@@ -19,13 +19,9 @@
 #include "include.h"
 
 
-
-
-
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
-
 
 
 // TODO: normális tx buffer méretet!
@@ -35,6 +31,7 @@
 // Size of Reception buffer
 //#define RXBUFFERSIZE                      TXBUFFERSIZE
 #define RXBUFFERSIZE                      1
+
 
 
 // TODO!!! Error-ok elkerülése véget kellett
@@ -47,6 +44,7 @@
 #define DISABLE	0
 
 
+
 /*
 typedef enum
 {
@@ -54,12 +52,6 @@ typedef enum
   SET = !RESET
 } FlagStatus, ITStatus;
 */
-
-
-
-#define BLUETOOTH_USART_PREEMT_PRIORITY		1
-#define BLUETOOTH_USART_SUB_PRIORITY		0
-
 
 
 ////////////////////////////////////  DEFINES FOR CHARACTERS
@@ -281,7 +273,7 @@ typedef enum
 */
 
 
-// Hyperterminal alatt nem muködik:
+// Hyperterminal alatt nem mûködik:
 /*
 #define USART_ESCAPE_BACKGROUND_DEFAULT()	\
 		USART_SendChar(27);					\
@@ -415,7 +407,7 @@ void USART_SendCharWithoutWait ( uint8_t c );
 void USART_SendFloat ( float value);
 
 
-uint8_t USART_WaitForSend (uint16_t timeoutMiliSecond);
+uint8_t USART_WaitForSend ( uint16_t timeoutMiliSecond );
 
 
 

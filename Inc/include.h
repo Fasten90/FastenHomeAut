@@ -114,7 +114,12 @@ typedef enum
 //#define CONFIG_USE_PANEL_NODESMALL
 //#define CONFIG_USE_PANEL_NODEMEDIUM
 //#define CONFIG_USE_PANEL_CENTERPANEL
+//#define CONFIG_USE_PANEL_DISCOVERY
 
+
+#if !defined(CONFIG_USE_PANEL_NODEMSMALL) && !defined(CONFIG_USE_PANEL_NODEMEDIUM) && !defined(CONFIG_USE_PANEL_CENTERPANEL) && !defined(CONFIG_USE_PANEL_DISCOVERY)
+#error "Miss config define! Use CONFIG_USE_PANEL_..."
+#endif
 
 ///////////////////////////// INCLUDES
 
@@ -154,25 +159,37 @@ typedef enum
 #ifdef CONFIG_USE_PANEL_CENTERPANEL
 	#include "stm32f4xx_hal.h"
 	
-	#include "stm32_hal_legacy.h"	// define-ok miatt?
+	#include "stm32_hal_legacy.h"	// for defines
 	
-	#define CONFIG_ENABLE_ESP8266
+	//#define CONFIG_ENABLE_ESP8266
+
 	#define CONFIG_ENABLE_DEBUGUSART
-	#define CONFIG_USE_FREERTOS
+	//#define CONFIG_USE_FREERTOS
 	
 #endif
 
-// TODO: Kultúráltra megírni
-#ifndef CONFIG_USE_PANEL_NODEMSMALL
-#ifndef CONFIG_USE_PANEL_NODEMEDIUM
-#ifndef CONFIG_USE_PANEL_CENTERPANEL
-#error "Miss config define! Use CONFIG_USE_PANEL_..."
+
+
+#ifdef CONFIG_USE_PANEL_DISCOVERY
+// STM32F4 Discovery
+	#include "stm32f4xx_hal.h"
+
+	#include "stm32_hal_legacy.h"	// for defines
+
+	#define CONFIG_ENABLE_DEBUGUSART
+	//#define CONFIG_USE_FREERTOS
+
+	//#define CONFIG_MODULE_LED_ENABLE
+
+	//#define CONFIG_ENABLE_ESP8266
+	//#define CONFIG_MODULE_FLASH_ENABLE
+	//#define CONFIG_MODULE_TEMPERATURE_ENABLE
+	//#define CONFIG_MODULE_ADC_ENABLE
+	//#define MODULE_SYSMANAGER_ENABLE
+
 #endif
-#endif
-#endif
-//#if ( defined(CONFIG_USE_PANEL_NODEMSMALL) && !defined(CONFIG_USE_PANEL_NODEMEDIUM) && !defined(CONFIG_USE_PANEL_CENTERPANEL) ) )
-//#error "Miss config define! Use CONFIG_USE_PANEL_..."
-//#endif
+
+
 
 // If you want use monitor program's history
 // turn off, if has small memory, now it need 1.5k RAM
@@ -180,7 +197,10 @@ typedef enum
 
 
 // FreeRTOS - at panel selection
+// Do not use from this line, use the CONFIG_USE_PANEL ...
 //#define CONFIG_USE_FREERTOS
+
+
 
 /** Kernel */
 #ifdef CONFIG_USE_FREERTOS
@@ -222,18 +242,26 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #define USE_ESP8266_MODE_CLIENT
 	
 	
-
+// For board defines (pins, ports)
 #include "board.h"
+
+
 
 // MODUL INCLUDES
 
-#ifdef CONFIG_USE_PANEL_NODESMALL
 
 #include "usart.h"
 #include "string.h"
 
 #include "monitor.h"
 #include "command.h"
+
+
+
+
+#ifdef CONFIG_USE_PANEL_NODESMALL
+
+
 
 //#include "homeautmessage.h"
 
@@ -257,13 +285,6 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 #include "led.h"
 #include "button.h"
-
-
-#include "usart.h"
-#include "string.h"
-
-#include "monitor.h"
-#include "command.h"
 
 #include "ESP8266.h"
 
@@ -293,18 +314,12 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #include "led.h"
 #include "button.h"
 
-
-#include "usart.h"
-#include "string.h"
-
-#include "monitor.h"
-#include "command.h"
-
 #include "ESP8266.h"
 
 #include "homeautmessage.h"
+#ifdef MODULE_SYSMANAGER_ENABLE
 #include "SysManager.h"
-
+#endif
 
 #include "IO.h"
 
@@ -327,6 +342,34 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 
 #endif // #ifdef CONFIG_USE_PANEL_CENTERPANEL
+
+
+
+#ifdef CONFIG_USE_PANEL_DISCOVERY
+
+
+#include "led.h"
+#include "button.h"
+
+
+#include "IO.h"
+
+#include "raspberrypi.h"
+
+#endif // #ifdef CONFIG_USE_PANEL_DISCOVERY
+
+
+
+#ifdef CONFIG_ENABLE_ESP8266
+#include "ESP8266.h"
+#endif
+
+
+#ifdef MODULE_SYSMANAGER_ENABLE
+#include "homeautmessage.h"
+#include "SysManager.h"
+#endif
+
 
 
 

@@ -62,14 +62,14 @@ const FunctionTypeParity FunctionTypeParity_List[] =
 		.name = "CONFIG_",
 		.function = Function_Config
 	},
-	
+
 	// HERE ADD NEW DateType
-	
+
 	{
 		.name = 0,
 		.function = Function_End
 	}
-		
+
 };
 
 
@@ -78,7 +78,7 @@ const FunctionTypeParity FunctionTypeParity_List[] =
 const DataTypeParity DataTypeParity_List[] =
 {
 	// 6 char length
-	
+
 	// LOGIN
 	{
 		.name = "NSMALL",
@@ -95,13 +95,13 @@ const DataTypeParity DataTypeParity_List[] =
 	{
 		.name = "WELCOM",
 		.type = Login_Welcome
-	},	
+	},
 	{
 		.name = "SYNC__",
 		.type = Login_Sync
-	},	
-	
-	
+	},
+
+
 	// STATE
 	{
 		.name = "TEMP__",
@@ -126,8 +126,8 @@ const DataTypeParity DataTypeParity_List[] =
 	{
 		.name = "OUTPUT",
 		.type = State_Output
-	},		
-	
+	},
+
 	// ALARM
 	{
 		.name = "PREBUT",
@@ -148,7 +148,7 @@ const DataTypeParity DataTypeParity_List[] =
 	{
 		.name = "TOCOLD",
 		.type = Alarm_TooCold
-	},	
+	},
 	{
 		.name = "INTHOT",
 		.type = Alarm_InternalTemperature_TooHot
@@ -156,7 +156,7 @@ const DataTypeParity DataTypeParity_List[] =
 	{
 		.name = "INCOLD",
 		.type = Alarm_InternalTemperature_TooCold
-	},		
+	},
 	{
 		.name = "BRIGHT",
 		.type = Alarm_TooBright
@@ -164,7 +164,7 @@ const DataTypeParity DataTypeParity_List[] =
 	{
 		.name = "TODARK",
 		.type = Alarm_TooDark
-	},	
+	},
 	{
 		.name = "MOVING",
 		.type = Alarm_Moving
@@ -172,7 +172,7 @@ const DataTypeParity DataTypeParity_List[] =
 	{
 		.name = "SOUND_",
 		.type = Alarm_SoundImpacted
-	},	
+	},
 
 	
 	// COMMAND
@@ -180,15 +180,15 @@ const DataTypeParity DataTypeParity_List[] =
 		.name = "SETOUT",
 		.type = Command_SetOutput
 	},
-	
+
 	// HERE ADD NEW DateType
-	
+
 	{
 		.name = 0,
 		.type = DataType_End
 	}
-	
-	
+
+
 };
 
 
@@ -399,13 +399,15 @@ ReturnType HOMEAUTMESSAGE_CreateMessage(HOMEAUTMESSAGE_MessageType *createToMess
 	
 	// MyAddress: uint8_t --> ASCII_3
 	// Problem: if not 3 char?
-	SignedDecimalToStringFixLength(messageInformation->MyAddress,createToMessage->MyAddress,3);
+	// TODO: Error with it! Fix length, and ended with character and not '\0'
+	UnsignedDecimalToString(messageInformation->MyAddress,createToMessage->MyAddress);
 	
 	// Default Separator
 	StrCpyFixLength(createToMessage->Seperator1,HOMEAUTMESSAGE_DefaultSeperator, HOMEAUTMESSAGE_DefaultSeparator_Length);
 
 	// TargetAddress
-	SignedDecimalToStringFixLength(messageInformation->TargetAddress,createToMessage->TargetAddress,3);
+	// TODO: Error with it! Fix length, and ended with character and not '\0'
+	UnsignedDecimalToString(messageInformation->TargetAddress,createToMessage->TargetAddress);
 	
 	// Default Separator
 	StrCpyFixLength(createToMessage->Seperator2,HOMEAUTMESSAGE_DefaultSeperator, HOMEAUTMESSAGE_DefaultSeparator_Length);
@@ -491,8 +493,11 @@ ReturnType HOMEAUTMESSAGE_CreateAndSendHomeAutMessage
 			
 		}
 		*/
+#ifdef CONFIG_USE_FREERTOS
 		ESP8266_SendMessageToQueue((uint8_t *)&message);
-		
+#endif
+
+
 	}	
 
 	return Return_Ok;	// TODO: Visszatéréseket jól megcsinálni

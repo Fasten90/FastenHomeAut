@@ -516,8 +516,8 @@ bool UnsignedDecimalStringToNum (const char *string, uint32_t *value)
 		if (IsDecimalChar(string[i]))
 		{
 			decimal = DecimalCharToNum(string[i]);
-			// Shift left 1* =  <<1
-			calculatedValue <<= 1;
+			// Shift left 1* =  *10
+			calculatedValue *= 10;
 			// Add new value
 			calculatedValue += decimal;
 		}

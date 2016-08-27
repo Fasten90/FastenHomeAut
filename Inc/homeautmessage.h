@@ -173,7 +173,7 @@ typedef struct {
 
 
 
-// GLOBVAL VARIABLES
+// GLOBAL VARIABLES
 
 extern const FunctionTypeParity FunctionTypeParity_List[];	// Function enum - "FUNCTION" string
 	

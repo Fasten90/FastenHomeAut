@@ -9,7 +9,7 @@
 #include "include.h"
 
 
-
+#ifdef CONFIG_ENABLE_ESP8266
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
@@ -2003,5 +2003,5 @@ static void DebugPrint( const char *debugString )
 }
 
 
-
+#endif
 // END of File

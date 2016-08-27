@@ -14,7 +14,7 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-
+#ifdef MODULE_SYSMANAGER_ENABLE
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
@@ -575,7 +575,8 @@ ReturnType SysManager_Sync ( void )
 */
 ReturnType SysManager_CheckReceivedMessage ( void )
 {
-	// Check received message and Process if need		
+	// Check received message and Process if need
+#ifdef CONFIG_USE_FREERTOS
 	if ( xQueueReceive(ESP8266_ReceivedMessage_Queue,SysManager_HomeAutMessage_Buffer,0) == pdPASS )
 	{
 		// Read & Parse
@@ -590,6 +591,7 @@ ReturnType SysManager_CheckReceivedMessage ( void )
 			DebugPrint("Failed HomeAutMessage parsing\r\n");
 		}		
 	}
+#endif
 	
 	return Return_Ok;
 }			
@@ -868,5 +870,8 @@ ReturnType SysManager_SendStates ( void )
 	
 	return Return_Ok;
 }
+
+#endif	// #ifdef MODULE_SYSMANAGER_ENABLE
+
 #endif
 

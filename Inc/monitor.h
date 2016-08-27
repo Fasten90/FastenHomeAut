@@ -103,7 +103,8 @@ uint8_t MONITOR_ConvertSmallLetter( void );
 #define MONITOR_MAX_HISTORY_LENGTH			5
 
 
-#define MONITOR_WELCOME_DATE_VERSION	"2015.09.21 - v4.0\r\n"
+#define MONITOR_WELCOME_DATE_VERSION	__DATE__
+#define MONITOR_WELCOME_TIME_VERSION	__TIME__
 
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
 #define MONITOR_BOARD_TYPE		"Used panel: NodeMedium\r\n"
@@ -118,7 +119,8 @@ uint8_t MONITOR_ConvertSmallLetter( void );
 #define MONITOR_SEND_WELCOME()								\
 		USART_SendString("\r\n"								\
 		"Welcome in Monitor program!\r\n"					\
-		MONITOR_WELCOME_DATE_VERSION						\
+		MONITOR_WELCOME_DATE_VERSION "\r\n"					\
+		MONITOR_WELCOME_TIME_VERSION "\r\n"					\
 		MONITOR_BOARD_TYPE									\
 		"(c) Copyright, Vizi Gabor\r\n"						\
 		"\r\n"												\

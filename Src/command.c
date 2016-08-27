@@ -401,31 +401,6 @@ CommandList[19] = new1;
  *  Global functions
  *----------------------------------------------------------------------------*/
 
-/***************************************************************************//**
- * @brief
- * @details
- * @param[in]
- * @param[out]
- * @return
- ******************************************************************************/
-
-
-
-
-/***************************************************************************//**
- * @brief
- * @details
- *
- * @param[in]
- * @param[out]
- *
- * @retval
- * @retval
- ******************************************************************************/
-
-
-
-
 
 uint8_t COMMAND_GetCommandNum( void )
 {
@@ -434,11 +409,9 @@ uint8_t COMMAND_GetCommandNum( void )
 }
 
 
-
-
-///////////////////////////////////////////////////////////////////////////////
-/* COMMAND FUNCTIONS */
-///////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+/*							COMMAND FUNCTIONS 								*/
+//////////////////////////////////////////////////////////////////////////////
 
 
 // Function: cls (clean screen)
@@ -637,7 +610,7 @@ uint32_t CommandFunction_reset ( uint32_t argc, char** argv ) {
 	//if ( argc > 1 )	USART_SendString("Too many arguments!\r\n");
 
 	uprintf("Reset...\r\n");
-	for(i=1000; i; i--);
+	for(i=0; i<1000; i++);
 
 	NVIC_SystemReset();
 
@@ -745,29 +718,7 @@ uint32_t CommandFunction_mw ( uint32_t argc, char** argv ) {
 // or led status <dummy>
 uint32_t CommandFunction_led ( uint32_t argc, char** argv )	// TODO: !!IMPORTANT!! atirni
 {
-	/*
-	if ( argc < 2 )
-	{
-		uprintf("Too few arguments!\r\n");
-		return RETURN_FALSE;
-	}
-	if ( argc > 2 )
-	{
-		uprintf("Too many arguments!\r\n");
-		return RETURN_FALSE;
-	}
 
-	//
-	if ( StringIsHexadecimalString(argv[1]) ) Arg2Num = StringHexToNum(argv[1]);	// Convert arg2, source to hex
-	else { USART_SendString("Wrong 1. argument!\r\n"); return 2; }
-
-
-	uprintf(" LED: 0x%b\r\n",Arg2Num);
-	//LED_Send ( Arg2Num );
-	*/
-
-	///*
-	// TODO:
 	if ( argc < 3 )
 	{
 		uprintf("Too few arguments!\r\n");
@@ -816,6 +767,7 @@ uint32_t CommandFunction_led ( uint32_t argc, char** argv )	// TODO: !!IMPORTANT
 	}
 	else
 	{
+		USART_SendString("Wrong command!\r\n");
 		return RETURN_FALSE;
 	}
 

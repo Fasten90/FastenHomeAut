@@ -77,8 +77,8 @@ void USART_Init ( UART_HandleTypeDef *UartHandle)
 {
 	
 	// HW init, Port init, etc...
-	HAL_UART_MspInit(UartHandle);
-	
+	//HAL_UART_MspInit(UartHandle);
+	// TODO: It is called from HAL_UART_Init() function
 
 	//##-1- Configure the UART peripheral ######################################
 	// Put the USART peripheral in the Asynchronous mode (UART Mode)
@@ -88,18 +88,20 @@ void USART_Init ( UART_HandleTypeDef *UartHandle)
 	  - Parity = None
 	  - BaudRate = 9600 baud
 	  - Hardware flow control disabled (RTS and CTS signals) */
-	#ifndef CONFIG_USE_PANEL_NODESMALL
+#ifndef CONFIG_USE_PANEL_NODESMALL
 	if ( UartHandle == &Debug_UartHandle)
 	{
 		UartHandle->Instance        = DEBUG_USARTx;
 		UartHandle->Init.BaudRate   = 115200;		// Monitor program
 	}
-	#endif
+#endif
+#ifdef CONFIG_ENABLE_ESP8266
 	if ( UartHandle == &ESP8266_UartHandle)
 	{
 		UartHandle->Instance        = ESP8266_USARTx;
 		UartHandle->Init.BaudRate   = 9600;			// ESP8266
 	}
+#endif
 	
 	UartHandle->Init.WordLength = UART_WORDLENGTH_8B;
 	UartHandle->Init.StopBits   = UART_STOPBITS_1;
@@ -109,20 +111,21 @@ void USART_Init ( UART_HandleTypeDef *UartHandle)
 
 	if(HAL_UART_Init(UartHandle) == HAL_OK)
 	{	
-		#ifndef CONFIG_USE_PANEL_NODESMALL
+#ifndef CONFIG_USE_PANEL_NODESMALL
 		if ( UartHandle == &Debug_UartHandle)
 		{
 			USART_SendEnable_flag = ENABLE;
 			__HAL_UART_CLEAR_FLAG(&Debug_UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
 
 		}
-		#endif
+#endif
+#ifdef CONFIG_ENABLE_ESP8266
 		if ( UartHandle == &ESP8266_UartHandle)
 		{
 			//USART_SendEnable_flag = ENABLE;
 			__HAL_UART_CLEAR_FLAG(&ESP8266_UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
 		}
-		
+#endif
 	}
 	else	// != HAL_OK
 	{	
@@ -155,14 +158,13 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 		// Enable USARTx clock
 		DEBUG_USART_CLK_ENABLES();
 
-		
 		// ##-2- Configure peripheral GPIO ##########################################
 		// UART TX GPIO pin configuration
 		GPIO_InitStruct.Pin       = DEBUG_USART_TX_GPIO_PIN;
 		GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
 		GPIO_InitStruct.Pull      = GPIO_NOPULL;
-		GPIO_InitStruct.Speed     = GPIO_SPEED_MEDIUM;
-		GPIO_InitStruct.Alternate = DEBUG_USART_AF;
+		GPIO_InitStruct.Speed     = GPIO_SPEED_FAST;
+		GPIO_InitStruct.Alternate = DEBUG_USART_AF;		// It is initialie alternate function
 
 		HAL_GPIO_Init(DEBUG_USART_TX_GPIO_PORT, &GPIO_InitStruct);
 
@@ -179,6 +181,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 		HAL_NVIC_SetPriority(DEBUG_USARTx_IRQn, DEBUG_USART_PREEMT_PRIORITY, DEBUG_USART_SUB_PRIORITY);
 		HAL_NVIC_EnableIRQ(DEBUG_USARTx_IRQn);
 	}
+#ifdef CONFIG_ENABLE_ESP8266
 	else if ( huart == &ESP8266_UartHandle)
 	{
 		// ##-1- Enable peripherals and GPIO Clocks #################################
@@ -212,6 +215,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 		HAL_NVIC_EnableIRQ(ESP8266_USARTx_IRQn);
 		
 	}
+#endif
 	else
 	{
 		Error_Handler();
@@ -284,8 +288,16 @@ void USART1_IRQHandler(void)
 
 }
 
+#ifdef CONFIG_USE_PANEL_DISCOVERY
+void USART2_IRQHandler(void)
+{
 
-#if ( CONFIG_USE_PANEL_NODEMEDIUM || CONFIG_USE_PANEL_CENTERPANEL )
+	HAL_UART_IRQHandler(&Debug_UartHandle);
+
+}
+#endif	//#ifdef CONFIG_BOARD_DISCOVERY
+
+#ifdef CONFIG_ENABLE_ESP8266
 void USART2_IRQHandler(void)
 {
 
@@ -300,7 +312,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 {
 
 	#ifdef CONFIG_USE_FREERTOS
-	taskDISABLE_INTERRUPTS();
+	taskDISABLE_INTERRUPTS();	// TODO: not need
 	#endif
 	
 	(void)UartHandle;
@@ -308,14 +320,15 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 	
 	// Set transmission flag: trasfer complete	
 	#ifdef CONFIG_USE_FREERTOS
-	xSemaphoreGiveFromISR(DEBUG_USART_Tx_Semaphore,(BaseType_t *)NULL);	// TODO FREERTOS
-	//xSemaphoreGive(DEBUG_USART_Tx_Semaphore);	// TODO FREERTOS
+	xSemaphoreGiveFromISR(DEBUG_USART_Tx_Semaphore,(BaseType_t *)NULL);
 	#endif
 	
-	USART_SendEnable_flag = ENABLE;	// sikeres kuldes
+	// Successful sending
+
+	USART_SendEnable_flag = ENABLE;
 
 	#ifdef CONFIG_USE_FREERTOS
-	taskENABLE_INTERRUPTS();
+	taskENABLE_INTERRUPTS();	// TODO: not need
 	#endif
 	
 }
@@ -340,11 +353,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 	#ifndef CONFIG_USE_PANEL_NODESMALL
 	if ( ( UartHandle->Instance == DEBUG_USARTx ) && ( UartHandle == &Debug_UartHandle ) )
 	{
-
-		// TODO: USART -TEST
-		//uint8_t USART_ReceivedChar = BluetoothUartHandle.pRxBuffPtr[0];
-		//(void)UartHandle;
-
 
 		if ( MONITOR_CommandEnable )
 		{
@@ -387,7 +395,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 				}
 				else
 				{
-					if ( USART_ReceivedChar  == '\r' )
+					if ( (USART_ReceivedChar  == '\r') || (USART_ReceivedChar == '\n'))
 					{		// receive Enter
 						MONITOR_CommandReadable = 1;
 						MONITOR_CommandActual[MONITOR_CommandLength] = '\0';
@@ -440,6 +448,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 			MONITOR_CommandEvent = 1;
 
 		}
+#ifdef MONITOR_REMOTE_CONTROL
 		else if ( MONITOR_RemoteControl )
 		{
 			//MONITOR_RemoteControlCharacter = MONITOR_RemoteControlBuffer[0];	// USED at remoteControl, work!
@@ -449,6 +458,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 			#endif
 			HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)MONITOR_RemoteControlBuffer, 1);	// USED at remoteControl, work!
 		}
+#endif
 	}
 	#endif	// #ifndef CONFIG_USE_PANEL_NODESMALL
 	
@@ -540,7 +550,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 		
 
 	}
-	#if ( CONFIG_USE_PANEL_NODEMEDIUM || CONFIG_USE_PANEL_CENTERPANEL )
+#ifdef CONFIG_ENABLE_ESP8266
 	else if (huart->Instance == USART2 )
 	{
 
@@ -565,7 +575,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 		
 
 	}	
-	#endif
+#endif
 	else
 	{
 		Error_Handler();
@@ -832,7 +842,7 @@ void USART_ReceiveMessage ( uint8_t *aRxBuffer )
 
 
 
-uint8_t USART_WaitForSend(uint16_t timeoutMiliSecond)
+uint8_t USART_WaitForSend( uint16_t timeoutMiliSecond )
 {
 
 	while(USART_SendEnable_flag == DISABLE && timeoutMiliSecond != 0)

@@ -16,19 +16,17 @@
 
 
 #include "include.h"
-#include "stdint.h" 	// For UINT16_MAX
+#include "stdint.h"
 #include "command.h"
 
-
 #include "monitor.h"
-
-//#include "global.h"
-
 
 	
 
 
 ///////////////////////////// MONITOR
+
+
 
 /////////////////////////////
 // GLOBAL VARIABLES
@@ -58,11 +56,6 @@ volatile uint8_t MONITOR_CommandEscapeStart_flag;
 volatile uint8_t MONITOR_CommandEscape_cnt;
 volatile uint8_t MONITOR_CommandReceivedBackspace;
 volatile uint8_t MONITOR_CommandSendBackChar_Enable = 0;
-
-// TODO: Delete:
-volatile uint8_t MONITOR_RemoteControl = 0;
-char MONITOR_RemoteControlBuffer[5];
-char MONITOR_RemoteControlCharacter = 0;
 
 
 #ifdef CONFIG_USE_FREERTOS
@@ -269,9 +262,13 @@ uint8_t MONITOR_CheckCommand ( void ) {
 	// Welcome message
 	MONITOR_SendPrimitiveWelcome();
 	
+
+#ifdef CONFIG_USE_FREERTOS
 	vTaskDelay(10);
-	
+
 	xSemaphoreGive(DEBUG_USART_Tx_Semaphore);
+	// Enable sendings
+#endif
 
 
 	while (1) {												// always checking the Command
