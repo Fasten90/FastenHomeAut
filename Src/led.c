@@ -6,6 +6,7 @@
 
 
 
+#ifdef CONFIG_MODULE_LED_ENABLE
 
 extern void Error_Handler( void );
 
@@ -349,6 +350,8 @@ void LED_PWM_ChangePercent(TIM_HandleTypeDef *TimHandle, uint32_t timerChannel, 
 	}
 	
 }
-#endif //#ifdef CONFIG_USE_PANEL_NODESMALL
+#endif	// #ifdef CONFIG_USE_PANEL_NODESMALL
+
+#endif	// #ifdef CONFIG_MODULE_LED_ENABLE
 
 

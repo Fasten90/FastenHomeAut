@@ -31,7 +31,7 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-#ifdef CONFIG_ENABLE_ESP8266
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
 extern UART_HandleTypeDef ESP8266_UartHandle;
 #endif
 #ifdef CONFIG_ENABLE_DEBUGUSART
@@ -95,7 +95,7 @@ void USART_Init ( UART_HandleTypeDef *UartHandle)
 		UartHandle->Init.BaudRate   = 115200;		// Monitor program
 	}
 #endif
-#ifdef CONFIG_ENABLE_ESP8266
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
 	if ( UartHandle == &ESP8266_UartHandle)
 	{
 		UartHandle->Instance        = ESP8266_USARTx;
@@ -119,7 +119,7 @@ void USART_Init ( UART_HandleTypeDef *UartHandle)
 
 		}
 #endif
-#ifdef CONFIG_ENABLE_ESP8266
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
 		if ( UartHandle == &ESP8266_UartHandle)
 		{
 			//USART_SendEnable_flag = ENABLE;
@@ -181,7 +181,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 		HAL_NVIC_SetPriority(DEBUG_USARTx_IRQn, DEBUG_USART_PREEMT_PRIORITY, DEBUG_USART_SUB_PRIORITY);
 		HAL_NVIC_EnableIRQ(DEBUG_USARTx_IRQn);
 	}
-#ifdef CONFIG_ENABLE_ESP8266
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
 	else if ( huart == &ESP8266_UartHandle)
 	{
 		// ##-1- Enable peripherals and GPIO Clocks #################################
@@ -297,7 +297,7 @@ void USART2_IRQHandler(void)
 }
 #endif	//#ifdef CONFIG_BOARD_DISCOVERY
 
-#ifdef CONFIG_ENABLE_ESP8266
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
 void USART2_IRQHandler(void)
 {
 
@@ -462,7 +462,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 	}
 	#endif	// #ifndef CONFIG_USE_PANEL_NODESMALL
 	
-	#ifdef CONFIG_ENABLE_ESP8266
+	#ifdef CONFIG_MODULE_ESP8266_ENABLE
 	if ( UartHandle->Instance == ESP8266_USARTx && UartHandle == &ESP8266_UartHandle )
 	{
 		
@@ -550,7 +550,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 		
 
 	}
-#ifdef CONFIG_ENABLE_ESP8266
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
 	else if (huart->Instance == USART2 )
 	{
 

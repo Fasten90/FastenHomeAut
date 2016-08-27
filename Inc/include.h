@@ -106,18 +106,21 @@ typedef enum
 
 
 
-// %%%%%%%%%%%%%%
-
-// Select your panel
+/////////////////////////////
+// 		Select your panel
+/////////////////////////////
 
 // Recommend define at project settings:
+// XXX: Select your panel
 //#define CONFIG_USE_PANEL_NODESMALL
 //#define CONFIG_USE_PANEL_NODEMEDIUM
 //#define CONFIG_USE_PANEL_CENTERPANEL
 //#define CONFIG_USE_PANEL_DISCOVERY
 
 
-#if !defined(CONFIG_USE_PANEL_NODEMSMALL) && !defined(CONFIG_USE_PANEL_NODEMEDIUM) && !defined(CONFIG_USE_PANEL_CENTERPANEL) && !defined(CONFIG_USE_PANEL_DISCOVERY)
+
+#if !defined(CONFIG_USE_PANEL_NODEMSMALL) && !defined(CONFIG_USE_PANEL_NODEMEDIUM) \
+	&& !defined(CONFIG_USE_PANEL_CENTERPANEL) && !defined(CONFIG_USE_PANEL_DISCOVERY)
 #error "Miss config define! Use CONFIG_USE_PANEL_..."
 #endif
 
@@ -131,7 +134,7 @@ typedef enum
 	#include "stm32f0xx_it.h"
 	#include "stm32f0xx_hal_conf.h"
 	
-	#define CONFIG_ENABLE_ESP8266
+	#define CONFIG_MODULE_ESP8266_ENABLE
 	#define CONFIG_MODULE_FLASH_ENABLE
 	#define CONFIG_MODULE_TEMPERATURE_ENABLE
 	#define CONFIG_MODULE_ADC_ENABLE
@@ -144,7 +147,7 @@ typedef enum
 	
 	#include "stm32_hal_legacy.h"	// define-ok miatt?
 
-	#define CONFIG_ENABLE_ESP8266
+	#define CONFIG_MODULE_ESP8266_ENABLE
 	#define CONFIG_ENABLE_DEBUGUSART
 	#define CONFIG_USE_FREERTOS
 	#define CONFIG_MODULE_FLASH_ENABLE
@@ -161,7 +164,7 @@ typedef enum
 	
 	#include "stm32_hal_legacy.h"	// for defines
 	
-	//#define CONFIG_ENABLE_ESP8266
+	#define CONFIG_MODULE_ESP8266_ENABLE
 
 	#define CONFIG_ENABLE_DEBUGUSART
 	//#define CONFIG_USE_FREERTOS
@@ -171,28 +174,39 @@ typedef enum
 
 
 #ifdef CONFIG_USE_PANEL_DISCOVERY
-// STM32F4 Discovery
-	#include "stm32f4xx_hal.h"
+	// STM32F4 Discovery
 
+	#include "stm32f4xx_hal.h"
 	#include "stm32_hal_legacy.h"	// for defines
 
 	#define CONFIG_ENABLE_DEBUGUSART
+
 	//#define CONFIG_USE_FREERTOS
 
 	//#define CONFIG_MODULE_LED_ENABLE
 
-	//#define CONFIG_ENABLE_ESP8266
+	//#define CONFIG_MODULE_BUTTON_ENABLE
+
+	//#define CONFIG_MODULE_IO_ENABLE
+
+	//#define CONFIG_MODULE_RASPBERRYPI_ENABLE
+
+	//#define CONFIG_MODULE_ESP8266_ENABLE
+
 	//#define CONFIG_MODULE_FLASH_ENABLE
+
 	//#define CONFIG_MODULE_TEMPERATURE_ENABLE
+
 	//#define CONFIG_MODULE_ADC_ENABLE
-	//#define MODULE_SYSMANAGER_ENABLE
+
+	//#define CONFIG_MODULE_SYSMANAGER_ENABLE
 
 #endif
 
 
 
 // If you want use monitor program's history
-// turn off, if has small memory, now it need 1.5k RAM
+// Turn off, if has small memory, now it need 1.5k RAM
 //#define USE_MONITOR_HISTORY
 
 
@@ -297,12 +311,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #include "adc.h"
 //#include "flash.h"	// Work, but not need
 
-
-
 #include "temperature.h"
-
-
-
 
 #endif // #ifdef CONFIG_USE_PANEL_NODEMEDIUM
 
@@ -310,14 +319,14 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 #ifdef CONFIG_USE_PANEL_CENTERPANEL
 
-
 #include "led.h"
 #include "button.h"
 
 #include "ESP8266.h"
 
 #include "homeautmessage.h"
-#ifdef MODULE_SYSMANAGER_ENABLE
+
+#ifdef CONFIG_MODULE_SYSMANAGER_ENABLE
 #include "SysManager.h"
 #endif
 
@@ -344,32 +353,37 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #endif // #ifdef CONFIG_USE_PANEL_CENTERPANEL
 
 
-
 #ifdef CONFIG_USE_PANEL_DISCOVERY
-
-
+// Need include, because used LED_x_ON / OFF() macros
 #include "led.h"
-#include "button.h"
-
-
-#include "IO.h"
-
-#include "raspberrypi.h"
-
-#endif // #ifdef CONFIG_USE_PANEL_DISCOVERY
-
-
-
-#ifdef CONFIG_ENABLE_ESP8266
-#include "ESP8266.h"
 #endif
 
 
-#ifdef MODULE_SYSMANAGER_ENABLE
+#ifdef CONFIG_MODULE_LED_ENABLE
+#include "led.h"
+#endif
+
+
+#ifdef CONFIG_MODULE_BUTTON_ENABLE
+#include "button.h"
+#endif
+
+#ifdef CONFIG_MODULE_IO_ENABLE
+#include "IO.h"
+#endif
+
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+#include "ESP8266.h"
+#endif
+
+#ifdef CONFIG_MODULE_SYSMANAGER_ENABLE
 #include "homeautmessage.h"
 #include "SysManager.h"
 #endif
 
+#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
+#include "raspberrypi.h"
+#endif
 
 
 

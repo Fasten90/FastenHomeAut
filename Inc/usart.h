@@ -362,7 +362,7 @@ USART_SendChar('K');
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-#ifdef CONFIG_ENABLE_ESP8266
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
 extern UART_HandleTypeDef ESP8266_UartHandle;
 #endif
 #ifdef CONFIG_ENABLE_DEBUGUSART

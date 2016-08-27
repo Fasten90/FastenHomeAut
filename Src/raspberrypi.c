@@ -13,6 +13,7 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
+#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
 
 /*------------------------------------------------------------------------------
  *  Type definitions
@@ -280,4 +281,4 @@ void HAL_UART_MspInitRASPBERRYPI(UART_HandleTypeDef *huart)
 	
 }
 
-
+#endif	// #ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE

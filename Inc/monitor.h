@@ -112,6 +112,10 @@ uint8_t MONITOR_ConvertSmallLetter( void );
 #ifdef CONFIG_USE_PANEL_CENTERPANEL
 #define MONITOR_BOARD_TYPE		"Used panel: CenterPanel\r\n"
 #endif
+#ifdef CONFIG_USE_PANEL_DISCOVERY
+#define MONITOR_BOARD_TYPE		"Used panel: STM32F4Discovery\r\n"
+#endif
+
 
 #define MONITOR_DUMMY_STRING				"____________________________________________\r\n"
 

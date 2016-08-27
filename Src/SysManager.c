@@ -14,7 +14,7 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#ifdef MODULE_SYSMANAGER_ENABLE
+#ifdef CONFIG_MODULE_SYSMANAGER_ENABLE
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
@@ -871,7 +871,7 @@ ReturnType SysManager_SendStates ( void )
 	return Return_Ok;
 }
 
-#endif	// #ifdef MODULE_SYSMANAGER_ENABLE
+#endif	// #ifdef CONFIG_MODULE_SYSMANAGER_ENABLE
 
 #endif
 

@@ -220,6 +220,9 @@ void EXTI9_5_IRQHandler(void)
   */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
+
+#ifdef CONFIG_MODULE_BUTTON_ENABLE
+	// BUTTON MODULE
 	if (GPIO_Pin == BUTTON_UP_GPIO_PIN)
 	{
 		// Toggle LED
@@ -246,7 +249,9 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	}
 	
 	//BUTTON_Clicked = 1;
+#endif	// #ifdef CONFIG_MODULE_BUTTON_ENABLE
 	
+
 	#ifdef CONFIG_USE_PANEL_NODEMEDIUM
 	if (GPIO_Pin == SENSOR_MOTION_GPIO_PIN)
 	{

@@ -737,6 +737,7 @@ uint32_t CommandFunction_led ( uint32_t argc, char** argv )	// TODO: !!IMPORTANT
 		return RETURN_FALSE;
 	}
 
+#ifdef CONFIG_MODULE_LED_ENABLE
 	
 	if (!StrCmp(argv[1],"on")) {
 		switch (Arg3Num) {
@@ -771,6 +772,7 @@ uint32_t CommandFunction_led ( uint32_t argc, char** argv )	// TODO: !!IMPORTANT
 		return RETURN_FALSE;
 	}
 
+#endif
 	
 	return RETURN_SUCCESS;
 
@@ -1775,9 +1777,10 @@ uint32_t CommandFunction_flashwrite	( uint32_t argc, char** argv ) {
 
 
 
-// Function: Raspberry pi brige
+// Function: Raspberry pi bridge
 uint32_t CommandFunction_raspberrypi	( uint32_t argc, char** argv ) {
 
+#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
 	if ( argc < 3 )
 	{
 		uprintf("Too few arguments!\r\n");
@@ -1806,7 +1809,7 @@ uint32_t CommandFunction_raspberrypi	( uint32_t argc, char** argv ) {
 	}
 
 	
-	
+#endif
 	
 	
 	return RETURN_SUCCESS;

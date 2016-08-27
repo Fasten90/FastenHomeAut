@@ -8,6 +8,9 @@
 
 
 
+#ifdef CONFIG_MODULE_LED_ENABLE
+
+
 #if BOARD_LED_LOGIC_HIGH_IS_ON == 1
 
 #define LED_RED_ON()			HAL_GPIO_WritePin(BOARD_LED_RED_PORT,BOARD_LED_RED_PIN,GPIO_PIN_SET)
@@ -41,6 +44,17 @@
 #define LED_GREEN_STATUS()			HAL_GPIO_ReadPin(BOARD_LED_GREEN_PORT,BOARD_LED_GREEN_PIN)
 
 
+#else
+
+// if not defined CONFIG_MODULE_LED_ENABLE
+#define LED_RED_ON()
+#define LED_BLUE_ON()
+#define LED_GREEN_ON()
+#define LED_RED_OFF()
+#define LED_BLUE_OFF()
+#define LED_GREEN_OFF()
+
+#endif
 
 
 

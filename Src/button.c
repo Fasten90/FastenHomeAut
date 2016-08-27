@@ -13,6 +13,7 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
+#ifdef CONFIG_MODULE_BUTTON_ENABLE
 
 /*------------------------------------------------------------------------------
  *  Type definitions
@@ -183,5 +184,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 */
 
 
+#endif	// #ifdef CONFIG_MODULE_BUTTON_ENABLE
 
 

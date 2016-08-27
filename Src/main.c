@@ -359,7 +359,8 @@ int main(void)
 
 
 
-#ifdef CONFIG_USE_PANEL_CENTERPANEL
+//#ifdef CONFIG_USE_PANEL_CENTERPANEL
+// TODO:
 int main(void)
 {
 
@@ -392,12 +393,18 @@ int main(void)
 	LED_BLUE_ON();
 	LED_GREEN_ON();
 	LED_RED_ON();
+#endif
+
+
 	
+#ifdef CONFIG_MODULE_BUTTON_ENABLE
 
 	// BUTTON
 	BUTTON_Init();
+#endif
 	
-	
+
+#ifdef CONFIG_MODULE_IO_ENABLE
 	// IO
 	IO_Init();
 #endif
@@ -437,7 +444,7 @@ int main(void)
 	
 	
 	// ESP8266
-#ifdef CONFIG_ENABLE_ESP8266
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
 	ESP8266_USART_Rx_Semaphore = NULL;
 	ESP8266_USART_Rx_Semaphore = xSemaphoreCreateBinary();
 	
@@ -460,14 +467,14 @@ int main(void)
 #endif
 	
 	
-#ifdef MODULE_SYSMANAGER_ENABLE
+#ifdef CONFIG_MODULE_SYSMANAGER_ENABLE
 	TaskHandle_t SYSMANAGER_TaskHandle = NULL;
 	if ( xTaskCreate( (pdTASK_CODE)SYSMANAGER_Task, "SysManagerTask", SYSMANAGER_TASK_STACK_SIZE, 0,
 				SYSMANAGER_TASK_PRIORITY, &SYSMANAGER_TaskHandle ) != pdPASS)
 	{
 		Error_Handler();
 	}
-#endif	// #ifdef MODULE_SYSMANAGER_ENABLE
+#endif	// #ifdef CONFIG_MODULE_SYSMANAGER_ENABLE
 	
 	
 #ifdef CONFIG_USE_FREERTOS
@@ -483,7 +490,7 @@ int main(void)
 	}
 	
 }
-#endif	// #ifdef CONFIG_USE_PANEL_CENTERPANEL
+//#endif	// #ifdef CONFIG_USE_PANEL_CENTERPANEL
 
 
 
@@ -587,7 +594,7 @@ void SystemClock_Config(void)
 
 
 
-#ifdef CONFIG_USE_PANEL_CENTERPANEL
+#if defined(CONFIG_USE_PANEL_CENTERPANEL) || defined(CONFIG_USE_PANEL_DISCOVERY)
 
 void SystemClock_Config(void)
 {
