@@ -113,8 +113,8 @@ void ESP8266_Test ( void )
 	// GPIO0 & GPIO2
 	
 	// help for pins: http://www.electrodragon.com/w/ESP8266
-	// Mindketto HIGH szinten volt amikor megmÈrtem
-	// Igen, de GPIO0 az LOW volt indul·skor Ès HIGH lett csatlakoz·s ut·n ...
+	// Mindketto HIGH szinten volt amikor megm√©rtem
+	// Igen, de GPIO0 az LOW volt indul√°skor √©s HIGH lett csatlakoz√°s ut√°n ...
 
 
 	GPIO_InitStruct.Pin       = ESP8266_GPIO2_GPIO_PIN;
@@ -210,7 +210,7 @@ void ESP8266_Test ( void )
 	
 	
 	// USART TX - RX	
-	// Most kell inicializ·lni, k¸lˆnben a reset miatt kapunk egy csomÛ ¸zenetet, amitol kifagy az UART
+	// Most kell inicializ√°lni, k√ºl√∂nben a reset miatt kapunk egy csom√≥ √ºzenetet, amitol kifagy az UART
 	USART_Init(&ESP8266_UartHandle);
 	
 
@@ -231,7 +231,7 @@ void ESP8266_Test ( void )
 		
 		
 	//ESP8266_Uart_ReceivedCharFlag = 0;
-	// Ink·bb legyen a ReceiveString() f¸ggvÈnyben
+	// Ink√°bb legyen a ReceiveString() f√ºggv√©nyben
 	
 	
 	
@@ -711,7 +711,7 @@ void ESP8266_Test ( void )
 		
 	
 	
-	// TesztelÈsre
+	// Tesztel√©sre
 	while(1);
 	
 	
@@ -743,8 +743,8 @@ ReturnType ESP8266_Init ( void )
 	// GPIO0 & GPIO2
 	
 	// help for pins: http://www.electrodragon.com/w/ESP8266
-	// Mindketto HIGH szinten volt amikor megmÈrtem
-	// Igen, de GPIO0 az LOW volt indul·skor Ès HIGH lett csatlakoz·s ut·n ...
+	// Mindketto HIGH szinten volt amikor megm√©rtem
+	// Igen, de GPIO0 az LOW volt indul√°skor √©s HIGH lett csatlakoz√°s ut√°n ...
 
 
 	GPIO_InitStruct.Pin       = ESP8266_GPIO2_GPIO_PIN;
@@ -843,7 +843,7 @@ ReturnType ESP8266_Init ( void )
 	
 	
 	// USART TX - RX	
-	// Most kell inicializ·lni, k¸lˆnben a reset miatt kapunk egy csomÛ ¸zenetet, amitol kifagy az UART
+	// Most kell inicializ√°lni, k√ºl√∂nben a reset miatt kapunk egy csom√≥ √ºzenetet, amitol kifagy az UART
 	//USART_Init(&ESP8266_UartHandle);
 	
 
@@ -1052,7 +1052,7 @@ ReturnType ESP8266_ConnectToWifiNetwork ( void )
 	////////////////////////////////////////////
 	// Save IP address to ESP8266_MyIpAddressString
 	// AT+CIFSR
-	// IP cÌm
+	// IP c√≠m
 	// Command:
 	// AT+CIFSR
 	// Response:	AT+CIFSR 192.168.0.106\r\nOK
@@ -1068,7 +1068,7 @@ ReturnType ESP8266_ConnectToWifiNetwork ( void )
 	
 	uint8_t point = 0;
 	uint8_t IPcnt = 0;
-	const uint8_t selected_point = 6;		// TODO: ... ennÈl jobb IP beolvas·s kÈne
+	const uint8_t selected_point = 6;		// TODO: ... enn√©l jobb IP beolvas√°s k√©ne
 	for (int i=0; ESP8266_ReceiveBuffer[i] != '\0'; i++ )
 	{
 		if (ESP8266_ReceiveBuffer[i] == '.')
@@ -1332,7 +1332,7 @@ ReturnType ESP8266_SendTcpMessage ( char *message )
 {
 	uint8_t length = 0;
 	
-	// TODO: HOMEAUTMESSAGE_DefaultMessageLength define-nal kÈne	// 40
+	// TODO: HOMEAUTMESSAGE_DefaultMessageLength define-nal k√©ne	// 40
 	if ( StringLength(message) !=  40 )	
 	{		
 		return Return_False;
@@ -1457,7 +1457,7 @@ ReturnType ESP8266_ReceiveFixTcpMessage ( void )
 #ifdef CONFIG_USE_FREERTOS
 ReturnType ESP8266_ReceiveUnknownTcpMessage ( void )
 {
-	// usart IT-ben v·lt·s, egyenkÈnt fogunk karaktert fogadni:
+	// usart IT-ben v√°lt√°s, egyenk√©nt fogunk karaktert fogadni:
 	ESP8266_Receive_Mode_FixLength = 0;
 	
 	// Clear buffer
@@ -1744,7 +1744,7 @@ ReturnType ESP8266_ClientConnectBlocking(void)
 			DebugPrint("Retry to connect...\r\n");
 			
 			// Clean and reset...
-			// ERROR\r\nUnli [nk] // miatt kell... TODO: valami jobb megold·s kÈne...
+			// ERROR\r\nUnli [nk] // miatt kell... TODO: valami jobb megold√°s k√©ne...
 			
 			// Clear buffer and etc
 			// Delete previous receive:
@@ -1812,8 +1812,8 @@ void ESP8266_Task(void)
 	vTaskDelay(10000);
 	
 	
-	// MinÈl kÈsobb kell inicializ·lni az USART-ot, mert az ESP8266 indul·skor sok ¸zenetet k¸ld, amitol kifagy a handler.
-	//(ErrorCallback hÌvÛdik meg)
+	// Min√©l k√©sobb kell inicializ√°lni az USART-ot, mert az ESP8266 indul√°skor sok √ºzenetet k√ºld, amitol kifagy a handler.
+	//(ErrorCallback h√≠v√≥dik meg)
 	USART_Init(&ESP8266_UartHandle);
 	
 	
@@ -1888,7 +1888,7 @@ void ESP8266_Task(void)
 		
 		// Print received message:
 		DebugPrint("\r\nReceived a message\r\n");
-		// TODO: ha ezt most kiveszem, akkor nem tudja feldolgozni az elso uzenet kivetelevel a tˆbbit...
+		// TODO: ha ezt most kiveszem, akkor nem tudja feldolgozni az elso uzenet kivetelevel a t√∂bbit...
 		//DebugPrint((char *)&ESP8266_ReceiveBuffer[ESP8266_HOMEAUTMESSAGE_RECEIVEDMESSAGE_START]);
 		//DebugPrint((const char *)&ESP8266_ReceiveBuffer[0]);
 		//DebugPrint("\r\n");

@@ -2,7 +2,7 @@
  * board.h
  *
  *  	Created on: 	2013.11.19.
- *      Author: 		Vizi Gábor
+ *      Author: 		Vizi GÃ¡bor
  *		E-mail:			vizi.gabor90@gmail.com
  *		University:		BME (BUTE)
  *		Project: 		RadioAlarm - Radio Alarm System Center module v2
@@ -50,7 +50,7 @@
 
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
 
-// Comment: A sematicban fordítva van a blue-red
+// Comment: A sematicban fordÃ­tva van a blue-red
 
 #define BOARD_LED_BLUE_PORT			GPIOB
 #define BOARD_LED_BLUE_PIN			GPIO_PIN_5
@@ -69,7 +69,7 @@
 
 #ifdef CONFIG_USE_PANEL_CENTERPANEL
 
-// Comment: A sematicban fordítva van a blue-red
+// Comment: A sematicban fordÃ­tva van a blue-red
 // blue: PE5
 // green: PE6
 // red: PA8
@@ -224,7 +224,7 @@
 
 
 #define ADC_BUFFER_SIZE				( 5 )	
-// TODO : 4volt		// mintakódban 3 van
+// TODO : 4volt		// mintakÃ³dban 3 van
 // now: Vsource, ligh, mic, prox, internal temp
 
 
@@ -403,7 +403,7 @@
 #define TEMPERATURE_I2C_TEMP_ADDRESS	((uint16_t)( 0x0000 | (1<<6)  | (1 << 3 ) ) )
 // 0b1001000
 // 1,0,0,1,0,0,0 BITEK, nem pedig hexa!!!!!!!!!!!!!!
-// 0x1001000 NEM JÓÓÓÓÓÓÓÓÓÓÓ
+// 0x1001000 NEM JÃ“Ã“Ã“Ã“Ã“Ã“Ã“Ã“Ã“Ã“Ã“
 
 // pointer register:
 #define TEMPERATURE_I2C_REGISTER_TEMP	((uint8_t)0x00)
@@ -1022,7 +1022,7 @@ SENSOR_OPENCLOSE	PC6
 // RELAY_1_EN			PD3
 // RELAY_2_EN			PD4
 
-// Ideiglenesen felcserélem, hogy a relay_1 az lehessen, amelyik be is van forrasztva (relay_2, alsó)
+// Ideiglenesen felcserÃ©lem, hogy a relay_1 az lehessen, amelyik be is van forrasztva (relay_2, alsÃ³)
 
 
 #define RELAY_1_GPIO_PORT			GPIOD

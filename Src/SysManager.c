@@ -199,7 +199,7 @@ void SYSMANAGER_Task(void)
 			// Delay 1 sec
 			vTaskDelay(1000);		
 
-			// TODO: Sec++ áttétele máshova
+			// TODO: Sec++ Ã¡ttÃ©tele mÃ¡shova
 			DeviceStatus.ActualSec++;			
 			
 			
@@ -209,7 +209,7 @@ void SYSMANAGER_Task(void)
 		// Delay 1 sec
 		vTaskDelay(1000);
 		
-		// TODO: Sec++ áttétele máshova
+		// TODO: Sec++ Ã¡ttÃ©tele mÃ¡shova
 		DeviceStatus.ActualSec++;
 		
 	}
@@ -476,8 +476,8 @@ ReturnType SysManager_CheckIOs ( void )
 	if ( GLOBAL_IO_Sensor_Sound_Impact_Sound)
 	{
 		GLOBAL_IO_Sensor_Sound_Impact_Sound = 0;
-		// IMPORTANT: Azért nem kell nagyon nullázni, mert IT, így csak felfutáskor állítódik egybe, ezt a változót
-		// 1-be állítja, majd mi ezt kinullázzuk, nyugtázva
+		// IMPORTANT: AzÃ©rt nem kell nagyon nullÃ¡zni, mert IT, Ã­gy csak felfutÃ¡skor Ã¡llÃ­tÃ³dik egybe, ezt a vÃ¡ltozÃ³t
+		// 1-be Ã¡llÃ­tja, majd mi ezt kinullÃ¡zzuk, nyugtÃ¡zva
 
 		// Send
 		HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
@@ -748,7 +748,7 @@ ReturnType SysManager_ProcessHomeAutMessage ( void )
 		}	
 		#endif	// #if CONFIG_USE_PANEL_CENTERPANEL	// For CenterPanel processing...
 		
-		// TODO: STATE ÜZENETEK FELDOLGOZÁSA
+		// TODO: STATE ÃœZENETEK FELDOLGOZÃSA
 		#if CONFIG_USE_PANEL_CENTERPANEL			// For CenterPanel processing...
 		// Is State + Battery voltage
 		else if (HOMEAUTMESSAGE_MessageInformation.Function == Function_State
@@ -849,21 +849,21 @@ ReturnType SysManager_SendStates ( void )
 	HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(myIp,serverIp,Function_State,State_Battery,battery,1);
 	
 	vTaskDelay(1000);
-	DeviceStatus.ActualSec++;	// TODO: Sec++ átrakás máshova
+	DeviceStatus.ActualSec++;	// TODO: Sec++ Ã¡trakÃ¡s mÃ¡shova
 	
 	// Light
 	uint32_t light = (uint32_t) ( DeviceStatus.Lighting * 100);
 	HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(myIp,serverIp,Function_State,State_Brightness,light,1);
 
 	vTaskDelay(1000);
-	DeviceStatus.ActualSec++;	// TODO: Sec++ átrakás máshova
+	DeviceStatus.ActualSec++;	// TODO: Sec++ Ã¡trakÃ¡s mÃ¡shova
 	
 	// Temperature
 	int32_t temp = (uint32_t) ( DeviceStatus.extTemperature * 100);	
 	HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(myIp,serverIp,Function_State,State_Temperature,temp,1);
 	
 	vTaskDelay(1000);
-	DeviceStatus.ActualSec++;	// TODO: Sec++ átrakás máshova
+	DeviceStatus.ActualSec++;	// TODO: Sec++ Ã¡trakÃ¡s mÃ¡shova
 	
 	//HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(0,0,Function_State,State_Sound,0,1);
 	

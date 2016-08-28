@@ -2,7 +2,7 @@
  *		include.h
  *
  *  	Created on: 	2013.11.19.
- *    Author: 		Vizi Gábor
+ *    Author: 		Vizi GÃ¡bor
  *		E-mail:			vizi.gabor90@gmail.com
  *		University:		BME (BUTE)
  *		Project: 		RadioAlarm - Radio Alarm System modules
@@ -265,10 +265,6 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #endif	// #ifdef CONFIG_USE_FREERTOS
 
 
-
-
-
-	
 	
 // For board defines (pins, ports)
 #include "board.h"
@@ -298,10 +294,10 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 #ifdef CONFIG_USE_PANEL_DISCOVERY
 
-#endif
+#endif	// #ifdef CONFIG_USE_PANEL_DISCOVERY
 
 
-// Nincs kész:
+// Nincs kÃ©sz:
 //#include "buzzer.h"
 //#include "lcd.h"
 //#include "eeprom.h"

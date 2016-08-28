@@ -2,7 +2,7 @@
  * monitor.h
  *
  *		Created on		2013.10.08.
- *      Author: 		Vizi Gábor
+ *      Author: 		Vizi GÃ¡bor
  *		E-mail:			vizi.gabor90@gmail.com
  *		University:		BME (BUTE)
  *		Project: 		RadioAlarm - Radio Alarm System modules

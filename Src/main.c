@@ -560,7 +560,7 @@ void SystemClock_Config(void)
 	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
 	/*
-	// Original... TODO: miért volt itt?
+	// Original... TODO: miÃ©rt volt itt?
 	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
 	RCC_OscInitStruct.MSIState = RCC_MSI_ON;
 	RCC_OscInitStruct.MSICalibrationValue = 0;
@@ -569,7 +569,7 @@ void SystemClock_Config(void)
 	HAL_RCC_OscConfig(&RCC_OscInitStruct);
 	*/
 
-	// for adc... TODO: valóban kell az adc-hez? és ha CSAK ez van?
+	// for adc... TODO: valÃ³ban kell az adc-hez? Ã©s ha CSAK ez van?
 	//HAL_RCC_GetOscConfig(&RCC_OscInitStruct);
 	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
 	RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;

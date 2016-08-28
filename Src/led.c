@@ -21,7 +21,7 @@ TIM_HandleTypeDef    TimLedGreenHandle;
 
 
 /*
-\brief	LED GPIO inicializ·l·s (TIMER nÈlk¸l!)
+\brief	LED GPIO inicializ√°l√°s (TIMER n√©lk√ºl!)
 */
 void LED_Init( void )
 {
@@ -70,7 +70,7 @@ void LED_Init( void )
 
 
 /*
-\brief	LED villogtatÛ, vÈgtelen ciklusban
+\brief	LED villogtat√≥, v√©gtelen ciklusban
 */
 void LED_Run ( void )
 {
@@ -319,7 +319,7 @@ void LED_PWM_ChangePercent(TIM_HandleTypeDef *TimHandle, uint32_t timerChannel, 
 	TIM_OC_InitTypeDef sConfig;
 	
 	
-	uint32_t Pulse = LED_TIMER_PERIOD_VALUE * percent / 100;	// % sz·mÌt·s
+	uint32_t Pulse = LED_TIMER_PERIOD_VALUE * percent / 100;	// % sz√°m√≠t√°s
 	
 	
 	/*##-2- Configure the PWM channels #########################################*/

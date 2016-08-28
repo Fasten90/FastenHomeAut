@@ -536,7 +536,7 @@ uint32_t CommandFunction_go ( uint32_t argc, char** argv ) {
 	int ( *fpntr )( void );
 
 	// TODO: USART_SendLine();
-	// TODO: MONITOR_SendMessage(); ez irányítódjon át egy USART_SendString()-re
+	// TODO: MONITOR_SendMessage(); ez irÃ¡nyÃ­tÃ³djon Ã¡t egy USART_SendString()-re
 	if ( argc < 2 ) { USART_SendString("Too few arguments!\r\n");	return 0; }
 	if ( argc > 2 ) { USART_SendString("Too many arguments!\r\n");	return 0; }
 
@@ -1329,7 +1329,7 @@ uint32_t CommandFunction_buzzer	( uint32_t argc, char** argv ) {
 	}
 	else if(!StrCmp(argv[1],"off"))
 	{
-		// Buzzer kikapcsolása
+		// Buzzer kikapcsolÃ¡sa
 		//BUZZER_DeInit();
 		uprintf("Buzzer off\r\n");
 	}
@@ -1886,11 +1886,11 @@ uint32_t CommandFunction_ESP8266	( uint32_t argc, char** argv ) {
 						
 						if ( length > 0)
 						{
-							//USART_SendChar(MONITOR_RemoteControlBuffer[0]);	// blokkol és lassú
+							//USART_SendChar(MONITOR_RemoteControlBuffer[0]);	// blokkol Ã©s lassÃº
 							
-							//HAL_UART_Transmit(&Debug_UartHandle, (uint8_t *)MONITOR_RemoteControlBuffer, 1,1);	// ez is lassú
-							HAL_UART_Transmit(&Debug_UartHandle, (uint8_t *)buffer, length,5000);	// ez is lassú
-							// TODO: nagyobb buffer és több karakter várása?
+							//HAL_UART_Transmit(&Debug_UartHandle, (uint8_t *)MONITOR_RemoteControlBuffer, 1,1);	// ez is lassÃº
+							HAL_UART_Transmit(&Debug_UartHandle, (uint8_t *)buffer, length,5000);	// ez is lassÃº
+							// TODO: nagyobb buffer Ã©s tÃ¶bb karakter vÃ¡rÃ¡sa?
 							
 							ESP8266_UartHandle.RxXferCount = 0;
 							for (int i=0; i < 256; i++) buffer[i]='\0';

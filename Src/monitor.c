@@ -2,7 +2,7 @@
  * monitor.c
  *
  *		Created on:		2013.10.08.
- *    	Author: 		Vizi Gábor
+ *    	Author: 		Vizi GÃ¡bor
  *		E-mail:			vizi.gabor90@gmail.com
  *		University:		BME (BUTE)
  *		Project: 		RadioAlarm - Radio Alarm System modules
@@ -170,28 +170,28 @@ uint8_t MONITOR_SendWelcome ( void )
 
 	
 	USART_SEND_CLS();						// Clean screen
-	MONITOR_SEND_WELCOME();					// Üdvözlo üzenet
-	USART_SEND_NEW_LINE();					// Új sor
+	MONITOR_SEND_WELCOME();					// ÃœdvÃ¶zlo Ã¼zenet
+	USART_SEND_NEW_LINE();					// Ãšj sor
 
 	// USART_ESCAPE_BACKGROUND_DEFAULT()
 	// USART_ESCAPE_RESET()
 
 
-	//USART_SendStringWithBackgroundColor("Színes háttér!");
+	//USART_SendStringWithBackgroundColor("SzÃ­nes hÃ¡ttÃ©r!");
 	USART_SEND_NEW_LINE();
 
-	USART_ESCAPE_TEXT_BLACK();				// Teszt üzenet
+	USART_ESCAPE_TEXT_BLACK();				// Teszt Ã¼zenet
 	USART_ESCAPE_BACKGROUND_GREEN();
 	USART_SendString("Example VALID message.\r\n");
 
-	USART_ESCAPE_BACKGROUND_RED();			// Teszt üzenet
+	USART_ESCAPE_BACKGROUND_RED();			// Teszt Ã¼zenet
 	USART_SendString("Example INVALID message.\r\n");
 
-	USART_ESCAPE_BACKGROUND_WHITE();		// Fehér háttérszín
+	USART_ESCAPE_BACKGROUND_WHITE();		// FehÃ©r hÃ¡ttÃ©rszÃ­n
 
 
 	USART_SEND_NEW_LINE();
-	MONITOR_SEND_PROMT();					// Új promt
+	MONITOR_SEND_PROMT();					// Ãšj promt
 
 	return RETURN_SUCCESS;
 }
@@ -230,7 +230,7 @@ uint8_t MONITOR_CheckCommand ( void ) {
 	//char CommandActual[MONITOR_MAX_COMMAND_LENGTH];	// TODO: kiszedni, ki kell az EndCommand-bol is
 
 	
-	// TODO: Globálissá ttenni oket
+	// TODO: GlobÃ¡lissÃ¡ ttenni oket
 	unsigned int argc;
 	char *argv[3];
 
@@ -253,7 +253,7 @@ uint8_t MONITOR_CheckCommand ( void ) {
 	
 	#ifdef CONFIG_USE_FREERTOS
 	xSemaphoreGive(DEBUG_USART_Tx_Semaphore);
-	// !!IMPORTANT!! Elso szemaforatadas, engedélyezve az USART-on kiküldés
+	// !!IMPORTANT!! Elso szemaforatadas, engedÃ©lyezve az USART-on kikÃ¼ldÃ©s
 	#endif
 	//HAL_UART_Receive_IT(&BluetoothUartHandle, (uint8_t *)USART_RxBuffer, RXBUFFERSIZE);	// TODO: VG - USART - TEST - uzenetvaras
 
@@ -316,10 +316,10 @@ uint8_t MONITOR_CheckCommand ( void ) {
 						USART_SEND_NEW_LINE();
 						
 						// TODO: 1. parametert kiszedni
-						MONITOR_EndCommand ( (char *)MONITOR_CommandActual, argc, argv );	// Parancs megkeresése és futtatási kísérlet		
+						MONITOR_EndCommand ( (char *)MONITOR_CommandActual, argc, argv );	// Parancs megkeresÃ©se Ã©s futtatÃ¡si kÃ­sÃ©rlet		
 						
 						#ifdef USE_MONITOR_HISTORY
-						MONITOR_HISTORY_Save ();											// History-ba lementés
+						MONITOR_HISTORY_Save ();											// History-ba lementÃ©s
 						#endif
 					}
 					else {																	// There is no char in the line	
@@ -783,7 +783,7 @@ uint8_t MONITOR_HISTORY_Load ( uint8_t direction )
 
 
 /*
-\brief		MONITOR_Actual konvertálása kisbetusre...
+\brief		MONITOR_Actual konvertÃ¡lÃ¡sa kisbetusre...
 */
 uint8_t MONITOR_ConvertSmallLetter( void )
 {

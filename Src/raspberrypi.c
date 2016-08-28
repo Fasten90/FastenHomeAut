@@ -157,9 +157,9 @@ void RASPBERRYPI_SendMessage(uint8_t myAddress, uint8_t functionType, uint8_t da
 	// Sending:
 	
 	/*
-	// Egész
+	// EgÃ©sz
 	uint32_t data1 = (uint32_t)data;
-	// Tört
+	// TÃ¶rt
 	uint32_t data2 = (uint32_t)(data*100) - (data1*100);
 	uprintf("%d_%c%c_%d.%d\r\n",myAddress,function,type,data1,data2);
 	*/

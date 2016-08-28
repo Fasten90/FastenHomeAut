@@ -38,7 +38,7 @@
 ADC_HandleTypeDef             AdcHandle;
 
 // ADC channel configuration structure declaration
-//ADC_ChannelConfTypeDef        sConfig;				// TODO: ha kiszedheto, akkor tˆrˆlni
+//ADC_ChannelConfTypeDef        sConfig;				// TODO: ha kiszedheto, akkor t√∂r√∂lni
 
 // Measured values
 volatile uint32_t		ADC_MeasuredValues[ADC_BUFFER_SIZE];
@@ -186,8 +186,8 @@ void ADC_Init( void )
 	ADC_ChannelConfTypeDef        sConfig;
 	
 	
-	// NodeSmall-n·l meg volt hÌva
-	// NodeMediumn·l k¸lˆn meghÌvja az HAL .. Init() is.
+	// NodeSmall-n√°l meg volt h√≠va
+	// NodeMediumn√°l k√ºl√∂n megh√≠vja az HAL .. Init() is.
 	#ifdef CONFIG_USE_PANEL_NODESMALL
 	HAL_ADC_MspInit(&AdcHandle);
 	#endif
@@ -232,7 +232,7 @@ void ADC_Init( void )
 	//AdcHandle.Init.LowPowerAutoPowerOff  = DISABLE;					// NodeSmall
 	AdcHandle.Init.LowPowerAutoWait      = ADC_AUTOWAIT_DISABLE;		// NodeMedium!
 	AdcHandle.Init.LowPowerAutoPowerOff  = ADC_AUTOPOWEROFF_DISABLE;	// NodeMedium!
-	AdcHandle.Init.Resolution            = ADC_RESOLUTION_12B;	// ADC_RESOLUTION12B is jÛ, de nem tudom melyik az ·ltal·nosabb // ADC_RESOLUTION12b
+	AdcHandle.Init.Resolution            = ADC_RESOLUTION_12B;	// ADC_RESOLUTION12B is j√≥, de nem tudom melyik az √°ltal√°nosabb // ADC_RESOLUTION12b
 	AdcHandle.Init.ScanConvMode          = ADC_SCAN_ENABLE;
 	/* Sequencer enabled (ADC conversion on several channels, successively, following settings below) */
 	AdcHandle.Init.DataAlign             = ADC_DATAALIGN_RIGHT;
@@ -253,14 +253,14 @@ void ADC_Init( void )
 	AdcHandle.Init.ContinuousConvMode    = DISABLE;	// DISABLE
 	AdcHandle.Init.DiscontinuousConvMode = ENABLE;	// ENABLE
 	AdcHandle.Init.ChannelsBank			= ADC_CHANNELS_BANK_A;
-	AdcHandle.Init.NbrOfConversion		= ADC_BUFFER_SIZE;	// TODO: valÛszÌn¸leg nem kell, mert tˆbbet akarunk	// HA ContinuousConvMode = ENABLE
-	AdcHandle.Init.NbrOfDiscConversion	= 1;	// TODO: valÛszÌn¸leg nem kell, mert tˆbbet akarunk
+	AdcHandle.Init.NbrOfConversion		= ADC_BUFFER_SIZE;	// TODO: val√≥sz√≠n√ºleg nem kell, mert t√∂bbet akarunk	// HA ContinuousConvMode = ENABLE
+	AdcHandle.Init.NbrOfDiscConversion	= 1;	// TODO: val√≥sz√≠n√ºleg nem kell, mert t√∂bbet akarunk
 	#endif
 	
-	//AdcHandle.NbrOfConversionRank      	 = ADC_MEASURE_NUM;		// Ez kell ?? vagy ez v·ltozik... ?
+	//AdcHandle.NbrOfConversionRank      	 = ADC_MEASURE_NUM;		// Ez kell ?? vagy ez v√°ltozik... ?
 	
-	// AMI M¡S NEKEM
-	//LSAAdcHandle.Init.ContinuousConvMode 	 	= 0;//DISABLE;		// EZ M¡S NEKEM	
+	// AMI M√ÅS NEKEM
+	//LSAAdcHandle.Init.ContinuousConvMode 	 	= 0;//DISABLE;		// EZ M√ÅS NEKEM	
 	//LSAAdcHandle.Init.ExternalTrigConv 	 		= ADC_EXTERNALTRIGCONV_T1_CC1;
 	//LSAAdcHandle.Init.NbrOfConversion 		 	= 4;
 	//LSAAdcHandle.Init.EOCSelection 		 		= 0;//DISABLE;
@@ -308,8 +308,8 @@ void ADC_Init( void )
 	
 	
 	#ifdef CONFIG_USE_PANEL_NODEMEDIUM
-	//sConfig.Channel      = ADCx_CHANNELa;			// channelek, egyenkÈnt kell be·llÌtani
-	//sConfig.Rank         = ADC_REGULAR_RANK_1;	// egyenkÈnt kell be·llÌtani
+	//sConfig.Channel      = ADCx_CHANNELa;			// channelek, egyenk√©nt kell be√°ll√≠tani
+	//sConfig.Rank         = ADC_REGULAR_RANK_1;	// egyenk√©nt kell be√°ll√≠tani
 	sConfig.SamplingTime = ADC_SAMPLETIME_48CYCLES;
 	#endif
 	
@@ -648,7 +648,7 @@ void ADC_Test ( void )
 		// Print Temp
 		dec = (uint32_t)Temperature;
 		fraction = (uint32_t)((Temperature-dec) *100 );			
-		uprintf("Temperature: %d.%d [∞C]\r\n",dec, fraction);
+		uprintf("Temperature: %d.%d [¬∞C]\r\n",dec, fraction);
 			
 		/*	
 		// Light
@@ -747,7 +747,7 @@ void ADC_Run( void )
 	// Print Temp
 	dec = (uint32_t)Temperature;
 	fraction = (uint32_t)((Temperature-dec) *100 );			
-	uprintf("Temperature: %d.%d [∞C]\r\n",dec, fraction);
+	uprintf("Temperature: %d.%d [¬∞C]\r\n",dec, fraction);
 	*/
 	
 	// Light
@@ -809,7 +809,7 @@ float ADC_ConvertInternalTempSensorValue (uint32_t readValue)
 	#define VDDA_TEMP_CAL                  ((uint32_t) 3000)    /* Vdda value with which temperature sensor has been calibrated in production (+-10 mV). */
 	
 	// Hardfaultot okoz?
-	// TODO: NodeMedium-n·l, L1 alatt HardFault lesz...
+	// TODO: NodeMedium-n√°l, L1 alatt HardFault lesz...
 	/*
 	#define COMPUTATION_TEMPERATURE_TEMP30_TEMP110(TS_ADC_DATA)                    \
 	  (((( ((int32_t)((TS_ADC_DATA * VDDA_APPLI) / VDDA_TEMP_CAL)                  \

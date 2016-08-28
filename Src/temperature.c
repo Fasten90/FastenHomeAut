@@ -229,7 +229,7 @@ float TEMPERATURE_ConvertLM75AdTemperatureValue(int16_t measuredValue)
 {
 	
 	float calculatedValue = 0.0;
-	// fenti 11 biten ábrázolja az értéket
+	// fenti 11 biten Ã¡brÃ¡zolja az Ã©rtÃ©ket
 	measuredValue = measuredValue >> 5;
 	
 	

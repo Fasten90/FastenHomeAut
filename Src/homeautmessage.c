@@ -13,6 +13,8 @@
 
 ////////// CONST
 
+// TODO: √Åt√≠rni a homeautmessage kezel√©st dinamikusra
+
 // Now: 40 length
 const uint8_t HOMEAUTMESSAGE_DefaultMessageLength = sizeof(HOMEAUTMESSAGE_MessageType);
 
@@ -484,8 +486,8 @@ ReturnType HOMEAUTMESSAGE_CreateAndSendHomeAutMessage
 	if ( HOMEAUTMESSAGE_CreateMessage(&message,&messageInformation) == Return_Ok )
 	{
 		
-		// TODO: queue-ba kÈne k¸ldeni ¸zenetet
-		// Vigy·zat: Ìgy a NodeSmall-nak m·smilyen kÛd kell majd...
+		// TODO: queue-ba k√©ne k√ºldeni √ºzenetet
+		// Vigy√°zat: √≠gy a NodeSmall-nak m√°smilyen k√≥d kell majd...
 		/*
 		if ( ESP8266_TcpConnectionStatus == ESP8266_TcpConnectionStatus_Connected )
 		{
@@ -500,7 +502,7 @@ ReturnType HOMEAUTMESSAGE_CreateAndSendHomeAutMessage
 
 	}	
 
-	return Return_Ok;	// TODO: VisszatÈrÈseket jÛl megcsin·lni
+	return Return_Ok;	// TODO: Visszat√©r√©seket j√≥l megcsin√°lni
 	
 }
 

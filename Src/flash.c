@@ -81,7 +81,7 @@ void FLASH_Init( void )
 	SpiHandle.Init.NSSPMode          = SPI_NSS_PULSE_DISABLED;
 	SpiHandle.Init.CRCLength         = SPI_CRC_LENGTH_8BIT;
 	#endif
-	//#ifdef CONFIG_USE_PANEL_NODEMEDIUM	// nincs egyéb struktúra elem
+	//#ifdef CONFIG_USE_PANEL_NODEMEDIUM	// nincs egyÃ©b struktÃºra elem
 
 
 

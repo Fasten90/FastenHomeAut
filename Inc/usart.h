@@ -24,7 +24,7 @@
  *----------------------------------------------------------------------------*/
 
 
-// TODO: normális tx buffer méretet!
+// TODO: normÃ¡lis tx buffer mÃ©retet!
 
 // Size of Transmission buffer
 #define TXBUFFERSIZE                      255
@@ -34,7 +34,7 @@
 
 
 
-// TODO!!! Error-ok elkerülése véget kellett
+// TODO!!! Error-ok elkerÃ¼lÃ©se vÃ©get kellett
 
 #define RESET	0
 #define SET		!RESET
@@ -90,7 +90,7 @@ typedef enum
 ////////////////////////////////////  ESCAPE SEQUENCE
 
 // Delete the line
-// CSI n K	EL – Erase in Line	Erases part of the line.
+// CSI n K	EL â€“ Erase in Line	Erases part of the line.
 // If n is zero (or missing), clear from cursor to the end of the line.
 // If n is one, clear from cursor to beginning of the line.
 // If n is two, clear entire line. Cursor position does not change.
@@ -107,7 +107,7 @@ typedef enum
 #define USART_ESCAPE_DELETELINE()	\
 	USART_SendString("\x1B[2K")
 
-// CSI n G	CHA – Cursor Horizontal Absolute	Moves the cursor to column n.
+// CSI n G	CHA â€“ Cursor Horizontal Absolute	Moves the cursor to column n.
 /*
 #define USART_ESCAPE_CURSOR_TO_LINESTART()	\
 	USART_SendChar(27);						\
@@ -118,11 +118,11 @@ typedef enum
 #define USART_ESCAPE_CURSOR_TO_LINESTART()	\
 	USART_SendString("\x1B[1G")
 
-// CSI n A	CUU – Cursor Up	Moves the cursor n (default 1) cells in the given direction.
+// CSI n A	CUU â€“ Cursor Up	Moves the cursor n (default 1) cells in the given direction.
 // If the cursor is already at the edge of the screen, this has no effect.
-// CSI n B	CUD – Cursor Down
-// CSI n C	CUF – Cursor Forward
-// CSI n D	CUB – Cursor Back
+// CSI n B	CUD â€“ Cursor Down
+// CSI n C	CUF â€“ Cursor Forward
+// CSI n D	CUB â€“ Cursor Back
 /*
 #define USART_ESCAPE_CURSORRIGHT()	\
 	USART_SendChar(27);				\
@@ -155,7 +155,7 @@ typedef enum
 
 
 // CURSOR SAVE/RESTORE
-//CSI s	SCP – Save Cursor Position	Saves the cursor position.
+//CSI s	SCP â€“ Save Cursor Position	Saves the cursor position.
 /*
 #define USART_ESCAPE_SAVECURSOR()	\
 	USART_SendChar(27);				\
@@ -165,7 +165,7 @@ typedef enum
 #define USART_ESCAPE_SAVECURSOR()	\
 	USART_SendString("\x1B[s")
 
-//CSI u	RCP – Restore Cursor Position	Restores the cursor position.
+//CSI u	RCP â€“ Restore Cursor Position	Restores the cursor position.
 /*
 #define USART_ESCAPE_RESTORECURSOR()	\
 	USART_SendChar(27);					\
@@ -189,7 +189,7 @@ typedef enum
 	USART_SendString("\x1B[2J")
 
 // Goto top left corner
-// CSI n ; m H	CUP – Cursor Position	Moves the cursor to row n, column m. The values are 1-based, and default to 1 (top left corner) if omitted.
+// CSI n ; m H	CUP â€“ Cursor Position	Moves the cursor to row n, column m. The values are 1-based, and default to 1 (top left corner) if omitted.
 // A sequence such as CSI ;5H is a synonym for CSI 1;5H as well as CSI 17;H is the same as CSI 17H and CSI 17;1H
 // n = 1 = row
 // ;
@@ -210,8 +210,8 @@ typedef enum
 ////////////////////////////////////  ESCAPE SEQUENCE  - COLORS
 
 
-// CSI n m 	SGR – Select Graphic Rendition
-// 40–47 	Set background color 	40 + x, where x is from the color table below
+// CSI n m 	SGR â€“ Select Graphic Rendition
+// 40â€“47 	Set background color 	40 + x, where x is from the color table below
 /*
 #define USART_ESCAPE_BACKGROUND_GREEN() \
 		USART_SendChar(27);				\
@@ -260,7 +260,7 @@ typedef enum
 
 
 
-// 100–109 	Set background color, high intensity 	aixterm (not in standard)
+// 100â€“109 	Set background color, high intensity 	aixterm (not in standard)
 // TODO: Not work
 /*
 #define USART_ESCAPE_BACKGROUND_WHITE() 	\
@@ -273,7 +273,7 @@ typedef enum
 */
 
 
-// Hyperterminal alatt nem mûködik:
+// Hyperterminal alatt nem mÅ±kÃ¶dik:
 /*
 #define USART_ESCAPE_BACKGROUND_DEFAULT()	\
 		USART_SendChar(27);					\
@@ -286,7 +286,7 @@ typedef enum
 		USART_SendString("\x1B[49m")
 
 
-// Gond: Fekete lesz az alapháttér Hyperterminalban
+// Gond: Fekete lesz az alaphÃ¡ttÃ©r Hyperterminalban
 /*
 #define USART_ESCAPE_RESET() 	\
 		USART_SendChar(27);		\
@@ -317,8 +317,8 @@ typedef enum
 */
 
 
-// CSI n D	CUB – Cursor Back
-// CSI n K	EL – Erase in Line	Erases part of the line. If n is zero (or missing), clear from cursor to the end of the line.
+// CSI n D	CUB â€“ Cursor Back
+// CSI n K	EL â€“ Erase in Line	Erases part of the line. If n is zero (or missing), clear from cursor to the end of the line.
 // PROBLEM: this is delete everything after cursor
 /*
 // Cursor back

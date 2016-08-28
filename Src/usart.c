@@ -324,7 +324,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 				MONITOR_CommandEscapeStart_flag = 0;
 				MONITOR_CommandEscapeEnd_flag = 1;
 				
-				// MONITOR_CommandActualEscape[] -be bemásolta az escape szekvencia karaktereit
+				// MONITOR_CommandActualEscape[] -be bemÃ¡solta az escape szekvencia karaktereit
 				/*
 				if (MONITOR_CommandEscape_cnt == 1)
 				{
@@ -549,7 +549,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 /***************************************************************************//**
  * @brief		-	USART_SendMessage:	Stringet kikuld USART-on
  ******************************************************************************/
-// TODO: ReturnType + Pointer vizsgálat
+// TODO: ReturnType + Pointer vizsgÃ¡lat
 void USART_SendMessage ( const char *aTxBuffer )
 {
 	#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
@@ -581,7 +581,7 @@ void USART_SendMessage ( const char *aTxBuffer )
 			#ifdef CONFIG_USE_FREERTOS
 			xSemaphoreGive(DEBUG_USART_Tx_Semaphore);
 			#endif
-			USART_SendEnable_flag = ENABLE;	// Mert sikertelen volt a küldés, küldhetjük a következot...
+			USART_SendEnable_flag = ENABLE;	// Mert sikertelen volt a kÃ¼ldÃ©s, kÃ¼ldhetjÃ¼k a kÃ¶vetkezot...
 
 		}
 		else // latszolag sikeres kuldes
@@ -768,7 +768,7 @@ void USART_ReceiveMessage ( void )
 	// Javitott, mert ha valamikor nem fogadnank uzenetet, akkor itt megint beallunk uzenetvaro uzemmodba
 
 	#ifdef CONFIG_USE_FREERTOS
-	// Szemafor várása
+	// Szemafor vÃ¡rÃ¡sa
 	xSemaphoreTake(DEBUG_USART_Rx_Semaphore, (portTickType) 1000);
 	#endif
 	
@@ -799,7 +799,7 @@ uint8_t USART_WaitForSend (uint16_t timeoutMiliSecond)
 	}
 	
 	USART_SendEnable_flag = ENABLE;
-	// TODO: FREERTOS-osra megírni ????
+	// TODO: FREERTOS-osra megÃ­rni ????
 	// ESP8266 FREERTOS
 	
 	return ENABLE;
