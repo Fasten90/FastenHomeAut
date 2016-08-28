@@ -106,6 +106,23 @@ typedef enum
 
 
 
+// If you want use monitor program's history
+// Turn off, if has small memory, now it need 1.5k RAM
+//#define USE_MONITOR_HISTORY
+
+
+// FreeRTOS - at panel selection
+// Do not use from this line, use the CONFIG_USE_PANEL ...
+//#define CONFIG_USE_FREERTOS
+
+
+
+// ESP8266
+//#define USE_ESP8266_TEST_FASTENHOME
+#define USE_ESP8266_MODE_CLIENT
+
+
+
 /////////////////////////////
 // 		Select your panel
 /////////////////////////////
@@ -125,6 +142,7 @@ typedef enum
 #endif
 
 ///////////////////////////// INCLUDES
+
 
 
 #ifdef CONFIG_USE_PANEL_NODESMALL
@@ -148,7 +166,7 @@ typedef enum
 	#include "stm32_hal_legacy.h"	// define-ok miatt?
 
 	#define CONFIG_MODULE_ESP8266_ENABLE
-	#define CONFIG_ENABLE_DEBUGUSART
+	#define CONFIG_MODULE_DEBUGUSART_ENABLE
 	#define CONFIG_USE_FREERTOS
 	#define CONFIG_MODULE_FLASH_ENABLE
 	#define CONFIG_MODULE_TEMPERATURE_ENABLE
@@ -166,9 +184,16 @@ typedef enum
 	
 	#define CONFIG_MODULE_ESP8266_ENABLE
 
-	#define CONFIG_ENABLE_DEBUGUSART
+	#define CONFIG_MODULE_DEBUGUSART_ENABLE
 	//#define CONFIG_USE_FREERTOS
 	
+	#define CONFIG_MODULE_ESP8266_ENABLE
+	#define CONFIG_MODULE_DEBUGUSART_ENABLE
+	#define CONFIG_USE_FREERTOS
+	#define CONFIG_MODULE_FLASH_ENABLE
+	#define CONFIG_MODULE_TEMPERATURE_ENABLE
+	#define CONFIG_MODULE_ADC_ENABLE
+
 #endif
 
 
@@ -179,7 +204,7 @@ typedef enum
 	#include "stm32f4xx_hal.h"
 	#include "stm32_hal_legacy.h"	// for defines
 
-	#define CONFIG_ENABLE_DEBUGUSART
+	#define CONFIG_MODULE_DEBUGUSART_ENABLE
 
 	//#define CONFIG_USE_FREERTOS
 
@@ -205,14 +230,6 @@ typedef enum
 
 
 
-// If you want use monitor program's history
-// Turn off, if has small memory, now it need 1.5k RAM
-//#define USE_MONITOR_HISTORY
-
-
-// FreeRTOS - at panel selection
-// Do not use from this line, use the CONFIG_USE_PANEL ...
-//#define CONFIG_USE_FREERTOS
 
 
 
@@ -250,10 +267,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 
 
-// ESP8266
 
-//#define USE_ESP8266_TEST_FASTENHOME
-#define USE_ESP8266_MODE_CLIENT
 	
 	
 // For board defines (pins, ports)
@@ -264,54 +278,13 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 // MODUL INCLUDES
 
 
-#include "usart.h"
-#include "string.h"
-
-#include "monitor.h"
-#include "command.h"
-
-
-
-
 #ifdef CONFIG_USE_PANEL_NODESMALL
-
-
-
-//#include "homeautmessage.h"
-
-#include "led.h"
-#include "adc.h"
-#include "button.h"
-#include "temperature.h"
-#include "flash.h"
-
-
-#include "ESP8266.h"
 
 #endif // #ifdef CONFIG_USE_PANEL_NODESMALL
 
 
 
-
-
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
-
-
-#include "led.h"
-#include "button.h"
-
-#include "ESP8266.h"
-
-#include "SysManager.h"
-#include "homeautmessage.h"
-
-
-#include "IO.h"
-
-#include "adc.h"
-//#include "flash.h"	// Work, but not need
-
-#include "temperature.h"
 
 #endif // #ifdef CONFIG_USE_PANEL_NODEMEDIUM
 
@@ -319,24 +292,16 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 #ifdef CONFIG_USE_PANEL_CENTERPANEL
 
-#include "led.h"
-#include "button.h"
+#endif // #ifdef CONFIG_USE_PANEL_CENTERPANEL
 
-#include "ESP8266.h"
 
-#include "homeautmessage.h"
 
-#ifdef CONFIG_MODULE_SYSMANAGER_ENABLE
-#include "SysManager.h"
+#ifdef CONFIG_USE_PANEL_DISCOVERY
+
 #endif
-
-#include "IO.h"
-
-#include "raspberrypi.h"
 
 
 // Nincs kész:
-
 //#include "buzzer.h"
 //#include "lcd.h"
 //#include "eeprom.h"
@@ -350,12 +315,17 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 //#include "log.h"
 
 
-#endif // #ifdef CONFIG_USE_PANEL_CENTERPANEL
 
-
-#ifdef CONFIG_USE_PANEL_DISCOVERY
 // Need include, because used LED_x_ON / OFF() macros
 #include "led.h"
+
+#include "usart.h"
+#include "string.h"
+
+
+#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#include "monitor.h"
+#include "command.h"
 #endif
 
 
@@ -381,10 +351,21 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #include "SysManager.h"
 #endif
 
+#ifdef MODUL_TEMPERATURE_ENABLE
+#include "temperature.h"
+#endif
+
 #ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
 #include "raspberrypi.h"
 #endif
 
+#ifdef CONFIG_MODULE_ADC_ENABLE
+#include "adc.h"
+#endif
+
+#ifdef CONFIG_MODULE_FLASH_ENABLE
+#include "flash.h"	// Work, but not need
+#endif
 
 
 

@@ -34,7 +34,7 @@
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 extern UART_HandleTypeDef ESP8266_UartHandle;
 #endif
-#ifdef CONFIG_ENABLE_DEBUGUSART
+#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 UART_HandleTypeDef Debug_UartHandle;
 #endif
 
@@ -88,7 +88,7 @@ void USART_Init ( UART_HandleTypeDef *UartHandle)
 	  - Parity = None
 	  - BaudRate = 9600 baud
 	  - Hardware flow control disabled (RTS and CTS signals) */
-#ifndef CONFIG_USE_PANEL_NODESMALL
+#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	if ( UartHandle == &Debug_UartHandle)
 	{
 		UartHandle->Instance        = DEBUG_USARTx;
@@ -111,7 +111,7 @@ void USART_Init ( UART_HandleTypeDef *UartHandle)
 
 	if(HAL_UART_Init(UartHandle) == HAL_OK)
 	{	
-#ifndef CONFIG_USE_PANEL_NODESMALL
+#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 		if ( UartHandle == &Debug_UartHandle)
 		{
 			USART_SendEnable_flag = ENABLE;
@@ -146,10 +146,8 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 	GPIO_InitTypeDef  GPIO_InitStruct;
 
 	
-	//#ifdef CONFIG_ENABLE_DEBUGUSART
+#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 
-	#if ( CONFIG_USE_PANEL_NODEMEDIUM || CONFIG_USE_PANEL_CENTERPANEL )
-	
 	if (huart == &Debug_UartHandle)
 	{
 		// ##-1- Enable peripherals and GPIO Clocks #################################
@@ -181,8 +179,9 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 		HAL_NVIC_SetPriority(DEBUG_USARTx_IRQn, DEBUG_USART_PREEMT_PRIORITY, DEBUG_USART_SUB_PRIORITY);
 		HAL_NVIC_EnableIRQ(DEBUG_USARTx_IRQn);
 	}
+#endif	// #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-	else if ( huart == &ESP8266_UartHandle)
+	if ( huart == &ESP8266_UartHandle)
 	{
 		// ##-1- Enable peripherals and GPIO Clocks #################################
 
@@ -220,44 +219,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 	{
 		Error_Handler();
 	}
-	#endif
-	
-	
-	#ifdef CONFIG_USE_PANEL_NODESMALL
-	if (huart == &ESP8266_UartHandle)
-	{
-		// ##-1- Enable peripherals and GPIO Clocks #################################
 
-		// Enable GPIO TX/RX clock
-		// Enable USARTx clock
-		ESP8266_USART_CLK_ENABLES();
-
-		
-		// ##-2- Configure peripheral GPIO ##########################################
-		// UART TX GPIO pin configuration
-		GPIO_InitStruct.Pin       = ESP8266_USART_TX_GPIO_PIN;
-		GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
-		GPIO_InitStruct.Pull      = GPIO_NOPULL;
-		GPIO_InitStruct.Speed     = GPIO_SPEED_MEDIUM;
-		GPIO_InitStruct.Alternate = ESP8266_USART_AF;
-
-		HAL_GPIO_Init(ESP8266_USART_TX_GPIO_PORT, &GPIO_InitStruct);
-
-		// UART RX GPIO pin configuration
-		GPIO_InitStruct.Pin = ESP8266_USART_RX_GPIO_PIN;
-		//GPIO_InitStruct.Alternate = ESP8266_USART_AF;
-
-		HAL_GPIO_Init(ESP8266_USART_RX_GPIO_PORT, &GPIO_InitStruct);
-
-
-		// ##-3- Configure the NVIC for UART ########################################
-		// NVIC for USARTx
-
-		HAL_NVIC_SetPriority(ESP8266_USARTx_IRQn, ESP8266_USART_PREEMT_PRIORITY, ESP8266_USART_SUB_PRIORITY);
-		HAL_NVIC_EnableIRQ(ESP8266_USARTx_IRQn);
-	}
-	
-	#endif
 	
 }
 
@@ -350,7 +312,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 	taskDISABLE_INTERRUPTS();
 	#endif
 
-	#ifndef CONFIG_USE_PANEL_NODESMALL
+	#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	if ( ( UartHandle->Instance == DEBUG_USARTx ) && ( UartHandle == &Debug_UartHandle ) )
 	{
 
@@ -460,7 +422,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 		}
 #endif
 	}
-	#endif	// #ifndef CONFIG_USE_PANEL_NODESMALL
+	#endif	// #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	
 	#ifdef CONFIG_MODULE_ESP8266_ENABLE
 	if ( UartHandle->Instance == ESP8266_USARTx && UartHandle == &ESP8266_UartHandle )
@@ -531,12 +493,10 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 		huart->RxXferSize = 0;
 
 		//__HAL_UART_FLUSH_DRREGISTER(&BluetoothUartHandle);
-		#if ( CONFIG_USE_PANEL_NODEMEDIUM || CONFIG_USE_PANEL_CENTERPANEL )
+		#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 		
-		#ifdef CONFIG_ENABLE_DEBUGUSART
 		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)USART_RxBuffer, RXBUFFERSIZE);
 		HAL_UART_Transmit_IT(&Debug_UartHandle,(uint8_t *)"$",1);
-		#endif
 		
 		#ifdef CONFIG_USE_FREERTOS
 		//xSemaphoreGiveFromISR(DEBUG_USART_Rx_Semaphore,0);
@@ -586,26 +546,13 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 
 
 
-// TODO: Torolni, nem megy bele
-/*
-void HAL_USART_ErrorCallback ( USART_HandleTypeDef *husart )
-{
-
-	(void)husart;
-	Error_Handler();
-	__HAL_USART_CLEAR_FLAG(&BluetoothUartHandle,USART_FLAG_RXNE | USART_FLAG_TXE | USART_FLAG_TC );
-
-}
-*/
-
-
 /***************************************************************************//**
  * @brief		-	USART_SendMessage:	Stringet kikuld USART-on
  ******************************************************************************/
 // TODO: ReturnType + Pointer vizsgálat
 void USART_SendMessage ( const char *aTxBuffer )
 {
-	#ifndef CONFIG_USE_PANEL_NODESMALL
+	#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	uint8_t length = 0;
 
 	length = StringLength(aTxBuffer);
@@ -675,7 +622,7 @@ void USART_SendMessage ( const char *aTxBuffer )
 	  Error_Handler();
 	}
 */
-	#endif // #ifndef CONFIG_USE_PANEL_NODESMALL
+	#endif // #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 }
 
 
@@ -686,7 +633,7 @@ void USART_SendMessage ( const char *aTxBuffer )
  ******************************************************************************/
 
 void USART_SendChar ( char c ) {
-	#ifndef CONFIG_USE_PANEL_NODESMALL
+	#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	char buf[2];
 	buf[0] = c;
 	buf[1] = '\0';
@@ -763,7 +710,7 @@ void USART_SendChar ( char c ) {
 	*/
 
 
-	#endif // #ifndef CONFIG_USE_PANEL_NODESMALL
+	#endif // #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 }
 
 
@@ -792,7 +739,7 @@ void USART_SendCharWithoutWait ( uint8_t c ) {
 /***************************************************************************//**
  * @brief		-	USART receive - IT-ben var uzenetet
  ******************************************************************************/
- #ifndef CONFIG_USE_PANEL_NODESMALL
+ #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 void USART_ReceiveMessage ( void )
 {
 
@@ -827,7 +774,7 @@ void USART_ReceiveMessage ( void )
 	
 	
 }
-#endif	// #ifndef CONFIG_USE_PANEL_NODESMALL
+#endif	// #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 
 
 /*
@@ -842,7 +789,7 @@ void USART_ReceiveMessage ( uint8_t *aRxBuffer )
 
 
 
-uint8_t USART_WaitForSend( uint16_t timeoutMiliSecond )
+uint8_t USART_WaitForSend (uint16_t timeoutMiliSecond)
 {
 
 	while(USART_SendEnable_flag == DISABLE && timeoutMiliSecond != 0)

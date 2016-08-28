@@ -54,7 +54,7 @@
 
 
 
-#ifdef CONFIG_ENABLE_DEBUGUSART
+#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 extern UART_HandleTypeDef Debug_UartHandle;
 
 	#ifdef CONFIG_USE_FREERTOS
@@ -409,8 +409,9 @@ int main(void)
 	IO_Init();
 #endif
 
-	// DEBUG USART
 
+	// DEBUG USART
+#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 #ifdef CONFIG_USE_FREERTOS
 	DEBUG_USART_Rx_Semaphore = NULL;
 	DEBUG_USART_Tx_Semaphore = NULL;
@@ -440,7 +441,7 @@ int main(void)
 	MONITOR_CheckCommand();	// infinite loop
 #endif
 	// End of DEBUG USART
-
+#endif	// #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	
 	
 	// ESP8266

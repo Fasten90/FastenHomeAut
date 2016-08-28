@@ -24,7 +24,7 @@
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
-#ifdef CONFIG_ENABLE_DEBUGUSART
+#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 extern UART_HandleTypeDef Debug_UartHandle;
 #endif
 

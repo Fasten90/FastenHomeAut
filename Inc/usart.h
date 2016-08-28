@@ -365,7 +365,7 @@ USART_SendChar('K');
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 extern UART_HandleTypeDef ESP8266_UartHandle;
 #endif
-#ifdef CONFIG_ENABLE_DEBUGUSART
+#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 extern UART_HandleTypeDef Debug_UartHandle;
 #endif
 
