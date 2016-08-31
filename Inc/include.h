@@ -18,7 +18,11 @@
 // #define assert_param(expr) ((void)0)	// incopatible redefinition ...
 
 
+
+
 // typedefs
+#include <stdbool.h>
+
 //
 typedef unsigned char				uint8_t;	
 typedef signed char					int8_t;		

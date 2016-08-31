@@ -97,6 +97,7 @@
   */ 
 
 #include <string.h>
+#include "MEM.h"
 #include "cmsis_os.h"
 
 extern void xPortSysTickHandler(void);

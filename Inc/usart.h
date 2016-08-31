@@ -27,14 +27,14 @@
 // TODO: normális tx buffer méretet!
 
 // Size of Transmission buffer
-#define TXBUFFERSIZE                      255
+#define TXBUFFERSIZE					255
 // Size of Reception buffer
-//#define RXBUFFERSIZE                      TXBUFFERSIZE
-#define RXBUFFERSIZE                      1
+//#define RXBUFFERSIZE					TXBUFFERSIZE
+#define RXBUFFERSIZE					1
 
 
 
-// TODO!!! Error-ok elkerülése véget kellett
+// TODO!!! For compiler errors
 
 #define RESET	0
 #define SET		!RESET
@@ -389,26 +389,21 @@ extern uint8_t USART_ReceiveEnable_flag;
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 void USART_Init ( UART_HandleTypeDef *UartHandle );
-void USART_SendMessage ( const char *aTxBuffer );
-void USART_SendMessageWithLength ( char *aTxBuffer, uint8_t length );
-//void USART_ReceiveMessage ( uint8_t *aRxBuffer );
-void USART_ReceiveMessage ( void );
-void USART_Test ( void );
-
-// !! IMPORTANT !! Send formatted string on USART !!
-void uprintf(char * param, ...);
-
-
-// Send functions
-void USART_SendChar ( char c );
-void USART_SendCharWithoutWait ( uint8_t c );
-
-
-void USART_SendFloat ( float value);
-
 
 uint8_t USART_WaitForSend ( uint16_t timeoutMiliSecond );
 
+//void USART_ReceiveMessage ( uint8_t *aRxBuffer );
+void USART_ReceiveMessage ( void );
+
+// Send functions
+// !! IMPORTANT !! Send formatted string on USART !!
+void uprintf(char * param, ...);
+
+bool USART_SendChar ( char c );
+bool USART_SendMessage ( const char *aTxBuffer );
+void USART_SendFloat ( float value);
+
+void USART_Test ( void );
 
 
 #endif /* USART_H_ */

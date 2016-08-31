@@ -546,28 +546,34 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 
 
 
-/***************************************************************************//**
- * @brief		-	USART_SendMessage:	Stringet kikuld USART-on
- ******************************************************************************/
-// TODO: ReturnType + Pointer vizsgálat
-void USART_SendMessage ( const char *aTxBuffer )
+/**
+ * \brief	Send string on USART
+ */
+// TODO: ReturnType + Check Pointer
+bool USART_SendMessage ( const char *aTxBuffer )
 {
 	#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	uint8_t length = 0;
 
 	length = StringLength(aTxBuffer);
-	if ( length == 0 ) return;
-	//if ( length >= TXBUFFERSIZE ) return;
+
+	if ( length == 0 )
+	{
+		return false;
+	}
+	if ( length >= TXBUFFERSIZE )
+	{
+		length = TXBUFFERSIZE;
+	}
 
 
-	// version1 - buffer
 	#ifdef CONFIG_USE_FREERTOS
 	if ( xSemaphoreTake(DEBUG_USART_Tx_Semaphore, (portTickType) 10000) == pdTRUE )
 	#else
 	if ( USART_WaitForSend(500))
 	#endif
 	{
-		// Sikerult lefoglalni a szemafort:
+		// Take semaphore, can sending
 		
 		USART_SendEnable_flag = DISABLE;
 		
@@ -576,63 +582,41 @@ void USART_SendMessage ( const char *aTxBuffer )
 		// ComIT
 		if(HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t*)USART_TxBuffer, length)!= HAL_OK)
 		{
-			// !!IMPORTANT!! Nem kuldte el az uzenetet!!
+			// NOTE: !!IMPORTANT!! Not sent message
 			//Error_Handler();
 			#ifdef CONFIG_USE_FREERTOS
 			xSemaphoreGive(DEBUG_USART_Tx_Semaphore);
 			#endif
-			USART_SendEnable_flag = ENABLE;	// Mert sikertelen volt a küldés, küldhetjük a következot...
+			USART_SendEnable_flag = ENABLE;	// Failed to send, now we can send message
 
+			return false;
 		}
-		else // latszolag sikeres kuldes
+		else
 		{
-			// A szemafort ISR-bol adjuk vissza !!
+			// Successful sending with IT
+			// Semaphore give by IT routine
+			return true;
 		}
 	}
 	else
 	{
-		// Nem sikerult lefoglalni a szemafort
-		// TODO: ?? Mi a teendo, ha nem sikerult az uzenet kikuldese a varakozas ellenere?
-		return;
+		// Cannot take semaphore, now usart is busy
+		return false;
 	}
 
 
-
-
-/*
-	// ComIT
-	if(HAL_UART_Transmit_IT(&UartHandle, (uint8_t*)aTxBuffer, length)!= HAL_OK)
-	{
-		// !!IMPORTANT!! Nem kuldte el az uzenetet!!
-		//Error_Handler();
-
-	}
-	else
-	{
-		// Ha sikeres a kuldes, akkor varni kell a szemaforra
-		xSemaphoreTake(DEBUG_Tx_Semaphore, (portTickType) 1000);
-	}
-*/
-
-
-/*
-	// version3 - ComPolling - NEM IT-s
-	if(HAL_UART_Transmit(&UartHandle, (uint8_t*)aTxBuffer, length, 5000)!= HAL_OK)
-	{
-	  Error_Handler();
-	}
-*/
 	#endif // #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 }
 
 
 
 
-/***************************************************************************//**
- * @brief		-	USART_SendChar:	Egy karaktert kikuld USART-on
- ******************************************************************************/
 
-void USART_SendChar ( char c ) {
+/**
+ * \brief	Send a char on USART
+ */
+bool USART_SendChar ( char c )
+{
 	#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	char buf[2];
 	buf[0] = c;
@@ -645,147 +629,59 @@ void USART_SendChar ( char c ) {
 	if ( USART_WaitForSend(100))
 	#endif	
 	{
+		// Successful take USART semaphore
 		USART_SendEnable_flag = DISABLE;
-		// Sikerult lefoglalni a szemafort:
+
 		StrCpy(USART_TxBuffer,buf);
 
 		if(HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t *)USART_TxBuffer, 1)!= HAL_OK)
 		{
-			// !! IMPORTANT!! Nem kuldte el az uzit!!
+			// NOTE: !! IMPORTANT!! Not sent message
 			//Error_Handler();
 			#ifdef CONFIG_USE_FREERTOS
 			xSemaphoreGive(DEBUG_USART_Tx_Semaphore);
 			#endif
-			USART_SendEnable_flag = ENABLE;	// sikertelen kuldes
+			USART_SendEnable_flag = ENABLE;
+			return false;
 		}
 		else
 		{
-			// A szemafort ISR-bol adjuk vissza !!
+			// Successful sending on USART
+			// Semaphore will give from ISR
+			return true;
 		}
 	}
 	else
 	{
-		// Sikertelen szemaforfoglalas
+		// Failed to take semaphore
+		return false;
 	}
-
-	
-
-
-/*
-	// version2 - buffer nelkul, utolagos varakozassal
-	if(HAL_UART_Transmit_IT(&UartHandle, buf, 1)!= HAL_OK)
-	{
-		// !! IMPORTANT!! Nem kuldte el az uzit!!
-		// Sikertelen kuldes, ne varjunk a szemaforra
-		//Error_Handler();
-	}
-	else
-	{
-		// Ha sikeres a kuldes, akkor varni kell a szemaforra
-		xSemaphoreTake(DEBUG_Tx_Semaphore, (portTickType) 10);
-	}
-*/
-
-
-
-	/*
-	if ( xSemaphoreTake(DEBUG_Tx_Semaphore, (portTickType) 100) == pdTRUE )
-	{
-		// Sikerult lefoglalni a szemafort:
-
-		if(HAL_UART_Transmit_IT(&UartHandle, buf, 1)!= HAL_OK)
-		{
-			// !! IMPORTANT!! Nem kuldte el az uzit!!
-			//Error_Handler();
-		}
-
-		// A szemafort ISR-bol adjuk vissza !!
-	}
-	else
-	{
-		// Nem sikerult lefoglalni a szemafort
-		// TODO: ?? Mi a teendo, ha nem sikerult az uzenet kikuldese a varakozas ellenere?
-		return;
-	}
-	*/
 
 
 	#endif // #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 }
 
 
-/***************************************************************************//**
- * @brief		-	USART_SendChar:	Egy karaktert kikuld USART-on
- * DO NOT USE!
- ******************************************************************************/
-/*
-void USART_SendCharWithoutWait ( uint8_t c ) {
 
-	uint8_t buf[2];
-	buf[0] = c;
-	buf[1] = '\0';
-
-
-	if(HAL_UART_Transmit_IT(&UartHandle, buf, 1)!= HAL_OK)
-	{
-		// !! IMPORTANT!! Nem kuldte el az uzit!!
-		//Error_Handler();
-	}
-
-}
-*/
-
-
-/***************************************************************************//**
- * @brief		-	USART receive - IT-ben var uzenetet
- ******************************************************************************/
+/**
+ * \brief	Receive message with IT
+ */
  #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 void USART_ReceiveMessage ( void )
 {
-
-	/*
-	// version - Monitor taszkbol uzenet varas: gond: meg kell varni a taszk futasat.
-	volatile HAL_StatusTypeDef status;
-
-	status = HAL_UART_Receive_IT(&UartHandle, (uint8_t *)USART_RxBuffer, RXBUFFERSIZE);
-
-	if ( status  != HAL_OK )
-	{	// Hiba van
-		// Uzenet fogadas hiba
-		//Error_Handler();
-	}
-	else	// Nincs hiba, varjunk a szemaforra
-	{
-		// Szemaforral jelezni az uzenet erkezeset
-		xSemaphoreTake(DEBUG_Rx_Semaphore, (portTickType) 1000);
-		// MONITOR_CheckCommand() -ban szemafor allitas!
-	}
-	*/
-
 
 	// USART - Receive Message - uzenetvaras
 	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)USART_RxBuffer, RXBUFFERSIZE);
 	// Javitott, mert ha valamikor nem fogadnank uzenetet, akkor itt megint beallunk uzenetvaro uzemmodba
 
 	#ifdef CONFIG_USE_FREERTOS
-	// Szemafor várása
+	// Wait for semaphore
 	xSemaphoreTake(DEBUG_USART_Rx_Semaphore, (portTickType) 1000);
 	#endif
 	
 	
 }
 #endif	// #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-
-
-/*
-void USART_ReceiveMessage ( uint8_t *aRxBuffer )
-{
-	if(HAL_UART_Receive(&UartHandle, (uint8_t *)aRxBuffer, RXBUFFERSIZE, 5000) != HAL_OK)
-	{
-	  Error_Handler();
-	}
-}
-*/
 
 
 
@@ -799,8 +695,7 @@ uint8_t USART_WaitForSend (uint16_t timeoutMiliSecond)
 	}
 	
 	USART_SendEnable_flag = ENABLE;
-	// TODO: FREERTOS-osra megírni ????
-	// ESP8266 FREERTOS
+
 	
 	return ENABLE;
 	
