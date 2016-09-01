@@ -39,13 +39,18 @@ UART_HandleTypeDef Debug_UartHandle;
 #endif
 
 
-char USART_RxBuffer[RXBUFFERSIZE];
-char USART_TxBuffer[TXBUFFERSIZE];
-char USART_ReceivedChar;
+volatile char USART_RxBuffer[RXBUFFERSIZE];
+volatile char USART_TxBuffer[TXBUFFERSIZE];
+
+volatile uint8_t USART_RxBufferWriteCounter = 0;
+
+
+#if RXBUFFERSIZE != 256
+#warning "RxBufferCounter need to check!"
+#endif
 
 
 uint8_t USART_SendEnable_flag;
-uint8_t USART_ReceiveEnable_flag;
 
 
 //extern uint8_t ESP8266_Uart_ReceivedCharFlag;
@@ -92,7 +97,7 @@ void USART_Init ( UART_HandleTypeDef *UartHandle)
 	if ( UartHandle == &Debug_UartHandle)
 	{
 		UartHandle->Instance        = DEBUG_USARTx;
-		UartHandle->Init.BaudRate   = 115200;		// Monitor program
+		UartHandle->Init.BaudRate   = 9600;		// Monitor program
 	}
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
@@ -108,6 +113,7 @@ void USART_Init ( UART_HandleTypeDef *UartHandle)
 	UartHandle->Init.Parity     = UART_PARITY_NONE;
 	UartHandle->Init.HwFlowCtl  = UART_HWCONTROL_NONE;
 	UartHandle->Init.Mode       = UART_MODE_TX_RX;
+	UartHandle->Init.OverSampling = UART_OVERSAMPLING_16;
 
 	if(HAL_UART_Init(UartHandle) == HAL_OK)
 	{	
@@ -313,114 +319,15 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 	#endif
 
 	#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-	if ( ( UartHandle->Instance == DEBUG_USARTx ) && ( UartHandle == &Debug_UartHandle ) )
+	if ( UartHandle == &Debug_UartHandle )
 	{
+		// TODO: másmilyen engedélyezõ flag kell ide
+		//if ( MONITOR_CommandEnable )
+		//{
+			HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[USART_RxBufferWriteCounter], RX_BUFFER_WAIT_LENGTH);
+			USART_RxBufferWriteCounter++;
 
-		if ( MONITOR_CommandEnable )
-		{
-			// ESCAPE SEQUENCE
-			if ( MONITOR_CommandEscapeStart_flag == 1 )
-			{	// We are in escape sequence
-				MONITOR_CommandEscapeStart_flag = 0;
-				MONITOR_CommandEscapeEnd_flag = 1;
-				
-				// MONITOR_CommandActualEscape[] -be bemÃ¡solta az escape szekvencia karaktereit
-				/*
-				if (MONITOR_CommandEscape_cnt == 1)
-				{
-					if (USART_ReceivedChar == '[') MONITOR_CommandActualEscape[MONITOR_CommandEscape_cnt++] = USART_ReceivedChar;
-					else	// Hibas escape szekvencia
-					{
-						MONITOR_CommandEscapeStart_flag = 0;
-						MONITOR_CommandEscape_cnt = 0;
-					}
-				}
-				else if ( MONITOR_CommandEscape_cnt == 2) { 		// TODO: only work with escape sequence if 3 chars (ESC[A)
-						MONITOR_CommandActualEscape[MONITOR_CommandEscape_cnt++] = USART_ReceivedChar;
-						MONITOR_CommandEscapeStart_flag = 0;
-						MONITOR_CommandEscapeEnd_flag = 1;
-					}
-				*/
-				HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)USART_RxBuffer, RXBUFFERSIZE);
-
-			}
-			else	// No escape sequence
-			{
-				// An character received
-				USART_ReceivedChar = USART_RxBuffer[0];	// TODO!
-
-				if ( USART_ReceivedChar  == '\x1B') {	// receive an Escape sequence
-					MONITOR_CommandEscapeStart_flag = 1;
-					MONITOR_CommandActualEscape[0] = USART_ReceivedChar;
-					MONITOR_CommandEscape_cnt = 1;
-					HAL_UART_Receive_IT(UartHandle, &MONITOR_CommandActualEscape[1], 2);
-				}
-				else
-				{
-					if ( (USART_ReceivedChar  == '\r') || (USART_ReceivedChar == '\n'))
-					{		// receive Enter
-						MONITOR_CommandReadable = 1;
-						MONITOR_CommandActual[MONITOR_CommandLength] = '\0';
-					}
-					else if ( USART_ReceivedChar  == USART_KEY_DELETE )
-					{	// In real world this is backspace	// PuTTy vs ZOC
-						MONITOR_CommandReceivedBackspace = 1;
-					}
-					else
-					{	// simple char for the command
-						// Receive an char
-						if ( MONITOR_CommandLength < MONITOR_MAX_COMMAND_LENGTH )	// shorted than max length?
-						{
-							if ( MONITOR_CommandCursorPosition == MONITOR_CommandLength )
-							{	// CursorPosition = CommandLength		(end character)
-								MONITOR_CommandActual[MONITOR_CommandLength] = USART_ReceivedChar ;
-								MONITOR_CommandLength++;
-								MONITOR_CommandCursorPosition++;
-								MONITOR_CommandReceivedLastChar = 1;
-
-							}
-							else
-							{	// CursorPosition < CommandLength		(inner character)
-								MONITOR_CommandLength++;
-								// copy
-								for ( int i = MONITOR_CommandLength; i > MONITOR_CommandCursorPosition; i-- ) MONITOR_CommandActual[i] = MONITOR_CommandActual[i-1];
-								MONITOR_CommandActual [ MONITOR_CommandCursorPosition ] = USART_ReceivedChar ;
-								MONITOR_CommandActual [ MONITOR_CommandLength ] = '\0';
-								MONITOR_CommandCursorPosition++;
-								MONITOR_CommandReceivedNotLastChar = 1;
-							}
-						}
-						else	// longer than max length ...
-						{
-						}
-
-					}
-					HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)USART_RxBuffer, RXBUFFERSIZE);
-				}
-
-			}// if ( MONITOR_CommandEnable )
-			
-			
-			// Transmission end semaphore / flag
-			// Szemafor beallitasa:
-			#ifdef CONFIG_USE_FREERTOS
-			//xSemaphoreGive(DEBUG_Rx_Semaphore); // !! IMPORTANT !! ISR-bol nem szabad hasznalni!
-			xSemaphoreGiveFromISR(DEBUG_USART_Rx_Semaphore,0);
-			#endif
-			MONITOR_CommandEvent = 1;
-
-		}
-#ifdef MONITOR_REMOTE_CONTROL
-		else if ( MONITOR_RemoteControl )
-		{
-			//MONITOR_RemoteControlCharacter = MONITOR_RemoteControlBuffer[0];	// USED at remoteControl, work!
-			//MONITOR_RemoteControlCharacter = UartHandle->pRxBuffPtr[0]
-			#ifdef CONFIG_USE_FREERTOS
-			xSemaphoreGiveFromISR(DEBUG_USART_Rx_Semaphore,0); 
-			#endif
-			HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)MONITOR_RemoteControlBuffer, 1);	// USED at remoteControl, work!
-		}
-#endif
+		//}
 	}
 	#endif	// #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	
@@ -475,7 +382,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
 
-	if (huart->Instance == USART1 )
+#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+	if (huart->Instance == DEBUG_USARTx )
 	{
 
 		// TODO:
@@ -493,9 +401,9 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 		huart->RxXferSize = 0;
 
 		//__HAL_UART_FLUSH_DRREGISTER(&BluetoothUartHandle);
-		#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 		
-		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)USART_RxBuffer, RXBUFFERSIZE);
+
+		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[USART_RxBufferWriteCounter], RX_BUFFER_WAIT_LENGTH);
 		HAL_UART_Transmit_IT(&Debug_UartHandle,(uint8_t *)"$",1);
 		
 		#ifdef CONFIG_USE_FREERTOS
@@ -506,12 +414,10 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 		}
 		#endif
 		
-		#endif
-		
-
 	}
+#endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-	else if (huart->Instance == USART2 )
+	else if (huart->Instance == ESP8266_USARTx )
 	{
 
 		// TODO:
@@ -561,9 +467,9 @@ bool USART_SendMessage ( const char *aTxBuffer )
 	{
 		return false;
 	}
-	if ( length >= TXBUFFERSIZE )
+	if ( length > TXBUFFERSIZE )
 	{
-		length = TXBUFFERSIZE;
+		length = TXBUFFERSIZE-1;
 	}
 
 
@@ -577,7 +483,7 @@ bool USART_SendMessage ( const char *aTxBuffer )
 		
 		USART_SendEnable_flag = DISABLE;
 		
-		StrCpy(USART_TxBuffer,aTxBuffer);
+		StrCpy((char *)USART_TxBuffer,aTxBuffer);
 
 		// ComIT
 		if(HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t*)USART_TxBuffer, length)!= HAL_OK)
@@ -632,7 +538,7 @@ bool USART_SendChar ( char c )
 		// Successful take USART semaphore
 		USART_SendEnable_flag = DISABLE;
 
-		StrCpy(USART_TxBuffer,buf);
+		StrCpy((char *)USART_TxBuffer,buf);
 
 		if(HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t *)USART_TxBuffer, 1)!= HAL_OK)
 		{
@@ -671,7 +577,7 @@ void USART_ReceiveMessage ( void )
 {
 
 	// USART - Receive Message - uzenetvaras
-	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)USART_RxBuffer, RXBUFFERSIZE);
+	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[USART_RxBufferWriteCounter], RX_BUFFER_WAIT_LENGTH);
 	// Javitott, mert ha valamikor nem fogadnank uzenetet, akkor itt megint beallunk uzenetvaro uzemmodba
 
 	#ifdef CONFIG_USE_FREERTOS

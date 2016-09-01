@@ -27,10 +27,11 @@
 // TODO: normális tx buffer méretet!
 
 // Size of Transmission buffer
-#define TXBUFFERSIZE					255
+#define TXBUFFERSIZE					256UL
 // Size of Reception buffer
 //#define RXBUFFERSIZE					TXBUFFERSIZE
-#define RXBUFFERSIZE					1
+#define RXBUFFERSIZE					256UL
+#define RX_BUFFER_WAIT_LENGTH			1
 
 
 
@@ -369,11 +370,12 @@ extern UART_HandleTypeDef ESP8266_UartHandle;
 extern UART_HandleTypeDef Debug_UartHandle;
 #endif
 
-extern char USART_RxBuffer[RXBUFFERSIZE];
-extern char USART_TxBuffer[TXBUFFERSIZE];
-extern char USART_ReceivedChar;
+extern volatile char USART_RxBuffer[RXBUFFERSIZE];
+extern volatile char USART_TxBuffer[TXBUFFERSIZE];
+
 extern uint8_t USART_SendEnable_flag;
-extern uint8_t USART_ReceiveEnable_flag;
+extern volatile uint8_t USART_RxBufferWriteCounter;
+
 
 /*------------------------------------------------------------------------------
  *  Local variables

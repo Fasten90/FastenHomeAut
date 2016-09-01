@@ -112,7 +112,7 @@ typedef enum
 
 // If you want use monitor program's history
 // Turn off, if has small memory, now it need 1.5k RAM
-//#define USE_MONITOR_HISTORY
+#define USE_MONITOR_HISTORY
 
 
 // FreeRTOS - at panel selection

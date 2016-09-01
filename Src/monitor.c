@@ -41,18 +41,21 @@
 // GLOBAL VARIABLES
 
 
-uint8_t MONITOR_CommandActual[MONITOR_MAX_COMMAND_LENGTH];
-uint8_t MONITOR_CommandActualEscape[3];
+volatile char MONITOR_CommandActual[MONITOR_MAX_COMMAND_LENGTH];
+volatile char MONITOR_CommandActualEscape[3];
+
+volatile uint8_t USART_RxBufferReadCnt = 0;
 
 volatile uint8_t MONITOR_CommandEnable = 0;
-volatile uint8_t MONITOR_CommandLength;
+volatile uint8_t MONITOR_CommandActualLength = 0;
+volatile uint8_t MONITOR_CommandSentLength = 0;
 volatile uint8_t MONITOR_CommandCursorPosition;
 volatile uint8_t MONITOR_CommandEvent;
 volatile uint8_t MONITOR_CommandReceivedLastChar;
 volatile uint8_t MONITOR_CommandReceivedNotLastChar;
 volatile uint8_t MONITOR_CommandReadable;
-volatile uint8_t MONITOR_CommandEscapeEnd_flag;
-volatile uint8_t MONITOR_CommandEscapeStart_flag;
+volatile uint8_t MONITOR_CommandEscapeSequenceReceived;
+volatile uint8_t MONITOR_CommandEscapeSequenceInProgress;
 volatile uint8_t MONITOR_CommandEscape_cnt;
 volatile uint8_t MONITOR_CommandReceivedBackspace;
 volatile uint8_t MONITOR_CommandSendBackChar_Enable = 0;
@@ -64,25 +67,52 @@ xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
 #endif
 
 
-// EXTERNED
-
-extern const CommandStruct CommandList[];
-
-extern UART_HandleTypeDef BluetoothUartHandle;
-
-extern char USART_TxBuffer[TXBUFFERSIZE];
-
-
-
-
 #ifdef USE_MONITOR_HISTORY
 uint8_t MONITOR_HISTORY_Save_cnt = MONITOR_MAX_HISTORY_LENGTH-1;
 uint8_t MONITOR_HISTORY_Load_cnt = MONITOR_MAX_HISTORY_LENGTH-1;
-char MONITOR_HISTORY[MONITOR_MAX_HISTORY_LENGTH][MONITOR_MAX_COMMAND_LENGTH];
+char MONITOR_HISTORY[MONITOR_MAX_HISTORY_LENGTH][MONITOR_MAX_COMMAND_LENGTH] =
+{
+
+#if defined(USE_MONITOR_HISTORY) && (MONITOR_MAX_HISTORY_LENGTH > 0)
+
+	#if ( MONITOR_MAX_HISTORY_LENGTH > 0 )
+	{
+		"help"
+	},
+	#endif
+	#if ( MONITOR_MAX_HISTORY_LENGTH > 1 )
+	{
+		"led 1 1"
+	},
+	#endif
+	#if ( MONITOR_MAX_HISTORY_LENGTH > 2 )
+	{
+		"cls"
+	},
+	#endif
+	#if ( MONITOR_MAX_HISTORY_LENGTH > 3 )
+	{
+		"test"
+	},
+	#endif
+	#if ( MONITOR_MAX_HISTORY_LENGTH > 4 )
+	{
+		"test"
+	}
+	#endif
+	#if ( MONITOR_MAX_HISTORY_LENGTH > 5 )
+	#warning isnt set monitor history commands
+	#endif
+#elif  (!MONITOR_MAX_HISTORY_LENGTH)
+#error USE_MONITOR_HISTORY define is defined, but MONITOR_MAX_HISTORY_LENGTH define is not set valid value.
+#endif
+};
 #endif
 
 
+///////////////////////////// FUNCTION PROTOTYPES
 
+static void ProcessReceivedCharacter(void);
 
 
 ///////////////////////////// FUNCTIONS
@@ -96,46 +126,16 @@ uint8_t MONITOR_Init ( void ) {
 	// INIT									// Init CommandActual
 
 	MONITOR_CommandEvent = 0;
-	MONITOR_CommandLength = 0;
+	MONITOR_CommandActualLength = 0;
+	MONITOR_CommandSentLength = 0;
 	MONITOR_CommandCursorPosition = 0;
-	MONITOR_CommandEscapeEnd_flag = 0;
-	MONITOR_CommandEscapeStart_flag = 0;
+	MONITOR_CommandEscapeSequenceReceived = 0;
+	MONITOR_CommandEscapeSequenceInProgress = 0;
 	MONITOR_CommandReceivedLastChar = 0;
 	MONITOR_CommandReceivedNotLastChar = 0;
 	MONITOR_CommandEscape_cnt = 0;
 	MONITOR_CommandSendBackChar_Enable = 1;	// enable
 	USART_TxBuffer[TXBUFFERSIZE-1] = '\0';
-
-
-	//MONITOR_CommandListInitialize();		// Init CommandList
-	// noew, the commands is in global variables
-	
-	
-//	MONITOR_HISTORY[0][] = "set speed 570";
-//	MONITOR_HISTORY[1][] = "stop";
-//	MONITOR_HISTORY[2][] = "start";
-#if ( USE_MONITOR_HISTORY && MONITOR_MAX_HISTORY_LENGTH )
-	#if ( MONITOR_MAX_HISTORY_LENGTH > 0 )
-	StrCpy(MONITOR_HISTORY[0], (const char *)MONITOR_HISTORY_STANDARDCOMMAND_1);
-	#endif
-	#if ( MONITOR_MAX_HISTORY_LENGTH > 1 )
-	StrCpy(MONITOR_HISTORY[1], (const char *)MONITOR_HISTORY_STANDARDCOMMAND_2);
-	#endif
-	#if ( MONITOR_MAX_HISTORY_LENGTH > 2 )
-	StrCpy(MONITOR_HISTORY[2], (const char *)MONITOR_HISTORY_STANDARDCOMMAND_3);
-	#endif
-	#if ( MONITOR_MAX_HISTORY_LENGTH > 3 )
-	StrCpy(MONITOR_HISTORY[3], (const char *)MONITOR_HISTORY_STANDARDCOMMAND_4);
-	#endif
-	#if ( MONITOR_MAX_HISTORY_LENGTH > 4 )
-	StrCpy(MONITOR_HISTORY[4], (const char *)MONITOR_HISTORY_STANDARDCOMMAND_5);
-	#endif
-	#if ( MONITOR_MAX_HISTORY_LENGTH > 5 )
-	#warning isnt set monitor history commands
-	#endif
-#elif  (!MONITOR_MAX_HISTORY_LENGTH)
-#error USE_MONITOR_HISTORY define is defined, but MONITOR_MAX_HISTORY_LENGTH define is not set valid value.
-#endif
 
 
 	// END OF INIT
@@ -230,7 +230,7 @@ uint8_t MONITOR_CheckCommand ( void ) {
 	//char CommandActual[MONITOR_MAX_COMMAND_LENGTH];	// TODO: kiszedni, ki kell az EndCommand-bol is
 
 	
-	// TODO: GlobÃ¡lissÃ¡ ttenni oket
+	// TODO: globálissá ttenni oket
 	unsigned int argc;
 	char *argv[3];
 
@@ -242,19 +242,25 @@ uint8_t MONITOR_CheckCommand ( void ) {
 	argv[1] = CommandArg2;
 	argv[2] = CommandArg3;
 
+
+#if RXBUFFERSIZE != 256
+#warning "Ring buffer counter error"
+#endif
+
 	//MONITOR_InitMonitor();	// Init
 		
 	argc = 0;
 	
 	// Initialize - End
 
+	// TODO: átalakítani, jelenleg nincs értelme, mert RxBufferbe másolunk
 	MONITOR_CommandEnable = 1;	// !! IMPORTANT !! Last initialize
 	
 	
-	#ifdef CONFIG_USE_FREERTOS
+#ifdef CONFIG_USE_FREERTOS
 	xSemaphoreGive(DEBUG_USART_Tx_Semaphore);
-	// !!IMPORTANT!! Elso szemaforatadas, engedÃ©lyezve az USART-on kikÃ¼ldÃ©s
-	#endif
+	// !!IMPORTANT!! Elso szemaforatadas, engedélyezve az USART-on kikÃ¼ldÃ©s
+#endif
 	//HAL_UART_Receive_IT(&BluetoothUartHandle, (uint8_t *)USART_RxBuffer, RXBUFFERSIZE);	// TODO: VG - USART - TEST - uzenetvaras
 
 	
@@ -271,45 +277,56 @@ uint8_t MONITOR_CheckCommand ( void ) {
 #endif
 
 
-	while (1) {												// always checking the Command
-		if ( MONITOR_CommandEnable ) {
+	// Start receive
+	USART_ReceiveMessage();
 
-			USART_ReceiveMessage ();	// Receiving
+	while (1)
+	{
+		// always checking the Command
+		if ( MONITOR_CommandEnable )
+		{
 
-			if ( MONITOR_CommandEvent ) {
+			// Check and process received characters
+			ProcessReceivedCharacter();
+
+
+			if ( MONITOR_CommandEvent )
+			{
 				MONITOR_CommandEvent = 0;
 
-				if ( MONITOR_CommandReceivedLastChar ){												// print the last chars
 
-					MONITOR_CommandReceivedLastChar = 0;
-					if ( MONITOR_CommandSendBackChar_Enable )
-					{	// if Enable send back
-						USART_SendChar( MONITOR_CommandActual[MONITOR_CommandLength-1] );
-					}
-				}
-
-				else if ( MONITOR_CommandReceivedNotLastChar ) {							// Nost Last char - Refresh the line
+				if ( MONITOR_CommandReceivedNotLastChar )
+				{
+					// Nost Last char - Refresh the line
 					MONITOR_CommandEnable = 0;
 					MONITOR_CommandReceivedNotLastChar = 0;
 					MONITOR_CommandResendLine();
 					MONITOR_CommandEnable = 1;
 				}
-				else if ( MONITOR_CommandEscapeEnd_flag ) {										// Escape sequence
+				else if ( MONITOR_CommandEscapeSequenceReceived )
+				{
+					// Escape sequence
 					MONITOR_CommandEnable = 0;
-					MONITOR_CommandEscapeEnd_flag = 0;
+					MONITOR_CommandEscapeSequenceReceived = 0;
 					MONITOR_CommandEscapeCharValidation ();
 					MONITOR_CommandEnable = 1;
 				}
-				else if ( MONITOR_CommandReceivedBackspace ) {								// Backspace
+				else if ( MONITOR_CommandReceivedBackspace )
+				{
+					// Backspace
 					MONITOR_CommandEnable = 0;
 					MONITOR_CommandReceivedBackspace = 0;
 					MONITOR_CommandBackspace();
 					MONITOR_CommandEnable = 1;
 				}
-				else if ( MONITOR_CommandReadable ) {										// Pressed Enter, EndCommand();
+				else if ( MONITOR_CommandReadable )
+				{
+					// Pressed Enter, EndCommand();
 					MONITOR_CommandEnable = 0;			// Disable
 					MONITOR_CommandReadable = 0;
-					if ( MONITOR_CommandLength > 0) {										// There are some char in the line
+					if ( MONITOR_CommandActualLength > 0)
+					{
+						// There are some char in the line
 						// has an command
 						MONITOR_ConvertSmallLetter();
 						
@@ -326,7 +343,8 @@ uint8_t MONITOR_CheckCommand ( void ) {
 						//USART_SEND_NEW_LINE();											
 						MONITOR_SEND_PROMT();
 					}
-					MONITOR_CommandLength = 0;
+					MONITOR_CommandActualLength = 0;
+					MONITOR_CommandSentLength = 0;
 					MONITOR_CommandCursorPosition = 0;
 					MONITOR_CommandEnable = 1;
 				}
@@ -338,6 +356,131 @@ uint8_t MONITOR_CheckCommand ( void ) {
 
 }
 
+
+
+static void ProcessReceivedCharacter(void)
+{
+
+	while (USART_RxBufferReadCnt!=USART_RxBufferWriteCounter)
+	{
+		volatile char USART_ReceivedChar = '\0';
+
+		// TODO: Don't know, why work...
+		USART_ReceivedChar = USART_RxBuffer[USART_RxBufferReadCnt-1];
+		USART_RxBufferReadCnt++;
+
+		// ESCAPE SEQUENCE
+		if ( MONITOR_CommandEscapeSequenceInProgress == 1 )
+		{
+			// Escape sequence in progress
+			// Copy escape characters to MONITOR_CommandActualEscape[]
+
+			if (MONITOR_CommandEscape_cnt == 1)
+			{
+				if (USART_ReceivedChar == '[')
+				{
+					MONITOR_CommandActualEscape[MONITOR_CommandEscape_cnt++] = USART_ReceivedChar;
+				}
+				else
+				{
+					// Wrong escape sequence
+					MONITOR_CommandEscapeSequenceInProgress = 0;
+					MONITOR_CommandEscape_cnt = 0;
+				}
+			}
+			else if ( MONITOR_CommandEscape_cnt == 2)
+			{
+				// TODO: only work with escape sequence if 3 chars (ESC[A)
+				MONITOR_CommandActualEscape[MONITOR_CommandEscape_cnt++] = USART_ReceivedChar;
+				MONITOR_CommandEscapeSequenceInProgress = 0;
+				MONITOR_CommandEscapeSequenceReceived = 1;
+				MONITOR_CommandEvent = 1;
+				return;
+			}
+
+		}
+		else
+		{
+			// No escape sequence
+			// An character received
+
+			if ( USART_ReceivedChar  == '\x1B')	// 'ESC'
+			{
+				// receive an Escape sequence
+				MONITOR_CommandEscapeSequenceInProgress = 1;
+				MONITOR_CommandActualEscape[0] = USART_ReceivedChar;
+				MONITOR_CommandEscape_cnt = 1;
+				//MONITOR_CommandEvent = 1;
+			}
+			else
+			{
+				if ( (USART_ReceivedChar  == '\r') || (USART_ReceivedChar == '\n') ||
+					(USART_ReceivedChar == '\0'))
+				{		// receive Enter
+					MONITOR_CommandReadable = 1;
+					MONITOR_CommandActual[MONITOR_CommandActualLength] = '\0';
+					MONITOR_CommandEvent = 1;
+					return;
+				}
+				else if ( USART_ReceivedChar  == USART_KEY_DELETE )
+				{
+					// In real world this is backspace	// PuTTy vs ZOC
+					MONITOR_CommandReceivedBackspace = 1;
+					MONITOR_CommandEvent = 1;
+					return;
+				}
+				else
+				{
+					// simple char for the command
+					// Receive an char
+					if ( MONITOR_CommandActualLength < MONITOR_MAX_COMMAND_LENGTH )	// shorted than max length?
+					{
+						if ( MONITOR_CommandCursorPosition == MONITOR_CommandActualLength )
+						{	// CursorPosition = CommandLength		(end character)
+							MONITOR_CommandActual[MONITOR_CommandActualLength] = USART_ReceivedChar;
+							MONITOR_CommandActualLength++;
+							MONITOR_CommandCursorPosition++;
+							MONITOR_CommandReceivedLastChar = 1;
+							USART_SendChar( USART_ReceivedChar );
+						}
+						else
+						{
+							// CursorPosition < CommandLength		(inner character)
+							MONITOR_CommandActualLength++;
+							// Copy
+							for ( uint8_t i = MONITOR_CommandActualLength; i > MONITOR_CommandCursorPosition; i-- )
+							{
+								MONITOR_CommandActual[i] = MONITOR_CommandActual[i-1];
+							}
+							MONITOR_CommandActual [MONITOR_CommandCursorPosition] = USART_ReceivedChar;
+							MONITOR_CommandActual [MONITOR_CommandActualLength] = '\0';
+							MONITOR_CommandCursorPosition++;
+							MONITOR_CommandReceivedNotLastChar = 1;
+							MONITOR_CommandEvent = 1;
+						}
+					}
+					else
+					{
+						// longer than max length ...
+						// Do not copy/print...
+					}
+
+				}
+			}
+
+		} // Processed received characters
+
+		// Transmission end semaphore / flag
+		// Szemafor beallitasa:
+		#ifdef CONFIG_USE_FREERTOS
+		//xSemaphoreGive(DEBUG_Rx_Semaphore); // !! IMPORTANT !! ISR-bol nem szabad hasznalni!
+		xSemaphoreGiveFromISR(DEBUG_USART_Rx_Semaphore,0);
+		#endif
+		//MONITOR_CommandEvent = 1;
+
+	} // End of while
+
+}
 
 
 // Function: Prepare (Separate) the command and Find and Run it...
@@ -440,11 +583,11 @@ uint8_t MONITOR_CommandFind( unsigned int argc, char** argv ) {
 uint8_t MONITOR_CommandBackspace ( void ) {
 	uint8_t i;
 
-	if (MONITOR_CommandLength > 0) {
+	if (MONITOR_CommandActualLength > 0) {
 
-		if ( MONITOR_CommandCursorPosition == MONITOR_CommandLength) {
+		if ( MONITOR_CommandCursorPosition == MONITOR_CommandActualLength) {
 			MONITOR_CommandActual[--MONITOR_CommandCursorPosition] = '\0';	// del from CommandActual, and Position--
-			MONITOR_CommandLength--;
+			MONITOR_CommandActualLength--;
 			
 #ifdef CONFIG_USE_TERMINAL_ZOC
 			USART_SEND_KEY_BACKSPACE();
@@ -534,10 +677,10 @@ uint8_t MONITOR_CommandBackspace ( void ) {
 				// send new command
 				// restore cursor
 
-				MONITOR_CommandLength--;
+				MONITOR_CommandActualLength--;
 				MONITOR_CommandCursorPosition--;
 
-				for ( i = MONITOR_CommandCursorPosition; i < MONITOR_CommandLength; i++ ) {
+				for ( i = MONITOR_CommandCursorPosition; i < MONITOR_CommandActualLength; i++ ) {
 					MONITOR_CommandActual[i] = MONITOR_CommandActual[i+1];		// copy
 				}
 				MONITOR_CommandActual[i] = '\0';
@@ -644,7 +787,7 @@ uint8_t MONITOR_CommandEscapeCharValidation ( void ) {
 			}
 			else if (  MONITOR_CommandActualEscape[2] == 'C' )					// Right cursor
 			{
-				if ( MONITOR_CommandCursorPosition < MONITOR_CommandLength )	// if not at end
+				if ( MONITOR_CommandCursorPosition < MONITOR_CommandActualLength )	// if not at end
 				{
 					USART_ESCAPE_CURSORRIGHT();
 					MONITOR_CommandCursorPosition++;
@@ -698,7 +841,7 @@ uint8_t MONITOR_HISTORY_Save ( void )
 	MONITOR_HISTORY_Load_cnt = MONITOR_HISTORY_Save_cnt;	// amit most gepeltunk be, az az utolso
 
 
-	StrCpy ( MONITOR_HISTORY[MONITOR_HISTORY_Save_cnt], MONITOR_CommandActual );
+	StrCpy ( MONITOR_HISTORY[MONITOR_HISTORY_Save_cnt], (char *)MONITOR_CommandActual );
 
 
 	return RETURN_SUCCESS;
@@ -752,11 +895,11 @@ uint8_t MONITOR_HISTORY_Load ( uint8_t direction )
 	// up cursor
 	// if direction == 1, masolhato azonnal az aktualis
 
-	StrCpy ( MONITOR_CommandActual, (const char *)MONITOR_HISTORY[MONITOR_HISTORY_Load_cnt]);
+	StrCpy ( (char *)MONITOR_CommandActual, (const char *)MONITOR_HISTORY[MONITOR_HISTORY_Load_cnt]);
 
 	// cursor, length!
-	MONITOR_CommandCursorPosition = StringLength(MONITOR_CommandActual);
-	MONITOR_CommandLength = MONITOR_CommandCursorPosition;
+	MONITOR_CommandCursorPosition = StringLength((char *)MONITOR_CommandActual);
+	MONITOR_CommandActualLength = MONITOR_CommandCursorPosition;
 
 	MONITOR_NewCommandResendLine ();
 

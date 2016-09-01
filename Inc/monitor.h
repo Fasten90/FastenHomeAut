@@ -57,12 +57,6 @@ typedef struct {
 
 
 
-#define MONITOR_HISTORY_STANDARDCOMMAND_1	"get speed"
-#define MONITOR_HISTORY_STANDARDCOMMAND_2	"get velocity"
-#define MONITOR_HISTORY_STANDARDCOMMAND_3	"log on status"
-#define MONITOR_HISTORY_STANDARDCOMMAND_4	"stop"
-#define MONITOR_HISTORY_STANDARDCOMMAND_5	"set speed 15"
-
 
 
 
@@ -148,17 +142,17 @@ uint8_t MONITOR_ConvertSmallLetter( void );
 
 /////////////////////////////  GLOBAL VARIABLES
 
-extern uint8_t MONITOR_CommandActual[MONITOR_MAX_COMMAND_LENGTH];
-extern uint8_t MONITOR_CommandActualEscape[3];
+extern volatile char MONITOR_CommandActual[MONITOR_MAX_COMMAND_LENGTH];
+extern volatile char MONITOR_CommandActualEscape[3];
 extern volatile uint8_t MONITOR_CommandEnable;
-extern volatile uint8_t MONITOR_CommandLength;
+extern volatile uint8_t MONITOR_CommandActualLength;
 extern volatile uint8_t MONITOR_CommandCursorPosition;
 extern volatile uint8_t MONITOR_CommandEvent;
 extern volatile uint8_t MONITOR_CommandReceivedLastChar;
 extern volatile uint8_t MONITOR_CommandReceivedNotLastChar;
 extern volatile uint8_t MONITOR_CommandReadable;
-extern volatile uint8_t	MONITOR_CommandEscapeEnd_flag;
-extern volatile uint8_t	MONITOR_CommandEscapeStart_flag;
+extern volatile uint8_t	MONITOR_CommandEscapeSequenceReceived;
+extern volatile uint8_t	MONITOR_CommandEscapeSequenceInProgress;
 extern volatile uint8_t	MONITOR_CommandEscape_cnt;
 extern volatile uint8_t MONITOR_CommandReceivedBackspace;
 extern volatile uint8_t MONITOR_CommandSendBackChar_Enable;
