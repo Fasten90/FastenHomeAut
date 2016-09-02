@@ -13,7 +13,7 @@
 
 ////////// CONST
 
-// TODO: Átírni a homeautmessage kezelést dinamikusra
+// TODO: Write to dynamic
 
 // Now: 40 length
 const uint8_t HOMEAUTMESSAGE_DefaultMessageLength = sizeof(HOMEAUTMESSAGE_MessageType);
@@ -68,7 +68,7 @@ const FunctionTypeParity FunctionTypeParity_List[] =
 	// HERE ADD NEW DateType
 
 	{
-		.name = 0,
+		.name = "",
 		.function = Function_End
 	}
 
@@ -186,7 +186,7 @@ const DataTypeParity DataTypeParity_List[] =
 	// HERE ADD NEW DateType
 
 	{
-		.name = 0,
+		.name = "",
 		.type = DataType_End
 	}
 
@@ -486,8 +486,8 @@ ReturnType HOMEAUTMESSAGE_CreateAndSendHomeAutMessage
 	if ( HOMEAUTMESSAGE_CreateMessage(&message,&messageInformation) == Return_Ok )
 	{
 		
-		// TODO: queue-ba kéne küldeni üzenetet
-		// Vigyázat: így a NodeSmall-nak másmilyen kód kell majd...
+		// TODO: queue-ba kĂ©ne kĂĽldeni ĂĽzenetet
+		// VigyĂˇzat: Ă­gy a NodeSmall-nak mĂˇsmilyen kĂłd kell majd...
 		/*
 		if ( ESP8266_TcpConnectionStatus == ESP8266_TcpConnectionStatus_Connected )
 		{
@@ -502,7 +502,7 @@ ReturnType HOMEAUTMESSAGE_CreateAndSendHomeAutMessage
 
 	}	
 
-	return Return_Ok;	// TODO: Visszatéréseket jól megcsinálni
+	return Return_Ok;	// TODO: VisszatĂ©rĂ©seket jĂłl megcsinĂˇlni
 	
 }
 

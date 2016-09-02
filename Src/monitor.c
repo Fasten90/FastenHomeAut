@@ -59,6 +59,16 @@ volatile uint8_t MONITOR_CommandReceivedBackspace;
 volatile uint8_t MONITOR_CommandSendBackChar_Enable = 0;
 
 
+uint8_t COMMAND_ArgCount;
+
+char CommandArg1[MONITOR_COMMAND_ARG_MAX_LENGTH];
+char CommandArg2[MONITOR_COMMAND_ARG_MAX_LENGTH];
+char CommandArg3[MONITOR_COMMAND_ARG_MAX_LENGTH];
+
+char *COMMAND_Arguments[MONITOR_COMMAND_ARG_MAX_LENGTH] = { CommandArg1, CommandArg2, CommandArg3 } ;
+
+
+
 #ifdef CONFIG_USE_FREERTOS
 xSemaphoreHandle DEBUG_USART_Rx_Semaphore;
 xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
@@ -66,43 +76,43 @@ xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
 
 
 #ifdef USE_MONITOR_HISTORY
-uint8_t MONITOR_HISTORY_Save_cnt = MONITOR_MAX_HISTORY_LENGTH-1;
-uint8_t MONITOR_HISTORY_Load_cnt = MONITOR_MAX_HISTORY_LENGTH-1;
-char MONITOR_HISTORY[MONITOR_MAX_HISTORY_LENGTH][MONITOR_MAX_COMMAND_LENGTH] =
+uint8_t MONITOR_HISTORY_Save_cnt = MONITOR_HISTORY_MAX_LENGTH-1;
+uint8_t MONITOR_HISTORY_Load_cnt = MONITOR_HISTORY_MAX_LENGTH-1;
+char MONITOR_HISTORY[MONITOR_HISTORY_MAX_LENGTH][MONITOR_MAX_COMMAND_LENGTH] =
 {
 
-#if defined(USE_MONITOR_HISTORY) && (MONITOR_MAX_HISTORY_LENGTH > 0)
+#if defined(USE_MONITOR_HISTORY) && (MONITOR_HISTORY_MAX_LENGTH > 0)
 
-	#if ( MONITOR_MAX_HISTORY_LENGTH > 0 )
+	#if ( MONITOR_HISTORY_MAX_LENGTH > 0 )
 	{
 		"help"
 	},
 	#endif
-	#if ( MONITOR_MAX_HISTORY_LENGTH > 1 )
+	#if ( MONITOR_HISTORY_MAX_LENGTH > 1 )
 	{
 		"led 1 1"
 	},
 	#endif
-	#if ( MONITOR_MAX_HISTORY_LENGTH > 2 )
+	#if ( MONITOR_HISTORY_MAX_LENGTH > 2 )
 	{
 		"cls"
 	},
 	#endif
-	#if ( MONITOR_MAX_HISTORY_LENGTH > 3 )
+	#if ( MONITOR_HISTORY_MAX_LENGTH > 3 )
 	{
 		"test"
 	},
 	#endif
-	#if ( MONITOR_MAX_HISTORY_LENGTH > 4 )
+	#if ( MONITOR_HISTORY_MAX_LENGTH > 4 )
 	{
 		"test"
 	}
 	#endif
-	#if ( MONITOR_MAX_HISTORY_LENGTH > 5 )
+	#if ( MONITOR_HISTORY_MAX_LENGTH > 5 )
 	#warning isnt set monitor history commands
 	#endif
-#elif  (!MONITOR_MAX_HISTORY_LENGTH)
-#error USE_MONITOR_HISTORY define is defined, but MONITOR_MAX_HISTORY_LENGTH define is not set valid value.
+#elif  (!MONITOR_HISTORY_MAX_LENGTH)
+#error USE_MONITOR_HISTORY define is defined, but MONITOR_HISTORY_MAX_LENGTH define is not set valid value.
 #endif
 };
 #endif
@@ -118,11 +128,10 @@ static void ProcessReceivedCharacter(void);
 
 
 // Function: Init Monitor program
-// TODO: kiszedve a kikuldes, mert faultot okoz, ha nincs kapcsolat
 void MONITOR_Init ( void )
 {
 
-	// INIT									// Init CommandActual
+	// INIT
 
 	MONITOR_CommandEvent = 0;
 	MONITOR_CommandActualLength = 0;
@@ -134,14 +143,13 @@ void MONITOR_Init ( void )
 	MONITOR_CommandReceivedNotLastChar = 0;
 	MONITOR_CommandEscape_cnt = 0;
 	MONITOR_CommandSendBackChar_Enable = 1;	// enable
-	USART_TxBuffer[TXBUFFERSIZE-1] = '\0';
+
+	//USART_TxBuffer[TXBUFFERSIZE-1] = '\0';
+
+	COMMAND_ArgCount = 0;
 
 
 	// END OF INIT
-	
-	// !!IMPORTANT!! Nem szabad kikuldeni uzenetet a kapcsolat letrejotte elott, mert faultba juthatunk.
-	
-	
 	return;
 }
 
@@ -169,24 +177,24 @@ void MONITOR_SendWelcome ( void )
 
 	
 	USART_SEND_CLS();						// Clean screen
-	MONITOR_SEND_WELCOME();					// ĂśdvĂ¶zlo ĂĽzenet
-	USART_SEND_NEW_LINE();					// Ăšj sor
+	MONITOR_SEND_WELCOME();					// Welcome message
+	USART_SEND_NEW_LINE();					// New line
 
 	// USART_ESCAPE_BACKGROUND_DEFAULT()
 	// USART_ESCAPE_RESET()
 
 
-	//USART_SendStringWithBackgroundColor("SzĂ­nes hĂˇttĂ©r!");
+	//USART_SendStringWithBackgroundColor("Coloured text!");
 	USART_SEND_NEW_LINE();
 
-	USART_ESCAPE_TEXT_BLACK();				// Teszt ĂĽzenet
+	USART_ESCAPE_TEXT_BLACK();				// Test message
 	USART_ESCAPE_BACKGROUND_GREEN();
 	USART_SendString("Example VALID message.\r\n");
 
-	USART_ESCAPE_BACKGROUND_RED();			// Teszt ĂĽzenet
+	USART_ESCAPE_BACKGROUND_RED();			// Test message
 	USART_SendString("Example INVALID message.\r\n");
 
-	USART_ESCAPE_BACKGROUND_WHITE();		// FehĂ©r hĂˇttĂ©rszĂ­n
+	USART_ESCAPE_BACKGROUND_WHITE();		// White background
 
 
 	USART_SEND_NEW_LINE();
@@ -225,29 +233,14 @@ void MONITOR_SendPrimitiveWelcome ( void )
 void MONITOR_CheckCommand ( void ) {
 
 	// Initialize
-
-	
-	// TODO: Glob�lis v�ltoz�v� tenni
-	uint8_t argc;
-	char *argv[3];
-
-	char CommandArg1[MONITOR_MAX_ARG_LENGTH];
-	char CommandArg2[MONITOR_MAX_ARG_LENGTH];
-	char CommandArg3[MONITOR_MAX_ARG_LENGTH];
-
-	argv[0] = CommandArg1;
-	argv[1] = CommandArg2;
-	argv[2] = CommandArg3;
+	//MONITOR_InitMonitor();	// Init
 
 
 #if RXBUFFERSIZE != 256
 #warning "Ring buffer counter error"
 #endif
 
-	//MONITOR_InitMonitor();	// Init
-		
-	argc = 0;
-	
+
 	// Initialize - End
 	MONITOR_CommandEnable = 1;	// !! IMPORTANT !! Last initialize
 	
@@ -269,6 +262,9 @@ void MONITOR_CheckCommand ( void ) {
 
 	while (1)
 	{
+
+		// TODO: Delete below CommandEnable flags
+
 		// always checking the Command
 		if ( MONITOR_CommandEnable )
 		{
@@ -279,12 +275,12 @@ void MONITOR_CheckCommand ( void ) {
 
 			if ( MONITOR_CommandEvent )
 			{
+				// Clear event
 				MONITOR_CommandEvent = 0;
-
 
 				if ( MONITOR_CommandReceivedNotLastChar )
 				{
-					// Nost Last char - Refresh the line
+					// Not Last char (it is inner character) - Refresh the line
 					MONITOR_CommandEnable = 0;
 					MONITOR_CommandReceivedNotLastChar = 0;
 					MONITOR_CommandResendLine();
@@ -319,8 +315,8 @@ void MONITOR_CheckCommand ( void ) {
 						
 						USART_SEND_NEW_LINE();
 						
-						// TODO: 1. parametert kiszedni
-						MONITOR_EndCommand ( (char *)MONITOR_CommandActual, argc, argv );	// Parancs megkeresĂ©se Ă©s futtatĂˇsi kĂ­sĂ©rlet		
+						// Search command and run
+						MONITOR_EndCommand ();
 						
 						#ifdef USE_MONITOR_HISTORY
 						MONITOR_HISTORY_Save ();											// History-ba lementĂ©s
@@ -471,33 +467,38 @@ static void ProcessReceivedCharacter(void)
 
 
 // Function: Prepare (Separate) the command and Find and Run it...
-uint8_t MONITOR_EndCommand ( char *CommandActual, uint8_t argc, char** argv  )
+bool MONITOR_EndCommand ( void )
 {
 
 	// Separate command
-	// CommandActual = MONITOR_CommandActual[]
-	argc = MONITOR_CommandSeparate ( argv, CommandActual );
+	COMMAND_ArgCount = MONITOR_CommandSeparate ();
+	bool isSuccessful = false;
 
-	if ( argc ) {
-		
-		MONITOR_CommandFind ( argc, argv );		// Find and probing execute the command
+	if ( COMMAND_ArgCount > 0 )
+	{
+		// Find and probing execute the command
+		isSuccessful = MONITOR_CommandFind ();
 		USART_SEND_NEW_LINE();
 	}
-	//else USART_SEND_NEW_LINE();				// argc == 0
+	else
+	{
+		// Cannot separated, this is not a command
+		isSuccessful = false;
+	}
 
 	
 	// Init new command
 	MONITOR_SEND_PROMT();
 
-	return RETURN_SUCCESS;
+	return isSuccessful;
 }
 
 
 
 
 // Function: Seperate words (command) to command word, and 2 argument
-// from char *CommandActul, to argv[0], [1], [2]
-uint8_t MONITOR_CommandSeparate ( char** argv, char *CommandActual )
+// from char *CommandActul, to COMMAND_Arguments[0], [1], [2]
+uint8_t MONITOR_CommandSeparate ( void )
 {
 	// seperate command to argumentums
 	// return arc; = argumentum's num
@@ -508,17 +509,19 @@ uint8_t MONITOR_CommandSeparate ( char** argv, char *CommandActual )
 	uint8_t CommandArgCount = 1;	// 1-3	// Arguments num is 1, when we start separate
 
 
-	for (i=0; CommandActual[i]!='\0'; i++)
+	for (i=0; MONITOR_CommandActual[i]!='\0'; i++)
 	{
-		if ( CommandActual[i] != ' '  )
+		// Search ' ' space
+		if ( MONITOR_CommandActual[i] != ' '  )
 		{
 			// Not space, copy char to  Argument (CommandArgX[])
-			argv[CommandArgCount-1][j] = CommandActual[i];
+			COMMAND_Arguments[CommandArgCount-1][j] = MONITOR_CommandActual[i];
 			j++;
 		}
 		else
-		{													// It's space or the end, skip the space
-			argv[CommandArgCount-1][j] = '\0';
+		{
+			// It's space or the end, skip the space
+			COMMAND_Arguments[CommandArgCount-1][j] = '\0';
 			CommandArgCount++;
 			j = 0;
 			if ( CommandArgCount >3)
@@ -527,17 +530,17 @@ uint8_t MONITOR_CommandSeparate ( char** argv, char *CommandActual )
 				return 0;
 			}
 		}
-		if ( j >= MONITOR_MAX_ARG_LENGTH )
+		if ( j >= MONITOR_COMMAND_ARG_MAX_LENGTH )
 		{
 			uprintf("Too long argument!\r\n");
 			return 0;
 		}
 	} // End of copies
 
-	argv[CommandArgCount-1][j] = '\0';							// Last argument's end
+	COMMAND_Arguments[CommandArgCount-1][j] = '\0';							// Last argument's end
 
-	if ( CommandArgCount < 3 ) argv[2][0] = '\0';				// 3. argument is empty
-	if ( CommandArgCount < 2 ) argv[1][0] = '\0';				// 2. argument is empty
+	if ( CommandArgCount < 3 ) COMMAND_Arguments[2][0] = '\0';				// 3. argument is empty
+	if ( CommandArgCount < 2 ) COMMAND_Arguments[1][0] = '\0';				// 2. argument is empty
 
 	return CommandArgCount;
 }
@@ -545,7 +548,7 @@ uint8_t MONITOR_CommandSeparate ( char** argv, char *CommandActual )
 
 
 // Function: Find the command
-uint8_t MONITOR_CommandFind ( uint8_t argc, char** argv )
+bool MONITOR_CommandFind ()
 {
 
 	uint8_t i;
@@ -560,11 +563,11 @@ uint8_t MONITOR_CommandFind ( uint8_t argc, char** argv )
 	for (i=0; i < commandNum; i++)
 	{
 
-		if (!StrCmp(argv[0],CommandList[i].name))
+		if (!StrCmp(COMMAND_Arguments[0],CommandList[i].name))
 		{
 			// Found the command
 			thisFunction = ( FunctionPointer )CommandList[i].CommandFunctionPointer;	// execute the command function
-			thisFunction(argc,argv);
+			thisFunction(COMMAND_ArgCount,COMMAND_Arguments);
 			CommandValid = 1;											// Valid Command
 			break;
 		}
@@ -574,13 +577,13 @@ uint8_t MONITOR_CommandFind ( uint8_t argc, char** argv )
 	if (CommandValid)
 	{
 		// Valid command
-		return RETURN_FALSE;
+		return true;
 	}
 	else
 	{
 		// Error, wrong command
 		USART_SendLine("Unknown Command");
-		return RETURN_SUCCESS;
+		return false;
 	}
 
 }
@@ -857,7 +860,7 @@ void MONITOR_HISTORY_Save ( void )
 	}
 
 	// Actual save counter
-	if ( MONITOR_HISTORY_Save_cnt >= ( MONITOR_MAX_HISTORY_LENGTH-1 ) )
+	if ( MONITOR_HISTORY_Save_cnt >= ( MONITOR_HISTORY_MAX_LENGTH-1 ) )
 	{
 		MONITOR_HISTORY_Save_cnt = 0;
 	}
@@ -888,7 +891,7 @@ bool MONITOR_HISTORY_IsInIt ( void )
 {
 	uint8_t i;
 	
-	for ( i = 0; i < MONITOR_MAX_HISTORY_LENGTH; i++ )
+	for ( i = 0; i < MONITOR_HISTORY_MAX_LENGTH; i++ )
 	{
 		if ( !StrCmp((const char *)MONITOR_HISTORY[i],(const char * )MONITOR_CommandActual))	// If it is equal
 		{
@@ -910,7 +913,7 @@ void MONITOR_HISTORY_Load ( uint8_t direction )
 	// down cursor
 	if ( direction == 0 ) // direction == 0
 	{
-		if ( MONITOR_HISTORY_Load_cnt >= ( MONITOR_MAX_HISTORY_LENGTH-1 ) )
+		if ( MONITOR_HISTORY_Load_cnt >= ( MONITOR_HISTORY_MAX_LENGTH-1 ) )
 		{
 			MONITOR_HISTORY_Load_cnt = 0;
 		}
@@ -937,7 +940,7 @@ void MONITOR_HISTORY_Load ( uint8_t direction )
 	{
 		if ( MONITOR_HISTORY_Load_cnt <= 0 )
 		{
-			MONITOR_HISTORY_Load_cnt = MONITOR_MAX_HISTORY_LENGTH-1;
+			MONITOR_HISTORY_Load_cnt = MONITOR_HISTORY_MAX_LENGTH-1;
 		}
 		else
 		{

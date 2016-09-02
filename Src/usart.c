@@ -39,8 +39,8 @@ UART_HandleTypeDef Debug_UartHandle;
 #endif
 
 
-volatile char USART_RxBuffer[RXBUFFERSIZE];
-volatile char USART_TxBuffer[TXBUFFERSIZE];
+volatile char USART_RxBuffer[RXBUFFERSIZE] = { 0 };
+volatile char USART_TxBuffer[TXBUFFERSIZE] = { 0 };
 
 volatile uint8_t USART_RxBufferWriteCounter = 0;
 
@@ -50,7 +50,7 @@ volatile uint8_t USART_RxBufferWriteCounter = 0;
 #endif
 
 
-uint8_t USART_SendEnable_flag;
+uint8_t USART_SendEnable_flag = 0;
 
 
 //extern uint8_t ESP8266_Uart_ReceivedCharFlag;

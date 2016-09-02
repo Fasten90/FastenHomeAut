@@ -418,7 +418,7 @@ uint8_t COMMAND_GetCommandNum( void )
 uint32_t CommandFunction_cls ( uint32_t argc, char** argv ) {
 
 	//(void)argc;
-	//(void)argv;
+	//(void)COMMAND_Arguments;
 	USART_SEND_CLS();
 
 	return RETURN_SUCCESS;
@@ -430,7 +430,7 @@ uint32_t CommandFunction_cls ( uint32_t argc, char** argv ) {
 // Function: dl (download)
 // dl <destination> <size>
 // Download to <destination> address <size> bytes from USART
-uint32_t CommandFunction_dl ( uint32_t argc, char** argv ) {
+uint32_t CommandFunction_dl ( uint32_t argc, char** COMMAND_Arguments ) {
 
 	unsigned char * destination;
 	uint32_t size;
@@ -440,9 +440,9 @@ uint32_t CommandFunction_dl ( uint32_t argc, char** argv ) {
 	if ( argc < 3 ) { USART_SendString("Too few arguments!\r\n"); return 0; }
 	if ( argc > 3 ) { USART_SendString("Too many arguments!\r\n"); return 0; }
 
-	if ( StringIsHexadecimalString(argv[1]) ) Arg2Num = StringHexToNum(argv[1]);	// <destination> 	Convert hex to num
+	if ( StringIsHexadecimalString(COMMAND_Arguments[1]) ) Arg2Num = StringHexToNum(COMMAND_Arguments[1]);	// <destination> 	Convert hex to num
 	else { USART_SendString("Wrong 1. argument!\r\n"); return 0; }
-	if ( StringIsUnsignedDecimalString(argv[2]) ) Arg3Num = UnsignedDecimalStringToNum(argv[2]);	// <size>			Convert dec to num
+	if ( StringIsUnsignedDecimalString(COMMAND_Arguments[2]) ) Arg3Num = UnsignedDecimalStringToNum(COMMAND_Arguments[2]);	// <size>			Convert dec to num
 	else { USART_SendString("Wrong 2. argument!\r\n"); return 0; }
 
 	size = Arg3Num;
@@ -605,7 +605,7 @@ uint32_t CommandFunction_help ( uint32_t argc, char** argv ) {
 uint32_t CommandFunction_reset ( uint32_t argc, char** argv ) {
 
 	//(void)argc;
-	//(void)argv;
+	//(void)COMMAND_Arguments;
 	int i;
 	//if ( argc > 1 )	USART_SendString("Too many arguments!\r\n");
 
@@ -627,7 +627,7 @@ uint32_t CommandFunction_reset ( uint32_t argc, char** argv ) {
 // source: hex
 // size: dec
 // read <size> byte-s from <source> address
-uint32_t CommandFunction_mr ( uint32_t argc, char** argv ) {
+uint32_t CommandFunction_mr ( uint32_t argc, char** COMMAND_Arguments ) {
 
 
 	uint32_t *source;
@@ -639,9 +639,9 @@ uint32_t CommandFunction_mr ( uint32_t argc, char** argv ) {
 	if ( argc < 3 ) {	USART_SendString("Too few arguments!\r\n");	return 0;	}
 	if ( argc > 3 ) {	USART_SendString("Too many arguments!\r\n");	return 0;	}
 
-	if ( StringIsHexadecimalString(argv[1]) ) Arg2Num = StringHexToNum(argv[1]);	// Convert arg2, source to hex
+	if ( StringIsHexadecimalString(COMMAND_Arguments[1]) ) Arg2Num = StringHexToNum(COMMAND_Arguments[1]);	// Convert arg2, source to hex
 	else { USART_SendString("Wrong 1. argument!"); return 2; }
-	if ( StringIsUnsignedDecimalString(argv[2]) ) Arg3Num = StringDecToNum(argv[2]);	// Convert arg3, size to dec
+	if ( StringIsUnsignedDecimalString(COMMAND_Arguments[2]) ) Arg3Num = StringDecToNum(COMMAND_Arguments[2]);	// Convert arg3, size to dec
 	else { USART_SendString("Wrong 2. argument!"); return 2; }
 
 	source = ( uint32_t *) Arg2Num;		// casting for valid numbers
@@ -671,7 +671,7 @@ uint32_t CommandFunction_mr ( uint32_t argc, char** argv ) {
 // destination: hex
 // data: hex
 // mwb, mwh, mww commands
-uint32_t CommandFunction_mw ( uint32_t argc, char** argv ) {
+uint32_t CommandFunction_mw ( uint32_t argc, char** COMMAND_Arguments ) {
 
 	unsigned char *destination1;
 	unsigned short int *destination2;
@@ -681,23 +681,23 @@ uint32_t CommandFunction_mw ( uint32_t argc, char** argv ) {
 	if ( argc < 3 ) {	USART_SendString("Too few arguments!\r\n");	return 0;	}
 	if ( argc > 3 ) {	USART_SendString("Too many arguments!\r\n");	return 0;	}
 
-	if ( StringIsHexadecimalString(argv[1]) ) Arg2Num = StringHexToNum(argv[1]);	// Convert hex
+	if ( StringIsHexadecimalString(COMMAND_Arguments[1]) ) Arg2Num = StringHexToNum(COMMAND_Arguments[1]);	// Convert hex
 	else { USART_SendString("Wrong 1. argument!"); return 2; }
-	if ( StringIsHexadecimalString(argv[2]) ) Arg3Num = StringHexToNum(argv[2]);	// Convert hex
+	if ( StringIsHexadecimalString(COMMAND_Arguments[2]) ) Arg3Num = StringHexToNum(COMMAND_Arguments[2]);	// Convert hex
 	else { USART_SendString("Wrong 2. Argument!"); return 2; }
 
 
-	if (!StrCmp(argv[0],"mwb")) {
+	if (!StrCmp(COMMAND_Arguments[0],"mwb")) {
 		destination1 = ( unsigned char *) Arg2Num;
 		*destination1 = ( unsigned char ) Arg3Num;
 		uprintf("Write: %b to: %w",Arg3Num,Arg2Num);
 	}
-	else if(!StrCmp(argv[0],"mwh")) {
+	else if(!StrCmp(COMMAND_Arguments[0],"mwh")) {
 		destination2 = ( unsigned short int *) Arg2Num;
 		*destination2 = ( unsigned short int) Arg3Num;
 		uprintf("Write: %h to: %w",Arg3Num,Arg2Num);
 	}
-	else if(!StrCmp(argv[0],"mww")) {
+	else if(!StrCmp(COMMAND_Arguments[0],"mww")) {
 		destination3 = ( uint32_t *) Arg2Num;
 		*destination3 = ( uint32_t ) Arg3Num;
 		uprintf("Write: %w to: %w",Arg3Num,Arg2Num);
@@ -739,7 +739,7 @@ uint32_t CommandFunction_led ( uint32_t argc, char** argv )	// TODO: !!IMPORTANT
 
 #ifdef CONFIG_MODULE_LED_ENABLE
 	
-	if (!StrCmp(argv[1],"on")) {
+	if (!StrCmp(COMMAND_Arguments[1],"on")) {
 		switch (Arg3Num) {
 			case 1:	LED_BLUE_ON();	break;
 			case 2:	LED_GREEN_ON();	break;
@@ -747,7 +747,7 @@ uint32_t CommandFunction_led ( uint32_t argc, char** argv )	// TODO: !!IMPORTANT
 		}
 		uprintf("Led on: %d\r\n",Arg3Num);
 	}
-	else if(!StrCmp(argv[1],"off")) {
+	else if(!StrCmp(COMMAND_Arguments[1],"off")) {
 		switch (Arg3Num) {
 			case 1:	LED_BLUE_OFF();	break;
 			case 2:	LED_GREEN_OFF();	break;
@@ -755,7 +755,7 @@ uint32_t CommandFunction_led ( uint32_t argc, char** argv )	// TODO: !!IMPORTANT
 		}
 		uprintf("Led off: %d\r\n",Arg3Num);
 	}
-	else if(!StrCmp(argv[1],"toggle")) {
+	else if(!StrCmp(COMMAND_Arguments[1],"toggle")) {
 		switch (Arg3Num) {
 			case 1: LED_BLUE_TOGGLE(); break;
 			case 2: LED_GREEN_TOGGLE(); break;
@@ -763,7 +763,7 @@ uint32_t CommandFunction_led ( uint32_t argc, char** argv )	// TODO: !!IMPORTANT
 		}
 		uprintf("Led toggle: %d\r\n",Arg3Num);
 	}
-	else if(!StrCmp(argv[1],"status")) {
+	else if(!StrCmp(COMMAND_Arguments[1],"status")) {
 		uprintf("Led status: %d %d %d\r\n",LED_BLUE_STATUS(), LED_GREEN_STATUS(), LED_RED_STATUS());
 	}
 	else
@@ -802,7 +802,7 @@ uint32_t CommandFunction_temp	( uint32_t argc, char** argv ) {
 
 /*
 // Function: Go to STOP mode
-uint32_t CommandFunction_stop	( uint32_t argc, char** argv ) {
+uint32_t CommandFunction_stop	( uint32_t argc, char** COMMAND_Arguments ) {
 
 	// Take anything before stop mode
 	LED_ALARM_ON();
@@ -829,9 +829,9 @@ uint32_t CommandFunction_stop	( uint32_t argc, char** argv ) {
 /*
 // Function: EEPROM read
 // Syntax: romr <address>
-uint32_t CommandFunction_romr	( uint32_t argc, char** argv ) {
+uint32_t CommandFunction_romr	( uint32_t argc, char** COMMAND_Arguments ) {
 
-	Arg2Num = StringDecToNum(argv[1]);
+	Arg2Num = StringDecToNum(COMMAND_Arguments[1]);
 		
 	//uprintf("address: 0x%h\r\n"
 	//				"data:    0x%b\r\n",
@@ -847,11 +847,11 @@ uint32_t CommandFunction_romr	( uint32_t argc, char** argv ) {
 /*
 // Function: EEPROM write
 // Syntax: romw <address> <data>
-uint32_t CommandFunction_romw	( uint32_t argc, char** argv ) {
+uint32_t CommandFunction_romw	( uint32_t argc, char** COMMAND_Arguments ) {
 
 
-	Arg2Num = StringHexToNum(argv[1]);
-	Arg3Num = StringHexToNum(argv[2]);
+	Arg2Num = StringHexToNum(COMMAND_Arguments[1]);
+	Arg3Num = StringHexToNum(COMMAND_Arguments[2]);
 	
 	uprintf("address: 0x%h\r\n"
 					"data:    0x%b\r\n",
@@ -866,7 +866,7 @@ uint32_t CommandFunction_romw	( uint32_t argc, char** argv ) {
 
 /*
 // Function: Read EEPROM's status register
-uint32_t CommandFunction_romsr	( uint32_t argc, char** argv ) {
+uint32_t CommandFunction_romsr	( uint32_t argc, char** COMMAND_Arguments ) {
 		
 	//uprintf("Status register: 0x%h\r\n",
 	//				EEPROM_ReadStatusRegister ()
@@ -879,7 +879,7 @@ uint32_t CommandFunction_romsr	( uint32_t argc, char** argv ) {
 
 /*
 // Function: EEPROM, Write Enable
-uint32_t CommandFunction_romwe	( uint32_t argc, char** argv ) {
+uint32_t CommandFunction_romwe	( uint32_t argc, char** COMMAND_Arguments ) {
 		
 	//EEPROM_WriteEnable ();
 
@@ -892,7 +892,7 @@ uint32_t CommandFunction_romwe	( uint32_t argc, char** argv ) {
 
 /*
 // Function: initialize EEPROM
-uint32_t CommandFunction_rominit	( uint32_t argc, char** argv ) {
+uint32_t CommandFunction_rominit	( uint32_t argc, char** COMMAND_Arguments ) {
 		
 	//EEPROM_Init ();
 
@@ -904,7 +904,7 @@ uint32_t CommandFunction_rominit	( uint32_t argc, char** argv ) {
 
 
 /*
-uint32_t CommandFunction_standby	( uint32_t argc, char** argv ) {
+uint32_t CommandFunction_standby	( uint32_t argc, char** COMMAND_Arguments ) {
 	
 	LCD_Instr_DisplayClear();
 	LCD_SendString_2line("RadioAlarm","in STANDBY mode",2,2);
@@ -921,9 +921,9 @@ uint32_t CommandFunction_standby	( uint32_t argc, char** argv ) {
 
 
 /*
-uint32_t CommandFunction_rtc	( uint32_t argc, char** argv ) {
+uint32_t CommandFunction_rtc	( uint32_t argc, char** COMMAND_Arguments ) {
 	
-	Arg2Num = StringDecToNum(argv[1]);
+	Arg2Num = StringDecToNum(COMMAND_Arguments[1]);
 	
 	uprintf("RTC wait %d second(s)\r\n",Arg2Num);
 	
@@ -941,7 +941,7 @@ uint32_t CommandFunction_rtc	( uint32_t argc, char** argv ) {
 uint32_t CommandFunction_test	( uint32_t argc, char** argv ) {
 	
 	//(void)argc;
-	//(void)argv;
+	//(void)COMMAND_Arguments;
 	//uint8_t i = 0;
 	//uint8_t buf[2];
 	
@@ -1114,10 +1114,10 @@ uint32_t CommandFunction_test	( uint32_t argc, char** argv ) {
 
 
 #if 0
-uint32_t CommandFunction_start	( uint32_t argc, char** argv )
+uint32_t CommandFunction_start	( uint32_t argc, char** COMMAND_Arguments )
 {
 	(void)argc;
-	(void)argv;
+	(void)COMMAND_Arguments;
 
 
 	uprintf("start command...\r\n");
@@ -1134,11 +1134,11 @@ uint32_t CommandFunction_start	( uint32_t argc, char** argv )
 
 
 #if 0
-uint32_t CommandFunction_stop	( uint32_t argc, char** argv )
+uint32_t CommandFunction_stop	( uint32_t argc, char** COMMAND_Arguments )
 {
 
 	//(void)argc;
-	//(void)argv;
+	//(void)COMMAND_Arguments;
 
 	//GLOBAL_CommandEmergencyStop();
 
@@ -1154,7 +1154,7 @@ uint32_t CommandFunction_stop	( uint32_t argc, char** argv )
 #if 0
 // Function: Beallitja a globalis valtozo erteket (set fuggvennyel)
 // Syntax: set <globalvar> <value>
-uint32_t CommandFunction_set ( uint32_t argc, char** argv )
+uint32_t CommandFunction_set ( uint32_t argc, char** COMMAND_Arguments )
 {
 
 	//int16_t result = 0;
@@ -1174,10 +1174,10 @@ uint32_t CommandFunction_set ( uint32_t argc, char** argv )
 	}
 
 	// Ertek konvertalasa
-	if ( StringIsSignedDec(argv[2]) )
+	if ( StringIsSignedDec(COMMAND_Arguments[2]) )
 	{
-		Arg3Num = StringSignedDecToNum(argv[2]);	// Convert arg2, signed decimal string to number
-		//Arg3Num = StringDecToNum(argv[2]);	// Convert arg2, unsigned decimal string to number
+		Arg3Num = StringSignedDecToNum(COMMAND_Arguments[2]);	// Convert arg2, signed decimal string to number
+		//Arg3Num = StringDecToNum(COMMAND_Arguments[2]);	// Convert arg2, unsigned decimal string to number
 	}
 	else
 	{
@@ -1187,33 +1187,33 @@ uint32_t CommandFunction_set ( uint32_t argc, char** argv )
 
 
 	/*
-	if ( !StrCmp( argv[1],MONITOR_GLOBALVARNAME_SPEED ))
+	if ( !StrCmp( COMMAND_Arguments[1],MONITOR_GLOBALVARNAME_SPEED ))
 	{
 		//Set_GlobaVarName1(Arg3Num);
 		//GLOBAL_SetSpeed(Arg3Num);
 		//result = GLOBAL_GetSpeed();
 	}
-	else if( !StrCmp( argv[1],MONITOR_GLOBALVARNAME_SPEED_REF ))
+	else if( !StrCmp( COMMAND_Arguments[1],MONITOR_GLOBALVARNAME_SPEED_REF ))
 	{
 		//GLOBAL_SetSpeedRef(Arg3Num);
 		//result = GLOBAL_GetSpeedRef();
 	}
-	else if( !StrCmp( argv[1],MONITOR_GLOBALVARNAME_VELOCITY ))
+	else if( !StrCmp( COMMAND_Arguments[1],MONITOR_GLOBALVARNAME_VELOCITY ))
 	{
 		//GLOBAL_SetVelocity(Arg3Num);
 		//result = GLOBAL_GetVelocity();
 	}
-	else if( !StrCmp( argv[1],MONITOR_GLOBALVARNAME_ANGLE ))
+	else if( !StrCmp( COMMAND_Arguments[1],MONITOR_GLOBALVARNAME_ANGLE ))
 	{
 		//GLOBAL_SetAngle(Arg3Num);
 		//result = GLOBAL_GetAngle();
 	}
-	else if( !StrCmp( argv[1],MONITOR_GLOBALVARNAME_POS_REF ))
+	else if( !StrCmp( COMMAND_Arguments[1],MONITOR_GLOBALVARNAME_POS_REF ))
 	{
 		//GLOBAL_SetPosRef(Arg3Num);
 		//result = GLOBAL_GetPosRef();
 	}
-	else if( !StrCmp( argv[1],MONITOR_GLOBALVARNAME_POSITION ))
+	else if( !StrCmp( COMMAND_Arguments[1],MONITOR_GLOBALVARNAME_POSITION ))
 	{
 		// TODO: GLOBAL_SetPosition();
 		uprintf("Set position fuggveny nincs!\r\n");
@@ -1221,26 +1221,26 @@ uint32_t CommandFunction_set ( uint32_t argc, char** argv )
 		//GLOBAL_SetPosition(Arg3Num);
 		//result = GLOBAL_GetPosition();
 	}
-	else if( !StrCmp( argv[1],MONITOR_GLOBALVARNAME_DIRECTION ))
+	else if( !StrCmp( COMMAND_Arguments[1],MONITOR_GLOBALVARNAME_DIRECTION ))
 	{
 		//GLOBAL_SetDirection(Arg3Num);
 		//result = GLOBAL_GetDirection();
 	}
-	else if( !StrCmp( argv[1],MONITOR_GLOBALVARNAME_PROXIMITY ))
+	else if( !StrCmp( COMMAND_Arguments[1],MONITOR_GLOBALVARNAME_PROXIMITY ))
 	{
 		// TODO: GLOBAL_SetProximity();
 		uprintf("Set prox fuggveny nincs!\r\n");
 		return RETURN_FALSE;
 	}
 
-	else if( !StrCmp( argv[1],MONITOR_GLOBALVARNAME_P ))
+	else if( !StrCmp( COMMAND_Arguments[1],MONITOR_GLOBALVARNAME_P ))
 	{
 		// TODO: GLOBAL_SetProximity();
 		GLOBAL_Controller_P = Arg3Num;
 		uprintf("Set prox fuggveny nincs!\r\n");
 		return RETURN_FALSE;
 	}
-	else if( !StrCmp( argv[1],MONITOR_GLOBALVARNAME_D ))
+	else if( !StrCmp( COMMAND_Arguments[1],MONITOR_GLOBALVARNAME_D ))
 	{
 		// TODO: GLOBAL_SetProximity();
 		GLOBAL_Controller_D = Arg3Num;
@@ -1260,7 +1260,7 @@ uint32_t CommandFunction_set ( uint32_t argc, char** argv )
 			"  value: %d \r\n"
 			"  now: %d \r\n"
 			"\r\n",
-			argv[1],
+			COMMAND_Arguments[1],
 			Arg3Num,
 			result
 			);
@@ -1276,7 +1276,7 @@ uint32_t CommandFunction_set ( uint32_t argc, char** argv )
 
 #if 0
 // Function: get <globalvar>
-uint32_t CommandFunction_get ( uint32_t argc, char** argv )
+uint32_t CommandFunction_get ( uint32_t argc, char** COMMAND_Arguments )
 {
 
 	//int32_t value;
@@ -1306,7 +1306,7 @@ uint32_t CommandFunction_get ( uint32_t argc, char** argv )
 
 #if 0
 // Function: buzzer switch on/off
-uint32_t CommandFunction_buzzer	( uint32_t argc, char** argv ) {
+uint32_t CommandFunction_buzzer	( uint32_t argc, char** COMMAND_Arguments ) {
 
 	if ( argc < 2 )
 	{
@@ -1319,7 +1319,7 @@ uint32_t CommandFunction_buzzer	( uint32_t argc, char** argv ) {
 		return RETURN_FALSE;
 	}
 
-	if (!StrCmp(argv[1],"on"))
+	if (!StrCmp(COMMAND_Arguments[1],"on"))
 	{
 		// TODO: Buzzer on
 		// Buzzer bekapcsolasa
@@ -1327,7 +1327,7 @@ uint32_t CommandFunction_buzzer	( uint32_t argc, char** argv ) {
 		uprintf("Buzzer on (Important! This is an infinite loop!)\r\n");
 		//BUZZER_On(); // Important!! Before turn on, need BUZZER_Init() function.
 	}
-	else if(!StrCmp(argv[1],"off"))
+	else if(!StrCmp(COMMAND_Arguments[1],"off"))
 	{
 		// Buzzer kikapcsolása
 		//BUZZER_DeInit();
@@ -1342,10 +1342,10 @@ uint32_t CommandFunction_buzzer	( uint32_t argc, char** argv ) {
 
 
 #if 0
-uint32_t CommandFunction_accelerometer	( uint32_t argc, char** argv ) {
+uint32_t CommandFunction_accelerometer	( uint32_t argc, char** COMMAND_Arguments ) {
 
 	(void)argc;
-	(void)argv;
+	(void)COMMAND_Arguments;
 
 	uprintf("Accelerometer has been started...\r\n");
 
@@ -1362,10 +1362,10 @@ uint32_t CommandFunction_accelerometer	( uint32_t argc, char** argv ) {
 
 
 #if 0
-uint32_t CommandFunction_gyroscope	( uint32_t argc, char** argv ) {
+uint32_t CommandFunction_gyroscope	( uint32_t argc, char** COMMAND_Arguments ) {
 
 	(void)argc;
-	(void)argv;
+	(void)COMMAND_Arguments;
 
 	uprintf("Gyroscope has been started...\r\n");
 
@@ -1383,7 +1383,7 @@ uint32_t CommandFunction_gyroscope	( uint32_t argc, char** argv ) {
 
 
 #if 0
-uint32_t CommandFunction_remotecontrol	( uint32_t argc, char** argv ) {
+uint32_t CommandFunction_remotecontrol	( uint32_t argc, char** COMMAND_Arguments ) {
 
 
 	return RETURN_SUCCESS;
@@ -1393,10 +1393,10 @@ uint32_t CommandFunction_remotecontrol	( uint32_t argc, char** argv ) {
 
 
 #if 0
-uint32_t CommandFunction_proximity	( uint32_t argc, char** argv ) {
+uint32_t CommandFunction_proximity	( uint32_t argc, char** COMMAND_Arguments ) {
 
 	//(void)argc;
-	//(void)argv;
+	//(void)COMMAND_Arguments;
 
 	uprintf("Jelenleg nincs funkcioja!\r\n");
 
@@ -1414,7 +1414,7 @@ uint32_t CommandFunction_proximity	( uint32_t argc, char** argv ) {
 //	}
 //
 //
-//	if (!StrCmp(argv[1],"on"))
+//	if (!StrCmp(COMMAND_Arguments[1],"on"))
 //	{
 //
 //		// LOG start
@@ -1422,7 +1422,7 @@ uint32_t CommandFunction_proximity	( uint32_t argc, char** argv ) {
 //		LOG_QueueEnable_PROXIMITY = LOG_ENABLE;
 //
 //	}
-//	else if(!StrCmp(argv[1],"off"))
+//	else if(!StrCmp(COMMAND_Arguments[1],"off"))
 //	{
 //
 //		// LOG end
@@ -1439,7 +1439,7 @@ uint32_t CommandFunction_proximity	( uint32_t argc, char** argv ) {
 
 
 #if 0
-uint32_t CommandFunction_log ( uint32_t argc, char** argv )
+uint32_t CommandFunction_log ( uint32_t argc, char** COMMAND_Arguments )
 {
 
 	//(void)argc;
@@ -1459,7 +1459,7 @@ uint32_t CommandFunction_log ( uint32_t argc, char** argv )
 
 	if ( argc == 2 )
 	{
-		if(!StrCmp(argv[1],"off"))
+		if(!StrCmp(COMMAND_Arguments[1],"off"))
 		{
 			// LOG end
 			//LOG_Off();
@@ -1495,7 +1495,7 @@ uint32_t CommandFunction_log ( uint32_t argc, char** argv )
 	/*
 	if ( argc == 2 )		// "log on", "log off"
 	{
-		if (!StrCmp(argv[1],"on"))
+		if (!StrCmp(COMMAND_Arguments[1],"on"))
 		{
 
 			uprintf("Log on\r\n");
@@ -1504,7 +1504,7 @@ uint32_t CommandFunction_log ( uint32_t argc, char** argv )
 			vTaskResume(LOG_TaskHandle);
 
 		}
-		else if(!StrCmp(argv[1],"off"))
+		else if(!StrCmp(COMMAND_Arguments[1],"off"))
 		{
 
 			// LOG end
@@ -1523,7 +1523,7 @@ uint32_t CommandFunction_log ( uint32_t argc, char** argv )
 	else */
 	if (argc == 3 )	// log on/off <taszk>
 	{
-		if (!StrCmp(argv[1],"on"))
+		if (!StrCmp(COMMAND_Arguments[1],"on"))
 		{
 	
 			MONITOR_CommandSendBackChar_Enable = 1; // Enable to send
@@ -1547,10 +1547,10 @@ uint32_t CommandFunction_log ( uint32_t argc, char** argv )
 
 
 #if 0
-uint32_t CommandFunction_exit ( uint32_t argc, char** argv )
+uint32_t CommandFunction_exit ( uint32_t argc, char** COMMAND_Arguments )
 {
 	(void)argc;
-	(void)argv;
+	(void)COMMAND_Arguments;
 
 
 	uprintf("exit\r\n"
@@ -1564,7 +1564,7 @@ uint32_t CommandFunction_exit ( uint32_t argc, char** argv )
 
 
 #if 0
-uint32_t CommandFunction_read ( uint32_t argc, char** argv )
+uint32_t CommandFunction_read ( uint32_t argc, char** COMMAND_Arguments )
 {
 
 	//int i;
@@ -1593,7 +1593,7 @@ uint32_t CommandFunction_read ( uint32_t argc, char** argv )
 	uint8_t String[20];
 
 	(void)argc;
-	(void)argv;
+	(void)COMMAND_Arguments;
 
 	for ( i=0; i<200; i++ )
 	{
@@ -1663,11 +1663,11 @@ uint32_t CommandFunction_flashdel	( uint32_t argc, char** argv ) {
 	
 
 	#ifdef FLASH_H_
-	if (!StrCmp(argv[2],"block"))
+	if (!StrCmp(COMMAND_Arguments[2],"block"))
 	{
 		FLASH_BlockErase(Arg2Num,5000);
 	}
-	else if (!StrCmp(argv[2],"sector"))
+	else if (!StrCmp(COMMAND_Arguments[2],"sector"))
 	{
 		FLASH_SectorErase(Arg2Num,5000);
 	}
@@ -1793,13 +1793,13 @@ uint32_t CommandFunction_raspberrypi	( uint32_t argc, char** argv ) {
 	}
 	
 	// Convert arg3, decimal
-	if (!UnsignedDecimalStringToNum(argv[2],&Arg3Num))
+	if (!UnsignedDecimalStringToNum(COMMAND_Arguments[2],&Arg3Num))
 	{
 		USART_SendString("Wrong 1. argument!\r\n");
 		return RETURN_FALSE;
 	}
 	
-	if (!StrCmp(argv[1],"setout"))
+	if (!StrCmp(COMMAND_Arguments[1],"setout"))
 	{
 		// setout
 		HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
@@ -1819,7 +1819,7 @@ uint32_t CommandFunction_raspberrypi	( uint32_t argc, char** argv ) {
 
 /*
 // Function: ESP8266 bridge
-uint32_t CommandFunction_ESP8266	( uint32_t argc, char** argv ) {
+uint32_t CommandFunction_ESP8266	( uint32_t argc, char** COMMAND_Arguments ) {
 
 	if ( argc > 1 )
 	{

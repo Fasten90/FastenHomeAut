@@ -69,10 +69,9 @@ void MONITOR_SendWelcome ( void );
 void MONITOR_SendPrimitiveWelcome ( void );
 
 void MONITOR_CheckCommand ( void );
-uint8_t MONITOR_EndCommand ( char *CommandActual, uint8_t argc, char** argv  );
-uint8_t MONITOR_CommandSeparate ( char** argv, char *CommandActual );
-uint8_t MONITOR_CommandFind ( uint8_t argc, char** argv );
-//uint8_t MONITOR_CommandListInitialize (void);
+bool MONITOR_EndCommand ( void );
+uint8_t MONITOR_CommandSeparate ( void );
+bool MONITOR_CommandFind ( void );
 
 void MONITOR_CommandBackspace ( void );
 void MONITOR_CommandResendLine ( void );
@@ -92,9 +91,10 @@ void MONITOR_ConvertSmallLetter ( void );
 
 
 
-#define MONITOR_MAX_COMMAND_LENGTH			255
-#define MONITOR_MAX_ARG_LENGTH				40
-#define MONITOR_MAX_HISTORY_LENGTH			5
+#define MONITOR_MAX_COMMAND_LENGTH			(255U)
+#define MONITOR_COMMAND_ARG_COUNT			(3)
+#define MONITOR_COMMAND_ARG_MAX_LENGTH		(40)
+#define MONITOR_HISTORY_MAX_LENGTH			(5)
 
 
 #define MONITOR_WELCOME_DATE_VERSION	__DATE__

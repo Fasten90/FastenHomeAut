@@ -98,7 +98,7 @@ uint32_t CommandFunction_raspberrypi 	( uint32_t argc, char** argv );
  
  
 // Command Function
-typedef uint32_t ( *FunctionPointer )( uint32_t argc, char** argv );
+typedef uint32_t ( *FunctionPointer )( uint32_t argc, char** COMMAND_Arguments );
 
 
 // Command struct
