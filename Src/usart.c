@@ -321,7 +321,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 	#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	if ( UartHandle == &Debug_UartHandle )
 	{
-		// TODO: m·smilyen engedÈlyezı flag kell ide
+		// TODO: m√°smilyen enged√©lyez≈ë flag kell ide
 		//if ( MONITOR_CommandEnable )
 		//{
 			HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[USART_RxBufferWriteCounter], RX_BUFFER_WAIT_LENGTH);
@@ -515,6 +515,14 @@ bool USART_SendMessage ( const char *aTxBuffer )
 }
 
 
+
+bool USART_SendLine (const char *message)
+{
+	bool isSuccessful = true;
+	isSuccessful &= USART_SendMessage(message);
+	isSuccessful &= USART_SendMessage("\r\n");
+	return isSuccessful;
+}
 
 
 

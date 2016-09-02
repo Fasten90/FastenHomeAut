@@ -2,14 +2,12 @@
  * monitor.c
  *
  *		Created on:		2013.10.08.
- *    	Author: 		Vizi Gábor
+ *    	Author: 		Vizi G�bor
  *		E-mail:			vizi.gabor90@gmail.com
- *		University:		BME (BUTE)
- *		Project: 		RadioAlarm - Radio Alarm System modules
  *		Function:		Monitor program, communication with UART, execute commands
- *		Target:			STM32F107RC
- *		Version:		v3
- *		Last modified:	2014.08.07
+ *		Target:			STM32Fx
+ *		Version:		v4
+ *		Last modified:	2016.09.02
  */
 
 
@@ -121,7 +119,8 @@ static void ProcessReceivedCharacter(void);
 
 // Function: Init Monitor program
 // TODO: kiszedve a kikuldes, mert faultot okoz, ha nincs kapcsolat
-uint8_t MONITOR_Init ( void ) {
+void MONITOR_Init ( void )
+{
 
 	// INIT									// Init CommandActual
 
@@ -143,12 +142,12 @@ uint8_t MONITOR_Init ( void ) {
 	// !!IMPORTANT!! Nem szabad kikuldeni uzenetet a kapcsolat letrejotte elott, mert faultba juthatunk.
 	
 	
-	return RETURN_SUCCESS;
+	return;
 }
 
 
 
-uint8_t MONITOR_SendWelcome ( void )
+void MONITOR_SendWelcome ( void )
 {
 
 
@@ -170,35 +169,35 @@ uint8_t MONITOR_SendWelcome ( void )
 
 	
 	USART_SEND_CLS();						// Clean screen
-	MONITOR_SEND_WELCOME();					// Üdvözlo üzenet
-	USART_SEND_NEW_LINE();					// Új sor
+	MONITOR_SEND_WELCOME();					// ĂśdvĂ¶zlo ĂĽzenet
+	USART_SEND_NEW_LINE();					// Ăšj sor
 
 	// USART_ESCAPE_BACKGROUND_DEFAULT()
 	// USART_ESCAPE_RESET()
 
 
-	//USART_SendStringWithBackgroundColor("Színes háttér!");
+	//USART_SendStringWithBackgroundColor("SzĂ­nes hĂˇttĂ©r!");
 	USART_SEND_NEW_LINE();
 
-	USART_ESCAPE_TEXT_BLACK();				// Teszt üzenet
+	USART_ESCAPE_TEXT_BLACK();				// Teszt ĂĽzenet
 	USART_ESCAPE_BACKGROUND_GREEN();
 	USART_SendString("Example VALID message.\r\n");
 
-	USART_ESCAPE_BACKGROUND_RED();			// Teszt üzenet
+	USART_ESCAPE_BACKGROUND_RED();			// Teszt ĂĽzenet
 	USART_SendString("Example INVALID message.\r\n");
 
-	USART_ESCAPE_BACKGROUND_WHITE();		// Fehér háttérszín
+	USART_ESCAPE_BACKGROUND_WHITE();		// FehĂ©r hĂˇttĂ©rszĂ­n
 
 
 	USART_SEND_NEW_LINE();
-	MONITOR_SEND_PROMT();					// Új promt
+	MONITOR_SEND_PROMT();					// Ăšj promt
 
-	return RETURN_SUCCESS;
+	return;
 }
 
 
 
-uint8_t MONITOR_SendPrimitiveWelcome ( void )
+void MONITOR_SendPrimitiveWelcome ( void )
 {
 
 
@@ -216,22 +215,20 @@ uint8_t MONITOR_SendPrimitiveWelcome ( void )
 	USART_SEND_NEW_LINE();
 	MONITOR_SEND_PROMT();					// New promt
 
-	return RETURN_SUCCESS;
+	return;
 	
 }
 
 
 
 // Function: Always run, wait command and execute it
-uint8_t MONITOR_CheckCommand ( void ) {
+void MONITOR_CheckCommand ( void ) {
 
 	// Initialize
 
-	//char CommandActual[MONITOR_MAX_COMMAND_LENGTH];	// TODO: kiszedni, ki kell az EndCommand-bol is
-
 	
-	// TODO: glob�liss� ttenni oket
-	unsigned int argc;
+	// TODO: Glob�lis v�ltoz�v� tenni
+	uint8_t argc;
 	char *argv[3];
 
 	char CommandArg1[MONITOR_MAX_ARG_LENGTH];
@@ -252,21 +249,7 @@ uint8_t MONITOR_CheckCommand ( void ) {
 	argc = 0;
 	
 	// Initialize - End
-
-	// TODO: �talak�tani, jelenleg nincs �rtelme, mert RxBufferbe m�solunk
 	MONITOR_CommandEnable = 1;	// !! IMPORTANT !! Last initialize
-	
-	
-#ifdef CONFIG_USE_FREERTOS
-	xSemaphoreGive(DEBUG_USART_Tx_Semaphore);
-	// !!IMPORTANT!! Elso szemaforatadas, enged�lyezve az USART-on kiküldés
-#endif
-	//HAL_UART_Receive_IT(&BluetoothUartHandle, (uint8_t *)USART_RxBuffer, RXBUFFERSIZE);	// TODO: VG - USART - TEST - uzenetvaras
-
-	
-	
-	// Welcome message
-	MONITOR_SendPrimitiveWelcome();
 	
 
 #ifdef CONFIG_USE_FREERTOS
@@ -275,6 +258,10 @@ uint8_t MONITOR_CheckCommand ( void ) {
 	xSemaphoreGive(DEBUG_USART_Tx_Semaphore);
 	// Enable sendings
 #endif
+
+
+	// Welcome message
+	MONITOR_SendPrimitiveWelcome();
 
 
 	// Start receive
@@ -333,10 +320,10 @@ uint8_t MONITOR_CheckCommand ( void ) {
 						USART_SEND_NEW_LINE();
 						
 						// TODO: 1. parametert kiszedni
-						MONITOR_EndCommand ( (char *)MONITOR_CommandActual, argc, argv );	// Parancs megkeresése és futtatási kísérlet		
+						MONITOR_EndCommand ( (char *)MONITOR_CommandActual, argc, argv );	// Parancs megkeresĂ©se Ă©s futtatĂˇsi kĂ­sĂ©rlet		
 						
 						#ifdef USE_MONITOR_HISTORY
-						MONITOR_HISTORY_Save ();											// History-ba lementés
+						MONITOR_HISTORY_Save ();											// History-ba lementĂ©s
 						#endif
 					}
 					else {																	// There is no char in the line	
@@ -484,7 +471,8 @@ static void ProcessReceivedCharacter(void)
 
 
 // Function: Prepare (Separate) the command and Find and Run it...
-uint8_t MONITOR_EndCommand ( char *CommandActual, unsigned int argc, char** argv  ) {
+uint8_t MONITOR_EndCommand ( char *CommandActual, uint8_t argc, char** argv  )
+{
 
 	// Separate command
 	// CommandActual = MONITOR_CommandActual[]
@@ -509,28 +497,41 @@ uint8_t MONITOR_EndCommand ( char *CommandActual, unsigned int argc, char** argv
 
 // Function: Seperate words (command) to command word, and 2 argument
 // from char *CommandActul, to argv[0], [1], [2]
-uint8_t MONITOR_CommandSeparate ( char** argv, char *CommandActual ) {
+uint8_t MONITOR_CommandSeparate ( char** argv, char *CommandActual )
+{
 	// seperate command to argumentums
 	// return arc; = argumentum's num
 	// call from void MonitorWaitCommand(void);
 
-	int i;
-	int j = 0;
+	uint8_t i;
+	uint8_t j = 0;
 	uint8_t CommandArgCount = 1;	// 1-3	// Arguments num is 1, when we start separate
 
 
-	for (i=0; CommandActual[i]!='\0'; i++) {
-		if ( CommandActual[i] != ' '  ) {						// Not space, copy char to  Argument (CommandArgX[])
+	for (i=0; CommandActual[i]!='\0'; i++)
+	{
+		if ( CommandActual[i] != ' '  )
+		{
+			// Not space, copy char to  Argument (CommandArgX[])
 			argv[CommandArgCount-1][j] = CommandActual[i];
 			j++;
 		}
-		else {													// It's space or the end, skip the space
+		else
+		{													// It's space or the end, skip the space
 			argv[CommandArgCount-1][j] = '\0';
 			CommandArgCount++;
 			j = 0;
-			if ( CommandArgCount >3) { uprintf("Too many arguments!\r\n"); return 0; }
+			if ( CommandArgCount >3)
+			{
+				uprintf("Too many arguments!\r\n");
+				return 0;
+			}
 		}
-		if ( j >= MONITOR_MAX_ARG_LENGTH ) { uprintf("Too long argument!\r\n"); return 0;}
+		if ( j >= MONITOR_MAX_ARG_LENGTH )
+		{
+			uprintf("Too long argument!\r\n");
+			return 0;
+		}
 	} // End of copies
 
 	argv[CommandArgCount-1][j] = '\0';							// Last argument's end
@@ -544,19 +545,24 @@ uint8_t MONITOR_CommandSeparate ( char** argv, char *CommandActual ) {
 
 
 // Function: Find the command
-uint8_t MONITOR_CommandFind( unsigned int argc, char** argv ) {
+uint8_t MONITOR_CommandFind ( uint8_t argc, char** argv )
+{
 
 	uint8_t i;
-	uint8_t CommandValid = 0;
+	bool CommandValid = false;
 	FunctionPointer	thisFunction;
 	uint8_t commandNum = COMMAND_GetCommandNum();
-
+	// TODO: get the command.c "MAX_COMMAND_NUM" define
 	
 	// Find the command
 	//for (i=0; i < MONITOR_MAX_COMMAND_NUM; i++) {		// Need an correct "MAX_COMMAND_NUM" define
 	//for (i=0; CommandList[i].name != NULL; i++) {		// If last command = 0
-	for (i=0; i < commandNum; i++) {					// get the command.c "MAX_COMMAND_NUM" define
-		if (!StrCmp(argv[0],CommandList[i].name)) {						// Found the command
+	for (i=0; i < commandNum; i++)
+	{
+
+		if (!StrCmp(argv[0],CommandList[i].name))
+		{
+			// Found the command
 			thisFunction = ( FunctionPointer )CommandList[i].CommandFunctionPointer;	// execute the command function
 			thisFunction(argc,argv);
 			CommandValid = 1;											// Valid Command
@@ -564,13 +570,17 @@ uint8_t MONITOR_CommandFind( unsigned int argc, char** argv ) {
 		}
 	}
 
-	// Valid command or not?
-	if (!CommandValid) {
-		uprintf("Unknown Command.\r\n");	// Has valid command? If not, throw error text
-		return RETURN_SUCCESS;
+	// Is valid command?
+	if (CommandValid)
+	{
+		// Valid command
+		return RETURN_FALSE;
 	}
-	else {
-		return RETURN_FALSE;				// Valid command
+	else
+	{
+		// Error, wrong command
+		USART_SendLine("Unknown Command");
+		return RETURN_SUCCESS;
 	}
 
 }
@@ -580,12 +590,16 @@ uint8_t MONITOR_CommandFind( unsigned int argc, char** argv ) {
 /*
 \brief			Command's letter deleting (backspace)
 */
-uint8_t MONITOR_CommandBackspace ( void ) {
+void MONITOR_CommandBackspace ( void )
+{
 	uint8_t i;
 
-	if (MONITOR_CommandActualLength > 0) {
-
-		if ( MONITOR_CommandCursorPosition == MONITOR_CommandActualLength) {
+	if (MONITOR_CommandActualLength > 0)
+	{
+		// If has command
+		// Cursor at end?
+		if ( MONITOR_CommandCursorPosition == MONITOR_CommandActualLength)
+		{
 			MONITOR_CommandActual[--MONITOR_CommandCursorPosition] = '\0';	// del from CommandActual, and Position--
 			MONITOR_CommandActualLength--;
 			
@@ -666,9 +680,14 @@ uint8_t MONITOR_CommandBackspace ( void ) {
 #endif
 
 		}
-		else {										// CursorPosition != CommandLength, we are in command chars
+		else
+		{
+			// CursorPosition != CommandLength, we are in command chars
+			// Cursor not at end
 
-			if ( MONITOR_CommandCursorPosition > 0 ) {			// not at 0 position
+			if ( MONITOR_CommandCursorPosition > 0 )
+			{
+				// not at 0 position
 
 				// Procedure:
 				// copy CommandActual
@@ -680,7 +699,8 @@ uint8_t MONITOR_CommandBackspace ( void ) {
 				MONITOR_CommandActualLength--;
 				MONITOR_CommandCursorPosition--;
 
-				for ( i = MONITOR_CommandCursorPosition; i < MONITOR_CommandActualLength; i++ ) {
+				for ( i = MONITOR_CommandCursorPosition; i < MONITOR_CommandActualLength; i++ )
+				{
 					MONITOR_CommandActual[i] = MONITOR_CommandActual[i+1];		// copy
 				}
 				MONITOR_CommandActual[i] = '\0';
@@ -706,7 +726,7 @@ uint8_t MONITOR_CommandBackspace ( void ) {
 			}
 		}
 	}
-	return RETURN_SUCCESS;			// not do anything
+	return;			// not do anything
 }
 
 
@@ -714,7 +734,8 @@ uint8_t MONITOR_CommandBackspace ( void ) {
 /*
 \brief		Resend the actual line/command
 */
-uint8_t MONITOR_CommandResendLine ( void ) {
+void MONITOR_CommandResendLine ( void )
+{
 
 	//step right
 	USART_ESCAPE_CURSORRIGHT();
@@ -735,7 +756,7 @@ uint8_t MONITOR_CommandResendLine ( void ) {
 	// Restore the position
 	USART_ESCAPE_RESTORECURSOR();
 
-	return RETURN_SUCCESS;
+	return;
 }
 
 
@@ -743,7 +764,8 @@ uint8_t MONITOR_CommandResendLine ( void ) {
 /*
 \brief		Resend an new line/command
 */
-uint8_t MONITOR_NewCommandResendLine ( void ) {
+uint8_t MONITOR_NewCommandResendLine ( void )
+{
 
 	// Delete the line
 	USART_ESCAPE_DELETELINE();
@@ -763,29 +785,31 @@ uint8_t MONITOR_NewCommandResendLine ( void ) {
 /*
 \brief		Process Excape sequence
 */
-uint8_t MONITOR_CommandEscapeCharValidation ( void ) {
+bool MONITOR_CommandEscapeCharValidation ( void )
+{
 	// return valid char, or 0 if invalid
 	// work with ANSI escape codes
 
-	if (MONITOR_CommandActualEscape[0] == '\x1B') { 								// ESC
-		if ( MONITOR_CommandActualEscape[1] == '[' )							// '[', escape sequence 2. letter
+	if (MONITOR_CommandActualEscape[0] == '\x1B')				// ESC
+	{
+		if ( MONITOR_CommandActualEscape[1] == '[' )			// '[', escape sequence 2. letter
 		{
 			// This is an escape sequence
-			if ( MONITOR_CommandActualEscape[2] == 'A' )						// Up cursor		// previous History command
+			if ( MONITOR_CommandActualEscape[2] == 'A' )		// Up cursor = previous History command
 			{
 				#ifdef USE_MONITOR_HISTORY
 				MONITOR_HISTORY_Load ( 1 );
 				#endif
 				return RETURN_SUCCESS;
 			}
-			else if ( MONITOR_CommandActualEscape[2] == 'B' )					// Down cursor		// next History command
+			else if ( MONITOR_CommandActualEscape[2] == 'B' )	// Down cursor		// next History command
 			{
 				#ifdef USE_MONITOR_HISTORY
 				MONITOR_HISTORY_Load ( 0 );
 				#endif
 				return RETURN_SUCCESS;
 			}
-			else if (  MONITOR_CommandActualEscape[2] == 'C' )					// Right cursor
+			else if (  MONITOR_CommandActualEscape[2] == 'C' )	// Right cursor
 			{
 				if ( MONITOR_CommandCursorPosition < MONITOR_CommandActualLength )	// if not at end
 				{
@@ -795,7 +819,8 @@ uint8_t MONITOR_CommandEscapeCharValidation ( void ) {
 				}
 				else return RETURN_SUCCESS;								// not do anything
 			}
-			else if (  MONITOR_CommandActualEscape[2] == 'D' )	{		// Left cursor
+			else if (  MONITOR_CommandActualEscape[2] == 'D' )			// Left cursor
+			{
 				if ( MONITOR_CommandCursorPosition > 0 )				// if not at start
 				{
 					USART_ESCAPE_CURSORLEFT();
@@ -822,14 +847,16 @@ uint8_t MONITOR_CommandEscapeCharValidation ( void ) {
 
 
 #ifdef USE_MONITOR_HISTORY
-uint8_t MONITOR_HISTORY_Save ( void )
+void MONITOR_HISTORY_Save ( void )
 {
 
-	if ( MONITOR_HISTORY_IsInIt() == RETURN_SUCCESS )	// Ha van egyezo
+	// Has equal command?
+	if ( MONITOR_HISTORY_IsInIt() == RETURN_SUCCESS )
 	{
-		return RETURN_SUCCESS;
+		return;
 	}
 
+	// Actual save counter
 	if ( MONITOR_HISTORY_Save_cnt >= ( MONITOR_MAX_HISTORY_LENGTH-1 ) )
 	{
 		MONITOR_HISTORY_Save_cnt = 0;
@@ -838,13 +865,15 @@ uint8_t MONITOR_HISTORY_Save ( void )
 	{
 		MONITOR_HISTORY_Save_cnt++;
 	}
+
+	// This command is the last
 	MONITOR_HISTORY_Load_cnt = MONITOR_HISTORY_Save_cnt;	// amit most gepeltunk be, az az utolso
 
-
+	// Save command
 	StrCpy ( MONITOR_HISTORY[MONITOR_HISTORY_Save_cnt], (char *)MONITOR_CommandActual );
 
 
-	return RETURN_SUCCESS;
+	return;
 
 }
 #endif
@@ -852,22 +881,22 @@ uint8_t MONITOR_HISTORY_Save ( void )
 
 
 // Function: van-e a history-ban
-// return RETURN_SUCCESS, ha van megegyezo
-// return RETURN_FALSE, ha nincs megegyezo
+// return true, ha van megegyezo
+// return false, ha nincs megegyezo
 #ifdef USE_MONITOR_HISTORY
-uint8_t MONITOR_HISTORY_IsInIt ( void )
+bool MONITOR_HISTORY_IsInIt ( void )
 {
-	int i;
+	uint8_t i;
 	
 	for ( i = 0; i < MONITOR_MAX_HISTORY_LENGTH; i++ )
 	{
 		if ( !StrCmp((const char *)MONITOR_HISTORY[i],(const char * )MONITOR_CommandActual))	// If it is equal
 		{
-			return RETURN_SUCCESS; // van megegyezo
+			return true; // Has equal command
 		}
 	}
 
-	return RETURN_FALSE; // nincs megegyezo
+	return false; // nincs megegyezo
 
 }
 #endif
@@ -875,7 +904,7 @@ uint8_t MONITOR_HISTORY_IsInIt ( void )
 
 
 #ifdef USE_MONITOR_HISTORY
-uint8_t MONITOR_HISTORY_Load ( uint8_t direction )
+void MONITOR_HISTORY_Load ( uint8_t direction )
 {
 
 	// down cursor
@@ -918,7 +947,7 @@ uint8_t MONITOR_HISTORY_Load ( uint8_t direction )
 	}
 
 
-	return RETURN_SUCCESS;
+	return;
 
 }
 #endif
@@ -926,11 +955,11 @@ uint8_t MONITOR_HISTORY_Load ( uint8_t direction )
 
 
 /*
-\brief		MONITOR_Actual konvertálása kisbetusre...
+\brief		Convert MONITOR_CommandActual (Actual command) to small letters
 */
-uint8_t MONITOR_ConvertSmallLetter( void )
+void MONITOR_ConvertSmallLetter ( void )
 {
-	int i;
+	uint8_t i;
 	
 	for ( i = 0; MONITOR_CommandActual[i] != '\0'; i++ )
 	{
@@ -938,10 +967,9 @@ uint8_t MONITOR_ConvertSmallLetter( void )
 		{	// need to change to small letter
 			MONITOR_CommandActual[i] = MONITOR_CommandActual[i] - ( 'A' - 'a'); // length between Big Letter and small letter
 		}
-		//else OK;
 	}
 
-	return RETURN_SUCCESS;
+	return;
 	
 }
 

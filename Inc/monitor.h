@@ -64,27 +64,27 @@ typedef struct {
 
 
 
-uint8_t MONITOR_Init ( void );
-uint8_t MONITOR_SendWelcome ( void );
-uint8_t MONITOR_SendPrimitiveWelcome ( void );
+void MONITOR_Init ( void );
+void MONITOR_SendWelcome ( void );
+void MONITOR_SendPrimitiveWelcome ( void );
 
-uint8_t MONITOR_CheckCommand ( void );
-uint8_t MONITOR_EndCommand ( char *CommandActual, unsigned int argc, char** argv  );
+void MONITOR_CheckCommand ( void );
+uint8_t MONITOR_EndCommand ( char *CommandActual, uint8_t argc, char** argv  );
 uint8_t MONITOR_CommandSeparate ( char** argv, char *CommandActual );
-uint8_t MONITOR_CommandFind (unsigned int argc, char** argv );
+uint8_t MONITOR_CommandFind ( uint8_t argc, char** argv );
 //uint8_t MONITOR_CommandListInitialize (void);
 
-uint8_t MONITOR_CommandBackspace ( void );
-uint8_t MONITOR_CommandResendLine ( void );
-uint8_t MONITOR_CommandEscapeCharValidation ( void );
+void MONITOR_CommandBackspace ( void );
+void MONITOR_CommandResendLine ( void );
+bool MONITOR_CommandEscapeCharValidation ( void );
+
+// Monitor history
+void MONITOR_HISTORY_Save ( void );
+bool MONITOR_HISTORY_IsInIt ( void );
+void MONITOR_HISTORY_Load ( uint8_t direction );
 
 
-uint8_t MONITOR_HISTORY_Save ( void );
-uint8_t MONITOR_HISTORY_IsInIt ( void );
-uint8_t MONITOR_HISTORY_Load ( uint8_t direction );
-
-
-uint8_t MONITOR_ConvertSmallLetter( void );
+void MONITOR_ConvertSmallLetter ( void );
 
 
 

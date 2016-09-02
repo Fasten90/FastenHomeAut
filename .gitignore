@@ -81,3 +81,5 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+Debug/STM32F407DiscoHomeAut.elf.list
+*.list
