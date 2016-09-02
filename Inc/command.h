@@ -17,11 +17,53 @@
  *----------------------------------------------------------------------------*/
 
 
-
-
 #define NUM_OF(x) (sizeof(x)/sizeof(x[0]))
 	
 #define MONITOR_MAX_COMMAND_NUM				(uint8_t)( NUM_OF(CommandList))
+
+
+/*------------------------------------------------------------------------------
+ *  Type definitions
+ *----------------------------------------------------------------------------*/
+
+
+// Command Function
+typedef uint32_t ( *FunctionPointer )( uint32_t argc, char** COMMAND_Arguments );
+
+
+// Command struct
+typedef struct
+{
+	const char *name;
+	const FunctionPointer *CommandFunctionPointer;
+	const char *description;
+	const uint8_t ArgNum;
+} CommandStruct;
+
+
+// Command results
+typedef enum
+{
+	CommandResult_Unknown = 0,
+	CommandResult_Ok,
+	CommandResult_Error_WrongArgument1,
+	CommandResult_Error_WrongArgument2,
+	CommandResult_Error_TooFewArgument,
+	CommandResult_Error_WrongArgumentNum,
+	CommandResult_Error_TooManyArgument,
+	CommandResult_Error_CommandArgNumIsWrong
+} CommandResult_t;
+
+
+
+
+/*------------------------------------------------------------------------------
+ *  Global variables
+ *----------------------------------------------------------------------------*/
+
+extern const CommandStruct CommandList[];
+
+extern const uint8_t MONITOR_CommandNum;
 
 
 
@@ -29,7 +71,6 @@
 *  Global function declarations
 *----------------------------------------------------------------------------*/
  
-extern uint8_t COMMAND_GetCommandNum( void );
 
 
 
@@ -90,50 +131,6 @@ uint32_t CommandFunction_flashwrite	( uint32_t argc, char** argv );
 
 uint32_t CommandFunction_ESP8266	( uint32_t argc, char** argv );
 uint32_t CommandFunction_raspberrypi 	( uint32_t argc, char** argv );
-	
-	
-/*------------------------------------------------------------------------------
- *  Type definitions
- *----------------------------------------------------------------------------*/
- 
- 
-// Command Function
-typedef uint32_t ( *FunctionPointer )( uint32_t argc, char** COMMAND_Arguments );
-
-
-// Command struct
-typedef struct {
-	char * name;
-	FunctionPointer *CommandFunctionPointer;
-	char * description;
-} CommandStruct;
-
-
-
-
-
-/*------------------------------------------------------------------------------
- *  Global variables
- *----------------------------------------------------------------------------*/
-
-extern const CommandStruct CommandList[];
- 
-
-//extern CommandStruct CommandList[];
-//extern CommandStruct CommandList[MONITOR_MAX_COMMAND_NUM];
-
-
-
-/*------------------------------------------------------------------------------
- *  Local variables
- *----------------------------------------------------------------------------*/
-
-
-/*------------------------------------------------------------------------------
- *  Local function declarations
- *----------------------------------------------------------------------------*/
-
-
 
 
 

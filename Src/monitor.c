@@ -11,19 +11,14 @@
  */
 
 
-
-
 #include "include.h"
 #include "stdint.h"
 #include "command.h"
 
 #include "monitor.h"
 
-	
-
 
 ///////////////////////////// MONITOR
-
 
 
 /////////////////////////////
@@ -31,9 +26,6 @@
 // FUNCTIONS
 // COMMAND FUNCTIONS
 /////////////////////////////
-
-
-
 
 
 // GLOBAL VARIABLES
@@ -61,12 +53,14 @@ volatile uint8_t MONITOR_CommandSendBackChar_Enable = 0;
 
 uint8_t COMMAND_ArgCount;
 
+
 char CommandArg1[MONITOR_COMMAND_ARG_MAX_LENGTH];
 char CommandArg2[MONITOR_COMMAND_ARG_MAX_LENGTH];
 char CommandArg3[MONITOR_COMMAND_ARG_MAX_LENGTH];
 
 char *COMMAND_Arguments[MONITOR_COMMAND_ARG_MAX_LENGTH] = { CommandArg1, CommandArg2, CommandArg3 } ;
 
+//char COMMAND_Arguments[MONITOR_COMMAND_ARG_MAX_LENGTH][MONITOR_COMMAND_ARG_MAX_LENGTH] = { 0 };
 
 
 #ifdef CONFIG_USE_FREERTOS
@@ -553,22 +547,20 @@ bool MONITOR_CommandFind ()
 
 	uint8_t i;
 	bool CommandValid = false;
-	FunctionPointer	thisFunction;
-	uint8_t commandNum = COMMAND_GetCommandNum();
-	// TODO: get the command.c "MAX_COMMAND_NUM" define
-	
+
 	// Find the command
 	//for (i=0; i < MONITOR_MAX_COMMAND_NUM; i++) {		// Need an correct "MAX_COMMAND_NUM" define
 	//for (i=0; CommandList[i].name != NULL; i++) {		// If last command = 0
-	for (i=0; i < commandNum; i++)
+	for (i=0; i < MONITOR_CommandNum; i++)
 	{
 
 		if (!StrCmp(COMMAND_Arguments[0],CommandList[i].name))
 		{
 			// Found the command
-			thisFunction = ( FunctionPointer )CommandList[i].CommandFunctionPointer;	// execute the command function
-			thisFunction(COMMAND_ArgCount,COMMAND_Arguments);
-			CommandValid = 1;											// Valid Command
+			MONITOR_RunCommand(i);
+
+			// Valid Command
+			CommandValid = true;
 			break;
 		}
 	}
@@ -977,3 +969,144 @@ void MONITOR_ConvertSmallLetter ( void )
 }
 
 
+
+/*
+ * \brief	Check result and write response
+ */
+void MONITOR_CheckResultAndRespond (CommandResult_t result)
+{
+	switch(result)
+	{
+	case CommandResult_Unknown:
+		USART_SendLine("Unknown error");
+		break;
+
+	case CommandResult_Ok:
+		// Not need response
+		break;
+
+	case CommandResult_Error_WrongArgument1:
+		USART_SendLine("Argument error");
+		break;
+
+	case CommandResult_Error_TooFewArgument:
+		USART_SendLine("Too few argument");
+		break;
+
+	case CommandResult_Error_TooManyArgument:
+		USART_SendLine("Too many argument");
+		break;
+
+	case CommandResult_Error_CommandArgNumIsWrong:
+		USART_SendLine("Command set is wrong");
+		break;
+
+	default:
+		USART_SendLine("Unknown command process");
+		break;
+	}
+}
+
+
+
+void MONITOR_RunCommand ( uint8_t commandID )
+{
+
+	uint32_t result = CommandResult_Ok;
+	bool needWriteHelp = false;
+
+	// Check argument nums
+	result = MONITOR_ArgumentNumIsGood(COMMAND_ArgCount, CommandList[commandID].ArgNum);
+
+	if(result == CommandResult_Ok)
+	{
+		// Good
+
+		FunctionPointer thisFunction = ( FunctionPointer )CommandList[commandID].CommandFunctionPointer;
+
+		// Execute the command function
+		result = thisFunction(COMMAND_ArgCount,(char**)COMMAND_Arguments);
+	}
+	else
+	{
+		// if not Ok, write help
+		needWriteHelp = true;
+	}
+
+
+
+	// Write result if need
+	MONITOR_CheckResultAndRespond(result);
+
+	if(needWriteHelp)
+	{
+		MONITOR_WriteAnCommandHelp (commandID);
+	}
+
+}
+
+
+
+void MONITOR_WriteAnCommandHelp ( uint8_t commandID )
+{
+	USART_SendMessage("Command name: ");
+	USART_SendLine(CommandList[commandID].name);
+	USART_SendLine("Function:");
+	USART_SendLine(CommandList[commandID].description);
+
+}
+
+
+CommandResult_t MONITOR_ArgumentNumIsGood ( uint8_t receivedArgNum, uint8_t commandArgNum)
+{
+	// Check ArgNum. bit is set?
+	if (receivedArgNum > MONITOR_COMMAND_ARG_COUNT)
+	{
+		return CommandResult_Error_TooManyArgument;
+	}
+	if (commandArgNum > 0b111)
+	{
+		return CommandResult_Error_CommandArgNumIsWrong;
+	}
+
+	if( commandArgNum & (1 << (receivedArgNum-1)))
+	{
+		// Good, there is this bit
+		return CommandResult_Ok;
+	}
+	else
+	{
+		volatile uint8_t maxRequiredArgNum = 0;
+		uint8_t minRequiredArgNum = 0;
+		uint8_t i;
+		for (i=0; i<8; i++)
+		{
+			if(commandArgNum & (1 << i))
+			{
+				maxRequiredArgNum = i+1;
+				if(minRequiredArgNum == 0)
+				{
+					minRequiredArgNum = i+1;
+				}
+			}
+		}
+		
+		// Check min, max
+		if (receivedArgNum < minRequiredArgNum)
+		{
+			// Too few
+			return CommandResult_Error_TooFewArgument;
+		}
+		else if (receivedArgNum > maxRequiredArgNum)
+		{
+			// Too many
+			return CommandResult_Error_TooManyArgument;
+		}
+		else
+		{
+			// Wrong num
+			return CommandResult_Error_WrongArgumentNum;
+		}
+	}
+
+}

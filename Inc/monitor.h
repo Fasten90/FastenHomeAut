@@ -17,6 +17,7 @@
 
 
 #include "include.h"
+#include "command.h"
 
 
 ///////////////////////////// MONITOR
@@ -58,42 +59,13 @@ typedef struct {
 
 
 
-
-
-/////////////////////////////  PROTOTYPES
-
-
-
-void MONITOR_Init ( void );
-void MONITOR_SendWelcome ( void );
-void MONITOR_SendPrimitiveWelcome ( void );
-
-void MONITOR_CheckCommand ( void );
-bool MONITOR_EndCommand ( void );
-uint8_t MONITOR_CommandSeparate ( void );
-bool MONITOR_CommandFind ( void );
-
-void MONITOR_CommandBackspace ( void );
-void MONITOR_CommandResendLine ( void );
-bool MONITOR_CommandEscapeCharValidation ( void );
-
-// Monitor history
-void MONITOR_HISTORY_Save ( void );
-bool MONITOR_HISTORY_IsInIt ( void );
-void MONITOR_HISTORY_Load ( uint8_t direction );
-
-
-void MONITOR_ConvertSmallLetter ( void );
-
-
-
 /////////////////////////////  DEFINES
 
 
 
 #define MONITOR_MAX_COMMAND_LENGTH			(255U)
 #define MONITOR_COMMAND_ARG_COUNT			(3)
-#define MONITOR_COMMAND_ARG_MAX_LENGTH		(40)
+#define MONITOR_COMMAND_ARG_MAX_LENGTH		(80)
 #define MONITOR_HISTORY_MAX_LENGTH			(5)
 
 
@@ -166,6 +138,39 @@ extern xSemaphoreHandle DEBUG_USART_Rx_Semaphore;
 extern xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
 #endif
 
+
+
+
+
+/////////////////////////////  PROTOTYPES
+
+
+
+void MONITOR_Init ( void );
+void MONITOR_SendWelcome ( void );
+void MONITOR_SendPrimitiveWelcome ( void );
+
+void MONITOR_CheckCommand ( void );
+bool MONITOR_EndCommand ( void );
+uint8_t MONITOR_CommandSeparate ( void );
+bool MONITOR_CommandFind ( void );
+
+void MONITOR_CommandBackspace ( void );
+void MONITOR_CommandResendLine ( void );
+bool MONITOR_CommandEscapeCharValidation ( void );
+
+// Monitor history
+void MONITOR_HISTORY_Save ( void );
+bool MONITOR_HISTORY_IsInIt ( void );
+void MONITOR_HISTORY_Load ( uint8_t direction );
+
+
+void MONITOR_ConvertSmallLetter ( void );
+
+void MONITOR_CheckResultAndRespond(CommandResult_t result);
+void MONITOR_RunCommand ( uint8_t commandID );
+void MONITOR_WriteAnCommandHelp ( uint8_t commandID );
+CommandResult_t MONITOR_ArgumentNumIsGood ( uint8_t receivedArgNum, uint8_t commandArgNum);
 
 
 
