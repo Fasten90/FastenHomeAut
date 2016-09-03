@@ -37,6 +37,7 @@ typedef struct
 	const char *name;
 	const FunctionPointer *CommandFunctionPointer;
 	const char *description;
+	const char *syntax;
 	const uint8_t ArgNum;
 } CommandStruct;
 

@@ -38,17 +38,17 @@ const CommandStruct CommandList[] =
 {
 	/*
 	{
-		.name = "stop",														// name
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_stop,	// Function
-		.description = "stop\r\n"												// Describe
+		.name = "stop",
+		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_stop,
+		.description = "stop\r\n"
 	},
 	*/
 	
 	{
 		.name = "help",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_help,
-		.description = "Commands's list, or write command's propertities\r\n"
-		"  Syntax: help <command>",
+		.description = "Commands's list, or write command's propertities",
+		.syntax = "<command>",
 		.ArgNum = (1 << 1) | (1 << 0),
 	},
 	
@@ -57,6 +57,7 @@ const CommandStruct CommandList[] =
 		.name = "reset",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_reset,
 		.description = "Software reset",
+		.syntax = NULL,
 		.ArgNum = (1 << 0),
 	},
 
@@ -64,6 +65,7 @@ const CommandStruct CommandList[] =
 		.name = "cls",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_cls,
 		.description = "Clear Screen",
+		.syntax = "",
 		.ArgNum = (1 << 0),
 	},
 
@@ -71,6 +73,7 @@ const CommandStruct CommandList[] =
 		.name = "test",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_test,
 		.description = "...",
+		.syntax = "",
 		.ArgNum = (1 << 0),
 	},
 
@@ -105,8 +108,8 @@ const CommandStruct CommandList[] =
 	{
 		.name = "led",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_led,
-		.description = "Control LED\r\n"
-						"led <on/off/toggle/status> <num>",
+		.description = "Control LED",
+		.syntax = "<on/off/toggle/status> <num>",
 		.ArgNum = (1 << 2) | (1 << 1),
 		/*
 		"  <num>: decimal: 1-3\r\n"
@@ -133,7 +136,8 @@ const CommandStruct CommandList[] =
 	{
 		.name = "flashdel",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_flashdel,
-		.description = "Syntax: flashdel <address> <block/sector>",
+		.description = "Delete flash",
+		.syntax = "<address> <block/sector>",
 		.ArgNum = (1 << 2),
 	},
 
@@ -141,7 +145,8 @@ const CommandStruct CommandList[] =
 	{
 		.name = "flashread",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_flashread,
-		.description = "Syntax: flashread <address>",
+		.description = "Read from flash",
+		.syntax = "<address>",
 		.ArgNum = (1 << 1),
 	},
 
@@ -149,7 +154,8 @@ const CommandStruct CommandList[] =
 	{
 		.name = "flashwrite",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_flashwrite,
-		.description = "Syntax: flashwrite <address> <byte>",
+		.description = "Write flash",
+		.syntax = "<address> <byte>",
 		.ArgNum = (1 << 2),
 	},
 
@@ -158,6 +164,7 @@ const CommandStruct CommandList[] =
 		.name = "temperature",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_temp,
 		.description = "...",
+		.syntax = NULL,
 		.ArgNum = (1 << 0),
 	},
 
@@ -169,12 +176,15 @@ const CommandStruct CommandList[] =
 	},
 	*/
 	
+	/*
 	{
 		.name = "#raspi",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_raspberrypi,
 		.description = "Raspberry Pi HomeAutMessage sending",
+		.syntax = "-",
 		.ArgNum = (1 << 1)
 	}
+	*/
 	
 		
 };
@@ -1727,6 +1737,7 @@ uint32_t CommandFunction_flashwrite	( uint32_t argc, char** argv ) {
 
 
 // Function: Raspberry pi bridge
+#if 0
 uint32_t CommandFunction_raspberrypi	( uint32_t argc, char** argv ) {
 
 #ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
@@ -1763,7 +1774,7 @@ uint32_t CommandFunction_raspberrypi	( uint32_t argc, char** argv ) {
 	
 	return CommandResult_Ok;
 }
-
+#endif
 
 
 /*

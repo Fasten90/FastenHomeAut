@@ -30,7 +30,7 @@
 
 // GLOBAL VARIABLES
 
-
+// TODO: nullázni a változókat?
 volatile char MONITOR_CommandActual[MONITOR_MAX_COMMAND_LENGTH];
 volatile char MONITOR_CommandActualEscape[3];
 
@@ -1051,8 +1051,9 @@ void MONITOR_WriteAnCommandHelp ( uint8_t commandID )
 {
 	USART_SendMessage("Command name: ");
 	USART_SendLine(CommandList[commandID].name);
-	USART_SendLine("Function:");
+	USART_SendMessage("Function: ");
 	USART_SendLine(CommandList[commandID].description);
+	uprintf("Syntax: %s %s\r\n", CommandList[commandID].name, CommandList[commandID].syntax);
 
 }
 
