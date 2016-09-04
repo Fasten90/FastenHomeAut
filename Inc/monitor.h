@@ -24,38 +24,11 @@
 
 
 /////////////////////////////
-// TYPEDEFS
-// PROTOTYPES
 // DEFINES
+// TYPEDEFS
+// EXTERNED GLOBAL VARIABLES
+// EXTERNED PROTOTYPES
 /////////////////////////////
-
-
-/////////////////////////////  TYPEDEFS
-
-
-
-
-
-
-/*
-// For GlobalVars
-// TODO: NOT USED
-
-typedef void * ( *GetFunctionPointer )( void * );
-typedef void * ( *SetFunctionPointer )( void * );
-
-typedef uint8_t CommandGlobalVarType;
-
-typedef struct {
-	char * VarName;
-	CommandGlobalVarType type;
-	GetFunctionPointer *GetCommandFunctionPointer;
-	SetFunctionPointer *SetCommandFunctionPointer;
-} GlobalVariable_t;
-
-#define COMMAND_GLOBALVAR_TYPE_UINT8	(CommandGlobalVarType)1
-*/
-
 
 
 
@@ -107,8 +80,27 @@ typedef struct {
 #define USART_SEND_DUMMYSTRING()		USART_SendString(MONITOR_DUMMY_STRING)
 
 
-#define	RETURN_SUCCESS	1
-#define RETURN_FALSE	0
+/////////////////////////////  TYPEDEFS
+
+
+/*
+// For GlobalVars
+// TODO: NOT USED
+
+typedef void * ( *GetFunctionPointer )( void * );
+typedef void * ( *SetFunctionPointer )( void * );
+
+typedef uint8_t CommandGlobalVarType;
+
+typedef struct {
+	char * VarName;
+	CommandGlobalVarType type;
+	GetFunctionPointer *GetCommandFunctionPointer;
+	SetFunctionPointer *SetCommandFunctionPointer;
+} GlobalVariable_t;
+
+#define COMMAND_GLOBALVAR_TYPE_UINT8	(CommandGlobalVarType)1
+*/
 
 
 
@@ -116,21 +108,8 @@ typedef struct {
 
 extern volatile char MONITOR_CommandActual[MONITOR_MAX_COMMAND_LENGTH];
 extern volatile char MONITOR_CommandActualEscape[3];
-extern volatile uint8_t MONITOR_CommandEnable;
-extern volatile uint8_t MONITOR_CommandActualLength;
-extern volatile uint8_t MONITOR_CommandCursorPosition;
-extern volatile uint8_t MONITOR_CommandEvent;
-extern volatile uint8_t MONITOR_CommandReceivedLastChar;
-extern volatile uint8_t MONITOR_CommandReceivedNotLastChar;
-extern volatile uint8_t MONITOR_CommandReadable;
-extern volatile uint8_t	MONITOR_CommandEscapeSequenceReceived;
-extern volatile uint8_t	MONITOR_CommandEscapeSequenceInProgress;
-extern volatile uint8_t	MONITOR_CommandEscape_cnt;
-extern volatile uint8_t MONITOR_CommandReceivedBackspace;
-extern volatile uint8_t MONITOR_CommandSendBackChar_Enable;
-extern volatile uint8_t MONITOR_RemoteControl;
-extern char MONITOR_RemoteControlBuffer[5];
-extern char MONITOR_RemoteControlCharacter;
+
+extern const bool MONITOR_CommandReceiveEnable;
 
 
 #ifdef CONFIG_USE_FREERTOS
@@ -151,12 +130,13 @@ void MONITOR_SendWelcome ( void );
 void MONITOR_SendPrimitiveWelcome ( void );
 
 void MONITOR_CheckCommand ( void );
-bool MONITOR_EndCommand ( void );
+bool MONITOR_PrepareFindExecuteCommand ( void );
 uint8_t MONITOR_CommandSeparate ( void );
 bool MONITOR_CommandFind ( void );
 
 void MONITOR_CommandBackspace ( void );
 void MONITOR_CommandResendLine ( void );
+void MONITOR_NewCommandResendLine ( void );
 bool MONITOR_CommandEscapeCharValidation ( void );
 
 // Monitor history

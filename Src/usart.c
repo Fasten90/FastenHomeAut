@@ -11,8 +11,9 @@
 #include "board.h"
 
 #include "usart.h"
+#include "monitor.h"
 
-#include <stdarg.h>		// for "..." paramteres in uprintf function
+#include <stdarg.h>		// for "..." parameters in uprintf function
 
 
 
@@ -319,15 +320,18 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 	#endif
 
 	#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-	if ( UartHandle == &Debug_UartHandle )
+	if ( ( UartHandle == &Debug_UartHandle ) &&
+			( MONITOR_CommandReceiveEnable == true ) )
 	{
-		// TODO: másmilyen engedélyező flag kell ide
-		//if ( MONITOR_CommandEnable )
-		//{
-			HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[USART_RxBufferWriteCounter], RX_BUFFER_WAIT_LENGTH);
-			USART_RxBufferWriteCounter++;
+		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[USART_RxBufferWriteCounter], RX_BUFFER_WAIT_LENGTH);
+		USART_RxBufferWriteCounter++;
 
-		//}
+		#ifdef CONFIG_USE_FREERTOS
+		// Transmission end semaphore / flag
+		// Give semaphore
+		xSemaphoreGiveFromISR(DEBUG_USART_Rx_Semaphore,0);
+		#endif
+
 	}
 	#endif	// #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	
@@ -581,7 +585,7 @@ bool USART_SendChar ( char c )
  * \brief	Receive message with IT
  */
  #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-void USART_ReceiveMessage ( void )
+void USART_StartReceiveMessage ( void )
 {
 
 	// USART - Receive Message - uzenetvaras

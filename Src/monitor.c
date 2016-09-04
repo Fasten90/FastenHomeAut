@@ -31,35 +31,47 @@
 // GLOBAL VARIABLES
 
 // TODO: nullázni a változókat?
-volatile char MONITOR_CommandActual[MONITOR_MAX_COMMAND_LENGTH];
-volatile char MONITOR_CommandActualEscape[3];
+volatile char MONITOR_CommandActual[MONITOR_MAX_COMMAND_LENGTH] = { 0 };
+volatile char MONITOR_CommandActualEscape[3] = { 0 };
 
+// USART Read cnt
 volatile uint8_t USART_RxBufferReadCnt = 0;
 
-volatile uint8_t MONITOR_CommandEnable = 0;
+/////////////////////////////////
+//			Configs:
+/////////////////////////////////
+
+// Enable monitor
+const bool MONITOR_CommandReceiveEnable = true;
+// Enable sending back: "Echo mode"
+const bool MONITOR_CommandSendBackCharEnable = true;
+
+// Variables For Monitor
+volatile bool MONITOR_CommandReceivedEvent = false;
+volatile bool MONITOR_CommandReceivedLastChar = false;
+volatile bool MONITOR_CommandReceivedNotLastChar = false;
+volatile bool MONITOR_CommandReadable = false;
+volatile bool MONITOR_CommandReceivedBackspace =false;
+
 volatile uint8_t MONITOR_CommandActualLength = 0;
 volatile uint8_t MONITOR_CommandSentLength = 0;
-volatile uint8_t MONITOR_CommandCursorPosition;
-volatile uint8_t MONITOR_CommandEvent;
-volatile uint8_t MONITOR_CommandReceivedLastChar;
-volatile uint8_t MONITOR_CommandReceivedNotLastChar;
-volatile uint8_t MONITOR_CommandReadable;
-volatile uint8_t MONITOR_CommandEscapeSequenceReceived;
-volatile uint8_t MONITOR_CommandEscapeSequenceInProgress;
-volatile uint8_t MONITOR_CommandEscape_cnt;
-volatile uint8_t MONITOR_CommandReceivedBackspace;
-volatile uint8_t MONITOR_CommandSendBackChar_Enable = 0;
+volatile uint8_t MONITOR_CommandCursorPosition = 0;
+
+volatile bool MONITOR_CommandEscapeSequenceReceived = false;
+volatile uint8_t MONITOR_CommandEscapeSequenceInProgress = 0;
+volatile uint8_t MONITOR_CommandEscape_cnt = 0;
 
 
-uint8_t COMMAND_ArgCount;
+uint8_t COMMAND_ArgCount = 0;
 
 
-char CommandArg1[MONITOR_COMMAND_ARG_MAX_LENGTH];
-char CommandArg2[MONITOR_COMMAND_ARG_MAX_LENGTH];
-char CommandArg3[MONITOR_COMMAND_ARG_MAX_LENGTH];
+char CommandArg1[MONITOR_COMMAND_ARG_MAX_LENGTH] = { 0 };
+char CommandArg2[MONITOR_COMMAND_ARG_MAX_LENGTH] = { 0 };
+char CommandArg3[MONITOR_COMMAND_ARG_MAX_LENGTH] = { 0 };
 
 char *COMMAND_Arguments[MONITOR_COMMAND_ARG_MAX_LENGTH] = { CommandArg1, CommandArg2, CommandArg3 } ;
 
+// TODO: Megcsináljuk 2 dimenziósra a tömböt?
 //char COMMAND_Arguments[MONITOR_COMMAND_ARG_MAX_LENGTH][MONITOR_COMMAND_ARG_MAX_LENGTH] = { 0 };
 
 
@@ -70,6 +82,7 @@ xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
 
 
 #ifdef USE_MONITOR_HISTORY
+// TODO: Átalakítani úgy, hogy 0-át kelljen betölteni!
 uint8_t MONITOR_HISTORY_Save_cnt = MONITOR_HISTORY_MAX_LENGTH-1;
 uint8_t MONITOR_HISTORY_Load_cnt = MONITOR_HISTORY_MAX_LENGTH-1;
 char MONITOR_HISTORY[MONITOR_HISTORY_MAX_LENGTH][MONITOR_MAX_COMMAND_LENGTH] =
@@ -99,14 +112,14 @@ char MONITOR_HISTORY[MONITOR_HISTORY_MAX_LENGTH][MONITOR_MAX_COMMAND_LENGTH] =
 	#endif
 	#if ( MONITOR_HISTORY_MAX_LENGTH > 4 )
 	{
-		"test"
+		"reset"
 	}
 	#endif
 	#if ( MONITOR_HISTORY_MAX_LENGTH > 5 )
-	#warning isnt set monitor history commands
+	#warning "isnt set monitor history commands"
 	#endif
 #elif  (!MONITOR_HISTORY_MAX_LENGTH)
-#error USE_MONITOR_HISTORY define is defined, but MONITOR_HISTORY_MAX_LENGTH define is not set valid value.
+#error "USE_MONITOR_HISTORY define is defined, but MONITOR_HISTORY_MAX_LENGTH define is not set valid value."
 #endif
 };
 #endif
@@ -125,25 +138,23 @@ static void ProcessReceivedCharacter(void);
 void MONITOR_Init ( void )
 {
 
-	// INIT
+	// Init
 
-	MONITOR_CommandEvent = 0;
+	MONITOR_CommandReceivedEvent = false;
+	MONITOR_CommandReceivedNotLastChar = false;
+
 	MONITOR_CommandActualLength = 0;
 	MONITOR_CommandSentLength = 0;
 	MONITOR_CommandCursorPosition = 0;
-	MONITOR_CommandEscapeSequenceReceived = 0;
-	MONITOR_CommandEscapeSequenceInProgress = 0;
-	MONITOR_CommandReceivedLastChar = 0;
-	MONITOR_CommandReceivedNotLastChar = 0;
-	MONITOR_CommandEscape_cnt = 0;
-	MONITOR_CommandSendBackChar_Enable = 1;	// enable
 
-	//USART_TxBuffer[TXBUFFERSIZE-1] = '\0';
+	MONITOR_CommandEscapeSequenceReceived = false;
+	MONITOR_CommandEscapeSequenceInProgress = false;
+	MONITOR_CommandEscape_cnt = 0;
 
 	COMMAND_ArgCount = 0;
 
+	// End of init
 
-	// END OF INIT
 	return;
 }
 
@@ -224,7 +235,8 @@ void MONITOR_SendPrimitiveWelcome ( void )
 
 
 // Function: Always run, wait command and execute it
-void MONITOR_CheckCommand ( void ) {
+void MONITOR_CheckCommand ( void )
+{
 
 	// Initialize
 	//MONITOR_InitMonitor();	// Init
@@ -235,9 +247,6 @@ void MONITOR_CheckCommand ( void ) {
 #endif
 
 
-	// Initialize - End
-	MONITOR_CommandEnable = 1;	// !! IMPORTANT !! Last initialize
-	
 
 #ifdef CONFIG_USE_FREERTOS
 	vTaskDelay(10);
@@ -252,55 +261,53 @@ void MONITOR_CheckCommand ( void ) {
 
 
 	// Start receive
-	USART_ReceiveMessage();
+	USART_StartReceiveMessage();
 
 	while (1)
 	{
 
-		// TODO: Delete below CommandEnable flags
-
-		// always checking the Command
-		if ( MONITOR_CommandEnable )
+		//Always checking the Command
+		if ( MONITOR_CommandReceiveEnable )
 		{
 
-			// Check and process received characters
+			#ifdef CONFIG_USE_FREERTOS
+			// Wait semaphore
+			if ( xSemaphoreTake(DEBUG_USART_Tx_Semaphore,1000) == pdTRUE )
+			{
+				MONITOR_CommandReceivedEvent = true;
+			}
+			#endif
+
 			ProcessReceivedCharacter();
 
-
-			if ( MONITOR_CommandEvent )
+			if ( MONITOR_CommandReceivedEvent )
 			{
 				// Clear event
-				MONITOR_CommandEvent = 0;
+				MONITOR_CommandReceivedEvent = false;
 
+				// Only one event will receive
 				if ( MONITOR_CommandReceivedNotLastChar )
 				{
 					// Not Last char (it is inner character) - Refresh the line
-					MONITOR_CommandEnable = 0;
-					MONITOR_CommandReceivedNotLastChar = 0;
+					MONITOR_CommandReceivedNotLastChar = false;
 					MONITOR_CommandResendLine();
-					MONITOR_CommandEnable = 1;
 				}
 				else if ( MONITOR_CommandEscapeSequenceReceived )
 				{
 					// Escape sequence
-					MONITOR_CommandEnable = 0;
-					MONITOR_CommandEscapeSequenceReceived = 0;
+					MONITOR_CommandEscapeSequenceReceived = false;
 					MONITOR_CommandEscapeCharValidation ();
-					MONITOR_CommandEnable = 1;
 				}
 				else if ( MONITOR_CommandReceivedBackspace )
 				{
 					// Backspace
-					MONITOR_CommandEnable = 0;
-					MONITOR_CommandReceivedBackspace = 0;
+					MONITOR_CommandReceivedBackspace = false;
 					MONITOR_CommandBackspace();
-					MONITOR_CommandEnable = 1;
 				}
 				else if ( MONITOR_CommandReadable )
 				{
 					// Pressed Enter, EndCommand();
-					MONITOR_CommandEnable = 0;			// Disable
-					MONITOR_CommandReadable = 0;
+					MONITOR_CommandReadable = false;
 					if ( MONITOR_CommandActualLength > 0)
 					{
 						// There are some char in the line
@@ -310,20 +317,21 @@ void MONITOR_CheckCommand ( void ) {
 						USART_SEND_NEW_LINE();
 						
 						// Search command and run
-						MONITOR_EndCommand ();
+						MONITOR_PrepareFindExecuteCommand ();
 						
 						#ifdef USE_MONITOR_HISTORY
-						MONITOR_HISTORY_Save ();											// History-ba lementÄ‚Â©s
+						// Save command to History
+						MONITOR_HISTORY_Save ();
 						#endif
 					}
-					else {																	// There is no char in the line	
-						//USART_SEND_NEW_LINE();											
+					else
+					{
+						// There is no char in the line
 						MONITOR_SEND_PROMT();
 					}
 					MONITOR_CommandActualLength = 0;
 					MONITOR_CommandSentLength = 0;
 					MONITOR_CommandCursorPosition = 0;
-					MONITOR_CommandEnable = 1;
 				}
 			}
 		}
@@ -338,7 +346,8 @@ void MONITOR_CheckCommand ( void ) {
 static void ProcessReceivedCharacter(void)
 {
 
-	while (USART_RxBufferReadCnt!=USART_RxBufferWriteCounter)
+	// While Read cnt not equal than Write cnt
+	while (USART_RxBufferReadCnt != USART_RxBufferWriteCounter)
 	{
 		volatile char USART_ReceivedChar = '\0';
 
@@ -347,7 +356,7 @@ static void ProcessReceivedCharacter(void)
 		USART_RxBufferReadCnt++;
 
 		// ESCAPE SEQUENCE
-		if ( MONITOR_CommandEscapeSequenceInProgress == 1 )
+		if ( MONITOR_CommandEscapeSequenceInProgress )
 		{
 			// Escape sequence in progress
 			// Copy escape characters to MONITOR_CommandActualEscape[]
@@ -361,7 +370,7 @@ static void ProcessReceivedCharacter(void)
 				else
 				{
 					// Wrong escape sequence
-					MONITOR_CommandEscapeSequenceInProgress = 0;
+					MONITOR_CommandEscapeSequenceInProgress = false;
 					MONITOR_CommandEscape_cnt = 0;
 				}
 			}
@@ -369,9 +378,9 @@ static void ProcessReceivedCharacter(void)
 			{
 				// TODO: only work with escape sequence if 3 chars (ESC[A)
 				MONITOR_CommandActualEscape[MONITOR_CommandEscape_cnt++] = USART_ReceivedChar;
-				MONITOR_CommandEscapeSequenceInProgress = 0;
-				MONITOR_CommandEscapeSequenceReceived = 1;
-				MONITOR_CommandEvent = 1;
+				MONITOR_CommandEscapeSequenceInProgress = false;
+				MONITOR_CommandEscapeSequenceReceived = true;
+				MONITOR_CommandReceivedEvent = true;
 				return;
 			}
 
@@ -384,26 +393,25 @@ static void ProcessReceivedCharacter(void)
 			if ( USART_ReceivedChar  == '\x1B')	// 'ESC'
 			{
 				// receive an Escape sequence
-				MONITOR_CommandEscapeSequenceInProgress = 1;
+				MONITOR_CommandEscapeSequenceInProgress = true;
 				MONITOR_CommandActualEscape[0] = USART_ReceivedChar;
 				MONITOR_CommandEscape_cnt = 1;
-				//MONITOR_CommandEvent = 1;
 			}
 			else
 			{
 				if ( (USART_ReceivedChar  == '\r') || (USART_ReceivedChar == '\n') ||
 					(USART_ReceivedChar == '\0'))
 				{		// receive Enter
-					MONITOR_CommandReadable = 1;
+					MONITOR_CommandReadable = true;
 					MONITOR_CommandActual[MONITOR_CommandActualLength] = '\0';
-					MONITOR_CommandEvent = 1;
+					MONITOR_CommandReceivedEvent = true;
 					return;
 				}
-				else if ( USART_ReceivedChar  == USART_KEY_DELETE )
+				else if ( USART_ReceivedChar  == USART_KEY_BACKSPACE )
 				{
 					// In real world this is backspace	// PuTTy vs ZOC
-					MONITOR_CommandReceivedBackspace = 1;
-					MONITOR_CommandEvent = 1;
+					MONITOR_CommandReceivedBackspace = true;
+					MONITOR_CommandReceivedEvent = true;
 					return;
 				}
 				else
@@ -413,27 +421,31 @@ static void ProcessReceivedCharacter(void)
 					if ( MONITOR_CommandActualLength < MONITOR_MAX_COMMAND_LENGTH )	// shorted than max length?
 					{
 						if ( MONITOR_CommandCursorPosition == MONITOR_CommandActualLength )
-						{	// CursorPosition = CommandLength		(end character)
+						{
+							// CursorPosition = CommandLength		(end character)
 							MONITOR_CommandActual[MONITOR_CommandActualLength] = USART_ReceivedChar;
 							MONITOR_CommandActualLength++;
 							MONITOR_CommandCursorPosition++;
-							MONITOR_CommandReceivedLastChar = 1;
-							USART_SendChar( USART_ReceivedChar );
+							if(MONITOR_CommandSendBackCharEnable)
+							{
+								USART_SendChar( USART_ReceivedChar );
+							}
 						}
 						else
 						{
 							// CursorPosition < CommandLength		(inner character)
 							MONITOR_CommandActualLength++;
 							// Copy
-							for ( uint8_t i = MONITOR_CommandActualLength; i > MONITOR_CommandCursorPosition; i-- )
+							uint8_t i;
+							for ( i = MONITOR_CommandActualLength; i > MONITOR_CommandCursorPosition; i-- )
 							{
 								MONITOR_CommandActual[i] = MONITOR_CommandActual[i-1];
 							}
 							MONITOR_CommandActual [MONITOR_CommandCursorPosition] = USART_ReceivedChar;
 							MONITOR_CommandActual [MONITOR_CommandActualLength] = '\0';
 							MONITOR_CommandCursorPosition++;
-							MONITOR_CommandReceivedNotLastChar = 1;
-							MONITOR_CommandEvent = 1;
+							MONITOR_CommandReceivedNotLastChar = true;
+							MONITOR_CommandReceivedEvent = true;
 						}
 					}
 					else
@@ -447,21 +459,13 @@ static void ProcessReceivedCharacter(void)
 
 		} // Processed received characters
 
-		// Transmission end semaphore / flag
-		// Szemafor beallitasa:
-		#ifdef CONFIG_USE_FREERTOS
-		//xSemaphoreGive(DEBUG_Rx_Semaphore); // !! IMPORTANT !! ISR-bol nem szabad hasznalni!
-		xSemaphoreGiveFromISR(DEBUG_USART_Rx_Semaphore,0);
-		#endif
-		//MONITOR_CommandEvent = 1;
-
 	} // End of while
-
 }
 
 
+
 // Function: Prepare (Separate) the command and Find and Run it...
-bool MONITOR_EndCommand ( void )
+bool MONITOR_PrepareFindExecuteCommand ( void )
 {
 
 	// Separate command
@@ -542,7 +546,7 @@ uint8_t MONITOR_CommandSeparate ( void )
 
 
 // Function: Find the command
-bool MONITOR_CommandFind ()
+bool MONITOR_CommandFind ( void )
 {
 
 	uint8_t i;
@@ -575,6 +579,7 @@ bool MONITOR_CommandFind ()
 	{
 		// Error, wrong command
 		USART_SendLine("Unknown Command");
+		USART_SendLine("Type \"help\" for help");
 		return false;
 	}
 
@@ -759,7 +764,7 @@ void MONITOR_CommandResendLine ( void )
 /*
 \brief		Resend an new line/command
 */
-uint8_t MONITOR_NewCommandResendLine ( void )
+void MONITOR_NewCommandResendLine ( void )
 {
 
 	// Delete the line
@@ -772,7 +777,7 @@ uint8_t MONITOR_NewCommandResendLine ( void )
 	// Write new CommandActual
 	uprintf("# %s",MONITOR_CommandActual);
 
-	return RETURN_SUCCESS;
+	return;
 }
 
 
@@ -795,14 +800,14 @@ bool MONITOR_CommandEscapeCharValidation ( void )
 				#ifdef USE_MONITOR_HISTORY
 				MONITOR_HISTORY_Load ( 1 );
 				#endif
-				return RETURN_SUCCESS;
+				return true;
 			}
 			else if ( MONITOR_CommandActualEscape[2] == 'B' )	// Down cursor		// next History command
 			{
 				#ifdef USE_MONITOR_HISTORY
 				MONITOR_HISTORY_Load ( 0 );
 				#endif
-				return RETURN_SUCCESS;
+				return true;
 			}
 			else if (  MONITOR_CommandActualEscape[2] == 'C' )	// Right cursor
 			{
@@ -810,9 +815,9 @@ bool MONITOR_CommandEscapeCharValidation ( void )
 				{
 					USART_ESCAPE_CURSORRIGHT();
 					MONITOR_CommandCursorPosition++;
-					return RETURN_SUCCESS;
+					return true;
 				}
-				else return RETURN_SUCCESS;								// not do anything
+				else return true;								// not do anything
 			}
 			else if (  MONITOR_CommandActualEscape[2] == 'D' )			// Left cursor
 			{
@@ -820,22 +825,22 @@ bool MONITOR_CommandEscapeCharValidation ( void )
 				{
 					USART_ESCAPE_CURSORLEFT();
 					MONITOR_CommandCursorPosition--;
-					return RETURN_SUCCESS;
+					return true;
 				}
-				else return RETURN_SUCCESS;								// not do anything
+				else return true;										// not do anything
 			}
 		}
 		else	// This is not escape sequence
 		{
-			return RETURN_FALSE;
+			return false;
 		}
 	}
 	else
 	{
-		return RETURN_FALSE;
+		return false;
 	}
 
-	return RETURN_FALSE;
+	return false;
 
 }
 
@@ -846,7 +851,7 @@ void MONITOR_HISTORY_Save ( void )
 {
 
 	// Has equal command?
-	if ( MONITOR_HISTORY_IsInIt() == RETURN_SUCCESS )
+	if ( MONITOR_HISTORY_IsInIt() == true )
 	{
 		return;
 	}

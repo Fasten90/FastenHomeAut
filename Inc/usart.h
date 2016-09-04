@@ -57,19 +57,20 @@ typedef enum
 
 ////////////////////////////////////  DEFINES FOR CHARACTERS
 
+CONFIG_USE_TERMINAL_ZOC
+#if defined(CONFIG_USE_TERMINAL_ZOC) || defined(CONFIG_USE_TERMINAL_PUTTY)
+#define USART_KEY_DELETE			(8)
+#define USART_KEY_BACKSPACE			(127)
+#else
+#define USART_KEY_DELETE			(127)
+#define USART_KEY_BACKSPACE			(8)
+#endif
 
-//#ifdef CONFIGURE_TERMINAL_USE_PUTTY
-#define USART_KEY_BACKSPACE			8
-#define USART_KEY_DELETE			127
-//#else
-//#define USART_KEY_BACKSPACE			127
-//#define USART_KEY_DELETE			8
-//#endif
-
-#define USART_KEY_ENTER				13
-#define USART_KEY_SPACE				32
-#define USART_KEY_ESCAPE			27
-#define USART_KEY_BELL				7
+// TODO: clean...
+#define USART_KEY_ENTER				(13)
+#define USART_KEY_SPACE				(32)
+#define USART_KEY_ESCAPE			(27)
+#define USART_KEY_BELL				(7)
 
 #define USART_ESCAPESEQUENCE_1		'\x1B'
 #define USART_ESCAPESEQUENCE_2		'['
@@ -394,8 +395,8 @@ void USART_Init ( UART_HandleTypeDef *UartHandle );
 
 uint8_t USART_WaitForSend ( uint16_t timeoutMiliSecond );
 
-//void USART_ReceiveMessage ( uint8_t *aRxBuffer );
-void USART_ReceiveMessage ( void );
+//void USART_StartReceiveMessage ( uint8_t *aRxBuffer );
+void USART_StartReceiveMessage ( void );
 
 // Send functions
 // !! IMPORTANT !! Send formatted string on USART !!

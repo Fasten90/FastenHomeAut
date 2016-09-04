@@ -1479,7 +1479,7 @@ uint32_t CommandFunction_log ( uint32_t argc, char** COMMAND_Arguments )
 
 			xSemaphoreGive(LOG_TaskKill_Semaphore);
 			*/
-			MONITOR_CommandSendBackChar_Enable = 1;	// Enable to send
+			MONITOR_CommandSendBackCharEnable = 1;	// Enable to send
 			uprintf("Log off\r\n");
 		}
 		else
@@ -1524,7 +1524,7 @@ uint32_t CommandFunction_log ( uint32_t argc, char** COMMAND_Arguments )
 		if (!StrCmp(COMMAND_Arguments[1],"on"))
 		{
 	
-			MONITOR_CommandSendBackChar_Enable = 1; // Enable to send
+			MONITOR_CommandSendBackCharEnable = 1; // Enable to send
 		}
 		else
 		{
