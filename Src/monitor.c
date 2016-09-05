@@ -47,21 +47,21 @@ const bool MONITOR_CommandReceiveEnable = true;
 const bool MONITOR_CommandSendBackCharEnable = true;
 
 // Variables For Monitor
-volatile bool MONITOR_CommandReceivedEvent = false;
-volatile bool MONITOR_CommandReceivedLastChar = false;
-volatile bool MONITOR_CommandReceivedNotLastChar = false;
-volatile bool MONITOR_CommandReadable = false;
-volatile bool MONITOR_CommandReceivedBackspace =false;
+static volatile bool MONITOR_CommandReceivedEvent = false;
+static volatile bool MONITOR_CommandReceivedLastChar = false;
+static volatile bool MONITOR_CommandReceivedNotLastChar = false;
+static volatile bool MONITOR_CommandReadable = false;
+static volatile bool MONITOR_CommandReceivedBackspace =false;
 
-volatile uint8_t MONITOR_CommandActualLength = 0;
-volatile uint8_t MONITOR_CommandSentLength = 0;
-volatile uint8_t MONITOR_CommandCursorPosition = 0;
+static volatile uint8_t MONITOR_CommandActualLength = 0;
+static volatile uint8_t MONITOR_CommandSentLength = 0;
+static volatile uint8_t MONITOR_CommandCursorPosition = 0;
 
-volatile bool MONITOR_CommandEscapeSequenceReceived = false;
-volatile uint8_t MONITOR_CommandEscapeSequenceInProgress = 0;
-volatile uint8_t MONITOR_CommandEscape_cnt = 0;
+static volatile bool MONITOR_CommandEscapeSequenceReceived = false;
+static volatile uint8_t MONITOR_CommandEscapeSequenceInProgress = 0;
+static volatile uint8_t MONITOR_CommandEscape_cnt = 0;
 
-
+// TODO: Use more static keyword
 uint8_t COMMAND_ArgCount = 0;
 
 
