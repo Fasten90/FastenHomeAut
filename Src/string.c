@@ -835,6 +835,29 @@ uint8_t StrCpyFixLength (char *dest, const char *string, uint8_t length)
 
 
 /*
+ * \brief	Copy string with max length
+ * \return	String length (=parameter)
+ */
+uint8_t StrCpyMax (char *dest, const char *string, uint8_t length)
+{
+
+	uint8_t i = 0;
+
+	// Copy characters
+	while((i < length) && (string[i] != '\0'))
+	{
+		dest[i] = string[i];
+		i++;
+	}
+
+	dest[i++] = '\0';
+
+	return i;
+}
+
+
+
+/*
  * \brief	Append string to dest's end
  * \length	New string's length (original + copied)
  */

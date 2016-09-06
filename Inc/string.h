@@ -85,6 +85,7 @@ uint8_t StrCmp (const char * ch1, const char *ch2);
 uint8_t StrCmpWithLength (const char * ch1, const char *ch2, uint8_t length);
 uint8_t StrCpy (char *dest, const char *string );
 uint8_t StrCpyFixLength (char *dest, const char *string, uint8_t length );
+uint8_t StrCpyMax (char *dest, const char *string, uint8_t length);
 uint8_t StrAppend (char *dest, const char *string);
 
 

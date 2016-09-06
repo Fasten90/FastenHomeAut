@@ -10,6 +10,7 @@
 //#include "usart.h"
 #include "include.h"
 
+#include "GlobalVarHandler.h"
 
 /*------------------------------------------------------------------------------
  *  Macros & definitions
@@ -65,7 +66,7 @@ const CommandStruct CommandList[] =
 		.name = "cls",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_cls,
 		.description = "Clear Screen",
-		.syntax = "",
+		.syntax = NULL,
 		.ArgNum = (1 << 0),
 	},
 
@@ -73,8 +74,24 @@ const CommandStruct CommandList[] =
 		.name = "test",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_test,
 		.description = "...",
-		.syntax = "",
+		.syntax = NULL,
 		.ArgNum = (1 << 0),
+	},
+
+	{
+		.name = "set",
+		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_set,
+		.description = "set global variable value",
+		.syntax = "<varName> <value>",
+		.ArgNum = (1 << 2),
+	},
+
+	{
+		.name = "get",
+		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_get,
+		.description = "get global variable value",
+		.syntax = "<varName>",
+		.ArgNum = (1 << 1),
 	},
 
 	/*
@@ -84,17 +101,6 @@ const CommandStruct CommandList[] =
 		.description = "start\r\n"
 	},
 
-	{
-		.name = "set",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_set,
-		.description = "set\r\n"
-	},
-
-	{
-		.name = "get",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_get,
-		.description = "get\r\n"
-	},
 
 	{
 		.name = "buzzer",
@@ -945,6 +951,18 @@ uint32_t CommandFunction_test	( uint32_t argc, char** argv ) {
 	
 	USART_SendLine("Test start");
 
+	// GlobalVar
+
+	char buffer[30];
+	GlobalVarHandler_CheckReceivedCommand("TestVar",NULL,SetGet_Get,Source_DebugSerial,
+			buffer,20);
+
+	uprintf("%s\r\n",buffer);
+
+	GlobalVarHandler_CheckReceivedCommand("TestString",NULL,SetGet_Get,Source_DebugSerial,
+			buffer,30);
+
+	uprintf("%s\r\n",buffer);
 
 	// Temperature test
 	
@@ -1149,156 +1167,48 @@ uint32_t CommandFunction_stop	( uint32_t argc, char** COMMAND_Arguments )
 
 
 
-#if 0
+
 // Function: Beallitja a globalis valtozo erteket (set fuggvennyel)
 // Syntax: set <globalvar> <value>
 uint32_t CommandFunction_set ( uint32_t argc, char** COMMAND_Arguments )
 {
 
-	//int16_t result = 0;
+	char resultBuffer[30];
 
-	// Ellenorzes, hogy hany parameter van
-	if ( argc < 3 )
-	{
-		uprintf("Too few arguments!\r\n");
-		uprintf(" set <globalvar> <value>\r\n");
-		return RETURN_FALSE;
-	}
-	if ( argc > 3 )
-	{
-		uprintf("Too many arguments!\r\n");
-		uprintf(" set <globalvar> <value>\r\n");
-		return RETURN_FALSE;
-	}
+	GlobalVarHandler_CheckReceivedCommand(
+			COMMAND_Arguments[1],COMMAND_Arguments[2],
+			SetGet_Set,Source_DebugSerial,
+			resultBuffer,30);
 
-	// Ertek konvertalasa
-	if ( StringIsSignedDec(COMMAND_Arguments[2]) )
-	{
-		Arg3Num = StringSignedDecToNum(COMMAND_Arguments[2]);	// Convert arg2, signed decimal string to number
-		//Arg3Num = StringDecToNum(COMMAND_Arguments[2]);	// Convert arg2, unsigned decimal string to number
-	}
-	else
-	{
-		uprintf("Wrong 2. argument!\r\n");
-		return RETURN_FALSE;
-	}
+	uprintf("%s\r\n",resultBuffer);
 
-
-	/*
-	if ( !StrCmp( COMMAND_Arguments[1],MONITOR_GLOBALVARNAME_SPEED ))
-	{
-		//Set_GlobaVarName1(Arg3Num);
-		//GLOBAL_SetSpeed(Arg3Num);
-		//result = GLOBAL_GetSpeed();
-	}
-	else if( !StrCmp( COMMAND_Arguments[1],MONITOR_GLOBALVARNAME_SPEED_REF ))
-	{
-		//GLOBAL_SetSpeedRef(Arg3Num);
-		//result = GLOBAL_GetSpeedRef();
-	}
-	else if( !StrCmp( COMMAND_Arguments[1],MONITOR_GLOBALVARNAME_VELOCITY ))
-	{
-		//GLOBAL_SetVelocity(Arg3Num);
-		//result = GLOBAL_GetVelocity();
-	}
-	else if( !StrCmp( COMMAND_Arguments[1],MONITOR_GLOBALVARNAME_ANGLE ))
-	{
-		//GLOBAL_SetAngle(Arg3Num);
-		//result = GLOBAL_GetAngle();
-	}
-	else if( !StrCmp( COMMAND_Arguments[1],MONITOR_GLOBALVARNAME_POS_REF ))
-	{
-		//GLOBAL_SetPosRef(Arg3Num);
-		//result = GLOBAL_GetPosRef();
-	}
-	else if( !StrCmp( COMMAND_Arguments[1],MONITOR_GLOBALVARNAME_POSITION ))
-	{
-		// TODO: GLOBAL_SetPosition();
-		uprintf("Set position fuggveny nincs!\r\n");
-		return RETURN_FALSE;
-		//GLOBAL_SetPosition(Arg3Num);
-		//result = GLOBAL_GetPosition();
-	}
-	else if( !StrCmp( COMMAND_Arguments[1],MONITOR_GLOBALVARNAME_DIRECTION ))
-	{
-		//GLOBAL_SetDirection(Arg3Num);
-		//result = GLOBAL_GetDirection();
-	}
-	else if( !StrCmp( COMMAND_Arguments[1],MONITOR_GLOBALVARNAME_PROXIMITY ))
-	{
-		// TODO: GLOBAL_SetProximity();
-		uprintf("Set prox fuggveny nincs!\r\n");
-		return RETURN_FALSE;
-	}
-
-	else if( !StrCmp( COMMAND_Arguments[1],MONITOR_GLOBALVARNAME_P ))
-	{
-		// TODO: GLOBAL_SetProximity();
-		GLOBAL_Controller_P = Arg3Num;
-		uprintf("Set prox fuggveny nincs!\r\n");
-		return RETURN_FALSE;
-	}
-	else if( !StrCmp( COMMAND_Arguments[1],MONITOR_GLOBALVARNAME_D ))
-	{
-		// TODO: GLOBAL_SetProximity();
-		GLOBAL_Controller_D = Arg3Num;
-		uprintf("Set prox fuggveny nincs!\r\n");
-		return RETURN_FALSE;
-	}
-
-	else
-	{
-		uprintf("Unknown global variable!\r\n");
-		return RETURN_FALSE;
-	}
-
-
-	uprintf(" set:\r\n"
-			"  variable: %s \r\n"
-			"  value: %d \r\n"
-			"  now: %d \r\n"
-			"\r\n",
-			COMMAND_Arguments[1],
-			Arg3Num,
-			result
-			);
-	*/
 
 	return CommandResult_Ok;
 
 }
-#endif
 
 
 
 
-#if 0
+
+
 // Function: get <globalvar>
 uint32_t CommandFunction_get ( uint32_t argc, char** COMMAND_Arguments )
 {
 
-	//int32_t value;
-	//uint32_t values[4];
+	char resultBuffer[30];
 
-	if ( argc < 2 )
-	{
-		uprintf("Too few arguments!\r\n");
-		uprintf(" get <globalvar>\r\n");
-		return RETURN_FALSE;
-	}
-	if ( argc > 2 )
-	{
-		uprintf("Too many arguments!\r\n");
-		uprintf(" get <globalvar>\r\n");
-		return RETURN_FALSE;
-	}
+	GlobalVarHandler_CheckReceivedCommand(
+			COMMAND_Arguments[1],COMMAND_Arguments[2],
+			SetGet_Get,Source_DebugSerial,
+			resultBuffer,30);
 
+	uprintf("%s\r\n",resultBuffer);
 
 
 	return CommandResult_Ok;
 
 }
-#endif
 
 
 
