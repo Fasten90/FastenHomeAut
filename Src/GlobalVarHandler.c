@@ -8,51 +8,41 @@
 
 #include "include.h"
 #include "GlobalVarHandler.h"
+#include "GlobalVariables.h"
 
 
-#define NUM_OF(x) (sizeof(x)/sizeof(x[0]))
 
-#define GLOBAL_VAR_MAX_COMMAND_NUM				(uint8_t)( NUM_OF(GlobalVarList))
-
-
-// Global variables
-
-// TODO: Add to new file
-
-uint8_t testVar = 17;
-char deviceName[25] = "deviceName: Discovery";
-
-
-GlobalVarCommand_t GlobalVarList[] =
+/// GLOBAL VARIABLES
+/*
+Type_Unknown = 0,
+Type_Bool,
+Type_Uint8,
+Type_Int8,
+Type_Uint16,
+Type_Int16,
+Type_Uint32,
+Type_Int32,
+Type_Float,
+Type_String,
+Type_Enumerator
+*/
+static const char const*GlobalVarTypesNames[] =
 {
-		{
-			.name = "testvar",
-			.varPointer = &testVar,
-			.type = Type_Uint8
-		},
-		{
-			.name = "teststring",
-			.varPointer = deviceName,
-			.type = Type_String,
-			.stringMaxLength = 19
-		}
-
-		// ADD new global variable here
-		/*
-			const VarType_t type;
-
-			void const *varPointer;
-			const bool isReadOnly;
-
-			const void const *maxPointer;
-			const void const *minPointer;
-			const char const *unit;
-
-			const uint8_t stringMaxLength;
-
-			const CommandSource_t sourceEnable;
-		 */
+		// NOTE: Important!! Must be in the same order with VarType_t
+		"Unknown",
+		"bool",
+		"uint8_t",
+		"int8_t",
+		"uint16_t",
+		"int16_t",
+		"uint32_t",
+		"int32_t",
+		"float",
+		"string",
+		"enumerator"
 };
+
+
 
 
 /// FUNCTION PROTOTYPES
@@ -61,6 +51,8 @@ static ProcessResult_t GlobalVarHandler_GetCommand(uint8_t commandID, char *resu
 static int16_t GlobalVarHandler_SearchVariableName(const char *commandName);
 static ProcessResult_t GlobalVarHandler_SetCommand(uint8_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength);
 static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBuffer, uint8_t resultBufferLength);
+static ProcessResult_t GlobalVarHandler_CheckValue(uint32_t num, uint8_t commandID);
+
 
 
 /// FUNCTIONS
@@ -75,10 +67,15 @@ bool GlobalVarHandler_CheckCommandStructAreValid(void)
 
 
 /**
- * \brief	Check received command
- * TODO: params
+ * \brief	Process received command
+ * \param	*commandName		received command name (string)
+ * \param	*param				received parameters after command
+ * \param	setGetType			Set or get command
+ * \param	source				Command source (e.g. USART)
+ * \param	*resultBuffer		Buffer, which writed with result
+ * \param	resultBufferLength	Buffer length
  */
-void GlobalVarHandler_CheckReceivedCommand(
+void GlobalVarHandler_ProcessCommand(
 		const char *commandName, const char *param,
 		SetGetType_t setGetType, CommandSource_t source,
 		char *resultBuffer, uint8_t resultBufferLength)
@@ -146,7 +143,7 @@ static int16_t GlobalVarHandler_SearchVariableName(const char *commandName)
 	uint8_t i;
 
 	// Search
-	for (i=0; i<GLOBAL_VAR_MAX_COMMAND_NUM; i++)
+	for (i=0; i<GlobalVarMaxCommandNum; i++)
 	{
 		if(!StrCmp(GlobalVarList[i].name, commandName))
 		{
@@ -178,14 +175,13 @@ static ProcessResult_t GlobalVarHandler_GetCommand(uint8_t commandID, char *resu
 		uint8_t *numPointer = (uint8_t *)GlobalVarList[commandID].varPointer;
 		uint8_t num = *numPointer;
 		// TODO: Buffer túlírás ellenõrzés
-		length = UnsignedDecimalToString(num, resultBuffer);
-
+		length += UnsignedDecimalToString(num, resultBuffer);
 		}
 		break;
 	case Type_String:
 		{
 		const char *string = GlobalVarList[commandID].varPointer;
-		length = StrCpy(resultBuffer,string);
+		length += StrCpyMax(resultBuffer,string, *resultBufferLength-length);
 		}
 		break;
 
@@ -194,19 +190,31 @@ static ProcessResult_t GlobalVarHandler_GetCommand(uint8_t commandID, char *resu
 		break;
 	}
 
+
+#ifdef GLOBALVARHANDLER_UNIT_ENABLE
 	// Append unit, if need
-	// TODO:
+	if (GlobalVarList[commandID].unit)
+	{
+		// Space
+		length += StrCpyMax(&resultBuffer[length], " ", *resultBufferLength-length);
+		// Copy *unit
+		length += StrCpyMax(&resultBuffer[length],GlobalVarList[commandID].unit, *resultBufferLength-length);
+	}
+#endif
+
 
 	// Check length
 	// TODO:
-	if(length <= *resultBufferLength)
+	if (length <= *resultBufferLength)
 	{
 		*resultBufferLength -= length;
 	}
 	else
 	{
 		*resultBufferLength = 0;
+		// TODO: Buffer Overflow
 	}
+
 
 	return Process_Ok_Answered;
 }
@@ -218,12 +226,12 @@ static ProcessResult_t GlobalVarHandler_GetCommand(uint8_t commandID, char *resu
  */
 static ProcessResult_t GlobalVarHandler_SetCommand(uint8_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength)
 {
-	// TODO: Need implement
 
 	uint8_t length = 0;
 
 	// TODO: isHex?
 
+	// TODO: külön függvénybe az értékkonvertálást?
 	switch(GlobalVarList[commandID].type)
 	{
 	case Type_Uint8:
@@ -233,7 +241,21 @@ static ProcessResult_t GlobalVarHandler_SetCommand(uint8_t commandID, const char
 		if(UnsignedDecimalStringToNum(param, &num))
 		{
 			// TODO: Check value
-			*numPointer = num;
+			ProcessResult_t result;
+			result = GlobalVarHandler_CheckValue(num,commandID);
+
+			if (result == Process_Ok_SetSuccessful_SendOk)
+			{
+				// Good
+				*numPointer = num;
+			}
+			else
+			{
+				// Wrong
+				return result;
+			}
+
+			// NOTE: Do not return from here
 			//return Process_Ok_SetSuccessful_SendOk;
 		}
 		else
@@ -246,14 +268,18 @@ static ProcessResult_t GlobalVarHandler_SetCommand(uint8_t commandID, const char
 	case Type_String:
 		{
 		uint8_t stringLength = StringLength(param);
-		if ( stringLength >= GlobalVarList[commandID].stringMaxLength )
+		if ( stringLength >= GlobalVarList[commandID].maxValue )
 		{
-			stringLength =  GlobalVarList[commandID].stringMaxLength;
+			stringLength =  GlobalVarList[commandID].maxValue;
+		}
+		if (stringLength > *resultBufferLength)
+		{
+			stringLength = *resultBufferLength;
 		}
 
 		char *string = (char *)GlobalVarList[commandID].varPointer;
 
-		length = StrCpyMax(string,param,stringLength);
+		length += StrCpyMax(string,param,stringLength);
 		}
 		break;
 
@@ -279,6 +305,44 @@ static ProcessResult_t GlobalVarHandler_SetCommand(uint8_t commandID, const char
 
 
 /**
+ * \brief	Check values
+ */
+static ProcessResult_t GlobalVarHandler_CheckValue(uint32_t num, uint8_t commandID)
+{
+	switch(GlobalVarList[commandID].type)
+	{
+	case Type_Bool:
+		if (num > 1) return Process_InvalidValue_TooMuch;
+		break;
+	case Type_Uint8:
+		if (num > 255) return Process_InvalidValue_TooMuch;
+		break;
+	case Type_Uint16:
+		if (num > 65535) return Process_InvalidValue_TooMuch;
+		break;
+	case Type_String:
+		if (num > GlobalVarList[commandID].maxValue) return Process_TooLongString;
+		break;
+	case Type_Enumerator:
+		if (num > GlobalVarList[commandID].maxValue) return Process_InvalidValue_TooMuch;
+		break;
+		// TODO: Lekezelni a többi ágat is
+	default:
+		return Process_FailType;
+		break;
+	}
+
+	// check maxValue
+	if (num > GlobalVarList[commandID].maxValue) return Process_InvalidValue_TooMuch;
+
+	if (num < GlobalVarList[commandID].minValue) return Process_InvalidValue_TooSmall;
+
+	return Process_Ok_SetSuccessful_SendOk;
+}
+
+
+
+/**
  * \brief	Write process result
  */
 static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBuffer, uint8_t resultBufferLength)
@@ -289,13 +353,12 @@ static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBu
 
 	case Process_Ok_Answered:
 		// Do nothing
-		resultBuffer[0] = '\0';
+		//resultBuffer[0] = '\0';
 		break;
 	case Process_Ok_SetSuccessful_SendOk:
 		StrCpyMax(resultBuffer,"Set successful!",resultBufferLength);
 		break;
 	case Process_CommandNotFound:
-		// TODO: StrCpyMax()
 		StrCpyMax(resultBuffer,"Command not find!",resultBufferLength);
 		break;
 	case Process_FailParam:
@@ -328,3 +391,66 @@ static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBu
 	}
 }
 
+
+
+/**
+ * \brief	List all variables
+ */
+void GlobalVarHandler_ListAllVariables(void)
+{
+	uint8_t i;
+	uint8_t length;
+
+	// TODO: Megcsinálni szebbre?
+	// TODO: min/max-okat kiírni?
+	// TODO: Enumokat is kiírni, ha van?
+	USART_SendLine("|------Name--------|--Type---|unit|----Description-------|");
+	for (i=0; i<GlobalVarMaxCommandNum; i++)
+	{
+		// Print one command / line:
+		// name \t type \t description
+		/*
+		uprintf("%s\t%s\t%s\t[%s]\r\n",
+				GlobalVarList[i].name,	// name
+				GlobalVarTypesNames[GlobalVarList[i].type],	// type
+				GlobalVarList[i].description,	// description
+				GlobalVarList[i].unit			// unit
+				);
+		*/
+		length = 0;
+		length += USART_SendString("| ");
+		// Send name
+		length += USART_SendString(GlobalVarList[i].name);
+		while(length < 20)
+		{
+			USART_SendChar(' ');
+			length++;
+		}
+		// Send type
+		length += USART_SendString(GlobalVarTypesNames[GlobalVarList[i].type]);
+		while(length < 30)
+		{
+			USART_SendChar(' ');
+			length++;
+		}
+		// Send unit
+		if(GlobalVarList[i].unit)
+		{
+			// If has unit
+			length += USART_SendString("[");
+			length += USART_SendString(GlobalVarList[i].unit);
+			length += USART_SendString("]");
+		}
+		while(length < 35)
+		{
+			USART_SendChar(' ');
+			length++;
+		}
+		// Send description
+		length += USART_SendString(GlobalVarList[i].description);
+		length += USART_SendLine("");
+	}
+	USART_SendLine("--------------------------------");
+
+
+}

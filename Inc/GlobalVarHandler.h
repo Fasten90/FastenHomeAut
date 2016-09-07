@@ -12,6 +12,12 @@
 #include "include.h"
 
 
+/// DEFINES
+
+#define GLOBALVARHANDLER_UNIT_ENABLE
+#define GLOBALVARHANDLER_DESCRIPTION_ENABLE
+
+
 /// TYPEDEFS
 /// ENUMS
 
@@ -27,7 +33,8 @@ typedef enum
 	Type_Int32,
 	Type_Float,
 	Type_String,
-	Type_Enumerator
+	Type_Enumerator,
+	Type_Count
 } VarType_t;
 
 
@@ -38,6 +45,7 @@ typedef enum
 	Process_SourceNotEnabled,
 	Process_IsReadOnly,
 	Process_TooLongString,
+	Process_FailType,
 	Process_FailParam,
 	Process_FailParamIsNotNumber,
 	Process_InvalidValue_TooMuch,
@@ -74,15 +82,24 @@ typedef struct
 	void const *varPointer;
 	const bool isReadOnly;
 
-	uint32_t maxValue;
-	uint32_t minValue;
-	bool isHex;	// TODO: esetleg lekezeljük külön bemenetként a 0x00et...
-	const char const *unit;
-	const char const *description;
+	const uint32_t maxValue;	// TODO: union pl. a stringMaxLength-tel
+	const uint32_t minValue;
 
-	const uint8_t stringMaxLength;
+	//const uint8_t stringMaxLength;	// TODO: összevonva a maxValue-val
 
 	const CommandSource_t sourceEnable;
+
+	const bool isHex;		// TODO: esetleg lekezeljük külön bemenetként a 0x00et...
+
+	const char *enumList;	// TODO: enumerátorhoz
+
+#ifdef GLOBALVARHANDLER_UNIT_ENABLE
+	const char const *unit;
+#endif
+#ifdef GLOBALVARHANDLER_DESCRIPTION_ENABLE
+	const char const *description;
+#endif
+
 
 } GlobalVarCommand_t;
 
@@ -91,12 +108,12 @@ typedef struct
 
 /// FUNCTION PROTOTYPES
 bool GlobalVarHandler_CheckCommandStructAreValid(void);
-void GlobalVarHandler_CheckReceivedCommand(
+void GlobalVarHandler_ProcessCommand(
 		const char *commandName, const char *param,
 		SetGetType_t setGetType, CommandSource_t source,
 		char *resultBuffer, uint8_t resultBufferLength);
 
-
+void GlobalVarHandler_ListAllVariables(void);
 
 
 

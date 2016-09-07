@@ -403,7 +403,7 @@ void USART_StartReceiveMessage ( void );
 void uprintf(char * param, ...);
 
 bool USART_SendChar ( char c );
-bool USART_SendMessage ( const char *aTxBuffer );
+uint8_t USART_SendMessage ( const char *aTxBuffer );
 bool USART_SendLine ( const char *message );
 void USART_SendFloat ( float value);
 

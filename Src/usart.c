@@ -460,7 +460,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
  * \brief	Send string on USART
  */
 // TODO: ReturnType + Check Pointer
-bool USART_SendMessage ( const char *aTxBuffer )
+uint8_t USART_SendMessage ( const char *aTxBuffer )
 {
 	#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	uint8_t length = 0;
@@ -499,19 +499,19 @@ bool USART_SendMessage ( const char *aTxBuffer )
 			#endif
 			USART_SendEnable_flag = ENABLE;	// Failed to send, now we can send message
 
-			return false;
+			return 0;
 		}
 		else
 		{
 			// Successful sending with IT
 			// Semaphore give by IT routine
-			return true;
+			return length;
 		}
 	}
 	else
 	{
 		// Cannot take semaphore, now usart is busy
-		return false;
+		return 0;
 	}
 
 

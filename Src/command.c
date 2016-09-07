@@ -953,16 +953,20 @@ uint32_t CommandFunction_test	( uint32_t argc, char** argv ) {
 
 	// GlobalVar
 
+	GlobalVarHandler_ListAllVariables();
+
+	/*
 	char buffer[30];
-	GlobalVarHandler_CheckReceivedCommand("TestVar",NULL,SetGet_Get,Source_DebugSerial,
+	GlobalVarHandler_ProcessCommand("TestVar",NULL,SetGet_Get,Source_DebugSerial,
 			buffer,20);
 
 	uprintf("%s\r\n",buffer);
 
-	GlobalVarHandler_CheckReceivedCommand("TestString",NULL,SetGet_Get,Source_DebugSerial,
+	GlobalVarHandler_ProcessCommand("TestString",NULL,SetGet_Get,Source_DebugSerial,
 			buffer,30);
 
 	uprintf("%s\r\n",buffer);
+	*/
 
 	// Temperature test
 	
@@ -1175,7 +1179,7 @@ uint32_t CommandFunction_set ( uint32_t argc, char** COMMAND_Arguments )
 
 	char resultBuffer[30];
 
-	GlobalVarHandler_CheckReceivedCommand(
+	GlobalVarHandler_ProcessCommand(
 			COMMAND_Arguments[1],COMMAND_Arguments[2],
 			SetGet_Set,Source_DebugSerial,
 			resultBuffer,30);
@@ -1198,7 +1202,7 @@ uint32_t CommandFunction_get ( uint32_t argc, char** COMMAND_Arguments )
 
 	char resultBuffer[30];
 
-	GlobalVarHandler_CheckReceivedCommand(
+	GlobalVarHandler_ProcessCommand(
 			COMMAND_Arguments[1],COMMAND_Arguments[2],
 			SetGet_Get,Source_DebugSerial,
 			resultBuffer,30);

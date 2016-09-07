@@ -45,7 +45,7 @@
 
 
 
-/*
+/**
  * \brief	Convert signed decimal to string
  * \note	Only max INT_MAX / 2 number can be converted
  * \return	created string length
@@ -72,7 +72,7 @@ uint8_t SignedDecimalToString (int32_t value, char *string)
 
 
 
-/*
+/**
  * \brief	Convert unsigned decimal to string
  * \return	created string length
  */
@@ -110,7 +110,7 @@ uint8_t UnsignedDecimalToString (uint32_t value, char *string)
 
 
 
-/*
+/**
  * \brief	Convert value to hexadecimalstring
  * \return	created string length
  */
@@ -139,7 +139,7 @@ uint8_t DecimalToHexaString (uint32_t value, uint8_t ByteNum, char *string)
 }
 
 
-/*
+/**
  * \brief	Convert a byte to hexa string
  * \return	Length
  */
@@ -165,7 +165,7 @@ uint8_t ByteToHexaString (uint8_t byte, char *string)
 
 
 
-/*
+/**
  * \brief	Convet a octet (0-15) to Hexa character ('0' - '9' - 'A' - 'F')
  * \return	character (octet)
  */
@@ -192,7 +192,7 @@ char OctetToChar (uint8_t octet)
 
 
 
-/*
+/**
  * \brief	Convert float value to String
  * \return	Length
  */
@@ -251,7 +251,7 @@ uint8_t FloatToString (float value, char *string, uint8_t fractionLength)
 
 
 
-/*
+/**
  * \brief	Look the string is hexa or not
  * \return	How many hexa characters are...
  */
@@ -284,7 +284,7 @@ uint8_t StringIsHexadecimalString (const char *string)
 
 
 
-/*
+/**
  * \brief	Check the string, it is unsigned decimal number?
  * \return	> 0 : decimal number length
  * 			0 not number
@@ -312,7 +312,7 @@ uint8_t StringIsUnsignedDecimalString (const char *string)
 
 
 
-/*
+/**
  * \brief	Check the string, it is signed decimal number?
  * \return	> 0 : decimal number length
  * 			0 not number
@@ -337,7 +337,7 @@ uint8_t StringIsSignedDecimalString (const char *string)
 
 
 
-/*
+/**
  * \brief	Check, it is hexadecimal number character?
  * \return	true, if hex number
  * 			false, if no hex number
@@ -363,7 +363,7 @@ bool IsHexChar(char c)
 
 
 
-/*
+/**
  * \brief	Check, it is decimal number character?
  * \return	true, if number
  * 			false, if no number
@@ -381,7 +381,7 @@ bool IsDecimalChar(char c)
 
 
 
-/*
+/**
  * \brief	Convert Hex character to octet (0-9, A-F)
  * \return	Value (number)
  */
@@ -406,7 +406,7 @@ uint8_t HexCharToOctet(char c)
 
 
 
-/*
+/**
  * \brief	Convert two hexadecimal string to number (byte)
  * \return	true, if successul
  * 			false, if has error
@@ -424,7 +424,7 @@ bool StringByteToNum(const char *string, uint8_t *byte)
 
 
 
-/*
+/**
  * \brief	Convert Hex string to number(integer)
  * \return	true, if successul
  * 			false, if has error
@@ -482,7 +482,7 @@ bool StringHexToNum (const char *string, uint32_t *hexValue, uint8_t byteLength)
 
 
 
-/*
+/**
  * \brief Convert deciaml character to number (byte)
  * \return	value (number)
  */
@@ -499,7 +499,7 @@ uint8_t DecimalCharToNum(char c)
 
 
 
-/*
+/**
  * \brief	Convert Unsigned decimal string to integer
  * \return	true, if successul
  * 			false, if has error
@@ -541,7 +541,7 @@ bool UnsignedDecimalStringToNum (const char *string, uint32_t *value)
 
 
 
-/*
+/**
  * \brief	Convert signed decimal string to signed integer
  * \return	true, if successul
  * 			false, if has error
@@ -594,7 +594,7 @@ bool SignedDecimalStringToNum (const char *string, int32_t *value)
 
 
 
-/*
+/**
  * \brief	Convert Float string to num(float)
  * \return	true, if successul
  * 			false, if has error
@@ -686,7 +686,7 @@ bool StringToFloat (const char *string, float *Num)
 
 
 
-/*
+/**
  * \brief	Power(a,b) = a^b
  */
 uint32_t power (uint32_t a, uint8_t b)
@@ -704,7 +704,7 @@ uint32_t power (uint32_t a, uint8_t b)
 
 
 
-/*
+/**
  * \brief	Calculate string length
  * \return	length
  * 			0, if null string
@@ -725,7 +725,7 @@ uint8_t StringLength (const char *string)
 
 
 
-/*
+/**
  * \brief	Compare two string
  * \return	1, if not equal
  * 			0, if equal
@@ -755,7 +755,7 @@ uint8_t StrCmp(const char * ch1, const char *ch2) {
 
 
 
-/*
+/**
  * \brief	Compare string in fix length
  * \return	1, if not equal
  * 			0, if equal
@@ -785,7 +785,7 @@ uint8_t StrCmpWithLength(const char * ch1, const char *ch2, uint8_t length) {
 
 
 
-/*
+/**
  * \brief	Copy string to *dest pointer
  * \return	copied string length
  */
@@ -814,7 +814,7 @@ uint8_t StrCpy (char *dest, const char *string)
 
 
 
-/*
+/**
  * \brief	Copy fix length string
  * \return	String length (=parameter)
  */
@@ -834,7 +834,7 @@ uint8_t StrCpyFixLength (char *dest, const char *string, uint8_t length)
 
 
 
-/*
+/**
  * \brief	Copy string with max length
  * \return	String length (=parameter)
  */
@@ -850,14 +850,14 @@ uint8_t StrCpyMax (char *dest, const char *string, uint8_t length)
 		i++;
 	}
 
-	dest[i++] = '\0';
+	dest[i] = '\0';
 
 	return i;
 }
 
 
 
-/*
+/**
  * \brief	Append string to dest's end
  * \length	New string's length (original + copied)
  */
