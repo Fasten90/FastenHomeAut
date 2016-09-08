@@ -25,6 +25,7 @@ GlobalVarCommand_t GlobalVarList[] =
 			.name = "testvar",
 			.varPointer = &testVar,
 			.type = Type_Uint8,
+			.maxValue = 20,
 			.description = "Test integer"
 		},
 		{

@@ -94,6 +94,14 @@ const CommandStruct CommandList[] =
 		.ArgNum = (1 << 1),
 	},
 
+	{
+		.name = "?",
+		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_GlobalVariableHelp,
+		.description = "help global variable",
+		.syntax = "<varName>",
+		.ArgNum = (1 << 1),
+	},
+
 	/*
 	{
 		.name = "start",
@@ -1205,6 +1213,26 @@ uint32_t CommandFunction_get ( uint32_t argc, char** COMMAND_Arguments )
 	GlobalVarHandler_ProcessCommand(
 			COMMAND_Arguments[1],COMMAND_Arguments[2],
 			SetGet_Get,Source_DebugSerial,
+			resultBuffer,30);
+
+	uprintf("%s\r\n",resultBuffer);
+
+
+	return CommandResult_Ok;
+
+}
+
+
+
+// Function: help <globalvar>
+uint32_t CommandFunction_GlobalVariableHelp ( uint32_t argc, char** COMMAND_Arguments )
+{
+
+	char resultBuffer[30];
+
+	GlobalVarHandler_ProcessCommand(
+			COMMAND_Arguments[1],COMMAND_Arguments[2],
+			SetGet_Help,Source_DebugSerial,
 			resultBuffer,30);
 
 	uprintf("%s\r\n",resultBuffer);

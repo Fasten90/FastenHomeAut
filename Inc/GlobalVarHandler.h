@@ -59,7 +59,8 @@ typedef enum
 {
 	SetGet_Unknown = 0,
 	SetGet_Get,
-	SetGet_Set
+	SetGet_Set,
+	SetGet_Help
 } SetGetType_t;
 
 

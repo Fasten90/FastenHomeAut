@@ -52,7 +52,7 @@ static int16_t GlobalVarHandler_SearchVariableName(const char *commandName);
 static ProcessResult_t GlobalVarHandler_SetCommand(uint8_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength);
 static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBuffer, uint8_t resultBufferLength);
 static ProcessResult_t GlobalVarHandler_CheckValue(uint32_t num, uint8_t commandID);
-
+static void GlobalVarHandler_HelpVariable (uint8_t commandID, char *resultBuffer);
 
 
 /// FUNCTIONS
@@ -90,12 +90,12 @@ void GlobalVarHandler_ProcessCommand(
 		if ((source & GlobalVarList[commandID].sourceEnable) || (GlobalVarList[commandID].sourceEnable == Source_All))
 		{
 			// Source is enabled
-			if(setGetType == SetGet_Get)
+			if (setGetType == SetGet_Get)
 			{
 				// Get
 				result = GlobalVarHandler_GetCommand(commandID,resultBuffer,&resultBufferLength);
 			}
-			else if(setGetType == SetGet_Set)
+			else if (setGetType == SetGet_Set)
 			{
 				// Can set? (not const?)
 				if(!GlobalVarList[commandID].isReadOnly)
@@ -108,6 +108,11 @@ void GlobalVarHandler_ProcessCommand(
 					// Cannot set, it is read only
 					result = Process_IsReadOnly;
 				}
+			}
+			else if (setGetType == SetGet_Help)
+			{
+				GlobalVarHandler_HelpVariable(commandID,resultBuffer);
+				result = Process_Ok_Answered;
 			}
 			else
 			{
@@ -333,9 +338,21 @@ static ProcessResult_t GlobalVarHandler_CheckValue(uint32_t num, uint8_t command
 	}
 
 	// check maxValue
-	if (num > GlobalVarList[commandID].maxValue) return Process_InvalidValue_TooMuch;
+	// Maxvalue is set?
+	if (GlobalVarList[commandID].maxValue == GlobalVarList[commandID].minValue)
+	{
+		// Is not set
+		return Process_Ok_SetSuccessful_SendOk;
+	}
+	else
+	{
+		// is set, because max not equal than min
 
-	if (num < GlobalVarList[commandID].minValue) return Process_InvalidValue_TooSmall;
+		if (num > GlobalVarList[commandID].maxValue) return Process_InvalidValue_TooMuch;
+
+		if (num < GlobalVarList[commandID].minValue) return Process_InvalidValue_TooSmall;
+
+	}
 
 	return Process_Ok_SetSuccessful_SendOk;
 }
@@ -400,11 +417,12 @@ void GlobalVarHandler_ListAllVariables(void)
 {
 	uint8_t i;
 	uint8_t length;
+	char buffer[10];
 
 	// TODO: Megcsinálni szebbre?
 	// TODO: min/max-okat kiírni?
 	// TODO: Enumokat is kiírni, ha van?
-	USART_SendLine("|------Name--------|--Type---|unit|----Description-------|");
+	USART_SendLine("+------Name--------|--Type---|min|max|unit|----Description-------+");
 	for (i=0; i<GlobalVarMaxCommandNum; i++)
 	{
 		// Print one command / line:
@@ -433,6 +451,25 @@ void GlobalVarHandler_ListAllVariables(void)
 			USART_SendChar(' ');
 			length++;
 		}
+		// Send min
+
+		length += SignedDecimalToString(GlobalVarList[i].minValue,buffer);
+		USART_SendString(buffer);
+		while(length < 34)
+		{
+			USART_SendChar(' ');
+			length++;
+		}
+
+		// Send max
+		length += SignedDecimalToString(GlobalVarList[i].maxValue,buffer);
+		USART_SendString(buffer);
+		while(length < 38)
+		{
+			USART_SendChar(' ');
+			length++;
+		}
+
 		// Send unit
 		if(GlobalVarList[i].unit)
 		{
@@ -441,7 +478,7 @@ void GlobalVarHandler_ListAllVariables(void)
 			length += USART_SendString(GlobalVarList[i].unit);
 			length += USART_SendString("]");
 		}
-		while(length < 35)
+		while(length < 43)
 		{
 			USART_SendChar(' ');
 			length++;
@@ -450,7 +487,26 @@ void GlobalVarHandler_ListAllVariables(void)
 		length += USART_SendString(GlobalVarList[i].description);
 		length += USART_SendLine("");
 	}
-	USART_SendLine("--------------------------------");
+	USART_SendLine("+----------------------------------------------------------------+");
 
+
+}
+
+
+
+/**
+ * \brief	An global variable help menu
+ */
+static void GlobalVarHandler_HelpVariable (uint8_t commandID, char *resultBuffer)
+{
+
+	// TODO: resultBufferbe írás
+	uprintf("Command help: %s, type:%s, min:%d, max:%d, desc:%s\r\n",
+			GlobalVarList[commandID].name,
+			GlobalVarTypesNames[GlobalVarList[commandID].type],
+			GlobalVarList[commandID].minValue,
+			GlobalVarList[commandID].maxValue,
+			GlobalVarList[commandID].description
+			);
 
 }

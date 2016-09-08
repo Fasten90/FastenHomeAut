@@ -84,9 +84,10 @@ uint32_t CommandFunction_help	( uint32_t argc, char** argv );
 uint32_t CommandFunction_test	( uint32_t argc, char** argv );
 uint32_t CommandFunction_start	( uint32_t argc, char** argv );
 uint32_t CommandFunction_stop	( uint32_t argc, char** argv );
+
 uint32_t CommandFunction_set	( uint32_t argc, char** argv );
 uint32_t CommandFunction_get	( uint32_t argc, char** argv );
-
+uint32_t CommandFunction_GlobalVariableHelp ( uint32_t argc, char** COMMAND_Arguments );
 
 uint32_t CommandFunction_reset	( uint32_t argc, char** argv );
 uint32_t CommandFunction_led	( uint32_t argc, char** argv );

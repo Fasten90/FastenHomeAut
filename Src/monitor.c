@@ -2,7 +2,7 @@
  * monitor.c
  *
  *		Created on:		2013.10.08.
- *    	Author: 		Vizi G·bor
+ *    	Author: 		Vizi G√°bor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		Monitor program, communication with UART, execute commands
  *		Target:			STM32Fx
@@ -30,12 +30,12 @@
 
 // GLOBAL VARIABLES
 
-// TODO: null·zni a v·ltozÛkat?
 volatile char MONITOR_CommandActual[MONITOR_MAX_COMMAND_LENGTH] = { 0 };
 volatile char MONITOR_CommandActualEscape[3] = { 0 };
 
 // USART Read cnt
 volatile uint8_t USART_RxBufferReadCnt = 0;
+
 
 /////////////////////////////////
 //			Configs:
@@ -71,7 +71,7 @@ char CommandArg3[MONITOR_COMMAND_ARG_MAX_LENGTH] = { 0 };
 
 char *COMMAND_Arguments[MONITOR_COMMAND_ARG_MAX_LENGTH] = { CommandArg1, CommandArg2, CommandArg3 } ;
 
-// TODO: Megcsin·ljuk 2 dimenziÛsra a tˆmbˆt?
+// TODO: Megcsin√°ljuk 2 dimenzi√≥sra a t√∂mb√∂t?
 //char COMMAND_Arguments[MONITOR_COMMAND_ARG_MAX_LENGTH][MONITOR_COMMAND_ARG_MAX_LENGTH] = { 0 };
 
 
@@ -82,7 +82,7 @@ xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
 
 
 #ifdef USE_MONITOR_HISTORY
-// TODO: ¡talakÌtani ˙gy, hogy 0-·t kelljen betˆlteni!
+// TODO: √Åtalak√≠tani √∫gy, hogy 0-√°t kelljen bet√∂lteni!
 uint8_t MONITOR_HISTORY_Save_cnt = MONITOR_HISTORY_MAX_LENGTH-1;
 uint8_t MONITOR_HISTORY_Load_cnt = MONITOR_HISTORY_MAX_LENGTH-1;
 char MONITOR_HISTORY[MONITOR_HISTORY_MAX_LENGTH][MONITOR_MAX_COMMAND_LENGTH] =
@@ -125,16 +125,21 @@ char MONITOR_HISTORY[MONITOR_HISTORY_MAX_LENGTH][MONITOR_MAX_COMMAND_LENGTH] =
 #endif
 
 
-///////////////////////////// FUNCTION PROTOTYPES
+/////////////////////////////
+///		FUNCTION PROTOTYPES
+/////////////////////////////
 
 static void ProcessReceivedCharacter(void);
 
 
-///////////////////////////// FUNCTIONS
+/////////////////////////////
+///		FUNCTIONS
+/////////////////////////////
 
 
-
-// Function: Init Monitor program
+/**
+ * \brief	Init Monitor program
+ */
 void MONITOR_Init ( void )
 {
 
@@ -160,6 +165,9 @@ void MONITOR_Init ( void )
 
 
 
+/**
+ * \brief	Send welcome message
+ */
 void MONITOR_SendWelcome ( void )
 {
 
@@ -210,6 +218,9 @@ void MONITOR_SendWelcome ( void )
 
 
 
+/**
+ * \brief	Send welcome message
+ */
 void MONITOR_SendPrimitiveWelcome ( void )
 {
 
@@ -234,7 +245,9 @@ void MONITOR_SendPrimitiveWelcome ( void )
 
 
 
-// Function: Always run, wait command and execute it
+/**
+ * \brief	Always run, wait command and execute it
+ */
 void MONITOR_CheckCommand ( void )
 {
 
@@ -343,6 +356,9 @@ void MONITOR_CheckCommand ( void )
 
 
 
+/**
+ * \brief	Check received characters and make command (COMMAND_Actual)
+ */
 static void ProcessReceivedCharacter(void)
 {
 
@@ -464,7 +480,9 @@ static void ProcessReceivedCharacter(void)
 
 
 
-// Function: Prepare (Separate) the command and Find and Run it...
+/**
+ * \brief	Prepare (Separate) the command and Find and Run it...
+ */
 bool MONITOR_PrepareFindExecuteCommand ( void )
 {
 
@@ -493,9 +511,10 @@ bool MONITOR_PrepareFindExecuteCommand ( void )
 
 
 
-
-// Function: Seperate words (command) to command word, and 2 argument
-// from char *CommandActul, to COMMAND_Arguments[0], [1], [2]
+/**
+ * \brief	Separate parameters from ActualCommand to COMMAND_Arguments[0], [1], [2]
+ *	\ TODO: √Åtnevez√©s, szeparat√°ro karakter const legyen
+ */
 uint8_t MONITOR_CommandSeparate ( void )
 {
 	// seperate command to argumentums
@@ -545,7 +564,9 @@ uint8_t MONITOR_CommandSeparate ( void )
 
 
 
-// Function: Find the command
+/**
+ * \brief	Find the command (in list)
+ */
 bool MONITOR_CommandFind ( void )
 {
 
@@ -587,7 +608,7 @@ bool MONITOR_CommandFind ( void )
 
 
 
-/*
+/**
 \brief			Command's letter deleting (backspace)
 */
 void MONITOR_CommandBackspace ( void )
@@ -731,7 +752,7 @@ void MONITOR_CommandBackspace ( void )
 
 
 
-/*
+/**
 \brief		Resend the actual line/command
 */
 void MONITOR_CommandResendLine ( void )
@@ -761,7 +782,7 @@ void MONITOR_CommandResendLine ( void )
 
 
 
-/*
+/**
 \brief		Resend an new line/command
 */
 void MONITOR_NewCommandResendLine ( void )
@@ -782,7 +803,7 @@ void MONITOR_NewCommandResendLine ( void )
 
 
 
-/*
+/**
 \brief		Process Excape sequence
 */
 bool MONITOR_CommandEscapeCharValidation ( void )
@@ -847,6 +868,9 @@ bool MONITOR_CommandEscapeCharValidation ( void )
 
 
 #ifdef USE_MONITOR_HISTORY
+/**
+ * \brief	Save actual command to history
+ */
 void MONITOR_HISTORY_Save ( void )
 {
 
@@ -880,10 +904,12 @@ void MONITOR_HISTORY_Save ( void )
 
 
 
-// Function: van-e a history-ban
-// return true, ha van megegyezo
-// return false, ha nincs megegyezo
 #ifdef USE_MONITOR_HISTORY
+/**
+ * \brief	Check, this command is in History?
+ * \return	true, if has equal
+ * 			false, if not has equal
+ */
 bool MONITOR_HISTORY_IsInIt ( void )
 {
 	uint8_t i;
@@ -904,6 +930,9 @@ bool MONITOR_HISTORY_IsInIt ( void )
 
 
 #ifdef USE_MONITOR_HISTORY
+/**
+ * \brief	Load history from list to actual command
+ */
 void MONITOR_HISTORY_Load ( uint8_t direction )
 {
 
@@ -954,7 +983,7 @@ void MONITOR_HISTORY_Load ( uint8_t direction )
 
 
 
-/*
+/**
 \brief		Convert MONITOR_CommandActual (Actual command) to small letters
 */
 void MONITOR_ConvertSmallLetter ( void )
@@ -975,7 +1004,7 @@ void MONITOR_ConvertSmallLetter ( void )
 
 
 
-/*
+/**
  * \brief	Check result and write response
  */
 void MONITOR_CheckResultAndRespond (CommandResult_t result)
@@ -1014,6 +1043,9 @@ void MONITOR_CheckResultAndRespond (CommandResult_t result)
 
 
 
+/**
+ * \brief	Run command
+ */
 void MONITOR_RunCommand ( uint8_t commandID )
 {
 
@@ -1052,6 +1084,9 @@ void MONITOR_RunCommand ( uint8_t commandID )
 
 
 
+/**
+ * \brief	Write an command help
+ */
 void MONITOR_WriteAnCommandHelp ( uint8_t commandID )
 {
 	USART_SendMessage("Command name: ");
@@ -1063,6 +1098,10 @@ void MONITOR_WriteAnCommandHelp ( uint8_t commandID )
 }
 
 
+
+/**
+ * \brief	Check actual command argument num from settings
+ */
 CommandResult_t MONITOR_ArgumentNumIsGood ( uint8_t receivedArgNum, uint8_t commandArgNum)
 {
 	// Check ArgNum. bit is set?
@@ -1116,3 +1155,5 @@ CommandResult_t MONITOR_ArgumentNumIsGood ( uint8_t receivedArgNum, uint8_t comm
 	}
 
 }
+
+
