@@ -80,16 +80,18 @@ uint8_t UnsignedDecimalToString (uint32_t value, char *string)
 {
 
 	uint8_t length = 0;
+	bool isStarted = false;
 
 	// Largest num: 1xxxxxx...
 	uint32_t decade = 1000000000;
 
 	while (decade > 1)
 	{
-		if (value >= decade)
+		if ((value >= decade) || (isStarted == true))
 		{
 			// Put first digit
 			string[length++] = ((value/decade) + '0');
+			isStarted = true;
 		}
 
 		// Value - first digit

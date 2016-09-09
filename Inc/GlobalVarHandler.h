@@ -2,7 +2,7 @@
  * GlobalVarHandler.h
  *
  *  Created on: Sep 5, 2016
- *      Author: Vizi Gábor
+ *      Author: Vizi Gï¿½bor
  */
 
 #ifndef GLOBALVARHANDLER_H_
@@ -23,7 +23,7 @@
 
 typedef enum
 {
-	Type_Unknown = 0,
+	Type_Error = 0,
 	Type_Bool,
 	Type_Uint8,
 	Type_Int8,
@@ -48,8 +48,10 @@ typedef enum
 	Process_FailType,
 	Process_FailParam,
 	Process_FailParamIsNotNumber,
+	Process_FailParamIsNotHexNumber,
 	Process_InvalidValue_TooMuch,
 	Process_InvalidValue_TooSmall,
+	Process_InvalidValue_NotBool,
 	Process_Ok_Answered,
 	Process_Ok_SetSuccessful_SendOk
 } ProcessResult_t;
@@ -86,13 +88,13 @@ typedef struct
 	const uint32_t maxValue;	// TODO: union pl. a stringMaxLength-tel
 	const uint32_t minValue;
 
-	//const uint8_t stringMaxLength;	// TODO: összevonva a maxValue-val
+	//const uint8_t stringMaxLength;	// TODO: ï¿½sszevonva a maxValue-val
 
 	const CommandSource_t sourceEnable;
 
-	const bool isHex;		// TODO: esetleg lekezeljük külön bemenetként a 0x00et...
+	const bool isHex;		// TODO: esetleg lekezeljï¿½k kï¿½lï¿½n bemenetkï¿½nt a 0x00et...
 
-	const char *enumList;	// TODO: enumerátorhoz
+	const char *enumList;	// TODO: enumerï¿½torhoz
 
 #ifdef GLOBALVARHANDLER_UNIT_ENABLE
 	const char const *unit;

@@ -260,7 +260,6 @@ void MONITOR_CheckCommand ( void )
 #endif
 
 
-
 #ifdef CONFIG_USE_FREERTOS
 	vTaskDelay(10);
 
@@ -272,6 +271,11 @@ void MONITOR_CheckCommand ( void )
 	// Welcome message
 	MONITOR_SendPrimitiveWelcome();
 
+	// Check GlobalVarList[]
+	if(GlobalVarHandler_CheckCommandStructAreValid()==false)
+	{
+		USART_SendLine("ERROR in GlobalVarList! Should correct that!");
+	}
 
 	// Start receive
 	USART_StartReceiveMessage();

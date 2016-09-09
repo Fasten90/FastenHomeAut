@@ -2,7 +2,7 @@
  * GlobalVarHandler.c
  *
  *  Created on: Sep 5, 2016
- *      Author: Vizi Gábor
+ *      Author: Vizi GÃ¡bor
  */
 
 
@@ -11,10 +11,19 @@
 #include "GlobalVariables.h"
 
 
+#define BOOL_MAX	(1)
+/*
+#define UINT8_MAX	(0xFF)
+#define INT8_MAX	(0x7F)
+#define UINT16_MAX	(0xFFFF)
+#define INT16_MAX	(0x7FFF)
+#define UINT32_MAX	(0xFFFFFFFF)
+#define INT32_MAX	(0x7FFFFFFF)
+*/
 
 /// GLOBAL VARIABLES
 /*
-Type_Unknown = 0,
+Type_Error = 0,
 Type_Bool,
 Type_Uint8,
 Type_Int8,
@@ -53,15 +62,49 @@ static ProcessResult_t GlobalVarHandler_SetCommand(uint8_t commandID, const char
 static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBuffer, uint8_t resultBufferLength);
 static ProcessResult_t GlobalVarHandler_CheckValue(uint32_t num, uint8_t commandID);
 static void GlobalVarHandler_HelpVariable (uint8_t commandID, char *resultBuffer);
-
+static ProcessResult_t GlobalVarHandler_GetIntegerVariable(uint8_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
+static ProcessResult_t GlobalVarHandler_SetBool(uint8_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength);
+static ProcessResult_t GlobalVarHandler_SetInteger(uint8_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength);
 
 /// FUNCTIONS
 
 
 bool GlobalVarHandler_CheckCommandStructAreValid(void)
 {
-	// TODO: vagy itt futásidejû teszt, vagy makrókkal fordításidejû teszt?
-	return false;
+	// TODO: vagy itt futÃ¡sidejÅ±teszt, vagy makrÃ³kkal fordÃ­tÃ¡sidejÅ± teszt?
+
+	uint8_t i;
+
+	for (i=0; i < GlobalVarMaxCommandNum; i++)
+	{
+		if (GlobalVarList[i].name == NULL)
+		{
+			return false;
+		}
+
+		if (GlobalVarList[i].varPointer == NULL)
+		{
+			return false;
+		}
+
+		if (GlobalVarList[i].type == Type_Error)
+		{
+			return false;
+		}
+
+		if ( (GlobalVarList[i].type == Type_Enumerator) && (GlobalVarList[i].enumList == NULL) )
+		{
+			return false;
+		}
+
+		if ( (GlobalVarList[i].type == Type_String) && (GlobalVarList[i].maxValue == 0))
+		{
+			return false;
+		}
+
+	}
+
+	return true;
 }
 
 
@@ -175,18 +218,31 @@ static ProcessResult_t GlobalVarHandler_GetCommand(uint8_t commandID, char *resu
 
 	switch(GlobalVarList[commandID].type)
 	{
-	case Type_Uint8:
+	case Type_Bool:
 		{
-		uint8_t *numPointer = (uint8_t *)GlobalVarList[commandID].varPointer;
-		uint8_t num = *numPointer;
-		// TODO: Buffer túlírás ellenõrzés
-		length += UnsignedDecimalToString(num, resultBuffer);
+			bool *boolPointer = (bool *)GlobalVarList[commandID].varPointer;
+			if(*boolPointer)
+			{
+				length += StrCpyMax(resultBuffer,"1 / TRUE",*resultBufferLength);
+			}
+			else
+			{
+				length += StrCpyMax(resultBuffer,"0 / FALSE",*resultBufferLength);
+			}
 		}
+		break;
+	case Type_Uint8:
+	case Type_Uint16:
+	case Type_Uint32:
+	case Type_Int8:
+	case Type_Int16:
+	case Type_Int32:
+		GlobalVarHandler_GetIntegerVariable(commandID,resultBuffer,resultBufferLength);
 		break;
 	case Type_String:
 		{
-		const char *string = GlobalVarList[commandID].varPointer;
-		length += StrCpyMax(resultBuffer,string, *resultBufferLength-length);
+			const char *string = GlobalVarList[commandID].varPointer;
+			length += StrCpyMax(resultBuffer,string, *resultBufferLength-length);
 		}
 		break;
 
@@ -209,7 +265,7 @@ static ProcessResult_t GlobalVarHandler_GetCommand(uint8_t commandID, char *resu
 
 
 	// Check length
-	// TODO:
+	// TODO: Check length
 	if (length <= *resultBufferLength)
 	{
 		*resultBufferLength -= length;
@@ -227,49 +283,135 @@ static ProcessResult_t GlobalVarHandler_GetCommand(uint8_t commandID, char *resu
 
 
 /**
+ * \brief Get integer value
+ */
+static ProcessResult_t GlobalVarHandler_GetIntegerVariable(uint8_t commandID, char *resultBuffer, uint8_t *resultBufferLength)
+{
+
+	VarType_t type = GlobalVarList[commandID].type;
+
+	if(GlobalVarList[commandID].isHex)
+	{
+		uint8_t byteNum = 0;
+		switch(type)
+		{
+			case Type_Uint8:
+				byteNum = 1;
+				break;
+			case Type_Uint16:
+				byteNum = 2;
+				break;
+			case Type_Uint32:
+				byteNum = 4;
+				break;
+			default:
+				byteNum = 0;
+				break;
+		}
+
+		if(byteNum != 0)
+		{
+			uint32_t *numPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
+			uint32_t num = *numPointer;
+			// TODO: Buffer tÃºlÃ­rÃ¡s ellenÅ‘rzÃ©s
+			*resultBufferLength -= StrCpyMax(resultBuffer,"0x",3);
+			*resultBufferLength -= DecimalToHexaString(num, byteNum, resultBuffer);
+			return Process_Ok_Answered;
+		}
+		else
+		{
+			return Process_UnknownError;
+		}
+	}
+
+
+	// If not hex
+	// TODO: SzÃ©pÃ­teni
+	switch(type)
+	{
+	case Type_Uint8:
+		{
+			uint8_t *numPointer = (uint8_t *)GlobalVarList[commandID].varPointer;
+			uint8_t num = *numPointer;
+			// TODO: Buffer tÃºlÃ­rÃ¡s ellenÅ‘rzÃ©s
+			*resultBufferLength -= UnsignedDecimalToString(num, resultBuffer);
+		}
+		break;
+	case Type_Uint16:
+		{
+			uint16_t *numPointer = (uint16_t *)GlobalVarList[commandID].varPointer;
+			uint16_t num = *numPointer;
+			// TODO: Buffer tÃºlÃ­rÃ¡s ellenÅ‘rzÃ©s
+			*resultBufferLength -= UnsignedDecimalToString(num, resultBuffer);
+		}
+		break;
+	case Type_Uint32:
+		{
+			uint32_t *numPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
+			uint32_t num = *numPointer;
+			// TODO: Buffer tÃºlÃ­rÃ¡s ellenÅ‘rzÃ©s
+			*resultBufferLength -= UnsignedDecimalToString(num, resultBuffer);
+		}
+		break;
+	case Type_Int8:
+		{
+			int8_t *numPointer = (int8_t *)GlobalVarList[commandID].varPointer;
+			int8_t num = *numPointer;
+			// TODO: Buffer tÃºlÃ­rÃ¡s ellenÅ‘rzÃ©s
+			*resultBufferLength -= SignedDecimalToString(num, resultBuffer);
+		}
+		break;
+	case Type_Int16:
+		{
+			int16_t *numPointer = (int16_t *)GlobalVarList[commandID].varPointer;
+			int16_t num = *numPointer;
+			// TODO: Buffer tÃºlÃ­rÃ¡s ellenÅ‘rzÃ©s
+			*resultBufferLength -= SignedDecimalToString(num, resultBuffer);
+		}
+		break;
+	case Type_Int32:
+		{
+			int32_t *numPointer = (int32_t *)GlobalVarList[commandID].varPointer;
+			int32_t num = *numPointer;
+			// TODO: Buffer tÃºlÃ­rÃ¡s ellenÅ‘rzÃ©s
+			*resultBufferLength -= SignedDecimalToString(num, resultBuffer);
+		}
+		break;
+	default:
+		// Wrong case
+		return Process_UnknownError;
+		break;
+	}
+
+
+	return Process_Ok_Answered;
+}
+
+
+/**
  * \brief	Set command
  */
 static ProcessResult_t GlobalVarHandler_SetCommand(uint8_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength)
 {
 
 	uint8_t length = 0;
+	ProcessResult_t result = Process_UnknownError;
 
-	// TODO: isHex?
-
-	// TODO: külön függvénybe az értékkonvertálást?
 	switch(GlobalVarList[commandID].type)
 	{
-	case Type_Uint8:
-		{
-		uint8_t *numPointer = (uint8_t *)GlobalVarList[commandID].varPointer;
-		uint32_t num = 0;
-		if(UnsignedDecimalStringToNum(param, &num))
-		{
-			// TODO: Check value
-			ProcessResult_t result;
-			result = GlobalVarHandler_CheckValue(num,commandID);
-
-			if (result == Process_Ok_SetSuccessful_SendOk)
-			{
-				// Good
-				*numPointer = num;
-			}
-			else
-			{
-				// Wrong
-				return result;
-			}
-
-			// NOTE: Do not return from here
-			//return Process_Ok_SetSuccessful_SendOk;
-		}
-		else
-		{
-			return Process_FailParamIsNotNumber;
-		}
-
-		}
+	case Type_Bool:
+		result = GlobalVarHandler_SetBool(commandID, param, resultBuffer, resultBufferLength);
 		break;
+
+	case Type_Uint8:
+	case Type_Uint16:
+	case Type_Uint32:
+	case Type_Int8:
+	case Type_Int16:
+	case Type_Int32:
+		result = GlobalVarHandler_SetInteger(commandID, param, resultBuffer, resultBufferLength);
+		break;
+
 	case Type_String:
 		{
 		uint8_t stringLength = StringLength(param);
@@ -288,9 +430,24 @@ static ProcessResult_t GlobalVarHandler_SetCommand(uint8_t commandID, const char
 		}
 		break;
 
+	case Type_Float:
+		// TODO: implement
+		return Process_FailParam;
+		break;
+
+	case Type_Enumerator:
+		// TODO: implement
+		return Process_FailParam;
+		break;
+
 	default:
 		return Process_FailParam;
 		break;
+	}
+
+	if(result != Process_Ok_SetSuccessful_SendOk)
+	{
+		return result;
 	}
 
 	// Check length
@@ -310,20 +467,275 @@ static ProcessResult_t GlobalVarHandler_SetCommand(uint8_t commandID, const char
 
 
 /**
+ * \brief	Set bool variable
+ */
+static ProcessResult_t GlobalVarHandler_SetBool(uint8_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength)
+{
+
+	uint32_t num;
+	bool boolVal;
+	// Check it is decimal?
+	if(UnsignedDecimalStringToNum(param, &num))
+	{
+		if (num == 1)
+		{
+			boolVal = true;
+		}
+		else if (num == 0)
+		{
+			boolVal = false;
+		}
+		else
+		{
+			// Wrong num (not 0, and not 1)
+			return Process_InvalidValue_NotBool;
+		}
+	}
+	else
+	{
+		// Not number
+
+		// Check it is "on" / "off"?
+		if(!StrCmp((const char*)param,"on"))
+		{
+			boolVal = true;
+		}
+		else if(!StrCmp((const char*)param,"off"))
+		{
+			boolVal = false;
+		}
+		// Check it is "enable" / "disable"
+		else if(!StrCmp((const char*)param,"enable"))
+		{
+			boolVal = true;
+		}
+		else if(!StrCmp((const char*)param,"disable"))
+		{
+			boolVal = false;
+		}
+		else
+		{
+			// Not good "string"
+			return Process_InvalidValue_NotBool;
+		}
+	}
+	// If reach here, boolVal is contain a valid value
+	bool *bPointer = (bool *)GlobalVarList[commandID].varPointer;
+	*bPointer = boolVal;
+
+	return Process_Ok_SetSuccessful_SendOk;
+}
+
+
+
+/**
+ * \brief	Set integer global variable
+ */
+static ProcessResult_t GlobalVarHandler_SetInteger(uint8_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength)
+{
+	VarType_t varType = GlobalVarList[commandID].type;
+
+	// If hex
+	if(GlobalVarList[commandID].isHex)
+	{
+		uint8_t length = 0;
+		if(param[0] == '0' && param[1] == 'x')
+		{
+			length = 2;
+		}
+
+		uint8_t byteLength = StringIsHexadecimalString(&param[length]);
+		if(byteLength != 0)
+		{
+			uint32_t num;
+			if(StringHexToNum(&param[length],&num,byteLength/2))
+			{
+				// Is good num?
+				ProcessResult_t result = GlobalVarHandler_CheckValue(num, commandID);
+				if ( result == Process_Ok_SetSuccessful_SendOk)
+				{
+					switch(varType)
+					{
+					case Type_Uint8:
+						{
+							uint8_t *wPointer = (uint8_t *)GlobalVarList[commandID].varPointer;
+							*wPointer = num;
+						}
+						break;
+					case Type_Uint16:
+						{
+							uint16_t *wPointer = (uint16_t *)GlobalVarList[commandID].varPointer;
+							*wPointer = num;
+						}
+						break;
+					case Type_Uint32:
+						{
+							uint32_t *wPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
+							*wPointer = num;
+						}
+						break;
+					default:
+						return Process_UnknownError;
+						break;
+					}
+
+					return Process_Ok_SetSuccessful_SendOk;
+
+				}
+				else
+				{
+					// Too much or small
+					return result;
+				}
+
+			}
+			else
+			{
+				// Wrong hex converting
+				return Process_FailParamIsNotHexNumber;
+			}
+		}
+		else
+		{
+			// Wrong hex converting, not number
+			return Process_FailParamIsNotHexNumber;
+		}
+	} // End of "isHex"
+
+
+	if(varType == Type_Uint8 || varType == Type_Uint16 || varType == Type_Uint32)
+	{
+		// Unsigned types
+
+		uint32_t num = 0;
+		if(UnsignedDecimalStringToNum(param, &num))
+		{
+			ProcessResult_t result;
+			result = GlobalVarHandler_CheckValue(num,commandID);
+
+			if (result == Process_Ok_SetSuccessful_SendOk)
+			{
+				// Good
+				if (varType == Type_Uint8)
+				{
+					uint8_t *numPointer = (uint8_t *)GlobalVarList[commandID].varPointer;
+					*numPointer = num;
+				}
+				else if (varType == Type_Uint16)
+				{
+					uint16_t *numPointer = (uint16_t *)GlobalVarList[commandID].varPointer;
+					*numPointer = num;
+				}
+				else if (varType == Type_Uint32)
+				{
+					uint32_t *numPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
+					*numPointer = num;
+				}
+				//else - not reaching
+				return Process_Ok_SetSuccessful_SendOk;
+			}
+			else
+			{
+				// Wrong
+				return result;
+			}
+
+			// NOTE: Do not return from here
+			//return Process_Ok_SetSuccessful_SendOk;
+		}
+		else
+		{
+			return Process_FailParamIsNotNumber;
+		}
+	}
+
+	if(varType == Type_Int8 || varType == Type_Int16 || varType == Type_Int32)
+	{
+		// Unsigned types
+
+		int32_t num = 0;
+		if(SignedDecimalStringToNum(param, &num))
+		{
+			ProcessResult_t result;
+			result = GlobalVarHandler_CheckValue(num,commandID);
+
+			if (result == Process_Ok_SetSuccessful_SendOk)
+			{
+				// Good
+				if (varType == Type_Int8)
+				{
+					uint8_t *numPointer = (uint8_t *)GlobalVarList[commandID].varPointer;
+					*numPointer = num;
+				}
+				else if (varType == Type_Int16)
+				{
+					uint16_t *numPointer = (uint16_t *)GlobalVarList[commandID].varPointer;
+					*numPointer = num;
+				}
+				else if (varType == Type_Int32)
+				{
+					uint32_t *numPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
+					*numPointer = num;
+				}
+				//else - not reaching
+				return Process_Ok_SetSuccessful_SendOk;
+			}
+			else
+			{
+				// Wrong
+				return result;
+			}
+
+			// NOTE: Do not return from here
+			//return Process_Ok_SetSuccessful_SendOk;
+		}
+		else
+		{
+			return Process_FailParamIsNotNumber;
+		}
+	}
+
+	return Process_UnknownError;
+
+}
+
+
+
+/**
  * \brief	Check values
+ * \return	Process_Ok_SetSuccessful_SendOk, if ok
  */
 static ProcessResult_t GlobalVarHandler_CheckValue(uint32_t num, uint8_t commandID)
 {
+
+	// First, check the type value
 	switch(GlobalVarList[commandID].type)
 	{
 	case Type_Bool:
-		if (num > 1) return Process_InvalidValue_TooMuch;
+		if (num > BOOL_MAX) return Process_InvalidValue_TooMuch;
 		break;
 	case Type_Uint8:
-		if (num > 255) return Process_InvalidValue_TooMuch;
+		if (num > UINT8_MAX) return Process_InvalidValue_TooMuch;
 		break;
 	case Type_Uint16:
-		if (num > 65535) return Process_InvalidValue_TooMuch;
+		if (num > UINT16_MAX) return Process_InvalidValue_TooMuch;
+		break;
+	case Type_Uint32:
+		// TODO: Always true
+		if (num > UINT32_MAX) return Process_InvalidValue_TooMuch;
+		break;
+	case Type_Int8:
+		if ((int32_t)num > INT8_MAX) return Process_InvalidValue_TooMuch;
+		if ((int32_t)num < INT8_MIN) return Process_InvalidValue_TooSmall;
+		break;
+	case Type_Int16:
+		if ((int32_t)num > INT16_MAX) return Process_InvalidValue_TooMuch;
+		if ((int32_t)num < INT16_MIN) return Process_InvalidValue_TooSmall;
+		break;
+	case Type_Int32:
+		// TODO: Always true
+		if ((int32_t)num > INT32_MAX) return Process_InvalidValue_TooMuch;
+		if ((int32_t)num < INT32_MIN) return Process_InvalidValue_TooSmall;
 		break;
 	case Type_String:
 		if (num > GlobalVarList[commandID].maxValue) return Process_TooLongString;
@@ -331,13 +743,13 @@ static ProcessResult_t GlobalVarHandler_CheckValue(uint32_t num, uint8_t command
 	case Type_Enumerator:
 		if (num > GlobalVarList[commandID].maxValue) return Process_InvalidValue_TooMuch;
 		break;
-		// TODO: Lekezelni a többi ágat is
 	default:
 		return Process_FailType;
 		break;
 	}
 
-	// check maxValue
+
+	// Check maxValue
 	// Maxvalue is set?
 	if (GlobalVarList[commandID].maxValue == GlobalVarList[commandID].minValue)
 	{
@@ -390,6 +802,9 @@ static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBu
 	case Process_InvalidValue_TooMuch:
 		StrCpyMax(resultBuffer,"Invalid value, too much",resultBufferLength);
 		break;
+	case Process_InvalidValue_NotBool:
+		StrCpyMax(resultBuffer,"Invalid value, not bool",resultBufferLength);
+		break;
 	case Process_IsReadOnly:
 		StrCpyMax(resultBuffer,"Cannot set, it is constant",resultBufferLength);
 		break;
@@ -419,9 +834,9 @@ void GlobalVarHandler_ListAllVariables(void)
 	uint8_t length;
 	char buffer[10];
 
-	// TODO: Megcsinálni szebbre?
-	// TODO: min/max-okat kiírni?
-	// TODO: Enumokat is kiírni, ha van?
+	// TODO: Megcsinï¿½lni szebbre?
+	// TODO: min/max-okat kiï¿½rni?
+	// TODO: Enumokat is kiï¿½rni, ha van?
 	USART_SendLine("+------Name--------|--Type---|min|max|unit|----Description-------+");
 	for (i=0; i<GlobalVarMaxCommandNum; i++)
 	{
@@ -500,7 +915,7 @@ void GlobalVarHandler_ListAllVariables(void)
 static void GlobalVarHandler_HelpVariable (uint8_t commandID, char *resultBuffer)
 {
 
-	// TODO: resultBufferbe írás
+	// TODO: resultBufferbe ï¿½rï¿½s
 	uprintf("Command help: %s, type:%s, min:%d, max:%d, desc:%s\r\n",
 			GlobalVarList[commandID].name,
 			GlobalVarTypesNames[GlobalVarList[commandID].type],

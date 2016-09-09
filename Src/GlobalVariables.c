@@ -2,7 +2,7 @@
  * GlobalVariables.c
  *
  *  Created on: Sep 7, 2016
- *      Author: Vizi Gábor
+ *      Author: Vizi GÃ¡bor
  */
 
 
@@ -18,6 +18,10 @@
 uint8_t testVar = 17;
 char deviceName[20] = "Discovery";
 uint8_t distance = 0;
+bool myTestBool = false;
+int16_t testInt16;
+uint32_t testUint32;
+int32_t testInt32;
 
 GlobalVarCommand_t GlobalVarList[] =
 {
@@ -42,6 +46,28 @@ GlobalVarCommand_t GlobalVarList[] =
 			.unit = "cm",
 			.description = "distance from hell"
 		},
+		{
+			.name = "bool",
+			.varPointer = &myTestBool,
+			.type = Type_Bool
+		},
+		{
+			.name = "testint16",
+			.varPointer = &testInt16,
+			.type = Type_Int16,
+		},
+		{
+			.name = "testint32",
+			.varPointer = &testInt32,
+			.type = Type_Int32,
+		},
+		{
+			.name = "testuint32",
+			.varPointer = &testUint32,
+			.type = Type_Uint32,
+			.isHex = true,
+		},
+
 
 		// ADD new global variable here
 		/*
@@ -61,7 +87,7 @@ GlobalVarCommand_t GlobalVarList[] =
 };
 
 
-// TODO: Megvizsgálni a tagok számát
+// TODO: MegvizsgÃ¡lni a tagok szÃ¡mÃ¡t
 /*
 #if ( (sizeof(GlobalVarList)/sizeof(GlobalVarList[0])) > 255 )
 #error "uint8_t globalVarSize"
