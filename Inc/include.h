@@ -109,11 +109,15 @@ typedef enum
 //#define USE_RADIOALARM_OTG
 
 
+// comment out, if you dont need escape sequence (cursors, history, cls, ...)
+#define MONITOR_ESCAPE_SEQUENCE_ENABLE
 
-// If you want use monitor program's history
-// Turn off, if has small memory, now it need 1.5k RAM
-#define USE_MONITOR_HISTORY
 
+#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+	// If you want use monitor program's history
+	// Turn off, if has small memory, now it need 1.5k RAM
+	#define USE_MONITOR_HISTORY
+#endif
 
 // FreeRTOS - at panel selection
 // Do not use from this line, use the CONFIG_USE_PANEL ...

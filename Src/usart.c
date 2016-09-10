@@ -729,4 +729,11 @@ void USART_SendFloat ( float value )
 
 
 
+/**
+ * \brief	Send "Bell" character
+ */
+void USART_SendSoundBeep ( void )
+{
+	USART_SendChar('\a');
+}
 

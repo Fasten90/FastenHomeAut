@@ -314,8 +314,10 @@ static ProcessResult_t GlobalVarHandler_GetIntegerVariable(uint8_t commandID, ch
 			uint32_t *numPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
 			uint32_t num = *numPointer;
 			// TODO: Buffer túlírás ellenőrzés
-			*resultBufferLength -= StrCpyMax(resultBuffer,"0x",3);
-			*resultBufferLength -= DecimalToHexaString(num, byteNum, resultBuffer);
+			uint8_t length = 0;
+			length += StrCpyMax(resultBuffer,"0x",3);
+			length += DecimalToHexaString(num, byteNum, &resultBuffer[length]);
+			*resultBufferLength -= length;
 			return Process_Ok_Answered;
 		}
 		else
@@ -424,9 +426,13 @@ static ProcessResult_t GlobalVarHandler_SetCommand(uint8_t commandID, const char
 			stringLength = *resultBufferLength;
 		}
 
+		// TODO: Nincs hossz ellenőrzés és arra riasztás, levágja
+
 		char *string = (char *)GlobalVarList[commandID].varPointer;
 
 		length += StrCpyMax(string,param,stringLength);
+
+		result = Process_Ok_SetSuccessful_SendOk;
 		}
 		break;
 

@@ -16,7 +16,7 @@
 #include "command.h"
 
 #include "monitor.h"
-
+#include "GlobalVarHandler.h"
 
 ///////////////////////////// MONITOR
 
@@ -31,7 +31,7 @@
 // GLOBAL VARIABLES
 
 volatile char MONITOR_CommandActual[MONITOR_MAX_COMMAND_LENGTH] = { 0 };
-volatile char MONITOR_CommandActualEscape[3] = { 0 };
+volatile char MONITOR_CommandActualEscape[4] = { 0 };
 
 // USART Read cnt
 volatile uint8_t USART_RxBufferReadCnt = 0;
@@ -51,7 +51,12 @@ static volatile bool MONITOR_CommandReceivedEvent = false;
 static volatile bool MONITOR_CommandReceivedLastChar = false;
 static volatile bool MONITOR_CommandReceivedNotLastChar = false;
 static volatile bool MONITOR_CommandReadable = false;
-static volatile bool MONITOR_CommandReceivedBackspace =false;
+static volatile bool MONITOR_CommandReceivedBackspace = false;
+
+#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+static volatile bool MONITOR_CommandReceivedDelete = false;
+static volatile bool MONITOR_CommandReceivedTabulator = false;
+#endif
 
 static volatile uint8_t MONITOR_CommandActualLength = 0;
 static volatile uint8_t MONITOR_CommandSentLength = 0;
@@ -129,7 +134,9 @@ char MONITOR_HISTORY[MONITOR_HISTORY_MAX_LENGTH][MONITOR_MAX_COMMAND_LENGTH] =
 ///		FUNCTION PROTOTYPES
 /////////////////////////////
 
-static void ProcessReceivedCharacter(void);
+static void MONITOR_ProcessReceivedCharacter(void);
+static void MONITOR_CommandDelete ( void );
+static void MONITOR_CommandTabulator ( void );
 
 
 /////////////////////////////
@@ -152,9 +159,11 @@ void MONITOR_Init ( void )
 	MONITOR_CommandSentLength = 0;
 	MONITOR_CommandCursorPosition = 0;
 
+#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 	MONITOR_CommandEscapeSequenceReceived = false;
 	MONITOR_CommandEscapeSequenceInProgress = false;
 	MONITOR_CommandEscape_cnt = 0;
+#endif
 
 	COMMAND_ArgCount = 0;
 
@@ -224,17 +233,17 @@ void MONITOR_SendWelcome ( void )
 void MONITOR_SendPrimitiveWelcome ( void )
 {
 
-
 	#ifdef CONFIG_USE_FREERTOS
 	vTaskDelay(1);
 	#else
 	HAL_Delay(1);
 	#endif
 
-	
+#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 	USART_SEND_CLS();						// Clean screen
+#endif
+	
 	MONITOR_SEND_WELCOME();					// Welcome message
-
 
 	USART_SEND_NEW_LINE();
 	MONITOR_SEND_PROMT();					// New promt
@@ -295,7 +304,7 @@ void MONITOR_CheckCommand ( void )
 			}
 			#endif
 
-			ProcessReceivedCharacter();
+			MONITOR_ProcessReceivedCharacter();
 
 			if ( MONITOR_CommandReceivedEvent )
 			{
@@ -303,10 +312,27 @@ void MONITOR_CheckCommand ( void )
 				MONITOR_CommandReceivedEvent = false;
 
 				// Only one event will receive
-				if ( MONITOR_CommandReceivedNotLastChar )
+				if ( MONITOR_CommandReceivedBackspace )
+				{
+					// Backspace
+					MONITOR_CommandReceivedBackspace = false;
+					MONITOR_CommandBackspace();
+				}
+				else if ( MONITOR_CommandReceivedDelete )
+				{
+					// Delete
+					MONITOR_CommandReceivedDelete = false;
+					MONITOR_CommandDelete();
+				}
+#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+				else if ( MONITOR_CommandReceivedNotLastChar )
 				{
 					// Not Last char (it is inner character) - Refresh the line
 					MONITOR_CommandReceivedNotLastChar = false;
+
+					//step right
+					USART_ESCAPE_CURSORRIGHT();
+
 					MONITOR_CommandResendLine();
 				}
 				else if ( MONITOR_CommandEscapeSequenceReceived )
@@ -315,12 +341,12 @@ void MONITOR_CheckCommand ( void )
 					MONITOR_CommandEscapeSequenceReceived = false;
 					MONITOR_CommandEscapeCharValidation ();
 				}
-				else if ( MONITOR_CommandReceivedBackspace )
+				else if ( MONITOR_CommandReceivedTabulator )
 				{
-					// Backspace
-					MONITOR_CommandReceivedBackspace = false;
-					MONITOR_CommandBackspace();
+					MONITOR_CommandReceivedTabulator = false;
+					MONITOR_CommandTabulator();
 				}
+#endif
 				else if ( MONITOR_CommandReadable )
 				{
 					// Pressed Enter, EndCommand();
@@ -363,7 +389,7 @@ void MONITOR_CheckCommand ( void )
 /**
  * \brief	Check received characters and make command (COMMAND_Actual)
  */
-static void ProcessReceivedCharacter(void)
+static void MONITOR_ProcessReceivedCharacter(void)
 {
 
 	// While Read cnt not equal than Write cnt
@@ -375,12 +401,13 @@ static void ProcessReceivedCharacter(void)
 		USART_ReceivedChar = USART_RxBuffer[USART_RxBufferReadCnt-1];
 		USART_RxBufferReadCnt++;
 
+#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 		// ESCAPE SEQUENCE
 		if ( MONITOR_CommandEscapeSequenceInProgress )
 		{
 			// Escape sequence in progress
 			// Copy escape characters to MONITOR_CommandActualEscape[]
-
+			// TODO: Megcsinálni elegánsabban
 			if (MONITOR_CommandEscape_cnt == 1)
 			{
 				if (USART_ReceivedChar == '[')
@@ -396,17 +423,41 @@ static void ProcessReceivedCharacter(void)
 			}
 			else if ( MONITOR_CommandEscape_cnt == 2)
 			{
-				// TODO: only work with escape sequence if 3 chars (ESC[A)
 				MONITOR_CommandActualEscape[MONITOR_CommandEscape_cnt++] = USART_ReceivedChar;
-				MONITOR_CommandEscapeSequenceInProgress = false;
-				MONITOR_CommandEscapeSequenceReceived = true;
-				MONITOR_CommandReceivedEvent = true;
-				return;
-			}
 
+				// TODO: only work with escape sequence if 3 chars (ESC[A)
+				if(MONITOR_CommandActualEscape[2] != '3')
+				{
+					// \e[A / B / C / D
+					MONITOR_CommandEscapeSequenceInProgress = false;
+					MONITOR_CommandEscapeSequenceReceived = true;
+					MONITOR_CommandReceivedEvent = true;
+					return;
+				}
+				else
+				{
+					// \e[3~ --> delete at zoc
+					//MONITOR_CommandEscape_cnt++;
+				}
+			}
+			else if ( MONITOR_CommandEscape_cnt == 3)
+			{
+				MONITOR_CommandActualEscape[MONITOR_CommandEscape_cnt++] = USART_ReceivedChar;
+
+				if (MONITOR_CommandActualEscape[3] == '~')
+				{
+					// TODO: At ZOC, it is delete char
+					// Delete button
+					MONITOR_CommandEscapeSequenceInProgress = false;
+					MONITOR_CommandReceivedDelete = true;
+					MONITOR_CommandReceivedEvent = true;
+					return;
+				}
+			}
 		}
 		else
 		{
+#endif	// #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 			// No escape sequence
 			// An character received
 
@@ -421,7 +472,8 @@ static void ProcessReceivedCharacter(void)
 			{
 				if ( (USART_ReceivedChar  == '\r') || (USART_ReceivedChar == '\n') ||
 					(USART_ReceivedChar == '\0'))
-				{		// receive Enter
+				{
+					// Received Enter
 					MONITOR_CommandReadable = true;
 					MONITOR_CommandActual[MONITOR_CommandActualLength] = '\0';
 					MONITOR_CommandReceivedEvent = true;
@@ -429,8 +481,23 @@ static void ProcessReceivedCharacter(void)
 				}
 				else if ( USART_ReceivedChar  == USART_KEY_BACKSPACE )
 				{
-					// In real world this is backspace	// PuTTy vs ZOC
+					// Received backspace
 					MONITOR_CommandReceivedBackspace = true;
+					MONITOR_CommandReceivedEvent = true;
+					return;
+				}
+				else if ( USART_ReceivedChar == USART_KEY_DELETE )
+				{
+					// Delete button
+					// TODO: Not work at ZOC, but work at other terminal?
+					MONITOR_CommandReceivedDelete = true;
+					MONITOR_CommandReceivedEvent = true;
+					return;
+				}
+				else if ( USART_ReceivedChar == '\t' )
+				{
+					// TAB
+					MONITOR_CommandReceivedTabulator = true;
 					MONITOR_CommandReceivedEvent = true;
 					return;
 				}
@@ -475,7 +542,9 @@ static void ProcessReceivedCharacter(void)
 					}
 
 				}
+#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 			}
+#endif
 
 		} // Processed received characters
 
@@ -617,7 +686,6 @@ bool MONITOR_CommandFind ( void )
 */
 void MONITOR_CommandBackspace ( void )
 {
-	uint8_t i;
 
 	if (MONITOR_CommandActualLength > 0)
 	{
@@ -638,48 +706,6 @@ void MONITOR_CommandBackspace ( void )
 			
 			// v1
 			USART_SEND_KEY_DEL();
-			
-			// v2
-			//USART_SEND_KEY_DEL();
-			//USART_SendChar(' ');
-			//USART_SEND_KEY_DEL();
-			
-			// v3
-			//USART_SEND_KEY_DEL();
-			//USART_SEND_KEY_DEL();
-			//USART_SendChar(MONITOR_CommandActual[MONITOR_CommandCursorPosition-1]);
-			
-			// v4
-			//USART_SEND_KEY_DEL();
-			//USART_SendChar(' ');
-			//USART_SEND_KEY_BACKSPACE();
-			
-			// v5
-			//USART_SEND_KEY_BACKSPACE();
-			//USART_SendChar(' ');
-			//USART_SEND_KEY_BACKSPACE();
-			
-			// v6, left, space, left
-			//USART_ESCAPE_CURSORLEFT();
-			//USART_SendChar(' ');
-			//USART_ESCAPE_CURSORLEFT();
-			
-			// TODO: WRONG!! After backspace an char has been lost (but write to buffer)
-			
-			/*
-			// Delete this line
-			USART_ESCAPE_DELETELINE();
-
-			// Save the cursor ( we need backup this, because the user's cursor is stand this position )
-			USART_ESCAPE_SAVECURSOR();
-
-			// Cursor to line start -> we want write the "CommandActual"
-			USART_ESCAPE_CURSOR_TO_LINESTART();
-			USART_ESCAPE_CURSORLEFTLOTOF();
-
-			// Write new CommandActual
-			uprintf("# %s",MONITOR_CommandActual);
-			*/
 #endif
 			
 #ifdef CONFIG_USE_TERMINAL_HYPERTERMINAL
@@ -705,10 +731,13 @@ void MONITOR_CommandBackspace ( void )
 #endif
 
 		}
+#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 		else
 		{
 			// CursorPosition != CommandLength, we are in command chars
 			// Cursor not at end
+
+			uint8_t i;
 
 			if ( MONITOR_CommandCursorPosition > 0 )
 			{
@@ -730,7 +759,7 @@ void MONITOR_CommandBackspace ( void )
 				}
 				MONITOR_CommandActual[i] = '\0';
 
-				// Send backspace
+				// Send backspace = step left
 				USART_SEND_KEY_BACKSPACE();
 
 				// Delete this line
@@ -750,20 +779,104 @@ void MONITOR_CommandBackspace ( void )
 				USART_ESCAPE_RESTORECURSOR();
 			}
 		}
+#endif	// #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 	}
 	return;			// not do anything
 }
 
 
 
+#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+/**
+ * \brief	Delete button received
+ */
+static void MONITOR_CommandDelete ( void )
+{
+
+	if (MONITOR_CommandActualLength > 0)
+	{
+		// If has command
+		// Cursor at end?
+		if ( MONITOR_CommandCursorPosition == MONITOR_CommandActualLength)
+		{
+			// Do nothing at end
+		}
+		else
+		{
+			// CursorPosition != CommandLength, we are in command chars
+			// Cursor not at end
+
+			uint8_t i;
+
+			if ( MONITOR_CommandCursorPosition > 0 )
+			{
+				// not at 0 position
+
+				// Procedure:
+				// copy CommandActual after cursor
+				// delete line
+				// save cursor
+				// send new command
+				// restore cursor
+
+				MONITOR_CommandActualLength--;
+
+				for ( i = MONITOR_CommandCursorPosition; i < MONITOR_CommandActualLength; i++ )
+				{
+					MONITOR_CommandActual[i] = MONITOR_CommandActual[i+1];		// copy
+				}
+				MONITOR_CommandActual[i] = '\0';
+
+				// Resend line
+				MONITOR_CommandResendLine();
+			}
+		}
+	}
+	return;
+
+}
+#endif	// #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+
+
+
+#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+/**
+ * \brief	Received tabulator command: Complete command
+ */
+static void MONITOR_CommandTabulator ( void )
+{
+	// Find same command
+	uint8_t i;
+
+	for (i=0; i < MONITOR_CommandNum; i++)
+	{
+		if(!StrCmpWithLength(CommandList[i].name, (const char *)MONITOR_CommandActual,MONITOR_CommandActualLength))
+		{
+			// It is equal
+			// We write the first equal?
+			// TODO:
+			StrCpy((char *)MONITOR_CommandActual, CommandList[i].name);
+
+			MONITOR_CommandActualLength = StringLength(CommandList[i].name);
+
+			MONITOR_CommandCursorPosition = MONITOR_CommandActualLength;
+
+			MONITOR_NewCommandResendLine();
+
+			return;
+		}
+	}
+}
+#endif // #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+
+
+
+#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 /**
 \brief		Resend the actual line/command
 */
 void MONITOR_CommandResendLine ( void )
 {
-
-	//step right
-	USART_ESCAPE_CURSORRIGHT();
 
 	// Delete the line
 	USART_ESCAPE_DELETELINE();
@@ -783,9 +896,10 @@ void MONITOR_CommandResendLine ( void )
 
 	return;
 }
+#endif	// #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 
 
-
+#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 /**
 \brief		Resend an new line/command
 */
@@ -804,9 +918,10 @@ void MONITOR_NewCommandResendLine ( void )
 
 	return;
 }
+#endif	// #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 
 
-
+#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 /**
 \brief		Process Excape sequence
 */
@@ -868,7 +983,7 @@ bool MONITOR_CommandEscapeCharValidation ( void )
 	return false;
 
 }
-
+#endif	// #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 
 
 #ifdef USE_MONITOR_HISTORY

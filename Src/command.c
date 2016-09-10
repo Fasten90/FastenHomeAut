@@ -102,6 +102,13 @@ const CommandStruct CommandList[] =
 		.ArgNum = (1 << 1),
 	},
 
+	{
+		.name = "list",
+		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_GlobalVariableList,
+		.description = "List global variable",
+		.ArgNum = (1 << 0),
+	},
+
 	/*
 	{
 		.name = "start",
@@ -959,9 +966,12 @@ uint32_t CommandFunction_test	( uint32_t argc, char** argv ) {
 	
 	USART_SendLine("Test start");
 
+
+	USART_SendSoundBeep();
+
 	// GlobalVar
 
-	GlobalVarHandler_ListAllVariables();
+	//GlobalVarHandler_ListAllVariables();
 
 	/*
 	char buffer[30];
@@ -1242,6 +1252,17 @@ uint32_t CommandFunction_GlobalVariableHelp ( uint32_t argc, char** COMMAND_Argu
 
 }
 
+
+
+// Function: list globalvars
+uint32_t CommandFunction_GlobalVariableList ( uint32_t argc, char** COMMAND_Arguments )
+{
+
+	GlobalVarHandler_ListAllVariables();
+
+	return CommandResult_Ok;
+
+}
 
 
 #if 0

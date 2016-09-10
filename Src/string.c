@@ -131,7 +131,7 @@ uint8_t DecimalToHexaString (uint32_t value, uint8_t ByteNum, char *string)
 	{
 		// Convert next byte
 		uint8_t byte = (uint8_t)( value >> ((ByteNum-i-1)*8) );
-		length += ByteToHexaString (byte,  string);
+		length += ByteToHexaString (byte,  &string[length]);
 	}
 
 	string[length] = '\0';
@@ -465,9 +465,10 @@ bool StringHexToNum (const char *string, uint32_t *hexValue, uint8_t byteLength)
 		// 2. = 1 = odd --> not need shift
 		if ( StringByteToNum(&string[i],&calculatedByte) )
 		{
-			// For example: for 4 byte, first need << 24 (3*8)
-			// After that, << 16 (2*8)
-			calculatedValue = calculatedByte << ((byteLength-1)*8);
+			// Shift one byte left original value
+			calculatedValue <<= 8;
+			// Add new value
+			calculatedValue += calculatedByte;
 			i++;
 			// 2 character converted, need ++
 		}

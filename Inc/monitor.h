@@ -32,8 +32,12 @@
 
 
 
-/////////////////////////////  DEFINES
+/////////////////////////////
+///			DEFINES
+/////////////////////////////
 
+
+///	Config defines
 
 
 #define MONITOR_MAX_COMMAND_LENGTH			(255U)
@@ -98,7 +102,7 @@ CONFIG_USE_TERMINAL_ZOC
 // TODO: clean...
 #define USART_KEY_ENTER				('\r')
 #define USART_KEY_SPACE				(' ')
-#define USART_KEY_ESCAPE			('\e')
+#define USART_KEY_ESCAPE			('\x1B')	// TODO: '\e' it is "delete" at ZOC
 #define USART_KEY_BELL				('\a')
 
 // NOTE: Changed \e to \x1B
@@ -257,7 +261,6 @@ USART_SendChar('K');
 /////////////////////////////  GLOBAL VARIABLES
 
 extern volatile char MONITOR_CommandActual[MONITOR_MAX_COMMAND_LENGTH];
-extern volatile char MONITOR_CommandActualEscape[3];
 
 extern const bool MONITOR_CommandReceiveEnable;
 
