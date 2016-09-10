@@ -135,9 +135,11 @@ char MONITOR_HISTORY[MONITOR_HISTORY_MAX_LENGTH][MONITOR_MAX_COMMAND_LENGTH] =
 /////////////////////////////
 
 static void MONITOR_ProcessReceivedCharacter(void);
+
+#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 static void MONITOR_CommandDelete ( void );
 static void MONITOR_CommandTabulator ( void );
-
+#endif
 
 /////////////////////////////
 ///		FUNCTIONS
@@ -318,13 +320,13 @@ void MONITOR_CheckCommand ( void )
 					MONITOR_CommandReceivedBackspace = false;
 					MONITOR_CommandBackspace();
 				}
+#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 				else if ( MONITOR_CommandReceivedDelete )
 				{
 					// Delete
 					MONITOR_CommandReceivedDelete = false;
 					MONITOR_CommandDelete();
 				}
-#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 				else if ( MONITOR_CommandReceivedNotLastChar )
 				{
 					// Not Last char (it is inner character) - Refresh the line
@@ -486,6 +488,7 @@ static void MONITOR_ProcessReceivedCharacter(void)
 					MONITOR_CommandReceivedEvent = true;
 					return;
 				}
+#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 				else if ( USART_ReceivedChar == USART_KEY_DELETE )
 				{
 					// Delete button
@@ -501,6 +504,7 @@ static void MONITOR_ProcessReceivedCharacter(void)
 					MONITOR_CommandReceivedEvent = true;
 					return;
 				}
+#endif	// #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 				else
 				{
 					// simple char for the command

@@ -239,7 +239,6 @@ void USART1_IRQHandler(void)
 	//__HAL_UART_DISABLE_IT: Disable the specified UART interrupt
 	//__HAL_UART_DISABLE_IT(&BluetoothUartHandle, UART_IT_RXNE | UART_IT_TXE);
 
-	// TODO: VG - USART javitani! ha tul sok adat erkezik, akkor itt beragad, lehet hogy valamilyen flaget torolni kene
 	#ifdef CONFIG_USE_PANEL_NODESMALL
 	HAL_UART_IRQHandler(&ESP8266_UartHandle);
 	#endif
@@ -279,14 +278,9 @@ void USART2_IRQHandler(void)
 
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 {
-
-	#ifdef CONFIG_USE_FREERTOS
-	taskDISABLE_INTERRUPTS();	// TODO: not need
-	#endif
-	
+	// For warning
 	(void)UartHandle;
 
-	
 	// Set transmission flag: trasfer complete	
 	#ifdef CONFIG_USE_FREERTOS
 	xSemaphoreGiveFromISR(DEBUG_USART_Tx_Semaphore,(BaseType_t *)NULL);
@@ -296,10 +290,6 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 
 	USART_SendEnable_flag = ENABLE;
 
-	#ifdef CONFIG_USE_FREERTOS
-	taskENABLE_INTERRUPTS();	// TODO: not need
-	#endif
-	
 }
 
 
@@ -368,8 +358,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 		ESP8266_Uart_ReceivedCharFlag = 1;
 		
 		#endif
-		
-
 		
 	}
 	#endif

@@ -11,6 +11,8 @@
 #include "include.h"
 
 #include "GlobalVarHandler.h"
+#include "formattedMessage.h"
+
 
 /*------------------------------------------------------------------------------
  *  Macros & definitions
@@ -968,6 +970,13 @@ uint32_t CommandFunction_test	( uint32_t argc, char** argv ) {
 
 
 	USART_SendSoundBeep();
+
+	SendColouredMessage("Valami pirosan\r\n", Color_Red);
+	SendColouredMessage("Valami sárgán\r\n", Color_Yellow);
+
+	SendColouredMessageWithBackgroundColor("Valami piros háttérrel\r\n", Color_Black, Color_Red);
+	SendColouredMessageWithBackgroundColor("Valami sárga háttérrel\r\n", Color_Black, Color_Yellow);
+
 
 	// GlobalVar
 
