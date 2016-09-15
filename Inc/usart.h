@@ -19,8 +19,6 @@
  *----------------------------------------------------------------------------*/
 
 
-// TODO: normális tx buffer méretet!
-
 // Size of Transmission buffer
 #define TXBUFFERSIZE					256UL
 // Size of Reception buffer

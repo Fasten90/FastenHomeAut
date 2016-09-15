@@ -69,8 +69,9 @@ typedef enum
 typedef enum
 {
 	Source_All = 0,
-	Source_DebugSerial = 1 << 0,
-	Source_Ethernet = 1 << 1,
+	Source_DebugSerial = (1 << 0),
+	Source_Ethernet = (1 << 1),
+	Source_Disable = (1 << 2)
 } CommandSource_t;
 
 
@@ -102,7 +103,6 @@ typedef struct
 #ifdef GLOBALVARHANDLER_DESCRIPTION_ENABLE
 	const char const *description;
 #endif
-
 
 } GlobalVarCommand_t;
 

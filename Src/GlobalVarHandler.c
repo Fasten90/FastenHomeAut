@@ -68,7 +68,10 @@ static ProcessResult_t GlobalVarHandler_SetInteger(uint8_t commandID, const char
 
 /// FUNCTIONS
 
-
+/**
+ * \brief	Check the GlobalVarList[], are set valid?
+ * \return	true, if ok
+ */
 bool GlobalVarHandler_CheckCommandStructAreValid(void)
 {
 	// TODO: vagy itt futásidejűteszt, vagy makrókkal fordításidejű teszt?
@@ -174,7 +177,6 @@ void GlobalVarHandler_ProcessCommand(
 		result = Process_CommandNotFound;
 	}
 
-
 	GlobalVarHandler_WriteResults(result,resultBuffer,resultBufferLength);
 
 }
@@ -231,6 +233,7 @@ static ProcessResult_t GlobalVarHandler_GetCommand(uint8_t commandID, char *resu
 			}
 		}
 		break;
+
 	case Type_Uint8:
 	case Type_Uint16:
 	case Type_Uint32:
@@ -239,6 +242,7 @@ static ProcessResult_t GlobalVarHandler_GetCommand(uint8_t commandID, char *resu
 	case Type_Int32:
 		GlobalVarHandler_GetIntegerVariable(commandID,resultBuffer,resultBufferLength);
 		break;
+
 	case Type_String:
 		{
 			const char *string = GlobalVarList[commandID].varPointer;
@@ -339,6 +343,7 @@ static ProcessResult_t GlobalVarHandler_GetIntegerVariable(uint8_t commandID, ch
 			*resultBufferLength -= UnsignedDecimalToString(num, resultBuffer);
 		}
 		break;
+
 	case Type_Uint16:
 		{
 			uint16_t *numPointer = (uint16_t *)GlobalVarList[commandID].varPointer;
@@ -347,6 +352,7 @@ static ProcessResult_t GlobalVarHandler_GetIntegerVariable(uint8_t commandID, ch
 			*resultBufferLength -= UnsignedDecimalToString(num, resultBuffer);
 		}
 		break;
+
 	case Type_Uint32:
 		{
 			uint32_t *numPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
@@ -355,6 +361,7 @@ static ProcessResult_t GlobalVarHandler_GetIntegerVariable(uint8_t commandID, ch
 			*resultBufferLength -= UnsignedDecimalToString(num, resultBuffer);
 		}
 		break;
+
 	case Type_Int8:
 		{
 			int8_t *numPointer = (int8_t *)GlobalVarList[commandID].varPointer;
@@ -363,6 +370,7 @@ static ProcessResult_t GlobalVarHandler_GetIntegerVariable(uint8_t commandID, ch
 			*resultBufferLength -= SignedDecimalToString(num, resultBuffer);
 		}
 		break;
+
 	case Type_Int16:
 		{
 			int16_t *numPointer = (int16_t *)GlobalVarList[commandID].varPointer;
@@ -371,6 +379,7 @@ static ProcessResult_t GlobalVarHandler_GetIntegerVariable(uint8_t commandID, ch
 			*resultBufferLength -= SignedDecimalToString(num, resultBuffer);
 		}
 		break;
+
 	case Type_Int32:
 		{
 			int32_t *numPointer = (int32_t *)GlobalVarList[commandID].varPointer;
@@ -379,12 +388,12 @@ static ProcessResult_t GlobalVarHandler_GetIntegerVariable(uint8_t commandID, ch
 			*resultBufferLength -= SignedDecimalToString(num, resultBuffer);
 		}
 		break;
+
 	default:
 		// Wrong case
 		return Process_UnknownError;
 		break;
 	}
-
 
 	return Process_Ok_Answered;
 }
@@ -501,8 +510,17 @@ static ProcessResult_t GlobalVarHandler_SetBool(uint8_t commandID, const char *p
 	{
 		// Not number
 
+		// Check it is "true" / "false" ?
+		if(!StrCmp((const char*)param,"true"))
+		{
+			boolVal = true;
+		}
+		else if(!StrCmp((const char*)param,"false"))
+		{
+			boolVal = false;
+		}
 		// Check it is "on" / "off"?
-		if(!StrCmp((const char*)param,"on"))
+		else if(!StrCmp((const char*)param,"on"))
 		{
 			boolVal = true;
 		}
@@ -840,9 +858,9 @@ void GlobalVarHandler_ListAllVariables(void)
 	uint8_t length;
 	char buffer[10];
 
-	// TODO: Megcsin�lni szebbre?
-	// TODO: min/max-okat ki�rni?
-	// TODO: Enumokat is ki�rni, ha van?
+	// TODO: Megcsinálni szebbre?
+	// TODO: min/max-okat kiírni?
+	// TODO: Enumokat is kiírni, ha van?
 	USART_SendLine("+------Name--------|--Type---|min|max|unit|----Description-------+");
 	for (i=0; i<GlobalVarMaxCommandNum; i++)
 	{

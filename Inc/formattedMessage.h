@@ -26,7 +26,7 @@
 
 
 // Intensity 	0 	1 	2 	3 	4 	5 	6 	7
-// Normal 	Black 	Red 	Green 	Yellow[16] 	Blue 	Magenta 	Cyan 	White
+// Normal 	Black 	Red 	Green 	Yellow 	Blue 	Magenta 	Cyan 	White
 
 typedef enum
 {
@@ -48,6 +48,8 @@ void SendColouredMessageWithBackgroundColor (const char* message, FormattedStrin
 void SendColouredMessage (const char* message, FormattedStringColors_t textColor);
 void SendTextColor (FormattedStringColors_t textColor);
 void SendBackgroundColor (FormattedStringColors_t backgroundColor);
+void SendErrorMessage (const char *message);
+
 
 
 

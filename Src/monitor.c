@@ -41,6 +41,8 @@ volatile uint8_t USART_RxBufferReadCnt = 0;
 //			Configs:
 /////////////////////////////////
 
+static const char MONITOR_Password[] = { "password" };
+
 // Enable monitor
 const bool MONITOR_CommandReceiveEnable = true;
 // Enable sending back: "Echo mode"
@@ -134,11 +136,16 @@ char MONITOR_HISTORY[MONITOR_HISTORY_MAX_LENGTH][MONITOR_MAX_COMMAND_LENGTH] =
 ///		FUNCTION PROTOTYPES
 /////////////////////////////
 
-static void MONITOR_ProcessReceivedCharacter(void);
+static void MONITOR_ProcessReceivedCharacter ( void );
 
 #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 static void MONITOR_CommandDelete ( void );
 static void MONITOR_CommandTabulator ( void );
+#endif
+
+#ifdef MONITOR_GET_PASSWORD_ENABLE
+static void MONITOR_GetPassword ( void );
+static bool MONITOR_CheckPassword (const char *string);
 #endif
 
 /////////////////////////////
@@ -222,7 +229,7 @@ void MONITOR_SendWelcome ( void )
 
 
 	USART_SEND_NEW_LINE();
-	MONITOR_SEND_PROMT();					// Ăšj promt
+	MONITOR_SEND_PROMT();					// New promt
 
 	return;
 }
@@ -278,10 +285,6 @@ void MONITOR_CheckCommand ( void )
 	// Enable sendings
 #endif
 
-
-	// Welcome message
-	MONITOR_SendPrimitiveWelcome();
-
 	// Check GlobalVarList[]
 	if(GlobalVarHandler_CheckCommandStructAreValid()==false)
 	{
@@ -291,6 +294,15 @@ void MONITOR_CheckCommand ( void )
 	// Start receive
 	USART_StartReceiveMessage();
 
+#ifdef MONITOR_GET_PASSWORD_ENABLE
+	MONITOR_GetPassword();
+#endif
+
+	// Welcome message
+	MONITOR_SendPrimitiveWelcome();
+
+
+	// Infinite "task" loop
 	while (1)
 	{
 
@@ -391,7 +403,7 @@ void MONITOR_CheckCommand ( void )
 /**
  * \brief	Check received characters and make command (COMMAND_Actual)
  */
-static void MONITOR_ProcessReceivedCharacter(void)
+static void MONITOR_ProcessReceivedCharacter ( void )
 {
 
 	// While Read cnt not equal than Write cnt
@@ -1176,7 +1188,7 @@ void MONITOR_RunCommand ( uint8_t commandID )
 	bool needWriteHelp = false;
 
 	// Check argument nums
-	result = MONITOR_ArgumentNumIsGood(COMMAND_ArgCount, CommandList[commandID].ArgNum);
+	result = MONITOR_ArgumentNumIsGood(COMMAND_ArgCount, CommandList[commandID].CommandArgNum);
 
 	if(result == CommandResult_Ok)
 	{
@@ -1227,7 +1239,7 @@ void MONITOR_WriteAnCommandHelp ( uint8_t commandID )
  */
 CommandResult_t MONITOR_ArgumentNumIsGood ( uint8_t receivedArgNum, uint8_t commandArgNum)
 {
-	// Check ArgNum. bit is set?
+	// Check CommandArgNum. bit is set?
 	if (receivedArgNum > MONITOR_COMMAND_ARG_COUNT)
 	{
 		return CommandResult_Error_TooManyArgument;
@@ -1280,3 +1292,85 @@ CommandResult_t MONITOR_ArgumentNumIsGood ( uint8_t receivedArgNum, uint8_t comm
 }
 
 
+
+#ifdef MONITOR_GET_PASSWORD_ENABLE
+/**
+ * \brief Get (and wait) Password
+ */
+static void MONITOR_GetPassword ( void )
+{
+
+	bool passwordIsOk = false;
+
+	// Wait first character
+	USART_SendLine("\r\nType a character:");
+	while (USART_RxBufferWriteCounter < 1);
+	USART_RxBufferReadCnt = 1;
+
+	while (!passwordIsOk)
+	{
+		USART_SendString("\r\nPassword:");
+
+		bool isTry = true;
+		MONITOR_CommandActualLength = 0;
+
+		while (isTry)
+		{
+
+			// While Read cnt not equal than Write cnt
+			if (USART_RxBufferReadCnt != USART_RxBufferWriteCounter)
+			{
+				volatile char USART_ReceivedChar = '\0';
+
+				// TODO: Don't know, why work...
+				USART_ReceivedChar = USART_RxBuffer[USART_RxBufferReadCnt-1];
+				USART_RxBufferReadCnt++;
+				USART_SendChar('*');
+
+				if(USART_ReceivedChar == '\r')
+				{
+					// Pressed enter, check password
+					isTry = false;
+					MONITOR_CommandActual[MONITOR_CommandActualLength++] = '\0';
+					USART_SendLine("");	// TODO: Külön függvény / makró rá
+					if(MONITOR_CheckPassword((const char*)MONITOR_CommandActual))
+					{
+						// Successful password
+						USART_SendLine("Successful password!");
+						MONITOR_CommandActualLength=0;
+						return;
+					}
+					else
+					{
+						// Failed password
+						USART_SendLine("Wrong password!");
+					}
+				}
+				else
+				{
+					// Copy character
+					MONITOR_CommandActual[MONITOR_CommandActualLength++] = USART_ReceivedChar;
+				}
+			}
+		}
+	}
+}
+
+
+
+/**
+ * \brief Check password
+ */
+static bool MONITOR_CheckPassword (const char *string)
+{
+	if(!StrCmp(string,MONITOR_Password))
+	{
+		// Equal
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+#endif	// #ifdef MONITOR_GET_PASSWORD_ENABLE

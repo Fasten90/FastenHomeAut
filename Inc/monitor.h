@@ -102,7 +102,7 @@ CONFIG_USE_TERMINAL_ZOC
 // TODO: clean...
 #define USART_KEY_ENTER				('\r')
 #define USART_KEY_SPACE				(' ')
-#define USART_KEY_ESCAPE			('\x1B')	// TODO: '\e' it is "delete" at ZOC
+#define USART_KEY_ESCAPE			('\x1B')
 #define USART_KEY_BELL				('\a')
 
 // NOTE: Changed \e to \x1B

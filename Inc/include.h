@@ -109,9 +109,13 @@ typedef enum
 //#define USE_RADIOALARM_OTG
 
 
+/// XXX: Monitor settings
+
+// For wait password
+//#define MONITOR_GET_PASSWORD_ENABLE
+
 // comment out, if you dont need escape sequence (cursors, history, cls, ...)
 #define MONITOR_ESCAPE_SEQUENCE_ENABLE
-
 
 #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 	// If you want use monitor program's history

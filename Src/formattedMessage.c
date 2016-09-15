@@ -10,6 +10,9 @@
 #include "formattedMessage.h"
 
 
+/**
+ * \brief	Send message on debug with textcolor & backgroundcolor
+ */
 void SendColouredMessageWithBackgroundColor (const char* message, FormattedStringColors_t textColor, FormattedStringColors_t backgroundColor)
 {
 	// Send background color
@@ -24,6 +27,9 @@ void SendColouredMessageWithBackgroundColor (const char* message, FormattedStrin
 
 
 
+/**
+ * \brief	Send message on debug with textcolor
+ */
 void SendColouredMessage (const char* message, FormattedStringColors_t textColor)
 {
 	// Send color escape
@@ -38,6 +44,9 @@ void SendColouredMessage (const char* message, FormattedStringColors_t textColor
 
 
 
+/**
+ * \brief	Send textcolor escape sequence
+ */
 void SendTextColor (FormattedStringColors_t textColor)
 {
 	USART_SendMessage(USART_ESCAPE_TEXT_START);
@@ -47,9 +56,23 @@ void SendTextColor (FormattedStringColors_t textColor)
 
 
 
+/**
+ * \brief	Send backgroundcolor escape sequence
+ */
 void SendBackgroundColor (FormattedStringColors_t backgroundColor)
 {
 	USART_SendMessage(USART_ESCAPE_BACKGROUND_START);
 	USART_SendChar('0' + backgroundColor);
 	USART_SendMessage(USART_ESCAPE_BACKGROUND_END);
+}
+
+
+
+/**
+ * \brief	Send error message (black text, with red background)
+ */
+void SendErrorMessage (const char *message)
+{
+	// TODO: Will be MACRO()?
+	SendColouredMessageWithBackgroundColor(message,Color_Black,Color_Red);
 }

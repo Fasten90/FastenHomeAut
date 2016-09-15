@@ -12,12 +12,13 @@
 
 #include "GlobalVarHandler.h"
 #include "formattedMessage.h"
-
+#include "Globals.h"
 
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
+#define COMMAND_
 
 /*------------------------------------------------------------------------------
  *  Type definitions
@@ -39,29 +40,37 @@ uint32_t Arg3Num;
 
 const CommandStruct CommandList[] =
 {
-	/*
-	{
-		.name = "stop",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_stop,
-		.description = "stop\r\n"
-	},
-	*/
-	
+
 	{
 		.name = "help",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_help,
 		.description = "Commands's list, or write command's propertities",
 		.syntax = "<command>",
-		.ArgNum = (1 << 1) | (1 << 0),
+		.CommandArgNum = CommandArgument_0 | CommandArgument_1,
 	},
 	
+	{
+		.name = "version",
+		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_version,
+		.description = "Get version",
+		.syntax = NULL,
+		.CommandArgNum = CommandArgument_0,
+	},
 	
+	{
+		.name = "welcome",
+		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_welcome,
+		.description = "Send welcome message",
+		.syntax = NULL,
+		.CommandArgNum = CommandArgument_0,
+	},
+
 	{
 		.name = "reset",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_reset,
 		.description = "Software reset",
 		.syntax = NULL,
-		.ArgNum = (1 << 0),
+		.CommandArgNum = CommandArgument_0,
 	},
 
 	{
@@ -69,7 +78,7 @@ const CommandStruct CommandList[] =
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_cls,
 		.description = "Clear Screen",
 		.syntax = NULL,
-		.ArgNum = (1 << 0),
+		.CommandArgNum = CommandArgument_0,
 	},
 
 	{
@@ -77,7 +86,7 @@ const CommandStruct CommandList[] =
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_test,
 		.description = "...",
 		.syntax = NULL,
-		.ArgNum = (1 << 0),
+		.CommandArgNum = CommandArgument_0,
 	},
 
 	{
@@ -85,7 +94,7 @@ const CommandStruct CommandList[] =
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_set,
 		.description = "set global variable value",
 		.syntax = "<varName> <value>",
-		.ArgNum = (1 << 2),
+		.CommandArgNum = CommandArgument_2,
 	},
 
 	{
@@ -93,7 +102,7 @@ const CommandStruct CommandList[] =
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_get,
 		.description = "get global variable value",
 		.syntax = "<varName>",
-		.ArgNum = (1 << 1),
+		.CommandArgNum = CommandArgument_1,
 	},
 
 	{
@@ -101,15 +110,63 @@ const CommandStruct CommandList[] =
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_GlobalVariableHelp,
 		.description = "help global variable",
 		.syntax = "<varName>",
-		.ArgNum = (1 << 1),
+		.CommandArgNum = CommandArgument_1,
 	},
 
 	{
 		.name = "list",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_GlobalVariableList,
 		.description = "List global variable",
-		.ArgNum = (1 << 0),
+		.CommandArgNum = CommandArgument_0,
 	},
+	
+	{
+		.name = "led",
+		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_led,
+		.description = "Control LED",
+		.syntax = "<on/off/toggle/status> <num>",
+		.CommandArgNum = CommandArgument_1 | CommandArgument_2,
+	},
+	
+	{
+		.name = "flashdel",
+		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_flashdel,
+		.description = "Delete flash",
+		.syntax = "<address> <block/sector>",
+		.CommandArgNum = CommandArgument_2,
+	},
+
+	{
+		.name = "flashread",
+		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_flashread,
+		.description = "Read from flash",
+		.syntax = "<address>",
+		.CommandArgNum = CommandArgument_1,
+	},
+
+	{
+		.name = "flashwrite",
+		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_flashwrite,
+		.description = "Write flash",
+		.syntax = "<address> <byte>",
+		.CommandArgNum = CommandArgument_2,
+	},
+	
+	{
+		.name = "temperature",
+		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_temp,
+		.description = "...",
+		.syntax = NULL,
+		.CommandArgNum = CommandArgument_0,
+	},
+
+	/*
+	{
+		.name = "stop",
+		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_stop,
+		.description = "stop\r\n"
+	},
+	*/
 
 	/*
 	{
@@ -117,8 +174,9 @@ const CommandStruct CommandList[] =
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_start,
 		.description = "start\r\n"
 	},
+	*/
 
-
+	/*
 	{
 		.name = "buzzer",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_buzzer,
@@ -127,22 +185,6 @@ const CommandStruct CommandList[] =
 		"Function: trivial\r\n"
 	},
 	*/
-	
-	{
-		.name = "led",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_led,
-		.description = "Control LED",
-		.syntax = "<on/off/toggle/status> <num>",
-		.ArgNum = (1 << 2) | (1 << 1),
-		/*
-		"  <num>: decimal: 1-3\r\n"
-		"Function:\r\n"
-		"  led on: tun on <num>. led\r\n"
-		"  led off: turn off <num>. led\r\n"
-		"  led switch: switch <num>. led\r\n"
-		"  led status: write leds's status\r\n"
-		*/
-	},
 
 	/*
 	{
@@ -155,41 +197,6 @@ const CommandStruct CommandList[] =
 					"Function: download from USART to destination address\r\n"
 	},
 	*/
-	
-	{
-		.name = "flashdel",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_flashdel,
-		.description = "Delete flash",
-		.syntax = "<address> <block/sector>",
-		.ArgNum = (1 << 2),
-	},
-
-	
-	{
-		.name = "flashread",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_flashread,
-		.description = "Read from flash",
-		.syntax = "<address>",
-		.ArgNum = (1 << 1),
-	},
-
-	
-	{
-		.name = "flashwrite",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_flashwrite,
-		.description = "Write flash",
-		.syntax = "<address> <byte>",
-		.ArgNum = (1 << 2),
-	},
-
-	
-	{
-		.name = "temperature",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_temp,
-		.description = "...",
-		.syntax = NULL,
-		.ArgNum = (1 << 0),
-	},
 
 	/*
 	{
@@ -205,211 +212,12 @@ const CommandStruct CommandList[] =
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_raspberrypi,
 		.description = "Raspberry Pi HomeAutMessage sending",
 		.syntax = "-",
-		.ArgNum = (1 << 1)
+		.CommandArgNum = CommandArgument_1
 	}
 	*/
 	
 		
 };
-
-
-
-/*
-new1.name = "remote";
-new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_remotecontrol;
-new1.description = "remote\r\n"
-				"Function: Remote control\r\n";
-CommandList[13] = new1;
-
-
-new1.name = "prox";
-new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_proximity;
-new1.description = "prox\r\n"
-				"Function: Proximities's status\r\n";
-CommandList[14] = new1;
-
-
-
-new1.name = "go";
-new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_go;
-new1.description = "go\r\n"
-				"Syntax: go <destination>\r\n"
-				"  <destination>: hexa\r\n"
-				"Function: program jump to destination\r\n";
-CommandList[16] = new1;
-
-new1.name = "log";
-new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_log;
-new1.description = "log\r\n"
-				"  log <on/off>\r\n";
-CommandList[17] = new1;
-
-
-new1.name = "exit";
-new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_exit;
-new1.description = "exit\r\n"
-				"Function: Exit from MONITOR program\r\n";
-CommandList[18] = new1;
-
-
-new1.name = "read";
-new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_read;
-new1.description = "read\r\n"
-				"Function: Read datas\r\n";
-CommandList[19] = new1;
-*/
-
-
-
-//	new1.name = "mr";
-//	new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_mr;
-//	new1.description = "mr\r\n"
-//					"Syntax: mr <source> <size>\r\n"
-//					"  <source>: hexa\r\n"
-//					"  <size>: decimal, byte's num\r\n"
-//					"Function: read from memory address (source) size byte-s\r\n";
-//	CommandList[3] = new1;
-
-
-//	new1.name = "mwb";
-//	new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_mw;
-//	new1.description = "mwb\r\n"
-//					"Syntax: mwb <destination> <data>\r\n"
-//					"  <destination>: hexa\r\n"
-//					"  <data>: 1 byte, hexa\r\n"
-//					"Function: write to memory address (destination) data\r\n";
-//	CommandList[4] = new1;
-
-
-//	new1.name = "mwh";
-//	new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_mw;
-//	new1.description = "mwh\r\n"
-//					"Syntax: mwh <destination> <data>\r\n"
-//					"  <destination>: hexa\r\n"
-//					"  <data>: 2 byte, hexa\r\n"
-//					"Function: write to memory address (destination) data\r\n";
-//	CommandList[5] = new1;
-
-
-//	new1.name = "mww";
-//	new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_mw;
-//	new1.description = "mww\r\n"
-//					"Syntax: mww <destination> <data>\r\n"
-//					"  <destination>: hexa\r\n"
-//					"  <data>: 4 byte, hexa\r\n"
-//					"Function: write to memory address (destination) data\r\n";
-//	CommandList[6] = new1;
-
-
-//	new1.name = "btn";
-//	new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_btn;
-//	new1.description = "btn"
-//									"Write buttons's status\r\n";
-//	CommandList[10] = new1;
-	
-//	new1.name = "tizenegy";
-//	new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_tizenegy;
-//	new1.description = "tizenegy\r\n"
-//									"Special function for Jablonkai Sara\r\n";
-//	CommandList[12] = new1;
-
-//	new1.name = "temp";
-//	new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_temp;
-//	new1.description = "temp\r\n"
-//									"Read temperature and Vref\r\n";
-//	CommandList[13] = new1;
-	
-//	new1.name = "lcd";
-//	new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_lcd;
-//	new1.description = "lcd\r\n"
-//									"Write 2 line text on LCD\r\n";
-//	CommandList[14] = new1;
-
-	
-//	new1.name = "romwe";
-//	new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_romwe;
-//	new1.description = "romwe\r\n"
-//					"Syntax: romwe\r\n"
-//					"Function: Enable ROM Write\r\n";
-//	CommandList[16] = new1;
-
-
-//	new1.name = "romr";
-//	new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_romr;
-//	new1.description = "romr\n\r"
-//					"Syntax: romr <address>\r\n"
-//					"  <address>: hexa\r\n"
-//					"Function: Read from ROM memory from <address>\r\n";
-//	CommandList[17] = new1;
-
-
-//	new1.name = "romw";
-//	new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_romw;
-//	new1.description = "romw\n\r"
-//					"Syntax: romw <address> <data>\r\n"
-//					"  <address>: hexa\r\n"
-//					"  <data>: hexa, 1  byte\r\n"
-//					"Function: Write to ROM memory to <address> the <data> byte\r\n"
-//					"Example: \"romw 0 0A\" write 0x00 address 0x0A data\r\n"
-//					"Note: You need type first \"rominit\" and after the \"romwe\" command!\r\n";
-//	CommandList[18] = new1;
-
-
-//	new1.name = "romsr";
-//	new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_romsr;
-//	new1.description = "romsr\r\n"
-//					"Syntax: romsr\r\n"
-//					"Function: Read ROM's status register\r\n";
-//	CommandList[19] = new1;
-
-
-//	new1.name = "rominit";
-//	new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_rominit;
-//	new1.description = "rominit\r\n"
-//					"Function: Initialize EEPROM\r\n";
-//	CommandList[20] = new1;
-	
-
-//new1.name = "romsw";
-//new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_romwd;
-//new1.description = "romwd\r\n"
-//				"Syntax: romwd"
-//				"Function: Disable ROM Write";
-//CommandList[21] = new1;
-
-//new1.name = "romwd";
-//new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_romwd;
-//new1.description = "romwd\r\n"
-//				"Syntax: romwd"
-//				"Function: Disable ROM Write";
-//CommandList[22] = new1;
-
-
-//	new1.name = "rfm12b";
-//	new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_rfm12b;
-//	new1.description = "rfm12b\r\n"
-//					"Function: rfm12b test\r\n";
-//	CommandList[22] = new1;
-	
-//	new1.name = "keypad";
-//	new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_keypad;
-//	new1.description = "kepyad\r\n"
-//					"Function: read keypad's pressed buttons\r\n";
-//	CommandList[23] = new1;
-	
-//	new1.name = "standby";
-//	new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_standby;
-//	new1.description = "standby\r\n"
-//					"Function: go to STANDBY mode\r\n";
-//	CommandList[24] = new1;
-	
-//	new1.name = "rtc";
-//	new1.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_rtc;
-//	new1.description = "rtc\r\n"
-//									"Syntax: rtc <second>\r\n"
-//									"Function: wait x second\r\n";
-//	CommandList[25] = new1;
-
 
 
 const uint8_t MONITOR_CommandNum = MONITOR_MAX_COMMAND_NUM;
@@ -443,10 +251,11 @@ const uint8_t MONITOR_CommandNum = MONITOR_MAX_COMMAND_NUM;
 
 
 // Function: cls (clean screen)
-uint32_t CommandFunction_cls ( uint32_t argc, char** argv ) {
+uint32_t CommandFunction_cls ( uint32_t argc, char** argv )
+{
 
 	//(void)argc;
-	//(void)COMMAND_Arguments;
+	//(void)argv;
 	USART_SEND_CLS();
 
 	return CommandResult_Ok;
@@ -454,11 +263,28 @@ uint32_t CommandFunction_cls ( uint32_t argc, char** argv ) {
 
 
 
+uint32_t CommandFunction_version ( uint32_t argc, char** argv )
+{
+	USART_SendLine(Global_Version);
+
+	return CommandResult_Ok;
+}
+
+
+uint32_t CommandFunction_welcome ( uint32_t argc, char** argv )
+{
+	MONITOR_SendPrimitiveWelcome();
+
+	return CommandResult_Ok;
+}
+
+
 #if 0
 // Function: dl (download)
 // dl <destination> <size>
 // Download to <destination> address <size> bytes from USART
-uint32_t CommandFunction_dl ( uint32_t argc, char** COMMAND_Arguments ) {
+uint32_t CommandFunction_dl ( uint32_t argc, char** argv )
+{
 
 	unsigned char * destination;
 	uint32_t size;
@@ -468,9 +294,9 @@ uint32_t CommandFunction_dl ( uint32_t argc, char** COMMAND_Arguments ) {
 	if ( argc < 3 ) { USART_SendString("Too few arguments!\r\n"); return 0; }
 	if ( argc > 3 ) { USART_SendString("Too many arguments!\r\n"); return 0; }
 
-	if ( StringIsHexadecimalString(COMMAND_Arguments[1]) ) Arg2Num = StringHexToNum(COMMAND_Arguments[1]);	// <destination> 	Convert hex to num
+	if ( StringIsHexadecimalString(argv[1]) ) Arg2Num = StringHexToNum(argv[1]);	// <destination> 	Convert hex to num
 	else { USART_SendString("Wrong 1. argument!\r\n"); return 0; }
-	if ( StringIsUnsignedDecimalString(COMMAND_Arguments[2]) ) Arg3Num = UnsignedDecimalStringToNum(COMMAND_Arguments[2]);	// <size>			Convert dec to num
+	if ( StringIsUnsignedDecimalString(argv[2]) ) Arg3Num = UnsignedDecimalStringToNum(argv[2]);	// <size>			Convert dec to num
 	else { USART_SendString("Wrong 2. argument!\r\n"); return 0; }
 
 	size = Arg3Num;
@@ -595,7 +421,8 @@ uint32_t CommandFunction_go ( uint32_t argc, char** argv ) {
 // Function: help (list commands)
 // 'help' or 'help <command>'
 // Listing commands or write the command's describe
-uint32_t CommandFunction_help ( uint32_t argc, char** argv ) {
+uint32_t CommandFunction_help ( uint32_t argc, char** argv )
+{
 
 	uint8_t i;
 
@@ -635,10 +462,11 @@ uint32_t CommandFunction_help ( uint32_t argc, char** argv ) {
 
 
 // Function: reset
-uint32_t CommandFunction_reset ( uint32_t argc, char** argv ) {
+uint32_t CommandFunction_reset ( uint32_t argc, char** argv )
+{
 
 	//(void)argc;
-	//(void)COMMAND_Arguments;
+	//(void)argv;
 	uint16_t i;
 
 	USART_SendLine("Reset...");
@@ -659,7 +487,7 @@ uint32_t CommandFunction_reset ( uint32_t argc, char** argv ) {
 // source: hex
 // size: dec
 // read <size> byte-s from <source> address
-uint32_t CommandFunction_mr ( uint32_t argc, char** COMMAND_Arguments ) {
+uint32_t CommandFunction_mr ( uint32_t argc, char** argv ) {
 
 
 	uint32_t *source;
@@ -671,9 +499,9 @@ uint32_t CommandFunction_mr ( uint32_t argc, char** COMMAND_Arguments ) {
 	if ( argc < 3 ) {	USART_SendString("Too few arguments!\r\n");	return 0;	}
 	if ( argc > 3 ) {	USART_SendString("Too many arguments!\r\n");	return 0;	}
 
-	if ( StringIsHexadecimalString(COMMAND_Arguments[1]) ) Arg2Num = StringHexToNum(COMMAND_Arguments[1]);	// Convert arg2, source to hex
+	if ( StringIsHexadecimalString(argv[1]) ) Arg2Num = StringHexToNum(argv[1]);	// Convert arg2, source to hex
 	else { USART_SendString("Wrong 1. argument!"); return 2; }
-	if ( StringIsUnsignedDecimalString(COMMAND_Arguments[2]) ) Arg3Num = StringDecToNum(COMMAND_Arguments[2]);	// Convert arg3, size to dec
+	if ( StringIsUnsignedDecimalString(argv[2]) ) Arg3Num = StringDecToNum(argv[2]);	// Convert arg3, size to dec
 	else { USART_SendString("Wrong 2. argument!"); return 2; }
 
 	source = ( uint32_t *) Arg2Num;		// casting for valid numbers
@@ -703,7 +531,7 @@ uint32_t CommandFunction_mr ( uint32_t argc, char** COMMAND_Arguments ) {
 // destination: hex
 // data: hex
 // mwb, mwh, mww commands
-uint32_t CommandFunction_mw ( uint32_t argc, char** COMMAND_Arguments ) {
+uint32_t CommandFunction_mw ( uint32_t argc, char** argv ) {
 
 	unsigned char *destination1;
 	unsigned short int *destination2;
@@ -713,23 +541,23 @@ uint32_t CommandFunction_mw ( uint32_t argc, char** COMMAND_Arguments ) {
 	if ( argc < 3 ) {	USART_SendString("Too few arguments!\r\n");	return 0;	}
 	if ( argc > 3 ) {	USART_SendString("Too many arguments!\r\n");	return 0;	}
 
-	if ( StringIsHexadecimalString(COMMAND_Arguments[1]) ) Arg2Num = StringHexToNum(COMMAND_Arguments[1]);	// Convert hex
+	if ( StringIsHexadecimalString(argv[1]) ) Arg2Num = StringHexToNum(argv[1]);	// Convert hex
 	else { USART_SendString("Wrong 1. argument!"); return 2; }
-	if ( StringIsHexadecimalString(COMMAND_Arguments[2]) ) Arg3Num = StringHexToNum(COMMAND_Arguments[2]);	// Convert hex
+	if ( StringIsHexadecimalString(argv[2]) ) Arg3Num = StringHexToNum(argv[2]);	// Convert hex
 	else { USART_SendString("Wrong 2. Argument!"); return 2; }
 
 
-	if (!StrCmp(COMMAND_Arguments[0],"mwb")) {
+	if (!StrCmp(argv[0],"mwb")) {
 		destination1 = ( unsigned char *) Arg2Num;
 		*destination1 = ( unsigned char ) Arg3Num;
 		uprintf("Write: %b to: %w",Arg3Num,Arg2Num);
 	}
-	else if(!StrCmp(COMMAND_Arguments[0],"mwh")) {
+	else if(!StrCmp(argv[0],"mwh")) {
 		destination2 = ( unsigned short int *) Arg2Num;
 		*destination2 = ( unsigned short int) Arg3Num;
 		uprintf("Write: %h to: %w",Arg3Num,Arg2Num);
 	}
-	else if(!StrCmp(COMMAND_Arguments[0],"mww")) {
+	else if(!StrCmp(argv[0],"mww")) {
 		destination3 = ( uint32_t *) Arg2Num;
 		*destination3 = ( uint32_t ) Arg3Num;
 		uprintf("Write: %w to: %w",Arg3Num,Arg2Num);
@@ -760,7 +588,7 @@ uint32_t CommandFunction_led ( uint32_t argc, char** argv )	// TODO: !!IMPORTANT
 
 #ifdef CONFIG_MODULE_LED_ENABLE
 	
-	if (!StrCmp(COMMAND_Arguments[1],"on")) {
+	if (!StrCmp(argv[1],"on")) {
 		switch (Arg3Num) {
 			case 1:	LED_BLUE_ON();	break;
 			case 2:	LED_GREEN_ON();	break;
@@ -768,7 +596,7 @@ uint32_t CommandFunction_led ( uint32_t argc, char** argv )	// TODO: !!IMPORTANT
 		}
 		uprintf("Led on: %d\r\n",Arg3Num);
 	}
-	else if(!StrCmp(COMMAND_Arguments[1],"off")) {
+	else if(!StrCmp(argv[1],"off")) {
 		switch (Arg3Num) {
 			case 1:	LED_BLUE_OFF();	break;
 			case 2:	LED_GREEN_OFF();	break;
@@ -776,7 +604,7 @@ uint32_t CommandFunction_led ( uint32_t argc, char** argv )	// TODO: !!IMPORTANT
 		}
 		uprintf("Led off: %d\r\n",Arg3Num);
 	}
-	else if(!StrCmp(COMMAND_Arguments[1],"toggle")) {
+	else if(!StrCmp(argv[1],"toggle")) {
 		switch (Arg3Num) {
 			case 1: LED_BLUE_TOGGLE(); break;
 			case 2: LED_GREEN_TOGGLE(); break;
@@ -784,7 +612,7 @@ uint32_t CommandFunction_led ( uint32_t argc, char** argv )	// TODO: !!IMPORTANT
 		}
 		uprintf("Led toggle: %d\r\n",Arg3Num);
 	}
-	else if(!StrCmp(COMMAND_Arguments[1],"status")) {
+	else if(!StrCmp(argv[1],"status")) {
 		uprintf("Led status: %d %d %d\r\n",LED_BLUE_STATUS(), LED_GREEN_STATUS(), LED_RED_STATUS());
 	}
 	else
@@ -823,7 +651,7 @@ uint32_t CommandFunction_temp	( uint32_t argc, char** argv ) {
 
 /*
 // Function: Go to STOP mode
-uint32_t CommandFunction_stop	( uint32_t argc, char** COMMAND_Arguments ) {
+uint32_t CommandFunction_stop	( uint32_t argc, char** argv ) {
 
 	// Take anything before stop mode
 	LED_ALARM_ON();
@@ -850,9 +678,9 @@ uint32_t CommandFunction_stop	( uint32_t argc, char** COMMAND_Arguments ) {
 /*
 // Function: EEPROM read
 // Syntax: romr <address>
-uint32_t CommandFunction_romr	( uint32_t argc, char** COMMAND_Arguments ) {
+uint32_t CommandFunction_romr	( uint32_t argc, char** argv ) {
 
-	Arg2Num = StringDecToNum(COMMAND_Arguments[1]);
+	Arg2Num = StringDecToNum(argv[1]);
 		
 	//uprintf("address: 0x%h\r\n"
 	//				"data:    0x%b\r\n",
@@ -868,11 +696,11 @@ uint32_t CommandFunction_romr	( uint32_t argc, char** COMMAND_Arguments ) {
 /*
 // Function: EEPROM write
 // Syntax: romw <address> <data>
-uint32_t CommandFunction_romw	( uint32_t argc, char** COMMAND_Arguments ) {
+uint32_t CommandFunction_romw	( uint32_t argc, char** argv ) {
 
 
-	Arg2Num = StringHexToNum(COMMAND_Arguments[1]);
-	Arg3Num = StringHexToNum(COMMAND_Arguments[2]);
+	Arg2Num = StringHexToNum(argv[1]);
+	Arg3Num = StringHexToNum(argv[2]);
 	
 	uprintf("address: 0x%h\r\n"
 					"data:    0x%b\r\n",
@@ -887,7 +715,7 @@ uint32_t CommandFunction_romw	( uint32_t argc, char** COMMAND_Arguments ) {
 
 /*
 // Function: Read EEPROM's status register
-uint32_t CommandFunction_romsr	( uint32_t argc, char** COMMAND_Arguments ) {
+uint32_t CommandFunction_romsr	( uint32_t argc, char** argv ) {
 		
 	//uprintf("Status register: 0x%h\r\n",
 	//				EEPROM_ReadStatusRegister ()
@@ -900,7 +728,7 @@ uint32_t CommandFunction_romsr	( uint32_t argc, char** COMMAND_Arguments ) {
 
 /*
 // Function: EEPROM, Write Enable
-uint32_t CommandFunction_romwe	( uint32_t argc, char** COMMAND_Arguments ) {
+uint32_t CommandFunction_romwe	( uint32_t argc, char** argv ) {
 		
 	//EEPROM_WriteEnable ();
 
@@ -913,7 +741,7 @@ uint32_t CommandFunction_romwe	( uint32_t argc, char** COMMAND_Arguments ) {
 
 /*
 // Function: initialize EEPROM
-uint32_t CommandFunction_rominit	( uint32_t argc, char** COMMAND_Arguments ) {
+uint32_t CommandFunction_rominit	( uint32_t argc, char** argv ) {
 		
 	//EEPROM_Init ();
 
@@ -925,7 +753,7 @@ uint32_t CommandFunction_rominit	( uint32_t argc, char** COMMAND_Arguments ) {
 
 
 /*
-uint32_t CommandFunction_standby	( uint32_t argc, char** COMMAND_Arguments ) {
+uint32_t CommandFunction_standby	( uint32_t argc, char** argv ) {
 	
 	LCD_Instr_DisplayClear();
 	LCD_SendString_2line("RadioAlarm","in STANDBY mode",2,2);
@@ -942,9 +770,9 @@ uint32_t CommandFunction_standby	( uint32_t argc, char** COMMAND_Arguments ) {
 
 
 /*
-uint32_t CommandFunction_rtc	( uint32_t argc, char** COMMAND_Arguments ) {
+uint32_t CommandFunction_rtc	( uint32_t argc, char** argv ) {
 	
-	Arg2Num = StringDecToNum(COMMAND_Arguments[1]);
+	Arg2Num = StringDecToNum(argv[1]);
 	
 	uprintf("RTC wait %d second(s)\r\n",Arg2Num);
 	
@@ -962,7 +790,7 @@ uint32_t CommandFunction_rtc	( uint32_t argc, char** COMMAND_Arguments ) {
 uint32_t CommandFunction_test	( uint32_t argc, char** argv ) {
 	
 	//(void)argc;
-	//(void)COMMAND_Arguments;
+	//(void)argv;
 	//uint8_t i = 0;
 	//uint8_t buf[2];
 	
@@ -977,7 +805,7 @@ uint32_t CommandFunction_test	( uint32_t argc, char** argv ) {
 	SendColouredMessageWithBackgroundColor("Valami piros háttérrel\r\n", Color_Black, Color_Red);
 	SendColouredMessageWithBackgroundColor("Valami sárga háttérrel\r\n", Color_Black, Color_Yellow);
 
-
+	SendErrorMessage ("FATAL ERROR EXAMPLE\r\n");
 	// GlobalVar
 
 	//GlobalVarHandler_ListAllVariables();
@@ -1025,7 +853,7 @@ uint32_t CommandFunction_test	( uint32_t argc, char** argv ) {
 	{
 		//uprintf("Front proximity value: %d [cm]\r\n",PROX_MeaseuredValueToDistanceConverter( ProxAdcValues[PROX_SENSOR_FRONT] ));
 		if ( HAL_UART_Receive(&Debug_UartHandle,buf,1,50) == HAL_OK ) return 1;
-		//vTaskDelay(200); 		// TODO: FREERTOS
+		//vTaskDelay(200);
 	}
 	*/
 
@@ -1161,10 +989,10 @@ uint32_t CommandFunction_test	( uint32_t argc, char** argv ) {
 
 
 #if 0
-uint32_t CommandFunction_start	( uint32_t argc, char** COMMAND_Arguments )
+uint32_t CommandFunction_start	( uint32_t argc, char** argv )
 {
 	(void)argc;
-	(void)COMMAND_Arguments;
+	(void)argv;
 
 
 	uprintf("start command...\r\n");
@@ -1181,11 +1009,11 @@ uint32_t CommandFunction_start	( uint32_t argc, char** COMMAND_Arguments )
 
 
 #if 0
-uint32_t CommandFunction_stop	( uint32_t argc, char** COMMAND_Arguments )
+uint32_t CommandFunction_stop	( uint32_t argc, char** argv )
 {
 
 	//(void)argc;
-	//(void)COMMAND_Arguments;
+	//(void)argv;
 
 	//GLOBAL_CommandEmergencyStop();
 
@@ -1201,13 +1029,13 @@ uint32_t CommandFunction_stop	( uint32_t argc, char** COMMAND_Arguments )
 
 // Function: Beallitja a globalis valtozo erteket (set fuggvennyel)
 // Syntax: set <globalvar> <value>
-uint32_t CommandFunction_set ( uint32_t argc, char** COMMAND_Arguments )
+uint32_t CommandFunction_set ( uint32_t argc, char** argv )
 {
 
 	char resultBuffer[30];
 
 	GlobalVarHandler_ProcessCommand(
-			COMMAND_Arguments[1],COMMAND_Arguments[2],
+			argv[1],argv[2],
 			SetGet_Set,Source_DebugSerial,
 			resultBuffer,30);
 
@@ -1224,13 +1052,13 @@ uint32_t CommandFunction_set ( uint32_t argc, char** COMMAND_Arguments )
 
 
 // Function: get <globalvar>
-uint32_t CommandFunction_get ( uint32_t argc, char** COMMAND_Arguments )
+uint32_t CommandFunction_get ( uint32_t argc, char** argv )
 {
 
 	char resultBuffer[30];
 
 	GlobalVarHandler_ProcessCommand(
-			COMMAND_Arguments[1],COMMAND_Arguments[2],
+			argv[1],argv[2],
 			SetGet_Get,Source_DebugSerial,
 			resultBuffer,30);
 
@@ -1244,13 +1072,13 @@ uint32_t CommandFunction_get ( uint32_t argc, char** COMMAND_Arguments )
 
 
 // Function: help <globalvar>
-uint32_t CommandFunction_GlobalVariableHelp ( uint32_t argc, char** COMMAND_Arguments )
+uint32_t CommandFunction_GlobalVariableHelp ( uint32_t argc, char** argv )
 {
 
 	char resultBuffer[30];
 
 	GlobalVarHandler_ProcessCommand(
-			COMMAND_Arguments[1],COMMAND_Arguments[2],
+			argv[1],argv[2],
 			SetGet_Help,Source_DebugSerial,
 			resultBuffer,30);
 
@@ -1264,7 +1092,7 @@ uint32_t CommandFunction_GlobalVariableHelp ( uint32_t argc, char** COMMAND_Argu
 
 
 // Function: list globalvars
-uint32_t CommandFunction_GlobalVariableList ( uint32_t argc, char** COMMAND_Arguments )
+uint32_t CommandFunction_GlobalVariableList ( uint32_t argc, char** argv )
 {
 
 	GlobalVarHandler_ListAllVariables();
@@ -1276,7 +1104,7 @@ uint32_t CommandFunction_GlobalVariableList ( uint32_t argc, char** COMMAND_Argu
 
 #if 0
 // Function: buzzer switch on/off
-uint32_t CommandFunction_buzzer	( uint32_t argc, char** COMMAND_Arguments ) {
+uint32_t CommandFunction_buzzer	( uint32_t argc, char** argv ) {
 
 	if ( argc < 2 )
 	{
@@ -1289,7 +1117,7 @@ uint32_t CommandFunction_buzzer	( uint32_t argc, char** COMMAND_Arguments ) {
 		return RETURN_FALSE;
 	}
 
-	if (!StrCmp(COMMAND_Arguments[1],"on"))
+	if (!StrCmp(argv[1],"on"))
 	{
 		// TODO: Buzzer on
 		// Buzzer bekapcsolasa
@@ -1297,7 +1125,7 @@ uint32_t CommandFunction_buzzer	( uint32_t argc, char** COMMAND_Arguments ) {
 		uprintf("Buzzer on (Important! This is an infinite loop!)\r\n");
 		//BUZZER_On(); // Important!! Before turn on, need BUZZER_Init() function.
 	}
-	else if(!StrCmp(COMMAND_Arguments[1],"off"))
+	else if(!StrCmp(argv[1],"off"))
 	{
 		// Buzzer kikapcsolása
 		//BUZZER_DeInit();
@@ -1312,10 +1140,10 @@ uint32_t CommandFunction_buzzer	( uint32_t argc, char** COMMAND_Arguments ) {
 
 
 #if 0
-uint32_t CommandFunction_accelerometer	( uint32_t argc, char** COMMAND_Arguments ) {
+uint32_t CommandFunction_accelerometer	( uint32_t argc, char** argv ) {
 
 	(void)argc;
-	(void)COMMAND_Arguments;
+	(void)argv;
 
 	uprintf("Accelerometer has been started...\r\n");
 
@@ -1332,10 +1160,10 @@ uint32_t CommandFunction_accelerometer	( uint32_t argc, char** COMMAND_Arguments
 
 
 #if 0
-uint32_t CommandFunction_gyroscope	( uint32_t argc, char** COMMAND_Arguments ) {
+uint32_t CommandFunction_gyroscope	( uint32_t argc, char** argv ) {
 
 	(void)argc;
-	(void)COMMAND_Arguments;
+	(void)argv;
 
 	uprintf("Gyroscope has been started...\r\n");
 
@@ -1353,7 +1181,7 @@ uint32_t CommandFunction_gyroscope	( uint32_t argc, char** COMMAND_Arguments ) {
 
 
 #if 0
-uint32_t CommandFunction_remotecontrol	( uint32_t argc, char** COMMAND_Arguments ) {
+uint32_t CommandFunction_remotecontrol	( uint32_t argc, char** argv ) {
 
 
 	return CommandResult_Ok;
@@ -1363,10 +1191,10 @@ uint32_t CommandFunction_remotecontrol	( uint32_t argc, char** COMMAND_Arguments
 
 
 #if 0
-uint32_t CommandFunction_proximity	( uint32_t argc, char** COMMAND_Arguments ) {
+uint32_t CommandFunction_proximity	( uint32_t argc, char** argv ) {
 
 	//(void)argc;
-	//(void)COMMAND_Arguments;
+	//(void)argv;
 
 	uprintf("Jelenleg nincs funkcioja!\r\n");
 
@@ -1384,7 +1212,7 @@ uint32_t CommandFunction_proximity	( uint32_t argc, char** COMMAND_Arguments ) {
 //	}
 //
 //
-//	if (!StrCmp(COMMAND_Arguments[1],"on"))
+//	if (!StrCmp(argv[1],"on"))
 //	{
 //
 //		// LOG start
@@ -1392,7 +1220,7 @@ uint32_t CommandFunction_proximity	( uint32_t argc, char** COMMAND_Arguments ) {
 //		LOG_QueueEnable_PROXIMITY = LOG_ENABLE;
 //
 //	}
-//	else if(!StrCmp(COMMAND_Arguments[1],"off"))
+//	else if(!StrCmp(argv[1],"off"))
 //	{
 //
 //		// LOG end
@@ -1409,7 +1237,7 @@ uint32_t CommandFunction_proximity	( uint32_t argc, char** COMMAND_Arguments ) {
 
 
 #if 0
-uint32_t CommandFunction_log ( uint32_t argc, char** COMMAND_Arguments )
+uint32_t CommandFunction_log ( uint32_t argc, char** argv )
 {
 
 	//(void)argc;
@@ -1429,7 +1257,7 @@ uint32_t CommandFunction_log ( uint32_t argc, char** COMMAND_Arguments )
 
 	if ( argc == 2 )
 	{
-		if(!StrCmp(COMMAND_Arguments[1],"off"))
+		if(!StrCmp(argv[1],"off"))
 		{
 			// LOG end
 			//LOG_Off();
@@ -1465,7 +1293,7 @@ uint32_t CommandFunction_log ( uint32_t argc, char** COMMAND_Arguments )
 	/*
 	if ( argc == 2 )		// "log on", "log off"
 	{
-		if (!StrCmp(COMMAND_Arguments[1],"on"))
+		if (!StrCmp(argv[1],"on"))
 		{
 
 			uprintf("Log on\r\n");
@@ -1474,7 +1302,7 @@ uint32_t CommandFunction_log ( uint32_t argc, char** COMMAND_Arguments )
 			vTaskResume(LOG_TaskHandle);
 
 		}
-		else if(!StrCmp(COMMAND_Arguments[1],"off"))
+		else if(!StrCmp(argv[1],"off"))
 		{
 
 			// LOG end
@@ -1493,7 +1321,7 @@ uint32_t CommandFunction_log ( uint32_t argc, char** COMMAND_Arguments )
 	else */
 	if (argc == 3 )	// log on/off <taszk>
 	{
-		if (!StrCmp(COMMAND_Arguments[1],"on"))
+		if (!StrCmp(argv[1],"on"))
 		{
 	
 			MONITOR_CommandSendBackCharEnable = 1; // Enable to send
@@ -1517,10 +1345,10 @@ uint32_t CommandFunction_log ( uint32_t argc, char** COMMAND_Arguments )
 
 
 #if 0
-uint32_t CommandFunction_exit ( uint32_t argc, char** COMMAND_Arguments )
+uint32_t CommandFunction_exit ( uint32_t argc, char** argv )
 {
 	(void)argc;
-	(void)COMMAND_Arguments;
+	(void)argv;
 
 
 	uprintf("exit\r\n"
@@ -1534,7 +1362,7 @@ uint32_t CommandFunction_exit ( uint32_t argc, char** COMMAND_Arguments )
 
 
 #if 0
-uint32_t CommandFunction_read ( uint32_t argc, char** COMMAND_Arguments )
+uint32_t CommandFunction_read ( uint32_t argc, char** argv )
 {
 
 	//int i;
@@ -1563,7 +1391,7 @@ uint32_t CommandFunction_read ( uint32_t argc, char** COMMAND_Arguments )
 	uint8_t String[20];
 
 	(void)argc;
-	(void)COMMAND_Arguments;
+	(void)argv;
 
 	for ( i=0; i<200; i++ )
 	{
@@ -1620,11 +1448,11 @@ uint32_t CommandFunction_flashdel	( uint32_t argc, char** argv ) {
 
 
 	#ifdef FLASH_H_
-	if (!StrCmp(COMMAND_Arguments[2],"block"))
+	if (!StrCmp(argv[2],"block"))
 	{
 		FLASH_BlockErase(Arg2Num,5000);
 	}
-	else if (!StrCmp(COMMAND_Arguments[2],"sector"))
+	else if (!StrCmp(argv[2],"sector"))
 	{
 		FLASH_SectorErase(Arg2Num,5000);
 	}
@@ -1725,13 +1553,13 @@ uint32_t CommandFunction_raspberrypi	( uint32_t argc, char** argv ) {
 	}
 	
 	// Convert arg3, decimal
-	if (!UnsignedDecimalStringToNum(COMMAND_Arguments[2],&Arg3Num))
+	if (!UnsignedDecimalStringToNum(argv[2],&Arg3Num))
 	{
 		USART_SendString("Wrong 1. argument!\r\n");
 		return RETURN_FALSE;
 	}
 	
-	if (!StrCmp(COMMAND_Arguments[1],"setout"))
+	if (!StrCmp(argv[1],"setout"))
 	{
 		// setout
 		HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
@@ -1751,7 +1579,7 @@ uint32_t CommandFunction_raspberrypi	( uint32_t argc, char** argv ) {
 
 /*
 // Function: ESP8266 bridge
-uint32_t CommandFunction_ESP8266	( uint32_t argc, char** COMMAND_Arguments ) {
+uint32_t CommandFunction_ESP8266	( uint32_t argc, char** argv ) {
 
 	if ( argc > 1 )
 	{

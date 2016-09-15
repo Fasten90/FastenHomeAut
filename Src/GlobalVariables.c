@@ -9,7 +9,7 @@
 #include "GlobalVarHandler.h"
 #include "GlobalVariables.h"
 
-
+#include "Globals.h"
 
 
 /// Global variables
@@ -22,6 +22,7 @@ bool myTestBool = false;
 int16_t testInt16;
 uint32_t testUint32;
 int32_t testInt32;
+bool cannotAccess = false;
 
 GlobalVarCommand_t GlobalVarList[] =
 {
@@ -30,7 +31,8 @@ GlobalVarCommand_t GlobalVarList[] =
 			.varPointer = &testVar,
 			.type = Type_Uint8,
 			.maxValue = 20,
-			.description = "Test integer"
+			.description = "Test integer",
+			.sourceEnable = Source_DebugSerial | Source_Ethernet
 		},
 		{
 			.name = "devicename",
@@ -67,6 +69,18 @@ GlobalVarCommand_t GlobalVarList[] =
 			.type = Type_Uint32,
 			.isHex = true,
 		},
+		{
+			.name = "cannotaccess",
+			.varPointer = &cannotAccess,
+			.type = Type_Bool,
+			.sourceEnable = Source_Disable
+		},
+		{
+			.name = "version",
+			.varPointer = &Global_Version,
+			.type = Type_String,
+			.isReadOnly = true
+		}
 
 
 		// ADD new global variable here
