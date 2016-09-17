@@ -23,6 +23,7 @@ int16_t testInt16;
 uint32_t testUint32;
 int32_t testInt32;
 bool cannotAccess = false;
+float floatTest = 12.34f;
 
 GlobalVarCommand_t GlobalVarList[] =
 {
@@ -80,6 +81,11 @@ GlobalVarCommand_t GlobalVarList[] =
 			.varPointer = &Global_Version,
 			.type = Type_String,
 			.isReadOnly = true
+		},
+		{
+			.name = "floattest",
+			.varPointer = &floatTest,
+			.type = Type_Float,
 		}
 
 
@@ -101,14 +107,6 @@ GlobalVarCommand_t GlobalVarList[] =
 };
 
 
-// TODO: Megvizsgálni a tagok számát
-/*
-#if ( (sizeof(GlobalVarList)/sizeof(GlobalVarList[0])) > 255 )
-#error "uint8_t globalVarSize"
-#endif
-*/
-
-
-const uint8_t GlobalVarMaxCommandNum = sizeof(GlobalVarList)/sizeof(GlobalVarList[0]);
+const VarID_t GlobalVarMaxCommandNum = sizeof(GlobalVarList)/sizeof(GlobalVarList[0]);
 
 

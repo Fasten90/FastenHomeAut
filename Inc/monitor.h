@@ -284,8 +284,8 @@ void MONITOR_SendPrimitiveWelcome ( void );
 
 void MONITOR_CheckCommand ( void );
 bool MONITOR_PrepareFindExecuteCommand ( void );
-uint8_t MONITOR_CommandSeparate ( void );
-bool MONITOR_CommandFind ( void );
+uint8_t MONITOR_CommandParser ( void );
+bool MONITOR_SearchCommand ( void );
 
 void MONITOR_CommandBackspace ( void );
 void MONITOR_CommandResendLine ( void );
@@ -301,8 +301,8 @@ void MONITOR_HISTORY_Load ( uint8_t direction );
 void MONITOR_ConvertSmallLetter ( void );
 
 void MONITOR_CheckResultAndRespond(CommandResult_t result);
-void MONITOR_RunCommand ( uint8_t commandID );
-void MONITOR_WriteAnCommandHelp ( uint8_t commandID );
+void MONITOR_RunCommand ( CommandID_t commandID );
+void MONITOR_WriteAnCommandHelp ( CommandID_t commandID );
 CommandResult_t MONITOR_ArgumentNumIsGood ( uint8_t receivedArgNum, uint8_t commandArgNum);
 
 

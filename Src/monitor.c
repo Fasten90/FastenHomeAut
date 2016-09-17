@@ -41,7 +41,7 @@ volatile uint8_t USART_RxBufferReadCnt = 0;
 //			Configs:
 /////////////////////////////////
 
-static const char MONITOR_Password[] = { "password" };
+static const char MONITOR_Password[] = "password";
 
 // Enable monitor
 const bool MONITOR_CommandReceiveEnable = true;
@@ -576,13 +576,13 @@ bool MONITOR_PrepareFindExecuteCommand ( void )
 {
 
 	// Separate command
-	COMMAND_ArgCount = MONITOR_CommandSeparate ();
+	COMMAND_ArgCount = MONITOR_CommandParser ();
 	bool isSuccessful = false;
 
 	if ( COMMAND_ArgCount > 0 )
 	{
 		// Find and probing execute the command
-		isSuccessful = MONITOR_CommandFind ();
+		isSuccessful = MONITOR_SearchCommand ();
 		USART_SEND_NEW_LINE();
 	}
 	else
@@ -602,9 +602,8 @@ bool MONITOR_PrepareFindExecuteCommand ( void )
 
 /**
  * \brief	Separate parameters from ActualCommand to COMMAND_Arguments[0], [1], [2]
- *	\ TODO: Átnevezés, szeparatáro karakter const legyen
  */
-uint8_t MONITOR_CommandSeparate ( void )
+uint8_t MONITOR_CommandParser ( void )
 {
 	// seperate command to argumentums
 	// return arc; = argumentum's num
@@ -656,15 +655,13 @@ uint8_t MONITOR_CommandSeparate ( void )
 /**
  * \brief	Find the command (in list)
  */
-bool MONITOR_CommandFind ( void )
+bool MONITOR_SearchCommand ( void )
 {
 
-	uint8_t i;
+	CommandID_t i;
 	bool CommandValid = false;
 
-	// Find the command
-	//for (i=0; i < MONITOR_MAX_COMMAND_NUM; i++) {		// Need an correct "MAX_COMMAND_NUM" define
-	//for (i=0; CommandList[i].name != NULL; i++) {		// If last command = 0
+	// Search the command
 	for (i=0; i < MONITOR_CommandNum; i++)
 	{
 
@@ -1181,7 +1178,7 @@ void MONITOR_CheckResultAndRespond (CommandResult_t result)
 /**
  * \brief	Run command
  */
-void MONITOR_RunCommand ( uint8_t commandID )
+void MONITOR_RunCommand ( CommandID_t commandID )
 {
 
 	uint32_t result = CommandResult_Ok;
@@ -1222,7 +1219,7 @@ void MONITOR_RunCommand ( uint8_t commandID )
 /**
  * \brief	Write an command help
  */
-void MONITOR_WriteAnCommandHelp ( uint8_t commandID )
+void MONITOR_WriteAnCommandHelp ( CommandID_t commandID )
 {
 	USART_SendMessage("Command name: ");
 	USART_SendLine(CommandList[commandID].name);

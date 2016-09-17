@@ -5,11 +5,12 @@
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
-//#include "command.h"
+
 //#include "monitor.h"
 //#include "usart.h"
 #include "include.h"
 
+#include "command.h"
 #include "GlobalVarHandler.h"
 #include "formattedMessage.h"
 #include "Globals.h"
@@ -220,7 +221,7 @@ const CommandStruct CommandList[] =
 };
 
 
-const uint8_t MONITOR_CommandNum = MONITOR_MAX_COMMAND_NUM;
+const CommandID_t MONITOR_CommandNum = MONITOR_MAX_COMMAND_NUM;
 
 
 /*------------------------------------------------------------------------------

@@ -27,8 +27,11 @@
  *----------------------------------------------------------------------------*/
 
 
-// Command Function
+// Command Function pointer
 typedef uint32_t ( *FunctionPointer )( uint32_t argc, char** COMMAND_Arguments );
+
+// CommandID
+typedef uint8_t CommandID_t;
 
 
 // CommandArgNum type
@@ -73,7 +76,7 @@ typedef enum
 
 extern const CommandStruct CommandList[];
 
-extern const uint8_t MONITOR_CommandNum;
+extern const CommandID_t MONITOR_CommandNum;
 
 
 

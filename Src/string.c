@@ -599,7 +599,7 @@ bool SignedDecimalStringToNum (const char *string, int32_t *value)
 
 /**
  * \brief	Convert Float string to num(float)
- * \return	true, if successul
+ * \return	true, if successful
  * 			false, if has error
  */
 bool StringToFloat (const char *string, float *Num)
@@ -657,10 +657,11 @@ bool StringToFloat (const char *string, float *Num)
 		return false;
 	}
 
+	// Integer (before .)
 	*Num = integer;
 
 	// Convert fraction
-	if(!UnsignedDecimalStringToNum(&string[pointCnt],&integer))
+	if(!UnsignedDecimalStringToNum(&string[pointCnt+1],&integer))
 	{
 		// Error with convert fraction part
 		return false;
@@ -668,7 +669,7 @@ bool StringToFloat (const char *string, float *Num)
 
 	fractionPart = integer;
 	// We converted after point part, ".567", but we need to shift right
-	for (i=0; i < (stringLength-pointCnt); i++ )
+	for (i=0; i < (stringLength-pointCnt-1); i++ )
 	{
 		// >> point
 		// Example: 567 == > 56.7

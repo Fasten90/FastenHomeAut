@@ -21,6 +21,8 @@
 /// TYPEDEFS
 /// ENUMS
 
+typedef uint8_t VarID_t;
+
 typedef enum
 {
 	Type_Error = 0,
@@ -86,16 +88,14 @@ typedef struct
 	void const *varPointer;
 	const bool isReadOnly;
 
-	const uint32_t maxValue;	// TODO: union pl. a stringMaxLength-tel
+	const uint32_t maxValue;
 	const uint32_t minValue;
-
-	//const uint8_t stringMaxLength;	// TODO: �sszevonva a maxValue-val
 
 	const CommandSource_t sourceEnable;
 
-	const bool isHex;		// TODO: esetleg lekezelj�k k�l�n bemenetk�nt a 0x00et...
+	const bool isHex;
 
-	const char *enumList;	// TODO: enumer�torhoz
+	const char *enumList;	// TODO: For enumerators
 
 #ifdef GLOBALVARHANDLER_UNIT_ENABLE
 	const char const *unit;

@@ -53,18 +53,19 @@ static const char const*GlobalVarTypesNames[] =
 
 
 
-
 /// FUNCTION PROTOTYPES
 
-static ProcessResult_t GlobalVarHandler_GetCommand(uint8_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
-static int16_t GlobalVarHandler_SearchVariableName(const char *commandName);
-static ProcessResult_t GlobalVarHandler_SetCommand(uint8_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength);
+static ProcessResult_t GlobalVarHandler_GetCommand(VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
+static bool GlobalVarHandler_SearchVariableName(const char *commandName, VarID_t *commandID);
+static ProcessResult_t GlobalVarHandler_SetCommand(const VarID_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength);
 static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBuffer, uint8_t resultBufferLength);
-static ProcessResult_t GlobalVarHandler_CheckValue(uint32_t num, uint8_t commandID);
-static void GlobalVarHandler_HelpVariable (uint8_t commandID, char *resultBuffer);
-static ProcessResult_t GlobalVarHandler_GetIntegerVariable(uint8_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
-static ProcessResult_t GlobalVarHandler_SetBool(uint8_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength);
-static ProcessResult_t GlobalVarHandler_SetInteger(uint8_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength);
+static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t num);
+static void GlobalVarHandler_HelpVariable (VarID_t commandID, char *resultBuffer);
+static ProcessResult_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
+static ProcessResult_t GlobalVarHandler_SetBool(VarID_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength);
+static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength);
+
+
 
 /// FUNCTIONS
 
@@ -76,7 +77,7 @@ bool GlobalVarHandler_CheckCommandStructAreValid(void)
 {
 	// TODO: vagy itt futásidejűteszt, vagy makrókkal fordításidejű teszt?
 
-	uint8_t i;
+	VarID_t i;
 
 	for (i=0; i < GlobalVarMaxCommandNum; i++)
 	{
@@ -129,8 +130,9 @@ void GlobalVarHandler_ProcessCommand(
 	 ProcessResult_t result = Process_UnknownError;
 
 	// Search command
-	int16_t commandID = GlobalVarHandler_SearchVariableName(commandName);
-	if(commandID > -1)
+	VarID_t commandID = 0;
+
+	if(GlobalVarHandler_SearchVariableName(commandName,&commandID))
 	{
 		// Found, Check the source
 		if ((source & GlobalVarList[commandID].sourceEnable) || (GlobalVarList[commandID].sourceEnable == Source_All))
@@ -188,9 +190,9 @@ void GlobalVarHandler_ProcessCommand(
  * \return	0..., if found, it is commandID
  * 			-1, if no founded
  */
-static int16_t GlobalVarHandler_SearchVariableName(const char *commandName)
+static bool GlobalVarHandler_SearchVariableName(const char *commandName, VarID_t *commandID)
 {
-	uint8_t i;
+	VarID_t i;
 
 	// Search
 	for (i=0; i<GlobalVarMaxCommandNum; i++)
@@ -198,12 +200,13 @@ static int16_t GlobalVarHandler_SearchVariableName(const char *commandName)
 		if(!StrCmp(GlobalVarList[i].name, commandName))
 		{
 		// Found
-		return i;
+		*commandID = i;
+		return true;
 		}
 	}
 
 	// Not found
-	return -1;
+	return false;
 
 }
 
@@ -212,7 +215,7 @@ static int16_t GlobalVarHandler_SearchVariableName(const char *commandName)
 /**
  * \brief	Get command
  */
-static ProcessResult_t GlobalVarHandler_GetCommand(uint8_t commandID, char *resultBuffer, uint8_t *resultBufferLength)
+static ProcessResult_t GlobalVarHandler_GetCommand(VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength)
 {
 	uint8_t length = 0;
 
@@ -243,11 +246,24 @@ static ProcessResult_t GlobalVarHandler_GetCommand(uint8_t commandID, char *resu
 		GlobalVarHandler_GetIntegerVariable(commandID,resultBuffer,resultBufferLength);
 		break;
 
+	case Type_Float:
+		{
+			float *floatPointer = (float *)GlobalVarList[commandID].varPointer;
+			float value = *floatPointer;
+			FloatToString(value,resultBuffer,2);
+		}
+		break;
+
 	case Type_String:
 		{
 			const char *string = GlobalVarList[commandID].varPointer;
 			length += StrCpyMax(resultBuffer,string, *resultBufferLength-length);
 		}
+		break;
+
+	case Type_Enumerator:
+		// TODO: Implement
+		return Process_FailParam;
 		break;
 
 	default:
@@ -289,7 +305,7 @@ static ProcessResult_t GlobalVarHandler_GetCommand(uint8_t commandID, char *resu
 /**
  * \brief Get integer value
  */
-static ProcessResult_t GlobalVarHandler_GetIntegerVariable(uint8_t commandID, char *resultBuffer, uint8_t *resultBufferLength)
+static ProcessResult_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength)
 {
 
 	VarType_t type = GlobalVarList[commandID].type;
@@ -402,7 +418,7 @@ static ProcessResult_t GlobalVarHandler_GetIntegerVariable(uint8_t commandID, ch
 /**
  * \brief	Set command
  */
-static ProcessResult_t GlobalVarHandler_SetCommand(uint8_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength)
+static ProcessResult_t GlobalVarHandler_SetCommand(const VarID_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength)
 {
 
 	uint8_t length = 0;
@@ -423,31 +439,54 @@ static ProcessResult_t GlobalVarHandler_SetCommand(uint8_t commandID, const char
 		result = GlobalVarHandler_SetInteger(commandID, param, resultBuffer, resultBufferLength);
 		break;
 
-	case Type_String:
+	case Type_Float:
 		{
-		uint8_t stringLength = StringLength(param);
-		if ( stringLength >= GlobalVarList[commandID].maxValue )
-		{
-			stringLength =  GlobalVarList[commandID].maxValue;
-		}
-		if (stringLength > *resultBufferLength)
-		{
-			stringLength = *resultBufferLength;
-		}
-
-		// TODO: Nincs hossz ellenőrzés és arra riasztás, levágja
-
-		char *string = (char *)GlobalVarList[commandID].varPointer;
-
-		length += StrCpyMax(string,param,stringLength);
-
-		result = Process_Ok_SetSuccessful_SendOk;
+			float floatValue;
+			if (StringToFloat(param,&floatValue))
+			{
+				// Successful convert
+				result = GlobalVarHandler_CheckValue(commandID,(uint32_t)(int32_t)floatValue);
+				if (result == Process_Ok_SetSuccessful_SendOk)
+				{
+					// Value is OK
+					float *floatPointer = (float *)GlobalVarList[commandID].varPointer;
+					*floatPointer = floatValue;
+					return Process_Ok_SetSuccessful_SendOk;
+				}
+				else
+				{
+					// Wrong value (too high or too less)
+					return result;
+				}
+			}
+			else
+			{
+				return Process_FailParamIsNotNumber;
+			}
+			return Process_FailParam;
 		}
 		break;
 
-	case Type_Float:
-		// TODO: implement
-		return Process_FailParam;
+	case Type_String:
+		{
+			uint8_t stringLength = StringLength(param);
+			if ( stringLength >= GlobalVarList[commandID].maxValue )
+			{
+				stringLength =  GlobalVarList[commandID].maxValue;
+			}
+			if (stringLength > *resultBufferLength)
+			{
+				stringLength = *resultBufferLength;
+			}
+
+			// TODO: Nincs hossz ellenőrzés és arra riasztás, levágja
+
+			char *string = (char *)GlobalVarList[commandID].varPointer;
+
+			length += StrCpyMax(string,param,stringLength);
+
+			result = Process_Ok_SetSuccessful_SendOk;
+		}
 		break;
 
 	case Type_Enumerator:
@@ -484,7 +523,7 @@ static ProcessResult_t GlobalVarHandler_SetCommand(uint8_t commandID, const char
 /**
  * \brief	Set bool variable
  */
-static ProcessResult_t GlobalVarHandler_SetBool(uint8_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength)
+static ProcessResult_t GlobalVarHandler_SetBool(VarID_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength)
 {
 
 	uint32_t num;
@@ -555,7 +594,7 @@ static ProcessResult_t GlobalVarHandler_SetBool(uint8_t commandID, const char *p
 /**
  * \brief	Set integer global variable
  */
-static ProcessResult_t GlobalVarHandler_SetInteger(uint8_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength)
+static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength)
 {
 	VarType_t varType = GlobalVarList[commandID].type;
 
@@ -729,7 +768,7 @@ static ProcessResult_t GlobalVarHandler_SetInteger(uint8_t commandID, const char
  * \brief	Check values
  * \return	Process_Ok_SetSuccessful_SendOk, if ok
  */
-static ProcessResult_t GlobalVarHandler_CheckValue(uint32_t num, uint8_t commandID)
+static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t num)
 {
 
 	// First, check the type value
@@ -758,6 +797,11 @@ static ProcessResult_t GlobalVarHandler_CheckValue(uint32_t num, uint8_t command
 		break;
 	case Type_Int32:
 		// TODO: Always true
+		if ((int32_t)num > INT32_MAX) return Process_InvalidValue_TooMuch;
+		if ((int32_t)num < INT32_MIN) return Process_InvalidValue_TooSmall;
+		break;
+	case Type_Float:
+		// TODO: Not a good compare in float type
 		if ((int32_t)num > INT32_MAX) return Process_InvalidValue_TooMuch;
 		if ((int32_t)num < INT32_MIN) return Process_InvalidValue_TooSmall;
 		break;
@@ -936,7 +980,7 @@ void GlobalVarHandler_ListAllVariables(void)
 /**
  * \brief	An global variable help menu
  */
-static void GlobalVarHandler_HelpVariable (uint8_t commandID, char *resultBuffer)
+static void GlobalVarHandler_HelpVariable (VarID_t commandID, char *resultBuffer)
 {
 
 	// TODO: resultBufferbe �r�s

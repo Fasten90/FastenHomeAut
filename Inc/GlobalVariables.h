@@ -2,7 +2,7 @@
  * GlobalVariables.h
  *
  *  Created on: Sep 7, 2016
- *      Author: Vizi Gábor
+ *      Author: Vizi GÃ¡bor
  */
 
 #ifndef GLOBALVARIABLES_H_
@@ -15,7 +15,7 @@
 
 
 extern GlobalVarCommand_t GlobalVarList[];
-extern const uint8_t GlobalVarMaxCommandNum;
+extern const VarID_t GlobalVarMaxCommandNum;
 
 
 
