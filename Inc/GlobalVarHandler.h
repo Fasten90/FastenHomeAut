@@ -2,7 +2,7 @@
  * GlobalVarHandler.h
  *
  *  Created on: Sep 5, 2016
- *      Author: Vizi G�bor
+ *      Author: Vizi Gábor
  */
 
 #ifndef GLOBALVARHANDLER_H_
