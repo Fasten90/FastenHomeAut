@@ -83,3 +83,4 @@ $RECYCLE.BIN/
 *.lnk
 Debug/STM32F407DiscoHomeAut.elf.list
 *.list
+*.map
