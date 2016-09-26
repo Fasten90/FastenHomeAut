@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Purpose:		USART periferia
+ * Purpose:		USART peripheral
  ******************************************************************************/
 
 
@@ -12,9 +12,6 @@
 
 #include "usart.h"
 #include "monitor.h"
-
-#include <stdarg.h>		// for "..." parameters in uprintf function
-
 
 
 
@@ -591,6 +588,9 @@ void USART_StartReceiveMessage ( void )
 
 
 
+/**
+ * \brief	Wait fo USART sending
+ */
 uint8_t USART_WaitForSend (uint16_t timeoutMiliSecond)
 {
 
@@ -610,7 +610,7 @@ uint8_t USART_WaitForSend (uint16_t timeoutMiliSecond)
 
 
 /*
-void USART_Test ( void )
+void USART_Test (void)
 {
 
 	USART_Init();
@@ -622,97 +622,16 @@ void USART_Test ( void )
 
 
 
-// Function: like printf(); C function
-// Bemasoljuk egy stringbe a szoveget, es csak azutan kuldjuk ki
-void uprintf(char * param, ...) {			// d, w, h, b, c, s, %
-
-	// Working in at:
-	char TxBuffer[TXBUFFERSIZE];
-
-	va_list ap;			// argument pointer
-	char	*p;			// step on fmt
-	char	*sval;		// string
-	int		ival;		// int
-	unsigned int uival;	// uint
-	float	flval;		// float
-	char 	cval;		// character
-
-	char *string;
-	string = TxBuffer;
-	//uint8_t	length = 0;
-
-	va_start(ap, param); 							// ap on arg
-	for (p = param; *p; p++) {  	       			// p to EOS
-		if (*p != '%')								// copy, if not '%'
-		{
-			*string = *p;							// copy to string
-			string++;
-		}
-		else            							// there is %, working
-		{ switch(*++p)
-		  {
-			case 'd': ival = va_arg(ap, int);						// Decimal
-					  string += SignedDecimalToString(ival,string);
-					  break;
-
-			case 'u': uival = va_arg(ap, int);						// unsigned
-					  string += UnsignedDecimalToString(uival,string);
-					  break;
-
-			case 'w': uival = va_arg(ap, unsigned int);				// Hex // 32 bits	// 8 hex	// 4 byte
-					  string += DecimalToHexaString(uival,4,string);// copy to string
-					  break;
-
-			case 'h': ival = va_arg(ap, int);						// Hex // 16 bits	// 4 hex	// 2 byte
-					  string += DecimalToHexaString(ival,2,string);	// copy to string
-					  break;
-
-			case 'b': ival = va_arg(ap, int);						// Hex	// 8 bits	// 2 hex	// 1 byte
-					  string += DecimalToHexaString(ival,1,string);	// copy to string
-					  break;
-
-			case 'c': cval = va_arg(ap, int);						// Char
-					  *string = cval;								// copy to string
-					  string++;
-					  *string = '\0';
-					  break;
-			case 'f': //flval = va_arg(ap, float);					// float
-					  //string += FloatToString(ival,string,6);
-					  //flval = va_arg(ap, float);					// GOOD, but warning
-					  flval = va_arg(ap, double);
-					  string += FloatToString(flval,string,6);
-					  break;
-			case 's': for(sval = va_arg(ap,char*); *sval; sval++)	// String
-					  {
-						*string = *sval;							// copy to string
-						string++;
-					  }
-					  break;
-
-			default:  *string = *p;									// Other, for example: '%'
-					  string++;
-					  break;
-		  }
-		}
-	}
-	va_end(ap);						 							// Cleaning after end
-
-	*string = '\0';												// string's end
-
-	USART_SendMessage(TxBuffer);							// Send on Usart
-}
-
-
-
-void USART_SendFloat ( float value )
+/**
+ * \brief	Send float number on usart
+ */
+void USART_SendFloat (float value)
 {
 	char string[16];
 	
-	FloatToString(value,string,6);	
+	FloatToString(value,string,0,6);
 	
 	USART_SendString(string);
-	
-	
 }
 
 
@@ -720,7 +639,7 @@ void USART_SendFloat ( float value )
 /**
  * \brief	Send "Bell" character
  */
-void USART_SendSoundBeep ( void )
+void USART_SendSoundBeep (void)
 {
 	USART_SendChar('\a');
 }

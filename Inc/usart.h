@@ -73,9 +73,6 @@ uint8_t USART_WaitForSend ( uint16_t timeoutMiliSecond );
 //void USART_StartReceiveMessage ( uint8_t *aRxBuffer );
 void USART_StartReceiveMessage ( void );
 
-// Send functions
-// !! IMPORTANT !! Send formatted string on USART !!
-void uprintf(char * param, ...);
 
 bool USART_SendChar ( char c );
 uint8_t USART_SendMessage ( const char *aTxBuffer );

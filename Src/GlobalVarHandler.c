@@ -250,7 +250,7 @@ static ProcessResult_t GlobalVarHandler_GetCommand(VarID_t commandID, char *resu
 		{
 			float *floatPointer = (float *)GlobalVarList[commandID].varPointer;
 			float value = *floatPointer;
-			FloatToString(value,resultBuffer,2);
+			FloatToString(value,resultBuffer,0,2);
 		}
 		break;
 

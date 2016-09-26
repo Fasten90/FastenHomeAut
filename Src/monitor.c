@@ -706,9 +706,12 @@ void MONITOR_CommandBackspace ( void )
 		// Cursor at end?
 		if ( MONITOR_CommandCursorPosition == MONITOR_CommandActualLength)
 		{
-			MONITOR_CommandActual[--MONITOR_CommandCursorPosition] = '\0';	// del from CommandActual, and Position--
+			// Cursor at end
+			// Delete from CommandActual, and Position--
+			MONITOR_CommandActual[--MONITOR_CommandCursorPosition] = '\0';
 			MONITOR_CommandActualLength--;
 			
+			// Delete last character on terminal
 #ifdef CONFIG_USE_TERMINAL_ZOC
 			USART_SEND_KEY_BACKSPACE();
 			USART_SEND_KEY_DEL();
@@ -866,8 +869,8 @@ static void MONITOR_CommandTabulator ( void )
 		if(!StrCmpWithLength(CommandList[i].name, (const char *)MONITOR_CommandActual,MONITOR_CommandActualLength))
 		{
 			// It is equal
-			// We write the first equal?
-			// TODO:
+			// We write the first equal
+			// TODO: Lekezelni az esetleges több Tabulátort? biztos jó, hogy az első egyezőt kiírjuk?
 			StrCpy((char *)MONITOR_CommandActual, CommandList[i].name);
 
 			MONITOR_CommandActualLength = StringLength(CommandList[i].name);
@@ -912,6 +915,7 @@ void MONITOR_CommandResendLine ( void )
 #endif	// #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 
 
+
 #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 /**
 \brief		Resend an new line/command
@@ -932,6 +936,7 @@ void MONITOR_NewCommandResendLine ( void )
 	return;
 }
 #endif	// #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+
 
 
 #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
@@ -997,6 +1002,7 @@ bool MONITOR_CommandEscapeCharValidation ( void )
 
 }
 #endif	// #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+
 
 
 #ifdef USE_MONITOR_HISTORY

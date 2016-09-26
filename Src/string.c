@@ -5,9 +5,13 @@
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
-#include "string.h"
+
 #include "include.h"
 
+// For printfs
+#include <stdarg.h>		// for "..." parameters in uprintf function
+
+#include "string.h"
 
 /*------------------------------------------------------------------------------
  *  Macros & definitions
@@ -113,6 +117,72 @@ uint8_t UnsignedDecimalToString (uint32_t value, char *string)
 
 
 /**
+ * \brief	Calculate unsigned decimal number "string length"
+ * \return	length of number's string
+ */
+uint8_t UnsignedDecimalLength(uint32_t value)
+{
+
+	uint8_t length = 0;
+	bool isStarted = false;
+
+	// Largest num: 1xxxxxx...
+	uint32_t decade = 1000000000;
+
+	while (decade > 1)
+	{
+		if ((value >= decade) || (isStarted == true))
+		{
+			length++;
+			isStarted = true;
+		}
+
+		// Value - first digit
+		value %= decade;
+
+		// /10
+		decade /= 10;
+	}
+
+	return length;
+}
+
+
+
+/**
+ * \brief	Unsigned decimal (uint32_t) to String with fill (a character to x length)
+ */
+uint8_t UnsignedDecimalToStringFill(uint32_t value, char *string, uint8_t fillLength, char fillCharacter)
+{
+	uint8_t length = 0;
+	uint8_t i;
+
+	length = UnsignedDecimalLength(value);
+
+	if (length >= fillLength)
+	{
+		// Not need fill
+		// Put number
+		length = UnsignedDecimalToString(value, string);
+	}
+	else
+	{
+		// Need fill
+		for (i=0; i < (fillLength - length); i++)
+		{
+			string[i] = fillCharacter;
+		}
+		// Put number
+		length = i-1;
+		length += UnsignedDecimalToString(value, &string[length]);
+	}
+
+	return length;
+}
+
+
+
+/**
  * \brief	Convert value to hexadecimalstring
  * \return	created string length
  */
@@ -198,7 +268,7 @@ char OctetToChar (uint8_t octet)
  * \brief	Convert float value to String
  * \return	Length
  */
-uint8_t FloatToString (float value, char *string, uint8_t fractionLength)
+uint8_t FloatToString (float value, char *string, uint8_t integerLength, uint8_t fractionLength)
 {
 	uint8_t num;
 	uint8_t length = 0;
@@ -216,7 +286,7 @@ uint8_t FloatToString (float value, char *string, uint8_t fractionLength)
 
 	// Integer
 	calcValue = (uint32_t)value;
-	length += UnsignedDecimalToString(calcValue,&string[length]);
+	length += UnsignedDecimalToStringFill(calcValue,&string[length],integerLength,' ');
 
 
 	// Point '.'
@@ -486,7 +556,7 @@ bool StringHexToNum (const char *string, uint32_t *hexValue, uint8_t byteLength)
 
 
 /**
- * \brief Convert deciaml character to number (byte)
+ * \brief Convert decimal character to number (byte)
  * \return	value (number)
  */
 uint8_t DecimalCharToNum(char c)
@@ -504,7 +574,7 @@ uint8_t DecimalCharToNum(char c)
 
 /**
  * \brief	Convert Unsigned decimal string to integer
- * \return	true, if successul
+ * \return	true, if successful
  * 			false, if has error
  */
 bool UnsignedDecimalStringToNum (const char *string, uint32_t *value)
@@ -546,7 +616,7 @@ bool UnsignedDecimalStringToNum (const char *string, uint32_t *value)
 
 /**
  * \brief	Convert signed decimal string to signed integer
- * \return	true, if successul
+ * \return	true, if successful
  * 			false, if has error
  */
 bool SignedDecimalStringToNum (const char *string, int32_t *value)
@@ -686,24 +756,6 @@ bool StringToFloat (const char *string, float *Num)
 	}
 
 	return true;
-}
-
-
-
-/**
- * \brief	Power(a,b) = a^b
- */
-uint32_t power (uint32_t a, uint8_t b)
-{
-	uint8_t i;
-	uint32_t Num=a;
-	if (b==0) return 1;
-	for (i=1; i<b; i++)
-	{
-		Num=Num*a;
-	}
-
-	return Num;
 }
 
 
@@ -877,3 +929,247 @@ uint8_t StrAppend (char *dest, const char *string)
 
 }
 
+
+
+/**
+ * \brief	Find small string in big string
+ * \return	'findString' position in 'str'
+ */
+int16_t FindString (const char *findString, const char *str)
+{
+	uint8_t i;
+	uint8_t length = StringLength(str);
+
+	// Search first equal character
+	for (i=0; i<length; i++)
+	{
+		if (findString[0] == str[i])
+		{
+			// First character is equal
+			if(!StrCmp(findString, &str[i]))
+			{
+				return i;
+			}
+		}
+	}
+
+	return -1;
+
+}
+
+
+
+/**
+ * \brief	Instead of sprintf()
+ */
+uint8_t string_printf (char *str, const char *format, va_list ap)
+{
+	// Used '%' parameters
+	// %d, %u, %x, %X, %w, %h, %b, %c, %s, %f
+
+	// TODO: Use "new" typedefs
+
+	char	*p;			// step on fmt
+	char	*sval;		// string
+	int		ival;		// int
+	unsigned int uival;	// uint
+	float	flval;		// float
+	char 	cval;		// character
+
+	char *string = str;
+
+	uint8_t paramDescCnt = 0;
+	uint8_t paramNum1 = 0;
+	uint8_t paramNum2 = 0;
+	char fillCharacter = ' ';
+
+	for (p = (char *)format; *p; p++)						// p to EOS
+	{
+		if (*p != '%')								// copy, if not '%'
+		{
+			*string = *p;							// copy to string
+			string++;
+		}
+		else
+		{
+			// '%' character
+			p++;
+			paramNum1 = 0;
+			paramNum2 = 2;
+			fillCharacter = ' ';
+
+			// Check %...x (parameter after %, before x, u, f)
+			// Next character is num?
+			if(IsDecimalChar(*p))
+			{
+				// It is num (1. param)
+				paramNum1 = DecimalCharToNum(*p);
+				fillCharacter = *p;
+				paramDescCnt++;
+				p++;
+
+				if (IsDecimalChar(*p))
+				{
+					// xy
+					// It is num (2. param)
+					paramNum2 = DecimalCharToNum(*p);
+					paramDescCnt++;
+					p++;
+				}
+				else if (*p == '.')
+				{
+					// x.
+					p++;
+					if (IsDecimalChar(*p))
+					{
+						// x.x
+						paramNum2 = DecimalCharToNum(*p);
+						paramDescCnt++;
+						p++;
+					}
+					else
+					{
+						// x.
+						// y=2 now, for correct float printing
+						paramNum2 = 2;
+					}
+				}
+				else
+				{
+					// x		==>		x = fill character, y = length
+					// If only has one parameter
+					paramNum2 = paramNum1;	// Length
+					fillCharacter = ' ';	// Blank character
+				}
+			}
+
+			// Process next character (after '%', or etc)
+			switch (*p)
+			{
+				case 'd': ival = va_arg(ap, int);						// Decimal = signed int
+						  string += SignedDecimalToString(ival,string);
+						  break;
+
+				case 'u': uival = va_arg(ap, int);						// Unsigned integer
+						  string += UnsignedDecimalToStringFill(uival,string, paramNum2, fillCharacter);
+						  break;
+
+				// TODO: Create 'x' and 'X' to different
+				case 'x':
+				case 'X': uival = va_arg(ap, unsigned int);				// Hex // 32 bits	// 8 hex	// 4 byte
+						  string += DecimalToHexaString(uival,4,string);// Copy to string
+						  break;
+
+				// TODO: Delete w, h, b if not need
+				case 'w': uival = va_arg(ap, unsigned int);				// Hex // 32 bits	// 8 hex	// 4 byte
+						  string += DecimalToHexaString(uival,4,string);// Copy to string
+						  break;
+
+				case 'h': ival = va_arg(ap, int);						// Hex // 16 bits	// 4 hex	// 2 byte
+						  string += DecimalToHexaString(ival,2,string);	// Copy to string
+						  break;
+
+				case 'b': ival = va_arg(ap, int);						// Hex	// 8 bits	// 2 hex	// 1 byte
+						  string += DecimalToHexaString(ival,1,string);	// Copy to string
+						  break;
+
+				case 'c': cval = va_arg(ap, int);						// Char
+						  *string = cval;								// Copy to string
+						  string++;
+						  *string = '\0';
+						  break;
+
+				case 'f': flval = va_arg(ap, double);					// Double / Float
+						  string += FloatToString(flval,string,paramNum1,paramNum2);
+						  break;
+
+				case 's': for(sval = va_arg(ap,char*); *sval; sval++)	// String
+						  {
+							*string = *sval;							// Copy to string
+							string++;
+						  }
+						  break;
+
+				default:
+						*string = *p;									// Other, for example: '%'
+						string++;
+					 	 break;
+		  }
+		}	// End of '%'
+
+	}	// End of for loop
+
+	*string = '\0';												// string's end
+
+	return (string-str);
+
+}
+
+
+
+/**
+ * \brief	Function like sprintf(); Print to string
+ */
+uint8_t usprintf (char *str, const char *format, ...)
+{
+	uint8_t length = 0;
+
+	va_list ap;									// argument pointer
+	va_start(ap, format); 						// ap on arg
+	length = string_printf(str,format,ap);		// Separate and process
+	va_end(ap);						 			// Cleaning after end
+
+	return length;
+}
+
+
+
+/**
+ * \brief	Function like printf(); Print on debug serial port
+ * 			Copy character to buffer and after that, sending.
+ */
+uint8_t uprintf (const char *format, ...)
+{
+	// Working in at:
+	char TxBuffer[TXBUFFERSIZE];
+
+	va_list ap;									// argument pointer
+	va_start(ap, format); 						// ap on arg
+	string_printf(TxBuffer,format,ap);				// Separate and process
+	va_end(ap);						 			// Cleaning after end
+
+	return USART_SendMessage(TxBuffer);			// Send on Usart
+}
+
+
+
+// Other printf:
+/*
+// Link: http://electronics.stackexchange.com/questions/206113/how-do-i-use-the-printf-function-on-stm32/206118
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
+
+void vprint(const char *fmt, va_list argp)
+{
+    char string[200];
+    if(0 < vsprintf(string,fmt,argp)) // build string
+    {
+        HAL_UART_Transmit(&huart1, (uint8_t*)string, strlen(string), 0xffffff); // send message via UART
+    }
+}
+
+void my_printf(const char *fmt, ...) // custom printf() function
+{
+    va_list argp;
+    va_start(argp, fmt);
+    vprint(target, fmt, argp);
+    va_end(argp);
+}
+*/
+
+
+// Other printf:
+/*
+// Link: http://www.sparetimelabs.com/tinyprintf/tinyprintf.php
+*/

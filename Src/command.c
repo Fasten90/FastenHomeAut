@@ -809,6 +809,34 @@ uint32_t CommandFunction_test	( uint32_t argc, char** argv ) {
 	SendColouredMessageWithBackgroundColor("Valami sárga háttérrel\r\n", Color_Black, Color_Yellow);
 
 	SendErrorMessage ("FATAL ERROR EXAMPLE\r\n");
+
+	/*
+	// Lekezelve
+	%1.5f	// Max 9.9f
+	%4u		unsigned és folytathatja ha hosszabb lenne, kiegészíti blank karakterrel
+	%02d
+
+	Működik, de alapból így van:
+	%08x
+
+	Nem:
+	%-10d???
+	 */
+	uprintf("%1.5f\r\n",123.34);	// Printed: "123.33999"
+	uprintf("%5.5f\r\n",123.34);	// Printed: "  123.33999"
+	uprintf("%5.1f\r\n",123.34);	// Printed: "  123.3"
+
+	uprintf("%0u\r\n",123);			// Printed: "123"
+	uprintf("%1u\r\n",123);			// Printed:	"123"
+	uprintf("%4u\r\n",123);			// Printed: " 123"
+	uprintf("%9u\r\n",123);			// Printed: "      123"
+
+	uprintf("%05u\r\n",123);		// Printed: "00123", it is OK
+	uprintf("%A5u\r\n",123);		// Printed: "A5u", because 'A' is not a number
+	uprintf("%-5u\r\n",123);		// Printed: "-5u", because '-' is not a number
+
+
+
 	// GlobalVar
 
 	//GlobalVarHandler_ListAllVariables();
