@@ -76,10 +76,10 @@ char CommandArg1[MONITOR_COMMAND_ARG_MAX_LENGTH] = { 0 };
 char CommandArg2[MONITOR_COMMAND_ARG_MAX_LENGTH] = { 0 };
 char CommandArg3[MONITOR_COMMAND_ARG_MAX_LENGTH] = { 0 };
 
-char *COMMAND_Arguments[MONITOR_COMMAND_ARG_MAX_LENGTH] = { CommandArg1, CommandArg2, CommandArg3 } ;
+char *COMMAND_Arguments[MONITOR_COMMAND_ARG_COUNT] = { CommandArg1, CommandArg2, CommandArg3 } ;
 
 // TODO: Megcsináljuk 2 dimenziósra a tömböt?
-//char COMMAND_Arguments[MONITOR_COMMAND_ARG_MAX_LENGTH][MONITOR_COMMAND_ARG_MAX_LENGTH] = { 0 };
+//char COMMAND_Arguments[MONITOR_COMMAND_ARG_COUNT][MONITOR_COMMAND_ARG_MAX_LENGTH] = { 0 };
 
 
 #ifdef CONFIG_USE_FREERTOS

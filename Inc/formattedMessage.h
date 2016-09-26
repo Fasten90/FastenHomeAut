@@ -50,6 +50,7 @@ void SendTextColor (FormattedStringColors_t textColor);
 void SendBackgroundColor (FormattedStringColors_t backgroundColor);
 void SendErrorMessage (const char *message);
 
+void FormattedMessage_UnitTest (void);
 
 
 

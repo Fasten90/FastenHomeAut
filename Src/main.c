@@ -65,7 +65,6 @@ extern UART_HandleTypeDef Debug_UartHandle;
 #endif
 
 
-
 /* USER CODE END 0 */
 
 
@@ -74,156 +73,9 @@ void SystemClock_Config(void);
 void Error_Handler( void );
 
 
-#ifdef CONFIG_USE_PANEL_NODESMALL
+
 int main(void)
 {
-
-	/* USER CODE BEGIN 1 */
-
-	/* USER CODE END 1 */
-
-	/* MCU Configuration----------------------------------------------------------*/
-
-	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-	HAL_Init();
-
-	/* Configure the system clock */
-	SystemClock_Config();
-
-	/* System interrupt init*/
-	HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
-
-	/* Initialize all configured peripherals */
-
-	/* USER CODE BEGIN 2 */
-	
-
-	//////////////////
-	//  LED
-	//////////////////
-	
-	LED_Init(); // for all
-	//LED_Run();	// TEST: infinite loop
-	LED_BLUE_ON();	
-	
-	// If you use Timers, cant use the LED_colour_ON/OFF() command
-	//LED_InitTimers();	// for blue+green led
-		
-	//LED_BLUE_SET_PERCENT(12);
-	//LED_GREEN_SET_PERCENT(25);
-	
-	
-	// LED TEST
-	//HAL_Delay(5000);
-	//LED_PWM_ChangePercent(&TimLedBlueHandle,LED_BLUE_TIMER_CHANNEL,0);
-	//LED_PWM_ChangePercent(&TimLedGreenHandle,LED_GREEN_TIMER_CHANNEL,100);
-	
-	//HAL_Delay(5000);
-	//LED_PWM_ChangePercent(&TimLedBlueHandle,LED_BLUE_TIMER_CHANNEL,12);
-	//LED_PWM_ChangePercent(&TimLedGreenHandle,LED_GREEN_TIMER_CHANNEL,25);	
-	
-	
-	
-	
-
-	// USART / MONITOR Init
-	
-	
-	//USART_Init(&BluetoothUartHandle);
-	//MONITOR_Init();
-	//MONITOR_SendPrimitiveWelcome();
-	//MONITOR_CheckCommand();	// Infinite Loop
-	
-	// TEST:
-	//uprintf("Command Num: %d",COMMAND_GetCommandNum());
-	
-	
-	
-	
-	// HomeAutMessage Message TEST
-	//HOMEAUTMESSAGE_Test();
-	
-	
-	
-	
-	
-	// ESP8266
-	
-	// TEST
-	// USART init in the _Test() function
-	// Be careful! Infinite loop at end!
-	//ESP8266_Test();	
-	
-	ESP8266_Init();
-	ESP8266_ClientConnect();
-	
-	
-	ESP8266_StartReceiveMessage();
-	if (ESP8266_CheckReceiveMessage() == Return_Ok)
-	{
-		// If received the fix length message:
-		
-		// do something
-	}
-	
-	
-
-	
-	
-	
-	// ADC
-	ADC_Init();
-	// Vsource, Internal Temp, etc...
-	//ADC_Test();	// Infinite loop: sending ADC values
-	
-	
-	
-	// BUTTON - exti
-	BUTTON_Init();
-	
-	
-	
-	//TEMPERATURE_I2C_Init();
-	// Wrong ...
-	
-	
-	
-	FLASH_Init();
-	//FLASH_Test();
-	//FLASH_Test_WithEraseWriteRead();
-	
-	
-	// Test: send Temperature float value. Need ADC_Init() and convert the measured value...
-	//ADC_ConvertAllMeasuredValues();
-	//USART_SendFloat(ADC_ConvertedValue_InternalTemperature);
-
-	
-
-	
-	
-	
-	
-	
-	/* USER CODE END 2 */
-
-	/* USER CODE BEGIN 3 */
-	/* Infinite loop */
-	while (1)
-	{
-
-	}
-	/* USER CODE END 3 */
-
-}
-#endif //#ifdef CONFIG_USE_PANEL_NODESMALL
-
-
-
-
-#ifdef CONFIG_USE_PANEL_NODEMEDIUM
-int main(void)
-{
-
 
 	/* MCU Configuration----------------------------------------------------------*/
 
@@ -234,147 +86,6 @@ int main(void)
 	SystemClock_Config();
 
 
-	// USER CODE:
-	
-	
-	// LED
-	LED_Init();
-	
-	LED_BLUE_ON();
-	LED_GREEN_ON();
-	LED_RED_ON();
-	
-	
-	// BUTTON
-	BUTTON_Init();
-	
-	
-	// IO
-	IO_Init();
-		
-	
-	// FLASH
-	//FLASH_Init();	// good, but not need	// !! IMPORTANTT!! Need uncomment include.h "flash.h", and hal_config module enable
-	//FLASH_Test();	
-	
-	
-	// ADC
-	// now only Vsource
-	ADC_Init();
-	//ADC_Test();
-
-
-	// TEMPERATURE
-	TEMPERATURE_I2C_Init();
-	
-	
-
-	#ifdef CONFIG_USE_FREERTOS
-	
-	
-	// MONITOR
-				
-	// Semaphore for USART
-	
-	//xSemaphoreHandle DEBUG_USART_Rx_Semaphore;
-	//xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
-	DEBUG_USART_Rx_Semaphore = NULL;
-	DEBUG_USART_Tx_Semaphore = NULL;
-	
-	DEBUG_USART_Rx_Semaphore = xSemaphoreCreateBinary();
-	DEBUG_USART_Tx_Semaphore = xSemaphoreCreateBinary();	
-	
-	if (DEBUG_USART_Rx_Semaphore == NULL || DEBUG_USART_Tx_Semaphore == NULL)
-	{
-		Error_Handler();
-	}
-	
-	
-	// Monitor
-	USART_Init(&Debug_UartHandle);
-	MONITOR_Init();
-	
-	// MONITOR_CheckCommand();	// infinite loop
-	TaskHandle_t MONITOR_TaskHandle = NULL;
-	//xTaskCreate( vTaskCode, "NAME", STACK_SIZE, &ucParameterToPass, tskIDLE_PRIORITY, &xHandle );
-	if ( xTaskCreate( (pdTASK_CODE)MONITOR_CheckCommand, "MonitorTask", MONITOR_TASK_STACK_SIZE, 0,
-				MONITOR_TASK_PRIORITY, &MONITOR_TaskHandle ) != pdPASS)
-	{
-		Error_Handler();
-	}
-	
-
-	
-	
-	// ESP8266
-	ESP8266_USART_Rx_Semaphore = NULL;
-	ESP8266_USART_Rx_Semaphore = xSemaphoreCreateBinary();
-	
-	ESP8266_SendMessage_Queue = NULL;
-	ESP8266_SendMessage_Queue = xQueueCreate( ESP8266_HOMEAUTMESSAGE_SENDMESSAGE_QUEUE_LENGTH, ESP8266_HOMEAUTMESSAGE_ITEM_SIZE );
-	
-	ESP8266_ReceivedMessage_Queue = NULL;
-	ESP8266_ReceivedMessage_Queue = xQueueCreate( ESP8266_HOMEAUTMESSAGE_RECEIVEMESSAGE_QUEUE_LENGTH, ESP8266_HOMEAUTMESSAGE_ITEM_SIZE );
-	
-	
-	ESP8266_Init();
-	
-	
-	//ESP8266_Task()
-	TaskHandle_t ESP8266_TaskHandle = NULL;
-	//xTaskCreate( vTaskCode, "NAME", STACK_SIZE, &ucParameterToPass, tskIDLE_PRIORITY, &xHandle );
-	if ( xTaskCreate( (pdTASK_CODE)ESP8266_Task, "ESP8266Task", ESP8266_TASK_STACK_SIZE, 0,
-				ESP8266_TASK_PRIORITY, &ESP8266_TaskHandle ) != pdPASS)
-	{
-		Error_Handler();
-	}
-	
-	
-	
-	TaskHandle_t SYSMANAGER_TaskHandle = NULL;
-	if ( xTaskCreate( (pdTASK_CODE)SYSMANAGER_Task, "SysManagerTask", SYSMANAGER_TASK_STACK_SIZE, 0,
-				SYSMANAGER_TASK_PRIORITY, &SYSMANAGER_TaskHandle ) != pdPASS)
-	{
-		Error_Handler();
-	}
-	
-
-	vTaskStartScheduler();
-
-	#endif	// 	#ifdef CONFIG_USE_FREERTOS
-	
-	
-	// Infinite loop - never reached
-	while (1)
-	{
-		Error_Handler();
-	}
-	
-}
-
-
-#endif	// #ifdef CONFIG_USE_PANEL_NODEMEDIUM
-
-
-
-
-
-//#ifdef CONFIG_USE_PANEL_CENTERPANEL
-// TODO:
-int main(void)
-{
-
-
-	/* MCU Configuration----------------------------------------------------------*/
-
-	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-	HAL_Init();
-
-	/* Configure the system clock */
-	SystemClock_Config();
-
-
-	
 	// USER CODE:
 	
 	// TEST
@@ -396,7 +107,6 @@ int main(void)
 #endif
 
 
-	
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
 
 	// BUTTON
@@ -491,15 +201,11 @@ int main(void)
 	}
 	
 }
-//#endif	// #ifdef CONFIG_USE_PANEL_CENTERPANEL
 
 
-
-
-
-/*
-\brief	Error_Handler - Hibakat feldolgozo fuggveny.
-*/
+/**
+ * \brief	Error_Handler
+ */
 void Error_Handler( void )
 {
 	LED_BLUE_OFF();

@@ -18,7 +18,7 @@ void SendColouredMessageWithBackgroundColor (const char* message, FormattedStrin
 	// Send background color
 	SendBackgroundColor(backgroundColor);
 
-	// Send coloured message
+	// Send colored message
 	SendColouredMessage(message,textColor);
 
 	// Send background color = white
@@ -76,3 +76,21 @@ void SendErrorMessage (const char *message)
 	// TODO: Will be MACRO()?
 	SendColouredMessageWithBackgroundColor(message,Color_Black,Color_Red);
 }
+
+
+
+/**
+ * \brief	Formatted messages Unit test
+ */
+void FormattedMessage_UnitTest (void)
+{
+	// Send coloured messages
+	SendColouredMessage("Valami pirosan\r\n", Color_Red);
+	SendColouredMessage("Valami sárgán\r\n", Color_Yellow);
+
+	SendColouredMessageWithBackgroundColor("Valami piros háttérrel\r\n", Color_Black, Color_Red);
+	SendColouredMessageWithBackgroundColor("Valami sárga háttérrel\r\n", Color_Black, Color_Yellow);
+
+	SendErrorMessage ("FATAL ERROR EXAMPLE\r\n");
+}
+

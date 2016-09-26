@@ -802,39 +802,9 @@ uint32_t CommandFunction_test	( uint32_t argc, char** argv ) {
 
 	USART_SendSoundBeep();
 
-	SendColouredMessage("Valami pirosan\r\n", Color_Red);
-	SendColouredMessage("Valami sárgán\r\n", Color_Yellow);
 
-	SendColouredMessageWithBackgroundColor("Valami piros háttérrel\r\n", Color_Black, Color_Red);
-	SendColouredMessageWithBackgroundColor("Valami sárga háttérrel\r\n", Color_Black, Color_Yellow);
-
-	SendErrorMessage ("FATAL ERROR EXAMPLE\r\n");
-
-	/*
-	// Lekezelve
-	%1.5f	// Max 9.9f
-	%4u		unsigned és folytathatja ha hosszabb lenne, kiegészíti blank karakterrel
-	%02d
-
-	Működik, de alapból így van:
-	%08x
-
-	Nem:
-	%-10d???
-	 */
-	uprintf("%1.5f\r\n",123.34);	// Printed: "123.33999"
-	uprintf("%5.5f\r\n",123.34);	// Printed: "  123.33999"
-	uprintf("%5.1f\r\n",123.34);	// Printed: "  123.3"
-
-	uprintf("%0u\r\n",123);			// Printed: "123"
-	uprintf("%1u\r\n",123);			// Printed:	"123"
-	uprintf("%4u\r\n",123);			// Printed: " 123"
-	uprintf("%9u\r\n",123);			// Printed: "      123"
-
-	uprintf("%05u\r\n",123);		// Printed: "00123", it is OK
-	uprintf("%A5u\r\n",123);		// Printed: "A5u", because 'A' is not a number
-	uprintf("%-5u\r\n",123);		// Printed: "-5u", because '-' is not a number
-
+	FormattedMessage_UnitTest();
+	STRING_UnitTest();
 
 
 	// GlobalVar
@@ -889,39 +859,7 @@ uint32_t CommandFunction_test	( uint32_t argc, char** argv ) {
 	*/
 
 
-	// FLOAT TEST
-	/*
-	char String[20];
-	float AnNum;
 
-	AnNum = StringToFloat ( "3.14" );
-	FloatToString ( AnNum , String, 2 );
-	uprintf("%s\r\n",String);
-
-
-	AnNum = StringToFloat ( "3.1234567" );
-	FloatToString ( AnNum , String,4 );
-	uprintf("%s\r\n",String);
-
-
-	AnNum = StringToFloat ( "3.0" );
-	FloatToString ( AnNum , String,6 );
-	uprintf("%s\r\n",String);
-
-	AnNum = StringToFloat ( "3.2" );
-	FloatToString ( AnNum , String,4 );
-	uprintf("%s\r\n",String);
-
-	AnNum = StringToFloat ( "0.24" );
-	FloatToString ( AnNum , String,4 );
-	uprintf("%s\r\n",String);
-	
-	
-	uprintf("%f\r\n",1.2);
-	uprintf("%f\r\n",3.1234567);
-	uprintf("%f\r\n",0.24);
-	uprintf("%f\r\n",-0.24);	
-	*/
 	
 	
 	
