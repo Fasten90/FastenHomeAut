@@ -18,24 +18,6 @@
 #include "monitor.h"
 #include "GlobalVarHandler.h"
 
-///////////////////////////// MONITOR
-
-
-/////////////////////////////
-// GLOBAL VARIABLES
-// FUNCTIONS
-// COMMAND FUNCTIONS
-/////////////////////////////
-
-
-// GLOBAL VARIABLES
-
-volatile char MONITOR_CommandActual[MONITOR_MAX_COMMAND_LENGTH] = { 0 };
-volatile char MONITOR_CommandActualEscape[4] = { 0 };
-
-// USART Read cnt
-volatile uint8_t USART_RxBufferReadCnt = 0;
-
 
 /////////////////////////////////
 //			Configs:
@@ -47,6 +29,18 @@ static const char MONITOR_Password[] = "password";
 const bool MONITOR_CommandReceiveEnable = true;
 // Enable sending back: "Echo mode"
 const bool MONITOR_CommandSendBackCharEnable = true;
+
+
+/////////////////////////////////
+// 		GLOBAL VARIABLES
+/////////////////////////////////
+
+volatile char MONITOR_CommandActual[MONITOR_MAX_COMMAND_LENGTH] = { 0 };
+volatile char MONITOR_CommandActualEscape[4] = { 0 };
+
+// USART Read cnt
+volatile uint8_t USART_RxBufferReadCnt = 0;
+
 
 // Variables For Monitor
 static volatile bool MONITOR_CommandReceivedEvent = false;
@@ -72,14 +66,7 @@ static volatile uint8_t MONITOR_CommandEscape_cnt = 0;
 uint8_t COMMAND_ArgCount = 0;
 
 
-char CommandArg1[MONITOR_COMMAND_ARG_MAX_LENGTH] = { 0 };
-char CommandArg2[MONITOR_COMMAND_ARG_MAX_LENGTH] = { 0 };
-char CommandArg3[MONITOR_COMMAND_ARG_MAX_LENGTH] = { 0 };
-
-char *COMMAND_Arguments[MONITOR_COMMAND_ARG_COUNT] = { CommandArg1, CommandArg2, CommandArg3 } ;
-
-// TODO: Megcsináljuk 2 dimenziósra a tömböt?
-//char COMMAND_Arguments[MONITOR_COMMAND_ARG_COUNT][MONITOR_COMMAND_ARG_MAX_LENGTH] = { 0 };
+char *COMMAND_Arguments[MONITOR_COMMAND_ARG_COUNT] = { 0 } ;
 
 
 #ifdef CONFIG_USE_FREERTOS
@@ -609,32 +596,43 @@ uint8_t MONITOR_CommandParser ( void )
 	// return arc; = argumentum's num
 	// call from void MonitorWaitCommand(void);
 
+	// TODO: Általános Parset függvénnyel megoldani?
+
 	uint8_t i;
 	uint8_t j = 0;
 	uint8_t CommandArgCount = 1;	// 1-3	// Arguments num is 1, when we start separate
 
+	// First argument
+	COMMAND_Arguments[0] = (char *)&MONITOR_CommandActual[0];
 
 	for (i=0; MONITOR_CommandActual[i]!='\0'; i++)
 	{
 		// Search ' ' space
-		if ( MONITOR_CommandActual[i] != ' '  )
+		if ((MONITOR_CommandActual[i] != ' ')  && (MONITOR_CommandActual[i] != '\0'))
 		{
-			// Not space, copy char to  Argument (CommandArgX[])
-			COMMAND_Arguments[CommandArgCount-1][j] = MONITOR_CommandActual[i];
+			// Not space, inner argument
 			j++;
 		}
-		else
+		else if ( MONITOR_CommandActual[i] ==  ' ')
 		{
+			// == ' ' or '\0' ==> next argument
 			// It's space or the end, skip the space
-			COMMAND_Arguments[CommandArgCount-1][j] = '\0';
+			MONITOR_CommandActual[i] = '\0';	// Put end
+			COMMAND_Arguments[CommandArgCount] = (char *)&MONITOR_CommandActual[i+1];	// Set pointer
 			CommandArgCount++;
 			j = 0;
-			if ( CommandArgCount >3)
+			if (CommandArgCount > MONITOR_COMMAND_ARG_COUNT)
 			{
 				uprintf("Too many arguments!\r\n");
 				return 0;
 			}
 		}
+		else
+		{
+			// == '\0'
+			break;
+		}
+		// Check length
 		if ( j >= MONITOR_COMMAND_ARG_MAX_LENGTH )
 		{
 			uprintf("Too long argument!\r\n");
@@ -642,10 +640,15 @@ uint8_t MONITOR_CommandParser ( void )
 		}
 	} // End of copies
 
-	COMMAND_Arguments[CommandArgCount-1][j] = '\0';							// Last argument's end
-
-	if ( CommandArgCount < 3 ) COMMAND_Arguments[2][0] = '\0';				// 3. argument is empty
-	if ( CommandArgCount < 2 ) COMMAND_Arguments[1][0] = '\0';				// 2. argument is empty
+	// Set pointers, if not set
+	if ( CommandArgCount < 3 )
+	{
+		COMMAND_Arguments[2] = NULL;		// 3. argument is empty
+	}
+	if ( CommandArgCount < 2 )
+	{
+		COMMAND_Arguments[1] = NULL;		// 2. argument is empty
+	}
 
 	return CommandArgCount;
 }
