@@ -714,7 +714,8 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 		}
 	} // End of "isHex"
 
-
+	// If it is not hex
+	// It is unsigned integers?
 	if(varType == Type_Uint8 || varType == Type_Uint16 || varType == Type_Uint32)
 	{
 		// Unsigned types
@@ -761,9 +762,10 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 		}
 	}
 
+	// It is signed integers?
 	if(varType == Type_Int8 || varType == Type_Int16 || varType == Type_Int32)
 	{
-		// Unsigned types
+		// Signed types
 
 		int32_t num = 0;
 		if(SignedDecimalStringToNum(param, &num))
@@ -808,7 +810,6 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 	}
 
 	return Process_UnknownError;
-
 }
 
 
