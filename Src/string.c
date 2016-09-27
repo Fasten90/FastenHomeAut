@@ -67,11 +67,11 @@ uint8_t SignedDecimalToString (int32_t value, char *str)
 	if (value < 0)	// if negative decimal num
 	{
 		str[length++] = '-';
-		value = (uint32_t) (value * (-1));// Sign +
+		value = (uint32_t) (value * (-1));	// Sign +
 	}
 
+	// Return with length
 	return (length + UnsignedDecimalToString (value,&str[length]));
-
 }
 
 
@@ -183,32 +183,89 @@ uint8_t UnsignedDecimalToStringFill(uint32_t value, char *str, uint8_t fillLengt
 
 
 /**
- * \brief	Convert value to hexadecimalstring
- * \return	created string length
+ * \brief	Convert signed decimal (int32_t) to string with fill
  */
-uint8_t DecimalToHexaString (uint32_t value, uint8_t ByteNum, char *str)
+uint8_t SignedDecimalToStringFill (int32_t value, char *str, uint8_t fillLength, char fillCharacter)
 {
-	uint8_t i;
+	// TODO: A kelleténél bonyolultabb lett.
+
 	uint8_t length = 0;
+	uint8_t i;
 
-	// Check parameters
-	if ((ByteNum > 4) || (ByteNum == 0))
+	if (value >= 0)
 	{
-		return 0;
+		// Sign +
+		length = UnsignedDecimalToStringFill((uint32_t)value,str,fillLength,fillCharacter);
 	}
-
-	for (i = 0; i < ByteNum; i++)
+	else
 	{
-		// Convert next byte
-		uint8_t byte = (uint8_t)( value >> ((ByteNum-i-1)*8) );
-		length += ByteToHexaString (byte,  &str[length]);
-	}
+		// Sign -
 
-	str[length] = '\0';
+		value *= -1;	// Sign swap
+
+		// Check "fill character"
+		if(fillCharacter == ' ')
+		{
+			// ' ', put sign at last
+			// "    -123"
+			length = UnsignedDecimalLength(value);
+			if (length > fillLength)
+			{
+				// Not need fill
+				length = SignedDecimalToString(-value, str);
+			}
+			else
+			{
+				// Need fill
+				// "    -123"
+				for (i=0; i<(fillLength-length-1); i++)
+				{
+					*str++ = ' ';
+				}
+				*str++ = '-';
+				length++;	// sign
+				length += UnsignedDecimalToString(value,str);
+			}
+		}
+		else
+		{
+			// "-0000123"
+			*str++ = '-';	// Print '-'
+			length++;
+			length += UnsignedDecimalToStringFill((uint32_t)value,str,fillLength,fillCharacter);
+		}
+	}
 
 	return length;
-
 }
+
+
+
+/**
+ * \brief	Convet a octet (0-15) to Hexa character ('0' - '9' - 'A' - 'F')
+ * \return	character (octet)
+ */
+char OctetToChar (uint8_t octet)
+{
+	char convertedOctet;
+	if ((octet >= 0) && (octet <= 9))
+	{
+		// 0- 9
+		convertedOctet = (octet + '0');
+	}
+	else if ((octet >= 10) && (octet <= 15))
+	{
+		// A-F
+		convertedOctet = (octet - 10 + 'A');
+	}
+	else
+	{
+		convertedOctet = 'x';
+	}
+
+	return convertedOctet;
+}
+
 
 
 /**
@@ -238,28 +295,31 @@ uint8_t ByteToHexaString (uint8_t byte, char *str)
 
 
 /**
- * \brief	Convet a octet (0-15) to Hexa character ('0' - '9' - 'A' - 'F')
- * \return	character (octet)
+ * \brief	Convert value to hexadecimalstring
+ * \return	created string length
  */
-char OctetToChar (uint8_t octet)
+uint8_t DecimalToHexaString (uint32_t value, char *str, uint8_t ByteNum)
 {
-	char convertedOctet;
-	if ((octet >= 0) && (octet <= 9))
+	uint8_t i;
+	uint8_t length = 0;
+
+	// Check parameters
+	if ((ByteNum > 4) || (ByteNum == 0))
 	{
-		// 0- 9
-		convertedOctet = (octet + '0');
-	}
-	else if ((octet >= 10) && (octet <= 15))
-	{
-		// A-F
-		convertedOctet = (octet - 10 + 'A');
-	}
-	else
-	{
-		convertedOctet = 'x';
+		return 0;
 	}
 
-	return convertedOctet;
+	for (i = 0; i < ByteNum; i++)
+	{
+		// Convert next byte
+		uint8_t byte = (uint8_t)( value >> ((ByteNum-i-1)*8) );
+		length += ByteToHexaString (byte,  &str[length]);
+	}
+
+	str[length] = '\0';
+
+	return length;
+
 }
 
 
@@ -994,8 +1054,8 @@ uint8_t string_printf (char *str, const char *format, va_list ap)
 		{
 			// '%' character
 			p++;
-			paramNum1 = 0;
-			paramNum2 = 2;
+			paramNum1 = 0;	// for standard %08x
+			paramNum2 = 8;
 			fillCharacter = ' ';
 
 			// Check %...x (parameter after %, before x, u, f)
@@ -1029,7 +1089,8 @@ uint8_t string_printf (char *str, const char *format, va_list ap)
 					}
 					else
 					{
-						// x.
+						// x.y
+						// x = paramNum1
 						// y=2 now, for correct float printing
 						paramNum2 = 2;
 					}
@@ -1046,31 +1107,31 @@ uint8_t string_printf (char *str, const char *format, va_list ap)
 			// Process next character (after '%', or etc)
 			switch (*p)
 			{
-				case 'd': ival = va_arg(ap, int);						// Decimal = signed int
-						  string += SignedDecimalToString(ival,string);
+				case 'd': ival = va_arg(ap, int);						// Decimal = signed int (~int32_t)
+						  string += SignedDecimalToStringFill(ival,string, paramNum2, fillCharacter);
 						  break;
 
-				case 'u': uival = va_arg(ap, int);						// Unsigned integer
+				case 'u': uival = va_arg(ap, int);						// Uint = Unsigned int (~uint32_t)
 						  string += UnsignedDecimalToStringFill(uival,string, paramNum2, fillCharacter);
 						  break;
 
 				// TODO: Create 'x' and 'X' to different
 				case 'x':
 				case 'X': uival = va_arg(ap, unsigned int);				// Hex // 32 bits	// 8 hex	// 4 byte
-						  string += DecimalToHexaString(uival,4,string);// Copy to string
+						  string += DecimalToHexaString(uival, string, paramNum2/2);// Copy to string
 						  break;
 
 				// TODO: Delete w, h, b if not need
-				case 'w': uival = va_arg(ap, unsigned int);				// Hex // 32 bits	// 8 hex	// 4 byte
-						  string += DecimalToHexaString(uival,4,string);// Copy to string
+				case 'w': uival = va_arg(ap, unsigned int);					// Hex // 32 bits	// 8 hex	// 4 byte
+						  string += DecimalToHexaString(uival, string, 4);	// Copy to string
 						  break;
 
-				case 'h': ival = va_arg(ap, int);						// Hex // 16 bits	// 4 hex	// 2 byte
-						  string += DecimalToHexaString(ival,2,string);	// Copy to string
+				case 'h': ival = va_arg(ap, int);							// Hex // 16 bits	// 4 hex	// 2 byte
+						  string += DecimalToHexaString(ival, string, 2);	// Copy to string
 						  break;
 
-				case 'b': ival = va_arg(ap, int);						// Hex	// 8 bits	// 2 hex	// 1 byte
-						  string += DecimalToHexaString(ival,1,string);	// Copy to string
+				case 'b': ival = va_arg(ap, int);							// Hex	// 8 bits	// 2 hex	// 1 byte
+						  string += DecimalToHexaString(ival, string, 1);	// Copy to string
 						  break;
 
 				case 'c': cval = va_arg(ap, int);						// Char
@@ -1149,19 +1210,24 @@ uint8_t uprintf (const char *format, ...)
 void STRING_UnitTest (void)
 {
 
-
 	/*
 	// Lekezelve
-	%1.5f	// Max 9.9f
-	%4u		unsigned és folytathatja ha hosszabb lenne, kiegészíti blank karakterrel
-	%02d
+	%1.5f	// Max 9.9f, pl.		1.5f == > 1.12345
+	%4u		// unsigned és folytathatja ha hosszabb lenne, kiegészíti blank karakterrel
+	%02u	// Feltölti 0-val, ha 2 jegyűnél kisebb a szám, ellenkező esetben kiírja teljesen
+			// Csak 0-9 számmal lehet feltölteni
+	%4d
+	%04d
 
-	Működik, de alapból így van:
-	%08x
+	// Hexadecimális csak így működik (Mindenképpen 0-val tölt fel):
+	%08x		00001234
+	%04x		1234
+	%02x		34
 
-	Nem:
-	%-10d???
+	// Nem működik:
+	%-10d
 	 */
+
 	uprintf("Float print tests:\r\n");
 	uprintf("%1.5f\r\n",123.34);	// Printed: "123.33999"
 	uprintf("%5.5f\r\n",123.34);	// Printed: "  123.33999"
@@ -1173,12 +1239,23 @@ void STRING_UnitTest (void)
 	uprintf("%1u\r\n",123);			// Printed:	"123"
 	uprintf("%4u\r\n",123);			// Printed: " 123"
 	uprintf("%9u\r\n",123);			// Printed: "      123"
-
-	uprintf("Integer print tests 2:\r\n");
 	uprintf("%05u\r\n",123);		// Printed: "00123", it is OK
+
+	uprintf("Integer print tests (wrong examples):\r\n");
 	uprintf("Wrong example: %A5u\r\n",123);		// Printed: "A5u", because 'A' is not a number
 	uprintf("Wrong example: %-5u\r\n",123);		// Printed: "-5u", because '-' is not a number
 
+	uprintf("Signed Integer print tests:\r\n");
+	uprintf("%0d\r\n",-123);			// Printed: "123"
+	uprintf("%1d\r\n",-123);			// Printed:	"123"
+	uprintf("%4d\r\n",-123);			// Printed: " 123"
+	uprintf("%9d\r\n",-123);			// Printed: "      123"
+	uprintf("%05d\r\n",-123);			// Printed: "00123", it is OK
+
+	uprintf("Hexadecimal print tests:\r\n");
+	uprintf("0x%08x\r\n",0xFFFFFFFF);
+	uprintf("0x%04x\r\n",0xFFFFFFFF);
+	uprintf("0x%02x\r\n",0xFFFFFFFF);
 
 
 	// FLOAT TEST

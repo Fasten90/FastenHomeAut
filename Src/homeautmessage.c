@@ -440,7 +440,7 @@ ReturnType HOMEAUTMESSAGE_CreateMessage(HOMEAUTMESSAGE_MessageType *createToMess
 	}
 	
 	// Data
-	DecimalToHexaString(messageInformation->Data,4,createToMessage->Data);
+	DecimalToHexaString(messageInformation->Data, createToMessage->Data, 4);
 	
 	
 	// Default Separator

@@ -312,6 +312,7 @@ static ProcessResult_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, ch
 
 	if(GlobalVarList[commandID].isHex)
 	{
+		// Get in Hex format
 		uint8_t byteNum = 0;
 		switch(type)
 		{
@@ -336,7 +337,7 @@ static ProcessResult_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, ch
 			// TODO: Buffer túlírás ellenőrzés
 			uint8_t length = 0;
 			length += StrCpyMax(resultBuffer,"0x",3);
-			length += DecimalToHexaString(num, byteNum, &resultBuffer[length]);
+			length += DecimalToHexaString(num, &resultBuffer[length], byteNum);
 			*resultBufferLength -= length;
 			return Process_Ok_Answered;
 		}
