@@ -313,6 +313,7 @@ static ProcessResult_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, ch
 	if(GlobalVarList[commandID].isHex)
 	{
 		// Get in Hex format
+
 		uint8_t byteNum = 0;
 		switch(type)
 		{
@@ -607,6 +608,11 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 		{
 			length = 2;
 		}
+		else
+		{
+			// Need set with "0x"
+			return Process_FailParamIsNotHexStart;
+		}
 
 		uint8_t byteLength = StringIsHexadecimalString(&param[length]);
 		if(byteLength != 0)
@@ -615,7 +621,7 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 			if(StringHexToNum(&param[length],&num,byteLength/2))
 			{
 				// Is good num?
-				ProcessResult_t result = GlobalVarHandler_CheckValue(num, commandID);
+				ProcessResult_t result = GlobalVarHandler_CheckValue(commandID, num);
 				if ( result == Process_Ok_SetSuccessful_SendOk)
 				{
 					switch(varType)
@@ -851,41 +857,64 @@ static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBu
 
 	case Process_Ok_Answered:
 		// Do nothing
-		//resultBuffer[0] = '\0';
 		break;
+
 	case Process_Ok_SetSuccessful_SendOk:
 		StrCpyMax(resultBuffer,"Set successful!",resultBufferLength);
 		break;
+
 	case Process_CommandNotFound:
 		StrCpyMax(resultBuffer,"Command not find!",resultBufferLength);
 		break;
+
 	case Process_FailParam:
 		StrCpyMax(resultBuffer,"Fail parameter",resultBufferLength);
 		break;
+
+	case Process_FailType:
+		StrCpyMax(resultBuffer,"Fail type",resultBufferLength);
+		break;
+
 	case Process_FailParamIsNotNumber:
 		StrCpyMax(resultBuffer,"Not number",resultBufferLength);
 		break;
+
+	case Process_FailParamIsNotHexNumber:
+		StrCpyMax(resultBuffer,"Not hex number",resultBufferLength);
+		break;
+
+	case Process_FailParamIsNotHexStart:
+		StrCpyMax(resultBuffer,"Not hex, missed \"0x\"",resultBufferLength);
+		break;
+
 	case Process_InvalidValue_TooSmall:
 		StrCpyMax(resultBuffer,"Invalid value, too small",resultBufferLength);
 		break;
+
 	case Process_InvalidValue_TooMuch:
 		StrCpyMax(resultBuffer,"Invalid value, too much",resultBufferLength);
 		break;
+
 	case Process_InvalidValue_NotBool:
 		StrCpyMax(resultBuffer,"Invalid value, not bool",resultBufferLength);
 		break;
+
 	case Process_IsReadOnly:
 		StrCpyMax(resultBuffer,"Cannot set, it is constant",resultBufferLength);
 		break;
+
 	case Process_SourceNotEnabled:
 		StrCpyMax(resultBuffer,"Cannot process this command from this source",resultBufferLength);
 		break;
+
 	case Process_TooLongString:
 		StrCpyMax(resultBuffer,"Too long string",resultBufferLength);
 		break;
+
 	case Process_UnknownError:
 		StrCpyMax(resultBuffer,"Unknown error",resultBufferLength);
 		break;
+
 	default:
 		StrCpyMax(resultBuffer,"Fatal error",resultBufferLength);
 		break;

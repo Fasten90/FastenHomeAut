@@ -51,6 +51,7 @@ typedef enum
 	Process_FailParam,
 	Process_FailParamIsNotNumber,
 	Process_FailParamIsNotHexNumber,
+	Process_FailParamIsNotHexStart,
 	Process_InvalidValue_TooMuch,
 	Process_InvalidValue_TooSmall,
 	Process_InvalidValue_NotBool,
