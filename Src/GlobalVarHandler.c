@@ -62,9 +62,10 @@ static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBu
 static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t num);
 static void GlobalVarHandler_HelpVariable (VarID_t commandID, char *resultBuffer);
 static ProcessResult_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
+static uint8_t GlobalVarHandler_GetEnumerator(const VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
 static ProcessResult_t GlobalVarHandler_SetBool(VarID_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength);
 static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength);
-
+static ProcessResult_t GLobalVarHandler_SetEnumerator(VarID_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength);
 
 
 /// FUNCTIONS
@@ -262,8 +263,7 @@ static ProcessResult_t GlobalVarHandler_GetCommand(VarID_t commandID, char *resu
 		break;
 
 	case Type_Enumerator:
-		// TODO: Implement
-		return Process_FailParam;
+		length += GlobalVarHandler_GetEnumerator(commandID, resultBuffer, resultBufferLength);
 		break;
 
 	default:
@@ -417,6 +417,49 @@ static ProcessResult_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, ch
 }
 
 
+
+/**
+ * \brief	Get enumerators
+ */
+static uint8_t GlobalVarHandler_GetEnumerator(const VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength)
+{
+	uint8_t *enumPointer = (uint8_t *)GlobalVarList[commandID].varPointer;
+	uint8_t enumValue = *enumPointer;
+	uint8_t length = 0;		// TODO: Lehet, hogy nem így érdemes a hosszt figyelni
+	char *enumString;
+
+	// Print enum value
+	length += UnsignedDecimalToString(enumValue, resultBuffer);
+	length += StrCpy(&resultBuffer[length], " ");
+	// TODO: Check overflow
+
+	// Check "enumList" pointer
+	if (GlobalVarList[commandID].enumList == NULL)
+	{
+		length += StrCpyMax(&resultBuffer[length],"ERROR - There is not set \"enumList\" pointer", *resultBufferLength-length);
+		return length;
+	}
+
+	// If has good enumList
+	// Check value (It is not too high?)
+	if (enumValue > GlobalVarList[commandID].maxValue)
+	{
+		length += StrCpyMax(&resultBuffer[length],"ERROR - Enum has too high value", *resultBufferLength-length);
+		return length;
+	}
+
+	// Good value
+	// Print enum string
+	enumString = (char *)GlobalVarList[commandID].enumList[enumValue];	// string pointer
+	length += StrCpyMax(&resultBuffer[length],enumString, *resultBufferLength-length);
+
+	// Return length
+	return length;
+
+}
+
+
+
 /**
  * \brief	Set command
  */
@@ -492,8 +535,7 @@ static ProcessResult_t GlobalVarHandler_SetCommand(const VarID_t commandID, cons
 		break;
 
 	case Type_Enumerator:
-		// TODO: implement
-		return Process_FailParam;
+		result = GLobalVarHandler_SetEnumerator(commandID, param, resultBuffer, resultBufferLength);
 		break;
 
 	default:
@@ -772,6 +814,63 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 
 
 /**
+ * \brief	Set enumerator
+ */
+static ProcessResult_t GLobalVarHandler_SetEnumerator(VarID_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength)
+{
+	uint32_t enumValue = 0;
+	uint8_t *enumPointer = (uint8_t *)GlobalVarList[commandID].varPointer;
+	uint8_t i;
+
+	// Check enumList pointer
+	if (GlobalVarList[commandID].enumList == NULL)
+	{
+		return Process_Settings_EmptyEnumList;
+	}
+
+	// It is number
+	if (StringIsUnsignedDecimalString(param))
+	{
+		// It is number
+		if (UnsignedDecimalStringToNum(param, &enumValue))
+		{
+			if (GlobalVarHandler_CheckValue(commandID,enumValue) == Process_Ok_SetSuccessful_SendOk)
+			{
+				// It is Ok
+				*enumPointer = (uint8_t)enumValue;
+				return Process_Ok_SetSuccessful_SendOk;
+			}
+			else
+			{
+				return Process_InvalidValue_TooMuch;
+			}
+		}
+	}
+	else
+	{
+		// Not number, check string
+		for (i=0; i<GlobalVarList[commandID].maxValue; i++)
+		{
+			// It is equal string?
+			if (StrCmp(param, GlobalVarList[commandID].enumList[i])==0)
+			{
+				// Equal
+				// Set value
+				*enumPointer = i;
+				return Process_Ok_SetSuccessful_SendOk;
+			}
+		}
+
+		// Not found, it is invalid string
+		return Process_InvalidValue_NotEnumString;
+	}
+
+	return Process_UnknownError;
+}
+
+
+
+/**
  * \brief	Check values
  * \return	Process_Ok_SetSuccessful_SendOk, if ok
  */
@@ -816,7 +915,7 @@ static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t n
 		if (num > GlobalVarList[commandID].maxValue) return Process_TooLongString;
 		break;
 	case Type_Enumerator:
-		if (num > GlobalVarList[commandID].maxValue) return Process_InvalidValue_TooMuch;
+		if (num >= GlobalVarList[commandID].maxValue) return Process_InvalidValue_TooMuch;
 		break;
 	default:
 		return Process_FailType;
@@ -860,63 +959,71 @@ static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBu
 		break;
 
 	case Process_Ok_SetSuccessful_SendOk:
-		StrCpyMax(resultBuffer,"Set successful!",resultBufferLength);
+		StrCpyMax(resultBuffer, "Set successful!", resultBufferLength);
 		break;
 
 	case Process_CommandNotFound:
-		StrCpyMax(resultBuffer,"Command not find!",resultBufferLength);
+		StrCpyMax(resultBuffer, "Command not find!", resultBufferLength);
 		break;
 
 	case Process_FailParam:
-		StrCpyMax(resultBuffer,"Fail parameter",resultBufferLength);
+		StrCpyMax(resultBuffer, "Fail parameter", resultBufferLength);
 		break;
 
 	case Process_FailType:
-		StrCpyMax(resultBuffer,"Fail type",resultBufferLength);
+		StrCpyMax(resultBuffer, "Fail type", resultBufferLength);
 		break;
 
 	case Process_FailParamIsNotNumber:
-		StrCpyMax(resultBuffer,"Not number",resultBufferLength);
+		StrCpyMax(resultBuffer, "Not number", resultBufferLength);
 		break;
 
 	case Process_FailParamIsNotHexNumber:
-		StrCpyMax(resultBuffer,"Not hex number",resultBufferLength);
+		StrCpyMax(resultBuffer, "Not hex number", resultBufferLength);
 		break;
 
 	case Process_FailParamIsNotHexStart:
-		StrCpyMax(resultBuffer,"Not hex, missed \"0x\"",resultBufferLength);
+		StrCpyMax(resultBuffer, "Not hex, missed \"0x\"", resultBufferLength);
 		break;
 
 	case Process_InvalidValue_TooSmall:
-		StrCpyMax(resultBuffer,"Invalid value, too small",resultBufferLength);
+		StrCpyMax(resultBuffer, "Invalid value, too small", resultBufferLength);
 		break;
 
 	case Process_InvalidValue_TooMuch:
-		StrCpyMax(resultBuffer,"Invalid value, too much",resultBufferLength);
+		StrCpyMax(resultBuffer, "Invalid value, too much", resultBufferLength);
 		break;
 
 	case Process_InvalidValue_NotBool:
-		StrCpyMax(resultBuffer,"Invalid value, not bool",resultBufferLength);
+		StrCpyMax(resultBuffer, "Invalid value, not bool", resultBufferLength);
+		break;
+
+	case Process_InvalidValue_NotEnumString:
+		StrCpyMax(resultBuffer, "Invalid enum string", resultBufferLength);
+		break;
+
+	case Process_Settings_EmptyEnumList:
+		StrCpyMax(resultBuffer, "EnumList settings error", resultBufferLength);
 		break;
 
 	case Process_IsReadOnly:
-		StrCpyMax(resultBuffer,"Cannot set, it is constant",resultBufferLength);
+		StrCpyMax(resultBuffer, "Cannot set, it is constant", resultBufferLength);
 		break;
 
 	case Process_SourceNotEnabled:
-		StrCpyMax(resultBuffer,"Cannot process this command from this source",resultBufferLength);
+		StrCpyMax(resultBuffer, "Cannot process this command from this source", resultBufferLength);
 		break;
 
 	case Process_TooLongString:
-		StrCpyMax(resultBuffer,"Too long string",resultBufferLength);
+		StrCpyMax(resultBuffer, "Too long string", resultBufferLength);
 		break;
 
 	case Process_UnknownError:
-		StrCpyMax(resultBuffer,"Unknown error",resultBufferLength);
+		StrCpyMax(resultBuffer, "Unknown error", resultBufferLength);
 		break;
 
 	default:
-		StrCpyMax(resultBuffer,"Fatal error",resultBufferLength);
+		StrCpyMax(resultBuffer, "Fatal error", resultBufferLength);
 		break;
 	}
 }

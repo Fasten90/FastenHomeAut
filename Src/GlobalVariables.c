@@ -24,6 +24,16 @@ uint32_t testUint32;
 int32_t testInt32;
 bool cannotAccess = false;
 float floatTest = 12.34f;
+uint8_t enumValue = 2;
+
+const char *enumExampleList[] =
+{
+	"example1enumstring",
+	"example2enumstring",
+	"example3enumstring",
+	"example4enumstring",
+	NULL
+};
 
 GlobalVarCommand_t GlobalVarList[] =
 {
@@ -86,6 +96,13 @@ GlobalVarCommand_t GlobalVarList[] =
 			.name = "floattest",
 			.varPointer = &floatTest,
 			.type = Type_Float,
+		},
+		{
+			.name = "enumtest",
+			.varPointer = &enumValue,
+			.type = Type_Enumerator,
+			.maxValue = 4,
+			.enumList = enumExampleList
 		}
 
 

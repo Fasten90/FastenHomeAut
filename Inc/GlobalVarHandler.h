@@ -55,6 +55,8 @@ typedef enum
 	Process_InvalidValue_TooMuch,
 	Process_InvalidValue_TooSmall,
 	Process_InvalidValue_NotBool,
+	Process_InvalidValue_NotEnumString,
+	Process_Settings_EmptyEnumList,
 	Process_Ok_Answered,
 	Process_Ok_SetSuccessful_SendOk
 } ProcessResult_t;
@@ -71,10 +73,10 @@ typedef enum
 
 typedef enum
 {
-	Source_All = 0,
-	Source_DebugSerial = (1 << 0),
-	Source_Ethernet = (1 << 1),
-	Source_Disable = (1 << 2)
+	Source_All			= 0,
+	Source_DebugSerial	= (1 << 0),
+	Source_Ethernet		= (1 << 1),
+	Source_Disable		= (1 << 2)
 } CommandSource_t;
 
 
@@ -96,7 +98,7 @@ typedef struct
 
 	const bool isHex;
 
-	const char *enumList;	// TODO: For enumerators
+	const char **enumList;
 
 #ifdef GLOBALVARHANDLER_UNIT_ENABLE
 	const char const *unit;
