@@ -1410,7 +1410,7 @@ uint32_t CommandFunction_read ( uint32_t argc, char** argv )
 uint32_t CommandFunction_flashdel	( uint32_t argc, char** argv ) {
 
 	// Convert arg2 hex
-	if ( !StringHexToNum(argv[1],&Arg2Num,0))
+	if ( !StringHexToNum(argv[1],&Arg2Num))
 	{
 		return CommandResult_Error_WrongArgument1;
 	}
@@ -1446,7 +1446,7 @@ uint32_t CommandFunction_flashread	( uint32_t argc, char** argv ) {
 	
 
 	// Convert arg2 hex
-	if ( !StringHexToNum(argv[1],&Arg2Num,0))
+	if ( !StringHexToNum(argv[1],&Arg2Num))
 	{
 		return CommandResult_Error_WrongArgument1;
 	}
@@ -1474,7 +1474,7 @@ uint32_t CommandFunction_flashread	( uint32_t argc, char** argv ) {
 uint32_t CommandFunction_flashwrite	( uint32_t argc, char** argv ) {
 
 	// Convert arg2 hex
-	if ( !StringHexToNum(argv[1],&Arg2Num,0))
+	if ( !StringHexToNum(argv[1],&Arg2Num))
 	{
 		return CommandResult_Error_WrongArgument1;
 	}

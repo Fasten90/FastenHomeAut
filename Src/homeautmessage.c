@@ -304,7 +304,7 @@ ReturnType HOMEAUTMESSAGE_CompareMessage(char *messageString)
 								StrCpyFixLength(buffer,message->Data,HOMEAUTMESSAGE_DefaultData_Length);
 								buffer[HOMEAUTMESSAGE_DefaultData_Length] = '\0';
 
-								if(StringHexToNum (buffer,&readedData,4))
+								if(StringHexToNum (buffer,&readedData))
 								{
 									// Successful converting
 								}
@@ -440,7 +440,7 @@ ReturnType HOMEAUTMESSAGE_CreateMessage(HOMEAUTMESSAGE_MessageType *createToMess
 	}
 	
 	// Data
-	DecimalToHexaString(messageInformation->Data, createToMessage->Data, 4);
+	DecimalToHexaString(messageInformation->Data, createToMessage->Data, 8);
 	
 	
 	// Default Separator

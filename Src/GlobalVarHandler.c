@@ -314,31 +314,31 @@ static ProcessResult_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, ch
 	{
 		// Get in Hex format
 
-		uint8_t byteNum = 0;
+		uint8_t octetNum = 0;
 		switch(type)
 		{
 			case Type_Uint8:
-				byteNum = 1;
+				octetNum = 2;
 				break;
 			case Type_Uint16:
-				byteNum = 2;
+				octetNum = 4;
 				break;
 			case Type_Uint32:
-				byteNum = 4;
+				octetNum = 8;
 				break;
 			default:
-				byteNum = 0;
+				octetNum = 0;
 				break;
 		}
 
-		if(byteNum != 0)
+		if (octetNum != 0)
 		{
 			uint32_t *numPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
 			uint32_t num = *numPointer;
 			// TODO: Buffer túlírás ellenőrzés
 			uint8_t length = 0;
 			length += StrCpyMax(resultBuffer,"0x",3);
-			length += DecimalToHexaString(num, &resultBuffer[length], byteNum);
+			length += DecimalToHexaString(num, &resultBuffer[length], octetNum);
 			*resultBufferLength -= length;
 			return Process_Ok_Answered;
 		}
@@ -641,6 +641,7 @@ static ProcessResult_t GlobalVarHandler_SetBool(VarID_t commandID, const char *p
 static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength)
 {
 	VarType_t varType = GlobalVarList[commandID].type;
+	uint32_t num;
 
 	// If hex
 	if(GlobalVarList[commandID].isHex)
@@ -656,60 +657,49 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 			return Process_FailParamIsNotHexStart;
 		}
 
-		uint8_t byteLength = StringIsHexadecimalString(&param[length]);
-		if(byteLength != 0)
+		// Convert HexString to Num
+		if(StringHexToNum(&param[length],&num))
 		{
-			uint32_t num;
-			if(StringHexToNum(&param[length],&num,byteLength/2))
+			// Is good num?
+			ProcessResult_t result = GlobalVarHandler_CheckValue(commandID, num);
+			if ( result == Process_Ok_SetSuccessful_SendOk)
 			{
-				// Is good num?
-				ProcessResult_t result = GlobalVarHandler_CheckValue(commandID, num);
-				if ( result == Process_Ok_SetSuccessful_SendOk)
+				switch(varType)
 				{
-					switch(varType)
+				case Type_Uint8:
 					{
-					case Type_Uint8:
-						{
-							uint8_t *wPointer = (uint8_t *)GlobalVarList[commandID].varPointer;
-							*wPointer = num;
-						}
-						break;
-					case Type_Uint16:
-						{
-							uint16_t *wPointer = (uint16_t *)GlobalVarList[commandID].varPointer;
-							*wPointer = num;
-						}
-						break;
-					case Type_Uint32:
-						{
-							uint32_t *wPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
-							*wPointer = num;
-						}
-						break;
-					default:
-						return Process_UnknownError;
-						break;
+						uint8_t *wPointer = (uint8_t *)GlobalVarList[commandID].varPointer;
+						*wPointer = num;
 					}
-
-					return Process_Ok_SetSuccessful_SendOk;
-
+					break;
+				case Type_Uint16:
+					{
+						uint16_t *wPointer = (uint16_t *)GlobalVarList[commandID].varPointer;
+						*wPointer = num;
+					}
+					break;
+				case Type_Uint32:
+					{
+						uint32_t *wPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
+						*wPointer = num;
+					}
+					break;
+				default:
+					return Process_UnknownError;
+					break;
 				}
-				else
-				{
-					// Too much or small
-					return result;
-				}
 
+				return Process_Ok_SetSuccessful_SendOk;
 			}
 			else
 			{
-				// Wrong hex converting
-				return Process_FailParamIsNotHexNumber;
+				// Too much or small
+				return result;
 			}
 		}
 		else
 		{
-			// Wrong hex converting, not number
+			// Wrong hex converting
 			return Process_FailParamIsNotHexNumber;
 		}
 	} // End of "isHex"

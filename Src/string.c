@@ -269,7 +269,7 @@ char OctetToChar (uint8_t octet)
 
 
 /**
- * \brief	Convert a byte to hexa string
+ * \brief	Convert a byte to hexadecimal string
  * \return	Length
  */
 uint8_t ByteToHexaString (uint8_t byte, char *str)
@@ -295,25 +295,25 @@ uint8_t ByteToHexaString (uint8_t byte, char *str)
 
 
 /**
- * \brief	Convert value to hexadecimalstring
+ * \brief	Convert value to hexadecimal string
  * \return	created string length
  */
-uint8_t DecimalToHexaString (uint32_t value, char *str, uint8_t ByteNum)
+uint8_t DecimalToHexaString (uint32_t value, char *str, uint8_t length)
 {
 	uint8_t i;
-	uint8_t length = 0;
+	uint8_t octet;
 
 	// Check parameters
-	if ((ByteNum > 4) || (ByteNum == 0))
+	if ((length > 8) || (length == 0))
 	{
 		return 0;
 	}
 
-	for (i = 0; i < ByteNum; i++)
+	for (i = 0; i < length; i++)
 	{
 		// Convert next byte
-		uint8_t byte = (uint8_t)( value >> ((ByteNum-i-1)*8) );
-		length += ByteToHexaString (byte,  &str[length]);
+		octet = (uint8_t)(0x0F&(value >> ((length-i-1)*4)));
+		str[i] = OctetToChar (octet);
 	}
 
 	str[length] = '\0';
@@ -540,7 +540,7 @@ uint8_t HexCharToOctet(const char c)
 
 /**
  * \brief	Convert two hexadecimal string to number (byte)
- * \return	true, if successul
+ * \return	true, if successful
  * 			false, if has error
  */
 bool StringByteToNum(const char *str, uint8_t *byte)
@@ -558,53 +558,42 @@ bool StringByteToNum(const char *str, uint8_t *byte)
 
 /**
  * \brief	Convert Hex string to number(integer)
- * \return	true, if successul
+ * \return	true, if successful
  * 			false, if has error
  */
-bool StringHexToNum (const char *str, uint32_t *hexValue, uint8_t byteLength)
+bool StringHexToNum (const char *str, uint32_t *hexValue)
 {
 	uint8_t i;
 	uint32_t calculatedValue = 0;
 	uint8_t calculatedByte = 0;
-	uint8_t octetLength = 0;
 
-
-	octetLength = StringIsHexadecimalString (str);	// octetLength = how many hex character have
-
-	if (octetLength == 0 || (octetLength%2))
+	// Check length
+	if ( StringIsHexadecimalString(str) == 0)
 	{
 		// Wrong string or wrong octetlength
-		return false;
-	}
-
-	if (byteLength == 0)
-	{
-		// Calculate byte length
-		byteLength = octetLength / 2;
-	}
-	else if (octetLength != byteLength*2)
-	{
-		// Wrong byteLength
 		return false;
 	}
 
 	// Create hexValue
 	for (i=0; str[i] != '\0'; i++)
 	{
-		// 1. = 0 = event --> shift <<4
-		// 2. = 1 = odd --> not need shift
-		if ( StringByteToNum(&str[i],&calculatedByte) )
+		// shift <<4 + add next hex
+		if (IsHexChar(str[i]))
 		{
+			calculatedByte = HexCharToOctet(str[i]);
 			// Shift one byte left original value
-			calculatedValue <<= 8;
+			calculatedValue <<= 4;
 			// Add new value
 			calculatedValue += calculatedByte;
-			i++;
-			// 2 character converted, need ++
 		}
 		else
 		{
 			return false;
+		}
+		if (i >= 8)
+		{
+			// Has an "uint32_t"
+			break;
 		}
 	}
 
@@ -1118,20 +1107,20 @@ uint8_t string_printf (char *str, const char *format, va_list ap)
 				// TODO: Create 'x' and 'X' to different
 				case 'x':
 				case 'X': uival = va_arg(ap, unsigned int);				// Hex // 32 bits	// 8 hex	// 4 byte
-						  string += DecimalToHexaString(uival, string, paramNum2/2);// Copy to string
+						  string += DecimalToHexaString(uival, string, paramNum2);// Copy to string
 						  break;
 
 				// TODO: Delete w, h, b if not need
 				case 'w': uival = va_arg(ap, unsigned int);					// Hex // 32 bits	// 8 hex	// 4 byte
-						  string += DecimalToHexaString(uival, string, 4);	// Copy to string
+						  string += DecimalToHexaString(uival, string, 8);	// Copy to string
 						  break;
 
 				case 'h': ival = va_arg(ap, int);							// Hex // 16 bits	// 4 hex	// 2 byte
-						  string += DecimalToHexaString(ival, string, 2);	// Copy to string
+						  string += DecimalToHexaString(ival, string, 4);	// Copy to string
 						  break;
 
 				case 'b': ival = va_arg(ap, int);							// Hex	// 8 bits	// 2 hex	// 1 byte
-						  string += DecimalToHexaString(ival, string, 1);	// Copy to string
+						  string += DecimalToHexaString(ival, string, 2);	// Copy to string
 						  break;
 
 				case 'c': cval = va_arg(ap, int);						// Char
