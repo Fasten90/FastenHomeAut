@@ -1,8 +1,13 @@
 /*
- * options.h
+ *		options.h
  *
- *  Created on: Sep 28, 2016
- *      Author: Vizi Gábor
+ * 		Created on:		2016.09.28
+ *		Author: 		Vizi Gábor
+ *		E-mail:			vizi.gabor90@gmail.com
+ *		Function:		compiler options for project
+ *		Target:			STM32Fx
+ *		Version:		v4
+ *		Last modified:	2016.09.28
  */
 
 #ifndef OPTIONS_H_

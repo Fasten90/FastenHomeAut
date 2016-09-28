@@ -1,6 +1,13 @@
-/*******************************************************************************
- * Purpose:
- ******************************************************************************/
+/*
+ *		string.h
+ *
+ *		Author: 		Vizi Gábor
+ *		E-mail:			vizi.gabor90@gmail.com
+ *		Function:		string manipulation functions
+ *		Target:			STM32Fx
+ *		Version:		v4
+ *		Last modified:	2016.09.28
+ */
 
 #ifndef STRING_H_
 #define STRING_H_

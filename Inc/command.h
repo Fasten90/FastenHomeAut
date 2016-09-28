@@ -1,6 +1,13 @@
-/*******************************************************************************
- * Purpose:
- ******************************************************************************/
+/*
+ *		command.h
+ *
+ *		Author: 		Vizi Gábor
+ *		E-mail:			vizi.gabor90@gmail.com
+ *		Function:		Command list
+ *		Target:			STM32Fx
+ *		Version:		v4
+ *		Last modified:	2016.09.28
+ */
 
 #ifndef COMMAND_H_
 #define COMMAND_H_

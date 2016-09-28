@@ -1,8 +1,12 @@
 /*
- *	command.c
- *	General commands's list
+ *		command.c
  *
- *	Author: Vizi Gábor
+ *		Author: 		Vizi Gábor
+ *		E-mail:			vizi.gabor90@gmail.com
+ *		Function:		General commands's list
+ *		Target:			STM32Fx
+ *		Version:		v4
+ *		Last modified:	2016.09.28
  */
 
 /*------------------------------------------------------------------------------

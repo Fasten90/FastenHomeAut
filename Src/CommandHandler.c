@@ -1,13 +1,13 @@
 /*
- * monitor.c
+ *		CommandHandler.c
  *
  *		Created on:		2013.10.08.
- *    	Author: 		Vizi Gábor
+ *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Monitor program, communication with UART, execute commands
+ *		Function:		Command Handler: communication with UART, execute commands
  *		Target:			STM32Fx
  *		Version:		v4
- *		Last modified:	2016.09.02
+ *		Last modified:	2016.09.28
  */
 
 

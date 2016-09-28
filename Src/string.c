@@ -1,6 +1,13 @@
-/*******************************************************************************
- * Purpose:
- ******************************************************************************/
+/*
+ *		string.c
+ *
+ *		Author: 		Vizi Gábor
+ *		E-mail:			vizi.gabor90@gmail.com
+ *		Function:		string manipulation functions
+ *		Target:			STM32Fx
+ *		Version:		v4
+ *		Last modified:	2016.09.28
+ */
 
 /*------------------------------------------------------------------------------
  *  Header files
@@ -1210,9 +1217,15 @@ void STRING_UnitTest (void)
 	%04d
 
 	// Hexadecimális csak így működik (Mindenképpen 0-val tölt fel):
-	%08x		00001234
-	%04x		1234
+	%01x		4
 	%02x		34
+	%03x		234
+	%04x		1234
+	%05x		01234
+	%06x		001234
+	%07x		0001234
+	%08x		00001234
+	%09x				WRONG!
 
 	// Nem működik:
 	%-10d
@@ -1252,6 +1265,16 @@ void STRING_UnitTest (void)
 	uprintf("0x%07x\r\n",0xFFFFFFFF);
 	uprintf("0x%08x\r\n",0xFFFFFFFF);
 	uprintf("0x%09x\r\n",0xFFFFFFFF);
+
+	uprintf("0x%01x\r\n",0x12345678);
+	uprintf("0x%02x\r\n",0x12345678);
+	uprintf("0x%03x\r\n",0x12345678);
+	uprintf("0x%04x\r\n",0x12345678);
+	uprintf("0x%05x\r\n",0x12345678);
+	uprintf("0x%06x\r\n",0x12345678);
+	uprintf("0x%07x\r\n",0x12345678);
+	uprintf("0x%08x\r\n",0x12345678);
+	uprintf("0x%09x\r\n",0x12345678);
 	// FLOAT TEST
 	/*
 	char String[20];

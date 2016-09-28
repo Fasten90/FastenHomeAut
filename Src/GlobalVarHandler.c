@@ -1,8 +1,13 @@
 /*
- * GlobalVarHandler.c
+ *		GlobalVarHandler.c
  *
- *  Created on: Sep 5, 2016
- *      Author: Vizi Gábor
+ *		Created on:		2016.09.05
+ *		Author: 		Vizi Gábor
+ *		E-mail:			vizi.gabor90@gmail.com
+ *		Function:		Global Variable Handler: Handle set-get variable from uart or other
+ *		Target:			STM32Fx
+ *		Version:		v4
+ *		Last modified:	2016.09.28
  */
 
 

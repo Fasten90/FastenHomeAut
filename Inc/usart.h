@@ -1,8 +1,13 @@
-/*******************************************************************************
- * Purpose:	USART module
+/*
+ *		usart.h
  *
- ******************************************************************************/
-
+ *		Author: 		Vizi Gábor
+ *		E-mail:			vizi.gabor90@gmail.com
+ *		Function:		usart communication
+ *		Target:			STM32Fx
+ *		Version:		v4
+ *		Last modified:	2016.09.28
+ */
 
 #ifndef USART_H_
 #define USART_H_

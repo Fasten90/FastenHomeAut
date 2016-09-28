@@ -1,4 +1,13 @@
-
+/*
+ *		homeautmessage.c
+ *
+ *		Author: 		Vizi Gábor
+ *		E-mail:			vizi.gabor90@gmail.com
+ *		Function:		HomeAutMessage message handling
+ *		Target:			STM32Fx
+ *		Version:		v4
+ *		Last modified:	2016.09.28
+ */
 
 #include "homeautmessage.h"
 #include "include.h"
