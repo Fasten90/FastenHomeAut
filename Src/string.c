@@ -245,25 +245,25 @@ uint8_t SignedDecimalToStringFill (int32_t value, char *str, uint8_t fillLength,
  * \brief	Convet a octet (0-15) to Hexa character ('0' - '9' - 'A' - 'F')
  * \return	character (octet)
  */
-char OctetToChar (uint8_t octet)
+char HexToHexChar (uint8_t value)
 {
-	char convertedOctet;
-	if ((octet >= 0) && (octet <= 9))
+	char hexChar;
+	if ((value >= 0) && (value <= 9))
 	{
 		// 0- 9
-		convertedOctet = (octet + '0');
+		hexChar = (value + '0');
 	}
-	else if ((octet >= 10) && (octet <= 15))
+	else if ((value >= 10) && (value <= 15))
 	{
 		// A-F
-		convertedOctet = (octet - 10 + 'A');
+		hexChar = (value - 10 + 'A');
 	}
 	else
 	{
-		convertedOctet = 'x';
+		hexChar = 'x';
 	}
 
-	return convertedOctet;
+	return hexChar;
 }
 
 
@@ -275,15 +275,15 @@ char OctetToChar (uint8_t octet)
 uint8_t ByteToHexaString (uint8_t byte, char *str)
 {
 	uint8_t length = 0;
-	uint8_t octet;
+	uint8_t hex;
 
-	// First octet
-	octet = (byte >> 4);
-	str[length++] = OctetToChar (octet);
+	// First hex
+	hex = (byte >> 4);
+	str[length++] = HexToHexChar (hex);
 
-	// Second octet
-	octet = (byte & 0x0F);
-	str[length++] = OctetToChar (octet);
+	// Second hex
+	hex = (byte & 0x0F);
+	str[length++] = HexToHexChar (hex);
 
 	// Put end char
 	str[length] = '\0';
@@ -313,7 +313,7 @@ uint8_t DecimalToHexaString (uint32_t value, char *str, uint8_t length)
 	{
 		// Convert next byte
 		octet = (uint8_t)(0x0F&(value >> ((length-i-1)*4)));
-		str[i] = OctetToChar (octet);
+		str[i] = HexToHexChar (octet);
 	}
 
 	str[length] = '\0';
@@ -500,7 +500,7 @@ bool IsHexChar(const char c)
  * \return	true, if number
  * 			false, if no number
  */
-bool IsDecimalChar(const char c)
+bool IsDecimalChar (const char c)
 {
 	bool isOk = false;
 	if ((c >= '0') && (c <='9'))
@@ -517,23 +517,23 @@ bool IsDecimalChar(const char c)
  * \brief	Convert Hex character to octet (0-9, A-F)
  * \return	Value (number)
  */
-uint8_t HexCharToOctet(const char c)
+uint8_t HexCharToHex (const char c)
 {
-	uint8_t octet = 0;
+	uint8_t hexValue = 0;
 	if ((c >= '0') && (c <='9'))
 	{
-		octet = c - '0';
+		hexValue = c - '0';
 	}
 	else if ((c >= 'A') && (c <= 'F'))
 	{
-		octet = c - 'A' + 10;
+		hexValue = c - 'A' + 10;
 	}
 	else if ((c >= 'a') && (c <= 'f'))
 	{
-		octet = c - 'a' + 10;
+		hexValue = c - 'a' + 10;
 	}
 
-	return octet;
+	return hexValue;
 }
 
 
@@ -546,8 +546,8 @@ uint8_t HexCharToOctet(const char c)
 bool StringByteToNum(const char *str, uint8_t *byte)
 {
 	uint8_t calculatedByte = 0;
-	calculatedByte |= (HexCharToOctet(str[0])&0x0F) << 4;
-	calculatedByte |= (HexCharToOctet(str[1])&0x0F);
+	calculatedByte |= (HexCharToHex(str[0])&0x0F) << 4;
+	calculatedByte |= (HexCharToHex(str[1])&0x0F);
 
 	*byte = calculatedByte;
 	return true;
@@ -580,7 +580,7 @@ bool StringHexToNum (const char *str, uint32_t *hexValue)
 		// shift <<4 + add next hex
 		if (IsHexChar(str[i]))
 		{
-			calculatedByte = HexCharToOctet(str[i]);
+			calculatedByte = HexCharToHex(str[i]);
 			// Shift one byte left original value
 			calculatedValue <<= 4;
 			// Add new value
@@ -608,7 +608,7 @@ bool StringHexToNum (const char *str, uint32_t *hexValue)
  * \brief Convert decimal character to number (byte)
  * \return	value (number)
  */
-uint8_t DecimalCharToNum(char c)
+uint8_t DecimalCharToNum (char c)
 {
 	uint8_t value = 0;
 	if ((c >= '0') && (c <= '9'))
@@ -1193,6 +1193,7 @@ uint8_t uprintf (const char *format, ...)
 
 
 
+#ifdef MODULE_STRING_UNIT_TEST_ENABLED
 /**
  * \brief	String module Unit Test
  */
@@ -1242,11 +1243,15 @@ void STRING_UnitTest (void)
 	uprintf("%05d\r\n",-123);			// Printed: "00123", it is OK
 
 	uprintf("Hexadecimal print tests:\r\n");
-	uprintf("0x%08x\r\n",0xFFFFFFFF);
-	uprintf("0x%04x\r\n",0xFFFFFFFF);
+	uprintf("0x%01x\r\n",0xFFFFFFFF);
 	uprintf("0x%02x\r\n",0xFFFFFFFF);
-
-
+	uprintf("0x%03x\r\n",0xFFFFFFFF);
+	uprintf("0x%04x\r\n",0xFFFFFFFF);
+	uprintf("0x%05x\r\n",0xFFFFFFFF);
+	uprintf("0x%06x\r\n",0xFFFFFFFF);
+	uprintf("0x%07x\r\n",0xFFFFFFFF);
+	uprintf("0x%08x\r\n",0xFFFFFFFF);
+	uprintf("0x%09x\r\n",0xFFFFFFFF);
 	// FLOAT TEST
 	/*
 	char String[20];
@@ -1283,6 +1288,7 @@ void STRING_UnitTest (void)
 
 	return;
 }
+#endif	// #ifdef MODULE_STRING_UNIT_TEST_ENABLED
 
 
 // Other printf:

@@ -89,4 +89,13 @@
 
 
 
+/// Unit tests
+
+#define MODULE_STRING_UNIT_TEST_ENABLED
+
+
+
+
+
+
 #endif /* OPTIONS_H_ */
