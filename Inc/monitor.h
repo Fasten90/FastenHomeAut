@@ -41,13 +41,14 @@
 
 
 #define MONITOR_MAX_COMMAND_LENGTH			(255U)
-#define MONITOR_COMMAND_ARG_COUNT			(3)
+#define MONITOR_COMMAND_ARG_MAX_COUNT			(3)
 #define MONITOR_COMMAND_ARG_MAX_LENGTH		(80)
-#define MONITOR_HISTORY_MAX_LENGTH			(5)
+#define MONITOR_HISTORY_MAX_COUNT			(5)
 
 
 #define MONITOR_WELCOME_DATE_VERSION	__DATE__
 #define MONITOR_WELCOME_TIME_VERSION	__TIME__
+
 
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
 #define MONITOR_BOARD_TYPE		"Used panel: NodeMedium\r\n"
@@ -294,7 +295,7 @@ bool MONITOR_CommandEscapeCharValidation ( void );
 
 // Monitor history
 void MONITOR_HISTORY_Save ( void );
-bool MONITOR_HISTORY_IsInIt ( void );
+bool MONITOR_HISTORY_FindInHistoryList ( void );
 void MONITOR_HISTORY_Load ( uint8_t direction );
 
 

@@ -62,11 +62,8 @@ static volatile bool MONITOR_CommandEscapeSequenceReceived = false;
 static volatile uint8_t MONITOR_CommandEscapeSequenceInProgress = 0;
 static volatile uint8_t MONITOR_CommandEscape_cnt = 0;
 
-// TODO: Use more static keyword
-uint8_t COMMAND_ArgCount = 0;
-
-
-char *COMMAND_Arguments[MONITOR_COMMAND_ARG_COUNT] = { 0 } ;
+static uint8_t COMMAND_ArgCount = 0;
+static char *COMMAND_Arguments[MONITOR_COMMAND_ARG_MAX_COUNT] = { 0 } ;
 
 
 #ifdef CONFIG_USE_FREERTOS
@@ -76,44 +73,43 @@ xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
 
 
 #ifdef USE_MONITOR_HISTORY
-// TODO: Átalakítani úgy, hogy 0-át kelljen betölteni!
-uint8_t MONITOR_HISTORY_Save_cnt = MONITOR_HISTORY_MAX_LENGTH-1;
-uint8_t MONITOR_HISTORY_Load_cnt = MONITOR_HISTORY_MAX_LENGTH-1;
-char MONITOR_HISTORY[MONITOR_HISTORY_MAX_LENGTH][MONITOR_MAX_COMMAND_LENGTH] =
+static uint8_t MONITOR_HISTORY_Save_cnt = 0;
+static uint8_t MONITOR_HISTORY_Load_cnt = 0;
+static char MONITOR_HISTORY[MONITOR_HISTORY_MAX_COUNT][MONITOR_MAX_COMMAND_LENGTH] =
 {
 
-#if defined(USE_MONITOR_HISTORY) && (MONITOR_HISTORY_MAX_LENGTH > 0)
+#if defined(USE_MONITOR_HISTORY) && (MONITOR_HISTORY_MAX_COUNT > 0)
 
-	#if ( MONITOR_HISTORY_MAX_LENGTH > 0 )
+	#if ( MONITOR_HISTORY_MAX_COUNT > 0 )
 	{
 		"help"
 	},
 	#endif
-	#if ( MONITOR_HISTORY_MAX_LENGTH > 1 )
+	#if ( MONITOR_HISTORY_MAX_COUNT > 1 )
 	{
 		"led 1 1"
 	},
 	#endif
-	#if ( MONITOR_HISTORY_MAX_LENGTH > 2 )
+	#if ( MONITOR_HISTORY_MAX_COUNT > 2 )
 	{
 		"cls"
 	},
 	#endif
-	#if ( MONITOR_HISTORY_MAX_LENGTH > 3 )
+	#if ( MONITOR_HISTORY_MAX_COUNT > 3 )
 	{
 		"test"
 	},
 	#endif
-	#if ( MONITOR_HISTORY_MAX_LENGTH > 4 )
+	#if ( MONITOR_HISTORY_MAX_COUNT > 4 )
 	{
 		"reset"
 	}
 	#endif
-	#if ( MONITOR_HISTORY_MAX_LENGTH > 5 )
-	#warning "isnt set monitor history commands"
+	#if ( MONITOR_HISTORY_MAX_COUNT > 5 )
+	#warning "Isn't set monitor history commands"
 	#endif
-#elif  (!MONITOR_HISTORY_MAX_LENGTH)
-#error "USE_MONITOR_HISTORY define is defined, but MONITOR_HISTORY_MAX_LENGTH define is not set valid value."
+#elif  (!MONITOR_HISTORY_MAX_COUNT)
+#error "USE_MONITOR_HISTORY define is defined, but 'MONITOR_HISTORY_MAX_LENGTH' define is not set valid value."
 #endif
 };
 #endif
@@ -141,7 +137,7 @@ static bool MONITOR_CheckPassword (const char *string);
 
 
 /**
- * \brief	Init Monitor program
+ * \brief	Initialize Monitor program
  */
 void MONITOR_Init ( void )
 {
@@ -621,7 +617,7 @@ uint8_t MONITOR_CommandParser ( void )
 			COMMAND_Arguments[CommandArgCount] = (char *)&MONITOR_CommandActual[i+1];	// Set pointer
 			CommandArgCount++;
 			j = 0;
-			if (CommandArgCount > MONITOR_COMMAND_ARG_COUNT)
+			if (CommandArgCount > MONITOR_COMMAND_ARG_MAX_COUNT)
 			{
 				uprintf("Too many arguments!\r\n");
 				return 0;
@@ -1016,13 +1012,13 @@ void MONITOR_HISTORY_Save ( void )
 {
 
 	// Has equal command?
-	if ( MONITOR_HISTORY_IsInIt() == true )
+	if ( MONITOR_HISTORY_FindInHistoryList() == true )
 	{
 		return;
 	}
 
 	// Actual save counter
-	if ( MONITOR_HISTORY_Save_cnt >= ( MONITOR_HISTORY_MAX_LENGTH-1 ) )
+	if ( MONITOR_HISTORY_Save_cnt >= ( MONITOR_HISTORY_MAX_COUNT-1 ) )
 	{
 		MONITOR_HISTORY_Save_cnt = 0;
 	}
@@ -1031,12 +1027,13 @@ void MONITOR_HISTORY_Save ( void )
 		MONITOR_HISTORY_Save_cnt++;
 	}
 
-	// This command is the last
-	MONITOR_HISTORY_Load_cnt = MONITOR_HISTORY_Save_cnt;	// amit most gepeltunk be, az az utolso
+	// Actual saved is the "last"
+	MONITOR_HISTORY_Load_cnt = MONITOR_HISTORY_Save_cnt;
+
+	// TODO: Check length
 
 	// Save command
 	StrCpy ( MONITOR_HISTORY[MONITOR_HISTORY_Save_cnt], (char *)MONITOR_CommandActual );
-
 
 	return;
 
@@ -1051,19 +1048,21 @@ void MONITOR_HISTORY_Save ( void )
  * \return	true, if has equal
  * 			false, if not has equal
  */
-bool MONITOR_HISTORY_IsInIt ( void )
+bool MONITOR_HISTORY_FindInHistoryList ( void )
 {
 	uint8_t i;
 	
-	for ( i = 0; i < MONITOR_HISTORY_MAX_LENGTH; i++ )
+	for ( i = 0; i < MONITOR_HISTORY_MAX_COUNT; i++ )
 	{
 		if ( !StrCmp((const char *)MONITOR_HISTORY[i],(const char * )MONITOR_CommandActual))	// If it is equal
 		{
-			return true; // Has equal command
+			// Has equal command
+			return true;
 		}
 	}
 
-	return false; // nincs megegyezo
+	// There is no equal command
+	return false;
 
 }
 #endif
@@ -1080,7 +1079,7 @@ void MONITOR_HISTORY_Load ( uint8_t direction )
 	// down cursor
 	if ( direction == 0 ) // direction == 0
 	{
-		if ( MONITOR_HISTORY_Load_cnt >= ( MONITOR_HISTORY_MAX_LENGTH-1 ) )
+		if ( MONITOR_HISTORY_Load_cnt >= ( MONITOR_HISTORY_MAX_COUNT-1 ) )
 		{
 			MONITOR_HISTORY_Load_cnt = 0;
 		}
@@ -1088,34 +1087,32 @@ void MONITOR_HISTORY_Load ( uint8_t direction )
 		{
 			MONITOR_HISTORY_Load_cnt++;
 		}
-
 	}
 
 	// up cursor
-	// if direction == 1, masolhato azonnal az aktualis
+	// if direction == 1, copy actual
 
+	// Copy command and set cursor
 	StrCpy ( (char *)MONITOR_CommandActual, (const char *)MONITOR_HISTORY[MONITOR_HISTORY_Load_cnt]);
 
 	// cursor, length!
-	MONITOR_CommandCursorPosition = StringLength((char *)MONITOR_CommandActual);
+	MONITOR_CommandCursorPosition = StringLength((const char *)MONITOR_CommandActual);
 	MONITOR_CommandActualLength = MONITOR_CommandCursorPosition;
 
 	MONITOR_NewCommandResendLine ();
 
-
+	// Step load cnt
 	if ( direction == 1 ) // direction == 0
 	{
 		if ( MONITOR_HISTORY_Load_cnt <= 0 )
 		{
-			MONITOR_HISTORY_Load_cnt = MONITOR_HISTORY_MAX_LENGTH-1;
+			MONITOR_HISTORY_Load_cnt = MONITOR_HISTORY_MAX_COUNT-1;
 		}
 		else
 		{
 			MONITOR_HISTORY_Load_cnt--;
 		}
-
 	}
-
 
 	return;
 
@@ -1246,7 +1243,7 @@ void MONITOR_WriteAnCommandHelp ( CommandID_t commandID )
 CommandResult_t MONITOR_ArgumentNumIsGood ( uint8_t receivedArgNum, uint8_t commandArgNum)
 {
 	// Check CommandArgNum. bit is set?
-	if (receivedArgNum > MONITOR_COMMAND_ARG_COUNT)
+	if (receivedArgNum > MONITOR_COMMAND_ARG_MAX_COUNT)
 	{
 		return CommandResult_Error_TooManyArgument;
 	}
