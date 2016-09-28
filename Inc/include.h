@@ -221,7 +221,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-#include "monitor.h"
+#include "CommandHandler.h"
 #include "command.h"
 #endif
 

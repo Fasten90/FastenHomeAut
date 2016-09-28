@@ -12,8 +12,8 @@
  *		Last modified:	2014.05.16
  */
 
-#ifndef MONITOR_H_
-#define MONITOR_H_
+#ifndef COMMANDHANDLER_H_
+#define COMMANDHANDLER_H_
 
 
 #include "include.h"
@@ -308,4 +308,4 @@ CommandResult_t MONITOR_ArgumentNumIsGood ( uint8_t receivedArgNum, uint8_t comm
 
 
 
-#endif /* MONITOR_H_ */
+#endif /* COMMANDHANDLER_H_ */

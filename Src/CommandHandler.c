@@ -15,7 +15,7 @@
 #include "stdint.h"
 #include "command.h"
 
-#include "monitor.h"
+#include "CommandHandler.h"
 #include "GlobalVarHandler.h"
 
 
