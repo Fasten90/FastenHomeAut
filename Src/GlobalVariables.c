@@ -35,7 +35,7 @@ const char *enumExampleList[] =
 	NULL
 };
 
-GlobalVarCommand_t GlobalVarList[] =
+const GlobalVarCommand_t GlobalVarList[] =
 {
 		{
 			.name = "testvar",

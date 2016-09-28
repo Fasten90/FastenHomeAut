@@ -2,7 +2,7 @@
  *		include.h
  *
  *  	Created on: 	2013.11.19.
- *    Author: 		Vizi Gábor
+ *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		University:		BME (BUTE)
  *		Project: 		RadioAlarm - Radio Alarm System modules
@@ -15,9 +15,11 @@
 #ifndef INCLUDE_H_
 #define INCLUDE_H_
 
+
+#include "options.h"
+
+
 // #define assert_param(expr) ((void)0)	// incopatible redefinition ...
-
-
 
 
 // typedefs
@@ -36,9 +38,6 @@ typedef signed int					int32_t;
 
 
 
-
-
-
 typedef enum
 {
 	Return_Ok = 0,
@@ -52,12 +51,6 @@ typedef enum
 
 
 
-
-
-
-
-
-
 ///////////////////////////// CONFIGURE
 
 
@@ -66,86 +59,6 @@ typedef enum
 // CONFIG DEFINES
 // INCLUDES
 /////////////////////////////
-
-
-///////////////////////////// CONFIG DEFINES
-
-
-// !!IMPORTANT!!  TODO: Check this!
-//#define HSE_VALUE 	(uint32_t)8000000
-// not need, its included
-
-
-/////////////////////////////
-////// XXX: Select your terminal
-////// for monitor.c
-//#define CONFIG_USE_TERMINAL_HYPERTERMINAL
-#define CONFIG_USE_TERMINAL_ZOC
-//#define CONFIG_USE_TERMINAL_PUTTY
-
-
-/////////////////////////////
-////// XXX: Time init from USB
-////// for log.c
-//#define RADIOALARM_CONFIG_TIMEINITUSB
-
-
-/////////////////////////////
-////// XXX: Stop mode
-////// for log.c, lowpower.c
-//#define RADIOALARM_CONFIG_ENABLE_STOPMODE
-
-
-/////////////////////////////
-////// XXX: Select transmitter or receiver
-////// for rfm12b.c
-//#define RFM12B_TRANSMITTER
-//#define RFM12B_RECEIVER
-
-
-/////////////////////////////
-////// XXX: If you want to send messages on UART (USB)
-////// for main.c, log.c
-//#define USE_RADIOALARM_OTG
-
-
-/// XXX: Monitor settings
-
-// For wait password
-//#define MONITOR_GET_PASSWORD_ENABLE
-
-// comment out, if you dont need escape sequence (cursors, history, cls, ...)
-#define MONITOR_ESCAPE_SEQUENCE_ENABLE
-
-#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
-	// If you want use monitor program's history
-	// Turn off, if has small memory, now it need 1.5k RAM
-	#define USE_MONITOR_HISTORY
-#endif
-
-// FreeRTOS - at panel selection
-// Do not use from this line, use the CONFIG_USE_PANEL ...
-//#define CONFIG_USE_FREERTOS
-
-
-
-// ESP8266
-//#define USE_ESP8266_TEST_FASTENHOME
-#define USE_ESP8266_MODE_CLIENT
-
-
-
-/////////////////////////////
-// 		Select your panel
-/////////////////////////////
-
-// Recommend define at project settings:
-// XXX: Select your panel
-//#define CONFIG_USE_PANEL_NODESMALL
-//#define CONFIG_USE_PANEL_NODEMEDIUM
-//#define CONFIG_USE_PANEL_CENTERPANEL
-//#define CONFIG_USE_PANEL_DISCOVERY
-
 
 
 #if !defined(CONFIG_USE_PANEL_NODEMSMALL) && !defined(CONFIG_USE_PANEL_NODEMEDIUM) \
@@ -282,31 +195,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #include "board.h"
 
 
-
 // MODUL INCLUDES
-
-
-#ifdef CONFIG_USE_PANEL_NODESMALL
-
-#endif // #ifdef CONFIG_USE_PANEL_NODESMALL
-
-
-
-#ifdef CONFIG_USE_PANEL_NODEMEDIUM
-
-#endif // #ifdef CONFIG_USE_PANEL_NODEMEDIUM
-
-
-
-#ifdef CONFIG_USE_PANEL_CENTERPANEL
-
-#endif // #ifdef CONFIG_USE_PANEL_CENTERPANEL
-
-
-
-#ifdef CONFIG_USE_PANEL_DISCOVERY
-
-#endif	// #ifdef CONFIG_USE_PANEL_DISCOVERY
 
 
 // Nincs kész:
