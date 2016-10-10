@@ -283,5 +283,7 @@ void MONITOR_SendPrimitiveWelcome ( void );
 
 void MONITOR_CheckCommand ( void );
 
+void MONITOR_WriteAnCommandHelp (CommandID_t commandID);
+
 
 #endif /* COMMANDHANDLER_H_ */

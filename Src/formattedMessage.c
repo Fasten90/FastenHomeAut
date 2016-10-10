@@ -88,12 +88,12 @@ void SendErrorMessage (const char *message)
  */
 void FormattedMessage_UnitTest (void)
 {
-	// Send coloured messages
-	SendColouredMessage("Valami pirosan\r\n", Color_Red);
-	SendColouredMessage("Valami sárgán\r\n", Color_Yellow);
+	// Send colored messages
+	SendColouredMessage("Red text\r\n", Color_Red);
+	SendColouredMessage("Yellow text\r\n", Color_Yellow);
 
-	SendColouredMessageWithBackgroundColor("Valami piros háttérrel\r\n", Color_Black, Color_Red);
-	SendColouredMessageWithBackgroundColor("Valami sárga háttérrel\r\n", Color_Black, Color_Yellow);
+	SendColouredMessageWithBackgroundColor("Black text with Red background color\r\n", Color_Black, Color_Red);
+	SendColouredMessageWithBackgroundColor("Black text with Yellow background color\r\n", Color_Black, Color_Yellow);
 
 	SendErrorMessage ("FATAL ERROR EXAMPLE\r\n");
 }

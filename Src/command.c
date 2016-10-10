@@ -18,6 +18,7 @@
 #include "include.h"
 
 #include "command.h"
+#include "CommandHandler.h"
 #include "GlobalVarHandler.h"
 #include "formattedMessage.h"
 #include "Globals.h"

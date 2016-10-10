@@ -146,7 +146,6 @@ void MONITOR_ConvertSmallLetter (void);
 
 void MONITOR_CheckResultAndRespond (CommandResult_t result);
 void MONITOR_RunCommand (CommandID_t commandID);
-void MONITOR_WriteAnCommandHelp (CommandID_t commandID);
 CommandResult_t MONITOR_ArgumentNumIsGood (uint8_t receivedArgNum, uint8_t commandArgNum);
 
 #ifdef MONITOR_GET_PASSWORD_ENABLE
