@@ -1051,7 +1051,7 @@ uint8_t string_printf (char *str, const char *format, va_list ap)
 			// '%' character
 			p++;
 			paramNum1 = 0;	// for standard %08x
-			paramNum2 = 8;
+			paramNum2 = 0;
 			fillCharacter = ' ';
 
 			// Check %...x (parameter after %, before x, u, f)

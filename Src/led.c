@@ -10,34 +10,28 @@
 
 extern void Error_Handler( void );
 
-
+#ifdef CONFIG_USE_PANEL_NODESMALL
 /* Timer handler declaration */
 TIM_HandleTypeDef    TimLedBlueHandle;
 TIM_HandleTypeDef    TimLedGreenHandle;
+#endif
 
 
 
 
 
-
-/*
-\brief	LED GPIO inicializálás (TIMER nélkül!)
+/**
+\brief	LED GPIO initialization (without TIMER)
 */
 void LED_Init( void )
 {
 	
-
 	GPIO_InitTypeDef GPIO_InitStructure;
 
-
-	/* GPIOC Periph clock enable */
-	//RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOC, ENABLE);
-	//RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB, ENABLE);
+	// GPIO Periph clock enable
 	LED_PORT_CLK_ENABLES();
 	
-	
-
-	/* Configure PC10 and PC11 in output pushpull mode */
+	// Configure pin output pushpull mode
 	//GPIO_InitStructure.Alternate = GPIO_AF;
 	GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;	
 	GPIO_InitStructure.Pin = BOARD_LED_RED_PIN;
@@ -61,16 +55,16 @@ void LED_Init( void )
 
 
 	//HAL_GPIO_WritePin(LED_DESIGN_SPI_OE_GPIO_PORT,LED_DESIGN_SPI_OE_GPIO_PIN,GPIO_PIN_RESET)
-	HAL_GPIO_WritePin(BOARD_LED_RED_PORT,BOARD_LED_RED_PIN,GPIO_PIN_SET);
-	HAL_GPIO_WritePin(BOARD_LED_BLUE_PORT,BOARD_LED_BLUE_PIN,GPIO_PIN_SET);
-	HAL_GPIO_WritePin(BOARD_LED_GREEN_PORT,BOARD_LED_GREEN_PIN,GPIO_PIN_SET);
+	LED_RED_OFF();
+	LED_BLUE_OFF();
+	LED_GREEN_OFF();
 	
 }
 
 
 
-/*
-\brief	LED villogtató, végtelen ciklusban
+/**
+\brief	LED blinkg in infinite loop
 */
 void LED_Run ( void )
 {
@@ -111,8 +105,8 @@ void LED_Run ( void )
 
 
 
-/*
-\brief	LED-ek timerrel
+/**
+\brief	LEDs with timer
 */
 #ifdef CONFIG_USE_PANEL_NODESMALL
 void LED_InitTimers( void )

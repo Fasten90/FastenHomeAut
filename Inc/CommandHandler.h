@@ -277,11 +277,11 @@ extern xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
 
 
 
-void MONITOR_Init ( void );
-void MONITOR_SendWelcome ( void );
-void MONITOR_SendPrimitiveWelcome ( void );
+void MONITOR_Init (void);
+void MONITOR_SendWelcome (void);
+void MONITOR_SendPrimitiveWelcome (void);
 
-void MONITOR_CheckCommand ( void );
+void MONITOR_CheckCommand (void);
 
 void MONITOR_WriteAnCommandHelp (CommandID_t commandID);
 

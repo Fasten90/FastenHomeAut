@@ -5,8 +5,12 @@
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
-#include "raspberrypi.h"
+
+#include "options.h"
 #include "include.h"
+#include "homeautmessage.h"
+
+#include "raspberrypi.h"
 
 
 /*------------------------------------------------------------------------------
@@ -14,6 +18,7 @@
  *----------------------------------------------------------------------------*/
 
 #ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
+
 
 /*------------------------------------------------------------------------------
  *  Type definitions
@@ -163,34 +168,10 @@ void RASPBERRYPI_SendMessage(uint8_t myAddress, uint8_t functionType, uint8_t da
 	uint32_t data2 = (uint32_t)(data*100) - (data1*100);
 	uprintf("%d_%c%c_%d.%d\r\n",myAddress,function,type,data1,data2);
 	*/
-	uprintf("#%d_%c%c_%f\r\n",myAddress,function,type,data);
+	uprintf("#%d_%c%c_%0.6f\r\n",myAddress,function,type,data);
 	
 }
 
-
-
-#define RASPBERRYPI_USARTx				USART1
-
-#define RASPBERRYPI_USART_CLK_ENABLES()		\
-		__USART1_CLK_ENABLE();			\
-		__GPIOA_CLK_ENABLE()
-
-
-#define RASPBERRYPI_USART_TX_GPIO_PORT			GPIOA
-#define RASPBERRYPI_USART_TX_GPIO_CLK			RCC_AHB1Periph_GPIOA
-#define RASPBERRYPI_USART_TX_GPIO_PIN			GPIO_PIN_9
-
-#define RASPBERRYPI_USART_RX_GPIO_PORT			GPIOA
-#define RASPBERRYPI_USART_RX_GPIO_CLK			RCC_AHB1Periph_GPIOA
-#define RASPBERRYPI_USART_RX_GPIO_PIN			GPIO_PIN_10
-
-#define RASPBERRYPI_USART_AF					GPIO_AF7_USART1
-
-#define RASPBERRYPI_USARTx_IRQn              	USART1_IRQn
-#define RASPBERRYPI_USARTx_IRQHandler        	USART1_IRQHandler
-
-#define RASPBERRYPI_USART_PREEMT_PRIORITY		14
-#define RASPBERRYPI_USART_SUB_PRIORITY			0
 
 
 void RASPBERRYPI_Init(void)
@@ -231,9 +212,6 @@ void RASPBERRYPI_Init(void)
 		// != HAL_OK
 		Error_Handler();
 	}
-	
-	
-
 }
 
 

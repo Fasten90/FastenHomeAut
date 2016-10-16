@@ -103,7 +103,7 @@ int main(void)
 	
 	LED_BLUE_ON();
 	LED_GREEN_ON();
-	LED_RED_ON();
+	LED_RED_OFF();
 #endif
 
 

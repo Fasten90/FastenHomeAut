@@ -117,6 +117,8 @@ uint32_t CommandFunction_flashread	( uint32_t argc, char** argv );
 uint32_t CommandFunction_flashwrite	( uint32_t argc, char** argv );
 uint32_t CommandFunction_temp	( uint32_t argc, char** argv );
 
+uint32_t CommandFunction_raspberrypi ( uint32_t argc, char** argv );
+
 /*
 uint32_t CommandFunction_buzzer	( uint32_t argc, char** argv );
 uint32_t CommandFunction_accelerometer	( uint32_t argc, char** argv );
@@ -151,7 +153,6 @@ uint32_t CommandFunction_standby	( uint32_t argc, char** argv );
 uint32_t CommandFunction_rtc	( uint32_t argc, char** argv );
 
 uint32_t CommandFunction_ESP8266	( uint32_t argc, char** argv );
-uint32_t CommandFunction_raspberrypi 	( uint32_t argc, char** argv );
 */
 
 

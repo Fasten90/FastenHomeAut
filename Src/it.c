@@ -210,6 +210,15 @@ void EXTI9_5_IRQHandler(void)
 
 
 
+#ifdef CONFIG_USE_PANEL_DISCOVERY
+
+// PA0 - User button
+void EXTI0_IRQHandler(void)
+{
+	HAL_GPIO_EXTI_IRQHandler(BUTTON_USER_GPIO_PIN);
+}
+
+#endif	// #ifdef CONFIG_USE_PANEL_DISCOVERY
 
 
 
@@ -223,6 +232,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
 	// BUTTON MODULE
+
+#if defined(CONFIG_USE_PANEL_NODESMALL) || defined(CONFIG_USE_PANEL_NODEMEDIUM) || defined(CONFIG_USE_PANEL_CENTERPANEL)
 	if (GPIO_Pin == BUTTON_UP_GPIO_PIN)
 	{
 		// Toggle LED
@@ -250,7 +261,15 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	
 	//BUTTON_Clicked = 1;
 #endif	// #ifdef CONFIG_MODULE_BUTTON_ENABLE
-	
+#ifdef CONFIG_USE_PANEL_DISCOVERY
+	if (GPIO_Pin == BUTTON_USER_GPIO_PIN)
+	{
+		// Toggle LED
+		LED_RED_TOGGLE();
+		BUTTON_Clicked |= ( ( 1 << PressedButton_Pressed) | ( 1 << PressedButton_Up ) );
+	}
+#endif
+#endif
 
 	#ifdef CONFIG_USE_PANEL_NODEMEDIUM
 	if (GPIO_Pin == SENSOR_MOTION_GPIO_PIN)

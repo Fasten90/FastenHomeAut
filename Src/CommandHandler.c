@@ -18,18 +18,24 @@
 #include "CommandHandler.h"
 #include "GlobalVarHandler.h"
 
+#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
+#include "raspberrypi.h"
+#include "homeautmessage.h"
+#endif
+
 
 /////////////////////////////////
 //			Configs:
 /////////////////////////////////
-
-static const char MONITOR_Password[] = "password";
 
 // Enable monitor
 const bool MONITOR_CommandReceiveEnable = true;
 // Enable sending back: "Echo mode"
 const bool MONITOR_CommandSendBackCharEnable = true;
 
+#ifdef MONITOR_GET_PASSWORD_ENABLE
+static const char MONITOR_Password[] = "password";
+#endif
 
 /////////////////////////////////
 // 		GLOBAL VARIABLES
@@ -149,7 +155,7 @@ void MONITOR_RunCommand (CommandID_t commandID);
 CommandResult_t MONITOR_ArgumentNumIsGood (uint8_t receivedArgNum, uint8_t commandArgNum);
 
 #ifdef MONITOR_GET_PASSWORD_ENABLE
-static void MONITOR_GetPassword ( void );
+static void MONITOR_GetPassword (void);
 static bool MONITOR_CheckPassword (const char *string);
 #endif
 
@@ -323,6 +329,15 @@ void MONITOR_CheckCommand ( void )
 				MONITOR_CommandReceivedEvent = true;
 			}
 			#endif
+
+#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
+			// Test for Raspberry Pi
+			if (BUTTON_Clicked)
+			{
+				BUTTON_Clicked = 0;
+				RASPBERRYPI_SendMessage(1, Function_Alarm, Alarm_PressedButton , 17);
+			}
+#endif
 
 			MONITOR_ProcessReceivedCharacter();
 

@@ -93,6 +93,29 @@
 
 
 
+#ifdef CONFIG_USE_PANEL_DISCOVERY
+
+// Comment: A sematicban fordítva van a blue-red
+// blue: PE5
+// green: PE6
+// red: PA8
+
+#define BOARD_LED_BLUE_PORT			GPIOD
+#define BOARD_LED_BLUE_PIN			GPIO_PIN_15
+#define BOARD_LED_GREEN_PORT		GPIOD
+#define BOARD_LED_GREEN_PIN			GPIO_PIN_12
+#define BOARD_LED_RED_PORT			GPIOD
+#define BOARD_LED_RED_PIN			GPIO_PIN_14
+
+#define LED_PORT_CLK_ENABLES()		__GPIOD_CLK_ENABLE()
+
+
+// high pin = lighting (define 1)
+#define BOARD_LED_LOGIC_HIGH_IS_ON	1
+
+#endif //#ifdef CONFIG_USE_PANEL_CENTERPANEL
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // 			TIMERS for LEDs
 ///////////////////////////////////////////////////////////////////////////////
@@ -388,7 +411,13 @@
 #endif	// #ifdef CONFIG_USE_PANEL_CENTERPANEL
 
 
+#ifdef CONFIG_USE_PANEL_DISCOVERY
+#define BUTTON_USER_GPIO_PORT		GPIOA
+#define BUTTON_USER_GPIO_CLK		RCC_AHB1Periph_GPIOA
+#define BUTTON_USER_GPIO_PIN		GPIO_PIN_0
 
+#define BUTTON_CLK_ENABLES()		__GPIOA_CLK_ENABLE()
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //			TEMPERATURE - I2C - LM75
@@ -1046,7 +1075,34 @@ SENSOR_OPENCLOSE	PC6
 //			ETC
 ///////////////////////////////////////////////////////////////////////////////
 
+#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
 
+// Raspberry Pi
+
+#define RASPBERRYPI_USARTx				USART1
+
+#define RASPBERRYPI_USART_CLK_ENABLES()		\
+		__USART1_CLK_ENABLE();			\
+		__GPIOA_CLK_ENABLE()
+
+
+#define RASPBERRYPI_USART_TX_GPIO_PORT			GPIOA
+#define RASPBERRYPI_USART_TX_GPIO_CLK			RCC_AHB1Periph_GPIOA
+#define RASPBERRYPI_USART_TX_GPIO_PIN			GPIO_PIN_9
+
+#define RASPBERRYPI_USART_RX_GPIO_PORT			GPIOA
+#define RASPBERRYPI_USART_RX_GPIO_CLK			RCC_AHB1Periph_GPIOA
+#define RASPBERRYPI_USART_RX_GPIO_PIN			GPIO_PIN_10
+
+#define RASPBERRYPI_USART_AF					GPIO_AF7_USART1
+
+#define RASPBERRYPI_USARTx_IRQn              	USART1_IRQn
+#define RASPBERRYPI_USARTx_IRQHandler        	USART1_IRQHandler
+
+#define RASPBERRYPI_USART_PREEMT_PRIORITY		14
+#define RASPBERRYPI_USART_SUB_PRIORITY			0
+
+#endif
 
 
 #endif /* BOARD_H_ */

@@ -61,12 +61,12 @@ void BUTTON_Init ( void )
 	BUTTON_CLK_ENABLES();
 
 
-	
-	
 	// Configure x pin as input floating
 	GPIO_InitStructure.Mode = GPIO_MODE_IT_RISING;
 	GPIO_InitStructure.Pull = GPIO_NOPULL;
 	
+#if defined(CONFIG_USE_PANEL_NODESMALL) || defined(CONFIG_USE_PANEL_NODEMEDIUM) || defined(CONFIG_USE_PANEL_CENTERPANEL)
+
 	GPIO_InitStructure.Pin = BUTTON_UP_GPIO_PIN;
 	HAL_GPIO_Init(BUTTON_UP_GPIO_PORT, &GPIO_InitStructure);
 	
@@ -78,8 +78,11 @@ void BUTTON_Init ( void )
 
 	GPIO_InitStructure.Pin  = BUTTON_RIGHT_GPIO_PIN;
 	HAL_GPIO_Init(BUTTON_RIGHT_GPIO_PORT, &GPIO_InitStructure);
-	
-	
+#endif
+#ifdef CONFIG_USE_PANEL_DISCOVERY
+	GPIO_InitStructure.Pin  = BUTTON_USER_GPIO_PIN;
+	HAL_GPIO_Init(BUTTON_USER_GPIO_PORT, &GPIO_InitStructure);
+#endif
 	
 	// Config IT-s
 	
@@ -95,8 +98,6 @@ void BUTTON_Init ( void )
 	HAL_NVIC_EnableIRQ(EXTI4_15_IRQn); 
 	
 	#endif
-	
-	
 	
 	
 	#ifdef CONFIG_USE_PANEL_NODEMEDIUM
@@ -137,6 +138,16 @@ void BUTTON_Init ( void )
 	
 
 	#endif
+
+
+#ifdef CONFIG_USE_PANEL_DISCOVERY
+
+	// User		PA0
+
+	// Enable and set EXTI lines
+	HAL_NVIC_SetPriority(EXTI0_IRQn, 1, 0);
+	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+#endif
 
 }
 

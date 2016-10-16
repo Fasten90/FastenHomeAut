@@ -167,6 +167,13 @@ const CommandStruct CommandList[] =
 		.syntax = NULL,
 		.CommandArgNum = CommandArgument_0,
 	},
+	{
+		.name = "#raspi",
+		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_raspberrypi,
+		.description = "Raspberry Pi HomeAutMessage sending",
+		.syntax = "-",
+		.CommandArgNum = CommandArgument_2
+	}
 
 	/*
 	{
@@ -213,18 +220,7 @@ const CommandStruct CommandList[] =
 		.description = "ESP8266 wifi modul bridge\r\n"
 	},
 	*/
-	
-	/*
-	{
-		.name = "#raspi",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_raspberrypi,
-		.description = "Raspberry Pi HomeAutMessage sending",
-		.syntax = "-",
-		.CommandArgNum = CommandArgument_1
-	}
-	*/
-	
-		
+
 };
 
 
@@ -1510,45 +1506,49 @@ uint32_t CommandFunction_flashwrite	( uint32_t argc, char** argv ) {
 
 
 
-// Function: Raspberry pi bridge
-#if 0
-uint32_t CommandFunction_raspberrypi	( uint32_t argc, char** argv ) {
-
 #ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
-	if ( argc < 3 )
-	{
-		uprintf("Too few arguments!\r\n");
-		return RETURN_FALSE;
-	}
-	if ( argc > 3 )
-	{
-		uprintf("Too many arguments!\r\n");
-		return RETURN_FALSE;
-	}
+// Function: Raspberry pi bridge
+uint32_t CommandFunction_raspberrypi (uint32_t argc, char** argv)
+{
 	
-	// Convert arg3, decimal
-	if (!UnsignedDecimalStringToNum(argv[2],&Arg3Num))
-	{
-		USART_SendString("Wrong 1. argument!\r\n");
-		return RETURN_FALSE;
-	}
-	
+	// Check arg 2
 	if (!StrCmp(argv[1],"setout"))
 	{
 		// setout
+		/*
 		HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
 			0,255,
 			Function_Command, Command_SetOutput,
 			Arg3Num, 1);
+		*/
+
+		// Convert arg3, decimal
+		if (!UnsignedDecimalStringToNum(argv[2],&Arg3Num))
+		{
+			USART_SendString("Wrong 1. argument!\r\n");
+			return Return_False;
+		}
+
+		if (Arg3Num > 0)
+		{
+			LED_BLUE_ON();
+			LED_GREEN_ON();
+		}
+		else
+		{
+			LED_BLUE_OFF();
+			LED_GREEN_OFF();
+		}
+
+		return CommandResult_Ok;
 	}
 
-	
-#endif
-	
-	
-	return CommandResult_Ok;
+	uprintf("Wrong parameter");
+
+	return Return_False;
 }
 #endif
+
 
 
 /*
