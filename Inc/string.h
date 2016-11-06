@@ -31,7 +31,14 @@
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
-
+typedef enum
+{
+	Print_Unknown,
+	Print_DebugUart,
+	Print_OtherUart,
+	// Do not use:
+	Print_Count
+} PrintDevice_t;
 
 /*------------------------------------------------------------------------------
  *  Global variables
@@ -106,6 +113,7 @@ int16_t FindString (const char *findString, const char *str);
 uint8_t string_printf (char *str, const char *format, va_list ap);
 uint8_t usprintf (char *str, const char *format, ...);
 uint8_t uprintf (const char *format, ...);
+uint8_t duprintf (const PrintDevice_t dev, const char *format, ...);
 
 void STRING_UnitTest (void);
 

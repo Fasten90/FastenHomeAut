@@ -18,7 +18,8 @@
 
 
 
-typedef struct {
+typedef struct
+{
 	char Header[9];
 	// |HomeAut|
 	char MyAddress[3];
@@ -29,7 +30,7 @@ typedef struct {
 	// <TargetAddress>
 	char Seperator2[1];
 	// |
-	char	Function[7];
+	char Function[7];
 	// <Function>
 	char Seperator3[1];
 	// |
@@ -62,7 +63,8 @@ const uint8_t HOMEAUTMESSAGE_DefaultFunctionConfig[] =  "CONFIG_";
 
 
 
-typedef enum {
+typedef enum
+{
 	Function_Invalid = 0,
 	Function_Login,
 	Function_State,
@@ -71,13 +73,13 @@ typedef enum {
 	Function_Mode,
 	Function_Config,
 	Function_End
-	
 } HOMEAUTMESSAGE_FunctionType;
 
 
 
 
-typedef struct {
+typedef struct
+{
 	char name[8];
 	HOMEAUTMESSAGE_FunctionType function;
 } FunctionTypeParity;
@@ -86,7 +88,8 @@ typedef struct {
 
 
 
-typedef enum {
+typedef enum
+{
 	DataType_Unknown = 0,
 	
 	// Login
@@ -152,14 +155,16 @@ typedef enum {
 
 
 
-typedef struct {
+typedef struct
+{
 	char name[7];
 	HOMEAUTMESSAGE_DataType type;
 } DataTypeParity;
 
 
 
-typedef struct {
+typedef struct
+{
 	uint8_t MyAddress;
 	uint8_t TargetAddress;
 	HOMEAUTMESSAGE_FunctionType Function;

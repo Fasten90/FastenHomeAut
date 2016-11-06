@@ -24,14 +24,10 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 
-// LED
-
+#ifdef CONFIG_USE_PANEL_NODESMALL
 // RED PC13
 // BLUE PB8
 // GREEN PB9
-
-#ifdef CONFIG_USE_PANEL_NODESMALL
-
 #define BOARD_LED_RED_PORT			GPIOC
 #define BOARD_LED_RED_PIN			GPIO_PIN_13
 #define BOARD_LED_BLUE_PORT			GPIOB
@@ -173,10 +169,6 @@
 
 
 
-
-
-
-
 ///////////////////////////////////////////////////////////////////////////////
 // 		ADC  - ANALOG
 ///////////////////////////////////////////////////////////////////////////////
@@ -247,7 +239,6 @@
 
 
 #define ADC_BUFFER_SIZE				( 5 )	
-// TODO : 4volt		// mintakódban 3 van
 // now: Vsource, ligh, mic, prox, internal temp
 
 
@@ -431,8 +422,8 @@
 //1 0 0 1 A2 A1 A0
 #define TEMPERATURE_I2C_TEMP_ADDRESS	((uint16_t)( 0x0000 | (1<<6)  | (1 << 3 ) ) )
 // 0b1001000
-// 1,0,0,1,0,0,0 BITEK, nem pedig hexa!!!!!!!!!!!!!!
-// 0x1001000 NEM JÓÓÓÓÓÓÓÓÓÓÓ
+// 1,0,0,1,0,0,0 BITs, and not hex !!!!!!!!!!!!!!
+// Wrong example: 0x1001000
 
 // pointer register:
 #define TEMPERATURE_I2C_REGISTER_TEMP	((uint8_t)0x00)
@@ -612,7 +603,7 @@
 
 
 
-#define FLASH_SPIx                             SPI1
+#define FLASH_SPIx						SPI1
 
 
 #define FLASH_SPIx_PINS_CLK_ENABLES()	\
@@ -620,23 +611,23 @@
 		__GPIOB_CLK_ENABLE()
 
 
-#define SPIx_CLK_ENABLE()                __SPI1_CLK_ENABLE()
+#define SPIx_CLK_ENABLE()				__SPI1_CLK_ENABLE()
 
 
-#define SPIx_FORCE_RESET()               __SPI1_FORCE_RESET()
-#define SPIx_RELEASE_RESET()             __SPI1_RELEASE_RESET()
+#define SPIx_FORCE_RESET()				__SPI1_FORCE_RESET()
+#define SPIx_RELEASE_RESET()			__SPI1_RELEASE_RESET()
 
 
 // Definition for SPIx Pins
-#define SPIx_SCK_PIN                     GPIO_PIN_5
-#define SPIx_SCK_GPIO_PORT               GPIOA
-#define SPIx_SCK_AF                      GPIO_AF5_SPI1
-#define SPIx_MISO_PIN                    GPIO_PIN_6
-#define SPIx_MISO_GPIO_PORT              GPIOA
-#define SPIx_MISO_AF                     GPIO_AF5_SPI1
-#define SPIx_MOSI_PIN                    GPIO_PIN_7
-#define SPIx_MOSI_GPIO_PORT              GPIOA
-#define SPIx_MOSI_AF                     GPIO_AF5_SPI1
+#define SPIx_SCK_PIN					GPIO_PIN_5
+#define SPIx_SCK_GPIO_PORT				GPIOA
+#define SPIx_SCK_AF						GPIO_AF5_SPI1
+#define SPIx_MISO_PIN					GPIO_PIN_6
+#define SPIx_MISO_GPIO_PORT				GPIOA
+#define SPIx_MISO_AF					GPIO_AF5_SPI1
+#define SPIx_MOSI_PIN					GPIO_PIN_7
+#define SPIx_MOSI_GPIO_PORT				GPIOA
+#define SPIx_MOSI_AF					GPIO_AF5_SPI1
 
 
 #define FLASH_SPI_CS_GPIO_PIN			GPIO_PIN_0
@@ -645,9 +636,6 @@
 #define FLASH_SPI_WP_GPIO_PORT			GPIOB
 #define FLASH_SPI_HOLD_GPIO_PIN			GPIO_PIN_4
 #define FLASH_SPI_HOLD_GPIO_PORT		GPIOA
-
-
-
 
 
 #endif	// CONFIG_USE_PANEL_NODEMEDIUM
@@ -759,12 +747,12 @@
 #define ESP8266_USARTx					USART1
 
 /* Definition for USARTx's NVIC */
-#define ESP8266_USARTx_IRQn               USART1_IRQn
-#define ESP8266_USARTx_IRQHandler         USART1_IRQHandler
+#define ESP8266_USARTx_IRQn				USART1_IRQn
+#define ESP8266_USARTx_IRQHandler		USART1_IRQHandler
 
 // WITHOUT FREERTOS: If use FreeRTOS, you need higher priority
-#define ESP8266_USART_PREEMT_PRIORITY		2
-#define ESP8266_USART_SUB_PRIORITY			0
+#define ESP8266_USART_PREEMT_PRIORITY	2
+#define ESP8266_USART_SUB_PRIORITY		0
 
 
 
@@ -775,12 +763,12 @@
 
 
 #define ESP8266_USART_TX_GPIO_PORT		GPIOA
-#define ESP8266_USART_TX_GPIO_CLK			RCC_AHB1Periph_GPIOA
-#define ESP8266_USART_TX_GPIO_PIN			GPIO_PIN_9
+#define ESP8266_USART_TX_GPIO_CLK		RCC_AHB1Periph_GPIOA
+#define ESP8266_USART_TX_GPIO_PIN		GPIO_PIN_9
 
 #define ESP8266_USART_RX_GPIO_PORT		GPIOA
-#define ESP8266_USART_RX_GPIO_CLK			RCC_AHB1Periph_GPIOA
-#define ESP8266_USART_RX_GPIO_PIN			GPIO_PIN_10
+#define ESP8266_USART_RX_GPIO_CLK		RCC_AHB1Periph_GPIOA
+#define ESP8266_USART_RX_GPIO_PIN		GPIO_PIN_10
 
 #define ESP8266_USART_AF				GPIO_AF1_USART1
 

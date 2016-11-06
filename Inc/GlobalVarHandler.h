@@ -28,6 +28,7 @@
 
 typedef uint8_t VarID_t;
 
+// Note: This enum has an "name list" (GlobalVarTypesNames), Must be in the same order with it!
 typedef enum
 {
 	Type_Error = 0,
@@ -90,10 +91,10 @@ typedef enum
 typedef struct
 {
 
-	const char const *name;
+	const char * const name;
 	const VarType_t type;
 
-	void const *varPointer;
+	void * const varPointer;
 	const bool isReadOnly;
 
 	const uint32_t maxValue;
@@ -106,10 +107,10 @@ typedef struct
 	const char **enumList;
 
 #ifdef GLOBALVARHANDLER_UNIT_ENABLE
-	const char const *unit;
+	const char * const unit;
 #endif
 #ifdef GLOBALVARHANDLER_DESCRIPTION_ENABLE
-	const char const *description;
+	const char * const description;
 #endif
 
 } GlobalVarCommand_t;

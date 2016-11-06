@@ -92,7 +92,7 @@ const GlobalVarCommand_t GlobalVarList[] =
 		},
 		{
 			.name = "version",
-			.varPointer = &Global_Version,
+			.varPointer = (void * const)&Global_Version,
 			.type = Type_String,
 			.isReadOnly = true
 		},

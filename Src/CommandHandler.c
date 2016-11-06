@@ -19,8 +19,8 @@
 #include "GlobalVarHandler.h"
 
 #ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
-#include "raspberrypi.h"
 #include "homeautmessage.h"
+#include "raspberrypi.h"
 #endif
 
 

@@ -154,7 +154,7 @@ void GlobalVarHandler_ProcessCommand(
 				// Can set? (not const?)
 				if(!GlobalVarList[commandID].isReadOnly)
 				{
-					// It not const, set
+					// It not const, can set
 					result = GlobalVarHandler_SetCommand(commandID,param,resultBuffer,&resultBufferLength);
 				}
 				else
@@ -225,8 +225,7 @@ static ProcessResult_t GlobalVarHandler_GetCommand(VarID_t commandID, char *resu
 {
 	uint8_t length = 0;
 
-	// TODO: isHex?
-
+	// Check type
 	switch(GlobalVarList[commandID].type)
 	{
 	case Type_Bool:
@@ -886,7 +885,7 @@ static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t n
 		if (num > UINT16_MAX) return Process_InvalidValue_TooMuch;
 		break;
 	case Type_Uint32:
-		// TODO: Always true
+		// TODO: Always good, do better code
 		if (num > UINT32_MAX) return Process_InvalidValue_TooMuch;
 		break;
 	case Type_Int8:
@@ -898,7 +897,7 @@ static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t n
 		if ((int32_t)num < INT16_MIN) return Process_InvalidValue_TooSmall;
 		break;
 	case Type_Int32:
-		// TODO: Always true
+		// TODO: Always good, do better code
 		if ((int32_t)num > INT32_MAX) return Process_InvalidValue_TooMuch;
 		if ((int32_t)num < INT32_MIN) return Process_InvalidValue_TooSmall;
 		break;
@@ -1105,7 +1104,6 @@ void GlobalVarHandler_ListAllVariables(void)
 	}
 	USART_SendLine("+----------------------------------------------------------------+");
 
-
 }
 
 
@@ -1116,8 +1114,7 @@ void GlobalVarHandler_ListAllVariables(void)
 static void GlobalVarHandler_HelpVariable (VarID_t commandID, char *resultBuffer)
 {
 
-	// TODO: resultBufferbe �r�s
-	uprintf("Command help: %s, type:%s, min:%d, max:%d, desc:%s\r\n",
+	usprintf(resultBuffer, "Command help: %s, type:%s, min:%d, max:%d, desc:%s\r\n",
 			GlobalVarList[commandID].name,
 			GlobalVarTypesNames[GlobalVarList[commandID].type],
 			GlobalVarList[commandID].minValue,

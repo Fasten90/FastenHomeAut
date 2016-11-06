@@ -1103,54 +1103,66 @@ uint8_t string_printf (char *str, const char *format, va_list ap)
 			// Process next character (after '%', or etc)
 			switch (*p)
 			{
-				case 'd': ival = va_arg(ap, int);						// Decimal = signed int (~int32_t)
-						  string += SignedDecimalToStringFill(ival,string, paramNum2, fillCharacter);
-						  break;
+				case 'd':
+					ival = va_arg(ap, int);	// Decimal = signed int (~int32_t)
+					string += SignedDecimalToStringFill(ival, string, paramNum2,
+							fillCharacter);
+					break;
 
-				case 'u': uival = va_arg(ap, int);						// Uint = Unsigned int (~uint32_t)
-						  string += UnsignedDecimalToStringFill(uival,string, paramNum2, fillCharacter);
-						  break;
+				case 'u':
+					uival = va_arg(ap, int);// Uint = Unsigned int (~uint32_t)
+					string += UnsignedDecimalToStringFill(uival, string,
+							paramNum2, fillCharacter);
+					break;
 
-				// TODO: Create 'x' and 'X' to different
+					// TODO: Create 'x' and 'X' to different
 				case 'x':
-				case 'X': uival = va_arg(ap, unsigned int);				// Hex // 32 bits	// 8 hex	// 4 byte
-						  string += DecimalToHexaString(uival, string, paramNum2);// Copy to string
-						  break;
+				case 'X':
+					uival = va_arg(ap, unsigned int);// Hex // 32 bits	// 8 hex	// 4 byte
+					string += DecimalToHexaString(uival, string, paramNum2);// Copy to string
+					break;
 
-				// TODO: Delete w, h, b if not need
-				case 'w': uival = va_arg(ap, unsigned int);					// Hex // 32 bits	// 8 hex	// 4 byte
-						  string += DecimalToHexaString(uival, string, 8);	// Copy to string
-						  break;
+					// TODO: Delete w, h, b if not need
+				case 'w':
+					uival = va_arg(ap, unsigned int);// Hex // 32 bits	// 8 hex	// 4 byte
+					string += DecimalToHexaString(uival, string, 8);// Copy to string
+					break;
 
-				case 'h': ival = va_arg(ap, int);							// Hex // 16 bits	// 4 hex	// 2 byte
-						  string += DecimalToHexaString(ival, string, 4);	// Copy to string
-						  break;
+				case 'h':
+					ival = va_arg(ap, int);	// Hex // 16 bits	// 4 hex	// 2 byte
+					string += DecimalToHexaString(ival, string, 4);	// Copy to string
+					break;
 
-				case 'b': ival = va_arg(ap, int);							// Hex	// 8 bits	// 2 hex	// 1 byte
-						  string += DecimalToHexaString(ival, string, 2);	// Copy to string
-						  break;
+				case 'b':
+					ival = va_arg(ap, int);	// Hex	// 8 bits	// 2 hex	// 1 byte
+					string += DecimalToHexaString(ival, string, 2);	// Copy to string
+					break;
 
-				case 'c': cval = va_arg(ap, int);						// Char
-						  *string = cval;								// Copy to string
-						  string++;
-						  *string = '\0';
-						  break;
+				case 'c':
+					cval = va_arg(ap, int);					// Char
+					*string = cval;							// Copy to string
+					string++;
+					*string = '\0';
+					break;
 
-				case 'f': flval = va_arg(ap, double);					// Double / Float
-						  string += FloatToString(flval,string,paramNum1,paramNum2);
-						  break;
+				case 'f':
+					flval = va_arg(ap, double);				// Double / Float
+					string += FloatToString(flval, string, paramNum1,
+							paramNum2);
+					break;
 
-				case 's': for(sval = va_arg(ap,char*); *sval; sval++)	// String
-						  {
-							*string = *sval;							// Copy to string
-							string++;
-						  }
-						  break;
+				case 's':
+					for (sval = va_arg(ap, char*); *sval; sval++)	// String
+					{
+						*string = *sval;					// Copy to string
+						string++;
+					}
+					break;
 
 				default:
-						*string = *p;									// Other, for example: '%'
-						string++;
-					 	 break;
+					*string = *p;					// Other, for example: '%'
+					string++;
+					break;
 		  }
 		}	// End of '%'
 
@@ -1192,10 +1204,49 @@ uint8_t uprintf (const char *format, ...)
 
 	va_list ap;									// argument pointer
 	va_start(ap, format); 						// ap on arg
-	string_printf(TxBuffer,format,ap);				// Separate and process
+	string_printf(TxBuffer,format,ap);			// Separate and process
 	va_end(ap);						 			// Cleaning after end
 
 	return USART_SendMessage(TxBuffer);			// Send on Usart
+}
+
+
+
+/**
+ * \brief	device uart print
+ * \param	dev		what peripheral sending
+ */
+uint8_t duprintf (const PrintDevice_t dev, const char *format, ...)
+{
+	uint8_t length = 0;
+	// Working in at:
+	char TxBuffer[TXBUFFERSIZE];
+
+	va_list ap;									// argument pointer
+	va_start(ap, format); 						// ap on arg
+	string_printf(TxBuffer,format,ap);			// Separate and process
+	va_end(ap);						 			// Cleaning after end
+
+	switch (dev)
+	{
+		case Print_Unknown:
+			// Error, do not use
+			length = 0;
+			break;
+		case Print_DebugUart:
+			length = USART_SendMessage(TxBuffer);			// Send on Usart
+			break;
+		case Print_OtherUart:
+			// TODO: Not implemented
+			break;
+		default:
+			// Error, do not use
+			length = 0;
+			break;
+	}
+
+	return length;
+
 }
 
 

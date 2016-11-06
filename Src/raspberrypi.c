@@ -73,6 +73,91 @@ void RASPBERRYPI_Task(void)
 
 
 
+void RASPBERRYPI_Init(void)
+{
+	UART_HandleTypeDef *UartHandle = &RaspberrypiUartHandle;
+
+	// HW init, Port init, etc...
+	HAL_UART_MspInitRASPBERRYPI(UartHandle);
+
+
+	//##-1- Configure the UART peripheral ######################################
+	// Put the USART peripheral in the Asynchronous mode (UART Mode)
+	/* UARTx configured as follow:
+	  - Word Length = 8 Bits
+	  - Stop Bit = One Stop bit
+	  - Parity = None
+	  - BaudRate = 9600 baud
+	  - Hardware flow control disabled (RTS and CTS signals) */
+	if ( UartHandle == &RaspberrypiUartHandle)
+	{
+		UartHandle->Instance        = RASPBERRYPI_USARTx;
+		UartHandle->Init.BaudRate   = 115200;
+	}
+
+
+	UartHandle->Init.WordLength = UART_WORDLENGTH_8B;
+	UartHandle->Init.StopBits   = UART_STOPBITS_1;
+	UartHandle->Init.Parity     = UART_PARITY_NONE;
+	UartHandle->Init.HwFlowCtl  = UART_HWCONTROL_NONE;
+	UartHandle->Init.Mode       = UART_MODE_TX_RX;
+
+	if(HAL_UART_Init(UartHandle) == HAL_OK)
+	{
+
+	}
+	else
+	{
+		// != HAL_OK
+		Error_Handler();
+	}
+}
+
+
+
+void HAL_UART_MspInitRASPBERRYPI(UART_HandleTypeDef *huart)
+{
+
+	GPIO_InitTypeDef  GPIO_InitStruct;
+
+
+	if (huart == &RaspberrypiUartHandle)
+	{
+		// ##-1- Enable peripherals and GPIO Clocks #################################
+
+		// Enable GPIO TX/RX clock
+		// Enable USARTx clock
+		RASPBERRYPI_USART_CLK_ENABLES();
+
+
+		// ##-2- Configure peripheral GPIO ##########################################
+		// UART TX GPIO pin configuration
+		GPIO_InitStruct.Pin       = RASPBERRYPI_USART_TX_GPIO_PIN;
+		GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
+		GPIO_InitStruct.Pull      = GPIO_NOPULL;
+		GPIO_InitStruct.Speed     = GPIO_SPEED_MEDIUM;
+		GPIO_InitStruct.Alternate = RASPBERRYPI_USART_AF;
+
+		HAL_GPIO_Init(RASPBERRYPI_USART_TX_GPIO_PORT, &GPIO_InitStruct);
+
+		// UART RX GPIO pin configuration
+		GPIO_InitStruct.Pin = RASPBERRYPI_USART_RX_GPIO_PIN;
+		//GPIO_InitStruct.Alternate = DEBUG_USART_AF;
+
+		HAL_GPIO_Init(RASPBERRYPI_USART_RX_GPIO_PORT, &GPIO_InitStruct);
+
+
+		// ##-3- Configure the NVIC for UART ########################################
+		// NVIC for USARTx
+
+		HAL_NVIC_SetPriority(RASPBERRYPI_USARTx_IRQn, RASPBERRYPI_USART_PREEMT_PRIORITY, RASPBERRYPI_USART_SUB_PRIORITY);
+		HAL_NVIC_EnableIRQ(RASPBERRYPI_USARTx_IRQn);
+	}
+
+}
+
+
+
 // void RASPBERRYPI_SendMessage(uint8_t myAddress, HOMEAUTMESSAGE_FunctionType functionType, HOMEAUTMESSAGE_DataType dataType , float data)
 void RASPBERRYPI_SendMessage(uint8_t myAddress, uint8_t functionType, uint8_t dataType , float data)
 {
@@ -161,102 +246,9 @@ void RASPBERRYPI_SendMessage(uint8_t myAddress, uint8_t functionType, uint8_t da
 	
 	// Sending:
 	
-	/*
-	// Egész
-	uint32_t data1 = (uint32_t)data;
-	// Tört
-	uint32_t data2 = (uint32_t)(data*100) - (data1*100);
-	uprintf("%d_%c%c_%d.%d\r\n",myAddress,function,type,data1,data2);
-	*/
-	uprintf("#%d_%c%c_%0.6f\r\n",myAddress,function,type,data);
+	uprintf("#%d_%c%c_%0.2f\r\n",myAddress,function,type,data);
 	
 }
 
-
-
-void RASPBERRYPI_Init(void)
-{
-	UART_HandleTypeDef *UartHandle = &RaspberrypiUartHandle;
-	
-	// HW init, Port init, etc...
-	HAL_UART_MspInitRASPBERRYPI(UartHandle);
-	
-
-	//##-1- Configure the UART peripheral ######################################
-	// Put the USART peripheral in the Asynchronous mode (UART Mode)
-	/* UARTx configured as follow:
-	  - Word Length = 8 Bits
-	  - Stop Bit = One Stop bit
-	  - Parity = None
-	  - BaudRate = 9600 baud
-	  - Hardware flow control disabled (RTS and CTS signals) */
-	if ( UartHandle == &RaspberrypiUartHandle)
-	{
-		UartHandle->Instance        = RASPBERRYPI_USARTx;
-		UartHandle->Init.BaudRate   = 115200;
-	}
-
-	
-	UartHandle->Init.WordLength = UART_WORDLENGTH_8B;
-	UartHandle->Init.StopBits   = UART_STOPBITS_1;
-	UartHandle->Init.Parity     = UART_PARITY_NONE;
-	UartHandle->Init.HwFlowCtl  = UART_HWCONTROL_NONE;
-	UartHandle->Init.Mode       = UART_MODE_TX_RX;
-
-	if(HAL_UART_Init(UartHandle) == HAL_OK)
-	{	
-		
-	}
-	else	
-	{	
-		// != HAL_OK
-		Error_Handler();
-	}
-}
-
-
-
-
-void HAL_UART_MspInitRASPBERRYPI(UART_HandleTypeDef *huart)
-{
-	
-	GPIO_InitTypeDef  GPIO_InitStruct;
-
-	
-	if (huart == &RaspberrypiUartHandle)
-	{
-		// ##-1- Enable peripherals and GPIO Clocks #################################
-
-		// Enable GPIO TX/RX clock
-		// Enable USARTx clock
-		RASPBERRYPI_USART_CLK_ENABLES();
-
-		
-		// ##-2- Configure peripheral GPIO ##########################################
-		// UART TX GPIO pin configuration
-		GPIO_InitStruct.Pin       = RASPBERRYPI_USART_TX_GPIO_PIN;
-		GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
-		GPIO_InitStruct.Pull      = GPIO_NOPULL;
-		GPIO_InitStruct.Speed     = GPIO_SPEED_MEDIUM;
-		GPIO_InitStruct.Alternate = RASPBERRYPI_USART_AF;
-
-		HAL_GPIO_Init(RASPBERRYPI_USART_TX_GPIO_PORT, &GPIO_InitStruct);
-
-		// UART RX GPIO pin configuration
-		GPIO_InitStruct.Pin = RASPBERRYPI_USART_RX_GPIO_PIN;
-		//GPIO_InitStruct.Alternate = DEBUG_USART_AF;
-
-		HAL_GPIO_Init(RASPBERRYPI_USART_RX_GPIO_PORT, &GPIO_InitStruct);
-
-
-		// ##-3- Configure the NVIC for UART ########################################
-		// NVIC for USARTx
-
-		HAL_NVIC_SetPriority(RASPBERRYPI_USARTx_IRQn, RASPBERRYPI_USART_PREEMT_PRIORITY, RASPBERRYPI_USART_SUB_PRIORITY);
-		HAL_NVIC_EnableIRQ(RASPBERRYPI_USARTx_IRQn);
-	}
-
-	
-}
 
 #endif	// #ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
