@@ -173,7 +173,13 @@ const CommandStruct CommandList[] =
 		.description = "Raspberry Pi HomeAutMessage sending",
 		.syntax = "-",
 		.CommandArgNum = CommandArgument_2
+	},
+	{
+		.name = "dac",
+		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_dac,
+		.CommandArgNum = CommandArgument_1
 	}
+
 
 	/*
 	{
@@ -1526,7 +1532,7 @@ uint32_t CommandFunction_raspberrypi (uint32_t argc, char** argv)
 		if (!UnsignedDecimalStringToNum(argv[2],&Arg3Num))
 		{
 			USART_SendString("Wrong 1. argument!\r\n");
-			return Return_False;
+			return CommandResult_Error_WrongArgument1;
 		}
 
 		if (Arg3Num > 0)
@@ -1545,7 +1551,7 @@ uint32_t CommandFunction_raspberrypi (uint32_t argc, char** argv)
 
 	uprintf("Wrong parameter");
 
-	return Return_False;
+	return CommandResult_Error_Unknown;
 }
 #endif
 
@@ -1658,5 +1664,25 @@ uint32_t CommandFunction_ESP8266	( uint32_t argc, char** argv ) {
 }
 */
 
+#ifdef CONFIG_MODULE_DAC_ENABLE
+// TODO: typedef enummal visszatérni mindenhol
+uint32_t CommandFunction_dac (uint32_t argc, char** argv)
+{
+
+	if (!UnsignedDecimalStringToNum(argv[1],&Arg2Num))
+	{
+		USART_SendString("Wrong 1. argument!\r\n");
+		return CommandResult_Error_WrongArgument1;
+	}
+
+	if(HAL_DAC_SetValue(&DacHandle, DACx_CHANNEL1, DAC_ALIGN_12B_R, Arg2Num) != HAL_OK)
+	{
+		/* Setting value Error */
+		Error_Handler();
+	}
+
+	return CommandResult_Ok;
+}
+#endif
 
 /* END OF COMMAND FUNCTIONS */

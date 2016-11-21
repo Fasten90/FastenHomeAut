@@ -120,6 +120,12 @@ int main(void)
 #endif
 
 
+#ifdef CONFIG_MODULE_DAC_ENABLE
+	HAL_DAC_MspInit(&DacHandle);
+
+	DAC_Ch1_TriangleConfig();
+#endif
+
 	// DEBUG USART
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 #ifdef CONFIG_USE_FREERTOS

@@ -71,7 +71,8 @@ typedef enum
 	CommandResult_Error_TooFewArgument,
 	CommandResult_Error_WrongArgumentNum,
 	CommandResult_Error_TooManyArgument,
-	CommandResult_Error_CommandArgNumIsWrong
+	CommandResult_Error_CommandArgNumIsWrong,
+	CommandResult_Error_Unknown
 } CommandResult_t;
 
 
@@ -118,6 +119,8 @@ uint32_t CommandFunction_flashwrite	( uint32_t argc, char** argv );
 uint32_t CommandFunction_temp	( uint32_t argc, char** argv );
 
 uint32_t CommandFunction_raspberrypi ( uint32_t argc, char** argv );
+
+uint32_t CommandFunction_dac (uint32_t argc, char** argv);
 
 /*
 uint32_t CommandFunction_buzzer	( uint32_t argc, char** argv );

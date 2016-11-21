@@ -311,7 +311,7 @@ void MONITOR_CheckCommand ( void )
 #endif
 
 	// Welcome message
-	MONITOR_SendPrimitiveWelcome();
+	//MONITOR_SendPrimitiveWelcome();
 
 
 	// Infinite "task" loop
