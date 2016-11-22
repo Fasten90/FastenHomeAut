@@ -122,8 +122,7 @@ int main(void)
 
 #ifdef CONFIG_MODULE_DAC_ENABLE
 	HAL_DAC_MspInit(&DacHandle);
-
-	DAC_Ch1_TriangleConfig();
+	DAC_Config();
 #endif
 
 	// DEBUG USART

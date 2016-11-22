@@ -177,7 +177,7 @@ const CommandStruct CommandList[] =
 	{
 		.name = "dac",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_dac,
-		.CommandArgNum = CommandArgument_1
+		.CommandArgNum = CommandArgument_2
 	}
 
 
@@ -1669,17 +1669,22 @@ uint32_t CommandFunction_ESP8266	( uint32_t argc, char** argv ) {
 uint32_t CommandFunction_dac (uint32_t argc, char** argv)
 {
 
+	float voltage = 0.0f;
+
 	if (!UnsignedDecimalStringToNum(argv[1],&Arg2Num))
 	{
-		USART_SendString("Wrong 1. argument!\r\n");
+		USART_SendLine("Wrong 1. argument!");
 		return CommandResult_Error_WrongArgument1;
 	}
 
-	if(HAL_DAC_SetValue(&DacHandle, DACx_CHANNEL1, DAC_ALIGN_12B_R, Arg2Num) != HAL_OK)
+	if (!StringToFloat(argv[2],&voltage))
 	{
-		/* Setting value Error */
-		Error_Handler();
+		USART_SendLine("Wrong 2. argument!");
+		return CommandResult_Error_WrongArgument2;
 	}
+
+	DAC_SetValue(Arg2Num,voltage);
+
 
 	return CommandResult_Ok;
 }

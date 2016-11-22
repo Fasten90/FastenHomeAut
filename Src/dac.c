@@ -20,7 +20,7 @@ DAC_HandleTypeDef    DacHandle;
 static DAC_ChannelConfTypeDef sConfig;
 
 
-void DAC_Ch1_TriangleConfig(void);
+void DAC_Config(void);
 
 
 void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac)
@@ -46,7 +46,7 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac)
 
 
 
-void DAC_Ch1_TriangleConfig(void)
+void DAC_Config(void)
 {
 
   /*##-1- Configure the DAC peripheral #######################################*/
@@ -72,7 +72,7 @@ void DAC_Ch1_TriangleConfig(void)
 
   /*##-5- Set DAC channel1 DHR12RD register ################################################*/
 
-  if(HAL_DAC_SetValue(&DacHandle, DACx_CHANNEL1, DAC_ALIGN_8B_R, 0xFF) != HAL_OK)
+  if(HAL_DAC_SetValue(&DacHandle, DACx_CHANNEL1, DAC_ALIGN_12B_R, 0x00) != HAL_OK)
   {
 	/* Setting value Error */
 	Error_Handler();
@@ -89,3 +89,53 @@ void DAC_Ch1_TriangleConfig(void)
 
 }
 
+
+
+/**
+ * \brief	Convert voltage to DA value
+ */
+uint32_t DAC_VoltageToBinary (float voltage)
+{
+	return voltage / DAC_MAX_VOLTAGE * DAC_DA_MAX_VALUE;
+}
+
+
+
+/**
+ * \brief	Set DAC value
+ */
+bool DAC_SetValue (DAC_Channel_t channel, float voltage)
+{
+
+	uint32_t channelDefine = DACx_CHANNEL1;
+	uint32_t dacValue = 0;
+
+	// Check channel
+	switch (channel)
+	{
+		case Channel_Unknown:
+			channelDefine = DACx_CHANNEL1;
+			break;
+
+		case Channel_1:
+			channelDefine = DACx_CHANNEL1;
+			break;
+
+		case Channel_2:
+			channelDefine = DACx_CHANNEL1;
+			break;
+
+		default:
+			channelDefine = DACx_CHANNEL1;
+			break;
+	}
+
+	// Check value
+	dacValue = DAC_VoltageToBinary(voltage);
+
+	if(HAL_DAC_SetValue(&DacHandle, channelDefine, DAC_ALIGN_12B_R, dacValue) != HAL_OK)
+	{
+		/* Setting value Error */
+		Error_Handler();
+	}
+}
