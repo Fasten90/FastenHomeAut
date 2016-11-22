@@ -211,9 +211,9 @@ void MONITOR_SendWelcome ( void )
 	#endif
 
 
-//	USART_ESCAPE_BACKGROUND_WHITE();		// background: white
-//	//USART_ESCAPE_BACKGROUND_DEFAULT();	// Note: White in Hyperterminal is grey colour
-//	USART_ESCAPE_TEXT_BLACK();				// text: black
+	//USART_ESCAPE_BACKGROUND_WHITE();		// background: white
+	//USART_ESCAPE_BACKGROUND_DEFAULT();	// Note: White in Hyperterminal is grey colour
+	//USART_ESCAPE_TEXT_BLACK();			// text: black
 
 	
 	USART_ESCAPE_BACKGROUND_DEFAULT();
@@ -311,14 +311,14 @@ void MONITOR_CheckCommand ( void )
 #endif
 
 	// Welcome message
-	//MONITOR_SendPrimitiveWelcome();
+	MONITOR_SendPrimitiveWelcome();
 
 
 	// Infinite "task" loop
 	while (1)
 	{
 
-		//Always checking the Command
+		// Always checking the Command
 		if ( MONITOR_CommandReceiveEnable )
 		{
 

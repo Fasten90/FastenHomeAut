@@ -260,12 +260,12 @@ const CommandID_t MONITOR_CommandNum = MONITOR_MAX_COMMAND_NUM;
 //////////////////////////////////////////////////////////////////////////////
 
 
-// Function: cls (clean screen)
+/**
+ * \brief	CLS: Clear screen
+ */
 uint32_t CommandFunction_cls ( uint32_t argc, char** argv )
 {
 
-	//(void)argc;
-	//(void)argv;
 	USART_SEND_CLS();
 
 	return CommandResult_Ok;
@@ -273,6 +273,9 @@ uint32_t CommandFunction_cls ( uint32_t argc, char** argv )
 
 
 
+/**
+ * \brief	Get version
+ */
 uint32_t CommandFunction_version ( uint32_t argc, char** argv )
 {
 	USART_SendLine(Global_Version);
@@ -281,6 +284,10 @@ uint32_t CommandFunction_version ( uint32_t argc, char** argv )
 }
 
 
+
+/**
+ * \brief	Send Welcome message
+ */
 uint32_t CommandFunction_welcome ( uint32_t argc, char** argv )
 {
 	MONITOR_SendPrimitiveWelcome();
@@ -289,148 +296,12 @@ uint32_t CommandFunction_welcome ( uint32_t argc, char** argv )
 }
 
 
-#if 0
-// Function: dl (download)
-// dl <destination> <size>
-// Download to <destination> address <size> bytes from USART
-uint32_t CommandFunction_dl ( uint32_t argc, char** argv )
-{
 
-	unsigned char * destination;
-	uint32_t size;
-	//uint32_t i;
-	//unsigned char byte;
-
-	if ( argc < 3 ) { USART_SendString("Too few arguments!\r\n"); return 0; }
-	if ( argc > 3 ) { USART_SendString("Too many arguments!\r\n"); return 0; }
-
-	if ( StringIsHexadecimalString(argv[1]) ) Arg2Num = StringHexToNum(argv[1]);	// <destination> 	Convert hex to num
-	else { USART_SendString("Wrong 1. argument!\r\n"); return 0; }
-	if ( StringIsUnsignedDecimalString(argv[2]) ) Arg3Num = UnsignedDecimalStringToNum(argv[2]);	// <size>			Convert dec to num
-	else { USART_SendString("Wrong 2. argument!\r\n"); return 0; }
-
-	size = Arg3Num;
-	destination = (unsigned char *)Arg2Num;
-
-
-	// Ellenorizni kell, hogy uint16_t -e
-	if ( size > UINT16_MAX )
-	{
-		USART_SendString("The <size> is too large. Only work with maximum UINT16_MAX\r\n");
-		return RETURN_FALSE;
-	}
-
-	uprintf("Destination: 0x%w\r\n"
-			"Size: %d bytes\r\n",
-			destination,
-			size);
-
-
-
-	USART_SendString("Please send the binary file...\r\n");
-
-
-	/*
-	for ( i = 0; i < size; i++) {			// Loop: receive char and write, while  <size> byte-s not received.
-		//byte = USARTReceiveChar();		// TODO: helyette mas kell
-		HAL_UART_Receive(&UartHandle,&byte,1,1000);
-		*destination = byte;
-		destination++;
-	}
-	*/
-	//taskENTER_CRITICAL();				// TODO: FREERTOS
-
-	// TODO:
-	//
-	/*
-	uint8_t flash_status;
-
-	void save_data_to_flash() {
-
-	  flash_status = FLASH_COMPLETE;
-
-	  FLASH_Unlock();
-	  FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_OPERR |FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR |FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR);
-	  flash_status = FLASH_EraseSector(FLASH_Sector_3, VoltageRange_3);
-
-	  if (flash_status != FLASH_COMPLETE) {
-	    FLASH_Lock();
-	    return;
-	  }
-
-	  uint8_t* address = &flash_data[0];
-
-	  //program first run status bit
-	  flash_status = FLASH_ProgramByte((uint32_t)address, 0x00);
-	  address += 4;
-	  if (flash_status != FLASH_COMPLETE) {
-	    FLASH_Lock();
-	    return;
-	  }
-
-	}
-	*/
-	//*/
-
-	//HAL_UART_Receive(&UartHandle,destination,size,0xFFFFFFFF);
-
-	uprintf("Jelenleg teszteles alatt, a FLASH programozassal gond van.\r\n");
-	//FLASH_Test();
-
-		//taskEXIT_CRITICAL(); 				// TODO: FREERTOS
-
-	USART_SendString("Arrived the binary file.\r\n");
-
-
-
-	return CommandResult_Ok;
-}
-#endif
-
-
-
-
-
-// Function: go (jump to an address)
-// go <destination>
-// jump <destination> address
-#if 0
-uint32_t CommandFunction_go ( uint32_t argc, char** argv ) {
-
-	uint32_t destination;
-	int ( *fpntr )( void );
-
-	// TODO: USART_SendLine();
-	// TODO: MONITOR_SendMessage(); ez irányítódjon át egy USART_SendString()-re
-
-	// Convert hex
-	if ( !StringHexToNum(argv[1],&Arg2Num,0))
-	{
-		return CommandResult_Error_WrongArgument1;
-	}
-
-	destination = Arg2Num;
-	uprintf("Go destination: 0x%w\r\n",
-			destination);
-
-
-	fpntr = (int (*) (void))destination;		// casting
-	fpntr();
-
-	// Now, for example: "go 20000151"
-
-	// We can use the "jump" ASM instruction, but not a good idea
-	// Programming manual page 92, B instruction
-
-	return CommandResult_Ok;
-}
-#endif
-
-
-
-// Function: help (list commands)
-// 'help' or 'help <command>'
-// Listing commands or write the command's describe
+/**
+ * \brief	Help command
+ * 			Use: 'help', or 'help <commandname>'
+ * 			List commands or write the command's decription
+ */
 uint32_t CommandFunction_help ( uint32_t argc, char** argv )
 {
 
@@ -471,7 +342,9 @@ uint32_t CommandFunction_help ( uint32_t argc, char** argv )
 
 
 
-// Function: reset
+/**
+ * \brief	Reset command
+ */
 uint32_t CommandFunction_reset ( uint32_t argc, char** argv )
 {
 
@@ -491,101 +364,14 @@ uint32_t CommandFunction_reset ( uint32_t argc, char** argv )
 
 
 
-/*
-// Function: mr (memory read)
-// mr <source> <size>
-// source: hex
-// size: dec
-// read <size> byte-s from <source> address
-uint32_t CommandFunction_mr ( uint32_t argc, char** argv ) {
-
-
-	uint32_t *source;
-	uint32_t *p;
-	unsigned short int size;
-	uint32_t i;
-
-
-	if ( argc < 3 ) {	USART_SendString("Too few arguments!\r\n");	return 0;	}
-	if ( argc > 3 ) {	USART_SendString("Too many arguments!\r\n");	return 0;	}
-
-	if ( StringIsHexadecimalString(argv[1]) ) Arg2Num = StringHexToNum(argv[1]);	// Convert arg2, source to hex
-	else { USART_SendString("Wrong 1. argument!"); return 2; }
-	if ( StringIsUnsignedDecimalString(argv[2]) ) Arg3Num = StringDecToNum(argv[2]);	// Convert arg3, size to dec
-	else { USART_SendString("Wrong 2. argument!"); return 2; }
-
-	source = ( uint32_t *) Arg2Num;		// casting for valid numbers
-	size = ( unsigned short int ) Arg3Num;	// <size> max 256
-	// TODO: checking the correct address
-
-	uprintf("Source: 0x%w\r\n"
-			"Size: %d\r\n",
-			source,size);
-
-	i=0;
-	for (p = source; p < source+size/4; p++) {
-		if ( !(i % 4) ) uprintf("\r\n 0x%w:",p);
-		uprintf(" %w",*p);
-		i++;
-	}
-
-	return 1;
-}
-*/
-
-
-
-/*
-// FunctioN: mw - memory write
-// mwb <destination> <data>
-// destination: hex
-// data: hex
-// mwb, mwh, mww commands
-uint32_t CommandFunction_mw ( uint32_t argc, char** argv ) {
-
-	unsigned char *destination1;
-	unsigned short int *destination2;
-	uint32_t *destination3;
-
-
-	if ( argc < 3 ) {	USART_SendString("Too few arguments!\r\n");	return 0;	}
-	if ( argc > 3 ) {	USART_SendString("Too many arguments!\r\n");	return 0;	}
-
-	if ( StringIsHexadecimalString(argv[1]) ) Arg2Num = StringHexToNum(argv[1]);	// Convert hex
-	else { USART_SendString("Wrong 1. argument!"); return 2; }
-	if ( StringIsHexadecimalString(argv[2]) ) Arg3Num = StringHexToNum(argv[2]);	// Convert hex
-	else { USART_SendString("Wrong 2. Argument!"); return 2; }
-
-
-	if (!StrCmp(argv[0],"mwb")) {
-		destination1 = ( unsigned char *) Arg2Num;
-		*destination1 = ( unsigned char ) Arg3Num;
-		uprintf("Write: %b to: %w",Arg3Num,Arg2Num);
-	}
-	else if(!StrCmp(argv[0],"mwh")) {
-		destination2 = ( unsigned short int *) Arg2Num;
-		*destination2 = ( unsigned short int) Arg3Num;
-		uprintf("Write: %h to: %w",Arg3Num,Arg2Num);
-	}
-	else if(!StrCmp(argv[0],"mww")) {
-		destination3 = ( uint32_t *) Arg2Num;
-		*destination3 = ( uint32_t ) Arg3Num;
-		uprintf("Write: %w to: %w",Arg3Num,Arg2Num);
-	}
-
-
-	return 1;
-}
-*/
-
-
-
-
-// Function: led turn on, turn off, or switch
-// led on <num>
-// or led off <num>
-// or led toggle <num>
-// or led status <dummy>
+/**
+ * \brief	Set LED (turn on, turn off, toggle, status)
+ * 			Commands:
+ *			led on <num>
+ *			led off <num>
+ *			led toggle <num>
+ *			led status <dummy>
+ */
 uint32_t CommandFunction_led ( uint32_t argc, char** argv )	// TODO: !!IMPORTANT!! atirni
 {
 
@@ -639,7 +425,10 @@ uint32_t CommandFunction_led ( uint32_t argc, char** argv )	// TODO: !!IMPORTANT
 
 
 
-// Function: Read temperature and Vref values
+/**
+ * \brief	Temperature
+ * 			Read temperature and Vref values
+ */
 uint32_t CommandFunction_temp	( uint32_t argc, char** argv ) {
 
 	//uprintf("Temperature: %d [C]\r\n",ADC_GetTemp());
@@ -658,145 +447,9 @@ uint32_t CommandFunction_temp	( uint32_t argc, char** argv ) {
 
 
 
-
-/*
-// Function: Go to STOP mode
-uint32_t CommandFunction_stop	( uint32_t argc, char** argv ) {
-
-	// Take anything before stop mode
-	LED_ALARM_ON();
-	LCD_Instr_DisplayClear();
-	LCD_SendString_2line("RadioAlarm","in STOP mode",2,2);
-	
-	uprintf("Go to STOP mode...\r\n"
-					"Wake up with USER button\r\n"
-					);
-	
-	LOWPOWER_GotoStopMode();
-	
-	LED_ALARM_OFF();
-	LCD_Instr_DisplayClear();
-	LCD_SendString_2line("RadioAlarm","",2,2);
-	uprintf("End of STOP mode\r\n");
-	
-	return 1;
-}
-*/
-
-
-
-/*
-// Function: EEPROM read
-// Syntax: romr <address>
-uint32_t CommandFunction_romr	( uint32_t argc, char** argv ) {
-
-	Arg2Num = StringDecToNum(argv[1]);
-		
-	//uprintf("address: 0x%h\r\n"
-	//				"data:    0x%b\r\n",
-	//				Arg2Num,
-	//				EEPROM_ReadByte(Arg2Num)
-	//				);
-	
-	return 1;
-}
-*/
-
-
-/*
-// Function: EEPROM write
-// Syntax: romw <address> <data>
-uint32_t CommandFunction_romw	( uint32_t argc, char** argv ) {
-
-
-	Arg2Num = StringHexToNum(argv[1]);
-	Arg3Num = StringHexToNum(argv[2]);
-	
-	uprintf("address: 0x%h\r\n"
-					"data:    0x%b\r\n",
-					Arg2Num,
-					Arg3Num);
-	//EEPROM_WriteByte(Arg2Num,Arg3Num);
-
-	return 1;
-}
-*/
-
-
-/*
-// Function: Read EEPROM's status register
-uint32_t CommandFunction_romsr	( uint32_t argc, char** argv ) {
-		
-	//uprintf("Status register: 0x%h\r\n",
-	//				EEPROM_ReadStatusRegister ()
-	//				);
-	
-	return 1;
-}
-*/
-
-
-/*
-// Function: EEPROM, Write Enable
-uint32_t CommandFunction_romwe	( uint32_t argc, char** argv ) {
-		
-	//EEPROM_WriteEnable ();
-
-	uprintf("EEPROM write enable\r\n");
-	
-	return 1;
-}
-*/
-
-
-/*
-// Function: initialize EEPROM
-uint32_t CommandFunction_rominit	( uint32_t argc, char** argv ) {
-		
-	//EEPROM_Init ();
-
-	uprintf("EEPROM initialized\r\n");
-	
-	return 1;
-}
-*/
-
-
-/*
-uint32_t CommandFunction_standby	( uint32_t argc, char** argv ) {
-	
-	LCD_Instr_DisplayClear();
-	LCD_SendString_2line("RadioAlarm","in STANDBY mode",2,2);
-	
-	uprintf("Go to STANDBY mode. You can wake up(=reset) with RESET and USER button!\r\n");
-	
-	LOWPOWER_GotoSTANDBYMode ();
-	
-	// Exit from STANDBY mode is same with reset, this point is never reachable
-	
-	return 1;
-}
-*/
-
-
-/*
-uint32_t CommandFunction_rtc	( uint32_t argc, char** argv ) {
-	
-	Arg2Num = StringDecToNum(argv[1]);
-	
-	uprintf("RTC wait %d second(s)\r\n",Arg2Num);
-	
-	//RTC_WaitSeconds(Arg2Num);
-	
-	uprintf("End\r\n");
-	
-	return 1;
-}
-*/
-
-
-
-// Function: TEST...
+/**
+ * \brief	Test function
+ */
 uint32_t CommandFunction_test	( uint32_t argc, char** argv ) {
 	
 	//(void)argc;
@@ -964,6 +617,643 @@ uint32_t CommandFunction_test	( uint32_t argc, char** argv ) {
 
 
 
+/**
+ * \brief	set global variable
+ * 			Use: 'set <globalvariablename> <value>'
+ */
+uint32_t CommandFunction_set ( uint32_t argc, char** argv )
+{
+
+	char resultBuffer[30];
+
+	GlobalVarHandler_ProcessCommand(
+			argv[1],argv[2],
+			SetGet_Set,Source_DebugSerial,
+			resultBuffer,30);
+
+	uprintf("%s\r\n",resultBuffer);
+
+
+	return CommandResult_Ok;
+
+}
+
+
+
+/**
+ * \brief	Get globalvar value
+ * 			Use: 'get <globalvarname>'
+ */
+uint32_t CommandFunction_get ( uint32_t argc, char** argv )
+{
+
+	char resultBuffer[30];
+
+	GlobalVarHandler_ProcessCommand(
+			argv[1],argv[2],
+			SetGet_Get,Source_DebugSerial,
+			resultBuffer,30);
+
+	uprintf("%s\r\n",resultBuffer);
+
+
+	return CommandResult_Ok;
+
+}
+
+
+
+/**
+ * \brief	Global variable help
+ * 			Use: '? <globalvar>'
+ */
+uint32_t CommandFunction_GlobalVariableHelp ( uint32_t argc, char** argv )
+{
+
+	char resultBuffer[30];
+
+	GlobalVarHandler_ProcessCommand(
+			argv[1],argv[2],
+			SetGet_Help,Source_DebugSerial,
+			resultBuffer,30);
+
+	uprintf("%s\r\n",resultBuffer);
+
+
+	return CommandResult_Ok;
+
+}
+
+
+
+/**
+ * \brief	List global variables
+ */
+uint32_t CommandFunction_GlobalVariableList ( uint32_t argc, char** argv )
+{
+
+	GlobalVarHandler_ListAllVariables();
+
+	return CommandResult_Ok;
+
+}
+
+
+
+/**
+ * \brief	Flash erase
+ * 			Use: 'flashdel <address> <block/sector>'
+ */
+uint32_t CommandFunction_flashdel	( uint32_t argc, char** argv ) {
+
+	// Convert arg2 hex
+	if ( !StringHexToNum(argv[1],&Arg2Num))
+	{
+		return CommandResult_Error_WrongArgument1;
+	}
+
+
+	#ifdef FLASH_H_
+	if (!StrCmp(argv[2],"block"))
+	{
+		FLASH_BlockErase(Arg2Num,5000);
+	}
+	else if (!StrCmp(argv[2],"sector"))
+	{
+		FLASH_SectorErase(Arg2Num,5000);
+	}
+	else
+	{
+		return RETURN_FALSE;
+	}
+	#endif		
+			
+	uprintf("address erased: 0x%h\r\n",
+			Arg2Num
+			);
+	
+	return CommandResult_Ok;
+}
+
+
+
+/**
+ * \brief	Flash read
+ * 			Use: 'flashread <address>'
+ */
+uint32_t CommandFunction_flashread	( uint32_t argc, char** argv ) {
+	
+
+	// Convert arg2 hex
+	if ( !StringHexToNum(argv[1],&Arg2Num))
+	{
+		return CommandResult_Error_WrongArgument1;
+	}
+
+	#ifdef FLASH_H_
+	uint8_t Buffer[1];
+	FLASH_Read(Arg2Num,Buffer,1,5000);
+	
+	
+	uprintf("address: 0x%w\r\n"
+			"data:    0x%b\r\n",
+			Arg2Num,
+			Buffer[0]
+			);
+	#endif
+	
+	return CommandResult_Ok;
+}
+
+
+
+
+/**
+ * \brief	Flash write
+ * 			Use: 'flashwrite <address> <data>'
+ */
+uint32_t CommandFunction_flashwrite	( uint32_t argc, char** argv ) {
+
+	// Convert arg2 hex
+	if ( !StringHexToNum(argv[1],&Arg2Num))
+	{
+		return CommandResult_Error_WrongArgument1;
+	}
+	
+	// Convert arg3, decimal
+	if (!UnsignedDecimalStringToNum(argv[2],&Arg3Num))
+	{
+		return CommandResult_Error_WrongArgument2;
+	}
+
+
+	#ifdef FLASH_H_
+	uint8_t Buffer[1];
+	
+	Buffer[0] = (uint8_t)Arg3Num;
+		
+	FLASH_Write(Arg2Num,Buffer,1,5000);
+	#endif
+	
+	uprintf("address: 0x%w\r\n"
+			"data:    0x%b\r\n",
+			Arg2Num,
+			Arg3Num);
+
+	
+	return CommandResult_Ok;
+}
+
+
+
+#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
+/**
+ * \brief	Raspberry Pi command
+ */
+uint32_t CommandFunction_raspberrypi (uint32_t argc, char** argv)
+{
+	
+	// Check arg 2
+	if (!StrCmp(argv[1],"setout"))
+	{
+		// setout
+		/*
+		HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
+			0,255,
+			Function_Command, Command_SetOutput,
+			Arg3Num, 1);
+		*/
+
+		// Convert arg3, decimal
+		if (!UnsignedDecimalStringToNum(argv[2],&Arg3Num))
+		{
+			USART_SendString("Wrong 1. argument!\r\n");
+			return CommandResult_Error_WrongArgument1;
+		}
+
+		if (Arg3Num > 0)
+		{
+			LED_BLUE_ON();
+			LED_GREEN_ON();
+		}
+		else
+		{
+			LED_BLUE_OFF();
+			LED_GREEN_OFF();
+		}
+
+		return CommandResult_Ok;
+	}
+
+	uprintf("Wrong parameter");
+
+	return CommandResult_Error_Unknown;
+}
+#endif
+
+
+
+#ifdef CONFIG_MODULE_DAC_ENABLE
+/**
+ * \brief	DAC function
+ * 			Use: 'dac <channel> <voltage>'
+ */
+uint32_t CommandFunction_dac (uint32_t argc, char** argv)
+{
+
+	float voltage = 0.0f;
+
+	if (!UnsignedDecimalStringToNum(argv[1],&Arg2Num))
+	{
+		USART_SendLine("Wrong 1. argument!");
+		return CommandResult_Error_WrongArgument1;
+	}
+
+	if (!StringToFloat(argv[2],&voltage))
+	{
+		USART_SendLine("Wrong 2. argument!");
+		return CommandResult_Error_WrongArgument2;
+	}
+
+	DAC_SetValue(Arg2Num,voltage);
+
+
+	return CommandResult_Ok;
+}
+#endif
+
+
+
+#if 0
+// Function: dl (download)
+// dl <destination> <size>
+// Download to <destination> address <size> bytes from USART
+uint32_t CommandFunction_dl ( uint32_t argc, char** argv )
+{
+
+	unsigned char * destination;
+	uint32_t size;
+	//uint32_t i;
+	//unsigned char byte;
+
+	if ( argc < 3 ) { USART_SendString("Too few arguments!\r\n"); return 0; }
+	if ( argc > 3 ) { USART_SendString("Too many arguments!\r\n"); return 0; }
+
+	if ( StringIsHexadecimalString(argv[1]) ) Arg2Num = StringHexToNum(argv[1]);	// <destination> 	Convert hex to num
+	else { USART_SendString("Wrong 1. argument!\r\n"); return 0; }
+	if ( StringIsUnsignedDecimalString(argv[2]) ) Arg3Num = UnsignedDecimalStringToNum(argv[2]);	// <size>			Convert dec to num
+	else { USART_SendString("Wrong 2. argument!\r\n"); return 0; }
+
+	size = Arg3Num;
+	destination = (unsigned char *)Arg2Num;
+
+
+	// Ellenorizni kell, hogy uint16_t -e
+	if ( size > UINT16_MAX )
+	{
+		USART_SendString("The <size> is too large. Only work with maximum UINT16_MAX\r\n");
+		return RETURN_FALSE;
+	}
+
+	uprintf("Destination: 0x%w\r\n"
+			"Size: %d bytes\r\n",
+			destination,
+			size);
+
+
+
+	USART_SendString("Please send the binary file...\r\n");
+
+
+	/*
+	for ( i = 0; i < size; i++) {			// Loop: receive char and write, while  <size> byte-s not received.
+		//byte = USARTReceiveChar();		// TODO: helyette mas kell
+		HAL_UART_Receive(&UartHandle,&byte,1,1000);
+		*destination = byte;
+		destination++;
+	}
+	*/
+	//taskENTER_CRITICAL();				// TODO: FREERTOS
+
+	// TODO:
+	//
+	/*
+	uint8_t flash_status;
+
+	void save_data_to_flash() {
+
+	  flash_status = FLASH_COMPLETE;
+
+	  FLASH_Unlock();
+	  FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_OPERR |FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR |FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR);
+	  flash_status = FLASH_EraseSector(FLASH_Sector_3, VoltageRange_3);
+
+	  if (flash_status != FLASH_COMPLETE) {
+	    FLASH_Lock();
+	    return;
+	  }
+
+	  uint8_t* address = &flash_data[0];
+
+	  //program first run status bit
+	  flash_status = FLASH_ProgramByte((uint32_t)address, 0x00);
+	  address += 4;
+	  if (flash_status != FLASH_COMPLETE) {
+	    FLASH_Lock();
+	    return;
+	  }
+
+	}
+	*/
+	//*/
+
+	//HAL_UART_Receive(&UartHandle,destination,size,0xFFFFFFFF);
+
+	uprintf("Jelenleg teszteles alatt, a FLASH programozassal gond van.\r\n");
+	//FLASH_Test();
+
+		//taskEXIT_CRITICAL(); 				// TODO: FREERTOS
+
+	USART_SendString("Arrived the binary file.\r\n");
+
+
+
+	return CommandResult_Ok;
+}
+#endif
+
+
+
+#if 0
+// Function: go (jump to an address)
+// go <destination>
+// jump <destination> address
+uint32_t CommandFunction_go ( uint32_t argc, char** argv ) {
+
+	uint32_t destination;
+	int ( *fpntr )( void );
+
+	// TODO: USART_SendLine();
+	// TODO: MONITOR_SendMessage(); ez irányítódjon át egy USART_SendString()-re
+
+	// Convert hex
+	if ( !StringHexToNum(argv[1],&Arg2Num,0))
+	{
+		return CommandResult_Error_WrongArgument1;
+	}
+
+	destination = Arg2Num;
+	uprintf("Go destination: 0x%w\r\n",
+			destination);
+
+
+	fpntr = (int (*) (void))destination;		// casting
+	fpntr();
+
+	// Now, for example: "go 20000151"
+
+	// We can use the "jump" ASM instruction, but not a good idea
+	// Programming manual page 92, B instruction
+
+	return CommandResult_Ok;
+}
+#endif
+
+
+
+
+#if 0
+// Function: mr (memory read)
+// mr <source> <size>
+// source: hex
+// size: dec
+// read <size> byte-s from <source> address
+uint32_t CommandFunction_mr ( uint32_t argc, char** argv ) {
+
+
+	uint32_t *source;
+	uint32_t *p;
+	unsigned short int size;
+	uint32_t i;
+
+
+	if ( argc < 3 ) {	USART_SendString("Too few arguments!\r\n");	return 0;	}
+	if ( argc > 3 ) {	USART_SendString("Too many arguments!\r\n");	return 0;	}
+
+	if ( StringIsHexadecimalString(argv[1]) ) Arg2Num = StringHexToNum(argv[1]);	// Convert arg2, source to hex
+	else { USART_SendString("Wrong 1. argument!"); return 2; }
+	if ( StringIsUnsignedDecimalString(argv[2]) ) Arg3Num = StringDecToNum(argv[2]);	// Convert arg3, size to dec
+	else { USART_SendString("Wrong 2. argument!"); return 2; }
+
+	source = ( uint32_t *) Arg2Num;		// casting for valid numbers
+	size = ( unsigned short int ) Arg3Num;	// <size> max 256
+	// TODO: checking the correct address
+
+	uprintf("Source: 0x%w\r\n"
+			"Size: %d\r\n",
+			source,size);
+
+	i=0;
+	for (p = source; p < source+size/4; p++) {
+		if ( !(i % 4) ) uprintf("\r\n 0x%w:",p);
+		uprintf(" %w",*p);
+		i++;
+	}
+
+	return 1;
+}
+#endif
+
+
+
+#if 0
+// FunctioN: mw - memory write
+// mwb <destination> <data>
+// destination: hex
+// data: hex
+// mwb, mwh, mww commands
+uint32_t CommandFunction_mw ( uint32_t argc, char** argv ) {
+
+	unsigned char *destination1;
+	unsigned short int *destination2;
+	uint32_t *destination3;
+
+
+	if ( argc < 3 ) {	USART_SendString("Too few arguments!\r\n");	return 0;	}
+	if ( argc > 3 ) {	USART_SendString("Too many arguments!\r\n");	return 0;	}
+
+	if ( StringIsHexadecimalString(argv[1]) ) Arg2Num = StringHexToNum(argv[1]);	// Convert hex
+	else { USART_SendString("Wrong 1. argument!"); return 2; }
+	if ( StringIsHexadecimalString(argv[2]) ) Arg3Num = StringHexToNum(argv[2]);	// Convert hex
+	else { USART_SendString("Wrong 2. Argument!"); return 2; }
+
+
+	if (!StrCmp(argv[0],"mwb")) {
+		destination1 = ( unsigned char *) Arg2Num;
+		*destination1 = ( unsigned char ) Arg3Num;
+		uprintf("Write: %b to: %w",Arg3Num,Arg2Num);
+	}
+	else if(!StrCmp(argv[0],"mwh")) {
+		destination2 = ( unsigned short int *) Arg2Num;
+		*destination2 = ( unsigned short int) Arg3Num;
+		uprintf("Write: %h to: %w",Arg3Num,Arg2Num);
+	}
+	else if(!StrCmp(argv[0],"mww")) {
+		destination3 = ( uint32_t *) Arg2Num;
+		*destination3 = ( uint32_t ) Arg3Num;
+		uprintf("Write: %w to: %w",Arg3Num,Arg2Num);
+	}
+
+
+	return 1;
+}
+#endif
+
+
+
+#if 0
+// Function: Go to STOP mode
+uint32_t CommandFunction_stop	( uint32_t argc, char** argv ) {
+
+	// Take anything before stop mode
+	LED_ALARM_ON();
+	LCD_Instr_DisplayClear();
+	LCD_SendString_2line("RadioAlarm","in STOP mode",2,2);
+
+	uprintf("Go to STOP mode...\r\n"
+					"Wake up with USER button\r\n"
+					);
+
+	LOWPOWER_GotoStopMode();
+
+	LED_ALARM_OFF();
+	LCD_Instr_DisplayClear();
+	LCD_SendString_2line("RadioAlarm","",2,2);
+	uprintf("End of STOP mode\r\n");
+
+	return 1;
+}
+#endif
+
+
+
+#if 0
+// Function: EEPROM read
+// Syntax: romr <address>
+uint32_t CommandFunction_romr	( uint32_t argc, char** argv ) {
+
+	Arg2Num = StringDecToNum(argv[1]);
+
+	//uprintf("address: 0x%h\r\n"
+	//				"data:    0x%b\r\n",
+	//				Arg2Num,
+	//				EEPROM_ReadByte(Arg2Num)
+	//				);
+
+	return 1;
+}
+#endif
+
+
+
+#if 0
+// Function: EEPROM write
+// Syntax: romw <address> <data>
+uint32_t CommandFunction_romw	( uint32_t argc, char** argv ) {
+
+
+	Arg2Num = StringHexToNum(argv[1]);
+	Arg3Num = StringHexToNum(argv[2]);
+
+	uprintf("address: 0x%h\r\n"
+					"data:    0x%b\r\n",
+					Arg2Num,
+					Arg3Num);
+	//EEPROM_WriteByte(Arg2Num,Arg3Num);
+
+	return 1;
+}
+#endif
+
+
+
+#if 0
+// Function: Read EEPROM's status register
+uint32_t CommandFunction_romsr	( uint32_t argc, char** argv ) {
+
+	//uprintf("Status register: 0x%h\r\n",
+	//				EEPROM_ReadStatusRegister ()
+	//				);
+
+	return 1;
+}
+#endif
+
+
+
+#if 0
+// Function: EEPROM, Write Enable
+uint32_t CommandFunction_romwe	( uint32_t argc, char** argv ) {
+
+	//EEPROM_WriteEnable ();
+
+	uprintf("EEPROM write enable\r\n");
+
+	return 1;
+}
+#endif
+
+
+
+#if 0
+// Function: initialize EEPROM
+uint32_t CommandFunction_rominit	( uint32_t argc, char** argv ) {
+
+	//EEPROM_Init ();
+
+	uprintf("EEPROM initialized\r\n");
+
+	return 1;
+}
+#endif
+
+
+
+#if 0
+uint32_t CommandFunction_standby	( uint32_t argc, char** argv ) {
+
+	LCD_Instr_DisplayClear();
+	LCD_SendString_2line("RadioAlarm","in STANDBY mode",2,2);
+
+	uprintf("Go to STANDBY mode. You can wake up(=reset) with RESET and USER button!\r\n");
+
+	LOWPOWER_GotoSTANDBYMode ();
+
+	// Exit from STANDBY mode is same with reset, this point is never reachable
+
+	return 1;
+}
+#endif
+
+
+
+#if 0
+uint32_t CommandFunction_rtc	( uint32_t argc, char** argv ) {
+
+	Arg2Num = StringDecToNum(argv[1]);
+
+	uprintf("RTC wait %d second(s)\r\n",Arg2Num);
+
+	//RTC_WaitSeconds(Arg2Num);
+
+	uprintf("End\r\n");
+
+	return 1;
+}
+#endif
+
+
+
 #if 0
 uint32_t CommandFunction_start	( uint32_t argc, char** argv )
 {
@@ -1000,82 +1290,6 @@ uint32_t CommandFunction_stop	( uint32_t argc, char** argv )
 }
 #endif
 
-
-
-
-// Function: Beallitja a globalis valtozo erteket (set fuggvennyel)
-// Syntax: set <globalvar> <value>
-uint32_t CommandFunction_set ( uint32_t argc, char** argv )
-{
-
-	char resultBuffer[30];
-
-	GlobalVarHandler_ProcessCommand(
-			argv[1],argv[2],
-			SetGet_Set,Source_DebugSerial,
-			resultBuffer,30);
-
-	uprintf("%s\r\n",resultBuffer);
-
-
-	return CommandResult_Ok;
-
-}
-
-
-
-
-
-
-// Function: get <globalvar>
-uint32_t CommandFunction_get ( uint32_t argc, char** argv )
-{
-
-	char resultBuffer[30];
-
-	GlobalVarHandler_ProcessCommand(
-			argv[1],argv[2],
-			SetGet_Get,Source_DebugSerial,
-			resultBuffer,30);
-
-	uprintf("%s\r\n",resultBuffer);
-
-
-	return CommandResult_Ok;
-
-}
-
-
-
-// Function: help <globalvar>
-uint32_t CommandFunction_GlobalVariableHelp ( uint32_t argc, char** argv )
-{
-
-	char resultBuffer[30];
-
-	GlobalVarHandler_ProcessCommand(
-			argv[1],argv[2],
-			SetGet_Help,Source_DebugSerial,
-			resultBuffer,30);
-
-	uprintf("%s\r\n",resultBuffer);
-
-
-	return CommandResult_Ok;
-
-}
-
-
-
-// Function: list globalvars
-uint32_t CommandFunction_GlobalVariableList ( uint32_t argc, char** argv )
-{
-
-	GlobalVarHandler_ListAllVariables();
-
-	return CommandResult_Ok;
-
-}
 
 
 #if 0
@@ -1212,6 +1426,7 @@ uint32_t CommandFunction_proximity	( uint32_t argc, char** argv ) {
 #endif
 
 
+
 #if 0
 uint32_t CommandFunction_log ( uint32_t argc, char** argv )
 {
@@ -1299,7 +1514,7 @@ uint32_t CommandFunction_log ( uint32_t argc, char** argv )
 	{
 		if (!StrCmp(argv[1],"on"))
 		{
-	
+
 			MONITOR_CommandSendBackCharEnable = 1; // Enable to send
 		}
 		else
@@ -1389,7 +1604,7 @@ uint32_t CommandFunction_read ( uint32_t argc, char** argv )
 		#ifdef CONFIG_USE_FREERTOS
 		vTaskDelay(1);
 		#else
-		HAL_Delay(1);	
+		HAL_Delay(1);
 		#endif
 	}
 
@@ -1412,152 +1627,8 @@ uint32_t CommandFunction_read ( uint32_t argc, char** argv )
 #endif
 
 
-// Function: Flash erase
-// Syntax: flashdel <address> <block/sector>
-uint32_t CommandFunction_flashdel	( uint32_t argc, char** argv ) {
 
-	// Convert arg2 hex
-	if ( !StringHexToNum(argv[1],&Arg2Num))
-	{
-		return CommandResult_Error_WrongArgument1;
-	}
-
-
-	#ifdef FLASH_H_
-	if (!StrCmp(argv[2],"block"))
-	{
-		FLASH_BlockErase(Arg2Num,5000);
-	}
-	else if (!StrCmp(argv[2],"sector"))
-	{
-		FLASH_SectorErase(Arg2Num,5000);
-	}
-	else
-	{
-		return RETURN_FALSE;
-	}
-	#endif		
-			
-	uprintf("address erased: 0x%h\r\n",
-			Arg2Num
-			);
-	
-	return CommandResult_Ok;
-}
-
-
-
-// Function: FLASH read
-// Syntax: flashread <address>
-uint32_t CommandFunction_flashread	( uint32_t argc, char** argv ) {
-	
-
-	// Convert arg2 hex
-	if ( !StringHexToNum(argv[1],&Arg2Num))
-	{
-		return CommandResult_Error_WrongArgument1;
-	}
-
-	#ifdef FLASH_H_
-	uint8_t Buffer[1];
-	FLASH_Read(Arg2Num,Buffer,1,5000);
-	
-	
-	uprintf("address: 0x%w\r\n"
-			"data:    0x%b\r\n",
-			Arg2Num,
-			Buffer[0]
-			);
-	#endif
-	
-	return CommandResult_Ok;
-}
-
-
-
-
-// Function: FLASH write
-// Syntax: flashwrite <address> <data>
-uint32_t CommandFunction_flashwrite	( uint32_t argc, char** argv ) {
-
-	// Convert arg2 hex
-	if ( !StringHexToNum(argv[1],&Arg2Num))
-	{
-		return CommandResult_Error_WrongArgument1;
-	}
-	
-	// Convert arg3, decimal
-	if (!UnsignedDecimalStringToNum(argv[2],&Arg3Num))
-	{
-		return CommandResult_Error_WrongArgument2;
-	}
-
-
-	#ifdef FLASH_H_
-	uint8_t Buffer[1];
-	
-	Buffer[0] = (uint8_t)Arg3Num;
-		
-	FLASH_Write(Arg2Num,Buffer,1,5000);
-	#endif
-	
-	uprintf("address: 0x%w\r\n"
-			"data:    0x%b\r\n",
-			Arg2Num,
-			Arg3Num);
-
-	
-	return CommandResult_Ok;
-}
-
-
-
-#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
-// Function: Raspberry pi bridge
-uint32_t CommandFunction_raspberrypi (uint32_t argc, char** argv)
-{
-	
-	// Check arg 2
-	if (!StrCmp(argv[1],"setout"))
-	{
-		// setout
-		/*
-		HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
-			0,255,
-			Function_Command, Command_SetOutput,
-			Arg3Num, 1);
-		*/
-
-		// Convert arg3, decimal
-		if (!UnsignedDecimalStringToNum(argv[2],&Arg3Num))
-		{
-			USART_SendString("Wrong 1. argument!\r\n");
-			return CommandResult_Error_WrongArgument1;
-		}
-
-		if (Arg3Num > 0)
-		{
-			LED_BLUE_ON();
-			LED_GREEN_ON();
-		}
-		else
-		{
-			LED_BLUE_OFF();
-			LED_GREEN_OFF();
-		}
-
-		return CommandResult_Ok;
-	}
-
-	uprintf("Wrong parameter");
-
-	return CommandResult_Error_Unknown;
-}
-#endif
-
-
-
-/*
+#if 0
 // Function: ESP8266 bridge
 uint32_t CommandFunction_ESP8266	( uint32_t argc, char** argv ) {
 
@@ -1566,18 +1637,18 @@ uint32_t CommandFunction_ESP8266	( uint32_t argc, char** argv ) {
 		uprintf("Too many arguments!\r\n");
 		return RETURN_FALSE;
 	}
-	
-	
-	
+
+
+
 	MONITOR_RemoteControl = 1;
 
 	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)MONITOR_RemoteControlBuffer, 1);	// TODO: hibalehetoseg: egy mar meglevo receive_IT utan hivjuk ezt
-	
+
 	USART_SendString("Type your sendingmessage to ESP8266:\r\n");
-	
+
 	while(1)
 	{
-		
+
 		if (xSemaphoreTake(DEBUG_USART_Rx_Semaphore,1000) == pdTRUE)
 		{
 			// received an char
@@ -1594,27 +1665,27 @@ uint32_t CommandFunction_ESP8266	( uint32_t argc, char** argv ) {
 				LED_GREEN_TOGGLE();
 				MONITOR_RemoteControlBuffer[0] = '\r';
 				MONITOR_RemoteControlBuffer[1] = '\n';
-				MONITOR_RemoteControlBuffer[2] = '\0';			
+				MONITOR_RemoteControlBuffer[2] = '\0';
 				USART_SendString("\r\nSended to ESP8266\r\n"
 								 "Wait for the response:\r\n");
-		
+
 				// Receive from ESP8266 (and send on debug usart)
 				uint8_t isExit = 0;
 				HAL_StatusTypeDef status;
-				
+
 				uint8_t exitBuffer[2] = { '\0', '\0' };
 				uint8_t buffer[100];
 				//exitBuffer[0] == 0;
-				
+
 				// For Exit: wait char from Debug USART
 				HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)exitBuffer, 1);
-				
+
 				ESP8266_UartHandle.RxXferCount = 0;
 				for (int i=0; i < 256; i++) buffer[i]='\0';
-				
+
 				// Sending command on ESP8266
 				ESP8266_SendString(MONITOR_RemoteControlBuffer);	// sending "\r\n"
-				
+
 				while(!isExit)
 				{
 					//if ( HAL_UART_Receive(&ESP8266_UartHandle, (uint8_t *)MONITOR_RemoteControlBuffer, 1, 100) == HAL_OK)
@@ -1623,15 +1694,15 @@ uint32_t CommandFunction_ESP8266	( uint32_t argc, char** argv ) {
 					if (status == HAL_OK || status == HAL_TIMEOUT )
 					{
 						uint16_t length = ESP8266_UartHandle.RxXferCount;
-						
+
 						if ( length > 0)
 						{
 							//USART_SendChar(MONITOR_RemoteControlBuffer[0]);	// blokkol és lassú
-							
+
 							//HAL_UART_Transmit(&Debug_UartHandle, (uint8_t *)MONITOR_RemoteControlBuffer, 1,1);	// ez is lassú
 							HAL_UART_Transmit(&Debug_UartHandle, (uint8_t *)buffer, length,5000);	// ez is lassú
 							// TODO: nagyobb buffer és több karakter várása?
-							
+
 							ESP8266_UartHandle.RxXferCount = 0;
 							for (int i=0; i < 256; i++) buffer[i]='\0';
 						}
@@ -1646,48 +1717,24 @@ uint32_t CommandFunction_ESP8266	( uint32_t argc, char** argv ) {
 					}
 				}
 			}
-			
+
 			// Receiving an char from debug uart
 			HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)MONITOR_RemoteControlBuffer, 1);
 		}
 		else
 		{
 		}
-		
+
 	}
-	
+
 	// Never reached, so it commented
 	MONITOR_RemoteControl = 0;
-	
-	return CommandResult_Ok;
-	
-}
-*/
-
-#ifdef CONFIG_MODULE_DAC_ENABLE
-// TODO: typedef enummal visszatérni mindenhol
-uint32_t CommandFunction_dac (uint32_t argc, char** argv)
-{
-
-	float voltage = 0.0f;
-
-	if (!UnsignedDecimalStringToNum(argv[1],&Arg2Num))
-	{
-		USART_SendLine("Wrong 1. argument!");
-		return CommandResult_Error_WrongArgument1;
-	}
-
-	if (!StringToFloat(argv[2],&voltage))
-	{
-		USART_SendLine("Wrong 2. argument!");
-		return CommandResult_Error_WrongArgument2;
-	}
-
-	DAC_SetValue(Arg2Num,voltage);
-
 
 	return CommandResult_Ok;
+
 }
 #endif
+
+
 
 /* END OF COMMAND FUNCTIONS */
