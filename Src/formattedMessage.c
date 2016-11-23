@@ -95,6 +95,6 @@ void FormattedMessage_UnitTest (void)
 	SendColouredMessageWithBackgroundColor("Black text with Red background color\r\n", Color_Black, Color_Red);
 	SendColouredMessageWithBackgroundColor("Black text with Yellow background color\r\n", Color_Black, Color_Yellow);
 
-	SendErrorMessage ("FATAL ERROR EXAMPLE\r\n");
+	SendErrorMessage("FATAL ERROR EXAMPLE\r\n");
 }
 

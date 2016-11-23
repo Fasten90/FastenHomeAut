@@ -41,7 +41,6 @@ extern UART_HandleTypeDef Debug_UartHandle;
 #endif
 
 
-
 uint32_t Arg2Num;
 uint32_t Arg3Num;
 
@@ -263,7 +262,7 @@ const CommandID_t MONITOR_CommandNum = MONITOR_MAX_COMMAND_NUM;
 /**
  * \brief	CLS: Clear screen
  */
-uint32_t CommandFunction_cls ( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_cls ( uint32_t argc, char** argv )
 {
 
 	USART_SEND_CLS();
@@ -276,7 +275,7 @@ uint32_t CommandFunction_cls ( uint32_t argc, char** argv )
 /**
  * \brief	Get version
  */
-uint32_t CommandFunction_version ( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_version ( uint32_t argc, char** argv )
 {
 	USART_SendLine(Global_Version);
 
@@ -288,7 +287,7 @@ uint32_t CommandFunction_version ( uint32_t argc, char** argv )
 /**
  * \brief	Send Welcome message
  */
-uint32_t CommandFunction_welcome ( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_welcome ( uint32_t argc, char** argv )
 {
 	MONITOR_SendPrimitiveWelcome();
 
@@ -302,7 +301,7 @@ uint32_t CommandFunction_welcome ( uint32_t argc, char** argv )
  * 			Use: 'help', or 'help <commandname>'
  * 			List commands or write the command's decription
  */
-uint32_t CommandFunction_help ( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_help ( uint32_t argc, char** argv )
 {
 
 	uint8_t i;
@@ -337,7 +336,7 @@ uint32_t CommandFunction_help ( uint32_t argc, char** argv )
 		return CommandResult_Ok;
 	}
 
-	return CommandResult_Unknown;
+	return CommandResult_Error_Unknown;
 }
 
 
@@ -345,7 +344,7 @@ uint32_t CommandFunction_help ( uint32_t argc, char** argv )
 /**
  * \brief	Reset command
  */
-uint32_t CommandFunction_reset ( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_reset ( uint32_t argc, char** argv )
 {
 
 	//(void)argc;
@@ -364,6 +363,7 @@ uint32_t CommandFunction_reset ( uint32_t argc, char** argv )
 
 
 
+#ifdef CONFIG_MODULE_LED_ENABLE
 /**
  * \brief	Set LED (turn on, turn off, toggle, status)
  * 			Commands:
@@ -372,43 +372,48 @@ uint32_t CommandFunction_reset ( uint32_t argc, char** argv )
  *			led toggle <num>
  *			led status <dummy>
  */
-uint32_t CommandFunction_led ( uint32_t argc, char** argv )	// TODO: !!IMPORTANT!! atirni
+CommandResult_t CommandFunction_led ( uint32_t argc, char** argv )
 {
 
 	// Convert arg2, decimal
 	if (!UnsignedDecimalStringToNum(argv[2],&Arg3Num))
 	{
-		return CommandResult_Error_WrongArgument1;
+		return CommandResult_Error_WrongArgument2;
 	}
 
-
-#ifdef CONFIG_MODULE_LED_ENABLE
-	
-	if (!StrCmp(argv[1],"on")) {
-		switch (Arg3Num) {
+	// Check 2. arg
+	if (!StrCmp(argv[1], "on"))
+	{
+		switch (Arg3Num)
+		{
 			case 1:	LED_BLUE_ON();	break;
 			case 2:	LED_GREEN_ON();	break;
 			case 3:	LED_RED_ON();	break;
 		}
 		uprintf("Led on: %d\r\n",Arg3Num);
 	}
-	else if(!StrCmp(argv[1],"off")) {
-		switch (Arg3Num) {
-			case 1:	LED_BLUE_OFF();	break;
+	else if(!StrCmp(argv[1], "off"))
+	{
+		switch (Arg3Num)
+		{
+			case 1:	LED_BLUE_OFF();		break;
 			case 2:	LED_GREEN_OFF();	break;
-			case 3:	LED_RED_OFF();	break;
+			case 3:	LED_RED_OFF();		break;
 		}
 		uprintf("Led off: %d\r\n",Arg3Num);
 	}
-	else if(!StrCmp(argv[1],"toggle")) {
-		switch (Arg3Num) {
-			case 1: LED_BLUE_TOGGLE(); break;
+	else if(!StrCmp(argv[1], "toggle"))
+	{
+		switch (Arg3Num)
+		{
+			case 1: LED_BLUE_TOGGLE();	break;
 			case 2: LED_GREEN_TOGGLE(); break;
-			case 3: LED_RED_TOGGLE(); break;
+			case 3: LED_RED_TOGGLE();	break;
 		}
 		uprintf("Led toggle: %d\r\n",Arg3Num);
 	}
-	else if(!StrCmp(argv[1],"status")) {
+	else if(!StrCmp(argv[1], "status"))
+	{
 		uprintf("Led status: %d %d %d\r\n",LED_BLUE_STATUS(), LED_GREEN_STATUS(), LED_RED_STATUS());
 	}
 	else
@@ -425,32 +430,34 @@ uint32_t CommandFunction_led ( uint32_t argc, char** argv )	// TODO: !!IMPORTANT
 
 
 
+#ifdef CONFIG_MODULE_ADC_ENABLE
 /**
  * \brief	Temperature
  * 			Read temperature and Vref values
  */
-uint32_t CommandFunction_temp	( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_temp	( uint32_t argc, char** argv ) {
 
 	//uprintf("Temperature: %d [C]\r\n",ADC_GetTemp());
 	//uprintf("Vref: %d [mV]\r\n",ADC_GetVref());
 	
-	#ifdef ADC_H_
+
 	ADC_ConvertAllMeasuredValues();
 	
 	uprintf("Temperature: ");
 	USART_SendFloat(ADC_ConvertedValue_InternalTemperature);
 	uprintf(" [C]\r\n");
-	#endif
 	
-	return 1;
+
+	return CommandResult_Ok;
 }
+#endif
 
 
 
 /**
  * \brief	Test function
  */
-uint32_t CommandFunction_test	( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_test	( uint32_t argc, char** argv ) {
 	
 	//(void)argc;
 	//(void)argv;
@@ -621,7 +628,7 @@ uint32_t CommandFunction_test	( uint32_t argc, char** argv ) {
  * \brief	set global variable
  * 			Use: 'set <globalvariablename> <value>'
  */
-uint32_t CommandFunction_set ( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_set ( uint32_t argc, char** argv )
 {
 
 	char resultBuffer[30];
@@ -644,7 +651,7 @@ uint32_t CommandFunction_set ( uint32_t argc, char** argv )
  * \brief	Get globalvar value
  * 			Use: 'get <globalvarname>'
  */
-uint32_t CommandFunction_get ( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_get ( uint32_t argc, char** argv )
 {
 
 	char resultBuffer[30];
@@ -667,7 +674,7 @@ uint32_t CommandFunction_get ( uint32_t argc, char** argv )
  * \brief	Global variable help
  * 			Use: '? <globalvar>'
  */
-uint32_t CommandFunction_GlobalVariableHelp ( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_GlobalVariableHelp ( uint32_t argc, char** argv )
 {
 
 	char resultBuffer[30];
@@ -689,7 +696,7 @@ uint32_t CommandFunction_GlobalVariableHelp ( uint32_t argc, char** argv )
 /**
  * \brief	List global variables
  */
-uint32_t CommandFunction_GlobalVariableList ( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_GlobalVariableList ( uint32_t argc, char** argv )
 {
 
 	GlobalVarHandler_ListAllVariables();
@@ -700,11 +707,13 @@ uint32_t CommandFunction_GlobalVariableList ( uint32_t argc, char** argv )
 
 
 
+#ifdef CONFIG_MODULE_FLASH_ENABLE
 /**
  * \brief	Flash erase
  * 			Use: 'flashdel <address> <block/sector>'
  */
-uint32_t CommandFunction_flashdel	( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_flashdel	( uint32_t argc, char** argv )
+{
 
 	// Convert arg2 hex
 	if ( !StringHexToNum(argv[1],&Arg2Num))
@@ -713,7 +722,6 @@ uint32_t CommandFunction_flashdel	( uint32_t argc, char** argv ) {
 	}
 
 
-	#ifdef FLASH_H_
 	if (!StrCmp(argv[2],"block"))
 	{
 		FLASH_BlockErase(Arg2Num,5000);
@@ -726,7 +734,6 @@ uint32_t CommandFunction_flashdel	( uint32_t argc, char** argv ) {
 	{
 		return RETURN_FALSE;
 	}
-	#endif		
 			
 	uprintf("address erased: 0x%h\r\n",
 			Arg2Num
@@ -734,14 +741,17 @@ uint32_t CommandFunction_flashdel	( uint32_t argc, char** argv ) {
 	
 	return CommandResult_Ok;
 }
+#endif
 
 
 
+#ifdef CONFIG_MODULE_FLASH_ENABLE
 /**
  * \brief	Flash read
  * 			Use: 'flashread <address>'
  */
-uint32_t CommandFunction_flashread	( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_flashread	( uint32_t argc, char** argv )
+{
 	
 
 	// Convert arg2 hex
@@ -750,7 +760,7 @@ uint32_t CommandFunction_flashread	( uint32_t argc, char** argv ) {
 		return CommandResult_Error_WrongArgument1;
 	}
 
-	#ifdef FLASH_H_
+
 	uint8_t Buffer[1];
 	FLASH_Read(Arg2Num,Buffer,1,5000);
 	
@@ -760,19 +770,20 @@ uint32_t CommandFunction_flashread	( uint32_t argc, char** argv ) {
 			Arg2Num,
 			Buffer[0]
 			);
-	#endif
 	
 	return CommandResult_Ok;
 }
+#endif
 
 
 
-
+#ifdef CONFIG_MODULE_FLASH_ENABLE
 /**
  * \brief	Flash write
  * 			Use: 'flashwrite <address> <data>'
  */
-uint32_t CommandFunction_flashwrite	( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_flashwrite	( uint32_t argc, char** argv )
+{
 
 	// Convert arg2 hex
 	if ( !StringHexToNum(argv[1],&Arg2Num))
@@ -787,14 +798,13 @@ uint32_t CommandFunction_flashwrite	( uint32_t argc, char** argv ) {
 	}
 
 
-	#ifdef FLASH_H_
 	uint8_t Buffer[1];
 	
 	Buffer[0] = (uint8_t)Arg3Num;
 		
 	FLASH_Write(Arg2Num,Buffer,1,5000);
-	#endif
 	
+
 	uprintf("address: 0x%w\r\n"
 			"data:    0x%b\r\n",
 			Arg2Num,
@@ -803,6 +813,7 @@ uint32_t CommandFunction_flashwrite	( uint32_t argc, char** argv ) {
 	
 	return CommandResult_Ok;
 }
+#endif	// #ifdef CONFIG_MODULE_FLASH_ENABLE
 
 
 
@@ -810,7 +821,7 @@ uint32_t CommandFunction_flashwrite	( uint32_t argc, char** argv ) {
 /**
  * \brief	Raspberry Pi command
  */
-uint32_t CommandFunction_raspberrypi (uint32_t argc, char** argv)
+CommandResult_t CommandFunction_raspberrypi (uint32_t argc, char** argv)
 {
 	
 	// Check arg 2
@@ -858,7 +869,7 @@ uint32_t CommandFunction_raspberrypi (uint32_t argc, char** argv)
  * \brief	DAC function
  * 			Use: 'dac <channel> <voltage>'
  */
-uint32_t CommandFunction_dac (uint32_t argc, char** argv)
+CommandResult_t CommandFunction_dac (uint32_t argc, char** argv)
 {
 
 	float voltage = 0.0f;
@@ -888,7 +899,7 @@ uint32_t CommandFunction_dac (uint32_t argc, char** argv)
 // Function: dl (download)
 // dl <destination> <size>
 // Download to <destination> address <size> bytes from USART
-uint32_t CommandFunction_dl ( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_dl ( uint32_t argc, char** argv )
 {
 
 	unsigned char * destination;
@@ -988,7 +999,7 @@ uint32_t CommandFunction_dl ( uint32_t argc, char** argv )
 // Function: go (jump to an address)
 // go <destination>
 // jump <destination> address
-uint32_t CommandFunction_go ( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_go ( uint32_t argc, char** argv ) {
 
 	uint32_t destination;
 	int ( *fpntr )( void );
@@ -1028,7 +1039,7 @@ uint32_t CommandFunction_go ( uint32_t argc, char** argv ) {
 // source: hex
 // size: dec
 // read <size> byte-s from <source> address
-uint32_t CommandFunction_mr ( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_mr ( uint32_t argc, char** argv ) {
 
 
 	uint32_t *source;
@@ -1072,7 +1083,7 @@ uint32_t CommandFunction_mr ( uint32_t argc, char** argv ) {
 // destination: hex
 // data: hex
 // mwb, mwh, mww commands
-uint32_t CommandFunction_mw ( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_mw ( uint32_t argc, char** argv ) {
 
 	unsigned char *destination1;
 	unsigned short int *destination2;
@@ -1113,7 +1124,7 @@ uint32_t CommandFunction_mw ( uint32_t argc, char** argv ) {
 
 #if 0
 // Function: Go to STOP mode
-uint32_t CommandFunction_stop	( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_stop	( uint32_t argc, char** argv ) {
 
 	// Take anything before stop mode
 	LED_ALARM_ON();
@@ -1140,7 +1151,7 @@ uint32_t CommandFunction_stop	( uint32_t argc, char** argv ) {
 #if 0
 // Function: EEPROM read
 // Syntax: romr <address>
-uint32_t CommandFunction_romr	( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_romr	( uint32_t argc, char** argv ) {
 
 	Arg2Num = StringDecToNum(argv[1]);
 
@@ -1159,7 +1170,7 @@ uint32_t CommandFunction_romr	( uint32_t argc, char** argv ) {
 #if 0
 // Function: EEPROM write
 // Syntax: romw <address> <data>
-uint32_t CommandFunction_romw	( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_romw	( uint32_t argc, char** argv ) {
 
 
 	Arg2Num = StringHexToNum(argv[1]);
@@ -1179,7 +1190,7 @@ uint32_t CommandFunction_romw	( uint32_t argc, char** argv ) {
 
 #if 0
 // Function: Read EEPROM's status register
-uint32_t CommandFunction_romsr	( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_romsr	( uint32_t argc, char** argv ) {
 
 	//uprintf("Status register: 0x%h\r\n",
 	//				EEPROM_ReadStatusRegister ()
@@ -1193,7 +1204,7 @@ uint32_t CommandFunction_romsr	( uint32_t argc, char** argv ) {
 
 #if 0
 // Function: EEPROM, Write Enable
-uint32_t CommandFunction_romwe	( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_romwe	( uint32_t argc, char** argv ) {
 
 	//EEPROM_WriteEnable ();
 
@@ -1207,7 +1218,7 @@ uint32_t CommandFunction_romwe	( uint32_t argc, char** argv ) {
 
 #if 0
 // Function: initialize EEPROM
-uint32_t CommandFunction_rominit	( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_rominit	( uint32_t argc, char** argv ) {
 
 	//EEPROM_Init ();
 
@@ -1220,7 +1231,7 @@ uint32_t CommandFunction_rominit	( uint32_t argc, char** argv ) {
 
 
 #if 0
-uint32_t CommandFunction_standby	( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_standby	( uint32_t argc, char** argv ) {
 
 	LCD_Instr_DisplayClear();
 	LCD_SendString_2line("RadioAlarm","in STANDBY mode",2,2);
@@ -1238,7 +1249,7 @@ uint32_t CommandFunction_standby	( uint32_t argc, char** argv ) {
 
 
 #if 0
-uint32_t CommandFunction_rtc	( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_rtc	( uint32_t argc, char** argv ) {
 
 	Arg2Num = StringDecToNum(argv[1]);
 
@@ -1255,7 +1266,7 @@ uint32_t CommandFunction_rtc	( uint32_t argc, char** argv ) {
 
 
 #if 0
-uint32_t CommandFunction_start	( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_start	( uint32_t argc, char** argv )
 {
 	(void)argc;
 	(void)argv;
@@ -1275,7 +1286,7 @@ uint32_t CommandFunction_start	( uint32_t argc, char** argv )
 
 
 #if 0
-uint32_t CommandFunction_stop	( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_stop	( uint32_t argc, char** argv )
 {
 
 	//(void)argc;
@@ -1294,7 +1305,7 @@ uint32_t CommandFunction_stop	( uint32_t argc, char** argv )
 
 #if 0
 // Function: buzzer switch on/off
-uint32_t CommandFunction_buzzer	( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_buzzer	( uint32_t argc, char** argv ) {
 
 	if ( argc < 2 )
 	{
@@ -1330,7 +1341,7 @@ uint32_t CommandFunction_buzzer	( uint32_t argc, char** argv ) {
 
 
 #if 0
-uint32_t CommandFunction_accelerometer	( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_accelerometer	( uint32_t argc, char** argv ) {
 
 	(void)argc;
 	(void)argv;
@@ -1350,7 +1361,7 @@ uint32_t CommandFunction_accelerometer	( uint32_t argc, char** argv ) {
 
 
 #if 0
-uint32_t CommandFunction_gyroscope	( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_gyroscope	( uint32_t argc, char** argv ) {
 
 	(void)argc;
 	(void)argv;
@@ -1371,7 +1382,7 @@ uint32_t CommandFunction_gyroscope	( uint32_t argc, char** argv ) {
 
 
 #if 0
-uint32_t CommandFunction_remotecontrol	( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_remotecontrol	( uint32_t argc, char** argv ) {
 
 
 	return CommandResult_Ok;
@@ -1381,7 +1392,7 @@ uint32_t CommandFunction_remotecontrol	( uint32_t argc, char** argv ) {
 
 
 #if 0
-uint32_t CommandFunction_proximity	( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_proximity	( uint32_t argc, char** argv ) {
 
 	//(void)argc;
 	//(void)argv;
@@ -1428,7 +1439,7 @@ uint32_t CommandFunction_proximity	( uint32_t argc, char** argv ) {
 
 
 #if 0
-uint32_t CommandFunction_log ( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_log ( uint32_t argc, char** argv )
 {
 
 	//(void)argc;
@@ -1536,7 +1547,7 @@ uint32_t CommandFunction_log ( uint32_t argc, char** argv )
 
 
 #if 0
-uint32_t CommandFunction_exit ( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_exit ( uint32_t argc, char** argv )
 {
 	(void)argc;
 	(void)argv;
@@ -1553,7 +1564,7 @@ uint32_t CommandFunction_exit ( uint32_t argc, char** argv )
 
 
 #if 0
-uint32_t CommandFunction_read ( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_read ( uint32_t argc, char** argv )
 {
 
 	//int i;
@@ -1630,7 +1641,7 @@ uint32_t CommandFunction_read ( uint32_t argc, char** argv )
 
 #if 0
 // Function: ESP8266 bridge
-uint32_t CommandFunction_ESP8266	( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_ESP8266	( uint32_t argc, char** argv ) {
 
 	if ( argc > 1 )
 	{

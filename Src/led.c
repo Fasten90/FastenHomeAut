@@ -1,4 +1,13 @@
-
+/*
+ *		led.c
+ *
+ *		Author: 		Vizi Gábor
+ *		E-mail:			vizi.gabor90@gmail.com
+ *		Function:		LED functions
+ *		Target:			STM32Fx
+ *		Version:		v2
+ *		Last modified:	2016.11.23
+ */
 
 #include "board.h"
 #include "include.h"
@@ -15,8 +24,6 @@ extern void Error_Handler( void );
 TIM_HandleTypeDef    TimLedBlueHandle;
 TIM_HandleTypeDef    TimLedGreenHandle;
 #endif
-
-
 
 
 
@@ -347,5 +354,3 @@ void LED_PWM_ChangePercent(TIM_HandleTypeDef *TimHandle, uint32_t timerChannel, 
 #endif	// #ifdef CONFIG_USE_PANEL_NODESMALL
 
 #endif	// #ifdef CONFIG_MODULE_LED_ENABLE
-
-

@@ -138,4 +138,6 @@ bool DAC_SetValue (DAC_Channel_t channel, float voltage)
 		/* Setting value Error */
 		Error_Handler();
 	}
+
+	return true;
 }

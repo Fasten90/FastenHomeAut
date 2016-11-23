@@ -17,6 +17,7 @@
 
 
 #define BOOL_MAX	(1)
+
 /*
 #define UINT8_MAX	(0xFF)
 #define INT8_MAX	(0x7F)
@@ -27,6 +28,7 @@
 */
 
 /// GLOBAL VARIABLES
+
 /*
 Type_Error = 0,
 Type_Bool,
@@ -40,6 +42,7 @@ Type_Float,
 Type_String,
 Type_Enumerator
 */
+// TODO: Lehet, hogy lekérdező függvénybe kéne rakni?
 static const char const*GlobalVarTypesNames[] =
 {
 		// NOTE: Important!! Must be in the same order with VarType_t
@@ -138,7 +141,7 @@ void GlobalVarHandler_ProcessCommand(
 	// Search command
 	VarID_t commandID = 0;
 
-	if(GlobalVarHandler_SearchVariableName(commandName,&commandID))
+	if (GlobalVarHandler_SearchVariableName(commandName,&commandID))
 	{
 		// Found, Check the source
 		if ((source & GlobalVarList[commandID].sourceEnable) || (GlobalVarList[commandID].sourceEnable == Source_All))
@@ -152,7 +155,7 @@ void GlobalVarHandler_ProcessCommand(
 			else if (setGetType == SetGet_Set)
 			{
 				// Can set? (not const?)
-				if(!GlobalVarList[commandID].isReadOnly)
+				if (!GlobalVarList[commandID].isReadOnly)
 				{
 					// It not const, can set
 					result = GlobalVarHandler_SetCommand(commandID,param,resultBuffer,&resultBufferLength);
@@ -203,7 +206,7 @@ static bool GlobalVarHandler_SearchVariableName(const char *commandName, VarID_t
 	// Search
 	for (i=0; i<GlobalVarMaxCommandNum; i++)
 	{
-		if(!StrCmp(GlobalVarList[i].name, commandName))
+		if (!StrCmp(GlobalVarList[i].name, commandName))
 		{
 		// Found
 		*commandID = i;
@@ -231,7 +234,7 @@ static ProcessResult_t GlobalVarHandler_GetCommand(VarID_t commandID, char *resu
 	case Type_Bool:
 		{
 			bool *boolPointer = (bool *)GlobalVarList[commandID].varPointer;
-			if(*boolPointer)
+			if (*boolPointer)
 			{
 				length += StrCpyMax(resultBuffer,"1 / TRUE",*resultBufferLength);
 			}
@@ -314,7 +317,7 @@ static ProcessResult_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, ch
 
 	VarType_t type = GlobalVarList[commandID].type;
 
-	if(GlobalVarList[commandID].isHex)
+	if (GlobalVarList[commandID].isHex)
 	{
 		// Get in Hex format
 
@@ -547,14 +550,14 @@ static ProcessResult_t GlobalVarHandler_SetCommand(const VarID_t commandID, cons
 		break;
 	}
 
-	if(result != Process_Ok_SetSuccessful_SendOk)
+	if (result != Process_Ok_SetSuccessful_SendOk)
 	{
 		return result;
 	}
 
 	// Check length
 	// TODO: Check length with correct
-	if(length <= *resultBufferLength)
+	if (length <= *resultBufferLength)
 	{
 		*resultBufferLength -= length;
 	}
@@ -577,7 +580,7 @@ static ProcessResult_t GlobalVarHandler_SetBool(VarID_t commandID, const char *p
 	uint32_t num;
 	bool boolVal;
 	// Check it is decimal?
-	if(UnsignedDecimalStringToNum(param, &num))
+	if (UnsignedDecimalStringToNum(param, &num))
 	{
 		if (num == 1)
 		{
@@ -598,29 +601,29 @@ static ProcessResult_t GlobalVarHandler_SetBool(VarID_t commandID, const char *p
 		// Not number
 
 		// Check it is "true" / "false" ?
-		if(!StrCmp((const char*)param,"true"))
+		if (!StrCmp((const char*)param,"true"))
 		{
 			boolVal = true;
 		}
-		else if(!StrCmp((const char*)param,"false"))
+		else if (!StrCmp((const char*)param,"false"))
 		{
 			boolVal = false;
 		}
 		// Check it is "on" / "off"?
-		else if(!StrCmp((const char*)param,"on"))
+		else if (!StrCmp((const char*)param,"on"))
 		{
 			boolVal = true;
 		}
-		else if(!StrCmp((const char*)param,"off"))
+		else if (!StrCmp((const char*)param,"off"))
 		{
 			boolVal = false;
 		}
 		// Check it is "enable" / "disable"
-		else if(!StrCmp((const char*)param,"enable"))
+		else if (!StrCmp((const char*)param,"enable"))
 		{
 			boolVal = true;
 		}
-		else if(!StrCmp((const char*)param,"disable"))
+		else if (!StrCmp((const char*)param,"disable"))
 		{
 			boolVal = false;
 		}
@@ -648,10 +651,10 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 	uint32_t num;
 
 	// If hex
-	if(GlobalVarList[commandID].isHex)
+	if (GlobalVarList[commandID].isHex)
 	{
 		uint8_t length = 0;
-		if(param[0] == '0' && param[1] == 'x')
+		if (param[0] == '0' && param[1] == 'x')
 		{
 			length = 2;
 		}
@@ -662,7 +665,7 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 		}
 
 		// Convert HexString to Num
-		if(StringHexToNum(&param[length],&num))
+		if (StringHexToNum(&param[length],&num))
 		{
 			// Is good num?
 			ProcessResult_t result = GlobalVarHandler_CheckValue(commandID, num);
@@ -710,12 +713,12 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 
 	// If it is not hex
 	// It is unsigned integers?
-	if(varType == Type_Uint8 || varType == Type_Uint16 || varType == Type_Uint32)
+	if (varType == Type_Uint8 || varType == Type_Uint16 || varType == Type_Uint32)
 	{
 		// Unsigned types
 
 		uint32_t num = 0;
-		if(UnsignedDecimalStringToNum(param, &num))
+		if (UnsignedDecimalStringToNum(param, &num))
 		{
 			ProcessResult_t result;
 			result = GlobalVarHandler_CheckValue(num,commandID);
@@ -757,12 +760,12 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 	}
 
 	// It is signed integers?
-	if(varType == Type_Int8 || varType == Type_Int16 || varType == Type_Int32)
+	if (varType == Type_Int8 || varType == Type_Int16 || varType == Type_Int32)
 	{
 		// Signed types
 
 		int32_t num = 0;
-		if(SignedDecimalStringToNum(param, &num))
+		if (SignedDecimalStringToNum(param, &num))
 		{
 			ProcessResult_t result;
 			result = GlobalVarHandler_CheckValue(num,commandID);
@@ -873,48 +876,62 @@ static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t n
 {
 
 	// First, check the type value
-	switch(GlobalVarList[commandID].type)
+	switch (GlobalVarList[commandID].type)
 	{
-	case Type_Bool:
-		if (num > BOOL_MAX) return Process_InvalidValue_TooMuch;
-		break;
-	case Type_Uint8:
-		if (num > UINT8_MAX) return Process_InvalidValue_TooMuch;
-		break;
-	case Type_Uint16:
-		if (num > UINT16_MAX) return Process_InvalidValue_TooMuch;
-		break;
-	case Type_Uint32:
-		// TODO: Always good, do better code
-		if (num > UINT32_MAX) return Process_InvalidValue_TooMuch;
-		break;
-	case Type_Int8:
-		if ((int32_t)num > INT8_MAX) return Process_InvalidValue_TooMuch;
-		if ((int32_t)num < INT8_MIN) return Process_InvalidValue_TooSmall;
-		break;
-	case Type_Int16:
-		if ((int32_t)num > INT16_MAX) return Process_InvalidValue_TooMuch;
-		if ((int32_t)num < INT16_MIN) return Process_InvalidValue_TooSmall;
-		break;
-	case Type_Int32:
-		// TODO: Always good, do better code
-		if ((int32_t)num > INT32_MAX) return Process_InvalidValue_TooMuch;
-		if ((int32_t)num < INT32_MIN) return Process_InvalidValue_TooSmall;
-		break;
-	case Type_Float:
-		// TODO: Not a good compare in float type
-		if ((int32_t)num > INT32_MAX) return Process_InvalidValue_TooMuch;
-		if ((int32_t)num < INT32_MIN) return Process_InvalidValue_TooSmall;
-		break;
-	case Type_String:
-		if (num > GlobalVarList[commandID].maxValue) return Process_TooLongString;
-		break;
-	case Type_Enumerator:
-		if (num >= GlobalVarList[commandID].maxValue) return Process_InvalidValue_TooMuch;
-		break;
-	default:
-		return Process_FailType;
-		break;
+		case Type_Bool:
+			if (num > BOOL_MAX)
+				return Process_InvalidValue_TooMuch;
+			break;
+		case Type_Uint8:
+			if (num > UINT8_MAX)
+				return Process_InvalidValue_TooMuch;
+			break;
+		case Type_Uint16:
+			if (num > UINT16_MAX)
+				return Process_InvalidValue_TooMuch;
+			break;
+		case Type_Uint32:
+			// TODO: Always good, do better code
+			if (num > UINT32_MAX)
+				return Process_InvalidValue_TooMuch;
+			break;
+		case Type_Int8:
+			if ((int32_t)num > INT8_MAX)
+				return Process_InvalidValue_TooMuch;
+			if ((int32_t)num < INT8_MIN)
+				return Process_InvalidValue_TooSmall;
+			break;
+		case Type_Int16:
+			if ((int32_t)num > INT16_MAX)
+				return Process_InvalidValue_TooMuch;
+			if ((int32_t)num < INT16_MIN)
+				return Process_InvalidValue_TooSmall;
+			break;
+		case Type_Int32:
+			// TODO: Always good, do better code
+			if ((int32_t)num > INT32_MAX)
+				return Process_InvalidValue_TooMuch;
+			if ((int32_t)num < INT32_MIN)
+				return Process_InvalidValue_TooSmall;
+			break;
+		case Type_Float:
+			// TODO: Not a good compare in float type
+			if ((int32_t)num > INT32_MAX)
+				return Process_InvalidValue_TooMuch;
+			if ((int32_t)num < INT32_MIN)
+				return Process_InvalidValue_TooSmall;
+			break;
+		case Type_String:
+			if (num > GlobalVarList[commandID].maxValue)
+				return Process_TooLongString;
+			break;
+		case Type_Enumerator:
+			if (num >= GlobalVarList[commandID].maxValue)
+				return Process_InvalidValue_TooMuch;
+			break;
+		default:
+			return Process_FailType;
+			break;
 	}
 
 
@@ -946,80 +963,88 @@ static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t n
 static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBuffer, uint8_t resultBufferLength)
 {
 
-	switch(result)
+	switch (result)
 	{
 
-	case Process_Ok_Answered:
-		// Do nothing
-		break;
+		case Process_Ok_Answered:
+			// Do nothing
+			break;
 
-	case Process_Ok_SetSuccessful_SendOk:
-		StrCpyMax(resultBuffer, "Set successful!", resultBufferLength);
-		break;
+		case Process_Ok_SetSuccessful_SendOk:
+			StrCpyMax(resultBuffer, "Set successful!", resultBufferLength);
+			break;
 
-	case Process_CommandNotFound:
-		StrCpyMax(resultBuffer, "Command not find!", resultBufferLength);
-		break;
+		case Process_CommandNotFound:
+			StrCpyMax(resultBuffer, "Command not find!", resultBufferLength);
+			break;
 
-	case Process_FailParam:
-		StrCpyMax(resultBuffer, "Fail parameter", resultBufferLength);
-		break;
+		case Process_FailParam:
+			StrCpyMax(resultBuffer, "Fail parameter", resultBufferLength);
+			break;
 
-	case Process_FailType:
-		StrCpyMax(resultBuffer, "Fail type", resultBufferLength);
-		break;
+		case Process_FailType:
+			StrCpyMax(resultBuffer, "Fail type", resultBufferLength);
+			break;
 
-	case Process_FailParamIsNotNumber:
-		StrCpyMax(resultBuffer, "Not number", resultBufferLength);
-		break;
+		case Process_FailParamIsNotNumber:
+			StrCpyMax(resultBuffer, "Not number", resultBufferLength);
+			break;
 
-	case Process_FailParamIsNotHexNumber:
-		StrCpyMax(resultBuffer, "Not hex number", resultBufferLength);
-		break;
+		case Process_FailParamIsNotHexNumber:
+			StrCpyMax(resultBuffer, "Not hex number", resultBufferLength);
+			break;
 
-	case Process_FailParamIsNotHexStart:
-		StrCpyMax(resultBuffer, "Not hex, missed \"0x\"", resultBufferLength);
-		break;
+		case Process_FailParamIsNotHexStart:
+			StrCpyMax(resultBuffer, "Not hex, missed \"0x\"",
+					resultBufferLength);
+			break;
 
-	case Process_InvalidValue_TooSmall:
-		StrCpyMax(resultBuffer, "Invalid value, too small", resultBufferLength);
-		break;
+		case Process_InvalidValue_TooSmall:
+			StrCpyMax(resultBuffer, "Invalid value, too small",
+					resultBufferLength);
+			break;
 
-	case Process_InvalidValue_TooMuch:
-		StrCpyMax(resultBuffer, "Invalid value, too much", resultBufferLength);
-		break;
+		case Process_InvalidValue_TooMuch:
+			StrCpyMax(resultBuffer, "Invalid value, too much",
+					resultBufferLength);
+			break;
 
-	case Process_InvalidValue_NotBool:
-		StrCpyMax(resultBuffer, "Invalid value, not bool", resultBufferLength);
-		break;
+		case Process_InvalidValue_NotBool:
+			StrCpyMax(resultBuffer, "Invalid value, not bool",
+					resultBufferLength);
+			break;
 
-	case Process_InvalidValue_NotEnumString:
-		StrCpyMax(resultBuffer, "Invalid enum string", resultBufferLength);
-		break;
+		case Process_InvalidValue_NotEnumString:
+			StrCpyMax(resultBuffer, "Invalid enum string", resultBufferLength);
+			break;
 
-	case Process_Settings_EmptyEnumList:
-		StrCpyMax(resultBuffer, "EnumList settings error", resultBufferLength);
-		break;
+		case Process_Settings_EmptyEnumList:
+			StrCpyMax(resultBuffer, "EnumList settings error",
+					resultBufferLength);
+			break;
 
-	case Process_IsReadOnly:
-		StrCpyMax(resultBuffer, "Cannot set, it is constant", resultBufferLength);
-		break;
+		case Process_IsReadOnly:
+			StrCpyMax(resultBuffer, "Cannot set, it is constant",
+					resultBufferLength);
+			break;
 
-	case Process_SourceNotEnabled:
-		StrCpyMax(resultBuffer, "Cannot process this command from this source", resultBufferLength);
-		break;
+		case Process_SourceNotEnabled:
+			StrCpyMax(resultBuffer,
+					"Cannot process this command from this source",
+					resultBufferLength);
+			break;
 
-	case Process_TooLongString:
-		StrCpyMax(resultBuffer, "Too long string", resultBufferLength);
-		break;
+		case Process_TooLongString:
+			StrCpyMax(resultBuffer, "Too long string", resultBufferLength);
+			break;
 
-	case Process_UnknownError:
-		StrCpyMax(resultBuffer, "Unknown error", resultBufferLength);
-		break;
+		case Process_UnknownError:
+			StrCpyMax(resultBuffer, "Unknown error", resultBufferLength);
+			break;
 
-	default:
-		StrCpyMax(resultBuffer, "Fatal error", resultBufferLength);
-		break;
+		default:
+			StrCpyMax(resultBuffer, "Fatal error", resultBufferLength);
+			break;
 	}
 }
 
@@ -1086,7 +1111,7 @@ void GlobalVarHandler_ListAllVariables(void)
 		}
 
 		// Send unit
-		if(GlobalVarList[i].unit)
+		if (GlobalVarList[i].unit)
 		{
 			// If has unit
 			length += USART_SendString("[");

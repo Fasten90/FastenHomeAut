@@ -1300,11 +1300,11 @@ void STRING_UnitTest (void)
 	uprintf("Wrong example: %-5u\r\n",123);		// Printed: "-5u", because '-' is not a number
 
 	uprintf("Signed Integer print tests:\r\n");
-	uprintf("%0d\r\n",-123);			// Printed: "123"
-	uprintf("%1d\r\n",-123);			// Printed:	"123"
-	uprintf("%4d\r\n",-123);			// Printed: " 123"
-	uprintf("%9d\r\n",-123);			// Printed: "      123"
-	uprintf("%05d\r\n",-123);			// Printed: "00123", it is OK
+	uprintf("%0d\r\n",-123);			// Printed: "-123"
+	uprintf("%1d\r\n",-123);			// Printed:	"-123"
+	uprintf("%4d\r\n",-123);			// Printed: "-123"
+	uprintf("%9d\r\n",-123);			// Printed: "     -123"
+	uprintf("%05d\r\n",-123);			// Printed: "-0123", it is OK
 
 	uprintf("Hexadecimal print tests:\r\n");
 	uprintf("0x%01x\r\n",0xFFFFFFFF);

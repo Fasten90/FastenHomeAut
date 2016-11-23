@@ -7,10 +7,10 @@
  *		Function:		Globals
  *		Target:			STM32Fx
  *		Version:		v4
- *		Last modified:	2016.09.28
+ *		Last modified:	2016.11.23
  */
 
 #include "globals.h"
 
-const char Global_Version[] = "v0.1.1.4";
+const char Global_Version[] = "v0.1.1.5";
 
