@@ -87,37 +87,53 @@ bool GlobalVarHandler_CheckCommandStructAreValid(void)
 	// TODO: vagy itt futásidejűteszt, vagy makrókkal fordításidejű teszt?
 
 	VarID_t i;
+	bool hasError = false;
 
 	for (i=0; i < GlobalVarMaxCommandNum; i++)
 	{
 		if (GlobalVarList[i].name == NULL)
 		{
-			return false;
+			hasError = true;
+			break;
 		}
 
 		if (GlobalVarList[i].varPointer == NULL)
 		{
-			return false;
+			hasError = true;
+			break;
 		}
 
 		if (GlobalVarList[i].type == Type_Error)
 		{
-			return false;
+			hasError = true;
+			break;
 		}
 
 		if ( (GlobalVarList[i].type == Type_Enumerator) && (GlobalVarList[i].enumList == NULL) )
 		{
-			return false;
+			hasError = true;
+			break;
 		}
 
-		if ( (GlobalVarList[i].type == Type_String) && (GlobalVarList[i].maxValue == 0) )
+		if ( (GlobalVarList[i].type == Type_String) && (GlobalVarList[i].maxValue == 0) && (!GlobalVarList[i].isReadOnly) )
 		{
-			return false;
+			hasError = true;
+			break;
 		}
 
 	}
 
-	return true;
+	if (hasError)
+	{
+		// Error
+		uprintf("Error in %d. (%s) command\r\n", i, GlobalVarList[i].name);
+#ifdef CONFIG_DEBUG_MODE
+		// Stop debugger
+		__asm("BKPT #0\n");		// ASM: Break debugger
+#endif
+	}
+
+	return !hasError;
 }
 
 
@@ -128,7 +144,7 @@ bool GlobalVarHandler_CheckCommandStructAreValid(void)
  * \param	*param				received parameters after command
  * \param	setGetType			Set or get command
  * \param	source				Command source (e.g. USART)
- * \param	*resultBuffer		Buffer, which writed with result
+ * \param	*resultBuffer		Buffer, which writing with result
  * \param	resultBufferLength	Buffer length
  */
 void GlobalVarHandler_ProcessCommand(

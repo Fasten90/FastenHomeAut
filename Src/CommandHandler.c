@@ -298,7 +298,7 @@ void MONITOR_CheckCommand ( void )
 #endif
 
 	// Check GlobalVarList[]
-	if (GlobalVarHandler_CheckCommandStructAreValid()==false)
+	if (GlobalVarHandler_CheckCommandStructAreValid() == false)
 	{
 		USART_SendLine("ERROR in GlobalVarList! Should correct that!");
 	}

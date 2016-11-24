@@ -93,6 +93,9 @@
 //#define CONFIG_USE_PANEL_DISCOVERY
 
 
+/// Debug
+#define CONFIG_DEBUG_MODE
+
 
 /// Unit tests
 

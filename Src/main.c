@@ -143,6 +143,8 @@ int main(void)
 	USART_Init(&Debug_UartHandle);
 	MONITOR_Init();
 	
+	STRING_UnitTest();
+
 #ifdef CONFIG_USE_FREERTOS
 	TaskHandle_t MONITOR_TaskHandle = NULL;
 	//xTaskCreate( vTaskCode, "NAME", STACK_SIZE, &ucParameterToPass, tskIDLE_PRIORITY, &xHandle );

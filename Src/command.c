@@ -134,7 +134,35 @@ const CommandStruct CommandList[] =
 		.syntax = "<on/off/toggle/status> <num>",
 		.CommandArgNum = CommandArgument_1 | CommandArgument_2,
 	},
-	
+	{
+		.name = "#raspi",
+		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_raspberrypi,
+		.description = "Raspberry Pi HomeAutMessage sending",
+		.syntax = "-",
+		.CommandArgNum = CommandArgument_2
+	},
+	{
+		.name = "dac",
+		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_dac,
+		.CommandArgNum = CommandArgument_2
+	},
+	{
+		.name = "unittest",
+		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_unittest,
+		.description = "Run unit tests",
+		.syntax = "optional: <modul>",
+		.CommandArgNum = CommandArgument_0 | CommandArgument_1
+	}
+#ifdef CONFIG_MODULE_ADC_ENABLE
+	{
+		.name = "temperature",
+		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_temp,
+		.description = "...",
+		.syntax = NULL,
+		.CommandArgNum = CommandArgument_0,
+	},
+#endif
+#ifdef CONFIG_MODULE_FLASH_ENABLE
 	{
 		.name = "flashdel",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_flashdel,
@@ -158,27 +186,7 @@ const CommandStruct CommandList[] =
 		.syntax = "<address> <byte>",
 		.CommandArgNum = CommandArgument_2,
 	},
-	
-	{
-		.name = "temperature",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_temp,
-		.description = "...",
-		.syntax = NULL,
-		.CommandArgNum = CommandArgument_0,
-	},
-	{
-		.name = "#raspi",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_raspberrypi,
-		.description = "Raspberry Pi HomeAutMessage sending",
-		.syntax = "-",
-		.CommandArgNum = CommandArgument_2
-	},
-	{
-		.name = "dac",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_dac,
-		.CommandArgNum = CommandArgument_2
-	}
-
+#endif
 
 	/*
 	{
@@ -893,6 +901,16 @@ CommandResult_t CommandFunction_dac (uint32_t argc, char** argv)
 }
 #endif
 
+
+CommandResult_t CommandFunction_unittest (uint32_t argc, char** argv)
+{
+
+#ifdef MODULE_STRING_UNIT_TEST_ENABLED
+	STRING_UnitTest();
+#endif
+
+	return CommandResult_Ok;
+}
 
 
 #if 0

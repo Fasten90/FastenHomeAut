@@ -14,11 +14,12 @@
  *----------------------------------------------------------------------------*/
 
 #include "include.h"
-
-// For printfs
 #include <stdarg.h>		// for "..." parameters in uprintf function
-
+#ifdef MODULE_STRING_UNIT_TEST_ENABLED
+#include "unittest.h"
+#endif
 #include "string.h"
+
 
 /*------------------------------------------------------------------------------
  *  Macros & definitions
@@ -131,24 +132,17 @@ uint8_t UnsignedDecimalLength(uint32_t value)
 {
 
 	uint8_t length = 0;
-	bool isStarted = false;
 
-	// Largest num: 1xxxxxx...
-	uint32_t decade = 1000000000;
-
-	while (decade > 1)
+	if (value == 0)
 	{
-		if ((value >= decade) || (isStarted == true))
-		{
-			length++;
-			isStarted = true;
-		}
+		length = 1;
+	}
 
-		// Value - first digit
-		value %= decade;
-
-		// /10
-		decade /= 10;
+	while (value > 0)
+	{
+		// value : 10
+		value /= 10;
+		length++;
 	}
 
 	return length;
@@ -180,7 +174,7 @@ uint8_t UnsignedDecimalToStringFill(uint32_t value, char *str, uint8_t fillLengt
 			str[i] = fillCharacter;
 		}
 		// Put number
-		length = i-1;
+		length = i;
 		length += UnsignedDecimalToString(value, &str[length]);
 	}
 
@@ -227,19 +221,19 @@ uint8_t SignedDecimalToStringFill (int32_t value, char *str, uint8_t fillLength,
 				// "    -123"
 				for (i=0; i<(fillLength-length-1); i++)
 				{
-					*str++ = ' ';
+					str[i] = ' ';
 				}
-				*str++ = '-';
-				length++;	// sign
-				length += UnsignedDecimalToString(value,str);
+				length = i;	// sign
+				str[length++] = '-';
+				length += UnsignedDecimalToString(value,&str[length]);
 			}
 		}
 		else
 		{
 			// "-0000123"
-			*str++ = '-';	// Print '-'
-			length++;
-			length += UnsignedDecimalToStringFill((uint32_t)value,str,fillLength,fillCharacter);
+			length = 0;
+			str[length++] = '-';	// Print '-'
+			length += UnsignedDecimalToStringFill((uint32_t)value,&str[length],fillLength,fillCharacter);
 		}
 	}
 
@@ -1258,7 +1252,21 @@ uint8_t duprintf (const PrintDevice_t dev, const char *format, ...)
 void STRING_UnitTest (void)
 {
 
+	char buffer[20];
+	float floatNum;
+
+	UnitTest_Start("String module unit test", __FILE__);
+
+
+	/// String compare StrCmp()
+	// Equal:
+	UnitTest_CheckResult(!StrCmp("example", "example"), "StrCmp error", __FILE__, __LINE__);
+	// Not equal:
+	UnitTest_CheckResult(StrCmp("example1", "example2"), "StrCmp error", __FILE__, __LINE__);
+
+
 	/*
+	// TODO: Kommentet átírni angolra vagy szépíteni
 	// Lekezelve
 	%1.5f	// Max 9.9f, pl.		1.5f == > 1.12345
 	%4u		// unsigned és folytathatja ha hosszabb lenne, kiegészíti blank karakterrel
@@ -1282,83 +1290,104 @@ void STRING_UnitTest (void)
 	%-10d
 	 */
 
-	uprintf("Float print tests:\r\n");
-	uprintf("%1.5f\r\n",123.34);	// Printed: "123.33999"
-	uprintf("%5.5f\r\n",123.34);	// Printed: "  123.33999"
-	uprintf("%5.1f\r\n",123.34);	// Printed: "  123.3"
-	uprintf("%1.1f\r\n",123.34);	// Printed: "123.3"
+	// Float print tests
 
-	uprintf("Integer print tests:\r\n");
-	uprintf("%0u\r\n",123);			// Printed: "123"
-	uprintf("%1u\r\n",123);			// Printed:	"123"
-	uprintf("%4u\r\n",123);			// Printed: " 123"
-	uprintf("%9u\r\n",123);			// Printed: "      123"
-	uprintf("%05u\r\n",123);		// Printed: "00123", it is OK
-
-	uprintf("Integer print tests (wrong examples):\r\n");
-	uprintf("Wrong example: %A5u\r\n",123);		// Printed: "A5u", because 'A' is not a number
-	uprintf("Wrong example: %-5u\r\n",123);		// Printed: "-5u", because '-' is not a number
-
-	uprintf("Signed Integer print tests:\r\n");
-	uprintf("%0d\r\n",-123);			// Printed: "-123"
-	uprintf("%1d\r\n",-123);			// Printed:	"-123"
-	uprintf("%4d\r\n",-123);			// Printed: "-123"
-	uprintf("%9d\r\n",-123);			// Printed: "     -123"
-	uprintf("%05d\r\n",-123);			// Printed: "-0123", it is OK
-
-	uprintf("Hexadecimal print tests:\r\n");
-	uprintf("0x%01x\r\n",0xFFFFFFFF);
-	uprintf("0x%02x\r\n",0xFFFFFFFF);
-	uprintf("0x%03x\r\n",0xFFFFFFFF);
-	uprintf("0x%04x\r\n",0xFFFFFFFF);
-	uprintf("0x%05x\r\n",0xFFFFFFFF);
-	uprintf("0x%06x\r\n",0xFFFFFFFF);
-	uprintf("0x%07x\r\n",0xFFFFFFFF);
-	uprintf("0x%08x\r\n",0xFFFFFFFF);
-	uprintf("0x%09x\r\n",0xFFFFFFFF);
-
-	uprintf("0x%01x\r\n",0x12345678);
-	uprintf("0x%02x\r\n",0x12345678);
-	uprintf("0x%03x\r\n",0x12345678);
-	uprintf("0x%04x\r\n",0x12345678);
-	uprintf("0x%05x\r\n",0x12345678);
-	uprintf("0x%06x\r\n",0x12345678);
-	uprintf("0x%07x\r\n",0x12345678);
-	uprintf("0x%08x\r\n",0x12345678);
-	uprintf("0x%09x\r\n",0x12345678);
-	// FLOAT TEST
-	/*
-	char String[20];
-	float AnNum;
-
-	AnNum = StringToFloat ( "3.14" );
-	FloatToString ( AnNum , String, 2 );
-	uprintf("%s\r\n",String);
+	// "123.33999"
+	usprintf(buffer,"%1.5f",123.34);
+	UnitTest_CheckResult(!StrCmp(buffer, "123.33999"), "Float error", __FILE__, __LINE__);
+	// "123.33999"
+	usprintf(buffer,"%5.5f",123.34);
+	UnitTest_CheckResult(!StrCmp(buffer, "  123.33999"), "Float error", __FILE__, __LINE__);
+	// "  123.3"
+	usprintf(buffer, "%5.1f",123.34);
+	UnitTest_CheckResult(!StrCmp(buffer, "  123.3"), "Float error", __FILE__, __LINE__);
+	// "123.3"
+	usprintf(buffer, "%1.1f",123.34);
+	UnitTest_CheckResult(!StrCmp(buffer, "123.3"), "Float error", __FILE__, __LINE__);
 
 
-	AnNum = StringToFloat ( "3.1234567" );
-	FloatToString ( AnNum , String,4 );
-	uprintf("%s\r\n",String);
+	// Integer print tests
+	// Printed: "123"
+	usprintf(buffer, "%0u",123);
+	UnitTest_CheckResult(!StrCmp(buffer, "123"), "Integer error", __FILE__, __LINE__);
+	// Printed:	"123"
+	usprintf(buffer, "%1u",123);
+	UnitTest_CheckResult(!StrCmp(buffer, "123"), "Integer error", __FILE__, __LINE__);
+	// Printed: " 123"
+	usprintf(buffer, "%4u",123);
+	UnitTest_CheckResult(!StrCmp(buffer, " 123"), "Integer error", __FILE__, __LINE__);
+	// Printed: "      123"
+	usprintf(buffer, "%9u",123);
+	UnitTest_CheckResult(!StrCmp(buffer, "      123"), "Integer error", __FILE__, __LINE__);
+	// Printed: "00123", it is OK
+	usprintf(buffer, "%05u",123);
+	UnitTest_CheckResult(!StrCmp(buffer, "00123"), "Integer error", __FILE__, __LINE__);
+
+	// Integer print tests (wrong examples):
+	usprintf(buffer, "%A5",123);		// Printed: "A5u", because 'A' is not a number
+	UnitTest_CheckResult(!StrCmp(buffer, "A5"), "Integer error", __FILE__, __LINE__);
+	usprintf(buffer, "%-5u",123);		// Printed: "-5u", because '-' is not a number
+	UnitTest_CheckResult(!StrCmp(buffer, "-5u"), "Integer error", __FILE__, __LINE__);
+
+	// Signed Integer print tests:
+	// Printed: "-123"
+	usprintf(buffer, "%0d",-123);
+	UnitTest_CheckResult(!StrCmp(buffer, "-123"), "Integer error", __FILE__, __LINE__);
+	// Printed:	"-123"
+	usprintf(buffer, "%1d",-123);
+	UnitTest_CheckResult(!StrCmp(buffer, "-123"), "Integer error", __FILE__, __LINE__);
+	// Printed: "-123"
+	usprintf(buffer, "%4d",-123);
+	UnitTest_CheckResult(!StrCmp(buffer, "-123"), "Integer error", __FILE__, __LINE__);
+	// Printed: "     -123"
+	usprintf(buffer, "%9d",-123);
+	UnitTest_CheckResult(!StrCmp(buffer, "     -123"), "Integer error", __FILE__, __LINE__);
+	// Printed: "-0123", it is OK
+	usprintf(buffer, "%05d",-123);
+	UnitTest_CheckResult(!StrCmp(buffer, "-00123"), "Integer error", __FILE__, __LINE__);
+
+	// Hexadecimal print tests:
+	usprintf(buffer, "0x%01x",0xFFFFFFFF);
+	UnitTest_CheckResult(!StrCmp(buffer, "0xF"), "Hexadecimal error", __FILE__, __LINE__);
+	usprintf(buffer, "0x%02x",0xFFFFFFFF);
+	UnitTest_CheckResult(!StrCmp(buffer, "0xFF"), "Hexadecimal error", __FILE__, __LINE__);
+	usprintf(buffer, "0x%03x",0xFFFFFFFF);
+	UnitTest_CheckResult(!StrCmp(buffer, "0xFFF"), "Hexadecimal error", __FILE__, __LINE__);
+	usprintf(buffer, "0x%04x",0xFFFFFFFF);
+	UnitTest_CheckResult(!StrCmp(buffer, "0xFFFF"), "Hexadecimal error", __FILE__, __LINE__);
+	usprintf(buffer, "0x%05x",0xFFFFFFFF);
+	UnitTest_CheckResult(!StrCmp(buffer, "0xFFFFF"), "Hexadecimal error", __FILE__, __LINE__);
+	usprintf(buffer, "0x%06x",0xFFFFFFFF);
+	UnitTest_CheckResult(!StrCmp(buffer, "0xFFFFFF"), "Hexadecimal error", __FILE__, __LINE__);
+	usprintf(buffer, "0x%07x",0xFFFFFFFF);
+	UnitTest_CheckResult(!StrCmp(buffer, "0xFFFFFFF"), "Hexadecimal error", __FILE__, __LINE__);
+	usprintf(buffer, "0x%08x",0xFFFFFFFF);
+	UnitTest_CheckResult(!StrCmp(buffer, "0xFFFFFFFF"), "Hexadecimal error", __FILE__, __LINE__);
+	usprintf(buffer, "0x%09x",0xFFFFFFFF);
+	UnitTest_CheckResult(!StrCmp(buffer, "0x"), "Hexadecimal error", __FILE__, __LINE__);
+
+	usprintf(buffer, "0x%01x",0x12345678);
+	UnitTest_CheckResult(!StrCmp(buffer, "0x8"), "Hexadecimal error", __FILE__, __LINE__);
+	usprintf(buffer, "0x%02x",0x12345678);
+	UnitTest_CheckResult(!StrCmp(buffer, "0x78"), "Hexadecimal error", __FILE__, __LINE__);
+	usprintf(buffer, "0x%03x",0x12345678);
+	UnitTest_CheckResult(!StrCmp(buffer, "0x678"), "Hexadecimal error", __FILE__, __LINE__);
+	usprintf(buffer, "0x%04x",0x12345678);
+	UnitTest_CheckResult(!StrCmp(buffer, "0x5678"), "Hexadecimal error", __FILE__, __LINE__);
+	usprintf(buffer, "0x%05x",0x12345678);
+	UnitTest_CheckResult(!StrCmp(buffer, "0x45678"), "Hexadecimal error", __FILE__, __LINE__);
+	usprintf(buffer, "0x%06x",0x12345678);
+	UnitTest_CheckResult(!StrCmp(buffer, "0x345678"), "Hexadecimal error", __FILE__, __LINE__);
+	usprintf(buffer, "0x%07x",0x12345678);
+	UnitTest_CheckResult(!StrCmp(buffer, "0x2345678"), "Hexadecimal error", __FILE__, __LINE__);
+	usprintf(buffer, "0x%08x",0x12345678);
+	UnitTest_CheckResult(!StrCmp(buffer, "0x12345678"), "Hexadecimal error", __FILE__, __LINE__);
+	usprintf(buffer, "0x%09x",0x12345678);
+	UnitTest_CheckResult(!StrCmp(buffer, "0x"), "Hexadecimal error", __FILE__, __LINE__);
 
 
-	AnNum = StringToFloat ( "3.0" );
-	FloatToString ( AnNum , String,6 );
-	uprintf("%s\r\n",String);
+	UnitTest_End(__FILE__);
 
-	AnNum = StringToFloat ( "3.2" );
-	FloatToString ( AnNum , String,4 );
-	uprintf("%s\r\n",String);
-
-	AnNum = StringToFloat ( "0.24" );
-	FloatToString ( AnNum , String,4 );
-	uprintf("%s\r\n",String);
-
-
-	uprintf("%f\r\n",1.2);
-	uprintf("%f\r\n",3.1234567);
-	uprintf("%f\r\n",0.24);
-	uprintf("%f\r\n",-0.24);
-	*/
 
 	return;
 }
