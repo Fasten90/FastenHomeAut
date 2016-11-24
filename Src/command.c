@@ -392,7 +392,7 @@ CommandResult_t CommandFunction_led ( uint32_t argc, char** argv )
 		}
 		uprintf("Led on: %d\r\n",Arg3Num);
 	}
-	else if(!StrCmp(argv[1], "off"))
+	else if (!StrCmp(argv[1], "off"))
 	{
 		switch (Arg3Num)
 		{
@@ -402,7 +402,7 @@ CommandResult_t CommandFunction_led ( uint32_t argc, char** argv )
 		}
 		uprintf("Led off: %d\r\n",Arg3Num);
 	}
-	else if(!StrCmp(argv[1], "toggle"))
+	else if (!StrCmp(argv[1], "toggle"))
 	{
 		switch (Arg3Num)
 		{
@@ -412,7 +412,7 @@ CommandResult_t CommandFunction_led ( uint32_t argc, char** argv )
 		}
 		uprintf("Led toggle: %d\r\n",Arg3Num);
 	}
-	else if(!StrCmp(argv[1], "status"))
+	else if (!StrCmp(argv[1], "status"))
 	{
 		uprintf("Led status: %d %d %d\r\n",LED_BLUE_STATUS(), LED_GREEN_STATUS(), LED_RED_STATUS());
 	}
@@ -1104,12 +1104,12 @@ CommandResult_t CommandFunction_mw ( uint32_t argc, char** argv ) {
 		*destination1 = ( unsigned char ) Arg3Num;
 		uprintf("Write: %b to: %w",Arg3Num,Arg2Num);
 	}
-	else if(!StrCmp(argv[0],"mwh")) {
+	else if (!StrCmp(argv[0],"mwh")) {
 		destination2 = ( unsigned short int *) Arg2Num;
 		*destination2 = ( unsigned short int) Arg3Num;
 		uprintf("Write: %h to: %w",Arg3Num,Arg2Num);
 	}
-	else if(!StrCmp(argv[0],"mww")) {
+	else if (!StrCmp(argv[0],"mww")) {
 		destination3 = ( uint32_t *) Arg2Num;
 		*destination3 = ( uint32_t ) Arg3Num;
 		uprintf("Write: %w to: %w",Arg3Num,Arg2Num);
@@ -1326,7 +1326,7 @@ CommandResult_t CommandFunction_buzzer	( uint32_t argc, char** argv ) {
 		uprintf("Buzzer on (Important! This is an infinite loop!)\r\n");
 		//BUZZER_On(); // Important!! Before turn on, need BUZZER_Init() function.
 	}
-	else if(!StrCmp(argv[1],"off"))
+	else if (!StrCmp(argv[1],"off"))
 	{
 		// Buzzer kikapcsolása
 		//BUZZER_DeInit();
@@ -1421,7 +1421,7 @@ CommandResult_t CommandFunction_proximity	( uint32_t argc, char** argv ) {
 //		LOG_QueueEnable_PROXIMITY = LOG_ENABLE;
 //
 //	}
-//	else if(!StrCmp(argv[1],"off"))
+//	else if (!StrCmp(argv[1],"off"))
 //	{
 //
 //		// LOG end
@@ -1459,7 +1459,7 @@ CommandResult_t CommandFunction_log ( uint32_t argc, char** argv )
 
 	if ( argc == 2 )
 	{
-		if(!StrCmp(argv[1],"off"))
+		if (!StrCmp(argv[1],"off"))
 		{
 			// LOG end
 			//LOG_Off();
@@ -1504,7 +1504,7 @@ CommandResult_t CommandFunction_log ( uint32_t argc, char** argv )
 			vTaskResume(LOG_TaskHandle);
 
 		}
-		else if(!StrCmp(argv[1],"off"))
+		else if (!StrCmp(argv[1],"off"))
 		{
 
 			// LOG end

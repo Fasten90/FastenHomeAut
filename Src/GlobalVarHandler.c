@@ -110,7 +110,7 @@ bool GlobalVarHandler_CheckCommandStructAreValid(void)
 			return false;
 		}
 
-		if ( (GlobalVarList[i].type == Type_String) && (GlobalVarList[i].maxValue == 0))
+		if ( (GlobalVarList[i].type == Type_String) && (GlobalVarList[i].maxValue == 0) )
 		{
 			return false;
 		}

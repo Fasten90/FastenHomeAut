@@ -211,7 +211,7 @@ uint8_t SignedDecimalToStringFill (int32_t value, char *str, uint8_t fillLength,
 		value *= -1;	// Sign swap
 
 		// Check "fill character"
-		if(fillCharacter == ' ')
+		if (fillCharacter == ' ')
 		{
 			// ' ', put sign at last
 			// "    -123"
@@ -687,7 +687,7 @@ bool SignedDecimalStringToNum (const char *str, int32_t *value)
 		isNegative = true;
 		length = 1;
 	}
-	else if(str[0] == '+')
+	else if (str[0] == '+')
 	{
 		// Positive
 		isNegative = false ;
@@ -747,7 +747,7 @@ bool StringToFloat (const char *str, float *Num)
 		isNegative = true;
 		length = 1;
 	}
-	else if(str[0] == '+')
+	else if (str[0] == '+')
 	{
 		isNegative = false ;
 		length = 1;
@@ -765,7 +765,7 @@ bool StringToFloat (const char *str, float *Num)
 	for (i=0; str[length+i] != '.'; i++)
 	{
 		numString[i] = str[length+i];
-		if(i >= stringLength)
+		if (i >= stringLength)
 		{
 			// Error, overflow
 			return false;
@@ -777,7 +777,7 @@ bool StringToFloat (const char *str, float *Num)
 
 
 	// Convert integer
-	if(!UnsignedDecimalStringToNum(numString,&integer))
+	if (!UnsignedDecimalStringToNum(numString,&integer))
 	{
 		// Error with convert integer part
 		return false;
@@ -787,7 +787,7 @@ bool StringToFloat (const char *str, float *Num)
 	*Num = integer;
 
 	// Convert fraction
-	if(!UnsignedDecimalStringToNum(&str[pointCnt+1],&integer))
+	if (!UnsignedDecimalStringToNum(&str[pointCnt+1],&integer))
 	{
 		// Error with convert fraction part
 		return false;
@@ -806,7 +806,7 @@ bool StringToFloat (const char *str, float *Num)
 	// Add Integer and Fraction
 	*Num += fractionPart;
 
-	if(isNegative)
+	if (isNegative)
 	{
 		*Num = (-1) * (*Num);
 	}
@@ -1002,7 +1002,7 @@ int16_t FindString (const char *findString, const char *str)
 		if (findString[0] == str[i])
 		{
 			// First character is equal
-			if(!StrCmp(findString, &str[i]))
+			if (!StrCmp(findString, &str[i]))
 			{
 				return i;
 			}
@@ -1056,7 +1056,7 @@ uint8_t string_printf (char *str, const char *format, va_list ap)
 
 			// Check %...x (parameter after %, before x, u, f)
 			// Next character is num?
-			if(IsDecimalChar(*p))
+			if (IsDecimalChar(*p))
 			{
 				// It is num (1. param)
 				paramNum1 = DecimalCharToNum(*p);
@@ -1375,7 +1375,7 @@ void STRING_UnitTest (void)
 void vprint(const char *fmt, va_list argp)
 {
     char string[200];
-    if(0 < vsprintf(string,fmt,argp)) // build string
+    if (0 < vsprintf(string,fmt,argp)) // build string
     {
         HAL_UART_Transmit(&huart1, (uint8_t*)string, strlen(string), 0xffffff); // send message via UART
     }

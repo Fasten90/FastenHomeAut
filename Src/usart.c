@@ -120,7 +120,7 @@ void USART_Init ( UART_HandleTypeDef *UartHandle)
 	UartHandle->Init.Mode       = UART_MODE_TX_RX;
 	UartHandle->Init.OverSampling = UART_OVERSAMPLING_16;
 
-	if(HAL_UART_Init(UartHandle) == HAL_OK)
+	if (HAL_UART_Init(UartHandle) == HAL_OK)
 	{	
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 		if ( UartHandle == &Debug_UartHandle)
@@ -482,7 +482,7 @@ uint8_t USART_SendMessage ( const char *aTxBuffer )
 		StrCpy((char *)USART_TxBuffer,aTxBuffer);
 
 		// ComIT
-		if(HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t*)USART_TxBuffer, length)!= HAL_OK)
+		if (HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t*)USART_TxBuffer, length)!= HAL_OK)
 		{
 			// NOTE: !!IMPORTANT!! Not sent message
 			//Error_Handler();
@@ -544,7 +544,7 @@ bool USART_SendChar ( char c )
 
 		StrCpy((char *)USART_TxBuffer,buf);
 
-		if(HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t *)USART_TxBuffer, 1)!= HAL_OK)
+		if (HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t *)USART_TxBuffer, 1)!= HAL_OK)
 		{
 			// NOTE: !! IMPORTANT!! Not sent message
 			//Error_Handler();

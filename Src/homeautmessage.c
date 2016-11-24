@@ -243,7 +243,7 @@ ReturnType HOMEAUTMESSAGE_CompareMessage(char *messageString)
 		// MyAddress
 		StrCpyFixLength(buffer,message->MyAddress,HOMEAUTMESSAGE_DefaultAddress_Length);
 		buffer[HOMEAUTMESSAGE_DefaultAddress_Length] = '\0';
-		if(!UnsignedDecimalStringToNum (buffer, &readedMyAddress))
+		if (!UnsignedDecimalStringToNum (buffer, &readedMyAddress))
 		{
 			return Return_False;
 		}
@@ -253,7 +253,7 @@ ReturnType HOMEAUTMESSAGE_CompareMessage(char *messageString)
 			{
 				StrCpyFixLength(buffer,message->TargetAddress,HOMEAUTMESSAGE_DefaultAddress_Length);
 				buffer[HOMEAUTMESSAGE_DefaultAddress_Length] = '\0';
-				if(!UnsignedDecimalStringToNum (buffer,&readedTargetAddress))
+				if (!UnsignedDecimalStringToNum (buffer,&readedTargetAddress))
 				{
 					return Return_False;
 				}
@@ -313,7 +313,7 @@ ReturnType HOMEAUTMESSAGE_CompareMessage(char *messageString)
 								StrCpyFixLength(buffer,message->Data,HOMEAUTMESSAGE_DefaultData_Length);
 								buffer[HOMEAUTMESSAGE_DefaultData_Length] = '\0';
 
-								if(StringHexToNum (buffer,&readedData))
+								if (StringHexToNum (buffer,&readedData))
 								{
 									// Successful converting
 								}
@@ -378,7 +378,7 @@ void HOMEAUTMESSAGE_Test(void)
 		}
 	}
 	
-	if(isGood)
+	if (isGood)
 	{
 		LED_GREEN_ON();
 	}

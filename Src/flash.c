@@ -85,7 +85,7 @@ void FLASH_Init( void )
 
 
 
-	if(HAL_SPI_Init(&SpiHandle) != HAL_OK)
+	if (HAL_SPI_Init(&SpiHandle) != HAL_OK)
 	{
 		/* Initialization Error */
 		Error_Handler();
@@ -268,7 +268,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef *hspi)
 {
 	GPIO_InitTypeDef  GPIO_InitStruct;
 
-	if(hspi->Instance == FLASH_SPIx)
+	if (hspi->Instance == FLASH_SPIx)
 	{     
 		/*##-1- Enable peripherals and GPIO Clocks #################################*/
 		/* Enable GPIO TX/RX clock */
@@ -350,7 +350,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef *hspi)
 /*
 void HAL_SPI_MspDeInit(SPI_HandleTypeDef *hspi)
 {
-  if(hspi->Instance == SPIx)
+  if (hspi->Instance == SPIx)
   {   
     //##-1- Reset peripherals ##################################################
     SPIx_FORCE_RESET();

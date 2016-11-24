@@ -298,7 +298,7 @@ void MONITOR_CheckCommand ( void )
 #endif
 
 	// Check GlobalVarList[]
-	if(GlobalVarHandler_CheckCommandStructAreValid()==false)
+	if (GlobalVarHandler_CheckCommandStructAreValid()==false)
 	{
 		USART_SendLine("ERROR in GlobalVarList! Should correct that!");
 	}
@@ -461,7 +461,7 @@ static void MONITOR_ProcessReceivedCharacter ( void )
 				MONITOR_CommandActualEscape[MONITOR_CommandEscape_cnt++] = USART_ReceivedChar;
 
 				// TODO: only work with escape sequence if 3 chars (ESC[A)
-				if(MONITOR_CommandActualEscape[2] != '3')
+				if (MONITOR_CommandActualEscape[2] != '3')
 				{
 					// \e[A / B / C / D
 					MONITOR_CommandEscapeSequenceInProgress = false;
@@ -550,7 +550,7 @@ static void MONITOR_ProcessReceivedCharacter ( void )
 							MONITOR_CommandActual[MONITOR_CommandActualLength] = USART_ReceivedChar;
 							MONITOR_CommandActualLength++;
 							MONITOR_CommandCursorPosition++;
-							if(MONITOR_CommandSendBackCharEnable)
+							if (MONITOR_CommandSendBackCharEnable)
 							{
 								USART_SendChar( USART_ReceivedChar );
 							}
@@ -903,7 +903,7 @@ static void MONITOR_CommandTabulator ( void )
 
 	for (i=0; i < MONITOR_CommandNum; i++)
 	{
-		if(!StrCmpWithLength(CommandList[i].name, (const char *)MONITOR_CommandActual,MONITOR_CommandActualLength))
+		if (!StrCmpWithLength(CommandList[i].name, (const char *)MONITOR_CommandActual,MONITOR_CommandActualLength))
 		{
 			// It is equal
 			// We write the first equal
@@ -1231,7 +1231,7 @@ void MONITOR_RunCommand ( CommandID_t commandID )
 	// Check argument nums
 	result = MONITOR_ArgumentNumIsGood(COMMAND_ArgCount, CommandList[commandID].CommandArgNum);
 
-	if(result == CommandResult_Ok)
+	if (result == CommandResult_Ok)
 	{
 		// Good
 
@@ -1251,7 +1251,7 @@ void MONITOR_RunCommand ( CommandID_t commandID )
 	// Write result if need
 	MONITOR_CheckResultAndRespond(result);
 
-	if(needWriteHelp)
+	if (needWriteHelp)
 	{
 		MONITOR_WriteAnCommandHelp (commandID);
 	}
@@ -1290,7 +1290,7 @@ CommandResult_t MONITOR_ArgumentNumIsGood ( uint8_t receivedArgNum, uint8_t comm
 		return CommandResult_Error_CommandArgNumIsWrong;
 	}
 
-	if( commandArgNum & (1 << (receivedArgNum-1)))
+	if (commandArgNum & (1 << (receivedArgNum-1)))
 	{
 		// Good, there is this bit
 		return CommandResult_Ok;
@@ -1302,10 +1302,10 @@ CommandResult_t MONITOR_ArgumentNumIsGood ( uint8_t receivedArgNum, uint8_t comm
 		uint8_t i;
 		for (i=0; i<8; i++)
 		{
-			if(commandArgNum & (1 << i))
+			if (commandArgNum & (1 << i))
 			{
 				maxRequiredArgNum = i+1;
-				if(minRequiredArgNum == 0)
+				if (minRequiredArgNum == 0)
 				{
 					minRequiredArgNum = i+1;
 				}
@@ -1368,13 +1368,13 @@ static void MONITOR_GetPassword ( void )
 				USART_RxBufferReadCnt++;
 				USART_SendChar('*');
 
-				if(USART_ReceivedChar == '\r')
+				if (USART_ReceivedChar == '\r')
 				{
 					// Pressed enter, check password
 					isTry = false;
 					MONITOR_CommandActual[MONITOR_CommandActualLength++] = '\0';
 					USART_SendLine("");	// TODO: Külön függvény / makró rá
-					if(MONITOR_CheckPassword((const char*)MONITOR_CommandActual))
+					if (MONITOR_CheckPassword((const char*)MONITOR_CommandActual))
 					{
 						// Successful password
 						USART_SendLine("Successful password!");
@@ -1404,7 +1404,7 @@ static void MONITOR_GetPassword ( void )
  */
 static bool MONITOR_CheckPassword (const char *string)
 {
-	if(!StrCmp(string,MONITOR_Password))
+	if (!StrCmp(string,MONITOR_Password))
 	{
 		// Equal
 		return true;

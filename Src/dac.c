@@ -53,7 +53,7 @@ void DAC_Config(void)
   DacHandle.Instance = DACx;
 
   /*##-1- Initialize the DAC peripheral ######################################*/
-  if(HAL_DAC_Init(&DacHandle) != HAL_OK)
+  if (HAL_DAC_Init(&DacHandle) != HAL_OK)
   {
     /* Initialization Error */
     Error_Handler();
@@ -63,7 +63,7 @@ void DAC_Config(void)
   sConfig.DAC_Trigger = DAC_TRIGGER_NONE;
   sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_DISABLE;
 
-  if(HAL_DAC_ConfigChannel(&DacHandle, &sConfig, DACx_CHANNEL1) != HAL_OK)
+  if (HAL_DAC_ConfigChannel(&DacHandle, &sConfig, DACx_CHANNEL1) != HAL_OK)
   {
     /* Channel configuration Error */
     Error_Handler();
@@ -72,7 +72,7 @@ void DAC_Config(void)
 
   /*##-5- Set DAC channel1 DHR12RD register ################################################*/
 
-  if(HAL_DAC_SetValue(&DacHandle, DACx_CHANNEL1, DAC_ALIGN_12B_R, 0x00) != HAL_OK)
+  if (HAL_DAC_SetValue(&DacHandle, DACx_CHANNEL1, DAC_ALIGN_12B_R, 0x00) != HAL_OK)
   {
 	/* Setting value Error */
 	Error_Handler();
@@ -81,7 +81,7 @@ void DAC_Config(void)
 
 
   /*##-4- Enable DAC Channel1 ################################################*/
-  if(HAL_DAC_Start(&DacHandle, DACx_CHANNEL1) != HAL_OK)
+  if (HAL_DAC_Start(&DacHandle, DACx_CHANNEL1) != HAL_OK)
   {
     /* Start Error */
     Error_Handler();
@@ -133,7 +133,7 @@ bool DAC_SetValue (DAC_Channel_t channel, float voltage)
 	// Check value
 	dacValue = DAC_VoltageToBinary(voltage);
 
-	if(HAL_DAC_SetValue(&DacHandle, channelDefine, DAC_ALIGN_12B_R, dacValue) != HAL_OK)
+	if (HAL_DAC_SetValue(&DacHandle, channelDefine, DAC_ALIGN_12B_R, dacValue) != HAL_OK)
 	{
 		/* Setting value Error */
 		Error_Handler();

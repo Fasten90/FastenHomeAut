@@ -70,7 +70,7 @@ extern UART_HandleTypeDef Debug_UartHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-void Error_Handler( void );
+void Error_Handler(void);
 
 
 
