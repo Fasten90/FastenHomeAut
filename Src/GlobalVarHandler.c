@@ -1076,7 +1076,6 @@ void GlobalVarHandler_ListAllVariables(void)
 	char buffer[10];
 
 	// TODO: Megcsinálni szebbre?
-	// TODO: min/max-okat kiírni?
 	// TODO: Enumokat is kiírni, ha van?
 	USART_SendLine("+------Name--------|--Type---|min|max|unit|----Description-------+");
 	for (i=0; i<GlobalVarMaxCommandNum; i++)
@@ -1095,14 +1094,14 @@ void GlobalVarHandler_ListAllVariables(void)
 		length += USART_SendString("| ");
 		// Send name
 		length += USART_SendString(GlobalVarList[i].name);
-		while(length < 20)
+		while (length < 20)
 		{
 			USART_SendChar(' ');
 			length++;
 		}
 		// Send type
 		length += USART_SendString(GlobalVarTypesNames[GlobalVarList[i].type]);
-		while(length < 30)
+		while (length < 30)
 		{
 			USART_SendChar(' ');
 			length++;
@@ -1111,7 +1110,7 @@ void GlobalVarHandler_ListAllVariables(void)
 
 		length += SignedDecimalToString(GlobalVarList[i].minValue,buffer);
 		USART_SendString(buffer);
-		while(length < 34)
+		while (length < 34)
 		{
 			USART_SendChar(' ');
 			length++;
@@ -1120,7 +1119,7 @@ void GlobalVarHandler_ListAllVariables(void)
 		// Send max
 		length += SignedDecimalToString(GlobalVarList[i].maxValue,buffer);
 		USART_SendString(buffer);
-		while(length < 38)
+		while (length < 38)
 		{
 			USART_SendChar(' ');
 			length++;
@@ -1134,7 +1133,7 @@ void GlobalVarHandler_ListAllVariables(void)
 			length += USART_SendString(GlobalVarList[i].unit);
 			length += USART_SendString("]");
 		}
-		while(length < 43)
+		while (length < 43)
 		{
 			USART_SendChar(' ');
 			length++;
