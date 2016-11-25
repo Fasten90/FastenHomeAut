@@ -941,6 +941,35 @@ uint8_t StrCpyFixLength (char *dest, const char *str, uint8_t length)
 
 
 /**
+ * \brief	Copy fix length string
+ * \return	String length (=parameter)
+ */
+uint8_t StrCpyFixLengthWithFillCharacter (char *dest, const char *str, uint8_t length, char fillChar)
+{
+
+	uint8_t i;
+
+	// Copy characters
+	for ( i = 0; (i < length) && (str[i]); i++ )
+	{
+		dest[i] = str[i];
+	}
+
+	// Fill with character after string
+	if (i<length)
+	{
+		for (; i < length; i++)
+		{
+			dest[i] = fillChar;
+		}
+	}
+
+	return length;
+}
+
+
+
+/**
  * \brief	Copy string with max length
  * \return	String length (=parameter)
  */
@@ -950,7 +979,7 @@ uint8_t StrCpyMax (char *dest, const char *str, uint8_t length)
 	uint8_t i = 0;
 
 	// Copy characters
-	while((i < length) && (str[i] != '\0'))
+	while ((i < length) && (str[i] != '\0'))
 	{
 		dest[i] = str[i];
 		i++;
@@ -1046,6 +1075,7 @@ uint8_t string_printf (char *str, const char *format, va_list ap)
 			p++;
 			paramNum1 = 0;	// for standard %08x
 			paramNum2 = 0;
+			paramDescCnt = 0;
 			fillCharacter = ' ';
 
 			// Check %...x (parameter after %, before x, u, f)
@@ -1146,10 +1176,26 @@ uint8_t string_printf (char *str, const char *format, va_list ap)
 					break;
 
 				case 's':
-					for (sval = va_arg(ap, char*); *sval; sval++)	// String
+					sval = va_arg(ap, char*);
+					if (paramDescCnt)
 					{
-						*string = *sval;					// Copy to string
-						string++;
+						// string copy with length
+						uint8_t stringLength = 0;
+						if (paramDescCnt == 1)
+						{
+							stringLength = paramNum1;
+						}
+						else if (paramDescCnt == 2)
+						{
+							stringLength = paramNum1*10 + paramNum2;
+						}
+
+						string += StrCpyFixLengthWithFillCharacter(string, sval, stringLength, ' ');
+					}
+					else
+					{
+						// standard string copy
+						string += StrCpy(string, sval);
 					}
 					break;
 
@@ -1253,7 +1299,7 @@ void STRING_UnitTest (void)
 {
 
 	char buffer[20];
-	float floatNum;
+
 
 	UnitTest_Start("String module unit test", __FILE__);
 
@@ -1384,6 +1430,21 @@ void STRING_UnitTest (void)
 	UnitTest_CheckResult(!StrCmp(buffer, "0x12345678"), "Hexadecimal error", __FILE__, __LINE__);
 	usprintf(buffer, "0x%09x",0x12345678);
 	UnitTest_CheckResult(!StrCmp(buffer, "0x"), "Hexadecimal error", __FILE__, __LINE__);
+
+
+	// String (%s)
+	// Standard %s print
+	usprintf(buffer, "%s", "text");
+	UnitTest_CheckResult(!StrCmp(buffer, "text"), "String error (%s)", __FILE__, __LINE__);
+	// max 5 character
+	usprintf(buffer, "%5s", "longtext");
+	UnitTest_CheckResult(!StrCmp(buffer, "longt"), "String error (%s)", __FILE__, __LINE__);
+	// 10 character, need fill with ' '
+	usprintf(buffer, "%10s", "longtext");
+	UnitTest_CheckResult(!StrCmp(buffer, "longtext  "), "String error (%s)", __FILE__, __LINE__);
+	// max 10 character
+	usprintf(buffer, "%10s", "toolongtext");
+	UnitTest_CheckResult(!StrCmp(buffer, "toolongtex"), "String error (%s)", __FILE__, __LINE__);
 
 
 	UnitTest_End(__FILE__);

@@ -1072,14 +1072,29 @@ static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBu
 void GlobalVarHandler_ListAllVariables(void)
 {
 	uint8_t i;
+	/*
 	uint8_t length;
 	char buffer[10];
+	 */
 
-	// TODO: Megcsinálni szebbre?
 	// TODO: Enumokat is kiírni, ha van?
-	USART_SendLine("+------Name--------|--Type---|min|max|unit|----Description-------+");
+	const char *header = "+-ID-+-------Name-----------+----Type----+--min--+--max--+-unit-+-----Description------+";
+
+	// Send header
+	USART_SendLine(header);
+
+	// Rows (commands)
 	for (i=0; i<GlobalVarMaxCommandNum; i++)
 	{
+		uprintf("| %2d | %20s | %10s | %5d | %5d | %4s | %20s |\r\n",
+				i,
+				GlobalVarList[i].name,
+				GlobalVarTypesNames[GlobalVarList[i].type],
+				GlobalVarList[i].minValue,
+				GlobalVarList[i].maxValue,
+				GlobalVarList[i].unit,
+				GlobalVarList[i].description
+				);
 		// Print one command / line:
 		// name \t type \t description
 		/*
@@ -1090,6 +1105,7 @@ void GlobalVarHandler_ListAllVariables(void)
 				GlobalVarList[i].unit			// unit
 				);
 		*/
+		/*
 		length = 0;
 		length += USART_SendString("| ");
 		// Send name
@@ -1141,8 +1157,11 @@ void GlobalVarHandler_ListAllVariables(void)
 		// Send description
 		length += USART_SendString(GlobalVarList[i].description);
 		length += USART_SendLine("");
+		*/
 	}
-	USART_SendLine("+----------------------------------------------------------------+");
+
+	// After commands (end)
+	USART_SendLine(header);
 
 }
 
