@@ -991,23 +991,34 @@ uint8_t StrCpyFixLengthWithFillCharacter (char *dest, const char *str, uint8_t l
 
 /**
  * \brief	Copy string with max length
- * \return	String length (=parameter)
+ * \return	String length
  */
-uint8_t StrCpyMax (char *dest, const char *str, uint8_t length)
+uint8_t StrCpyMax (char *dest, const char *str, uint8_t maxLength)
 {
 
-	uint8_t i = 0;
+	uint8_t length = 0;
+	length = StringLength(str);
 
-	// Copy characters
-	while ((i < length) && (str[i] != '\0'))
+	// Check parameters
+	if (dest == NULL || str == NULL || maxLength == 0)
 	{
-		dest[i] = str[i];
-		i++;
+		return 0;
 	}
 
-	dest[i] = '\0';
+	// Check long
+	if (length >= maxLength)
+	{
+		// Too long, only can copy "length-1" characters + '\0'
+		length = maxLength-1;
+	}
 
-	return i;
+	// Copy characters
+	StrCpyFixLength(dest, str, length);
+
+	// Put end
+	dest[length] = '\0';
+
+	return length;
 }
 
 

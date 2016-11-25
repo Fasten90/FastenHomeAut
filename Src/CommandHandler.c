@@ -602,7 +602,7 @@ bool MONITOR_PrepareFindExecuteCommand ( void )
 
 	if ( COMMAND_ArgCount > 0 )
 	{
-		// Find and probing execute the command
+		// Find and execute the command
 		isSuccessful = MONITOR_SearchCommand ();
 		USART_SEND_NEW_LINE();
 	}
@@ -714,18 +714,15 @@ bool MONITOR_SearchCommand ( void )
 	}
 
 	// Is valid command?
-	if (CommandValid)
-	{
-		// Valid command
-		return true;
-	}
-	else
+	if (!CommandValid)
 	{
 		// Error, wrong command
 		USART_SendLine("Unknown Command");
 		USART_SendLine("Type \"help\" for help");
-		return false;
 	}
+
+	// Return with validation
+	return !CommandValid;
 
 }
 

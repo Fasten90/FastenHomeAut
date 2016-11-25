@@ -2,7 +2,7 @@
  * MEM.c
  *
  *  Created on: Aug 31, 2016
- *      Author: Vizi G·bor
+ *      Author: Vizi G√°bor
  */
 
 
@@ -61,7 +61,7 @@ void * memmove ( void * destination, const void * source, size_t num )
 
 
 
-// TODO: Vagy MakrÛval megcsin·lni?
+// TODO: Vagy Makr√≥val megcsin√°lni?
 void * meminit ( void * ptr, size_t num )
 {
 

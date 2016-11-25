@@ -103,7 +103,7 @@ uint8_t StrCmpWithLength (const char * str1, const char *str2, uint8_t length);
 uint8_t StrCpy (char *dest, const char *src );
 uint8_t StrCpyFixLength (char *dest, const char *src, uint8_t length );
 uint8_t StrCpyFixLengthWithFillCharacter (char *dest, const char *str, uint8_t length, char fillChar);
-uint8_t StrCpyMax (char *dest, const char *src, uint8_t length);
+uint8_t StrCpyMax (char *dest, const char *str, uint8_t maxLength);
 uint8_t StrAppend (char *dest, const char *src);
 
 // Find & Separators

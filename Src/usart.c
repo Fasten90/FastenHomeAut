@@ -512,6 +512,9 @@ uint8_t USART_SendMessage ( const char *aTxBuffer )
 
 
 
+/**
+ * \brief Send newline
+ */
 bool USART_SendNewLine (void)
 {
 	return USART_SendMessage("\r\n");
@@ -519,6 +522,9 @@ bool USART_SendNewLine (void)
 
 
 
+/**
+ * \brief	Send message with newline
+ */
 bool USART_SendLine (const char *message)
 {
 	bool isSuccessful = true;
