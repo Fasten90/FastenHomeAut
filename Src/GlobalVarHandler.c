@@ -68,7 +68,7 @@ static bool GlobalVarHandler_SearchVariableName(const char *commandName, VarID_t
 static ProcessResult_t GlobalVarHandler_SetCommand(const VarID_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength);
 static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBuffer, uint8_t resultBufferLength);
 static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t num);
-static void GlobalVarHandler_HelpVariable (VarID_t commandID, char *resultBuffer);
+static void GlobalVarHandler_PrintVariableDescriptions (VarID_t commandID, char *resultBuffer);
 static ProcessResult_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
 static uint8_t GlobalVarHandler_GetEnumerator(const VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
 static ProcessResult_t GlobalVarHandler_SetBool(VarID_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength);
@@ -184,7 +184,7 @@ void GlobalVarHandler_ProcessCommand(
 			}
 			else if (setGetType == SetGet_Help)
 			{
-				GlobalVarHandler_HelpVariable(commandID,resultBuffer);
+				GlobalVarHandler_PrintVariableDescriptions(commandID,resultBuffer);
 				result = Process_Ok_Answered;
 			}
 			else
@@ -1069,13 +1069,9 @@ static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBu
 /**
  * \brief	List all variables
  */
-void GlobalVarHandler_ListAllVariables(void)
+void GlobalVarHandler_ListAllVariableParameters(void)
 {
 	uint8_t i;
-	/*
-	uint8_t length;
-	char buffer[10];
-	 */
 
 	// TODO: Enumokat is kiírni, ha van?
 	const char *header = "+-ID-+-------Name-----------+----Type----+--min--+--max--+-unit-+-----Description------+";
@@ -1086,6 +1082,8 @@ void GlobalVarHandler_ListAllVariables(void)
 	// Rows (commands)
 	for (i=0; i<GlobalVarMaxCommandNum; i++)
 	{
+
+		// Print one command / line:
 		uprintf("| %2d | %20s | %10s | %5d | %5d | %4s | %20s |\r\n",
 				i,
 				GlobalVarList[i].name,
@@ -1095,69 +1093,6 @@ void GlobalVarHandler_ListAllVariables(void)
 				GlobalVarList[i].unit,
 				GlobalVarList[i].description
 				);
-		// Print one command / line:
-		// name \t type \t description
-		/*
-		uprintf("%s\t%s\t%s\t[%s]\r\n",
-				GlobalVarList[i].name,	// name
-				GlobalVarTypesNames[GlobalVarList[i].type],	// type
-				GlobalVarList[i].description,	// description
-				GlobalVarList[i].unit			// unit
-				);
-		*/
-		/*
-		length = 0;
-		length += USART_SendString("| ");
-		// Send name
-		length += USART_SendString(GlobalVarList[i].name);
-		while (length < 20)
-		{
-			USART_SendChar(' ');
-			length++;
-		}
-		// Send type
-		length += USART_SendString(GlobalVarTypesNames[GlobalVarList[i].type]);
-		while (length < 30)
-		{
-			USART_SendChar(' ');
-			length++;
-		}
-		// Send min
-
-		length += SignedDecimalToString(GlobalVarList[i].minValue,buffer);
-		USART_SendString(buffer);
-		while (length < 34)
-		{
-			USART_SendChar(' ');
-			length++;
-		}
-
-		// Send max
-		length += SignedDecimalToString(GlobalVarList[i].maxValue,buffer);
-		USART_SendString(buffer);
-		while (length < 38)
-		{
-			USART_SendChar(' ');
-			length++;
-		}
-
-		// Send unit
-		if (GlobalVarList[i].unit)
-		{
-			// If has unit
-			length += USART_SendString("[");
-			length += USART_SendString(GlobalVarList[i].unit);
-			length += USART_SendString("]");
-		}
-		while (length < 43)
-		{
-			USART_SendChar(' ');
-			length++;
-		}
-		// Send description
-		length += USART_SendString(GlobalVarList[i].description);
-		length += USART_SendLine("");
-		*/
 	}
 
 	// After commands (end)
@@ -1168,9 +1103,35 @@ void GlobalVarHandler_ListAllVariables(void)
 
 
 /**
- * \brief	An global variable help menu
+ * \brief	Print all variable values
  */
-static void GlobalVarHandler_HelpVariable (VarID_t commandID, char *resultBuffer)
+void GlobalVarHandler_PrintAllVariableValues (void)
+{
+	uint8_t i;
+	char resultBuffer[20];
+	uint8_t resultBufferLength;
+
+	uprintf("Global variables:\r\n"
+			" <Name>               | <Value>\r\n");
+
+	// Print all variables
+	for (i=0; i<GlobalVarMaxCommandNum; i++)
+	{
+		// Print a variable name and value
+		resultBufferLength = 20;
+		GlobalVarHandler_GetCommand(i,resultBuffer,&resultBufferLength);
+		uprintf(" %20s %20s\r\n", GlobalVarList[i].name, resultBuffer);
+	}
+
+	uprintf("End of global variables\r\n");
+}
+
+
+
+/**
+ * \brief	Print global variable descriptions
+ */
+static void GlobalVarHandler_PrintVariableDescriptions (VarID_t commandID, char *resultBuffer)
 {
 
 	usprintf(resultBuffer, "Command help: %s, type:%s, min:%d, max:%d, desc:%s\r\n",

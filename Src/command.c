@@ -55,7 +55,6 @@ const CommandStruct CommandList[] =
 		.syntax = "<command>",
 		.CommandArgNum = CommandArgument_0 | CommandArgument_1,
 	},
-	
 	{
 		.name = "version",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_version,
@@ -63,7 +62,6 @@ const CommandStruct CommandList[] =
 		.syntax = NULL,
 		.CommandArgNum = CommandArgument_0,
 	},
-	
 	{
 		.name = "welcome",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_welcome,
@@ -71,7 +69,6 @@ const CommandStruct CommandList[] =
 		.syntax = NULL,
 		.CommandArgNum = CommandArgument_0,
 	},
-
 	{
 		.name = "reset",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_reset,
@@ -79,7 +76,6 @@ const CommandStruct CommandList[] =
 		.syntax = NULL,
 		.CommandArgNum = CommandArgument_0,
 	},
-
 	{
 		.name = "cls",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_cls,
@@ -87,7 +83,6 @@ const CommandStruct CommandList[] =
 		.syntax = NULL,
 		.CommandArgNum = CommandArgument_0,
 	},
-
 	{
 		.name = "test",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_test,
@@ -95,7 +90,6 @@ const CommandStruct CommandList[] =
 		.syntax = NULL,
 		.CommandArgNum = CommandArgument_0,
 	},
-
 	{
 		.name = "set",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_set,
@@ -103,7 +97,6 @@ const CommandStruct CommandList[] =
 		.syntax = "<varName> <value>",
 		.CommandArgNum = CommandArgument_2,
 	},
-
 	{
 		.name = "get",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_get,
@@ -111,7 +104,6 @@ const CommandStruct CommandList[] =
 		.syntax = "<varName>",
 		.CommandArgNum = CommandArgument_1,
 	},
-
 	{
 		.name = "?",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_GlobalVariableHelp,
@@ -119,14 +111,18 @@ const CommandStruct CommandList[] =
 		.syntax = "<varName>",
 		.CommandArgNum = CommandArgument_1,
 	},
-
 	{
 		.name = "list",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_GlobalVariableList,
 		.description = "List global variable",
 		.CommandArgNum = CommandArgument_0,
 	},
-	
+	{
+		.name = "listvalues",
+		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_GlobalVariableValueList,
+		.description = "List global variable's values",
+		.CommandArgNum = CommandArgument_0,
+	},
 	{
 		.name = "led",
 		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_led,
@@ -484,7 +480,7 @@ CommandResult_t CommandFunction_test	( uint32_t argc, char** argv ) {
 
 	// GlobalVar
 
-	//GlobalVarHandler_ListAllVariables();
+	//GlobalVarHandler_ListAllVariableParameters();
 
 	/*
 	char buffer[30];
@@ -707,7 +703,21 @@ CommandResult_t CommandFunction_GlobalVariableHelp ( uint32_t argc, char** argv 
 CommandResult_t CommandFunction_GlobalVariableList ( uint32_t argc, char** argv )
 {
 
-	GlobalVarHandler_ListAllVariables();
+	GlobalVarHandler_ListAllVariableParameters();
+
+	return CommandResult_Ok;
+
+}
+
+
+
+/**
+ * \brief	Print all global variable values
+ */
+CommandResult_t CommandFunction_GlobalVariableValueList ( uint32_t argc, char** argv )
+{
+
+	GlobalVarHandler_PrintAllVariableValues();
 
 	return CommandResult_Ok;
 

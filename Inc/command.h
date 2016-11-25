@@ -109,6 +109,8 @@ CommandResult_t CommandFunction_set	( uint32_t argc, char** argv );
 CommandResult_t CommandFunction_get	( uint32_t argc, char** argv );
 CommandResult_t CommandFunction_GlobalVariableHelp ( uint32_t argc, char** argv );
 CommandResult_t CommandFunction_GlobalVariableList ( uint32_t argc, char** argv );
+CommandResult_t CommandFunction_GlobalVariableValueList ( uint32_t argc, char** argv );
+
 
 CommandResult_t CommandFunction_reset	( uint32_t argc, char** argv );
 CommandResult_t CommandFunction_led	( uint32_t argc, char** argv );

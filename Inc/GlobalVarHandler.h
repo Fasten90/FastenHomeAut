@@ -125,8 +125,8 @@ void GlobalVarHandler_ProcessCommand(
 		SetGetType_t setGetType, CommandSource_t source,
 		char *resultBuffer, uint8_t resultBufferLength);
 
-void GlobalVarHandler_ListAllVariables(void);
-
+void GlobalVarHandler_ListAllVariableParameters(void);
+void GlobalVarHandler_PrintAllVariableValues (void);
 
 
 
