@@ -512,11 +512,18 @@ uint8_t USART_SendMessage ( const char *aTxBuffer )
 
 
 
+bool USART_SendNewLine (void)
+{
+	return USART_SendMessage("\r\n");
+}
+
+
+
 bool USART_SendLine (const char *message)
 {
 	bool isSuccessful = true;
 	isSuccessful &= USART_SendMessage(message);
-	isSuccessful &= USART_SendMessage("\r\n");
+	isSuccessful &= USART_SendNewLine();
 	return isSuccessful;
 }
 

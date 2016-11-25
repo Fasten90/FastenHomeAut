@@ -891,13 +891,11 @@ CommandResult_t CommandFunction_dac (uint32_t argc, char** argv)
 
 	if (!StringToUnsignedDecimalNum(argv[1],&Arg2Num))
 	{
-		USART_SendLine("Wrong 1. argument!");
 		return CommandResult_Error_WrongArgument1;
 	}
 
 	if (!StringToFloat(argv[2],&voltage))
 	{
-		USART_SendLine("Wrong 2. argument!");
 		return CommandResult_Error_WrongArgument2;
 	}
 

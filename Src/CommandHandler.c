@@ -630,7 +630,7 @@ uint8_t MONITOR_CommandParser ( void )
 	// return arc; = argumentum's num
 	// call from void MonitorWaitCommand(void);
 
-	// TODO: Általános Parset függvénnyel megoldani?
+	// TODO: Általános Parser függvénnyel megoldani?
 
 	uint8_t i;
 	uint8_t j = 0;
@@ -1068,10 +1068,10 @@ void MONITOR_HISTORY_Save ( void )
 	// Actual saved is the "last"
 	MONITOR_HISTORY_Load_cnt = MONITOR_HISTORY_Save_cnt;
 
-	// TODO: Check length
-
 	// Save command
-	StrCpy ( MONITOR_HISTORY[MONITOR_HISTORY_Save_cnt], (char *)MONITOR_CommandActual );
+	StrCpyMax( MONITOR_HISTORY[MONITOR_HISTORY_Save_cnt],
+			(char *)MONITOR_CommandActual,
+			MONITOR_MAX_COMMAND_LENGTH );
 
 	return;
 
@@ -1373,7 +1373,7 @@ static void MONITOR_GetPassword ( void )
 					// Pressed enter, check password
 					isTry = false;
 					MONITOR_CommandActual[MONITOR_CommandActualLength++] = '\0';
-					USART_SendLine("");	// TODO: Külön függvény / makró rá
+					USART_SendNewLine();
 					if (MONITOR_CheckPassword((const char*)MONITOR_CommandActual))
 					{
 						// Successful password

@@ -81,6 +81,7 @@ void USART_StartReceiveMessage ( void );
 
 bool USART_SendChar ( char c );
 uint8_t USART_SendMessage ( const char *aTxBuffer );
+bool USART_SendNewLine (void);
 bool USART_SendLine ( const char *message );
 void USART_SendFloat ( float value);
 void USART_SendSoundBeep ( void );
