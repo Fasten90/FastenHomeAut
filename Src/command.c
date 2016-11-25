@@ -380,7 +380,7 @@ CommandResult_t CommandFunction_led ( uint32_t argc, char** argv )
 {
 
 	// Convert arg2, decimal
-	if (!UnsignedDecimalStringToNum(argv[2],&Arg3Num))
+	if (!StringToUnsignedDecimalNum(argv[2],&Arg3Num))
 	{
 		return CommandResult_Error_WrongArgument2;
 	}
@@ -473,10 +473,7 @@ CommandResult_t CommandFunction_test	( uint32_t argc, char** argv ) {
 
 	USART_SendSoundBeep();
 
-
 	FormattedMessage_UnitTest();
-	STRING_UnitTest();
-
 
 	// GlobalVar
 
@@ -810,7 +807,7 @@ CommandResult_t CommandFunction_flashwrite	( uint32_t argc, char** argv )
 	}
 	
 	// Convert arg3, decimal
-	if (!UnsignedDecimalStringToNum(argv[2],&Arg3Num))
+	if (!StringToUnsignedDecimalNum(argv[2],&Arg3Num))
 	{
 		return CommandResult_Error_WrongArgument2;
 	}
@@ -854,7 +851,7 @@ CommandResult_t CommandFunction_raspberrypi (uint32_t argc, char** argv)
 		*/
 
 		// Convert arg3, decimal
-		if (!UnsignedDecimalStringToNum(argv[2],&Arg3Num))
+		if (!StringToUnsignedDecimalNum(argv[2],&Arg3Num))
 		{
 			USART_SendString("Wrong 1. argument!\r\n");
 			return CommandResult_Error_WrongArgument1;
@@ -892,7 +889,7 @@ CommandResult_t CommandFunction_dac (uint32_t argc, char** argv)
 
 	float voltage = 0.0f;
 
-	if (!UnsignedDecimalStringToNum(argv[1],&Arg2Num))
+	if (!StringToUnsignedDecimalNum(argv[1],&Arg2Num))
 	{
 		USART_SendLine("Wrong 1. argument!");
 		return CommandResult_Error_WrongArgument1;
@@ -940,7 +937,7 @@ CommandResult_t CommandFunction_dl ( uint32_t argc, char** argv )
 
 	if ( StringIsHexadecimalString(argv[1]) ) Arg2Num = StringHexToNum(argv[1]);	// <destination> 	Convert hex to num
 	else { USART_SendString("Wrong 1. argument!\r\n"); return 0; }
-	if ( StringIsUnsignedDecimalString(argv[2]) ) Arg3Num = UnsignedDecimalStringToNum(argv[2]);	// <size>			Convert dec to num
+	if ( StringIsUnsignedDecimalString(argv[2]) ) Arg3Num = StringToUnsignedDecimalNum(argv[2]);	// <size>			Convert dec to num
 	else { USART_SendString("Wrong 2. argument!\r\n"); return 0; }
 
 	size = Arg3Num;

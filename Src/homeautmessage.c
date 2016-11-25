@@ -243,7 +243,7 @@ ReturnType HOMEAUTMESSAGE_CompareMessage(char *messageString)
 		// MyAddress
 		StrCpyFixLength(buffer,message->MyAddress,HOMEAUTMESSAGE_DefaultAddress_Length);
 		buffer[HOMEAUTMESSAGE_DefaultAddress_Length] = '\0';
-		if (!UnsignedDecimalStringToNum (buffer, &readedMyAddress))
+		if (!StringToUnsignedDecimalNum (buffer, &readedMyAddress))
 		{
 			return Return_False;
 		}
@@ -253,7 +253,7 @@ ReturnType HOMEAUTMESSAGE_CompareMessage(char *messageString)
 			{
 				StrCpyFixLength(buffer,message->TargetAddress,HOMEAUTMESSAGE_DefaultAddress_Length);
 				buffer[HOMEAUTMESSAGE_DefaultAddress_Length] = '\0';
-				if (!UnsignedDecimalStringToNum (buffer,&readedTargetAddress))
+				if (!StringToUnsignedDecimalNum (buffer,&readedTargetAddress))
 				{
 					return Return_False;
 				}

@@ -596,7 +596,7 @@ static ProcessResult_t GlobalVarHandler_SetBool(VarID_t commandID, const char *p
 	uint32_t num;
 	bool boolVal;
 	// Check it is decimal?
-	if (UnsignedDecimalStringToNum(param, &num))
+	if (StringToUnsignedDecimalNum(param, &num))
 	{
 		if (num == 1)
 		{
@@ -734,7 +734,7 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 		// Unsigned types
 
 		uint32_t num = 0;
-		if (UnsignedDecimalStringToNum(param, &num))
+		if (StringToUnsignedDecimalNum(param, &num))
 		{
 			ProcessResult_t result;
 			result = GlobalVarHandler_CheckValue(num,commandID);
@@ -781,7 +781,7 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 		// Signed types
 
 		int32_t num = 0;
-		if (SignedDecimalStringToNum(param, &num))
+		if (StringToSignedDecimalNum(param, &num))
 		{
 			ProcessResult_t result;
 			result = GlobalVarHandler_CheckValue(num,commandID);
@@ -846,7 +846,7 @@ static ProcessResult_t GLobalVarHandler_SetEnumerator(VarID_t commandID, const c
 	if (StringIsUnsignedDecimalString(param))
 	{
 		// It is number
-		if (UnsignedDecimalStringToNum(param, &enumValue))
+		if (StringToUnsignedDecimalNum(param, &enumValue))
 		{
 			if (GlobalVarHandler_CheckValue(commandID,enumValue) == Process_Ok_SetSuccessful_SendOk)
 			{

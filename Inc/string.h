@@ -83,14 +83,14 @@ uint8_t StringIsUnsignedDecimalString (const char *str);
 uint8_t StringIsSignedDecimalString (const char *str);
 
 // HexString --> Integer converters
-uint8_t HexCharToHex (const char c);
+bool HexCharToHex (const char c, uint8_t *hexValue);
 bool StringByteToNum (const char *str, uint8_t *byte);
 bool StringHexToNum (const char *str, uint32_t *hexValue);
 
 // Num string --> Integer converters
 uint8_t DecimalCharToNum (char c);
-bool UnsignedDecimalStringToNum (const char *str, uint32_t *value);
-bool SignedDecimalStringToNum (const char *str, int32_t *value);
+bool StringToUnsignedDecimalNum (const char *str, uint32_t *value);
+bool StringToSignedDecimalNum (const char *str, int32_t *value);
 
 // String --> Float converter
 bool StringToFloat (const char *str, float *Num);

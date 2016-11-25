@@ -516,43 +516,56 @@ bool IsDecimalChar (const char c)
 
 /**
  * \brief	Convert Hex character to octet (0-9, A-F)
- * \return	Value (number)
+ * \param	c	ASCII character, which you need to convert to value
+ * \param	*hexValue	the value
+ * \return	result
+ * 			true	successful
+ * 			false	failed
  */
-uint8_t HexCharToHex (const char c)
+bool HexCharToHex (const char c, uint8_t *hexValue)
 {
-	uint8_t hexValue = 0;
+	bool isOk = true;
+	*hexValue = 0;
 	if ((c >= '0') && (c <='9'))
 	{
-		hexValue = c - '0';
+		*hexValue = c - '0';
 	}
 	else if ((c >= 'A') && (c <= 'F'))
 	{
-		hexValue = c - 'A' + 10;
+		*hexValue = c - 'A' + 10;
 	}
 	else if ((c >= 'a') && (c <= 'f'))
 	{
-		hexValue = c - 'a' + 10;
+		*hexValue = c - 'a' + 10;
+	}
+	else
+	{
+		isOk = false;
 	}
 
-	return hexValue;
+	return isOk;
 }
 
 
 
 /**
- * \brief	Convert two hexadecimal string to number (byte)
+ * \brief	Convert two hexadecimal character (string) to number (byte)
  * \return	true, if successful
  * 			false, if has error
  */
 bool StringByteToNum(const char *str, uint8_t *byte)
 {
-	uint8_t calculatedByte = 0;
-	calculatedByte |= (HexCharToHex(str[0])&0x0F) << 4;
-	calculatedByte |= (HexCharToHex(str[1])&0x0F);
 
-	*byte = calculatedByte;
-	return true;
+	uint8_t calculatedByte1 = 0;
+	uint8_t calculatedByte2 = 0;
+	bool result = true;
 
+	result &= HexCharToHex(str[0], &calculatedByte1);
+	result &= HexCharToHex(str[1], &calculatedByte2);
+
+	*byte = ((calculatedByte1 & 0x0F)<<4) | (calculatedByte2 & 0x0F);
+
+	return result;
 }
 
 
@@ -581,11 +594,18 @@ bool StringHexToNum (const char *str, uint32_t *hexValue)
 		// shift <<4 + add next hex
 		if (IsHexChar(str[i]))
 		{
-			calculatedByte = HexCharToHex(str[i]);
-			// Shift one byte left original value
-			calculatedValue <<= 4;
-			// Add new value
-			calculatedValue += calculatedByte;
+			if (HexCharToHex(str[i], &calculatedByte))
+			{
+				// Shift one byte left original value
+				calculatedValue <<= 4;
+				// Add new value
+				calculatedValue += calculatedByte;
+			}
+			else
+			{
+				// Failed (hex character)
+				return false;
+			}
 		}
 		else
 		{
@@ -627,7 +647,7 @@ uint8_t DecimalCharToNum (char c)
  * \return	true, if successful
  * 			false, if has error
  */
-bool UnsignedDecimalStringToNum (const char *str, uint32_t *value)
+bool StringToUnsignedDecimalNum (const char *str, uint32_t *value)
 {
 	uint32_t calculatedValue = 0;
 	uint8_t i;
@@ -669,7 +689,7 @@ bool UnsignedDecimalStringToNum (const char *str, uint32_t *value)
  * \return	true, if successful
  * 			false, if has error
  */
-bool SignedDecimalStringToNum (const char *str, int32_t *value)
+bool StringToSignedDecimalNum (const char *str, int32_t *value)
 {
 	uint32_t convertValue = 0;
 	bool isNegative = false;
@@ -694,7 +714,7 @@ bool SignedDecimalStringToNum (const char *str, int32_t *value)
 		length = 0;
 	}
 
-	if (UnsignedDecimalStringToNum(&str[length],&convertValue))
+	if (StringToUnsignedDecimalNum(&str[length],&convertValue))
 	{
 		if (isNegative)
 		{
@@ -771,7 +791,7 @@ bool StringToFloat (const char *str, float *Num)
 
 
 	// Convert integer
-	if (!UnsignedDecimalStringToNum(numString,&integer))
+	if (!StringToUnsignedDecimalNum(numString,&integer))
 	{
 		// Error with convert integer part
 		return false;
@@ -781,7 +801,7 @@ bool StringToFloat (const char *str, float *Num)
 	*Num = integer;
 
 	// Convert fraction
-	if (!UnsignedDecimalStringToNum(&str[pointCnt+1],&integer))
+	if (!StringToUnsignedDecimalNum(&str[pointCnt+1],&integer))
 	{
 		// Error with convert fraction part
 		return false;
@@ -1299,8 +1319,14 @@ void STRING_UnitTest (void)
 {
 
 	char buffer[20];
+	uint8_t value8;
+	bool result;
+	uint32_t value32;
+	int32_t ivalue32;
+	float fvalue;
 
 
+	// Start of unittest
 	UnitTest_Start("String module unit test", __FILE__);
 
 
@@ -1447,6 +1473,65 @@ void STRING_UnitTest (void)
 	UnitTest_CheckResult(!StrCmp(buffer, "toolongtex"), "String error (%s)", __FILE__, __LINE__);
 
 
+
+	// string -> num converters
+
+	// string -> decimal
+
+	// Byte
+	// Good bytes
+	result = StringByteToNum("00", &value8);
+	UnitTest_CheckResult(result, "StringByteToNum error", __FILE__, __LINE__);
+	UnitTest_CheckResult((value8 == 0x00), "StringByteToNum error", __FILE__, __LINE__);
+	result = StringByteToNum("15", &value8);
+	UnitTest_CheckResult(result, "StringByteToNum error", __FILE__, __LINE__);
+	UnitTest_CheckResult((value8 == 0x15), "StringByteToNum error", __FILE__, __LINE__);
+	result = StringByteToNum("FF", &value8);
+	UnitTest_CheckResult(result, "StringByteToNum error", __FILE__, __LINE__);
+	UnitTest_CheckResult((value8 == 0xFF), "StringByteToNum error", __FILE__, __LINE__);
+	// Wrong byte
+	result = StringByteToNum("FG", &value8);
+	UnitTest_CheckResult(!result, "StringByteToNum error", __FILE__, __LINE__);
+
+
+	// Hexs
+	// Good hex
+	result = StringHexToNum("12345678", &value32);
+	UnitTest_CheckResult(result, "StringHexToNum error", __FILE__, __LINE__);
+	UnitTest_CheckResult(value32 == 0x12345678, "StringHexToNum error", __FILE__, __LINE__);
+	// Wrong hex
+	result = StringHexToNum("123G5678", &value32);
+	UnitTest_CheckResult(!result, "StringHexToNum error", __FILE__, __LINE__);
+
+	// Decimals
+
+	// Good decimals
+	result = StringToSignedDecimalNum("-123",&ivalue32);
+	UnitTest_CheckResult(result, "StringToSignedDecimalNum error", __FILE__, __LINE__);
+	UnitTest_CheckResult(ivalue32 == -123, "StringToSignedDecimalNum error", __FILE__, __LINE__);
+
+	result = StringToUnsignedDecimalNum("123",&value32);
+	UnitTest_CheckResult(result, "StringToUnsignedDecimalNum error", __FILE__, __LINE__);
+	UnitTest_CheckResult(value32 == 123, "StringToUnsignedDecimalNum error", __FILE__, __LINE__);
+
+	// Wrong decimals
+	result = StringToSignedDecimalNum("-123a",&ivalue32);
+	UnitTest_CheckResult(!result, "StringToSignedDecimalNum error", __FILE__, __LINE__);
+
+	result = StringToUnsignedDecimalNum("-123",&value32);
+	UnitTest_CheckResult(!result, "StringToUnsignedDecimalNum error", __FILE__, __LINE__);
+
+	// Float
+	// Good
+	result = StringToFloat("-123.3499", &fvalue);
+	UnitTest_CheckResult(result, "StringToFloat error", __FILE__, __LINE__);
+	UnitTest_CheckResult(((fvalue < -123.3498) && (fvalue > -123.3500)), "StringToFloat error", __FILE__, __LINE__);
+
+	result = StringToFloat("-123a.3999", &fvalue);
+	UnitTest_CheckResult(!result, "StringToFloat error", __FILE__, __LINE__);
+
+
+	// End of unittest
 	UnitTest_End(__FILE__);
 
 

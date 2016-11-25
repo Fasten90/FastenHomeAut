@@ -1095,7 +1095,7 @@ ReturnType ESP8266_ConnectToWifiNetwork ( void )
 	
 	// Convert IP address (string) to decimal
 	uint32_t ip;
-	if (!UnsignedDecimalStringToNum(ESP8266_MyIpAddressString,&ip))
+	if (!StringToUnsignedDecimalNum(ESP8266_MyIpAddressString,&ip))
 	{
 		// Failed to convert
 		return Return_False;
