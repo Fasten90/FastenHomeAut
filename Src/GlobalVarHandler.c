@@ -201,7 +201,7 @@ void GlobalVarHandler_ProcessCommand(
 	else
 	{
 		// Not found
-		result = Process_CommandNotFound;
+		result = Process_GlobalVariableNameNotFind;
 	}
 
 	GlobalVarHandler_WriteResults(result,resultBuffer,resultBufferLength);
@@ -987,11 +987,11 @@ static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBu
 			break;
 
 		case Process_Ok_SetSuccessful_SendOk:
-			StrCpyMax(resultBuffer, "Set successful!", resultBufferLength);
+			StrCpyMax(resultBuffer, "Set successful", resultBufferLength);
 			break;
 
-		case Process_CommandNotFound:
-			StrCpyMax(resultBuffer, "Command not find!", resultBufferLength);
+		case Process_GlobalVariableNameNotFind:
+			StrCpyMax(resultBuffer, "Global variable not find", resultBufferLength);
 			break;
 
 		case Process_FailParam:

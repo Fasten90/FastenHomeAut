@@ -26,6 +26,10 @@ TIM_HandleTypeDef    TimLedGreenHandle;
 #endif
 
 
+static bool LED_SetRedLed(LED_SetType ledSet);
+static bool LED_SetBlueLed(LED_SetType ledSet);
+static bool LED_SetGreenLed(LED_SetType ledSet);
+
 
 /**
 \brief	LED GPIO initialization (without TIMER)
@@ -71,9 +75,9 @@ void LED_Init( void )
 
 
 /**
-\brief	LED blinkg in infinite loop
+\brief	LED blinking in infinite loop
 */
-void LED_Run ( void )
+void LED_Test ( void )
 {
 	
 	uint16_t delayMs = 200;
@@ -106,9 +110,134 @@ void LED_Run ( void )
 		#endif	
 			
 	}
+}
 
+
+
+static bool LED_SetRedLed(LED_SetType ledSet)
+{
+	switch (ledSet)
+	{
+		case LED_SET_ON:
+			LED_RED_ON();
+			break;
+		case LED_SET_OFF:
+			LED_RED_OFF();
+			break;
+		case LED_SET_TOGGLE:
+			LED_RED_TOGGLE();
+			break;
+		default:
+			return false;
+	}
+
+	return true;
+}
+
+
+
+static bool LED_SetBlueLed(LED_SetType ledSet)
+{
+	switch (ledSet)
+	{
+		case LED_SET_OFF:
+			LED_BLUE_OFF();
+			break;
+		case LED_SET_ON:
+			LED_BLUE_ON();
+			break;
+		case LED_SET_TOGGLE:
+			LED_BLUE_TOGGLE();
+			break;
+		default:
+			return false;
+	}
+
+	return true;
+}
+
+
+
+
+static bool LED_SetGreenLed(LED_SetType ledSet)
+{
+	switch (ledSet)
+	{
+		case LED_SET_OFF:
+			LED_GREEN_OFF();
+			break;
+		case LED_SET_ON:
+			LED_GREEN_ON();
+			break;
+		case LED_SET_TOGGLE:
+			LED_GREEN_TOGGLE();
+			break;
+		default:
+			return false;
+	}
+
+	return true;
+}
+
+
+
+/**
+ * \brief	Set LED
+ * \param	num		LED number
+ * \param	ledSet	Which type (on, off, toggle)
+ */
+bool LED_SetLed(uint8_t num, LED_SetType ledSet)
+{
+
+	switch (num)
+	{
+		case 1:
+			LED_SetRedLed(ledSet);
+			break;
+		case 2:
+			LED_SetBlueLed(ledSet);
+			break;
+		case 3:
+			LED_SetGreenLed(ledSet);
+			break;
+		default:
+			return false;
+	}
+
+	return true;
 
 }
+
+
+
+/**
+ * \brief	Get LED status
+ * \return	true, if high
+ * 			false, if low
+ */
+bool LED_GetStatus(uint8_t num)
+{
+	bool status;
+
+	switch (num)
+	{
+		case 1:
+			status = LED_RED_STATUS();
+			break;
+		case 2:
+			status = LED_BLUE_STATUS();
+			break;
+		case 3:
+			status = LED_GREEN_STATUS();
+			break;
+		default:
+			status = false;
+			break;
+	}
+
+	return status;
+}
+
 
 
 

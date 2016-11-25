@@ -49,7 +49,7 @@ typedef enum
 typedef enum
 {
 	Process_UnknownError = 0,
-	Process_CommandNotFound,
+	Process_GlobalVariableNameNotFind,
 	Process_SourceNotEnabled,
 	Process_IsReadOnly,
 	Process_TooLongString,

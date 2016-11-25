@@ -107,6 +107,7 @@
 
 
 // high pin = lighting (define 1)
+// if high pin = not lighting (low pin = lighting), define 0
 #define BOARD_LED_LOGIC_HIGH_IS_ON	1
 
 #endif //#ifdef CONFIG_USE_PANEL_CENTERPANEL

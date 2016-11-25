@@ -331,7 +331,7 @@ CommandResult_t CommandFunction_help ( uint32_t argc, char** argv )
 			if (!StrCmp(CommandList[i].name,argv[1]))
 			{
 				// Command's describe
-				MONITOR_WriteAnCommandHelp(i);
+				MONITOR_WriteCommandHelp(i);
 				return CommandResult_Ok;
 			}
 		}
@@ -384,53 +384,44 @@ CommandResult_t CommandFunction_led ( uint32_t argc, char** argv )
 	{
 		return CommandResult_Error_WrongArgument2;
 	}
+	if (Arg3Num > LED_NUM_MAX || Arg3Num < LED_NUM_MIN)
+	{
+		return CommandResult_Error_WrongArgument2;
+	}
 
 	// Check 2. arg
 	if (!StrCmp(argv[1], "on"))
 	{
-		switch (Arg3Num)
-		{
-			case 1:	LED_BLUE_ON();	break;
-			case 2:	LED_GREEN_ON();	break;
-			case 3:	LED_RED_ON();	break;
-		}
+		LED_SetLed(Arg3Num,LED_SET_ON);
 		uprintf("Led on: %d\r\n",Arg3Num);
 	}
 	else if (!StrCmp(argv[1], "off"))
 	{
-		switch (Arg3Num)
-		{
-			case 1:	LED_BLUE_OFF();		break;
-			case 2:	LED_GREEN_OFF();	break;
-			case 3:	LED_RED_OFF();		break;
-		}
+		LED_SetLed(Arg3Num,LED_SET_OFF);
 		uprintf("Led off: %d\r\n",Arg3Num);
 	}
 	else if (!StrCmp(argv[1], "toggle"))
 	{
-		switch (Arg3Num)
-		{
-			case 1: LED_BLUE_TOGGLE();	break;
-			case 2: LED_GREEN_TOGGLE(); break;
-			case 3: LED_RED_TOGGLE();	break;
-		}
+		LED_SetLed(Arg3Num,LED_SET_TOGGLE);
 		uprintf("Led toggle: %d\r\n",Arg3Num);
 	}
 	else if (!StrCmp(argv[1], "status"))
 	{
-		uprintf("Led status: %d %d %d\r\n",LED_BLUE_STATUS(), LED_GREEN_STATUS(), LED_RED_STATUS());
+		uprintf("Led status: %d %d %d\r\n",
+				LED_RED_STATUS(),
+				LED_BLUE_STATUS(),
+				LED_GREEN_STATUS());
 	}
 	else
 	{
-		USART_SendString("Wrong command!\r\n");
+		// Wrong 1. parameter (not "on", "off", "toggle", "status")
 		return CommandResult_Error_WrongArgument1;
 	}
-
-#endif
 	
 	return CommandResult_Ok;
 
 }
+#endif
 
 
 
@@ -853,8 +844,7 @@ CommandResult_t CommandFunction_raspberrypi (uint32_t argc, char** argv)
 		// Convert arg3, decimal
 		if (!StringToUnsignedDecimalNum(argv[2],&Arg3Num))
 		{
-			USART_SendString("Wrong 1. argument!\r\n");
-			return CommandResult_Error_WrongArgument1;
+			return CommandResult_Error_WrongArgument2;
 		}
 
 		if (Arg3Num > 0)
@@ -870,10 +860,12 @@ CommandResult_t CommandFunction_raspberrypi (uint32_t argc, char** argv)
 
 		return CommandResult_Ok;
 	}
+	else
+	{
+		// Wrong command - not "setout"
+		return CommandResult_Error_WrongArgument1;
+	}
 
-	uprintf("Wrong parameter");
-
-	return CommandResult_Error_Unknown;
 }
 #endif
 
@@ -899,10 +891,16 @@ CommandResult_t CommandFunction_dac (uint32_t argc, char** argv)
 		return CommandResult_Error_WrongArgument2;
 	}
 
-	DAC_SetValue(Arg2Num,voltage);
+	if (DAC_SetValue(Arg2Num,voltage))
+	{
+		uprintf("Set ok!\r\n");
+		return CommandResult_Ok;
+	}
+	else
+	{
+		return CommandResult_Error_WrongArgumentNum;
+	}
 
-
-	return CommandResult_Ok;
 }
 #endif
 

@@ -39,7 +39,8 @@
 
 
 #define MONITOR_MAX_COMMAND_LENGTH			(255U)
-#define MONITOR_COMMAND_ARG_MAX_COUNT			(3)
+#define MONITOR_COMMAND_ARG_MAX_COUNT		(3)
+#define MONITOR_COMMAND_ARG_MAX_NUM_BITS	(0b111)
 #define MONITOR_COMMAND_ARG_MAX_LENGTH		(80)
 #define MONITOR_HISTORY_MAX_COUNT			(5)
 
@@ -283,7 +284,7 @@ void MONITOR_SendPrimitiveWelcome (void);
 
 void MONITOR_CheckCommand (void);
 
-void MONITOR_WriteAnCommandHelp (CommandID_t commandID);
+void MONITOR_WriteCommandHelp (CommandID_t commandID);
 
 
 #endif /* COMMANDHANDLER_H_ */
