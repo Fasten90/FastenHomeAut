@@ -51,7 +51,7 @@ const CommandStruct CommandList[] =
 	{
 		.name = "help",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_help,
-		.description = "Commands's list, or write command's propertities",
+		.description = "Commands's list, or write command's descriptions",
 		.syntax = "<command>",
 		.commandArgNum = CommandArgument_0 | CommandArgument_1,
 	},
@@ -299,7 +299,7 @@ CommandResult_t CommandFunction_version ( uint32_t argc, char** argv )
  */
 CommandResult_t CommandFunction_welcome ( uint32_t argc, char** argv )
 {
-	MONITOR_SendPrimitiveWelcome();
+	MONITOR_SendWelcome();
 
 	return CommandResult_Ok;
 }
@@ -333,7 +333,8 @@ CommandResult_t CommandFunction_help ( uint32_t argc, char** argv )
 	{
 		// Arg2 not empty, find the command
 		for (i=0; i < MONITOR_MAX_COMMAND_NUM; i++)
-		{										// Find the command
+		{
+			// Find the command
 			if (!StrCmp(CommandList[i].name,argv[1]))
 			{
 				// Command's describe
@@ -342,7 +343,7 @@ CommandResult_t CommandFunction_help ( uint32_t argc, char** argv )
 			}
 		}
 
-		USART_SendLine("There is not find command");
+		uprintf("Not find command: %s\r\n", argv[1]);
 		return CommandResult_Ok;
 	}
 
@@ -376,11 +377,12 @@ CommandResult_t CommandFunction_reset ( uint32_t argc, char** argv )
 #ifdef CONFIG_MODULE_LED_ENABLE
 /**
  * \brief	Set LED (turn on, turn off, toggle, status)
- * 			Commands:
- *			led on <num>
- *			led off <num>
- *			led toggle <num>
- *			led status <dummy>
+ * 			Use:
+ *				led <num> on
+ *				led <num> off
+ *				led <num> toggle
+ *				led <num> status
+ *				led status
  */
 CommandResult_t CommandFunction_led ( uint32_t argc, char** argv )
 {

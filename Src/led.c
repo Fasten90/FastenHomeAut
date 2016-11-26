@@ -116,83 +116,75 @@ void LED_Test ( void )
 
 static bool LED_SetRedLed(LED_SetType ledSet)
 {
-	bool isOk = false;
 
 	switch (ledSet)
 	{
 		case LED_SET_ON:
 			LED_RED_ON();
-			isOk = true;
 			break;
 		case LED_SET_OFF:
 			LED_RED_OFF();
-			isOk = true;
 			break;
 		case LED_SET_TOGGLE:
 			LED_RED_TOGGLE();
-			isOk = true;
+			break;
+		case LED_GET_STATUS:
 			break;
 		default:
-			isOk = false;
+			break;
 	}
 
-	return isOk;
+	return LED_RED_STATUS();
 }
 
 
 
 static bool LED_SetBlueLed(LED_SetType ledSet)
 {
-	bool isOk = false;
 
 	switch (ledSet)
 	{
 		case LED_SET_ON:
 			LED_BLUE_ON();
-			isOk = true;
 			break;
 		case LED_SET_OFF:
 			LED_BLUE_OFF();
-			isOk = true;
 			break;
 		case LED_SET_TOGGLE:
 			LED_BLUE_TOGGLE();
-			isOk = true;
+			break;
+		case LED_GET_STATUS:
 			break;
 		default:
-			isOk = false;
 			break;
 	}
 
-	return isOk;
+	return LED_BLUE_STATUS();
 }
 
 
 
 static bool LED_SetGreenLed(LED_SetType ledSet)
 {
-	bool isOk = false;
 
 	switch (ledSet)
 	{
-		case LED_SET_OFF:
-			LED_GREEN_OFF();
-			isOk = true;
-			break;
 		case LED_SET_ON:
 			LED_GREEN_ON();
-			isOk = true;
+			break;
+		case LED_SET_OFF:
+			LED_GREEN_OFF();
 			break;
 		case LED_SET_TOGGLE:
 			LED_GREEN_TOGGLE();
-			isOk = true;
+			break;
+		case LED_GET_STATUS:
 			break;
 		default:
-			isOk = false;
 			break;
 	}
 
-	return isOk;
+	return LED_GREEN_STATUS();
 }
 
 
@@ -204,25 +196,25 @@ static bool LED_SetGreenLed(LED_SetType ledSet)
  */
 bool LED_SetLed(uint8_t num, LED_SetType ledSet)
 {
-	bool isOk = false;
+	bool state = false;
 
 	switch (num)
 	{
 		case 1:
-			isOk = LED_SetRedLed(ledSet);
+			state = LED_SetRedLed(ledSet);
 			break;
 		case 2:
-			isOk = LED_SetBlueLed(ledSet);
+			state = LED_SetBlueLed(ledSet);
 			break;
 		case 3:
-			isOk = LED_SetGreenLed(ledSet);
+			state = LED_SetGreenLed(ledSet);
 			break;
 		default:
-			isOk = false;
+			state = false;
 			break;
 	}
 
-	return isOk;
+	return state;
 
 }
 
@@ -258,10 +250,9 @@ bool LED_GetStatus(uint8_t num)
 
 
 
-
 /**
-\brief	LEDs with timer
-*/
+ * \brief	LEDs with timer
+ */
 #ifdef CONFIG_USE_PANEL_NODESMALL
 void LED_InitTimers( void )
 {

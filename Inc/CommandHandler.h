@@ -41,7 +41,7 @@
 #define MONITOR_MAX_COMMAND_LENGTH			(255U)
 #define MONITOR_COMMAND_ARG_MAX_COUNT		(3)
 #define MONITOR_COMMAND_ARG_MAX_NUM_BITS	(0b111)
-#define MONITOR_COMMAND_ARG_MAX_LENGTH		(80)
+
 #define MONITOR_HISTORY_MAX_COUNT			(5)
 
 
@@ -280,7 +280,6 @@ extern xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
 
 void MONITOR_Init (void);
 void MONITOR_SendWelcome (void);
-void MONITOR_SendPrimitiveWelcome (void);
 
 void MONITOR_CheckCommand (void);
 

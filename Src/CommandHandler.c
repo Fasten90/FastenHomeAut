@@ -37,6 +37,8 @@ const bool MONITOR_CommandSendBackCharEnable = true;
 static const char MONITOR_Password[] = "password";
 #endif
 
+const char MONITOR_DelimiterChar = ' ';
+
 /////////////////////////////////
 // 		GLOBAL VARIABLES
 /////////////////////////////////
@@ -133,8 +135,8 @@ static void MONITOR_CommandTabulator ( void );
 #endif
 
 bool MONITOR_PrepareFindExecuteCommand ( void );
-uint8_t MONITOR_CommandParser ( void );
-bool MONITOR_SearchCommand ( void );
+static uint8_t MONITOR_CommandParser ( void );
+static bool MONITOR_SearchCommand ( void );
 
 void MONITOR_CommandBackspace ( void );
 void MONITOR_CommandResendLine ( void );
@@ -201,59 +203,6 @@ void MONITOR_Init ( void )
 void MONITOR_SendWelcome ( void )
 {
 
-
-	//USART_SEND_DUMMYSTRING();
-
-	#ifdef CONFIG_USE_FREERTOS
-	vTaskDelay(1);
-	#else
-	HAL_Delay(1);
-	#endif
-
-
-	//USART_ESCAPE_BACKGROUND_WHITE();		// background: white
-	//USART_ESCAPE_BACKGROUND_DEFAULT();	// Note: White in Hyperterminal is grey colour
-	//USART_ESCAPE_TEXT_BLACK();			// text: black
-
-	
-	USART_ESCAPE_BACKGROUND_DEFAULT();
-
-	
-	USART_SEND_CLS();						// Clean screen
-	MONITOR_SEND_WELCOME();					// Welcome message
-	USART_SEND_NEW_LINE();					// New line
-
-	// USART_ESCAPE_BACKGROUND_DEFAULT()
-	// USART_ESCAPE_RESET()
-
-
-	//USART_SendStringWithBackgroundColor("Coloured text!");
-	USART_SEND_NEW_LINE();
-
-	USART_ESCAPE_TEXT_BLACK();				// Test message
-	USART_ESCAPE_BACKGROUND_GREEN();
-	USART_SendString("Example VALID message.\r\n");
-
-	USART_ESCAPE_BACKGROUND_RED();			// Test message
-	USART_SendString("Example INVALID message.\r\n");
-
-	USART_ESCAPE_BACKGROUND_WHITE();		// White background
-
-
-	USART_SEND_NEW_LINE();
-	MONITOR_SEND_PROMT();					// New promt
-
-	return;
-}
-
-
-
-/**
- * \brief	Send welcome message
- */
-void MONITOR_SendPrimitiveWelcome ( void )
-{
-
 	#ifdef CONFIG_USE_FREERTOS
 	vTaskDelay(1);
 	#else
@@ -311,7 +260,7 @@ void MONITOR_CheckCommand ( void )
 #endif
 
 	// Welcome message
-	MONITOR_SendPrimitiveWelcome();
+	MONITOR_SendWelcome();
 
 
 	// Infinite "task" loop
@@ -362,12 +311,13 @@ void MONITOR_CheckCommand ( void )
 				}
 				else if ( MONITOR_CommandReceivedNotLastChar )
 				{
-					// Not Last char (it is inner character) - Refresh the line
+					// Received inner character
+
 					MONITOR_CommandReceivedNotLastChar = false;
 
-					//step right
+					// Step right
 					USART_ESCAPE_CURSORRIGHT();
-
+					// Not Last char (it is inner character) - Refresh the line
 					MONITOR_CommandResendLine();
 				}
 				else if ( MONITOR_CommandEscapeSequenceReceived )
@@ -378,6 +328,7 @@ void MONITOR_CheckCommand ( void )
 				}
 				else if ( MONITOR_CommandReceivedTabulator )
 				{
+					// Received tabulator
 					MONITOR_CommandReceivedTabulator = false;
 					MONITOR_CommandTabulator();
 				}
@@ -395,11 +346,11 @@ void MONITOR_CheckCommand ( void )
 						USART_SEND_NEW_LINE();
 						
 						// Search command and run
-						MONITOR_PrepareFindExecuteCommand ();
+						MONITOR_PrepareFindExecuteCommand();
 						
 						#ifdef USE_MONITOR_HISTORY
 						// Save command to History
-						MONITOR_HISTORY_Save ();
+						MONITOR_HISTORY_Save();
 						#endif
 					}
 					else
@@ -600,10 +551,10 @@ bool MONITOR_PrepareFindExecuteCommand ( void )
 	COMMAND_ArgCount = MONITOR_CommandParser ();
 	bool isSuccessful = false;
 
-	if ( COMMAND_ArgCount > 0 )
+	if (COMMAND_ArgCount > 0)
 	{
 		// Find and execute the command
-		isSuccessful = MONITOR_SearchCommand ();
+		isSuccessful = MONITOR_SearchCommand();
 		USART_SEND_NEW_LINE();
 	}
 	else
@@ -622,69 +573,28 @@ bool MONITOR_PrepareFindExecuteCommand ( void )
 
 
 /**
- * \brief	Separate parameters from ActualCommand to COMMAND_Arguments[0], [1], [2]
+ * \brief	Separate command to parameters
+ * 			: from ActualCommand to COMMAND_Arguments[0], [1], [2]
  */
-uint8_t MONITOR_CommandParser ( void )
+static uint8_t MONITOR_CommandParser(void)
 {
 	// seperate command to argumentums
 	// return arc; = argumentum's num
 	// call from void MonitorWaitCommand(void);
 
-	// TODO: Általános Parser függvénnyel megoldani?
+	uint8_t commandArgCount = 0;
 
-	uint8_t i;
-	uint8_t j = 0;
-	uint8_t CommandArgCount = 1;	// 1-3	// Arguments num is 1, when we start separate
+	commandArgCount = STRING_Splitter((char*)MONITOR_CommandActual, MONITOR_DelimiterChar,
+			COMMAND_Arguments,MONITOR_COMMAND_ARG_MAX_COUNT);
 
-	// First argument
-	COMMAND_Arguments[0] = (char *)&MONITOR_CommandActual[0];
 
-	for (i=0; MONITOR_CommandActual[i]!='\0'; i++)
+	if (commandArgCount > MONITOR_COMMAND_ARG_MAX_COUNT)
 	{
-		// Search ' ' space
-		if ((MONITOR_CommandActual[i] != ' ')  && (MONITOR_CommandActual[i] != '\0'))
-		{
-			// Not space, inner argument
-			j++;
-		}
-		else if ( MONITOR_CommandActual[i] ==  ' ')
-		{
-			// == ' ' or '\0' ==> next argument
-			// It's space or the end, skip the space
-			MONITOR_CommandActual[i] = '\0';	// Put end
-			COMMAND_Arguments[CommandArgCount] = (char *)&MONITOR_CommandActual[i+1];	// Set pointer
-			CommandArgCount++;
-			j = 0;
-			if (CommandArgCount > MONITOR_COMMAND_ARG_MAX_COUNT)
-			{
-				uprintf("Too many arguments!\r\n");
-				return 0;
-			}
-		}
-		else
-		{
-			// == '\0'
-			break;
-		}
-		// Check length
-		if ( j >= MONITOR_COMMAND_ARG_MAX_LENGTH )
-		{
-			uprintf("Too long argument!\r\n");
-			return 0;
-		}
-	} // End of copies
-
-	// Set pointers, if not set
-	if ( CommandArgCount < 3 )
-	{
-		COMMAND_Arguments[2] = NULL;		// 3. argument is empty
-	}
-	if ( CommandArgCount < 2 )
-	{
-		COMMAND_Arguments[1] = NULL;		// 2. argument is empty
+		uprintf("Too many arguments!\r\n");
+		commandArgCount = 0;
 	}
 
-	return CommandArgCount;
+	return commandArgCount;
 }
 
 
@@ -692,7 +602,7 @@ uint8_t MONITOR_CommandParser ( void )
 /**
  * \brief	Find the command (in list)
  */
-bool MONITOR_SearchCommand ( void )
+static bool MONITOR_SearchCommand ( void )
 {
 
 	CommandID_t i;
