@@ -107,7 +107,9 @@ uint8_t StrCpyMax (char *dest, const char *str, uint8_t maxLength);
 uint8_t StrAppend (char *dest, const char *src);
 
 // Find & Separators
-int16_t FindString (const char *findString, const char *str);
+int16_t FindString (const char *str, const char *findString);
+uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint8_t parameterMaxCount);
+
 
 // Send functions
 // !! IMPORTANT !! Send formatted string on USART !!
@@ -116,6 +118,7 @@ uint8_t usprintf (char *str, const char *format, ...);
 uint8_t uprintf (const char *format, ...);
 uint8_t duprintf (const PrintDevice_t dev, const char *format, ...);
 
+// Unit test
 void STRING_UnitTest (void);
 
 

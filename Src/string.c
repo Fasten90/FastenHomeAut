@@ -920,12 +920,13 @@ uint8_t StrCpy (char *dest, const char *str)
 	uint8_t i;
 	uint8_t length;
 
-	length = StringLength(str);
-	if ( length == 0 )
+	// Check parameter
+	if (dest == NULL)
 	{
-		// Return 0 length
 		return 0;
 	}
+
+	length = StringLength(str);
 
 	// Copy characters
 	for ( i = 0; i < length; i++ )
@@ -1043,12 +1044,17 @@ uint8_t StrAppend (char *dest, const char *str)
 
 /**
  * \brief	Find small string in big string
+ * 			like strstr()
+ * \param	*str	scanned string
+ * 			*fincString	which find
  * \return	'findString' position in 'str'
+ * 			-1	if not found
  */
-int16_t FindString (const char *findString, const char *str)
+int16_t FindString (const char *str, const char *findString)
 {
 	uint8_t i;
 	uint8_t length = StringLength(str);
+	uint8_t findStringLength = StringLength(findString);
 
 	// Search first equal character
 	for (i=0; i<length; i++)
@@ -1056,7 +1062,7 @@ int16_t FindString (const char *findString, const char *str)
 		if (findString[0] == str[i])
 		{
 			// First character is equal
-			if (!StrCmp(findString, &str[i]))
+			if (!StrCmpWithLength(findString, &str[i],findStringLength))
 			{
 				return i;
 			}
@@ -1064,6 +1070,69 @@ int16_t FindString (const char *findString, const char *str)
 	}
 
 	return -1;
+
+}
+
+
+
+/**
+ * \brief	Separators
+ * 			like strtok()
+ * 			NOTE: Be careful, pointers to original (source) string
+ */
+uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint8_t parameterMaxCount)
+{
+	uint8_t i;
+	uint8_t j;
+	uint8_t parameters = 0;
+
+	// Check parameters
+	if (source == NULL || separated == NULL || parameterMaxCount == 0)
+	{
+		// Fail parameters
+		return 0;
+	}
+
+	// Make empty
+	separated[0] = NULL;
+
+	// Split
+	j = 0;
+	for (i = 0; source[i]; i++)
+	{
+		// There is delimiter?
+		if ((source[i] == delimiterChar) || (source[i+1] == '\0'))
+		{
+			// Found delimiter or end character
+			if (source[i] == delimiterChar)
+			{
+				source[i] = '\0';
+			}
+			parameters++;
+			j = 0;
+			if (parameters >= parameterMaxCount)
+			{
+				// Ok, end
+				break;
+			}
+			else
+			{
+				separated[parameters] = NULL;
+			}
+		}
+		else
+		{
+			// Not ended, count
+			if (j == 0)
+			{
+				// New string found
+				separated[parameters] = &source[i];
+			}
+			j++;
+		}
+	}
+
+	return parameters;
 
 }
 
@@ -1329,13 +1398,14 @@ uint8_t duprintf (const PrintDevice_t dev, const char *format, ...)
 void STRING_UnitTest (void)
 {
 
-	char buffer[20];
+	char buffer[30];
 	uint8_t value8;
 	bool result;
+	int16_t ivalue16;
 	uint32_t value32;
 	int32_t ivalue32;
 	float fvalue;
-
+	char *splitted[10];
 
 	// Start of unittest
 	UnitTest_Start("String module unit test", __FILE__);
@@ -1345,6 +1415,7 @@ void STRING_UnitTest (void)
 	// Equal:
 	UnitTest_CheckResult(!StrCmp("example", "example"), "StrCmp error", __FILE__, __LINE__);
 	// Not equal:
+	UnitTest_CheckResult(StrCmp("example", "example1"), "StrCmp error", __FILE__, __LINE__);
 	UnitTest_CheckResult(StrCmp("example1", "example2"), "StrCmp error", __FILE__, __LINE__);
 
 
@@ -1540,6 +1611,39 @@ void STRING_UnitTest (void)
 
 	result = StringToFloat("-123a.3999", &fvalue);
 	UnitTest_CheckResult(!result, "StringToFloat error", __FILE__, __LINE__);
+
+
+
+	/// String function testing
+
+	// FindString()
+	ivalue16 = FindString("longtexttofinding","text");
+	UnitTest_CheckResult(ivalue16 == 4, "FindString error", __FILE__, __LINE__);
+	ivalue16 = FindString("longtexttofinding","wrongtext");
+	UnitTest_CheckResult(ivalue16 == -1, "FindString error", __FILE__, __LINE__);
+
+
+	// STRING_Splitter()
+	StrCpy(buffer, "need to separate this text");
+	value8 = STRING_Splitter(buffer, ' ', splitted, 10);
+	UnitTest_CheckResult(value8 == 5, "STRING_Splitter error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(splitted[0],"need"), "STRING_Splitter error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(splitted[1],"to"), "STRING_Splitter error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(splitted[2],"separate"), "STRING_Splitter error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(splitted[3],"this"), "STRING_Splitter error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(splitted[4],"text"), "STRING_Splitter error", __FILE__, __LINE__);
+	UnitTest_CheckResult(splitted[5] == NULL, "STRING_Splitter error", __FILE__, __LINE__);
+
+	StrCpy(buffer, "text");
+	value8 = STRING_Splitter(buffer, ' ', splitted, 10);
+	UnitTest_CheckResult(value8 == 1, "STRING_Splitter error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(splitted[0],"text"), "STRING_Splitter error", __FILE__, __LINE__);
+	UnitTest_CheckResult(splitted[1] == NULL, "STRING_Splitter error", __FILE__, __LINE__);
+
+	StrCpy(buffer, "");
+	value8 = STRING_Splitter(buffer, ' ', splitted, 10);
+	UnitTest_CheckResult(value8 == 0, "STRING_Splitter error", __FILE__, __LINE__);
+	UnitTest_CheckResult(splitted[0] == NULL, "STRING_Splitter error", __FILE__, __LINE__);
 
 
 	// End of unittest
