@@ -10,7 +10,24 @@
  *		Last modified:	2016.11.23
  */
 
+#include "include.h"
+#include "options.h"
 #include "globals.h"
 
 const char Global_Version[] = "v0.1.1.5";
 
+
+
+void DelayMs(uint32_t ms)
+{
+#ifdef CONFIG_USE_FREERTOS
+	vTaskDelay(ms/);
+#else
+	uint32_t i;
+	while (ms--)
+	{
+		i = 8000/2;
+		while(i--);
+	}
+#endif
+}

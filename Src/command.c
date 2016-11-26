@@ -148,6 +148,12 @@ const CommandStruct CommandList[] =
 		.description = "Run unit tests",
 		.syntax = "optional: <modul>",
 		.commandArgNum = CommandArgument_0 | CommandArgument_1
+	},
+	{
+		.name = "moduletest",
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_moduletest,
+		.description = "Run module test",
+		.commandArgNum = CommandArgument_0
 	}
 #ifdef CONFIG_MODULE_ADC_ENABLE
 	{
@@ -380,43 +386,65 @@ CommandResult_t CommandFunction_led ( uint32_t argc, char** argv )
 {
 
 	// Convert arg2, decimal
-	if (!StringToUnsignedDecimalNum(argv[2],&Arg3Num))
+	bool isFirstParamNum = false;
+
+	if (StringToUnsignedDecimalNum(argv[1],&Arg2Num))
 	{
-		return CommandResult_Error_WrongArgument2;
+		isFirstParamNum = true;
 	}
-	if (Arg3Num > LED_NUM_MAX || Arg3Num < LED_NUM_MIN)
+	if (isFirstParamNum == true && (Arg2Num > LED_NUM_MAX || Arg2Num < LED_NUM_MIN))
 	{
-		return CommandResult_Error_WrongArgument2;
+		return CommandResult_Error_WrongArgument1;
 	}
 
+
 	// Check 2. arg
-	if (!StrCmp(argv[1], "on"))
+	if (isFirstParamNum == false && !StrCmp(argv[1], "status"))
 	{
-		LED_SetLed(Arg3Num,LED_SET_ON);
-		uprintf("Led on: %d\r\n",Arg3Num);
-	}
-	else if (!StrCmp(argv[1], "off"))
-	{
-		LED_SetLed(Arg3Num,LED_SET_OFF);
-		uprintf("Led off: %d\r\n",Arg3Num);
-	}
-	else if (!StrCmp(argv[1], "toggle"))
-	{
-		LED_SetLed(Arg3Num,LED_SET_TOGGLE);
-		uprintf("Led toggle: %d\r\n",Arg3Num);
-	}
-	else if (!StrCmp(argv[1], "status"))
-	{
+		// "status"
 		uprintf("Led status: %d %d %d\r\n",
 				LED_RED_STATUS(),
 				LED_BLUE_STATUS(),
 				LED_GREEN_STATUS());
 	}
+	else if (isFirstParamNum == true)
+	{
+		// 1. param = num (LED num)
+		LED_SetType setType = LED_SET_DONTCARE;
+		bool status = false;
+
+		if (!StrCmp(argv[2], "on"))
+		{
+			setType = LED_SET_ON;
+		}
+		else if (!StrCmp(argv[2], "off"))
+		{
+			setType = LED_SET_OFF;
+		}
+		else if (!StrCmp(argv[2], "toggle"))
+		{
+			setType = LED_SET_TOGGLE;
+		}
+		else if (!StrCmp(argv[2], "status"))
+		{
+			setType = LED_GET_STATUS;
+		}
+		else
+		{
+			// Wrong 2. parameter (not "on", "off", "toggle", "status")
+			return CommandResult_Error_WrongArgument2;
+		}
+
+		status = LED_SetLed(Arg2Num,setType);
+		uprintf("%d. LED status: %d\r\n",Arg2Num, status);
+
+	}
 	else
 	{
-		// Wrong 1. parameter (not "on", "off", "toggle", "status")
+		// First param is not status and not LED num
 		return CommandResult_Error_WrongArgument1;
 	}
+
 	
 	return CommandResult_Ok;
 
@@ -462,9 +490,6 @@ CommandResult_t CommandFunction_test	( uint32_t argc, char** argv ) {
 	USART_SendLine("Test start");
 
 
-	USART_SendSoundBeep();
-
-	FormattedMessage_UnitTest();
 
 	// GlobalVar
 
@@ -915,6 +940,45 @@ CommandResult_t CommandFunction_unittest (uint32_t argc, char** argv)
 #ifdef MODULE_STRING_UNIT_TEST_ENABLED
 	STRING_UnitTest();
 #endif
+
+	return CommandResult_Ok;
+}
+
+
+
+/**
+ * \brief	Run module test
+ */
+CommandResult_t CommandFunction_moduletest (uint32_t argc, char** argv)
+{
+
+	uint8_t i;
+
+	// LED test
+	USART_SendLine("LED test");
+
+	// LEDs on
+	for (i=LED_NUM_MIN; i<=LED_NUM_MAX; i++)
+	{
+		LED_SetLed(i, LED_SET_ON);
+		DelayMs(500);
+	}
+
+	// LEDs off
+	for (i=LED_NUM_MIN; i<=LED_NUM_MAX; i++)
+	{
+		LED_SetLed(i, LED_SET_OFF);
+		DelayMs(500);
+	}
+
+	// Beep in terminal
+	USART_SendLine("Beep test");
+	USART_SendSoundBeep();
+
+	// Send formatted messages
+	USART_SendLine("Formatted message test");
+	FormattedMessage_Test();
+
 
 	return CommandResult_Ok;
 }

@@ -124,6 +124,7 @@ CommandResult_t CommandFunction_raspberrypi ( uint32_t argc, char** argv );
 
 CommandResult_t CommandFunction_dac (uint32_t argc, char** argv);
 CommandResult_t CommandFunction_unittest (uint32_t argc, char** argv);
+CommandResult_t CommandFunction_moduletest (uint32_t argc, char** argv);
 
 
 /*

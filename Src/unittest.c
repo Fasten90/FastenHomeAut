@@ -22,9 +22,10 @@ static uint16_t UnitTest_InvalidCnt = 0;
 
 void UnitTest_Start(const char *message, const char *fileName)
 {
-	uprintf("File: \"%s\"\r\n"
-			"%s\r\n",
-			fileName, message);
+	uprintf("%s\r\n"
+			"File: \"%s\"\r\n"
+			"\r\n",
+			message, fileName);
 	UnitTest_ValidCnt = 0;
 	UnitTest_InvalidCnt = 0;
 }
@@ -43,8 +44,10 @@ void UnitTest_CheckResult(bool isValid, const char *errorString, const char *fil
 		// Invalid
 		UnitTest_InvalidCnt++;
 
-		uprintf("Error in \"%s\" at %d. line.\r\n"
-				"Case: \"%s\"\r\n",
+		uprintf("\r\n"
+				"Error in \"%s\" at %d. line.\r\n"
+				"Case: \"%s\"\r\n"
+				"\r\n",
 				fileName, line, errorString);
 		// TODO: Use SendErrorMessage()
 	}
@@ -54,14 +57,19 @@ void UnitTest_CheckResult(bool isValid, const char *errorString, const char *fil
 
 void UnitTest_End(const char *fileName)
 {
-	uprintf("In \"%s\" file run unit test:\r\n"
+	uprintf("\r\n"
+			"In \"%s\" file run unit test:\r\n"
 			"Successful: %d\r\n"
-			"Error: %d\r\n",
+			"Error: %d\r\n"
+			"\r\n",
 			fileName, UnitTest_ValidCnt, UnitTest_InvalidCnt);
 
-	if (!UnitTest_InvalidCnt)
+	if (UnitTest_InvalidCnt)
+	{
+		uprintf("UnitTest run failed\r\n");
+	}
+	else
 	{
 		uprintf("UnitTest run successfully\r\n");
 	}
-
 }

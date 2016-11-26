@@ -86,7 +86,7 @@ void SendErrorMessage (const char *message)
 /**
  * \brief	Formatted messages Unit test
  */
-void FormattedMessage_UnitTest (void)
+void FormattedMessage_Test (void)
 {
 	// Send colored messages
 	SendColouredMessage("Red text\r\n", Color_Red);
