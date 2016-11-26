@@ -40,6 +40,11 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(DACx_CHANNEL1_GPIO_PORT, &GPIO_InitStruct);
 
+  /* DAC Channel1 GPIO pin configuration */
+  GPIO_InitStruct.Pin = DACx_CHANNEL2_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(DACx_CHANNEL2_GPIO_PORT, &GPIO_InitStruct);
 
 }
 
@@ -68,7 +73,11 @@ void DAC_Config(void)
     /* Channel configuration Error */
     Error_Handler();
   }
-
+  if (HAL_DAC_ConfigChannel(&DacHandle, &sConfig, DACx_CHANNEL2) != HAL_OK)
+  {
+    /* Channel configuration Error */
+    Error_Handler();
+  }
 
   /*##-5- Set DAC channel1 DHR12RD register ################################################*/
 
@@ -77,11 +86,20 @@ void DAC_Config(void)
 	/* Setting value Error */
 	Error_Handler();
   }
-
+  if (HAL_DAC_SetValue(&DacHandle, DACx_CHANNEL2, DAC_ALIGN_12B_R, 0x00) != HAL_OK)
+  {
+	/* Setting value Error */
+	Error_Handler();
+  }
 
 
   /*##-4- Enable DAC Channel1 ################################################*/
   if (HAL_DAC_Start(&DacHandle, DACx_CHANNEL1) != HAL_OK)
+  {
+    /* Start Error */
+    Error_Handler();
+  }
+  if (HAL_DAC_Start(&DacHandle, DACx_CHANNEL2) != HAL_OK)
   {
     /* Start Error */
     Error_Handler();
@@ -122,7 +140,7 @@ bool DAC_SetValue (DAC_Channel_t channel, float voltage)
 			break;
 
 		case Channel_2:
-			channelDefine = DACx_CHANNEL1;
+			channelDefine = DACx_CHANNEL2;
 			break;
 
 		default:

@@ -436,7 +436,7 @@ CommandResult_t CommandFunction_led ( uint32_t argc, char** argv )
 		}
 
 		status = LED_SetLed(Arg2Num,setType);
-		uprintf("%d. LED status: %d\r\n",Arg2Num, status);
+		uprintf("LED %d. status: %d\r\n",Arg2Num, status);
 
 	}
 	else
