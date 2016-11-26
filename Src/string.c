@@ -188,7 +188,6 @@ uint8_t UnsignedDecimalToStringFill(uint32_t value, char *str, uint8_t fillLengt
  */
 uint8_t SignedDecimalToStringFill (int32_t value, char *str, uint8_t fillLength, char fillCharacter)
 {
-	// TODO: A kelleténél bonyolultabb lett.
 
 	uint8_t length = 0;
 	uint8_t i;

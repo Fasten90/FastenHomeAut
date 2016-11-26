@@ -39,7 +39,6 @@ typedef enum {
 
 typedef struct {
 	uint8_t IP_addressDec;
-	//char IP_addressString[4];		// TODO: delete
 	HomeAutDeviceStateType State;
 } HomeAutDeviceDataType;
 

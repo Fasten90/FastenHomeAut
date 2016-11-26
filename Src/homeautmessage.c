@@ -9,9 +9,9 @@
  *		Last modified:	2016.09.28
  */
 
-#include "homeautmessage.h"
-#include "include.h"
 
+#include "include.h"
+#include "homeautmessage.h"
 
 
 
@@ -363,7 +363,6 @@ void HOMEAUTMESSAGE_Test(void)
 	uint8_t isGood = 0;
 	
 	// It is valid message?
-	//if ( HOMEAUTMESSAGE_CompareMessage((HOMEAUTMESSAGE_MessageType *)TestMessage) == Return_Ok)	// TODO: delete, if below good
 	if ( HOMEAUTMESSAGE_CompareMessage(TestMessage) == Return_Ok)
 	{
 		if ( HOMEAUTMESSAGE_MessageInformation.isValid == VALID )

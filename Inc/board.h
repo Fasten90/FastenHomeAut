@@ -310,7 +310,8 @@
 
 
 
-// L1 not included internal Tempsensor :( TODO. Sure... ?
+// L1 not included internal Tempsensor :(
+// TODO: Sure... ?
 #define ADC_TEMPSENSOR_CHANNEL		ADC_CHANNEL_16
 #define ADC_VREFINT_CHANNEL			ADC_CHANNEL_17
 
