@@ -1182,35 +1182,35 @@ void MONITOR_ConvertSmallLetter ( void )
  */
 void MONITOR_CheckResultAndRespond (CommandResult_t result)
 {
-	switch(result)
+	switch (result)
 	{
-	case CommandResult_Unknown:
-		USART_SendLine("Unknown error");
-		break;
-	case CommandResult_Ok:
-		// Not need response
-		break;
-	case CommandResult_Error_WrongArgument1:
-		USART_SendLine("Wrong argument (1.)");
-		break;
-	case CommandResult_Error_WrongArgument2:
-		USART_SendLine("Wrong argument (2.)");
-		break;
-	case CommandResult_Error_TooFewArgument:
-		USART_SendLine("Too few argument");
-		break;
-	case CommandResult_Error_TooManyArgument:
-		USART_SendLine("Too many argument");
-		break;
-	case CommandResult_Error_CommandArgNumIsWrong:
-		USART_SendLine("Command set is wrong");
-		break;
-	case CommandResult_Error_Unknown:
-		USART_SendLine("Unknown error");
-		break;
-	default:
-		USART_SendLine("Unknown command process");
-		break;
+		case CommandResult_Unknown:
+			USART_SendLine("Unknown error");
+			break;
+		case CommandResult_Ok:
+			// Not need response
+			break;
+		case CommandResult_Error_WrongArgument1:
+			USART_SendLine("Wrong argument (1.)");
+			break;
+		case CommandResult_Error_WrongArgument2:
+			USART_SendLine("Wrong argument (2.)");
+			break;
+		case CommandResult_Error_TooFewArgument:
+			USART_SendLine("Too few argument");
+			break;
+		case CommandResult_Error_TooManyArgument:
+			USART_SendLine("Too many argument");
+			break;
+		case CommandResult_Error_CommandArgNumIsWrong:
+			USART_SendLine("Command set is wrong");
+			break;
+		case CommandResult_Error_Unknown:
+			USART_SendLine("Unknown error");
+			break;
+		default:
+			USART_SendLine("Unknown command process");
+			break;
 	}
 }
 
@@ -1226,13 +1226,13 @@ void MONITOR_RunCommand ( CommandID_t commandID )
 	bool needWriteHelp = false;
 
 	// Check argument nums
-	result = MONITOR_ArgumentNumIsGood(COMMAND_ArgCount, CommandList[commandID].CommandArgNum);
+	result = MONITOR_ArgumentNumIsGood(COMMAND_ArgCount, CommandList[commandID].commandArgNum);
 
 	if (result == CommandResult_Ok)
 	{
 		// Good
 
-		FunctionPointer thisFunction = ( FunctionPointer )CommandList[commandID].CommandFunctionPointer;
+		FunctionPointer thisFunction = ( FunctionPointer )CommandList[commandID].commandFunctionPointer;
 
 		// Execute the command function
 		result = thisFunction(COMMAND_ArgCount,(char**)COMMAND_Arguments);
@@ -1277,7 +1277,7 @@ void MONITOR_WriteCommandHelp ( CommandID_t commandID )
  */
 CommandResult_t MONITOR_ArgumentNumIsGood ( uint8_t receivedArgNum, uint8_t commandArgNum)
 {
-	// Check CommandArgNum. bit is set?
+	// Check commandArgNum. bit is set?
 	if (receivedArgNum > MONITOR_COMMAND_ARG_MAX_COUNT)
 	{
 		return CommandResult_Error_TooManyArgument;

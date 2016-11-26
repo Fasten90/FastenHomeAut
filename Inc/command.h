@@ -57,7 +57,7 @@ typedef CommandResult_t ( *FunctionPointer )( uint32_t argc, char** COMMAND_Argu
 typedef uint8_t CommandID_t;
 
 
-// CommandArgNum type
+// commandArgNum type
 typedef enum
 {
 	CommandArgument_0 = (1 << 0),
@@ -70,10 +70,10 @@ typedef enum
 typedef struct
 {
 	const char *name;
-	const FunctionPointer *CommandFunctionPointer;
+	const FunctionPointer *commandFunctionPointer;
 	const char *description;
 	const char *syntax;
-	const CommandArgNum_t CommandArgNum;
+	const CommandArgNum_t commandArgNum;
 } CommandStruct;
 
 

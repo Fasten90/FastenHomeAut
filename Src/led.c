@@ -116,67 +116,83 @@ void LED_Test ( void )
 
 static bool LED_SetRedLed(LED_SetType ledSet)
 {
+	bool isOk = false;
+
 	switch (ledSet)
 	{
 		case LED_SET_ON:
 			LED_RED_ON();
+			isOk = true;
 			break;
 		case LED_SET_OFF:
 			LED_RED_OFF();
+			isOk = true;
 			break;
 		case LED_SET_TOGGLE:
 			LED_RED_TOGGLE();
+			isOk = true;
 			break;
 		default:
-			return false;
+			isOk = false;
 	}
 
-	return true;
+	return isOk;
 }
 
 
 
 static bool LED_SetBlueLed(LED_SetType ledSet)
 {
+	bool isOk = false;
+
 	switch (ledSet)
 	{
-		case LED_SET_OFF:
-			LED_BLUE_OFF();
-			break;
 		case LED_SET_ON:
 			LED_BLUE_ON();
+			isOk = true;
+			break;
+		case LED_SET_OFF:
+			LED_BLUE_OFF();
+			isOk = true;
 			break;
 		case LED_SET_TOGGLE:
 			LED_BLUE_TOGGLE();
+			isOk = true;
 			break;
 		default:
-			return false;
+			isOk = false;
+			break;
 	}
 
-	return true;
+	return isOk;
 }
-
 
 
 
 static bool LED_SetGreenLed(LED_SetType ledSet)
 {
+	bool isOk = false;
+
 	switch (ledSet)
 	{
 		case LED_SET_OFF:
 			LED_GREEN_OFF();
+			isOk = true;
 			break;
 		case LED_SET_ON:
 			LED_GREEN_ON();
+			isOk = true;
 			break;
 		case LED_SET_TOGGLE:
 			LED_GREEN_TOGGLE();
+			isOk = true;
 			break;
 		default:
-			return false;
+			isOk = false;
+			break;
 	}
 
-	return true;
+	return isOk;
 }
 
 
@@ -188,23 +204,25 @@ static bool LED_SetGreenLed(LED_SetType ledSet)
  */
 bool LED_SetLed(uint8_t num, LED_SetType ledSet)
 {
+	bool isOk = false;
 
 	switch (num)
 	{
 		case 1:
-			LED_SetRedLed(ledSet);
+			isOk = LED_SetRedLed(ledSet);
 			break;
 		case 2:
-			LED_SetBlueLed(ledSet);
+			isOk = LED_SetBlueLed(ledSet);
 			break;
 		case 3:
-			LED_SetGreenLed(ledSet);
+			isOk = LED_SetGreenLed(ledSet);
 			break;
 		default:
-			return false;
+			isOk = false;
+			break;
 	}
 
-	return true;
+	return isOk;
 
 }
 

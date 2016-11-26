@@ -50,144 +50,144 @@ const CommandStruct CommandList[] =
 
 	{
 		.name = "help",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_help,
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_help,
 		.description = "Commands's list, or write command's propertities",
 		.syntax = "<command>",
-		.CommandArgNum = CommandArgument_0 | CommandArgument_1,
+		.commandArgNum = CommandArgument_0 | CommandArgument_1,
 	},
 	{
 		.name = "version",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_version,
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_version,
 		.description = "Get version",
 		.syntax = NULL,
-		.CommandArgNum = CommandArgument_0,
+		.commandArgNum = CommandArgument_0,
 	},
 	{
 		.name = "welcome",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_welcome,
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_welcome,
 		.description = "Send welcome message",
 		.syntax = NULL,
-		.CommandArgNum = CommandArgument_0,
+		.commandArgNum = CommandArgument_0,
 	},
 	{
 		.name = "reset",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_reset,
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_reset,
 		.description = "Software reset",
 		.syntax = NULL,
-		.CommandArgNum = CommandArgument_0,
+		.commandArgNum = CommandArgument_0,
 	},
 	{
 		.name = "cls",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_cls,
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_cls,
 		.description = "Clear Screen",
 		.syntax = NULL,
-		.CommandArgNum = CommandArgument_0,
+		.commandArgNum = CommandArgument_0,
 	},
 	{
 		.name = "test",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_test,
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_test,
 		.description = "...",
 		.syntax = NULL,
-		.CommandArgNum = CommandArgument_0,
+		.commandArgNum = CommandArgument_0,
 	},
 	{
 		.name = "set",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_set,
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_set,
 		.description = "set global variable value",
 		.syntax = "<varName> <value>",
-		.CommandArgNum = CommandArgument_2,
+		.commandArgNum = CommandArgument_2,
 	},
 	{
 		.name = "get",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_get,
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_get,
 		.description = "get global variable value",
 		.syntax = "<varName>",
-		.CommandArgNum = CommandArgument_1,
+		.commandArgNum = CommandArgument_1,
 	},
 	{
 		.name = "?",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_GlobalVariableHelp,
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_GlobalVariableHelp,
 		.description = "help global variable",
 		.syntax = "<varName>",
-		.CommandArgNum = CommandArgument_1,
+		.commandArgNum = CommandArgument_1,
 	},
 	{
 		.name = "list",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_GlobalVariableList,
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_GlobalVariableList,
 		.description = "List global variable",
-		.CommandArgNum = CommandArgument_0,
+		.commandArgNum = CommandArgument_0,
 	},
 	{
 		.name = "listvalues",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_GlobalVariableValueList,
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_GlobalVariableValueList,
 		.description = "List global variable's values",
-		.CommandArgNum = CommandArgument_0,
+		.commandArgNum = CommandArgument_0,
 	},
 	{
 		.name = "led",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_led,
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_led,
 		.description = "Control LED",
 		.syntax = "<on/off/toggle/status> <num>",
-		.CommandArgNum = CommandArgument_1 | CommandArgument_2,
+		.commandArgNum = CommandArgument_1 | CommandArgument_2,
 	},
 	{
 		.name = "#raspi",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_raspberrypi,
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_raspberrypi,
 		.description = "Raspberry Pi HomeAutMessage sending",
 		.syntax = "-",
-		.CommandArgNum = CommandArgument_2
+		.commandArgNum = CommandArgument_2
 	},
 	{
 		.name = "dac",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_dac,
-		.CommandArgNum = CommandArgument_2
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_dac,
+		.commandArgNum = CommandArgument_2
 	},
 	{
 		.name = "unittest",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_unittest,
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_unittest,
 		.description = "Run unit tests",
 		.syntax = "optional: <modul>",
-		.CommandArgNum = CommandArgument_0 | CommandArgument_1
+		.commandArgNum = CommandArgument_0 | CommandArgument_1
 	}
 #ifdef CONFIG_MODULE_ADC_ENABLE
 	{
 		.name = "temperature",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_temp,
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_temp,
 		.description = "...",
 		.syntax = NULL,
-		.CommandArgNum = CommandArgument_0,
+		.commandArgNum = CommandArgument_0,
 	},
 #endif
 #ifdef CONFIG_MODULE_FLASH_ENABLE
 	{
 		.name = "flashdel",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_flashdel,
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_flashdel,
 		.description = "Delete flash",
 		.syntax = "<address> <block/sector>",
-		.CommandArgNum = CommandArgument_2,
+		.commandArgNum = CommandArgument_2,
 	},
 
 	{
 		.name = "flashread",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_flashread,
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_flashread,
 		.description = "Read from flash",
 		.syntax = "<address>",
-		.CommandArgNum = CommandArgument_1,
+		.commandArgNum = CommandArgument_1,
 	},
 
 	{
 		.name = "flashwrite",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_flashwrite,
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_flashwrite,
 		.description = "Write flash",
 		.syntax = "<address> <byte>",
-		.CommandArgNum = CommandArgument_2,
+		.commandArgNum = CommandArgument_2,
 	},
 #endif
 
 	/*
 	{
 		.name = "stop",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_stop,
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_stop,
 		.description = "stop\r\n"
 	},
 	*/
@@ -195,7 +195,7 @@ const CommandStruct CommandList[] =
 	/*
 	{
 		.name = "start",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_start,
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_start,
 		.description = "start\r\n"
 	},
 	*/
@@ -203,7 +203,7 @@ const CommandStruct CommandList[] =
 	/*
 	{
 		.name = "buzzer",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_buzzer,
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_buzzer,
 		.description = "buzzer\r\n"
 		"Syntax: buzzer on/off\r\n"
 		"Function: trivial\r\n"
@@ -213,7 +213,7 @@ const CommandStruct CommandList[] =
 	/*
 	{
 		.name = "dl",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_dl,
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_dl,
 		.description = "dl\r\n"
 					"Syntax: dl <destination> <size>\r\n"
 					"  <destination>: destination address (hexadecimal)\r\n"
@@ -225,7 +225,7 @@ const CommandStruct CommandList[] =
 	/*
 	{
 		.name = "esp8266",
-		.CommandFunctionPointer = ( FunctionPointer *)CommandFunction_ESP8266,
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_ESP8266,
 		.description = "ESP8266 wifi modul bridge\r\n"
 	},
 	*/
@@ -905,6 +905,10 @@ CommandResult_t CommandFunction_dac (uint32_t argc, char** argv)
 #endif
 
 
+
+/**
+ * \brief	Run module's unit tests
+ */
 CommandResult_t CommandFunction_unittest (uint32_t argc, char** argv)
 {
 
@@ -914,6 +918,7 @@ CommandResult_t CommandFunction_unittest (uint32_t argc, char** argv)
 
 	return CommandResult_Ok;
 }
+
 
 
 #if 0
@@ -1008,8 +1013,6 @@ CommandResult_t CommandFunction_dl ( uint32_t argc, char** argv )
 
 	USART_SendString("Arrived the binary file.\r\n");
 
-
-
 	return CommandResult_Ok;
 }
 #endif
@@ -1050,7 +1053,6 @@ CommandResult_t CommandFunction_go ( uint32_t argc, char** argv ) {
 	return CommandResult_Ok;
 }
 #endif
-
 
 
 
