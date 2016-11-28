@@ -126,6 +126,8 @@ CommandResult_t CommandFunction_dac (uint32_t argc, char** argv);
 CommandResult_t CommandFunction_unittest (uint32_t argc, char** argv);
 CommandResult_t CommandFunction_moduletest (uint32_t argc, char** argv);
 
+CommandResult_t CommandFunction_io (uint32_t argc, char** argv);
+
 
 /*
 CommandResult_t CommandFunction_buzzer	( uint32_t argc, char** argv );

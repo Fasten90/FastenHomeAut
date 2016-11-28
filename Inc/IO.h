@@ -52,8 +52,9 @@ extern uint8_t GLOBAL_IO_Sensor_Sound_Impact_Sound;
 /*------------------------------------------------------------------------------
  *  Global function declarations
  *----------------------------------------------------------------------------*/
+#ifdef CONFIG_MODULE_IO_ENABLE
 void IO_Init ( void );
-
+#endif
 
 
 

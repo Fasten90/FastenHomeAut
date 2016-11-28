@@ -151,6 +151,8 @@ typedef enum
 
 	#define CONFIG_MODULE_DAC_ENABLE
 
+	#define CONFIG_MODULE_COMMON_IO
+
 #endif
 
 
@@ -269,6 +271,9 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #include "dac.h"
 #endif
 
+#ifdef CONFIG_MODULE_COMMON_IO
+#include "commonIO.h"
+#endif
 
 void Error_Handler( void );
 
