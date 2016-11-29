@@ -20,7 +20,7 @@
 
 #include <stdbool.h>	// For bool
 
-#include <stdarg.h>		// for "..." parameters in uprintf function
+#include <stdarg.h>		// For "..." parameters in uprintf function
 
 
 /*------------------------------------------------------------------------------
@@ -31,14 +31,7 @@
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
-typedef enum
-{
-	Print_Unknown,
-	Print_DebugUart,
-	Print_OtherUart,
-	// Do not use:
-	Print_Count
-} PrintDevice_t;
+
 
 /*------------------------------------------------------------------------------
  *  Global variables
@@ -116,7 +109,7 @@ uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint
 uint8_t string_printf (char *str, const char *format, va_list ap);
 uint8_t usprintf (char *str, const char *format, ...);
 uint8_t uprintf (const char *format, ...);
-uint8_t duprintf (const PrintDevice_t dev, const char *format, ...);
+uint8_t duprintf (CommProtocol_t dev, const char *format, ...);
 
 // Unit test
 void STRING_UnitTest (void);

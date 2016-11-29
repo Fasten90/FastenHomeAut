@@ -23,11 +23,7 @@ void DelayMs(uint32_t ms)
 #ifdef CONFIG_USE_FREERTOS
 	vTaskDelay(ms/);
 #else
-	uint32_t i;
-	while (ms--)
-	{
-		i = 8000/2;
-		while(i--);
-	}
+	HAL_Delay(ms);
 #endif
 }
+

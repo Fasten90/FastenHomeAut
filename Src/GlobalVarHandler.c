@@ -68,7 +68,7 @@ static bool GlobalVarHandler_SearchVariableName(const char *commandName, VarID_t
 static ProcessResult_t GlobalVarHandler_SetCommand(const VarID_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength);
 static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBuffer, uint8_t resultBufferLength);
 static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t num);
-static void GlobalVarHandler_PrintVariableDescriptions (VarID_t commandID, char *resultBuffer);
+static void GlobalVarHandler_PrintVariableDescriptions (VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
 static ProcessResult_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
 static uint8_t GlobalVarHandler_GetEnumerator(const VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
 static ProcessResult_t GlobalVarHandler_SetBool(VarID_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength);
@@ -184,7 +184,7 @@ void GlobalVarHandler_ProcessCommand(
 			}
 			else if (setGetType == SetGet_Help)
 			{
-				GlobalVarHandler_PrintVariableDescriptions(commandID,resultBuffer);
+				GlobalVarHandler_PrintVariableDescriptions(commandID, resultBuffer, &resultBufferLength);
 				result = Process_Ok_Answered;
 			}
 			else
@@ -1131,15 +1131,31 @@ void GlobalVarHandler_PrintAllVariableValues (void)
 /**
  * \brief	Print global variable descriptions
  */
-static void GlobalVarHandler_PrintVariableDescriptions (VarID_t commandID, char *resultBuffer)
+static void GlobalVarHandler_PrintVariableDescriptions (VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength)
 {
 
-	usprintf(resultBuffer, "Command help: %s, type:%s, min:%d, max:%d, desc:%s\r\n",
-			GlobalVarList[commandID].name,
-			GlobalVarTypesNames[GlobalVarList[commandID].type],
-			GlobalVarList[commandID].minValue,
-			GlobalVarList[commandID].maxValue,
-			GlobalVarList[commandID].description
-			);
+	if (*resultBufferLength < 30)
+	{
+		// Small buffer
+		usprintf(resultBuffer, "Too short buffer...");
+	}
+	else if (*resultBufferLength >= 30 && *resultBufferLength < 80)
+	{
+		// Medium buffer
+		usprintf(resultBuffer, "Command help: %s, desc:%s\r\n",
+				GlobalVarList[commandID].name,
+				GlobalVarList[commandID].description);
+	}
+	else
+	{
+		// Long buffer
+		usprintf(resultBuffer, "Command help: %s, type:%s, min:%d, max:%d, desc:%s\r\n",
+				GlobalVarList[commandID].name,
+				GlobalVarTypesNames[GlobalVarList[commandID].type],
+				GlobalVarList[commandID].minValue,
+				GlobalVarList[commandID].maxValue,
+				GlobalVarList[commandID].description
+				);
+	}
 
 }

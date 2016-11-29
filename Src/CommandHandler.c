@@ -15,6 +15,7 @@
 #include "stdint.h"
 #include "command.h"
 
+#include "escapesequence.h"
 #include "CommandHandler.h"
 #include "GlobalVarHandler.h"
 
@@ -45,6 +46,7 @@ const char MONITOR_DelimiterChar = ' ';
 
 volatile char MONITOR_CommandActual[MONITOR_MAX_COMMAND_LENGTH] = { 0 };
 volatile char MONITOR_CommandActualEscape[4] = { 0 };
+volatile CommProtocol_t MONITOR_CommandSource = 0;
 
 // USART Read cnt
 volatile uint8_t USART_RxBufferReadCnt = 0;
@@ -134,7 +136,7 @@ static void MONITOR_CommandDelete ( void );
 static void MONITOR_CommandTabulator ( void );
 #endif
 
-bool MONITOR_PrepareFindExecuteCommand ( void );
+bool MONITOR_PrepareFindExecuteCommand ( CommProtocol_t source );
 static uint8_t MONITOR_CommandParser ( void );
 static bool MONITOR_SearchCommand ( void );
 
@@ -346,7 +348,7 @@ void MONITOR_CheckCommand ( void )
 						USART_SEND_NEW_LINE();
 						
 						// Search command and run
-						MONITOR_PrepareFindExecuteCommand();
+						MONITOR_PrepareFindExecuteCommand(Source_DebugUart);
 						
 						#ifdef USE_MONITOR_HISTORY
 						// Save command to History
@@ -543,9 +545,12 @@ static void MONITOR_ProcessReceivedCharacter ( void )
 
 /**
  * \brief	Prepare (Separate) the command and Find and Run it...
+ * 			TODO: Átalakítani char* átvevősre
  */
-bool MONITOR_PrepareFindExecuteCommand ( void )
+bool MONITOR_PrepareFindExecuteCommand ( CommProtocol_t source )
 {
+
+	MONITOR_CommandSource = source;
 
 	// Separate command
 	COMMAND_ArgCount = MONITOR_CommandParser ();
@@ -573,14 +578,13 @@ bool MONITOR_PrepareFindExecuteCommand ( void )
 
 
 /**
- * \brief	Separate command to parameters
+ * \brief	Separate command to parameters/arguments
  * 			: from ActualCommand to COMMAND_Arguments[0], [1], [2]
+ * 			NOTE: Only call from MONITOR_PrepareFindExecuteCommand()
+ * 	\return	argument number
  */
 static uint8_t MONITOR_CommandParser(void)
 {
-	// seperate command to argumentums
-	// return arc; = argumentum's num
-	// call from void MonitorWaitCommand(void);
 
 	uint8_t commandArgCount = 0;
 
@@ -590,7 +594,7 @@ static uint8_t MONITOR_CommandParser(void)
 
 	if (commandArgCount > MONITOR_COMMAND_ARG_MAX_COUNT)
 	{
-		uprintf("Too many arguments!\r\n");
+		duprintf(MONITOR_CommandSource, "Too many arguments!\r\n");
 		commandArgCount = 0;
 	}
 
@@ -683,7 +687,7 @@ void MONITOR_CommandBackspace ( void )
 			USART_ESCAPE_CURSORLEFTLOTOF();
 
 			// Write new CommandActual
-			uprintf("# %s",MONITOR_CommandActual);
+			duprintf(MONITOR_CommandSource, "# %s",MONITOR_CommandActual);
 
 			// restore the position
 			USART_ESCAPE_RESTORECURSOR();
@@ -733,7 +737,7 @@ void MONITOR_CommandBackspace ( void )
 				USART_ESCAPE_CURSORLEFTLOTOF();
 
 				// Write new CommandActual
-				uprintf("# %s",MONITOR_CommandActual);
+				duprintf(MONITOR_CommandSource, "# %s",MONITOR_CommandActual);
 
 				// restore the position
 				USART_ESCAPE_RESTORECURSOR();
@@ -849,7 +853,7 @@ void MONITOR_CommandResendLine ( void )
 	USART_ESCAPE_CURSORLEFTLOTOF();
 
 	// Write new CommandActual
-	uprintf("# %s",MONITOR_CommandActual);
+	duprintf(MONITOR_CommandSource, "# %s",MONITOR_CommandActual);
 
 	// Restore the position
 	USART_ESCAPE_RESTORECURSOR();
@@ -875,7 +879,7 @@ void MONITOR_NewCommandResendLine ( void )
 	USART_ESCAPE_CURSORLEFTLOTOF();
 
 	// Write new CommandActual
-	uprintf("# %s",MONITOR_CommandActual);
+	duprintf(MONITOR_CommandSource, "# %s",MONITOR_CommandActual);
 
 	return;
 }
@@ -1176,7 +1180,7 @@ void MONITOR_WriteCommandHelp ( CommandID_t commandID )
 	USART_SendLine(CommandList[commandID].name);
 	USART_SendMessage("Function: ");
 	USART_SendLine(CommandList[commandID].description);
-	uprintf("Syntax: %s %s\r\n", CommandList[commandID].name, CommandList[commandID].syntax);
+	duprintf(MONITOR_CommandSource, "Syntax: %s %s\r\n", CommandList[commandID].name, CommandList[commandID].syntax);
 
 }
 

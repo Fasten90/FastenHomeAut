@@ -77,6 +77,7 @@ typedef enum
 } SetGetType_t;
 
 
+// TODO: összevonni a CommandHandler féle forrással
 typedef enum
 {
 	Source_All			= 0,

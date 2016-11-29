@@ -1355,7 +1355,7 @@ uint8_t uprintf (const char *format, ...)
  * \brief	device uart print
  * \param	dev		what peripheral sending
  */
-uint8_t duprintf (const PrintDevice_t dev, const char *format, ...)
+uint8_t duprintf (CommProtocol_t dev, const char *format, ...)
 {
 	uint8_t length = 0;
 	// Working in at:
@@ -1368,14 +1368,14 @@ uint8_t duprintf (const PrintDevice_t dev, const char *format, ...)
 
 	switch (dev)
 	{
-		case Print_Unknown:
+		case Source_Unknown:
 			// Error, do not use
 			length = 0;
 			break;
-		case Print_DebugUart:
+		case Source_DebugUart:
 			length = USART_SendMessage(TxBuffer);			// Send on Usart
 			break;
-		case Print_OtherUart:
+		case Source_OtherUart:
 			// TODO: Not implemented
 			break;
 		default:
