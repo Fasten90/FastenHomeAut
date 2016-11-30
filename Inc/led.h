@@ -62,7 +62,9 @@ typedef enum
 	LED_SET_ON,
 	LED_SET_OFF,
 	LED_SET_TOGGLE,
-	LED_GET_STATUS
+	LED_GET_STATUS,
+	// Do not use:
+	LED_TYPE_COUNT
 } LED_SetType;
 
 
@@ -77,6 +79,8 @@ void LED_Init( void );
 void LED_Test ( void );
 bool LED_SetLed(uint8_t num, LED_SetType ledSet);
 bool LED_GetStatus(uint8_t num);
+uint8_t LED_GetNumFromName (const char*name);
+LED_SetType LED_GetTypeFromString (const char*typeString);
 
 void LED_InitTimers( void );
 void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim);

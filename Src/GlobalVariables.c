@@ -30,7 +30,9 @@ bool cannotAccess = false;
 float floatTest = 12.34f;
 uint8_t enumValue = 2;
 
-const char *enumExampleList[] =
+
+
+const char *const enumExampleList[] =
 {
 	"example1enumstring",
 	"example2enumstring",
@@ -39,6 +41,11 @@ const char *enumExampleList[] =
 	NULL
 };
 
+
+
+/**
+ * \brief	Global variables list
+ */
 const GlobalVarCommand_t GlobalVarList[] =
 {
 		{

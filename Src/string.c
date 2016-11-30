@@ -652,6 +652,10 @@ bool StringToUnsignedDecimalNum (const char *str, uint32_t *value)
 	uint8_t i;
 	uint8_t decimal;
 
+	if (str == NULL)
+	{
+		return false;
+	}
 
 	for (i=0; str[i] != '\0'; i++)
 	{
@@ -1106,6 +1110,11 @@ uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint
 			if (source[i] == delimiterChar)
 			{
 				source[i] = '\0';
+			}
+			if (j==0)
+			{
+				// one length parameter // TODO: Szebben megcsinálni
+				separated[parameters] = &source[i];
 			}
 			parameters++;
 			j = 0;

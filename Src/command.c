@@ -403,6 +403,7 @@ CommandResult_t CommandFunction_reset ( uint32_t argc, char** argv )
  */
 CommandResult_t CommandFunction_led ( uint32_t argc, char** argv )
 {
+	// TODO: Szépíteni
 
 	// Convert arg2, decimal
 	bool isFirstParamNum = false;
@@ -411,11 +412,22 @@ CommandResult_t CommandFunction_led ( uint32_t argc, char** argv )
 	{
 		isFirstParamNum = true;
 	}
+
+	// Check parameters
 	if (isFirstParamNum == true && (Arg2Num > LED_NUM_MAX || Arg2Num < LED_NUM_MIN))
 	{
 		return CommandResult_Error_WrongArgument1;
 	}
-
+	else if (isFirstParamNum == false)
+	{
+		// Not number, check it is color?
+		uint8_t ledNum = LED_GetNumFromName(argv[1]);
+		if (ledNum != 0)
+		{
+			Arg2Num = ledNum;
+			isFirstParamNum = true;
+		}
+	}
 
 	// Check 2. arg
 	if (isFirstParamNum == false && !StrCmp(argv[1], "status"))
@@ -429,31 +441,19 @@ CommandResult_t CommandFunction_led ( uint32_t argc, char** argv )
 	else if (isFirstParamNum == true)
 	{
 		// 1. param = num (LED num)
+
+		// Get type
 		LED_SetType setType = LED_SET_DONTCARE;
 		bool status = false;
+		setType = LED_GetTypeFromString(argv[2]);
 
-		if (!StrCmp(argv[2], "on"))
+		if (setType == LED_SET_DONTCARE)
 		{
-			setType = LED_SET_ON;
-		}
-		else if (!StrCmp(argv[2], "off"))
-		{
-			setType = LED_SET_OFF;
-		}
-		else if (!StrCmp(argv[2], "toggle"))
-		{
-			setType = LED_SET_TOGGLE;
-		}
-		else if (!StrCmp(argv[2], "status"))
-		{
-			setType = LED_GET_STATUS;
-		}
-		else
-		{
-			// Wrong 2. parameter (not "on", "off", "toggle", "status")
+			// Error, do nothing
 			return CommandResult_Error_WrongArgument2;
 		}
 
+		// Set LED
 		status = LED_SetLed(Arg2Num,setType);
 		duprintf(MONITOR_CommandSource, "LED %d. status: %d\r\n",Arg2Num, status);
 
@@ -713,14 +713,14 @@ CommandResult_t CommandFunction_get ( uint32_t argc, char** argv )
 CommandResult_t CommandFunction_GlobalVariableHelp ( uint32_t argc, char** argv )
 {
 
-	char resultBuffer[30];
+	char resultBuffer[80];
 
 	GlobalVarHandler_ProcessCommand(
 			argv[1], argv[2],
 			SetGet_Help, Source_DebugSerial,
-			resultBuffer, 30);
+			resultBuffer, 80);
 
-	duprintf(MONITOR_CommandSource, "%s\r\n",resultBuffer);
+	duprintf(MONITOR_CommandSource, "%s",resultBuffer);
 
 
 	return CommandResult_Ok;

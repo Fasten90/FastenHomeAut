@@ -26,6 +26,28 @@ TIM_HandleTypeDef    TimLedGreenHandle;
 #endif
 
 
+
+const char * const LED_NameList[] =
+{
+	// NOTE: Be careful, when change the order and num, syncronize with LED_NUM_MAX define
+	"red",
+	"blue",
+	"green",
+	NULL
+};				///< LED names
+
+
+const char * const LED_TypeNameList[] =
+{
+	// NOTE: Syncronize with LED_SetType
+	"-",
+	"on",
+	"off",
+	"toggle",
+	"status"
+};				///< LED types
+
+
 static bool LED_SetRedLed(LED_SetType ledSet);
 static bool LED_SetBlueLed(LED_SetType ledSet);
 static bool LED_SetGreenLed(LED_SetType ledSet);
@@ -246,6 +268,54 @@ bool LED_GetStatus(uint8_t num)
 	}
 
 	return status;
+}
+
+
+
+/**
+ * \brief	Get LED type from name
+ */
+uint8_t LED_GetNumFromName (const char*name)
+{
+	uint8_t i;
+	uint8_t ledNum = 0;
+
+	for (i=0; i < LED_NUM_MAX; i++)
+	{
+		if (!StrCmp(LED_NameList[i], name))
+		{
+			// LED num = index+1
+			ledNum = i + 1;
+			break;
+		}
+	}
+
+	return ledNum;
+
+}
+
+
+
+/**
+ * \brief	Get type from string
+ */
+LED_SetType LED_GetTypeFromString (const char*typeString)
+{
+	uint8_t i;
+	LED_SetType ledType = 0;
+
+	// TODO: Lehet, hogy kevesebbet foglalna nem ciklusként
+
+	for (i=0; i < LED_TYPE_COUNT; i++)
+	{
+		if (!StrCmp(LED_TypeNameList[i], typeString))
+		{
+			ledType = i;
+			break;
+		}
+	}
+
+	return ledType;
 }
 
 

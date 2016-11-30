@@ -553,7 +553,7 @@ bool MONITOR_PrepareFindExecuteCommand ( CommProtocol_t source )
 	MONITOR_CommandSource = source;
 
 	// Separate command
-	COMMAND_ArgCount = MONITOR_CommandParser ();
+	COMMAND_ArgCount = MONITOR_CommandParser();
 	bool isSuccessful = false;
 
 	if (COMMAND_ArgCount > 0)
@@ -589,7 +589,7 @@ static uint8_t MONITOR_CommandParser(void)
 	uint8_t commandArgCount = 0;
 
 	commandArgCount = STRING_Splitter((char*)MONITOR_CommandActual, MONITOR_DelimiterChar,
-			COMMAND_Arguments,MONITOR_COMMAND_ARG_MAX_COUNT);
+			COMMAND_Arguments, MONITOR_COMMAND_ARG_MAX_COUNT);
 
 
 	if (commandArgCount > MONITOR_COMMAND_ARG_MAX_COUNT)

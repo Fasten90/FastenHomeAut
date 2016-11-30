@@ -97,6 +97,12 @@ bool GlobalVarHandler_CheckCommandStructAreValid(void)
 			break;
 		}
 
+		if (StringLength(GlobalVarList[i].name) >= GLOBALVARHANDLER_NAME_MAX_LENGTH)
+		{
+			hasError = true;
+			break;
+		}
+
 		if (GlobalVarList[i].varPointer == NULL)
 		{
 			hasError = true;
@@ -1134,21 +1140,8 @@ void GlobalVarHandler_PrintAllVariableValues (void)
 static void GlobalVarHandler_PrintVariableDescriptions (VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength)
 {
 
-	if (*resultBufferLength < 30)
+	if (*resultBufferLength >= 80)
 	{
-		// Small buffer
-		usprintf(resultBuffer, "Too short buffer...");
-	}
-	else if (*resultBufferLength >= 30 && *resultBufferLength < 80)
-	{
-		// Medium buffer
-		usprintf(resultBuffer, "Command help: %s, desc:%s\r\n",
-				GlobalVarList[commandID].name,
-				GlobalVarList[commandID].description);
-	}
-	else
-	{
-		// Long buffer
 		usprintf(resultBuffer, "Command help: %s, type:%s, min:%d, max:%d, desc:%s\r\n",
 				GlobalVarList[commandID].name,
 				GlobalVarTypesNames[GlobalVarList[commandID].type],
