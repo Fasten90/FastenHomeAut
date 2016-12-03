@@ -69,7 +69,7 @@ static ProcessResult_t GlobalVarHandler_SetCommand(const VarID_t commandID, cons
 static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBuffer, uint8_t resultBufferLength);
 static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t num);
 static void GlobalVarHandler_PrintVariableDescriptions (VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
-static ProcessResult_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
+static uint8_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
 static uint8_t GlobalVarHandler_GetEnumerator(const VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
 static ProcessResult_t GlobalVarHandler_SetBool(VarID_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength);
 static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char *param, char *resultBuffer, uint8_t *resultBufferLength);
@@ -273,7 +273,7 @@ static ProcessResult_t GlobalVarHandler_GetCommand(VarID_t commandID, char *resu
 	case Type_Int8:
 	case Type_Int16:
 	case Type_Int32:
-		GlobalVarHandler_GetIntegerVariable(commandID,resultBuffer,resultBufferLength);
+		length += GlobalVarHandler_GetIntegerVariable(commandID,resultBuffer,resultBufferLength);
 		break;
 
 	case Type_Float:
@@ -332,11 +332,12 @@ static ProcessResult_t GlobalVarHandler_GetCommand(VarID_t commandID, char *resu
 
 
 /**
- * \brief Get integer value
+ * \brief	Get integer value
+ * 			NOTE: Be careful, commandID not checked
  */
-static ProcessResult_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength)
+static uint8_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength)
 {
-
+	uint8_t length = 0;
 	VarType_t type = GlobalVarList[commandID].type;
 
 	if (GlobalVarList[commandID].isHex)
@@ -362,87 +363,91 @@ static ProcessResult_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, ch
 
 		if (octetNum != 0)
 		{
+			// Octet num is ok
 			uint32_t *numPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
 			uint32_t num = *numPointer;
 			// TODO: Buffer túlírás ellenőrzés
-			uint8_t length = 0;
 			length += StrCpyMax(resultBuffer,"0x",3);
 			length += DecimalToHexaString(num, &resultBuffer[length], octetNum);
 			*resultBufferLength -= length;
-			return Process_Ok_Answered;
+			return length;
 		}
 		else
 		{
-			return Process_UnknownError;
+			// Error, octet = 0
+			return 0;
 		}
 	}
-
-
-	// If not hex
-	// TODO: Szépíteni
-	switch(type)
+	else
 	{
-	case Type_Uint8:
+		// If not hex
+		// TODO: Szépíteni, legyen ez az egész else if-ben
+		switch(type)
 		{
-			uint8_t *numPointer = (uint8_t *)GlobalVarList[commandID].varPointer;
-			uint8_t num = *numPointer;
-			// TODO: Buffer túlírás ellenőrzés
-			*resultBufferLength -= UnsignedDecimalToString(num, resultBuffer);
-		}
-		break;
+			// TODO: formázás
+		case Type_Uint8:
+			{
+				uint8_t *numPointer = (uint8_t *)GlobalVarList[commandID].varPointer;
+				uint8_t num = *numPointer;
+				// TODO: Buffer túlírás ellenőrzés
+				*resultBufferLength -= UnsignedDecimalToString(num, resultBuffer);
+			}
+			break;
 
-	case Type_Uint16:
-		{
-			uint16_t *numPointer = (uint16_t *)GlobalVarList[commandID].varPointer;
-			uint16_t num = *numPointer;
-			// TODO: Buffer túlírás ellenőrzés
-			*resultBufferLength -= UnsignedDecimalToString(num, resultBuffer);
-		}
-		break;
+		case Type_Uint16:
+			{
+				uint16_t *numPointer = (uint16_t *)GlobalVarList[commandID].varPointer;
+				uint16_t num = *numPointer;
+				// TODO: Buffer túlírás ellenőrzés
+				*resultBufferLength -= UnsignedDecimalToString(num, resultBuffer);
+			}
+			break;
 
-	case Type_Uint32:
-		{
-			uint32_t *numPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
-			uint32_t num = *numPointer;
-			// TODO: Buffer túlírás ellenőrzés
-			*resultBufferLength -= UnsignedDecimalToString(num, resultBuffer);
-		}
-		break;
+		case Type_Uint32:
+			{
+				uint32_t *numPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
+				uint32_t num = *numPointer;
+				// TODO: Buffer túlírás ellenőrzés
+				*resultBufferLength -= UnsignedDecimalToString(num, resultBuffer);
+			}
+			break;
 
-	case Type_Int8:
-		{
-			int8_t *numPointer = (int8_t *)GlobalVarList[commandID].varPointer;
-			int8_t num = *numPointer;
-			// TODO: Buffer túlírás ellenőrzés
-			*resultBufferLength -= SignedDecimalToString(num, resultBuffer);
-		}
-		break;
+		case Type_Int8:
+			{
+				int8_t *numPointer = (int8_t *)GlobalVarList[commandID].varPointer;
+				int8_t num = *numPointer;
+				// TODO: Buffer túlírás ellenőrzés
+				*resultBufferLength -= SignedDecimalToString(num, resultBuffer);
+			}
+			break;
 
-	case Type_Int16:
-		{
-			int16_t *numPointer = (int16_t *)GlobalVarList[commandID].varPointer;
-			int16_t num = *numPointer;
-			// TODO: Buffer túlírás ellenőrzés
-			*resultBufferLength -= SignedDecimalToString(num, resultBuffer);
-		}
-		break;
+		case Type_Int16:
+			{
+				int16_t *numPointer = (int16_t *)GlobalVarList[commandID].varPointer;
+				int16_t num = *numPointer;
+				// TODO: Buffer túlírás ellenőrzés
+				*resultBufferLength -= SignedDecimalToString(num, resultBuffer);
+			}
+			break;
 
-	case Type_Int32:
-		{
-			int32_t *numPointer = (int32_t *)GlobalVarList[commandID].varPointer;
-			int32_t num = *numPointer;
-			// TODO: Buffer túlírás ellenőrzés
-			*resultBufferLength -= SignedDecimalToString(num, resultBuffer);
-		}
-		break;
+		case Type_Int32:
+			{
+				int32_t *numPointer = (int32_t *)GlobalVarList[commandID].varPointer;
+				int32_t num = *numPointer;
+				// TODO: Buffer túlírás ellenőrzés
+				*resultBufferLength -= SignedDecimalToString(num, resultBuffer);
+			}
+			break;
 
-	default:
-		// Wrong case
-		return Process_UnknownError;
-		break;
+		default:
+			// Wrong case
+			return 0;
+			break;
+		}
+
 	}
 
-	return Process_Ok_Answered;
+	return length;
 }
 
 
@@ -1116,9 +1121,11 @@ void GlobalVarHandler_PrintAllVariableValues (void)
 	uint8_t i;
 	char resultBuffer[20];
 	uint8_t resultBufferLength;
+	// TODO: Ne uprintf legyen, hanem vagy duprintf, vagy sprintf
 
 	uprintf("Global variables:\r\n"
-			" <Name>               | <Value>\r\n");
+			" %20s %20s\r\n",
+			"<Name>", "<Value>");
 
 	// Print all variables
 	for (i=0; i<GlobalVarMaxCommandNum; i++)

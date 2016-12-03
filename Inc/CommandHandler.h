@@ -46,10 +46,11 @@
 #define MONITOR_HISTORY_MAX_COUNT			(5)
 
 
-#define MONITOR_WELCOME_DATE_VERSION	__DATE__
-#define MONITOR_WELCOME_TIME_VERSION	__TIME__
+#define MONITOR_WELCOME_DATE_VERSION		__DATE__
+#define MONITOR_WELCOME_TIME_VERSION		__TIME__
 
 
+// TODO: Hardware name define...
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
 #define MONITOR_BOARD_TYPE		"Used panel: NodeMedium\r\n"
 #endif
@@ -65,7 +66,8 @@
 
 
 #define MONITOR_SEND_WELCOME()								\
-		USART_SendString("\r\n"								\
+		MONITOR_SendMessage(								\
+		"\r\n"												\
 		"Welcome in Monitor program!\r\n"					\
 		MONITOR_WELCOME_DATE_VERSION "\r\n"					\
 		MONITOR_WELCOME_TIME_VERSION "\r\n"					\
@@ -75,18 +77,15 @@
 		"Try \"help\" command for help!\r\n")
 
 
-#define MONITOR_SEND_PROMT()		\
-		USART_SendString("\r\n# ")
+#define MONITOR_SEND_PROMT()			\
+		MONITOR_SendMessage("\r\n# ")
 
 
-#define USART_SendString(message)		USART_SendMessage((char *)message)
+#define USART_SEND_DUMMYSTRING()		MONITOR_SendMessage(MONITOR_DUMMY_STRING)
 
 
-#define USART_SEND_DUMMYSTRING()		USART_SendString(MONITOR_DUMMY_STRING)
-
-
-#define USART_SEND_NEW_LINE()			\
-		USART_SendString("\r\n");
+#define MONITOR_SEND_NEW_LINE()			\
+		MONITOR_SendMessage("\r\n")
 
 
 ////////////////////////////////////  DEFINES FOR CHARACTERS
@@ -117,11 +116,11 @@ CONFIG_USE_TERMINAL_ZOC
 
 // 8 = BS = Backspace
 #define USART_SEND_KEY_BACKSPACE()	\
-		USART_SendChar(8)
+		MONITOR_SendChar(8)
 
 // 127 = DEL = Delete
 #define USART_SEND_KEY_DEL()		 \
-		USART_SendChar(127)
+		MONITOR_SendChar(127)
 
 
 
@@ -157,6 +156,8 @@ void MONITOR_SendWelcome (void);
 void MONITOR_CheckCommand (void);
 
 void MONITOR_WriteCommandHelp (CommandID_t commandID);
+void MONITOR_SendCls(void);
+
 
 
 #endif /* COMMANDHANDLER_H_ */

@@ -108,7 +108,7 @@ typedef struct
 
 	const bool isHex;
 
-	const char **enumList;
+	const char * const *enumList;
 
 #ifdef GLOBALVARHANDLER_UNIT_ENABLE
 	const char * const unit;

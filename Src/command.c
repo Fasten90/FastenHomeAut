@@ -292,7 +292,7 @@ const CommandID_t MONITOR_CommandNum = MONITOR_MAX_COMMAND_NUM;
 CommandResult_t CommandFunction_cls ( uint32_t argc, char** argv )
 {
 
-	USART_SEND_CLS();
+	MONITOR_SendCls();
 
 	return CommandResult_Ok;
 }

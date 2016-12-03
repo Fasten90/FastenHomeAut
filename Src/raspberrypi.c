@@ -167,86 +167,85 @@ void RASPBERRYPI_SendMessage(uint8_t myAddress, uint8_t functionType, uint8_t da
 	{
 		case Function_Alarm:
 			function = 'a';
-		break;
+			break;
 		case Function_Command:
 			function = 'c';
-		break;
+			break;
 		case Function_Config:
 			function = 'c';
-		break;
+			break;
 		case Function_End:
 			return;
-		//break;		// Because: statement is unreachable
+			//break;		// Because: statement is unreachable
 		case Function_Invalid:
 			return;
-		//break;			// Because: statement is unreachable	
+			//break;			// Because: statement is unreachable
 		case Function_Login:
 			function = 'l';
-		break;	
+			break;
 		case Function_Mode:
 			function = 'm';
-		break;	
+			break;
 		case Function_State:
 			function = 's';
-		break;
+			break;
 		default:
 			return;
-		//break;		// Because: statement is unreachable
+			//break;		// Because: statement is unreachable
 	}
-	
+
 	char type = 0;
 	switch (dataType)
 	{
 		case State_Temperature:
 			type = 't';
-		break;
+			break;
 		case State_Brightness:
 			type = 'b';
-		break;
+			break;
 		case State_Sound:
 			type = 's';
-		break;
+			break;
 		case State_Battery:
 			type = 'v';		// Status ~Voltage
-		break;
+			break;
 		case State_Input:
 			type = 'i';
-		break;
+			break;
 		case State_Output:
 			type = 'o';
-		break;
+			break;
 		case Alarm_PressedButton:
 			type = 'b';
-		break;
+			break;
 		case Alarm_Moving:
 			type = 'm';
-		break;		
+			break;
 		case Alarm_SoundImpacted:
 			type = 's';
-		break;	
+			break;
 		case Alarm_DoorOpened:
 			type = 'd';
-		break;	
-		
+			break;
+
 		default:
 			return;
-		//break;		// Because: statement is unreachable
+			//break;		// Because: statement is unreachable
 	}
 	// STATE
 	//State_Button,
 	//State_Vin,
 	//State_Accelerometer,
-	
+
 	// Alarm
 	//Alarm_TooHot,
 	//Alarm_TooCold,
 	//Alarm_TooBright,
 	//Alarm_TooDark,
 
-	
 	// Sending:
-	
-	uprintf("#%d_%c%c_%0.2f\r\n",myAddress,function,type,data);
+
+	uprintf("#%d_%c%c_%0.2f\r\n", myAddress, function, type, data);
 	
 }
 

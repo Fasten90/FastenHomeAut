@@ -157,6 +157,9 @@ void MONITOR_ConvertSmallLetter (void);
 void MONITOR_CheckResultAndRespond (CommandResult_t result);
 void MONITOR_RunCommand (CommandID_t commandID);
 CommandResult_t MONITOR_ArgumentNumIsGood (uint8_t receivedArgNum, uint8_t commandArgNum);
+void MONITOR_SendMessage(const char *message);
+void MONITOR_SendLine(const char *message);
+void MONITOR_SendChar(char c);
 
 #ifdef MONITOR_GET_PASSWORD_ENABLE
 static void MONITOR_GetPassword (void);
@@ -212,12 +215,12 @@ void MONITOR_SendWelcome ( void )
 	#endif
 
 #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
-	USART_SEND_CLS();						// Clean screen
+	MONITOR_SendCls();						// Clean screen
 #endif
 	
 	MONITOR_SEND_WELCOME();					// Welcome message
 
-	USART_SEND_NEW_LINE();
+	MONITOR_SEND_NEW_LINE();
 	MONITOR_SEND_PROMT();					// New promt
 
 	return;
@@ -251,7 +254,7 @@ void MONITOR_CheckCommand ( void )
 	// Check GlobalVarList[]
 	if (GlobalVarHandler_CheckCommandStructAreValid() == false)
 	{
-		USART_SendLine("ERROR in GlobalVarList! Should correct that!");
+		MONITOR_SendLine("ERROR in GlobalVarList! Should correct that!");
 	}
 
 	// Start receive
@@ -318,7 +321,7 @@ void MONITOR_CheckCommand ( void )
 					MONITOR_CommandReceivedNotLastChar = false;
 
 					// Step right
-					USART_ESCAPE_CURSORRIGHT();
+					MONITOR_SendMessage(USART_ESCAPE_CURSORRIGHT);
 					// Not Last char (it is inner character) - Refresh the line
 					MONITOR_CommandResendLine();
 				}
@@ -345,7 +348,7 @@ void MONITOR_CheckCommand ( void )
 						// has an command
 						MONITOR_ConvertSmallLetter();
 						
-						USART_SEND_NEW_LINE();
+						MONITOR_SEND_NEW_LINE();
 						
 						// Search command and run
 						MONITOR_PrepareFindExecuteCommand(Source_DebugUart);
@@ -505,6 +508,7 @@ static void MONITOR_ProcessReceivedCharacter ( void )
 							MONITOR_CommandCursorPosition++;
 							if (MONITOR_CommandSendBackCharEnable)
 							{
+								// TODO: Cserélni
 								USART_SendChar( USART_ReceivedChar );
 							}
 						}
@@ -560,7 +564,7 @@ bool MONITOR_PrepareFindExecuteCommand ( CommProtocol_t source )
 	{
 		// Find and execute the command
 		isSuccessful = MONITOR_SearchCommand();
-		USART_SEND_NEW_LINE();
+		MONITOR_SEND_NEW_LINE();
 	}
 	else
 	{
@@ -594,7 +598,8 @@ static uint8_t MONITOR_CommandParser(void)
 
 	if (commandArgCount > MONITOR_COMMAND_ARG_MAX_COUNT)
 	{
-		duprintf(MONITOR_CommandSource, "Too many arguments!\r\n");
+		// Too many arugments
+		MONITOR_SendMessage("Too many arguments!\r\n");
 		commandArgCount = 0;
 	}
 
@@ -631,8 +636,8 @@ static bool MONITOR_SearchCommand ( void )
 	if (!CommandValid)
 	{
 		// Error, wrong command
-		USART_SendLine("Unknown Command");
-		USART_SendLine("Type \"help\" for help");
+		MONITOR_SendMessage("Unknown Command\r\n"
+				"Type \"help\" for help\r\n");
 	}
 
 	// Return with validation
@@ -677,20 +682,20 @@ void MONITOR_CommandBackspace ( void )
 			USART_SEND_KEY_BACKSPACE();
 
 			// Delete this line
-			USART_ESCAPE_DELETELINE();
+			MONITOR_SendMessage(USART_ESCAPE_DELETELINE);
 
 			// Save the cursor ( we need backup this, because the user's cursor is stand this position )
-			USART_ESCAPE_SAVECURSOR();
+			MONITOR_SendMessage(USART_ESCAPE_SAVECURSOR);
 
 			// Cursor to line start -> we want write the "CommandActual"
-			USART_ESCAPE_CURSOR_TO_LINESTART();
-			USART_ESCAPE_CURSORLEFTLOTOF();
+			MONITOR_SendMessage(USART_ESCAPE_CURSOR_TO_LINESTART);
+			MONITOR_SendMessage(USART_ESCAPE_CURSORLEFTLOTOF);
 
 			// Write new CommandActual
-			duprintf(MONITOR_CommandSource, "# %s",MONITOR_CommandActual);
+			MONITOR_SendMessage("# %s",MONITOR_CommandActual);
 
 			// restore the position
-			USART_ESCAPE_RESTORECURSOR();
+			MONITOR_SendMessage(USART_ESCAPE_RESTORECURSOR);
 
 #endif
 
@@ -723,24 +728,26 @@ void MONITOR_CommandBackspace ( void )
 				}
 				MONITOR_CommandActual[i] = '\0';
 
+				// TODO: Egy függvénybe rakni az újra kiküldést?
+
 				// Send backspace = step left
 				USART_SEND_KEY_BACKSPACE();
 
 				// Delete this line
-				USART_ESCAPE_DELETELINE();
+				MONITOR_SendMessage(USART_ESCAPE_DELETELINE);
 
 				// Save the cursor ( we need backup this, because the user's cursor is stand this position
-				USART_ESCAPE_SAVECURSOR();
+				MONITOR_SendMessage(USART_ESCAPE_SAVECURSOR);
 
 				// Cursor to line start -> we want write the "CommandActual"
-				USART_ESCAPE_CURSOR_TO_LINESTART();
-				USART_ESCAPE_CURSORLEFTLOTOF();
+				MONITOR_SendMessage(USART_ESCAPE_CURSOR_TO_LINESTART);
+				MONITOR_SendMessage(USART_ESCAPE_CURSORLEFTLOTOF);
 
 				// Write new CommandActual
 				duprintf(MONITOR_CommandSource, "# %s",MONITOR_CommandActual);
 
-				// restore the position
-				USART_ESCAPE_RESTORECURSOR();
+				// Restore the position
+				MONITOR_SendMessage(USART_ESCAPE_RESTORECURSOR);
 			}
 		}
 #endif	// #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
@@ -761,7 +768,7 @@ static void MONITOR_CommandDelete ( void )
 	{
 		// If has command
 		// Cursor at end?
-		if ( MONITOR_CommandCursorPosition == MONITOR_CommandActualLength)
+		if (MONITOR_CommandCursorPosition == MONITOR_CommandActualLength)
 		{
 			// Do nothing at end
 		}
@@ -772,7 +779,7 @@ static void MONITOR_CommandDelete ( void )
 
 			uint8_t i;
 
-			if ( MONITOR_CommandCursorPosition > 0 )
+			if (MONITOR_CommandCursorPosition > 0)
 			{
 				// not at 0 position
 
@@ -785,7 +792,7 @@ static void MONITOR_CommandDelete ( void )
 
 				MONITOR_CommandActualLength--;
 
-				for ( i = MONITOR_CommandCursorPosition; i < MONITOR_CommandActualLength; i++ )
+				for (i = MONITOR_CommandCursorPosition; i < MONITOR_CommandActualLength; i++)
 				{
 					MONITOR_CommandActual[i] = MONITOR_CommandActual[i+1];		// copy
 				}
@@ -843,20 +850,20 @@ void MONITOR_CommandResendLine ( void )
 {
 
 	// Delete the line
-	USART_ESCAPE_DELETELINE();
+	MONITOR_SendMessage(USART_ESCAPE_DELETELINE);
 
 	// Save cursor
-	USART_ESCAPE_SAVECURSOR();
+	MONITOR_SendMessage(USART_ESCAPE_SAVECURSOR);
 
 	// Cursor to line start
-	USART_ESCAPE_CURSOR_TO_LINESTART();
-	USART_ESCAPE_CURSORLEFTLOTOF();
+	MONITOR_SendMessage(USART_ESCAPE_CURSOR_TO_LINESTART);
+	MONITOR_SendMessage(USART_ESCAPE_CURSORLEFTLOTOF);
 
 	// Write new CommandActual
 	duprintf(MONITOR_CommandSource, "# %s",MONITOR_CommandActual);
 
 	// Restore the position
-	USART_ESCAPE_RESTORECURSOR();
+	MONITOR_SendMessage(USART_ESCAPE_RESTORECURSOR);
 
 	return;
 }
@@ -872,11 +879,11 @@ void MONITOR_NewCommandResendLine ( void )
 {
 
 	// Delete the line
-	USART_ESCAPE_DELETELINE();
+	MONITOR_SendMessage(USART_ESCAPE_DELETELINE);
 
 	// Cursor to line start
-	USART_ESCAPE_CURSOR_TO_LINESTART();
-	USART_ESCAPE_CURSORLEFTLOTOF();
+	MONITOR_SendMessage(USART_ESCAPE_CURSOR_TO_LINESTART);
+	MONITOR_SendMessage(USART_ESCAPE_CURSORLEFTLOTOF);
 
 	// Write new CommandActual
 	duprintf(MONITOR_CommandSource, "# %s",MONITOR_CommandActual);
@@ -919,21 +926,29 @@ bool MONITOR_CommandEscapeCharValidation ( void )
 			{
 				if ( MONITOR_CommandCursorPosition < MONITOR_CommandActualLength )	// if not at end
 				{
-					USART_ESCAPE_CURSORRIGHT();
+					MONITOR_SendMessage(USART_ESCAPE_CURSORRIGHT);
 					MONITOR_CommandCursorPosition++;
 					return true;
 				}
-				else return true;								// not do anything
+				else
+				{
+					// not do anything
+					return true;
+				}
 			}
 			else if (  MONITOR_CommandActualEscape[2] == 'D' )			// Left cursor
 			{
 				if ( MONITOR_CommandCursorPosition > 0 )				// if not at start
 				{
-					USART_ESCAPE_CURSORLEFT();
+					MONITOR_SendMessage(USART_ESCAPE_CURSORLEFT);
 					MONITOR_CommandCursorPosition--;
 					return true;
 				}
-				else return true;										// not do anything
+				else
+				{
+					// not do anything
+					return true;
+				}
 			}
 		}
 		else	// This is not escape sequence
@@ -1099,31 +1114,31 @@ void MONITOR_CheckResultAndRespond (CommandResult_t result)
 	switch (result)
 	{
 		case CommandResult_Unknown:
-			USART_SendLine("Unknown error");
+			MONITOR_SendLine("Unknown error");
 			break;
 		case CommandResult_Ok:
 			// Not need response
 			break;
 		case CommandResult_Error_WrongArgument1:
-			USART_SendLine("Wrong argument (1.)");
+			MONITOR_SendLine("Wrong argument (1.)");
 			break;
 		case CommandResult_Error_WrongArgument2:
-			USART_SendLine("Wrong argument (2.)");
+			MONITOR_SendLine("Wrong argument (2.)");
 			break;
 		case CommandResult_Error_TooFewArgument:
-			USART_SendLine("Too few argument");
+			MONITOR_SendLine("Too few argument");
 			break;
 		case CommandResult_Error_TooManyArgument:
-			USART_SendLine("Too many argument");
+			MONITOR_SendLine("Too many argument");
 			break;
 		case CommandResult_Error_CommandArgNumIsWrong:
-			USART_SendLine("Command set is wrong");
+			MONITOR_SendLine("Command set is wrong");
 			break;
 		case CommandResult_Error_Unknown:
-			USART_SendLine("Unknown error");
+			MONITOR_SendLine("Unknown error");
 			break;
 		default:
-			USART_SendLine("Unknown command process");
+			MONITOR_SendLine("Unknown command process");
 			break;
 	}
 }
@@ -1176,11 +1191,15 @@ void MONITOR_RunCommand ( CommandID_t commandID )
  */
 void MONITOR_WriteCommandHelp ( CommandID_t commandID )
 {
-	USART_SendMessage("Command name: ");
-	USART_SendLine(CommandList[commandID].name);
-	USART_SendMessage("Function: ");
-	USART_SendLine(CommandList[commandID].description);
-	duprintf(MONITOR_CommandSource, "Syntax: %s %s\r\n", CommandList[commandID].name, CommandList[commandID].syntax);
+
+	duprintf(MONITOR_CommandSource,
+			"Command name: %s\r\n"
+			"Function: %s\r\n"
+			"Syntax: %s %s\r\n",
+			CommandList[commandID].name,
+			CommandList[commandID].description,
+			CommandList[commandID].name,
+			CommandList[commandID].syntax);
 
 }
 
@@ -1246,6 +1265,71 @@ CommandResult_t MONITOR_ArgumentNumIsGood ( uint8_t receivedArgNum, uint8_t comm
 
 
 
+/**
+ * \brief	Send message to source
+ */
+void MONITOR_SendMessage(const char *message)
+{
+	// TODO: használni egy közös függvényt a duprintf()-essel
+	//return duprintf(MONITOR_CommandSource, message);
+	switch (MONITOR_CommandSource)
+	{
+		case Source_DebugUart:
+			USART_SendMessage(message);
+			break;
+
+		default:
+			// TODO: átrakni máshova?
+			USART_SendMessage(message);
+			break;
+	}
+}
+
+
+
+/**
+ * \brief	Send line (with newline)
+ */
+void MONITOR_SendLine(const char *message)
+{
+	MONITOR_SendMessage(message);
+	MONITOR_SendMessage("\r\n");
+}
+
+
+
+/**
+ * \brief	Send character
+ */
+void MONITOR_SendChar(char c)
+{
+	/// TODO:
+	switch (MONITOR_CommandSource)
+	{
+		case Source_DebugUart:
+			USART_SendChar(c);
+			break;
+
+		default:
+			// TODO: átrakni máshova?
+			USART_SendChar(c);
+			break;
+	}
+}
+
+
+
+/**
+ * \brief	Send CLS
+ */
+void MONITOR_SendCls(void)
+{
+	MONITOR_SendMessage(USART_ESCAPE_ERASE_CLS);
+	MONITOR_SendMessage(USART_ESCAPE_CURSOR_TOPLEFT);
+}
+
+
+
 #ifdef MONITOR_GET_PASSWORD_ENABLE
 /**
  * \brief Get (and wait) Password
@@ -1256,13 +1340,13 @@ static void MONITOR_GetPassword ( void )
 	bool passwordIsOk = false;
 
 	// Wait first character
-	USART_SendLine("\r\nType a character:");
+	MONITOR_SendLine("\r\nType a character:");
 	while (USART_RxBufferWriteCounter < 1);
 	USART_RxBufferReadCnt = 1;
 
 	while (!passwordIsOk)
 	{
-		USART_SendString("\r\nPassword:");
+		MONITOR_SendMessage("\r\nPassword:");
 
 		bool isTry = true;
 		MONITOR_CommandActualLength = 0;
@@ -1289,14 +1373,14 @@ static void MONITOR_GetPassword ( void )
 					if (MONITOR_CheckPassword((const char*)MONITOR_CommandActual))
 					{
 						// Successful password
-						USART_SendLine("Successful password!");
+						MONITOR_SendLine("Successful password!");
 						MONITOR_CommandActualLength=0;
 						return;
 					}
 					else
 					{
 						// Failed password
-						USART_SendLine("Wrong password!");
+						MONITOR_SendLine("Wrong password!");
 					}
 				}
 				else

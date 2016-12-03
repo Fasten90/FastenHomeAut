@@ -651,7 +651,7 @@ void USART_SendFloat (float value)
 	
 	FloatToString(value,string,0,6);
 	
-	USART_SendString(string);
+	USART_SendMessage(string);
 }
 
 
