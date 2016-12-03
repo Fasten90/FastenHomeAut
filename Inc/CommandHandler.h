@@ -39,6 +39,8 @@
 
 ///	Config defines
 
+#include "board.h"
+
 
 #define MONITOR_MAX_COMMAND_LENGTH			(255U)
 #define MONITOR_COMMAND_ARG_MAX_COUNT		(3)
@@ -51,18 +53,6 @@
 #define MONITOR_WELCOME_TIME_VERSION		__TIME__
 
 
-// TODO: Hardware name define...
-#ifdef CONFIG_USE_PANEL_NODEMEDIUM
-#define MONITOR_BOARD_TYPE		"Used panel: NodeMedium\r\n"
-#endif
-#ifdef CONFIG_USE_PANEL_CENTERPANEL
-#define MONITOR_BOARD_TYPE		"Used panel: CenterPanel\r\n"
-#endif
-#ifdef CONFIG_USE_PANEL_DISCOVERY
-#define MONITOR_BOARD_TYPE		"Used panel: STM32F4Discovery\r\n"
-#endif
-
-
 #define MONITOR_DUMMY_STRING				"____________________________________________\r\n"
 
 
@@ -72,7 +62,7 @@
 		"Welcome in Monitor program!\r\n"					\
 		MONITOR_WELCOME_DATE_VERSION "\r\n"					\
 		MONITOR_WELCOME_TIME_VERSION "\r\n"					\
-		MONITOR_BOARD_TYPE									\
+		"Used panel: " BOARD_NAME "\r\n"			\
 		"(c) Copyright, Vizi Gabor\r\n"						\
 		"\r\n"												\
 		"Try \"help\" command for help!\r\n")

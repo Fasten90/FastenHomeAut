@@ -114,6 +114,12 @@ const GlobalVarCommand_t GlobalVarList[] =
 			.type = Type_Enumerator,
 			.maxValue = 4,
 			.enumList = enumExampleList
+		},
+		{
+			.name = "boardname",
+			.varPointer = &Global_BoardName,
+			.type = Type_String,
+			.isReadOnly = true
 		}
 
 

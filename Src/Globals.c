@@ -14,7 +14,9 @@
 #include "options.h"
 #include "globals.h"
 
-const char Global_Version[] = "v0.1.1.5";
+
+const char Global_BoardName[]	= BOARD_NAME;
+const char Global_Version[]		= "v0.1.1.5";
 
 
 

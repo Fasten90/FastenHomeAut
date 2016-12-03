@@ -348,13 +348,13 @@ void MONITOR_CheckCommand ( void )
 						
 						MONITOR_SEND_NEW_LINE();
 						
-						// Search command and run
-						MONITOR_PrepareFindExecuteCommand(CommProt_DebugUart);
-						
 						#ifdef USE_MONITOR_HISTORY
 						// Save command to History
 						MONITOR_HISTORY_Save();
 						#endif
+
+						// Search command and run
+						MONITOR_PrepareFindExecuteCommand(CommProt_DebugUart);
 					}
 					else
 					{

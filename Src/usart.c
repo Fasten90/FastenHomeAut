@@ -79,7 +79,6 @@ extern void Error_Handler( void );
 
 
 
-
 /***************************************************************************//**
  * @brief		-	USART_Init:	Inicializalja az USART periferiat
  ******************************************************************************/
@@ -146,7 +145,6 @@ void USART_Init ( UART_HandleTypeDef *UartHandle)
 	
 
 }
-
 
 
 
@@ -230,10 +228,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 	{
 		Error_Handler();
 	}
-
-	
 }
-
 
 
 
@@ -451,9 +446,9 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 /**
  * \brief	Send string on USART
  */
-// TODO: ReturnType + Check Pointer
 uint8_t USART_SendMessage ( const char *aTxBuffer )
 {
+	// TODO: ReturnType + Check Pointer
 	#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	uint8_t length = 0;
 
@@ -593,15 +588,14 @@ bool USART_SendChar ( char c )
 void USART_StartReceiveMessage ( void )
 {
 
-	// USART - Receive Message - uzenetvaras
+	// USART - Receive Message
 	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[USART_RxBufferWriteCounter], RX_BUFFER_WAIT_LENGTH);
-	// Javitott, mert ha valamikor nem fogadnank uzenetet, akkor itt megint beallunk uzenetvaro uzemmodba
+	// TODO: Delete this comment: Javitott, mert ha valamikor nem fogadnank uzenetet, akkor itt megint beallunk uzenetvaro uzemmodba
 
 	#ifdef CONFIG_USE_FREERTOS
 	// Wait for semaphore
 	xSemaphoreTake(DEBUG_USART_Rx_Semaphore, (portTickType) 1000);
 	#endif
-	
 	
 }
 #endif	// #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
@@ -653,3 +647,5 @@ void USART_SendFloat (float value)
 	
 	USART_SendMessage(string);
 }
+
+

@@ -14,7 +14,7 @@
 #define GLOBALS_H_
 
 
-
+extern const char Global_BoardName[];
 extern const char Global_Version[];
 
 

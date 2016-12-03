@@ -19,6 +19,21 @@
 #include "include.h" // what panel using
 
 
+/// BOARD NAME
+
+#ifdef CONFIG_USE_PANEL_NODEMEDIUM
+#define BOARD_NAME		"NodeMedium"
+#endif
+#ifdef CONFIG_USE_PANEL_CENTERPANEL
+#define BOARD_NAME		"CenterPanel"
+#endif
+#ifdef CONFIG_USE_PANEL_DISCOVERY
+#define BOARD_NAME		"STM32F4Discovery"
+#endif
+
+
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // 			LED
 ///////////////////////////////////////////////////////////////////////////////
