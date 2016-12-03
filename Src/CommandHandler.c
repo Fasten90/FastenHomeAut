@@ -387,7 +387,7 @@ static void MONITOR_ProcessReceivedCharacter ( void )
 		volatile char USART_ReceivedChar = '\0';
 
 		// TODO: Don't know, why work...
-		USART_ReceivedChar = USART_RxBuffer[USART_RxBufferReadCnt-1];
+		USART_ReceivedChar = USART_RxBuffer[USART_RxBufferReadCnt];
 		USART_RxBufferReadCnt++;
 
 #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
@@ -1303,11 +1303,11 @@ static void MONITOR_GetPassword ( void )
 				volatile char USART_ReceivedChar = '\0';
 
 				// TODO: Don't know, why work...
-				USART_ReceivedChar = USART_RxBuffer[USART_RxBufferReadCnt-1];
+				USART_ReceivedChar = USART_RxBuffer[USART_RxBufferReadCnt];
 				USART_RxBufferReadCnt++;
 				MONITOR_SendChar('*');
 
-				if (USART_ReceivedChar == '\r')
+				if (USART_ReceivedChar == '\r' || USART_ReceivedChar == '\n')
 				{
 					// Pressed enter, check password
 					isTry = false;

@@ -309,11 +309,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 	#endif
 
 	#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-	if ( ( UartHandle == &Debug_UartHandle ) &&
-			( MONITOR_CommandReceiveEnable == true ) )
+	if ( ( UartHandle == &Debug_UartHandle ) && ( MONITOR_CommandReceiveEnable == true ) )
 	{
-		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[USART_RxBufferWriteCounter], RX_BUFFER_WAIT_LENGTH);
-		USART_RxBufferWriteCounter++;
+		// Receive to next index
+		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[++USART_RxBufferWriteCounter], RX_BUFFER_WAIT_LENGTH);
 
 		#ifdef CONFIG_USE_FREERTOS
 		// Transmission end semaphore / flag
