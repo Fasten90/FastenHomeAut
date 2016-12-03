@@ -319,7 +319,7 @@ void MONITOR_CheckCommand ( void )
 					MONITOR_CommandReceivedNotLastChar = false;
 
 					// Step right
-					MONITOR_SendMessage(USART_ESCAPE_CURSORRIGHT);
+					MONITOR_SendMessage(ESCAPE_CURSORRIGHT);
 					// Not Last char (it is inner character) - Refresh the line
 					MONITOR_CommandResendLine(true);
 				}
@@ -833,17 +833,17 @@ void MONITOR_CommandResendLine ( bool needRestoreCursor )
 	// - (opc) Restore cursor
 
 	// Delete line
-	MONITOR_SendMessage(USART_ESCAPE_DELETELINE);
+	MONITOR_SendMessage(ESCAPE_DELETELINE);
 
 	if (needRestoreCursor)
 	{
 		// Save cursor
-		MONITOR_SendMessage(USART_ESCAPE_SAVECURSOR);
+		MONITOR_SendMessage(ESCAPE_SAVECURSOR);
 	}
 
 	// Cursor to line start
-	MONITOR_SendMessage(USART_ESCAPE_CURSOR_TO_LINESTART);
-	MONITOR_SendMessage(USART_ESCAPE_CURSORLEFTLOTOF);
+	MONITOR_SendMessage(ESCAPE_CURSOR_TO_LINESTART);
+	MONITOR_SendMessage(ESCAPE_CURSORLEFTLOTOF);
 
 	// Write new CommandActual
 	MONITOR_SEND_PROMT();
@@ -852,7 +852,7 @@ void MONITOR_CommandResendLine ( bool needRestoreCursor )
 	if (needRestoreCursor)
 	{
 		// Restore the position
-		MONITOR_SendMessage(USART_ESCAPE_RESTORECURSOR);
+		MONITOR_SendMessage(ESCAPE_RESTORECURSOR);
 	}
 
 	return;
@@ -893,7 +893,7 @@ bool MONITOR_CommandEscapeCharValidation ( void )
 			{
 				if ( MONITOR_CommandCursorPosition < MONITOR_CommandActualLength )	// if not at end
 				{
-					MONITOR_SendMessage(USART_ESCAPE_CURSORRIGHT);
+					MONITOR_SendMessage(ESCAPE_CURSORRIGHT);
 					MONITOR_CommandCursorPosition++;
 					return true;
 				}
@@ -907,7 +907,7 @@ bool MONITOR_CommandEscapeCharValidation ( void )
 			{
 				if ( MONITOR_CommandCursorPosition > 0 )				// if not at start
 				{
-					MONITOR_SendMessage(USART_ESCAPE_CURSORLEFT);
+					MONITOR_SendMessage(ESCAPE_CURSORLEFT);
 					MONITOR_CommandCursorPosition--;
 					return true;
 				}
@@ -1267,8 +1267,8 @@ void MONITOR_SendChar(char c)
  */
 void MONITOR_SendCls(void)
 {
-	MONITOR_SendMessage(USART_ESCAPE_ERASE_CLS);
-	MONITOR_SendMessage(USART_ESCAPE_CURSOR_TOPLEFT);
+	MONITOR_SendMessage(ESCAPE_ERASE_CLS);
+	MONITOR_SendMessage(ESCAPE_CURSOR_TOPLEFT);
 }
 
 

@@ -31,13 +31,13 @@
 
 
 // CSI 2 K: delete entire line
-#define USART_ESCAPE_DELETELINE		\
+#define ESCAPE_DELETELINE		\
 	("\x1B" "[2K")
 
 
 // CSI n G	CHA – Cursor Horizontal Absolute	Moves the cursor to column n.
 // CSI 1 G  -> go start of line
-#define USART_ESCAPE_CURSOR_TO_LINESTART	\
+#define ESCAPE_CURSOR_TO_LINESTART	\
 	("\x1B" "[1G")
 
 
@@ -46,35 +46,35 @@
 // CSI n B	CUD – Cursor Down
 // CSI n C	CUF – Cursor Forward
 // CSI n D	CUB – Cursor Back
-#define USART_ESCAPE_CURSORRIGHT	\
+#define ESCAPE_CURSORRIGHT	\
 	("\x1B" "[C")
 
 
 // Cursor step left
-#define USART_ESCAPE_CURSORLEFT	\
+#define ESCAPE_CURSORLEFT	\
 	("\x1B" "[D")
 
 
 // Cursor go left (loft of step)
-#define USART_ESCAPE_CURSORLEFTLOTOF	\
+#define ESCAPE_CURSORLEFTLOTOF	\
 	("\x1B" "[100D")
 
 
 // CURSOR SAVE/RESTORE
 //CSI s	SCP – Save Cursor Position	Saves the cursor position.
-#define USART_ESCAPE_SAVECURSOR	\
+#define ESCAPE_SAVECURSOR	\
 	("\x1B" "[s")
 
 
 //CSI u	RCP – Restore Cursor Position	Restores the cursor position.
-#define USART_ESCAPE_RESTORECURSOR	\
+#define ESCAPE_RESTORECURSOR	\
 	("\x1B" "[u")
 
 
 // Erase Functions:
 // (CSI in UTF-8 is 0xC2, 0x9B) = ESC+[
 // ESC[2J Clear screen and home cursor
-#define USART_ESCAPE_ERASE_CLS		\
+#define ESCAPE_ERASE_CLS		\
 	("\x1B" "[2J")
 
 
@@ -85,7 +85,7 @@
 // ;
 // 1 = column
 // H
-#define USART_ESCAPE_CURSOR_TOPLEFT	\
+#define ESCAPE_CURSOR_TOPLEFT	\
 	("\x1B" "[1;1H")
 
 
@@ -95,26 +95,26 @@
 
 // CSI n m 	SGR – Select Graphic Rendition
 // 40–47 	Set background color 	40 + x, where x is from the color table below
-#define USART_ESCAPE_BACKGROUND_GREEN	\
+#define ESCAPE_BACKGROUND_GREEN	\
 		("\x1B" "[42m")
 
-#define USART_ESCAPE_BACKGROUND_RED		\
+#define ESCAPE_BACKGROUND_RED		\
 		("\x1B" "[41m")
 
-#define USART_ESCAPE_BACKGROUND_WHITE	\
+#define ESCAPE_BACKGROUND_WHITE	\
 		("\x1B" "[47m")
 
-#define USART_ESCAPE_TEXT_BLACK			\
+#define ESCAPE_TEXT_BLACK			\
 		("\x1B" "[30m")
 
 
 // NOTE: Not work in Hyperterminal
-#define USART_ESCAPE_BACKGROUND_DEFAULT	\
+#define ESCAPE_BACKGROUND_DEFAULT	\
 		("\x1B" "[49m")
 
 
 // NOTE: At Hyperterminal the background will be black
-#define USART_ESCAPE_RESET				\
+#define ESCAPE_RESET				\
 		("\x1B" "[0m")
 
 
@@ -139,9 +139,9 @@ USART_SendChar('K');
 
 
 
-#define USART_SEND_CLS				\
-		USART_ESCAPE_ERASE_CLS		\
-		USART_ESCAPE_CURSOR_TOPLEFT
+#define ESCAPE_SEND_CLS				\
+		ESCAPE_ERASE_CLS		\
+		ESCAPE_CURSOR_TOPLEFT
 
 
 

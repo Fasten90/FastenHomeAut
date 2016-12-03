@@ -748,7 +748,7 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 		if (StringToUnsignedDecimalNum(param, &num))
 		{
 			ProcessResult_t result;
-			result = GlobalVarHandler_CheckValue(num,commandID);
+			result = GlobalVarHandler_CheckValue(commandID, num);
 
 			if (result == Process_Ok_SetSuccessful_SendOk)
 			{
