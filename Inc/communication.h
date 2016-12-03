@@ -18,12 +18,11 @@
 
 typedef enum
 {
-	Source_Unknown,
-	Source_DebugUart,
-	Source_OtherUart,
+	CommProt_Unknown	= 0,
+	CommProt_DebugUart  = (1 << 0),
+	CommProt_OtherUart	= (1 << 1),
 
-	// Do not use:
-	Source_Count
+	CommProt_Disable	= (1 << 2)
 } CommProtocol_t;
 
 

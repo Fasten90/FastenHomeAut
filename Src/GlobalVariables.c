@@ -54,7 +54,7 @@ const GlobalVarCommand_t GlobalVarList[] =
 			.type = Type_Uint8,
 			.maxValue = 20,
 			.description = "Test integer",
-			.sourceEnable = Source_DebugSerial | Source_Ethernet
+			.sourceEnable = CommProt_DebugUart | CommProt_OtherUart
 		},
 		{
 			.name = "devicename",
@@ -95,7 +95,7 @@ const GlobalVarCommand_t GlobalVarList[] =
 			.name = "cannotaccess",
 			.varPointer = &cannotAccess,
 			.type = Type_Bool,
-			.sourceEnable = Source_Disable
+			.sourceEnable = CommProt_Disable
 		},
 		{
 			.name = "version",

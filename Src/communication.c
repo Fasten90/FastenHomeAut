@@ -27,15 +27,15 @@ uint8_t COMMUNICATION_SendMessage (CommProtocol_t protocol, const char *message)
 
 	switch (protocol)
 	{
-		case Source_Unknown:
+		case CommProt_Unknown:
 			// Unknown, send on debug
 			length = USART_SendMessage(message);
 			break;
-		case Source_DebugUart:
+		case CommProt_DebugUart:
 			// Send on Usart
 			length = USART_SendMessage(message);
 			break;
-		case Source_OtherUart:
+		case CommProt_OtherUart:
 			// TODO: Not implemented
 			length = 0;
 			break;
@@ -58,7 +58,7 @@ uint8_t COMMUNICATION_SendChar (CommProtocol_t protocol, char c)
 {
 	switch (MONITOR_CommandSource)
 	{
-		case Source_DebugUart:
+		case CommProt_DebugUart:
 			USART_SendChar(c);
 			break;
 
@@ -66,5 +66,7 @@ uint8_t COMMUNICATION_SendChar (CommProtocol_t protocol, char c)
 			USART_SendChar(c);
 			break;
 	}
+
+	return 1;
 }
 

@@ -162,6 +162,9 @@ void MONITOR_CheckCommand (void);
 void MONITOR_WriteCommandHelp (CommandID_t commandID);
 void MONITOR_SendCls(void);
 
+void MONITOR_SendMessage(const char *message);
+void MONITOR_SendLine(const char *message);
+void MONITOR_SendChar(char c);
 
 
 #endif /* COMMANDHANDLER_H_ */

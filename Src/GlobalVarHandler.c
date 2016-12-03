@@ -155,7 +155,7 @@ bool GlobalVarHandler_CheckCommandStructAreValid(void)
  */
 void GlobalVarHandler_ProcessCommand(
 		const char *commandName, const char *param,
-		SetGetType_t setGetType, CommandSource_t source,
+		SetGetType_t setGetType, CommProtocol_t source,
 		char *resultBuffer, uint8_t resultBufferLength)
 {
 	 ProcessResult_t result = Process_UnknownError;
@@ -166,7 +166,7 @@ void GlobalVarHandler_ProcessCommand(
 	if (GlobalVarHandler_SearchVariableName(commandName,&commandID))
 	{
 		// Found, Check the source
-		if ((source & GlobalVarList[commandID].sourceEnable) || (GlobalVarList[commandID].sourceEnable == Source_All))
+		if ((source & GlobalVarList[commandID].sourceEnable) || (GlobalVarList[commandID].sourceEnable == CommProt_Unknown))
 		{
 			// Source is enabled
 			if (setGetType == SetGet_Get)

@@ -157,9 +157,7 @@ void MONITOR_ConvertSmallLetter (void);
 void MONITOR_CheckResultAndRespond (CommandResult_t result);
 void MONITOR_RunCommand (CommandID_t commandID);
 CommandResult_t MONITOR_ArgumentNumIsGood (uint8_t receivedArgNum, uint8_t commandArgNum);
-void MONITOR_SendMessage(const char *message);
-void MONITOR_SendLine(const char *message);
-void MONITOR_SendChar(char c);
+
 
 #ifdef MONITOR_GET_PASSWORD_ENABLE
 static void MONITOR_GetPassword (void);
@@ -351,7 +349,7 @@ void MONITOR_CheckCommand ( void )
 						MONITOR_SEND_NEW_LINE();
 						
 						// Search command and run
-						MONITOR_PrepareFindExecuteCommand(Source_DebugUart);
+						MONITOR_PrepareFindExecuteCommand(CommProt_DebugUart);
 						
 						#ifdef USE_MONITOR_HISTORY
 						// Save command to History

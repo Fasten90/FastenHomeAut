@@ -80,15 +80,6 @@ typedef enum
 } SetGetType_t;
 
 
-// TODO: összevonni a CommandHandler féle forrással
-typedef enum
-{
-	Source_All			= 0,
-	Source_DebugSerial	= (1 << 0),
-	Source_Ethernet		= (1 << 1),
-	Source_Disable		= (1 << 2)
-} CommandSource_t;
-
 
 /// STRUCTS
 
@@ -104,7 +95,7 @@ typedef struct
 	const uint32_t maxValue;
 	const uint32_t minValue;
 
-	const CommandSource_t sourceEnable;
+	const CommProtocol_t sourceEnable;
 
 	const bool isHex;
 
@@ -126,7 +117,7 @@ typedef struct
 bool GlobalVarHandler_CheckCommandStructAreValid(void);
 void GlobalVarHandler_ProcessCommand(
 		const char *commandName, const char *param,
-		SetGetType_t setGetType, CommandSource_t source,
+		SetGetType_t setGetType, CommProtocol_t source,
 		char *resultBuffer, uint8_t resultBufferLength);
 
 void GlobalVarHandler_ListAllVariableParameters(void);
