@@ -17,6 +17,7 @@
 #include "include.h"
 #include "command.h"
 #include "escapesequence.h"
+#include "communication.h"
 
 
 ///////////////////////////// MONITOR
@@ -77,8 +78,11 @@
 		"Try \"help\" command for help!\r\n")
 
 
-#define MONITOR_SEND_PROMT()			\
+#define MONITOR_SEND_PROMT_NEW_LINE()			\
 		MONITOR_SendMessage("\r\n# ")
+
+#define MONITOR_SEND_PROMT()			\
+		MONITOR_SendMessage("# ")
 
 
 #define USART_SEND_DUMMYSTRING()		MONITOR_SendMessage(MONITOR_DUMMY_STRING)

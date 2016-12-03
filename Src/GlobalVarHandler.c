@@ -381,70 +381,70 @@ static uint8_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resu
 	else
 	{
 		// If not hex
-		// TODO: Szépíteni, legyen ez az egész else if-ben
 		switch(type)
 		{
-			// TODO: formázás
-		case Type_Uint8:
+			case Type_Uint8:
 			{
 				uint8_t *numPointer = (uint8_t *)GlobalVarList[commandID].varPointer;
 				uint8_t num = *numPointer;
 				// TODO: Buffer túlírás ellenőrzés
-				*resultBufferLength -= UnsignedDecimalToString(num, resultBuffer);
+				length += UnsignedDecimalToString(num, resultBuffer);
 			}
-			break;
+				break;
 
-		case Type_Uint16:
+			case Type_Uint16:
 			{
 				uint16_t *numPointer = (uint16_t *)GlobalVarList[commandID].varPointer;
 				uint16_t num = *numPointer;
 				// TODO: Buffer túlírás ellenőrzés
-				*resultBufferLength -= UnsignedDecimalToString(num, resultBuffer);
+				length += UnsignedDecimalToString(num, resultBuffer);
 			}
-			break;
+				break;
 
-		case Type_Uint32:
+			case Type_Uint32:
 			{
 				uint32_t *numPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
 				uint32_t num = *numPointer;
 				// TODO: Buffer túlírás ellenőrzés
-				*resultBufferLength -= UnsignedDecimalToString(num, resultBuffer);
+				length += UnsignedDecimalToString(num, resultBuffer);
 			}
-			break;
+				break;
 
-		case Type_Int8:
+			case Type_Int8:
 			{
 				int8_t *numPointer = (int8_t *)GlobalVarList[commandID].varPointer;
 				int8_t num = *numPointer;
 				// TODO: Buffer túlírás ellenőrzés
-				*resultBufferLength -= SignedDecimalToString(num, resultBuffer);
+				length += SignedDecimalToString(num, resultBuffer);
 			}
-			break;
+				break;
 
-		case Type_Int16:
+			case Type_Int16:
 			{
 				int16_t *numPointer = (int16_t *)GlobalVarList[commandID].varPointer;
 				int16_t num = *numPointer;
 				// TODO: Buffer túlírás ellenőrzés
-				*resultBufferLength -= SignedDecimalToString(num, resultBuffer);
+				length += SignedDecimalToString(num, resultBuffer);
 			}
-			break;
+				break;
 
-		case Type_Int32:
+			case Type_Int32:
 			{
 				int32_t *numPointer = (int32_t *)GlobalVarList[commandID].varPointer;
 				int32_t num = *numPointer;
 				// TODO: Buffer túlírás ellenőrzés
-				*resultBufferLength -= SignedDecimalToString(num, resultBuffer);
+				length += SignedDecimalToString(num, resultBuffer);
 			}
-			break;
+				break;
 
-		default:
-			// Wrong case
-			return 0;
-			break;
+			default:
+				// Wrong case
+				return 0;
+				break;
 		}
 
+		// - length
+		*resultBufferLength -= length;
 	}
 
 	return length;
@@ -795,7 +795,7 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 		if (StringToSignedDecimalNum(param, &num))
 		{
 			ProcessResult_t result;
-			result = GlobalVarHandler_CheckValue(num,commandID);
+			result = GlobalVarHandler_CheckValue(commandID, num);
 
 			if (result == Process_Ok_SetSuccessful_SendOk)
 			{

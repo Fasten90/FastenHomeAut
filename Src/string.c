@@ -18,6 +18,7 @@
 #ifdef MODULE_STRING_UNIT_TEST_ENABLED
 #include "unittest.h"
 #endif
+#include "communication.h"
 #include "string.h"
 
 
@@ -1361,37 +1362,22 @@ uint8_t uprintf (const char *format, ...)
 
 
 /**
- * \brief	device uart print
- * \param	dev		what peripheral sending
+ * \brief	Send message on xy communication protocol
+ * \param	protocol		what peripheral sending
  */
-uint8_t duprintf (CommProtocol_t dev, const char *format, ...)
+uint8_t duprintf (CommProtocol_t protocol, const char *format, ...)
 {
 	uint8_t length = 0;
+
 	// Working in at:
-	char TxBuffer[TXBUFFERSIZE];
+	char txBuffer[TXBUFFERSIZE];
 
 	va_list ap;									// argument pointer
 	va_start(ap, format); 						// ap on arg
-	string_printf(TxBuffer,format,ap);			// Separate and process
+	string_printf(txBuffer,format,ap);			// Separate and process
 	va_end(ap);						 			// Cleaning after end
 
-	switch (dev)
-	{
-		case Source_Unknown:
-			// Error, do not use
-			length = 0;
-			break;
-		case Source_DebugUart:
-			length = USART_SendMessage(TxBuffer);			// Send on Usart
-			break;
-		case Source_OtherUart:
-			// TODO: Not implemented
-			break;
-		default:
-			// Error, do not use
-			length = 0;
-			break;
-	}
+	length = COMMUNICATION_SendMessage(protocol, txBuffer);
 
 	return length;
 

@@ -48,19 +48,6 @@ typedef enum
 
 
 
-// TODO: Áttenni máshova
-typedef enum
-{
-	Source_Unknown,
-	Source_DebugUart,
-	Source_OtherUart,
-	// Do not use:
-	Source_Count
-} CommProtocol_t;
-
-
-
-
 ///////////////////////////// CONFIGURE
 
 

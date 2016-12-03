@@ -14,10 +14,11 @@
 #include "include.h"
 #include "stdint.h"
 #include "command.h"
-
 #include "escapesequence.h"
-#include "CommandHandler.h"
 #include "GlobalVarHandler.h"
+#include "communication.h"
+
+#include "CommandHandler.h"
 
 #ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
 #include "homeautmessage.h"
@@ -141,8 +142,7 @@ static uint8_t MONITOR_CommandParser ( void );
 static bool MONITOR_SearchCommand ( void );
 
 void MONITOR_CommandBackspace ( void );
-void MONITOR_CommandResendLine ( void );
-void MONITOR_NewCommandResendLine ( void );
+void MONITOR_CommandResendLine ( bool needRestoreCursor );
 bool MONITOR_CommandEscapeCharValidation ( void );
 
 #ifdef USE_MONITOR_HISTORY
@@ -178,7 +178,7 @@ static bool MONITOR_CheckPassword (const char *string);
 void MONITOR_Init ( void )
 {
 
-	// Init
+	// Initialize
 
 	MONITOR_CommandReceivedEvent = false;
 	MONITOR_CommandReceivedNotLastChar = false;
@@ -195,7 +195,7 @@ void MONITOR_Init ( void )
 
 	COMMAND_ArgCount = 0;
 
-	// End of init
+	// End of initialization
 
 	return;
 }
@@ -221,7 +221,7 @@ void MONITOR_SendWelcome ( void )
 	MONITOR_SEND_WELCOME();					// Welcome message
 
 	MONITOR_SEND_NEW_LINE();
-	MONITOR_SEND_PROMT();					// New promt
+	MONITOR_SEND_PROMT_NEW_LINE();					// New promt
 
 	return;
 	
@@ -323,13 +323,13 @@ void MONITOR_CheckCommand ( void )
 					// Step right
 					MONITOR_SendMessage(USART_ESCAPE_CURSORRIGHT);
 					// Not Last char (it is inner character) - Refresh the line
-					MONITOR_CommandResendLine();
+					MONITOR_CommandResendLine(true);
 				}
 				else if ( MONITOR_CommandEscapeSequenceReceived )
 				{
 					// Escape sequence
 					MONITOR_CommandEscapeSequenceReceived = false;
-					MONITOR_CommandEscapeCharValidation ();
+					MONITOR_CommandEscapeCharValidation();
 				}
 				else if ( MONITOR_CommandReceivedTabulator )
 				{
@@ -361,7 +361,7 @@ void MONITOR_CheckCommand ( void )
 					else
 					{
 						// There is no char in the line
-						MONITOR_SEND_PROMT();
+						MONITOR_SEND_PROMT_NEW_LINE();
 					}
 					MONITOR_CommandActualLength = 0;
 					MONITOR_CommandSentLength = 0;
@@ -508,8 +508,8 @@ static void MONITOR_ProcessReceivedCharacter ( void )
 							MONITOR_CommandCursorPosition++;
 							if (MONITOR_CommandSendBackCharEnable)
 							{
-								// TODO: Cserélni
-								USART_SendChar( USART_ReceivedChar );
+								// Send received character
+								MONITOR_SendChar( USART_ReceivedChar );
 							}
 						}
 						else
@@ -574,7 +574,7 @@ bool MONITOR_PrepareFindExecuteCommand ( CommProtocol_t source )
 
 	
 	// Init new command
-	MONITOR_SEND_PROMT();
+	MONITOR_SEND_PROMT_NEW_LINE();
 
 	return isSuccessful;
 }
@@ -648,8 +648,8 @@ static bool MONITOR_SearchCommand ( void )
 
 
 /**
-\brief			Command's letter deleting (backspace)
-*/
+ * \brief	Command's letter deleting (backspace)
+ */
 void MONITOR_CommandBackspace ( void )
 {
 
@@ -681,30 +681,18 @@ void MONITOR_CommandBackspace ( void )
 			
 			USART_SEND_KEY_BACKSPACE();
 
-			// Delete this line
-			MONITOR_SendMessage(USART_ESCAPE_DELETELINE);
-
-			// Save the cursor ( we need backup this, because the user's cursor is stand this position )
-			MONITOR_SendMessage(USART_ESCAPE_SAVECURSOR);
-
-			// Cursor to line start -> we want write the "CommandActual"
-			MONITOR_SendMessage(USART_ESCAPE_CURSOR_TO_LINESTART);
-			MONITOR_SendMessage(USART_ESCAPE_CURSORLEFTLOTOF);
-
-			// Write new CommandActual
-			MONITOR_SendMessage("# %s",MONITOR_CommandActual);
-
-			// restore the position
-			MONITOR_SendMessage(USART_ESCAPE_RESTORECURSOR);
+			// Delete & Resend
+			MONITOR_CommandResendLine(true);
 
 #endif
-
 		}
 #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 		else
 		{
 			// CursorPosition != CommandLength, we are in command chars
 			// Cursor not at end
+			// Event: Used backspace at inner command
+			// NOTE: Be careful, cursor need to put at original position
 
 			uint8_t i;
 
@@ -714,10 +702,7 @@ void MONITOR_CommandBackspace ( void )
 
 				// Procedure:
 				// copy CommandActual
-				// delete line
-				// save cursor
-				// send new command
-				// restore cursor
+				// delete & resend
 
 				MONITOR_CommandActualLength--;
 				MONITOR_CommandCursorPosition--;
@@ -728,26 +713,17 @@ void MONITOR_CommandBackspace ( void )
 				}
 				MONITOR_CommandActual[i] = '\0';
 
-				// TODO: Egy függvénybe rakni az újra kiküldést?
-
 				// Send backspace = step left
 				USART_SEND_KEY_BACKSPACE();
 
-				// Delete this line
-				MONITOR_SendMessage(USART_ESCAPE_DELETELINE);
+				// Delete & Resend
+				MONITOR_CommandResendLine(true);
 
-				// Save the cursor ( we need backup this, because the user's cursor is stand this position
-				MONITOR_SendMessage(USART_ESCAPE_SAVECURSOR);
-
-				// Cursor to line start -> we want write the "CommandActual"
-				MONITOR_SendMessage(USART_ESCAPE_CURSOR_TO_LINESTART);
-				MONITOR_SendMessage(USART_ESCAPE_CURSORLEFTLOTOF);
-
-				// Write new CommandActual
-				duprintf(MONITOR_CommandSource, "# %s",MONITOR_CommandActual);
-
-				// Restore the position
-				MONITOR_SendMessage(USART_ESCAPE_RESTORECURSOR);
+			}
+			else
+			{
+				// At 0 position
+				// Do nothing, cannot backspace
 			}
 		}
 #endif	// #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
@@ -782,27 +758,30 @@ static void MONITOR_CommandDelete ( void )
 			if (MONITOR_CommandCursorPosition > 0)
 			{
 				// not at 0 position
-
 				// Procedure:
-				// copy CommandActual after cursor
-				// delete line
-				// save cursor
-				// send new command
-				// restore cursor
+				// - Copy CommandActual after cursor
+				// - Resend command with original cursor position
 
 				MONITOR_CommandActualLength--;
 
+				// Drop the backspaced character
 				for (i = MONITOR_CommandCursorPosition; i < MONITOR_CommandActualLength; i++)
 				{
 					MONITOR_CommandActual[i] = MONITOR_CommandActual[i+1];		// copy
 				}
 				MONITOR_CommandActual[i] = '\0';
 
-				// Resend line
-				MONITOR_CommandResendLine();
+				// Resend line with original cursor position
+				MONITOR_CommandResendLine(true);
+			}
+			else
+			{
+				// At 0 position:
+				// We cannot use backspace, do nothin!
 			}
 		}
 	}
+
 	return;
 
 }
@@ -832,7 +811,7 @@ static void MONITOR_CommandTabulator ( void )
 
 			MONITOR_CommandCursorPosition = MONITOR_CommandActualLength;
 
-			MONITOR_NewCommandResendLine();
+			MONITOR_CommandResendLine(false);
 
 			return;
 		}
@@ -844,26 +823,39 @@ static void MONITOR_CommandTabulator ( void )
 
 #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 /**
-\brief		Resend the actual line/command
-*/
-void MONITOR_CommandResendLine ( void )
+ * \brief		Resend the actual line/command
+ * 				NOTE: It save and restore the original cursor position
+ */
+void MONITOR_CommandResendLine ( bool needRestoreCursor )
 {
+	// Procedure:
+	// - Delete line
+	// - (opc) Save cursor
+	// - Send new command
+	// - (opc) Restore cursor
 
-	// Delete the line
+	// Delete line
 	MONITOR_SendMessage(USART_ESCAPE_DELETELINE);
 
-	// Save cursor
-	MONITOR_SendMessage(USART_ESCAPE_SAVECURSOR);
+	if (needRestoreCursor)
+	{
+		// Save cursor
+		MONITOR_SendMessage(USART_ESCAPE_SAVECURSOR);
+	}
 
 	// Cursor to line start
 	MONITOR_SendMessage(USART_ESCAPE_CURSOR_TO_LINESTART);
 	MONITOR_SendMessage(USART_ESCAPE_CURSORLEFTLOTOF);
 
 	// Write new CommandActual
-	duprintf(MONITOR_CommandSource, "# %s",MONITOR_CommandActual);
+	MONITOR_SEND_PROMT();
+	MONITOR_SendMessage((const char *)MONITOR_CommandActual);
 
-	// Restore the position
-	MONITOR_SendMessage(USART_ESCAPE_RESTORECURSOR);
+	if (needRestoreCursor)
+	{
+		// Restore the position
+		MONITOR_SendMessage(USART_ESCAPE_RESTORECURSOR);
+	}
 
 	return;
 }
@@ -873,31 +865,8 @@ void MONITOR_CommandResendLine ( void )
 
 #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 /**
-\brief		Resend an new line/command
-*/
-void MONITOR_NewCommandResendLine ( void )
-{
-
-	// Delete the line
-	MONITOR_SendMessage(USART_ESCAPE_DELETELINE);
-
-	// Cursor to line start
-	MONITOR_SendMessage(USART_ESCAPE_CURSOR_TO_LINESTART);
-	MONITOR_SendMessage(USART_ESCAPE_CURSORLEFTLOTOF);
-
-	// Write new CommandActual
-	duprintf(MONITOR_CommandSource, "# %s",MONITOR_CommandActual);
-
-	return;
-}
-#endif	// #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
-
-
-
-#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
-/**
-\brief		Process Excape sequence
-*/
+ * \brief	Process Escape sequence
+ */
 bool MONITOR_CommandEscapeCharValidation ( void )
 {
 	// return valid char, or 0 if invalid
@@ -1063,7 +1032,7 @@ void MONITOR_HISTORY_Load ( uint8_t direction )
 	MONITOR_CommandCursorPosition = StringLength((const char *)MONITOR_CommandActual);
 	MONITOR_CommandActualLength = MONITOR_CommandCursorPosition;
 
-	MONITOR_NewCommandResendLine ();
+	MONITOR_CommandResendLine(false);
 
 	// Step load cnt
 	if ( direction == 1 ) // direction == 0
@@ -1086,8 +1055,8 @@ void MONITOR_HISTORY_Load ( uint8_t direction )
 
 
 /**
-\brief		Convert MONITOR_CommandActual (Actual command) to small letters
-*/
+ * \brief	Convert MONITOR_CommandActual (Actual command) to small letters
+ */
 void MONITOR_ConvertSmallLetter ( void )
 {
 	uint8_t i;
@@ -1260,7 +1229,6 @@ CommandResult_t MONITOR_ArgumentNumIsGood ( uint8_t receivedArgNum, uint8_t comm
 			return CommandResult_Error_WrongArgumentNum;
 		}
 	}
-
 }
 
 
@@ -1270,25 +1238,13 @@ CommandResult_t MONITOR_ArgumentNumIsGood ( uint8_t receivedArgNum, uint8_t comm
  */
 void MONITOR_SendMessage(const char *message)
 {
-	// TODO: használni egy közös függvényt a duprintf()-essel
-	//return duprintf(MONITOR_CommandSource, message);
-	switch (MONITOR_CommandSource)
-	{
-		case Source_DebugUart:
-			USART_SendMessage(message);
-			break;
-
-		default:
-			// TODO: átrakni máshova?
-			USART_SendMessage(message);
-			break;
-	}
+	COMMUNICATION_SendMessage(MONITOR_CommandSource, message);
 }
 
 
 
 /**
- * \brief	Send line (with newline)
+ * \brief	Send line (with newline) to source
  */
 void MONITOR_SendLine(const char *message)
 {
@@ -1303,18 +1259,7 @@ void MONITOR_SendLine(const char *message)
  */
 void MONITOR_SendChar(char c)
 {
-	/// TODO:
-	switch (MONITOR_CommandSource)
-	{
-		case Source_DebugUart:
-			USART_SendChar(c);
-			break;
-
-		default:
-			// TODO: átrakni máshova?
-			USART_SendChar(c);
-			break;
-	}
+	COMMUNICATION_SendChar(MONITOR_CommandSource, c);
 }
 
 
@@ -1362,7 +1307,7 @@ static void MONITOR_GetPassword ( void )
 				// TODO: Don't know, why work...
 				USART_ReceivedChar = USART_RxBuffer[USART_RxBufferReadCnt-1];
 				USART_RxBufferReadCnt++;
-				USART_SendChar('*');
+				MONITOR_SendChar('*');
 
 				if (USART_ReceivedChar == '\r')
 				{

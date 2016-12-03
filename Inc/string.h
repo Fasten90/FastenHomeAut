@@ -22,6 +22,8 @@
 
 #include <stdarg.h>		// For "..." parameters in uprintf function
 
+#include "communication.h"
+
 
 /*------------------------------------------------------------------------------
  *  Macros & definitions
@@ -109,7 +111,7 @@ uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint
 uint8_t string_printf (char *str, const char *format, va_list ap);
 uint8_t usprintf (char *str, const char *format, ...);
 uint8_t uprintf (const char *format, ...);
-uint8_t duprintf (CommProtocol_t dev, const char *format, ...);
+uint8_t duprintf (CommProtocol_t protocol, const char *format, ...);
 
 // Unit test
 void STRING_UnitTest (void);
