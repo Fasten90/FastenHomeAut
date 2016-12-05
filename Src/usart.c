@@ -232,37 +232,12 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 
 
 
-void USART1_IRQHandler(void)
+void DEBUG_USARTx_IRQHandler(void)
 {
-
-	//__HAL_UART_DISABLE_IT: Disable the specified UART interrupt
-	//__HAL_UART_DISABLE_IT(&BluetoothUartHandle, UART_IT_RXNE | UART_IT_TXE);
-
-	#ifdef CONFIG_USE_PANEL_NODESMALL
-	HAL_UART_IRQHandler(&ESP8266_UartHandle);
-	#endif
-	
-	#if ( CONFIG_USE_PANEL_NODEMEDIUM || CONFIG_USE_PANEL_CENTERPANEL )
 	HAL_UART_IRQHandler(&Debug_UartHandle);
-	#endif
-
-	// __HAL_UART_ENABLE_IT: Enable the specified UART interrupt
-	//__HAL_UART_ENABLE_IT(&BluetoothUartHandle, UART_IT_RXNE | UART_IT_TXE);
-
-	// __HAL_UART_GET_FLAG : Check whether the specified UART flag is set or not
-	// __HAL_UART_CLEAR_FLAG : Clear the specified UART pending flag
-
-
 }
 
-#ifdef CONFIG_USE_PANEL_DISCOVERY
-void USART2_IRQHandler(void)
-{
 
-	HAL_UART_IRQHandler(&Debug_UartHandle);
-
-}
-#endif	//#ifdef CONFIG_BOARD_DISCOVERY
 
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 void USART2_IRQHandler(void)

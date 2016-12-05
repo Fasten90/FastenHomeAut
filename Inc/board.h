@@ -344,7 +344,40 @@
 #endif	// CONFIG_USE_PANEL_CENTERPANEL
 
 
+#ifdef CONFIG_USE_PANEL_DISCOVERY
 
+
+// ANALOG
+
+#define ADC_BUFFER_SIZE				( 1 )
+
+
+#define ADCx                            ADC1
+#define ADCx_CLK_ENABLE()               __HAL_RCC_ADC1_CLK_ENABLE()
+#define DMAx_CLK_ENABLE()               __HAL_RCC_DMA2_CLK_ENABLE()
+#define ADCx_CHANNEL_GPIO_CLK_ENABLE()  __HAL_RCC_GPIOA_CLK_ENABLE()
+
+#define ADCx_FORCE_RESET()              __HAL_RCC_ADC_FORCE_RESET()
+#define ADCx_RELEASE_RESET()            __HAL_RCC_ADC_RELEASE_RESET()
+
+/* Definition for ADCx Channel Pin */
+#define ADCx_CHANNEL_PIN                GPIO_PIN_1
+#define ADCx_CHANNEL_GPIO_PORT          GPIOA
+
+/* Definition for ADCx's Channel */
+#define ADCx_CHANNEL                    ADC_CHANNEL_1
+
+/* Definition for ADCx's DMA */
+#define ADCx_DMA_CHANNEL                DMA_CHANNEL_0
+#define ADCx_DMA_STREAM                 DMA2_Stream0
+
+/* Definition for ADCx's NVIC */
+#define ADCx_DMA_IRQn                   DMA2_Stream0_IRQn
+#define ADCx_DMA_IRQHandler             DMA2_Stream0_IRQHandler
+
+
+
+#endif
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -743,30 +776,27 @@
 // DEBUG_USART_RX	-	PA3
 
 
-#define DEBUG_USARTx					USART2
-
-
-//#define DEBUG_USART_CLK_ENABLE()		__USART1_CLK_ENABLE()
+#define DEBUG_USARTx					USART6
 
 #define DEBUG_USART_CLK_ENABLES()		\
-		__USART2_CLK_ENABLE();			\
-		__GPIOA_CLK_ENABLE()
+		__USART6_CLK_ENABLE();			\
+		__GPIOC_CLK_ENABLE()
 
 
-#define DEBUG_USART_TX_GPIO_PORT		GPIOA
-#define DEBUG_USART_TX_GPIO_CLK			RCC_AHB1Periph_GPIOA
-#define DEBUG_USART_TX_GPIO_PIN			GPIO_PIN_2
+#define DEBUG_USART_TX_GPIO_PORT		GPIOC
+#define DEBUG_USART_TX_GPIO_CLK			RCC_AHB1Periph_GPIOC
+#define DEBUG_USART_TX_GPIO_PIN			GPIO_PIN_6
 
-#define DEBUG_USART_RX_GPIO_PORT		GPIOA
-#define DEBUG_USART_RX_GPIO_CLK			RCC_AHB1Periph_GPIOA
-#define DEBUG_USART_RX_GPIO_PIN			GPIO_PIN_3
+#define DEBUG_USART_RX_GPIO_PORT		GPIOC
+#define DEBUG_USART_RX_GPIO_CLK			RCC_AHB1Periph_GPIOC
+#define DEBUG_USART_RX_GPIO_PIN			GPIO_PIN_7
 
-#define DEBUG_USART_AF					GPIO_AF7_USART2
+#define DEBUG_USART_AF					GPIO_AF8_USART6
 
 
 // Definition for USARTx's NVIC
-#define DEBUG_USARTx_IRQn               USART2_IRQn
-#define DEBUG_USARTx_IRQHandler         USART2_IRQHandler
+#define DEBUG_USARTx_IRQn               USART6_IRQn
+#define DEBUG_USARTx_IRQHandler         USART6_IRQHandler
 
 #define DEBUG_USART_PREEMT_PRIORITY		10
 #define DEBUG_USART_SUB_PRIORITY		0

@@ -124,6 +124,7 @@ int main(void)
 	DAC_Config();
 #endif
 
+
 	// DEBUG USART
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 #ifdef CONFIG_USE_FREERTOS
@@ -137,12 +138,17 @@ int main(void)
 	{
 		Error_Handler();
 	}
-#endif	//#ifdef CONFIG_USE_FREERTOS
-	
-	// Monitor initialize
+#else	//#ifdef CONFIG_USE_FREERTOS
+
 	USART_Init(&Debug_UartHandle);
+#endif
+#endif
+
+
+#ifdef CONFIG_MODULE_MONITOR_ENABLE
+	// Monitor initialize
 	MONITOR_Init();
-	
+
 #ifdef CONFIG_USE_FREERTOS
 	TaskHandle_t MONITOR_TaskHandle = NULL;
 	//xTaskCreate( vTaskCode, "NAME", STACK_SIZE, &ucParameterToPass, tskIDLE_PRIORITY, &xHandle );
@@ -154,9 +160,15 @@ int main(void)
 #else
 	MONITOR_CheckCommand();	// infinite loop
 #endif
-	// End of DEBUG USART
-#endif	// #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-	
+#endif	// #ifdef CONFIG_MODULE_MONITOR_ENABLE
+
+
+#ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
+	//HAL_ADC_MspInit(&AdcHandle);
+	ADC_Init();
+	ADC_Test();
+#endif
+
 	
 	// ESP8266
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
@@ -221,6 +233,10 @@ void Error_Handler( void )
 	vTaskEndScheduler();
 #endif
 	
+#ifdef CONFIG_DEBUG_MODE
+	// Stop debugger
+	__asm("BKPT #0\n");		// ASM: Break debugger
+#endif
 	while(1)	// infinite loop
 	{
 		LED_BLUE_OFF();
@@ -269,18 +285,7 @@ void SystemClock_Config(void)
 
 	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
-	/*
-	// Original... TODO: miért volt itt?
-	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
-	RCC_OscInitStruct.MSIState = RCC_MSI_ON;
-	RCC_OscInitStruct.MSICalibrationValue = 0;
-	RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_5;
-	RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
-	HAL_RCC_OscConfig(&RCC_OscInitStruct);
-	*/
 
-	// for adc... TODO: valóban kell az adc-hez? és ha CSAK ez van?
-	//HAL_RCC_GetOscConfig(&RCC_OscInitStruct);
 	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
 	RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
 	RCC_OscInitStruct.HSIState = RCC_HSI_ON;
@@ -312,9 +317,9 @@ void SystemClock_Config(void)
 
   RCC_OscInitTypeDef RCC_OscInitStruct;
 
-  __PWR_CLK_ENABLE();
+  __HAL_RCC_PWR_CLK_ENABLE();
 
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE2);
 
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;

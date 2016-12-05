@@ -155,7 +155,7 @@ const CommandStruct CommandList[] =
 		.description = "Run module test",
 		.commandArgNum = CommandArgument_0
 	},
-#ifdef CONFIG_MODULE_COMMON_IO
+#ifdef CONFIG_MODULE_COMMON_IO_ENABLE
 	{
 		.name = "ioinit",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_io,
@@ -1005,7 +1005,7 @@ CommandResult_t CommandFunction_moduletest (uint32_t argc, char** argv)
 
 
 
-#ifdef CONFIG_MODULE_COMMON_IO
+#ifdef CONFIG_MODULE_COMMON_IO_ENABLE
 CommandResult_t CommandFunction_io (uint32_t argc, char** argv)
 {
 

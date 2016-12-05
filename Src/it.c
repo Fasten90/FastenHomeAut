@@ -287,3 +287,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 
 
+#ifdef CONFIG_USE_PANEL_DISCOVERY
+void ADCx_DMA_IRQHandler(void)
+{
+  HAL_DMA_IRQHandler(AdcHandle.DMA_Handle);
+}
+#endif
+

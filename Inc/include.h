@@ -128,6 +128,8 @@ typedef enum
 
 	#define CONFIG_MODULE_DEBUGUSART_ENABLE
 
+	//#define CONFIG_MODULE_MONITOR_ENABLE
+
 	//#define CONFIG_USE_FREERTOS
 
 	#define CONFIG_MODULE_LED_ENABLE
@@ -148,9 +150,11 @@ typedef enum
 
 	//#define CONFIG_MODULE_SYSMANAGER_ENABLE
 
-	#define CONFIG_MODULE_DAC_ENABLE
+	//#define CONFIG_MODULE_DAC_ENABLE
 
-	#define CONFIG_MODULE_COMMON_IO
+	//#define CONFIG_MODULE_COMMON_IO_ENABLE
+
+	#define CONFIG_MODULE_COMMON_ADC_ENABLE
 
 #endif
 
@@ -213,9 +217,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 //#include "log.h"
 
 
-
-// Need include, because used LED_x_ON / OFF() macros
-#include "led.h"
+#include "globals.h"
 
 #include "usart.h"
 #include "string.h"
@@ -270,8 +272,12 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #include "dac.h"
 #endif
 
-#ifdef CONFIG_MODULE_COMMON_IO
+#ifdef CONFIG_MODULE_COMMON_IO_ENABLE
 #include "commonIO.h"
+#endif
+
+#ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
+#include "commonAdc.h"
 #endif
 
 void Error_Handler( void );
