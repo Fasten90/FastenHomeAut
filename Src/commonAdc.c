@@ -28,7 +28,7 @@
 ADC_HandleTypeDef		AdcHandle;
 
 // Measured values
-volatile uint32_t		ADC_MeasuredValues[ADC_BUFFER_SIZE];
+volatile uint32_t		ADC_MeasuredValues[ADC_BUFFER_SIZE] = { 0 };
 
 // Calculated values
 volatile float			ADC_ConvertedValues[ADC_BUFFER_SIZE] = { 0 };
@@ -58,14 +58,10 @@ extern void Error_Handler(void);
 
 
 
-
-/***************************************************************************//**
- * @brief
- * @details
- * @param[in]
- * @param[out]
- * @return
- ******************************************************************************/
+/**
+ * \brief	Initialize ADC
+ *
+ */
 void ADC_Init(void)
 {
 	ADC_ChannelConfTypeDef   sConfig;
@@ -156,6 +152,9 @@ void ADC_Init(void)
 
 
 
+/**
+ * \brief	ADC Msp Init for HAL driver
+ */
 void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 {
 	
@@ -220,6 +219,9 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 
 
 
+/**
+ * \brief	ADC callback function for HAL driver
+ */
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 {
 	LED_RED_TOGGLE();
@@ -227,6 +229,10 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 
 
 
+/**
+ * \brief	Infinite loop: print ADC values
+ * 			NOTE: Be careful, it is blocking mode
+ */
 void ADC_Test ( void )
 {
 	
@@ -245,46 +251,13 @@ void ADC_Test ( void )
 		DelayMs(1000);
 	}
 
-	
-	
-	////////////
-	// TEST Temperature float value send on USART
-	/*
-	HAL_Delay(1000);
-	// Internal Temperature Sensor
-	ADC_ConvertedValue_InternalTemperature = ADC_ConvertInternalTempSensorValue(ADC_MeasuredValues[3]);
-
-	// Print Temp
-	//dec = (uint32_t)Temperature;
-	//fraction = (uint32_t)((Temperature-dec) *100 );			
-	//uprintf("Temperature: %d.%d [V]\r\n",dec, fraction);
-
-	USART_SendFloat(ADC_ConvertedValue_InternalTemperature);
-	*/	
-	
-	
 }
 
 
 
-/*
- * \brief
+/**
+ * \brief	Convert read value to voltage
  */
-void ADC_Run( void )
-{
-	
-	if (HAL_ADC_Start(&AdcHandle) != HAL_OK)
-	{
-	  Error_Handler(); 
-	}
-	
-	DelayMs(10);
-
-	// TODO: convert values to voltage?
-}
-
-
-
 float ADC_ConvertToVoltage (uint32_t readValue)
 {
 	float Voltage;
@@ -295,6 +268,9 @@ float ADC_ConvertToVoltage (uint32_t readValue)
 
 
 
+/**
+ * \brief	Convert all read values
+ */
 void ADC_ConvertAllMeasuredValues ( void )
 {
 	

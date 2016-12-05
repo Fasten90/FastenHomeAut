@@ -444,8 +444,6 @@
 
 
 
-
-
 #ifdef CONFIG_USE_PANEL_CENTERPANEL
 
 // Up		PC7
@@ -479,6 +477,7 @@
 #endif	// #ifdef CONFIG_USE_PANEL_CENTERPANEL
 
 
+
 #ifdef CONFIG_USE_PANEL_DISCOVERY
 #define BUTTON_USER_GPIO_PORT		GPIOA
 #define BUTTON_USER_GPIO_CLK		RCC_AHB1Periph_GPIOA
@@ -486,6 +485,8 @@
 
 #define BUTTON_CLK_ENABLES()		__GPIOA_CLK_ENABLE()
 #endif
+
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //			TEMPERATURE - I2C - LM75
@@ -621,6 +622,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 
+
 #ifdef CONFIG_USE_PANEL_NODESMALL
 
 
@@ -663,7 +665,6 @@
 #define SPIx_MOSI_AF                     GPIO_AF0_SPI1
 
 #endif
-
 
 
 
@@ -719,10 +720,10 @@
 
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 // DEBUG - USART
 ///////////////////////////////////////////////////////////////////////////////
+
 
 
 #if ( CONFIG_USE_PANEL_NODEMEDIUM || CONFIG_USE_PANEL_CENTERPANEL )
@@ -764,14 +765,13 @@
 #endif
 
 
-#ifdef CONFIG_USE_PANEL_DISCOVERY
 
+#ifdef CONFIG_USE_PANEL_DISCOVERY
 
 // USART
 // DEBUG_USART		USART2
 // DEBUG_USART_TX	-	PA2
 // DEBUG_USART_RX	-	PA3
-
 
 #define DEBUG_USARTx					USART6
 
@@ -803,10 +803,10 @@
 
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 //			ESP8266		-	USART
 ///////////////////////////////////////////////////////////////////////////////
+
 
 
 #ifdef CONFIG_USE_PANEL_NODESMALL
@@ -849,7 +849,6 @@
 
 
 #endif // #ifdef CONFIG_USE_PANEL_NODESMALL
-
 
 
 
@@ -939,7 +938,6 @@
 
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 //			ESP8266		-	OTHER PINS
 ///////////////////////////////////////////////////////////////////////////////
@@ -974,6 +972,7 @@ _GPIO2			PB15
 #endif	// #ifdef CONFIG_USE_PANEL_NODESMALL
 
 
+
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
 
 /*
@@ -1003,7 +1002,6 @@ _GPIO2			PA8
 
 
 #endif	// #ifdef CONFIG_USE_PANEL_NODEMEDIUM
-
 
 
 
@@ -1040,11 +1038,6 @@ _GPIO2			PB8
 
 
 #endif	// #ifdef CONFIG_USE_PANEL_CENTERPANEL
-
-
-
-//////////////////////////////////////////////////////////////////////////////
-
 
 
 
@@ -1102,8 +1095,6 @@ SENSOR_OPENCLOSE	PC6
 
 
 #endif
-
-
 
 
 
@@ -1165,6 +1156,7 @@ SENSOR_OPENCLOSE	PC6
 #define RASPBERRYPI_USART_SUB_PRIORITY			0
 
 #endif
+
 
 
 #endif /* BOARD_H_ */

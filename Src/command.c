@@ -1015,6 +1015,13 @@ CommandResult_t CommandFunction_moduletest (uint32_t argc, char** argv)
 
 
 #ifdef CONFIG_MODULE_COMMON_IO_ENABLE
+/**
+ * \brief	Common IO function
+ * 			Initialize and set/get io pin status
+ * 			"ioinit <port><pin> <input/output>"
+ * 			"ioout <port><pin> <set/reset>"
+ * 			"ioin <port><pin>
+ */
 CommandResult_t CommandFunction_io (uint32_t argc, char** argv)
 {
 
@@ -1113,6 +1120,10 @@ CommandResult_t CommandFunction_io (uint32_t argc, char** argv)
 
 
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
+/**
+ * \brief	Common ADC function
+ * 			Read ADC values
+ */
 CommandResult_t CommandFunction_adc (uint32_t argc, char** argv)
 {
 
