@@ -30,6 +30,7 @@
  *----------------------------------------------------------------------------*/
 extern ADC_HandleTypeDef		AdcHandle;
 extern volatile uint32_t		ADC_MeasuredValues[];
+extern volatile float			ADC_ConvertedValues[];
 
 
 /*------------------------------------------------------------------------------

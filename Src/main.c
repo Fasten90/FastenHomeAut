@@ -125,7 +125,14 @@ int main(void)
 #endif
 
 
-	// DEBUG USART
+#ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
+	//HAL_ADC_MspInit(&AdcHandle);
+	ADC_Init();
+	//ADC_Test();
+#endif
+
+
+// DEBUG USART
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 #ifdef CONFIG_USE_FREERTOS
 	DEBUG_USART_Rx_Semaphore = NULL;
@@ -163,13 +170,6 @@ int main(void)
 #endif	// #ifdef CONFIG_MODULE_MONITOR_ENABLE
 
 
-#ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
-	//HAL_ADC_MspInit(&AdcHandle);
-	ADC_Init();
-	ADC_Test();
-#endif
-
-	
 	// ESP8266
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 	ESP8266_USART_Rx_Semaphore = NULL;

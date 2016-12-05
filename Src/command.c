@@ -170,7 +170,16 @@ const CommandStruct CommandList[] =
 		.name = "ioin",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_io,
 		.commandArgNum = CommandArgument_1
-	}
+	},
+#endif
+#ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
+	{
+		.name = "adc",
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_adc,
+		.description = "ADC",
+		.syntax = "TODO:",
+		.commandArgNum = CommandArgument_0,
+	},
 #endif
 #ifdef CONFIG_MODULE_ADC_ENABLE
 	{
@@ -1098,6 +1107,25 @@ CommandResult_t CommandFunction_io (uint32_t argc, char** argv)
 
 	return CommandResult_Ok;
 
+}
+#endif
+
+
+
+#ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
+CommandResult_t CommandFunction_adc (uint32_t argc, char** argv)
+{
+
+	uint8_t i;
+
+	ADC_ConvertAllMeasuredValues();
+
+	for (i=0; i<ADC_BUFFER_SIZE; i++)
+	{
+		duprintf(MONITOR_CommandSource,"ADC: %d. value: %2.2f", i, ADC_ConvertedValues[i]);
+	}
+
+	return CommandResult_Ok;
 }
 #endif
 

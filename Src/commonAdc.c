@@ -192,20 +192,19 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 	/*##- 3- Configure DMA #####################################################*/ 
 
 	/*********************** Configure DMA parameters ***************************/
-	DmaHandle.Instance                 = ADCx_DMA_STREAM;
-	// TODO: tabbal formázás
-	DmaHandle.Init.Channel			   = ADCx_DMA_CHANNEL;
-	DmaHandle.Init.Direction           = DMA_PERIPH_TO_MEMORY;
-	DmaHandle.Init.PeriphInc           = DMA_PINC_DISABLE;
-	DmaHandle.Init.MemInc              = DMA_MINC_ENABLE;
-	DmaHandle.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
-	DmaHandle.Init.MemDataAlignment    = DMA_MDATAALIGN_WORD;
-	DmaHandle.Init.Mode                = DMA_CIRCULAR;
-	DmaHandle.Init.Priority            = DMA_PRIORITY_LOW;
-	DmaHandle.Init.FIFOMode			   = DMA_FIFOMODE_DISABLE;
-	DmaHandle.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_HALFFULL;
-	DmaHandle.Init.MemBurst            = DMA_MBURST_SINGLE;
-	DmaHandle.Init.PeriphBurst         = DMA_PBURST_SINGLE;
+	DmaHandle.Instance					= ADCx_DMA_STREAM;
+	DmaHandle.Init.Channel				= ADCx_DMA_CHANNEL;
+	DmaHandle.Init.Direction			= DMA_PERIPH_TO_MEMORY;
+	DmaHandle.Init.PeriphInc			= DMA_PINC_DISABLE;
+	DmaHandle.Init.MemInc				= DMA_MINC_ENABLE;
+	DmaHandle.Init.PeriphDataAlignment	= DMA_PDATAALIGN_WORD;
+	DmaHandle.Init.MemDataAlignment		= DMA_MDATAALIGN_WORD;
+	DmaHandle.Init.Mode					= DMA_CIRCULAR;
+	DmaHandle.Init.Priority				= DMA_PRIORITY_LOW;
+	DmaHandle.Init.FIFOMode				= DMA_FIFOMODE_DISABLE;
+	DmaHandle.Init.FIFOThreshold		= DMA_FIFO_THRESHOLD_HALFFULL;
+	DmaHandle.Init.MemBurst				= DMA_MBURST_SINGLE;
+	DmaHandle.Init.PeriphBurst			= DMA_PBURST_SINGLE;
 
 	/* Deinitialize  & Initialize the DMA for new transfer */
 	HAL_DMA_Init(&DmaHandle);
@@ -217,11 +216,6 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 	HAL_NVIC_SetPriority(ADCx_DMA_IRQn, 12, 0);
 	HAL_NVIC_EnableIRQ(ADCx_DMA_IRQn);
 	
-	/*
-	 * TODO: Delete
-	HAL_NVIC_SetPriority(ADC1_IRQn, 11, 0);
-	HAL_NVIC_EnableIRQ(ADC1_IRQn);
-	*/
 }
 
 
@@ -239,24 +233,6 @@ void ADC_Test ( void )
 	while (1)
 	{
 		uint8_t i;
-
-		//
-		/*
-		HAL_ADC_Start(&AdcHandle);
-		while(1)
-		{
-			if (HAL_ADC_PollForConversion(&AdcHandle, 1000000) == HAL_OK)
-			{
-				ADCValue = HAL_ADC_GetValue(&AdcHandle);
-				uprintf("%d. value: %d\r\n", i, ADCValue);
-			}
-		}
-
-		if (HAL_ADC_Start(&AdcHandle) != HAL_OK)
-		{
-			Error_Handler();
-		}
-		//*/
 		
 		DelayMs(10);
 
