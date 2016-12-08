@@ -1009,6 +1009,7 @@ static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t n
 			if (num >= GlobalVarList[commandID].maxValue)
 				return Process_InvalidValue_TooMuch;
 			break;
+		// Wrong types
 		case Type_Error:
 		case Type_Count:
 		default:
@@ -1018,7 +1019,7 @@ static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t n
 
 
 	// Check maxValue
-	// Maxvalue is set?
+	// maxValue is set?
 	if (GlobalVarList[commandID].maxValue == GlobalVarList[commandID].minValue)
 	{
 		// Is not set
@@ -1052,90 +1053,84 @@ static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t n
  */
 static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBuffer, uint8_t resultBufferLength)
 {
+	const char *pMessage = NULL;
 
 	switch (result)
 	{
-
 		case Process_Ok_Answered:
 			// Do nothing
 			break;
 
 		case Process_Ok_SetSuccessful_SendOk:
-			StrCpyMax(resultBuffer, "Set successful", resultBufferLength);
+			pMessage = "Set successful";
 			break;
 
 		case Process_GlobalVariableNameNotFind:
-			StrCpyMax(resultBuffer, "Global variable not find", resultBufferLength);
+			pMessage = "Global variable not find";
 			break;
 
 		case Process_FailParam:
-			StrCpyMax(resultBuffer, "Fail parameter", resultBufferLength);
+			pMessage = "Fail parameter";
 			break;
 
 		case Process_FailType:
-			StrCpyMax(resultBuffer, "Fail type", resultBufferLength);
+			pMessage = "Fail type";
 			break;
 
 		case Process_FailParamIsNotNumber:
-			StrCpyMax(resultBuffer, "Not number", resultBufferLength);
+			pMessage = "Not number";
 			break;
 
 		case Process_FailParamIsNotHexNumber:
-			StrCpyMax(resultBuffer, "Not hex number", resultBufferLength);
+			pMessage = "Not hex number";
 			break;
 
 		case Process_FailParamIsNotHexStart:
-			StrCpyMax(resultBuffer, "Not hex, missed \"0x\"",
-					resultBufferLength);
+			pMessage = "Not hex, missed \"0x\"";
 			break;
 
 		case Process_InvalidValue_TooSmall:
-			StrCpyMax(resultBuffer, "Invalid value, too small",
-					resultBufferLength);
+			pMessage = "Invalid value, too small";
 			break;
 
 		case Process_InvalidValue_TooMuch:
-			StrCpyMax(resultBuffer, "Invalid value, too much",
-					resultBufferLength);
+			pMessage = "Invalid value, too much";
 			break;
 
 		case Process_InvalidValue_NotBool:
-			StrCpyMax(resultBuffer, "Invalid value, not bool",
-					resultBufferLength);
+			pMessage = "Invalid value, not bool";
 			break;
 
 		case Process_InvalidValue_NotEnumString:
-			StrCpyMax(resultBuffer, "Invalid enum string", resultBufferLength);
+			pMessage = "Invalid enum string";
 			break;
 
 		case Process_Settings_EmptyEnumList:
-			StrCpyMax(resultBuffer, "EnumList settings error",
-					resultBufferLength);
+			pMessage = "EnumList settings error";
 			break;
 
 		case Process_IsReadOnly:
-			StrCpyMax(resultBuffer, "Cannot set, it is constant",
-					resultBufferLength);
+			pMessage = "Cannot set, it is constant";
 			break;
 
 		case Process_SourceNotEnabled:
-			StrCpyMax(resultBuffer,
-					"Cannot process this command from this source",
-					resultBufferLength);
+			pMessage = "Cannot process this command from this source";
 			break;
 
 		case Process_TooLongString:
-			StrCpyMax(resultBuffer, "Too long string", resultBufferLength);
+			pMessage = "Too long string";
 			break;
 
 		case Process_UnknownError:
-			StrCpyMax(resultBuffer, "Unknown error", resultBufferLength);
+			pMessage = "Unknown error";
 			break;
 
 		default:
-			StrCpyMax(resultBuffer, "Fatal error", resultBufferLength);
+			pMessage = "Fatal error";
 			break;
 	}
+
+	StrCpyMax(resultBuffer, pMessage, resultBufferLength);
 }
 
 
