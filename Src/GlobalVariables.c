@@ -32,6 +32,7 @@ uint8_t enumValue = 2;
 
 
 
+///< enumExample string list
 const char *const enumExampleList[] =
 {
 	"example1enumstring",
@@ -43,9 +44,7 @@ const char *const enumExampleList[] =
 
 
 
-/**
- * \brief	Global variables list
- */
+///< Global variables list
 const GlobalVarCommand_t GlobalVarList[] =
 {
 		{
@@ -141,6 +140,8 @@ const GlobalVarCommand_t GlobalVarList[] =
 };
 
 
+
+///< GlobalVarList length
 const VarID_t GlobalVarMaxCommandNum = sizeof(GlobalVarList)/sizeof(GlobalVarList[0]);
 
 

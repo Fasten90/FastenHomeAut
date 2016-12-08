@@ -226,6 +226,7 @@ int main(void)
 }
 
 
+
 /**
  * \brief	Error_Handler
  */
@@ -253,9 +254,11 @@ void Error_Handler( void )
 }
 
 
-/** System Clock Configuration
-*/
+
 #ifdef CONFIG_USE_PANEL_NODESMALL
+/**
+ * System Clock Configuration
+ */
 void SystemClock_Config(void)
 {
 
@@ -282,6 +285,9 @@ void SystemClock_Config(void)
 
 
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
+/**
+ * System Clock Configuration
+ */
 void SystemClock_Config(void)
 {
 
@@ -315,10 +321,10 @@ void SystemClock_Config(void)
 
 
 
-
-
 #if defined(CONFIG_USE_PANEL_CENTERPANEL) || defined(CONFIG_USE_PANEL_DISCOVERY)
-
+/**
+ * System Clock Configuration
+ */
 void SystemClock_Config(void)
 {
 
@@ -339,11 +345,7 @@ void SystemClock_Config(void)
   HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
 }
-
 #endif	// #ifdef CONFIG_USE_PANEL_CENTERPANEL
-
-
-
 
 
 
