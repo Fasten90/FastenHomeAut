@@ -11,9 +11,9 @@
  */
 
 
+#include "commandList.h"
 #include "include.h"
 #include "stdint.h"
-#include "command.h"
 #include "escapesequence.h"
 #include "GlobalVarHandler.h"
 #include "communication.h"
@@ -983,7 +983,7 @@ bool MONITOR_HISTORY_FindInHistoryList ( void )
 {
 	uint8_t i;
 	
-	for ( i = 0; i < MONITOR_HISTORY_MAX_COUNT; i++ )
+	for (i = 0; i < MONITOR_HISTORY_MAX_COUNT; i++)
 	{
 		if ( !StrCmp((const char *)MONITOR_HISTORY[i],(const char * )MONITOR_CommandActual))	// If it is equal
 		{
@@ -1008,9 +1008,9 @@ void MONITOR_HISTORY_Load ( uint8_t direction )
 {
 
 	// down cursor
-	if ( direction == 0 ) // direction == 0
+	if (direction == 0) // direction == 0
 	{
-		if ( MONITOR_HISTORY_Load_cnt >= ( MONITOR_HISTORY_MAX_COUNT-1 ) )
+		if (MONITOR_HISTORY_Load_cnt >= (MONITOR_HISTORY_MAX_COUNT-1))
 		{
 			MONITOR_HISTORY_Load_cnt = 0;
 		}
@@ -1024,7 +1024,7 @@ void MONITOR_HISTORY_Load ( uint8_t direction )
 	// if direction == 1, copy actual
 
 	// Copy command and set cursor
-	StrCpy ( (char *)MONITOR_CommandActual, (const char *)MONITOR_HISTORY[MONITOR_HISTORY_Load_cnt]);
+	StrCpy((char *)MONITOR_CommandActual, (const char *)MONITOR_HISTORY[MONITOR_HISTORY_Load_cnt]);
 
 	// cursor, length!
 	MONITOR_CommandCursorPosition = StringLength((const char *)MONITOR_CommandActual);
@@ -1033,9 +1033,9 @@ void MONITOR_HISTORY_Load ( uint8_t direction )
 	MONITOR_CommandResendLine(false);
 
 	// Step load cnt
-	if ( direction == 1 ) // direction == 0
+	if (direction == 1) // direction == 0
 	{
-		if ( MONITOR_HISTORY_Load_cnt <= 0 )
+		if (MONITOR_HISTORY_Load_cnt <= 0)
 		{
 			MONITOR_HISTORY_Load_cnt = MONITOR_HISTORY_MAX_COUNT-1;
 		}
@@ -1046,7 +1046,6 @@ void MONITOR_HISTORY_Load ( uint8_t direction )
 	}
 
 	return;
-
 }
 #endif
 
@@ -1059,7 +1058,7 @@ void MONITOR_ConvertSmallLetter ( void )
 {
 	uint8_t i;
 	
-	for ( i = 0; MONITOR_CommandActual[i] != '\0'; i++ )
+	for (i = 0; MONITOR_CommandActual[i] != '\0'; i++)
 	{
 		if ( ( MONITOR_CommandActual[i] > 'A' ) && ( MONITOR_CommandActual[i] < 'Z' ) )
 		{	// need to change to small letter
@@ -1068,7 +1067,6 @@ void MONITOR_ConvertSmallLetter ( void )
 	}
 
 	return;
-	
 }
 
 
@@ -1078,39 +1076,52 @@ void MONITOR_ConvertSmallLetter ( void )
  */
 void MONITOR_CheckResultAndRespond (CommandResult_t result)
 {
+	const char *pMessage = NULL;
+
 	switch (result)
 	{
 		case CommandResult_Unknown:
-			MONITOR_SendLine("Unknown error");
+			pMessage = "Unknown error";
 			break;
+
 		case CommandResult_Ok:
 			// Not need response
 			break;
+
 		case CommandResult_Error_WrongArgument1:
-			MONITOR_SendLine("Wrong argument (1.)");
+			pMessage ="Wrong argument (1.)";
 			break;
+
 		case CommandResult_Error_WrongArgument2:
-			MONITOR_SendLine("Wrong argument (2.)");
+			pMessage ="Wrong argument (2.)";
 			break;
+
 		case CommandResult_Error_TooFewArgument:
-			MONITOR_SendLine("Too few argument");
+			pMessage ="Too few argument";
 			break;
+
 		case CommandResult_Error_TooManyArgument:
-			MONITOR_SendLine("Too many argument");
+			pMessage ="Too many argument";
 			break;
+
 		case CommandResult_Error_WrongArgumentNum:
-			MONITOR_SendLine("Wrong argument num");
+			pMessage ="Wrong argument num";
 			break;
+
 		case CommandResult_Error_CommandArgNumIsWrong:
-			MONITOR_SendLine("Command set is wrong");
+			pMessage ="Command set is wrong";
 			break;
+
 		case CommandResult_Error_Unknown:
-			MONITOR_SendLine("Unknown error");
+			pMessage ="Unknown error";
 			break;
+
 		default:
-			MONITOR_SendLine("Unknown command process");
+			pMessage ="Unknown command process";
 			break;
 	}
+
+	MONITOR_SendLine(pMessage);
 }
 
 

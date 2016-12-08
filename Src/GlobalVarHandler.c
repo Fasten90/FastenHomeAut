@@ -78,9 +78,11 @@ static ProcessResult_t GLobalVarHandler_SetEnumerator(VarID_t commandID, const c
 
 /// FUNCTIONS
 
+
+
 /**
  * \brief	Check the GlobalVarList[], are set valid?
- * \return	true, if ok
+ * \retval	true	 ok
  */
 bool GlobalVarHandler_CheckCommandStructAreValid(void)
 {
@@ -211,7 +213,6 @@ void GlobalVarHandler_ProcessCommand(
 	}
 
 	GlobalVarHandler_WriteResults(result,resultBuffer,resultBufferLength);
-
 }
 
 
@@ -238,7 +239,6 @@ static bool GlobalVarHandler_SearchVariableName(const char *commandName, VarID_t
 
 	// Not found
 	return false;
-
 }
 
 
@@ -789,6 +789,7 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 		}
 	} // End of "isHex"
 
+	// TODO: else if legyen
 	// If it is not hex
 	// It is unsigned integers?
 	if (varType == Type_Uint8 || varType == Type_Uint16 || varType == Type_Uint32)
@@ -962,31 +963,37 @@ static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t n
 			if (num > BOOL_MAX)
 				return Process_InvalidValue_TooMuch;
 			break;
+
 		case Type_Uint8:
 			if (num > UINT8_MAX)
 				return Process_InvalidValue_TooMuch;
 			break;
+
 		case Type_Uint16:
 			if (num > UINT16_MAX)
 				return Process_InvalidValue_TooMuch;
 			break;
+
 		case Type_Uint32:
 			// TODO: Always good, do better code
 			if (num > UINT32_MAX)
 				return Process_InvalidValue_TooMuch;
 			break;
+
 		case Type_Int8:
 			if ((int32_t)num > INT8_MAX)
 				return Process_InvalidValue_TooMuch;
 			if ((int32_t)num < INT8_MIN)
 				return Process_InvalidValue_TooSmall;
 			break;
+
 		case Type_Int16:
 			if ((int32_t)num > INT16_MAX)
 				return Process_InvalidValue_TooMuch;
 			if ((int32_t)num < INT16_MIN)
 				return Process_InvalidValue_TooSmall;
 			break;
+
 		case Type_Int32:
 			// TODO: Always good, do better code
 			if ((int32_t)num > INT32_MAX)
@@ -994,6 +1001,7 @@ static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t n
 			if ((int32_t)num < INT32_MIN)
 				return Process_InvalidValue_TooSmall;
 			break;
+
 		case Type_Float:
 			// TODO: Not a good compare in float type
 			if ((int32_t)num > INT32_MAX)
@@ -1001,14 +1009,17 @@ static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t n
 			if ((int32_t)num < INT32_MIN)
 				return Process_InvalidValue_TooSmall;
 			break;
+
 		case Type_String:
 			if (num >= GlobalVarList[commandID].maxValue)
 				return Process_TooLongString;
 			break;
+
 		case Type_Enumerator:
 			if (num >= GlobalVarList[commandID].maxValue)
 				return Process_InvalidValue_TooMuch;
 			break;
+
 		// Wrong types
 		case Type_Error:
 		case Type_Count:

@@ -9,15 +9,15 @@
  *		Last modified:	2016.09.28
  */
 
-#ifndef COMMAND_H_
-#define COMMAND_H_
+#ifndef COMMANDLIST_H_
+#define COMMANDLIST_H_
 
 
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
 #include "include.h"
-//#include "CommandHandler.h"
+#include "CommandHandler.h"
 
 /*------------------------------------------------------------------------------
  *  Macros & definitions
@@ -33,48 +33,6 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-
-// Command results
-typedef enum
-{
-	CommandResult_Unknown = 0,
-	CommandResult_Ok,
-	CommandResult_Error_WrongArgument1,
-	CommandResult_Error_WrongArgument2,
-	CommandResult_Error_TooFewArgument,
-	CommandResult_Error_WrongArgumentNum,
-	CommandResult_Error_TooManyArgument,
-	CommandResult_Error_CommandArgNumIsWrong,
-	CommandResult_Error_Unknown
-} CommandResult_t;
-
-
-// Command Function pointer
-typedef CommandResult_t ( *FunctionPointer )( uint32_t argc, char** COMMAND_Arguments );
-
-
-// CommandID
-typedef uint8_t CommandID_t;
-
-
-// commandArgNum type
-typedef enum
-{
-	CommandArgument_0 = (1 << 0),
-	CommandArgument_1 = (1 << 1),
-	CommandArgument_2 = (1 << 2)
-} CommandArgNum_t;
-
-
-// Command struct
-typedef struct
-{
-	const char *name;
-	const FunctionPointer *commandFunctionPointer;
-	const char *description;
-	const char *syntax;
-	const CommandArgNum_t commandArgNum;
-} CommandStruct;
 
 
 
@@ -166,4 +124,4 @@ CommandResult_t CommandFunction_ESP8266	( uint32_t argc, char** argv );
 
 
 
-#endif /* COMMAND_H_ */
+#endif /* COMMANDLIST_H_ */

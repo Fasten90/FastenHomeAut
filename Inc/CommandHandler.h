@@ -15,9 +15,9 @@
 
 
 #include "include.h"
-#include "command.h"
 #include "escapesequence.h"
 #include "communication.h"
+#include "board.h"
 
 
 ///////////////////////////// MONITOR
@@ -38,8 +38,6 @@
 
 
 ///	Config defines
-
-#include "board.h"
 
 
 #define MONITOR_MAX_COMMAND_LENGTH			(255U)
@@ -105,7 +103,7 @@ CONFIG_USE_TERMINAL_ZOC
 #define USART_ESCAPESEQUENCE_2		('[')
 
 
-////////////////////////////////////  BUTTONS
+/// BUTTONS
 
 
 // 8 = BS = Backspace
@@ -118,8 +116,50 @@ CONFIG_USE_TERMINAL_ZOC
 
 
 
-/////////////////////////////  TYPEDEFS
+/// TYPEDEFS
 
+
+///< Command results
+typedef enum
+{
+	CommandResult_Unknown = 0,
+	CommandResult_Ok,
+	CommandResult_Error_WrongArgument1,
+	CommandResult_Error_WrongArgument2,
+	CommandResult_Error_TooFewArgument,
+	CommandResult_Error_WrongArgumentNum,
+	CommandResult_Error_TooManyArgument,
+	CommandResult_Error_CommandArgNumIsWrong,
+	CommandResult_Error_Unknown
+} CommandResult_t;
+
+
+///< Command Function pointer
+typedef CommandResult_t ( *FunctionPointer )( uint32_t argc, char** COMMAND_Arguments );
+
+
+///< CommandID
+typedef uint8_t CommandID_t;
+
+
+///< commandArgNum type
+typedef enum
+{
+	CommandArgument_0 = (1 << 0),
+	CommandArgument_1 = (1 << 1),
+	CommandArgument_2 = (1 << 2)
+} CommandArgNum_t;
+
+
+///< Command structure
+typedef struct
+{
+	const char *name;
+	const FunctionPointer *commandFunctionPointer;
+	const char *description;
+	const char *syntax;
+	const CommandArgNum_t commandArgNum;
+} CommandStruct;
 
 
 

@@ -13,11 +13,9 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
-//#include "CommandHandler.h"
-//#include "usart.h"
+#include "commandList.h"
 #include "include.h"
 
-#include "command.h"
 #include "CommandHandler.h"
 #include "GlobalVarHandler.h"
 #include "formattedMessage.h"
