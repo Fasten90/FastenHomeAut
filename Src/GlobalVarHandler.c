@@ -356,6 +356,10 @@ static uint8_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resu
 			case Type_Uint32:
 				octetNum = 8;
 				break;
+			case Type_Bool:
+			case Type_Enumerator:
+			case Type_Float:
+			// TODO:
 			default:
 				octetNum = 0;
 				break;
@@ -696,7 +700,7 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 		{
 			// Is good num?
 			ProcessResult_t result = GlobalVarHandler_CheckValue(commandID, num);
-			if ( result == Process_Ok_SetSuccessful_SendOk)
+			if (result == Process_Ok_SetSuccessful_SendOk)
 			{
 				switch(varType)
 				{
@@ -897,6 +901,8 @@ static ProcessResult_t GLobalVarHandler_SetEnumerator(VarID_t commandID, const c
 
 /**
  * \brief	Check values
+ * 			- Check type value (integer)
+ * 			- Check min-max
  * \return	Process_Ok_SetSuccessful_SendOk, if ok
  */
 static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t num)
@@ -949,7 +955,7 @@ static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t n
 				return Process_InvalidValue_TooSmall;
 			break;
 		case Type_String:
-			if (num > GlobalVarList[commandID].maxValue)
+			if (num >= GlobalVarList[commandID].maxValue)
 				return Process_TooLongString;
 			break;
 		case Type_Enumerator:
@@ -972,11 +978,19 @@ static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t n
 	else
 	{
 		// is set, because max not equal than min
+		// Check, it is too large or too small?
 
-		if (num > GlobalVarList[commandID].maxValue) return Process_InvalidValue_TooMuch;
+		if (num > GlobalVarList[commandID].maxValue)
+		{
+			// Too large
+			return Process_InvalidValue_TooMuch;
+		}
 
-		if (num < GlobalVarList[commandID].minValue) return Process_InvalidValue_TooSmall;
-
+		if (num < GlobalVarList[commandID].minValue)
+		{
+			// Too small
+			return Process_InvalidValue_TooSmall;
+		}
 	}
 
 	return Process_Ok_SetSuccessful_SendOk;

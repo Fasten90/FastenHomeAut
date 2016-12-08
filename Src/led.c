@@ -152,6 +152,10 @@ static bool LED_SetRedLed(LED_SetType ledSet)
 			break;
 		case LED_GET_STATUS:
 			break;
+		case LED_SET_DONTCARE:
+		case LED_TYPE_COUNT:
+			// Do not use
+			break;
 		default:
 			break;
 	}
@@ -177,6 +181,10 @@ static bool LED_SetBlueLed(LED_SetType ledSet)
 			break;
 		case LED_GET_STATUS:
 			break;
+		case LED_SET_DONTCARE:
+		case LED_TYPE_COUNT:
+			// Do not use
+			break;
 		default:
 			break;
 	}
@@ -201,6 +209,10 @@ static bool LED_SetGreenLed(LED_SetType ledSet)
 			LED_GREEN_TOGGLE();
 			break;
 		case LED_GET_STATUS:
+			break;
+		case LED_SET_DONTCARE:
+		case LED_TYPE_COUNT:
+			// Do not use
 			break;
 		default:
 			break;

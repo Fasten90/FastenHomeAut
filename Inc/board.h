@@ -106,7 +106,6 @@
 
 #ifdef CONFIG_USE_PANEL_DISCOVERY
 
-// Comment: A sematicban fordítva van a blue-red
 // blue: PE5
 // green: PE6
 // red: PA8

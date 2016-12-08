@@ -45,6 +45,7 @@ uint32_t Arg2Num;
 uint32_t Arg3Num;
 
 
+///< Commands list
 const CommandStruct CommandList[] =
 {
 
@@ -1007,6 +1008,11 @@ CommandResult_t CommandFunction_moduletest (uint32_t argc, char** argv)
 	// Send formatted messages
 	MONITOR_SendLine("Formatted message test");
 	FormattedMessage_Test();
+
+
+	// STL selftest
+	MONITOR_SendLine("STL selftest");
+	STL_DoRunTimeChecks();
 
 
 	return CommandResult_Ok;

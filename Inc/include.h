@@ -23,7 +23,9 @@
 // typedefs
 #include <stdbool.h>
 
-//
+
+/// Integer typedefs
+
 typedef unsigned char				uint8_t;	
 typedef signed char					int8_t;		
 typedef short unsigned int			uint16_t;
@@ -32,18 +34,14 @@ typedef short signed int			int16_t;
 typedef unsigned int				uint32_t;
 typedef signed int					int32_t;
 #endif
-//
 
 
+/// Return typedef
 
 typedef enum
 {
 	Return_Ok = 0,
-	Return_Success,	// Ez kell ????
-	Return_False,
-	Return_Error,
-	Return_Timeout
-	
+	Return_Error
 } ReturnType;
 
 
@@ -156,15 +154,13 @@ typedef enum
 
 	#define CONFIG_MODULE_COMMON_ADC_ENABLE
 
+	#define	CONFIG_MODULE_STL_SELFTEST_ENABLE
 #endif
 
 
 
-
-
-
-/** Kernel */
 #ifdef CONFIG_USE_FREERTOS
+/// FreeRTOS includes
 #include "FreeRTOSConfig.h"
 #include "FreeRTOS.h"
 #include "task.h"
@@ -189,7 +185,6 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 #define SYSMANAGER_TASK_STACK_SIZE		configMINIMAL_STACK_SIZE * 2
 #define SYSMANAGER_TASK_PRIORITY		( tskIDLE_PRIORITY + 3UL )
-
 
 
 #endif	// #ifdef CONFIG_USE_FREERTOS
@@ -280,8 +275,12 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #include "commonAdc.h"
 #endif
 
-void Error_Handler( void );
+#ifdef CONFIG_MODULE_STL_SELFTEST_ENABLE
+#include "stm32fxx_STLmain.h"
+#endif
 
+
+void Error_Handler( void );
 
 
 #endif /* INCLUDE_H_ */

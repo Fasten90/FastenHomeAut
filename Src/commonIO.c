@@ -98,6 +98,10 @@ bool IO_SetOutput(char port, uint8_t pin, Output_Type output)
 			status = HAL_GPIO_ReadPin(GPIO_port, realPin);
 			break;
 
+		case OUTPUT_COUNT:
+			status = false;
+			break;
+
 		default:
 			status = false;
 	}
@@ -286,8 +290,11 @@ uint32_t IO_GetMode(IO_Type io)
 			iomode = GPIO_MODE_OUTPUT_PP;
 			break;
 
+		case IO_UNKNOWN:
+		case IO_COUNT:
+			break;
+
 		default:
-			iomode = GPIO_MODE_INPUT;
 			break;
 	}
 

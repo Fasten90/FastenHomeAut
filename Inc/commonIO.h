@@ -20,7 +20,6 @@ typedef enum
 	IO_UNKNOWN,
 	IO_INPUT,
 	IO_OUTPUT,
-	IO_ADC,
 
 	// Do not use:
 	IO_COUNT

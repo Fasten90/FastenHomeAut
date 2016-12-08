@@ -31,34 +31,11 @@
 
 
 /////////////////////////////
-////// XXX: Time init from USB
-////// for log.c
-//#define RADIOALARM_CONFIG_TIMEINITUSB
-
-
-/////////////////////////////
-////// XXX: Stop mode
-////// for log.c, lowpower.c
-//#define RADIOALARM_CONFIG_ENABLE_STOPMODE
-
-
-/////////////////////////////
-////// XXX: Select transmitter or receiver
-////// for rfm12b.c
-//#define RFM12B_TRANSMITTER
-//#define RFM12B_RECEIVER
-
-
-/////////////////////////////
-////// XXX: If you want to send messages on UART (USB)
-////// for main.c, log.c
-//#define USE_RADIOALARM_OTG
-
-
 /// XXX: Monitor settings
 
 // For wait password
 //#define MONITOR_GET_PASSWORD_ENABLE
+
 
 // comment out, if you dont need escape sequence (cursors, history, cls, ...)
 #define MONITOR_ESCAPE_SEQUENCE_ENABLE
@@ -68,11 +45,6 @@
 	// Turn off, if has small memory, now it need 1.5k RAM
 	#define USE_MONITOR_HISTORY
 #endif
-
-
-// FreeRTOS - at panel selection
-// Do not use from this line, use the CONFIG_USE_PANEL ...
-//#define CONFIG_USE_FREERTOS
 
 
 // ESP8266
@@ -85,8 +57,8 @@
 // 		Select your panel
 /////////////////////////////
 
-// Recommend define at project settings:
 // XXX: Select your panel
+// NOTE: Recommend define at project settings:
 //#define CONFIG_USE_PANEL_NODESMALL
 //#define CONFIG_USE_PANEL_NODEMEDIUM
 //#define CONFIG_USE_PANEL_CENTERPANEL

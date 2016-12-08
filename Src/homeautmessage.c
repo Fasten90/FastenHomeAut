@@ -245,7 +245,7 @@ ReturnType HOMEAUTMESSAGE_CompareMessage(char *messageString)
 		buffer[HOMEAUTMESSAGE_DefaultAddress_Length] = '\0';
 		if (!StringToUnsignedDecimalNum (buffer, &readedMyAddress))
 		{
-			return Return_False;
+			return Return_Error;
 		}
 		if (readedMyAddress >= 0 && readedMyAddress <= 256)
 		{
@@ -255,7 +255,7 @@ ReturnType HOMEAUTMESSAGE_CompareMessage(char *messageString)
 				buffer[HOMEAUTMESSAGE_DefaultAddress_Length] = '\0';
 				if (!StringToUnsignedDecimalNum (buffer,&readedTargetAddress))
 				{
-					return Return_False;
+					return Return_Error;
 				}
 				if (readedMyAddress >= 0 && readedMyAddress <= 256)
 				{
@@ -304,7 +304,7 @@ ReturnType HOMEAUTMESSAGE_CompareMessage(char *messageString)
 								
 								if (dataType == DataType_Unknown)
 								{
-									return Return_False;
+									return Return_Error;
 								}
 									
 								
@@ -347,7 +347,7 @@ ReturnType HOMEAUTMESSAGE_CompareMessage(char *messageString)
 		}		
 	}			
 	
-	return Return_False;
+	return Return_Error;
 	
 }		
 

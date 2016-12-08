@@ -39,6 +39,9 @@ uint8_t COMMUNICATION_SendMessage (CommProtocol_t protocol, const char *message)
 			// TODO: Not implemented
 			length = 0;
 			break;
+		case CommProt_Disable:
+			length = 0;
+			break;
 		default:
 			// Error, do not use
 			length = 0;
@@ -58,12 +61,18 @@ uint8_t COMMUNICATION_SendChar (CommProtocol_t protocol, char c)
 {
 	switch (MONITOR_CommandSource)
 	{
+		case CommProt_Unknown:
+			// Unknown, send on debug
+			USART_SendChar(c);
+			break;
 		case CommProt_DebugUart:
 			USART_SendChar(c);
 			break;
-
+		case CommProt_OtherUart:
+		case CommProt_Disable:
+			// TODO: Not implemented
+			break;
 		default:
-			USART_SendChar(c);
 			break;
 	}
 

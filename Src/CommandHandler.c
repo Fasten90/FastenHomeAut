@@ -1098,6 +1098,9 @@ void MONITOR_CheckResultAndRespond (CommandResult_t result)
 		case CommandResult_Error_TooManyArgument:
 			MONITOR_SendLine("Too many argument");
 			break;
+		case CommandResult_Error_WrongArgumentNum:
+			MONITOR_SendLine("Wrong argument num");
+			break;
 		case CommandResult_Error_CommandArgNumIsWrong:
 			MONITOR_SendLine("Command set is wrong");
 			break;
