@@ -1131,7 +1131,11 @@ void MONITOR_RunCommand ( CommandID_t commandID )
 	{
 		// Good
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
 		FunctionPointer thisFunction = ( FunctionPointer )CommandList[commandID].commandFunctionPointer;
+#pragma GCC diagnostic pop
+		// End of warning suppress
 
 		// Execute the command function
 		result = thisFunction(COMMAND_ArgCount,(char**)COMMAND_Arguments);

@@ -4156,7 +4156,8 @@ TickType_t uxReturn;
 			eOriginalNotifyState = pxTCB->eNotifyState;
 
 			pxTCB->eNotifyState = eNotified;
-
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch-default"
 			switch( eAction )
 			{
 				case eSetBits	:
@@ -4188,7 +4189,8 @@ TickType_t uxReturn;
 					updated. */
 					break;
 			}
-
+#pragma GCC diagnostic pop
+// End of warning suppress
 			traceTASK_NOTIFY();
 
 			/* If the task is in the blocked state specifically to wait for a
@@ -4281,7 +4283,8 @@ TickType_t uxReturn;
 
 			eOriginalNotifyState = pxTCB->eNotifyState;
 			pxTCB->eNotifyState = eNotified;
-
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch-default"
 			switch( eAction )
 			{
 				case eSetBits	:
@@ -4313,7 +4316,8 @@ TickType_t uxReturn;
 					updated. */
 					break;
 			}
-
+#pragma GCC diagnostic pop
+// End of warning suppress
 			traceTASK_NOTIFY_FROM_ISR();
 
 			/* If the task is in the blocked state specifically to wait for a

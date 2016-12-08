@@ -44,7 +44,7 @@
 
 #define MONITOR_MAX_COMMAND_LENGTH			(255U)
 #define MONITOR_COMMAND_ARG_MAX_COUNT		(3)
-#define MONITOR_COMMAND_ARG_MAX_NUM_BITS	(0b111)	// TODO: átalakítani
+#define MONITOR_COMMAND_ARG_MAX_NUM_BITS	(0x07)	// 0b111 <-- warning: "binary constants are a GCC extension
 
 #define MONITOR_HISTORY_MAX_COUNT			(5)
 

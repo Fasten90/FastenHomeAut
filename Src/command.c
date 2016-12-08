@@ -44,6 +44,8 @@ extern UART_HandleTypeDef Debug_UartHandle;
 uint32_t Arg2Num;
 uint32_t Arg3Num;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
 
 ///< Commands list
 const CommandStruct CommandList[] =
@@ -264,6 +266,10 @@ const CommandStruct CommandList[] =
 	*/
 
 };
+
+
+#pragma GCC diagnostic pop
+// End of warning suppress
 
 
 const CommandID_t MONITOR_CommandNum = MONITOR_MAX_COMMAND_NUM;
@@ -1010,10 +1016,11 @@ CommandResult_t CommandFunction_moduletest (uint32_t argc, char** argv)
 	FormattedMessage_Test();
 
 
+#ifdef CONFIG_MODULE_STL_SELFTEST_ENABLE
 	// STL selftest
 	MONITOR_SendLine("STL selftest");
 	STL_DoRunTimeChecks();
-
+#endif
 
 	return CommandResult_Ok;
 }
