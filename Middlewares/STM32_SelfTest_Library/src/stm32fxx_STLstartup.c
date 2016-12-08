@@ -294,6 +294,9 @@ void STL_StartUp(void)
 
     if(crc_result != *(uint32_t *)(&REF_CRC32))
   #endif  /* __CC_ARM */   
+#ifdef __GNUC__
+  if(crc_result != *(uint32_t *)(&REF_CRC32))
+#endif  /* __CC_ARM */
     {
       #ifdef STL_VERBOSE_POR
         printf("FLASH 32-bit CRC Error at Start-up\n\r");
@@ -365,7 +368,7 @@ void STL_StartUp(void)
     /* restore destroyed content of HAL structure for UART */
     UartHandle.Instance = USARTx;
     UartHandle.ErrorCode = HAL_UART_ERROR_NONE;
-    UartHandle.State= HAL_UART_STATE_READY;
+    UartHandle.gState= HAL_UART_STATE_READY;
     
     printf(" Full RAM Test OK\n\r");
   #endif /* STL_VERBOSE_POR */
@@ -423,7 +426,7 @@ void STL_StartUp(void)
     
   #ifdef STL_VERBOSE_POR
     /* finish communication flow prior system clock change */
-    while (UartHandle.State == HAL_UART_STATE_BUSY_TX)
+    while (UartHandle.gState == HAL_UART_STATE_BUSY_TX)
     { }
   #endif /* STL_VERBOSE_POR */
   
@@ -520,7 +523,7 @@ void STL_StartUp(void)
     printf(" Control Flow Checkpoint 2 OK \n\r");
   
     /* finish communication flow prior system clock change */
-    while (UartHandle.State == HAL_UART_STATE_BUSY_TX)
+    while (UartHandle.gState == HAL_UART_STATE_BUSY_TX)
     { }
    #endif  /* STL_VERBOSE_POR */
      

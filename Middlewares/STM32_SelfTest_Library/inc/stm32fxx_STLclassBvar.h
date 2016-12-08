@@ -155,6 +155,60 @@
 #endif  /* __CC_ARM */
 
 
+#ifdef __GNUC__
+  /* RAM location for temporary storage of original values at run time RAM transparent test */
+  EXTERN uint32_t aRunTimeRamBuf[RT_RAM_BLOCKSIZE + 2] __attribute__((section("RUN_TIME_RAM_BUF")));
+
+  /* RAM pointer for run-time tests */
+  EXTERN uint32_t *pRunTimeRamChk        __attribute__((section("RUN_TIME_RAM_PNT")));
+  EXTERN uint32_t *pRunTimeRamChkInv     __attribute__((section("RUN_TIME_RAM_PNT")));
+  EXTERN uint32_t aGAP_FOR_RAM_TEST_OVERLAY[2] __attribute__((section("RUN_TIME_RAM_PNT")));
+
+  /* Note: the zero_init forces the linker to place variables in the bss section */
+  /* This allows the UNINIT directive (in scatter file) to work. On the contrary */
+  /* all Class B variables pairs should be initialized properly by user before using them */
+
+  /* Counter for verifying correct program execution at start */
+  EXTERN uint32_t CtrlFlowCnt             __attribute__((section("CLASS_B_RAM")));
+  EXTERN uint32_t CtrlFlowCntInv          __attribute__((section("CLASS_B_RAM_REV")));
+
+  /* Counter for verifying correct program execution in interrupt */
+  EXTERN uint32_t ISRCtrlFlowCnt          __attribute__((section("CLASS_B_RAM")));
+  EXTERN uint32_t ISRCtrlFlowCntInv       __attribute__((section("CLASS_B_RAM_REV")));
+
+  /* LSI period measurement at TIM5 IRQHandler */
+  EXTERN uint32_t PeriodValue           __attribute__((section("CLASS_B_RAM")));
+  EXTERN uint32_t PeriodValueInv        __attribute__((section("CLASS_B_RAM_REV")));
+
+  /* Sofware time base used in main program (incremented in SysTick timer ISR */
+  EXTERN uint32_t TickCounter             __attribute__((section("CLASS_B_RAM")));
+  EXTERN uint32_t TickCounterInv          __attribute__((section("CLASS_B_RAM_REV")));
+
+  /* Indicates to the main routine a 100ms tick */
+  EXTERN __IO uint32_t TimeBaseFlag       __attribute__((section("CLASS_B_RAM")));
+  EXTERN __IO uint32_t TimeBaseFlagInv    __attribute__((section("CLASS_B_RAM_REV")));
+
+  /* Indicates to the main routine a 100ms tick */
+  EXTERN __IO uint32_t LSIPeriodFlag      __attribute__((section("CLASS_B_RAM")));
+  EXTERN __IO uint32_t LSIPeriodFlagInv   __attribute__((section("CLASS_B_RAM_REV")));
+
+  /* Stores the Control flow counter from one main loop to the other */
+  EXTERN uint32_t LastCtrlFlowCnt         __attribute__((section("CLASS_B_RAM")));
+  EXTERN uint32_t LastCtrlFlowCntInv      __attribute__((section("CLASS_B_RAM_REV")));
+
+  /* Pointer to FLASH for crc32 run-time tests */
+  EXTERN uint32_t *pRunCrc32Chk           __attribute__((section("CLASS_B_RAM")));
+  EXTERN uint32_t *pRunCrc32ChkInv        __attribute__((section("CLASS_B_RAM_REV")));
+
+/* Reference 32-bit CRC for run-time tests */
+  EXTERN uint32_t RefCrc32                __attribute__((section("CLASS_B_RAM")));
+  EXTERN uint32_t RefCrc32Inv             __attribute__((section("CLASS_B_RAM_REV")));
+
+  /* Magic pattern for Stack overflow in this array */
+  EXTERN __IO uint32_t aStackOverFlowPtrn[4]   __attribute__((section("STACK_BOTTOM")));
+#endif
+
+
 #endif /* __STL_CLASS_B_VAR_H */
 
 /******************* (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
