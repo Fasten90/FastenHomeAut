@@ -53,7 +53,6 @@
 /* USER CODE BEGIN 0 */
 
 
-
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 extern UART_HandleTypeDef Debug_UartHandle;
 
@@ -128,7 +127,12 @@ int main(void)
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
 	//HAL_ADC_MspInit(&AdcHandle);
 	ADC_Init();
+	// Test, blocking
 	//ADC_Test();
+#endif
+
+#ifdef CONFIG_MODULE_STL_SELFTEST_ENABLE
+	STL_InitRunTimeChecks();
 #endif
 
 
@@ -155,7 +159,10 @@ int main(void)
 #ifdef CONFIG_MODULE_MONITOR_ENABLE
 	// Monitor initialize
 	MONITOR_Init();
+#endif
 
+
+#ifdef CONFIG_MODULE_MONITOR_ENABLE
 #ifdef CONFIG_USE_FREERTOS
 	TaskHandle_t MONITOR_TaskHandle = NULL;
 	//xTaskCreate( vTaskCode, "NAME", STACK_SIZE, &ucParameterToPass, tskIDLE_PRIORITY, &xHandle );
