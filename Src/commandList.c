@@ -131,6 +131,7 @@ const CommandStruct CommandList[] =
 		.syntax = "<on/off/toggle/status> <num>",
 		.commandArgNum = CommandArgument_1 | CommandArgument_2,
 	},
+#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
 	{
 		.name = "#raspi",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_raspberrypi,
@@ -138,6 +139,7 @@ const CommandStruct CommandList[] =
 		.syntax = "-",
 		.commandArgNum = CommandArgument_2
 	},
+#endif
 	{
 		.name = "dac",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_dac,

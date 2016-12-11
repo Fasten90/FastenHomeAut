@@ -17,28 +17,28 @@
 #define INVALID		( 0 )
 
 
-
+///< HomeAut message structure for message seperating
 typedef struct
 {
-	char Header[9];
+	char Header[9];							///< Header
 	// |HomeAut|
-	char MyAddress[3];
+	char MyAddress[3];						///< My address (sender)
 	// <MyAddress>
-	char Seperator1[1];
+	char Seperator1[1];						///< Separator character
 	// |
-	char TargetAddress[3];
+	char TargetAddress[3];					///< Target Address
 	// <TargetAddress>
-	char Seperator2[1];
+	char Seperator2[1];						///< Separator character
 	// |
-	char Function[7];
+	char Function[7];						///< Function
 	// <Function>
-	char Seperator3[1];
+	char Seperator3[1];						///< Separator character
 	// |
-	char DataType[6];
+	char DataType[6];						///< Data type (
 	// <DataType> : 6 byte ASCII char
-	char Data[8];
+	char Data[8];							///< Data (example: temperature value)
 	// <Data> : 8 byte - ASCII Hex
-	char Seperator4[1];
+	char Seperator4[1];						///< Last separator character
 	// |
 } HOMEAUTMESSAGE_MessageType;
 
@@ -62,7 +62,6 @@ const uint8_t HOMEAUTMESSAGE_DefaultFunctionConfig[] =  "CONFIG_";
 
 
 
-
 typedef enum
 {
 	Function_Invalid = 0,
@@ -77,14 +76,12 @@ typedef enum
 
 
 
-
+///< Function name - string parity table
 typedef struct
 {
-	char name[8];
-	HOMEAUTMESSAGE_FunctionType function;
+	char name[8];								///< Name of function
+	HOMEAUTMESSAGE_FunctionType function;		///< Function enum
 } FunctionTypeParity;
-
-
 
 
 
@@ -154,24 +151,24 @@ typedef enum
 
 
 
-
+///<  Data type - string table
 typedef struct
 {
-	char name[7];
-	HOMEAUTMESSAGE_DataType type;
+	const char name[7];						///< Name of Data [string]
+	HOMEAUTMESSAGE_DataType type;			///< Data type
 } DataTypeParity;
 
 
 
+///< HomeAut message information type
 typedef struct
 {
-	uint8_t MyAddress;
-	uint8_t TargetAddress;
-	HOMEAUTMESSAGE_FunctionType Function;
-	HOMEAUTMESSAGE_DataType DataType;
-	uint32_t Data;
-	uint8_t isValid;
-	
+	uint8_t MyAddress;						///< My (sender) address
+	uint8_t TargetAddress;					///< Target (receiver) address
+	HOMEAUTMESSAGE_FunctionType Function;	///< Function
+	HOMEAUTMESSAGE_DataType DataType;		///< Data type
+	uint32_t Data;							///< Data
+	uint8_t isValid;						///< It is valid information?
 } HOMEAUTMESSAGE_InformationType;
 
 
@@ -205,4 +202,3 @@ ReturnType HOMEAUTMESSAGE_CreateAndSendHomeAutMessage
 
 
 #endif /* HOMEAUTMESSAGE_H_*/
-

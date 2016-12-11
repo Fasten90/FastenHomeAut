@@ -14,6 +14,7 @@
 #include "homeautmessage.h"
 
 
+#ifdef CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
 
 ////////////////////////////
 //		GLOBAL VARIABLES
@@ -514,5 +515,4 @@ ReturnType HOMEAUTMESSAGE_CreateAndSendHomeAutMessage
 	
 }
 
-
-
+#endif	// CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE

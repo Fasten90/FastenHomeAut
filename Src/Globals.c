@@ -13,13 +13,18 @@
 #include "include.h"
 #include "options.h"
 #include "globals.h"
+#include "version.h"
 
 
 const char Global_BoardName[]	= BOARD_NAME;
-const char Global_Version[]		= "v0.1.1.5";
+const char Global_Version[]		= VERSION_DEFINE;
 
 
 
+/**
+ * \brief	Delay (ms)
+ * \param[in]	ms	milisecond, which time delay
+ */
 void DelayMs(uint32_t ms)
 {
 #ifdef CONFIG_USE_FREERTOS

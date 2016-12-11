@@ -130,38 +130,38 @@ static char MONITOR_HISTORY[MONITOR_HISTORY_MAX_COUNT][MONITOR_MAX_COMMAND_LENGT
 ///		FUNCTION PROTOTYPES
 /////////////////////////////
 
-static void MONITOR_ProcessReceivedCharacter ( void );
+static void MONITOR_ProcessReceivedCharacter(void);
 
 #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
-static void MONITOR_CommandDelete ( void );
-static void MONITOR_CommandTabulator ( void );
+static void MONITOR_CommandDelete(void);
+static void MONITOR_CommandTabulator(void);
 #endif
 
-bool MONITOR_PrepareFindExecuteCommand ( CommProtocol_t source );
-static uint8_t MONITOR_CommandParser ( void );
-static bool MONITOR_SearchCommand ( void );
+bool MONITOR_PrepareFindExecuteCommand(CommProtocol_t source);
+static uint8_t MONITOR_CommandParser(void);
+static bool MONITOR_SearchCommand(void);
 
-void MONITOR_CommandBackspace ( void );
-void MONITOR_CommandResendLine ( bool needRestoreCursor );
-bool MONITOR_CommandEscapeCharValidation ( void );
+void MONITOR_CommandBackspace(void);
+void MONITOR_CommandResendLine( bool needRestoreCursor);
+bool MONITOR_CommandEscapeCharValidation(void);
 
 #ifdef USE_MONITOR_HISTORY
 // Monitor history
-void MONITOR_HISTORY_Save (void);
-bool MONITOR_HISTORY_FindInHistoryList (void);
-void MONITOR_HISTORY_Load (uint8_t direction);
+void MONITOR_HISTORY_Save(void);
+bool MONITOR_HISTORY_FindInHistoryList(void);
+void MONITOR_HISTORY_Load(uint8_t direction);
 #endif
 
-void MONITOR_ConvertSmallLetter (void);
+void MONITOR_ConvertSmallLetter(void);
 
-void MONITOR_CheckResultAndRespond (CommandResult_t result);
-void MONITOR_RunCommand (CommandID_t commandID);
-CommandResult_t MONITOR_ArgumentNumIsGood (uint8_t receivedArgNum, uint8_t commandArgNum);
-
+void MONITOR_CheckResultAndRespond(CommandResult_t result);
+void MONITOR_RunCommand(CommandID_t commandID);
+CommandResult_t MONITOR_ArgumentNumIsGood(uint8_t receivedArgNum,
+		uint8_t commandArgNum);
 
 #ifdef MONITOR_GET_PASSWORD_ENABLE
-static void MONITOR_GetPassword (void);
-static bool MONITOR_CheckPassword (const char *string);
+static void MONITOR_GetPassword(void);
+static bool MONITOR_CheckPassword(const char *string);
 #endif
 
 
@@ -173,7 +173,7 @@ static bool MONITOR_CheckPassword (const char *string);
 /**
  * \brief	Initialize Monitor program
  */
-void MONITOR_Init ( void )
+void MONITOR_Init(void)
 {
 
 	// Initialize
@@ -203,7 +203,7 @@ void MONITOR_Init ( void )
 /**
  * \brief	Send welcome message
  */
-void MONITOR_SendWelcome ( void )
+void MONITOR_SendWelcome(void)
 {
 
 	#ifdef CONFIG_USE_FREERTOS
@@ -230,7 +230,7 @@ void MONITOR_SendWelcome ( void )
 /**
  * \brief	Always run, wait command and execute it
  */
-void MONITOR_CheckCommand ( void )
+void MONITOR_CheckCommand(void)
 {
 
 	// Initialize
@@ -271,7 +271,7 @@ void MONITOR_CheckCommand ( void )
 	{
 
 		// Always checking the Command
-		if ( MONITOR_CommandReceiveEnable )
+		if (MONITOR_CommandReceiveEnable)
 		{
 
 			#ifdef CONFIG_USE_FREERTOS
@@ -293,26 +293,26 @@ void MONITOR_CheckCommand ( void )
 
 			MONITOR_ProcessReceivedCharacter();
 
-			if ( MONITOR_CommandReceivedEvent )
+			if (MONITOR_CommandReceivedEvent)
 			{
 				// Clear event
 				MONITOR_CommandReceivedEvent = false;
 
 				// Only one event will receive
-				if ( MONITOR_CommandReceivedBackspace )
+				if (MONITOR_CommandReceivedBackspace)
 				{
 					// Backspace
 					MONITOR_CommandReceivedBackspace = false;
 					MONITOR_CommandBackspace();
 				}
 #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
-				else if ( MONITOR_CommandReceivedDelete )
+				else if (MONITOR_CommandReceivedDelete)
 				{
 					// Delete
 					MONITOR_CommandReceivedDelete = false;
 					MONITOR_CommandDelete();
 				}
-				else if ( MONITOR_CommandReceivedNotLastChar )
+				else if (MONITOR_CommandReceivedNotLastChar)
 				{
 					// Received inner character
 
@@ -323,24 +323,24 @@ void MONITOR_CheckCommand ( void )
 					// Not Last char (it is inner character) - Refresh the line
 					MONITOR_CommandResendLine(true);
 				}
-				else if ( MONITOR_CommandEscapeSequenceReceived )
+				else if (MONITOR_CommandEscapeSequenceReceived)
 				{
 					// Escape sequence
 					MONITOR_CommandEscapeSequenceReceived = false;
 					MONITOR_CommandEscapeCharValidation();
 				}
-				else if ( MONITOR_CommandReceivedTabulator )
+				else if (MONITOR_CommandReceivedTabulator)
 				{
 					// Received tabulator
 					MONITOR_CommandReceivedTabulator = false;
 					MONITOR_CommandTabulator();
 				}
 #endif
-				else if ( MONITOR_CommandReadable )
+				else if (MONITOR_CommandReadable)
 				{
 					// Pressed Enter, EndCommand();
 					MONITOR_CommandReadable = false;
-					if ( MONITOR_CommandActualLength > 0)
+					if (MONITOR_CommandActualLength > 0)
 					{
 						// There are some char in the line
 						// has an command
@@ -378,7 +378,7 @@ void MONITOR_CheckCommand ( void )
 /**
  * \brief	Check received characters and make command (COMMAND_Actual)
  */
-static void MONITOR_ProcessReceivedCharacter ( void )
+static void MONITOR_ProcessReceivedCharacter(void)
 {
 
 	// While Read cnt not equal than Write cnt
@@ -468,7 +468,7 @@ static void MONITOR_ProcessReceivedCharacter ( void )
 					MONITOR_CommandReceivedEvent = true;
 					return;
 				}
-				else if ( USART_ReceivedChar  == USART_KEY_BACKSPACE )
+				else if (USART_ReceivedChar == USART_KEY_BACKSPACE)
 				{
 					// Received backspace
 					MONITOR_CommandReceivedBackspace = true;
@@ -476,7 +476,7 @@ static void MONITOR_ProcessReceivedCharacter ( void )
 					return;
 				}
 #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
-				else if ( USART_ReceivedChar == USART_KEY_DELETE )
+				else if (USART_ReceivedChar == USART_KEY_DELETE)
 				{
 					// Delete button
 					// TODO: Not work at ZOC, but work at other terminal?
@@ -484,7 +484,7 @@ static void MONITOR_ProcessReceivedCharacter ( void )
 					MONITOR_CommandReceivedEvent = true;
 					return;
 				}
-				else if ( USART_ReceivedChar == '\t' )
+				else if (USART_ReceivedChar == '\t')
 				{
 					// TAB
 					MONITOR_CommandReceivedTabulator = true;
@@ -494,11 +494,11 @@ static void MONITOR_ProcessReceivedCharacter ( void )
 #endif	// #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 				else
 				{
-					// simple char for the command
-					// Receive an char
-					if ( MONITOR_CommandActualLength < MONITOR_MAX_COMMAND_LENGTH )	// shorted than max length?
+					// Simple char for the command
+					// shorted than max length?
+					if (MONITOR_CommandActualLength < MONITOR_MAX_COMMAND_LENGTH)
 					{
-						if ( MONITOR_CommandCursorPosition == MONITOR_CommandActualLength )
+						if (MONITOR_CommandCursorPosition == MONITOR_CommandActualLength)
 						{
 							// CursorPosition = CommandLength		(end character)
 							MONITOR_CommandActual[MONITOR_CommandActualLength] = USART_ReceivedChar;
@@ -516,7 +516,7 @@ static void MONITOR_ProcessReceivedCharacter ( void )
 							MONITOR_CommandActualLength++;
 							// Copy
 							uint8_t i;
-							for ( i = MONITOR_CommandActualLength; i > MONITOR_CommandCursorPosition; i-- )
+							for (i = MONITOR_CommandActualLength; i > MONITOR_CommandCursorPosition; i--)
 							{
 								MONITOR_CommandActual[i] = MONITOR_CommandActual[i-1];
 							}
@@ -549,7 +549,7 @@ static void MONITOR_ProcessReceivedCharacter ( void )
  * \brief	Prepare (Separate) the command and Find and Run it...
  * 			TODO: Átalakítani char* átvevősre
  */
-bool MONITOR_PrepareFindExecuteCommand ( CommProtocol_t source )
+bool MONITOR_PrepareFindExecuteCommand(CommProtocol_t source)
 {
 
 	MONITOR_CommandSource = source;
@@ -609,7 +609,7 @@ static uint8_t MONITOR_CommandParser(void)
 /**
  * \brief	Find the command (in list)
  */
-static bool MONITOR_SearchCommand ( void )
+static bool MONITOR_SearchCommand(void)
 {
 
 	CommandID_t i;
@@ -648,7 +648,7 @@ static bool MONITOR_SearchCommand ( void )
 /**
  * \brief	Command's letter deleting (backspace)
  */
-void MONITOR_CommandBackspace ( void )
+void MONITOR_CommandBackspace(void)
 {
 
 	if (MONITOR_CommandActualLength > 0)
@@ -735,7 +735,7 @@ void MONITOR_CommandBackspace ( void )
 /**
  * \brief	Delete button received
  */
-static void MONITOR_CommandDelete ( void )
+static void MONITOR_CommandDelete(void)
 {
 
 	if (MONITOR_CommandActualLength > 0)
@@ -791,7 +791,7 @@ static void MONITOR_CommandDelete ( void )
 /**
  * \brief	Received tabulator command: Complete command
  */
-static void MONITOR_CommandTabulator ( void )
+static void MONITOR_CommandTabulator(void)
 {
 	// Find same command
 	uint8_t i;
@@ -824,7 +824,7 @@ static void MONITOR_CommandTabulator ( void )
  * \brief		Resend the actual line/command
  * 				NOTE: It save and restore the original cursor position
  */
-void MONITOR_CommandResendLine ( bool needRestoreCursor )
+void MONITOR_CommandResendLine( bool needRestoreCursor)
 {
 	// Procedure:
 	// - Delete line
@@ -865,7 +865,7 @@ void MONITOR_CommandResendLine ( bool needRestoreCursor )
 /**
  * \brief	Process Escape sequence
  */
-bool MONITOR_CommandEscapeCharValidation ( void )
+bool MONITOR_CommandEscapeCharValidation(void)
 {
 	// return valid char, or 0 if invalid
 	// work with ANSI escape codes
@@ -939,7 +939,7 @@ bool MONITOR_CommandEscapeCharValidation ( void )
 /**
  * \brief	Save actual command to history
  */
-void MONITOR_HISTORY_Save ( void )
+void MONITOR_HISTORY_Save(void)
 {
 
 	// Has equal command?
@@ -979,7 +979,7 @@ void MONITOR_HISTORY_Save ( void )
  * \return	true, if has equal
  * 			false, if not has equal
  */
-bool MONITOR_HISTORY_FindInHistoryList ( void )
+bool MONITOR_HISTORY_FindInHistoryList(void)
 {
 	uint8_t i;
 	
@@ -1004,7 +1004,7 @@ bool MONITOR_HISTORY_FindInHistoryList ( void )
 /**
  * \brief	Load history from list to actual command
  */
-void MONITOR_HISTORY_Load ( uint8_t direction )
+void MONITOR_HISTORY_Load(uint8_t direction)
 {
 
 	// down cursor
@@ -1054,7 +1054,7 @@ void MONITOR_HISTORY_Load ( uint8_t direction )
 /**
  * \brief	Convert MONITOR_CommandActual (Actual command) to small letters
  */
-void MONITOR_ConvertSmallLetter ( void )
+void MONITOR_ConvertSmallLetter(void)
 {
 	uint8_t i;
 	
@@ -1074,7 +1074,7 @@ void MONITOR_ConvertSmallLetter ( void )
 /**
  * \brief	Check result and write response
  */
-void MONITOR_CheckResultAndRespond (CommandResult_t result)
+void MONITOR_CheckResultAndRespond(CommandResult_t result)
 {
 	const char *pMessage = NULL;
 
@@ -1129,7 +1129,7 @@ void MONITOR_CheckResultAndRespond (CommandResult_t result)
 /**
  * \brief	Run command
  */
-void MONITOR_RunCommand ( CommandID_t commandID )
+void MONITOR_RunCommand(CommandID_t commandID)
 {
 
 	uint32_t result = CommandResult_Ok;
@@ -1174,9 +1174,10 @@ void MONITOR_RunCommand ( CommandID_t commandID )
 /**
  * \brief	Write a command help
  */
-void MONITOR_WriteCommandHelp ( CommandID_t commandID )
+void MONITOR_WriteCommandHelp(CommandID_t commandID)
 {
 
+	// Print command to source
 	duprintf(MONITOR_CommandSource,
 			"Command name: %s\r\n"
 			"Function: %s\r\n"
@@ -1193,7 +1194,7 @@ void MONITOR_WriteCommandHelp ( CommandID_t commandID )
 /**
  * \brief	Check actual command argument num from settings
  */
-CommandResult_t MONITOR_ArgumentNumIsGood ( uint8_t receivedArgNum, uint8_t commandArgNum)
+CommandResult_t MONITOR_ArgumentNumIsGood(uint8_t receivedArgNum, uint8_t commandArgNum)
 {
 	// Check commandArgNum. bit is set?
 	if (receivedArgNum > MONITOR_COMMAND_ARG_MAX_COUNT)
@@ -1295,7 +1296,7 @@ void MONITOR_SendCls(void)
 /**
  * \brief Get (and wait) Password
  */
-static void MONITOR_GetPassword ( void )
+static void MONITOR_GetPassword(void)
 {
 
 	bool passwordIsOk = false;
@@ -1359,7 +1360,7 @@ static void MONITOR_GetPassword ( void )
 /**
  * \brief Check password
  */
-static bool MONITOR_CheckPassword (const char *string)
+static bool MONITOR_CheckPassword(const char *string)
 {
 	if (!StrCmp(string,MONITOR_Password))
 	{

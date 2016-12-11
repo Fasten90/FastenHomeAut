@@ -53,15 +53,15 @@ extern volatile float			ADC_ConvertedValues[];
 /*------------------------------------------------------------------------------
  *  Global function declarations
  *----------------------------------------------------------------------------*/
-void ADC_Init( void );
+void ADC_Init(void);
 void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc);
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle);
 
-void ADC_Test ( void );
+void ADC_Test(void);
 
-float ADC_ConvertToVoltage (uint32_t readValue);
-void ADC_ConvertAllMeasuredValues( void );
+float ADC_ConvertToVoltage(uint32_t readValue);
+void ADC_ConvertAllMeasuredValues(void);
 
 
 #endif // #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE

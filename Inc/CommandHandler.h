@@ -18,6 +18,7 @@
 #include "escapesequence.h"
 #include "communication.h"
 #include "board.h"
+#include "version.h"
 
 
 ///////////////////////////// MONITOR
@@ -47,10 +48,6 @@
 #define MONITOR_HISTORY_MAX_COUNT			(5)
 
 
-#define MONITOR_WELCOME_DATE_VERSION		__DATE__
-#define MONITOR_WELCOME_TIME_VERSION		__TIME__
-
-
 #define MONITOR_DUMMY_STRING				"____________________________________________\r\n"
 
 
@@ -58,15 +55,16 @@
 		MONITOR_SendMessage(								\
 		"\r\n"												\
 		"Welcome in Monitor program!\r\n"					\
-		MONITOR_WELCOME_DATE_VERSION "\r\n"					\
-		MONITOR_WELCOME_TIME_VERSION "\r\n"					\
-		"Used panel: " BOARD_NAME "\r\n"			\
+		"Version: " VERSION_DEFINE "\r\n"					\
+		DATE_VERSION "\r\n"									\
+		TIME_VERSION "\r\n"									\
+		"Used panel: " BOARD_NAME "\r\n"					\
 		"(c) Copyright, Vizi Gabor\r\n"						\
 		"\r\n"												\
 		"Try \"help\" command for help!\r\n")
 
 
-#define MONITOR_SEND_PROMT_NEW_LINE()			\
+#define MONITOR_SEND_PROMT_NEW_LINE()	\
 		MONITOR_SendMessage("\r\n# ")
 
 #define MONITOR_SEND_PROMT()			\
@@ -91,7 +89,7 @@ CONFIG_USE_TERMINAL_ZOC
 #define USART_KEY_BACKSPACE			(0x08)
 #endif
 
-// TODO: clean...
+
 #define USART_KEY_ENTER				('\r')
 #define USART_KEY_SPACE				(' ')
 #define USART_KEY_ESCAPE			('\x1B')
@@ -142,7 +140,7 @@ typedef CommandResult_t ( *FunctionPointer )( uint32_t argc, char** COMMAND_Argu
 typedef uint8_t CommandID_t;
 
 
-///< commandArgNum type
+///< CommandArgNum type
 typedef enum
 {
 	CommandArgument_0 = (1 << 0),
@@ -154,11 +152,11 @@ typedef enum
 ///< Command structure
 typedef struct
 {
-	const char *name;
-	const FunctionPointer *commandFunctionPointer;
-	const char *description;
-	const char *syntax;
-	const CommandArgNum_t commandArgNum;
+	const char *name;								///< Name of command (which need type) [string]
+	const FunctionPointer *commandFunctionPointer;	///< Function pointer (which called)
+	const char *description;						///< Command description (for help)
+	const char *syntax;								///< Command syntax
+	const CommandArgNum_t commandArgNum;			///< Required command argument num
 } CommandStruct;
 
 
@@ -178,18 +176,14 @@ extern xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
 
 
 
-
-
 /////////////////////////////  PROTOTYPES
 
+void MONITOR_Init(void);
+void MONITOR_SendWelcome(void);
 
+void MONITOR_CheckCommand(void);
 
-void MONITOR_Init (void);
-void MONITOR_SendWelcome (void);
-
-void MONITOR_CheckCommand (void);
-
-void MONITOR_WriteCommandHelp (CommandID_t commandID);
+void MONITOR_WriteCommandHelp(CommandID_t commandID);
 void MONITOR_SendCls(void);
 
 void MONITOR_SendMessage(const char *message);

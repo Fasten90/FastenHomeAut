@@ -372,8 +372,42 @@
 #define ADCx_DMA_IRQHandler             DMA2_Stream0_IRQHandler
 
 
+#endif
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+//			DAC
+///////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifdef CONFIG_USE_PANEL_DISCOVERY
+
+
+#define DACx                            DAC
+
+/* Definition for DAC clock resources */
+#define DACx_CHANNEL_GPIO_CLK_ENABLE()	__HAL_RCC_GPIOA_CLK_ENABLE()
+#define DACx_CLK_ENABLE()				__HAL_RCC_DAC_CLK_ENABLE()
+
+/* Definition for DACx Channel1 Pin */
+#define DACx_CHANNEL1_PIN				GPIO_PIN_4
+#define DACx_CHANNEL1_GPIO_PORT			GPIOA
+
+#define DACx_CHANNEL2_PIN				GPIO_PIN_5
+#define DACx_CHANNEL2_GPIO_PORT			GPIOA
+
+#define DACx_CHANNEL1					DAC_CHANNEL_1
+#define DACx_CHANNEL2					DAC_CHANNEL_2
+
+
+#define DAC_MAX_VOLTAGE					3.3f
+#define DAC_DA_MAX_VALUE				4095
+
 
 #endif
+
 
 
 ///////////////////////////////////////////////////////////////////////////////

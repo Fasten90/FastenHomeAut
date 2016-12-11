@@ -75,16 +75,17 @@ extern TIM_HandleTypeDef    TimLedGreenHandle;
 
 
 
-void LED_Init( void );
-void LED_Test ( void );
+void LED_Init(void);
+void LED_Test(void);
 bool LED_SetLed(uint8_t num, LED_SetType ledSet);
 bool LED_GetStatus(uint8_t num);
-uint8_t LED_GetNumFromName (const char*name);
-LED_SetType LED_GetTypeFromString (const char*typeString);
+uint8_t LED_GetNumFromName(const char*name);
+LED_SetType LED_GetTypeFromString(const char*typeString);
 
-void LED_InitTimers( void );
+void LED_InitTimers(void);
 void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim);
-void LED_PWM_ChangePercent(TIM_HandleTypeDef *TimHandle, uint32_t timerChannel, uint8_t percent );
+void LED_PWM_ChangePercent(TIM_HandleTypeDef *TimHandle,
+		uint32_t timerChannel, uint8_t percent);
 
 
 

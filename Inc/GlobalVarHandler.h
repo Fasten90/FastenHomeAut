@@ -31,6 +31,7 @@
 
 typedef uint8_t VarID_t;
 
+
 // Note: This enum has an "name list" (GlobalVarTypesNames), Must be in the same order with it!
 typedef enum
 {
@@ -83,29 +84,31 @@ typedef enum
 
 /// STRUCTS
 
+
+///< GlobalVarCommand structure for set-get global variables
 typedef struct
 {
 
-	const char * const name;
-	const VarType_t type;
+	const char * const name;				///< Name of global variable [string]
+	const VarType_t type;					///< Type of global variable
 
-	void * const varPointer;
-	const bool isReadOnly;
+	void * const varPointer;				///< Pointer of variable
+	const bool isReadOnly;					///< Is read only?
 
-	const uint32_t maxValue;
-	const uint32_t minValue;
+	const uint32_t maxValue;				///< Max value
+	const uint32_t minValue;				///< Min value
 
-	const CommProtocol_t sourceEnable;
+	const CommProtocol_t sourceEnable;		///< Enabled sources (for set-get)
 
-	const bool isHex;
+	const bool isHex;						///< Set-get in hexadecimal?
 
-	const char * const *enumList;
+	const char * const *enumList;			///< Enum list, if it is enumerator
 
 #ifdef GLOBALVARHANDLER_UNIT_ENABLE
-	const char * const unit;
+	const char * const unit;				///< units, example: [cm]
 #endif
 #ifdef GLOBALVARHANDLER_DESCRIPTION_ENABLE
-	const char * const description;
+	const char * const description;			///< descriptions of global variable
 #endif
 
 } GlobalVarCommand_t;
@@ -121,7 +124,7 @@ void GlobalVarHandler_ProcessCommand(
 		char *resultBuffer, uint8_t resultBufferLength);
 
 void GlobalVarHandler_ListAllVariableParameters(void);
-void GlobalVarHandler_PrintAllVariableValues (void);
+void GlobalVarHandler_PrintAllVariableValues(void);
 
 
 

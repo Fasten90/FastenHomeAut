@@ -136,7 +136,9 @@ typedef enum
 
 	//#define CONFIG_MODULE_IO_ENABLE
 
-	#define CONFIG_MODULE_RASPBERRYPI_ENABLE
+	//#define CONFIG_MODULE_RASPBERRYPI_ENABLE
+
+	//#define CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
 
 	//#define CONFIG_MODULE_ESP8266_ENABLE
 
@@ -250,8 +252,11 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #include "temperature.h"
 #endif
 
-#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
+#ifdef CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
 #include "homeautmessage.h"
+#endif
+
+#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
 #include "raspberrypi.h"
 #endif
 
@@ -264,7 +269,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #endif
 
 #ifdef CONFIG_MODULE_DAC_ENABLE
-#include "dac.h"
+#include "commonDac.h"
 #endif
 
 #ifdef CONFIG_MODULE_COMMON_IO_ENABLE

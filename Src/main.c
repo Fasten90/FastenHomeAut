@@ -228,14 +228,14 @@ int main(void)
 
 
 /**
- * \brief	Error_Handler
+ * \brief	Error Handler
  */
-void Error_Handler( void )
+void Error_Handler(void)
 {
+	// Turn off LEDs
 	LED_BLUE_OFF();
 	LED_GREEN_OFF();
-	LED_RED_ON();
-	
+
 #ifdef CONFIG_USE_FREERTOS
 	// End task scheduling
 	vTaskEndScheduler();
@@ -245,11 +245,11 @@ void Error_Handler( void )
 	// Stop debugger
 	__asm("BKPT #0\n");		// ASM: Break debugger
 #endif
+
 	while(1)	// infinite loop
 	{
-		LED_BLUE_OFF();
-		LED_GREEN_OFF();
-		LED_RED_ON();			
+		LED_RED_TOGGLE();
+		DelayMs(125);
 	}
 }
 

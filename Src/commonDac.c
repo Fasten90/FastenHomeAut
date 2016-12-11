@@ -11,10 +11,11 @@
  */
 
 
+#include "commonDac.h"
 #include "options.h"
 #include "include.h"
+#include "board.h"
 #include "stm32f4xx_hal.h"
-#include "dac.h"
 
 DAC_HandleTypeDef    DacHandle;
 static DAC_ChannelConfTypeDef sConfig;
