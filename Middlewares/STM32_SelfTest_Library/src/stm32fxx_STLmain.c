@@ -59,6 +59,14 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+
+// Added to STL
+#define FLASH_SIZE						(1 * 1024 * 1024)
+#define FLASH_ADDR_START				(0x800000)
+#define FLASH_ADDR_FLASH_END_VARIABLE	(FLASH_ADDR_START+FLASH_SIZE - 1024)
+const __attribute__((section("flashendcrc"),space(prog), address(FLASH_ADDR_FLASH_END_VARIABLE))) uint32_t __Check_Sum = 0x00001234;
+
+
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 ErrorStatus STL_CheckStack(void);

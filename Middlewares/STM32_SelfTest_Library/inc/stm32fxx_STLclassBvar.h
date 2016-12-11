@@ -50,6 +50,8 @@
 #ifndef __STL_CLASS_B_VAR_H
 #define __STL_CLASS_B_VAR_H
 
+#include "stm32fxx_STLparam.h"
+
 /* This avoids having mutiply defined global variables */
 #ifdef ALLOC_GLOBALS
 #define EXTERN

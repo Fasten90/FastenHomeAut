@@ -209,7 +209,7 @@ void STL_StartUp(void)
   
   /* No Control flow check here (not safety critical) */
   /* Switch on the PLL to speed-up Flash and RAM tests */
-  StartUpClock_Config();
+  //StartUpClock_Config();
 
   #ifdef STL_VERBOSE_POR
     /* Re-init communication channel with modified clock setting */
@@ -296,7 +296,7 @@ void STL_StartUp(void)
   #endif  /* __CC_ARM */   
 #ifdef __GNUC__
   if(crc_result != *(uint32_t *)(&REF_CRC32))
-#endif  /* __CC_ARM */
+#endif  /* __GNUC__ */
     {
       #ifdef STL_VERBOSE_POR
         printf("FLASH 32-bit CRC Error at Start-up\n\r");
@@ -571,7 +571,7 @@ void STL_WDGSelfTest(void)
     #endif  /* STL_EVAL_MODE */
 
     /* Clear all flags before resuming test */
-    __HAL_RCC_CLEAR_FLAG();
+    //__HAL_RCC_CLEAR_FLAG();
 
     /* Setup IWDG to minimum period */
     __HAL_RESET_HANDLE_STATE(&IwdgHandle);
@@ -584,7 +584,7 @@ void STL_WDGSelfTest(void)
     /* Initialization */
     HAL_IWDG_Init(&IwdgHandle);
     /* initialization becomes accepted when IWDG starts (LSI is enabled by HW) */
-    HAL_IWDG_Start(&IwdgHandle);
+    //HAL_IWDG_Start(&IwdgHandle);	// NOTE: Commented, because there is not this function in STM32F4xx HAL driver 1.14
 
     /* Wait for an independant watchdog reset */
     while(1)
@@ -625,7 +625,7 @@ void STL_WDGSelfTest(void)
         HAL_WWDG_Init(&WwdgHandle);
         
         /* Enable WWDG clock */
-        HAL_WWDG_Start(&WwdgHandle);
+        //HAL_WWDG_Start(&WwdgHandle);	// NOTE: Commented, because there is not this function in STM32F4xx HAL driver 1.14
 
         while(1)
         { }

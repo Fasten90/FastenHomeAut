@@ -11,6 +11,7 @@
 
 // For STL
 #define MAX_FLASH_LATENCY FLASH_LATENCY_3
+#define __HAL_RCC_CLEAR_FLAG __HAL_RCC_CLEAR_RESET_FLAGS
 
 
 #endif /* MAIN_H_ */
