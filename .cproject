@@ -115,18 +115,28 @@
 							<tool id="com.atollic.truestudio.ar.base.807120915" name="Archiver" superClass="com.atollic.truestudio.ar.base"/>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="com.atollic.truestudio.exe.debug.1518366166.20430902" name="stm32f4xx_hal_msp_template.c" rcbsApplicability="disable" resourcePath="Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_msp_template.c" toolsToInvoke="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447.1297175481">
-						<tool id="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447.1297175481" name="C Compiler" superClass="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447"/>
-					</fileInfo>
 					<fileInfo id="com.atollic.truestudio.exe.debug.311825581.983937533" name="" rcbsApplicability="disable" resourcePath="nofile" toolsToInvoke="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447.1976695455">
 						<tool id="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447.1976695455" name="C Compiler" superClass="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447">
 							<inputType id="com.atollic.truestudio.gcc.input.1274347818" superClass="com.atollic.truestudio.gcc.input"/>
 						</tool>
 					</fileInfo>
+					<folderInfo id="com.atollic.truestudio.exe.debug.1518366166.1361688396" name="/" resourcePath="Middlewares/STM32_SelfTest_Library">
+						<toolChain id="com.atollic.truestudio.exe.debug.toolchain.2108381129" name="Atollic ARM Tools" superClass="com.atollic.truestudio.exe.debug.toolchain" unusedChildren="">
+							<option id="com.atollic.truestudio.toolchain_options.mcu.369284816.677039779" name="Microcontroller" superClass="com.atollic.truestudio.toolchain_options.mcu.369284816"/>
+							<option id="com.atollic.truestudio.toolchain_options.vendor.649027544.192082160" name="Vendor name" superClass="com.atollic.truestudio.toolchain_options.vendor.649027544"/>
+							<tool id="com.atollic.truestudio.exe.debug.toolchain.as.1696989668" name="Assembler" superClass="com.atollic.truestudio.exe.debug.toolchain.as.1545899283"/>
+							<tool id="com.atollic.truestudio.exe.debug.toolchain.gcc.1382811203" name="C Compiler" superClass="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447"/>
+							<tool id="com.atollic.truestudio.exe.debug.toolchain.ld.456778522" name="C Linker" superClass="com.atollic.truestudio.exe.debug.toolchain.ld.1444973427"/>
+							<tool id="com.atollic.truestudio.exe.debug.toolchain.gpp.1569290758" name="C++ Compiler" superClass="com.atollic.truestudio.exe.debug.toolchain.gpp.981298185"/>
+							<tool id="com.atollic.truestudio.exe.debug.toolchain.ldcc.1820424965" name="C++ Linker" superClass="com.atollic.truestudio.exe.debug.toolchain.ldcc.428260"/>
+							<tool id="com.atollic.truestudio.ar.base.529073558" name="Archiver" superClass="com.atollic.truestudio.ar.base.807120915"/>
+							<tool id="com.atollic.truestudio.exe.debug.toolchain.secoutput.1851631011" name="Other" superClass="com.atollic.truestudio.exe.debug.toolchain.secoutput.839033486"/>
+						</toolChain>
+					</folderInfo>
 					<sourceEntries>
 						<entry excluding="STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_msp_template.c|STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_timebase_tim_template.c|STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_timebase_rtc_alarm_template.c|STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_timebase_rtc_wakeup_template.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Inc"/>
-						<entry excluding="STM32_SelfTest_Library" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
+						<entry excluding="STM32_SelfTest_Library|STM32_SelfTest_Library/stm32f4xx_STLcpustartIARv5.s|STM32_SelfTest_Library/stm32fxx_STLRamMcMxIAR.s|STM32_SelfTest_Library/stm32f4xx_STLcpurunIARv5.s" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Src"/>
 					</sourceEntries>
 				</configuration>
