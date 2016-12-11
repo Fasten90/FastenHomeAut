@@ -58,9 +58,12 @@
  * @param[out]
  * @return
  ******************************************************************************/
-void MODULNAME_FunctionName()
+void MODULNAME_FunctionName(void)
 {
+
 }
+
+
 
 /***************************************************************************//**
  * @brief
@@ -72,6 +75,7 @@ void MODULNAME_FunctionName()
  * @retval
  * @retval
  ******************************************************************************/
-void MODULNAME_OtherFunc()
+void MODULNAME_OtherFunc(void)
 {
+
 }

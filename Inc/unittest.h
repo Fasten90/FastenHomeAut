@@ -16,7 +16,7 @@
 
 /// Functions prototypes
 
-void UnitTest_Start(const char *message, const char *fileName);
+void UnitTest_Start(const char *moduleName, const char *fileName);
 void UnitTest_CheckResult(bool isValid, const char *errorString, const char *fileName, uint32_t line);
 void UnitTest_End(const char *fileName);
 

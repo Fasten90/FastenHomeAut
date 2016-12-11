@@ -49,22 +49,18 @@ volatile char USART_TxBuffer[TXBUFFERSIZE] = { 0 };
 
 volatile uint8_t USART_RxBufferWriteCounter = 0;
 
+uint8_t USART_SendEnable_flag = 0;
+
 
 #if RXBUFFERSIZE != 256
 #warning "RxBufferCounter need to check!"
 #endif
 
 
-uint8_t USART_SendEnable_flag = 0;
-
-
-//extern uint8_t ESP8266_Uart_ReceivedCharFlag;
-
 
 /*------------------------------------------------------------------------------
  *  Function declarations
  *----------------------------------------------------------------------------*/
-//static uint8_t StrCpy ( const uint8_t *string, uint8_t *dest);	// uint8_t pos
 
 
 /*------------------------------------------------------------------------------
@@ -79,9 +75,9 @@ extern void Error_Handler( void );
 
 
 
-/***************************************************************************//**
- * @brief		-	USART_Init:	Inicializalja az USART periferiat
- ******************************************************************************/
+/**
+ * \brief	Initialize USART peripheral
+ */
 void USART_Init ( UART_HandleTypeDef *UartHandle)
 {
 	
@@ -141,20 +137,18 @@ void USART_Init ( UART_HandleTypeDef *UartHandle)
 	{	
 		Error_Handler();
 	}
-	
-	
-
 }
 
 
 
+/**
+ * \brief	UART initialize (port - pins) for HAL driver
+ */
 void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 {
 	
-	
 	GPIO_InitTypeDef  GPIO_InitStruct;
 
-	
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 
 	if (huart == &Debug_UartHandle)
@@ -268,7 +262,6 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 
 
 
-
 /**
   * @brief  Rx Transfer completed callback
   * @param  UartHandle: UART handle
@@ -343,7 +336,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 
 
 
-// !! IMPORTANT !! Hiba eseten ebbe az ErrorCallback-be jutunk.
+/**
+ * \brief	UART error function
+ * 			If has error, the HAL driver call this function
+ */
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
 
@@ -420,7 +416,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 /**
  * \brief	Send string on USART
  */
-uint8_t USART_SendMessage ( const char *aTxBuffer )
+uint8_t USART_SendMessage(const char *aTxBuffer)
 {
 	// TODO: ReturnType + Check Pointer
 	#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
@@ -484,7 +480,7 @@ uint8_t USART_SendMessage ( const char *aTxBuffer )
 /**
  * \brief Send newline
  */
-bool USART_SendNewLine (void)
+bool USART_SendNewLine(void)
 {
 	return USART_SendMessage("\r\n");
 }
@@ -494,7 +490,7 @@ bool USART_SendNewLine (void)
 /**
  * \brief	Send message with newline
  */
-bool USART_SendLine (const char *message)
+bool USART_SendLine(const char *message)
 {
 	bool isSuccessful = true;
 	isSuccessful &= USART_SendMessage(message);
@@ -507,7 +503,7 @@ bool USART_SendLine (const char *message)
 /**
  * \brief	Send a char on USART
  */
-bool USART_SendChar ( char c )
+bool USART_SendChar(char c)
 {
 	#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	char buf[2];
@@ -559,7 +555,7 @@ bool USART_SendChar ( char c )
  * \brief	Receive message with IT
  */
  #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-void USART_StartReceiveMessage ( void )
+void USART_StartReceiveMessage(void)
 {
 
 	// USART - Receive Message
@@ -579,7 +575,7 @@ void USART_StartReceiveMessage ( void )
 /**
  * \brief	Wait fo USART sending
  */
-uint8_t USART_WaitForSend (uint16_t timeoutMiliSecond)
+uint8_t USART_WaitForSend(uint16_t timeoutMiliSecond)
 {
 
 	while(USART_SendEnable_flag == DISABLE && timeoutMiliSecond != 0)
@@ -597,6 +593,20 @@ uint8_t USART_WaitForSend (uint16_t timeoutMiliSecond)
 
 
 
+/**
+ * \brief	Send float number on usart
+ */
+void USART_SendFloat(float value)
+{
+	char string[16];
+	
+	FloatToString(value,string,0,6);
+	
+	USART_SendMessage(string);
+}
+
+
+
 /*
 void USART_Test (void)
 {
@@ -607,19 +617,3 @@ void USART_Test (void)
 
 }
 */
-
-
-
-/**
- * \brief	Send float number on usart
- */
-void USART_SendFloat (float value)
-{
-	char string[16];
-	
-	FloatToString(value,string,0,6);
-	
-	USART_SendMessage(string);
-}
-
-

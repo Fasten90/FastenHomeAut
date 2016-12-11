@@ -72,19 +72,17 @@ extern volatile uint8_t USART_RxBufferWriteCounter;
 /*------------------------------------------------------------------------------
  *  Global function declarations
  *----------------------------------------------------------------------------*/
-void USART_Init ( UART_HandleTypeDef *UartHandle );
+void USART_Init(UART_HandleTypeDef *UartHandle);
 
-uint8_t USART_WaitForSend ( uint16_t timeoutMiliSecond );
+uint8_t USART_WaitForSend(uint16_t timeoutMiliSecond);
 
-//void USART_StartReceiveMessage ( uint8_t *aRxBuffer );
-void USART_StartReceiveMessage ( void );
+void USART_StartReceiveMessage(void);
 
-
-bool USART_SendChar ( char c );
-uint8_t USART_SendMessage ( const char *aTxBuffer );
-bool USART_SendNewLine (void);
-bool USART_SendLine ( const char *message );
-void USART_SendFloat ( float value);
+bool USART_SendChar(char c);
+uint8_t USART_SendMessage(const char *aTxBuffer);
+bool USART_SendNewLine(void);
+bool USART_SendLine(const char *message);
+void USART_SendFloat(float value);
 
 
 

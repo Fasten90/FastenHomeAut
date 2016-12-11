@@ -8,8 +8,6 @@
 
 #include "options.h"
 #include "include.h"
-#include "homeautmessage.h"
-
 #include "raspberrypi.h"
 
 
@@ -158,8 +156,9 @@ void HAL_UART_MspInitRASPBERRYPI(UART_HandleTypeDef *huart)
 
 
 
-// void RASPBERRYPI_SendMessage(uint8_t myAddress, HOMEAUTMESSAGE_FunctionType functionType, HOMEAUTMESSAGE_DataType dataType , float data)
-void RASPBERRYPI_SendMessage(uint8_t myAddress, uint8_t functionType, uint8_t dataType , float data)
+void RASPBERRYPI_SendMessage(uint8_t myAddress,
+		HomeAut_FunctionType functionType, HomeAut_DataType dataType, float data)
+//void RASPBERRYPI_SendMessage(uint8_t myAddress, uint8_t functionType, uint8_t dataType , float data)
 {
 	//myAddress	// ok
 	char function = 0;

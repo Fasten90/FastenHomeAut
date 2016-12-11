@@ -9,7 +9,7 @@
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
-#include "include.h"
+//#include "include.h"
 //#include "homeautmessage.h"	// TODO: delete
 
 /*------------------------------------------------------------------------------
@@ -41,8 +41,10 @@
 /*------------------------------------------------------------------------------
  *  Global function declarations
  *----------------------------------------------------------------------------*/
-//void RASPBERRYPI_SendMessage(uint8_t myAddress, HOMEAUTMESSAGE_FunctionType functionType, HOMEAUTMESSAGE_DataType dataType , float data);
-void RASPBERRYPI_SendMessage(uint8_t myAddress, uint8_t functionType, uint8_t dataType , float data);
+// TODO: Feloldani a HomeAut_FunctionType, HomeAut_DataType hibát
+//void RASPBERRYPI_SendMessage(uint8_t myAddress,
+//		HomeAut_FunctionType functionType, HomeAut_DataType dataType , float data);
+void RASPBERRYPI_SendMessage(uint8_t myAddress, uint8_t functionType, uint8_t dataType, float data);
 
 
 

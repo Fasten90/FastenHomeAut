@@ -26,7 +26,7 @@
 // TODO: Write to dynamic
 
 // Now: 40 length
-const uint8_t HOMEAUTMESSAGE_DefaultMessageLength = sizeof(HOMEAUTMESSAGE_MessageType);
+const uint8_t HOMEAUTMESSAGE_DefaultMessageLength = sizeof(HomeAut_MessageType);
 
 const char HOMEAUTMESSAGE_DefaultHeader[] = "|HomeAut|";
 const uint8_t HOMEAUTMESSAGE_DefaultHeader_Length = sizeof(HOMEAUTMESSAGE_DefaultHeader) -1;
@@ -212,7 +212,7 @@ const DataTypeParity DataTypeParity_List[] =
 ////////////////////////////
 //		GLOBAL VARIABLES
 
-HOMEAUTMESSAGE_InformationType HOMEAUTMESSAGE_MessageInformation;
+HomeAut_InformationType HOMEAUTMESSAGE_MessageInformation;
 
 
 
@@ -226,15 +226,15 @@ HOMEAUTMESSAGE_InformationType HOMEAUTMESSAGE_MessageInformation;
 */
 ReturnType HOMEAUTMESSAGE_CompareMessage(char *messageString)
 {
-	HOMEAUTMESSAGE_MessageType *message = (HOMEAUTMESSAGE_MessageType *)messageString;
+	HomeAut_MessageType *message = (HomeAut_MessageType *)messageString;
 	
 	HOMEAUTMESSAGE_MessageInformation.isValid = INVALID;
 	uint32_t readedMyAddress = 0;
 	uint32_t readedTargetAddress = 0;
-	HOMEAUTMESSAGE_FunctionType function = Function_Invalid;
+	HomeAut_FunctionType function = Function_Invalid;
 	uint32_t readedData = 0;
 	char buffer[10];
-	HOMEAUTMESSAGE_DataType dataType = DataType_Unknown;
+	HomeAut_DataType dataType = DataType_Unknown;
 	
 	
 	// Header
@@ -383,8 +383,8 @@ void HOMEAUTMESSAGE_Test(void)
 		LED_GREEN_ON();
 	}
 	
-	HOMEAUTMESSAGE_MessageType anMessage;
-	HOMEAUTMESSAGE_MessageType *pAnMessage;
+	HomeAut_MessageType anMessage;
+	HomeAut_MessageType *pAnMessage;
 	pAnMessage = &anMessage;
 	
 	HOMEAUTMESSAGE_CreateMessage(pAnMessage,&HOMEAUTMESSAGE_MessageInformation);
@@ -398,7 +398,7 @@ void HOMEAUTMESSAGE_Test(void)
 
 
 
-ReturnType HOMEAUTMESSAGE_CreateMessage(HOMEAUTMESSAGE_MessageType *createToMessage, HOMEAUTMESSAGE_InformationType *messageInformation)
+ReturnType HOMEAUTMESSAGE_CreateMessage(HomeAut_MessageType *createToMessage, HomeAut_InformationType *messageInformation)
 {
 	
 	
@@ -466,18 +466,18 @@ ReturnType HOMEAUTMESSAGE_CreateMessage(HOMEAUTMESSAGE_MessageType *createToMess
 /*
 uint8_t MyAddress;
 uint8_t TargetAddress;
-HOMEAUTMESSAGE_FunctionType Function;
-HOMEAUTMESSAGE_DataType DataType;
+HomeAut_FunctionType Function;
+HomeAut_DataType DataType;
 uint32_t Data;
 uint8_t isValid;
 */
 ReturnType HOMEAUTMESSAGE_CreateAndSendHomeAutMessage
-	( uint8_t myIp, uint8_t destIp, HOMEAUTMESSAGE_FunctionType function,
-	HOMEAUTMESSAGE_DataType dataType, uint32_t data, uint8_t isValid)
+	( uint8_t myIp, uint8_t destIp, HomeAut_FunctionType function,
+	HomeAut_DataType dataType, uint32_t data, uint8_t isValid)
 {
 	
-	HOMEAUTMESSAGE_InformationType messageInformation;
-	HOMEAUTMESSAGE_MessageType message;
+	HomeAut_InformationType messageInformation;
+	HomeAut_MessageType message;
 	
 
 	messageInformation.MyAddress = myIp;	

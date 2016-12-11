@@ -136,9 +136,9 @@ typedef enum
 
 	//#define CONFIG_MODULE_IO_ENABLE
 
-	//#define CONFIG_MODULE_RASPBERRYPI_ENABLE
-
 	//#define CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
+
+	//#define CONFIG_MODULE_RASPBERRYPI_ENABLE
 
 	//#define CONFIG_MODULE_ESP8266_ENABLE
 
@@ -193,43 +193,25 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 
 	
-// For board defines (pins, ports)
+/// For board defines (pins, ports)
 #include "board.h"
 
 
-// MODUL INCLUDES
-
-
-// Nincs kész:
-//#include "buzzer.h"
-//#include "lcd.h"
-//#include "eeprom.h"
-//#include "rfm12b.h"
-//#include "lis302dl.h"
-//#include "lowpower.h"
-//#include "rtc.h"
-
-//#include "clock.h"
-
-//#include "log.h"
+/// MODUL INCLUDES
 
 
 #include "globals.h"
-
-#include "usart.h"
 #include "string.h"
 
-
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#include "usart.h"
 #include "CommandHandler.h"
 #include "commandList.h"
 #endif
 
-
 #ifdef CONFIG_MODULE_LED_ENABLE
 #include "led.h"
 #endif
-
 
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
 #include "button.h"

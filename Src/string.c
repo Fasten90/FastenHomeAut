@@ -1402,7 +1402,7 @@ void STRING_UnitTest (void)
 	char *splitted[10];
 
 	// Start of unittest
-	UnitTest_Start("String module unit test", __FILE__);
+	UnitTest_Start("String", __FILE__);
 
 
 	/// String compare StrCmp()

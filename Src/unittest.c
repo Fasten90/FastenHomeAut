@@ -16,22 +16,35 @@
 #include "unittest.h"
 
 
+/// VARIABLES
+
 static uint16_t UnitTest_ValidCnt = 0;
 static uint16_t UnitTest_InvalidCnt = 0;
 
 
-void UnitTest_Start(const char *message, const char *fileName)
+/// FUNCTIONS
+
+
+
+/**
+ * \brief	Start unit test
+ */
+void UnitTest_Start(const char *moduleName, const char *fileName)
 {
-	uprintf("%s\r\n"
+	uprintf("\r\n"
+			"Start %s module unit test\r\n"
 			"File: \"%s\"\r\n"
 			"\r\n",
-			message, fileName);
+			moduleName, fileName);
 	UnitTest_ValidCnt = 0;
 	UnitTest_InvalidCnt = 0;
 }
 
 
 
+/**
+ * \brief	Check unit test result
+ */
 void UnitTest_CheckResult(bool isValid, const char *errorString, const char *fileName, uint32_t line)
 {
 	if (isValid)
@@ -55,6 +68,9 @@ void UnitTest_CheckResult(bool isValid, const char *errorString, const char *fil
 
 
 
+/**
+ * \brief Finish unit test
+ */
 void UnitTest_End(const char *fileName)
 {
 	uprintf("\r\n"
