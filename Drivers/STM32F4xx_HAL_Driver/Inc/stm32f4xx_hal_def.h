@@ -100,7 +100,7 @@ typedef enum
   *            HAL_PPP_MspInit() which will reconfigure the low level hardware.
   * @retval None
   */
-#define __HAL_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = 0U)
+#define __HAL_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->Instance->SR = 0U)
 
 #if (USE_RTOS == 1)
   /* Reserved for future use */
