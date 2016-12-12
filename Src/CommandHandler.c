@@ -274,14 +274,6 @@ void MONITOR_CheckCommand(void)
 		if (MONITOR_CommandReceiveEnable)
 		{
 
-			#ifdef CONFIG_USE_FREERTOS
-			// Wait semaphore
-			if ( xSemaphoreTake(DEBUG_USART_Tx_Semaphore,1000) == pdTRUE )
-			{
-				MONITOR_CommandReceivedEvent = true;
-			}
-			#endif
-
 #ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
 			// Test for Raspberry Pi
 			if (BUTTON_Clicked)
@@ -291,7 +283,17 @@ void MONITOR_CheckCommand(void)
 			}
 #endif
 
+
+			#ifdef CONFIG_USE_FREERTOS
+			// Wait semaphore
+			if (xSemaphoreTake(DEBUG_USART_Tx_Semaphore,1000) == pdTRUE)
+			{
+				MONITOR_ProcessReceivedCharacter();
+			}
+			#else
+			// If not used FreeRTOS, always check characters
 			MONITOR_ProcessReceivedCharacter();
+			#endif
 
 			if (MONITOR_CommandReceivedEvent)
 			{

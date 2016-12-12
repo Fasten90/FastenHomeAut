@@ -19,7 +19,7 @@ extern const char Global_Version[];
 
 
 void DelayMs(uint32_t ms);
-
+void Error_Handler(void);
 
 
 #endif /* GLOBALS_H_ */

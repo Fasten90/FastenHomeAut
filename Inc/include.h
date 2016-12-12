@@ -17,7 +17,7 @@
 #include "options.h"
 
 
-// #define assert_param(expr) ((void)0)	// incopatible redefinition ...
+// #define assert_param(expr) ((void)0)	// incompatible redefinition ...
 
 
 // typedefs
@@ -128,7 +128,7 @@ typedef enum
 
 	#define CONFIG_MODULE_MONITOR_ENABLE
 
-	//#define CONFIG_USE_FREERTOS
+	#define CONFIG_USE_FREERTOS
 
 	#define CONFIG_MODULE_LED_ENABLE
 
@@ -156,7 +156,7 @@ typedef enum
 
 	#define CONFIG_MODULE_COMMON_ADC_ENABLE
 
-	//#define CONFIG_MODULE_STL_SELFTEST_ENABLE
+	#define CONFIG_MODULE_STL_SELFTEST_ENABLE
 #endif
 
 
@@ -179,7 +179,7 @@ FreeRTOS/Source/portable/[compiler]/[architecture]/port.c.
 FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 */
 
-#define MONITOR_TASK_STACK_SIZE			configMINIMAL_STACK_SIZE * 3
+#define MONITOR_TASK_STACK_SIZE			configMINIMAL_STACK_SIZE * 10
 #define MONITOR_TASK_PRIORITY			( tskIDLE_PRIORITY + 3UL )
 
 #define ESP8266_TASK_STACK_SIZE			configMINIMAL_STACK_SIZE * 3
@@ -264,6 +264,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 #ifdef CONFIG_MODULE_STL_SELFTEST_ENABLE
 #include "stm32fxx_STLmain.h"
+#include "stm32fxx_STLmain_simple.h"
 #endif
 
 

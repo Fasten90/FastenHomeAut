@@ -283,8 +283,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[++USART_RxBufferWriteCounter], RX_BUFFER_WAIT_LENGTH);
 
 		#ifdef CONFIG_USE_FREERTOS
-		// Transmission end semaphore / flag
-		// Give semaphore
+		// Transmission end semaphore / flag: Give semaphore
 		xSemaphoreGiveFromISR(DEBUG_USART_Rx_Semaphore,0);
 		#endif
 

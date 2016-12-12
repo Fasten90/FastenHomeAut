@@ -23,14 +23,41 @@ const char Global_Version[]		= VERSION_DEFINE;
 
 /**
  * \brief	Delay (ms)
- * \param[in]	ms	milisecond, which time delay
+ * \param[in]	ms	millisecond, which time delay
  */
 void DelayMs(uint32_t ms)
 {
 #ifdef CONFIG_USE_FREERTOS
-	vTaskDelay(ms/);
+	vTaskDelay((TickType_t)(ms/portTICK_PERIOD_MS));
 #else
 	HAL_Delay(ms);
 #endif
 }
 
+
+
+/**
+ * \brief	Error Handler
+ */
+void Error_Handler(void)
+{
+	// Turn off LEDs
+	LED_BLUE_OFF();
+	LED_GREEN_OFF();
+
+#ifdef CONFIG_DEBUG_MODE
+	// Stop debugger
+	__asm("BKPT #0\n");		// ASM: Break debugger
+#endif
+
+#ifdef CONFIG_USE_FREERTOS
+	// End task scheduling
+	vTaskEndScheduler();
+#endif
+
+	while(1)	// infinite loop
+	{
+		LED_RED_TOGGLE();
+		DelayMs(125);
+	}
+}

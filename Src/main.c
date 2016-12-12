@@ -125,11 +125,12 @@ int main(void)
 
 
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
-	//HAL_ADC_MspInit(&AdcHandle);
+	//HAL_ADC_MspInit(&AdcHandle);	// Called by HAL driver
 	ADC_Init();
 	// Test, blocking
 	//ADC_Test();
 #endif
+
 
 #ifdef CONFIG_MODULE_STL_SELFTEST_ENABLE
 	STL_InitRunTimeChecks();
@@ -138,6 +139,7 @@ int main(void)
 
 // DEBUG USART
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+	USART_Init(&Debug_UartHandle);
 #ifdef CONFIG_USE_FREERTOS
 	DEBUG_USART_Rx_Semaphore = NULL;
 	DEBUG_USART_Tx_Semaphore = NULL;
@@ -149,10 +151,7 @@ int main(void)
 	{
 		Error_Handler();
 	}
-#else	//#ifdef CONFIG_USE_FREERTOS
-
-	USART_Init(&Debug_UartHandle);
-#endif
+#endif	//#ifdef CONFIG_USE_FREERTOS
 #endif
 
 
@@ -177,8 +176,8 @@ int main(void)
 #endif	// #ifdef CONFIG_MODULE_MONITOR_ENABLE
 
 
-	// ESP8266
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
+	// ESP8266
 	ESP8266_USART_Rx_Semaphore = NULL;
 	ESP8266_USART_Rx_Semaphore = xSemaphoreCreateBinary();
 	
@@ -223,34 +222,6 @@ int main(void)
 		Error_Handler();
 	}
 	
-}
-
-
-
-/**
- * \brief	Error Handler
- */
-void Error_Handler(void)
-{
-	// Turn off LEDs
-	LED_BLUE_OFF();
-	LED_GREEN_OFF();
-
-#ifdef CONFIG_USE_FREERTOS
-	// End task scheduling
-	vTaskEndScheduler();
-#endif
-	
-#ifdef CONFIG_DEBUG_MODE
-	// Stop debugger
-	__asm("BKPT #0\n");		// ASM: Break debugger
-#endif
-
-	while(1)	// infinite loop
-	{
-		LED_RED_TOGGLE();
-		DelayMs(125);
-	}
 }
 
 
@@ -380,5 +351,223 @@ void assert_failed(uint8_t* file, uint32_t line)
 /**
   * @}
 */ 
+
+/*-----------------------------------------------------------*/
+
+void vApplicationTickHook( void )
+{
+	// TODO: What is this?
+}
+/*-----------------------------------------------------------*/
+
+#if 0
+static void prvSetupNestedFPUInterruptsTest( void )
+{
+	NVIC_InitTypeDef NVIC_InitStructure;
+
+	/* Enable the TIM2 interrupt in the NVIC.  The timer itself is not used,
+	just its interrupt vector to force nesting from software.  TIM2 must have
+	a lower priority than TIM3, and both must have priorities above
+	configMAX_SYSCALL_INTERRUPT_PRIORITY. */
+	NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY - 1;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init( &NVIC_InitStructure );
+
+	/* Enable the TIM3 interrupt in the NVIC.  The timer itself is not used,
+	just its interrupt vector to force nesting from software.  TIM2 must have
+	a lower priority than TIM3, and both must have priorities above
+	configMAX_SYSCALL_INTERRUPT_PRIORITY. */
+	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY - 2;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init( &NVIC_InitStructure );
+}
+/*-----------------------------------------------------------*/
+
+void TIM3_IRQHandler( void )
+{
+	/* Just to verify that the interrupt nesting behaves as expected, increment
+	ulFPUInterruptNesting on entry, and decrement it on exit. */
+	ulFPUInterruptNesting++;
+
+	/* This is the highest priority interrupt in the chain of forced nesting
+	interrupts, so latch the maximum value reached by ulFPUInterruptNesting.
+	This is done purely to allow verification that the nesting depth reaches
+	that intended. */
+	if( ulFPUInterruptNesting > ulMaxFPUInterruptNesting )
+	{
+		ulMaxFPUInterruptNesting = ulFPUInterruptNesting;
+	}
+
+	/* Fill the FPU registers with 99 to overwrite the values written by
+	TIM2_IRQHandler(). */
+	vRegTestClearFlopRegistersToParameterValue( 99UL );
+
+	ulFPUInterruptNesting--;
+}
+/*-----------------------------------------------------------*/
+
+void TIM2_IRQHandler( void )
+{
+	/* Just to verify that the interrupt nesting behaves as expected, increment
+	ulFPUInterruptNesting on entry, and decrement it on exit. */
+	ulFPUInterruptNesting++;
+
+	/* Fill the FPU registers with 1. */
+	vRegTestClearFlopRegistersToParameterValue( 1UL );
+
+	/* Trigger a timer 3 interrupt, which will fill the registers with a
+	different value. */
+	NVIC_SetPendingIRQ( TIM3_IRQn );
+
+	/* Ensure that, after returning from the nesting interrupt, all the FPU
+	registers contain the value to which they were set by this interrupt
+	function. */
+	configASSERT( ulRegTestCheckFlopRegistersContainParameterValue( 1UL ) );
+
+	ulFPUInterruptNesting--;
+}
+/*-----------------------------------------------------------*/
+
+static void prvOptionallyCreateComprehensveTestApplication( void )
+{
+	#if ( mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY == 0 )
+	{
+	TimerHandle_t xCheckTimer = NULL;
+
+		/* Configure the interrupts used to test FPU registers being used from
+		nested interrupts. */
+		prvSetupNestedFPUInterruptsTest();
+
+		/* Start all the other standard demo/test tasks. */
+		vStartIntegerMathTasks( tskIDLE_PRIORITY );
+		vStartDynamicPriorityTasks();
+		vStartBlockingQueueTasks( mainBLOCK_Q_PRIORITY );
+		vCreateBlockTimeTasks();
+		vStartCountingSemaphoreTasks();
+		vStartGenericQueueTasks( tskIDLE_PRIORITY );
+		vStartRecursiveMutexTasks();
+		vStartPolledQueueTasks( mainQUEUE_POLL_PRIORITY );
+		vStartSemaphoreTasks( mainSEM_TEST_PRIORITY );
+
+		/* Most importantly, start the tasks that use the FPU. */
+		vStartMathTasks( mainFLOP_TASK_PRIORITY );
+
+		/* Create the register check tasks, as described at the top of this
+		file */
+		xTaskCreate( vRegTest1Task, "Reg1", configMINIMAL_STACK_SIZE, ( void * ) NULL, tskIDLE_PRIORITY, NULL );
+		xTaskCreate( vRegTest2Task, "Reg2", configMINIMAL_STACK_SIZE, ( void * ) NULL, tskIDLE_PRIORITY, NULL );
+
+		/* Create the semaphore that is used to demonstrate a task being
+		synchronised with an interrupt. */
+		vSemaphoreCreateBinary( xTestSemaphore );
+
+		/* Create the task that is unblocked by the demonstration interrupt. */
+		xTaskCreate( prvButtonTestTask, "BtnTest", configMINIMAL_STACK_SIZE, ( void * ) NULL, tskIDLE_PRIORITY, NULL );
+
+		/* Create the software timer that performs the 'check' functionality,
+		as described at the top of this file. */
+		xCheckTimer = xTimerCreate( "CheckTimer",					/* A text name, purely to help debugging. */
+									( mainCHECK_TIMER_PERIOD_MS ),	/* The timer period, in this case 3000ms (3s). */
+									pdTRUE,							/* This is an auto-reload timer, so xAutoReload is set to pdTRUE. */
+									( void * ) 0,					/* The ID is not used, so can be set to anything. */
+									prvCheckTimerCallback			/* The callback function that inspects the status of all the other tasks. */
+								  );
+
+		if( xCheckTimer != NULL )
+		{
+			xTimerStart( xCheckTimer, mainDONT_BLOCK );
+		}
+
+		/* This task has to be created last as it keeps account of the number of
+		tasks it expects to see running. */
+		vCreateSuicidalTasks( mainCREATOR_TASK_PRIORITY );
+	}
+	#else /* mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY */
+	{
+		/* Just to prevent compiler warnings when the configuration options are
+		set such that these static functions are not used. */
+		( void ) vRegTest1Task;
+		( void ) vRegTest2Task;
+		( void ) prvCheckTimerCallback;
+		( void ) prvSetupNestedFPUInterruptsTest;
+	}
+	#endif /* mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY */
+}
+/*-----------------------------------------------------------*/
+
+void EXTI9_5_IRQHandler(void)
+{
+	long lHigherPriorityTaskWoken = pdFALSE;
+
+	/* Only line 6 is enabled, so there is no need to test which line generated
+	the interrupt. */
+	EXTI_ClearITPendingBit( EXTI_Line6 );
+
+	/* This interrupt does nothing more than demonstrate how to synchronise a
+	task with an interrupt.  First the handler releases a semaphore.
+	lHigherPriorityTaskWoken has been initialised to zero. */
+	xSemaphoreGiveFromISR( xTestSemaphore, &lHigherPriorityTaskWoken );
+
+	/* If there was a task that was blocked on the semaphore, and giving the
+	semaphore caused the task to unblock, and the unblocked task has a priority
+	higher than the currently executing task (the task that this interrupt
+	interrupted), then lHigherPriorityTaskWoken will have been set to pdTRUE.
+	Passing pdTRUE into the following macro call will cause this interrupt to
+	return directly to the unblocked, higher priority, task. */
+	portEND_SWITCHING_ISR( lHigherPriorityTaskWoken );
+}
+#endif
+/*-----------------------------------------------------------*/
+
+void vApplicationMallocFailedHook( void )
+{
+	/* vApplicationMallocFailedHook() will only be called if
+	configUSE_MALLOC_FAILED_HOOK is set to 1 in FreeRTOSConfig.h.  It is a hook
+	function that will get called if a call to pvPortMalloc() fails.
+	pvPortMalloc() is called internally by the kernel whenever a task, queue,
+	timer or semaphore is created.  It is also called by various parts of the
+	demo application.  If heap_1.c or heap_2.c are used, then the size of the
+	heap available to pvPortMalloc() is defined by configTOTAL_HEAP_SIZE in
+	FreeRTOSConfig.h, and the xPortGetFreeHeapSize() API function can be used
+	to query the size of free heap space that remains (although it does not
+	provide information on how the remaining heap might be fragmented). */
+	taskDISABLE_INTERRUPTS();
+	//for( ;; );
+	Error_Handler();
+}
+/*-----------------------------------------------------------*/
+
+void vApplicationIdleHook( void )
+{
+	/* vApplicationIdleHook() will only be called if configUSE_IDLE_HOOK is set
+	to 1 in FreeRTOSConfig.h.  It will be called on each iteration of the idle
+	task.  It is essential that code added to this hook function never attempts
+	to block in any way (for example, call xQueueReceive() with a block time
+	specified, or call vTaskDelay()).  If the application makes use of the
+	vTaskDelete() API function (as this demo application does) then it is also
+	important that vApplicationIdleHook() is permitted to return to its calling
+	function, because it is the responsibility of the idle task to clean up
+	memory allocated by the kernel to any task that has since been deleted. */
+}
+/*-----------------------------------------------------------*/
+
+void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName )
+{
+	( void ) pcTaskName;
+	( void ) pxTask;
+
+	/* Run time stack overflow checking is performed if
+	configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.  This hook
+	function is called if a stack overflow is detected. */
+	taskDISABLE_INTERRUPTS();
+	//for( ;; );
+	Error_Handler();
+}
+/*-----------------------------------------------------------*/
+
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
