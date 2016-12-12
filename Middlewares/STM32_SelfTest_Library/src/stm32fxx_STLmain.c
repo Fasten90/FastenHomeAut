@@ -51,6 +51,7 @@
 #include "stm32fxx_STLparam.h"
 #include "stm32fxx_STLlib.h"
 
+#if 0
 /** @addtogroup STM32FxxSelfTestLib_src
   * @{
   */ 
@@ -64,7 +65,7 @@
 #define FLASH_SIZE						(1 * 1024 * 1024)
 #define FLASH_ADDR_START				(0x800000)
 #define FLASH_ADDR_FLASH_END_VARIABLE	(FLASH_ADDR_START+FLASH_SIZE - 1024)
-const __attribute__((section("flashendcrc"),space(prog), address(FLASH_ADDR_FLASH_END_VARIABLE))) uint32_t __Check_Sum = 0x00001234;
+const __attribute__((.section("flashendcrc"),.space(prog), .address(FLASH_ADDR_FLASH_END_VARIABLE))) uint32_t __Check_Sum = 0x00001234;
 
 
 /* Private function prototypes -----------------------------------------------*/
@@ -242,7 +243,7 @@ void STL_InitRunTimeChecks(void)
 /******************************************************************************/
 /**
   * @brief  Perform set of generic tests at run time from main
-  *         (can be divided into more separeted segments if necessary)
+  *         (can be divided into more separated segments if necessary)
   * @param  : None
   * @retval : None
   */
@@ -518,3 +519,6 @@ ErrorStatus STL_CheckStack(void)
   */
 
 /******************* (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+#endif
+

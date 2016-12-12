@@ -1019,7 +1019,19 @@ CommandResult_t CommandFunction_moduletest (uint32_t argc, char** argv)
 #ifdef CONFIG_MODULE_STL_SELFTEST_ENABLE
 	// STL selftest
 	MONITOR_SendLine("STL selftest");
-	STL_DoRunTimeChecks();
+	while(!STL_FlashResult)
+	{
+		STL_DoRunTimeChecks();
+	}
+	if (STL_FlashResult == 1)
+	{
+		MONITOR_SendLine("STL Flash CRC test result is OK");
+	}
+	else
+	{
+		MONITOR_SendLine("STL Flash CRC test result is Failed");
+	}
+
 #endif
 
 	return CommandResult_Ok;

@@ -69,7 +69,7 @@
     #pragma diag_suppress= Pm088,Pm136,Pm140,Pm141
   #endif /* __IAR_SYSTEMS_ICC__ */
 /**
-  * @brief  Inializes the pointers to the Flash memory required during
+  * @brief  Initializes the pointers to the Flash memory required during
   *   run-time
   * @param  : None
   * @retval : None
