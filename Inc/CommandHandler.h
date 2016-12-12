@@ -56,8 +56,8 @@
 		"\r\n"												\
 		"Welcome in Monitor program!\r\n"					\
 		"Version: " VERSION_DEFINE "\r\n"					\
-		DATE_VERSION "\r\n"									\
-		TIME_VERSION "\r\n"									\
+		"Date: " DATE_VERSION "\r\n"									\
+		"Time: "TIME_VERSION "\r\n"									\
 		"Used panel: " BOARD_NAME "\r\n"					\
 		"(c) Copyright, Vizi Gabor\r\n"						\
 		"\r\n"												\
