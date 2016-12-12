@@ -2,11 +2,20 @@
 #define LED_H_
 
 
+
+/*------------------------------------------------------------------------------
+ *  Includes
+ *----------------------------------------------------------------------------*/
+
 #include "include.h"
 #include "options.h"
 #include "board.h"
 
 
+
+/*------------------------------------------------------------------------------
+ *  Macros & definitions
+ *----------------------------------------------------------------------------*/
 
 
 #ifdef CONFIG_MODULE_LED_ENABLE
@@ -38,13 +47,11 @@
 #endif
 
 
-
 #define  LED_TIMER_PERIOD_VALUE       (uint32_t)(666 - 1)  /* Period Value  */
 
 
 #define LED_BLUE_SET_PERCENT(percent)	LED_PWM_ChangePercent(&TimLedBlueHandle,LED_BLUE_TIMER_CHANNEL,percent);
 #define LED_GREEN_SET_PERCENT(percent)	LED_PWM_ChangePercent(&TimLedGreenHandle,LED_GREEN_TIMER_CHANNEL,percent);	
-
 
 
 /*
@@ -55,6 +62,10 @@
 */
 
 
+
+/*------------------------------------------------------------------------------
+ *  Type definitions
+ *----------------------------------------------------------------------------*/
 
 typedef enum
 {
@@ -69,11 +80,18 @@ typedef enum
 
 
 
+/*------------------------------------------------------------------------------
+ *  Global variables
+ *----------------------------------------------------------------------------*/
+
 extern TIM_HandleTypeDef    TimLedBlueHandle;
 extern TIM_HandleTypeDef    TimLedGreenHandle;
 
 
 
+/*------------------------------------------------------------------------------
+ *  Global function declarations
+ *----------------------------------------------------------------------------*/
 
 void LED_Init(void);
 void LED_Test(void);
@@ -86,10 +104,6 @@ void LED_InitTimers(void);
 void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim);
 void LED_PWM_ChangePercent(TIM_HandleTypeDef *TimHandle,
 		uint32_t timerChannel, uint8_t percent);
-
-
-
-
 
 
 

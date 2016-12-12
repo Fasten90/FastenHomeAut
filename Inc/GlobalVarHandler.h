@@ -17,7 +17,9 @@
 #include "include.h"
 
 
-/// DEFINES
+/*------------------------------------------------------------------------------
+ *  Macros & definitions
+ *----------------------------------------------------------------------------*/
 
 #define GLOBALVARHANDLER_UNIT_ENABLE
 #define GLOBALVARHANDLER_DESCRIPTION_ENABLE
@@ -26,8 +28,9 @@
 
 
 
-/// TYPEDEFS
-/// ENUMS
+/*------------------------------------------------------------------------------
+ *  Type definitions
+ *----------------------------------------------------------------------------*/
 
 typedef uint8_t VarID_t;
 
@@ -84,10 +87,6 @@ typedef enum
 } SetGetType_t;
 
 
-//////////////////////////////////////////////////////
-//					STRUCTS
-/////////////////////////////////////////////////////
-
 
 /// GlobalVarCommand structure for set-get global variables
 typedef struct
@@ -119,8 +118,10 @@ typedef struct
 
 
 
+/*------------------------------------------------------------------------------
+ *  Global function declarations
+ *----------------------------------------------------------------------------*/
 
-/// FUNCTION PROTOTYPES
 bool GlobalVarHandler_CheckCommandStructAreValid(void);
 void GlobalVarHandler_ProcessCommand(
 		const char *commandName, const char *param,

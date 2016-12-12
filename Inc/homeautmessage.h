@@ -10,12 +10,18 @@
 
 
 
-
-// DEFINES
+/*------------------------------------------------------------------------------
+ *  Macros & definitions
+ *----------------------------------------------------------------------------*/
 
 #define VALID		( 1 )
 #define INVALID		( 0 )
 
+
+
+/*------------------------------------------------------------------------------
+ *  Type definitions
+ *----------------------------------------------------------------------------*/
 
 /// HomeAut message structure for message separation
 typedef struct
@@ -172,9 +178,9 @@ typedef struct
 
 
 
-
-
-// GLOBAL VARIABLES
+/*------------------------------------------------------------------------------
+ *  Global variables
+ *----------------------------------------------------------------------------*/
 
 extern const FunctionTypeParity FunctionTypeParity_List[];	// Function enum - "FUNCTION" string
 	
@@ -186,7 +192,9 @@ extern HomeAut_InformationType HOMEAUTMESSAGE_MessageInformation;
 
 
 
-// PROTOTYPES
+/*------------------------------------------------------------------------------
+ *  Global function declarations
+ *----------------------------------------------------------------------------*/
 
 void HOMEAUTMESSAGE_Test(void);
 ReturnType HOMEAUTMESSAGE_CompareMessage(char *messageString);

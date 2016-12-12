@@ -2,13 +2,17 @@
  * MEM.h
  *
  *  Created on: Aug 31, 2016
- *      Author: Vizi Gábor
+ *      Author: Vizi Gï¿½bor
  */
 
 #ifndef MEM_H_
 #define MEM_H_
 
 
+
+/*------------------------------------------------------------------------------
+ *  Global function declarations
+ *----------------------------------------------------------------------------*/
 
 //void * memcpy ( void * destination, const void * source, size_t num );
 void * memcpy ( void * destination, const void * source, size_t num );

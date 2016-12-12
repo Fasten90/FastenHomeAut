@@ -15,6 +15,10 @@
 
 
 
+/*------------------------------------------------------------------------------
+ *  Type definitions
+ *----------------------------------------------------------------------------*/
+
 typedef enum
 {
 	IO_UNKNOWN,
@@ -41,7 +45,9 @@ typedef enum
 
 
 
-/// FUNCTION PROTOTYPES
+/*------------------------------------------------------------------------------
+ *  Global function declarations
+ *----------------------------------------------------------------------------*/
 
 bool IO_Init(char port, uint8_t pin, IO_Type io);
 bool IO_SetOutput(char port, uint8_t pin, Output_Type output);

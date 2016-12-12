@@ -1,20 +1,21 @@
-/*******************************************************************************
- * Purpose:
- ******************************************************************************/
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><templates><template autoinsert="false" context="org.eclipse.cdt.core.cHeader.contenttype_context" deleted="false" description="Default template for newly created C header files" enabled="true" id="org.eclipse.cdt.ui.text.codetemplates.cheaderfile" name="Default C header template">${filecomment}
+#ifndef ${include_guard_symbol}
+#define ${include_guard_symbol}
 
-#ifndef RASPBERRYPI_H_
-#define RASPBERRYPI_H_
+${includes}
+
+${declarations}
 
 
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
+#include "include.h"
 
-//#include "include.h"
-//#include "homeautmessage.h"	// TODO: delete
+
 
 /*------------------------------------------------------------------------------
- *  Macros & definitions
+ *  Macros &amp; definitions
  *----------------------------------------------------------------------------*/
 
 
@@ -22,6 +23,7 @@
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
+
 
 
 /*------------------------------------------------------------------------------
@@ -34,11 +36,6 @@
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-// TODO: Feloldani a HomeAut_FunctionType, HomeAut_DataType hibát
-//void RASPBERRYPI_SendMessage(uint8_t myAddress,
-//		HomeAut_FunctionType functionType, HomeAut_DataType dataType , float data);
-void RASPBERRYPI_SendMessage(uint8_t myAddress, uint8_t functionType, uint8_t dataType, float data);
 
 
-
-#endif /* RASPBERRYPI_H_ */
+#endif /* ${include_guard_symbol} */</template></templates>

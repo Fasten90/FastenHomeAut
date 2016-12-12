@@ -35,6 +35,7 @@
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
+
 extern ADC_HandleTypeDef		AdcHandle;
 extern volatile uint32_t		ADC_MeasuredValues[];
 extern volatile float			ADC_ConvertedValues[];
@@ -53,6 +54,7 @@ extern volatile float			ADC_ConvertedValues[];
 /*------------------------------------------------------------------------------
  *  Global function declarations
  *----------------------------------------------------------------------------*/
+
 void ADC_Init(void);
 void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc);
 

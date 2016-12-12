@@ -14,7 +14,10 @@
 #define COMMUNICATION_H_
 
 
-/// TYPEDEFS
+
+/*------------------------------------------------------------------------------
+ *  Type definitions
+ *----------------------------------------------------------------------------*/
 
 typedef enum
 {
@@ -27,7 +30,9 @@ typedef enum
 
 
 
-/// FUNCTION PROTOTYPES
+/*------------------------------------------------------------------------------
+ *  Global function declarations
+ *----------------------------------------------------------------------------*/
 
 uint8_t COMMUNICATION_SendMessage(CommProtocol_t protocol, const char *message);
 uint8_t COMMUNICATION_SendChar(CommProtocol_t protocol, char c);

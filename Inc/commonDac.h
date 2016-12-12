@@ -17,8 +17,11 @@
 #include "include.h"
 
 
+/*------------------------------------------------------------------------------
+ *  Type definitions
+ *----------------------------------------------------------------------------*/
 
-/// Enums
+/// DAC Channel number
 typedef enum
 {
 	Channel_Unknown,
@@ -27,11 +30,19 @@ typedef enum
 } DAC_Channel_t;
 
 
-/// GLOBAL VARIABLES
+
+/*------------------------------------------------------------------------------
+ *  Global variables
+ *----------------------------------------------------------------------------*/
+
 extern DAC_HandleTypeDef    DacHandle;
 
 
-/// FUNCTIONS
+
+/*------------------------------------------------------------------------------
+ *  Global function declarations
+ *----------------------------------------------------------------------------*/
+
 void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac);
 void DAC_Config(void);
 bool DAC_SetValue (DAC_Channel_t channel, float voltage);

@@ -15,6 +15,10 @@
 
 
 
+/*------------------------------------------------------------------------------
+ *  Global variables
+ *----------------------------------------------------------------------------*/
+
 extern const GlobalVarCommand_t GlobalVarList[];
 extern const VarID_t GlobalVarMaxCommandNum;
 

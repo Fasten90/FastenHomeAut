@@ -14,7 +14,10 @@
 #define FORMATTEDMESSAGE_H_
 
 
-/// DEFINES
+
+/*------------------------------------------------------------------------------
+ *  Macros & definitions
+ *----------------------------------------------------------------------------*/
 
 // Example:
 // USART_SendString("\x1B" "[30m");	= Black text color
@@ -28,8 +31,10 @@
 #define USART_ESCAPE_BACKGROUND_END		"m"
 
 
-/// TYPEDEFS
 
+/*------------------------------------------------------------------------------
+ *  Type definitions
+ *----------------------------------------------------------------------------*/
 
 /**
  * Color enum for Escape sequence
@@ -50,7 +55,9 @@ typedef enum
 
 
 
-/// FUNCTION PROTOTYPES
+/*------------------------------------------------------------------------------
+ *  Global function declarations
+ *----------------------------------------------------------------------------*/
 
 void SendColouredMessageWithBackgroundColor(const char* message,
 		FormattedStringColors_t textColor,
@@ -61,8 +68,6 @@ void SendBackgroundColor(FormattedStringColors_t backgroundColor);
 void SendErrorMessage(const char *message);
 
 void FormattedMessage_Test(void);
-
-
 
 
 

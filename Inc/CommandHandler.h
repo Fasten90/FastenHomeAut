@@ -33,12 +33,12 @@
 
 
 
-/////////////////////////////
-///			DEFINES
-/////////////////////////////
+/*------------------------------------------------------------------------------
+ *  Macros & definitions
+ *----------------------------------------------------------------------------*/
 
 
-///	Config defines
+//	Config defines
 
 
 #define MONITOR_MAX_COMMAND_LENGTH			(255U)
@@ -78,7 +78,7 @@
 		MONITOR_SendMessage("\r\n")
 
 
-////////////////////////////////////  DEFINES FOR CHARACTERS
+//	DEFINES FOR CHARACTERS
 
 CONFIG_USE_TERMINAL_ZOC
 #if defined(CONFIG_USE_TERMINAL_ZOC) || defined(CONFIG_USE_TERMINAL_PUTTY)
@@ -101,7 +101,7 @@ CONFIG_USE_TERMINAL_ZOC
 #define USART_ESCAPESEQUENCE_2		('[')
 
 
-/// BUTTONS
+//	BUTTONS
 
 
 // 8 = BS = Backspace
@@ -114,7 +114,9 @@ CONFIG_USE_TERMINAL_ZOC
 
 
 
-/// TYPEDEFS
+/*------------------------------------------------------------------------------
+ *  Type definitions
+ *----------------------------------------------------------------------------*/
 
 
 /// Command results
@@ -161,7 +163,9 @@ typedef struct
 
 
 
-/////////////////////////////  GLOBAL VARIABLES
+/*------------------------------------------------------------------------------
+ *  Global variables
+ *----------------------------------------------------------------------------*/
 
 extern volatile char MONITOR_CommandActual[MONITOR_MAX_COMMAND_LENGTH];
 extern volatile CommProtocol_t MONITOR_CommandSource;
@@ -176,7 +180,9 @@ extern xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
 
 
 
-/////////////////////////////  PROTOTYPES
+/*------------------------------------------------------------------------------
+ *  Global function declarations
+ *----------------------------------------------------------------------------*/
 
 void MONITOR_Init(void);
 void MONITOR_SendWelcome(void);

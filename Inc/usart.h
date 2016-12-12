@@ -16,6 +16,7 @@
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
+
 #include "include.h"
 
 
@@ -23,14 +24,12 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-
 // Size of Transmission buffer
 #define TXBUFFERSIZE					256UL
 // Size of Reception buffer
 //#define RXBUFFERSIZE					TXBUFFERSIZE
 #define RXBUFFERSIZE					256UL
 #define RX_BUFFER_WAIT_LENGTH			1
-
 
 
 // TODO!!! For compiler errors
@@ -41,7 +40,6 @@
 
 #define	ENABLE	1
 #define DISABLE	0
-
 
 
 
@@ -67,6 +65,7 @@ extern volatile char USART_TxBuffer[TXBUFFERSIZE];
 
 extern uint8_t USART_SendEnable_flag;
 extern volatile uint8_t USART_RxBufferWriteCounter;
+
 
 
 /*------------------------------------------------------------------------------
