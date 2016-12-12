@@ -28,7 +28,7 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-///< HomeAut Device state type (connection)
+/// HomeAut Device state type (connection)
 typedef enum
 {
 	State_Unknown = 0,
@@ -39,12 +39,13 @@ typedef enum
 } HomeAutDeviceStateType;
 
 
-///< HomeAut Device connection type: IP and status
+/// HomeAut Device connection type: IP and status
 typedef struct
 {
-	uint8_t IP_addressDec;
-	HomeAutDeviceStateType State;
+	uint8_t IP_addressDec;				///< IP address
+	HomeAutDeviceStateType State;		///< State
 } HomeAutDeviceDataType;
+
 
 
 /*------------------------------------------------------------------------------

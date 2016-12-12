@@ -233,7 +233,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
  * \brief	Infinite loop: print ADC values
  * 			NOTE: Be careful, it is blocking mode
  */
-void ADC_Test ( void )
+void ADC_Test(void)
 {
 	
 	while (1)
@@ -258,11 +258,11 @@ void ADC_Test ( void )
 /**
  * \brief	Convert read value to voltage
  */
-float ADC_ConvertToVoltage (uint32_t readValue)
+float ADC_ConvertToVoltage(uint32_t readValue)
 {
 	float Voltage;
-	// /4096 for 12b resolution, *3.3V for reference Voltage 
-	Voltage = (float)readValue * 3.3 / 4096;
+
+	Voltage = (float)readValue * COMMON_ADC_VOLTAGE_MAX / COMMON_ADC_RESOLUTION_MAX;
 	return Voltage;
 }
 
@@ -271,7 +271,7 @@ float ADC_ConvertToVoltage (uint32_t readValue)
 /**
  * \brief	Convert all read values
  */
-void ADC_ConvertAllMeasuredValues ( void )
+void ADC_ConvertAllMeasuredValues(void)
 {
 	
 	uint8_t i;

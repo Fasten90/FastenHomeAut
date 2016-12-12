@@ -372,6 +372,9 @@
 #define ADCx_DMA_IRQHandler             DMA2_Stream0_IRQHandler
 
 
+#define COMMON_ADC_VOLTAGE_MAX			(3.3f)
+#define COMMON_ADC_RESOLUTION_MAX		(4096U)
+
 #endif
 
 

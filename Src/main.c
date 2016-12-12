@@ -352,6 +352,8 @@ void assert_failed(uint8_t* file, uint32_t line)
   * @}
 */ 
 
+#ifdef CONFIG_USE_FREERTOS
+
 /*-----------------------------------------------------------*/
 
 void vApplicationTickHook( void )
@@ -568,6 +570,6 @@ void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName )
 	Error_Handler();
 }
 /*-----------------------------------------------------------*/
-
+#endif	// #ifdef CONFIG_USE_FREERTOS
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

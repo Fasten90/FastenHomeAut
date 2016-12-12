@@ -955,106 +955,104 @@ static ProcessResult_t GLobalVarHandler_SetEnumerator(VarID_t commandID, const c
  */
 static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t num)
 {
+	ProcessResult_t result = Process_Ok_SetSuccessful_SendOk;
 
 	// First, check the type value
 	switch (GlobalVarList[commandID].type)
 	{
 		case Type_Bool:
 			if (num > BOOL_MAX)
-				return Process_InvalidValue_TooMuch;
+				result = Process_InvalidValue_TooMuch;
 			break;
 
 		case Type_Uint8:
 			if (num > UINT8_MAX)
-				return Process_InvalidValue_TooMuch;
+				result = Process_InvalidValue_TooMuch;
 			break;
 
 		case Type_Uint16:
 			if (num > UINT16_MAX)
-				return Process_InvalidValue_TooMuch;
+				result = Process_InvalidValue_TooMuch;
 			break;
 
 		case Type_Uint32:
 			// TODO: Always good, do better code
 			if (num > UINT32_MAX)
-				return Process_InvalidValue_TooMuch;
+				result = Process_InvalidValue_TooMuch;
 			break;
 
 		case Type_Int8:
 			if ((int32_t)num > INT8_MAX)
-				return Process_InvalidValue_TooMuch;
-			if ((int32_t)num < INT8_MIN)
-				return Process_InvalidValue_TooSmall;
+				result = Process_InvalidValue_TooMuch;
+			else if ((int32_t)num < INT8_MIN)
+				result = Process_InvalidValue_TooSmall;
 			break;
 
 		case Type_Int16:
 			if ((int32_t)num > INT16_MAX)
-				return Process_InvalidValue_TooMuch;
-			if ((int32_t)num < INT16_MIN)
-				return Process_InvalidValue_TooSmall;
+				result = Process_InvalidValue_TooMuch;
+			else if ((int32_t)num < INT16_MIN)
+				result = Process_InvalidValue_TooSmall;
 			break;
 
 		case Type_Int32:
 			// TODO: Always good, do better code
 			if ((int32_t)num > INT32_MAX)
-				return Process_InvalidValue_TooMuch;
+				result = Process_InvalidValue_TooMuch;
 			if ((int32_t)num < INT32_MIN)
-				return Process_InvalidValue_TooSmall;
+				result = Process_InvalidValue_TooSmall;
 			break;
 
 		case Type_Float:
 			// TODO: Not a good compare in float type
 			if ((int32_t)num > INT32_MAX)
-				return Process_InvalidValue_TooMuch;
-			if ((int32_t)num < INT32_MIN)
-				return Process_InvalidValue_TooSmall;
+				result = Process_InvalidValue_TooMuch;
+			else if ((int32_t)num < INT32_MIN)
+				result = Process_InvalidValue_TooSmall;
 			break;
 
 		case Type_String:
 			if (num >= GlobalVarList[commandID].maxValue)
-				return Process_TooLongString;
+				result = Process_TooLongString;
 			break;
 
 		case Type_Enumerator:
 			if (num >= GlobalVarList[commandID].maxValue)
-				return Process_InvalidValue_TooMuch;
+				result = Process_InvalidValue_TooMuch;
 			break;
 
 		// Wrong types
 		case Type_Error:
 		case Type_Count:
 		default:
-			return Process_FailType;
+			result = Process_FailType;
 			break;
 	}
 
-
-	// Check maxValue
-	// maxValue is set?
-	if (GlobalVarList[commandID].maxValue == GlobalVarList[commandID].minValue)
+	if (result == Process_Ok_SetSuccessful_SendOk)
 	{
-		// Is not set
-		return Process_Ok_SetSuccessful_SendOk;
-	}
-	else
-	{
-		// is set, because max not equal than min
-		// Check, it is too large or too small?
 
-		if (num > GlobalVarList[commandID].maxValue)
+		// Check maxValue
+		// maxValue is set?
+		if (GlobalVarList[commandID].maxValue != GlobalVarList[commandID].minValue)
 		{
-			// Too large
-			return Process_InvalidValue_TooMuch;
-		}
+			// There is setted maxValue, because max not equal than min
+			// Check, it is too large or too small?
 
-		if (num < GlobalVarList[commandID].minValue)
-		{
-			// Too small
-			return Process_InvalidValue_TooSmall;
+			if (num > GlobalVarList[commandID].maxValue)
+			{
+				// Too large
+				result = Process_InvalidValue_TooMuch;
+			}
+			else if (num < GlobalVarList[commandID].minValue)
+			{
+				// Too small
+				result = Process_InvalidValue_TooSmall;
+			}
 		}
 	}
 
-	return Process_Ok_SetSuccessful_SendOk;
+	return result;
 }
 
 

@@ -55,7 +55,9 @@ void SysTick_Handler(void)
 
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
+#ifdef CONFIG_USE_FREERTOS
   osSystickHandler();
+#endif
   /* USER CODE BEGIN SysTick_IRQn 1 */
 
   /* USER CODE END SysTick_IRQn 1 */

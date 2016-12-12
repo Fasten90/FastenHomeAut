@@ -17,7 +17,7 @@
 #define INVALID		( 0 )
 
 
-///< HomeAut message structure for message seperating
+/// HomeAut message structure for message separation
 typedef struct
 {
 	char Header[9];							///< Header
@@ -34,7 +34,7 @@ typedef struct
 	// <Function>
 	char Seperator3[1];						///< Separator character
 	// |
-	char DataType[6];						///< Data type (
+	char DataType[6];						///< Data type (example: TOOHOT)
 	// <DataType> : 6 byte ASCII char
 	char Data[8];							///< Data (example: temperature value)
 	// <Data> : 8 byte - ASCII Hex
@@ -61,7 +61,6 @@ const uint8_t HOMEAUTMESSAGE_DefaultFunctionConfig[] =  "CONFIG_";
 */
 
 
-
 typedef enum
 {
 	Function_Invalid = 0,
@@ -76,15 +75,15 @@ typedef enum
 
 
 
-///< Function name - string parity table
+/// Function name - string parity table
 typedef struct
 {
-	char name[8];								///< Name of function
+	char name[8];						///< Name of function
 	HomeAut_FunctionType function;		///< Function enum
 } FunctionTypeParity;
 
 
-
+/// DataType enumeration for HomeAutMessage
 typedef enum
 {
 	DataType_Unknown = 0,
@@ -151,22 +150,22 @@ typedef enum
 
 
 
-///<  Data type - string table
+///  Data type - string table
 typedef struct
 {
 	const char name[7];						///< Name of Data [string]
-	HomeAut_DataType type;			///< Data type
+	HomeAut_DataType type;					///< Data type
 } DataTypeParity;
 
 
 
-///< HomeAut message information type
+/// HomeAut message information type
 typedef struct
 {
 	uint8_t MyAddress;						///< My (sender) address
 	uint8_t TargetAddress;					///< Target (receiver) address
-	HomeAut_FunctionType Function;	///< Function
-	HomeAut_DataType DataType;		///< Data type
+	HomeAut_FunctionType Function;			///< Function
+	HomeAut_DataType DataType;				///< Data type
 	uint32_t Data;							///< Data
 	uint8_t isValid;						///< It is valid information?
 } HomeAut_InformationType;
