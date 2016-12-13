@@ -118,24 +118,25 @@ void ADC_Init(void)
 		Error_Handler();
 	}
 
-#if ADC_BUFFER_SIZE > 1
+#if ADC_BUFFER_SIZE >= 2
 	/* Configuration of channel on ADCx regular group on sequencer rank 2 */
 	/* Replicate previous rank settings, change only channel and rank */
 	sConfig.Channel      = ADC_CHANNEL_2;
 	sConfig.Rank         = 2;
-	sConfig.SamplingTime = ADC_SAMPLETIME_84CYCLES;
+	sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
 
 	if (HAL_ADC_ConfigChannel(&AdcHandle, &sConfig) != HAL_OK)
 	{
 		/* Channel Configuration Error */
 		Error_Handler();
 	}
-
+#endif
+#if ADC_BUFFER_SIZE >= 3
 	/* Configuration of channel on ADCx regular group on sequencer rank 3 */
 	/* Replicate previous rank settings, change only channel and rank */
 	sConfig.Channel      = ADC_CHANNEL_3;
 	sConfig.Rank         = 3;
-	sConfig.SamplingTime = ADC_SAMPLETIME_84CYCLES;
+	sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
 
 	if (HAL_ADC_ConfigChannel(&AdcHandle, &sConfig) != HAL_OK)
 	{
@@ -186,10 +187,11 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(ADCx_CHANNEL_GPIO_PORT, &GPIO_InitStruct);
 
-#if ADC_BUFFER_SIZE > 1
+#if ADC_BUFFER_SIZE >= 2
 	GPIO_InitStruct.Pin = GPIO_PIN_2;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-	
+#endif
+#if ADC_BUFFER_SIZE >= 3
 	GPIO_InitStruct.Pin = GPIO_PIN_3;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 #endif
@@ -198,9 +200,9 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 #warning "ADC num is not 3, need extend the channel configs"
 #endif
 
-	/*##- 3- Configure DMA #####################################################*/ 
+	/*##- 3- Configure DMA */
 
-	/*********************** Configure DMA parameters ***************************/
+	/* Configure DMA parameters */
 	DmaHandle.Instance					= ADCx_DMA_STREAM;
 	DmaHandle.Init.Channel				= ADCx_DMA_CHANNEL;
 	DmaHandle.Init.Direction			= DMA_PERIPH_TO_MEMORY;
@@ -271,10 +273,11 @@ void ADC_Test(void)
  */
 float ADC_ConvertToVoltage(uint32_t readValue)
 {
-	float Voltage;
+	float voltage;
 
-	Voltage = (float)readValue * COMMON_ADC_VOLTAGE_MAX / COMMON_ADC_RESOLUTION_MAX;
-	return Voltage;
+	voltage = (float)readValue * COMMON_ADC_VOLTAGE_MAX / COMMON_ADC_RESOLUTION_MAX;
+
+	return voltage;
 }
 
 

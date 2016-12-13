@@ -348,7 +348,7 @@
 
 // ANALOG
 
-#define ADC_BUFFER_SIZE				( 1 )
+#define ADC_BUFFER_SIZE					( 3 )
 
 
 #define ADCx                            ADC1
@@ -372,12 +372,12 @@
 #define ADCx_DMA_IRQHandler             DMA2_Stream0_IRQHandler
 
 /* ADC DMA Interrupt priorities */
-#define ADC_DMA_PREEMT_PRIORITY			10
+#define ADC_DMA_PREEMT_PRIORITY			13
 #define ADC_DMA_SUB_PRIORITY			0
 
 
 #define COMMON_ADC_VOLTAGE_MAX			(3.3f)
-#define COMMON_ADC_RESOLUTION_MAX		(4096U)
+#define COMMON_ADC_RESOLUTION_MAX		(4095U)
 
 #endif
 

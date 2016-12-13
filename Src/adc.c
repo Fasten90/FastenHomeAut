@@ -88,7 +88,6 @@ extern void Error_Handler(void);
  * @param[out]
  * @return
  ******************************************************************************/
-//void ADC_InitGoodnew(void)
 void ADC_InitGoodnew(void)
 {
 	ADC_ChannelConfTypeDef   sConfig;

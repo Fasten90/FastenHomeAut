@@ -94,14 +94,14 @@ void USART_Init ( UART_HandleTypeDef *UartHandle)
 	  - BaudRate = 9600 baud
 	  - Hardware flow control disabled (RTS and CTS signals) */
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-	if ( UartHandle == &Debug_UartHandle)
+	if (UartHandle == &Debug_UartHandle)
 	{
 		UartHandle->Instance        = DEBUG_USARTx;
 		UartHandle->Init.BaudRate   = 9600;		// Monitor program
 	}
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-	if ( UartHandle == &ESP8266_UartHandle)
+	if (UartHandle == &ESP8266_UartHandle)
 	{
 		UartHandle->Instance        = ESP8266_USARTx;
 		UartHandle->Init.BaudRate   = 9600;			// ESP8266
@@ -165,7 +165,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 		GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
 		GPIO_InitStruct.Pull      = GPIO_NOPULL;
 		GPIO_InitStruct.Speed     = GPIO_SPEED_FAST;
-		GPIO_InitStruct.Alternate = DEBUG_USART_AF;		// It is initialie alternate function
+		GPIO_InitStruct.Alternate = DEBUG_USART_AF;		// It is initialize alternate function
 
 		HAL_GPIO_Init(DEBUG_USART_TX_GPIO_PORT, &GPIO_InitStruct);
 
@@ -361,9 +361,10 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 		huart->RxXferSize = 0;
 
 		//__HAL_UART_FLUSH_DRREGISTER(&BluetoothUartHandle);
-		
+		// Reinitialize USART
+		USART_Init(&Debug_UartHandle);
 
-		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[USART_RxBufferWriteCounter], RX_BUFFER_WAIT_LENGTH);
+		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[++USART_RxBufferWriteCounter], RX_BUFFER_WAIT_LENGTH);
 		HAL_UART_Transmit_IT(&Debug_UartHandle,(uint8_t *)"$",1);
 		
 		#ifdef CONFIG_USE_FREERTOS

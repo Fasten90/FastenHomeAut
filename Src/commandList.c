@@ -21,6 +21,8 @@
 #include "formattedMessage.h"
 #include "Globals.h"
 
+
+
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
@@ -34,18 +36,12 @@
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-extern UART_HandleTypeDef Debug_UartHandle;
-#endif
 
-
-uint32_t Arg2Num;
-uint32_t Arg3Num;
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 
-///< Commands list
+/// Commands list
 const CommandStruct CommandList[] =
 {
 
@@ -423,6 +419,7 @@ CommandResult_t CommandFunction_led ( uint32_t argc, char** argv )
 
 	// Convert arg2, decimal
 	bool isFirstParamNum = false;
+	uint32_t Arg2Num;
 
 	if (StringToUnsignedDecimalNum(argv[1],&Arg2Num))
 	{
@@ -779,6 +776,7 @@ CommandResult_t CommandFunction_GlobalVariableValueList ( uint32_t argc, char** 
  */
 CommandResult_t CommandFunction_flashdel	( uint32_t argc, char** argv )
 {
+	uint32_t Arg2Num;
 
 	// Convert arg2 hex
 	if ( !StringHexToNum(argv[1],&Arg2Num))
@@ -818,6 +816,7 @@ CommandResult_t CommandFunction_flashdel	( uint32_t argc, char** argv )
 CommandResult_t CommandFunction_flashread	( uint32_t argc, char** argv )
 {
 	
+	uint32_t Arg2Num;
 
 	// Convert arg2 hex
 	if ( !StringHexToNum(argv[1],&Arg2Num))
@@ -849,6 +848,7 @@ CommandResult_t CommandFunction_flashread	( uint32_t argc, char** argv )
  */
 CommandResult_t CommandFunction_flashwrite	( uint32_t argc, char** argv )
 {
+	uint32_t Arg2Num;
 
 	// Convert arg2 hex
 	if ( !StringHexToNum(argv[1],&Arg2Num))
@@ -937,7 +937,7 @@ CommandResult_t CommandFunction_raspberrypi (uint32_t argc, char** argv)
  */
 CommandResult_t CommandFunction_dac (uint32_t argc, char** argv)
 {
-
+	uint32_t Arg2Num;
 	float voltage = 0.0f;
 
 	if (!StringToUnsignedDecimalNum(argv[1],&Arg2Num))
@@ -1158,7 +1158,7 @@ CommandResult_t CommandFunction_adc (uint32_t argc, char** argv)
 
 	for (i=0; i<ADC_BUFFER_SIZE; i++)
 	{
-		duprintf(MONITOR_CommandSource,"ADC: %d. value: %2.2f", i, ADC_ConvertedValues[i]);
+		duprintf(MONITOR_CommandSource,"ADC: %d. value: %2.2f\r\n", i, ADC_ConvertedValues[i]);
 	}
 
 	return CommandResult_Ok;
@@ -1176,8 +1176,8 @@ CommandResult_t CommandFunction_dl ( uint32_t argc, char** argv )
 
 	unsigned char * destination;
 	uint32_t size;
-	//uint32_t i;
-	//unsigned char byte;
+	uint32_t Arg2Num;
+	uint32_t Arg3Num;
 
 	if ( argc < 3 ) { USART_SendString("Too few arguments!\r\n"); return 0; }
 	if ( argc > 3 ) { USART_SendString("Too many arguments!\r\n"); return 0; }
@@ -1273,6 +1273,7 @@ CommandResult_t CommandFunction_go ( uint32_t argc, char** argv ) {
 
 	uint32_t destination;
 	int ( *fpntr )( void );
+	uint32_t Arg2Num;
 
 	// TODO: USART_SendLine();
 	// TODO: MONITOR_SendMessage(); ez irányítódjon át egy USART_SendString()-re
@@ -1315,7 +1316,8 @@ CommandResult_t CommandFunction_mr ( uint32_t argc, char** argv ) {
 	uint32_t *p;
 	unsigned short int size;
 	uint32_t i;
-
+	uint32_t Arg2Num;
+	uint32_t Arg3Num;
 
 	if ( argc < 3 ) {	USART_SendString("Too few arguments!\r\n");	return 0;	}
 	if ( argc > 3 ) {	USART_SendString("Too many arguments!\r\n");	return 0;	}
@@ -1357,10 +1359,11 @@ CommandResult_t CommandFunction_mw ( uint32_t argc, char** argv ) {
 	unsigned char *destination1;
 	unsigned short int *destination2;
 	uint32_t *destination3;
+	uint32_t Arg2Num;
+	uint32_t Arg3Num;
 
-
-	if ( argc < 3 ) {	USART_SendString("Too few arguments!\r\n");	return 0;	}
-	if ( argc > 3 ) {	USART_SendString("Too many arguments!\r\n");	return 0;	}
+	if ( argc < 3 ) { USART_SendString("Too few arguments!\r\n");	return 0; }
+	if ( argc > 3 ) { USART_SendString("Too many arguments!\r\n"); return 0; }
 
 	if ( StringIsHexadecimalString(argv[1]) ) Arg2Num = StringHexToNum(argv[1]);	// Convert hex
 	else { USART_SendString("Wrong 1. argument!"); return 2; }
@@ -1422,6 +1425,8 @@ CommandResult_t CommandFunction_stop	( uint32_t argc, char** argv ) {
 // Syntax: romr <address>
 CommandResult_t CommandFunction_romr	( uint32_t argc, char** argv ) {
 
+	uint32_t Arg2Num;
+
 	Arg2Num = StringDecToNum(argv[1]);
 
 	//duprintf(MONITOR_CommandSource, "address: 0x%h\r\n"
@@ -1441,6 +1446,8 @@ CommandResult_t CommandFunction_romr	( uint32_t argc, char** argv ) {
 // Syntax: romw <address> <data>
 CommandResult_t CommandFunction_romw	( uint32_t argc, char** argv ) {
 
+	uint32_t Arg2Num;
+	uint32_t Arg3Num;
 
 	Arg2Num = StringHexToNum(argv[1]);
 	Arg3Num = StringHexToNum(argv[2]);
@@ -1519,6 +1526,8 @@ CommandResult_t CommandFunction_standby	( uint32_t argc, char** argv ) {
 
 #if 0
 CommandResult_t CommandFunction_rtc	( uint32_t argc, char** argv ) {
+
+	uint32_t Arg2Num;
 
 	Arg2Num = StringDecToNum(argv[1]);
 

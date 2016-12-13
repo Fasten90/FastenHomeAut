@@ -388,7 +388,6 @@ static void MONITOR_ProcessReceivedCharacter(void)
 	{
 		volatile char USART_ReceivedChar = '\0';
 
-		// TODO: Don't know, why work...
 		USART_ReceivedChar = USART_RxBuffer[USART_RxBufferReadCnt];
 		USART_RxBufferReadCnt++;
 
@@ -1323,7 +1322,6 @@ static void MONITOR_GetPassword(void)
 			{
 				volatile char USART_ReceivedChar = '\0';
 
-				// TODO: Don't know, why work...
 				USART_ReceivedChar = USART_RxBuffer[USART_RxBufferReadCnt];
 				USART_RxBufferReadCnt++;
 				MONITOR_SendChar('*');
