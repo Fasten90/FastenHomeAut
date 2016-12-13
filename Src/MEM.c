@@ -11,30 +11,22 @@
 #include "MEM.h"
 
 
-void * memcpy ( void * destination, const void * source, size_t num )
+
+/**
+ * \brief	Memory copy
+ * \param[out]	destination	where to copy
+ * \param[in]	source		from copy
+ * \param[in]	num			How many length to copy (in bytes)?
+ */
+void * memcpy (void * destination, const void * source, size_t num)
 {
-	uint16_t i;
-	uint32_t * dest = destination;
-	const uint32_t * src = source;
+	size_t i;
+	uint8_t *dest = destination;
+	const uint8_t *src = source;
 
-	for ( i=0; i < num; i++)
+	for (i=0; i < num; i++)
 	{
-		dest[i]=src[i];
-	}
-
-	return NULL;
-
-}
-
-
-void * memset ( void * ptr, int value, size_t num )
-{
-	uint16_t i;
-	uint32_t * dest = ptr;
-
-	for ( i=0; i < num; i++)
-	{
-		dest[i]=value;
+		dest[i] = src[i];
 	}
 
 	return NULL;
@@ -43,16 +35,20 @@ void * memset ( void * ptr, int value, size_t num )
 
 
 
-void * memmove ( void * destination, const void * source, size_t num )
+/**
+ * \brief		Set memory
+ * \param[out]	*ptr	Which memory area need set
+ * \param[in]	value	With which value
+ * \param[in]	num		How many length to set (in bytes)?
+ */
+void * memset (void * ptr, int value, size_t num)
 {
-	uint16_t i;
-	uint32_t * dest = destination;
-	uint32_t * src = (uint32_t *)source;
+	size_t i;
+	uint8_t *dest = ptr;
 
-	for ( i=0; i < num; i++)
+	for (i=0; i < num; i++)
 	{
-		dest[i]=src[i];
-		src[i]=0;
+		dest[i] = (uint8_t)value;
 	}
 
 	return NULL;
@@ -61,8 +57,35 @@ void * memmove ( void * destination, const void * source, size_t num )
 
 
 
-// TODO: Vagy Makróval megcsinálni?
-void * meminit ( void * ptr, size_t num )
+/**
+ * \brief	Memory move
+ * \param[out]	destination	where to copy
+ * \param[in]	source		from copy
+ * \param[in]	num			How many length to move (in bytes)?
+ */
+void * memmove (void * destination, const void * source, size_t num)
+{
+	size_t i;
+	uint8_t *dest = destination;
+	uint8_t *src = (uint8_t *)source;
+
+	for (i=0; i < num; i++)
+	{
+		dest[i] = src[i];
+		src[i] = 0;
+	}
+
+	return NULL;
+}
+
+
+
+/**
+ * \brief		Initialize memory area with 0
+ * \param[out]	*ptr	Which area
+ * \param[in]	num		How many length (in bytes)?
+ */
+void * meminit (void * ptr, size_t num)
 {
 
 	return memset(ptr,0,num);
