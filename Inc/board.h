@@ -838,6 +838,8 @@
 
 #define DEBUG_USART_AF					GPIO_AF8_USART6
 
+#define DEBUG_USART_BAUDRATE			9600
+
 
 // Definition for USARTx's NVIC
 #define DEBUG_USARTx_IRQn               USART6_IRQn
@@ -868,14 +870,6 @@
 
 #define ESP8266_USARTx					USART1
 
-/* Definition for USARTx's NVIC */
-#define ESP8266_USARTx_IRQn				USART1_IRQn
-#define ESP8266_USARTx_IRQHandler		USART1_IRQHandler
-
-// WITHOUT FREERTOS: If use FreeRTOS, you need higher priority
-#define ESP8266_USART_PREEMT_PRIORITY	2
-#define ESP8266_USART_SUB_PRIORITY		0
-
 
 
 #define ESP8266_USART_CLK_ENABLES()		\
@@ -894,6 +888,15 @@
 
 #define ESP8266_USART_AF				GPIO_AF1_USART1
 
+/* Definition for USARTx's NVIC */
+#define ESP8266_USARTx_IRQn				USART1_IRQn
+#define ESP8266_USARTx_IRQHandler		USART1_IRQHandler
+
+// WITHOUT FREERTOS: If use FreeRTOS, you need higher priority
+#define ESP8266_USART_PREEMT_PRIORITY	2
+#define ESP8266_USART_SUB_PRIORITY		0
+
+#define ESP8266_USART_BAUDRATE			9600
 
 
 #endif // #ifdef CONFIG_USE_PANEL_NODESMALL
@@ -908,13 +911,6 @@
 
 #define ESP8266_USARTx						USART2
 
-
-// Definition for USARTx's NVIC
-#define ESP8266_USARTx_IRQn              	USART2_IRQn
-#define ESP8266_USARTx_IRQHandler        	USART2_IRQHandler
-
-#define ESP8266_USART_PREEMT_PRIORITY		14
-#define ESP8266_USART_SUB_PRIORITY			0
 
 //#define ESP8266_USART_CLK_ENABLE()			__USART2_CLK_ENABLE()
 	
@@ -936,6 +932,15 @@
 #define ESP8266_USART_RX_GPIO_PIN			GPIO_PIN_3
 	
 #define ESP8266_USART_AF					GPIO_AF7_USART2
+
+// Definition for USARTx's NVIC
+#define ESP8266_USARTx_IRQn              	USART2_IRQn
+#define ESP8266_USARTx_IRQHandler        	USART2_IRQHandler
+
+#define ESP8266_USART_PREEMT_PRIORITY		14
+#define ESP8266_USART_SUB_PRIORITY			0
+
+#define ESP8266_USART_BAUDRATE				9600
 
 
 
@@ -952,13 +957,6 @@
 #define ESP8266_USARTx						USART2
 
 
-// Definition for USARTx's NVIC
-#define ESP8266_USARTx_IRQn              	USART2_IRQn
-#define ESP8266_USARTx_IRQHandler        	USART2_IRQHandler
-
-#define ESP8266_USART_PREEMT_PRIORITY		14
-#define ESP8266_USART_SUB_PRIORITY			0
-
 //#define ESP8266_USART_CLK_ENABLE()			__USART2_CLK_ENABLE()
 	
 //#define ESP8266_USART_TX_CLK_ENABLE()		RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE)
@@ -980,6 +978,14 @@
 	
 #define ESP8266_USART_AF					GPIO_AF7_USART2
 
+// Definition for USARTx's NVIC
+#define ESP8266_USARTx_IRQn              	USART2_IRQn
+#define ESP8266_USARTx_IRQHandler        	USART2_IRQHandler
+
+#define ESP8266_USART_PREEMT_PRIORITY		14
+#define ESP8266_USART_SUB_PRIORITY			0
+
+#define ESP8266_USART_BAUDRATE				9600
 
 
 #endif // #ifdef CONFIG_USE_PANEL_CENTERPANEL

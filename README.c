@@ -16,7 +16,7 @@
  *
  * Recommended IDE is the Atollic TrueSTUDIO 6.0, but you can use an other IDE.
  * - Install [Atollic TrueSTUDIO](http://atollic.com/)
- *
+ * - Install a terminal (serial port reader) software
  * 
  * 
  * How to use it?

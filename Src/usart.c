@@ -85,7 +85,7 @@ void USART_Init ( UART_HandleTypeDef *UartHandle)
 	//HAL_UART_MspInit(UartHandle);
 	// TODO: It is called from HAL_UART_Init() function
 
-	//##-1- Configure the UART peripheral ######################################
+	//##-1- Configure the UART peripheral
 	// Put the USART peripheral in the Asynchronous mode (UART Mode)
 	/* UARTx configured as follow:
 	  - Word Length = 8 Bits
@@ -97,14 +97,14 @@ void USART_Init ( UART_HandleTypeDef *UartHandle)
 	if (UartHandle == &Debug_UartHandle)
 	{
 		UartHandle->Instance        = DEBUG_USARTx;
-		UartHandle->Init.BaudRate   = 9600;		// Monitor program
+		UartHandle->Init.BaudRate   = DEBUG_USART_BAUDRATE;
 	}
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 	if (UartHandle == &ESP8266_UartHandle)
 	{
 		UartHandle->Instance        = ESP8266_USARTx;
-		UartHandle->Init.BaudRate   = 9600;			// ESP8266
+		UartHandle->Init.BaudRate   = ESP8266_USART_BAUDRATE;
 	}
 #endif
 	
@@ -118,7 +118,7 @@ void USART_Init ( UART_HandleTypeDef *UartHandle)
 	if (HAL_UART_Init(UartHandle) == HAL_OK)
 	{	
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-		if ( UartHandle == &Debug_UartHandle)
+		if (UartHandle == &Debug_UartHandle)
 		{
 			USART_SendEnable_flag = ENABLE;
 			__HAL_UART_CLEAR_FLAG(&Debug_UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
@@ -126,7 +126,7 @@ void USART_Init ( UART_HandleTypeDef *UartHandle)
 		}
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-		if ( UartHandle == &ESP8266_UartHandle)
+		if (UartHandle == &ESP8266_UartHandle)
 		{
 			//USART_SendEnable_flag = ENABLE;
 			__HAL_UART_CLEAR_FLAG(&ESP8266_UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
@@ -153,13 +153,13 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 
 	if (huart == &Debug_UartHandle)
 	{
-		// ##-1- Enable peripherals and GPIO Clocks #################################
+		// ##-1- Enable peripherals and GPIO Clocks
 
 		// Enable GPIO TX/RX clock
 		// Enable USARTx clock
 		DEBUG_USART_CLK_ENABLES();
 
-		// ##-2- Configure peripheral GPIO ##########################################
+		// ##-2- Configure peripheral GPIO
 		// UART TX GPIO pin configuration
 		GPIO_InitStruct.Pin       = DEBUG_USART_TX_GPIO_PIN;
 		GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
@@ -176,7 +176,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 		HAL_GPIO_Init(DEBUG_USART_RX_GPIO_PORT, &GPIO_InitStruct);
 
 
-		// ##-3- Configure the NVIC for UART ########################################
+		// ##-3- Configure the NVIC for UART
 		// NVIC for USARTx
 
 		HAL_NVIC_SetPriority(DEBUG_USARTx_IRQn, DEBUG_USART_PREEMT_PRIORITY, DEBUG_USART_SUB_PRIORITY);
@@ -184,16 +184,16 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 	}
 #endif	// #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-	if ( huart == &ESP8266_UartHandle)
+	if (huart == &ESP8266_UartHandle)
 	{
-		// ##-1- Enable peripherals and GPIO Clocks #################################
+		// ##-1- Enable peripherals and GPIO Clocks
 
 		// Enable GPIO TX/RX clock
 		// Enable USARTx clock
 		ESP8266_USART_CLK_ENABLES();
 
 		
-		// ##-2- Configure peripheral GPIO ##########################################
+		// ##-2- Configure peripheral GPIO
 		// UART TX GPIO pin configuration
 		GPIO_InitStruct.Pin       = ESP8266_USART_TX_GPIO_PIN;
 		GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
@@ -210,7 +210,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 		HAL_GPIO_Init(ESP8266_USART_RX_GPIO_PORT, &GPIO_InitStruct);
 
 
-		// ##-3- Configure the NVIC for UART ########################################
+		// ##-3- Configure the NVIC for UART
 		// NVIC for USARTx
 
 		HAL_NVIC_SetPriority(ESP8266_USARTx_IRQn, ESP8266_USART_PREEMT_PRIORITY, ESP8266_USART_SUB_PRIORITY);
@@ -364,7 +364,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 		// Reinitialize USART
 		USART_Init(&Debug_UartHandle);
 
-		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[++USART_RxBufferWriteCounter], RX_BUFFER_WAIT_LENGTH);
+		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[USART_RxBufferWriteCounter], RX_BUFFER_WAIT_LENGTH);
 		HAL_UART_Transmit_IT(&Debug_UartHandle,(uint8_t *)"$",1);
 		
 		#ifdef CONFIG_USE_FREERTOS
