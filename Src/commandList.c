@@ -48,136 +48,153 @@ const CommandStruct CommandList[] =
 	{
 		.name = "help",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_help,
-		.description = "Commands's list, or write command's descriptions",
-		.syntax = "<command>",
 		.commandArgNum = CommandArgument_0 | CommandArgument_1,
+		.description = "Commands's list, or write command's descriptions",
+		.syntax = "(command)",
 	},
 	{
 		.name = "version",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_version,
+		.commandArgNum = CommandArgument_0,
 		.description = "Get version",
 		.syntax = NULL,
-		.commandArgNum = CommandArgument_0,
 	},
 	{
 		.name = "welcome",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_welcome,
+		.commandArgNum = CommandArgument_0,
 		.description = "Send welcome message",
 		.syntax = NULL,
-		.commandArgNum = CommandArgument_0,
 	},
 	{
 		.name = "reset",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_reset,
+		.commandArgNum = CommandArgument_0,
 		.description = "Software reset",
 		.syntax = NULL,
-		.commandArgNum = CommandArgument_0,
 	},
 	{
 		.name = "cls",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_cls,
+		.commandArgNum = CommandArgument_0,
 		.description = "Clear Screen",
 		.syntax = NULL,
-		.commandArgNum = CommandArgument_0,
 	},
 	{
 		.name = "test",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_test,
-		.description = "...",
-		.syntax = NULL,
 		.commandArgNum = CommandArgument_0,
+		.description = NULL,
+		.syntax = NULL,
 	},
 	{
 		.name = "set",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_set,
+		.commandArgNum = CommandArgument_2,
 		.description = "set global variable value",
 		.syntax = "<varName> <value>",
-		.commandArgNum = CommandArgument_2,
 	},
 	{
 		.name = "get",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_get,
 		.description = "get global variable value",
-		.syntax = "<varName>",
 		.commandArgNum = CommandArgument_1,
+		.syntax = "<varName>",
 	},
 	{
 		.name = "?",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_GlobalVariableHelp,
 		.description = "help global variable",
-		.syntax = "<varName>",
 		.commandArgNum = CommandArgument_1,
+		.syntax = "<varName>",
 	},
 	{
 		.name = "list",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_GlobalVariableList,
-		.description = "List global variable",
 		.commandArgNum = CommandArgument_0,
+		.description = "List global variable",
 	},
 	{
 		.name = "listvalues",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_GlobalVariableValueList,
-		.description = "List global variable's values",
 		.commandArgNum = CommandArgument_0,
+		.description = "List global variable's values",
 	},
 	{
 		.name = "led",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_led,
-		.description = "Control LED",
-		.syntax = "<on/off/toggle/status> <num>",
 		.commandArgNum = CommandArgument_1 | CommandArgument_2,
+		.description = "Control LED",
+		.syntax = "<num> <on/off/toggle/status>",
 	},
 #ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
 	{
 		.name = "#raspi",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_raspberrypi,
-		.description = "Raspberry Pi HomeAutMessage sending",
-		.syntax = "-",
 		.commandArgNum = CommandArgument_2
+		.description = "Raspberry Pi HomeAutMessage sending",
+		.syntax = NULL,
 	},
 #endif
 	{
-		.name = "dac",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_dac,
-		.commandArgNum = CommandArgument_2
-	},
-	{
 		.name = "unittest",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_unittest,
+		.commandArgNum = CommandArgument_0 | CommandArgument_1,
 		.description = "Run unit tests",
-		.syntax = "optional: <modul>",
-		.commandArgNum = CommandArgument_0 | CommandArgument_1
+		.syntax = "(modul)",
 	},
 	{
 		.name = "moduletest",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_moduletest,
+		.commandArgNum = CommandArgument_0,
 		.description = "Run module test",
-		.commandArgNum = CommandArgument_0
 	},
 #ifdef CONFIG_MODULE_COMMON_IO_ENABLE
 	{
 		.name = "ioinit",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_io,
-		.commandArgNum = CommandArgument_2
+		.commandArgNum = CommandArgument_2,
+		.description = "Init IO pins",
+		.syntax = "<port><pin> <input/output>",
 	},
 	{
 		.name = "ioout",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_io,
-		.commandArgNum = CommandArgument_2
+		.commandArgNum = CommandArgument_2,
+		.description = "Set output",
+		.syntax = "<port><pin> <set/reset>",
 	},
 	{
 		.name = "ioin",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_io,
-		.commandArgNum = CommandArgument_1
+		.commandArgNum = CommandArgument_1,
+		.description = "Get input",
+		.syntax = "<port><pin>",
+	},
+#endif
+#ifdef CONFIG_MODULE_DAC_ENABLE
+	{
+		.name = "dac",
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_dac,
+		.commandArgNum = CommandArgument_2,
+		.description = "Digital -> Analog",
+		.syntax = "<num> <voltage>"
 	},
 #endif
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
 	{
 		.name = "adc",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_adc,
-		.description = "ADC",
-		.syntax = "TODO:",
+		.description = "Analog -> Digital",
+		.syntax = NULL,
 		.commandArgNum = CommandArgument_0,
+	},
+	{
+		.name = "adcread",
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_adcread,
+		.description = "ADC read continuous",
+		.syntax = "<milliSec> <num>",
+		.commandArgNum = CommandArgument_1 | CommandArgument_2,
 	},
 #endif
 #ifdef CONFIG_MODULE_ADC_ENABLE
@@ -1159,6 +1176,74 @@ CommandResult_t CommandFunction_adc (uint32_t argc, char** argv)
 	for (i=0; i<ADC_BUFFER_SIZE; i++)
 	{
 		duprintf(MONITOR_CommandSource,"ADC: %d. value: %2.2f\r\n", i, ADC_ConvertedValues[i]);
+	}
+
+	return CommandResult_Ok;
+}
+#endif
+
+
+
+#ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
+/**
+ * \brief	Common ADC function
+ * 			Read ADC values
+ */
+CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv)
+{
+
+	uint8_t i;
+	uint32_t convertValue;
+	uint16_t milliSec = 0;
+	uint8_t startNum = 0;
+	uint8_t endNum = ADC_BUFFER_SIZE-1;
+	// TODO: Elegánsabban megcsinálni:
+	uint8_t uartWriteCntOld = USART_RxBufferWriteCounter;
+
+	if (StringToUnsignedDecimalNum(argv[1],&convertValue))
+	{
+		milliSec = (uint16_t)convertValue;
+	}
+	else
+	{
+		// First argument is wrong
+		return CommandResult_Error_WrongArgument1;
+	}
+
+	// Check 2. argument
+	if (argc == 3)
+	{
+		if (StringToUnsignedDecimalNum(argv[2],&convertValue))
+		{
+			startNum = (uint8_t)convertValue;
+			endNum = startNum;
+		}
+		else
+		{
+			// Second argument is wrong
+			return CommandResult_Error_WrongArgument2;
+		}
+	}
+
+	// Loop for print
+	while (1)
+	{
+		for (i=startNum; i<=endNum; i++)
+		{
+			// Convert & Print
+			ADC_ConvertAllMeasuredValues();
+			duprintf(MONITOR_CommandSource,"ADC: %d. value: %2.2f\r\n", i, ADC_ConvertedValues[i]);
+		}
+
+		// Delay
+		DelayMs(milliSec);
+
+		if (uartWriteCntOld != USART_RxBufferWriteCounter)
+		{
+			// Received a new char
+			MONITOR_SendLine("ADC read is interrupted");
+			break;
+		}
 	}
 
 	return CommandResult_Ok;
