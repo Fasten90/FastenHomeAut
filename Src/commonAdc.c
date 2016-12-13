@@ -1,6 +1,14 @@
-/*******************************************************************************
- * Purpose:
- ******************************************************************************/
+/*
+ *		commonAdc.c
+ *
+ *		Created on:		2016. nov. 21.
+ *      Author:			Vizi Gábor
+ *		E-mail:			vizi.gabor90@gmail.com
+ *		Function:		-
+ *		Target:			STM32Fx
+ *		Version:		-
+ *		Last modified:	2016. dec. 13.
+ */
 
 /*------------------------------------------------------------------------------
  *  Header files
@@ -20,6 +28,7 @@
  *----------------------------------------------------------------------------*/
 
 
+
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
@@ -35,10 +44,10 @@ volatile float			ADC_ConvertedValues[ADC_BUFFER_SIZE] = { 0 };
 
 
 
-
 /*------------------------------------------------------------------------------
  *  Local variables
  *----------------------------------------------------------------------------*/
+
 
 
 /*------------------------------------------------------------------------------
@@ -46,9 +55,11 @@ volatile float			ADC_ConvertedValues[ADC_BUFFER_SIZE] = { 0 };
  *----------------------------------------------------------------------------*/
 
 
+
 /*------------------------------------------------------------------------------
  *  Local functions
  *----------------------------------------------------------------------------*/
+
 
 
 /*------------------------------------------------------------------------------
@@ -60,7 +71,6 @@ extern void Error_Handler(void);
 
 /**
  * \brief	Initialize ADC
- *
  */
 void ADC_Init(void)
 {
@@ -71,15 +81,15 @@ void ADC_Init(void)
 
 	AdcHandle.Init.ClockPrescaler        = ADC_CLOCKPRESCALER_PCLK_DIV2;
 	AdcHandle.Init.Resolution            = ADC_RESOLUTION_12B;
-	AdcHandle.Init.ScanConvMode          = DISABLE;               	/* Sequencer enabled (ADC conversion on several channels, successively, following settings below) */
-	AdcHandle.Init.ContinuousConvMode    = ENABLE;                       /* Continuous mode disabled to have only 1 rank converted at each conversion trig, and because discontinuous mode is enabled */
-	AdcHandle.Init.DiscontinuousConvMode = DISABLE;                        /* Sequencer of regular group will convert the sequence in several sub-divided sequences */
-	AdcHandle.Init.NbrOfDiscConversion   = 0;                             /* Sequencer of regular group will convert ranks one by one, at each conversion trig */
+	AdcHandle.Init.ScanConvMode          = DISABLE;							/* Sequencer enabled (ADC conversion on several channels, successively, following settings below) */
+	AdcHandle.Init.ContinuousConvMode    = ENABLE;							/* Continuous mode disabled to have only 1 rank converted at each conversion trig, and because discontinuous mode is enabled */
+	AdcHandle.Init.DiscontinuousConvMode = DISABLE;							/* Sequencer of regular group will convert the sequence in several sub-divided sequences */
+	AdcHandle.Init.NbrOfDiscConversion   = 0;								/* Sequencer of regular group will convert ranks one by one, at each conversion trig */
 	AdcHandle.Init.ExternalTrigConvEdge  = ADC_EXTERNALTRIGCONVEDGE_NONE;
-	AdcHandle.Init.ExternalTrigConv      = ADC_EXTERNALTRIGCONV_T1_CC1;            /* Trig of conversion start done manually by software, without external event */
+	AdcHandle.Init.ExternalTrigConv      = ADC_EXTERNALTRIGCONV_T1_CC1;		/* Trig of conversion start done manually by software, without external event */
 	AdcHandle.Init.DataAlign             = ADC_DATAALIGN_RIGHT;
-	AdcHandle.Init.NbrOfConversion       = ADC_BUFFER_SIZE;               /* Sequencer of regular group will convert the 3 first ranks: rank1, rank2, rank3 */
-	AdcHandle.Init.DMAContinuousRequests = ENABLE;                        /* ADC-DMA continuous requests to match with DMA configured in circular mode */
+	AdcHandle.Init.NbrOfConversion       = ADC_BUFFER_SIZE;					/* Sequencer of regular group will convert the 3 first ranks: rank1, rank2, rank3 */
+	AdcHandle.Init.DMAContinuousRequests = ENABLE;							/* ADC-DMA continuous requests to match with DMA configured in circular mode */
 	AdcHandle.Init.EOCSelection          = DISABLE;
 
 	
@@ -161,7 +171,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 	GPIO_InitTypeDef GPIO_InitStruct;
 	static DMA_HandleTypeDef DmaHandle;
 
-	/*##-1- Enable peripherals and GPIO Clocks #################################*/
+	/*##-1- Enable peripherals and GPIO Clocks */
 	/* Enable GPIO clock */
 	ADCx_CHANNEL_GPIO_CLK_ENABLE();
 	/* ADC Periph clock enable */
@@ -170,7 +180,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 	DMAx_CLK_ENABLE();
 
 
-	/*##- 2- Configure peripheral GPIO #########################################*/
+	/*##- 2- Configure peripheral GPIO */
 	GPIO_InitStruct.Pin = ADCx_CHANNEL_PIN;
 	GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
@@ -212,7 +222,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 	__HAL_LINKDMA(hadc, DMA_Handle, DmaHandle);
 
 	/* NVIC configuration for DMA Input data interrupt */
-	HAL_NVIC_SetPriority(ADCx_DMA_IRQn, 12, 0);
+	HAL_NVIC_SetPriority(ADCx_DMA_IRQn, ADC_DMA_PREEMT_PRIORITY, ADC_DMA_SUB_PRIORITY);
 	HAL_NVIC_EnableIRQ(ADCx_DMA_IRQn);
 	
 }
@@ -224,7 +234,8 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
  */
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 {
-	LED_RED_TOGGLE();
+	// TODO: Do anything, after ADC converting
+	//LED_RED_TOGGLE();
 }
 
 

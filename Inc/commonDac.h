@@ -1,5 +1,5 @@
 /*
- *		dac.h
+ *		commonDac.h
  *
  *		Created on:		2016. nov. 21.
  *      Author:			Vizi Gábor
@@ -7,7 +7,7 @@
  *		Function:		-
  *		Target:			STM32Fx
  *		Version:		-
- *		Last modified:	2016. nov. 21.
+ *		Last modified:	2016. dec. 13.
  */
 
 #ifndef COMMONDAC_H_
@@ -44,7 +44,7 @@ extern DAC_HandleTypeDef    DacHandle;
  *----------------------------------------------------------------------------*/
 
 void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac);
-void DAC_Config(void);
+void DAC_Init(void);
 bool DAC_SetValue (DAC_Channel_t channel, float voltage);
 
 

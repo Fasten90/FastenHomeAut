@@ -371,6 +371,10 @@
 #define ADCx_DMA_IRQn                   DMA2_Stream0_IRQn
 #define ADCx_DMA_IRQHandler             DMA2_Stream0_IRQHandler
 
+/* ADC DMA Interrupt priorities */
+#define ADC_DMA_PREEMT_PRIORITY			10
+#define ADC_DMA_SUB_PRIORITY			0
+
 
 #define COMMON_ADC_VOLTAGE_MAX			(3.3f)
 #define COMMON_ADC_RESOLUTION_MAX		(4096U)
@@ -515,11 +519,19 @@
 
 
 #ifdef CONFIG_USE_PANEL_DISCOVERY
-#define BUTTON_USER_GPIO_PORT		GPIOA
-#define BUTTON_USER_GPIO_CLK		RCC_AHB1Periph_GPIOA
-#define BUTTON_USER_GPIO_PIN		GPIO_PIN_0
 
-#define BUTTON_CLK_ENABLES()		__GPIOA_CLK_ENABLE()
+// User button: PA0
+
+#define BUTTON_USER_GPIO_PORT						GPIOA
+#define BUTTON_USER_GPIO_PIN						GPIO_PIN_0
+
+#define BUTTON_CLK_ENABLES()						__GPIOA_CLK_ENABLE()
+
+/* Button Interrupt priority */
+#define BUTTON_USER_EXTI_IRQn						EXTI0_IRQn
+#define BUTTON_USER_INTERRUPT_PREEMT_PRIORITY		10
+#define BUTTON_USER_INTERRUPT_SUB_PRIORITY			0
+
 #endif
 
 

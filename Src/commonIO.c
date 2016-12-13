@@ -17,6 +17,9 @@
 
 
 
+/*------------------------------------------------------------------------------
+ *  Function declarations
+ *----------------------------------------------------------------------------*/
 
 bool IO_EnablePeripheralClock(char port);
 GPIO_TypeDef * IO_GetPort(char port);
@@ -25,8 +28,12 @@ uint32_t IO_GetMode(IO_Type io);
 
 
 
+/*------------------------------------------------------------------------------
+ *  Functions
+ *----------------------------------------------------------------------------*/
+
 /**
- * \brief	Init IO pin
+ * \brief	Initialize IO pin
  */
 bool IO_Init(char port, uint8_t pin, IO_Type io)
 {
@@ -56,6 +63,9 @@ bool IO_Init(char port, uint8_t pin, IO_Type io)
 
 
 
+/**
+ * \brief	Set output
+ */
 bool IO_SetOutput(char port, uint8_t pin, Output_Type output)
 {
 	bool status = false;
@@ -107,11 +117,13 @@ bool IO_SetOutput(char port, uint8_t pin, Output_Type output)
 	}
 
 	return status;
-
 }
 
 
 
+/**
+ * \brief	Read input
+ */
 bool IO_ReadPin(char port, uint8_t pin)
 {
 	bool status = false;
@@ -134,6 +146,9 @@ bool IO_ReadPin(char port, uint8_t pin)
 
 
 
+/**
+ * \brief	Enable peripheral clock
+ */
 bool IO_EnablePeripheralClock(char port)
 {
 
@@ -173,6 +188,9 @@ bool IO_EnablePeripheralClock(char port)
 
 
 
+/**
+ * \brief	Convert "port name" to "port"
+ */
 GPIO_TypeDef * IO_GetPort(char port)
 {
 	GPIO_TypeDef *GPIO_port;
@@ -213,6 +231,9 @@ GPIO_TypeDef * IO_GetPort(char port)
 
 
 
+/**
+ * \brief	Convert "num" to "pin"
+ */
 uint32_t IO_GetPin(uint8_t pin)
 {
 
@@ -277,6 +298,9 @@ uint32_t IO_GetPin(uint8_t pin)
 
 
 
+/**
+ * \brief	Get IO mode
+ */
 uint32_t IO_GetMode(IO_Type io)
 {
 	uint32_t iomode;
@@ -299,12 +323,4 @@ uint32_t IO_GetMode(IO_Type io)
 	}
 
 	return iomode;
-}
-
-// TODO: Törölni, ha mégse kell
-bool IO_ProcessPortAndPinParameter(const char *string, char *port, uint8_t *pin)
-{
-
-	return false;
-
 }

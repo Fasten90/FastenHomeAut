@@ -142,10 +142,12 @@ void BUTTON_Init ( void )
 
 #ifdef CONFIG_USE_PANEL_DISCOVERY
 
-	// User		PA0
+	// User	button
 
 	// Enable and set EXTI lines
-	HAL_NVIC_SetPriority(EXTI0_IRQn, 1, 0);
+	HAL_NVIC_SetPriority(BUTTON_USER_EXTI_IRQn,
+			BUTTON_USER_INTERRUPT_PREEMT_PRIORITY,
+			BUTTON_USER_INTERRUPT_SUB_PRIORITY);
 	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 #endif
 

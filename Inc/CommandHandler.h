@@ -7,7 +7,7 @@
  *		Function:		Command Handler: communication with UART, execute commands
  *		Target:			STM32Fx
  *		Version:		v4
- *		Last modified:	2016.09.28
+ *		Last modified:	2016. dec. 13
  */
 
 #ifndef COMMANDHANDLER_H_
@@ -56,8 +56,8 @@
 		"\r\n"												\
 		"Welcome in Monitor program!\r\n"					\
 		"Version: " VERSION_DEFINE "\r\n"					\
-		"Date: " DATE_VERSION "\r\n"									\
-		"Time: "TIME_VERSION "\r\n"									\
+		"Date: " DATE_VERSION "\r\n"						\
+		"Time: "TIME_VERSION "\r\n"							\
 		"Used panel: " BOARD_NAME "\r\n"					\
 		"(c) Copyright, Vizi Gabor\r\n"						\
 		"\r\n"												\

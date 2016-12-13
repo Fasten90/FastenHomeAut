@@ -1,5 +1,5 @@
 /*
- *		dac.c
+ *		commonDac.c
  *
  *		Created on:		2016. nov. 21.
  *      Author:			Vizi Gábor
@@ -7,7 +7,7 @@
  *		Function:		-
  *		Target:			STM32Fx
  *		Version:		-
- *		Last modified:	2016. nov. 21.
+ *		Last modified:	2016. dec. 13.
  */
 
 
@@ -17,94 +17,107 @@
 #include "board.h"
 #include "stm32f4xx_hal.h"
 
+
+/*------------------------------------------------------------------------------
+ *  Global variables
+ *----------------------------------------------------------------------------*/
+
 DAC_HandleTypeDef    DacHandle;
 static DAC_ChannelConfTypeDef sConfig;
 
 
-void DAC_Config(void);
+
+/*------------------------------------------------------------------------------
+ *  Functions
+ *----------------------------------------------------------------------------*/
 
 
+
+/**
+ * \brief	HAL driver: DAC MSP initialization
+ */
 void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac)
 {
-  GPIO_InitTypeDef          GPIO_InitStruct;
+	GPIO_InitTypeDef GPIO_InitStruct;
 
-  /*##-1- Enable peripherals and GPIO Clocks #################################*/
-  /* Enable GPIO clock ****************************************/
-  DACx_CHANNEL_GPIO_CLK_ENABLE();
-  /* DAC Periph clock enable */
-  DACx_CLK_ENABLE();
+	/*##-1- Enable peripherals and GPIO Clocks */
+	/* Enable GPIO clock */
+	DACx_CHANNEL_GPIO_CLK_ENABLE();
+	/* DAC Periph clock enable */
+	DACx_CLK_ENABLE();
 
-  /*##-2- Configure peripheral GPIO ##########################################*/
-  /* DAC Channel1 GPIO pin configuration */
-  GPIO_InitStruct.Pin = DACx_CHANNEL1_PIN;
-  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(DACx_CHANNEL1_GPIO_PORT, &GPIO_InitStruct);
+	/*##-2- Configure peripheral GPIO */
+	/* DAC Channel1 GPIO pin configuration */
+	GPIO_InitStruct.Pin = DACx_CHANNEL1_PIN;
+	GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	HAL_GPIO_Init(DACx_CHANNEL1_GPIO_PORT, &GPIO_InitStruct);
 
-  /* DAC Channel1 GPIO pin configuration */
-  GPIO_InitStruct.Pin = DACx_CHANNEL2_PIN;
-  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(DACx_CHANNEL2_GPIO_PORT, &GPIO_InitStruct);
+	/* DAC Channel1 GPIO pin configuration */
+	GPIO_InitStruct.Pin = DACx_CHANNEL2_PIN;
+	GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	HAL_GPIO_Init(DACx_CHANNEL2_GPIO_PORT, &GPIO_InitStruct);
 
 }
 
 
 
-
-void DAC_Config(void)
+/**
+ * \brief	Initialize DAC
+ */
+void DAC_Init(void)
 {
 
-  /*##-1- Configure the DAC peripheral #######################################*/
-  DacHandle.Instance = DACx;
+	/*##-1- Configure the DAC peripheral */
+	DacHandle.Instance = DACx;
 
-  /*##-1- Initialize the DAC peripheral ######################################*/
-  if (HAL_DAC_Init(&DacHandle) != HAL_OK)
-  {
-    /* Initialization Error */
-    Error_Handler();
-  }
+	/*##-1- Initialize the DAC peripheral */
+	if (HAL_DAC_Init(&DacHandle) != HAL_OK)
+	{
+		/* Initialization Error */
+		Error_Handler();
+	}
 
-  /*##-2- DAC channel2 Configuration #########################################*/
-  sConfig.DAC_Trigger = DAC_TRIGGER_NONE;
-  sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_DISABLE;
+	/*##-2- DAC channel2 Configuration */
+	sConfig.DAC_Trigger = DAC_TRIGGER_NONE;
+	sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_DISABLE;
 
-  if (HAL_DAC_ConfigChannel(&DacHandle, &sConfig, DACx_CHANNEL1) != HAL_OK)
-  {
-    /* Channel configuration Error */
-    Error_Handler();
-  }
-  if (HAL_DAC_ConfigChannel(&DacHandle, &sConfig, DACx_CHANNEL2) != HAL_OK)
-  {
-    /* Channel configuration Error */
-    Error_Handler();
-  }
+	if (HAL_DAC_ConfigChannel(&DacHandle, &sConfig, DACx_CHANNEL1) != HAL_OK)
+	{
+		/* Channel configuration Error */
+		Error_Handler();
+	}
+	if (HAL_DAC_ConfigChannel(&DacHandle, &sConfig, DACx_CHANNEL2) != HAL_OK)
+	{
+		/* Channel configuration Error */
+		Error_Handler();
+	}
 
-  /*##-5- Set DAC channel1 DHR12RD register ################################################*/
+	/*##-5- Set DAC channel1 DHR12RD register */
+	if (HAL_DAC_SetValue(&DacHandle, DACx_CHANNEL1, DAC_ALIGN_12B_R, 0x00) != HAL_OK)
+	{
+		/* Setting value Error */
+		Error_Handler();
+	}
+	if (HAL_DAC_SetValue(&DacHandle, DACx_CHANNEL2, DAC_ALIGN_12B_R, 0x00) != HAL_OK)
+	{
+		/* Setting value Error */
+		Error_Handler();
+	}
 
-  if (HAL_DAC_SetValue(&DacHandle, DACx_CHANNEL1, DAC_ALIGN_12B_R, 0x00) != HAL_OK)
-  {
-	/* Setting value Error */
-	Error_Handler();
-  }
-  if (HAL_DAC_SetValue(&DacHandle, DACx_CHANNEL2, DAC_ALIGN_12B_R, 0x00) != HAL_OK)
-  {
-	/* Setting value Error */
-	Error_Handler();
-  }
 
-
-  /*##-4- Enable DAC Channel1 ################################################*/
-  if (HAL_DAC_Start(&DacHandle, DACx_CHANNEL1) != HAL_OK)
-  {
-    /* Start Error */
-    Error_Handler();
-  }
-  if (HAL_DAC_Start(&DacHandle, DACx_CHANNEL2) != HAL_OK)
-  {
-    /* Start Error */
-    Error_Handler();
-  }
+	/*##-4- Enable DAC Channel1 */
+	if (HAL_DAC_Start(&DacHandle, DACx_CHANNEL1) != HAL_OK)
+	{
+		/* Start Error */
+		Error_Handler();
+	}
+	if (HAL_DAC_Start(&DacHandle, DACx_CHANNEL2) != HAL_OK)
+	{
+		/* Start Error */
+		Error_Handler();
+	}
 
 }
 

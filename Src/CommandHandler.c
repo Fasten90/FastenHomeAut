@@ -286,7 +286,7 @@ void MONITOR_CheckCommand(void)
 
 			#ifdef CONFIG_USE_FREERTOS
 			// Wait semaphore
-			if (xSemaphoreTake(DEBUG_USART_Tx_Semaphore,1000) == pdTRUE)
+			if (xSemaphoreTake(DEBUG_USART_Rx_Semaphore,1000) == pdTRUE)
 			{
 				MONITOR_ProcessReceivedCharacter();
 			}
