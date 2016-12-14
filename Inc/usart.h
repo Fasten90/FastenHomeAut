@@ -73,7 +73,7 @@ extern volatile uint8_t USART_RxBufferWriteCounter;
  *----------------------------------------------------------------------------*/
 void USART_Init(UART_HandleTypeDef *UartHandle);
 
-uint8_t USART_WaitForSend(uint16_t timeoutMiliSecond);
+uint8_t USART_WaitForSend(uint16_t timeoutMilliSecond);
 
 void USART_StartReceiveMessage(void);
 

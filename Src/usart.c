@@ -576,12 +576,12 @@ void USART_StartReceiveMessage(void)
 /**
  * \brief	Wait fo USART sending
  */
-uint8_t USART_WaitForSend(uint16_t timeoutMiliSecond)
+uint8_t USART_WaitForSend(uint16_t timeoutMilliSecond)
 {
 
-	while(USART_SendEnable_flag == DISABLE && timeoutMiliSecond != 0)
+	while(USART_SendEnable_flag == DISABLE && timeoutMilliSecond != 0)
 	{	
-		timeoutMiliSecond--;
+		timeoutMilliSecond--;
 		HAL_Delay(1);
 	}
 	
