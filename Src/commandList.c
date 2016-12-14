@@ -172,7 +172,7 @@ const CommandStruct CommandList[] =
 		.syntax = "<port><pin>",
 	},
 #endif
-#ifdef CONFIG_MODULE_DAC_ENABLE
+#ifdef CONFIG_MODULE_COMMON_DAC_ENABLE
 	{
 		.name = "dac",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_dac,
@@ -947,7 +947,7 @@ CommandResult_t CommandFunction_raspberrypi (uint32_t argc, char** argv)
 
 
 
-#ifdef CONFIG_MODULE_DAC_ENABLE
+#ifdef CONFIG_MODULE_COMMON_DAC_ENABLE
 /**
  * \brief	DAC function
  * 			Use: 'dac <channel> <voltage>'

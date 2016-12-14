@@ -691,6 +691,15 @@ static ProcessResult_t GlobalVarHandler_SetBool(VarID_t commandID, const char *p
 		{
 			boolVal = false;
 		}
+		// Check it is "set" / "reset"
+		else if (!StrCmp((const char*)param,"set"))
+		{
+			boolVal = true;
+		}
+		else if (!StrCmp((const char*)param,"reset"))
+		{
+			boolVal = false;
+		}
 		else
 		{
 			// Not good "string"

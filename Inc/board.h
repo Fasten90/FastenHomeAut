@@ -16,7 +16,7 @@
 #define BOARD_H_
 
 
-#include "include.h" // what panel using
+#include "options.h" // what panel using
 
 
 /// BOARD NAME
@@ -330,8 +330,6 @@
 #define ADC_VREFINT_CHANNEL			ADC_CHANNEL_17
 
 
-
-
 #endif	// CONFIG_USE_PANEL_NODEMEDIUM
 
 
@@ -343,8 +341,8 @@
 #endif	// CONFIG_USE_PANEL_CENTERPANEL
 
 
-#ifdef CONFIG_USE_PANEL_DISCOVERY
 
+#ifdef CONFIG_USE_PANEL_DISCOVERY
 
 // ANALOG
 
@@ -540,6 +538,7 @@
 //			TEMPERATURE - I2C - LM75
 ///////////////////////////////////////////////////////////////////////////////
 
+#ifdef CONFIG_MODULE_ADC_ENABLE
 // I2C_SCL		PB10
 // I2C_SDA		PB11
 
@@ -554,6 +553,7 @@
 // pointer register:
 #define TEMPERATURE_I2C_REGISTER_TEMP	((uint8_t)0x00)
 
+#endif	// CONFIG_MODULE_ADC_ENABLE
 
 #ifdef CONFIG_USE_PANEL_NODESMALL
 #define I2Cx                             I2C1

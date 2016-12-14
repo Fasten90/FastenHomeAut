@@ -13,8 +13,8 @@
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
-#include "adc.h"
 #include "include.h"
+#include "commonAdc.h"
 
 
 /*------------------------------------------------------------------------------
@@ -42,6 +42,7 @@ volatile uint32_t		ADC_MeasuredValues[ADC_BUFFER_SIZE] = { 0 };
 // Calculated values
 volatile float			ADC_ConvertedValues[ADC_BUFFER_SIZE] = { 0 };
 
+volatile uint32_t		ADC_MeasureCnt = 0;
 
 
 /*------------------------------------------------------------------------------
@@ -236,8 +237,10 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
  */
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 {
-	// TODO: Do anything, after ADC converting
-	//LED_RED_TOGGLE();
+	// Suppress warning
+	(void)AdcHandle;
+
+	ADC_MeasureCnt++;
 }
 
 

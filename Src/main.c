@@ -33,16 +33,6 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#if CONFIG_USE_PANEL_NODESMALL
-	#include "stm32f0xx_hal.h"
-#endif
-#ifdef CONFIG_USE_PANEL_NODEMEDIUM
-	#include "stm32l1xx_hal.h"
-#endif
-#ifdef CONFIG_USE_PANEL_CENTERPANEL
-	#include "stm32f4xx_hal.h"
-#endif
-
 
 #include "include.h"
 
@@ -53,14 +43,13 @@
 /* USER CODE BEGIN 0 */
 
 
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-extern UART_HandleTypeDef Debug_UartHandle;
+#if defined(CONFIG_MODULE_DEBUGUSART_ENABLE) && defined(CONFIG_USE_FREERTOS)
+extern xSemaphoreHandle DEBUG_USART_Rx_Semaphore;
+extern xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
+#endif
 
-	#ifdef CONFIG_USE_FREERTOS
-	extern xSemaphoreHandle DEBUG_USART_Rx_Semaphore;
-	extern xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
-	extern xQueueHandle ESP8266_SendMessage_Queue;
-	#endif
+#if defined(CONFIG_MODULE_ESP8266_ENABLE) && defined(CONFIG_USE_FREERTOS)
+extern xQueueHandle ESP8266_SendMessage_Queue;
 #endif
 
 
@@ -86,7 +75,7 @@ int main(void)
 
 
 	// USER CODE:
-	
+
 	// TEST
 #ifdef TEST_CODE
 	USART_Init(&Debug_UartHandle);
@@ -118,7 +107,7 @@ int main(void)
 #endif
 
 
-#ifdef CONFIG_MODULE_DAC_ENABLE
+#ifdef CONFIG_MODULE_COMMON_DAC_ENABLE
 	HAL_DAC_MspInit(&DacHandle);
 	DAC_Init();
 #endif

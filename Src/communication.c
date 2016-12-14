@@ -59,7 +59,7 @@ uint8_t COMMUNICATION_SendMessage (CommProtocol_t protocol, const char *message)
  */
 uint8_t COMMUNICATION_SendChar (CommProtocol_t protocol, char c)
 {
-	switch (MONITOR_CommandSource)
+	switch (protocol)
 	{
 		case CommProt_Unknown:
 			// Unknown, send on debug
@@ -70,8 +70,6 @@ uint8_t COMMUNICATION_SendChar (CommProtocol_t protocol, char c)
 			break;
 		case CommProt_OtherUart:
 		case CommProt_Disable:
-			// TODO: Not implemented
-			break;
 		default:
 			break;
 	}

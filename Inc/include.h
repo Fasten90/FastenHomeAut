@@ -20,6 +20,8 @@
 // #define assert_param(expr) ((void)0)	// incompatible redefinition ...
 
 
+// Include libs, important headers
+
 // typedefs
 #include <stdbool.h>
 
@@ -34,6 +36,7 @@ typedef short signed int			int16_t;
 typedef unsigned int				uint32_t;
 typedef signed int					int32_t;
 #endif
+
 
 
 /// Return typedef
@@ -56,10 +59,6 @@ typedef enum
 /////////////////////////////
 
 
-#if !defined(CONFIG_USE_PANEL_NODEMSMALL) && !defined(CONFIG_USE_PANEL_NODEMEDIUM) \
-	&& !defined(CONFIG_USE_PANEL_CENTERPANEL) && !defined(CONFIG_USE_PANEL_DISCOVERY)
-#error "Miss config define! Use CONFIG_USE_PANEL_..."
-#endif
 
 ///////////////////////////// INCLUDES
 
@@ -68,95 +67,30 @@ typedef enum
 #ifdef CONFIG_USE_PANEL_NODESMALL
 	#include "stm32f0xx_hal.h"
 	#include "stm32f0xx_hal_def.h"
-	
 	#include "stm32f0xx_it.h"
 	#include "stm32f0xx_hal_conf.h"
-	
-	#define CONFIG_MODULE_ESP8266_ENABLE
-	#define CONFIG_MODULE_FLASH_ENABLE
-	#define CONFIG_MODULE_TEMPERATURE_ENABLE
-	#define CONFIG_MODULE_ADC_ENABLE
 #endif
 
 
 
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
 	#include "stm32l1xx_hal.h"
-	
-	#include "stm32_hal_legacy.h"	// define-ok miatt?
-
-	#define CONFIG_MODULE_ESP8266_ENABLE
-	#define CONFIG_MODULE_DEBUGUSART_ENABLE
-	#define CONFIG_USE_FREERTOS
-	#define CONFIG_MODULE_FLASH_ENABLE
-	#define CONFIG_MODULE_TEMPERATURE_ENABLE
-	#define CONFIG_MODULE_ADC_ENABLE
-	//#define CONFIG_USE_MONITOR_HISTORY
+	#include "stm32_hal_legacy.h"
 #endif
-
 
 
 
 #ifdef CONFIG_USE_PANEL_CENTERPANEL
 	#include "stm32f4xx_hal.h"
-	
-	#include "stm32_hal_legacy.h"	// for defines
-	
-	#define CONFIG_MODULE_ESP8266_ENABLE
-
-	#define CONFIG_MODULE_DEBUGUSART_ENABLE
-	//#define CONFIG_USE_FREERTOS
-	
-	#define CONFIG_MODULE_ESP8266_ENABLE
-	#define CONFIG_MODULE_DEBUGUSART_ENABLE
-	#define CONFIG_USE_FREERTOS
-	#define CONFIG_MODULE_FLASH_ENABLE
-	#define CONFIG_MODULE_TEMPERATURE_ENABLE
-	#define CONFIG_MODULE_ADC_ENABLE
-
+	#include "stm32_hal_legacy.h"
 #endif
 
 
 
 #ifdef CONFIG_USE_PANEL_DISCOVERY
 	// STM32F4 Discovery
-
 	#include "stm32f4xx_hal.h"
 	#include "stm32_hal_legacy.h"	// for defines
-
-	#define CONFIG_MODULE_DEBUGUSART_ENABLE
-
-	#define CONFIG_MODULE_MONITOR_ENABLE
-
-	//#define CONFIG_USE_FREERTOS
-
-	#define CONFIG_MODULE_LED_ENABLE
-
-	#define CONFIG_MODULE_BUTTON_ENABLE
-
-	//#define CONFIG_MODULE_IO_ENABLE
-
-	//#define CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
-
-	//#define CONFIG_MODULE_RASPBERRYPI_ENABLE
-
-	//#define CONFIG_MODULE_ESP8266_ENABLE
-
-	//#define CONFIG_MODULE_FLASH_ENABLE
-
-	//#define CONFIG_MODULE_TEMPERATURE_ENABLE
-
-	//#define CONFIG_MODULE_ADC_ENABLE
-
-	//#define CONFIG_MODULE_SYSMANAGER_ENABLE
-
-	#define CONFIG_MODULE_DAC_ENABLE
-
-	#define CONFIG_MODULE_COMMON_IO_ENABLE
-
-	#define CONFIG_MODULE_COMMON_ADC_ENABLE
-
-	//#define CONFIG_MODULE_STL_SELFTEST_ENABLE
 #endif
 
 
@@ -179,16 +113,6 @@ FreeRTOS/Source/portable/[compiler]/[architecture]/port.c.
 FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 */
 
-#define MONITOR_TASK_STACK_SIZE			configMINIMAL_STACK_SIZE * 10
-#define MONITOR_TASK_PRIORITY			( tskIDLE_PRIORITY + 3UL )
-
-#define ESP8266_TASK_STACK_SIZE			configMINIMAL_STACK_SIZE * 3
-#define ESP8266_TASK_PRIORITY			( tskIDLE_PRIORITY + 3UL )
-
-#define SYSMANAGER_TASK_STACK_SIZE		configMINIMAL_STACK_SIZE * 2
-#define SYSMANAGER_TASK_PRIORITY		( tskIDLE_PRIORITY + 3UL )
-
-
 #endif	// #ifdef CONFIG_USE_FREERTOS
 
 
@@ -199,6 +123,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 /// MODUL INCLUDES
 
+#include "MEM.h"
 
 #include "globals.h"
 #include "string.h"
@@ -250,7 +175,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #include "flash.h"	// Work, but not need
 #endif
 
-#ifdef CONFIG_MODULE_DAC_ENABLE
+#ifdef CONFIG_MODULE_COMMON_DAC_ENABLE
 #include "commonDac.h"
 #endif
 
