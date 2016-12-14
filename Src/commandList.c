@@ -320,6 +320,9 @@ const CommandID_t MONITOR_CommandNum = MONITOR_MAX_COMMAND_NUM;
  */
 CommandResult_t CommandFunction_cls ( uint32_t argc, char** argv )
 {
+	// Suppress warning
+	(void)argc;
+	(void)argv;
 
 	MONITOR_SendCls();
 
@@ -333,6 +336,10 @@ CommandResult_t CommandFunction_cls ( uint32_t argc, char** argv )
  */
 CommandResult_t CommandFunction_version ( uint32_t argc, char** argv )
 {
+	// Suppress warning
+	(void)argc;
+	(void)argv;
+
 	MONITOR_SendLine(Global_Version);
 
 	return CommandResult_Ok;
@@ -345,6 +352,10 @@ CommandResult_t CommandFunction_version ( uint32_t argc, char** argv )
  */
 CommandResult_t CommandFunction_welcome ( uint32_t argc, char** argv )
 {
+	// Suppress warning
+	(void)argc;
+	(void)argv;
+
 	MONITOR_SendWelcome();
 
 	return CommandResult_Ok;
@@ -403,9 +414,10 @@ CommandResult_t CommandFunction_help ( uint32_t argc, char** argv )
  */
 CommandResult_t CommandFunction_reset ( uint32_t argc, char** argv )
 {
+	// Suppress warning
+	(void)argc;
+	(void)argv;
 
-	//(void)argc;
-	//(void)argv;
 	uint16_t i;
 
 	MONITOR_SendLine("Reset...");
@@ -432,6 +444,9 @@ CommandResult_t CommandFunction_reset ( uint32_t argc, char** argv )
  */
 CommandResult_t CommandFunction_led ( uint32_t argc, char** argv )
 {
+	// Suppress warning
+	(void)argc;
+
 	// TODO: Szépíteni
 
 	// Convert arg2, decimal
@@ -502,37 +517,15 @@ CommandResult_t CommandFunction_led ( uint32_t argc, char** argv )
 
 
 
-#ifdef CONFIG_MODULE_ADC_ENABLE
-/**
- * \brief	Temperature
- * 			Read temperature and Vref values
- */
-CommandResult_t CommandFunction_temp	( uint32_t argc, char** argv ) {
-
-	//uprintf("Temperature: %d [C]\r\n",ADC_GetTemp());
-	//uprintf("Vref: %d [mV]\r\n",ADC_GetVref());
-	
-
-	ADC_ConvertAllMeasuredValues();
-	
-	uprintf("Temperature: ");
-	USART_SendFloat(ADC_ConvertedValue_InternalTemperature);
-	uprintf(" [C]\r\n");
-	
-
-	return CommandResult_Ok;
-}
-#endif
-
-
-
 /**
  * \brief	Test function
  */
-CommandResult_t CommandFunction_test	( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_test	( uint32_t argc, char** argv )
+{
 	
-	//(void)argc;
-	//(void)argv;
+	// Suppress warning
+	(void)argc;
+	(void)argv;
 	//uint8_t i = 0;
 	//uint8_t buf[2];
 	
@@ -696,6 +689,8 @@ CommandResult_t CommandFunction_test	( uint32_t argc, char** argv ) {
  */
 CommandResult_t CommandFunction_set ( uint32_t argc, char** argv )
 {
+	// Suppress warning
+	(void)argc;
 
 	char resultBuffer[30];
 
@@ -719,6 +714,8 @@ CommandResult_t CommandFunction_set ( uint32_t argc, char** argv )
  */
 CommandResult_t CommandFunction_get ( uint32_t argc, char** argv )
 {
+	// Suppress warning
+	(void)argc;
 
 	char resultBuffer[30];
 
@@ -741,6 +738,8 @@ CommandResult_t CommandFunction_get ( uint32_t argc, char** argv )
  */
 CommandResult_t CommandFunction_GlobalVariableHelp ( uint32_t argc, char** argv )
 {
+	// Suppress warning
+	(void)argc;
 
 	char resultBuffer[80];
 
@@ -763,6 +762,9 @@ CommandResult_t CommandFunction_GlobalVariableHelp ( uint32_t argc, char** argv 
  */
 CommandResult_t CommandFunction_GlobalVariableList ( uint32_t argc, char** argv )
 {
+	// Suppress warning
+	(void)argc;
+	(void)argv;
 
 	GlobalVarHandler_ListAllVariableParameters();
 
@@ -777,173 +779,15 @@ CommandResult_t CommandFunction_GlobalVariableList ( uint32_t argc, char** argv 
  */
 CommandResult_t CommandFunction_GlobalVariableValueList ( uint32_t argc, char** argv )
 {
+	// Suppress warning
+	(void)argc;
+	(void)argv;
 
 	GlobalVarHandler_PrintAllVariableValues();
 
 	return CommandResult_Ok;
 
 }
-
-
-
-#ifdef CONFIG_MODULE_FLASH_ENABLE
-/**
- * \brief	Flash erase
- * 			Use: 'flashdel <address> <block/sector>'
- */
-CommandResult_t CommandFunction_flashdel	( uint32_t argc, char** argv )
-{
-	uint32_t Arg2Num;
-
-	// Convert arg2 hex
-	if ( !StringHexToNum(argv[1],&Arg2Num))
-	{
-		return CommandResult_Error_WrongArgument1;
-	}
-
-
-	if (!StrCmp(argv[2],"block"))
-	{
-		FLASH_BlockErase(Arg2Num,5000);
-	}
-	else if (!StrCmp(argv[2],"sector"))
-	{
-		FLASH_SectorErase(Arg2Num,5000);
-	}
-	else
-	{
-		return RETURN_FALSE;
-	}
-			
-	duprintf(MONITOR_CommandSource, "address erased: 0x%h\r\n",
-			Arg2Num
-			);
-	
-	return CommandResult_Ok;
-}
-#endif
-
-
-
-#ifdef CONFIG_MODULE_FLASH_ENABLE
-/**
- * \brief	Flash read
- * 			Use: 'flashread <address>'
- */
-CommandResult_t CommandFunction_flashread	( uint32_t argc, char** argv )
-{
-	
-	uint32_t Arg2Num;
-
-	// Convert arg2 hex
-	if ( !StringHexToNum(argv[1],&Arg2Num))
-	{
-		return CommandResult_Error_WrongArgument1;
-	}
-
-
-	uint8_t Buffer[1];
-	FLASH_Read(Arg2Num,Buffer,1,5000);
-	
-	
-	duprintf(MONITOR_CommandSource, "address: 0x%w\r\n"
-			"data:    0x%b\r\n",
-			Arg2Num,
-			Buffer[0]
-			);
-	
-	return CommandResult_Ok;
-}
-#endif
-
-
-
-#ifdef CONFIG_MODULE_FLASH_ENABLE
-/**
- * \brief	Flash write
- * 			Use: 'flashwrite <address> <data>'
- */
-CommandResult_t CommandFunction_flashwrite	( uint32_t argc, char** argv )
-{
-	uint32_t Arg2Num;
-
-	// Convert arg2 hex
-	if ( !StringHexToNum(argv[1],&Arg2Num))
-	{
-		return CommandResult_Error_WrongArgument1;
-	}
-	
-	// Convert arg3, decimal
-	if (!StringToUnsignedDecimalNum(argv[2],&Arg3Num))
-	{
-		return CommandResult_Error_WrongArgument2;
-	}
-
-
-	uint8_t Buffer[1];
-	
-	Buffer[0] = (uint8_t)Arg3Num;
-		
-	FLASH_Write(Arg2Num,Buffer,1,5000);
-	
-
-	duprintf(MONITOR_CommandSource, "address: 0x%w\r\n"
-			"data:    0x%b\r\n",
-			Arg2Num,
-			Arg3Num);
-
-	
-	return CommandResult_Ok;
-}
-#endif	// #ifdef CONFIG_MODULE_FLASH_ENABLE
-
-
-
-#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
-/**
- * \brief	Raspberry Pi command
- */
-CommandResult_t CommandFunction_raspberrypi (uint32_t argc, char** argv)
-{
-	
-	// Check arg 2
-	if (!StrCmp(argv[1],"setout"))
-	{
-		// setout
-		/*
-		HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
-			0,255,
-			Function_Command, Command_SetOutput,
-			Arg3Num, 1);
-		*/
-
-		// Convert arg3, decimal
-		if (!StringToUnsignedDecimalNum(argv[2],&Arg3Num))
-		{
-			return CommandResult_Error_WrongArgument2;
-		}
-
-		if (Arg3Num > 0)
-		{
-			LED_BLUE_ON();
-			LED_GREEN_ON();
-		}
-		else
-		{
-			LED_BLUE_OFF();
-			LED_GREEN_OFF();
-		}
-
-		return CommandResult_Ok;
-	}
-	else
-	{
-		// Wrong command - not "setout"
-		return CommandResult_Error_WrongArgument1;
-	}
-
-}
-#endif
 
 
 
@@ -954,6 +798,9 @@ CommandResult_t CommandFunction_raspberrypi (uint32_t argc, char** argv)
  */
 CommandResult_t CommandFunction_dac (uint32_t argc, char** argv)
 {
+	// Suppress warning
+	(void)argc;
+
 	uint32_t Arg2Num;
 	float voltage = 0.0f;
 
@@ -987,6 +834,9 @@ CommandResult_t CommandFunction_dac (uint32_t argc, char** argv)
  */
 CommandResult_t CommandFunction_unittest (uint32_t argc, char** argv)
 {
+	// Suppress warning
+	(void)argc;
+	(void)argv;
 
 #ifdef MODULE_STRING_UNIT_TEST_ENABLED
 	STRING_UnitTest();
@@ -1002,6 +852,9 @@ CommandResult_t CommandFunction_unittest (uint32_t argc, char** argv)
  */
 CommandResult_t CommandFunction_moduletest (uint32_t argc, char** argv)
 {
+	// Suppress warning
+	(void)argc;
+	(void)argv;
 
 	uint8_t i;
 
@@ -1066,6 +919,8 @@ CommandResult_t CommandFunction_moduletest (uint32_t argc, char** argv)
  */
 CommandResult_t CommandFunction_io (uint32_t argc, char** argv)
 {
+	// Suppress warning
+	(void)argc;
 
 	if (!StrCmp(argv[0],"ioinit"))
 	{
@@ -1168,6 +1023,9 @@ CommandResult_t CommandFunction_io (uint32_t argc, char** argv)
  */
 CommandResult_t CommandFunction_adc (uint32_t argc, char** argv)
 {
+	// Suppress warning
+	(void)argc;
+	(void)argv;
 
 	uint8_t i;
 
@@ -1247,6 +1105,191 @@ CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv)
 	}
 
 	return CommandResult_Ok;
+}
+#endif
+
+
+
+#ifdef CONFIG_MODULE_ADC_ENABLE
+/**
+ * \brief	Temperature
+ * 			Read temperature and Vref values
+ */
+CommandResult_t CommandFunction_temp	( uint32_t argc, char** argv ) {
+
+	//uprintf("Temperature: %d [C]\r\n",ADC_GetTemp());
+	//uprintf("Vref: %d [mV]\r\n",ADC_GetVref());
+
+
+	ADC_ConvertAllMeasuredValues();
+
+	uprintf("Temperature: ");
+	USART_SendFloat(ADC_ConvertedValue_InternalTemperature);
+	uprintf(" [C]\r\n");
+
+
+	return CommandResult_Ok;
+}
+#endif
+
+
+
+#ifdef CONFIG_MODULE_FLASH_ENABLE
+/**
+ * \brief	Flash erase
+ * 			Use: 'flashdel <address> <block/sector>'
+ */
+CommandResult_t CommandFunction_flashdel	( uint32_t argc, char** argv )
+{
+	uint32_t Arg2Num;
+
+	// Convert arg2 hex
+	if ( !StringHexToNum(argv[1],&Arg2Num))
+	{
+		return CommandResult_Error_WrongArgument1;
+	}
+
+
+	if (!StrCmp(argv[2],"block"))
+	{
+		FLASH_BlockErase(Arg2Num,5000);
+	}
+	else if (!StrCmp(argv[2],"sector"))
+	{
+		FLASH_SectorErase(Arg2Num,5000);
+	}
+	else
+	{
+		return RETURN_FALSE;
+	}
+
+	duprintf(MONITOR_CommandSource, "address erased: 0x%h\r\n",
+			Arg2Num
+			);
+
+	return CommandResult_Ok;
+}
+#endif
+
+
+
+#ifdef CONFIG_MODULE_FLASH_ENABLE
+/**
+ * \brief	Flash read
+ * 			Use: 'flashread <address>'
+ */
+CommandResult_t CommandFunction_flashread	( uint32_t argc, char** argv )
+{
+
+	uint32_t Arg2Num;
+
+	// Convert arg2 hex
+	if ( !StringHexToNum(argv[1],&Arg2Num))
+	{
+		return CommandResult_Error_WrongArgument1;
+	}
+
+
+	uint8_t Buffer[1];
+	FLASH_Read(Arg2Num,Buffer,1,5000);
+
+
+	duprintf(MONITOR_CommandSource, "address: 0x%w\r\n"
+			"data:    0x%b\r\n",
+			Arg2Num,
+			Buffer[0]
+			);
+
+	return CommandResult_Ok;
+}
+#endif
+
+
+
+#ifdef CONFIG_MODULE_FLASH_ENABLE
+/**
+ * \brief	Flash write
+ * 			Use: 'flashwrite <address> <data>'
+ */
+CommandResult_t CommandFunction_flashwrite	( uint32_t argc, char** argv )
+{
+	uint32_t Arg2Num;
+
+	// Convert arg2 hex
+	if ( !StringHexToNum(argv[1],&Arg2Num))
+	{
+		return CommandResult_Error_WrongArgument1;
+	}
+
+	// Convert arg3, decimal
+	if (!StringToUnsignedDecimalNum(argv[2],&Arg3Num))
+	{
+		return CommandResult_Error_WrongArgument2;
+	}
+
+
+	uint8_t Buffer[1];
+
+	Buffer[0] = (uint8_t)Arg3Num;
+
+	FLASH_Write(Arg2Num,Buffer,1,5000);
+
+
+	duprintf(MONITOR_CommandSource, "address: 0x%w\r\n"
+			"data:    0x%b\r\n",
+			Arg2Num,
+			Arg3Num);
+
+
+	return CommandResult_Ok;
+}
+#endif	// #ifdef CONFIG_MODULE_FLASH_ENABLE
+
+
+
+#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
+/**
+ * \brief	Raspberry Pi command
+ */
+CommandResult_t CommandFunction_raspberrypi (uint32_t argc, char** argv)
+{
+
+	// Check arg 2
+	if (!StrCmp(argv[1],"setout"))
+	{
+		// setout
+		/*
+		HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
+			0,255,
+			Function_Command, Command_SetOutput,
+			Arg3Num, 1);
+		*/
+
+		// Convert arg3, decimal
+		if (!StringToUnsignedDecimalNum(argv[2],&Arg3Num))
+		{
+			return CommandResult_Error_WrongArgument2;
+		}
+
+		if (Arg3Num > 0)
+		{
+			LED_BLUE_ON();
+			LED_GREEN_ON();
+		}
+		else
+		{
+			LED_BLUE_OFF();
+			LED_GREEN_OFF();
+		}
+
+		return CommandResult_Ok;
+	}
+	else
+	{
+		// Wrong command - not "setout"
+		return CommandResult_Error_WrongArgument1;
+	}
+
 }
 #endif
 

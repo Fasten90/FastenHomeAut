@@ -419,20 +419,21 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 uint8_t USART_SendMessage(const char *aTxBuffer)
 {
 	// TODO: ReturnType + Check Pointer
-	#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	uint8_t length = 0;
 
 	length = StringLength(aTxBuffer);
 
-	if ( length == 0 )
+	if (length == 0)
 	{
 		return false;
 	}
-	if ( length > TXBUFFERSIZE )
+#if TXBUFFERSIZE < 256
+	if (length > TXBUFFERSIZE)
 	{
-		length = TXBUFFERSIZE-1;
+		length = TXBUFFERSIZE - 1;
 	}
-
+#endif
 
 	#ifdef CONFIG_USE_FREERTOS
 	if ( xSemaphoreTake(DEBUG_USART_Tx_Semaphore, (portTickType) 10000) == pdTRUE )

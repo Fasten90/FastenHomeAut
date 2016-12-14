@@ -249,7 +249,7 @@ uint8_t SignedDecimalToStringFill (int32_t value, char *str, uint8_t fillLength,
 char HexToHexChar (uint8_t value)
 {
 	char hexChar;
-	if ((value >= 0) && (value <= 9))
+	if (value <= 9)
 	{
 		// 0- 9
 		hexChar = (value + '0');

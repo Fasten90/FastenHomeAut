@@ -38,6 +38,9 @@ static DAC_ChannelConfTypeDef sConfig;
  */
 void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac)
 {
+	// Suppress warning
+	(void)hdac;
+
 	GPIO_InitTypeDef GPIO_InitStruct;
 
 	/*##-1- Enable peripherals and GPIO Clocks */
