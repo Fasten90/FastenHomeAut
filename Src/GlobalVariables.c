@@ -53,7 +53,7 @@ const GlobalVarCommand_t GlobalVarList[] =
 			.type = Type_Uint8,
 			.maxValue = 20,
 			.description = "Test integer",
-			.sourceEnable = CommProt_DebugUart | CommProt_OtherUart
+			.sourceEnable = CommProt_DebugUart | CommProt_SWO
 		},
 		{
 			.name = "devicename",

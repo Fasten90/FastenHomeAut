@@ -531,6 +531,7 @@ CommandResult_t CommandFunction_test	( uint32_t argc, char** argv )
 	
 	MONITOR_SendLine("Test start");
 
+	COMMUNICATION_SendMessage(CommProt_SWO, "Test message on SWO\n");
 
 
 	// GlobalVar

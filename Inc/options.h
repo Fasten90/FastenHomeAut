@@ -174,6 +174,7 @@
 
 /// Debug
 #define CONFIG_DEBUG_MODE
+#define CONFIG_SWO_ENABLED
 
 
 /// Unit tests

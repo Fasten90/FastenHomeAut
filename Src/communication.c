@@ -16,12 +16,22 @@
 
 
 
-/// FUNCTIONS
+/*------------------------------------------------------------------------------
+ *  Function declarations
+ *----------------------------------------------------------------------------*/
+
+uint8_t COMMUNICATION_SendCharacterOnSWO(uint8_t ch);
+
+
+
+/*------------------------------------------------------------------------------
+ *  Functions
+ *----------------------------------------------------------------------------*/
 
 /**
  * \brief	Send message (string) on selected communication protocol
  */
-uint8_t COMMUNICATION_SendMessage (CommProtocol_t protocol, const char *message)
+uint8_t COMMUNICATION_SendMessage(CommProtocol_t protocol, const char *message)
 {
 	uint8_t length = 0;
 
@@ -35,13 +45,11 @@ uint8_t COMMUNICATION_SendMessage (CommProtocol_t protocol, const char *message)
 			// Send on Usart
 			length = USART_SendMessage(message);
 			break;
-		case CommProt_OtherUart:
-			// TODO: Not implemented
-			length = 0;
+		case CommProt_SWO:
+			// Send on SWO
+			length = SWO_SendMessage(message);
 			break;
 		case CommProt_Disable:
-			length = 0;
-			break;
 		default:
 			// Error, do not use
 			length = 0;
@@ -49,7 +57,6 @@ uint8_t COMMUNICATION_SendMessage (CommProtocol_t protocol, const char *message)
 	}
 
 	return length;
-
 }
 
 
@@ -68,7 +75,9 @@ uint8_t COMMUNICATION_SendChar (CommProtocol_t protocol, char c)
 		case CommProt_DebugUart:
 			USART_SendChar(c);
 			break;
-		case CommProt_OtherUart:
+		case CommProt_SWO:
+			SWO_SendChar(c);
+			break;
 		case CommProt_Disable:
 		default:
 			break;
@@ -76,4 +85,5 @@ uint8_t COMMUNICATION_SendChar (CommProtocol_t protocol, char c)
 
 	return 1;
 }
+
 

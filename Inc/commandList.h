@@ -69,13 +69,6 @@ CommandResult_t CommandFunction_GlobalVariableValueList(uint32_t argc, char** ar
 CommandResult_t CommandFunction_reset(uint32_t argc, char** argv);
 CommandResult_t CommandFunction_led(uint32_t argc, char** argv);
 
-CommandResult_t CommandFunction_flashdel(uint32_t argc, char** argv);
-CommandResult_t CommandFunction_flashread(uint32_t argc, char** argv);
-CommandResult_t CommandFunction_flashwrite(uint32_t argc, char** argv);
-CommandResult_t CommandFunction_temp(uint32_t argc, char** argv);
-
-CommandResult_t CommandFunction_raspberrypi(uint32_t argc, char** argv);
-
 CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv);
 CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv);
 
@@ -83,6 +76,13 @@ CommandResult_t CommandFunction_dac(uint32_t argc, char** argv);
 CommandResult_t CommandFunction_io(uint32_t argc, char** argv);
 CommandResult_t CommandFunction_adc(uint32_t argc, char** argv);
 CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv);
+
+CommandResult_t CommandFunction_raspberrypi(uint32_t argc, char** argv);
+
+CommandResult_t CommandFunction_flashdel(uint32_t argc, char** argv);
+CommandResult_t CommandFunction_flashread(uint32_t argc, char** argv);
+CommandResult_t CommandFunction_flashwrite(uint32_t argc, char** argv);
+CommandResult_t CommandFunction_temp(uint32_t argc, char** argv);
 
 /*
 CommandResult_t CommandFunction_buzzer	( uint32_t argc, char** argv );
