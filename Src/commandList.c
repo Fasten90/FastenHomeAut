@@ -127,15 +127,6 @@ const CommandStruct CommandList[] =
 		.description = "Control LED",
 		.syntax = "<num> <on/off/toggle/status>",
 	},
-#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
-	{
-		.name = "#raspi",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_raspberrypi,
-		.commandArgNum = CommandArgument_2
-		.description = "Raspberry Pi HomeAutMessage sending",
-		.syntax = NULL,
-	},
-#endif
 	{
 		.name = "unittest",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_unittest,
@@ -195,6 +186,15 @@ const CommandStruct CommandList[] =
 		.description = "ADC read continuous",
 		.syntax = "<milliSec> <num>",
 		.commandArgNum = CommandArgument_1 | CommandArgument_2,
+	},
+#endif
+#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
+	{
+		.name = "#raspi",
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_raspberrypi,
+		.commandArgNum = CommandArgument_2
+		.description = "Raspberry Pi HomeAutMessage sending",
+		.syntax = NULL,
 	},
 #endif
 #ifdef CONFIG_MODULE_ADC_ENABLE
@@ -839,7 +839,7 @@ CommandResult_t CommandFunction_unittest (uint32_t argc, char** argv)
 	(void)argc;
 	(void)argv;
 
-#ifdef MODULE_STRING_UNIT_TEST_ENABLED
+#ifdef MODULE_STRING_UNIT_TEST_ENABLE
 	STRING_UnitTest();
 #endif
 

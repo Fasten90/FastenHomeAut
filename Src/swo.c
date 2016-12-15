@@ -18,6 +18,8 @@
 #include "swo.h"
 
 
+#ifdef CONFIG_SWO_ENABLE
+
 #define ITM_Port8(n)    (*((volatile unsigned char *)(0xE0000000+4*n)))
 #define ITM_Port16(n)   (*((volatile unsigned short*)(0xE0000000+4*n)))
 #define ITM_Port32(n)   (*((volatile unsigned long *)(0xE0000000+4*n)))
@@ -64,5 +66,7 @@ uint8_t SWO_SendChar(uint8_t ch)
 
 	return 1;
 }
+
+#endif	// CONFIG_SWO_ENABLE
 
 

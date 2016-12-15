@@ -15,7 +15,7 @@
 
 #include "include.h"
 #include <stdarg.h>		// for "..." parameters in uprintf function
-#ifdef MODULE_STRING_UNIT_TEST_ENABLED
+#ifdef MODULE_STRING_UNIT_TEST_ENABLE
 #include "unittest.h"
 #endif
 #include "communication.h"
@@ -1385,7 +1385,7 @@ uint8_t duprintf (CommProtocol_t protocol, const char *format, ...)
 
 
 
-#ifdef MODULE_STRING_UNIT_TEST_ENABLED
+#ifdef MODULE_STRING_UNIT_TEST_ENABLE
 /**
  * \brief	String module Unit Test
  */
@@ -1646,7 +1646,7 @@ void STRING_UnitTest (void)
 
 	return;
 }
-#endif	// #ifdef MODULE_STRING_UNIT_TEST_ENABLED
+#endif	// #ifdef MODULE_STRING_UNIT_TEST_ENABLE
 
 
 // Other printf:

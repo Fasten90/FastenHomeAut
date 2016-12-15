@@ -192,7 +192,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #include "stm32fxx_STLmain_simple.h"
 #endif
 
-#ifdef CONFIG_SWO_ENABLED
+#ifdef CONFIG_SWO_ENABLE
 #include "SWO.h"
 #endif
 

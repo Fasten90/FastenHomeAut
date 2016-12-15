@@ -174,11 +174,11 @@
 
 /// Debug
 #define CONFIG_DEBUG_MODE
-#define CONFIG_SWO_ENABLED
+#define CONFIG_SWO_ENABLE
 
 
 /// Unit tests
-#define MODULE_STRING_UNIT_TEST_ENABLED
+#define MODULE_STRING_UNIT_TEST_ENABLE
 
 
 

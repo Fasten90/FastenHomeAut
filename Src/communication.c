@@ -47,7 +47,9 @@ uint8_t COMMUNICATION_SendMessage(CommProtocol_t protocol, const char *message)
 			break;
 		case CommProt_SWO:
 			// Send on SWO
+#ifdef CONFIG_SWO_ENABLE
 			length = SWO_SendMessage(message);
+#endif
 			break;
 		case CommProt_Disable:
 		default:
@@ -76,7 +78,9 @@ uint8_t COMMUNICATION_SendChar (CommProtocol_t protocol, char c)
 			USART_SendChar(c);
 			break;
 		case CommProt_SWO:
+#ifdef CONFIG_SWO_ENABLE
 			SWO_SendChar(c);
+#endif
 			break;
 		case CommProt_Disable:
 		default:
