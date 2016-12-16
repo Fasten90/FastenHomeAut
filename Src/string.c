@@ -924,7 +924,7 @@ uint8_t StrCmpWithLength(const char * ch1, const char *ch2, uint8_t length) {
  * \brief	Copy string to *dest pointer
  * \return	copied string length
  */
-uint8_t StrCpy (char *dest, const char *str)
+uint8_t StrCpy(char *dest, const char *str)
 {
 	uint8_t i;
 	uint8_t length;
@@ -938,7 +938,7 @@ uint8_t StrCpy (char *dest, const char *str)
 	length = StringLength(str);
 
 	// Copy characters
-	for ( i = 0; i < length; i++ )
+	for (i = 0; i < length; i++)
 	{
 		dest[i] = str[i];
 	}
@@ -954,7 +954,7 @@ uint8_t StrCpy (char *dest, const char *str)
  * \brief	Copy fix length string
  * \return	String length (=parameter)
  */
-uint8_t StrCpyFixLength (char *dest, const char *str, uint8_t length)
+uint8_t StrCpyFixLength(char *dest, const char *str, uint8_t length)
 {
 
 	uint8_t i;

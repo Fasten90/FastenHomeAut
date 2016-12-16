@@ -55,7 +55,8 @@ void Error_Handler(void)
 	vTaskEndScheduler();
 #endif
 
-	while(1)	// infinite loop
+	// Infinite loop, do not disable interrupts ...
+	while(1)
 	{
 		LED_RED_TOGGLE();
 		DelayMs(125);
