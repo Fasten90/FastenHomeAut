@@ -159,9 +159,6 @@ CommandResult_t MONITOR_RunCommand(CommandID_t commandID);
 CommandResult_t MONITOR_CheckArgumentNumIsGood(uint8_t receivedArgNum,
 		uint8_t commandArgNum);
 
-void MONITOR_PrintAllCommands(void);
-void MONITOR_SearchCommandAndPrintHelp(const char *command);
-
 #ifdef MONITOR_GET_PASSWORD_ENABLE
 static void MONITOR_GetPassword(void);
 static bool MONITOR_CheckPassword(const char *string);

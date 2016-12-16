@@ -76,14 +76,6 @@ int main(void)
 
 	// USER CODE:
 
-	// TEST
-#ifdef TEST_CODE
-	USART_Init(&Debug_UartHandle);
-	USART_SendEnable_flag = ENABLE;
-	while(1)
-	USART_SendChar('a');
-#endif
-
 
 #ifdef CONFIG_MODULE_LED_ENABLE
 	// LED

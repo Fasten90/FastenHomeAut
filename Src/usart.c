@@ -49,7 +49,7 @@ volatile char USART_TxBuffer[TXBUFFERSIZE] = { 0 };
 
 volatile uint8_t USART_RxBufferWriteCounter = 0;
 
-uint8_t USART_SendEnable_flag = 0;
+bool USART_SendEnable_flag = false;
 
 
 #if RXBUFFERSIZE != 256
@@ -66,12 +66,12 @@ uint8_t USART_SendEnable_flag = 0;
 /*------------------------------------------------------------------------------
  *  Local functions
  *----------------------------------------------------------------------------*/
+static bool USART_WaitForSend(uint16_t timeoutMilliSecond);
 
 
 /*------------------------------------------------------------------------------
  *  Global functions
  *----------------------------------------------------------------------------*/
-extern void Error_Handler( void );
 
 
 
@@ -120,7 +120,7 @@ void USART_Init ( UART_HandleTypeDef *UartHandle)
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 		if (UartHandle == &Debug_UartHandle)
 		{
-			USART_SendEnable_flag = ENABLE;
+			USART_SendEnable_flag = true;
 			__HAL_UART_CLEAR_FLAG(&Debug_UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
 
 		}
@@ -128,7 +128,7 @@ void USART_Init ( UART_HandleTypeDef *UartHandle)
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 		if (UartHandle == &ESP8266_UartHandle)
 		{
-			//USART_SendEnable_flag = ENABLE;
+			//USART_SendEnable_flag = true;
 			__HAL_UART_CLEAR_FLAG(&ESP8266_UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
 		}
 #endif
@@ -256,7 +256,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 	
 	// Successful sending
 
-	USART_SendEnable_flag = ENABLE;
+	USART_SendEnable_flag = true;
 
 }
 
@@ -280,7 +280,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 	if ( ( UartHandle == &Debug_UartHandle ) && ( MONITOR_CommandReceiveEnable == true ) )
 	{
 		// Receive to next index
-		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[++USART_RxBufferWriteCounter], RX_BUFFER_WAIT_LENGTH);
+		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[++USART_RxBufferWriteCounter], RXBUFFER_WAIT_LENGTH);
 
 		#ifdef CONFIG_USE_FREERTOS
 		// Transmission end semaphore / flag: Give semaphore
@@ -364,7 +364,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 		// Reinitialize USART
 		USART_Init(&Debug_UartHandle);
 
-		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[USART_RxBufferWriteCounter], RX_BUFFER_WAIT_LENGTH);
+		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[USART_RxBufferWriteCounter], RXBUFFER_WAIT_LENGTH);
 		HAL_UART_Transmit_IT(&Debug_UartHandle,(uint8_t *)"$",1);
 		
 		#ifdef CONFIG_USE_FREERTOS
@@ -443,7 +443,7 @@ uint8_t USART_SendMessage(const char *aTxBuffer)
 	{
 		// Take semaphore, can sending
 		
-		USART_SendEnable_flag = DISABLE;
+		USART_SendEnable_flag = false;
 		
 		StrCpy((char *)USART_TxBuffer,aTxBuffer);
 
@@ -455,7 +455,7 @@ uint8_t USART_SendMessage(const char *aTxBuffer)
 			#ifdef CONFIG_USE_FREERTOS
 			xSemaphoreGive(DEBUG_USART_Tx_Semaphore);
 			#endif
-			USART_SendEnable_flag = ENABLE;	// Failed to send, now we can send message
+			USART_SendEnable_flag = true;	// Failed to send, now we can send message
 
 			return 0;
 		}
@@ -519,7 +519,7 @@ bool USART_SendChar(char c)
 	#endif	
 	{
 		// Successful take USART semaphore
-		USART_SendEnable_flag = DISABLE;
+		USART_SendEnable_flag = false;
 
 		StrCpy((char *)USART_TxBuffer,buf);
 
@@ -530,7 +530,7 @@ bool USART_SendChar(char c)
 			#ifdef CONFIG_USE_FREERTOS
 			xSemaphoreGive(DEBUG_USART_Tx_Semaphore);
 			#endif
-			USART_SendEnable_flag = ENABLE;
+			USART_SendEnable_flag = true;
 			return false;
 		}
 		else
@@ -560,7 +560,7 @@ void USART_StartReceiveMessage(void)
 {
 
 	// USART - Receive Message
-	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[USART_RxBufferWriteCounter], RX_BUFFER_WAIT_LENGTH);
+	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[USART_RxBufferWriteCounter], RXBUFFER_WAIT_LENGTH);
 	// TODO: Delete this comment: Javitott, mert ha valamikor nem fogadnank uzenetet, akkor itt megint beallunk uzenetvaro uzemmodba
 
 	#ifdef CONFIG_USE_FREERTOS
@@ -574,21 +574,21 @@ void USART_StartReceiveMessage(void)
 
 
 /**
- * \brief	Wait fo USART sending
+ * \brief	Wait for USART sending
  */
-uint8_t USART_WaitForSend(uint16_t timeoutMilliSecond)
+static bool USART_WaitForSend(uint16_t timeoutMilliSecond)
 {
 
-	while(USART_SendEnable_flag == DISABLE && timeoutMilliSecond != 0)
+	// Wait for flag or timeout
+	while ((USART_SendEnable_flag != true) || (timeoutMilliSecond == 0))
 	{	
 		timeoutMilliSecond--;
-		HAL_Delay(1);
+		DelayMs(1);
 	}
 	
-	USART_SendEnable_flag = ENABLE;
+	USART_SendEnable_flag = true;
 
-	
-	return ENABLE;
+	return true;
 	
 }
 

@@ -198,5 +198,8 @@ void MONITOR_SendMessage(const char *message);
 void MONITOR_SendLine(const char *message);
 void MONITOR_SendChar(char c);
 
+void MONITOR_PrintAllCommands(void);
+void MONITOR_SearchCommandAndPrintHelp(const char *command);
+
 
 #endif /* COMMANDHANDLER_H_ */

@@ -27,19 +27,8 @@
 // Size of Transmission buffer
 #define TXBUFFERSIZE					256UL
 // Size of Reception buffer
-//#define RXBUFFERSIZE					TXBUFFERSIZE
 #define RXBUFFERSIZE					256UL
-#define RX_BUFFER_WAIT_LENGTH			1
-
-
-// TODO!!! For compiler errors
-
-#define RESET	0
-#define SET		!RESET
-
-
-#define	ENABLE	1
-#define DISABLE	0
+#define RXBUFFER_WAIT_LENGTH			1
 
 
 
@@ -53,17 +42,16 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-#ifdef CONFIG_MODULE_ESP8266_ENABLE
-extern UART_HandleTypeDef ESP8266_UartHandle;
-#endif
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 extern UART_HandleTypeDef Debug_UartHandle;
+#endif
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+extern UART_HandleTypeDef ESP8266_UartHandle;
 #endif
 
 extern volatile char USART_RxBuffer[RXBUFFERSIZE];
 extern volatile char USART_TxBuffer[TXBUFFERSIZE];
 
-extern uint8_t USART_SendEnable_flag;
 extern volatile uint8_t USART_RxBufferWriteCounter;
 
 
@@ -72,8 +60,6 @@ extern volatile uint8_t USART_RxBufferWriteCounter;
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 void USART_Init(UART_HandleTypeDef *UartHandle);
-
-uint8_t USART_WaitForSend(uint16_t timeoutMilliSecond);
 
 void USART_StartReceiveMessage(void);
 
