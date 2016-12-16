@@ -119,6 +119,13 @@ const GlobalVarCommand_t GlobalVarList[] =
 			.varPointer = (void * const)&Global_BoardName,
 			.type = Type_String,
 			.isReadOnly = true
+		},
+		{
+			.name = "bittest",
+			.varPointer = &testUint32,
+			.type = Type_Bits,
+			.maxValue = 15,
+			.minValue = 8
 		}
 
 

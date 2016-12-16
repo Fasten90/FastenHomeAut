@@ -15,12 +15,12 @@
 
 #include "include.h"
 #include <stdarg.h>		// for "..." parameters in uprintf function
-#ifdef MODULE_STRING_UNIT_TEST_ENABLE
-#include "unittest.h"
-#endif
 #include "communication.h"
 #include "string.h"
 
+#ifdef MODULE_STRING_UNIT_TEST_ENABLE
+#include "unittest.h"
+#endif
 
 /*------------------------------------------------------------------------------
  *  Macros & definitions
@@ -296,6 +296,50 @@ uint8_t ByteToHexaString (uint8_t byte, char *str)
 
 
 /**
+ * \brief
+ */
+uint8_t DecimalToBinaryString(uint32_t value, char *str, uint8_t maxLength)
+{
+
+	uint8_t i;
+	uint8_t bitIndex = 31;
+
+	// Search first '1' bit:
+	while (!(value & (1 << bitIndex)) && (bitIndex > 0))
+	{
+		bitIndex--;
+	}
+
+	// When reach this, bitIndex found the first '1'bit
+	for (i=0; i<maxLength; i++)
+	{
+		// It '1' or '0'?
+		if (value & (1 << bitIndex))
+		{
+			str[i] = '1';
+		}
+		else
+		{
+			str[i] = '0';
+		}
+		// If reach end, break
+		if (bitIndex == 0)
+		{
+			i++;
+			break;
+		}
+		bitIndex--;
+	}
+
+	// Put end character
+	str[i] = '\0';
+
+	return i;
+}
+
+
+
+/**
  * \brief	Convert value to hexadecimal string
  * \return	created string length
  */
@@ -515,6 +559,54 @@ bool IsDecimalChar (const char c)
 	}
 
 	return isOk;
+}
+
+
+
+/**
+ * \brief	Binary string to uint32_t
+ *			Example: "01110" -> 14
+ */
+bool StringBinaryToNum(const char *str, uint32_t *num)
+{
+	uint32_t value = 0;
+	uint8_t i;
+
+	if (StringLength(str) > 32)
+	{
+		return false;
+	}
+
+	// TODO: Prefix ellenőrzés?
+	for (i=0; str[i]; i++)
+	{
+		if (str[i] == '1')
+		{
+			value |= 0x01;
+		}
+		else if (str[i] == '0')
+		{
+			// Do nothing, it is ok
+			// TODO: Optimize: this if (str[i] != '0') { return false; }, and not need else
+			value |= 0x00;
+		}
+		else
+		{
+			// Wrong character here
+			return false;
+		}
+
+		// Shift left
+		if (str[i+1])
+		{
+			value <<= 1;
+		}
+	}
+
+	// Finish
+	*num = value;
+	return true;
+
 }
 
 
@@ -1283,10 +1375,17 @@ uint8_t string_printf (char *str, const char *format, va_list ap)
 					string += DecimalToHexaString(ival, string, 4);
 					break;
 
+#if 0
 				case 'b':
 					// Hex	// 8 bits	// 2 hex	// 1 byte
 					ival = va_arg(ap, int);
 					string += DecimalToHexaString(ival, string, 2);
+					break;
+#endif
+				case 'b':
+					// Hex	// 8 bits	// 2 hex	// 1 byte
+					uival = va_arg(ap,  unsigned int);
+					string += DecimalToBinaryString(uival, string, 33);
 					break;
 
 				case 'c':

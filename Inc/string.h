@@ -57,6 +57,9 @@ uint8_t UnsignedDecimalToStringFill(uint32_t value, char *str,
 uint8_t SignedDecimalToStringFill(int32_t value, char *str,
 		uint8_t fillLength, char fillCharacter);
 
+// Num -> Binary String converter
+uint8_t DecimalToBinaryString(uint32_t value, char *str, uint8_t maxLength);
+
 // Hexadecimal --> String converters
 uint8_t DecimalToHexaString(uint32_t value, char *str, uint8_t length);
 uint8_t ByteToHexaString(uint8_t byte, char *str);
@@ -73,6 +76,9 @@ bool IsDecimalChar(const char c);
 uint8_t StringIsHexadecimalString(const char *str);
 uint8_t StringIsUnsignedDecimalString(const char *str);
 uint8_t StringIsSignedDecimalString(const char *str);
+
+// BinaryString --> Integer converter
+bool StringBinaryToNum(const char *str, uint32_t *num);
 
 // HexString --> Integer converters
 bool HexCharToHex(const char c, uint8_t *hexValue);

@@ -64,8 +64,10 @@ static const char const*GlobalVarTypesNames[] =
 		"uint32_t",
 		"int32_t",
 		"float",
+		"bits",
 		"string",
-		"enumerator"
+		"enumerator",
+		NULL
 };
 
 
@@ -81,9 +83,14 @@ static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBu
 static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t num);
 static void GlobalVarHandler_PrintVariableDescriptions (VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
 static uint8_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
+static uint8_t GlobalVarHandler_GetBits(const VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
 static uint8_t GlobalVarHandler_GetEnumerator(const VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
+
 static ProcessResult_t GlobalVarHandler_SetBool(VarID_t commandID, const char *param);
 static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char *param);
+static ProcessResult_t GlobalVarHandler_SetFloat(VarID_t commandID, const char *param);
+static ProcessResult_t GlobalVarHandler_SetBits(VarID_t commandID, const char *param);
+static ProcessResult_t GlobalVarHandler_SetString(VarID_t commandID, const char *param);
 static ProcessResult_t GLobalVarHandler_SetEnumerator(VarID_t commandID, const char *param);
 
 
@@ -130,18 +137,36 @@ bool GlobalVarHandler_CheckCommandStructAreValid(void)
 			break;
 		}
 
-		if ( (GlobalVarList[i].type == Type_Enumerator) && (GlobalVarList[i].enumList == NULL) )
+		if ((GlobalVarList[i].type == Type_Enumerator) && (GlobalVarList[i].enumList == NULL))
 		{
 			hasError = true;
 			break;
 		}
 
-		if ( (GlobalVarList[i].type == Type_String) && (GlobalVarList[i].maxValue == 0) && (!GlobalVarList[i].isReadOnly) )
+		if ((GlobalVarList[i].type == Type_String) && (GlobalVarList[i].maxValue == 0) && (!GlobalVarList[i].isReadOnly))
 		{
 			hasError = true;
 			break;
 		}
 
+		if (GlobalVarList[i].type == Type_Bits)
+		{
+			if (GlobalVarList[i].maxValue > 31)
+			{
+				hasError = true;
+				break;
+			}
+			if (GlobalVarList[i].minValue > 31)
+			{
+				hasError = true;
+				break;
+			}
+			if (GlobalVarList[i].minValue > GlobalVarList[i].maxValue)
+			{
+				hasError = true;
+				break;
+			}
+		}
 	}
 
 	if (hasError)
@@ -296,8 +321,12 @@ static ProcessResult_t GlobalVarHandler_GetCommand(VarID_t commandID, char *resu
 		{
 			float *floatPointer = (float *)GlobalVarList[commandID].varPointer;
 			float value = *floatPointer;
-			FloatToString(value, resultBuffer, 0, 2);
+			length += FloatToString(value, resultBuffer, 0, 2);
 		}
+			break;
+
+		case Type_Bits:
+			length += GlobalVarHandler_GetBits(commandID, resultBuffer, resultBufferLength);
 			break;
 
 		case Type_String:
@@ -387,6 +416,7 @@ static uint8_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resu
 			case Type_Bool:
 			case Type_Enumerator:
 			case Type_Float:
+			case Type_Bits:
 			case Type_String:
 			case Type_Error:
 			case Type_Count:
@@ -479,6 +509,7 @@ static uint8_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resu
 			case Type_Bool:
 			case Type_Enumerator:
 			case Type_Float:
+			case Type_Bits:
 			case Type_String:
 			case Type_Error:
 			case Type_Count:
@@ -492,6 +523,32 @@ static uint8_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resu
 
 	// - length
 	*resultBufferLength -= length;
+
+	return length;
+}
+
+
+
+/**
+ * \brief
+ */
+static uint8_t GlobalVarHandler_GetBits(const VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength)
+{
+	(void)resultBufferLength;
+	uint32_t *numPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
+	uint32_t num = *numPointer;
+	uint8_t length = 0;
+
+	// xxxx11111yyyyyy
+	//     mask  shift
+	uint8_t shift = GlobalVarList[commandID].minValue;
+	uint8_t bitLength = GlobalVarList[commandID].maxValue - shift;
+	// TODO: Check minValue and maxValue
+
+	// Shift to right, and mask to make our important bits
+	num = (num >> shift) & (power(2,bitLength)-1);
+
+	length += usprintf(resultBuffer, "0b%b", num);
 
 	return length;
 }
@@ -548,7 +605,6 @@ static uint8_t GlobalVarHandler_GetEnumerator(const VarID_t commandID, char *res
 static ProcessResult_t GlobalVarHandler_SetCommand(const VarID_t commandID, const char *param)
 {
 
-	uint8_t length = 0;
 	ProcessResult_t result = Process_UnknownError;
 
 	switch (GlobalVarList[commandID].type)
@@ -567,45 +623,15 @@ static ProcessResult_t GlobalVarHandler_SetCommand(const VarID_t commandID, cons
 			break;
 
 		case Type_Float:
-			{
-				float floatValue;
-				if (StringToFloat(param,&floatValue))
-				{
-					// Successful convert
-					result = GlobalVarHandler_CheckValue(commandID,(uint32_t)(int32_t)floatValue);
-					if (result == Process_Ok_SetSuccessful_SendOk)
-					{
-						// Value is OK
-						float *floatPointer = (float *)GlobalVarList[commandID].varPointer;
-						*floatPointer = floatValue;
-					}
-					else
-					{
-						// Wrong value (too high or too less)
-						break;
-					}
-				}
-				else
-				{
-					result = Process_FailParamIsNotNumber;
-				}
-			}
+			result = GlobalVarHandler_SetFloat(commandID, param);
+			break;
+
+		case Type_Bits:
+			result = GlobalVarHandler_SetBits(commandID, param);
 			break;
 
 		case Type_String:
-			{
-				uint8_t stringLength = StringLength(param);
-				if (stringLength >= GlobalVarList[commandID].maxValue)
-				{
-					stringLength =  GlobalVarList[commandID].maxValue;
-				}
-
-				char *string = (char *)GlobalVarList[commandID].varPointer;
-
-				length += StrCpyMax(string,param,stringLength);
-
-				result = Process_Ok_SetSuccessful_SendOk;
-			}
+			result = GlobalVarHandler_SetString(commandID, param);
 			break;
 
 		case Type_Enumerator:
@@ -622,7 +648,6 @@ static ProcessResult_t GlobalVarHandler_SetCommand(const VarID_t commandID, cons
 
 	// Return with result
 	return result;
-
 }
 
 
@@ -766,6 +791,7 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 					case Type_Int32:
 					case Type_Bool:
 					case Type_Float:
+					case Type_Bits:
 					case Type_Enumerator:
 					case Type_String:
 					case Type_Error:
@@ -892,6 +918,138 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 
 
 /**
+ * \brief	Set float type GlobalVar
+ */
+static ProcessResult_t GlobalVarHandler_SetFloat(VarID_t commandID, const char *param)
+{
+	ProcessResult_t result = Process_UnknownError;
+
+	float floatValue = 0.0f;
+	if (StringToFloat(param,&floatValue))
+	{
+		// Successful convert
+		result = GlobalVarHandler_CheckValue(commandID,(uint32_t)(int32_t)floatValue);
+		if (result == Process_Ok_SetSuccessful_SendOk)
+		{
+			// Value is OK
+			float *floatPointer = (float *)GlobalVarList[commandID].varPointer;
+			*floatPointer = floatValue;
+		}
+		/*else
+		{
+			// Wrong value (too high or too less)
+			// Do nothing
+		}*/
+	}
+	else
+	{
+		result = Process_FailParamIsNotNumber;
+	}
+
+	return result;
+}
+
+
+
+/**
+ * \brief	Set bits type GlobalVar
+ */
+static ProcessResult_t GlobalVarHandler_SetBits(VarID_t commandID, const char *param)
+{
+	uint32_t num = 0;
+	bool isOk = true;
+	ProcessResult_t result = Process_UnknownError;
+	uint8_t maxLength = GlobalVarList[commandID].maxValue - GlobalVarList[commandID].minValue + 1;
+
+	// Check prefix, need '0b'
+	if ((StringLength(param) <= 2) || (param[0] != '0') || (param[1] != 'b'))
+	{
+		// Too short or there is no prefix
+		result = Process_FailParamIsNotBinary;
+		isOk = false;
+	}
+
+	if (isOk)
+	{
+		// Check length
+		if (StringLength(param) > maxLength + 2)
+		{
+			result = Process_FailParamTooLongBinary;
+			isOk = false;
+		}
+	}
+
+	if (isOk)
+	{
+		// Convert binary string to num
+		if (StringBinaryToNum(&param[2], &num))
+		{
+			// Convert is ok, make correct value
+			num <<= GlobalVarList[commandID].minValue;
+
+			// Check num value
+			result = GlobalVarHandler_CheckValue(commandID, num);
+
+			if (result == Process_Ok_SetSuccessful_SendOk)
+			{
+				// Value is ok
+				uint32_t *valueNeedSet = (uint32_t *)GlobalVarList[commandID].varPointer;
+				// Clear bits
+				uint8_t i;
+				for (i = GlobalVarList[commandID].minValue;
+					 i < GlobalVarList[commandID].maxValue;
+					 i++)
+				{
+					// Clear bit
+					*valueNeedSet &= ~(1 << i);
+				}
+				// Set new value
+				*valueNeedSet |= num;
+			}
+		}
+		else
+		{
+			// Convert failed
+			result = Process_FailParamIsNotBinary;
+		}
+	}
+
+	return result;
+
+}
+
+
+
+/**
+ * \brief	Set string type GlobalVar
+ */
+static ProcessResult_t GlobalVarHandler_SetString(VarID_t commandID, const char *param)
+{
+	ProcessResult_t result = Process_UnknownError;
+
+	// Check length
+	uint8_t stringLength = StringLength(param);
+	if (stringLength >= GlobalVarList[commandID].maxValue)
+	{
+		// Too long
+		result = Process_FailParamTooLongString;
+	}
+	else
+	{
+		// Correct length
+		char *string = (char *)GlobalVarList[commandID].varPointer;
+		// Copy parameter
+		StrCpyMax(string, param, stringLength);
+
+		result = Process_Ok_SetSuccessful_SendOk;
+	}
+
+	return result;
+}
+
+
+
+/**
  * \brief	Set enumerator
  */
 static ProcessResult_t GLobalVarHandler_SetEnumerator(VarID_t commandID, const char *param)
@@ -1012,9 +1170,14 @@ static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t n
 				result = Process_InvalidValue_TooSmall;
 			break;
 
+		case Type_Bits:
+			if (num > (uint32_t)(power(2,GlobalVarList[commandID].maxValue+1)-1))
+				result = Process_InvalidValue_TooMuch;
+			break;
+
 		case Type_String:
 			if (num >= GlobalVarList[commandID].maxValue)
-				result = Process_TooLongString;
+				result = Process_FailParamTooLongString;
 			break;
 
 		case Type_Enumerator:
@@ -1035,7 +1198,8 @@ static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t n
 
 		// Check maxValue
 		// maxValue is set?
-		if (GlobalVarList[commandID].maxValue != GlobalVarList[commandID].minValue)
+		if (GlobalVarList[commandID].maxValue != GlobalVarList[commandID].minValue
+				&& GlobalVarList[commandID].type != Type_Bits)
 		{
 			// There is setted maxValue, because max not equal than min
 			// Check, it is too large or too small?
@@ -1099,6 +1263,14 @@ static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBu
 			pMessage = "Not hex, missed \"0x\"";
 			break;
 
+		case Process_FailParamIsNotBinary:
+			pMessage = "Not binary number. Syntax: \"0b1010\"";
+			break;
+
+		case Process_FailParamTooLongBinary:
+			pMessage = "Too long binary value";
+			break;
+
 		case Process_InvalidValue_TooSmall:
 			pMessage = "Invalid value, too small";
 			break;
@@ -1127,7 +1299,7 @@ static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBu
 			pMessage = "Cannot process this command from this source";
 			break;
 
-		case Process_TooLongString:
+		case Process_FailParamTooLongString:
 			pMessage = "Too long string";
 			break;
 

@@ -528,12 +528,12 @@ CommandResult_t CommandFunction_set ( uint32_t argc, char** argv )
 	// Suppress warning
 	(void)argc;
 
-	char resultBuffer[30];
+	char resultBuffer[40];
 
 	GlobalVarHandler_ProcessCommand(
 			argv[1], argv[2],
 			SetGet_Set, CommProt_DebugUart,
-			resultBuffer, 30);
+			resultBuffer, 40);
 
 	MONITOR_SendLine(resultBuffer);
 

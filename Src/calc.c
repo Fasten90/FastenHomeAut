@@ -14,7 +14,7 @@
 /**
  * \brief	Power(a,b) = a^b
  */
-uint32_t power (uint32_t a, uint8_t b)
+uint32_t power(uint32_t a, uint8_t b)
 {
 	uint8_t i;
 	uint32_t Num=a;

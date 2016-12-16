@@ -14,7 +14,7 @@
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-uint32_t power (uint32_t a, uint8_t b);
+uint32_t power(uint32_t a, uint8_t b);
 
 
 #endif /* CALC_H_ */
