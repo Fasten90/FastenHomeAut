@@ -21,6 +21,8 @@
 static uint16_t UnitTest_ValidCnt = 0;
 static uint16_t UnitTest_InvalidCnt = 0;
 
+static const char *UnitTest_FileName = NULL;
+
 
 /// FUNCTIONS
 
@@ -38,6 +40,7 @@ void UnitTest_Start(const char *moduleName, const char *fileName)
 			moduleName, fileName);
 	UnitTest_ValidCnt = 0;
 	UnitTest_InvalidCnt = 0;
+	UnitTest_FileName = fileName;
 }
 
 
@@ -45,7 +48,7 @@ void UnitTest_Start(const char *moduleName, const char *fileName)
 /**
  * \brief	Check unit test result
  */
-void UnitTest_CheckResult(bool isValid, const char *errorString, const char *fileName, uint32_t line)
+void UnitTest_CheckResult(bool isValid, const char *errorString, uint32_t line)
 {
 	if (isValid)
 	{
@@ -61,7 +64,8 @@ void UnitTest_CheckResult(bool isValid, const char *errorString, const char *fil
 				"Error in \"%s\" at %d. line.\r\n"
 				"Case: \"%s\"\r\n"
 				"\r\n",
-				fileName, line, errorString);
+				UnitTest_FileName, line,
+				errorString);
 		// TODO: Use SendErrorMessage()
 	}
 }
@@ -71,14 +75,16 @@ void UnitTest_CheckResult(bool isValid, const char *errorString, const char *fil
 /**
  * \brief Finish unit test
  */
-void UnitTest_End(const char *fileName)
+void UnitTest_End(void)
 {
 	uprintf("\r\n"
 			"In \"%s\" file run unit test:\r\n"
 			"Successful: %d\r\n"
 			"Error: %d\r\n"
 			"\r\n",
-			fileName, UnitTest_ValidCnt, UnitTest_InvalidCnt);
+			UnitTest_FileName,
+			UnitTest_ValidCnt,
+			UnitTest_InvalidCnt);
 
 	if (UnitTest_InvalidCnt)
 	{

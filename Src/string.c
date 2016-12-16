@@ -345,35 +345,40 @@ uint8_t FloatToString (float value, char *str, uint8_t integerLength, uint8_t fr
 	}
 
 
-	// Integer
+	// Integer: minimum interLength length (if integer part is longer then this num, it printed)
 	calcValue = (uint32_t)value;
 	length += UnsignedDecimalToStringFill(calcValue,&str[length],integerLength,' ');
 
-
-	// Point '.'
-	str[length++] = '.';
-
-
-	// Fraction:
-	// float : 4.567
-	// fractionLength: 4
-	// string: 4.5670
-
-	// 4.567 --> 0.567 --> 5670
-	// Only fraction
-	value = (value - (uint32_t)value);
-
-	// * 10, and write
-	while (fractionLength--)
+	// If has fractionLength parameter (=/= 0), print it
+	if (fractionLength)
 	{
-		// 0.567 --> 5.67
-		value *= 10; 			// "shift left" = *10
-		// 5.67 --> 5
-		num = (uint8_t)value;	// integer value (MSB octet)
-		// 5.67 - 5
-		value -= num;			// value--
-		str[length++] = num + '0';
+
+		// Point '.'
+		str[length++] = '.';
+
+
+		// Fraction:
+		// float : 4.567
+		// fractionLength: 4
+		// string: 4.5670
+
+		// 4.567 --> 0.567 --> 5670
+		// Only fraction
+		value = (value - (uint32_t)value);
+
+		// * 10, and write
+		while (fractionLength--)
+		{
+			// 0.567 --> 5.67
+			value *= 10; 			// "shift left" = *10
+			// 5.67 --> 5
+			num = (uint8_t)value;	// integer value (MSB octet)
+			// 5.67 - 5
+			value -= num;			// value--
+			str[length++] = num + '0';
+		}
 	}
+	// If hasn't fractionLength parameter, '.' and fraction part not printed
 
 	// Put end char
 	str[length] = '\0';
@@ -1166,12 +1171,12 @@ uint8_t string_printf (char *str, const char *format, va_list ap)
 
 	char *string = str;
 
-	uint8_t paramDescCnt = 0;
+	bool paramHasLength = false;
 	uint8_t paramNum1 = 0;
 	uint8_t paramNum2 = 0;
 	char fillCharacter = ' ';
 
-	for (p = (char *)format; *p; p++)						// p to EOS
+	for (p = (char *)format; *p; p++)				// p to EOS
 	{
 		if (*p != '%')								// copy, if not '%'
 		{
@@ -1184,25 +1189,26 @@ uint8_t string_printf (char *str, const char *format, va_list ap)
 			p++;
 			paramNum1 = 0;	// for standard %08x
 			paramNum2 = 0;
-			paramDescCnt = 0;
+			paramHasLength = false;
 			fillCharacter = ' ';
 
-			// Check %...x (parameter after %, before x, u, f)
+			// Check %...x (parameter after %, before x, u, f, s)
 			// Next character is num?
 			if (IsDecimalChar(*p))
 			{
 				// It is num (1. param)
-				paramNum1 = DecimalCharToNum(*p);
+				// Replace, if has two parameter
+				paramNum2 = DecimalCharToNum(*p);
 				fillCharacter = *p;
-				paramDescCnt++;
+				paramHasLength = true;
 				p++;
 
 				if (IsDecimalChar(*p))
 				{
 					// xy
 					// It is num (2. param)
+					paramNum1 = paramNum2;
 					paramNum2 = DecimalCharToNum(*p);
-					paramDescCnt++;
 					p++;
 				}
 				else if (*p == '.')
@@ -1211,24 +1217,25 @@ uint8_t string_printf (char *str, const char *format, va_list ap)
 					p++;
 					if (IsDecimalChar(*p))
 					{
-						// x.x
+						// x.y
+						paramNum1 = paramNum2;
 						paramNum2 = DecimalCharToNum(*p);
-						paramDescCnt++;
 						p++;
 					}
 					else
 					{
-						// x.y
+						// x.?
 						// x = paramNum1
-						// y=2 now, for correct float printing
-						paramNum2 = 2;
+						// ?=0 now, for correct float printing
+						// Do not step p pointer, because this character can be f, x, etc.
+						paramNum1 = paramNum2;
+						paramNum2 = 0;
 					}
 				}
 				else
 				{
 					// x		==>		x = fill character, y = length
 					// If only has one parameter
-					paramNum2 = paramNum1;	// Length
 					fillCharacter = ' ';	// Blank character
 				}
 			}
@@ -1238,8 +1245,8 @@ uint8_t string_printf (char *str, const char *format, va_list ap)
 			{
 				case 'd':
 					ival = va_arg(ap, int);	// Decimal = signed int (~int32_t)
-					string += SignedDecimalToStringFill(ival, string, paramNum2,
-							fillCharacter);
+					string += SignedDecimalToStringFill(ival, string,
+							paramNum2, fillCharacter);
 					break;
 
 				case 'u':
@@ -1251,24 +1258,35 @@ uint8_t string_printf (char *str, const char *format, va_list ap)
 					// TODO: Create 'x' and 'X' to different
 				case 'x':
 				case 'X':
-					uival = va_arg(ap, unsigned int);// Hex // 32 bits	// 8 hex	// 4 byte
-					string += DecimalToHexaString(uival, string, paramNum2);// Copy to string
+					// Hex - parameterized byte num
+					uival = va_arg(ap, unsigned int);
+					if (paramHasLength)
+					{
+						string += DecimalToHexaString(uival, string, paramNum2);
+					}
+					else
+					{
+						string += DecimalToHexaString(uival, string, 8);
+					}
 					break;
 
 					// TODO: Delete w, h, b if not need
 				case 'w':
-					uival = va_arg(ap, unsigned int);// Hex // 32 bits	// 8 hex	// 4 byte
-					string += DecimalToHexaString(uival, string, 8);// Copy to string
+					// Hex // 32 bits	// 8 hex	// 4 byte
+					uival = va_arg(ap, unsigned int);
+					string += DecimalToHexaString(uival, string, 8);
 					break;
 
 				case 'h':
-					ival = va_arg(ap, int);	// Hex // 16 bits	// 4 hex	// 2 byte
-					string += DecimalToHexaString(ival, string, 4);	// Copy to string
+					// Hex // 16 bits	// 4 hex	// 2 byte
+					ival = va_arg(ap, int);
+					string += DecimalToHexaString(ival, string, 4);
 					break;
 
 				case 'b':
-					ival = va_arg(ap, int);	// Hex	// 8 bits	// 2 hex	// 1 byte
-					string += DecimalToHexaString(ival, string, 2);	// Copy to string
+					// Hex	// 8 bits	// 2 hex	// 1 byte
+					ival = va_arg(ap, int);
+					string += DecimalToHexaString(ival, string, 2);
 					break;
 
 				case 'c':
@@ -1280,30 +1298,29 @@ uint8_t string_printf (char *str, const char *format, va_list ap)
 
 				case 'f':
 					flval = va_arg(ap, double);				// Double / Float
-					string += FloatToString(flval, string, paramNum1,
-							paramNum2);
+					if (paramHasLength)
+					{
+						string += FloatToString(flval, string,
+								paramNum1, paramNum2);
+					}
+					else
+					{
+						string += FloatToString(flval, string, 0, 6);
+					}
 					break;
 
 				case 's':
 					sval = va_arg(ap, char*);
-					if (paramDescCnt)
+					if (paramHasLength)
 					{
-						// string copy with length
-						uint8_t stringLength = 0;
-						if (paramDescCnt == 1)
-						{
-							stringLength = paramNum1;
-						}
-						else if (paramDescCnt == 2)
-						{
-							stringLength = paramNum1*10 + paramNum2;
-						}
-
-						string += StrCpyFixLengthWithFillCharacter(string, sval, stringLength, ' ');
+						// String copy with length
+						uint8_t stringLength = paramNum1*10 + paramNum2;
+						string += StrCpyFixLengthWithFillCharacter(string, sval,
+								stringLength, ' ');
 					}
 					else
 					{
-						// standard string copy
+						// Standard string copy
 						string += StrCpy(string, sval);
 					}
 					break;
@@ -1312,7 +1329,7 @@ uint8_t string_printf (char *str, const char *format, va_list ap)
 					*string = *p;					// Other, for example: '%'
 					string++;
 					break;
-		  }
+			}
 		}	// End of '%'
 
 	}	// End of for loop
@@ -1407,146 +1424,128 @@ void STRING_UnitTest (void)
 
 	/// String compare StrCmp()
 	// Equal:
-	UnitTest_CheckResult(!StrCmp("example", "example"), "StrCmp error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp("example", "example"), "StrCmp error", __LINE__);
 	// Not equal:
-	UnitTest_CheckResult(StrCmp("example", "example1"), "StrCmp error", __FILE__, __LINE__);
-	UnitTest_CheckResult(StrCmp("example1", "example2"), "StrCmp error", __FILE__, __LINE__);
+	UnitTest_CheckResult(StrCmp("example", "example1"), "StrCmp error", __LINE__);
+	UnitTest_CheckResult(StrCmp("example1", "example2"), "StrCmp error", __LINE__);
 
-
-	/*
-	// TODO: Kommentet átírni angolra vagy szépíteni
-	// Lekezelve
-	%1.5f	// Max 9.9f, pl.		1.5f == > 1.12345
-	%4u		// unsigned és folytathatja ha hosszabb lenne, kiegészíti blank karakterrel
-	%02u	// Feltölti 0-val, ha 2 jegyűnél kisebb a szám, ellenkező esetben kiírja teljesen
-			// Csak 0-9 számmal lehet feltölteni
-	%4d
-	%04d
-
-	// Hexadecimális csak így működik (Mindenképpen 0-val tölt fel):
-	%01x		4
-	%02x		34
-	%03x		234
-	%04x		1234
-	%05x		01234
-	%06x		001234
-	%07x		0001234
-	%08x		00001234
-	%09x				WRONG!
-
-	// Nem működik:
-	%-10d
-	 */
 
 	// Float print tests
-
-	// "123.33999"
-	usprintf(buffer,"%1.5f",123.34);
-	UnitTest_CheckResult(!StrCmp(buffer, "123.33999"), "Float error", __FILE__, __LINE__);
-	// "123.33999"
-	usprintf(buffer,"%5.5f",123.34);
-	UnitTest_CheckResult(!StrCmp(buffer, "  123.33999"), "Float error", __FILE__, __LINE__);
-	// "  123.3"
-	usprintf(buffer, "%5.1f",123.34);
-	UnitTest_CheckResult(!StrCmp(buffer, "  123.3"), "Float error", __FILE__, __LINE__);
+	// "123.339996" ~ like "%0.6"
+	usprintf(buffer,"%f",123.34);
+	UnitTest_CheckResult(!StrCmp(buffer, "123.339996"), "Float error", __LINE__);
+	// "123"
+	usprintf(buffer,"%1.0f",123.34);
+	UnitTest_CheckResult(!StrCmp(buffer, "123"), "Float error", __LINE__);
 	// "123.3"
 	usprintf(buffer, "%1.1f",123.34);
-	UnitTest_CheckResult(!StrCmp(buffer, "123.3"), "Float error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "123.3"), "Float error", __LINE__);
+	// "123.33999"
+	usprintf(buffer,"%1.5f",123.34);
+	UnitTest_CheckResult(!StrCmp(buffer, "123.33999"), "Float error", __LINE__);
+	// "  123.3"
+	usprintf(buffer, "%5.1f",123.34);
+	UnitTest_CheckResult(!StrCmp(buffer, "  123.3"), "Float error", __LINE__);
+	// "123.33999"
+	usprintf(buffer,"%5.5f",123.34);
+	UnitTest_CheckResult(!StrCmp(buffer, "  123.33999"), "Float error", __LINE__);
 
 
 	// Integer print tests
 	// Printed: "123"
 	usprintf(buffer, "%0u",123);
-	UnitTest_CheckResult(!StrCmp(buffer, "123"), "Integer error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "123"), "Integer error", __LINE__);
 	// Printed:	"123"
 	usprintf(buffer, "%1u",123);
-	UnitTest_CheckResult(!StrCmp(buffer, "123"), "Integer error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "123"), "Integer error", __LINE__);
 	// Printed: " 123"
 	usprintf(buffer, "%4u",123);
-	UnitTest_CheckResult(!StrCmp(buffer, " 123"), "Integer error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, " 123"), "Integer error", __LINE__);
 	// Printed: "      123"
 	usprintf(buffer, "%9u",123);
-	UnitTest_CheckResult(!StrCmp(buffer, "      123"), "Integer error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "      123"), "Integer error", __LINE__);
 	// Printed: "00123", it is OK
 	usprintf(buffer, "%05u",123);
-	UnitTest_CheckResult(!StrCmp(buffer, "00123"), "Integer error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "00123"), "Integer error", __LINE__);
 
 	// Integer print tests (wrong examples):
 	usprintf(buffer, "%A5",123);		// Printed: "A5u", because 'A' is not a number
-	UnitTest_CheckResult(!StrCmp(buffer, "A5"), "Integer error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "A5"), "Integer error", __LINE__);
 	usprintf(buffer, "%-5u",123);		// Printed: "-5u", because '-' is not a number
-	UnitTest_CheckResult(!StrCmp(buffer, "-5u"), "Integer error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "-5u"), "Integer error", __LINE__);
 
 	// Signed Integer print tests:
 	// Printed: "-123"
 	usprintf(buffer, "%0d",-123);
-	UnitTest_CheckResult(!StrCmp(buffer, "-123"), "Integer error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "-123"), "Integer error", __LINE__);
 	// Printed:	"-123"
 	usprintf(buffer, "%1d",-123);
-	UnitTest_CheckResult(!StrCmp(buffer, "-123"), "Integer error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "-123"), "Integer error", __LINE__);
 	// Printed: "-123"
 	usprintf(buffer, "%4d",-123);
-	UnitTest_CheckResult(!StrCmp(buffer, "-123"), "Integer error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "-123"), "Integer error", __LINE__);
 	// Printed: "     -123"
 	usprintf(buffer, "%9d",-123);
-	UnitTest_CheckResult(!StrCmp(buffer, "     -123"), "Integer error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "     -123"), "Integer error", __LINE__);
 	// Printed: "-0123", it is OK
 	usprintf(buffer, "%05d",-123);
-	UnitTest_CheckResult(!StrCmp(buffer, "-00123"), "Integer error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "-00123"), "Integer error", __LINE__);
 
 	// Hexadecimal print tests:
+	usprintf(buffer, "0x%x",0xFFFFFFFF);
+	UnitTest_CheckResult(!StrCmp(buffer, "0xFFFFFFFF"), "Hexadecimal error", __LINE__);
 	usprintf(buffer, "0x%01x",0xFFFFFFFF);
-	UnitTest_CheckResult(!StrCmp(buffer, "0xF"), "Hexadecimal error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "0xF"), "Hexadecimal error", __LINE__);
 	usprintf(buffer, "0x%02x",0xFFFFFFFF);
-	UnitTest_CheckResult(!StrCmp(buffer, "0xFF"), "Hexadecimal error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "0xFF"), "Hexadecimal error", __LINE__);
 	usprintf(buffer, "0x%03x",0xFFFFFFFF);
-	UnitTest_CheckResult(!StrCmp(buffer, "0xFFF"), "Hexadecimal error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "0xFFF"), "Hexadecimal error", __LINE__);
 	usprintf(buffer, "0x%04x",0xFFFFFFFF);
-	UnitTest_CheckResult(!StrCmp(buffer, "0xFFFF"), "Hexadecimal error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "0xFFFF"), "Hexadecimal error", __LINE__);
 	usprintf(buffer, "0x%05x",0xFFFFFFFF);
-	UnitTest_CheckResult(!StrCmp(buffer, "0xFFFFF"), "Hexadecimal error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "0xFFFFF"), "Hexadecimal error", __LINE__);
 	usprintf(buffer, "0x%06x",0xFFFFFFFF);
-	UnitTest_CheckResult(!StrCmp(buffer, "0xFFFFFF"), "Hexadecimal error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "0xFFFFFF"), "Hexadecimal error", __LINE__);
 	usprintf(buffer, "0x%07x",0xFFFFFFFF);
-	UnitTest_CheckResult(!StrCmp(buffer, "0xFFFFFFF"), "Hexadecimal error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "0xFFFFFFF"), "Hexadecimal error", __LINE__);
 	usprintf(buffer, "0x%08x",0xFFFFFFFF);
-	UnitTest_CheckResult(!StrCmp(buffer, "0xFFFFFFFF"), "Hexadecimal error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "0xFFFFFFFF"), "Hexadecimal error", __LINE__);
 	usprintf(buffer, "0x%09x",0xFFFFFFFF);
-	UnitTest_CheckResult(!StrCmp(buffer, "0x"), "Hexadecimal error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "0x"), "Hexadecimal error", __LINE__);
 
 	usprintf(buffer, "0x%01x",0x12345678);
-	UnitTest_CheckResult(!StrCmp(buffer, "0x8"), "Hexadecimal error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "0x8"), "Hexadecimal error", __LINE__);
 	usprintf(buffer, "0x%02x",0x12345678);
-	UnitTest_CheckResult(!StrCmp(buffer, "0x78"), "Hexadecimal error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "0x78"), "Hexadecimal error", __LINE__);
 	usprintf(buffer, "0x%03x",0x12345678);
-	UnitTest_CheckResult(!StrCmp(buffer, "0x678"), "Hexadecimal error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "0x678"), "Hexadecimal error", __LINE__);
 	usprintf(buffer, "0x%04x",0x12345678);
-	UnitTest_CheckResult(!StrCmp(buffer, "0x5678"), "Hexadecimal error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "0x5678"), "Hexadecimal error", __LINE__);
 	usprintf(buffer, "0x%05x",0x12345678);
-	UnitTest_CheckResult(!StrCmp(buffer, "0x45678"), "Hexadecimal error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "0x45678"), "Hexadecimal error", __LINE__);
 	usprintf(buffer, "0x%06x",0x12345678);
-	UnitTest_CheckResult(!StrCmp(buffer, "0x345678"), "Hexadecimal error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "0x345678"), "Hexadecimal error", __LINE__);
 	usprintf(buffer, "0x%07x",0x12345678);
-	UnitTest_CheckResult(!StrCmp(buffer, "0x2345678"), "Hexadecimal error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "0x2345678"), "Hexadecimal error", __LINE__);
 	usprintf(buffer, "0x%08x",0x12345678);
-	UnitTest_CheckResult(!StrCmp(buffer, "0x12345678"), "Hexadecimal error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "0x12345678"), "Hexadecimal error", __LINE__);
 	usprintf(buffer, "0x%09x",0x12345678);
-	UnitTest_CheckResult(!StrCmp(buffer, "0x"), "Hexadecimal error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "0x"), "Hexadecimal error", __LINE__);
 
 
 	// String (%s)
 	// Standard %s print
 	usprintf(buffer, "%s", "text");
-	UnitTest_CheckResult(!StrCmp(buffer, "text"), "String error (%s)", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "text"), "String error (%s)", __LINE__);
 	// max 5 character
 	usprintf(buffer, "%5s", "longtext");
-	UnitTest_CheckResult(!StrCmp(buffer, "longt"), "String error (%s)", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "longt"), "String error (%s)", __LINE__);
 	// 10 character, need fill with ' '
 	usprintf(buffer, "%10s", "longtext");
-	UnitTest_CheckResult(!StrCmp(buffer, "longtext  "), "String error (%s)", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "longtext  "), "String error (%s)", __LINE__);
 	// max 10 character
 	usprintf(buffer, "%10s", "toolongtext");
-	UnitTest_CheckResult(!StrCmp(buffer, "toolongtex"), "String error (%s)", __FILE__, __LINE__);
+	UnitTest_CheckResult(!StrCmp(buffer, "toolongtex"), "String error (%s)", __LINE__);
 
 
 
@@ -1557,54 +1556,54 @@ void STRING_UnitTest (void)
 	// Byte
 	// Good bytes
 	result = StringByteToNum("00", &value8);
-	UnitTest_CheckResult(result, "StringByteToNum error", __FILE__, __LINE__);
-	UnitTest_CheckResult((value8 == 0x00), "StringByteToNum error", __FILE__, __LINE__);
+	UnitTest_CheckResult(result, "StringByteToNum error", __LINE__);
+	UnitTest_CheckResult((value8 == 0x00), "StringByteToNum error", __LINE__);
 	result = StringByteToNum("15", &value8);
-	UnitTest_CheckResult(result, "StringByteToNum error", __FILE__, __LINE__);
-	UnitTest_CheckResult((value8 == 0x15), "StringByteToNum error", __FILE__, __LINE__);
+	UnitTest_CheckResult(result, "StringByteToNum error", __LINE__);
+	UnitTest_CheckResult((value8 == 0x15), "StringByteToNum error", __LINE__);
 	result = StringByteToNum("FF", &value8);
-	UnitTest_CheckResult(result, "StringByteToNum error", __FILE__, __LINE__);
-	UnitTest_CheckResult((value8 == 0xFF), "StringByteToNum error", __FILE__, __LINE__);
+	UnitTest_CheckResult(result, "StringByteToNum error", __LINE__);
+	UnitTest_CheckResult((value8 == 0xFF), "StringByteToNum error", __LINE__);
 	// Wrong byte
 	result = StringByteToNum("FG", &value8);
-	UnitTest_CheckResult(!result, "StringByteToNum error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!result, "StringByteToNum error", __LINE__);
 
 
 	// Hexs
 	// Good hex
 	result = StringHexToNum("12345678", &value32);
-	UnitTest_CheckResult(result, "StringHexToNum error", __FILE__, __LINE__);
-	UnitTest_CheckResult(value32 == 0x12345678, "StringHexToNum error", __FILE__, __LINE__);
+	UnitTest_CheckResult(result, "StringHexToNum error", __LINE__);
+	UnitTest_CheckResult(value32 == 0x12345678, "StringHexToNum error", __LINE__);
 	// Wrong hex
 	result = StringHexToNum("123G5678", &value32);
-	UnitTest_CheckResult(!result, "StringHexToNum error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!result, "StringHexToNum error", __LINE__);
 
 	// Decimals
 
 	// Good decimals
 	result = StringToSignedDecimalNum("-123",&ivalue32);
-	UnitTest_CheckResult(result, "StringToSignedDecimalNum error", __FILE__, __LINE__);
-	UnitTest_CheckResult(ivalue32 == -123, "StringToSignedDecimalNum error", __FILE__, __LINE__);
+	UnitTest_CheckResult(result, "StringToSignedDecimalNum error", __LINE__);
+	UnitTest_CheckResult(ivalue32 == -123, "StringToSignedDecimalNum error", __LINE__);
 
 	result = StringToUnsignedDecimalNum("123",&value32);
-	UnitTest_CheckResult(result, "StringToUnsignedDecimalNum error", __FILE__, __LINE__);
-	UnitTest_CheckResult(value32 == 123, "StringToUnsignedDecimalNum error", __FILE__, __LINE__);
+	UnitTest_CheckResult(result, "StringToUnsignedDecimalNum error", __LINE__);
+	UnitTest_CheckResult(value32 == 123, "StringToUnsignedDecimalNum error", __LINE__);
 
 	// Wrong decimals
 	result = StringToSignedDecimalNum("-123a",&ivalue32);
-	UnitTest_CheckResult(!result, "StringToSignedDecimalNum error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!result, "StringToSignedDecimalNum error", __LINE__);
 
 	result = StringToUnsignedDecimalNum("-123",&value32);
-	UnitTest_CheckResult(!result, "StringToUnsignedDecimalNum error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!result, "StringToUnsignedDecimalNum error", __LINE__);
 
 	// Float
 	// Good
 	result = StringToFloat("-123.3499", &fvalue);
-	UnitTest_CheckResult(result, "StringToFloat error", __FILE__, __LINE__);
-	UnitTest_CheckResult(((fvalue < -123.3498) && (fvalue > -123.3500)), "StringToFloat error", __FILE__, __LINE__);
+	UnitTest_CheckResult(result, "StringToFloat error", __LINE__);
+	UnitTest_CheckResult(((fvalue < -123.3498) && (fvalue > -123.3500)), "StringToFloat error", __LINE__);
 
 	result = StringToFloat("-123a.3999", &fvalue);
-	UnitTest_CheckResult(!result, "StringToFloat error", __FILE__, __LINE__);
+	UnitTest_CheckResult(!result, "StringToFloat error", __LINE__);
 
 
 
@@ -1612,36 +1611,36 @@ void STRING_UnitTest (void)
 
 	// FindString()
 	ivalue16 = FindString("longtexttofinding","text");
-	UnitTest_CheckResult(ivalue16 == 4, "FindString error", __FILE__, __LINE__);
+	UnitTest_CheckResult(ivalue16 == 4, "FindString error", __LINE__);
 	ivalue16 = FindString("longtexttofinding","wrongtext");
-	UnitTest_CheckResult(ivalue16 == -1, "FindString error", __FILE__, __LINE__);
+	UnitTest_CheckResult(ivalue16 == -1, "FindString error", __LINE__);
 
 
 	// STRING_Splitter()
 	StrCpy(buffer, "need to separate this text");
 	value8 = STRING_Splitter(buffer, ' ', splitted, 10);
-	UnitTest_CheckResult(value8 == 5, "STRING_Splitter error", __FILE__, __LINE__);
-	UnitTest_CheckResult(!StrCmp(splitted[0],"need"), "STRING_Splitter error", __FILE__, __LINE__);
-	UnitTest_CheckResult(!StrCmp(splitted[1],"to"), "STRING_Splitter error", __FILE__, __LINE__);
-	UnitTest_CheckResult(!StrCmp(splitted[2],"separate"), "STRING_Splitter error", __FILE__, __LINE__);
-	UnitTest_CheckResult(!StrCmp(splitted[3],"this"), "STRING_Splitter error", __FILE__, __LINE__);
-	UnitTest_CheckResult(!StrCmp(splitted[4],"text"), "STRING_Splitter error", __FILE__, __LINE__);
-	UnitTest_CheckResult(splitted[5] == NULL, "STRING_Splitter error", __FILE__, __LINE__);
+	UnitTest_CheckResult(value8 == 5, "STRING_Splitter error", __LINE__);
+	UnitTest_CheckResult(!StrCmp(splitted[0],"need"), "STRING_Splitter error", __LINE__);
+	UnitTest_CheckResult(!StrCmp(splitted[1],"to"), "STRING_Splitter error", __LINE__);
+	UnitTest_CheckResult(!StrCmp(splitted[2],"separate"), "STRING_Splitter error", __LINE__);
+	UnitTest_CheckResult(!StrCmp(splitted[3],"this"), "STRING_Splitter error", __LINE__);
+	UnitTest_CheckResult(!StrCmp(splitted[4],"text"), "STRING_Splitter error", __LINE__);
+	UnitTest_CheckResult(splitted[5] == NULL, "STRING_Splitter error", __LINE__);
 
 	StrCpy(buffer, "text");
 	value8 = STRING_Splitter(buffer, ' ', splitted, 10);
-	UnitTest_CheckResult(value8 == 1, "STRING_Splitter error", __FILE__, __LINE__);
-	UnitTest_CheckResult(!StrCmp(splitted[0],"text"), "STRING_Splitter error", __FILE__, __LINE__);
-	UnitTest_CheckResult(splitted[1] == NULL, "STRING_Splitter error", __FILE__, __LINE__);
+	UnitTest_CheckResult(value8 == 1, "STRING_Splitter error", __LINE__);
+	UnitTest_CheckResult(!StrCmp(splitted[0],"text"), "STRING_Splitter error", __LINE__);
+	UnitTest_CheckResult(splitted[1] == NULL, "STRING_Splitter error", __LINE__);
 
 	StrCpy(buffer, "");
 	value8 = STRING_Splitter(buffer, ' ', splitted, 10);
-	UnitTest_CheckResult(value8 == 0, "STRING_Splitter error", __FILE__, __LINE__);
-	UnitTest_CheckResult(splitted[0] == NULL, "STRING_Splitter error", __FILE__, __LINE__);
+	UnitTest_CheckResult(value8 == 0, "STRING_Splitter error", __LINE__);
+	UnitTest_CheckResult(splitted[0] == NULL, "STRING_Splitter error", __LINE__);
 
 
 	// End of unittest
-	UnitTest_End(__FILE__);
+	UnitTest_End();
 
 
 	return;
