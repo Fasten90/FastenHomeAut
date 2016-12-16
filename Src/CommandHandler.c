@@ -155,9 +155,12 @@ void MONITOR_HISTORY_Load(uint8_t direction);
 void MONITOR_ConvertSmallLetter(void);
 
 void MONITOR_CheckResultAndRespond(CommandResult_t result);
-void MONITOR_RunCommand(CommandID_t commandID);
-CommandResult_t MONITOR_ArgumentNumIsGood(uint8_t receivedArgNum,
+CommandResult_t MONITOR_RunCommand(CommandID_t commandID);
+CommandResult_t MONITOR_CheckArgumentNumIsGood(uint8_t receivedArgNum,
 		uint8_t commandArgNum);
+
+void MONITOR_PrintAllCommands(void);
+void MONITOR_SearchCommandAndPrintHelp(const char *command);
 
 #ifdef MONITOR_GET_PASSWORD_ENABLE
 static void MONITOR_GetPassword(void);
@@ -553,11 +556,11 @@ static void MONITOR_ProcessReceivedCharacter(void)
 bool MONITOR_PrepareFindExecuteCommand(CommProtocol_t source)
 {
 
-	MONITOR_CommandSource = source;
+	bool isSuccessful = false;
 
+	MONITOR_CommandSource = source;
 	// Separate command
 	COMMAND_ArgCount = MONITOR_CommandParser();
-	bool isSuccessful = false;
 
 	if (COMMAND_ArgCount > 0)
 	{
@@ -567,11 +570,10 @@ bool MONITOR_PrepareFindExecuteCommand(CommProtocol_t source)
 	}
 	else
 	{
-		// Cannot separated, this is not a command
+		// 0 Argument num, Cannot separated, this is not a command
 		isSuccessful = false;
 	}
 
-	
 	// Init new command
 	MONITOR_SEND_PROMT_NEW_LINE();
 
@@ -615,6 +617,7 @@ static bool MONITOR_SearchCommand(void)
 
 	CommandID_t i;
 	bool CommandValid = false;
+	CommandResult_t result = CommandResult_Error_CommandNotFound;
 
 	// Search the command
 	for (i=0; i < MONITOR_CommandNum; i++)
@@ -623,7 +626,7 @@ static bool MONITOR_SearchCommand(void)
 		if (!StrCmp(COMMAND_Arguments[0],CommandList[i].name))
 		{
 			// Found the command
-			MONITOR_RunCommand(i);
+			result = MONITOR_RunCommand(i);
 
 			// Valid Command
 			CommandValid = true;
@@ -631,16 +634,12 @@ static bool MONITOR_SearchCommand(void)
 		}
 	}
 
-	// Is valid command?
-	if (!CommandValid)
-	{
-		// Error, wrong command
-		MONITOR_SendMessage("Unknown Command\r\n"
-				"Type \"help\" for help\r\n");
-	}
+	// Write result
+	MONITOR_CheckResultAndRespond(result);
+
 
 	// Return with validation
-	return !CommandValid;
+	return CommandValid;
 
 }
 
@@ -1086,7 +1085,11 @@ void MONITOR_CheckResultAndRespond(CommandResult_t result)
 			break;
 
 		case CommandResult_Ok:
-			// Not need response
+			// Do not send response
+			break;
+
+		case CommandResult_Ok_SendSuccessful:
+			pMessage = "Successful";
 			break;
 
 		case CommandResult_Error_WrongArgument1:
@@ -1117,6 +1120,11 @@ void MONITOR_CheckResultAndRespond(CommandResult_t result)
 			pMessage ="Unknown error";
 			break;
 
+		case CommandResult_Error_CommandNotFound:
+			pMessage = 	"Unknown Command\r\n"
+						"Type \"help\" for help";
+			break;
+
 		default:
 			pMessage ="Unknown command process";
 			break;
@@ -1130,21 +1138,22 @@ void MONITOR_CheckResultAndRespond(CommandResult_t result)
 /**
  * \brief	Run command
  */
-void MONITOR_RunCommand(CommandID_t commandID)
+CommandResult_t MONITOR_RunCommand(CommandID_t commandID)
 {
 
-	uint32_t result = CommandResult_Ok;
+	CommandResult_t result = CommandResult_Unknown;
 	bool needWriteHelp = false;
 
 	// Check argument nums
-	result = MONITOR_ArgumentNumIsGood(COMMAND_ArgCount, CommandList[commandID].commandArgNum);
+	result = MONITOR_CheckArgumentNumIsGood(COMMAND_ArgCount, CommandList[commandID].commandArgNum);
 
 	if (result == CommandResult_Ok)
 	{
-		// Good
+		// Good, found & argument num is ok
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
+		// Call function
 		FunctionPointer thisFunction = ( FunctionPointer )CommandList[commandID].commandFunctionPointer;
 #pragma GCC diagnostic pop
 		// End of warning suppress
@@ -1158,16 +1167,59 @@ void MONITOR_RunCommand(CommandID_t commandID)
 		needWriteHelp = true;
 	}
 
-
-
-	// Write result if need
-	MONITOR_CheckResultAndRespond(result);
-
+	// Write command help, if command run failed
 	if (needWriteHelp)
 	{
 		MONITOR_WriteCommandHelp (commandID);
 	}
 
+	return result;
+}
+
+
+
+/**
+ * \brief	Print all commands
+ */
+void MONITOR_PrintAllCommands(void)
+{
+	CommandID_t i;
+
+	MONITOR_SendLine("Using help:\r\n"
+			"help <command>\r\n\r\n"
+			"Commands list:");
+	for (i=0; i < MONITOR_CommandNum; i++)
+	{
+		// Write a command
+		MONITOR_SendLine(CommandList[i].name);
+	}
+}
+
+
+
+/**
+ * \brief	Search command and print help
+ */
+void MONITOR_SearchCommandAndPrintHelp(const char *command)
+{
+	CommandID_t i;
+	bool isOk = false;
+
+	for (i=0; i < MONITOR_CommandNum; i++)
+	{
+		// Find the command
+		if (!StrCmp(CommandList[i].name, command))
+		{
+			// Command's describe
+			MONITOR_WriteCommandHelp(i);
+			isOk = true;
+		}
+	}
+
+	if (!isOk)
+	{
+		duprintf(MONITOR_CommandSource, "Not find command: %s\r\n", command);
+	}
 }
 
 
@@ -1195,7 +1247,7 @@ void MONITOR_WriteCommandHelp(CommandID_t commandID)
 /**
  * \brief	Check actual command argument num from settings
  */
-CommandResult_t MONITOR_ArgumentNumIsGood(uint8_t receivedArgNum, uint8_t commandArgNum)
+CommandResult_t MONITOR_CheckArgumentNumIsGood(uint8_t receivedArgNum, uint8_t commandArgNum)
 {
 	// Check commandArgNum. bit is set?
 	if (receivedArgNum > MONITOR_COMMAND_ARG_MAX_COUNT)

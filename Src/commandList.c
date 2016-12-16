@@ -365,46 +365,24 @@ CommandResult_t CommandFunction_welcome ( uint32_t argc, char** argv )
 
 /**
  * \brief	Help command
- * 			Use: 'help', or 'help <commandname>'
- * 			List commands or write the command's decription
+ * 			Use: 'help', or 'help <CommandName>'
+ * 			List commands or write the command's description
  */
 CommandResult_t CommandFunction_help ( uint32_t argc, char** argv )
 {
 
-	uint8_t i;
-
 	if (argc == 1)
 	{
 		// if Arg2 is empty, listing all commands
-		MONITOR_SendLine("Using help:\r\n"
-				"help <command>\r\n\r\n"
-				"Commands list:");
-		for (i=0; i < MONITOR_MAX_COMMAND_NUM; i++)
-		{
-			// Write a command
-			MONITOR_SendLine(CommandList[i].name);
-		}
-		return CommandResult_Ok;
+		MONITOR_PrintAllCommands();
 	}
 	else if (argc == 2)
 	{
-		// Arg2 not empty, find the command
-		for (i=0; i < MONITOR_MAX_COMMAND_NUM; i++)
-		{
-			// Find the command
-			if (!StrCmp(CommandList[i].name,argv[1]))
-			{
-				// Command's describe
-				MONITOR_WriteCommandHelp(i);
-				return CommandResult_Ok;
-			}
-		}
-
-		duprintf(MONITOR_CommandSource, "Not find command: %s\r\n", argv[1]);
-		return CommandResult_Ok;
+		// Has Arg2, find the command & print help
+		MONITOR_SearchCommandAndPrintHelp(argv[1]);
 	}
 
-	return CommandResult_Error_Unknown;
+	return CommandResult_Ok;
 }
 
 
@@ -533,149 +511,6 @@ CommandResult_t CommandFunction_test	( uint32_t argc, char** argv )
 
 	COMMUNICATION_SendMessage(CommProt_SWO, "Test message on SWO\n");
 
-
-	// GlobalVar
-
-	//GlobalVarHandler_ListAllVariableParameters();
-
-	/*
-	char buffer[30];
-	GlobalVarHandler_ProcessCommand("TestVar",NULL,SetGet_Get,Source_DebugSerial,
-			buffer,20);
-
-	uprintf("%s\r\n",buffer);
-
-	GlobalVarHandler_ProcessCommand("TestString",NULL,SetGet_Get,Source_DebugSerial,
-			buffer,30);
-
-	uprintf("%s\r\n",buffer);
-	*/
-
-	// Temperature test
-	
-	
-	//TEMPERATURE_I2C_Init();
-	
-	
-	
-	
-	
-	// ADC
-	//ADC_Test();
-	
-	
-	
-	// LED TEST
-	//LED_Init();
-
-	//LED_On (DESIGNLED_ALL);
-	//LED_Off(DESIGNLED_INDEX_RIGHT);
-
-	
-	
-	
-
-	// Proximity test
-	/*
-	while (i++ < 100)
-	{
-		//uprintf("Front proximity value: %d [cm]\r\n",PROX_MeaseuredValueToDistanceConverter( ProxAdcValues[PROX_SENSOR_FRONT] ));
-		if ( HAL_UART_Receive(&Debug_UartHandle,buf,1,50) == HAL_OK ) return 1;
-		//vTaskDelay(200);
-	}
-	*/
-
-
-
-	
-	
-	
-	
-	// Position teszt
-	//LOG_QueueSendMessage(LOG_MESSAGE_TYPE_POSITION,0,0);
-
-
-
-
-	// Teszt a jumper lerantashoz
-
-	//
-	/*
-	GPIO_InitTypeDef GPIO_InitStructure;
-
-	// Enable clock
-	CONTROL_START_GPIO_CLK_ENABLE();
-
-	// Set settings
-	GPIO_InitStructure.Mode = GPIO_MODE_INPUT;
-	//GPIO_InitStruct.Alternate =
-	GPIO_InitStructure.Pin = CONTROL_START_GPIO_PIN;
-	GPIO_InitStructure.Pull = GPIO_PULLDOWN;
-	GPIO_InitStructure.Speed = GPIO_SPEED_LOW;
-
-
-	HAL_GPIO_Init(CONTROL_START_GPIO_PORT, &GPIO_InitStructure);
-
-	while ( HAL_GPIO_ReadPin(CONTROL_START_GPIO_PORT,CONTROL_START_GPIO_PIN) == 1);
-	//
-	*/
-
-
-	/*
-	// LOG queue teszt
-	int16_t testbuffer[12];
-
-	for (int i=0; i<12; i++) testbuffer[i] = i+1;
-
-	if ( LOG_QueueSendMessage(LOG_MESSAGE_TYPE_EXAMPLE,1, testbuffer[1]) != RETURN_SUCCESS )
-	{
-		uprintf("Sikertelen elkuldes!\r\n");
-	}
-	if ( LOG_QueueSendMessage(LOG_MESSAGE_TYPE_EXAMPLE,1, testbuffer[1]) != RETURN_SUCCESS )
-	{
-		uprintf("Sikertelen elkuldes!\r\n");
-	}
-	if ( LOG_QueueSendMessage(LOG_MESSAGE_TYPE_EXAMPLE,1, testbuffer[1]) != RETURN_SUCCESS )
-	{
-		uprintf("Sikertelen elkuldes!\r\n");
-	}
-	if ( LOG_QueueSendMessage(LOG_MESSAGE_TYPE_EXAMPLE,1, testbuffer[1]) != RETURN_SUCCESS )
-	{
-		uprintf("Sikertelen elkuldes!\r\n");
-	}
-	*/
-
-
-
-	//SystemClock_Config();
-	//HAL_NVIC_ClearPendingIRQ(0xFFFFFFFF);
-
-	/*
-	// TEST az uprintf() fuggvenyhez
-	uprintf("elso sor\r\n"
-			"masodik sor, szam: %d\r\n"
-			"harmadik, szam: %d\r\n"
-			"\r\n",
-			230,
-			520);
-	
-
-	vTaskDelay(10);
-	
-	uprintf("blabla\r\n");
-	uprintf("blabla\r\n");
-	uprintf("blabla\r\n");
-	uprintf("blabla\r\n");
-
-
-	uprintf("elso sor\r\n"
-			"masodik sor, szam: %d\r\n"
-			"harmadik, szam: %d\r\n"
-			"\r\n",
-			230,
-			520);
-	*/
-
 	MONITOR_SendLine("Test end");
 
 	return CommandResult_Ok;
@@ -701,7 +536,6 @@ CommandResult_t CommandFunction_set ( uint32_t argc, char** argv )
 			resultBuffer, 30);
 
 	MONITOR_SendLine(resultBuffer);
-
 
 	return CommandResult_Ok;
 
@@ -817,8 +651,7 @@ CommandResult_t CommandFunction_dac (uint32_t argc, char** argv)
 
 	if (DAC_SetValue(Arg2Num,voltage))
 	{
-		MONITOR_SendLine("Set ok!");
-		return CommandResult_Ok;
+		return CommandResult_Ok_SendSuccessful;
 	}
 	else
 	{
@@ -838,6 +671,8 @@ CommandResult_t CommandFunction_unittest (uint32_t argc, char** argv)
 	// Suppress warning
 	(void)argc;
 	(void)argv;
+
+	MONITOR_SendLine("Start unittest");
 
 #ifdef MODULE_STRING_UNIT_TEST_ENABLE
 	STRING_UnitTest();

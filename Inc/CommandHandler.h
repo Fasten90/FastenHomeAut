@@ -124,12 +124,14 @@ typedef enum
 {
 	CommandResult_Unknown = 0,
 	CommandResult_Ok,
+	CommandResult_Ok_SendSuccessful,
 	CommandResult_Error_WrongArgument1,
 	CommandResult_Error_WrongArgument2,
 	CommandResult_Error_TooFewArgument,
 	CommandResult_Error_WrongArgumentNum,
 	CommandResult_Error_TooManyArgument,
 	CommandResult_Error_CommandArgNumIsWrong,
+	CommandResult_Error_CommandNotFound,
 	CommandResult_Error_Unknown
 } CommandResult_t;
 
