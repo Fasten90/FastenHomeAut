@@ -39,7 +39,7 @@
 
 
 /*
-Type_Error = 0,
+Type_Unknown = 0,
 Type_Bool,
 Type_Uint8,
 Type_Int8,
@@ -52,10 +52,10 @@ Type_String,
 Type_Enumerator
 */
 // TODO: Lehet, hogy lekérdező függvénybe kéne rakni?
-static const char const*GlobalVarTypesNames[] =
+static const char const *GlobalVarTypesNames[] =
 {
 		// NOTE: Important!! Must be in the same order with VarType_t
-		"Unknown",
+		"unknown",
 		"bool",
 		"uint8_t",
 		"int8_t",
@@ -131,7 +131,7 @@ bool GlobalVarHandler_CheckCommandStructAreValid(void)
 			break;
 		}
 
-		if (GlobalVarList[i].type == Type_Error)
+		if (GlobalVarList[i].type == Type_Unknown)
 		{
 			hasError = true;
 			break;
@@ -198,7 +198,7 @@ void GlobalVarHandler_ProcessCommand(
 		SetGetType_t setGetType, CommProtocol_t source,
 		char *resultBuffer, uint8_t resultBufferLength)
 {
-	 ProcessResult_t result = Process_UnknownError;
+	 ProcessResult_t result = Process_Unknown;
 
 	// Search command
 	VarID_t commandID = 0;
@@ -235,7 +235,7 @@ void GlobalVarHandler_ProcessCommand(
 			}
 			else
 			{
-				result = Process_UnknownError;
+				result = Process_Unknown;
 			}
 		}
 		else
@@ -343,7 +343,7 @@ static ProcessResult_t GlobalVarHandler_GetCommand(VarID_t commandID, char *resu
 			break;
 
 		// Wrong types
-		case Type_Error:
+		case Type_Unknown:
 		case Type_Count:
 		default:
 			return Process_FailParam;
@@ -418,7 +418,7 @@ static uint8_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resu
 			case Type_Float:
 			case Type_Bits:
 			case Type_String:
-			case Type_Error:
+			case Type_Unknown:
 			case Type_Count:
 			default:
 				octetNum = 0;
@@ -511,7 +511,7 @@ static uint8_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resu
 			case Type_Float:
 			case Type_Bits:
 			case Type_String:
-			case Type_Error:
+			case Type_Unknown:
 			case Type_Count:
 			default:
 				// Wrong case
@@ -605,7 +605,7 @@ static uint8_t GlobalVarHandler_GetEnumerator(const VarID_t commandID, char *res
 static ProcessResult_t GlobalVarHandler_SetCommand(const VarID_t commandID, const char *param)
 {
 
-	ProcessResult_t result = Process_UnknownError;
+	ProcessResult_t result = Process_Unknown;
 
 	switch (GlobalVarList[commandID].type)
 	{
@@ -639,7 +639,7 @@ static ProcessResult_t GlobalVarHandler_SetCommand(const VarID_t commandID, cons
 			break;
 
 		// Wrong types
-		case Type_Error:
+		case Type_Unknown:
 		case Type_Count:
 		default:
 			result = Process_FailType;
@@ -794,10 +794,10 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 					case Type_Bits:
 					case Type_Enumerator:
 					case Type_String:
-					case Type_Error:
+					case Type_Unknown:
 					case Type_Count:
 					default:
-						return Process_UnknownError;
+						return Process_Unknown;
 						break;
 				}
 
@@ -912,7 +912,7 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 		}
 	}
 
-	return Process_UnknownError;
+	return Process_Unknown;
 }
 
 
@@ -922,7 +922,7 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
  */
 static ProcessResult_t GlobalVarHandler_SetFloat(VarID_t commandID, const char *param)
 {
-	ProcessResult_t result = Process_UnknownError;
+	ProcessResult_t result = Process_Unknown;
 
 	float floatValue = 0.0f;
 	if (StringToFloat(param,&floatValue))
@@ -958,7 +958,7 @@ static ProcessResult_t GlobalVarHandler_SetBits(VarID_t commandID, const char *p
 {
 	uint32_t num = 0;
 	bool isOk = true;
-	ProcessResult_t result = Process_UnknownError;
+	ProcessResult_t result = Process_Unknown;
 	uint8_t maxLength = GlobalVarList[commandID].maxValue - GlobalVarList[commandID].minValue + 1;
 
 	// Check prefix, need '0b'
@@ -1025,7 +1025,7 @@ static ProcessResult_t GlobalVarHandler_SetBits(VarID_t commandID, const char *p
  */
 static ProcessResult_t GlobalVarHandler_SetString(VarID_t commandID, const char *param)
 {
-	ProcessResult_t result = Process_UnknownError;
+	ProcessResult_t result = Process_Unknown;
 
 	// Check length
 	uint8_t stringLength = StringLength(param);
@@ -1101,7 +1101,7 @@ static ProcessResult_t GLobalVarHandler_SetEnumerator(VarID_t commandID, const c
 		return Process_InvalidValue_NotEnumString;
 	}
 
-	return Process_UnknownError;
+	return Process_Unknown;
 }
 
 
@@ -1186,7 +1186,7 @@ static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t n
 			break;
 
 		// Wrong types
-		case Type_Error:
+		case Type_Unknown:
 		case Type_Count:
 		default:
 			result = Process_FailType;
@@ -1303,7 +1303,7 @@ static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBu
 			pMessage = "Too long string";
 			break;
 
-		case Process_UnknownError:
+		case Process_Unknown:
 			pMessage = "Unknown error";
 			break;
 
@@ -1322,7 +1322,7 @@ static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBu
  */
 void GlobalVarHandler_ListAllVariableParameters(void)
 {
-	uint8_t i;
+	VarID_t i;
 
 	// TODO: Enumokat is kiírni, ha van?
 	const char *header = "+-ID-+-------Name-----------+----Type----+--min--+--max--+-unit-+-----Description------+";

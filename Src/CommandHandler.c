@@ -142,7 +142,7 @@ static uint8_t MONITOR_CommandParser(void);
 static bool MONITOR_SearchCommand(void);
 
 void MONITOR_CommandBackspace(void);
-void MONITOR_CommandResendLine( bool needRestoreCursor);
+void MONITOR_CommandResendLine(bool needRestoreCursor);
 bool MONITOR_CommandEscapeCharValidation(void);
 
 #ifdef USE_MONITOR_HISTORY

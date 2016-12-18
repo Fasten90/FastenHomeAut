@@ -1631,6 +1631,11 @@ void STRING_UnitTest (void)
 	usprintf(buffer, "0x%09x",0x12345678);
 	UnitTest_CheckResult(!StrCmp(buffer, "0x"), "Hexadecimal error", __LINE__);
 
+	// Binaries printf
+	usprintf(buffer, "0b%b",0x000000FF);
+	UnitTest_CheckResult(!StrCmp(buffer, "0b11111111"), "Binary error", __LINE__);
+	usprintf(buffer, "0b%b",0x00000055);
+	UnitTest_CheckResult(!StrCmp(buffer, "0b1010101"), "Binary error", __LINE__);
 
 	// String (%s)
 	// Standard %s print
@@ -1676,6 +1681,18 @@ void STRING_UnitTest (void)
 	// Wrong hex
 	result = StringHexToNum("123G5678", &value32);
 	UnitTest_CheckResult(!result, "StringHexToNum error", __LINE__);
+
+
+	// Binaries
+	result = StringBinaryToNum("010101", &value32);
+	UnitTest_CheckResult(result, "StringBinaryToNum error", __LINE__);
+	UnitTest_CheckResult(value32 == 0x15, "StringHexToNum error", __LINE__);
+	result = StringBinaryToNum("01010101010101010101010101010101", &value32);
+	UnitTest_CheckResult(result, "StringBinaryToNum error", __LINE__);
+	UnitTest_CheckResult(value32 == 0x55555555, "StringHexToNum error", __LINE__);
+	result = StringBinaryToNum("010101010101010101010101010101010", &value32);
+	UnitTest_CheckResult(!result, "StringBinaryToNum error", __LINE__);
+
 
 	// Decimals
 

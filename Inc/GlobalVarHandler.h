@@ -39,7 +39,7 @@ typedef uint8_t VarID_t;
 /// \note	This enum has an "name list" (GlobalVarTypesNames), Must be in the same order with it!
 typedef enum
 {
-	Type_Error = 0,
+	Type_Unknown = 0,
 	Type_Bool,
 	Type_Uint8,
 	Type_Int8,
@@ -58,7 +58,7 @@ typedef enum
 /// Process result enumerator
 typedef enum
 {
-	Process_UnknownError = 0,
+	Process_Unknown = 0,
 	Process_GlobalVariableNameNotFind,
 	Process_SourceNotEnabled,
 	Process_IsReadOnly,
@@ -90,7 +90,6 @@ typedef enum
 } SetGetType_t;
 
 
-
 /// GlobalVarCommand structure for set-get global variables
 typedef struct
 {
@@ -111,10 +110,10 @@ typedef struct
 	const char * const *enumList;			///< Enum list, if it is enumerator
 
 #ifdef GLOBALVARHANDLER_UNIT_ENABLE
-	const char * const unit;				///< units, example: [cm]
+	const char * const unit;				///< units [string], example: [cm]
 #endif
 #ifdef GLOBALVARHANDLER_DESCRIPTION_ENABLE
-	const char * const description;			///< descriptions of global variable
+	const char * const description;			///< descriptions of global variable [string]
 #endif
 
 } GlobalVarCommand_t;
