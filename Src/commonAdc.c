@@ -80,9 +80,9 @@ void ADC_Init(void)
 	/* Configuration of AdcHandle init structure: ADC parameters and regular group */
 	AdcHandle.Instance = ADCx;
 
-	AdcHandle.Init.ClockPrescaler        = ADC_CLOCKPRESCALER_PCLK_DIV2;
+	AdcHandle.Init.ClockPrescaler        = ADC_CLOCKPRESCALER_PCLK_DIV8;
 	AdcHandle.Init.Resolution            = ADC_RESOLUTION_12B;
-	AdcHandle.Init.ScanConvMode          = DISABLE;							/* Sequencer enabled (ADC conversion on several channels, successively, following settings below) */
+	AdcHandle.Init.ScanConvMode          = ENABLE;							/* Sequencer enabled (ADC conversion on several channels, successively, following settings below) */
 	AdcHandle.Init.ContinuousConvMode    = ENABLE;							/* Continuous mode disabled to have only 1 rank converted at each conversion trig, and because discontinuous mode is enabled */
 	AdcHandle.Init.DiscontinuousConvMode = DISABLE;							/* Sequencer of regular group will convert the sequence in several sub-divided sequences */
 	AdcHandle.Init.NbrOfDiscConversion   = 0;								/* Sequencer of regular group will convert ranks one by one, at each conversion trig */
