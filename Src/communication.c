@@ -96,7 +96,7 @@ uint8_t COMMUNICATION_SendChar(CommProtocol_t protocol, char c)
  * \brief	Send message on xy communication protocol
  * \param	protocol		what peripheral sending
  */
-uint8_t duprintf(CommProtocol_t protocol, const char *format, ...)
+uint8_t COMMUNICATION_Printf(CommProtocol_t protocol, const char *format, ...)
 {
 	uint8_t length = 0;
 
