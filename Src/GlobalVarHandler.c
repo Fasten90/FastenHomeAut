@@ -1328,14 +1328,14 @@ void GlobalVarHandler_ListAllVariableParameters(void)
 	const char *header = "+-ID-+-------Name-----------+----Type----+--min--+--max--+-unit-+-----Description------+";
 
 	// Send header
-	USART_SendLine(header);
+	MONITOR_SendLine(header);
 
 	// Rows (commands)
 	for (i=0; i<GlobalVarMaxCommandNum; i++)
 	{
 
 		// Print one command / line:
-		uprintf("| %2d | %20s | %10s | %5d | %5d | %4s | %20s |\r\n",
+		MONITOR_Printf("| %2d | %20s | %10s | %5d | %5d | %4s | %20s |\r\n",
 				i,
 				GlobalVarList[i].name,
 				GlobalVarTypesNames[GlobalVarList[i].type],
@@ -1347,7 +1347,7 @@ void GlobalVarHandler_ListAllVariableParameters(void)
 	}
 
 	// After commands (end)
-	USART_SendLine(header);
+	MONITOR_SendLine(header);
 
 }
 
@@ -1359,11 +1359,10 @@ void GlobalVarHandler_ListAllVariableParameters(void)
 void GlobalVarHandler_PrintAllVariableValues (void)
 {
 	uint8_t i;
-	char resultBuffer[20];
+	char resultBuffer[40];
 	uint8_t resultBufferLength;
-	// TODO: Ne uprintf legyen, hanem vagy duprintf, vagy sprintf
 
-	uprintf("Global variables:\r\n"
+	MONITOR_Printf("Global variables:\r\n"
 			" %20s %20s\r\n",
 			"<Name>", "<Value>");
 
@@ -1371,12 +1370,12 @@ void GlobalVarHandler_PrintAllVariableValues (void)
 	for (i=0; i<GlobalVarMaxCommandNum; i++)
 	{
 		// Print a variable name and value
-		resultBufferLength = 20;
+		resultBufferLength = 40;
 		GlobalVarHandler_GetCommand(i,resultBuffer,&resultBufferLength);
-		uprintf(" %20s %20s\r\n", GlobalVarList[i].name, resultBuffer);
+		MONITOR_Printf(" %20s %20s\r\n", GlobalVarList[i].name, resultBuffer);
 	}
 
-	uprintf("End of global variables\r\n");
+	MONITOR_SendLine("End of global variables");
 }
 
 
