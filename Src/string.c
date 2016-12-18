@@ -1362,6 +1362,7 @@ uint8_t string_printf (char *str, const char *format, va_list ap)
 					}
 					break;
 
+#if 0
 					// TODO: Delete w, h, b if not need
 				case 'w':
 					// Hex // 32 bits	// 8 hex	// 4 byte
@@ -1374,7 +1375,7 @@ uint8_t string_printf (char *str, const char *format, va_list ap)
 					ival = va_arg(ap, int);
 					string += DecimalToHexaString(ival, string, 4);
 					break;
-
+#endif
 #if 0
 				case 'b':
 					// Hex	// 8 bits	// 2 hex	// 1 byte
@@ -1383,7 +1384,7 @@ uint8_t string_printf (char *str, const char *format, va_list ap)
 					break;
 #endif
 				case 'b':
-					// Hex	// 8 bits	// 2 hex	// 1 byte
+					// Binary print (from uint32_t)
 					uival = va_arg(ap,  unsigned int);
 					string += DecimalToBinaryString(uival, string, 33);
 					break;
@@ -1473,30 +1474,6 @@ uint8_t uprintf (const char *format, ...)
 	va_end(ap);						 			// Cleaning after end
 
 	return USART_SendMessage(TxBuffer);			// Send on Usart
-}
-
-
-
-/**
- * \brief	Send message on xy communication protocol
- * \param	protocol		what peripheral sending
- */
-uint8_t duprintf (CommProtocol_t protocol, const char *format, ...)
-{
-	uint8_t length = 0;
-
-	// Working in at:
-	char txBuffer[TXBUFFERSIZE];
-
-	va_list ap;									// argument pointer
-	va_start(ap, format); 						// ap on arg
-	string_printf(txBuffer,format,ap);			// Separate and process
-	va_end(ap);						 			// Cleaning after end
-
-	length = COMMUNICATION_SendMessage(protocol, txBuffer);
-
-	return length;
-
 }
 
 

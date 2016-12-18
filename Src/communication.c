@@ -66,7 +66,7 @@ uint8_t COMMUNICATION_SendMessage(CommProtocol_t protocol, const char *message)
 /**
  * \brief	Send character on selected communication protocol
  */
-uint8_t COMMUNICATION_SendChar (CommProtocol_t protocol, char c)
+uint8_t COMMUNICATION_SendChar(CommProtocol_t protocol, char c)
 {
 	switch (protocol)
 	{
@@ -89,5 +89,29 @@ uint8_t COMMUNICATION_SendChar (CommProtocol_t protocol, char c)
 
 	return 1;
 }
+
+
+
+/**
+ * \brief	Send message on xy communication protocol
+ * \param	protocol		what peripheral sending
+ */
+uint8_t duprintf(CommProtocol_t protocol, const char *format, ...)
+{
+	uint8_t length = 0;
+
+	// Working in at:
+	char txBuffer[TXBUFFERSIZE];
+
+	va_list ap;									// argument pointer
+	va_start(ap, format); 						// ap on arg
+	string_printf(txBuffer,format,ap);			// Separate and process
+	va_end(ap);						 			// Cleaning after end
+
+	length = COMMUNICATION_SendMessage(protocol, txBuffer);
+
+	return length;
+}
+
 
 

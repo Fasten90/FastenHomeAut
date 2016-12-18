@@ -197,6 +197,7 @@ void MONITOR_SendCls(void);
 void MONITOR_SendMessage(const char *message);
 void MONITOR_SendLine(const char *message);
 void MONITOR_SendChar(char c);
+void MONITOR_Printf(const char *format, ...);
 
 void MONITOR_PrintAllCommands(void);
 void MONITOR_SearchCommandAndPrintHelp(const char *command);

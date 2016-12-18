@@ -456,7 +456,7 @@ CommandResult_t CommandFunction_led ( uint32_t argc, char** argv )
 	if (isFirstParamNum == false && !StrCmp(argv[1], "status"))
 	{
 		// "status"
-		duprintf(MONITOR_CommandSource, "Led status: %d %d %d\r\n",
+		MONITOR_Printf("Led status: %d %d %d\r\n",
 				LED_RED_STATUS(),
 				LED_BLUE_STATUS(),
 				LED_GREEN_STATUS());
@@ -478,7 +478,7 @@ CommandResult_t CommandFunction_led ( uint32_t argc, char** argv )
 
 		// Set LED
 		status = LED_SetLed(Arg2Num,setType);
-		duprintf(MONITOR_CommandSource, "LED %d. status: %d\r\n",Arg2Num, status);
+		MONITOR_Printf("LED %d. status: %d\r\n",Arg2Num, status);
 
 	}
 	else
@@ -820,7 +820,7 @@ CommandResult_t CommandFunction_io (uint32_t argc, char** argv)
 			}
 			// Set output
 			bool status = IO_SetOutput(port,pin,output);
-			duprintf(MONITOR_CommandSource, "Output status: %d\r\n", status);
+			MONITOR_Printf("Output status: %d\r\n", status);
 			return CommandResult_Ok;
 		}
 		else
@@ -836,7 +836,7 @@ CommandResult_t CommandFunction_io (uint32_t argc, char** argv)
 		if (StringToUnsignedDecimalNum(&argv[1][1],&pin))
 		{
 			bool status = IO_ReadPin(port,pin);
-			duprintf(MONITOR_CommandSource, "Input status: %d\r\n", status);
+			MONITOR_Printf("Input status: %d\r\n", status);
 			return CommandResult_Ok;
 		}
 		else
@@ -869,7 +869,7 @@ CommandResult_t CommandFunction_adc (uint32_t argc, char** argv)
 
 	for (i=0; i<ADC_BUFFER_SIZE; i++)
 	{
-		duprintf(MONITOR_CommandSource,"ADC: %d. value: %2.2f\r\n", i, ADC_ConvertedValues[i]);
+		MONITOR_Printf("ADC: %d. value: %2.2f\r\n", i, ADC_ConvertedValues[i]);
 	}
 
 	return CommandResult_Ok;
@@ -926,7 +926,7 @@ CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv)
 		{
 			// Convert & Print
 			ADC_ConvertAllMeasuredValues();
-			duprintf(MONITOR_CommandSource,"ADC: %d. value: %2.2f\r\n", i, ADC_ConvertedValues[i]);
+			MONITOR_Printf("ADC: %d. value: %2.2f\r\n", i, ADC_ConvertedValues[i]);
 		}
 
 		// Delay
@@ -999,7 +999,7 @@ CommandResult_t CommandFunction_flashdel	( uint32_t argc, char** argv )
 		return RETURN_FALSE;
 	}
 
-	duprintf(MONITOR_CommandSource, "address erased: 0x%h\r\n",
+	MONITOR_Printf("address erased: 0x%h\r\n",
 			Arg2Num
 			);
 
@@ -1030,7 +1030,7 @@ CommandResult_t CommandFunction_flashread	( uint32_t argc, char** argv )
 	FLASH_Read(Arg2Num,Buffer,1,5000);
 
 
-	duprintf(MONITOR_CommandSource, "address: 0x%w\r\n"
+	MONITOR_Printf("address: 0x%w\r\n"
 			"data:    0x%b\r\n",
 			Arg2Num,
 			Buffer[0]
@@ -1071,7 +1071,7 @@ CommandResult_t CommandFunction_flashwrite	( uint32_t argc, char** argv )
 	FLASH_Write(Arg2Num,Buffer,1,5000);
 
 
-	duprintf(MONITOR_CommandSource, "address: 0x%w\r\n"
+	MONITOR_Printf("address: 0x%w\r\n"
 			"data:    0x%b\r\n",
 			Arg2Num,
 			Arg3Num);
@@ -1162,7 +1162,7 @@ CommandResult_t CommandFunction_dl ( uint32_t argc, char** argv )
 		return RETURN_FALSE;
 	}
 
-	duprintf(MONITOR_CommandSource, "Destination: 0x%w\r\n"
+	MONITOR_Printf("Destination: 0x%w\r\n"
 			"Size: %d bytes\r\n",
 			destination,
 			size);
@@ -1249,7 +1249,7 @@ CommandResult_t CommandFunction_go ( uint32_t argc, char** argv ) {
 	}
 
 	destination = Arg2Num;
-	duprintf(MONITOR_CommandSource, "Go destination: 0x%w\r\n",
+	MONITOR_Printf("Go destination: 0x%w\r\n",
 			destination);
 
 
@@ -1295,14 +1295,14 @@ CommandResult_t CommandFunction_mr ( uint32_t argc, char** argv ) {
 	size = ( unsigned short int ) Arg3Num;	// <size> max 256
 	// TODO: checking the correct address
 
-	duprintf(MONITOR_CommandSource, "Source: 0x%w\r\n"
+	MONITOR_Printf("Source: 0x%w\r\n"
 			"Size: %d\r\n",
 			source,size);
 
 	i=0;
 	for (p = source; p < source+size/4; p++) {
-		if ( !(i % 4) ) duprintf(MONITOR_CommandSource, "\r\n 0x%w:",p);
-		duprintf(MONITOR_CommandSource, " %w",*p);
+		if ( !(i % 4) ) MONITOR_Printf("\r\n 0x%w:",p);
+		MONITOR_Printf(" %w",*p);
 		i++;
 	}
 
@@ -1338,17 +1338,17 @@ CommandResult_t CommandFunction_mw ( uint32_t argc, char** argv ) {
 	if (!StrCmp(argv[0],"mwb")) {
 		destination1 = ( unsigned char *) Arg2Num;
 		*destination1 = ( unsigned char ) Arg3Num;
-		duprintf(MONITOR_CommandSource, "Write: %b to: %w",Arg3Num,Arg2Num);
+		MONITOR_Printf("Write: %b to: %w",Arg3Num,Arg2Num);
 	}
 	else if (!StrCmp(argv[0],"mwh")) {
 		destination2 = ( unsigned short int *) Arg2Num;
 		*destination2 = ( unsigned short int) Arg3Num;
-		duprintf(MONITOR_CommandSource, "Write: %h to: %w",Arg3Num,Arg2Num);
+		MONITOR_Printf("Write: %h to: %w",Arg3Num,Arg2Num);
 	}
 	else if (!StrCmp(argv[0],"mww")) {
 		destination3 = ( uint32_t *) Arg2Num;
 		*destination3 = ( uint32_t ) Arg3Num;
-		duprintf(MONITOR_CommandSource, "Write: %w to: %w",Arg3Num,Arg2Num);
+		MONITOR_Printf("Write: %w to: %w",Arg3Num,Arg2Num);
 	}
 
 
@@ -1393,7 +1393,7 @@ CommandResult_t CommandFunction_romr	( uint32_t argc, char** argv ) {
 
 	Arg2Num = StringDecToNum(argv[1]);
 
-	//duprintf(MONITOR_CommandSource, "address: 0x%h\r\n"
+	//MONITOR_Printf("address: 0x%h\r\n"
 	//				"data:    0x%b\r\n",
 	//				Arg2Num,
 	//				EEPROM_ReadByte(Arg2Num)
@@ -1416,7 +1416,7 @@ CommandResult_t CommandFunction_romw	( uint32_t argc, char** argv ) {
 	Arg2Num = StringHexToNum(argv[1]);
 	Arg3Num = StringHexToNum(argv[2]);
 
-	duprintf(MONITOR_CommandSource, "address: 0x%h\r\n"
+	MONITOR_Printf("address: 0x%h\r\n"
 					"data:    0x%b\r\n",
 					Arg2Num,
 					Arg3Num);
@@ -1432,7 +1432,7 @@ CommandResult_t CommandFunction_romw	( uint32_t argc, char** argv ) {
 // Function: Read EEPROM's status register
 CommandResult_t CommandFunction_romsr	( uint32_t argc, char** argv ) {
 
-	//duprintf(MONITOR_CommandSource, "Status register: 0x%h\r\n",
+	//MONITOR_Printf("Status register: 0x%h\r\n",
 	//				EEPROM_ReadStatusRegister ()
 	//				);
 
@@ -1495,7 +1495,7 @@ CommandResult_t CommandFunction_rtc	( uint32_t argc, char** argv ) {
 
 	Arg2Num = StringDecToNum(argv[1]);
 
-	duprintf(MONITOR_CommandSource, "RTC wait %d second(s)\r\n",Arg2Num);
+	MONITOR_Printf("RTC wait %d second(s)\r\n",Arg2Num);
 
 	//RTC_WaitSeconds(Arg2Num);
 
@@ -1822,7 +1822,7 @@ CommandResult_t CommandFunction_read ( uint32_t argc, char** argv )
 	pFloat = &temp;
 	FloatToString(*pFloat, String);
 
-	duprintf(MONITOR_CommandSource, "Distance: %s\r\n",String);
+	MONITOR_Printf("Distance: %s\r\n",String);
 	*/
 
 
@@ -1853,7 +1853,7 @@ CommandResult_t CommandFunction_read ( uint32_t argc, char** argv )
 	#endif
 	for (i=0; i<200; i++ )
 	{
-		duprintf(MONITOR_CommandSource, "%d\r\n",localDataRaw[i]);
+		MONITOR_Printf("%d\r\n",localDataRaw[i]);
 		#ifdef CONFIG_USE_FREERTOS
 		vTaskDelay(1);
 		#else
@@ -1865,7 +1865,7 @@ CommandResult_t CommandFunction_read ( uint32_t argc, char** argv )
 			"Avg:");
 	for (i=0; i<200; i++ )
 	{
-		//duprintf(MONITOR_CommandSource, "%d\r\n",localDataAvg[i]);	// egyszeru kiiratas, int. De az Avg float!
+		//MONITOR_Printf("%d\r\n",localDataAvg[i]);	// egyszeru kiiratas, int. De az Avg float!
 
 		pFloat = &localDataAvg[i];
 		FloatToString(*pFloat, String);

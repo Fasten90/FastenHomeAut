@@ -1215,7 +1215,7 @@ void MONITOR_SearchCommandAndPrintHelp(const char *command)
 
 	if (!isOk)
 	{
-		duprintf(MONITOR_CommandSource, "Not find command: %s\r\n", command);
+		MONITOR_Printf("Not find command: %s\r\n", command);
 	}
 }
 
@@ -1228,7 +1228,7 @@ void MONITOR_WriteCommandHelp(CommandID_t commandID)
 {
 
 	// Print command to source
-	duprintf(MONITOR_CommandSource,
+	MONITOR_Printf(
 			"Command name: %s\r\n"
 			"Function: %s\r\n"
 			"Syntax: %s %s\r\n",
@@ -1327,6 +1327,29 @@ void MONITOR_SendLine(const char *message)
 void MONITOR_SendChar(char c)
 {
 	COMMUNICATION_SendChar(MONITOR_CommandSource, c);
+}
+
+
+
+/**
+ * \brief	Send message on xy communication protocol
+ * \param	protocol		what peripheral sending
+ */
+void MONITOR_Printf(const char *format, ...)
+{
+
+	// Working in at:
+	char txBuffer[TXBUFFERSIZE];
+
+	va_list ap;									// argument pointer
+	va_start(ap, format); 						// ap on arg
+	string_printf(txBuffer,format,ap);			// Separate and process
+	va_end(ap);						 			// Cleaning after end
+
+	MONITOR_SendMessage(txBuffer);
+
+	return;
+
 }
 
 
