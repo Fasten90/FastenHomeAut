@@ -1263,10 +1263,10 @@ uint8_t string_printf (char *str, const char *format, va_list ap)
 
 	char *string = str;
 
-	bool paramHasLength = false;
-	uint8_t paramNum1 = 0;
-	uint8_t paramNum2 = 0;
-	char fillCharacter = ' ';
+	bool paramHasLength;
+	uint8_t paramNum1;
+	uint8_t paramNum2;
+	char fillCharacter;
 
 	for (p = (char *)format; *p; p++)				// p to EOS
 	{
@@ -1434,7 +1434,8 @@ uint8_t string_printf (char *str, const char *format, va_list ap)
 
 	}	// End of for loop
 
-	*string = '\0';												// string's end
+	// string's end
+	*string = '\0';
 
 	return (string-str);
 

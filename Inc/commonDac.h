@@ -17,6 +17,8 @@
 #include "include.h"
 
 
+#ifdef CONFIG_MODULE_COMMON_DAC_ENABLE
+
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
@@ -47,6 +49,8 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac);
 void DAC_Init(void);
 bool DAC_SetValue (DAC_Channel_t channel, float voltage);
 
+
+#endif
 
 
 #endif /* COMMONDAC_H_ */

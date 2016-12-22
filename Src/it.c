@@ -16,9 +16,6 @@
 #ifdef CONFIG_USE_PANEL_CENTER
 
 #endif
-#ifdef CONFIG_MODULE_STL_SELFTEST_ENABLE
-#include "stm32fxx_STLclassBvar.h"
-#endif
 
 
 
@@ -226,6 +223,18 @@ void EXTI0_IRQHandler(void)
 
 
 
+#ifdef CONFIG_USE_PANEL_NUCLEOF401RE
+
+// PC13 - User button
+void EXTI15_10_IRQHandler(void)
+{
+	HAL_GPIO_EXTI_IRQHandler(BUTTON_USER_GPIO_PIN);
+}
+
+#endif	// #ifdef CONFIG_USE_PANEL_DISCOVERY
+
+
+
 /**
   * @brief EXTI line detection callbacks
   * @param GPIO_Pin: Specifies the pins connected EXTI line
@@ -265,17 +274,17 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	
 	//BUTTON_Clicked = 1;
 #endif	// #ifdef CONFIG_MODULE_BUTTON_ENABLE
-#ifdef CONFIG_USE_PANEL_DISCOVERY
+#if defined(CONFIG_USE_PANEL_DISCOVERY) || defined(CONFIG_USE_PANEL_NUCLEOF401RE)
 	if (GPIO_Pin == BUTTON_USER_GPIO_PIN)
 	{
 		// Toggle LED
-		LED_RED_TOGGLE();
+		LED_GREEN_TOGGLE();
 		BUTTON_Clicked |= ( ( 1 << PressedButton_Pressed) | ( 1 << PressedButton_Up ) );
 	}
 #endif
 #endif
 
-	#ifdef CONFIG_USE_PANEL_NODEMEDIUM
+#ifdef CONFIG_USE_PANEL_NODEMEDIUM
 	if (GPIO_Pin == SENSOR_MOTION_GPIO_PIN)
 	{
 		GLOBAL_IO_Sensor_Motion_Move = 1;
@@ -284,14 +293,13 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	{
 		GLOBAL_IO_Sensor_Sound_Impact_Sound = 1;
 	}
-	#endif
-	
+#endif
 	
 }
 
 
 
-#ifdef CONFIG_USE_PANEL_DISCOVERY
+#if defined(CONFIG_USE_PANEL_DISCOVERY) || defined(CONFIG_USE_PANEL_NUCLEOF401RE)
 void ADCx_DMA_IRQHandler(void)
 {
   HAL_DMA_IRQHandler(AdcHandle.DMA_Handle);

@@ -456,10 +456,15 @@ CommandResult_t CommandFunction_led ( uint32_t argc, char** argv )
 	if (isFirstParamNum == false && !StrCmp(argv[1], "status"))
 	{
 		// "status"
+#ifdef CONFIG_USE_PANEL_DISCOVERY
 		MONITOR_Printf("Led status: %d %d %d\r\n",
 				LED_RED_STATUS(),
 				LED_BLUE_STATUS(),
 				LED_GREEN_STATUS());
+#elif CONFIG_USE_PANEL_NUCLEOF401RE
+		MONITOR_Printf("Led status: %d\r\n",
+						LED_GREEN_STATUS());
+#endif
 	}
 	else if (isFirstParamNum == true)
 	{

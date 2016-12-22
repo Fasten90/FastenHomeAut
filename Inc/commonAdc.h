@@ -55,7 +55,7 @@ extern volatile float			ADC_ConvertedValues[];
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void ADC_Init(void);
+void CommonADC_Init(void);
 void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc);
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle);

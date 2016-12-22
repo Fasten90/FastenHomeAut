@@ -18,6 +18,8 @@
 #include "stm32f4xx_hal.h"
 
 
+#ifdef CONFIG_MODULE_COMMON_DAC_ENABLE
+
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
@@ -131,7 +133,7 @@ void DAC_Init(void)
  */
 uint32_t DAC_VoltageToBinary (float voltage)
 {
-	return voltage / DAC_MAX_VOLTAGE * DAC_DA_MAX_VALUE;
+	return voltage / COMMON_DAC_MAX_VOLTAGE * COMMON_DAC_DA_MAX_VALUE;
 }
 
 
@@ -176,3 +178,5 @@ bool DAC_SetValue (DAC_Channel_t channel, float voltage)
 
 	return true;
 }
+
+#endif	// CONFIG_MODULE_COMMON_DAC_ENABLE

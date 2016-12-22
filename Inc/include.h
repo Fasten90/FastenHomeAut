@@ -63,31 +63,9 @@ typedef enum
 ///////////////////////////// INCLUDES
 
 
+// Includes microcontroller family libraries
 
-#ifdef CONFIG_USE_PANEL_NODESMALL
-	#include "stm32f0xx_hal.h"
-	#include "stm32f0xx_hal_def.h"
-	#include "stm32f0xx_it.h"
-	#include "stm32f0xx_hal_conf.h"
-#endif
-
-
-
-#ifdef CONFIG_USE_PANEL_NODEMEDIUM
-	#include "stm32l1xx_hal.h"
-	#include "stm32_hal_legacy.h"
-#endif
-
-
-
-#ifdef CONFIG_USE_PANEL_CENTERPANEL
-	#include "stm32f4xx_hal.h"
-	#include "stm32_hal_legacy.h"
-#endif
-
-
-
-#ifdef CONFIG_USE_PANEL_DISCOVERY
+#ifdef CONFIG_MICROCONTROLLER_STM32F4xx
 	// STM32F4 Discovery
 	#include "stm32f4xx_hal.h"
 	#include "stm32_hal_legacy.h"	// for defines

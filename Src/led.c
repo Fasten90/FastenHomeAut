@@ -9,8 +9,9 @@
  *		Last modified:	2016.11.23
  */
 
-#include "board.h"
+#include "options.h"
 #include "include.h"
+#include "board.h"
 #include "led.h"
 
 
@@ -26,17 +27,24 @@ TIM_HandleTypeDef    TimLedGreenHandle;
 #endif
 
 
-
+/// LED names
 const char * const LED_NameList[] =
 {
 	// NOTE: Be careful, when change the order and num, syncronize with LED_NUM_MAX define
+#ifdef CONFIG_USE_PANEL_DISCOVERY
 	"red",
 	"blue",
 	"green",
+#elif CONFIG_USE_PANEL_NUCLEOF401RE
+	"green",
+#else
+#warning "Miss CONFIG_USE_PANEL_.. define in LED names"
+#endif
 	NULL
 };				///< LED names
 
 
+/// LED types
 const char * const LED_TypeNameList[] =
 {
 	// NOTE: Syncronize with LED_SetType
@@ -45,12 +53,17 @@ const char * const LED_TypeNameList[] =
 	"off",
 	"toggle",
 	"status"
-};				///< LED types
+};
 
+
+// Function prototypes
 
 static bool LED_SetRedLed(LED_SetType ledSet);
 static bool LED_SetBlueLed(LED_SetType ledSet);
 static bool LED_SetGreenLed(LED_SetType ledSet);
+
+
+// Functions
 
 
 /**
@@ -67,27 +80,19 @@ void LED_Init( void )
 	// Configure pin output pushpull mode
 	//GPIO_InitStructure.Alternate = GPIO_AF;
 	GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;	
-	GPIO_InitStructure.Pin = BOARD_LED_RED_PIN;
+	GPIO_InitStructure.Pin = BOARD_LED_GREEN_PIN;
 	GPIO_InitStructure.Pull = GPIO_NOPULL;
 	GPIO_InitStructure.Speed = GPIO_SPEED_LOW;
-	HAL_GPIO_Init(BOARD_LED_RED_PORT, &GPIO_InitStructure);
+	HAL_GPIO_Init(BOARD_LED_GREEN_PORT, &GPIO_InitStructure);
 	
-
+#if LED_NUM_MAX > 1
 	GPIO_InitStructure.Pin = BOARD_LED_BLUE_PIN;
 	HAL_GPIO_Init(BOARD_LED_BLUE_PORT, &GPIO_InitStructure);
 	
-	GPIO_InitStructure.Pin = BOARD_LED_GREEN_PIN;
-	HAL_GPIO_Init(BOARD_LED_GREEN_PORT, &GPIO_InitStructure);
-	
-	
-	//GPIO_SetBits();
-	// GPIO_ResetBits ( BUZZER_GPIO_PORT, BUZZER_PIN );
-	//GPIO_ResetBits(BOARD_LED_RED_PORT, BOARD_LED_RED_PIN);
-	//GPIO_ResetBits(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN);
-	//GPIO_ResetBits(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN);
+	GPIO_InitStructure.Pin = BOARD_LED_RED_PIN;
+	HAL_GPIO_Init(BOARD_LED_RED_PORT, &GPIO_InitStructure);
+#endif
 
-
-	//HAL_GPIO_WritePin(LED_DESIGN_SPI_OE_GPIO_PORT,LED_DESIGN_SPI_OE_GPIO_PIN,GPIO_PIN_RESET)
 	LED_RED_OFF();
 	LED_BLUE_OFF();
 	LED_GREEN_OFF();
@@ -101,41 +106,32 @@ void LED_Init( void )
 */
 void LED_Test ( void )
 {
-	
-	uint16_t delayMs = 200;
-	
+
 	while(1)
 	{
-		
+		// Set LEDs
 		LED_RED_ON();
 		LED_BLUE_ON();
 		LED_GREEN_ON();
-		
-			
+
 		// Delay
-		#ifdef CONFIG_USE_FREERTOS
-		vTaskDelay(delayMs);
-		#else
-		HAL_Delay(delayMs);
-		#endif
-		
-		
+		DelayMs(200);
+
+		// Set LEDs
 		LED_RED_OFF();
 		LED_BLUE_OFF();
 		LED_GREEN_OFF();
 
 		// Delay
-		#ifdef CONFIG_USE_FREERTOS
-		vTaskDelay(delayMs);
-		#else
-		HAL_Delay(delayMs);
-		#endif	
-			
+		DelayMs(200);
 	}
 }
 
 
 
+/**
+ * \brief	Set red LED
+ */
 static bool LED_SetRedLed(LED_SetType ledSet)
 {
 
@@ -165,6 +161,9 @@ static bool LED_SetRedLed(LED_SetType ledSet)
 
 
 
+/**
+ * \brief	Set blue LED
+ */
 static bool LED_SetBlueLed(LED_SetType ledSet)
 {
 
@@ -194,6 +193,9 @@ static bool LED_SetBlueLed(LED_SetType ledSet)
 
 
 
+/**
+ * \brief	Set green LED
+ */
 static bool LED_SetGreenLed(LED_SetType ledSet)
 {
 
@@ -234,6 +236,7 @@ bool LED_SetLed(uint8_t num, LED_SetType ledSet)
 
 	switch (num)
 	{
+#ifdef CONFIG_USE_PANEL_DISCOVERY
 		case 1:
 			state = LED_SetRedLed(ledSet);
 			break;
@@ -243,6 +246,11 @@ bool LED_SetLed(uint8_t num, LED_SetType ledSet)
 		case 3:
 			state = LED_SetGreenLed(ledSet);
 			break;
+#elif CONFIG_USE_PANEL_NUCLEOF401RE
+		case 1:
+			state = LED_SetGreenLed(ledSet);
+			break;
+#endif
 		default:
 			state = false;
 			break;
@@ -265,6 +273,7 @@ bool LED_GetStatus(uint8_t num)
 
 	switch (num)
 	{
+#ifdef CONFIG_USE_PANEL_DISCOVERY
 		case 1:
 			status = LED_RED_STATUS();
 			break;
@@ -274,6 +283,11 @@ bool LED_GetStatus(uint8_t num)
 		case 3:
 			status = LED_GREEN_STATUS();
 			break;
+#elif CONFIG_USE_PANEL_NUCLEOF401RE
+		case 1:
+			status = LED_GREEN_STATUS();
+			break;
+#endif
 		default:
 			status = false;
 			break;

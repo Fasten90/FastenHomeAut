@@ -1,5 +1,5 @@
 /** \mainpage
- * HomeAut
+ * HomeAut project
  * ========================
  *
  * Description
@@ -8,13 +8,13 @@
  *
  * This document created by [Doxygen](http://www.stack.nl/~dimitri/doxygen/index.html)
  *
- * HomeAut is a "Hardware tester" software, which written in C.
+ * HomeAut is a simple demo and "Hardware tester" software, which written in C by Vizi Gábor.
  *
  *
  * Requirements
  * ------------------------
  *
- * Recommended IDE is the Atollic TrueSTUDIO 6.0, but you can use an other IDE.
+ * Recommended IDE is the Atollic TrueSTUDIO 6.0, but you can use newer or an other IDE.
  * - Install [Atollic TrueSTUDIO](http://atollic.com/)
  * - Install a terminal (serial port reader) software
  * 
@@ -26,9 +26,12 @@
  *   + If you have source code (project) and an IDE, you can compile and Run/Debug your code on the device
  * - Start run / Reset device.
  * - Connect Device to UART-USB converter or other serial converter
- *   + Connect device UART pins (PC6 - TX, PC7 - RX) to UART converter
+ *   + Connect device UART pins to USB-UART converter:
+ *     - PC6 (TX)
+ *     - PC7 (RX)
+ *     - GND
  *   + Plug in the UART-USB converter
- * - Start Serial Terminal
+ * - Start serial terminal
  *   + For example:
  *      - HpyerTerminal
  *      - PuTTY
@@ -44,8 +47,9 @@
  * ------------------------
  *
  * First:
- * If you need help, type on terminal: \code help \endcode
- * If you can't use a command, type this: \code help <CommandName> \endcode
+ * - If you need help, type on terminal: \code help \endcode
+ * - If you can't use a command, type this: \code help <CommandName> \endcode
+ *   + Example: \code help adcread \endcode
  *
  * For common IO-s:
  * - Send IO pin initialization command:
@@ -58,9 +62,12 @@
  *     - Example: \code ioout b13 set \endcode
  *
  * For ADC-s (Analog-Digital Converter):
- * - Send command, and you received Analog states (voltages): \code adc \endcode
- * - If you want periodical ADC reading: \code adcread <milliSec> \endcode
- *   + Where the <milliSec> is the time of period
+ * - Send command, and you received the last Analog states (voltages): \code adc \endcode
+ * - If you want periodical ADC reading: \code adcread <milliSec> (pin) \endcode
+ *   + milliSec: is the time of period (in millisecond)
+ *   + pin: is the num of pin (1-2-3)
+ *   + Example: \code adcread 1000 \endcode
+ *     - Read adc values time of 1 second (1000 millisecond)
  *
  * For DAC-s (Digital-Analog Converter):
  * - Send: \code dac <1/2> <voltage with decimal point> \endcode

@@ -206,11 +206,7 @@ void MONITOR_Init(void)
 void MONITOR_SendWelcome(void)
 {
 
-	#ifdef CONFIG_USE_FREERTOS
-	vTaskDelay(1);
-	#else
-	HAL_Delay(1);
-	#endif
+	DelayMs(1);
 
 #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 	MONITOR_SendCls();						// Clean screen

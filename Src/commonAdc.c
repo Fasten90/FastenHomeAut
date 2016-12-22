@@ -73,7 +73,7 @@ extern void Error_Handler(void);
 /**
  * \brief	Initialize ADC
  */
-void ADC_Init(void)
+void CommonADC_Init(void)
 {
 	ADC_ChannelConfTypeDef   sConfig;
 
@@ -108,7 +108,7 @@ void ADC_Init(void)
 	/*       temperature sensor) constraints.                                   */
 	/*       For example, sampling time of temperature sensor must be higher    */
 	/*       than 4us. Refer to device datasheet for min/typ/max values.        */
-	sConfig.Channel      = ADCx_CHANNEL;
+	sConfig.Channel      = ADCx_CHANNEL_1;
 	sConfig.Rank         = 1;
 	sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
 	sConfig.Offset		 = 0;
@@ -183,18 +183,18 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 
 
 	/*##- 2- Configure peripheral GPIO */
-	GPIO_InitStruct.Pin = ADCx_CHANNEL_PIN;
+	GPIO_InitStruct.Pin = ADCx_CHANNEL_PIN_1;
 	GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(ADCx_CHANNEL_GPIO_PORT, &GPIO_InitStruct);
 
 #if ADC_BUFFER_SIZE >= 2
-	GPIO_InitStruct.Pin = GPIO_PIN_2;
-	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+	GPIO_InitStruct.Pin = ADCx_CHANNEL_PIN_2;
+	HAL_GPIO_Init(ADCx_CHANNEL_GPIO_PORT, &GPIO_InitStruct);
 #endif
 #if ADC_BUFFER_SIZE >= 3
-	GPIO_InitStruct.Pin = GPIO_PIN_3;
-	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+	GPIO_InitStruct.Pin = ADCx_CHANNEL_PIN_3;
+	HAL_GPIO_Init(ADCx_CHANNEL_GPIO_PORT, &GPIO_InitStruct);
 #endif
 	
 #if ADC_BUFFER_SIZE > 3

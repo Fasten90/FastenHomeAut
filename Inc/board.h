@@ -21,11 +21,9 @@
 
 /// BOARD NAME
 
-#ifdef CONFIG_USE_PANEL_NODEMEDIUM
-#define BOARD_NAME		"NodeMedium"
-#endif
-#ifdef CONFIG_USE_PANEL_CENTERPANEL
-#define BOARD_NAME		"CenterPanel"
+
+#ifdef CONFIG_USE_PANEL_NUCLEOF401RE
+#define BOARD_NAME		"NucleoF401RE"
 #endif
 #ifdef CONFIG_USE_PANEL_DISCOVERY
 #define BOARD_NAME		"STM32F4Discovery"
@@ -39,56 +37,19 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 
-#ifdef CONFIG_USE_PANEL_NODESMALL
-// RED PC13
-// BLUE PB8
-// GREEN PB9
-#define BOARD_LED_RED_PORT			GPIOC
-#define BOARD_LED_RED_PIN			GPIO_PIN_13
-#define BOARD_LED_BLUE_PORT			GPIOB
-#define BOARD_LED_BLUE_PIN			GPIO_PIN_8
-#define BOARD_LED_GREEN_PORT		GPIOB
-#define BOARD_LED_GREEN_PIN			GPIO_PIN_9
-
-#define LED_PORT_CLK_ENABLES()		__GPIOC_CLK_ENABLE();	\
-									__GPIOB_CLK_ENABLE()
-
-#define BOARD_LED_LOGIC_HIGH_IS_ON	0
-
-#endif //#ifdef CONFIG_USE_PANEL_NODESMALL
-
-
-
-#ifdef CONFIG_USE_PANEL_NODEMEDIUM
-
-// Comment: A sematicban fordítva van a blue-red
-
-#define BOARD_LED_BLUE_PORT			GPIOB
-#define BOARD_LED_BLUE_PIN			GPIO_PIN_5
-#define BOARD_LED_GREEN_PORT		GPIOB
-#define BOARD_LED_GREEN_PIN			GPIO_PIN_6
-#define BOARD_LED_RED_PORT			GPIOB
-#define BOARD_LED_RED_PIN			GPIO_PIN_7
-
-#define LED_PORT_CLK_ENABLES()		__GPIOB_CLK_ENABLE()
-
-#define BOARD_LED_LOGIC_HIGH_IS_ON	1
-									
-#endif //#ifdef CONFIG_USE_PANEL_NODEMEDIUM
-
-
-
 #ifdef CONFIG_USE_PANEL_CENTERPANEL
 
-// Comment: A sematicban fordítva van a blue-red
+// Comment: A schematicban fordítva van a blue-red
 // blue: PE5
 // green: PE6
 // red: PA8
 
 #define BOARD_LED_BLUE_PORT			GPIOE
 #define BOARD_LED_BLUE_PIN			GPIO_PIN_5
+
 #define BOARD_LED_GREEN_PORT		GPIOE
 #define BOARD_LED_GREEN_PIN			GPIO_PIN_6
+
 #define BOARD_LED_RED_PORT			GPIOA
 #define BOARD_LED_RED_PIN			GPIO_PIN_8
 
@@ -110,51 +71,88 @@
 // green: PE6
 // red: PA8
 
-#define BOARD_LED_BLUE_PORT			GPIOD
-#define BOARD_LED_BLUE_PIN			GPIO_PIN_15
-#define BOARD_LED_GREEN_PORT		GPIOD
-#define BOARD_LED_GREEN_PIN			GPIO_PIN_12
-#define BOARD_LED_RED_PORT			GPIOD
-#define BOARD_LED_RED_PIN			GPIO_PIN_14
+#define LED_NUM_MIN				(1)
+#define LED_NUM_MAX				(3)
 
-#define LED_PORT_CLK_ENABLES()		__GPIOD_CLK_ENABLE()
+#define BOARD_LED_BLUE_PORT		GPIOD
+#define BOARD_LED_BLUE_PIN		GPIO_PIN_15
+#define BOARD_LED_GREEN_PORT	GPIOD
+#define BOARD_LED_GREEN_PIN		GPIO_PIN_12
+#define BOARD_LED_RED_PORT		GPIOD
+#define BOARD_LED_RED_PIN		GPIO_PIN_14
 
+#define LED_PORT_CLK_ENABLES()	__GPIOD_CLK_ENABLE()
 
-// high pin = lighting (define 1)
-// if high pin = not lighting (low pin = lighting), define 0
-#define BOARD_LED_LOGIC_HIGH_IS_ON	(1)
-
-/*
-// TODO: kijavítani
-#if BOARD_LED_LOGIC_HIGH_IS_ON == 1
-*/
 
 #define LED_RED_ON()			HAL_GPIO_WritePin(BOARD_LED_RED_PORT,BOARD_LED_RED_PIN,GPIO_PIN_SET)
 #define LED_BLUE_ON()			HAL_GPIO_WritePin(BOARD_LED_BLUE_PORT,BOARD_LED_BLUE_PIN,GPIO_PIN_SET)
 #define LED_GREEN_ON()			HAL_GPIO_WritePin(BOARD_LED_GREEN_PORT,BOARD_LED_GREEN_PIN,GPIO_PIN_SET)
+
 #define LED_RED_OFF()			HAL_GPIO_WritePin(BOARD_LED_RED_PORT,BOARD_LED_RED_PIN,GPIO_PIN_RESET)
 #define LED_BLUE_OFF()			HAL_GPIO_WritePin(BOARD_LED_BLUE_PORT,BOARD_LED_BLUE_PIN,GPIO_PIN_RESET)
 #define LED_GREEN_OFF()			HAL_GPIO_WritePin(BOARD_LED_GREEN_PORT,BOARD_LED_GREEN_PIN,GPIO_PIN_RESET)
 
-/*
-#elif BOARD_LED_LOGIC_HIGH_IS_ON == 0
+#define LED_RED_TOGGLE()		HAL_GPIO_TogglePin(BOARD_LED_RED_PORT,BOARD_LED_RED_PIN)
+#define LED_BLUE_TOGGLE()		HAL_GPIO_TogglePin(BOARD_LED_BLUE_PORT,BOARD_LED_BLUE_PIN)
+#define LED_GREEN_TOGGLE()		HAL_GPIO_TogglePin(BOARD_LED_GREEN_PORT,BOARD_LED_GREEN_PIN)
 
-#define LED_RED_ON()			HAL_GPIO_WritePin(BOARD_LED_RED_PORT,BOARD_LED_RED_PIN,GPIO_PIN_RESET)
-#define LED_BLUE_ON()			HAL_GPIO_WritePin(BOARD_LED_BLUE_PORT,BOARD_LED_BLUE_PIN,GPIO_PIN_RESET)
-#define LED_GREEN_ON()			HAL_GPIO_WritePin(BOARD_LED_GREEN_PORT,BOARD_LED_GREEN_PIN,GPIO_PIN_RESET)
-#define LED_RED_OFF()			HAL_GPIO_WritePin(BOARD_LED_RED_PORT,BOARD_LED_RED_PIN,GPIO_PIN_SET)
-#define LED_BLUE_OFF()			HAL_GPIO_WritePin(BOARD_LED_BLUE_PORT,BOARD_LED_BLUE_PIN,GPIO_PIN_SET)
-#define LED_GREEN_OFF()			HAL_GPIO_WritePin(BOARD_LED_GREEN_PORT,BOARD_LED_GREEN_PIN,GPIO_PIN_SET)
-
-#else
-
-	#error	"There is not selected BOARD_LED_LOGIC ... "
-
-#endif
-*/
-
+#define LED_RED_STATUS()		HAL_GPIO_ReadPin(BOARD_LED_RED_PORT,BOARD_LED_RED_PIN)
+#define LED_BLUE_STATUS()		HAL_GPIO_ReadPin(BOARD_LED_BLUE_PORT,BOARD_LED_BLUE_PIN)
+#define LED_GREEN_STATUS()		HAL_GPIO_ReadPin(BOARD_LED_GREEN_PORT,BOARD_LED_GREEN_PIN)
 
 #endif //#ifdef CONFIG_USE_PANEL_CENTERPANEL
+
+
+
+#if defined(CONFIG_MODULE_LED_ENABLE) && defined(CONFIG_USE_PANEL_NUCLEOF401RE)
+
+// Green user LED: PA5
+
+#define LED_NUM_MIN				(1)
+#define LED_NUM_MAX				(1)
+
+#define BOARD_LED_GREEN_PORT	GPIOA
+#define BOARD_LED_GREEN_PIN		GPIO_PIN_5
+
+#define LED_PORT_CLK_ENABLES()	__GPIOA_CLK_ENABLE()
+
+#define LED_RED_ON()
+#define LED_BLUE_ON()
+#define LED_GREEN_ON()			HAL_GPIO_WritePin(BOARD_LED_GREEN_PORT,BOARD_LED_GREEN_PIN,GPIO_PIN_SET)
+
+#define LED_RED_OFF()
+#define LED_BLUE_OFF()
+#define LED_GREEN_OFF()			HAL_GPIO_WritePin(BOARD_LED_GREEN_PORT,BOARD_LED_GREEN_PIN,GPIO_PIN_RESET)
+
+
+#define LED_RED_TOGGLE()
+#define LED_BLUE_TOGGLE()
+#define LED_GREEN_TOGGLE()		HAL_GPIO_TogglePin(BOARD_LED_GREEN_PORT,BOARD_LED_GREEN_PIN)
+
+#define LED_RED_STATUS()
+#define LED_BLUE_STATUS()
+#define LED_GREEN_STATUS()		HAL_GPIO_ReadPin(BOARD_LED_GREEN_PORT,BOARD_LED_GREEN_PIN)
+
+#endif
+
+
+#if !defined(CONFIG_MODULE_LED_ENABLE)
+
+// if not defined CONFIG_MODULE_LED_ENABLE
+#define LED_RED_ON()
+#define LED_BLUE_ON()
+#define LED_GREEN_ON()
+#define LED_RED_OFF()
+#define LED_BLUE_OFF()
+#define LED_GREEN_OFF()
+#define LED_RED_TOGGLE()
+#define LED_BLUE_TOGGLE()
+#define LED_GREEN_TOGGLE()
+#define LED_RED_STATUS()
+#define LED_BLUE_STATUS()
+#define LED_GREEN_STATUS()
+#endif
+
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -165,6 +163,7 @@
 // LED_BLUE			PB8	TIM16_CH1
 // LED_GREEN		PB9	TIM17_CH1
 
+// TODO: LED timers / PWM, need beautify
 
 
 /* Definition for TIMx clock resources */
@@ -334,15 +333,7 @@
 
 
 
-
-#ifdef CONFIG_USE_PANEL_CENTERPANEL
-
-
-#endif	// CONFIG_USE_PANEL_CENTERPANEL
-
-
-
-#ifdef CONFIG_USE_PANEL_DISCOVERY
+#if defined(CONFIG_USE_PANEL_DISCOVERY) || defined(CONFIG_USE_PANEL_NUCLEOF401RE)
 
 // ANALOG
 
@@ -355,11 +346,15 @@
 #define ADCx_CHANNEL_GPIO_CLK_ENABLE()  __HAL_RCC_GPIOA_CLK_ENABLE()
 
 /* Definition for ADCx Channel Pin */
-#define ADCx_CHANNEL_PIN                GPIO_PIN_1
-#define ADCx_CHANNEL_GPIO_PORT          GPIOA
+#define ADCx_CHANNEL_PIN_1				GPIO_PIN_1
+#define ADCx_CHANNEL_PIN_2				GPIO_PIN_2
+#define ADCx_CHANNEL_PIN_3				GPIO_PIN_3
+#define ADCx_CHANNEL_GPIO_PORT			GPIOA
 
 /* Definition for ADCx's Channel */
-#define ADCx_CHANNEL                    ADC_CHANNEL_1
+#define ADCx_CHANNEL_1					ADC_CHANNEL_1
+#define ADCx_CHANNEL_2					ADC_CHANNEL_2
+#define ADCx_CHANNEL_3					ADC_CHANNEL_3
 
 /* Definition for ADCx's DMA */
 #define ADCx_DMA_CHANNEL                DMA_CHANNEL_0
@@ -387,7 +382,7 @@
 
 
 
-#ifdef CONFIG_USE_PANEL_DISCOVERY
+#if defined(CONFIG_USE_PANEL_DISCOVERY) || defined(CONFIG_USE_PANEL_NUCLEOF401RE)
 
 
 #define DACx                            DAC
@@ -407,8 +402,8 @@
 #define DACx_CHANNEL2					DAC_CHANNEL_2
 
 
-#define DAC_MAX_VOLTAGE					3.3f
-#define DAC_DA_MAX_VALUE				4095
+#define COMMON_DAC_MAX_VOLTAGE					3.3f
+#define COMMON_DAC_DA_MAX_VALUE				4095
 
 
 #endif
@@ -527,6 +522,24 @@
 
 /* Button Interrupt priority */
 #define BUTTON_USER_EXTI_IRQn						EXTI0_IRQn
+#define BUTTON_USER_INTERRUPT_PREEMT_PRIORITY		10
+#define BUTTON_USER_INTERRUPT_SUB_PRIORITY			0
+
+#endif
+
+
+
+#ifdef CONFIG_USE_PANEL_NUCLEOF401RE
+
+// User button: PC13
+
+#define BUTTON_USER_GPIO_PORT						GPIOC
+#define BUTTON_USER_GPIO_PIN						GPIO_PIN_13
+
+#define BUTTON_CLK_ENABLES()						__GPIOC_CLK_ENABLE()
+
+/* Button Interrupt priority */
+#define BUTTON_USER_EXTI_IRQn						EXTI15_10_IRQn
 #define BUTTON_USER_INTERRUPT_PREEMT_PRIORITY		10
 #define BUTTON_USER_INTERRUPT_SUB_PRIORITY			0
 
@@ -812,12 +825,12 @@
 
 
 
-#ifdef CONFIG_USE_PANEL_DISCOVERY
+#if defined(CONFIG_USE_PANEL_DISCOVERY) || defined(CONFIG_USE_PANEL_NUCLEOF401RE)
 
 // USART
-// DEBUG_USART		USART2
-// DEBUG_USART_TX	-	PA2
-// DEBUG_USART_RX	-	PA3
+// DEBUG_USART			USART6
+// DEBUG_USART_TX		PC6
+// DEBUG_USART_RX		PC7
 
 #define DEBUG_USARTx					USART6
 

@@ -18,34 +18,7 @@
  *----------------------------------------------------------------------------*/
 
 
-#ifdef CONFIG_MODULE_LED_ENABLE
-
-
-#define LED_NUM_MIN				(1)
-#define LED_NUM_MAX				(3)
-
-
-#define LED_RED_TOGGLE()		HAL_GPIO_TogglePin(BOARD_LED_RED_PORT,BOARD_LED_RED_PIN)
-#define LED_BLUE_TOGGLE()		HAL_GPIO_TogglePin(BOARD_LED_BLUE_PORT,BOARD_LED_BLUE_PIN)
-#define LED_GREEN_TOGGLE()		HAL_GPIO_TogglePin(BOARD_LED_GREEN_PORT,BOARD_LED_GREEN_PIN)
-
-#define LED_RED_STATUS()		HAL_GPIO_ReadPin(BOARD_LED_RED_PORT,BOARD_LED_RED_PIN)
-#define LED_BLUE_STATUS()		HAL_GPIO_ReadPin(BOARD_LED_BLUE_PORT,BOARD_LED_BLUE_PIN)
-#define LED_GREEN_STATUS()		HAL_GPIO_ReadPin(BOARD_LED_GREEN_PORT,BOARD_LED_GREEN_PIN)
-
-
-#else
-
-// if not defined CONFIG_MODULE_LED_ENABLE
-#define LED_RED_ON()
-#define LED_BLUE_ON()
-#define LED_GREEN_ON()
-#define LED_RED_OFF()
-#define LED_BLUE_OFF()
-#define LED_GREEN_OFF()
-
-#endif
-
+// TODO: PWM LED
 
 #define  LED_TIMER_PERIOD_VALUE       (uint32_t)(666 - 1)  /* Period Value  */
 
@@ -99,6 +72,7 @@ bool LED_SetLed(uint8_t num, LED_SetType ledSet);
 bool LED_GetStatus(uint8_t num);
 uint8_t LED_GetNumFromName(const char*name);
 LED_SetType LED_GetTypeFromString(const char*typeString);
+
 
 void LED_InitTimers(void);
 void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim);

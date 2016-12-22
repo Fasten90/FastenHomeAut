@@ -107,7 +107,7 @@ int main(void)
 
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
 	//HAL_ADC_MspInit(&AdcHandle);	// Called by HAL driver
-	ADC_Init();
+	CommonADC_Init();
 	// Test, blocking
 	//ADC_Test();
 #endif
@@ -273,7 +273,9 @@ void SystemClock_Config(void)
 
 
 
-#if defined(CONFIG_USE_PANEL_CENTERPANEL) || defined(CONFIG_USE_PANEL_DISCOVERY)
+#if defined(CONFIG_USE_PANEL_CENTERPANEL) \
+	|| defined(CONFIG_USE_PANEL_DISCOVERY) \
+	|| defined(CONFIG_USE_PANEL_NUCLEOF401RE)
 /**
  * System Clock Configuration
  */
@@ -297,7 +299,7 @@ void SystemClock_Config(void)
   HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
 }
-#endif	// #ifdef CONFIG_USE_PANEL_CENTERPANEL
+#endif	// #ifdef CONFIG_USE_PANEL_...
 
 
 
