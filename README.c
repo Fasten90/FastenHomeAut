@@ -26,7 +26,7 @@
  *   + If you have source code (project) and an IDE, you can compile and Run/Debug your code on the device
  * - Start run / Reset device.
  * - Connect Device to UART-USB converter or other serial converter
- *   + Connect device UART pins to USB-UART converter:
+ *   + Connect device UART pins to USB-UART converter (Do not forget the swap: TX-RX):
  *     - PC6 (TX)
  *     - PC7 (RX)
  *     - GND
@@ -70,6 +70,7 @@
  *     - Read adc values time of 1 second (1000 millisecond)
  *
  * For DAC-s (Digital-Analog Converter):
+ * - \note Not available in all STM32F4xx!
  * - Send: \code dac <1/2> <voltage with decimal point> \endcode
  *   + Example: \code dac 1 3.0 \endcode
  *   + 1. = A4 pin
@@ -81,8 +82,9 @@
  *     - 1. LED will set on
  *   + Example: \code led status \endcode
  *     - LED statuses will printed out on Terminal
- *   + Example: \code led blue off \endcode
- *     - Blue LED will turn off
+ *   + Example: \code led green off \endcode
+ *     - Green LED will turn off
+ *
  *
  * How development?
  * ------------------------
@@ -90,9 +92,10 @@
  * - First, find Vizi Gábor
  * - Check C language(embedded) tutorials
  * - Read and check Atollic tutorials
- * - Download or request HomeAut embedded codes
+ * - Download or request HomeAut embedded codes / project
  * - Develop it, write codes
- * - Program your device
+ * - Compile
+ * - Debug / Program your device
  * - Enjoy it
  *
  *
