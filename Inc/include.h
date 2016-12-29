@@ -32,7 +32,7 @@ typedef unsigned char				uint8_t;
 typedef signed char					int8_t;		
 typedef short unsigned int			uint16_t;
 typedef short signed int			int16_t;
-#ifndef CONFIG_USE_DEV_ECLIPSE
+#ifndef CONFIG_USE_COMPILER_GCC
 typedef unsigned int				uint32_t;
 typedef signed int					int32_t;
 #endif
@@ -40,7 +40,6 @@ typedef signed int					int32_t;
 
 
 /// Return typedef
-
 typedef enum
 {
 	Return_Ok = 0,
@@ -63,8 +62,7 @@ typedef enum
 ///////////////////////////// INCLUDES
 
 
-// Includes microcontroller family libraries
-
+/// Includes microcontroller family libraries
 #ifdef CONFIG_MICROCONTROLLER_STM32F4xx
 	// STM32F4 Discovery
 	#include "stm32f4xx_hal.h"
@@ -73,8 +71,8 @@ typedef enum
 
 
 
-#ifdef CONFIG_USE_FREERTOS
 /// FreeRTOS includes
+#ifdef CONFIG_USE_FREERTOS
 #include "FreeRTOSConfig.h"
 #include "FreeRTOS.h"
 #include "task.h"

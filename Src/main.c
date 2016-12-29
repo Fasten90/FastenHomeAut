@@ -268,8 +268,8 @@ void SystemClock_Config(void)
 
 
 
-#if defined(CONFIG_USE_PANEL_CENTERPANEL) \
-	|| defined(CONFIG_USE_PANEL_DISCOVERY) \
+#if defined(CONFIG_USE_PANEL_HOMEAUTCENTERPANEL) \
+	|| defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) \
 	|| defined(CONFIG_USE_PANEL_NUCLEOF401RE)
 /**
  * System Clock Configuration

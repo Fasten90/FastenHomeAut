@@ -36,6 +36,8 @@
 								<option id="com.atollic.truestudio.common_options.target.interwork.195823820" name="Mix ARM/Thumb" superClass="com.atollic.truestudio.common_options.target.interwork"/>
 								<option id="com.atollic.truestudio.as.symbols.defined.1224966639" name="Defined symbols" superClass="com.atollic.truestudio.as.symbols.defined" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="CONFIG_USE_PANEL_NUCLEOF401RE=1"/>
+									<listOptionValue builtIn="false" value="CONFIG_USE_PANEL_STM32F4DISCOVERY=1"/>
+									<listOptionValue builtIn="false" value="CONFIG_USE_COMPILER_GCC=1"/>
 								</option>
 								<inputType id="com.atollic.truestudio.as.input.374932590" name="Input" superClass="com.atollic.truestudio.as.input"/>
 							</tool>
@@ -52,9 +54,9 @@
 								</option>
 								<option id="com.atollic.truestudio.gcc.symbols.defined.1670122205" name="Defined symbols" superClass="com.atollic.truestudio.gcc.symbols.defined" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
-									<listOptionValue builtIn="false" value="CONFIG_USE_DEV_ECLIPSE=1"/>
 									<listOptionValue builtIn="false" value="STM32F407xx"/>
-									<listOptionValue builtIn="false" value="CONFIG_USE_PANEL_DISCOVERY=1"/>
+									<listOptionValue builtIn="false" value="CONFIG_USE_PANEL_STM32F4DISCOVERY=1"/>
+									<listOptionValue builtIn="false" value="CONFIG_USE_COMPILER_GCC=1"/>
 								</option>
 								<option id="com.atollic.truestudio.common_options.target.endianess.1854274048" name="Endianess" superClass="com.atollic.truestudio.common_options.target.endianess" value="com.atollic.truestudio.common_options.target.endianess.little" valueType="enumerated"/>
 								<option id="com.atollic.truestudio.common_options.target.mcpu.191909026" name="Microcontroller" superClass="com.atollic.truestudio.common_options.target.mcpu" value="STM32F407VG" valueType="enumerated"/>

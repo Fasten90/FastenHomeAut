@@ -54,6 +54,7 @@ xQueueHandle ESP8266_ReceivedMessage_Queue;
 
 
 // For server type (server=master, or not server=client=slave)
+// TODO: Áttenni a define-okat az options.h-ba, és a változót megszüntetni
 #ifdef CONFIG_USE_PANEL_CENTERPANEL
 uint8_t ESP8266_ImServer = 1;
 #define CONFIG_ESP8266_IS_SERVER	1
@@ -77,10 +78,10 @@ uint8_t ESP8266_ImServer = 0;
 /*------------------------------------------------------------------------------
  *  Local functions
  *----------------------------------------------------------------------------*/
-static void DebugPrint( const char *debugString );
-ReturnType ESP8266_ReceiveUnknownTcpMessage ( void );
+static void DebugPrint(const char *debugString);
+ReturnType ESP8266_ReceiveUnknownTcpMessage(void);
 void ESP8266_WaitMessageAndCheckSendingQueue(void);
-;
+
 
 /*------------------------------------------------------------------------------
  *  Global functions

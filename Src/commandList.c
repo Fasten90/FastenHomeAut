@@ -289,36 +289,19 @@ const CommandID_t MONITOR_CommandNum = MONITOR_MAX_COMMAND_NUM;
 
 
 /*------------------------------------------------------------------------------
- *  Local variables
- *----------------------------------------------------------------------------*/
-
-
-
-
-/*------------------------------------------------------------------------------
- *  Function declarations
- *----------------------------------------------------------------------------*/
-
-
-/*------------------------------------------------------------------------------
- *  Local functions
- *----------------------------------------------------------------------------*/
-
-
-/*------------------------------------------------------------------------------
  *  Global functions
  *----------------------------------------------------------------------------*/
 
 
-//////////////////////////////////////////////////////////////////////////////
-/*							COMMAND FUNCTIONS 								*/
-//////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+							COMMAND FUNCTIONS
+*******************************************************************************/
 
 
 /**
  * \brief	CLS: Clear screen
  */
-CommandResult_t CommandFunction_cls ( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_cls(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -334,7 +317,7 @@ CommandResult_t CommandFunction_cls ( uint32_t argc, char** argv )
 /**
  * \brief	Get version
  */
-CommandResult_t CommandFunction_version ( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_version(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -350,7 +333,7 @@ CommandResult_t CommandFunction_version ( uint32_t argc, char** argv )
 /**
  * \brief	Send Welcome message
  */
-CommandResult_t CommandFunction_welcome ( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_welcome(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -368,7 +351,7 @@ CommandResult_t CommandFunction_welcome ( uint32_t argc, char** argv )
  * 			Use: 'help', or 'help <CommandName>'
  * 			List commands or write the command's description
  */
-CommandResult_t CommandFunction_help ( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_help(uint32_t argc, char** argv)
 {
 
 	if (argc == 1)
@@ -390,7 +373,7 @@ CommandResult_t CommandFunction_help ( uint32_t argc, char** argv )
 /**
  * \brief	Reset command
  */
-CommandResult_t CommandFunction_reset ( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_reset(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -399,11 +382,11 @@ CommandResult_t CommandFunction_reset ( uint32_t argc, char** argv )
 	uint16_t i;
 
 	MONITOR_SendLine("Reset...");
-	for(i=0; i<1000; i++);
+	for (i=0; i<1000; i++);
 
 	NVIC_SystemReset();
 
-	for(i=0; i<1000; i++);
+	for (i=0; i<1000; i++);
 
 	return CommandResult_Ok;
 }
@@ -420,7 +403,7 @@ CommandResult_t CommandFunction_reset ( uint32_t argc, char** argv )
  *				led <num> status
  *				led status
  */
-CommandResult_t CommandFunction_led ( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_led(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -456,7 +439,7 @@ CommandResult_t CommandFunction_led ( uint32_t argc, char** argv )
 	if (isFirstParamNum == false && !StrCmp(argv[1], "status"))
 	{
 		// "status"
-#ifdef CONFIG_USE_PANEL_DISCOVERY
+#ifdef CONFIG_USE_PANEL_STM32F4DISCOVERY
 		MONITOR_Printf("Led status: %d %d %d\r\n",
 				LED_RED_STATUS(),
 				LED_BLUE_STATUS(),
@@ -503,7 +486,7 @@ CommandResult_t CommandFunction_led ( uint32_t argc, char** argv )
 /**
  * \brief	Test function
  */
-CommandResult_t CommandFunction_test	( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 {
 	
 	// Suppress warning
@@ -528,7 +511,7 @@ CommandResult_t CommandFunction_test	( uint32_t argc, char** argv )
  * \brief	set global variable
  * 			Use: 'set <globalvariablename> <value>'
  */
-CommandResult_t CommandFunction_set ( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_set(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -552,7 +535,7 @@ CommandResult_t CommandFunction_set ( uint32_t argc, char** argv )
  * \brief	Get globalvar value
  * 			Use: 'get <globalvarname>'
  */
-CommandResult_t CommandFunction_get ( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_get(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -576,7 +559,7 @@ CommandResult_t CommandFunction_get ( uint32_t argc, char** argv )
  * \brief	Global variable help
  * 			Use: '? <globalvar>'
  */
-CommandResult_t CommandFunction_GlobalVariableHelp ( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -600,7 +583,7 @@ CommandResult_t CommandFunction_GlobalVariableHelp ( uint32_t argc, char** argv 
 /**
  * \brief	List global variables
  */
-CommandResult_t CommandFunction_GlobalVariableList ( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_GlobalVariableList(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -617,7 +600,8 @@ CommandResult_t CommandFunction_GlobalVariableList ( uint32_t argc, char** argv 
 /**
  * \brief	Print all global variable values
  */
-CommandResult_t CommandFunction_GlobalVariableValueList ( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_GlobalVariableValueList(uint32_t argc,
+		char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -636,7 +620,7 @@ CommandResult_t CommandFunction_GlobalVariableValueList ( uint32_t argc, char** 
  * \brief	DAC function
  * 			Use: 'dac <channel> <voltage>'
  */
-CommandResult_t CommandFunction_dac (uint32_t argc, char** argv)
+CommandResult_t CommandFunction_dac(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -644,16 +628,19 @@ CommandResult_t CommandFunction_dac (uint32_t argc, char** argv)
 	uint32_t Arg2Num;
 	float voltage = 0.0f;
 
+	// Check 1. argument (num)
 	if (!StringToUnsignedDecimalNum(argv[1],&Arg2Num))
 	{
 		return CommandResult_Error_WrongArgument1;
 	}
 
+	// Check 2. argument (voltage)
 	if (!StringToFloat(argv[2],&voltage))
 	{
 		return CommandResult_Error_WrongArgument2;
 	}
 
+	// Set DAC value
 	if (DAC_SetValue(Arg2Num,voltage))
 	{
 		return CommandResult_Ok_SendSuccessful;
@@ -671,7 +658,7 @@ CommandResult_t CommandFunction_dac (uint32_t argc, char** argv)
 /**
  * \brief	Run module's unit tests
  */
-CommandResult_t CommandFunction_unittest (uint32_t argc, char** argv)
+CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -691,7 +678,7 @@ CommandResult_t CommandFunction_unittest (uint32_t argc, char** argv)
 /**
  * \brief	Run module test
  */
-CommandResult_t CommandFunction_moduletest (uint32_t argc, char** argv)
+CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -740,7 +727,7 @@ CommandResult_t CommandFunction_moduletest (uint32_t argc, char** argv)
  * 			"ioout <port><pin> <set/reset>"
  * 			"ioin <port><pin>
  */
-CommandResult_t CommandFunction_io (uint32_t argc, char** argv)
+CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -844,7 +831,7 @@ CommandResult_t CommandFunction_io (uint32_t argc, char** argv)
  * \brief	Common ADC function
  * 			Read ADC values
  */
-CommandResult_t CommandFunction_adc (uint32_t argc, char** argv)
+CommandResult_t CommandFunction_adc(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -938,7 +925,8 @@ CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv)
  * \brief	Temperature
  * 			Read temperature and Vref values
  */
-CommandResult_t CommandFunction_temp	( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_temp(uint32_t argc, char** argv)
+{
 
 	//uprintf("Temperature: %d [C]\r\n",ADC_GetTemp());
 	//uprintf("Vref: %d [mV]\r\n",ADC_GetVref());
@@ -992,11 +980,9 @@ CommandResult_t CommandFunction_flashdel	( uint32_t argc, char** argv )
 
 	return CommandResult_Ok;
 }
-#endif
 
 
 
-#ifdef CONFIG_MODULE_FLASH_ENABLE
 /**
  * \brief	Flash read
  * 			Use: 'flashread <address>'
@@ -1025,11 +1011,9 @@ CommandResult_t CommandFunction_flashread	( uint32_t argc, char** argv )
 
 	return CommandResult_Ok;
 }
-#endif
 
 
 
-#ifdef CONFIG_MODULE_FLASH_ENABLE
 /**
  * \brief	Flash write
  * 			Use: 'flashwrite <address> <data>'

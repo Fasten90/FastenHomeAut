@@ -14,67 +14,31 @@
 #define OPTIONS_H_
 
 
-///////////////////////////// CONFIG DEFINES
+/*******************************************************************************
+								CONFIG DEFINES
+*******************************************************************************/
 
-
-// !!IMPORTANT!!  TODO: Check this!
-//#define HSE_VALUE 	(uint32_t)8000000
-// not need, its included
-
-
-/////////////////////////////
-////// XXX: Select your terminal
-////// for monitor.c
-//#define CONFIG_USE_TERMINAL_HYPERTERMINAL
-#define CONFIG_USE_TERMINAL_ZOC
-//#define CONFIG_USE_TERMINAL_PUTTY
-
-
-/////////////////////////////
-/// XXX: Monitor settings
-
-// For wait password
-//#define MONITOR_GET_PASSWORD_ENABLE
-
-
-// comment out, if you dont need escape sequence (cursors, history, cls, ...)
-#define MONITOR_ESCAPE_SEQUENCE_ENABLE
-
-#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
-	// If you want use monitor program's history
-	// Turn off, if has small memory, now it need 1.5k RAM
-	#define USE_MONITOR_HISTORY
-#endif
-
-
-// ESP8266
-//#define USE_ESP8266_TEST_FASTENHOME
-//#define USE_ESP8266_MODE_CLIENT
-
-
-
-/////////////////////////////
-// 		Select your panel
-/////////////////////////////
-
-// XXX: Select your panel
+/// XXX: Select your panel
 // NOTE: Recommend define at project settings:
 //#define CONFIG_USE_PANEL_NUCLEOF401RE
-//#define CONFIG_USE_PANEL_CENTERPANEL
-//#define CONFIG_USE_PANEL_DISCOVERY
-
+//#define CONFIG_USE_PANEL_HOMEAUTCENTERPANEL
+//#define CONFIG_USE_PANEL_STM32F4DISCOVERY
 
 #if !defined(CONFIG_USE_PANEL_NUCLEOF401RE) \
-	&& !defined(CONFIG_USE_PANEL_CENTERPANEL) \
-	&& !defined(CONFIG_USE_PANEL_DISCOVERY)
+	&& !defined(CONFIG_USE_PANEL_HOMEAUTCENTERPANEL) \
+	&& !defined(CONFIG_USE_PANEL_STM32F4DISCOVERY)
 #error "Miss config define! Use CONFIG_USE_PANEL_..."
 #endif
 
 
-// Enabled modules
 
+/*******************************************************************************
+									Modules
+*******************************************************************************/
 
-#ifdef CONFIG_USE_PANEL_CENTERPANEL
+/// Enabled modules
+
+#ifdef CONFIG_USE_PANEL_HOMEAUTCENTERPANEL
 
 	#define CONFIG_MICROCONTROLLER_STM32F4xx
 
@@ -136,7 +100,7 @@
 
 
 
-#ifdef CONFIG_USE_PANEL_DISCOVERY
+#ifdef CONFIG_USE_PANEL_STM32F4DISCOVERY
 	// STM32F4 Discovery
 
 	#define CONFIG_MICROCONTROLLER_STM32F4xx
@@ -194,10 +158,41 @@
 
 
 
+/*******************************************************************************
+								Monitor settings
+*******************************************************************************/
+
+/// XXX: Select your terminal
+/// for CommandHandler.c
+//#define CONFIG_USE_TERMINAL_HYPERTERMINAL
+#define CONFIG_USE_TERMINAL_ZOC
+//#define CONFIG_USE_TERMINAL_PUTTY
+
+
+/// For wait password
+//#define MONITOR_GET_PASSWORD_ENABLE
+
+
+// Escape sequences
+// comment out, if you dont need escape sequence (cursors, history, cls, ...)
+#define MONITOR_ESCAPE_SEQUENCE_ENABLE
+
+#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+	// If you want use monitor program's history
+	// Turn off, if has small memory, now it need 1.5k RAM
+	#define USE_MONITOR_HISTORY
+#endif
+
+
+
+/*******************************************************************************
+								Other settings
+*******************************************************************************/
+
+
 /// Debug
 #define CONFIG_DEBUG_MODE
 #define CONFIG_SWO_ENABLE
-
 
 
 /// Unit tests
