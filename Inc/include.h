@@ -22,7 +22,8 @@
 
 // Include libs, important headers
 
-// typedefs
+
+// bool typedef
 #include <stdbool.h>
 
 
@@ -48,18 +49,9 @@ typedef enum
 
 
 
-///////////////////////////// CONFIGURE
-
-
-
-/////////////////////////////
-// CONFIG DEFINES
-// INCLUDES
-/////////////////////////////
-
-
-
-///////////////////////////// INCLUDES
+/*******************************************************************************
+ * 									INCLUDES
+ ******************************************************************************/
 
 
 /// Includes microcontroller family libraries

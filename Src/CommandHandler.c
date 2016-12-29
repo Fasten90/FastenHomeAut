@@ -26,13 +26,13 @@
 #endif
 
 
-/////////////////////////////////
-//			Configs:
-/////////////////////////////////
+/*******************************************************************************
+ *									Configs:
+ ******************************************************************************/
 
-// Enable monitor
+/// Enable monitor
 const bool MONITOR_CommandReceiveEnable = true;
-// Enable sending back: "Echo mode"
+/// Enable sending back: "Echo mode"
 const bool MONITOR_CommandSendBackCharEnable = true;
 
 #ifdef MONITOR_GET_PASSWORD_ENABLE
@@ -41,19 +41,21 @@ static const char MONITOR_Password[] = "password";
 
 const char MONITOR_DelimiterChar = ' ';
 
-/////////////////////////////////
-// 		GLOBAL VARIABLES
-/////////////////////////////////
+
+
+/*******************************************************************************
+ *						 			Global variables
+ ******************************************************************************/
 
 volatile char MONITOR_CommandActual[MONITOR_MAX_COMMAND_LENGTH] = { 0 };
 volatile char MONITOR_CommandActualEscape[4] = { 0 };
 volatile CommProtocol_t MONITOR_CommandSource = 0;
 
-// USART Read cnt
+/// USART Read cnt
 volatile uint8_t USART_RxBufferReadCnt = 0;
 
 
-// Variables For Monitor
+/// Variables For Monitor
 static volatile bool MONITOR_CommandReceivedEvent = false;
 static volatile bool MONITOR_CommandReceivedLastChar = false;
 static volatile bool MONITOR_CommandReceivedNotLastChar = false;
@@ -126,9 +128,10 @@ static char MONITOR_HISTORY[MONITOR_HISTORY_MAX_COUNT][MONITOR_MAX_COMMAND_LENGT
 #endif
 
 
-/////////////////////////////
-///		FUNCTION PROTOTYPES
-/////////////////////////////
+
+/*******************************************************************************
+ *								Function prototypes
+ ******************************************************************************/
 
 static void MONITOR_ProcessReceivedCharacter(void);
 
@@ -165,9 +168,10 @@ static bool MONITOR_CheckPassword(const char *string);
 #endif
 
 
-/////////////////////////////
-///		FUNCTIONS
-/////////////////////////////
+
+/*******************************************************************************
+ *									Functions
+ ******************************************************************************/
 
 
 /**
@@ -1440,4 +1444,5 @@ static bool MONITOR_CheckPassword(const char *string)
 		return false;
 	}
 }
+
 #endif	// #ifdef MONITOR_GET_PASSWORD_ENABLE
