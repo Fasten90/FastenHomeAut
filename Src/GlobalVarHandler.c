@@ -1054,6 +1054,7 @@ static ProcessResult_t GlobalVarHandler_SetString(VarID_t commandID, const char 
  */
 static ProcessResult_t GLobalVarHandler_SetEnumerator(VarID_t commandID, const char *param)
 {
+	ProcessResult_t result = Process_Unknown;
 	uint32_t enumValue = 0;
 	uint8_t *enumPointer = (uint8_t *)GlobalVarList[commandID].varPointer;
 	uint8_t i;
@@ -1061,47 +1062,60 @@ static ProcessResult_t GLobalVarHandler_SetEnumerator(VarID_t commandID, const c
 	// Check enumList pointer
 	if (GlobalVarList[commandID].enumList == NULL)
 	{
-		return Process_Settings_EmptyEnumList;
-	}
-
-	// It is number
-	if (StringIsUnsignedDecimalString(param))
-	{
-		// It is number
-		if (StringToUnsignedDecimalNum(param, &enumValue))
-		{
-			if (GlobalVarHandler_CheckValue(commandID,enumValue) == Process_Ok_SetSuccessful_SendOk)
-			{
-				// It is Ok
-				*enumPointer = (uint8_t)enumValue;
-				return Process_Ok_SetSuccessful_SendOk;
-			}
-			else
-			{
-				return Process_InvalidValue_TooMuch;
-			}
-		}
+		result = Process_Settings_EmptyEnumList;
 	}
 	else
 	{
-		// Not number, check string
-		for (i=0; i<GlobalVarList[commandID].maxValue; i++)
+		// Check, it is number?
+		if (StringIsUnsignedDecimalString(param))
 		{
-			// It is equal string?
-			if (StrCmp(param, GlobalVarList[commandID].enumList[i])==0)
+			// It is number
+			if (StringToUnsignedDecimalNum(param, &enumValue))
 			{
-				// Equal
-				// Set value
-				*enumPointer = i;
-				return Process_Ok_SetSuccessful_SendOk;
+				if (GlobalVarHandler_CheckValue(commandID,enumValue) == Process_Ok_SetSuccessful_SendOk)
+				{
+					// It is Ok
+					*enumPointer = (uint8_t)enumValue;
+					result = Process_Ok_SetSuccessful_SendOk;
+				}
+				else
+				{
+					result = Process_InvalidValue_TooMuch;
+				}
 			}
 		}
+		else
+		{
+			// Not number, check string
+			for (i = 0; i < GlobalVarList[commandID].maxValue; i++)
+			{
+				// It is equal string?
+				if (StrCmp(param, GlobalVarList[commandID].enumList[i]) == 0)
+				{
+					// Equal
+					// Set value
+					*enumPointer = i;
+					result = Process_Ok_SetSuccessful_SendOk;
+				}
+			}
 
-		// Not found, it is invalid string
-		return Process_InvalidValue_NotEnumString;
+			// Not found, it is invalid string
+			result = Process_InvalidValue_NotEnumString;
+		}
 	}
 
-	return Process_Unknown;
+	if (result != Process_Ok_SetSuccessful_SendOk && result != Process_Settings_EmptyEnumList)
+	{
+		// Wrong, send enumerator strings
+		MONITOR_Printf("Invalid enum value, \"%s\" command has this enumerator strings:\r\n",
+				GlobalVarList[commandID].name);
+		for (i = 0; i < GlobalVarList[commandID].maxValue; i++)
+		{
+			MONITOR_Printf("- %s\r\n",GlobalVarList[commandID].enumList[i]);
+		}
+	}
+
+	return result;
 }
 
 

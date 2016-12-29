@@ -47,11 +47,10 @@ extern const CommandID_t MONITOR_CommandNum;
 
 
 /*------------------------------------------------------------------------------
-*  Global function declarations
-*----------------------------------------------------------------------------*/
+ *		Global function declarations - Commands
+ *----------------------------------------------------------------------------*/
  
 
-// COMMANDS
 CommandResult_t CommandFunction_cls(uint32_t argc, char** argv);
 CommandResult_t CommandFunction_help(uint32_t argc, char** argv);
 

@@ -21,18 +21,6 @@
 #include "version.h"
 
 
-///////////////////////////// MONITOR
-
-
-/////////////////////////////
-// DEFINES
-// TYPEDEFS
-// EXTERNED GLOBAL VARIABLES
-// EXTERNED PROTOTYPES
-/////////////////////////////
-
-
-
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
@@ -64,21 +52,16 @@
 		"Try \"help\" command for help!\r\n")
 
 
-#define MONITOR_SEND_PROMT_NEW_LINE()	\
-		MONITOR_SendMessage("\r\n# ")
+#define MONITOR_SEND_PROMT_NEW_LINE()	MONITOR_SendMessage("\r\n# ")
 
-#define MONITOR_SEND_PROMT()			\
-		MONITOR_SendMessage("# ")
-
+#define MONITOR_SEND_PROMT()			MONITOR_SendMessage("# ")
 
 #define USART_SEND_DUMMYSTRING()		MONITOR_SendMessage(MONITOR_DUMMY_STRING)
 
-
-#define MONITOR_SEND_NEW_LINE()			\
-		MONITOR_SendMessage("\r\n")
+#define MONITOR_SEND_NEW_LINE()			MONITOR_SendMessage("\r\n")
 
 
-//	DEFINES FOR CHARACTERS
+///	DEFINES FOR CHARACTERS
 
 CONFIG_USE_TERMINAL_ZOC
 #if defined(CONFIG_USE_TERMINAL_ZOC) || defined(CONFIG_USE_TERMINAL_PUTTY)
