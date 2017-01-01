@@ -552,12 +552,11 @@ static void MONITOR_ProcessReceivedCharacter(void)
  */
 bool MONITOR_PrepareFindExecuteCommand(CommProtocol_t source)
 {
-
 	bool isSuccessful = false;
 
-	MONITOR_CommandSource = source;
 	// Separate command
 	COMMAND_ArgCount = MONITOR_CommandParser();
+	MONITOR_CommandSource = source;
 
 	if (COMMAND_ArgCount > 0)
 	{
@@ -582,7 +581,7 @@ bool MONITOR_PrepareFindExecuteCommand(CommProtocol_t source)
 /**
  * \brief	Separate command to parameters/arguments
  * 			: from ActualCommand to COMMAND_Arguments[0], [1], [2]
- * 			NOTE: Only call from MONITOR_PrepareFindExecuteCommand()
+ * 	\note	Only call from MONITOR_PrepareFindExecuteCommand()
  * 	\return	argument number
  */
 static uint8_t MONITOR_CommandParser(void)
@@ -596,7 +595,7 @@ static uint8_t MONITOR_CommandParser(void)
 
 	if (commandArgCount > MONITOR_COMMAND_ARG_MAX_COUNT)
 	{
-		// Too many arugments
+		// Too many arguments
 		MONITOR_SendMessage("Too many arguments!\r\n");
 		commandArgCount = 0;
 	}
@@ -1355,7 +1354,7 @@ void MONITOR_Printf(const char *format, ...)
 
 
 /**
- * \brief	Send CLS
+ * \brief	Send CLS (Clear Screen)
  */
 void MONITOR_SendCls(void)
 {

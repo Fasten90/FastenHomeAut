@@ -31,7 +31,7 @@ TIM_HandleTypeDef    TimLedGreenHandle;
 const char * const LED_NameList[] =
 {
 	// NOTE: Be careful, when change the order and num, syncronize with LED_NUM_MAX define
-#ifdef CONFIG_USE_PANEL_STM32F4DISCOVERY
+#if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_HOMEAUTPANELS)
 	"red",
 	"blue",
 	"green",
@@ -236,7 +236,7 @@ bool LED_SetLed(uint8_t num, LED_SetType ledSet)
 
 	switch (num)
 	{
-#ifdef CONFIG_USE_PANEL_STM32F4DISCOVERY
+#if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_HOMEAUTPANELS)
 		case 1:
 			state = LED_SetRedLed(ledSet);
 			break;

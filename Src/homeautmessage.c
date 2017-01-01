@@ -248,7 +248,7 @@ ReturnType HOMEAUTMESSAGE_CompareMessage(char *messageString)
 		{
 			return Return_Error;
 		}
-		if (readedMyAddress >= 0 && readedMyAddress <= 256)
+		if (readedMyAddress < 256)
 		{
 			if (!StrCmpWithLength((char *)message->Seperator1,(char *)HOMEAUTMESSAGE_DefaultSeperator,HOMEAUTMESSAGE_DefaultSeparator_Length))
 			{
@@ -258,7 +258,7 @@ ReturnType HOMEAUTMESSAGE_CompareMessage(char *messageString)
 				{
 					return Return_Error;
 				}
-				if (readedMyAddress >= 0 && readedMyAddress <= 256)
+				if (readedMyAddress < 256)
 				{
 					//uint8_t Seperator2[1];
 					// |				

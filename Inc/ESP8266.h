@@ -112,7 +112,7 @@ extern char ESP8266_ReceiveBuffer[ESP8266_BUFFER_LENGTH];
 void ESP8266_Test ( void );
 void ESP8266_SendString (char *aTxBuffer);
 void ESP8266_ReceiveString (char *aRxBuffer, uint8_t length);	//*waitedString
-void ESP8266_BufferReset (char *Buffer, uint8_t length);
+void ESP8266_BufferReset (char *Buffer);
 void ESP8266_Task ( void );
 
 

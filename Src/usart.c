@@ -226,19 +226,19 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 
 
 
+#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 void DEBUG_USARTx_IRQHandler(void)
 {
 	HAL_UART_IRQHandler(&Debug_UartHandle);
 }
+#endif
 
 
 
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-void USART2_IRQHandler(void)
+void ESP8266_USARTx_IRQHandler(void)
 {
-
 	HAL_UART_IRQHandler(&ESP8266_UartHandle);
-
 }
 #endif
 

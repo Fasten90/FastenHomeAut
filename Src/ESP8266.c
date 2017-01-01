@@ -171,11 +171,11 @@ void ESP8266_Test ( void )
 	
 	// Reset (low = reset active)
 	HAL_GPIO_WritePin(ESP8266_RST_GPIO_PORT,ESP8266_RST_GPIO_PIN,GPIO_PIN_RESET);	
-	HAL_Delay(100);
+	DelayMs(100);
 	
 	// Reset end (high = inactive)
 	HAL_GPIO_WritePin(ESP8266_RST_GPIO_PORT,ESP8266_RST_GPIO_PIN,GPIO_PIN_SET);
-	HAL_Delay(1000);
+	DelayMs(1000);
 	//*/
 	
 	/*
@@ -200,14 +200,14 @@ void ESP8266_Test ( void )
 	// CH UP
 	HAL_GPIO_WritePin(ESP8266_CH_GPIO_PORT,ESP8266_CH_GPIO_PIN,GPIO_PIN_SET);
 	
-	HAL_Delay(2000);
+	DelayMs(2000);
 	
 	
 
 
 	
 	// Wait
-	HAL_Delay(1000);
+	DelayMs(1000);
 	
 	
 	// USART TX - RX	
@@ -215,7 +215,7 @@ void ESP8266_Test ( void )
 	USART_Init(&ESP8266_UartHandle);
 	
 
-	HAL_Delay(100);
+	DelayMs(100);
 		
 	/////////////////////////////////////////////
 
@@ -226,7 +226,7 @@ void ESP8266_Test ( void )
 	//AT+ CIPSTATUS
 
 
-	char Buffer[ESP8266_BUFFER_LENGTH] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	char Buffer[ESP8266_BUFFER_LENGTH] = { 0 };
 	
 		
 		
@@ -245,7 +245,7 @@ void ESP8266_Test ( void )
 	while(ESP8266_Uart_ReceivedCharFlag != 1);	
 		
 		
-	HAL_Delay(1000);
+	DelayMs(1000);
 	*/	
 	
 	
@@ -259,11 +259,14 @@ void ESP8266_Test ( void )
 
 	while(ESP8266_Uart_ReceivedCharFlag != 1);
 	
-	if (!StrCmp("AT\r\r\n\r\nOK\r\n",(const char *)Buffer)) LED_RED_ON();
+	if (!StrCmp("AT\r\r\n\r\nOK\r\n",(const char *)Buffer))
+	{
+		LED_RED_ON();
+	}
 	
 	
 	
-	HAL_Delay(200);
+	DelayMs(200);
 
 		
 
@@ -292,7 +295,7 @@ void ESP8266_Test ( void )
 		LED_RED_ON();
 	}
 	
-	HAL_Delay(1000);
+	DelayMs(1000);
 
 	
 	
@@ -801,13 +804,13 @@ ReturnType ESP8266_Init ( void )
 	
 	// Reset (low = reset active)
 	HAL_GPIO_WritePin(ESP8266_RST_GPIO_PORT,ESP8266_RST_GPIO_PIN,GPIO_PIN_RESET);	
-	//HAL_Delay(100);
+	//DelayMs(100);
 
 	
 	
 	// Reset end (high = inactive)
 	HAL_GPIO_WritePin(ESP8266_RST_GPIO_PORT,ESP8266_RST_GPIO_PIN,GPIO_PIN_SET);
-	//HAL_Delay(1000);
+	//DelayMs(1000);
 
 
 
@@ -833,14 +836,14 @@ ReturnType ESP8266_Init ( void )
 	// CH UP
 	HAL_GPIO_WritePin(ESP8266_CH_GPIO_PORT,ESP8266_CH_GPIO_PIN,GPIO_PIN_SET);
 	
-	//HAL_Delay(2000);
+	//DelayMs(2000);
 	
 	
 
 
 	
 	// Wait
-	//HAL_Delay(1000);
+	//DelayMs(1000);
 	
 	
 	// USART TX - RX	
@@ -848,7 +851,7 @@ ReturnType ESP8266_Init ( void )
 	//USART_Init(&ESP8266_UartHandle);
 	
 
-	//HAL_Delay(100);
+	//DelayMs(100);
 		
 	/////////////////////////////////////////////
 
@@ -863,7 +866,7 @@ ReturnType ESP8266_Init ( void )
 	while(ESP8266_Uart_ReceivedCharFlag != 1);	
 		
 		
-	HAL_Delay(1000);
+	DelayMs(1000);
 	*/	
 	
 	
@@ -881,7 +884,7 @@ ReturnType ESP8266_Init ( void )
 	
 	
 	
-	HAL_Delay(200);
+	DelayMs(200);
 
 		
 
@@ -911,7 +914,7 @@ ReturnType ESP8266_Init ( void )
 	}
 	
 	
-	HAL_Delay(1000);
+	DelayMs(1000);
 	*/
 	
 	return Return_Ok;
@@ -938,8 +941,8 @@ ReturnType ESP8266_Config ( void )
 	}
 	
 	
-	//HAL_Delay(200);
-	vTaskDelay(1000);
+	//DelayMs(200);
+	DelayMs(1000);
 		
 
 	
@@ -1006,7 +1009,7 @@ ReturnType ESP8266_ConnectToWifiNetwork ( void )
 		// AT+CWJAP=\"Fastenwifi\",\"fastenhome\"\r\r\n\r\nFAIL\r\n")
 		LED_GREEN_ON();
 		LED_RED_ON();
-		return Return_False;
+		return Return_Error;
 	}
 	else if (!StrCmp("AT+CWJAP=\"Fastenwifi\",\"fastenhome\"\r\r\n\r\nERRO",(const char *)ESP8266_ReceiveBuffer))
 	{
@@ -1014,7 +1017,7 @@ ReturnType ESP8266_ConnectToWifiNetwork ( void )
 		// AT+CWJAP=\"Fastenwifi\",\"fastenhome\"\r\r\n\r\nERROR\r\n")
 		LED_GREEN_OFF();
 		LED_RED_ON();
-		return Return_False;
+		return Return_Error;
 	}
 	
 	
@@ -1027,7 +1030,7 @@ ReturnType ESP8266_ConnectToWifiNetwork ( void )
 	//////////////////////////////////////////////
 
 
-	ESP8266_BufferReset(ESP8266_ReceiveBuffer, ESP8266_BUFFER_LENGTH);
+	ESP8266_BufferReset(ESP8266_ReceiveBuffer);
 		
 	ESP8266_ReceiveString(ESP8266_ReceiveBuffer,StringLength("AT+CIPMUX=1\r\r\n\r\nOK\r\n"));
 	
@@ -1046,7 +1049,7 @@ ReturnType ESP8266_ConnectToWifiNetwork ( void )
 	{
 		LED_GREEN_OFF();
 		LED_RED_ON();
-		return Return_False;
+		return Return_Error;
 	}
 	
 	
@@ -1059,7 +1062,7 @@ ReturnType ESP8266_ConnectToWifiNetwork ( void )
 	// Response:	AT+CIFSR 192.168.0.106\r\nOK
 	////////////////////////////////////////////
 	
-	ESP8266_BufferReset(ESP8266_ReceiveBuffer, ESP8266_BUFFER_LENGTH);
+	ESP8266_BufferReset(ESP8266_ReceiveBuffer);
 		
 	ESP8266_ReceiveString(ESP8266_ReceiveBuffer,StringLength("AT+CIFSR\r\r\n192.168.0.1\r\n9.6.5.10\r\n\r\nOK\r\n"));
 	
@@ -1099,7 +1102,7 @@ ReturnType ESP8266_ConnectToWifiNetwork ( void )
 	if (!StringToUnsignedDecimalNum(ESP8266_MyIpAddressString,&ip))
 	{
 		// Failed to convert
-		return Return_False;
+		return Return_Error;
 	}
 	ESP8266_MyIpAddressDecimal = (uint8_t)ip;
 	
@@ -1199,7 +1202,7 @@ ReturnType ESP8266_FindServer ( void )
 	//	AT+CWLIF
 	////////////////////////
 	
-	ESP8266_BufferReset(ESP8266_ReceiveBuffer, ESP8266_BUFFER_LENGTH);
+	ESP8266_BufferReset(ESP8266_ReceiveBuffer);
 		
 	ESP8266_ReceiveString(ESP8266_ReceiveBuffer,StringLength("AT+CWLIF\r\r\n\r\nOK\r\nLinked\r\n"));
 	
@@ -1220,7 +1223,7 @@ ReturnType ESP8266_FindServer ( void )
 		// ERROR\r\nUnli [nk]
 		LED_GREEN_OFF();
 		LED_RED_ON();		
-		return Return_False;
+		return Return_Error;
 	}
 	
 	//return Return_Ok;
@@ -1246,7 +1249,7 @@ ReturnType ESP8266_ConnectToServer ( void )
 	////////////////////////////////////////
 	
 	
-	ESP8266_BufferReset(ESP8266_ReceiveBuffer, ESP8266_BUFFER_LENGTH);
+	ESP8266_BufferReset(ESP8266_ReceiveBuffer);
 		
 	ESP8266_ReceiveString(ESP8266_ReceiveBuffer,StringLength("AT+CIPSTART=0,\"TCP\",\"9.6.5.10\",2000\r\r\n\r\nOK\r\nLinked\r\n"));
 	
@@ -1267,7 +1270,7 @@ ReturnType ESP8266_ConnectToServer ( void )
 		// ERROR\r\nUnli [nk]
 		LED_GREEN_OFF();
 		LED_RED_ON();		
-		return Return_False;
+		return Return_Error;
 	}
 	
 	
@@ -1293,7 +1296,7 @@ ReturnType ESP8266_StartServer ( void )
 	////////////////////////////////////////
 	
 	
-	ESP8266_BufferReset(ESP8266_ReceiveBuffer, ESP8266_BUFFER_LENGTH);
+	ESP8266_BufferReset(ESP8266_ReceiveBuffer);
 		
 	ESP8266_ReceiveString(ESP8266_ReceiveBuffer,StringLength("AT+CIPSERVER=1,2000\r\r\n\r\nOK\r\n"));
 	
@@ -1314,7 +1317,7 @@ ReturnType ESP8266_StartServer ( void )
 		// ERROR
 		LED_GREEN_OFF();
 		LED_RED_ON();
-		return Return_False;
+		return Return_Error;
 	}
 	
 	// Not reached
@@ -1336,7 +1339,7 @@ ReturnType ESP8266_SendTcpMessage ( char *message )
 	// TODO: HOMEAUTMESSAGE_DefaultMessageLength define-nal kéne	// 40
 	if ( StringLength(message) !=  40 )	
 	{		
-		return Return_False;
+		return Return_Error;
 	}
 	else
 	{	
@@ -1358,7 +1361,7 @@ ReturnType ESP8266_SendTcpMessage ( char *message )
 	// SEND OK
 	///////////////////////////////////////////////
 	
-	ESP8266_BufferReset(ESP8266_ReceiveBuffer, ESP8266_BUFFER_LENGTH);
+	ESP8266_BufferReset(ESP8266_ReceiveBuffer);
 		
 	ESP8266_ReceiveString(ESP8266_ReceiveBuffer,StringLength("AT+CIPSEND=0,40\r\r\n> "));
 	
@@ -1378,7 +1381,7 @@ ReturnType ESP8266_SendTcpMessage ( char *message )
 		LED_GREEN_OFF();
 		LED_RED_ON();
 		
-		return Return_False;
+		return Return_Error;
 	}
 	
 	
@@ -1389,7 +1392,7 @@ ReturnType ESP8266_SendTcpMessage ( char *message )
 
 	// TODO: do with parameter
 	// message
-	ESP8266_BufferReset(ESP8266_ReceiveBuffer, ESP8266_BUFFER_LENGTH);
+	ESP8266_BufferReset(ESP8266_ReceiveBuffer);
 		
 	//ESP8266_ReceiveString((unsigned char *)ESP8266_ReceiveBuffer,StringLength((uint8_t *)"|HomeAut|010|014|LOGIN__|NMEDIU00000000|\r\r\r\nSEND OK\r\n"));
 	ESP8266_ReceiveString(ESP8266_ReceiveBuffer, length + StringLength("\r\nSEND OK\r\n"));
@@ -1417,7 +1420,7 @@ ReturnType ESP8266_SendTcpMessage ( char *message )
 		LED_GREEN_OFF();
 		LED_RED_ON();
 		
-		return Return_False;
+		return Return_Error;
 	}
 	
 	return Return_Ok;
@@ -1434,7 +1437,7 @@ ReturnType ESP8266_ReceiveFixTcpMessage ( void )
 {
 
 	
-	ESP8266_BufferReset(ESP8266_ReceiveBuffer, ESP8266_BUFFER_LENGTH);
+	ESP8266_BufferReset(ESP8266_ReceiveBuffer);
 	
 	// Old:
 	// +IPD,0,18:GET / HTTP/1.0
@@ -1462,7 +1465,7 @@ ReturnType ESP8266_ReceiveUnknownTcpMessage ( void )
 	ESP8266_Receive_Mode_FixLength = 0;
 	
 	// Clear buffer
-	ESP8266_BufferReset(ESP8266_ReceiveBuffer, ESP8266_BUFFER_LENGTH);
+	ESP8266_BufferReset(ESP8266_ReceiveBuffer);
 	
 	// BufferCnt = 0;
 	ESP8266_ReceiveBuffer_Cnt = 0;
@@ -1497,7 +1500,7 @@ ReturnType ESP8266_CheckReceiveMessage ( void )
 	}
 	else
 	{
-		return Return_False;
+		return Return_Error;
 	}
 	#endif
 	
@@ -1547,7 +1550,7 @@ void ESP8266_ReceiveString (char *aRxBuffer, uint8_t length)
 
 
 
-void ESP8266_BufferReset (char *Buffer, uint8_t length)
+void ESP8266_BufferReset (char *Buffer)
 {
 	uint8_t i;
 	for (i =0; i < ESP8266_BUFFER_LENGTH; i++)
@@ -1680,12 +1683,12 @@ ReturnType ESP8266_SendMessageToQueue ( uint8_t *message )
 		}
 		else
 		{
-			return Return_False;
+			return Return_Error;
 		}
 	}
 	else
 	{
-		return Return_False;
+		return Return_Error;
 	}
 	
 }
@@ -1699,7 +1702,7 @@ ReturnType ESP8266_SendMessageToQueue ( uint8_t *message )
 ReturnType ESP8266_WaitClientConnect( void)
 {
 	
-	ESP8266_BufferReset(ESP8266_ReceiveBuffer, ESP8266_BUFFER_LENGTH);
+	ESP8266_BufferReset(ESP8266_ReceiveBuffer);
 	
 	// Link\r\n
 	// \r\n
@@ -1720,7 +1723,7 @@ ReturnType ESP8266_WaitClientConnect( void)
 ReturnType ESP8266_ClientConnectBlocking(void)
 {
 
-	ReturnType successfulConnected = Return_False;
+	ReturnType successfulConnected = Return_Error;
 	
 	// Receive type
 	ESP8266_Receive_Mode_FixLength = 1;
@@ -1741,7 +1744,7 @@ ReturnType ESP8266_ClientConnectBlocking(void)
 		{
 			// Failed to connect
 			DebugPrint("Failed connected to server\r\n");
-			vTaskDelay(10000);
+			DelayMs(10000);
 			DebugPrint("Retry to connect...\r\n");
 			
 			// Clean and reset...
@@ -1753,7 +1756,7 @@ ReturnType ESP8266_ClientConnectBlocking(void)
 			__HAL_UART_CLEAR_FLAG(&ESP8266_UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
 
 			ESP8266_UartHandle.ErrorCode = HAL_UART_ERROR_NONE;
-			ESP8266_UartHandle.State = HAL_UART_STATE_READY;
+			//ESP8266_UartHandle. = HAL_UART_STATE_READY;
 			ESP8266_UartHandle.TxXferCount = 0;
 			ESP8266_UartHandle.TxXferSize = 0;
 			ESP8266_UartHandle.RxXferCount = 0;
@@ -1762,7 +1765,7 @@ ReturnType ESP8266_ClientConnectBlocking(void)
 		}	
 	}
 	
-	// Successfull Connected ...
+	// Successful Connected ...
 	
 	// Send Login message
 	uint8_t myIp = ESP8266_MyIpAddressDecimal;
@@ -1770,7 +1773,7 @@ ReturnType ESP8266_ClientConnectBlocking(void)
 		myIp,ESP8266_SERVER_IP_ADDRESS_SHORT,
 		Function_Login,Login_ImLoginImNodeMedium,0,1);
 	
-	vTaskDelay(1000);
+	DelayMs(1000);
 	
 	
 	return Return_Ok;
@@ -1785,7 +1788,7 @@ ReturnType ESP8266_StartServerBlocking(void)
 	while ( ESP8266_StartServer() != Return_Ok)
 	{
 		DebugPrint("Error! Server isn't started\r\n");
-		vTaskDelay(10000);
+		DelayMs(10000);
 	}
 	
 	ESP8266_ConnectionStatus = ESP8266_ConnectionStatus_SuccessfulServerStarted;
@@ -1802,7 +1805,7 @@ void ESP8266_Task(void)
 {
 
 	// For received message checking
-	ReturnType isValidMessage = Return_False;
+	ReturnType isValidMessage = Return_Error;
 
 	
 	// First, need initialize ESP8266's pins, with	ESP8266_Init();
@@ -1810,7 +1813,7 @@ void ESP8266_Task(void)
 	
 	
 	// Delay, for hardware initializing
-	vTaskDelay(10000);
+	DelayMs(10000);
 	
 	
 	// Minél késobb kell inicializálni az USART-ot, mert az ESP8266 induláskor sok üzenetet küld, amitol kifagy a handler.
@@ -1818,7 +1821,7 @@ void ESP8266_Task(void)
 	USART_Init(&ESP8266_UartHandle);
 	
 	
-	vTaskDelay(100);
+	DelayMs(100);
 	
 	
 	// Config ESP8266
@@ -1827,22 +1830,22 @@ void ESP8266_Task(void)
 
 	
 	
-	//HAL_Delay(1000);
-	vTaskDelay(5000);
+	//DelayMs(1000);
+	DelayMs(5000);
 	
 	/////////////////////////////
 	// Connect to Wifi
 	/////////////////////////////
 	
-	while ( ESP8266_ConnectToWifiNetwork() == Return_False)
+	while ( ESP8266_ConnectToWifiNetwork() == Return_Error)
 	{
 		DebugPrint("Failed connect successful to Wifi\r\n");
-		vTaskDelay(10000);
+		DelayMs(10000);
 	}
 	DebugPrint("Successful connected to Wifi\r\n");
 	
 	// Delay
-	vTaskDelay(1000);
+	DelayMs(1000);
 	
 	
 
@@ -1967,7 +1970,7 @@ void ESP8266_Task(void)
 		else
 		{
 			// Not valid message
-			isValidMessage = Return_False;
+			isValidMessage = Return_Error;
 			DebugPrint((char *)&ESP8266_ReceiveBuffer[0]);
 			DebugPrint("Not valid message.\r\n");
 		}

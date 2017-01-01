@@ -1,5 +1,4 @@
 
-
 #include "options.h"
 #include "include.h"
 #include "board.h"
@@ -13,9 +12,6 @@
 	#include "stm32l1xx_hal.h"
 	#include "stm32l1xx_it.h"
 #endif
-#ifdef CONFIG_USE_PANEL_CENTER
-
-#endif
 
 
 
@@ -27,41 +23,6 @@ extern void xPortSysTickHandler(void);
 extern UART_HandleTypeDef BluetoothUartHandle;
 
 extern I2C_HandleTypeDef I2cHandle;
-
-/******************************************************************************/
-/*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
-/******************************************************************************/
-
-/**
-* @brief This function handles System tick timer.
-*/
-// AT stm32f0xx_it.c
-/*
-void SysTick_Handler(void)
-{
-	#ifdef CONFIG_USE_FREERTOS
-	xPortSysTickHandler();
-	#endif
-	HAL_IncTick();
-}
-*/
-
-
-
-//	// because USART1_IRQHandler defined in usart.c
-/*
-void USARTx_IRQHandler(void)
-{
-  HAL_UART_IRQHandler(&BluetoothUartHandle);
-}
-
-
-void USART1_IRQHandler(void)
-{
-  HAL_UART_IRQHandler(&BluetoothUartHandle);
-}
-//
-*/
 
 
 
@@ -174,7 +135,6 @@ void EXTI15_10_IRQHandler(void)
 
 
 #ifdef CONFIG_USE_PANEL_HOMEAUTCENTERPANEL
-
 
 // Up		PC7
 // Down		PC8
@@ -296,12 +256,11 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		GLOBAL_IO_Sensor_Sound_Impact_Sound = 1;
 	}
 #endif
-	
-}
+}	// End of HAL_GPIO_EXTI_Callback()
 
 
 
-#if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_NUCLEOF401RE)
+#if defined(CONFIG_MODULE_COMMON_ADC_ENABLE)
 void ADCx_DMA_IRQHandler(void)
 {
   HAL_DMA_IRQHandler(AdcHandle.DMA_Handle);
