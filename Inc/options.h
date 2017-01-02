@@ -184,7 +184,7 @@
 #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 	// If you want use monitor program's history
 	// Turn off, if has small memory, now it need 1.5k RAM
-	#define USE_MONITOR_HISTORY
+	#define CONFIG_USE_MONITOR_HISTORY
 #endif
 
 

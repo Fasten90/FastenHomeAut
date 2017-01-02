@@ -85,13 +85,13 @@ xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
 #endif
 
 
-#ifdef USE_MONITOR_HISTORY
+#ifdef CONFIG_USE_MONITOR_HISTORY
 static uint8_t MONITOR_HISTORY_Save_cnt = 0;
 static uint8_t MONITOR_HISTORY_Load_cnt = 0;
 static char MONITOR_HISTORY[MONITOR_HISTORY_MAX_COUNT][MONITOR_MAX_COMMAND_LENGTH] =
 {
 
-#if defined(USE_MONITOR_HISTORY) && (MONITOR_HISTORY_MAX_COUNT > 0)
+#if defined(CONFIG_USE_MONITOR_HISTORY) && (MONITOR_HISTORY_MAX_COUNT > 0)
 
 	#if ( MONITOR_HISTORY_MAX_COUNT > 0 )
 	{
@@ -148,7 +148,7 @@ void MONITOR_CommandBackspace(void);
 void MONITOR_CommandResendLine(bool needRestoreCursor);
 bool MONITOR_CommandEscapeCharValidation(void);
 
-#ifdef USE_MONITOR_HISTORY
+#ifdef CONFIG_USE_MONITOR_HISTORY
 // Monitor history
 void MONITOR_HISTORY_Save(void);
 bool MONITOR_HISTORY_FindInHistoryList(void);
@@ -350,7 +350,7 @@ void MONITOR_CheckCommand(void)
 						
 						MONITOR_SEND_NEW_LINE();
 						
-						#ifdef USE_MONITOR_HISTORY
+						#ifdef CONFIG_USE_MONITOR_HISTORY
 						// Save command to History
 						MONITOR_HISTORY_Save();
 						#endif
@@ -873,14 +873,14 @@ bool MONITOR_CommandEscapeCharValidation(void)
 			// This is an escape sequence
 			if ( MONITOR_CommandActualEscape[2] == 'A' )		// Up cursor = previous History command
 			{
-				#ifdef USE_MONITOR_HISTORY
+				#ifdef CONFIG_USE_MONITOR_HISTORY
 				MONITOR_HISTORY_Load ( 1 );
 				#endif
 				return true;
 			}
 			else if ( MONITOR_CommandActualEscape[2] == 'B' )	// Down cursor		// next History command
 			{
-				#ifdef USE_MONITOR_HISTORY
+				#ifdef CONFIG_USE_MONITOR_HISTORY
 				MONITOR_HISTORY_Load ( 0 );
 				#endif
 				return true;
@@ -931,7 +931,7 @@ bool MONITOR_CommandEscapeCharValidation(void)
 
 
 
-#ifdef USE_MONITOR_HISTORY
+#ifdef CONFIG_USE_MONITOR_HISTORY
 /**
  * \brief	Save actual command to history
  */
@@ -969,7 +969,7 @@ void MONITOR_HISTORY_Save(void)
 
 
 
-#ifdef USE_MONITOR_HISTORY
+#ifdef CONFIG_USE_MONITOR_HISTORY
 /**
  * \brief	Check, this command is in History?
  * \return	true, if has equal
@@ -996,7 +996,7 @@ bool MONITOR_HISTORY_FindInHistoryList(void)
 
 
 
-#ifdef USE_MONITOR_HISTORY
+#ifdef CONFIG_USE_MONITOR_HISTORY
 /**
  * \brief	Load history from list to actual command
  */

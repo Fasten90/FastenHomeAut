@@ -40,7 +40,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 
-#ifdef CONFIG_USE_PANEL_HOMEAUTCENTERPANEL
+#if defined(CONFIG_MODULE_LED_ENABLE) & defined(CONFIG_USE_PANEL_HOMEAUTCENTERPANEL)
 
 // \note: In the schematic the blue and red LED are inversely
 // blue: PE5
@@ -84,7 +84,7 @@
 
 
 
-#ifdef CONFIG_USE_PANEL_STM32F4DISCOVERY
+#if defined(CONFIG_MODULE_LED_ENABLE) & defined(CONFIG_USE_PANEL_STM32F4DISCOVERY)
 
 // blue: PE5
 // green: PE6

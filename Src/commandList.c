@@ -121,13 +121,6 @@ const CommandStruct CommandList[] =
 		.description = "List global variable's values",
 	},
 	{
-		.name = "led",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_led,
-		.commandArgNum = CommandArgument_1 | CommandArgument_2,
-		.description = "Control LED",
-		.syntax = "<num> <on/off/toggle/status>",
-	},
-	{
 		.name = "unittest",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_unittest,
 		.commandArgNum = CommandArgument_0 | CommandArgument_1,
@@ -140,6 +133,15 @@ const CommandStruct CommandList[] =
 		.commandArgNum = CommandArgument_0,
 		.description = "Run module test",
 	},
+#ifdef CONFIG_MODULE_LED_ENABLE
+	{
+		.name = "led",
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_led,
+		.commandArgNum = CommandArgument_1 | CommandArgument_2,
+		.description = "Control LED",
+		.syntax = "<num> <on/off/toggle/status>",
+	},
+#endif
 #ifdef CONFIG_MODULE_COMMON_IO_ENABLE
 	{
 		.name = "ioinit",
@@ -686,6 +688,7 @@ CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 
 	uint8_t i;
 
+#ifdef CONFIG_MODULE_LED_ENABLE
 	// LED test
 	MONITOR_SendLine("LED test");
 
@@ -702,7 +705,7 @@ CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 		LED_SetLed(i, LED_SET_OFF);
 		DelayMs(500);
 	}
-
+#endif	// #ifdef CONFIG_MODULE_LED_ENABLE
 
 	// Beep in terminal
 	MONITOR_SendLine("Beep test");
