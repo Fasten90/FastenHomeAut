@@ -150,7 +150,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 	GPIO_InitTypeDef  GPIO_InitStruct;
 
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-
 	if (huart == &Debug_UartHandle)
 	{
 		// ##-1- Enable peripherals and GPIO Clocks
@@ -218,10 +217,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 		
 	}
 #endif
-	else
-	{
-		Error_Handler();
-	}
+
 }
 
 
@@ -277,7 +273,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 	#endif
 
 	#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-	if ( ( UartHandle == &Debug_UartHandle ) && ( MONITOR_CommandReceiveEnable == true ) )
+	if ( (UartHandle == &Debug_UartHandle) && (MONITOR_CommandReceiveEnable == true) )
 	{
 		// Receive to next index
 		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[++USART_RxBufferWriteCounter], RXBUFFER_WAIT_LENGTH);
@@ -295,7 +291,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 	{
 		
 		#ifdef CONFIG_USE_FREERTOS
-		if ( ESP8266_Receive_Mode_FixLength == 1)
+		if (ESP8266_Receive_Mode_FixLength == 1)
 		{
 			xSemaphoreGiveFromISR(ESP8266_USART_Rx_Semaphore,0);	
 		}
@@ -304,7 +300,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 			// Put to Buffer and receive next char
 			//uint8_t receivedChar = Esp8266UartHandle.pRxBuffPtr[0];	// TODO: delete
 			//ESP8266_RxBuffer[ESP8266_RxBuffer_Cnt++] = receivedChar;
-			if ( ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_Cnt] != '\n' || ESP8266_ReceiveBuffer_Cnt <= 4)
+			if (ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_Cnt] != '\n' || ESP8266_ReceiveBuffer_Cnt <= 4)
 			{
 				ESP8266_ReceiveBuffer_Cnt++;
 				HAL_UART_Receive_IT(&ESP8266_UartHandle,(uint8_t *)&ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_Cnt],1);
@@ -435,11 +431,7 @@ uint8_t USART_SendMessage(const char *aTxBuffer)
 	}
 #endif
 
-	#ifdef CONFIG_USE_FREERTOS
-	if ( xSemaphoreTake(DEBUG_USART_Tx_Semaphore, (portTickType) 10000) == pdTRUE )
-	#else
-	if ( USART_WaitForSend(500))
-	#endif
+	if (USART_WaitForSend(1000))
 	{
 		// Take semaphore, can sending
 		
@@ -512,11 +504,7 @@ bool USART_SendChar(char c)
 	buf[1] = '\0';
 
 	
-	#ifdef CONFIG_USE_FREERTOS
-	if ( xSemaphoreTake(DEBUG_USART_Tx_Semaphore, (portTickType) 1000) == pdTRUE )
-	#else
-	if ( USART_WaitForSend(100))
-	#endif	
+	if (USART_WaitForSend(100))
 	{
 		// Successful take USART semaphore
 		USART_SendEnable_flag = false;
@@ -579,6 +567,16 @@ void USART_StartReceiveMessage(void)
 static bool USART_WaitForSend(uint16_t timeoutMilliSecond)
 {
 
+#ifdef CONFIG_USE_FREERTOS
+	if (xSemaphoreTake(DEBUG_USART_Tx_Semaphore, (portTickType)timeoutMilliSecond) == pdTRUE)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+#else
 	// Wait for flag or timeout
 	while ((USART_SendEnable_flag != true) || (timeoutMilliSecond == 0))
 	{	
@@ -589,7 +587,7 @@ static bool USART_WaitForSend(uint16_t timeoutMilliSecond)
 	USART_SendEnable_flag = true;
 
 	return true;
-	
+#endif
 }
 
 

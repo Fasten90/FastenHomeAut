@@ -98,7 +98,7 @@ const GlobalVarCommand_t GlobalVarList[] =
 		},
 		{
 			.name = "version",
-			.varPointer = (void * const)&Global_Version,
+			.varPointer = (void * const)Global_Version,
 			.type = Type_String,
 			.isReadOnly = true
 		},
@@ -116,7 +116,7 @@ const GlobalVarCommand_t GlobalVarList[] =
 		},
 		{
 			.name = "boardname",
-			.varPointer = (void * const)&Global_BoardName,
+			.varPointer = (void * const)Global_BoardName,
 			.type = Type_String,
 			.isReadOnly = true
 		},

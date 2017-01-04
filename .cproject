@@ -40,6 +40,7 @@
 									<listOptionValue builtIn="false" value="CONFIG_USE_COMPILER_GCC=1"/>
 									<listOptionValue builtIn="false" value="CONFIG_USE_PANEL_HOMEAUTCENTERPANEL=1"/>
 									<listOptionValue builtIn="false" value="CONFIG_USE_PANEL_F4DISCOVERY"/>
+									<listOptionValue builtIn="false" value="CONFIG_ESP8266_WIFI_NETWORK_PASSWORD=&quot;Easdg2011&quot;"/>
 								</option>
 								<inputType id="com.atollic.truestudio.as.input.374932590" name="Input" superClass="com.atollic.truestudio.as.input"/>
 							</tool>

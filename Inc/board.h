@@ -1003,6 +1003,69 @@
 
 
 
+#if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) && defined(CONFIG_MODULE_ESP8266_ENABLE)
+
+// USART3
+// USART_TX		PD8
+// USART_RX		PB11
+
+#define ESP8266_USARTx						USART3
+
+#define ESP8266_USART_CLK_ENABLES()			\
+		__USART3_CLK_ENABLE();				\
+		__GPIOB_CLK_ENABLE();				\
+		__GPIOD_CLK_ENABLE()
+
+
+#define ESP8266_USART_TX_GPIO_PORT			GPIOD
+#define ESP8266_USART_TX_GPIO_PIN			GPIO_PIN_8
+
+#define ESP8266_USART_RX_GPIO_PORT			GPIOB
+#define ESP8266_USART_RX_GPIO_PIN			GPIO_PIN_11
+
+#define ESP8266_USART_AF					GPIO_AF7_USART3
+
+// Definition for USARTx's NVIC
+#define ESP8266_USARTx_IRQn              	USART3_IRQn
+#define ESP8266_USARTx_IRQHandler        	USART3_IRQHandler
+
+#define ESP8266_USART_PREEMT_PRIORITY		14
+#define ESP8266_USART_SUB_PRIORITY			0
+
+#define ESP8266_USART_BAUDRATE				9600
+
+
+
+
+/*
+ESP8266	- Other pins
+_GPIO0 			PA12
+_RST			PB15
+_CH				PA8
+_GPIO2			PA11
+*/
+
+#define ESP8266_GPIO0_GPIO_PIN			GPIO_PIN_12
+#define ESP8266_GPIO0_GPIO_PORT			GPIOA
+#define ESP8266_RST_GPIO_PIN			GPIO_PIN_15
+#define ESP8266_RST_GPIO_PORT			GPIOB
+
+#define ESP8266_CH_GPIO_PIN				GPIO_PIN_8
+#define ESP8266_CH_GPIO_PORT			GPIOA
+#define ESP8266_GPIO2_GPIO_PIN			GPIO_PIN_11
+#define ESP8266_GPIO2_GPIO_PORT			GPIOA
+
+
+#define ESP8266_PINS_CLK_ENABLES()		\
+		__GPIOB_CLK_ENABLE();			\
+		__GPIOA_CLK_ENABLE()
+
+
+
+#endif // #ifdef CONFIG_USE_PANEL_CENTERPANEL
+
+
+
 ///////////////////////////////////////////////////////////////////////////////
 //			ESP8266		-	OTHER PINS
 ///////////////////////////////////////////////////////////////////////////////

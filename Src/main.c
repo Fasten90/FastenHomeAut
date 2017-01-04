@@ -100,13 +100,12 @@ int main(void)
 
 
 #ifdef CONFIG_MODULE_COMMON_DAC_ENABLE
-	HAL_DAC_MspInit(&DacHandle);
+	HAL_DAC_MspInit(&DacHandle);	// TODO: there is no call for this?
 	DAC_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
-	//HAL_ADC_MspInit(&AdcHandle);	// Called by HAL driver
 	CommonADC_Init();
 	// Test, blocking
 	//ADC_Test();
@@ -154,15 +153,12 @@ int main(void)
 
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 	// ESP8266
-	ESP8266_USART_Rx_Semaphore = NULL;
+
+#ifdef CONFIG_USE_FREERTOS
 	ESP8266_USART_Rx_Semaphore = xSemaphoreCreateBinary();
-	
-	ESP8266_SendMessage_Queue = NULL;
 	ESP8266_SendMessage_Queue = xQueueCreate( ESP8266_HOMEAUTMESSAGE_SENDMESSAGE_QUEUE_LENGTH, ESP8266_HOMEAUTMESSAGE_ITEM_SIZE );
-	
-	ESP8266_ReceivedMessage_Queue = NULL;
 	ESP8266_ReceivedMessage_Queue = xQueueCreate( ESP8266_HOMEAUTMESSAGE_RECEIVEMESSAGE_QUEUE_LENGTH, ESP8266_HOMEAUTMESSAGE_ITEM_SIZE );
-	
+#endif
 
 	ESP8266_Init();
 	

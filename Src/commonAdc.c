@@ -77,6 +77,8 @@ void CommonADC_Init(void)
 {
 	ADC_ChannelConfTypeDef   sConfig;
 
+	//HAL_ADC_MspInit(&AdcHandle);	// Called by HAL driver
+
 	/* Configuration of AdcHandle init structure: ADC parameters and regular group */
 	AdcHandle.Instance = ADCx;
 
