@@ -633,7 +633,7 @@ ReturnType ESP8266_SendTcpMessage(char *message)
 	ESP8266_WaitAnswer(5000);
 	
 #warning "First character is 0, but why...?"
-	if (!StrCmp("> ",(const char *)ESP8266_ReceiveBuffer))
+	if (!StrCmp("> ",(const char *)&ESP8266_ReceiveBuffer[1]))
 	{
 		ESP8266_LED_OK();
 	}
@@ -800,7 +800,7 @@ void ESP8266_ReceiveString(uint8_t length)
 void ESP8266_ClearReceiveBuffer(void)
 {
 	uint8_t i;
-	for (i =0; i < ESP8266_BUFFER_LENGTH; i++)
+	for (i = 0; i < ESP8266_BUFFER_LENGTH; i++)
 	{
 		ESP8266_ReceiveBuffer[i] = '\0';
 	}
@@ -863,6 +863,8 @@ static void ESP8266_WaitMessageAndCheckSendingQueue(void)
 				ESP8266_ReceiveBuffer_Cnt = 0;		// TODO: Csinálni egy receive mode váltás függvényt!!
 				ESP8266_TransmitBuffer[40] = '\0';	// end of buffer need to put an end char
 				
+
+				// TODO: Beautify this code below
 				// Clear buffer and etc
 				// Delete previous receive:
 				__HAL_UART_FLUSH_DRREGISTER(&ESP8266_UartHandle);
@@ -904,6 +906,7 @@ static void ESP8266_WaitMessageAndCheckSendingQueue(void)
 		}
 		else
 		{
+			// Received some characters, we should check messages, after it has been received
 			// Do nothing
 		}
 	}
@@ -974,6 +977,7 @@ ReturnType ESP8266_ClientConnectBlocking(void)
 	{
 		// Connect to server
 		successfulConnected = ESP8266_ConnectToServer();
+#warning "delete this code below !!!!!"
 		successfulConnected = Return_Ok;
 #warning "Need bugfix !!!!!"
 	
@@ -1089,7 +1093,6 @@ static ReturnType ESP8266_ConvertIpString(char *message, uint8_t *ip)
 		// Failed separate string
 		return Return_Error;
 	}
-
 }
 
 
@@ -1144,6 +1147,8 @@ void ESP8266_Task(void)
 		DelayMs(10000);
 		USART_Init(&ESP8266_UartHandle);
 	}
+
+	DebugPrint("Configured ESP8266\r\n");
 
 
 	// Wait

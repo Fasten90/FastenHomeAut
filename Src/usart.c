@@ -381,12 +381,30 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 		__HAL_UART_CLEAR_FLAG(&ESP8266_UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
 
 		huart->ErrorCode = HAL_UART_ERROR_NONE;
-		huart->gState = HAL_UART_STATE_READY;
+
+		/*
+		if (huart->TxXferSize > 0 && huart->RxXferSize > 0)
+		{
+			huart->gState = HAL_UART_STATE_BUSY_TX_RX;
+		}
+		else if (huart->TxXferSize > 0 && huart->RxXferSize <= 0)
+		{
+			huart->gState = HAL_UART_STATE_BUSY_TX;
+		}
+		else if (huart->TxXferSize <= 0 && huart->RxXferSize > 0)
+		{
+			huart->gState = HAL_UART_STATE_BUSY_RX;
+		}
+		else
+		{
+			huart->gState = HAL_UART_STATE_READY;
+		}*/
+		/*
 		huart->TxXferCount = 0;
 		huart->TxXferSize = 0;
 		huart->RxXferCount = 0;
 		huart->RxXferSize = 0;
-		
+		*/
 		// TODO: !! IMPORTANT !! Do not give semaphore, because if you give semaphore, code "think", received a message
 		/*
 		if (ESP8266_USART_Rx_Semaphore != NULL)
