@@ -233,8 +233,8 @@ ReturnType SysManager_GetMyNetworkState ( void )
 		// HomeAutDevices[0] = I am
 		
 		// IP address
-		DeviceStatus.myIp = ESP8266_MyIpAddressDecimal;
-		HomeAutDevices[0].IP_addressDec = ESP8266_MyIpAddressDecimal;
+		DeviceStatus.myIp = ESP8266_MyIpAddress;
+		HomeAutDevices[0].IP_addressDec = ESP8266_MyIpAddress;
 		
 		// State
 		HomeAutDevices[0].State = State_Server;
@@ -249,8 +249,8 @@ ReturnType SysManager_GetMyNetworkState ( void )
 		// HomeAutDevices[0] = I am
 		
 		// IP address
-		DeviceStatus.myIp = ESP8266_MyIpAddressDecimal;
-		HomeAutDevices[0].IP_addressDec = ESP8266_MyIpAddressDecimal;
+		DeviceStatus.myIp = ESP8266_MyIpAddress;
+		HomeAutDevices[0].IP_addressDec = ESP8266_MyIpAddress;
 		
 		// State
 		HomeAutDevices[0].State = State_Connected;

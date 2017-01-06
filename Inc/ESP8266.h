@@ -47,6 +47,14 @@
 #define	ESP8266_HOMEAUTMESSAGE_RECEIVEDMESSAGE_NULLCHAR		( 52 )
 #define	ESP8266_HOMEAUTMESSAGE_RECEIVEDMESSAGE_START		( 12 )
 
+
+#define ESP8266_LED_OK()		LED_GREEN_ON()
+#define ESP8266_LED_FAIL()		LED_RED_ON()
+
+
+#define ESP8266_TCP_MESSAGE_LENGTH				( 40 )
+
+
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
@@ -87,8 +95,7 @@ extern xQueueHandle ESP8266_ReceivedMessage_Queue;
 extern ESP8266_ConnectionStatusType	ESP8266_ConnectionStatus;
 extern ESP8266_TcpConnectionStatusType	ESP8266_TcpConnectionStatus;
 
-extern char ESP8266_MyIpAddressString[4];
-extern uint8_t ESP8266_MyIpAddressDecimal;
+extern uint8_t ESP8266_MyIpAddress[4];
 extern uint8_t ESP8266_DebugEnableFlag;
 
 extern uint8_t ESP8266_Receive_Mode_FixLength;
@@ -109,31 +116,29 @@ extern char ESP8266_ReceiveBuffer[ESP8266_BUFFER_LENGTH];
 /*------------------------------------------------------------------------------
  *  Global function declarations
  *----------------------------------------------------------------------------*/
-void ESP8266_Test ( void );
-void ESP8266_SendString (char *aTxBuffer);
-void ESP8266_ReceiveString (char *aRxBuffer, uint8_t length);	//*waitedString
-void ESP8266_BufferReset (char *Buffer);
-void ESP8266_Task ( void );
 
+void ESP8266_SendString(char *aTxBuffer);
+void ESP8266_ReceiveString(uint8_t length);
+void ESP8266_ClearReceiveBuffer(void);
+void ESP8266_Task(void);
 
-ReturnType ESP8266_Init ( void );
+ReturnType ESP8266_Init(void);
 
-ReturnType ESP8266_Config ( void );
-ReturnType ESP8266_ConnectToWifiNetwork ( void );
+ReturnType ESP8266_Config(void);
+ReturnType ESP8266_ConnectToWifiNetwork(void);
 
-ReturnType ESP8266_StartServer ( void );
-ReturnType ESP8266_FindServer ( void );
-ReturnType ESP8266_ConnectToServer ( void );
+ReturnType ESP8266_StartServer(void);
+ReturnType ESP8266_FindServer(void);
+ReturnType ESP8266_ConnectToServer(void);
 
-ReturnType ESP8266_SendTcpMessage ( char *message );
-ReturnType ESP8266_SendMessageToQueue ( uint8_t *message );
+ReturnType ESP8266_SendTcpMessage(char *message);
+ReturnType ESP8266_SendMessageToQueue(uint8_t *message);
 
-ReturnType ESP8266_ReceiveFixTcpMessage ( void );
+ReturnType ESP8266_ReceiveFixTcpMessage(void);
 
-ReturnType ESP8266_WaitClientConnect( void);
+ReturnType ESP8266_WaitClientConnect(void);
 
-ReturnType ESP8266_CheckReceiveMessage ( void );
-
+ReturnType ESP8266_CheckReceiveMessage(void);
 
 void ESP8266_WaitAnswer(void);
 

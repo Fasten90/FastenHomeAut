@@ -1151,19 +1151,19 @@ uint8_t StrAppend (char *dest, const char *str)
  * \return	'findString' position in 'str'
  * 			-1	if not found
  */
-int16_t FindString (const char *str, const char *findString)
+int16_t STRING_FindString (const char *str, const char *findString)
 {
 	uint8_t i;
 	uint8_t length = StringLength(str);
 	uint8_t findStringLength = StringLength(findString);
 
 	// Search first equal character
-	for (i=0; i<length; i++)
+	for (i = 0; i < length; i++)
 	{
 		if (findString[0] == str[i])
 		{
 			// First character is equal
-			if (!StrCmpWithLength(findString, &str[i],findStringLength))
+			if (!StrCmpWithLength(findString, &str[i], findStringLength))
 			{
 				return i;
 			}
@@ -1703,10 +1703,10 @@ void STRING_UnitTest (void)
 
 	/// String function testing
 
-	// FindString()
-	ivalue16 = FindString("longtexttofinding","text");
+	// STRING_FindString()
+	ivalue16 = STRING_FindString("longtexttofinding","text");
 	UnitTest_CheckResult(ivalue16 == 4, "FindString error", __LINE__);
-	ivalue16 = FindString("longtexttofinding","wrongtext");
+	ivalue16 = STRING_FindString("longtexttofinding","wrongtext");
 	UnitTest_CheckResult(ivalue16 == -1, "FindString error", __LINE__);
 
 
