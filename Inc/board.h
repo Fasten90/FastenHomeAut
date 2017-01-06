@@ -384,7 +384,7 @@
 #define ADCx_DMA_IRQHandler             DMA2_Stream0_IRQHandler
 
 /* ADC DMA Interrupt priorities */
-#define ADC_DMA_PREEMT_PRIORITY			13
+#define ADC_DMA_PREEMT_PRIORITY			15
 #define ADC_DMA_SUB_PRIORITY			0
 
 
@@ -1033,8 +1033,6 @@
 #define ESP8266_USART_SUB_PRIORITY			0
 
 #define ESP8266_USART_BAUDRATE				9600
-
-
 
 
 /*

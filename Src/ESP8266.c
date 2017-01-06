@@ -48,7 +48,7 @@ ESP8266_ConnectionStatusType	ESP8266_ConnectionStatus = ESP8266_ConnectionStatus
 
 ESP8266_TcpConnectionStatusType	ESP8266_TcpConnectionStatus = ESP8266_TcpConnectionStatus_Unknown;
 
-
+// TODO: Change to ipv4 (4 byte)
 char ESP8266_MyIpAddressString[4];
 uint8_t ESP8266_MyIpAddressDecimal = 0;
 
@@ -801,7 +801,7 @@ ReturnType ESP8266_Init(void)
 
 
 /**
- * \brief	Configurate ESP8266
+ * \brief	Configure ESP8266
  */
 ReturnType ESP8266_Config(void)
 {
@@ -820,15 +820,15 @@ ReturnType ESP8266_Config(void)
 	}
 	
 	
-	//DelayMs(200);
 	DelayMs(1000);
 		
 
-	
+	/////////////////
 	// CWMODE
 	// 1 = station
 	// 2 = host
-	// 3 = dual 
+	// 3 = dual
+	/////////////////
 	
 	ESP8266_ReceiveString(ESP8266_ReceiveBuffer,StringLength("AT+CWMODE=3\r\r\nno change\r\n"));
 	// Buffer + waitedString
@@ -1358,8 +1358,6 @@ ReturnType ESP8266_ReceiveFixTcpMessage ( void )
 	// length: 2+10+40+6 = 58
 	ESP8266_ReceiveString(ESP8266_ReceiveBuffer, ESP8266_HOMEAUT_RECEIVING_MESSAGE_LENGTH );
 		
-	//while(ESP8266_Uart_ReceivedCharFlag != 1);
-	
 	return Return_Ok;
 }
 
@@ -1483,7 +1481,7 @@ void ESP8266_BufferReset(char *Buffer)
 
 
 /**
- *\brief		Wait for answer with blocking
+ *\brief		Wait for answer in blocking mode
  */
 void ESP8266_WaitAnswer(void)
 {
@@ -1650,14 +1648,14 @@ ReturnType ESP8266_ClientConnectBlocking(void)
 	ESP8266_Receive_Mode_FixLength = 1;
 	
 	
-	while ( successfulConnected != Return_Ok)
+	while (successfulConnected != Return_Ok)
 	{
 		// Connect to server
 		successfulConnected = ESP8266_ConnectToServer();
 	
-		if ( successfulConnected == Return_Ok )
+		if (successfulConnected == Return_Ok)
 		{
-			// Successfull connected
+			// Successful connected
 			ESP8266_ConnectionStatus = ESP8266_ConnectionStatus_SuccessfulConnected;
 			DebugPrint("Successful connected to server\r\n");
 		}
@@ -1671,6 +1669,7 @@ ReturnType ESP8266_ClientConnectBlocking(void)
 			// Clean and reset...
 			// ERROR\r\nUnli [nk] // miatt kell... TODO: valami jobb megoldás kéne...
 			
+			// TODO: Valami szebb megoldás legyen itt
 			// Clear buffer and etc
 			// Delete previous receive:
 			__HAL_UART_FLUSH_DRREGISTER(&ESP8266_UartHandle);
