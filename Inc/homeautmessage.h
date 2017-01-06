@@ -200,8 +200,8 @@ void HOMEAUTMESSAGE_Test(void);
 ReturnType HOMEAUTMESSAGE_CompareMessage(char *messageString);
 ReturnType HOMEAUTMESSAGE_CreateMessage(HomeAut_MessageType *createToMessage, HomeAut_InformationType *messageInformation);
 
-ReturnType HOMEAUTMESSAGE_CreateAndSendHomeAutMessage
-	( uint8_t myIp, uint8_t destIp, HomeAut_FunctionType function,
+ReturnType HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
+	uint8_t myIp, uint8_t destIp, HomeAut_FunctionType function,
 	HomeAut_DataType dataType, uint32_t data, uint8_t isValid);
 	
 

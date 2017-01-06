@@ -293,7 +293,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 		#ifdef CONFIG_USE_FREERTOS
 		if (ESP8266_Receive_Mode_FixLength == 1)
 		{
-			xSemaphoreGiveFromISR(ESP8266_USART_Rx_Semaphore,0);	
+			xSemaphoreGiveFromISR(ESP8266_USART_Rx_Semaphore,0);
 		}
 		else
 		{
@@ -306,7 +306,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 					(uint8_t *)&ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_Cnt],
 					1);
 
-			if ((ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_Cnt] == '\n') && (ESP8266_ReceiveBuffer_Cnt <= 4))
+			if ((ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_Cnt] == '\n') && (ESP8266_ReceiveBuffer_Cnt >= 4))
 			{
 				// received an '\n' and not too short message
 				xSemaphoreGiveFromISR(ESP8266_USART_Rx_Semaphore, 0);
@@ -376,11 +376,8 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 	else if (huart->Instance == ESP8266_USARTx )
 	{
 
-		// TODO:
-		// neha kapunk ORE errort.
+		// TODO: Sad, but sometime receive errors
 
-		//__HAL_UART_RESET_HANDLE_STATE(&BluetoothUartHandle);
-		//__HAL_UART_GET_FLAG(huart, UART_FLAG_TXE);
 		__HAL_UART_CLEAR_FLAG(&ESP8266_UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
 
 		huart->ErrorCode = HAL_UART_ERROR_NONE;
@@ -390,10 +387,12 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 		huart->RxXferCount = 0;
 		huart->RxXferSize = 0;
 		
+		// TODO: !! IMPORTANT !! Do not give semaphore, because if you give semaphore, code "think", received a message
+		/*
 		if (ESP8266_USART_Rx_Semaphore != NULL)
 		{
 			xSemaphoreGiveFromISR(ESP8266_USART_Rx_Semaphore,0);
-		}
+		}*/
 	}	
 #endif
 	else

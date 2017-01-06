@@ -52,7 +52,10 @@
 #define ESP8266_LED_FAIL()		LED_RED_ON()
 
 
-#define ESP8266_TCP_MESSAGE_LENGTH				( 40 )
+// Reset (low = reset active)
+#define ESP8266_RST_ACTIVE()	HAL_GPIO_WritePin(ESP8266_RST_GPIO_PORT,ESP8266_RST_GPIO_PIN,GPIO_PIN_RESET)
+// Reset end (high = inactive)
+#define ESP8266_RST_INACTIVE()	HAL_GPIO_WritePin(ESP8266_RST_GPIO_PORT,ESP8266_RST_GPIO_PIN,GPIO_PIN_SET)
 
 
 /*------------------------------------------------------------------------------
@@ -100,7 +103,7 @@ extern uint8_t ESP8266_DebugEnableFlag;
 
 extern uint8_t ESP8266_Receive_Mode_FixLength;
 extern uint8_t ESP8266_ReceiveBuffer_Cnt;
-extern char ESP8266_ReceiveBuffer[ESP8266_BUFFER_LENGTH];
+extern volatile char ESP8266_ReceiveBuffer[ESP8266_BUFFER_LENGTH];
 
 
 /*------------------------------------------------------------------------------
@@ -140,7 +143,8 @@ ReturnType ESP8266_WaitClientConnect(void);
 
 ReturnType ESP8266_CheckReceiveMessage(void);
 
-void ESP8266_WaitAnswer(void);
+void ESP8266_WaitAnswer(uint32_t timeout);
+void ESP8266_ResetHardware(void);
 
 
 

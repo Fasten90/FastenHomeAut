@@ -411,14 +411,14 @@ ReturnType HOMEAUTMESSAGE_CreateMessage(HomeAut_MessageType *createToMessage, Ho
 	// MyAddress: uint8_t --> ASCII_3
 	// Problem: if not 3 char?
 	// TODO: Error with it! Fix length, and ended with character and not '\0'
-	UnsignedDecimalToString(messageInformation->MyAddress,createToMessage->MyAddress);
+	UnsignedDecimalToStringFill(messageInformation->MyAddress, createToMessage->MyAddress, 3, '0');
 	
 	// Default Separator
 	StrCpyFixLength(createToMessage->Seperator1,HOMEAUTMESSAGE_DefaultSeperator, HOMEAUTMESSAGE_DefaultSeparator_Length);
 
 	// TargetAddress
 	// TODO: Error with it! Fix length, and ended with character and not '\0'
-	UnsignedDecimalToString(messageInformation->TargetAddress,createToMessage->TargetAddress);
+	UnsignedDecimalToStringFill(messageInformation->TargetAddress, createToMessage->TargetAddress, 3, '0');
 	
 	// Default Separator
 	StrCpyFixLength(createToMessage->Seperator2,HOMEAUTMESSAGE_DefaultSeperator, HOMEAUTMESSAGE_DefaultSeparator_Length);
@@ -471,8 +471,8 @@ HomeAut_DataType DataType;
 uint32_t Data;
 uint8_t isValid;
 */
-ReturnType HOMEAUTMESSAGE_CreateAndSendHomeAutMessage
-	( uint8_t myIp, uint8_t destIp, HomeAut_FunctionType function,
+ReturnType HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
+	uint8_t myIp, uint8_t destIp, HomeAut_FunctionType function,
 	HomeAut_DataType dataType, uint32_t data, uint8_t isValid)
 {
 	
@@ -492,26 +492,24 @@ ReturnType HOMEAUTMESSAGE_CreateAndSendHomeAutMessage
 	messageInformation.isValid = isValid;
 	
 	// Create message ...
-	if ( HOMEAUTMESSAGE_CreateMessage(&message,&messageInformation) == Return_Ok )
+	if (HOMEAUTMESSAGE_CreateMessage(&message,&messageInformation) == Return_Ok)
 	{
-		
-		// TODO: queue-ba kĂ©ne kĂĽldeni ĂĽzenetet
-		// VigyĂˇzat: Ă­gy a NodeSmall-nak mĂˇsmilyen kĂłd kell majd...
-		/*
-		if ( ESP8266_TcpConnectionStatus == ESP8266_TcpConnectionStatus_Connected )
-		{
-			//ESP8266_SendTcpMessage((uint8_t *)&message);	// direct sending
-			
-		}
-		*/
+		// Send message
 #ifdef CONFIG_USE_FREERTOS
-		ESP8266_SendMessageToQueue((uint8_t *)&message);
+		return ESP8266_SendMessageToQueue((uint8_t *)&message);
+#else
+		if (ESP8266_TcpConnectionStatus == ESP8266_TcpConnectionStatus_Connected)
+		{
+			ESP8266_SendTcpMessage((uint8_t *)&message);	// direct sending
+		}
+		else
+		{
+			return Return_Error;
+		}
 #endif
-
-
 	}	
 
-	return Return_Ok;	// TODO: VisszatĂ©rĂ©seket jĂłl megcsinĂˇlni
+	return Return_Ok;	// TODO: Should correct return values
 	
 }
 
