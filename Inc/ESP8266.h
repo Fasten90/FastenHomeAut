@@ -58,6 +58,9 @@
 #define ESP8266_RST_INACTIVE()	HAL_GPIO_WritePin(ESP8266_RST_GPIO_PORT,ESP8266_RST_GPIO_PIN,GPIO_PIN_SET)
 
 
+#define ESP8266_TCP_MESSAGE_MAX_LENGTH						( 80 )
+
+
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
@@ -120,7 +123,7 @@ extern volatile char ESP8266_ReceiveBuffer[ESP8266_BUFFER_LENGTH];
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void ESP8266_SendString(char *aTxBuffer);
+void ESP8266_SendString(const char *str);
 void ESP8266_ReceiveString(uint8_t length);
 void ESP8266_ClearReceiveBuffer(void);
 void ESP8266_Task(void);
@@ -134,7 +137,6 @@ ReturnType ESP8266_StartServer(void);
 ReturnType ESP8266_FindServer(void);
 ReturnType ESP8266_ConnectToServer(void);
 
-ReturnType ESP8266_SendTcpMessage(char *message);
 ReturnType ESP8266_SendMessageToQueue(uint8_t *message);
 
 ReturnType ESP8266_ReceiveFixTcpMessage(void);

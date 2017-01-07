@@ -179,7 +179,6 @@ const CommandStruct CommandList[] =
 		.name = "adc",
 		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_adc,
 		.description = "Analog -> Digital",
-		.syntax = NULL,
 		.commandArgNum = CommandArgument_0,
 	},
 	{
@@ -188,6 +187,15 @@ const CommandStruct CommandList[] =
 		.description = "ADC read continuous",
 		.syntax = "<milliSec> <num>",
 		.commandArgNum = CommandArgument_1 | CommandArgument_2,
+	},
+#endif
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+	{
+		.name = "esp8266",
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_ESP8266,
+		.description = "Use ESP8266 module",
+		.syntax = "<send> <message>",
+		.commandArgNum = CommandArgument_2,
 	},
 #endif
 #ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
@@ -921,6 +929,24 @@ CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv)
 }
 #endif
 
+
+
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+CommandResult_t CommandFunction_ESP8266(uint32_t argc, char** argv)
+{
+	if (!StrCmp(argv[1],"send"))
+	{
+		// Send message to ESP8266 sending queue, which will send on ESP8266 TCP connection
+		ESP8266_SendMessageToQueue(argv[2]);
+		return CommandResult_Ok_SendSuccessful;
+	}
+	else
+	{
+		// Wrong 1. parameter
+		return CommandResult_Error_WrongArgument1;
+	}
+}
+#endif
 
 
 #ifdef CONFIG_MODULE_ADC_ENABLE

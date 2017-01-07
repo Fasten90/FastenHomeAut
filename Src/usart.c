@@ -96,23 +96,23 @@ void USART_Init ( UART_HandleTypeDef *UartHandle)
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	if (UartHandle == &Debug_UartHandle)
 	{
-		UartHandle->Instance        = DEBUG_USARTx;
-		UartHandle->Init.BaudRate   = DEBUG_USART_BAUDRATE;
+		UartHandle->Instance      = DEBUG_USARTx;
+		UartHandle->Init.BaudRate = DEBUG_USART_BAUDRATE;
 	}
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 	if (UartHandle == &ESP8266_UartHandle)
 	{
-		UartHandle->Instance        = ESP8266_USARTx;
-		UartHandle->Init.BaudRate   = ESP8266_USART_BAUDRATE;
+		UartHandle->Instance      = ESP8266_USARTx;
+		UartHandle->Init.BaudRate = ESP8266_USART_BAUDRATE;
 	}
 #endif
 	
-	UartHandle->Init.WordLength = UART_WORDLENGTH_8B;
-	UartHandle->Init.StopBits   = UART_STOPBITS_1;
-	UartHandle->Init.Parity     = UART_PARITY_NONE;
-	UartHandle->Init.HwFlowCtl  = UART_HWCONTROL_NONE;
-	UartHandle->Init.Mode       = UART_MODE_TX_RX;
+	UartHandle->Init.WordLength   = UART_WORDLENGTH_8B;
+	UartHandle->Init.StopBits     = UART_STOPBITS_1;
+	UartHandle->Init.Parity       = UART_PARITY_NONE;
+	UartHandle->Init.HwFlowCtl    = UART_HWCONTROL_NONE;
+	UartHandle->Init.Mode         = UART_MODE_TX_RX;
 	UartHandle->Init.OverSampling = UART_OVERSAMPLING_16;
 
 	if (HAL_UART_Init(UartHandle) == HAL_OK)
@@ -128,7 +128,6 @@ void USART_Init ( UART_HandleTypeDef *UartHandle)
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 		if (UartHandle == &ESP8266_UartHandle)
 		{
-			//USART_SendEnable_flag = true;
 			__HAL_UART_CLEAR_FLAG(&ESP8266_UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
 		}
 #endif
@@ -360,20 +359,20 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 		USART_Init(&Debug_UartHandle);
 
 		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[USART_RxBufferWriteCounter], RXBUFFER_WAIT_LENGTH);
-		HAL_UART_Transmit_IT(&Debug_UartHandle,(uint8_t *)"$",1);
+		HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t *)"$", 1);
 		
 		#ifdef CONFIG_USE_FREERTOS
 		//xSemaphoreGiveFromISR(DEBUG_USART_Rx_Semaphore,0);
-		if ( DEBUG_USART_Tx_Semaphore != NULL )
+		if (DEBUG_USART_Tx_Semaphore != NULL)
 		{
-			xSemaphoreGiveFromISR(DEBUG_USART_Tx_Semaphore,0);
+			xSemaphoreGiveFromISR(DEBUG_USART_Tx_Semaphore, 0);
 		}
 		#endif
 		
 	}
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-	else if (huart->Instance == ESP8266_USARTx )
+	else if (huart->Instance == ESP8266_USARTx)
 	{
 
 		// TODO: Sad, but sometime receive errors
@@ -421,6 +420,32 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 	return;
 }
 
+
+
+/**
+ * \brief	Clear UART peripheral status
+ * \note	Be careful for use, it will clear the receive-sending status
+ */
+void UART_ResetStatus(UART_HandleTypeDef *huart)
+{
+
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+	if (huart->Instance == ESP8266_USARTx)
+	{
+		// Delete previous receive:
+		__HAL_UART_FLUSH_DRREGISTER(huart);
+		__HAL_UART_CLEAR_FLAG(huart, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
+
+		huart->ErrorCode = HAL_UART_ERROR_NONE;
+		huart->gState = HAL_UART_STATE_READY;
+
+		huart->TxXferCount = 0;
+		huart->TxXferSize = 0;
+		huart->RxXferCount = 0;
+		huart->RxXferSize = 0;
+	}
+#endif
+}
 
 
 /**

@@ -83,6 +83,7 @@ xQueueHandle ESP8266_ReceivedMessage_Queue;
 static void DebugPrint(const char *debugString);
 static ReturnType ESP8266_ReceiveUnknownTcpMessage(void);
 static void ESP8266_WaitMessageAndCheckSendingQueue(void);
+static ReturnType ESP8266_SendTcpMessage(const char *message);
 
 static ReturnType ESP8266_ConvertIpString(char *message, uint8_t *ip);
 
@@ -366,10 +367,10 @@ ReturnType ESP8266_ConnectToWifiNetwork(void)
 	}
 
 	
-	// Send my IP address debug message
+	// Print my IP address
 	if (ESP8266_DebugEnableFlag == 1)
 	{
-		uprintf("My IP address: %d.%d.%d.%d\r\n",
+		uprintf("ESP8266 IP address: %d.%d.%d.%d\r\n",
 				ESP8266_MyIpAddress[0],
 				ESP8266_MyIpAddress[1],
 				ESP8266_MyIpAddress[2],
@@ -422,7 +423,8 @@ ReturnType ESP8266_ConnectToWifiNetwork(void)
 	//	AT+CIPSTA=<ip>
 	///////////////////////////////
 	
-	ESP8266_ReceiveString((unsigned char *)ESP8266_ReceiveBuffer,StringLength((uint8_t *)"AT+CIPSTA=\"9.6.5.14\"\r\r\n\r\nOK\r\n"));
+	ESP8266_ReceiveString((unsigned char *)ESP8266_ReceiveBuffer,
+	StringLength((uint8_t *)"AT+CIPSTA=\"9.6.5.14\"\r\r\n\r\nOK\r\n"));
 	
 	ESP8266_SendString((uint8_t *)"AT+CIPSTA=\"9.6.5.14\"\r\n");
 	
@@ -471,7 +473,8 @@ ReturnType ESP8266_FindServer ( void )
 	ESP8266_WaitAnswer(5000);
 	
 	// TODO: WTF, what is this parameter
-	if (!StrCmp("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",(const char *)ESP8266_ReceiveBuffer))
+	if (!StrCmp("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+			(const char *)ESP8266_ReceiveBuffer))
 	{
 		// OK\r\nLinked
 		LED_GREEN_ON();
@@ -595,19 +598,17 @@ ReturnType ESP8266_StartServer ( void )
  *			|HomeAut|010|014|LOGIN__|NMEDIU00000000|
  *			length: 40
  */
-ReturnType ESP8266_SendTcpMessage(char *message)
+static ReturnType ESP8266_SendTcpMessage(const char *message)
 {
-	uint8_t length = 0;
+	uint8_t length = StringLength(message);
+	char buffer[25]; // For "AT+CIPSEND=0,40\r\n"
 	
-	// TODO: Should be changeable length
-	if (StringLength(message) !=  ESP8266_HOMEAUT_MESSAGECONTENT_LENGTH)
+	// Check length
+	if (length >= ESP8266_TCP_MESSAGE_MAX_LENGTH)
 	{
 		// Wrong length
-		return Return_Error;
-	}
-	else
-	{	
-		length = ESP8266_HOMEAUT_MESSAGECONTENT_LENGTH;
+		DebugPrint("Too long message!\r\n");
+		length = ESP8266_TCP_MESSAGE_MAX_LENGTH - 1;
 	}
 	
 
@@ -624,26 +625,33 @@ ReturnType ESP8266_SendTcpMessage(char *message)
 	// SEND OK
 	///////////////////////////////////////////////
 	
-	// TODO: Should be changeable
-
 	ESP8266_ReceiveString(StringLength("> "));
 	
-	ESP8266_SendString("AT+CIPSEND=0,40\r\n");
+	// Send ~ "AT+CIPSEND=0,40\r\n"
+	usprintf(buffer, "AT+CIPSEND=0,%d\r\n", length);
+	ESP8266_SendString(buffer);
 	
 	ESP8266_WaitAnswer(5000);
 	
 #warning "First character is 0, but why...?"
-	if (!StrCmp("> ",(const char *)&ESP8266_ReceiveBuffer[1]))
+	if (!StrCmp("> ", (const char *)&ESP8266_ReceiveBuffer[1]))
 	{
 		ESP8266_LED_OK();
 	}
-	else
+	else if (!StrCmp("link is not\r\n", (const char *)&ESP8266_ReceiveBuffer[1]))
 	{
 		ESP8266_LED_FAIL();
 		return Return_Error;
 	}
+	else
+	{
+		ESP8266_LED_FAIL();
+#warning: "uncomment it"
+		//return Return_Error;
+	}
 	
 	
+	/////////////////////////
 	// Example:
 	// Send
 	// "GET / HTTP/1.0\r\n\r\n"
@@ -651,13 +659,14 @@ ReturnType ESP8266_SendTcpMessage(char *message)
 	// "SEND OK"
 
 	// Send message and wait response
-	ESP8266_ReceiveString(StringLength("SEND OK\r\n"));
+	ESP8266_ReceiveString(StringLength("\r\nSEND OK\r\n"));
 	
 	ESP8266_SendString(message);
 
 	ESP8266_WaitAnswer(5000);
 	
-	if (!StrCmp("SEND OK\r\n",(const char *)ESP8266_ReceiveBuffer))
+#warning "Wrong received characters, 0.-2. characters are '\0'"
+	if (!StrCmp("\r\nSEND OK\r\n", (const char *)&ESP8266_ReceiveBuffer[3]))
 	{
 		ESP8266_LED_OK();
 	}
@@ -677,7 +686,7 @@ ReturnType ESP8266_SendTcpMessage(char *message)
  *				length: 10+40
  *				example: "+IPD,0,40:" + "|HomeAut|010|014|LOGIN__|NMEDIU00000000|"
  */
-ReturnType ESP8266_ReceiveFixTcpMessage ( void )
+ReturnType ESP8266_ReceiveFixTcpMessage(void)
 {
 
 	
@@ -757,12 +766,12 @@ ReturnType ESP8266_CheckReceiveMessage ( void )
 /**
  * \brief	Send string to ESP8266
  */
-void ESP8266_SendString(char *aTxBuffer)
+void ESP8266_SendString(const char *str)
 {
 	
-	uint8_t length = StringLength(aTxBuffer);
+	uint8_t length = StringLength(str);
 
-	if (HAL_UART_Transmit(&ESP8266_UartHandle, (uint8_t*)aTxBuffer, length,5000) != HAL_OK)
+	if (HAL_UART_Transmit(&ESP8266_UartHandle, (uint8_t*)str, length, 5000) != HAL_OK)
 	{
 		Error_Handler();
 	}
@@ -863,26 +872,14 @@ static void ESP8266_WaitMessageAndCheckSendingQueue(void)
 				ESP8266_ReceiveBuffer_Cnt = 0;		// TODO: Csinálni egy receive mode váltás függvényt!!
 				ESP8266_TransmitBuffer[40] = '\0';	// end of buffer need to put an end char
 				
-
-				// TODO: Beautify this code below
-				// Clear buffer and etc
-				// Delete previous receive:
-				__HAL_UART_FLUSH_DRREGISTER(&ESP8266_UartHandle);
-				__HAL_UART_CLEAR_FLAG(&ESP8266_UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
-
-				ESP8266_UartHandle.ErrorCode = HAL_UART_ERROR_NONE;
-				ESP8266_UartHandle.gState = HAL_UART_STATE_READY;
-				ESP8266_UartHandle.TxXferCount = 0;
-				ESP8266_UartHandle.TxXferSize = 0;
-				ESP8266_UartHandle.RxXferCount = 0;
-				ESP8266_UartHandle.RxXferSize = 0;
-								
+				// Clear UART states
+				UART_ResetStatus(&ESP8266_UartHandle);
 				
 				// Sending
 				if (ESP8266_SendTcpMessage((char *)ESP8266_TransmitBuffer) == Return_Ok)
 				{
 					// TODO: printf
-					DebugPrint("Successful sended a message:\r\n");
+					DebugPrint("Successful sent a message:\r\n");
 					DebugPrint((const char *)ESP8266_TransmitBuffer);
 					DebugPrint("\r\n");
 				}
@@ -1146,9 +1143,11 @@ void ESP8266_Task(void)
 		ESP8266_ResetHardware();
 		DelayMs(10000);
 		USART_Init(&ESP8266_UartHandle);
+		UART_ResetStatus(&ESP8266_UartHandle);
 	}
 
-	DebugPrint("Configured ESP8266\r\n");
+	// If reached this, ESP8266 configure is successful
+	DebugPrint("Successful configured ESP8266\r\n");
 
 
 	// Wait
@@ -1226,12 +1225,16 @@ void ESP8266_Task(void)
 		if (ESP8266_ReceiveBuffer_Cnt >= 50)
 		{
 			//isValidMessage = OMEAUTMESSAGE_CompareMessage((uint8_t *)&ESP8266_ReceiveBuffer[ESP8266_HOMEAUTMESSAGE_RECEIVEDMESSAGE_START]);
+			// TODO: Correct this!
 			isValidMessage = Return_Ok;
 			if (isValidMessage == Return_Ok)
 			{
+				// TODO: Change DebugPrint-s
 				DebugPrint("Valid HomeAut message received:\r\n");
 				DebugPrint((char *)&ESP8266_ReceiveBuffer[ESP8266_HOMEAUTMESSAGE_RECEIVEDMESSAGE_START]);	
-				if (xQueueSend(ESP8266_ReceivedMessage_Queue,&ESP8266_ReceiveBuffer[ESP8266_HOMEAUTMESSAGE_RECEIVEDMESSAGE_START],1000) == pdPASS)
+				if (xQueueSend(ESP8266_ReceivedMessage_Queue,
+						(const void *)&ESP8266_ReceiveBuffer[ESP8266_HOMEAUTMESSAGE_RECEIVEDMESSAGE_START],
+						1000) == pdPASS)
 				{
 					// Successful sent to queue
 				}
