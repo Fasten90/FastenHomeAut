@@ -82,7 +82,11 @@ xQueueHandle ESP8266_ReceivedMessage_Queue;
  *----------------------------------------------------------------------------*/
 static void DebugPrint(const char *debugString);
 static ReturnType ESP8266_ReceiveUnknownTcpMessage(void);
+
 static void ESP8266_WaitMessageAndCheckSendingQueue(void);
+static void ESP8266_LoopSending(void);
+static void CheckReceivedMessage(void);
+
 static ReturnType ESP8266_SendTcpMessage(const char *message);
 
 static ReturnType ESP8266_ConvertIpString(char *message, uint8_t *ip);
@@ -633,7 +637,7 @@ static ReturnType ESP8266_SendTcpMessage(const char *message)
 	
 	ESP8266_WaitAnswer(5000);
 	
-#warning "First character is 0, but why...?"
+#warning "First character is 0, but why...?... Now it is \r and only received 1 character"
 	if (!StrCmp("> ", (const char *)&ESP8266_ReceiveBuffer[1]))
 	{
 		ESP8266_LED_OK();
@@ -665,7 +669,7 @@ static ReturnType ESP8266_SendTcpMessage(const char *message)
 
 	ESP8266_WaitAnswer(5000);
 	
-#warning "Wrong received characters, 0.-2. characters are '\0'"
+#warning "Wrong received characters, 0.-2. characters are '\0'... Now only receive '>' on first index"
 	if (!StrCmp("\r\nSEND OK\r\n", (const char *)&ESP8266_ReceiveBuffer[3]))
 	{
 		ESP8266_LED_OK();
@@ -715,7 +719,7 @@ ReturnType ESP8266_ReceiveFixTcpMessage(void)
  */
 static ReturnType ESP8266_ReceiveUnknownTcpMessage(void)
 {
-	// usart IT-ben váltás, egyenként fogunk karaktert fogadni:
+	// In uart IT: receive character by once
 	ESP8266_Receive_Mode_FixLength = 0;
 	
 	// Clear buffer
@@ -724,8 +728,8 @@ static ReturnType ESP8266_ReceiveUnknownTcpMessage(void)
 	// BufferCnt = 0;
 	ESP8266_ReceiveBuffer_Cnt = 0;
 	
-	// Start receive
-	HAL_UART_Receive_IT(&ESP8266_UartHandle,(uint8_t *)&ESP8266_ReceiveBuffer[0],1);
+	// Start receive (wait 1 character)
+	HAL_UART_Receive_IT(&ESP8266_UartHandle, (uint8_t *)&ESP8266_ReceiveBuffer[0], 1);
 
 	// Wait message
 	//ESP8266_WaitAnswer();	// Only wait ...
@@ -907,7 +911,39 @@ static void ESP8266_WaitMessageAndCheckSendingQueue(void)
 			// Do nothing
 		}
 	}
-	
+}
+
+
+
+/**
+ * \brief	Check sending queue and send messages on TCP
+ * \note	Be careful, it is infinite loop, never exit
+ */
+static void ESP8266_LoopSending(void)
+{
+	while(1)
+	{
+		// Need to sending?
+		if (xQueueReceive( ESP8266_SendMessage_Queue, (void * )ESP8266_TransmitBuffer, ( portTickType )0 ) == pdTRUE)
+		{
+
+			// Sending
+			if (ESP8266_SendTcpMessage((char *)ESP8266_TransmitBuffer) == Return_Ok)
+			{
+				// TODO: printf
+				DebugPrint("Successful sent a message:\r\n");
+				DebugPrint((const char *)ESP8266_TransmitBuffer);
+				DebugPrint("\r\n");
+			}
+			else
+			{
+				// TODO: printf
+				DebugPrint("Failed sending message:\r\n");
+				DebugPrint((const char *)ESP8266_TransmitBuffer);
+				DebugPrint("\r\n");
+			}
+		}
+	}
 }
 
 
@@ -965,7 +1001,7 @@ ReturnType ESP8266_WaitClientConnect( void)
 /**
  * \brief	Connect to server, with blocking
  */
-ReturnType ESP8266_ClientConnectBlocking(void)
+ReturnType ESP8266_ClientConnect(void)
 {
 
 	ReturnType successfulConnected = Return_Error;
@@ -994,19 +1030,6 @@ ReturnType ESP8266_ClientConnectBlocking(void)
 	}
 	
 	// Successful Connected ...
-	
-	// Send Login message
-	// TODO: Szépítés
-	HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
-		ESP8266_MyIpAddress[3],
-		ESP8266_SERVER_IP_ADDRESS_SHORT,
-		Function_Login,
-		Login_ImLoginImNodeMedium,
-		0,
-		1);
-	
-	DelayMs(1000);
-	
 	
 	return Return_Ok;
 }
@@ -1188,130 +1211,45 @@ void ESP8266_Task(void)
 			// TODO: Find server
 			
 			// Connect
-			ESP8266_ClientConnectBlocking();
+			ESP8266_ClientConnect();
 
 		}
 		#else
 		#error "CONFIG_ESP8266_IS_SERVER define isnt correct."
 		#endif
 		
+
 		// END OF Connect to server or start server
 
 		
+		// Send Login message
+		// TODO: Beautify
+		HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
+			ESP8266_MyIpAddress[3],
+			ESP8266_SERVER_IP_ADDRESS_SHORT,
+			Function_Login,
+			Login_ImLoginImNodeMedium,
+			0,
+			1);
+
+		DelayMs(1000);
+
+
+		//	Sending infinite loop
+		ESP8266_LoopSending();
+
 
 		/////////////////////////////////////
 		// Receive any message + Sending:
 		/////////////////////////////////////
-		ESP8266_ReceiveUnknownTcpMessage();
+		//ESP8266_ReceiveUnknownTcpMessage();
 		
 		
 		/////////////////////////////////////
 		//		Check received message
 		/////////////////////////////////////
 		
-		// Print received message:
-		DebugPrint("\r\nReceived a message\r\n");
-		// TODO: ha ezt most kiveszem, akkor nem tudja feldolgozni az elso uzenet kivetelevel a többit...
-		//DebugPrint((char *)&ESP8266_ReceiveBuffer[ESP8266_HOMEAUTMESSAGE_RECEIVEDMESSAGE_START]);
-		//DebugPrint((const char *)&ESP8266_ReceiveBuffer[0]);
-		//DebugPrint("\r\n");
-				
-		
-		// HomeAutMessage:
-		// "\r\n"											2
-		// "+IPD,0,40:"										10
-		// "|HomeAut|010|014|LOGIN__|NMEDIU00000000|"		40
-		// For HomeAutMessage
-		if (ESP8266_ReceiveBuffer_Cnt >= 50)
-		{
-			//isValidMessage = OMEAUTMESSAGE_CompareMessage((uint8_t *)&ESP8266_ReceiveBuffer[ESP8266_HOMEAUTMESSAGE_RECEIVEDMESSAGE_START]);
-			// TODO: Correct this!
-			isValidMessage = Return_Ok;
-			if (isValidMessage == Return_Ok)
-			{
-				// TODO: Change DebugPrint-s
-				DebugPrint("Valid HomeAut message received:\r\n");
-				DebugPrint((char *)&ESP8266_ReceiveBuffer[ESP8266_HOMEAUTMESSAGE_RECEIVEDMESSAGE_START]);	
-				if (xQueueSend(ESP8266_ReceivedMessage_Queue,
-						(const void *)&ESP8266_ReceiveBuffer[ESP8266_HOMEAUTMESSAGE_RECEIVEDMESSAGE_START],
-						1000) == pdPASS)
-				{
-					// Successful sent to queue
-				}
-				else
-				{
-					// Failed sent to queue
-					DebugPrint("Message failed to sending queue");
-				}
-			}
-			else
-			{				
-				DebugPrint("Invalid HomeAut message received:\r\n");
-				DebugPrint((char *)&ESP8266_ReceiveBuffer[0]);
-			}
-		}
-		// Check for unconnect, or other messages...
-		else if (!StrCmpWithLength((const char *)ESP8266_ReceiveBuffer, "Link", 4))
-		{
-			// Received: "Link"
-			isValidMessage = Return_Ok;
-			
-			#if ( CONFIG_ESP8266_IS_SERVER == 1)
-			// TODO: Process connecting, add new IP to list
-			DebugPrint("A client connected.\r\n");
-			#else
-			DebugPrint("Received \"Link\". This device is in client mode, dont understand it.\r\n");
-			#endif
-		}
-		else if (!StrCmpWithLength((const char *)ESP8266_ReceiveBuffer, "Unlink", 6))
-		{
-			// Received: "Unlink"
-			isValidMessage = Return_Ok;
-			
-			// TODO: Process disconnecting, delete IP from list
-			#if ( CONFIG_ESP8266_IS_SERVER == 1)
-			DebugPrint("A client disconnected.\r\n");
-			#else
-			DebugPrint("Disconnected. Need to reconnect\r\n");
-			ESP8266_ConnectionStatus = ESP8266_ConnectionStatus_ClosedConnection;
-			#endif
-		}
-		else if (!StrCmpWithLength((const char *)ESP8266_ReceiveBuffer, "OK", 2))
-		{
-			// Received: "OK"
-			// Note: This arrived after received an x length message (now, after 40 length homeautmessage)
-			isValidMessage = Return_Ok;
-			DebugPrint("Received an OK\r\n");
-		}
-		else if (!StrCmpWithLength((const char *)ESP8266_ReceiveBuffer, "", 1))
-		{
-			// Received: ""
-			// Note: This arrived after received an x length message (now, after 40 length homeautmessage) + "\r\n" after ""
-			isValidMessage = Return_Ok;
-			DebugPrint("Received an empty string\r\n");
-		}		
-		else
-		{
-			// Not valid message
-			isValidMessage = Return_Error;
-			DebugPrint((char *)&ESP8266_ReceiveBuffer[0]);
-			DebugPrint("Not valid message.\r\n");
-		}
-	
-		
-		// Received an correct message?
-		if (isValidMessage == Return_Ok)
-		{
-			LED_GREEN_ON();
-			LED_RED_OFF();
-		}
-		else
-		{
-			LED_GREEN_OFF();
-			LED_RED_ON();
-		}
-
-
+		CheckReceivedMessage();
 		
 	}
 	// END OF while(1)
@@ -1320,6 +1258,122 @@ void ESP8266_Task(void)
 }
 #endif	// #ifdef CONFIG_USE_FREERTOS
 
+
+
+/**
+ * \brief	TODO
+ */
+static void CheckReceivedMessage(void)
+{
+
+	// TODO: Check these codes below...
+
+	ReturnType isValidMessage;
+
+
+	// Print received message:
+	DebugPrint("\r\nReceived a message\r\n");
+	// TODO: ha ezt most kiveszem, akkor nem tudja feldolgozni az elso uzenet kivetelevel a többit...
+	//DebugPrint((char *)&ESP8266_ReceiveBuffer[ESP8266_HOMEAUTMESSAGE_RECEIVEDMESSAGE_START]);
+	//DebugPrint((const char *)&ESP8266_ReceiveBuffer[0]);
+	//DebugPrint("\r\n");
+
+
+	// HomeAutMessage:
+	// "\r\n"											2
+	// "+IPD,0,40:"										10
+	// "|HomeAut|010|014|LOGIN__|NMEDIU00000000|"		40
+	// For HomeAutMessage
+	if (ESP8266_ReceiveBuffer_Cnt >= 50)
+	{
+		//isValidMessage = OMEAUTMESSAGE_CompareMessage((uint8_t *)&ESP8266_ReceiveBuffer[ESP8266_HOMEAUTMESSAGE_RECEIVEDMESSAGE_START]);
+		// TODO: Correct this!
+		isValidMessage = Return_Ok;
+		if (isValidMessage == Return_Ok)
+		{
+			// TODO: Change DebugPrint-s
+			DebugPrint("Valid HomeAut message received:\r\n");
+			DebugPrint((char *)&ESP8266_ReceiveBuffer[ESP8266_HOMEAUTMESSAGE_RECEIVEDMESSAGE_START]);
+			if (xQueueSend(ESP8266_ReceivedMessage_Queue,
+					(const void *)&ESP8266_ReceiveBuffer[ESP8266_HOMEAUTMESSAGE_RECEIVEDMESSAGE_START],
+					1000) == pdPASS)
+			{
+				// Successful sent to queue
+			}
+			else
+			{
+				// Failed sent to queue
+				DebugPrint("Message failed to sending queue");
+			}
+		}
+		else
+		{
+			DebugPrint("Invalid HomeAut message received:\r\n");
+			DebugPrint((char *)&ESP8266_ReceiveBuffer[0]);
+		}
+	}
+	// Check for unconnect, or other messages...
+	else if (!StrCmpWithLength((const char *)ESP8266_ReceiveBuffer, "Link", 4))
+	{
+		// Received: "Link"
+		isValidMessage = Return_Ok;
+
+		#if ( CONFIG_ESP8266_IS_SERVER == 1)
+		// TODO: Process connecting, add new IP to list
+		DebugPrint("A client connected.\r\n");
+		#else
+		DebugPrint("Received \"Link\". This device is in client mode, dont understand it.\r\n");
+		#endif
+	}
+	else if (!StrCmpWithLength((const char *)ESP8266_ReceiveBuffer, "Unlink", 6))
+	{
+		// Received: "Unlink"
+		isValidMessage = Return_Ok;
+
+		// TODO: Process disconnecting, delete IP from list
+		#if ( CONFIG_ESP8266_IS_SERVER == 1)
+		DebugPrint("A client disconnected.\r\n");
+		#else
+		DebugPrint("Disconnected. Need to reconnect\r\n");
+		ESP8266_ConnectionStatus = ESP8266_ConnectionStatus_ClosedConnection;
+		#endif
+	}
+	else if (!StrCmpWithLength((const char *)ESP8266_ReceiveBuffer, "OK", 2))
+	{
+		// Received: "OK"
+		// Note: This arrived after received an x length message (now, after 40 length homeautmessage)
+		isValidMessage = Return_Ok;
+		DebugPrint("Received an OK\r\n");
+	}
+	else if (!StrCmpWithLength((const char *)ESP8266_ReceiveBuffer, "", 1))
+	{
+		// Received: ""
+		// Note: This arrived after received an x length message (now, after 40 length homeautmessage) + "\r\n" after ""
+		isValidMessage = Return_Ok;
+		DebugPrint("Received an empty string\r\n");
+	}
+	else
+	{
+		// Not valid message
+		isValidMessage = Return_Error;
+		DebugPrint((char *)&ESP8266_ReceiveBuffer[0]);
+		DebugPrint("Not valid message.\r\n");
+	}
+
+
+	// Received an correct message?
+	if (isValidMessage == Return_Ok)
+	{
+		LED_GREEN_ON();
+		LED_RED_OFF();
+	}
+	else
+	{
+		LED_GREEN_OFF();
+		LED_RED_ON();
+	}
+
+}
 
 
 /**

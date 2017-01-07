@@ -31,21 +31,23 @@ typedef struct
 	char MyAddress[3];						///< My address (sender)
 	// <MyAddress>
 	char Seperator1[1];						///< Separator character
-	// |
+	// '|'
 	char TargetAddress[3];					///< Target Address
 	// <TargetAddress>
 	char Seperator2[1];						///< Separator character
-	// |
+	// '|'
 	char Function[7];						///< Function
 	// <Function>
 	char Seperator3[1];						///< Separator character
-	// |
+	// '|'
 	char DataType[6];						///< Data type (example: TOOHOT)
 	// <DataType> : 6 byte ASCII char
 	char Data[8];							///< Data (example: temperature value)
 	// <Data> : 8 byte - ASCII Hex
 	char Seperator4[1];						///< Last separator character
-	// |
+	// '|'
+	char EndCharacter[1];					///< End character
+	// '\0'
 } HomeAut_MessageType;
 
 // For example message:

@@ -453,8 +453,11 @@ ReturnType HOMEAUTMESSAGE_CreateMessage(HomeAut_MessageType *createToMessage, Ho
 	
 	
 	// Default Separator
+	// TODO: change to 	createToMessage->Seperator4 = '|';
 	StrCpyFixLength(createToMessage->Seperator4,HOMEAUTMESSAGE_DefaultSeperator, HOMEAUTMESSAGE_DefaultSeparator_Length);
 	
+	// End character
+	createToMessage->EndCharacter[0] = '\0';
 	
 	return Return_Ok;
 }
