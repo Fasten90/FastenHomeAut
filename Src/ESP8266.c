@@ -1136,10 +1136,6 @@ void ESP8266_ResetHardware(void)
  */
 void ESP8266_Task(void)
 {
-
-	// For received message checking
-	ReturnType isValidMessage = Return_Error;
-
 	
 	// First, need initialize ESP8266's pins, with	ESP8266_Init();
 	// is in main.c
@@ -1150,8 +1146,8 @@ void ESP8266_Task(void)
 	
 	
 	// TODO: Delete this comment
-	// Minél késobb kell inicializálni az USART-ot, mert az ESP8266 induláskor sok üzenetet küld, amitol kifagy a handler.
-	//(ErrorCallback hívódik meg)
+	// Should init UART at very late (last minute),
+	// because ESP8266 send lot of messages at startup and UART has error, and call the ErrorCallback
 	USART_Init(&ESP8266_UartHandle);
 	
 	
