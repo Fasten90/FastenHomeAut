@@ -611,7 +611,7 @@ ReturnType SysManager_ProcessHomeAutMessage ( void )
 	{
 		//DebugPrint("HOMEAUTMESSAGE_MessageInformation.isValid == 1\r\n");
 		#ifdef CONFIG_USE_PANEL_CENTERPANEL
-		uint8_t ipAddress = HOMEAUTMESSAGE_MessageInformation.MyAddress;
+		uint8_t ipAddress = HOMEAUTMESSAGE_MessageInformation.SourceAddress;
 		uint32_t data = HOMEAUTMESSAGE_MessageInformation.Data;
 		#endif
 		

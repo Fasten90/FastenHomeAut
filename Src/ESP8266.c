@@ -50,6 +50,8 @@ ESP8266_TcpConnectionStatusType	ESP8266_TcpConnectionStatus = ESP8266_TcpConnect
 
 ///< IP address
 uint8_t ESP8266_MyIpAddress[4] = { 0 };
+const uint8_t ESP8266_ServerAddress[4] = { 192, 168, 1, 62 };
+
 
 // Receive
 uint8_t ESP8266_Receive_Mode_FixLength = 1;
@@ -951,7 +953,7 @@ static void ESP8266_LoopSending(void)
 /**
  * \brief	Put message to sending queue
  */
-ReturnType ESP8266_SendMessageToQueue(uint8_t *message)
+ReturnType ESP8266_SendMessageToQueue(char *message)
 {
 	// Sending
 	if (ESP8266_SendMessage_Queue != 0)
@@ -1221,8 +1223,8 @@ void ESP8266_Task(void)
 		// Send Login message
 		// TODO: Beautify
 		HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
-			ESP8266_MyIpAddress[3],
-			ESP8266_SERVER_IP_ADDRESS_SHORT,
+			ESP8266_MyIpAddress,
+			ESP8266_ServerAddress,
 			Function_Login,
 			Login_ImLoginImNodeMedium,
 			0,

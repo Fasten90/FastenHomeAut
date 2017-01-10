@@ -680,6 +680,10 @@ CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
 	STRING_UnitTest();
 #endif
 
+#ifdef MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
+	HOMEAUTMESSAGE_UnitTest();
+#endif
+
 	return CommandResult_Ok;
 }
 
@@ -934,6 +938,8 @@ CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv)
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 CommandResult_t CommandFunction_ESP8266(uint32_t argc, char** argv)
 {
+	(void)argc;
+
 	if (!StrCmp(argv[1],"send"))
 	{
 		// Send message to ESP8266 sending queue, which will send on ESP8266 TCP connection

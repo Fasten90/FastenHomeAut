@@ -22,9 +22,6 @@
 // for ESP8266 receive buffer length
 
 
-#define ESP8266_SERVER_IP_ADDRESS_SHORT		( 10 )
-
-
 #define ESP8266_HOMEAUTMESSAGE_RECEIVEMESSAGE_QUEUE_LENGTH	( 5 )
 #define ESP8266_HOMEAUTMESSAGE_SENDMESSAGE_QUEUE_LENGTH		( 5 )
 
@@ -137,7 +134,7 @@ ReturnType ESP8266_StartServer(void);
 ReturnType ESP8266_FindServer(void);
 ReturnType ESP8266_ConnectToServer(void);
 
-ReturnType ESP8266_SendMessageToQueue(uint8_t *message);
+ReturnType ESP8266_SendMessageToQueue(char *message);
 
 ReturnType ESP8266_ReceiveFixTcpMessage(void);
 
