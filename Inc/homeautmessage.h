@@ -22,56 +22,39 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define VALID		( 1 )
-#define INVALID		( 0 )
+// |HomeAut|192.168.100.100|192.168.100.014|2017-01-10 18:49:50|COMMAND|REMOTE|00000000|\0
+// This example length: 87
+#define HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH					( 90 )
+#define HOMEAUTMESSAGE_MESSAGE_MIN_LENGTH					( 70 )
+// TODO: Kiszámolni
 
+#define	HOMEAUTMESSAGE_SEPARATOR_CHARACTER					( '|' )
+#define	HOMEAUTMESSAGE_SEPARATOR_STRING						( "|" )
+
+#define HOMEAUTMESSAGE_SPLIT_NUM							( 7 )
+
+#define HOMEAUTMESSAGE_MESSAGE_STRUCT_HEADER_COUNT			( 0 )
+#define HOMEAUTMESSAGE_MESSAGE_STRUCT_SOURCEADDRESS_COUNT	( 1 )
+#define HOMEAUTMESSAGE_MESSAGE_STRUCT_TARGETADDRESS_COUNT	( 2 )
+#define HOMEAUTMESSAGE_MESSAGE_STRUCT_DATETIME_COUNT		( 3 )
+#define HOMEAUTMESSAGE_MESSAGE_STRUCT_FUNCTION_COUNT		( 4 )
+#define HOMEAUTMESSAGE_MESSAGE_STRUCT_DATATYPE_COUNT		( 5 )
+#define HOMEAUTMESSAGE_MESSAGE_STRUCT_DATA_COUNT			( 6 )
+
+// 2017-01-10 19:38:00
+#define HOMEAUTMESSAGE_MESSAGE_DATETIME_LENGTH		( 19 )
 
 
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-/// HomeAut message structure for message separation
+
 typedef struct
 {
-	char Header[9];							///< Header
-	// |HomeAut|
-	char MyAddress[3];						///< My address (sender)
-	// <MyAddress>
-	char Seperator1[1];						///< Separator character
-	// '|'
-	char TargetAddress[3];					///< Target Address
-	// <TargetAddress>
-	char Seperator2[1];						///< Separator character
-	// '|'
-	char Function[7];						///< Function
-	// <Function>
-	char Seperator3[1];						///< Separator character
-	// '|'
-	char DataType[6];						///< Data type (example: TOOHOT)
-	// <DataType> : 6 byte ASCII char
-	char Data[8];							///< Data (example: temperature value)
-	// <Data> : 8 byte - ASCII Hex
-	char Seperator4[1];						///< Last separator character
-	// '|'
-	char EndCharacter[1];					///< End character
-	// '\0'
-} HomeAut_MessageType;
+	uint8_t IP[4];
+} HomeAutAddress_t;
 
-// For example message:
-// |HomeAut|010|014|LOGIN__|NMEDIU00000000|
-//type = Login_ImLoginImNodeMedium
-
-// TODO: delete
-// uint8_t	Function[7],
-/*
-const uint8_t HOMEAUTMESSAGE_DefaultFunctionLogin[] =   "LOGIN__";
-const uint8_t HOMEAUTMESSAGE_DefaultFunctionState[] =   "STATE__";
-const uint8_t HOMEAUTMESSAGE_DefaultFunctionAlarm[] =   "ALARM__";
-const uint8_t HOMEAUTMESSAGE_DefaultFunctionCommand[] = "COMMAND";
-const uint8_t HOMEAUTMESSAGE_DefaultFunctionMode[] =    "MODE___";
-const uint8_t HOMEAUTMESSAGE_DefaultFunctionConfig[] =  "CONFIG_";
-*/
 
 
 /// HomeAut function
@@ -110,7 +93,6 @@ typedef enum
 	Login_Welcome,
 	Login_Sync,
 	
-	
 	// State
 	State_Temperature,
 	State_Brightness,
@@ -148,6 +130,7 @@ typedef enum
 	Command_SetLed,
 	Command_AllLed,
 	Command_ResetLed,
+	Command_Remote,
 	
 	// Mode: Master set Slave mode
 	Mode_RemoteControl,
@@ -177,12 +160,13 @@ typedef struct
 /// HomeAut message information type
 typedef struct
 {
-	uint8_t MyAddress;						///< My (sender) address
-	uint8_t TargetAddress;					///< Target (receiver) address
+	HomeAutAddress_t SourceAddress;			///< My (sender) address
+	HomeAutAddress_t TargetAddress;			///< Target (receiver) address
+	DateTime_t DateTime;					///< Event date and time
 	HomeAut_FunctionType Function;			///< Function
 	HomeAut_DataType DataType;				///< Data type
 	uint32_t Data;							///< Data
-	uint8_t isValid;						///< It is valid information?
+	bool isValid;							///< It is valid information?
 } HomeAut_InformationType;
 
 
@@ -206,16 +190,21 @@ extern HomeAut_InformationType HOMEAUTMESSAGE_MessageInformation;
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-ReturnType HOMEAUTMESSAGE_CheckAndProcessMessage(char *messageString);
-ReturnType HOMEAUTMESSAGE_CreateMessage(HomeAut_MessageType *createToMessage, HomeAut_InformationType *messageInformation);
+bool HOMEAUTMESSAGE_CheckAndProcessMessage(const char *messageString,
+		HomeAut_InformationType *messageInformation);
+ReturnType HOMEAUTMESSAGE_CreateMessage(HomeAut_InformationType *messageInformation, char *createToMessage);
 
 ReturnType HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
-	uint8_t myIp, uint8_t destIp, HomeAut_FunctionType function,
-	HomeAut_DataType dataType, uint32_t data, uint8_t isValid);
+	uint8_t *myIp, uint8_t *destIp,
+	HomeAut_FunctionType function,
+	HomeAut_DataType dataType,
+	uint32_t data,
+	uint8_t isValid);
 	
-void HOMEAUTMESSAGE_Test(void);
 
+bool HomeAutMessage_ConvertAddressStringToIP(char *message, HomeAutAddress_t *address);
 
+void HOMEAUTMESSAGE_UnitTest(void);
 
 
 #endif /* HOMEAUTMESSAGE_H_*/

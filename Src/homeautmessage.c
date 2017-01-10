@@ -10,8 +10,8 @@
  */
 
 
+#include <HomeAutMessage.h>
 #include "include.h"
-#include "homeautmessage.h"
 
 
 #ifdef CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
@@ -25,9 +25,9 @@
 // TODO: Write to dynamic
 
 // Now: 40 length
-const uint8_t HOMEAUTMESSAGE_DefaultMessageLength = sizeof(HomeAut_MessageType);
+const uint8_t HOMEAUTMESSAGE_DefaultMessageLength = HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH;
 
-const char HOMEAUTMESSAGE_DefaultHeader[] = "|HomeAut|";
+const char HOMEAUTMESSAGE_DefaultHeader[] = "HomeAut";
 const uint8_t HOMEAUTMESSAGE_DefaultHeader_Length = sizeof(HOMEAUTMESSAGE_DefaultHeader) -1;
 
 const char HOMEAUTMESSAGE_DefaultSeperator[] = "|";
@@ -191,6 +191,10 @@ const DataTypeParity DataTypeParity_List[] =
 		.name = "SETOUT",
 		.type = Command_SetOutput
 	},
+	{
+		.name = "REMOTE",
+		.type = Command_Remote
+	},
 
 	// HERE ADD NEW DateType
 
@@ -207,137 +211,147 @@ HomeAut_InformationType HOMEAUTMESSAGE_MessageInformation;
 
 
 
+
+uint8_t HomeAutMessage_PrintIpAddress(char *message, HomeAutAddress_t *ip);
+
+
+
 /*------------------------------------------------------------------------------
  *									Functions
  *----------------------------------------------------------------------------*/
 
 
 /**
- * \brief	Check HomeAutMessage
+ * \brief	Check HomeAutMessage (Convert string to information)
  */
-ReturnType HOMEAUTMESSAGE_CheckAndProcessMessage(char *messageString)
+bool HOMEAUTMESSAGE_CheckAndProcessMessage(const char *messageString,
+		HomeAut_InformationType *messageInformation)
 {
-	HomeAut_MessageType *message = (HomeAut_MessageType *)messageString;
+
+	// Information data
+	HomeAut_InformationType information = { 0 };
 	
-	HOMEAUTMESSAGE_MessageInformation.isValid = INVALID;
-	uint32_t readedMyAddress = 0;
-	uint32_t readedTargetAddress = 0;
-	HomeAut_FunctionType function = Function_Invalid;
-	uint32_t readedData = 0;
-	char buffer[10];
-	HomeAut_DataType dataType = DataType_Unknown;
+	// For separate
+	uint8_t messageLength;
+	char message[HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH];
+	bool isOk = true;
+	char *split[HOMEAUTMESSAGE_SPLIT_NUM] = { 0 };
+	uint8_t i;
 	
-	
-	// Header
-	if (!StrCmpWithLength((char *)message->Header,(char *)HOMEAUTMESSAGE_DefaultHeader,HOMEAUTMESSAGE_DefaultHeader_Length))
+	// |HomeAut|192.168.100.100|192.168.100.014|2017-01-10 18:49:50|COMMAND|REMOTE|00000000|\0
+
+	// Check length
+	messageLength = StringLength(messageString);
+	if (messageLength >= HOMEAUTMESSAGE_MESSAGE_MIN_LENGTH)
 	{
-		
-		// MyAddress
-		StrCpyFixLength(buffer,message->MyAddress,HOMEAUTMESSAGE_DefaultAddress_Length);
-		buffer[HOMEAUTMESSAGE_DefaultAddress_Length] = '\0';
-		if (!StringToUnsignedDecimalNum (buffer, &readedMyAddress))
+		// Ok, copy message to modify buffer
+		StrCpy(message, messageString);
+	}
+	else
+	{
+		isOk = false;
+	}
+
+
+	// TODO: Check first character
+
+	// Split
+	isOk = (STRING_Splitter(&message[1], HOMEAUTMESSAGE_SEPARATOR_CHARACTER,
+			split, HOMEAUTMESSAGE_SPLIT_NUM) == HOMEAUTMESSAGE_SPLIT_NUM);
+
+
+	// Check header
+	if (isOk)
+	{
+		isOk = !StrCmp(split[HOMEAUTMESSAGE_MESSAGE_STRUCT_HEADER_COUNT],
+				HOMEAUTMESSAGE_DefaultHeader);
+	}
+
+
+	// Check source address
+	if (isOk)
+	{
+		isOk = HomeAutMessage_ConvertAddressStringToIP(
+				split[HOMEAUTMESSAGE_MESSAGE_STRUCT_SOURCEADDRESS_COUNT],
+				&information.SourceAddress);
+	}
+
+
+	// Check target address
+	if (isOk)
+	{
+		isOk = HomeAutMessage_ConvertAddressStringToIP(
+				split[HOMEAUTMESSAGE_MESSAGE_STRUCT_TARGETADDRESS_COUNT],
+				&information.TargetAddress);
+	}
+
+
+	// DateTime
+	if (isOk)
+	{
+		isOk = DateTime_ConvertStringToDateTime(
+				split[HOMEAUTMESSAGE_MESSAGE_STRUCT_DATETIME_COUNT],
+				&information.DateTime);
+	}
+
+
+	// Function
+	if (isOk)
+	{
+		information.Function = Function_Invalid;
+		for (i = 0; FunctionTypeParity_List[i].function != Function_End; i++)
 		{
-			return Return_Error;
-		}
-		if (readedMyAddress < 256)
-		{
-			if (!StrCmpWithLength((char *)message->Seperator1,(char *)HOMEAUTMESSAGE_DefaultSeperator,HOMEAUTMESSAGE_DefaultSeparator_Length))
+			if (!StrCmp(
+					(char *)split[HOMEAUTMESSAGE_MESSAGE_STRUCT_FUNCTION_COUNT],
+					(char *)FunctionTypeParity_List[i].name))
 			{
-				StrCpyFixLength(buffer,message->TargetAddress,HOMEAUTMESSAGE_DefaultAddress_Length);
-				buffer[HOMEAUTMESSAGE_DefaultAddress_Length] = '\0';
-				if (!StringToUnsignedDecimalNum (buffer,&readedTargetAddress))
-				{
-					return Return_Error;
-				}
-				if (readedMyAddress < 256)
-				{
-					//uint8_t Seperator2[1];
-					// |				
-					if (!StrCmpWithLength((char *)message->Seperator2,(char *)HOMEAUTMESSAGE_DefaultSeperator,HOMEAUTMESSAGE_DefaultSeparator_Length))
-					{						
-
-						//uint8_t	Function[7];
-						// <Function>		
-						StrCpyFixLength(buffer,message->Function,HOMEAUTMESSAGE_DefaultFunction_Length);
-						buffer[HOMEAUTMESSAGE_DefaultFunction_Length] = '\0';
-						for (int i = 0; FunctionTypeParity_List[i].function != Function_End; i++)
-						{
-							if (!StrCmpWithLength((char *)buffer,(char *)FunctionTypeParity_List[i].name,HOMEAUTMESSAGE_DefaultFunction_Length))
-							{
-								function = FunctionTypeParity_List[i].function;
-								break;
-							}
-						}
-											
-						if ( function != Function_Invalid )
-						{
-							
-							//uint8_t Seperator3[1];
-							// |
-							if (!StrCmpWithLength((char *)message->Seperator3,(char *)HOMEAUTMESSAGE_DefaultSeperator,HOMEAUTMESSAGE_DefaultSeparator_Length))
-							{							
-								
-								// <DataType> : 6 byte ASCII char
-								StrCpyFixLength(buffer,message->DataType,HOMEAUTMESSAGE_DefaultDataType_Length);
-								buffer[HOMEAUTMESSAGE_DefaultFunction_Length] = '\0';
-								for (int i = 0; DataTypeParity_List[i].type != DataType_End; i++)
-								{		
-									//DataTypeParity_List[i].name
-									if (!StrCmpWithLength((char *)buffer,(char *)DataTypeParity_List[i].name,HOMEAUTMESSAGE_DefaultDataType_Length))
-									{
-										dataType = DataTypeParity_List[i].type;
-										break;
-									}
-									
-								}
-								
-								if (dataType == DataType_Unknown)
-								{
-									return Return_Error;
-								}
-									
-								
-								//uint8_t Data[8];
-								// <Data>
-								StrCpyFixLength(buffer,message->Data,HOMEAUTMESSAGE_DefaultData_Length);
-								buffer[HOMEAUTMESSAGE_DefaultData_Length] = '\0';
-
-								if (StringHexToNum (buffer,&readedData))
-								{
-									// Successful converting
-								}
-								else
-								{
-									// Error with converting hex
-									return Return_Error;
-								}
-																
-								//uint8_t Seperator4[1];
-								// |	
-								if (!StrCmpWithLength((char *)message->Seperator4,(char *)HOMEAUTMESSAGE_DefaultSeperator,HOMEAUTMESSAGE_DefaultSeparator_Length))
-								{	
-									
-									HOMEAUTMESSAGE_MessageInformation.MyAddress = readedMyAddress;
-									HOMEAUTMESSAGE_MessageInformation.TargetAddress = readedTargetAddress;
-									HOMEAUTMESSAGE_MessageInformation.Function = function;
-									HOMEAUTMESSAGE_MessageInformation.DataType = dataType;
-									HOMEAUTMESSAGE_MessageInformation.Data = readedData;
-									HOMEAUTMESSAGE_MessageInformation.isValid = VALID;
-									
-									return Return_Ok;
-								}
-							}								
-							
-						}		
-						
-					}
-				}
+				information.Function = FunctionTypeParity_List[i].function;
+				break;
 			}
-		}		
-	}			
+		}
+
+		isOk = (information.Function != Function_Invalid);
+	}
+
+	// Data type
+	if (isOk)
+	{
+		information.DataType = DataType_Unknown;
+		for (i = 0; DataTypeParity_List[i].type != DataType_End; i++)
+		{
+			//DataTypeParity_List[i].name
+			if (!StrCmp(
+					(char *)split[HOMEAUTMESSAGE_MESSAGE_STRUCT_DATATYPE_COUNT],
+					(char *)DataTypeParity_List[i].name))
+			{
+				information.DataType  = DataTypeParity_List[i].type;
+				break;
+			}
+
+		}
+
+		isOk = (information.DataType != DataType_Unknown);
+	}
+
+
+	// Data
+	if (isOk)
+	{
+		isOk = StringHexToNum(split[HOMEAUTMESSAGE_MESSAGE_STRUCT_DATA_COUNT], &information.Data);
+	}
+
+
+	// Finish
+	if (isOk)
+	{
+		information.isValid = true;
+		// If message is good, copy information to parameter
+		memcpy(messageInformation, &information, sizeof(HomeAut_InformationType));
+	}
+
 	
-	return Return_Error;
-	
+	return isOk;
+
 }		
 
 
@@ -345,75 +359,84 @@ ReturnType HOMEAUTMESSAGE_CheckAndProcessMessage(char *messageString)
 /**
  * \brief	Create an HomeAutMessage
  */
-ReturnType HOMEAUTMESSAGE_CreateMessage(HomeAut_MessageType *createToMessage, HomeAut_InformationType *messageInformation)
+uint8_t HOMEAUTMESSAGE_CreateMessage(HomeAut_InformationType *messageInformation, char *createToMessage)
 {
 	
-	
-	// Default Header
-	StrCpyFixLength(createToMessage->Header,HOMEAUTMESSAGE_DefaultHeader, HOMEAUTMESSAGE_DefaultHeader_Length);
+	uint8_t length = 0;
+	uint8_t i;
 
+	// Separator
+	length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
 
+	// Header Header
+	length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_DefaultHeader);
+
+	// Separator
+	length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
+
+	///////////////////////
 	// Others, variables
-	
-	// MyAddress: uint8_t --> ASCII_3
-	// Problem: if not 3 char?
-	// TODO: Error with it! Fix length, and ended with character and not '\0'
-	UnsignedDecimalToStringFill(messageInformation->MyAddress, createToMessage->MyAddress, 3, '0');
-	
-	// Default Separator
-	StrCpyFixLength(createToMessage->Seperator1,HOMEAUTMESSAGE_DefaultSeperator, HOMEAUTMESSAGE_DefaultSeparator_Length);
+	///////////////////////
 
-	// TargetAddress
-	// TODO: Error with it! Fix length, and ended with character and not '\0'
-	UnsignedDecimalToStringFill(messageInformation->TargetAddress, createToMessage->TargetAddress, 3, '0');
-	
-	// Default Separator
-	StrCpyFixLength(createToMessage->Seperator2,HOMEAUTMESSAGE_DefaultSeperator, HOMEAUTMESSAGE_DefaultSeparator_Length);
+	// Source Address
+	length += HomeAutMessage_PrintIpAddress(&createToMessage[length], &messageInformation->SourceAddress);
 
+	// Separator
+	length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
+
+	// Target Address
+	length += HomeAutMessage_PrintIpAddress(&createToMessage[length], &messageInformation->TargetAddress);
+
+	// Separator
+	length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
+
+	// DateTime
+	length += DateTime_PrintDateTimeToString(&createToMessage[length], &messageInformation->DateTime);
+
+	// Separator
+	length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
 	
 	// Function
-	for (int i = 0; FunctionTypeParity_List[i].function != Function_End; i++)
+	for (i = 0; FunctionTypeParity_List[i].function != Function_End; i++)
 	{
 		if (FunctionTypeParity_List[i].function == messageInformation->Function )
 		{
-			StrCpyFixLength(createToMessage->Function,FunctionTypeParity_List[i].name,HOMEAUTMESSAGE_DefaultFunction_Length);
+			length += StrCpy(&createToMessage[length], FunctionTypeParity_List[i].name);
 			break;
 		}
 	}
 	
-	// Default Separator
-	StrCpyFixLength(createToMessage->Seperator3,HOMEAUTMESSAGE_DefaultSeperator, HOMEAUTMESSAGE_DefaultSeparator_Length);
-	
-	
+	// Separator
+	length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
+
 	// DataType
-	for (int i = 0; DataTypeParity_List[i].type != DataType_End; i++)
+	for (i = 0; DataTypeParity_List[i].type != DataType_End; i++)
 	{
 		if (DataTypeParity_List[i].type == messageInformation->DataType )
 		{
-			StrCpyFixLength(createToMessage->DataType,DataTypeParity_List[i].name,HOMEAUTMESSAGE_DefaultData_Length);
+			length += StrCpy(&createToMessage[length], DataTypeParity_List[i].name);
 			break;
 		}
 	}
 	
+	// Separator
+	length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
+
 	// Data
-	DecimalToHexaString(messageInformation->Data, createToMessage->Data, 8);
+	length += DecimalToHexaString(messageInformation->Data, &createToMessage[length], 8);
+	
+	// Separator
+	length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
 	
 	
-	// Default Separator
-	// TODO: change to 	createToMessage->Seperator4 = '|';
-	StrCpyFixLength(createToMessage->Seperator4,HOMEAUTMESSAGE_DefaultSeperator, HOMEAUTMESSAGE_DefaultSeparator_Length);
-	
-	// End character
-	createToMessage->EndCharacter[0] = '\0';
-	
-	return Return_Ok;
+	return length;
 }
 
 
 
 /**
  * \brief	Create and send message the sending queue
- * \param	uint8_t MyAddress;
+ * \param	uint8_t SourceAddress;
  * \param	uint8_t TargetAddress;
  * \param	HomeAut_FunctionType Function;
  * \param	HomeAut_DataType DataType;
@@ -421,16 +444,23 @@ ReturnType HOMEAUTMESSAGE_CreateMessage(HomeAut_MessageType *createToMessage, Ho
  * \param	uint8_t isValid;
  */
 ReturnType HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
-	uint8_t myIp, uint8_t destIp, HomeAut_FunctionType function,
-	HomeAut_DataType dataType, uint32_t data, uint8_t isValid)
+	uint8_t *myIp, uint8_t *destIp,
+	HomeAut_FunctionType function,
+	HomeAut_DataType dataType,
+	uint32_t data,
+	uint8_t isValid)
 {
 	
 	HomeAut_InformationType messageInformation;
-	HomeAut_MessageType message;
+	char message[HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH];
 	
+	uint8_t i;
 
-	messageInformation.MyAddress = myIp;	
-	messageInformation.TargetAddress = destIp;
+	for (i = 0; i < 4; i++)
+		messageInformation.SourceAddress.IP[i] = myIp[i];
+
+	for (i = 0; i < 4; i++)
+		messageInformation.TargetAddress.IP[i] = destIp[i];
 	
 	messageInformation.Function = function;
 	
@@ -441,11 +471,11 @@ ReturnType HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
 	messageInformation.isValid = isValid;
 	
 	// Create message ...
-	if (HOMEAUTMESSAGE_CreateMessage(&message,&messageInformation) == Return_Ok)
+	if (HOMEAUTMESSAGE_CreateMessage(&messageInformation, message) == Return_Ok)
 	{
 		// Send message
 #ifdef CONFIG_USE_FREERTOS
-		return ESP8266_SendMessageToQueue((uint8_t *)&message);
+		return ESP8266_SendMessageToQueue(message);
 #else
 		if (ESP8266_TcpConnectionStatus == ESP8266_TcpConnectionStatus_Connected)
 		{
@@ -465,25 +495,101 @@ ReturnType HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
 
 
 /**
+ * \brief	Convert string IP address to uint8_t[4]
+ */
+bool HomeAutMessage_ConvertAddressStringToIP(char *message, HomeAutAddress_t *address)
+{
+
+	// String come like "\r\n192.168.0.1\r\n"
+
+	char *separated[4];
+
+	if (STRING_Splitter(message, '.',  separated, 4) == 4)
+	{
+		// Successful separated
+		// Convert IP string to number
+		uint8_t i;
+		for (i = 0; i < 4; i++)
+		{
+			uint32_t convertValue;
+			if (StringToUnsignedDecimalNum(separated[i], &convertValue))
+			{
+				// Successful convert to number
+				if (convertValue <= 255)
+				{
+					address->IP[i] = (uint8_t)convertValue;
+				}
+				else
+				{
+					// Error, Too large value
+					return false;
+				}
+			}
+			else
+			{
+				// Failed convert to number
+				return false;
+			}
+
+		}
+
+		return true;
+	}
+	else
+	{
+		// Failed separate string
+		return false;
+	}
+
+}
+
+
+
+/**
+ * \brief	Print IP address to string
+ */
+uint8_t HomeAutMessage_PrintIpAddress(char *message, HomeAutAddress_t *ip)
+{
+	uint8_t length = 0;
+	uint8_t i;
+
+	for (i=0; i<4; i++)
+	{
+		length += UnsignedDecimalToString(ip->IP[i], &message[length]);
+		if (i < 3)
+		{
+			message[length++] = '.';
+		}
+	}
+
+	return length;
+}
+
+
+
+/**
  * \brief	Test an HomeAutMessage
  */
-void HOMEAUTMESSAGE_Test(void)
+void HOMEAUTMESSAGE_UnitTest(void)
 {
 	// TODO: Update to unit test
 
-	// |HomeAut|<MyAddress>|<TargetAddress>|<Function>|<DataType>:<Data>|
-	const char TestMessage[] = "|HomeAut|100|121|ALARM__|TEMP__01234567|";
-
+	// |HomeAut|<SourceAddress>|<TargetAddress>|<DateTime>|<Function>|<DataType>:<Data>|
+	const char TestMessage[] = "|HomeAut|192.168.100.100|192.168.100.014|2017-01-10 18:49:50|COMMAND|REMOTE|00000000|";
+	HomeAut_InformationType testInformation = { 0 };
+	char exampleStringMessage[HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH];
 	uint8_t isGood = 0;
 
 	// It is valid message?
-	if (HOMEAUTMESSAGE_CheckAndProcessMessage(TestMessage) == Return_Ok)
+	if (HOMEAUTMESSAGE_CheckAndProcessMessage(TestMessage, &testInformation))
 	{
 		// TODO: Check all parameters
-		if (HOMEAUTMESSAGE_MessageInformation.isValid == VALID )
+		// TODO: Correct the parameters
+		if (testInformation.isValid == true)
 		{
-			if (HOMEAUTMESSAGE_MessageInformation.Data == 0x01234567)
+			if (testInformation.Data == 0x01234567)
 			{
+#warning "It is not good"
 				LED_GREEN_ON();
 				isGood = 1;
 				// GOOD !!
@@ -492,16 +598,16 @@ void HOMEAUTMESSAGE_Test(void)
 		}
 	}
 
+	// Is good to string message -> information convert?
 	if (isGood)
 	{
 		LED_GREEN_ON();
 	}
 
-	HomeAut_MessageType anMessage;
-	HomeAut_MessageType *pAnMessage;
-	pAnMessage = &anMessage;
 
-	HOMEAUTMESSAGE_CreateMessage(pAnMessage, &HOMEAUTMESSAGE_MessageInformation);
+	HOMEAUTMESSAGE_CreateMessage(&testInformation, exampleStringMessage);
+
+	// TODO: Check it
 
 }
 
