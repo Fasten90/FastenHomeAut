@@ -580,7 +580,7 @@ ReturnType SysManager_CheckReceivedMessage ( void )
 	if ( xQueueReceive(ESP8266_ReceivedMessage_Queue,SysManager_HomeAutMessage_Buffer,0) == pdPASS )
 	{
 		// Read & Parse
-		if ( HOMEAUTMESSAGE_CompareMessage(SysManager_HomeAutMessage_Buffer) == Return_Ok )
+		if ( HOMEAUTMESSAGE_CheckAndProcessMessage(SysManager_HomeAutMessage_Buffer) == Return_Ok )
 		{
 			// Successful parsed
 			// Process

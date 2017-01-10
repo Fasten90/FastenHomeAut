@@ -16,12 +16,11 @@
 
 #ifdef CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
 
-////////////////////////////
-//		GLOBAL VARIABLES
-////////////////////////////
+/*------------------------------------------------------------------------------
+ *  Global variables
+ *----------------------------------------------------------------------------*/
 
-
-////////// CONST
+// Constant global variables
 
 // TODO: Write to dynamic
 
@@ -204,27 +203,19 @@ const DataTypeParity DataTypeParity_List[] =
 };
 
 
-
-
-
-
-
-////////////////////////////
-//		GLOBAL VARIABLES
-
 HomeAut_InformationType HOMEAUTMESSAGE_MessageInformation;
 
 
 
-////////////////////////////
-//		FUNCTIONS
-////////////////////////////
+/*------------------------------------------------------------------------------
+ *									Functions
+ *----------------------------------------------------------------------------*/
 
 
-/*
-\brief	Check HomeAutMessage
-*/
-ReturnType HOMEAUTMESSAGE_CompareMessage(char *messageString)
+/**
+ * \brief	Check HomeAutMessage
+ */
+ReturnType HOMEAUTMESSAGE_CheckAndProcessMessage(char *messageString)
 {
 	HomeAut_MessageType *message = (HomeAut_MessageType *)messageString;
 	
@@ -265,7 +256,6 @@ ReturnType HOMEAUTMESSAGE_CompareMessage(char *messageString)
 					if (!StrCmpWithLength((char *)message->Seperator2,(char *)HOMEAUTMESSAGE_DefaultSeperator,HOMEAUTMESSAGE_DefaultSeparator_Length))
 					{						
 
-						
 						//uint8_t	Function[7];
 						// <Function>		
 						StrCpyFixLength(buffer,message->Function,HOMEAUTMESSAGE_DefaultFunction_Length);
@@ -286,8 +276,6 @@ ReturnType HOMEAUTMESSAGE_CompareMessage(char *messageString)
 							// |
 							if (!StrCmpWithLength((char *)message->Seperator3,(char *)HOMEAUTMESSAGE_DefaultSeperator,HOMEAUTMESSAGE_DefaultSeparator_Length))
 							{							
-								
-								
 								
 								// <DataType> : 6 byte ASCII char
 								StrCpyFixLength(buffer,message->DataType,HOMEAUTMESSAGE_DefaultDataType_Length);
@@ -354,50 +342,9 @@ ReturnType HOMEAUTMESSAGE_CompareMessage(char *messageString)
 
 
 
-
-void HOMEAUTMESSAGE_Test(void)
-{
-	
-	// |HomeAut|<MyAddress>|<TargetAddress>|<Function>|<DataType>:<Data>|
-	char TestMessage[] = "|HomeAut|100|121|ALARM__|TEMP__01234567|";
-	
-	uint8_t isGood = 0;
-	
-	// It is valid message?
-	if ( HOMEAUTMESSAGE_CompareMessage(TestMessage) == Return_Ok)
-	{
-		if ( HOMEAUTMESSAGE_MessageInformation.isValid == VALID )
-		{
-			if ( HOMEAUTMESSAGE_MessageInformation.Data == 0x01234567)
-			{
-				LED_GREEN_ON();
-				isGood = 1;
-				// GOOD !!
-				// now, you can check "HOMEAUTMESSAGE_MessageInformation"
-			}
-		}
-	}
-	
-	if (isGood)
-	{
-		LED_GREEN_ON();
-	}
-	
-	HomeAut_MessageType anMessage;
-	HomeAut_MessageType *pAnMessage;
-	pAnMessage = &anMessage;
-	
-	HOMEAUTMESSAGE_CreateMessage(pAnMessage,&HOMEAUTMESSAGE_MessageInformation);
-	
-	
-	while(1);
-	
-}
-
-
-
-
-
+/**
+ * \brief	Create an HomeAutMessage
+ */
 ReturnType HOMEAUTMESSAGE_CreateMessage(HomeAut_MessageType *createToMessage, HomeAut_InformationType *messageInformation)
 {
 	
@@ -464,16 +411,15 @@ ReturnType HOMEAUTMESSAGE_CreateMessage(HomeAut_MessageType *createToMessage, Ho
 
 
 
-
-
-/*
-uint8_t MyAddress;
-uint8_t TargetAddress;
-HomeAut_FunctionType Function;
-HomeAut_DataType DataType;
-uint32_t Data;
-uint8_t isValid;
-*/
+/**
+ * \brief	Create and send message the sending queue
+ * \param	uint8_t MyAddress;
+ * \param	uint8_t TargetAddress;
+ * \param	HomeAut_FunctionType Function;
+ * \param	HomeAut_DataType DataType;
+ * \param	uint32_t Data;
+ * \param	uint8_t isValid;
+ */
 ReturnType HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
 	uint8_t myIp, uint8_t destIp, HomeAut_FunctionType function,
 	HomeAut_DataType dataType, uint32_t data, uint8_t isValid)
@@ -515,5 +461,50 @@ ReturnType HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
 	return Return_Ok;	// TODO: Should correct return values
 	
 }
+
+
+
+/**
+ * \brief	Test an HomeAutMessage
+ */
+void HOMEAUTMESSAGE_Test(void)
+{
+	// TODO: Update to unit test
+
+	// |HomeAut|<MyAddress>|<TargetAddress>|<Function>|<DataType>:<Data>|
+	const char TestMessage[] = "|HomeAut|100|121|ALARM__|TEMP__01234567|";
+
+	uint8_t isGood = 0;
+
+	// It is valid message?
+	if (HOMEAUTMESSAGE_CheckAndProcessMessage(TestMessage) == Return_Ok)
+	{
+		// TODO: Check all parameters
+		if (HOMEAUTMESSAGE_MessageInformation.isValid == VALID )
+		{
+			if (HOMEAUTMESSAGE_MessageInformation.Data == 0x01234567)
+			{
+				LED_GREEN_ON();
+				isGood = 1;
+				// GOOD !!
+				// now, you can check "HOMEAUTMESSAGE_MessageInformation"
+			}
+		}
+	}
+
+	if (isGood)
+	{
+		LED_GREEN_ON();
+	}
+
+	HomeAut_MessageType anMessage;
+	HomeAut_MessageType *pAnMessage;
+	pAnMessage = &anMessage;
+
+	HOMEAUTMESSAGE_CreateMessage(pAnMessage, &HOMEAUTMESSAGE_MessageInformation);
+
+}
+
+
 
 #endif	// CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE

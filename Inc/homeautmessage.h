@@ -1,6 +1,14 @@
-/*******************************************************************************
- * Purpose:
- ******************************************************************************/
+/*
+ *		homeautmessage.h
+ *
+ *		Created on:		2015
+ *		Author: 		Vizi Gábor
+ *		E-mail:			vizi.gabor90@gmail.com
+ *		Function:		HomeAutMessage - Create a Home automation message
+ *		Target:			STM32Fx
+ *		Version:		v5
+ *		Last modified:	2017.01.08.
+ */
 
 #ifndef HOMEAUTMESSAGE_H_
 #define HOMEAUTMESSAGE_H_
@@ -54,10 +62,7 @@ typedef struct
 // |HomeAut|010|014|LOGIN__|NMEDIU00000000|
 //type = Login_ImLoginImNodeMedium
 
-
-
-
-
+// TODO: delete
 // uint8_t	Function[7],
 /*
 const uint8_t HOMEAUTMESSAGE_DefaultFunctionLogin[] =   "LOGIN__";
@@ -69,6 +74,7 @@ const uint8_t HOMEAUTMESSAGE_DefaultFunctionConfig[] =  "CONFIG_";
 */
 
 
+/// HomeAut function
 typedef enum
 {
 	Function_Invalid = 0,
@@ -89,6 +95,7 @@ typedef struct
 	char name[8];						///< Name of function
 	HomeAut_FunctionType function;		///< Function enum
 } FunctionTypeParity;
+
 
 
 /// DataType enumeration for HomeAutMessage
@@ -184,10 +191,11 @@ typedef struct
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-extern const FunctionTypeParity FunctionTypeParity_List[];	// Function enum - "FUNCTION" string
+/// Function enum - "FUNCTION" string
+extern const FunctionTypeParity FunctionTypeParity_List[];
 	
-
-extern const DataTypeParity DataTypeParity_List[];			// DataType enum - "DATATYPE" string
+/// DataType enum - "DATATYPE" string
+extern const DataTypeParity DataTypeParity_List[];
 
 
 extern HomeAut_InformationType HOMEAUTMESSAGE_MessageInformation;
@@ -198,14 +206,14 @@ extern HomeAut_InformationType HOMEAUTMESSAGE_MessageInformation;
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void HOMEAUTMESSAGE_Test(void);
-ReturnType HOMEAUTMESSAGE_CompareMessage(char *messageString);
+ReturnType HOMEAUTMESSAGE_CheckAndProcessMessage(char *messageString);
 ReturnType HOMEAUTMESSAGE_CreateMessage(HomeAut_MessageType *createToMessage, HomeAut_InformationType *messageInformation);
 
 ReturnType HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
 	uint8_t myIp, uint8_t destIp, HomeAut_FunctionType function,
 	HomeAut_DataType dataType, uint32_t data, uint8_t isValid);
 	
+void HOMEAUTMESSAGE_Test(void);
 
 
 
