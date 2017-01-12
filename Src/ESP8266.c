@@ -1222,7 +1222,7 @@ void ESP8266_Task(void)
 		
 		// Send Login message
 		// TODO: Beautify
-		HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
+		HomeAutMessage_CreateAndSendHomeAutMessage(
 			ESP8266_MyIpAddress,
 			ESP8266_ServerAddress,
 			Function_Login,

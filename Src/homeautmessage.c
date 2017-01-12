@@ -13,6 +13,10 @@
 #include <HomeAutMessage.h>
 #include "include.h"
 
+#ifdef MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
+#include "unittest.h"
+#endif
+
 
 #ifdef CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
 
@@ -22,27 +26,10 @@
 
 // Constant global variables
 
-// TODO: Write to dynamic
-
-// Now: 40 length
-const uint8_t HOMEAUTMESSAGE_DefaultMessageLength = HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH;
-
+/// HomeAut Header
 const char HOMEAUTMESSAGE_DefaultHeader[] = "HomeAut";
-const uint8_t HOMEAUTMESSAGE_DefaultHeader_Length = sizeof(HOMEAUTMESSAGE_DefaultHeader) -1;
 
-const char HOMEAUTMESSAGE_DefaultSeperator[] = "|";
-const uint8_t HOMEAUTMESSAGE_DefaultSeparator_Length = sizeof(HOMEAUTMESSAGE_DefaultSeperator) -1;
-
-
-const uint8_t HOMEAUTMESSAGE_DefaultDataType_Length = 6;
-
-const uint8_t HOMEAUTMESSAGE_DefaultFunction_Length = 7;
-
-const uint8_t HOMEAUTMESSAGE_DefaultAddress_Length = 3;
-const uint8_t HOMEAUTMESSAGE_DefaultData_Length = 8;
-
-
-
+/// HomeAut Function parity list
 const FunctionTypeParity FunctionTypeParity_List[] =
 {
 	{
@@ -74,18 +61,15 @@ const FunctionTypeParity FunctionTypeParity_List[] =
 		.function = Function_Config
 	},
 
-	// HERE ADD NEW DateType
+	// XXX: HERE ADD NEW DateType
 
 	{
 		.name = "",
 		.function = Function_End
 	}
-
 };
 
-
-
-
+/// HomeAut DataType parity list
 const DataTypeParity DataTypeParity_List[] =
 {
 	// 6 char length
@@ -185,7 +169,6 @@ const DataTypeParity DataTypeParity_List[] =
 		.type = Alarm_SoundImpacted
 	},
 
-	
 	// COMMAND
 	{
 		.name = "SETOUT",
@@ -196,7 +179,7 @@ const DataTypeParity DataTypeParity_List[] =
 		.type = Command_Remote
 	},
 
-	// HERE ADD NEW DateType
+	// XXX: HERE ADD NEW DateType
 
 	{
 		.name = "",
@@ -206,13 +189,8 @@ const DataTypeParity DataTypeParity_List[] =
 
 };
 
-
-HomeAut_InformationType HOMEAUTMESSAGE_MessageInformation;
-
-
-
-
-uint8_t HomeAutMessage_PrintIpAddress(char *message, HomeAutAddress_t *ip);
+/// HomeAut message information
+HomeAut_InformationType HomeAutMessage_MessageInformation;
 
 
 
@@ -224,7 +202,7 @@ uint8_t HomeAutMessage_PrintIpAddress(char *message, HomeAutAddress_t *ip);
 /**
  * \brief	Check HomeAutMessage (Convert string to information)
  */
-bool HOMEAUTMESSAGE_CheckAndProcessMessage(const char *messageString,
+bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
 		HomeAut_InformationType *messageInformation)
 {
 
@@ -244,7 +222,7 @@ bool HOMEAUTMESSAGE_CheckAndProcessMessage(const char *messageString,
 	messageLength = StringLength(messageString);
 	if (messageLength >= HOMEAUTMESSAGE_MESSAGE_MIN_LENGTH)
 	{
-		// Ok, copy message to modify buffer
+		// OK, copy message to modify buffer
 		StrCpy(message, messageString);
 	}
 	else
@@ -253,11 +231,19 @@ bool HOMEAUTMESSAGE_CheckAndProcessMessage(const char *messageString,
 	}
 
 
-	// TODO: Check first character
+	// Check first character
+	if (isOk)
+	{
+		isOk = (message[0] == HOMEAUTMESSAGE_SEPARATOR_CHARACTER);
+	}
+
 
 	// Split
-	isOk = (STRING_Splitter(&message[1], HOMEAUTMESSAGE_SEPARATOR_CHARACTER,
-			split, HOMEAUTMESSAGE_SPLIT_NUM) == HOMEAUTMESSAGE_SPLIT_NUM);
+	if (isOk)
+	{
+		isOk = (STRING_Splitter(&message[1], HOMEAUTMESSAGE_SEPARATOR_CHARACTER,
+				split, HOMEAUTMESSAGE_SPLIT_NUM) == HOMEAUTMESSAGE_SPLIT_NUM);
+	}
 
 
 	// Check header
@@ -313,6 +299,7 @@ bool HOMEAUTMESSAGE_CheckAndProcessMessage(const char *messageString,
 		isOk = (information.Function != Function_Invalid);
 	}
 
+
 	// Data type
 	if (isOk)
 	{
@@ -359,7 +346,7 @@ bool HOMEAUTMESSAGE_CheckAndProcessMessage(const char *messageString,
 /**
  * \brief	Create an HomeAutMessage
  */
-uint8_t HOMEAUTMESSAGE_CreateMessage(HomeAut_InformationType *messageInformation, char *createToMessage)
+uint8_t HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation, char *createToMessage)
 {
 	
 	uint8_t length = 0;
@@ -443,7 +430,7 @@ uint8_t HOMEAUTMESSAGE_CreateMessage(HomeAut_InformationType *messageInformation
  * \param	uint32_t Data;
  * \param	uint8_t isValid;
  */
-ReturnType HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
+ReturnType HomeAutMessage_CreateAndSendHomeAutMessage(
 	uint8_t *myIp, uint8_t *destIp,
 	HomeAut_FunctionType function,
 	HomeAut_DataType dataType,
@@ -471,7 +458,7 @@ ReturnType HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
 	messageInformation.isValid = isValid;
 	
 	// Create message ...
-	if (HOMEAUTMESSAGE_CreateMessage(&messageInformation, message) == Return_Ok)
+	if (HomeAutMessage_CreateMessage(&messageInformation, message) == Return_Ok)
 	{
 		// Send message
 #ifdef CONFIG_USE_FREERTOS
@@ -567,49 +554,63 @@ uint8_t HomeAutMessage_PrintIpAddress(char *message, HomeAutAddress_t *ip)
 
 
 
+#ifdef MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
 /**
  * \brief	Test an HomeAutMessage
  */
-void HOMEAUTMESSAGE_UnitTest(void)
+void HomeAutMessage_UnitTest(void)
 {
-	// TODO: Update to unit test
 
-	// |HomeAut|<SourceAddress>|<TargetAddress>|<DateTime>|<Function>|<DataType>:<Data>|
-	const char TestMessage[] = "|HomeAut|192.168.100.100|192.168.100.014|2017-01-10 18:49:50|COMMAND|REMOTE|00000000|";
+	UnitTest_Start("HomeAutMessage", __FILE__);
+
+
+	// |HomeAut|<SourceAddress>|<TargetAddress>|<DateTime>|<Function>|<DataType>|<Data>|
+	const char TestMessage[] = "|HomeAut|192.168.100.100|192.168.100.14|2017-01-10 18:49:50|COMMAND|REMOTE|01234567|";
 	HomeAut_InformationType testInformation = { 0 };
 	char exampleStringMessage[HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH];
-	uint8_t isGood = 0;
+	uint8_t length;
+
 
 	// It is valid message?
-	if (HOMEAUTMESSAGE_CheckAndProcessMessage(TestMessage, &testInformation))
-	{
-		// TODO: Check all parameters
-		// TODO: Correct the parameters
-		if (testInformation.isValid == true)
-		{
-			if (testInformation.Data == 0x01234567)
-			{
-#warning "It is not good"
-				LED_GREEN_ON();
-				isGood = 1;
-				// GOOD !!
-				// now, you can check "HOMEAUTMESSAGE_MessageInformation"
-			}
-		}
-	}
-
-	// Is good to string message -> information convert?
-	if (isGood)
-	{
-		LED_GREEN_ON();
-	}
+	UnitTest_CheckResult(HomeAutMessage_CheckAndProcessMessage(
+			TestMessage, &testInformation),
+			"HomeAutMessage Check function has error",
+			__LINE__);
 
 
-	HOMEAUTMESSAGE_CreateMessage(&testInformation, exampleStringMessage);
+	// Check results (processed values)
+	UnitTest_CheckResult(
+			((testInformation.isValid == true)
+			// TODO: SourceAddress & TargetAddress vizsgálat kiegészítése
+			&& (testInformation.SourceAddress.IP[0] == 192)
+			&& (testInformation.TargetAddress.IP[0] == 192)
+			// TODO: DateTime vizsgálat kultúráltan
+			&& (testInformation.DateTime.year == 17)
+			&& (testInformation.Function == Function_Command)
+			&& (testInformation.DataType == Command_Remote)
+			&& (testInformation.Data == 0x01234567)),
+			"HomeAutMessage processed value(s) error(s)",
+			__LINE__);
 
-	// TODO: Check it
+
+	// Check message creating
+	length = HomeAutMessage_CreateMessage(&testInformation, exampleStringMessage);
+	UnitTest_CheckResult(length == StringLength(TestMessage),
+			"HomeAutMessage CreateMessage error",
+			__LINE__);
+
+
+	// Check created message
+	UnitTest_CheckResult(!StrCmp(TestMessage, exampleStringMessage),
+			"HomeAutMessage created message error",
+			__LINE__);
+
+
+	// Finish
+	UnitTest_End();
 
 }
+#endif	// #ifdef MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
 
 
 

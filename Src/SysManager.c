@@ -315,7 +315,7 @@ ReturnType SysManager_CheckButtonStatus ( void )
 		// Create message ...
 		uint32_t buttonData = BUTTON_Clicked;
 		BUTTON_Clicked = 0;
-		HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
+		HomeAutMessage_CreateAndSendHomeAutMessage(
 			DeviceStatus.myIp,DeviceStatus.serverIp,
 			Function_Alarm, Alarm_PressedButton,
 			buttonData, 1);
@@ -340,7 +340,7 @@ ReturnType SysManager_Server_CheckButton ( void )
 		uint8_t myIp = DeviceStatus.myIp;
 		uint8_t targetIP = 255;
 		BUTTON_Clicked = 0;
-		HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
+		HomeAutMessage_CreateAndSendHomeAutMessage(
 			myIp,targetIP,
 			Function_Alarm,Alarm_PressedButton,
 			BUTTON_Clicked,1);
@@ -374,7 +374,7 @@ ReturnType SysManager_CheckAdcValues ( void )
 		DeviceStatus.AlarmLowBatteryIsSended = 1;
 		uint32_t voltage = (uint32_t)( DeviceStatus.myBatteryVoltage * 100);
 		
-		HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
+		HomeAutMessage_CreateAndSendHomeAutMessage(
 			DeviceStatus.myIp,DeviceStatus.serverIp,
 			Function_Alarm, Alarm_LowBattery,
 			voltage, 1);
@@ -393,7 +393,7 @@ ReturnType SysManager_CheckAdcValues ( void )
 		DeviceStatus.AlarmTooHotOrColdIsSended = 1;
 		uint32_t temp = (uint32_t)( DeviceStatus.myTemperature * 100);
 		
-		HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
+		HomeAutMessage_CreateAndSendHomeAutMessage(
 			DeviceStatus.myIp,DeviceStatus.serverIp,
 			Function_Alarm, Alarm_InternalTemperature_TooCold,
 			temp, 1);		
@@ -407,7 +407,7 @@ ReturnType SysManager_CheckAdcValues ( void )
 		DeviceStatus.AlarmTooHotOrColdIsSended = 1;
 		uint32_t temp = (uint32_t)( DeviceStatus.myTemperature * 100);
 		
-		HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
+		HomeAutMessage_CreateAndSendHomeAutMessage(
 			DeviceStatus.myIp,DeviceStatus.serverIp,
 			Function_Alarm, Alarm_InternalTemperature_TooHot,
 			temp, 1);
@@ -425,7 +425,7 @@ ReturnType SysManager_CheckAdcValues ( void )
 		DeviceStatus.AlarmLightingDarkOrBrightIsSended = 1;
 		uint32_t light = (uint32_t) (DeviceStatus.Lighting * 100);
 		
-		HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
+		HomeAutMessage_CreateAndSendHomeAutMessage(
 			DeviceStatus.myIp,DeviceStatus.serverIp,
 			Function_Alarm, Alarm_TooBright,
 			light, 1);		
@@ -439,7 +439,7 @@ ReturnType SysManager_CheckAdcValues ( void )
 		DeviceStatus.AlarmLightingDarkOrBrightIsSended = 2;
 		uint32_t light = (uint32_t)( DeviceStatus.Lighting * 100);
 		
-		HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
+		HomeAutMessage_CreateAndSendHomeAutMessage(
 			DeviceStatus.myIp,DeviceStatus.serverIp,
 			Function_Alarm, Alarm_TooDark,
 			light, 1);
@@ -466,7 +466,7 @@ ReturnType SysManager_CheckIOs ( void )
 		
 		// Send
 		// Create message ...		
-		HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
+		HomeAutMessage_CreateAndSendHomeAutMessage(
 			DeviceStatus.myIp,DeviceStatus.serverIp,
 			Function_Alarm, Alarm_Moving,
 			0, 1);		
@@ -480,7 +480,7 @@ ReturnType SysManager_CheckIOs ( void )
 		// 1-be állítja, majd mi ezt kinullázzuk, nyugtázva
 
 		// Send
-		HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
+		HomeAutMessage_CreateAndSendHomeAutMessage(
 			DeviceStatus.myIp,DeviceStatus.serverIp,
 			Function_Alarm, Alarm_SoundImpacted,
 			0, 1);
@@ -510,7 +510,7 @@ ReturnType SysManager_CheckTemperature ( void )
 	{
 		// Too hot
 		DeviceStatus.ExternalTemperatureAlarmTooHotOrColdIsSended = 1;
-		HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
+		HomeAutMessage_CreateAndSendHomeAutMessage(
 			DeviceStatus.myIp,DeviceStatus.serverIp,
 			Function_Alarm, Alarm_TooHot,
 			DeviceStatus.extTemperature * 100, 1);	
@@ -520,7 +520,7 @@ ReturnType SysManager_CheckTemperature ( void )
 	{
 		// Too cold
 		DeviceStatus.ExternalTemperatureAlarmTooHotOrColdIsSended = 2;
-		HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
+		HomeAutMessage_CreateAndSendHomeAutMessage(
 			DeviceStatus.myIp,DeviceStatus.serverIp,
 			Function_Alarm, Alarm_TooCold,
 			DeviceStatus.extTemperature * 100, 1);
@@ -553,7 +553,7 @@ ReturnType SysManager_Sync ( void )
 	{
 		uint8_t myIp = DeviceStatus.myIp;
 		uint8_t serverIp = DeviceStatus.serverIp;
-		HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(myIp,serverIp,Function_Login,Login_Sync,0,1);
+		HomeAutMessage_CreateAndSendHomeAutMessage(myIp,serverIp,Function_Login,Login_Sync,0,1);
 		DebugPrint("Sync message has been sended\r\n");
 	}
 	//DeviceStatus.LastMessageSendedSec // TODO:
@@ -580,7 +580,7 @@ ReturnType SysManager_CheckReceivedMessage ( void )
 	if ( xQueueReceive(ESP8266_ReceivedMessage_Queue,SysManager_HomeAutMessage_Buffer,0) == pdPASS )
 	{
 		// Read & Parse
-		if ( HOMEAUTMESSAGE_CheckAndProcessMessage(SysManager_HomeAutMessage_Buffer) == Return_Ok )
+		if ( HomeAutMessage_CheckAndProcessMessage(SysManager_HomeAutMessage_Buffer) == Return_Ok )
 		{
 			// Successful parsed
 			// Process
@@ -607,20 +607,20 @@ ReturnType SysManager_ProcessHomeAutMessage ( void )
 	//DebugPrint("SYSMANAGER_ReceivedAnValidHomeAutMessageAndNeedProcess = 1\r\n");
 	
 	// Is Valid message?
-	if ( HOMEAUTMESSAGE_MessageInformation.isValid == 1)
+	if ( HomeAutMessage_MessageInformation.isValid == 1)
 	{
-		//DebugPrint("HOMEAUTMESSAGE_MessageInformation.isValid == 1\r\n");
+		//DebugPrint("HomeAutMessage_MessageInformation.isValid == 1\r\n");
 		#ifdef CONFIG_USE_PANEL_CENTERPANEL
-		uint8_t ipAddress = HOMEAUTMESSAGE_MessageInformation.SourceAddress;
-		uint32_t data = HOMEAUTMESSAGE_MessageInformation.Data;
+		uint8_t ipAddress = HomeAutMessage_MessageInformation.SourceAddress;
+		uint32_t data = HomeAutMessage_MessageInformation.Data;
 		#endif
 		
 		// Is Alarm + Button + Left ?
-		if (HOMEAUTMESSAGE_MessageInformation.Function == Function_Alarm
+		if (HomeAutMessage_MessageInformation.Function == Function_Alarm
 			&&
-			HOMEAUTMESSAGE_MessageInformation.DataType == Alarm_PressedButton
+			HomeAutMessage_MessageInformation.DataType == Alarm_PressedButton
 			&&
-			HOMEAUTMESSAGE_MessageInformation.Data == 0x11)
+			HomeAutMessage_MessageInformation.Data == 0x11)
 		{	 // Left button
 			LED_GREEN_TOGGLE();
 
@@ -632,11 +632,11 @@ ReturnType SysManager_ProcessHomeAutMessage ( void )
 			#endif
 		}
 		// Is Alarm + Button + Down ?
-		else if (HOMEAUTMESSAGE_MessageInformation.Function == Function_Alarm
+		else if (HomeAutMessage_MessageInformation.Function == Function_Alarm
 			&&
-			HOMEAUTMESSAGE_MessageInformation.DataType == Alarm_PressedButton
+			HomeAutMessage_MessageInformation.DataType == Alarm_PressedButton
 			&&
-			HOMEAUTMESSAGE_MessageInformation.Data == 0x5) // Down button
+			HomeAutMessage_MessageInformation.Data == 0x5) // Down button
 		{
 			LED_GREEN_TOGGLE();
 			
@@ -649,11 +649,11 @@ ReturnType SysManager_ProcessHomeAutMessage ( void )
 			#endif
 		}
 		// Is Alarm + Button + Up ?
-		else if (HOMEAUTMESSAGE_MessageInformation.Function == Function_Alarm
+		else if (HomeAutMessage_MessageInformation.Function == Function_Alarm
 			&&
-			HOMEAUTMESSAGE_MessageInformation.DataType == Alarm_PressedButton
+			HomeAutMessage_MessageInformation.DataType == Alarm_PressedButton
 			&&
-			HOMEAUTMESSAGE_MessageInformation.Data == 0x3) // Up button
+			HomeAutMessage_MessageInformation.Data == 0x3) // Up button
 		{
 			#if CONFIG_USE_PANEL_CENTERPANEL
 			DebugPrint("NodeMedium clicked Up button\r\n");
@@ -664,11 +664,11 @@ ReturnType SysManager_ProcessHomeAutMessage ( void )
 			#endif
 		}
 		// Is Alarm + Button + Right ?
-		else if (HOMEAUTMESSAGE_MessageInformation.Function == Function_Alarm
+		else if (HomeAutMessage_MessageInformation.Function == Function_Alarm
 			&&
-			HOMEAUTMESSAGE_MessageInformation.DataType == Alarm_PressedButton
+			HomeAutMessage_MessageInformation.DataType == Alarm_PressedButton
 			&&
-			HOMEAUTMESSAGE_MessageInformation.Data == 0x9) // Right button
+			HomeAutMessage_MessageInformation.Data == 0x9) // Right button
 		{
 			#if CONFIG_USE_PANEL_CENTERPANEL
 			DebugPrint("NodeMedium clicked Right button\r\n");
@@ -679,9 +679,9 @@ ReturnType SysManager_ProcessHomeAutMessage ( void )
 		}
 		// Is Alarm + TooCold
 		#if CONFIG_USE_PANEL_CENTERPANEL				// For CenterPanel processing...
-		else if (HOMEAUTMESSAGE_MessageInformation.Function == Function_Alarm
+		else if (HomeAutMessage_MessageInformation.Function == Function_Alarm
 			&&
-			HOMEAUTMESSAGE_MessageInformation.DataType == Alarm_TooCold)
+			HomeAutMessage_MessageInformation.DataType == Alarm_TooCold)
 		{
 
 			DebugPrint("NodeMedium too cold\r\n");
@@ -689,59 +689,59 @@ ReturnType SysManager_ProcessHomeAutMessage ( void )
 			
 		}
 		// Is Alarm + TooHot
-		else if (HOMEAUTMESSAGE_MessageInformation.Function == Function_Alarm
+		else if (HomeAutMessage_MessageInformation.Function == Function_Alarm
 			&&
-			HOMEAUTMESSAGE_MessageInformation.DataType == Alarm_TooHot)
+			HomeAutMessage_MessageInformation.DataType == Alarm_TooHot)
 		{
 			DebugPrint("NodeMedium too hot\r\n");
 			RASPBERRYPI_SendMessage(ipAddress, Function_Alarm, Alarm_TooHot, data);
 		}
 		// Is Alarm + LowBatteryVoltage
-		else if (HOMEAUTMESSAGE_MessageInformation.Function == Function_Alarm
+		else if (HomeAutMessage_MessageInformation.Function == Function_Alarm
 			&&
-			HOMEAUTMESSAGE_MessageInformation.DataType == Alarm_LowBattery)
+			HomeAutMessage_MessageInformation.DataType == Alarm_LowBattery)
 		{
 			DebugPrint("NodeMedium low battery voltage\r\n");
 			RASPBERRYPI_SendMessage(ipAddress, Function_Alarm, Alarm_LowBattery, data);
 		}
 		
 		// Is Alarm + TooBright
-		else if (HOMEAUTMESSAGE_MessageInformation.Function == Function_Alarm
+		else if (HomeAutMessage_MessageInformation.Function == Function_Alarm
 			&&
-			HOMEAUTMESSAGE_MessageInformation.DataType == Alarm_TooBright)
+			HomeAutMessage_MessageInformation.DataType == Alarm_TooBright)
 		{
 			DebugPrint("NodeMedium too Bright\r\n");
 			RASPBERRYPI_SendMessage(ipAddress, Function_Alarm, Alarm_TooBright, data);
 		}
 		// Is Alarm + TooDark
-		else if (HOMEAUTMESSAGE_MessageInformation.Function == Function_Alarm
+		else if (HomeAutMessage_MessageInformation.Function == Function_Alarm
 			&&
-			HOMEAUTMESSAGE_MessageInformation.DataType == Alarm_TooDark)
+			HomeAutMessage_MessageInformation.DataType == Alarm_TooDark)
 		{
 			DebugPrint("NodeMedium too Dark\r\n");
 			RASPBERRYPI_SendMessage(ipAddress, Function_Alarm, Alarm_TooDark, data);
 		}
 		
 		// Is Alarm + Moving
-		else if (HOMEAUTMESSAGE_MessageInformation.Function == Function_Alarm
+		else if (HomeAutMessage_MessageInformation.Function == Function_Alarm
 			&&
-			HOMEAUTMESSAGE_MessageInformation.DataType == Alarm_Moving)
+			HomeAutMessage_MessageInformation.DataType == Alarm_Moving)
 		{
 			DebugPrint("NodeMedium moving sensed\r\n");
 			RASPBERRYPI_SendMessage(ipAddress, Function_Alarm, Alarm_Moving, data);
 		}
 		// Is Alarm + Sound impacted
-		else if (HOMEAUTMESSAGE_MessageInformation.Function == Function_Alarm
+		else if (HomeAutMessage_MessageInformation.Function == Function_Alarm
 			&&
-			HOMEAUTMESSAGE_MessageInformation.DataType == Alarm_SoundImpacted)
+			HomeAutMessage_MessageInformation.DataType == Alarm_SoundImpacted)
 		{
 			DebugPrint("NodeMedium sound impacting sensed\r\n");
 			RASPBERRYPI_SendMessage(ipAddress, Function_Alarm, Alarm_SoundImpacted , data);
 		}
 		// Alarm : door opened
-		else if (HOMEAUTMESSAGE_MessageInformation.Function == Function_Alarm
+		else if (HomeAutMessage_MessageInformation.Function == Function_Alarm
 			&&
-			HOMEAUTMESSAGE_MessageInformation.DataType == Alarm_DoorOpened)
+			HomeAutMessage_MessageInformation.DataType == Alarm_DoorOpened)
 		{
 			DebugPrint("NodeMedium door opened\r\n");
 			RASPBERRYPI_SendMessage(ipAddress, Function_Alarm, Alarm_SoundImpacted , data);
@@ -751,33 +751,33 @@ ReturnType SysManager_ProcessHomeAutMessage ( void )
 		// TODO: STATE ÜZENETEK FELDOLGOZÁSA
 		#if CONFIG_USE_PANEL_CENTERPANEL			// For CenterPanel processing...
 		// Is State + Battery voltage
-		else if (HOMEAUTMESSAGE_MessageInformation.Function == Function_State
+		else if (HomeAutMessage_MessageInformation.Function == Function_State
 			&&
-			HOMEAUTMESSAGE_MessageInformation.DataType == State_Battery)
+			HomeAutMessage_MessageInformation.DataType == State_Battery)
 		{
 			DebugPrint("NodeMedium state battery\r\n");
 			RASPBERRYPI_SendMessage(ipAddress, Function_State, State_Battery, data);
 		}
 		// Is State + Light
-		else if (HOMEAUTMESSAGE_MessageInformation.Function == Function_State
+		else if (HomeAutMessage_MessageInformation.Function == Function_State
 			&&
-			HOMEAUTMESSAGE_MessageInformation.DataType == State_Brightness)
+			HomeAutMessage_MessageInformation.DataType == State_Brightness)
 		{
 			DebugPrint("NodeMedium state brightness\r\n");
 			RASPBERRYPI_SendMessage(ipAddress, Function_State, State_Brightness, data);
 		}
 		// Is State + Temperature
-		else if (HOMEAUTMESSAGE_MessageInformation.Function == Function_State
+		else if (HomeAutMessage_MessageInformation.Function == Function_State
 			&&
-			HOMEAUTMESSAGE_MessageInformation.DataType == State_Temperature)
+			HomeAutMessage_MessageInformation.DataType == State_Temperature)
 		{
 			DebugPrint("NodeMedium state temperature\r\n");
 			RASPBERRYPI_SendMessage(ipAddress, Function_State, State_Temperature, data);
 		}
 		// Is State + Output
-		else if (HOMEAUTMESSAGE_MessageInformation.Function == Function_State
+		else if (HomeAutMessage_MessageInformation.Function == Function_State
 			&&
-			HOMEAUTMESSAGE_MessageInformation.DataType == State_Output)
+			HomeAutMessage_MessageInformation.DataType == State_Output)
 		{
 			DebugPrint("NodeMedium state output\r\n");
 			RASPBERRYPI_SendMessage(ipAddress, Function_State, State_Output, data);
@@ -786,11 +786,11 @@ ReturnType SysManager_ProcessHomeAutMessage ( void )
 		
 		#ifdef CONFIG_USE_PANEL_NODEMEDIUM
 		// Is Command + SetOutput ?
-		else if (HOMEAUTMESSAGE_MessageInformation.Function == Function_Command
+		else if (HomeAutMessage_MessageInformation.Function == Function_Command
 			&&
-			HOMEAUTMESSAGE_MessageInformation.DataType == Command_SetOutput)
+			HomeAutMessage_MessageInformation.DataType == Command_SetOutput)
 		{
-			if ( HOMEAUTMESSAGE_MessageInformation.Data )
+			if ( HomeAutMessage_MessageInformation.Data )
 			{
 				RELAY_1_ON();
 				DebugPrint("CenterPanel sended Command Output: relay 1 on\r\n");
@@ -800,10 +800,10 @@ ReturnType SysManager_ProcessHomeAutMessage ( void )
 				RELAY_1_OFF();
 				DebugPrint("CenterPanel sended Command Output: relay 1 off\r\n");
 			}
-			HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
+			HomeAutMessage_CreateAndSendHomeAutMessage(
 				DeviceStatus.myIp,DeviceStatus.serverIp,
 				Function_State,State_Output,
-				HOMEAUTMESSAGE_MessageInformation.Data,1);
+				HomeAutMessage_MessageInformation.Data,1);
 		}
 		#endif	// #ifdef CONFIG_USE_PANEL_NODEMEDIUM	// FOR COMMAND
 		
@@ -846,26 +846,26 @@ ReturnType SysManager_SendStates ( void )
 	
 	// Battery
 	uint32_t battery = (uint32_t) ( DeviceStatus.myBatteryVoltage * 100);
-	HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(myIp,serverIp,Function_State,State_Battery,battery,1);
+	HomeAutMessage_CreateAndSendHomeAutMessage(myIp,serverIp,Function_State,State_Battery,battery,1);
 	
 	vTaskDelay(1000);
 	DeviceStatus.ActualSec++;	// TODO: Sec++ átrakás máshova
 	
 	// Light
 	uint32_t light = (uint32_t) ( DeviceStatus.Lighting * 100);
-	HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(myIp,serverIp,Function_State,State_Brightness,light,1);
+	HomeAutMessage_CreateAndSendHomeAutMessage(myIp,serverIp,Function_State,State_Brightness,light,1);
 
 	vTaskDelay(1000);
 	DeviceStatus.ActualSec++;	// TODO: Sec++ átrakás máshova
 	
 	// Temperature
 	int32_t temp = (uint32_t) ( DeviceStatus.extTemperature * 100);	
-	HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(myIp,serverIp,Function_State,State_Temperature,temp,1);
+	HomeAutMessage_CreateAndSendHomeAutMessage(myIp,serverIp,Function_State,State_Temperature,temp,1);
 	
 	vTaskDelay(1000);
 	DeviceStatus.ActualSec++;	// TODO: Sec++ átrakás máshova
 	
-	//HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(0,0,Function_State,State_Sound,0,1);
+	//HomeAutMessage_CreateAndSendHomeAutMessage(0,0,Function_State,State_Sound,0,1);
 	
 	
 	return Return_Ok;

@@ -681,7 +681,7 @@ CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
 #endif
 
 #ifdef MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
-	HOMEAUTMESSAGE_UnitTest();
+	HomeAutMessage_UnitTest();
 #endif
 
 	return CommandResult_Ok;
@@ -1101,7 +1101,7 @@ CommandResult_t CommandFunction_raspberrypi (uint32_t argc, char** argv)
 	{
 		// setout
 		/*
-		HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
+		HomeAutMessage_CreateAndSendHomeAutMessage(
 			0,255,
 			Function_Command, Command_SetOutput,
 			Arg3Num, 1);

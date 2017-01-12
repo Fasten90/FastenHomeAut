@@ -26,7 +26,7 @@
  *  
  *----------------------------------------------------------------------------
  *
- * Portions Copyright © 2016 STMicroelectronics International N.V. All rights reserved.
+ * Portions Copyright ï¿½ 2016 STMicroelectronics International N.V. All rights reserved.
  * Portions Copyright (c) 2013 ARM LIMITED
  * All rights reserved.
  * Redistribution and use in source and binary forms, with or without
@@ -554,6 +554,8 @@ osEvent osSignalWait (int32_t signals, uint32_t millisec)
 */
 osMutexId osMutexCreate (const osMutexDef_t *mutex_def)
 {
+  // !! Note: Added code by user (VG), because there was a warning
+  (void)mutex_def;
 #if ( configUSE_MUTEXES == 1)
   return xSemaphoreCreateMutex(); 
 #else
@@ -1401,6 +1403,9 @@ osStatus osThreadList (uint8_t *buffer)
 {
 #if ( ( configUSE_TRACE_FACILITY == 1 ) && ( configUSE_STATS_FORMATTING_FUNCTIONS == 1 ) )
   vTaskList((char *)buffer);
+#else
+  // !! Note: Added code by user (VG), because there was a warning
+  (void)buffer;
 #endif
   return osOK;
 }

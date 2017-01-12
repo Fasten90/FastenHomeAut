@@ -75,8 +75,8 @@ typedef enum
 /// Function name - string parity table
 typedef struct
 {
-	char name[8];						///< Name of function
-	HomeAut_FunctionType function;		///< Function enum
+	const char *name;						///< Name of function
+	const HomeAut_FunctionType function;	///< Function enum
 } FunctionTypeParity;
 
 
@@ -151,8 +151,8 @@ typedef enum
 ///  Data type - string table
 typedef struct
 {
-	const char name[7];						///< Name of Data [string]
-	HomeAut_DataType type;					///< Data type
+	const char *name;						///< Name of Data [string]
+	const HomeAut_DataType type;			///< Data type
 } DataTypeParity;
 
 
@@ -182,7 +182,7 @@ extern const FunctionTypeParity FunctionTypeParity_List[];
 extern const DataTypeParity DataTypeParity_List[];
 
 
-extern HomeAut_InformationType HOMEAUTMESSAGE_MessageInformation;
+extern HomeAut_InformationType HomeAutMessage_MessageInformation;
 
 
 
@@ -190,11 +190,11 @@ extern HomeAut_InformationType HOMEAUTMESSAGE_MessageInformation;
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-bool HOMEAUTMESSAGE_CheckAndProcessMessage(const char *messageString,
+bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
 		HomeAut_InformationType *messageInformation);
-ReturnType HOMEAUTMESSAGE_CreateMessage(HomeAut_InformationType *messageInformation, char *createToMessage);
+ReturnType HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation, char *createToMessage);
 
-ReturnType HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
+ReturnType HomeAutMessage_CreateAndSendHomeAutMessage(
 	uint8_t *myIp, uint8_t *destIp,
 	HomeAut_FunctionType function,
 	HomeAut_DataType dataType,
@@ -204,7 +204,9 @@ ReturnType HOMEAUTMESSAGE_CreateAndSendHomeAutMessage(
 
 bool HomeAutMessage_ConvertAddressStringToIP(char *message, HomeAutAddress_t *address);
 
-void HOMEAUTMESSAGE_UnitTest(void);
+uint8_t HomeAutMessage_PrintIpAddress(char *message, HomeAutAddress_t *ip);
+
+void HomeAutMessage_UnitTest(void);
 
 
 #endif /* HOMEAUTMESSAGE_H_*/

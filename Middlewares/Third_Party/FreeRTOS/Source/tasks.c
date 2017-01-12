@@ -4390,6 +4390,10 @@ TickType_t uxReturn;
 					/* The task is being notified without its notify value being
 					updated. */
 					break;
+
+				// !! Note: Added code by user (VG), because there was a warning
+				default:
+					break;
 			}
 
 			traceTASK_NOTIFY();
@@ -4514,6 +4518,10 @@ TickType_t uxReturn;
 				case eNoAction :
 					/* The task is being notified without its notify value being
 					updated. */
+					break;
+
+				// !! Note: Added code by user (VG), because there was a warning
+				default:
 					break;
 			}
 
