@@ -453,7 +453,7 @@ void UART_ResetStatus(UART_HandleTypeDef *huart)
  */
 uint8_t USART_SendMessage(const char *aTxBuffer)
 {
-	// TODO: ReturnType + Check Pointer
+	// TODO: Return type + Check Pointer
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	uint8_t length = 0;
 
@@ -499,7 +499,7 @@ uint8_t USART_SendMessage(const char *aTxBuffer)
 	}
 	else
 	{
-		// Cannot take semaphore, now usart is busy
+		// Cannot take semaphore, now USART is busy
 		return 0;
 	}
 

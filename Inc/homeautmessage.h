@@ -192,9 +192,9 @@ extern HomeAut_InformationType HomeAutMessage_MessageInformation;
 
 bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
 		HomeAut_InformationType *messageInformation);
-ReturnType HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation, char *createToMessage);
+uint8_t HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation, char *createToMessage);
 
-ReturnType HomeAutMessage_CreateAndSendHomeAutMessage(
+bool HomeAutMessage_CreateAndSendHomeAutMessage(
 	uint8_t *myIp, uint8_t *destIp,
 	HomeAut_FunctionType function,
 	HomeAut_DataType dataType,

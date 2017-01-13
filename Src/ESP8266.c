@@ -83,15 +83,15 @@ xQueueHandle ESP8266_ReceivedMessage_Queue;
  *  Local functions
  *----------------------------------------------------------------------------*/
 static void DebugPrint(const char *debugString);
-static ReturnType ESP8266_ReceiveUnknownTcpMessage(void);
+static bool ESP8266_ReceiveUnknownTcpMessage(void);
 
 static void ESP8266_WaitMessageAndCheckSendingQueue(void);
 static void ESP8266_LoopSending(void);
 static void CheckReceivedMessage(void);
 
-static ReturnType ESP8266_SendTcpMessage(const char *message);
+static bool ESP8266_SendTcpMessage(const char *message);
 
-static ReturnType ESP8266_ConvertIpString(char *message, uint8_t *ip);
+static bool ESP8266_ConvertIpString(char *message, uint8_t *ip);
 
 
 /*------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ extern void Error_Handler( void );
 /**
  * \brief	Initialize ESP8266
  */
-ReturnType ESP8266_Init(void)
+void ESP8266_Init(void)
 {
 	
 	//	GPIO Init
@@ -171,7 +171,7 @@ ReturnType ESP8266_Init(void)
 	/////////////////////////////////////////////
 
 
-	return Return_Ok;
+	return;
 	
 }
 
@@ -180,7 +180,7 @@ ReturnType ESP8266_Init(void)
 /**
  * \brief	Configure ESP8266
  */
-ReturnType ESP8266_Config(void)
+bool ESP8266_Config(void)
 {
 	// TODO: Összevonni a ReceiveString-et, SendString-et  és a WaitAnswer-t
 	// TODO: Visszatérni false-szal, ha hibás a lefutás
@@ -203,7 +203,7 @@ ReturnType ESP8266_Config(void)
 	else
 	{
 		ESP8266_LED_FAIL();
-		return Return_Error;
+		return false;
 	}
 
 
@@ -226,7 +226,7 @@ ReturnType ESP8266_Config(void)
 	else
 	{
 		ESP8266_LED_FAIL();
-		return Return_Error;
+		return false;
 	}
 	
 	
@@ -261,11 +261,11 @@ ReturnType ESP8266_Config(void)
 	{
 		// Other... it is wrong
 		ESP8266_LED_FAIL();
-		return Return_Error;
+		return false;
 	}
 	
 	
-	return Return_Ok;	
+	return true;
 }
 
 
@@ -273,7 +273,7 @@ ReturnType ESP8266_Config(void)
 /**
  * \brief	Connect to Wifi network
  */
-ReturnType ESP8266_ConnectToWifiNetwork(void)
+bool ESP8266_ConnectToWifiNetwork(void)
 {
 	
 	
@@ -304,20 +304,20 @@ ReturnType ESP8266_ConnectToWifiNetwork(void)
 		// "FAIL"
 		// AT+CWJAP=\"networkname\",\"password\"\r\r\n\r\nFAIL\r\n")
 		ESP8266_LED_FAIL();
-		return Return_Error;
+		return false;
 	}
 	else if (!StrCmp("\r\nERRO", (const char *)ESP8266_ReceiveBuffer))
 	{
 		// "ERROR"
 		// AT+CWJAP=\"networkname\",\"password\"\r\r\n\r\nERROR\r\n")
 		ESP8266_LED_FAIL();
-		return Return_Error;
+		return false;
 	}
 	else
 	{
 		// Received unknown message
 		ESP8266_LED_FAIL();
-		return Return_Error;
+		return false;
 	}
 	
 	
@@ -342,7 +342,7 @@ ReturnType ESP8266_ConnectToWifiNetwork(void)
 	else
 	{
 		ESP8266_LED_FAIL();
-		return Return_Error;
+		return false;
 	}
 	
 	
@@ -363,7 +363,7 @@ ReturnType ESP8266_ConnectToWifiNetwork(void)
 	ESP8266_WaitAnswer(2000);
 	
 	// Check and convert IP address
-	if (ESP8266_ConvertIpString((char *)ESP8266_ReceiveBuffer, ESP8266_MyIpAddress) == Return_Ok)
+	if (ESP8266_ConvertIpString((char *)ESP8266_ReceiveBuffer, ESP8266_MyIpAddress))
 	{
 		DebugPrint("Successful convert IP address\r\n");
 	}
@@ -453,7 +453,7 @@ ReturnType ESP8266_ConnectToWifiNetwork(void)
 	*/
 	
 	
-	return Return_Ok;
+	return true;
 }
 
 
@@ -461,7 +461,7 @@ ReturnType ESP8266_ConnectToWifiNetwork(void)
 /**
  * \brief	TODO
  */
-ReturnType ESP8266_FindServer ( void )
+bool ESP8266_FindServer ( void )
 {
 	
 	// TODO: Not used... check it
@@ -485,17 +485,17 @@ ReturnType ESP8266_FindServer ( void )
 		// OK\r\nLinked
 		LED_GREEN_ON();
 		LED_RED_OFF();
-		return Return_Ok;
+		return true;
 	}
 	else
 	{
 		// ERROR\r\nUnli [nk]
 		LED_GREEN_OFF();
 		LED_RED_ON();		
-		return Return_Error;
+		return false;
 	}
 	
-	//return Return_Ok;
+	//return true;
 }
 
 
@@ -504,7 +504,7 @@ ReturnType ESP8266_FindServer ( void )
 /**
  * \brief	Connect ESP8266 to server
  */
-ReturnType ESP8266_ConnectToServer(void)
+bool ESP8266_ConnectToServer(void)
 {
 	
 	////////////////////////////////////////
@@ -532,19 +532,19 @@ ReturnType ESP8266_ConnectToServer(void)
 	{
 		// OK\r\nLinked
 		ESP8266_LED_OK();
-		return Return_Ok;
+		return true;
 	}
 	if (!StrCmp("ALREADY CONNECT", (const char *)ESP8266_ReceiveBuffer))
 	{
 		// "ALREADY CONNECT"
 		ESP8266_LED_OK();
-		return Return_Ok;
+		return true;
 	}
 	else
 	{
 		// ERROR\r\nUnli [nk]
 		ESP8266_LED_FAIL();
-		return Return_Error;
+		return false;
 	}
 	
 }
@@ -556,7 +556,7 @@ ReturnType ESP8266_ConnectToServer(void)
 /**
  * \brief	Start ESP8266 server
  */
-ReturnType ESP8266_StartServer ( void )
+bool ESP8266_StartServer ( void )
 {
 	
 	////////////////////////////////////////
@@ -583,17 +583,17 @@ ReturnType ESP8266_StartServer ( void )
 	{
 		// OK
 		ESP8266_LED_OK();
-		return Return_Ok;
+		return true;
 	}
 	else
 	{
 		// ERROR
 		ESP8266_LED_FAIL();
-		return Return_Error;
+		return false;
 	}
 	
 	// Not reached
-	//return Return_Ok;
+	//return true;
 }
 #endif
 
@@ -604,7 +604,7 @@ ReturnType ESP8266_StartServer ( void )
  *			|HomeAut|010|014|LOGIN__|NMEDIU00000000|
  *			length: 40
  */
-static ReturnType ESP8266_SendTcpMessage(const char *message)
+static bool ESP8266_SendTcpMessage(const char *message)
 {
 	uint8_t length = StringLength(message);
 	char buffer[25]; // For "AT+CIPSEND=0,40\r\n"
@@ -647,13 +647,13 @@ static ReturnType ESP8266_SendTcpMessage(const char *message)
 	else if (!StrCmp("link is not\r\n", (const char *)&ESP8266_ReceiveBuffer[1]))
 	{
 		ESP8266_LED_FAIL();
-		return Return_Error;
+		return false;
 	}
 	else
 	{
 		ESP8266_LED_FAIL();
 #warning: "uncomment it"
-		//return Return_Error;
+		//return false;
 	}
 	
 	
@@ -679,10 +679,10 @@ static ReturnType ESP8266_SendTcpMessage(const char *message)
 	else
 	{
 		ESP8266_LED_FAIL();
-		return Return_Error;
+		return false;
 	}
 	
-	return Return_Ok;
+	return true;
 }
 
 
@@ -692,7 +692,7 @@ static ReturnType ESP8266_SendTcpMessage(const char *message)
  *				length: 10+40
  *				example: "+IPD,0,40:" + "|HomeAut|010|014|LOGIN__|NMEDIU00000000|"
  */
-ReturnType ESP8266_ReceiveFixTcpMessage(void)
+bool ESP8266_ReceiveFixTcpMessage(void)
 {
 
 	
@@ -710,7 +710,7 @@ ReturnType ESP8266_ReceiveFixTcpMessage(void)
 	// length: 2+10+40+6 = 58
 	ESP8266_ReceiveString(ESP8266_HOMEAUT_RECEIVING_MESSAGE_LENGTH );
 		
-	return Return_Ok;
+	return true;
 }
 
 
@@ -719,7 +719,7 @@ ReturnType ESP8266_ReceiveFixTcpMessage(void)
 /**
  * \brief	Switch to unknown length Receive mode
  */
-static ReturnType ESP8266_ReceiveUnknownTcpMessage(void)
+static bool ESP8266_ReceiveUnknownTcpMessage(void)
 {
 	// In uart IT: receive character by once
 	ESP8266_Receive_Mode_FixLength = 0;
@@ -737,7 +737,7 @@ static ReturnType ESP8266_ReceiveUnknownTcpMessage(void)
 	//ESP8266_WaitAnswer();	// Only wait ...
 	ESP8266_WaitMessageAndCheckSendingQueue();		// wait for received message or if have to sending message
 	
-	return Return_Ok;
+	return true;
 }
 #endif
 
@@ -745,7 +745,7 @@ static ReturnType ESP8266_ReceiveUnknownTcpMessage(void)
 /*
 // It not used
 TODO: delete
-ReturnType ESP8266_CheckReceiveMessage ( void )
+bool ESP8266_CheckReceiveMessage ( void )
 {
 	
 	#ifdef CONFIG_USE_FREERTOS
@@ -756,11 +756,11 @@ ReturnType ESP8266_CheckReceiveMessage ( void )
 	// without semaphore, it is not blocking
 	if (ESP8266_Uart_ReceivedCharFlag == 1)
 	{
-		return Return_Ok;
+		return true;
 	}
 	else
 	{
-		return Return_Error;
+		return false;
 	}
 	#endif
 	
@@ -882,7 +882,7 @@ static void ESP8266_WaitMessageAndCheckSendingQueue(void)
 				UART_ResetStatus(&ESP8266_UartHandle);
 				
 				// Sending
-				if (ESP8266_SendTcpMessage((char *)ESP8266_TransmitBuffer) == Return_Ok)
+				if (ESP8266_SendTcpMessage((char *)ESP8266_TransmitBuffer))
 				{
 					// TODO: printf
 					DebugPrint("Successful sent a message:\r\n");
@@ -930,7 +930,7 @@ static void ESP8266_LoopSending(void)
 		{
 
 			// Sending
-			if (ESP8266_SendTcpMessage((char *)ESP8266_TransmitBuffer) == Return_Ok)
+			if (ESP8266_SendTcpMessage((char *)ESP8266_TransmitBuffer))
 			{
 				// TODO: printf
 				DebugPrint("Successful sent a message:\r\n");
@@ -953,7 +953,7 @@ static void ESP8266_LoopSending(void)
 /**
  * \brief	Put message to sending queue
  */
-ReturnType ESP8266_SendMessageToQueue(char *message)
+bool ESP8266_SendMessageToQueue(char *message)
 {
 	// Sending
 	if (ESP8266_SendMessage_Queue != 0)
@@ -961,16 +961,16 @@ ReturnType ESP8266_SendMessageToQueue(char *message)
 
 		if (xQueueSend(ESP8266_SendMessage_Queue, ( void * )message, ( portTickType ) 1000) == pdPASS)
 		{
-			return Return_Ok;
+			return true;
 		}
 		else
 		{
-			return Return_Error;
+			return false;
 		}
 	}
 	else
 	{
-		return Return_Error;
+		return false;
 	}
 }
 
@@ -981,7 +981,7 @@ ReturnType ESP8266_SendMessageToQueue(char *message)
  */
 #if 0
 // TODO: delete
-ReturnType ESP8266_WaitClientConnect( void)
+bool ESP8266_WaitClientConnect( void)
 {
 	
 	ESP8266_ClearReceiveBuffer();
@@ -993,7 +993,7 @@ ReturnType ESP8266_WaitClientConnect( void)
 	// wait for message
 	ESP8266_WaitAnswer();
 	
-	return Return_Ok;
+	return true;
 }
 #endif
 
@@ -1003,20 +1003,20 @@ ReturnType ESP8266_WaitClientConnect( void)
 /**
  * \brief	Connect to server, with blocking
  */
-ReturnType ESP8266_ClientConnect(void)
+bool ESP8266_ClientConnect(void)
 {
 
-	ReturnType successfulConnected = Return_Error;
+	bool successfulConnected = false;
 	
-	while (successfulConnected != Return_Ok)
+	while (!successfulConnected)
 	{
 		// Connect to server
 		successfulConnected = ESP8266_ConnectToServer();
 #warning "delete this code below !!!!!"
-		successfulConnected = Return_Ok;
+		successfulConnected = true;
 #warning "Need bugfix !!!!!"
 	
-		if (successfulConnected == Return_Ok)
+		if (successfulConnected)
 		{
 			// Successful connected
 			ESP8266_ConnectionStatus = ESP8266_ConnectionStatus_SuccessfulConnected;
@@ -1033,17 +1033,17 @@ ReturnType ESP8266_ClientConnect(void)
 	
 	// Successful Connected ...
 	
-	return Return_Ok;
+	return true;
 }
 #endif
 
 
 
 #if (CONFIG_ESP8266_IS_SERVER == 1)
-ReturnType ESP8266_StartServerBlocking(void)
+bool ESP8266_StartServerBlocking(void)
 {
 	// Start server
-	while ( ESP8266_StartServer() != Return_Ok)
+	while (!ESP8266_StartServer())
 	{
 		DebugPrint("Error! Server isn't started\r\n");
 		DelayMs(10000);
@@ -1052,7 +1052,7 @@ ReturnType ESP8266_StartServerBlocking(void)
 	ESP8266_ConnectionStatus = ESP8266_ConnectionStatus_SuccessfulServerStarted;
 	DebugPrint("Server has started\r\n");
 
-	return Return_Ok;
+	return true;
 	
 }
 #endif
@@ -1062,7 +1062,7 @@ ReturnType ESP8266_StartServerBlocking(void)
 /**
  * \brief	Convert IP string to IP number
  */
-static ReturnType ESP8266_ConvertIpString(char *message, uint8_t *ip)
+static bool ESP8266_ConvertIpString(char *message, uint8_t *ip)
 {
 	// String come like "\r\n192.168.0.1\r\n"
 
@@ -1075,7 +1075,7 @@ static ReturnType ESP8266_ConvertIpString(char *message, uint8_t *ip)
 	else
 	{
 		// There is no ending "\r\n"
-		return Return_Error;
+		return false;
 	}
 
 	char *separated[4];
@@ -1097,23 +1097,23 @@ static ReturnType ESP8266_ConvertIpString(char *message, uint8_t *ip)
 				else
 				{
 					// Error, Too large value
-					return Return_Error;
+					return false;
 				}
 			}
 			else
 			{
 				// Failed convert to number
-				return Return_Error;
+				return false;
 			}
 
 		}
 
-		return Return_Ok;
+		return true;
 	}
 	else
 	{
 		// Failed separate string
-		return Return_Error;
+		return false;
 	}
 }
 
@@ -1157,7 +1157,7 @@ void ESP8266_Task(void)
 	
 	
 	// Configure ESP8266
-	while (ESP8266_Config() != Return_Ok)
+	while (!ESP8266_Config())
 	{
 		DebugPrint("Reconfigure ESP8266 module...\r\n");
 		// Reinit ESP8266 - Restart it
@@ -1176,7 +1176,7 @@ void ESP8266_Task(void)
 	
 	
 	// Connect to WiFi
-	while (ESP8266_ConnectToWifiNetwork() != Return_Ok)
+	while (!ESP8266_ConnectToWifiNetwork())
 	{
 		DebugPrint("Failed connect to WiFi\r\n");
 		DelayMs(10000);
@@ -1224,7 +1224,7 @@ void ESP8266_Task(void)
 		// TODO: Beautify
 		HomeAutMessage_CreateAndSendHomeAutMessage(
 			ESP8266_MyIpAddress,
-			ESP8266_ServerAddress,
+			(uint8_t *)ESP8266_ServerAddress,
 			Function_Login,
 			Login_ImLoginImNodeMedium,
 			0,
@@ -1266,7 +1266,7 @@ static void CheckReceivedMessage(void)
 
 	// TODO: Check these codes below...
 
-	ReturnType isValidMessage;
+	bool isValidMessage;
 
 
 	// Print received message:
@@ -1286,8 +1286,8 @@ static void CheckReceivedMessage(void)
 	{
 		//isValidMessage = OMEAUTMESSAGE_CompareMessage((uint8_t *)&ESP8266_ReceiveBuffer[ESP8266_HOMEAUTMESSAGE_RECEIVEDMESSAGE_START]);
 		// TODO: Correct this!
-		isValidMessage = Return_Ok;
-		if (isValidMessage == Return_Ok)
+		isValidMessage = true;
+		if (isValidMessage)
 		{
 			// TODO: Change DebugPrint-s
 			DebugPrint("Valid HomeAut message received:\r\n");
@@ -1314,7 +1314,7 @@ static void CheckReceivedMessage(void)
 	else if (!StrCmpWithLength((const char *)ESP8266_ReceiveBuffer, "Link", 4))
 	{
 		// Received: "Link"
-		isValidMessage = Return_Ok;
+		isValidMessage = true;
 
 		#if ( CONFIG_ESP8266_IS_SERVER == 1)
 		// TODO: Process connecting, add new IP to list
@@ -1326,7 +1326,7 @@ static void CheckReceivedMessage(void)
 	else if (!StrCmpWithLength((const char *)ESP8266_ReceiveBuffer, "Unlink", 6))
 	{
 		// Received: "Unlink"
-		isValidMessage = Return_Ok;
+		isValidMessage = true;
 
 		// TODO: Process disconnecting, delete IP from list
 		#if ( CONFIG_ESP8266_IS_SERVER == 1)
@@ -1340,27 +1340,27 @@ static void CheckReceivedMessage(void)
 	{
 		// Received: "OK"
 		// Note: This arrived after received an x length message (now, after 40 length homeautmessage)
-		isValidMessage = Return_Ok;
+		isValidMessage = true;
 		DebugPrint("Received an OK\r\n");
 	}
 	else if (!StrCmpWithLength((const char *)ESP8266_ReceiveBuffer, "", 1))
 	{
 		// Received: ""
 		// Note: This arrived after received an x length message (now, after 40 length homeautmessage) + "\r\n" after ""
-		isValidMessage = Return_Ok;
+		isValidMessage = true;
 		DebugPrint("Received an empty string\r\n");
 	}
 	else
 	{
 		// Not valid message
-		isValidMessage = Return_Error;
+		isValidMessage = false;
 		DebugPrint((char *)&ESP8266_ReceiveBuffer[0]);
 		DebugPrint("Not valid message.\r\n");
 	}
 
 
 	// Received an correct message?
-	if (isValidMessage == Return_Ok)
+	if (isValidMessage)
 	{
 		LED_GREEN_ON();
 		LED_RED_OFF();

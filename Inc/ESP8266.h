@@ -125,22 +125,22 @@ void ESP8266_ReceiveString(uint8_t length);
 void ESP8266_ClearReceiveBuffer(void);
 void ESP8266_Task(void);
 
-ReturnType ESP8266_Init(void);
+void ESP8266_Init(void);
 
-ReturnType ESP8266_Config(void);
-ReturnType ESP8266_ConnectToWifiNetwork(void);
+bool ESP8266_Config(void);
+bool ESP8266_ConnectToWifiNetwork(void);
 
-ReturnType ESP8266_StartServer(void);
-ReturnType ESP8266_FindServer(void);
-ReturnType ESP8266_ConnectToServer(void);
+bool ESP8266_StartServer(void);
+bool ESP8266_FindServer(void);
+bool ESP8266_ConnectToServer(void);
 
-ReturnType ESP8266_SendMessageToQueue(char *message);
+bool ESP8266_SendMessageToQueue(char *message);
 
-ReturnType ESP8266_ReceiveFixTcpMessage(void);
+bool ESP8266_ReceiveFixTcpMessage(void);
 
-ReturnType ESP8266_WaitClientConnect(void);
+bool ESP8266_WaitClientConnect(void);
 
-ReturnType ESP8266_CheckReceiveMessage(void);
+bool ESP8266_CheckReceiveMessage(void);
 
 void ESP8266_WaitAnswer(uint32_t timeout);
 void ESP8266_ResetHardware(void);

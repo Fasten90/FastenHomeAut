@@ -430,7 +430,7 @@ uint8_t HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation
  * \param	uint32_t Data;
  * \param	uint8_t isValid;
  */
-ReturnType HomeAutMessage_CreateAndSendHomeAutMessage(
+bool HomeAutMessage_CreateAndSendHomeAutMessage(
 	uint8_t *myIp, uint8_t *destIp,
 	HomeAut_FunctionType function,
 	HomeAut_DataType dataType,
@@ -458,7 +458,7 @@ ReturnType HomeAutMessage_CreateAndSendHomeAutMessage(
 	messageInformation.isValid = isValid;
 	
 	// Create message ...
-	if (HomeAutMessage_CreateMessage(&messageInformation, message) == Return_Ok)
+	if (HomeAutMessage_CreateMessage(&messageInformation, message))
 	{
 		// Send message
 #ifdef CONFIG_USE_FREERTOS
@@ -474,9 +474,10 @@ ReturnType HomeAutMessage_CreateAndSendHomeAutMessage(
 		}
 #endif
 	}	
-
-	return Return_Ok;	// TODO: Should correct return values
-	
+	else
+	{
+		return false;
+	}
 }
 
 
