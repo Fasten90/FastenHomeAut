@@ -29,6 +29,7 @@
 /// HomeAut Header
 const char HOMEAUTMESSAGE_DefaultHeader[] = "HomeAut";
 
+
 /// HomeAut Function parity list
 const FunctionTypeParity FunctionTypeParity_List[] =
 {
@@ -68,6 +69,7 @@ const FunctionTypeParity FunctionTypeParity_List[] =
 		.function = Function_End
 	}
 };
+
 
 /// HomeAut DataType parity list
 const DataTypeParity DataTypeParity_List[] =
@@ -186,8 +188,8 @@ const DataTypeParity DataTypeParity_List[] =
 		.type = DataType_End
 	}
 
-
 };
+
 
 /// HomeAut message information
 HomeAut_InformationType HomeAutMessage_MessageInformation;
@@ -521,6 +523,7 @@ bool HomeAutMessage_ConvertAddressStringToIP(char *message, HomeAutAddress_t *ad
 
 		}
 
+		// Successful convert
 		return true;
 	}
 	else
@@ -528,7 +531,6 @@ bool HomeAutMessage_ConvertAddressStringToIP(char *message, HomeAutAddress_t *ad
 		// Failed separate string
 		return false;
 	}
-
 }
 
 

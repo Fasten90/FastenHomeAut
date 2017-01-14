@@ -448,6 +448,7 @@ void UART_ResetStatus(UART_HandleTypeDef *huart)
 }
 
 
+
 /**
  * \brief	Send string on USART
  */
@@ -607,7 +608,7 @@ static bool USART_WaitForSend(uint16_t timeoutMilliSecond)
 {
 
 #ifdef CONFIG_USE_FREERTOS
-	if (xSemaphoreTake(DEBUG_USART_Tx_Semaphore, (portTickType)timeoutMilliSecond) == pdTRUE)
+	if (xSemaphoreTake(DEBUG_USART_Tx_Semaphore, (portTickType)timeoutMilliSecond) == pdPASS)
 	{
 		return true;
 	}

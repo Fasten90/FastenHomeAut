@@ -140,7 +140,7 @@ int main(void)
 #ifdef CONFIG_USE_FREERTOS
 	TaskHandle_t MONITOR_TaskHandle = NULL;
 	//xTaskCreate( vTaskCode, "NAME", STACK_SIZE, &ucParameterToPass, tskIDLE_PRIORITY, &xHandle );
-	if ( xTaskCreate( (pdTASK_CODE)MONITOR_CheckCommand, "MonitorTask", MONITOR_TASK_STACK_SIZE, 0,
+	if (xTaskCreate( (pdTASK_CODE)MONITOR_CheckCommand, "MonitorTask", MONITOR_TASK_STACK_SIZE, 0,
 				MONITOR_TASK_PRIORITY, &MONITOR_TaskHandle ) != pdPASS)
 	{
 		Error_Handler();
@@ -156,14 +156,18 @@ int main(void)
 
 #ifdef CONFIG_USE_FREERTOS
 	ESP8266_USART_Rx_Semaphore = xSemaphoreCreateBinary();
-	ESP8266_SendMessage_Queue = xQueueCreate( ESP8266_HOMEAUTMESSAGE_SENDMESSAGE_QUEUE_LENGTH, ESP8266_HOMEAUTMESSAGE_ITEM_SIZE );
-	ESP8266_ReceivedMessage_Queue = xQueueCreate( ESP8266_HOMEAUTMESSAGE_RECEIVEMESSAGE_QUEUE_LENGTH, ESP8266_HOMEAUTMESSAGE_ITEM_SIZE );
+	ESP8266_SendMessage_Queue = xQueueCreate(
+			ESP8266_SENDMESSAGE_QUEUE_LENGTH,
+			ESP8266_MESSAGE_QUEUE_ITEM_SIZE);
+	ESP8266_ReceivedMessage_Queue = xQueueCreate(
+			ESP8266_RECEIVEMESSAGE_QUEUE_LENGTH,
+			ESP8266_MESSAGE_QUEUE_ITEM_SIZE);
 #endif
 
 	ESP8266_Init();
 	
 	TaskHandle_t ESP8266_TaskHandle = NULL;
-	if ( xTaskCreate( (pdTASK_CODE)ESP8266_Task, "ESP8266Task", ESP8266_TASK_STACK_SIZE, 0,
+	if (xTaskCreate( (pdTASK_CODE)ESP8266_Task, "ESP8266Task", ESP8266_TASK_STACK_SIZE, 0,
 				ESP8266_TASK_PRIORITY, &ESP8266_TaskHandle ) != pdPASS)
 	{
 		Error_Handler();

@@ -3,10 +3,10 @@
  *
  *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		usart communication
+ *		Function:		ESP8266 communication
  *		Target:			STM32Fx
  *		Version:		v4
- *		Last modified:	2017.01.04
+ *		Last modified:	2017.01.14
  */
 
 
@@ -41,15 +41,18 @@ UART_HandleTypeDef ESP8266_UartHandle;
 volatile uint8_t ESP8266_Uart_ReceivedCharFlag;
 
 volatile char ESP8266_ReceiveBuffer[ESP8266_BUFFER_LENGTH];
-volatile char ESP8266_TransmitBuffer[ESP8266_HOMEAUT_MESSAGECONTENT_LENGTH+1];
+volatile char ESP8266_TransmitBuffer[ESP8266_BUFFER_LENGTH];
 
 
-ESP8266_ConnectionStatusType	ESP8266_ConnectionStatus = ESP8266_ConnectionStatus_Unknown;
+ESP8266_WifiConnectionStatusType	ESP8266_ConnectionStatus
+			= ESP8266_WifiConnectionStatus_Unknown;
 
-ESP8266_TcpConnectionStatusType	ESP8266_TcpConnectionStatus = ESP8266_TcpConnectionStatus_Unknown;
+ESP8266_TcpConnectionStatusType	ESP8266_TcpConnectionStatus
+			= ESP8266_TcpConnectionStatus_Unknown;
 
-///< IP address
+///< My IP address
 uint8_t ESP8266_MyIpAddress[4] = { 0 };
+///< Server IP address
 const uint8_t ESP8266_ServerAddress[4] = { 192, 168, 1, 62 };
 
 
@@ -70,34 +73,29 @@ xQueueHandle ESP8266_ReceivedMessage_Queue;
 
 
 /*------------------------------------------------------------------------------
- *  Local variables
- *----------------------------------------------------------------------------*/
-
-
-/*------------------------------------------------------------------------------
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
 
-/*------------------------------------------------------------------------------
- *  Local functions
- *----------------------------------------------------------------------------*/
-static void DebugPrint(const char *debugString);
 static bool ESP8266_ReceiveUnknownTcpMessage(void);
 
 static void ESP8266_WaitMessageAndCheckSendingQueue(void);
 static void ESP8266_LoopSending(void);
-static void CheckReceivedMessage(void);
+static void ESP8266_CheckReceivedMessage(void);
+
+static bool ESP8266_ConnectToServerInBlockingMode(void);
 
 static bool ESP8266_SendTcpMessage(const char *message);
 
 static bool ESP8266_ConvertIpString(char *message, uint8_t *ip);
 
+static void DebugPrint(const char *debugString);
+
+
 
 /*------------------------------------------------------------------------------
- *  Global functions
+ *  Functions
  *----------------------------------------------------------------------------*/
-extern void Error_Handler( void );
 
 
 
@@ -174,6 +172,133 @@ void ESP8266_Init(void)
 	return;
 	
 }
+
+
+
+#ifdef CONFIG_USE_FREERTOS
+/**
+ * \brief	ESP8266 Task
+ * \note	It will go infinite loop, does not return
+ */
+void ESP8266_Task(void)
+{
+
+	// First, need initialize ESP8266's pins, with	ESP8266_Init();
+	// is in main.c
+
+
+	// Delay, for hardware initializing
+	DelayMs(10000);
+
+
+	// TODO: Delete this comment
+	// Should init UART at very late (last minute),
+	// because ESP8266 send lot of messages at startup and UART has error, and call the ErrorCallback
+	USART_Init(&ESP8266_UartHandle);
+
+
+	DelayMs(100);
+
+
+	// Configure ESP8266
+	while (!ESP8266_Config())
+	{
+		DebugPrint("Reconfigure ESP8266 module...\r\n");
+		// Reinit ESP8266 - Restart it
+		ESP8266_ResetHardware();
+		DelayMs(10000);
+		USART_Init(&ESP8266_UartHandle);
+		UART_ResetStatus(&ESP8266_UartHandle);
+	}
+
+	// If reached this, ESP8266 configure is successful
+	DebugPrint("Successful configured ESP8266\r\n");
+
+
+	// Wait
+	DelayMs(5000);
+
+
+	// Connect to WiFi
+	while (!ESP8266_ConnectToWifiNetwork())
+	{
+		DebugPrint("Failed connect to WiFi\r\n");
+		DelayMs(10000);
+	}
+
+	// If reached this, successful connected
+	DebugPrint("Successful connected to WiFi\r\n");
+
+
+	// Delay
+	DelayMs(1000);
+
+
+	//	Infinite loop for task working ...
+
+
+	while (1)
+	{
+		// CONNECT / START OF SERVER
+		#if (CONFIG_ESP8266_IS_SERVER == 1)
+		if (ESP8266_ConnectionStatus != ESP8266_ConnectionStatus_SuccessfulServerStarted)
+		{
+			// Start server
+			ESP8266_StartServerBlocking();
+
+		}
+		#elif (CONFIG_ESP8266_IS_SERVER == 0)
+		if (ESP8266_ConnectionStatus != ESP8266_WifiConnectionStatus_SuccessfulConnected)
+		{
+			// TODO: Find server
+
+			// Connect
+			ESP8266_ConnectToServerInBlockingMode();
+
+		}
+		#else
+		#error "CONFIG_ESP8266_IS_SERVER define isnt correct."
+		#endif
+
+
+		// END OF Connect to server or start server
+
+
+		// Send Login message
+		// TODO: Beautify
+		HomeAutMessage_CreateAndSendHomeAutMessage(
+			ESP8266_MyIpAddress,
+			(uint8_t *)ESP8266_ServerAddress,
+			Function_Login,
+			Login_ImLoginImNodeMedium,
+			0,
+			1);
+
+		DelayMs(1000);
+
+
+		//	Sending infinite loop
+		ESP8266_LoopSending();
+
+
+		/////////////////////////////////////
+		// Receive any message + Sending:
+		/////////////////////////////////////
+		//ESP8266_ReceiveUnknownTcpMessage();
+
+
+		/////////////////////////////////////
+		//		Check received message
+		/////////////////////////////////////
+
+		ESP8266_CheckReceivedMessage();
+
+	}
+	// END OF while(1)
+
+
+}
+#endif	// #ifdef CONFIG_USE_FREERTOS
 
 
 
@@ -705,10 +830,10 @@ bool ESP8266_ReceiveFixTcpMessage(void)
 	// HomeAutMessage:
 	// "\r\n"											2
 	// "+IPD,0,40:"										10
-	// "|HomeAut|010|014|LOGIN__|NMEDIU00000000|"		40
+	// "|HomeAut|010|014|LOGIN__|NMEDIU00000000|"		x
 	// "\r\nOK\r\n"										6
 	// length: 2+10+40+6 = 58
-	ESP8266_ReceiveString(ESP8266_HOMEAUT_RECEIVING_MESSAGE_LENGTH );
+	ESP8266_ReceiveString(ESP8266_BUFFER_LENGTH);
 		
 	return true;
 }
@@ -833,7 +958,7 @@ void ESP8266_WaitAnswer(uint32_t timeout)
 #if OLD_BLOCK
 	while (1)
 	{
-		if (xSemaphoreTake(ESP8266_USART_Rx_Semaphore, (portTickType) timeout) == pdTRUE)
+		if (xSemaphoreTake(ESP8266_USART_Rx_Semaphore, (portTickType) timeout) == pdPASS)
 		{
 			// Successful take, return
 			return;
@@ -862,7 +987,7 @@ static void ESP8266_WaitMessageAndCheckSendingQueue(void)
 	{
 		
 		// Received an ended string?
-		if (xSemaphoreTake(ESP8266_USART_Rx_Semaphore, (portTickType) 500) == pdTRUE)
+		if (xSemaphoreTake(ESP8266_USART_Rx_Semaphore, (portTickType) 500) == pdPASS)
 		{
 			// Received a message
 			return;
@@ -871,7 +996,7 @@ static void ESP8266_WaitMessageAndCheckSendingQueue(void)
 		else if (ESP8266_ReceiveBuffer_Cnt < 2)
 		{
 			// Need to sending?
-			if (xQueueReceive( ESP8266_SendMessage_Queue, (void * )ESP8266_TransmitBuffer, ( portTickType )0 ) == pdTRUE)
+			if (xQueueReceive( ESP8266_SendMessage_Queue, (void * )ESP8266_TransmitBuffer, ( portTickType )0 ) == pdPASS)
 			{
 				// Sending...
 				ESP8266_Receive_Mode_FixLength = 1;	// fix length, because receiving "> "
@@ -926,7 +1051,9 @@ static void ESP8266_LoopSending(void)
 	while(1)
 	{
 		// Need to sending?
-		if (xQueueReceive( ESP8266_SendMessage_Queue, (void * )ESP8266_TransmitBuffer, ( portTickType )0 ) == pdTRUE)
+		if (xQueueReceive(ESP8266_SendMessage_Queue,
+				(void * )ESP8266_TransmitBuffer,
+				( portTickType )0 ) == pdPASS)
 		{
 
 			// Sending
@@ -1003,7 +1130,7 @@ bool ESP8266_WaitClientConnect( void)
 /**
  * \brief	Connect to server, with blocking
  */
-bool ESP8266_ClientConnect(void)
+static bool ESP8266_ConnectToServerInBlockingMode(void)
 {
 
 	bool successfulConnected = false;
@@ -1019,7 +1146,7 @@ bool ESP8266_ClientConnect(void)
 		if (successfulConnected)
 		{
 			// Successful connected
-			ESP8266_ConnectionStatus = ESP8266_ConnectionStatus_SuccessfulConnected;
+			ESP8266_ConnectionStatus = ESP8266_WifiConnectionStatus_SuccessfulConnected;
 			DebugPrint("Successful connected to server\r\n");
 		}
 		else
@@ -1129,139 +1256,10 @@ void ESP8266_ResetHardware(void)
 }
 
 
-
-
-#ifdef CONFIG_USE_FREERTOS
-/**
- * \brief	ESP8266 Task
- * \note	It will go infinite loop, does not return
- */
-void ESP8266_Task(void)
-{
-	
-	// First, need initialize ESP8266's pins, with	ESP8266_Init();
-	// is in main.c
-	
-	
-	// Delay, for hardware initializing
-	DelayMs(10000);
-	
-	
-	// TODO: Delete this comment
-	// Should init UART at very late (last minute),
-	// because ESP8266 send lot of messages at startup and UART has error, and call the ErrorCallback
-	USART_Init(&ESP8266_UartHandle);
-	
-	
-	DelayMs(100);
-	
-	
-	// Configure ESP8266
-	while (!ESP8266_Config())
-	{
-		DebugPrint("Reconfigure ESP8266 module...\r\n");
-		// Reinit ESP8266 - Restart it
-		ESP8266_ResetHardware();
-		DelayMs(10000);
-		USART_Init(&ESP8266_UartHandle);
-		UART_ResetStatus(&ESP8266_UartHandle);
-	}
-
-	// If reached this, ESP8266 configure is successful
-	DebugPrint("Successful configured ESP8266\r\n");
-
-
-	// Wait
-	DelayMs(5000);
-	
-	
-	// Connect to WiFi
-	while (!ESP8266_ConnectToWifiNetwork())
-	{
-		DebugPrint("Failed connect to WiFi\r\n");
-		DelayMs(10000);
-	}
-
-	// If reached this, successful connected
-	DebugPrint("Successful connected to WiFi\r\n");
-	
-
-	// Delay
-	DelayMs(1000);
-	
-	
-	//	Infinite loop for task working ...
-
-	
-	while (1)
-	{
-		// CONNECT / START OF SERVER
-		#if (CONFIG_ESP8266_IS_SERVER == 1)
-		if (ESP8266_ConnectionStatus != ESP8266_ConnectionStatus_SuccessfulServerStarted)
-		{
-			// Start server
-			ESP8266_StartServerBlocking();
-
-		}
-		#elif (CONFIG_ESP8266_IS_SERVER == 0)
-		if (ESP8266_ConnectionStatus != ESP8266_ConnectionStatus_SuccessfulConnected)
-		{
-			// TODO: Find server
-			
-			// Connect
-			ESP8266_ClientConnect();
-
-		}
-		#else
-		#error "CONFIG_ESP8266_IS_SERVER define isnt correct."
-		#endif
-		
-
-		// END OF Connect to server or start server
-
-		
-		// Send Login message
-		// TODO: Beautify
-		HomeAutMessage_CreateAndSendHomeAutMessage(
-			ESP8266_MyIpAddress,
-			(uint8_t *)ESP8266_ServerAddress,
-			Function_Login,
-			Login_ImLoginImNodeMedium,
-			0,
-			1);
-
-		DelayMs(1000);
-
-
-		//	Sending infinite loop
-		ESP8266_LoopSending();
-
-
-		/////////////////////////////////////
-		// Receive any message + Sending:
-		/////////////////////////////////////
-		//ESP8266_ReceiveUnknownTcpMessage();
-		
-		
-		/////////////////////////////////////
-		//		Check received message
-		/////////////////////////////////////
-		
-		CheckReceivedMessage();
-		
-	}
-	// END OF while(1)
-
-
-}
-#endif	// #ifdef CONFIG_USE_FREERTOS
-
-
-
 /**
  * \brief	TODO
  */
-static void CheckReceivedMessage(void)
+static void ESP8266_CheckReceivedMessage(void)
 {
 
 	// TODO: Check these codes below...
@@ -1271,10 +1269,6 @@ static void CheckReceivedMessage(void)
 
 	// Print received message:
 	DebugPrint("\r\nReceived a message\r\n");
-	// TODO: ha ezt most kiveszem, akkor nem tudja feldolgozni az elso uzenet kivetelevel a többit...
-	//DebugPrint((char *)&ESP8266_ReceiveBuffer[ESP8266_HOMEAUTMESSAGE_RECEIVEDMESSAGE_START]);
-	//DebugPrint((const char *)&ESP8266_ReceiveBuffer[0]);
-	//DebugPrint("\r\n");
 
 
 	// HomeAutMessage:
@@ -1284,16 +1278,17 @@ static void CheckReceivedMessage(void)
 	// For HomeAutMessage
 	if (ESP8266_ReceiveBuffer_Cnt >= 50)
 	{
-		//isValidMessage = OMEAUTMESSAGE_CompareMessage((uint8_t *)&ESP8266_ReceiveBuffer[ESP8266_HOMEAUTMESSAGE_RECEIVEDMESSAGE_START]);
+
 		// TODO: Correct this!
 		isValidMessage = true;
 		if (isValidMessage)
 		{
 			// TODO: Change DebugPrint-s
+			// TODO: Modify separated good message......
 			DebugPrint("Valid HomeAut message received:\r\n");
-			DebugPrint((char *)&ESP8266_ReceiveBuffer[ESP8266_HOMEAUTMESSAGE_RECEIVEDMESSAGE_START]);
+			DebugPrint((char *)ESP8266_ReceiveBuffer);
 			if (xQueueSend(ESP8266_ReceivedMessage_Queue,
-					(const void *)&ESP8266_ReceiveBuffer[ESP8266_HOMEAUTMESSAGE_RECEIVEDMESSAGE_START],
+					(const void *)ESP8266_ReceiveBuffer,
 					1000) == pdPASS)
 			{
 				// Successful sent to queue
@@ -1333,7 +1328,7 @@ static void CheckReceivedMessage(void)
 		DebugPrint("A client disconnected.\r\n");
 		#else
 		DebugPrint("Disconnected. Need to reconnect\r\n");
-		ESP8266_ConnectionStatus = ESP8266_ConnectionStatus_ClosedConnection;
+		ESP8266_ConnectionStatus = ESP8266_WifiConnectionStatus_ClosedConnection;
 		#endif
 	}
 	else if (!StrCmpWithLength((const char *)ESP8266_ReceiveBuffer, "OK", 2))
@@ -1374,6 +1369,7 @@ static void CheckReceivedMessage(void)
 }
 
 
+
 /**
  * \brief	ESP8266 debug print
  */
@@ -1384,6 +1380,7 @@ static void DebugPrint(const char *debugString)
 		USART_SendMessage(debugString);
 	}
 }
+
 
 
 #endif

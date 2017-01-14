@@ -676,7 +676,7 @@ CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
 
 	MONITOR_SendLine("Start unittest");
 
-#ifdef MODULE_STRING_UNIT_TEST_ENABLE
+#ifdef MODULE_STRING_UNITTEST_ENABLE
 	STRING_UnitTest();
 #endif
 

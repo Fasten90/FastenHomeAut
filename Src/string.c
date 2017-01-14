@@ -18,7 +18,7 @@
 #include "communication.h"
 #include "string.h"
 
-#ifdef MODULE_STRING_UNIT_TEST_ENABLE
+#ifdef MODULE_STRING_UNITTEST_ENABLE
 #include "unittest.h"
 #endif
 
@@ -1479,7 +1479,7 @@ uint8_t uprintf (const char *format, ...)
 
 
 
-#ifdef MODULE_STRING_UNIT_TEST_ENABLE
+#ifdef MODULE_STRING_UNITTEST_ENABLE
 /**
  * \brief	String module Unit Test
  */
@@ -1739,7 +1739,7 @@ void STRING_UnitTest (void)
 
 	return;
 }
-#endif	// #ifdef MODULE_STRING_UNIT_TEST_ENABLE
+#endif	// #ifdef MODULE_STRING_UNITTEST_ENABLE
 
 
 // Other printf:

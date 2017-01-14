@@ -22,11 +22,12 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-// |HomeAut|192.168.100.100|192.168.100.014|2017-01-10 18:49:50|COMMAND|REMOTE|00000000|\0
+// "|HomeAut|192.168.100.100|192.168.100.014|2017-01-10 18:49:50|COMMAND|REMOTE|00000000|\0"
 // This example length: 87
 #define HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH					( 90 )
+// "|HomeAut|1.1.1.1|1.1.1.2|2017-01-10 18:49:50|COMMAND|REMOTE|00000000|\0"
+// This example length: 70
 #define HOMEAUTMESSAGE_MESSAGE_MIN_LENGTH					( 70 )
-// TODO: Kiszámolni
 
 #define	HOMEAUTMESSAGE_SEPARATOR_CHARACTER					( '|' )
 #define	HOMEAUTMESSAGE_SEPARATOR_STRING						( "|" )

@@ -65,7 +65,7 @@ volatile uint8_t SYSMANAGER_ReceivedAnValidHomeAutMessageAndNeedProcess = 0;
 uint8_t SysManager_DebugEnableFlag = 1;
 
 
-char SysManager_HomeAutMessage_Buffer[ESP8266_HOMEAUTMESSAGE_ITEM_SIZE];
+char SysManager_HomeAutMessage_Buffer[ESP8266_MESSAGE_QUEUE_ITEM_SIZE];
 	
 
 /*------------------------------------------------------------------------------
