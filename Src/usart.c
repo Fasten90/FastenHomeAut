@@ -292,11 +292,12 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 		#ifdef CONFIG_USE_FREERTOS
 		if (ESP8266_Receive_Mode_FixLength == 1)
 		{
+			// Received fix length message
 			xSemaphoreGiveFromISR(ESP8266_USART_Rx_Semaphore,0);
 		}
 		else
 		{
-			// ESP8266_Receive_Mode_FixLength == 0
+			// Received variable length message
 			// Put to Buffer and receive next char
 
 			// Save received character and wait new char
@@ -313,9 +314,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 		}
 	
 		#else
-		// NOT USED FREERTOS:
+		// Not used FreeRTOS:
 		ESP8266_Uart_ReceivedCharFlag = 1;
-		
 		#endif
 		
 	}

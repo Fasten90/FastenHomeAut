@@ -429,12 +429,12 @@ uint8_t HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation
 
 /**
  * \brief	Create and send message the sending queue
- * \param	uint8_t SourceAddress;
- * \param	uint8_t TargetAddress;
+ * \param	SourceAddress;
+ * \param	TargetAddress;
+ * \param	dateTime
  * \param	HomeAut_FunctionType Function;
  * \param	HomeAut_DataType DataType;
  * \param	uint32_t Data;
- * \param	uint8_t isValid;
  */
 bool HomeAutMessage_CreateAndSendHomeAutMessage(
 	Network_IP_t *myIp,
@@ -442,8 +442,7 @@ bool HomeAutMessage_CreateAndSendHomeAutMessage(
 	DateTime_t *dateTime,
 	HomeAut_FunctionType function,
 	HomeAut_DataType dataType,
-	uint32_t data,
-	uint8_t isValid)
+	uint32_t data)
 {
 	
 	HomeAut_InformationType messageInformation;
@@ -461,7 +460,7 @@ bool HomeAutMessage_CreateAndSendHomeAutMessage(
 	
 	messageInformation.Data = data;
 
-	messageInformation.isValid = isValid;
+	messageInformation.isValid = true;
 	
 	// Create message ...
 	if (HomeAutMessage_CreateMessage(&messageInformation, message))

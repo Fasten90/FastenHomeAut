@@ -92,7 +92,7 @@ static bool ESP8266_ReceiveUnknownTcpMessage(void);
 
 static void ESP8266_WaitMessageAndCheckSendingQueue(void);
 static void ESP8266_LoopSending(void);
-static void ESP8266_CheckReceivedMessage(void);
+static bool ESP8266_CheckReceivedMessage(void);
 
 static bool ESP8266_ConnectToServerInBlockingMode(void);
 
@@ -126,9 +126,8 @@ void ESP8266_Init(void)
 	// GPIO0 & GPIO2
 	
 	// help for pins: http://www.electrodragon.com/w/ESP8266
-	// TODO: Delete this comments
-	// Mindketto HIGH szinten volt amikor megmértem
-	// Igen, de GPIO0 az LOW volt induláskor és HIGH lett csatlakozás után ...
+	// GPIO0 start with LOW level, after connecting will be on HIGH level
+	// GPIO2 pin is on HIGH level...
 
 	// TODO: Need?
 	GPIO_InitStruct.Pin       = ESP8266_GPIO2_GPIO_PIN;
@@ -202,7 +201,6 @@ void ESP8266_Task(void)
 	DelayMs(10000);
 
 
-	// TODO: Delete this comment
 	// Should init UART at very late (last minute),
 	// because ESP8266 send lot of messages at startup and UART has error, and call the ErrorCallback
 	USART_Init(&ESP8266_UartHandle);
@@ -283,8 +281,7 @@ void ESP8266_Task(void)
 			(DateTime_t *)&EventDateTime,
 			Function_Login,
 			Login_ImLoginImDiscovery,
-			0,
-			1);
+			0);
 
 		DelayMs(1000);
 
@@ -320,7 +317,6 @@ void ESP8266_Task(void)
 bool ESP8266_Config(void)
 {
 	// TODO: Összevonni a ReceiveString-et, SendString-et  és a WaitAnswer-t
-	// TODO: Visszatérni false-szal, ha hibás a lefutás
 
 	//////////////////////
 	// "ATE0"
@@ -732,6 +728,7 @@ bool ESP8266_StartServer ( void )
 #endif
 
 
+
 /**
  * \brief	Sending HomeAutMessage
  *			for example:
@@ -876,32 +873,6 @@ static bool ESP8266_ReceiveUnknownTcpMessage(void)
 #endif
 
 
-/*
-// It not used
-TODO: delete
-bool ESP8266_CheckReceiveMessage ( void )
-{
-	
-	#ifdef CONFIG_USE_FREERTOS
-	ESP8266_WaitAnswer();	// FreeRTOS blocking (with semaphore)
-	return Retrn_Ok;
-	return
-	#else
-	// without semaphore, it is not blocking
-	if (ESP8266_Uart_ReceivedCharFlag == 1)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-	#endif
-	
-}
-*/
-
-
 
 /**
  * \brief	Send string to ESP8266
@@ -921,11 +892,12 @@ void ESP8266_SendString(const char *str)
 
 /**
  * \brief	Wait/Receive string
+ * \note	It wait fix length
  */
 void ESP8266_ReceiveString(uint8_t length)
 {
-	// Receive type
-	//ESP8266_Receive_Mode_FixLength = 1; // TODO:
+	// Receive type: fix length
+	ESP8266_Receive_Mode_FixLength = 1;
 
 	// Clear buffer
 	ESP8266_ClearReceiveBuffer();
@@ -1005,11 +977,14 @@ static void ESP8266_WaitMessageAndCheckSendingQueue(void)
 		else if (ESP8266_ReceiveBuffer_Cnt < 2)
 		{
 			// Need to sending?
-			if (xQueueReceive( ESP8266_SendMessage_Queue, (void * )ESP8266_TransmitBuffer, ( portTickType )0 ) == pdPASS)
+			if (xQueueReceive(ESP8266_SendMessage_Queue,
+					(void *)ESP8266_TransmitBuffer,
+					(portTickType)0) == pdPASS)
 			{
 				// Sending...
+				// TODO: Csinálni egy receive mode váltás függvényt!!
 				ESP8266_Receive_Mode_FixLength = 1;	// fix length, because receiving "> "
-				ESP8266_ReceiveBuffer_Cnt = 0;		// TODO: Csinálni egy receive mode váltás függvényt!!
+				ESP8266_ReceiveBuffer_Cnt = 0;
 				ESP8266_TransmitBuffer[40] = '\0';	// end of buffer need to put an end char
 				
 				// Clear UART states
@@ -1018,17 +993,21 @@ static void ESP8266_WaitMessageAndCheckSendingQueue(void)
 				// Sending
 				if (ESP8266_SendTcpMessage((char *)ESP8266_TransmitBuffer))
 				{
-					// TODO: printf
-					DebugPrint("Successful sent a message:\r\n");
-					DebugPrint((const char *)ESP8266_TransmitBuffer);
-					DebugPrint("\r\n");
+					if (ESP8266_DebugEnableFlag)
+					{
+						uprintf("Successful sent a message:\r\n"
+								"  %s\r\n",
+								(const char *)ESP8266_TransmitBuffer);
+					}
 				}
 				else
 				{	
-					// TODO: printf
-					DebugPrint("Failed sending message:\r\n");
-					DebugPrint((const char *)ESP8266_TransmitBuffer);
-					DebugPrint("\r\n");
+					if (ESP8266_DebugEnableFlag)
+					{
+						uprintf("Failed sending message:\r\n"
+								"  %s\r\n",
+								(const char *)ESP8266_TransmitBuffer);
+					}
 				}
 
 				
@@ -1068,17 +1047,23 @@ static void ESP8266_LoopSending(void)
 			// Sending
 			if (ESP8266_SendTcpMessage((char *)ESP8266_TransmitBuffer))
 			{
-				// TODO: printf
-				DebugPrint("Successful sent a message:\r\n");
-				DebugPrint((const char *)ESP8266_TransmitBuffer);
-				DebugPrint("\r\n");
+				// Successful sent
+				if (ESP8266_DebugEnableFlag)
+				{
+					uprintf("Successful sent a message:\r\n"
+							"  %s\r\n",
+							(const char *)ESP8266_TransmitBuffer);
+				}
 			}
 			else
 			{
-				// TODO: printf
-				DebugPrint("Failed sending message:\r\n");
-				DebugPrint((const char *)ESP8266_TransmitBuffer);
-				DebugPrint("\r\n");
+				// Failed send
+				if (ESP8266_DebugEnableFlag)
+				{
+					uprintf("Failed sending message:\r\n"
+							"  %s\r\n",
+							(const char *)ESP8266_TransmitBuffer);
+				}
 			}
 		}
 	}
@@ -1265,53 +1250,43 @@ void ESP8266_ResetHardware(void)
 }
 
 
-/**
- * \brief	TODO
- */
-static void ESP8266_CheckReceivedMessage(void)
-{
 
-	// TODO: Check these codes below...
+/**
+ * \brief	Check received a new TCP message
+ */
+static bool ESP8266_CheckReceivedMessage(void)
+{
 
 	bool isValidMessage;
 
 
 	// Print received message:
-	DebugPrint("\r\nReceived a message\r\n");
+	DebugPrint("Received a message\r\n");
 
 
-	// HomeAutMessage:
-	// "\r\n"											2
-	// "+IPD,0,40:"										10
-	// "|HomeAut|010|014|LOGIN__|NMEDIU00000000|"		40
-	// For HomeAutMessage
-	if (ESP8266_ReceiveBuffer_Cnt >= 50)
+	if (ESP8266_ReceiveBuffer_Cnt >= ESP8266_RECEIVEMESSAGE_MIN_LENGTH)
 	{
 
-		// TODO: Correct this!
-		isValidMessage = true;
-		if (isValidMessage)
+		// TODO: Change DebugPrint-s
+		// TODO: Modify separated good message......
+		if (ESP8266_DebugEnableFlag)
+			uprintf("Valid HomeAut message received:\r\n"
+					"%s",
+					(char *)ESP8266_ReceiveBuffer
+					);
+
+		if (xQueueSend(ESP8266_ReceivedMessage_Queue,
+				(const void *)ESP8266_ReceiveBuffer,
+				1000) != pdPASS)
 		{
-			// TODO: Change DebugPrint-s
-			// TODO: Modify separated good message......
-			DebugPrint("Valid HomeAut message received:\r\n");
-			DebugPrint((char *)ESP8266_ReceiveBuffer);
-			if (xQueueSend(ESP8266_ReceivedMessage_Queue,
-					(const void *)ESP8266_ReceiveBuffer,
-					1000) == pdPASS)
-			{
-				// Successful sent to queue
-			}
-			else
-			{
-				// Failed sent to queue
-				DebugPrint("Message failed to sending queue");
-			}
+			// Successful sent to queue
+			isValidMessage = true;
 		}
 		else
 		{
-			DebugPrint("Invalid HomeAut message received:\r\n");
-			DebugPrint((char *)&ESP8266_ReceiveBuffer[0]);
+			// Failed sent to queue
+			DebugPrint("Message failed to sending queue\r\n");
+			isValidMessage = false;
 		}
 	}
 	// Check for unconnect, or other messages...
@@ -1375,6 +1350,7 @@ static void ESP8266_CheckReceivedMessage(void)
 		LED_RED_ON();
 	}
 
+	return isValidMessage;
 }
 
 

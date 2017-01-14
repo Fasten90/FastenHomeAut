@@ -196,8 +196,7 @@ bool HomeAutMessage_CreateAndSendHomeAutMessage(
 	DateTime_t *dateTime,
 	HomeAut_FunctionType function,
 	HomeAut_DataType dataType,
-	uint32_t data,
-	uint8_t isValid);
+	uint32_t data);
 	
 
 bool HomeAutMessage_ConvertAddressStringToIP(char *message, Network_IP_t *address);
