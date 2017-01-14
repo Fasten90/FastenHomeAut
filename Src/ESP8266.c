@@ -51,17 +51,28 @@ ESP8266_TcpConnectionStatusType	ESP8266_TcpConnectionStatus
 			= ESP8266_TcpConnectionStatus_Unknown;
 
 ///< My IP address
-uint8_t ESP8266_MyIpAddress[4] = { 0 };
+Network_IP_t ESP8266_MyIpAddress = { 0 };
 ///< Server IP address
-const uint8_t ESP8266_ServerAddress[4] = { 192, 168, 1, 62 };
+const Network_IP_t ESP8266_ServerAddress = { .IP = { 192, 168, 1, 62 } };
 
 
 // Receive
 uint8_t ESP8266_Receive_Mode_FixLength = 1;
 uint8_t ESP8266_ReceiveBuffer_Cnt = 0;
 
-// Debug
+/// Debug
 uint8_t ESP8266_DebugEnableFlag = 1;
+
+/// for debug
+const DateTime_t EventDateTime =
+{
+	.year = 17,
+	.month = 1,
+	.day = 14,
+	.hour = 20,
+	.minute = 0,
+	.second = 0
+};
 
 
 #ifdef CONFIG_USE_FREERTOS
@@ -87,7 +98,7 @@ static bool ESP8266_ConnectToServerInBlockingMode(void);
 
 static bool ESP8266_SendTcpMessage(const char *message);
 
-static bool ESP8266_ConvertIpString(char *message, uint8_t *ip);
+static bool ESP8266_ConvertIpString(char *message, Network_IP_t *ip);
 
 static void DebugPrint(const char *debugString);
 
@@ -267,10 +278,11 @@ void ESP8266_Task(void)
 		// Send Login message
 		// TODO: Beautify
 		HomeAutMessage_CreateAndSendHomeAutMessage(
-			ESP8266_MyIpAddress,
-			(uint8_t *)ESP8266_ServerAddress,
+			&ESP8266_MyIpAddress,
+			(Network_IP_t *)&ESP8266_ServerAddress,
+			(DateTime_t *)&EventDateTime,
 			Function_Login,
-			Login_ImLoginImNodeMedium,
+			Login_ImLoginImDiscovery,
 			0,
 			1);
 
@@ -488,7 +500,7 @@ bool ESP8266_ConnectToWifiNetwork(void)
 	ESP8266_WaitAnswer(2000);
 	
 	// Check and convert IP address
-	if (ESP8266_ConvertIpString((char *)ESP8266_ReceiveBuffer, ESP8266_MyIpAddress))
+	if (ESP8266_ConvertIpString((char *)ESP8266_ReceiveBuffer, &ESP8266_MyIpAddress))
 	{
 		DebugPrint("Successful convert IP address\r\n");
 	}
@@ -501,11 +513,8 @@ bool ESP8266_ConnectToWifiNetwork(void)
 	// Print my IP address
 	if (ESP8266_DebugEnableFlag == 1)
 	{
-		uprintf("ESP8266 IP address: %d.%d.%d.%d\r\n",
-				ESP8266_MyIpAddress[0],
-				ESP8266_MyIpAddress[1],
-				ESP8266_MyIpAddress[2],
-				ESP8266_MyIpAddress[3]);
+		Network_PrintIpOnDebug("ESP8266",
+				&ESP8266_MyIpAddress);
 	}
 	
 	
@@ -1189,7 +1198,7 @@ bool ESP8266_StartServerBlocking(void)
 /**
  * \brief	Convert IP string to IP number
  */
-static bool ESP8266_ConvertIpString(char *message, uint8_t *ip)
+static bool ESP8266_ConvertIpString(char *message, Network_IP_t *ip)
 {
 	// String come like "\r\n192.168.0.1\r\n"
 
@@ -1219,7 +1228,7 @@ static bool ESP8266_ConvertIpString(char *message, uint8_t *ip)
 				// Successful convert to number
 				if (convertValue <= 255)
 				{
-					ip[i] = (uint8_t)convertValue;
+					ip->IP[i] = (uint8_t)convertValue;
 				}
 				else
 				{

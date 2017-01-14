@@ -122,7 +122,7 @@ extern ESP8266_WifiConnectionStatusType	ESP8266_ConnectionStatus;
 extern ESP8266_TcpConnectionStatusType	ESP8266_TcpConnectionStatus;
 
 
-extern uint8_t ESP8266_MyIpAddress[];
+extern Network_IP_t ESP8266_MyIpAddress;
 
 
 extern uint8_t ESP8266_DebugEnableFlag;

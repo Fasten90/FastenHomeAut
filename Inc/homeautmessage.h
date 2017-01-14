@@ -51,12 +51,6 @@
  *----------------------------------------------------------------------------*/
 
 
-typedef struct
-{
-	uint8_t IP[4];
-} HomeAutAddress_t;
-
-
 
 /// HomeAut function
 typedef enum
@@ -91,6 +85,7 @@ typedef enum
 	Login_ImLoginImNodeSmall,
 	Login_ImLoginImNodeMedium,
 	Login_ImLoginImCenterPanel,
+	Login_ImLoginImDiscovery,
 	Login_Welcome,
 	Login_Sync,
 	
@@ -161,8 +156,8 @@ typedef struct
 /// HomeAut message information type
 typedef struct
 {
-	HomeAutAddress_t SourceAddress;			///< My (sender) address
-	HomeAutAddress_t TargetAddress;			///< Target (receiver) address
+	Network_IP_t SourceAddress;				///< My (sender) address
+	Network_IP_t TargetAddress;				///< Target (receiver) address
 	DateTime_t DateTime;					///< Event date and time
 	HomeAut_FunctionType Function;			///< Function
 	HomeAut_DataType DataType;				///< Data type
@@ -196,16 +191,18 @@ bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
 uint8_t HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation, char *createToMessage);
 
 bool HomeAutMessage_CreateAndSendHomeAutMessage(
-	uint8_t *myIp, uint8_t *destIp,
+	Network_IP_t *myIp,
+	Network_IP_t *destIp,
+	DateTime_t *dateTime,
 	HomeAut_FunctionType function,
 	HomeAut_DataType dataType,
 	uint32_t data,
 	uint8_t isValid);
 	
 
-bool HomeAutMessage_ConvertAddressStringToIP(char *message, HomeAutAddress_t *address);
+bool HomeAutMessage_ConvertAddressStringToIP(char *message, Network_IP_t *address);
 
-uint8_t HomeAutMessage_PrintIpAddress(char *message, HomeAutAddress_t *ip);
+uint8_t HomeAutMessage_PrintIpAddress(char *message, Network_IP_t *ip);
 
 void HomeAutMessage_UnitTest(void);
 

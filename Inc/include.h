@@ -88,7 +88,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #include "string.h"
 #include "calc.h"
 #include "DateTime.h"
-
+#include "network.h"
 
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 #include "usart.h"

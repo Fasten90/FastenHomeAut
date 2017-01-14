@@ -38,15 +38,15 @@ const FunctionTypeParity FunctionTypeParity_List[] =
 		.function = Function_Invalid
 	},
 	{
-		.name = "LOGIN__",
+		.name = "LOGIN",
 		.function = Function_Login
 	},
 	{
-		.name = "STATE__",
+		.name = "STATE",
 		.function = Function_State
 	},
 	{
-		.name = "ALARM__",
+		.name = "ALARM",
 		.function = Function_Alarm
 	},
 	{
@@ -54,18 +54,18 @@ const FunctionTypeParity FunctionTypeParity_List[] =
 		.function = Function_Command
 	},
 	{
-		.name = "MODE___",
+		.name = "MODE",
 		.function = Function_Mode
 	},
 	{
-		.name = "CONFIG_",
+		.name = "CONFIG",
 		.function = Function_Config
 	},
 
 	// XXX: HERE ADD NEW DateType
 
 	{
-		.name = "",
+		.name = NULL,
 		.function = Function_End
 	}
 };
@@ -82,34 +82,38 @@ const DataTypeParity DataTypeParity_List[] =
 		.type = Login_ImLoginImNodeSmall
 	},
 	{
-		.name = "NMEDIU",
+		.name = "NMEDIUM",
 		.type = Login_ImLoginImNodeMedium
 	},
 	{
-		.name = "CENTER",
+		.name = "CENTERPANEL",
 		.type = Login_ImLoginImCenterPanel
 	},
 	{
-		.name = "WELCOM",
+		.name = "DISCOVERY",
+		.type = Login_ImLoginImDiscovery
+	},
+	{
+		.name = "WELCOME",
 		.type = Login_Welcome
 	},
 	{
-		.name = "SYNC__",
+		.name = "SYNC",
 		.type = Login_Sync
 	},
 
 
 	// STATE
 	{
-		.name = "TEMP__",
+		.name = "TEMP",
 		.type = State_Temperature
 	},
 	{
-		.name = "LIGHT_",
+		.name = "LIGHT",
 		.type = State_Brightness
 	},
 	{
-		.name = "SOUND_",
+		.name = "SOUND",
 		.type = State_Sound
 	},
 	{
@@ -117,7 +121,7 @@ const DataTypeParity DataTypeParity_List[] =
 		.type = State_Button
 	},
 	{
-		.name = "BATT__",
+		.name = "BATT",
 		.type = State_Battery
 	},
 	{
@@ -127,15 +131,15 @@ const DataTypeParity DataTypeParity_List[] =
 
 	// ALARM
 	{
-		.name = "PREBUT",
+		.name = "PRESSEDBUTTON",
 		.type = Alarm_PressedButton
 	},
 	{
-		.name = "LOWBAT",
+		.name = "LOWBATTERY",
 		.type = Alarm_LowBattery
 	},
 	{
-		.name = "ONCHG_",
+		.name = "ONCHGARGE",
 		.type = Alarm_OnCharge
 	},
 	{
@@ -143,7 +147,7 @@ const DataTypeParity DataTypeParity_List[] =
 		.type = Alarm_TooHot
 	},
 	{
-		.name = "TOCOLD",
+		.name = "TOOCOLD",
 		.type = Alarm_TooCold
 	},
 	{
@@ -151,7 +155,7 @@ const DataTypeParity DataTypeParity_List[] =
 		.type = Alarm_InternalTemperature_TooHot
 	},
 	{
-		.name = "INCOLD",
+		.name = "INTCOLD",
 		.type = Alarm_InternalTemperature_TooCold
 	},
 	{
@@ -159,7 +163,7 @@ const DataTypeParity DataTypeParity_List[] =
 		.type = Alarm_TooBright
 	},
 	{
-		.name = "TODARK",
+		.name = "TOODARK",
 		.type = Alarm_TooDark
 	},
 	{
@@ -167,7 +171,7 @@ const DataTypeParity DataTypeParity_List[] =
 		.type = Alarm_Moving
 	},
 	{
-		.name = "SOUND_",
+		.name = "SOUND",
 		.type = Alarm_SoundImpacted
 	},
 
@@ -184,7 +188,7 @@ const DataTypeParity DataTypeParity_List[] =
 	// XXX: HERE ADD NEW DateType
 
 	{
-		.name = "",
+		.name = NULL,
 		.type = DataType_End
 	}
 
@@ -433,7 +437,9 @@ uint8_t HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation
  * \param	uint8_t isValid;
  */
 bool HomeAutMessage_CreateAndSendHomeAutMessage(
-	uint8_t *myIp, uint8_t *destIp,
+	Network_IP_t *myIp,
+	Network_IP_t *destIp,
+	DateTime_t *dateTime,
 	HomeAut_FunctionType function,
 	HomeAut_DataType dataType,
 	uint32_t data,
@@ -443,14 +449,12 @@ bool HomeAutMessage_CreateAndSendHomeAutMessage(
 	HomeAut_InformationType messageInformation;
 	char message[HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH];
 	
-	uint8_t i;
+	memcpy(&messageInformation.SourceAddress, myIp, sizeof(Network_IP_t));
 
-	for (i = 0; i < 4; i++)
-		messageInformation.SourceAddress.IP[i] = myIp[i];
-
-	for (i = 0; i < 4; i++)
-		messageInformation.TargetAddress.IP[i] = destIp[i];
+	memcpy(&messageInformation.TargetAddress, destIp, sizeof(Network_IP_t));
 	
+	memcpy(&messageInformation.DateTime, dateTime, sizeof(DateTime_t));
+
 	messageInformation.Function = function;
 	
 	messageInformation.DataType = dataType;
@@ -487,7 +491,7 @@ bool HomeAutMessage_CreateAndSendHomeAutMessage(
 /**
  * \brief	Convert string IP address to uint8_t[4]
  */
-bool HomeAutMessage_ConvertAddressStringToIP(char *message, HomeAutAddress_t *address)
+bool HomeAutMessage_ConvertAddressStringToIP(char *message, Network_IP_t *address)
 {
 
 	// String come like "\r\n192.168.0.1\r\n"
@@ -538,7 +542,7 @@ bool HomeAutMessage_ConvertAddressStringToIP(char *message, HomeAutAddress_t *ad
 /**
  * \brief	Print IP address to string
  */
-uint8_t HomeAutMessage_PrintIpAddress(char *message, HomeAutAddress_t *ip)
+uint8_t HomeAutMessage_PrintIpAddress(char *message, Network_IP_t *ip)
 {
 	uint8_t length = 0;
 	uint8_t i;
