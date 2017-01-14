@@ -153,7 +153,7 @@ bool ESP8266_ConnectToWifiNetwork(void);
 
 bool ESP8266_StartServer(void);
 bool ESP8266_FindServer(void);
-bool ESP8266_ConnectToServer(void);
+bool ESP8266_ConnectToServer(Network_IP_t *ip, Network_Port_t port);
 
 bool ESP8266_SendMessageToQueue(char *message);
 

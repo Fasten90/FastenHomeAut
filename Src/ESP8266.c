@@ -55,6 +55,8 @@ Network_IP_t ESP8266_MyIpAddress = { 0 };
 ///< Server IP address
 const Network_IP_t ESP8266_ServerAddress = { .IP = { 192, 168, 1, 62 } };
 
+const Network_Port_t ESP8266_ServerPort = 2000;
+
 
 // Receive
 uint8_t ESP8266_Receive_Mode_FixLength = 1;
@@ -272,7 +274,7 @@ void ESP8266_Task(void)
 
 		// END OF Connect to server or start server
 
-
+#ifdef CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
 		// Send Login message
 		// TODO: Beautify
 		HomeAutMessage_CreateAndSendHomeAutMessage(
@@ -284,7 +286,7 @@ void ESP8266_Task(void)
 			0);
 
 		DelayMs(1000);
-
+#endif
 
 		//	Sending infinite loop
 		ESP8266_LoopSending();
@@ -489,7 +491,7 @@ bool ESP8266_ConnectToWifiNetwork(void)
 	////////////////////////////////////////////
 	
 	// TODO: Wait unknown length string (IP address length is not fix...
-	ESP8266_ReceiveString(StringLength("\r\n192.168.0.1\r\n9.6.5.10\r\n\r\nOK\r\n"));
+	ESP8266_ReceiveString(StringLength("192.168.0.1\r\n192.168.1.34\r\n\r\nOK\r\n"));
 
 	ESP8266_SendString("AT+CIFSR\r\n");
 	
@@ -634,7 +636,7 @@ bool ESP8266_FindServer ( void )
 /**
  * \brief	Connect ESP8266 to server
  */
-bool ESP8266_ConnectToServer(void)
+bool ESP8266_ConnectToServer(Network_IP_t *ip, Network_Port_t port)
 {
 	
 	////////////////////////////////////////
@@ -650,14 +652,19 @@ bool ESP8266_ConnectToServer(void)
 	// Linked
 	////////////////////////////////////////
 	
-	// TODO: Change IP address to changeable
 	ESP8266_ReceiveString(StringLength("\r\nOK\r\nLinked\r\n"));
 	
-	ESP8266_SendString("AT+CIPSTART=0,\"TCP\",\"192.168.1.62\",2000\r\n");
-	
+	// Original string: "AT+CIPSTART=0,\"TCP\",\"192.168.1.62\",2000\r\n"
+	//ESP8266_SendString("AT+CIPSTART=0,\"TCP\",\"192.168.1.62\",2000\r\n");
+	char buffer[50];
+	uint8_t length = 0;
+	length += usprintf(buffer, "AT+CIPSTART=0,\"TCP\",\"");
+	length += Network_PrintIp(&buffer[length], ip);
+	length += usprintf(&buffer[length], "\",%d\r\n", port);
+	ESP8266_SendString(buffer);
+
 	ESP8266_WaitAnswer(5000);
 	
-#warning "Has an error, not receive good response, but device connect to server"
 	if (!StrCmp("\r\nOK\r\nLinked\r\n", (const char *)ESP8266_ReceiveBuffer))
 	{
 		// OK\r\nLinked
@@ -770,8 +777,7 @@ static bool ESP8266_SendTcpMessage(const char *message)
 	
 	ESP8266_WaitAnswer(5000);
 	
-#warning "First character is 0, but why...?... Now it is \r and only received 1 character"
-	if (!StrCmp("> ", (const char *)&ESP8266_ReceiveBuffer[1]))
+	if (!StrCmp("> ", (const char *)ESP8266_ReceiveBuffer))
 	{
 		ESP8266_LED_OK();
 	}
@@ -783,8 +789,7 @@ static bool ESP8266_SendTcpMessage(const char *message)
 	else
 	{
 		ESP8266_LED_FAIL();
-#warning: "uncomment it"
-		//return false;
+		return false;
 	}
 	
 	
@@ -802,8 +807,7 @@ static bool ESP8266_SendTcpMessage(const char *message)
 
 	ESP8266_WaitAnswer(5000);
 	
-#warning "Wrong received characters, 0.-2. characters are '\0'... Now only receive '>' on first index"
-	if (!StrCmp("\r\nSEND OK\r\n", (const char *)&ESP8266_ReceiveBuffer[3]))
+	if (!StrCmp("\r\nSEND OK\r\n", (const char *)ESP8266_ReceiveBuffer))
 	{
 		ESP8266_LED_OK();
 	}
@@ -879,7 +883,6 @@ static bool ESP8266_ReceiveUnknownTcpMessage(void)
  */
 void ESP8266_SendString(const char *str)
 {
-	
 	uint8_t length = StringLength(str);
 
 	if (HAL_UART_Transmit(&ESP8266_UartHandle, (uint8_t*)str, length, 5000) != HAL_OK)
@@ -1132,10 +1135,9 @@ static bool ESP8266_ConnectToServerInBlockingMode(void)
 	while (!successfulConnected)
 	{
 		// Connect to server
-		successfulConnected = ESP8266_ConnectToServer();
-#warning "delete this code below !!!!!"
-		successfulConnected = true;
-#warning "Need bugfix !!!!!"
+		successfulConnected = ESP8266_ConnectToServer(
+				(Network_IP_t *)&ESP8266_ServerAddress,
+				ESP8266_ServerPort);
 	
 		if (successfulConnected)
 		{
@@ -1185,9 +1187,10 @@ bool ESP8266_StartServerBlocking(void)
  */
 static bool ESP8266_ConvertIpString(char *message, Network_IP_t *ip)
 {
-	// String come like "\r\n192.168.0.1\r\n"
 
-	int16_t pos = STRING_FindString(&message[2], "\r\n");
+	// String come like "192.168.0.1\r\n"
+
+	int16_t pos = STRING_FindString(message, "\r\n");
 	if (pos >= 0)
 	{
 		pos += 2;
@@ -1199,43 +1202,8 @@ static bool ESP8266_ConvertIpString(char *message, Network_IP_t *ip)
 		return false;
 	}
 
-	char *separated[4];
-	if (STRING_Splitter(message, '.',  separated, 4) == 4)
-	{
-		// Successful separated
-		// Convert IP string to number
-		uint8_t i;
-		for (i = 0; i < 4; i++)
-		{
-			uint32_t convertValue;
-			if (StringToUnsignedDecimalNum(separated[i], &convertValue))
-			{
-				// Successful convert to number
-				if (convertValue <= 255)
-				{
-					ip->IP[i] = (uint8_t)convertValue;
-				}
-				else
-				{
-					// Error, Too large value
-					return false;
-				}
-			}
-			else
-			{
-				// Failed convert to number
-				return false;
-			}
-
-		}
-
-		return true;
-	}
-	else
-	{
-		// Failed separate string
-		return false;
-	}
+	// Process IP address string like "192.168.0.1" to Network_IP_t
+	return Network_ConvertIpAddressStringToIP(message, ip);
 }
 
 

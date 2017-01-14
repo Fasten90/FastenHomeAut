@@ -45,29 +45,83 @@
 
 /**
  * \brief	Print IP to string
+ * \return	string length
  */
-uint8_t Network_PrintIp(char *str, Network_IP_t *IP)
+uint8_t Network_PrintIp(char *str, Network_IP_t *ip)
 {
 	return usprintf(str, "%d.%d.%d.%d",
-			IP->IP[0],
-			IP->IP[1],
-			IP->IP[2],
-			IP->IP[3]);
+			ip->IP[0],
+			ip->IP[1],
+			ip->IP[2],
+			ip->IP[3]);
 }
 
 
 
 /**
  * \brief	Print IP to string
+ * \return	string length
  */
-uint8_t Network_PrintIpOnDebug(char *str, Network_IP_t *IP)
+uint8_t Network_PrintIpOnDebug(char *str, Network_IP_t *ip)
 {
 	return uprintf("%s IP address: %d.%d.%d.%d\r\n",
 			str,
-			IP->IP[0],
-			IP->IP[1],
-			IP->IP[2],
-			IP->IP[3]);
+			ip->IP[0],
+			ip->IP[1],
+			ip->IP[2],
+			ip->IP[3]);
+}
+
+
+
+/**
+ * \brief	Convert string IP address to Network_IP_t
+ * \retval	true, if ok
+ * \retval	false, if false
+ */
+bool Network_ConvertIpAddressStringToIP(char *message, Network_IP_t *address)
+{
+
+	// Process String like "192.168.0.1"
+
+	char *separated[4];
+
+	if (STRING_Splitter(message, '.',  separated, 4) == 4)
+	{
+		// Successful separated
+		// Convert IP string to number
+		uint8_t i;
+		for (i = 0; i < 4; i++)
+		{
+			uint32_t convertValue;
+			if (StringToUnsignedDecimalNum(separated[i], &convertValue))
+			{
+				// Successful convert to number
+				if (convertValue <= 255)
+				{
+					address->IP[i] = (uint8_t)convertValue;
+				}
+				else
+				{
+					// Error, Too large value
+					return false;
+				}
+			}
+			else
+			{
+				// Failed convert to number
+				return false;
+			}
+		}
+
+		// Successful convert
+		return true;
+	}
+	else
+	{
+		// Failed separate string
+		return false;
+	}
 }
 
 

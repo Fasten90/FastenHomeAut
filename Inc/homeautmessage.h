@@ -198,11 +198,6 @@ bool HomeAutMessage_CreateAndSendHomeAutMessage(
 	HomeAut_DataType dataType,
 	uint32_t data);
 	
-
-bool HomeAutMessage_ConvertAddressStringToIP(char *message, Network_IP_t *address);
-
-uint8_t HomeAutMessage_PrintIpAddress(char *message, Network_IP_t *ip);
-
 void HomeAutMessage_UnitTest(void);
 
 

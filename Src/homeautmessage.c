@@ -263,7 +263,7 @@ bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
 	// Check source address
 	if (isOk)
 	{
-		isOk = HomeAutMessage_ConvertAddressStringToIP(
+		isOk = Network_ConvertIpAddressStringToIP(
 				split[HOMEAUTMESSAGE_MESSAGE_STRUCT_SOURCEADDRESS_COUNT],
 				&information.SourceAddress);
 	}
@@ -272,7 +272,7 @@ bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
 	// Check target address
 	if (isOk)
 	{
-		isOk = HomeAutMessage_ConvertAddressStringToIP(
+		isOk = Network_ConvertIpAddressStringToIP(
 				split[HOMEAUTMESSAGE_MESSAGE_STRUCT_TARGETADDRESS_COUNT],
 				&information.TargetAddress);
 	}
@@ -372,13 +372,13 @@ uint8_t HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation
 	///////////////////////
 
 	// Source Address
-	length += HomeAutMessage_PrintIpAddress(&createToMessage[length], &messageInformation->SourceAddress);
+	length += Network_PrintIp(&createToMessage[length], &messageInformation->SourceAddress);
 
 	// Separator
 	length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
 
 	// Target Address
-	length += HomeAutMessage_PrintIpAddress(&createToMessage[length], &messageInformation->TargetAddress);
+	length += Network_PrintIp(&createToMessage[length], &messageInformation->TargetAddress);
 
 	// Separator
 	length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
@@ -483,79 +483,6 @@ bool HomeAutMessage_CreateAndSendHomeAutMessage(
 	{
 		return false;
 	}
-}
-
-
-
-/**
- * \brief	Convert string IP address to uint8_t[4]
- */
-bool HomeAutMessage_ConvertAddressStringToIP(char *message, Network_IP_t *address)
-{
-
-	// String come like "\r\n192.168.0.1\r\n"
-
-	char *separated[4];
-
-	if (STRING_Splitter(message, '.',  separated, 4) == 4)
-	{
-		// Successful separated
-		// Convert IP string to number
-		uint8_t i;
-		for (i = 0; i < 4; i++)
-		{
-			uint32_t convertValue;
-			if (StringToUnsignedDecimalNum(separated[i], &convertValue))
-			{
-				// Successful convert to number
-				if (convertValue <= 255)
-				{
-					address->IP[i] = (uint8_t)convertValue;
-				}
-				else
-				{
-					// Error, Too large value
-					return false;
-				}
-			}
-			else
-			{
-				// Failed convert to number
-				return false;
-			}
-
-		}
-
-		// Successful convert
-		return true;
-	}
-	else
-	{
-		// Failed separate string
-		return false;
-	}
-}
-
-
-
-/**
- * \brief	Print IP address to string
- */
-uint8_t HomeAutMessage_PrintIpAddress(char *message, Network_IP_t *ip)
-{
-	uint8_t length = 0;
-	uint8_t i;
-
-	for (i=0; i<4; i++)
-	{
-		length += UnsignedDecimalToString(ip->IP[i], &message[length]);
-		if (i < 3)
-		{
-			message[length++] = '.';
-		}
-	}
-
-	return length;
 }
 
 
