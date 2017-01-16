@@ -7,7 +7,7 @@
  *		Function:		Command Handler: communication with UART, execute commands
  *		Target:			STM32Fx
  *		Version:		v4
- *		Last modified:	2016.09.28
+ *		Last modified:	2017.01.16
  */
 
 
@@ -26,20 +26,22 @@
 #endif
 
 
+
 /*******************************************************************************
  *									Configs:
  ******************************************************************************/
 
-/// Enable monitor
+/// Enable command handler
 const bool MONITOR_CommandReceiveEnable = true;
+
 /// Enable sending back: "Echo mode"
-const bool MONITOR_CommandSendBackCharEnable = true;
+static const bool MONITOR_CommandSendBackCharEnable = true;
 
 #ifdef MONITOR_GET_PASSWORD_ENABLE
 static const char MONITOR_Password[] = "password";
 #endif
 
-const char MONITOR_DelimiterChar = ' ';
+static const char MONITOR_DelimiterChar = ' ';
 
 
 
@@ -47,6 +49,7 @@ const char MONITOR_DelimiterChar = ' ';
  *						 			Global variables
  ******************************************************************************/
 
+/// Receive buffers
 volatile char MONITOR_CommandActual[MONITOR_MAX_COMMAND_LENGTH] = { 0 };
 volatile char MONITOR_CommandActualEscape[4] = { 0 };
 volatile CommProtocol_t MONITOR_CommandSource = 0;
@@ -138,28 +141,30 @@ static void CommandHandler_ProcessReceivedCharacter(void);
 #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
 static void CommandHandler_CommandDelete(void);
 static void CommandHandler_CommandTabulator(void);
+static void CommandHandler_CommandResendLine(bool needRestoreCursor);
+static bool CommandHandler_CommandEscapeCharValidation(void);
 #endif
 
-bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source);
+static void CommandHandler_CommandBackspace(void);
+
+static bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source);
 static uint8_t CommandHandler_CommandParser(void);
 static bool CommandHandler_SearchCommand(void);
 
-void CommandHandler_CommandBackspace(void);
-void CommandHandler_CommandResendLine(bool needRestoreCursor);
-bool CommandHandler_CommandEscapeCharValidation(void);
+
 
 #ifdef CONFIG_USE_MONITOR_HISTORY
 // Monitor history
-void CommandHandler_HistorySave(void);
-bool CommandHandler_HistoryFindInList(void);
-void CommandHandler_HistoryLoad(uint8_t direction);
+static void CommandHandler_HistorySave(void);
+static bool CommandHandler_HistoryFindInList(void);
+static void CommandHandler_HistoryLoad(uint8_t direction);
 #endif
 
-void CommandHandler_ConvertSmallLetter(void);
+static void CommandHandler_ConvertSmallLetter(void);
 
-void CommandHandler_CheckResultAndRespond(CommandResult_t result);
-CommandResult_t CommandHandler_RunCommand(CommandID_t commandID);
-CommandResult_t CommandHandler_CheckArgumentNumIsGood(uint8_t receivedArgNum,
+static void CommandHandler_CheckResultAndRespond(CommandResult_t result);
+static CommandResult_t CommandHandler_RunCommand(CommandID_t commandID);
+static CommandResult_t CommandHandler_CheckArgumentNumIsGood(uint8_t receivedArgNum,
 		uint8_t commandArgNum);
 
 #ifdef MONITOR_GET_PASSWORD_ENABLE
@@ -550,7 +555,7 @@ static void CommandHandler_ProcessReceivedCharacter(void)
  * \brief	Prepare (Separate) the command and Find and Run it...
  * 			TODO: Átalakítani char* átvevősre
  */
-bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source)
+static bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source)
 {
 	bool isSuccessful = false;
 
@@ -820,7 +825,7 @@ static void CommandHandler_CommandTabulator(void)
  * \brief		Resend the actual line/command
  * 				NOTE: It save and restore the original cursor position
  */
-void CommandHandler_CommandResendLine( bool needRestoreCursor)
+static void CommandHandler_CommandResendLine( bool needRestoreCursor)
 {
 	// Procedure:
 	// - Delete line
@@ -861,7 +866,7 @@ void CommandHandler_CommandResendLine( bool needRestoreCursor)
 /**
  * \brief	Process Escape sequence
  */
-bool CommandHandler_CommandEscapeCharValidation(void)
+static bool CommandHandler_CommandEscapeCharValidation(void)
 {
 	// return valid char, or 0 if invalid
 	// work with ANSI escape codes
@@ -935,7 +940,7 @@ bool CommandHandler_CommandEscapeCharValidation(void)
 /**
  * \brief	Save actual command to history
  */
-void CommandHandler_HistorySave(void)
+static void CommandHandler_HistorySave(void)
 {
 
 	// Has equal command?
@@ -975,7 +980,7 @@ void CommandHandler_HistorySave(void)
  * \return	true, if has equal
  * 			false, if not has equal
  */
-bool CommandHandler_HistoryFindInList(void)
+static bool CommandHandler_HistoryFindInList(void)
 {
 	uint8_t i;
 	
@@ -1000,7 +1005,7 @@ bool CommandHandler_HistoryFindInList(void)
 /**
  * \brief	Load history from list to actual command
  */
-void CommandHandler_HistoryLoad(uint8_t direction)
+static void CommandHandler_HistoryLoad(uint8_t direction)
 {
 
 	// down cursor
@@ -1050,15 +1055,17 @@ void CommandHandler_HistoryLoad(uint8_t direction)
 /**
  * \brief	Convert MONITOR_CommandActual (Actual command) to small letters
  */
-void CommandHandler_ConvertSmallLetter(void)
+static void CommandHandler_ConvertSmallLetter(void)
 {
 	uint8_t i;
 	
 	for (i = 0; MONITOR_CommandActual[i] != '\0'; i++)
 	{
 		if ( ( MONITOR_CommandActual[i] > 'A' ) && ( MONITOR_CommandActual[i] < 'Z' ) )
-		{	// need to change to small letter
-			MONITOR_CommandActual[i] = MONITOR_CommandActual[i] - ( 'A' - 'a'); // length between Big Letter and small letter
+		{
+			// Need to change to small letter
+			// length between Big Letter and small letter
+			MONITOR_CommandActual[i] = MONITOR_CommandActual[i] - ( 'A' - 'a');
 		}
 	}
 
@@ -1070,7 +1077,7 @@ void CommandHandler_ConvertSmallLetter(void)
 /**
  * \brief	Check result and write response
  */
-void CommandHandler_CheckResultAndRespond(CommandResult_t result)
+static void CommandHandler_CheckResultAndRespond(CommandResult_t result)
 {
 	const char *pMessage = NULL;
 
@@ -1134,14 +1141,15 @@ void CommandHandler_CheckResultAndRespond(CommandResult_t result)
 /**
  * \brief	Run command
  */
-CommandResult_t CommandHandler_RunCommand(CommandID_t commandID)
+static CommandResult_t CommandHandler_RunCommand(CommandID_t commandID)
 {
 
 	CommandResult_t result = CommandResult_Unknown;
 	bool needWriteHelp = false;
 
 	// Check argument nums
-	result = CommandHandler_CheckArgumentNumIsGood(COMMAND_ArgCount, CommandList[commandID].commandArgNum);
+	result = CommandHandler_CheckArgumentNumIsGood(
+			COMMAND_ArgCount, CommandList[commandID].commandArgNum);
 
 	if (result == CommandResult_Ok)
 	{
@@ -1150,7 +1158,7 @@ CommandResult_t CommandHandler_RunCommand(CommandID_t commandID)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 		// Call function
-		FunctionPointer thisFunction = ( FunctionPointer )CommandList[commandID].commandFunctionPointer;
+		FunctionPointer thisFunction = (FunctionPointer)CommandList[commandID].commandFunctionPointer;
 #pragma GCC diagnostic pop
 		// End of warning suppress
 
@@ -1243,7 +1251,8 @@ void CommandHandler_WriteCommandHelp(CommandID_t commandID)
 /**
  * \brief	Check actual command argument num from settings
  */
-CommandResult_t CommandHandler_CheckArgumentNumIsGood(uint8_t receivedArgNum, uint8_t commandArgNum)
+static CommandResult_t CommandHandler_CheckArgumentNumIsGood(uint8_t receivedArgNum,
+		uint8_t commandArgNum)
 {
 	// Check commandArgNum. bit is set?
 	if (receivedArgNum > MONITOR_COMMAND_ARG_MAX_COUNT)
