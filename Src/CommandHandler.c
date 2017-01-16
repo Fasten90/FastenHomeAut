@@ -125,7 +125,8 @@ static char MONITOR_HISTORY[MONITOR_HISTORY_MAX_COUNT][MONITOR_MAX_COMMAND_LENGT
 	#warning "Isn't set monitor history commands"
 	#endif
 #elif  (!MONITOR_HISTORY_MAX_COUNT)
-#error "USE_MONITOR_HISTORY define is defined, but 'MONITOR_HISTORY_MAX_LENGTH' define is not set valid value."
+#error "USE_MONITOR_HISTORY define is defined, but 'MONITOR_HISTORY_MAX_LENGTH'"
+	"define is not set valid value."
 #endif
 };
 #endif
@@ -799,11 +800,14 @@ static void CommandHandler_CommandTabulator(void)
 
 	for (i=0; i < MONITOR_CommandNum; i++)
 	{
-		if (!StrCmpWithLength(CommandList[i].name, (const char *)MONITOR_CommandActual,MONITOR_CommandActualLength))
+		if (!StrCmpWithLength(CommandList[i].name,
+				(const char *)MONITOR_CommandActual,
+				MONITOR_CommandActualLength))
 		{
 			// It is equal
 			// We write the first equal
-			// TODO: Lekezelni az esetleges több Tabulátort? biztos jó, hogy az első egyezőt kiírjuk?
+			// TODO: Lekezelni az esetleges több Tabulátort?
+			// Biztos jó, hogy az első egyezőt kiírjuk?
 			StrCpy((char *)MONITOR_CommandActual, CommandList[i].name);
 
 			MONITOR_CommandActualLength = StringLength(CommandList[i].name);
@@ -876,35 +880,41 @@ static bool CommandHandler_CommandEscapeCharValidation(void)
 		if ( MONITOR_CommandActualEscape[1] == '[' )			// '[', escape sequence 2. letter
 		{
 			// This is an escape sequence
-			if ( MONITOR_CommandActualEscape[2] == 'A' )		// Up cursor = previous History command
+			// 'A' Up cursor = previous History command
+			if ( MONITOR_CommandActualEscape[2] == 'A' )
 			{
 				#ifdef CONFIG_USE_MONITOR_HISTORY
 				CommandHandler_HistoryLoad ( 1 );
 				#endif
 				return true;
 			}
-			else if ( MONITOR_CommandActualEscape[2] == 'B' )	// Down cursor		// next History command
+			// 'B' Down cursor		// next History command
+			else if ( MONITOR_CommandActualEscape[2] == 'B' )
 			{
 				#ifdef CONFIG_USE_MONITOR_HISTORY
 				CommandHandler_HistoryLoad ( 0 );
 				#endif
 				return true;
 			}
-			else if (  MONITOR_CommandActualEscape[2] == 'C' )	// Right cursor
+			// 'C' - Right cursor - Step right
+			else if (  MONITOR_CommandActualEscape[2] == 'C' )
 			{
-				if ( MONITOR_CommandCursorPosition < MONITOR_CommandActualLength )	// if not at end
+				// Is cursor at end?
+				if ( MONITOR_CommandCursorPosition < MONITOR_CommandActualLength )
 				{
+					// Cursor within command
 					CommandHandler_SendMessage(ESCAPE_CURSORRIGHT);
 					MONITOR_CommandCursorPosition++;
 					return true;
 				}
 				else
 				{
-					// not do anything
+					// Cursor at end, do nothing
 					return true;
 				}
 			}
-			else if (  MONITOR_CommandActualEscape[2] == 'D' )			// Left cursor
+			// 'D' Left cursor - Step left
+			else if (  MONITOR_CommandActualEscape[2] == 'D' )
 			{
 				if ( MONITOR_CommandCursorPosition > 0 )				// if not at start
 				{
@@ -986,8 +996,10 @@ static bool CommandHandler_HistoryFindInList(void)
 	
 	for (i = 0; i < MONITOR_HISTORY_MAX_COUNT; i++)
 	{
-		if ( !StrCmp((const char *)MONITOR_HISTORY[i],(const char * )MONITOR_CommandActual))	// If it is equal
+		// Check, equal with command?
+		if ( !StrCmp((const char *)MONITOR_HISTORY[i],(const char * )MONITOR_CommandActual))
 		{
+			// If it is equal
 			// Has equal command
 			return true;
 		}
