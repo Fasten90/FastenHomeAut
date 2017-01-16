@@ -40,7 +40,7 @@
 
 
 #define MONITOR_SEND_WELCOME()								\
-		MONITOR_SendMessage(								\
+		CommandHandler_SendMessage(								\
 		"\r\n"												\
 		"Welcome in Monitor program!\r\n"					\
 		"Version: " VERSION_DEFINE "\r\n"					\
@@ -52,13 +52,13 @@
 		"Try \"help\" command for help!\r\n")
 
 
-#define MONITOR_SEND_PROMT_NEW_LINE()	MONITOR_SendMessage("\r\n# ")
+#define MONITOR_SEND_PROMT_NEW_LINE()	CommandHandler_SendMessage("\r\n# ")
 
-#define MONITOR_SEND_PROMT()			MONITOR_SendMessage("# ")
+#define MONITOR_SEND_PROMT()			CommandHandler_SendMessage("# ")
 
-#define USART_SEND_DUMMYSTRING()		MONITOR_SendMessage(MONITOR_DUMMY_STRING)
+#define USART_SEND_DUMMYSTRING()		CommandHandler_SendMessage(MONITOR_DUMMY_STRING)
 
-#define MONITOR_SEND_NEW_LINE()			MONITOR_SendMessage("\r\n")
+#define MONITOR_SEND_NEW_LINE()			CommandHandler_SendMessage("\r\n")
 
 
 ///	DEFINES FOR CHARACTERS
@@ -89,11 +89,11 @@ CONFIG_USE_TERMINAL_ZOC
 
 // 8 = BS = Backspace
 #define USART_SEND_KEY_BACKSPACE()	\
-		MONITOR_SendChar(8)
+		CommandHandler_SendChar(8)
 
 // 127 = DEL = Delete
 #define USART_SEND_KEY_DEL()		 \
-		MONITOR_SendChar(127)
+		CommandHandler_SendChar(127)
 
 
 
@@ -169,21 +169,21 @@ extern xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void MONITOR_Init(void);
-void MONITOR_SendWelcome(void);
+void CommandHandler_Init(void);
+void CommandHandler_SendWelcome(void);
 
-void MONITOR_CheckCommand(void);
+void CommandHandler_CheckCommand(void);
 
-void MONITOR_WriteCommandHelp(CommandID_t commandID);
-void MONITOR_SendCls(void);
+void CommandHandler_WriteCommandHelp(CommandID_t commandID);
+void CommandHandler_SendCls(void);
 
-void MONITOR_SendMessage(const char *message);
-void MONITOR_SendLine(const char *message);
-void MONITOR_SendChar(char c);
-void MONITOR_Printf(const char *format, ...);
+void CommandHandler_SendMessage(const char *message);
+void CommandHandler_SendLine(const char *message);
+void CommandHandler_SendChar(char c);
+void CommandHandler_Printf(const char *format, ...);
 
-void MONITOR_PrintAllCommands(void);
-void MONITOR_SearchCommandAndPrintHelp(const char *command);
+void CommandHandler_PrintAllCommands(void);
+void CommandHandler_SearchCommandAndPrintHelp(const char *command);
 
 
 #endif /* COMMANDHANDLER_H_ */

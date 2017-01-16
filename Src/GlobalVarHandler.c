@@ -1107,11 +1107,11 @@ static ProcessResult_t GLobalVarHandler_SetEnumerator(VarID_t commandID, const c
 	if (result != Process_Ok_SetSuccessful_SendOk && result != Process_Settings_EmptyEnumList)
 	{
 		// Wrong, send enumerator strings
-		MONITOR_Printf("Invalid enum value, \"%s\" command has this enumerator strings:\r\n",
+		CommandHandler_Printf("Invalid enum value, \"%s\" command has this enumerator strings:\r\n",
 				GlobalVarList[commandID].name);
 		for (i = 0; i < GlobalVarList[commandID].maxValue; i++)
 		{
-			MONITOR_Printf("- %s\r\n",GlobalVarList[commandID].enumList[i]);
+			CommandHandler_Printf("- %s\r\n",GlobalVarList[commandID].enumList[i]);
 		}
 	}
 
@@ -1342,14 +1342,14 @@ void GlobalVarHandler_ListAllVariableParameters(void)
 	const char *header = "+-ID-+-------Name-----------+----Type----+--min--+--max--+-unit-+-----Description------+";
 
 	// Send header
-	MONITOR_SendLine(header);
+	CommandHandler_SendLine(header);
 
 	// Rows (commands)
 	for (i=0; i<GlobalVarMaxCommandNum; i++)
 	{
 
 		// Print one command / line:
-		MONITOR_Printf("| %2d | %20s | %10s | %5d | %5d | %4s | %20s |\r\n",
+		CommandHandler_Printf("| %2d | %20s | %10s | %5d | %5d | %4s | %20s |\r\n",
 				i,
 				GlobalVarList[i].name,
 				GlobalVarTypesNames[GlobalVarList[i].type],
@@ -1361,7 +1361,7 @@ void GlobalVarHandler_ListAllVariableParameters(void)
 	}
 
 	// After commands (end)
-	MONITOR_SendLine(header);
+	CommandHandler_SendLine(header);
 
 }
 
@@ -1376,7 +1376,7 @@ void GlobalVarHandler_PrintAllVariableValues (void)
 	char resultBuffer[40];
 	uint8_t resultBufferLength;
 
-	MONITOR_Printf("Global variables:\r\n"
+	CommandHandler_Printf("Global variables:\r\n"
 			" %20s %20s\r\n",
 			"<Name>", "<Value>");
 
@@ -1386,10 +1386,10 @@ void GlobalVarHandler_PrintAllVariableValues (void)
 		// Print a variable name and value
 		resultBufferLength = 40;
 		GlobalVarHandler_GetCommand(i,resultBuffer,&resultBufferLength);
-		MONITOR_Printf(" %20s %20s\r\n", GlobalVarList[i].name, resultBuffer);
+		CommandHandler_Printf(" %20s %20s\r\n", GlobalVarList[i].name, resultBuffer);
 	}
 
-	MONITOR_SendLine("End of global variables");
+	CommandHandler_SendLine("End of global variables");
 }
 
 

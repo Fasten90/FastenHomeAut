@@ -132,7 +132,7 @@ int main(void)
 
 #ifdef CONFIG_MODULE_MONITOR_ENABLE
 	// Monitor initialize
-	MONITOR_Init();
+	CommandHandler_Init();
 #endif
 
 
@@ -140,13 +140,13 @@ int main(void)
 #ifdef CONFIG_USE_FREERTOS
 	TaskHandle_t MONITOR_TaskHandle = NULL;
 	//xTaskCreate( vTaskCode, "NAME", STACK_SIZE, &ucParameterToPass, tskIDLE_PRIORITY, &xHandle );
-	if (xTaskCreate( (pdTASK_CODE)MONITOR_CheckCommand, "MonitorTask", MONITOR_TASK_STACK_SIZE, 0,
+	if (xTaskCreate( (pdTASK_CODE)CommandHandler_CheckCommand, "MonitorTask", MONITOR_TASK_STACK_SIZE, 0,
 				MONITOR_TASK_PRIORITY, &MONITOR_TaskHandle ) != pdPASS)
 	{
 		Error_Handler();
 	}
 #else
-	MONITOR_CheckCommand();	// infinite loop
+	CommandHandler_CheckCommand();	// infinite loop
 #endif
 #endif	// #ifdef CONFIG_MODULE_MONITOR_ENABLE
 

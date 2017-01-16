@@ -317,7 +317,7 @@ CommandResult_t CommandFunction_cls(uint32_t argc, char** argv)
 	(void)argc;
 	(void)argv;
 
-	MONITOR_SendCls();
+	CommandHandler_SendCls();
 
 	return CommandResult_Ok;
 }
@@ -333,7 +333,7 @@ CommandResult_t CommandFunction_version(uint32_t argc, char** argv)
 	(void)argc;
 	(void)argv;
 
-	MONITOR_SendLine(Global_Version);
+	CommandHandler_SendLine(Global_Version);
 
 	return CommandResult_Ok;
 }
@@ -349,7 +349,7 @@ CommandResult_t CommandFunction_welcome(uint32_t argc, char** argv)
 	(void)argc;
 	(void)argv;
 
-	MONITOR_SendWelcome();
+	CommandHandler_SendWelcome();
 
 	return CommandResult_Ok;
 }
@@ -367,12 +367,12 @@ CommandResult_t CommandFunction_help(uint32_t argc, char** argv)
 	if (argc == 1)
 	{
 		// if Arg2 is empty, listing all commands
-		MONITOR_PrintAllCommands();
+		CommandHandler_PrintAllCommands();
 	}
 	else if (argc == 2)
 	{
 		// Has Arg2, find the command & print help
-		MONITOR_SearchCommandAndPrintHelp(argv[1]);
+		CommandHandler_SearchCommandAndPrintHelp(argv[1]);
 	}
 
 	return CommandResult_Ok;
@@ -391,7 +391,7 @@ CommandResult_t CommandFunction_reset(uint32_t argc, char** argv)
 
 	uint16_t i;
 
-	MONITOR_SendLine("Reset...");
+	CommandHandler_SendLine("Reset...");
 	for (i=0; i<1000; i++);
 
 	NVIC_SystemReset();
@@ -450,12 +450,12 @@ CommandResult_t CommandFunction_led(uint32_t argc, char** argv)
 	{
 		// "status"
 #ifdef CONFIG_USE_PANEL_STM32F4DISCOVERY
-		MONITOR_Printf("Led status: %d %d %d\r\n",
+		CommandHandler_Printf("Led status: %d %d %d\r\n",
 				LED_RED_STATUS(),
 				LED_BLUE_STATUS(),
 				LED_GREEN_STATUS());
 #elif CONFIG_USE_PANEL_NUCLEOF401RE
-		MONITOR_Printf("Led status: %d\r\n",
+		CommandHandler_Printf("Led status: %d\r\n",
 						LED_GREEN_STATUS());
 #endif
 	}
@@ -476,7 +476,7 @@ CommandResult_t CommandFunction_led(uint32_t argc, char** argv)
 
 		// Set LED
 		status = LED_SetLed(Arg2Num,setType);
-		MONITOR_Printf("LED %d. status: %d\r\n",Arg2Num, status);
+		CommandHandler_Printf("LED %d. status: %d\r\n",Arg2Num, status);
 
 	}
 	else
@@ -505,11 +505,11 @@ CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	//uint8_t i = 0;
 	//uint8_t buf[2];
 	
-	MONITOR_SendLine("Test start");
+	CommandHandler_SendLine("Test start");
 
 	COMMUNICATION_SendMessage(CommProt_SWO, "Test message on SWO\n");
 
-	MONITOR_SendLine("Test end");
+	CommandHandler_SendLine("Test end");
 
 	return CommandResult_Ok;
 
@@ -533,7 +533,7 @@ CommandResult_t CommandFunction_set(uint32_t argc, char** argv)
 			SetGet_Set, CommProt_DebugUart,
 			resultBuffer, 40);
 
-	MONITOR_SendLine(resultBuffer);
+	CommandHandler_SendLine(resultBuffer);
 
 	return CommandResult_Ok;
 
@@ -557,7 +557,7 @@ CommandResult_t CommandFunction_get(uint32_t argc, char** argv)
 			SetGet_Get, CommProt_DebugUart,
 			resultBuffer, 30);
 
-	MONITOR_SendMessage(resultBuffer);
+	CommandHandler_SendMessage(resultBuffer);
 
 	return CommandResult_Ok;
 
@@ -581,7 +581,7 @@ CommandResult_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** argv)
 			SetGet_Help, CommProt_DebugUart,
 			resultBuffer, 80);
 
-	MONITOR_SendMessage(resultBuffer);
+	CommandHandler_SendMessage(resultBuffer);
 
 
 	return CommandResult_Ok;
@@ -674,7 +674,7 @@ CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
 	(void)argc;
 	(void)argv;
 
-	MONITOR_SendLine("Start unittest");
+	CommandHandler_SendLine("Start unittest");
 
 #ifdef MODULE_STRING_UNITTEST_ENABLE
 	STRING_UnitTest();
@@ -702,7 +702,7 @@ CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 
 #ifdef CONFIG_MODULE_LED_ENABLE
 	// LED test
-	MONITOR_SendLine("LED test");
+	CommandHandler_SendLine("LED test");
 
 	// LEDs on
 	for (i=LED_NUM_MIN; i<=LED_NUM_MAX; i++)
@@ -720,12 +720,12 @@ CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 #endif	// #ifdef CONFIG_MODULE_LED_ENABLE
 
 	// Beep in terminal
-	MONITOR_SendLine("Beep test");
-	MONITOR_SendChar(USART_KEY_BELL);
+	CommandHandler_SendLine("Beep test");
+	CommandHandler_SendChar(USART_KEY_BELL);
 
 
 	// Send formatted messages
-	MONITOR_SendLine("Formatted message test");
+	CommandHandler_SendLine("Formatted message test");
 	FormattedMessage_Test();
 
 
@@ -809,7 +809,7 @@ CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
 			}
 			// Set output
 			bool status = IO_SetOutput(port,pin,output);
-			MONITOR_Printf("Output status: %d\r\n", status);
+			CommandHandler_Printf("Output status: %d\r\n", status);
 			return CommandResult_Ok;
 		}
 		else
@@ -825,7 +825,7 @@ CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
 		if (StringToUnsignedDecimalNum(&argv[1][1],&pin))
 		{
 			bool status = IO_ReadPin(port,pin);
-			MONITOR_Printf("Input status: %d\r\n", status);
+			CommandHandler_Printf("Input status: %d\r\n", status);
 			return CommandResult_Ok;
 		}
 		else
@@ -858,7 +858,7 @@ CommandResult_t CommandFunction_adc(uint32_t argc, char** argv)
 
 	for (i=0; i<ADC_BUFFER_SIZE; i++)
 	{
-		MONITOR_Printf("ADC: %d. value: %2.2f\r\n", i, ADC_ConvertedValues[i]);
+		CommandHandler_Printf("ADC: %d. value: %2.2f\r\n", i, ADC_ConvertedValues[i]);
 	}
 
 	return CommandResult_Ok;
@@ -915,7 +915,7 @@ CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv)
 		{
 			// Convert & Print
 			ADC_ConvertAllMeasuredValues();
-			MONITOR_Printf("ADC: %d. value: %2.2f\r\n", i, ADC_ConvertedValues[i]);
+			CommandHandler_Printf("ADC: %d. value: %2.2f\r\n", i, ADC_ConvertedValues[i]);
 		}
 
 		// Delay
@@ -924,7 +924,7 @@ CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv)
 		if (uartWriteCntOld != USART_RxBufferWriteCounter)
 		{
 			// Received a new char
-			MONITOR_SendLine("ADC read is interrupted");
+			CommandHandler_SendLine("ADC read is interrupted");
 			break;
 		}
 	}
@@ -1009,7 +1009,7 @@ CommandResult_t CommandFunction_flashdel	( uint32_t argc, char** argv )
 		return RETURN_FALSE;
 	}
 
-	MONITOR_Printf("address erased: 0x%h\r\n",
+	CommandHandler_Printf("address erased: 0x%h\r\n",
 			Arg2Num
 			);
 
@@ -1038,7 +1038,7 @@ CommandResult_t CommandFunction_flashread	( uint32_t argc, char** argv )
 	FLASH_Read(Arg2Num,Buffer,1,5000);
 
 
-	MONITOR_Printf("address: 0x%w\r\n"
+	CommandHandler_Printf("address: 0x%w\r\n"
 			"data:    0x%b\r\n",
 			Arg2Num,
 			Buffer[0]
@@ -1077,7 +1077,7 @@ CommandResult_t CommandFunction_flashwrite	( uint32_t argc, char** argv )
 	FLASH_Write(Arg2Num,Buffer,1,5000);
 
 
-	MONITOR_Printf("address: 0x%w\r\n"
+	CommandHandler_Printf("address: 0x%w\r\n"
 			"data:    0x%b\r\n",
 			Arg2Num,
 			Arg3Num);
@@ -1168,7 +1168,7 @@ CommandResult_t CommandFunction_dl ( uint32_t argc, char** argv )
 		return RETURN_FALSE;
 	}
 
-	MONITOR_Printf("Destination: 0x%w\r\n"
+	CommandHandler_Printf("Destination: 0x%w\r\n"
 			"Size: %d bytes\r\n",
 			destination,
 			size);
@@ -1222,7 +1222,7 @@ CommandResult_t CommandFunction_dl ( uint32_t argc, char** argv )
 
 	//HAL_UART_Receive(&UartHandle,destination,size,0xFFFFFFFF);
 
-	MONITOR_SendLine("Jelenleg teszteles alatt, a FLASH programozassal gond van.");
+	CommandHandler_SendLine("Jelenleg teszteles alatt, a FLASH programozassal gond van.");
 	//FLASH_Test();
 
 		//taskEXIT_CRITICAL(); 				// TODO: FREERTOS
@@ -1246,7 +1246,7 @@ CommandResult_t CommandFunction_go ( uint32_t argc, char** argv ) {
 	uint32_t Arg2Num;
 
 	// TODO: USART_SendLine();
-	// TODO: MONITOR_SendMessage(); ez irányítódjon át egy USART_SendString()-re
+	// TODO: CommandHandler_SendMessage(); ez irányítódjon át egy USART_SendString()-re
 
 	// Convert hex
 	if ( !StringHexToNum(argv[1],&Arg2Num,0))
@@ -1255,7 +1255,7 @@ CommandResult_t CommandFunction_go ( uint32_t argc, char** argv ) {
 	}
 
 	destination = Arg2Num;
-	MONITOR_Printf("Go destination: 0x%w\r\n",
+	CommandHandler_Printf("Go destination: 0x%w\r\n",
 			destination);
 
 
@@ -1301,14 +1301,14 @@ CommandResult_t CommandFunction_mr ( uint32_t argc, char** argv ) {
 	size = ( unsigned short int ) Arg3Num;	// <size> max 256
 	// TODO: checking the correct address
 
-	MONITOR_Printf("Source: 0x%w\r\n"
+	CommandHandler_Printf("Source: 0x%w\r\n"
 			"Size: %d\r\n",
 			source,size);
 
 	i=0;
 	for (p = source; p < source+size/4; p++) {
-		if ( !(i % 4) ) MONITOR_Printf("\r\n 0x%w:",p);
-		MONITOR_Printf(" %w",*p);
+		if ( !(i % 4) ) CommandHandler_Printf("\r\n 0x%w:",p);
+		CommandHandler_Printf(" %w",*p);
 		i++;
 	}
 
@@ -1344,17 +1344,17 @@ CommandResult_t CommandFunction_mw ( uint32_t argc, char** argv ) {
 	if (!StrCmp(argv[0],"mwb")) {
 		destination1 = ( unsigned char *) Arg2Num;
 		*destination1 = ( unsigned char ) Arg3Num;
-		MONITOR_Printf("Write: %b to: %w",Arg3Num,Arg2Num);
+		CommandHandler_Printf("Write: %b to: %w",Arg3Num,Arg2Num);
 	}
 	else if (!StrCmp(argv[0],"mwh")) {
 		destination2 = ( unsigned short int *) Arg2Num;
 		*destination2 = ( unsigned short int) Arg3Num;
-		MONITOR_Printf("Write: %h to: %w",Arg3Num,Arg2Num);
+		CommandHandler_Printf("Write: %h to: %w",Arg3Num,Arg2Num);
 	}
 	else if (!StrCmp(argv[0],"mww")) {
 		destination3 = ( uint32_t *) Arg2Num;
 		*destination3 = ( uint32_t ) Arg3Num;
-		MONITOR_Printf("Write: %w to: %w",Arg3Num,Arg2Num);
+		CommandHandler_Printf("Write: %w to: %w",Arg3Num,Arg2Num);
 	}
 
 
@@ -1373,7 +1373,7 @@ CommandResult_t CommandFunction_stop	( uint32_t argc, char** argv ) {
 	LCD_Instr_DisplayClear();
 	LCD_SendString_2line("RadioAlarm","in STOP mode",2,2);
 
-	MONITOR_SendLine("Go to STOP mode...\r\n"
+	CommandHandler_SendLine("Go to STOP mode...\r\n"
 					"Wake up with USER button"
 					);
 
@@ -1382,7 +1382,7 @@ CommandResult_t CommandFunction_stop	( uint32_t argc, char** argv ) {
 	LED_ALARM_OFF();
 	LCD_Instr_DisplayClear();
 	LCD_SendString_2line("RadioAlarm","",2,2);
-	MONITOR_SendLine("End of STOP mode\r\n");
+	CommandHandler_SendLine("End of STOP mode\r\n");
 
 	return 1;
 }
@@ -1399,7 +1399,7 @@ CommandResult_t CommandFunction_romr	( uint32_t argc, char** argv ) {
 
 	Arg2Num = StringDecToNum(argv[1]);
 
-	//MONITOR_Printf("address: 0x%h\r\n"
+	//CommandHandler_Printf("address: 0x%h\r\n"
 	//				"data:    0x%b\r\n",
 	//				Arg2Num,
 	//				EEPROM_ReadByte(Arg2Num)
@@ -1422,7 +1422,7 @@ CommandResult_t CommandFunction_romw	( uint32_t argc, char** argv ) {
 	Arg2Num = StringHexToNum(argv[1]);
 	Arg3Num = StringHexToNum(argv[2]);
 
-	MONITOR_Printf("address: 0x%h\r\n"
+	CommandHandler_Printf("address: 0x%h\r\n"
 					"data:    0x%b\r\n",
 					Arg2Num,
 					Arg3Num);
@@ -1438,7 +1438,7 @@ CommandResult_t CommandFunction_romw	( uint32_t argc, char** argv ) {
 // Function: Read EEPROM's status register
 CommandResult_t CommandFunction_romsr	( uint32_t argc, char** argv ) {
 
-	//MONITOR_Printf("Status register: 0x%h\r\n",
+	//CommandHandler_Printf("Status register: 0x%h\r\n",
 	//				EEPROM_ReadStatusRegister ()
 	//				);
 
@@ -1454,7 +1454,7 @@ CommandResult_t CommandFunction_romwe	( uint32_t argc, char** argv ) {
 
 	//EEPROM_WriteEnable ();
 
-	MONITOR_SendLine("EEPROM write enable");
+	CommandHandler_SendLine("EEPROM write enable");
 
 	return 1;
 }
@@ -1468,7 +1468,7 @@ CommandResult_t CommandFunction_rominit	( uint32_t argc, char** argv ) {
 
 	//EEPROM_Init ();
 
-	MONITOR_SendLine("EEPROM initialized\r\n");
+	CommandHandler_SendLine("EEPROM initialized\r\n");
 
 	return 1;
 }
@@ -1482,7 +1482,7 @@ CommandResult_t CommandFunction_standby	( uint32_t argc, char** argv ) {
 	LCD_Instr_DisplayClear();
 	LCD_SendString_2line("RadioAlarm","in STANDBY mode",2,2);
 
-	MONITOR_SendLine("Go to STANDBY mode. You can wake up(=reset) with RESET and USER button!");
+	CommandHandler_SendLine("Go to STANDBY mode. You can wake up(=reset) with RESET and USER button!");
 
 	LOWPOWER_GotoSTANDBYMode ();
 
@@ -1501,11 +1501,11 @@ CommandResult_t CommandFunction_rtc	( uint32_t argc, char** argv ) {
 
 	Arg2Num = StringDecToNum(argv[1]);
 
-	MONITOR_Printf("RTC wait %d second(s)\r\n",Arg2Num);
+	CommandHandler_Printf("RTC wait %d second(s)\r\n",Arg2Num);
 
 	//RTC_WaitSeconds(Arg2Num);
 
-	MONITOR_SendLine("End");
+	CommandHandler_SendLine("End");
 
 	return 1;
 }
@@ -1520,7 +1520,7 @@ CommandResult_t CommandFunction_start	( uint32_t argc, char** argv )
 	(void)argv;
 
 
-	MONITOR_SendLine("start command...\r\n");
+	CommandHandler_SendLine("start command...\r\n");
 
 
 	// Auto elinditasa a GLOBAL_CommandStartXXX() fuggvennyel
@@ -1542,7 +1542,7 @@ CommandResult_t CommandFunction_stop	( uint32_t argc, char** argv )
 
 	//GLOBAL_CommandEmergencyStop();
 
-	MONITOR_SendLine("$ Stop command! $");
+	CommandHandler_SendLine("$ Stop command! $");
 
 	return CommandResult_Ok;
 
@@ -1557,12 +1557,12 @@ CommandResult_t CommandFunction_buzzer	( uint32_t argc, char** argv ) {
 
 	if ( argc < 2 )
 	{
-		MONITOR_SendLine("Too few arguments!");
+		CommandHandler_SendLine("Too few arguments!");
 		return RETURN_FALSE;
 	}
 	if ( argc > 2 )
 	{
-		MONITOR_SendLine("Too many arguments!");
+		CommandHandler_SendLine("Too many arguments!");
 		return RETURN_FALSE;
 	}
 
@@ -1571,14 +1571,14 @@ CommandResult_t CommandFunction_buzzer	( uint32_t argc, char** argv ) {
 		// TODO: Buzzer on
 		// Buzzer bekapcsolasa
 		//BUZZER_Test_Task ();	// Buzzer taszk, nem a legjobb megoldas!
-		MONITOR_SendLine("Buzzer on (Important! This is an infinite loop!)");
+		CommandHandler_SendLine("Buzzer on (Important! This is an infinite loop!)");
 		//BUZZER_On(); // Important!! Before turn on, need BUZZER_Init() function.
 	}
 	else if (!StrCmp(argv[1],"off"))
 	{
 		// Buzzer kikapcsolása
 		//BUZZER_DeInit();
-		MONITOR_SendLine("Buzzer off");
+		CommandHandler_SendLine("Buzzer off");
 	}
 
 	return CommandResult_Ok;
@@ -1594,13 +1594,13 @@ CommandResult_t CommandFunction_accelerometer	( uint32_t argc, char** argv ) {
 	(void)argc;
 	(void)argv;
 
-	MONITOR_SendLine("Accelerometer has been started...");
+	CommandHandler_SendLine("Accelerometer has been started...");
 
 	// TODO:
 	//ACCELEROMETER_Task();
 	//vTaskResume(ACCELEROMETER_TaskHandle);
 
-	MONITOR_SendLine("End");
+	CommandHandler_SendLine("End");
 
 	return CommandResult_Ok;
 }
@@ -1614,13 +1614,13 @@ CommandResult_t CommandFunction_gyroscope	( uint32_t argc, char** argv ) {
 	(void)argc;
 	(void)argv;
 
-	MONITOR_SendLine("Gyroscope has been started...");
+	CommandHandler_SendLine("Gyroscope has been started...");
 
 	// TODO:
 	//GYROSCOPE_Task ();
 	//vTaskResume(GYROSCOPE_TaskHandle);
 
-	MONITOR_SendLine("End");
+	CommandHandler_SendLine("End");
 
 	return CommandResult_Ok;
 }
@@ -1645,18 +1645,18 @@ CommandResult_t CommandFunction_proximity	( uint32_t argc, char** argv ) {
 	//(void)argc;
 	//(void)argv;
 
-	MONITOR_SendLine("Jelenleg nincs funkcioja!");
+	CommandHandler_SendLine("Jelenleg nincs funkcioja!");
 
 //	if ( argc < 2 )
 //	{
-//		MONITOR_SendLine("Too few arguments!\r\n"
+//		CommandHandler_SendLine("Too few arguments!\r\n"
 //				" Use: \"prox on\" or \"prox off\"");
 //
 //		return RETURN_FALSE;
 //	}
 //	if ( argc > 2 )
 //	{
-//		MONITOR_SendLine("Too many arguments!");
+//		CommandHandler_SendLine("Too many arguments!");
 //		return RETURN_FALSE;
 //	}
 //
@@ -1665,7 +1665,7 @@ CommandResult_t CommandFunction_proximity	( uint32_t argc, char** argv ) {
 //	{
 //
 //		// LOG start
-//		MONITOR_SendLine("Proximity log on");
+//		CommandHandler_SendLine("Proximity log on");
 //		LOG_QueueEnable_PROXIMITY = LOG_ENABLE;
 //
 //	}
@@ -1674,11 +1674,11 @@ CommandResult_t CommandFunction_proximity	( uint32_t argc, char** argv ) {
 //
 //		// LOG end
 //		LOG_QueueEnable_PROXIMITY = LOG_DISABLE;
-//		MONITOR_SendLine("Proximity log off");
+//		CommandHandler_SendLine("Proximity log off");
 //
 //	}
 
-	//MONITOR_SendLine("End");
+	//CommandHandler_SendLine("End");
 
 	return CommandResult_Ok;
 }
@@ -1694,14 +1694,14 @@ CommandResult_t CommandFunction_log ( uint32_t argc, char** argv )
 
 	if ( argc < 2 )
 	{
-		MONITOR_SendLine("Too few arguments!\r\n"
+		CommandHandler_SendLine("Too few arguments!\r\n"
 				" Use: \"log on\" or \"log off\" or \"log on <task>\"");
 
 		return RETURN_FALSE;
 	}
 //	if ( argc > 2 )
 //	{
-//		MONITOR_SendLine("Too many arguments!");
+//		CommandHandler_SendLine("Too many arguments!");
 //		return RETURN_FALSE;
 //	}
 
@@ -1730,11 +1730,11 @@ CommandResult_t CommandFunction_log ( uint32_t argc, char** argv )
 			xSemaphoreGive(LOG_TaskKill_Semaphore);
 			*/
 			MONITOR_CommandSendBackCharEnable = 1;	// Enable to send
-			MONITOR_SendLine("Log off");
+			CommandHandler_SendLine("Log off");
 		}
 		else
 		{
-			MONITOR_SendLine("Wrong! Use \"log on <task>\" or \"log off\"");
+			CommandHandler_SendLine("Wrong! Use \"log on <task>\" or \"log off\"");
 			return RETURN_FALSE;
 		}
 
@@ -1746,7 +1746,7 @@ CommandResult_t CommandFunction_log ( uint32_t argc, char** argv )
 		if (!StrCmp(argv[1],"on"))
 		{
 
-			MONITOR_SendLine("Log on");
+			CommandHandler_SendLine("Log on");
 
 			// LOG start
 			vTaskResume(LOG_TaskHandle);
@@ -1765,7 +1765,7 @@ CommandResult_t CommandFunction_log ( uint32_t argc, char** argv )
 			//	vTaskDelete(LOG_TaskHandle);
 			//}
 
-			MONITOR_SendLine("Log off");
+			CommandHandler_SendLine("Log off");
 		}
 	}
 	else */
@@ -1778,7 +1778,7 @@ CommandResult_t CommandFunction_log ( uint32_t argc, char** argv )
 		}
 		else
 		{
-			MONITOR_SendLine("2. argumentum rossz! \"on\" vagy \"off\" kell legyen!");
+			CommandHandler_SendLine("2. argumentum rossz! \"on\" vagy \"off\" kell legyen!");
 			return RETURN_FALSE;
 		}
 	}
@@ -1801,7 +1801,7 @@ CommandResult_t CommandFunction_exit ( uint32_t argc, char** argv )
 	(void)argv;
 
 
-	MONITOR_SendLine("exit\r\n"
+	CommandHandler_SendLine("exit\r\n"
 			" MONITOR program leallitasa...");
 	//vTaskSuspend(DEBUG_TaskHandle);				// TODO: FREERTOS
 
@@ -1828,7 +1828,7 @@ CommandResult_t CommandFunction_read ( uint32_t argc, char** argv )
 	pFloat = &temp;
 	FloatToString(*pFloat, String);
 
-	MONITOR_Printf("Distance: %s\r\n",String);
+	CommandHandler_Printf("Distance: %s\r\n",String);
 	*/
 
 
@@ -1850,7 +1850,7 @@ CommandResult_t CommandFunction_read ( uint32_t argc, char** argv )
 	}
 
 
-	MONITOR_SendLine("\r\n"
+	CommandHandler_SendLine("\r\n"
 			"Raw:");
 	#ifdef CONFIG_USE_FREERTOS
 	vTaskDelay(1);
@@ -1859,7 +1859,7 @@ CommandResult_t CommandFunction_read ( uint32_t argc, char** argv )
 	#endif
 	for (i=0; i<200; i++ )
 	{
-		MONITOR_Printf("%d\r\n",localDataRaw[i]);
+		CommandHandler_Printf("%d\r\n",localDataRaw[i]);
 		#ifdef CONFIG_USE_FREERTOS
 		vTaskDelay(1);
 		#else
@@ -1867,16 +1867,16 @@ CommandResult_t CommandFunction_read ( uint32_t argc, char** argv )
 		#endif
 	}
 
-	MONITOR_SendLine("\r\n"
+	CommandHandler_SendLine("\r\n"
 			"Avg:");
 	for (i=0; i<200; i++ )
 	{
-		//MONITOR_Printf("%d\r\n",localDataAvg[i]);	// egyszeru kiiratas, int. De az Avg float!
+		//CommandHandler_Printf("%d\r\n",localDataAvg[i]);	// egyszeru kiiratas, int. De az Avg float!
 
 		pFloat = &localDataAvg[i];
 		FloatToString(*pFloat, String);
 
-		MONITOR_SendLine(String);
+		CommandHandler_SendLine(String);
 	}
 
 
@@ -1893,7 +1893,7 @@ CommandResult_t CommandFunction_ESP8266	( uint32_t argc, char** argv ) {
 
 	if ( argc > 1 )
 	{
-		MONITOR_SendLine("Too many arguments!");
+		CommandHandler_SendLine("Too many arguments!");
 		return RETURN_FALSE;
 	}
 
