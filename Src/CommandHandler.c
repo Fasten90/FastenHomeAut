@@ -169,7 +169,7 @@ static CommandResult_t CommandHandler_CheckArgumentNumIsGood(uint8_t receivedArg
 		uint8_t commandArgNum);
 
 #ifdef MONITOR_GET_PASSWORD_ENABLE
-static void MONITOR_GetPassword(void);
+static void CommandHandler_GetPassword(void);
 static bool MONITOR_CheckPassword(const char *string);
 #endif
 
@@ -265,7 +265,7 @@ void CommandHandler_CheckCommand(void)
 	USART_StartReceiveMessage();
 
 #ifdef MONITOR_GET_PASSWORD_ENABLE
-	MONITOR_GetPassword();
+	CommandHandler_GetPassword();
 #endif
 
 	// Welcome message
@@ -1389,7 +1389,7 @@ void CommandHandler_SendCls(void)
 /**
  * \brief Get (and wait) Password
  */
-static void MONITOR_GetPassword(void)
+static void CommandHandler_GetPassword(void)
 {
 
 	bool passwordIsOk = false;

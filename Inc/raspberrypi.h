@@ -10,8 +10,8 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
-//#include "include.h"
-//#include "homeautmessage.h"	// TODO: delete
+#include "include.h"
+#include "HomeAutMessage.h"	// TODO: delete
 
 /*------------------------------------------------------------------------------
  *  Macros & definitions
@@ -35,8 +35,9 @@
  *----------------------------------------------------------------------------*/
 
 // TODO: Feloldani a HomeAut_FunctionType, HomeAut_DataType hibát
-//void RASPBERRYPI_SendMessage(uint8_t myAddress,
-//		HomeAut_FunctionType functionType, HomeAut_DataType dataType , float data);
+/*void RASPBERRYPI_SendMessage(uint8_t myAddress,
+		HomeAut_FunctionType functionType, HomeAut_DataType dataType , float data);
+		*/
 void RASPBERRYPI_SendMessage(uint8_t myAddress, uint8_t functionType, uint8_t dataType, float data);
 
 

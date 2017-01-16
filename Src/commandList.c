@@ -201,9 +201,9 @@ const CommandStruct CommandList[] =
 #ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
 	{
 		.name = "#raspi",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_raspberrypi,
-		.commandArgNum = CommandArgument_2
 		.description = "Raspberry Pi HomeAutMessage sending",
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_raspberrypi,
+		.commandArgNum = CommandArgument_2,
 		.syntax = NULL,
 	},
 #endif
@@ -1095,6 +1095,7 @@ CommandResult_t CommandFunction_flashwrite	( uint32_t argc, char** argv )
  */
 CommandResult_t CommandFunction_raspberrypi (uint32_t argc, char** argv)
 {
+	(void)argc;
 
 	// Check arg 2
 	if (!StrCmp(argv[1],"setout"))
@@ -1108,12 +1109,13 @@ CommandResult_t CommandFunction_raspberrypi (uint32_t argc, char** argv)
 		*/
 
 		// Convert arg3, decimal
-		if (!StringToUnsignedDecimalNum(argv[2],&Arg3Num))
+		uint32_t value;
+		if (!StringToUnsignedDecimalNum(argv[2],&value))
 		{
 			return CommandResult_Error_WrongArgument2;
 		}
 
-		if (Arg3Num > 0)
+		if (value > 0)
 		{
 			LED_BLUE_ON();
 			LED_GREEN_ON();
