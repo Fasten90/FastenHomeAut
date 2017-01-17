@@ -43,7 +43,7 @@
 #define HOMEAUTMESSAGE_MESSAGE_STRUCT_DATA_COUNT			( 6 )
 
 // 2017-01-10 19:38:00
-#define HOMEAUTMESSAGE_MESSAGE_DATETIME_LENGTH		( 19 )
+#define HOMEAUTMESSAGE_MESSAGE_DATETIME_LENGTH				( 19 )
 
 
 /*------------------------------------------------------------------------------

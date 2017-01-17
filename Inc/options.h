@@ -168,23 +168,23 @@
 
 /// XXX: Select your terminal
 /// for CommandHandler.c
-//#define CONFIG_USE_TERMINAL_HYPERTERMINAL
-#define CONFIG_USE_TERMINAL_ZOC
-//#define CONFIG_USE_TERMINAL_PUTTY
+//#define CONFIG_COMMANDHANDLER_USE_TERMINAL_HYPERTERMINAL
+#define CONFIG_COMMANDHANDLER_USE_TERMINAL_ZOC
+//#define CONFIG_COMMANDHANDLER_USE_TERMINAL_PUTTY
 
 
 /// For wait password
-//#define MONITOR_GET_PASSWORD_ENABLE
+//#define CONFIG_COMMANDHANDLER_GET_PASSWORD_ENABLE
 
 
 // Escape sequences
 // comment out, if you dont need escape sequence (cursors, history, cls, ...)
-#define MONITOR_ESCAPE_SEQUENCE_ENABLE
+#define CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
 
-#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
 	// If you want use monitor program's history
 	// Turn off, if has small memory, now it need 1.5k RAM
-	#define CONFIG_USE_MONITOR_HISTORY
+	#define CONFIG_COMMANDHANDLER_USE_HISTORY
 #endif
 
 
@@ -200,8 +200,8 @@
 
 
 /// Unit tests
-#define MODULE_STRING_UNITTEST_ENABLE
-#define MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
+//#define MODULE_STRING_UNITTEST_ENABLE
+//#define MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
 
 
 // ESP8266 settings

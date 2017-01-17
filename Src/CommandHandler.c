@@ -32,16 +32,16 @@
  ******************************************************************************/
 
 /// Enable command handler
-const bool MONITOR_CommandReceiveEnable = true;
+const bool CommandHandler_CommandReceiveEnable = true;
 
 /// Enable sending back: "Echo mode"
-static const bool MONITOR_CommandSendBackCharEnable = true;
+static const bool CommandHandler_CommandSendBackCharEnable = true;
 
-#ifdef MONITOR_GET_PASSWORD_ENABLE
-static const char MONITOR_Password[] = "password";
+#ifdef CONFIG_COMMANDHANDLER_GET_PASSWORD_ENABLE
+static const char CommandHandler_Password[] = "password";
 #endif
 
-static const char MONITOR_DelimiterChar = ' ';
+static const char CommandHandler_DelimiterChar = ' ';
 
 
 
@@ -50,36 +50,36 @@ static const char MONITOR_DelimiterChar = ' ';
  ******************************************************************************/
 
 /// Receive buffers
-volatile char MONITOR_CommandActual[MONITOR_MAX_COMMAND_LENGTH] = { 0 };
-volatile char MONITOR_CommandActualEscape[4] = { 0 };
-volatile CommProtocol_t MONITOR_CommandSource = 0;
+volatile char CommandHandler_CommandActual[COMMANDHANDLER_MAX_COMMAND_LENGTH] = { 0 };
+volatile char CommandHandler_CommandActualEscape[4] = { 0 };
+volatile CommProtocol_t CommandHandler_CommandSource = 0;
 
 /// USART Read cnt
 volatile uint8_t USART_RxBufferReadCnt = 0;
 
 
-/// Variables For Monitor
-static volatile bool MONITOR_CommandReceivedEvent = false;
-static volatile bool MONITOR_CommandReceivedLastChar = false;
-static volatile bool MONITOR_CommandReceivedNotLastChar = false;
-static volatile bool MONITOR_CommandReadable = false;
-static volatile bool MONITOR_CommandReceivedBackspace = false;
+/// Variables For CommandHandler
+static volatile bool CommandHandler_CommandReceivedEvent = false;
+static volatile bool CommandHandler_CommandReceivedLastChar = false;
+static volatile bool CommandHandler_CommandReceivedNotLastChar = false;
+static volatile bool CommandHandler_CommandReadable = false;
+static volatile bool CommandHandler_CommandReceivedBackspace = false;
 
-#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
-static volatile bool MONITOR_CommandReceivedDelete = false;
-static volatile bool MONITOR_CommandReceivedTabulator = false;
+#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
+static volatile bool CommandHandler_CommandReceivedDelete = false;
+static volatile bool CommandHandler_CommandReceivedTabulator = false;
 #endif
 
-static volatile uint8_t MONITOR_CommandActualLength = 0;
-static volatile uint8_t MONITOR_CommandSentLength = 0;
-static volatile uint8_t MONITOR_CommandCursorPosition = 0;
+static volatile uint8_t CommandHandler_CommandActualLength = 0;
+static volatile uint8_t CommandHandler_CommandSentLength = 0;
+static volatile uint8_t CommandHandler_CommandCursorPosition = 0;
 
-static volatile bool MONITOR_CommandEscapeSequenceReceived = false;
-static volatile uint8_t MONITOR_CommandEscapeSequenceInProgress = 0;
-static volatile uint8_t MONITOR_CommandEscape_cnt = 0;
+static volatile bool CommandHandler_CommandEscapeSequenceReceived = false;
+static volatile uint8_t CommandHandler_CommandEscapeSequenceInProgress = 0;
+static volatile uint8_t CommandHandler_CommandEscape_cnt = 0;
 
-static uint8_t COMMAND_ArgCount = 0;
-static char *COMMAND_Arguments[MONITOR_COMMAND_ARG_MAX_COUNT] = { 0 } ;
+static uint8_t CommandHandler_CommandArgCount = 0;
+static char *CommandHandler_CommandArguments[COMMANDHANDLER_COMMAND_ARG_MAX_COUNT] = { 0 } ;
 
 
 #ifdef CONFIG_USE_FREERTOS
@@ -88,44 +88,44 @@ xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
 #endif
 
 
-#ifdef CONFIG_USE_MONITOR_HISTORY
-static uint8_t MONITOR_HISTORY_Save_cnt = 0;
-static uint8_t MONITOR_HISTORY_Load_cnt = 0;
-static char MONITOR_HISTORY[MONITOR_HISTORY_MAX_COUNT][MONITOR_MAX_COMMAND_LENGTH] =
+#ifdef CONFIG_COMMANDHANDLER_USE_HISTORY
+static uint8_t CommandHandler_HistorySaveCnt = 0;
+static uint8_t CommandHandler_HistoryLoadCnt = 0;
+static char CommandHandler_HistoryList[COMMANDHANDLER_HISTORY_MAX_COUNT][COMMANDHANDLER_MAX_COMMAND_LENGTH] =
 {
 
-#if defined(CONFIG_USE_MONITOR_HISTORY) && (MONITOR_HISTORY_MAX_COUNT > 0)
+#if defined(CONFIG_COMMANDHANDLER_USE_HISTORY) && (COMMANDHANDLER_HISTORY_MAX_COUNT > 0)
 
-	#if ( MONITOR_HISTORY_MAX_COUNT > 0 )
+	#if ( COMMANDHANDLER_HISTORY_MAX_COUNT > 0 )
 	{
 		"help"
 	},
 	#endif
-	#if ( MONITOR_HISTORY_MAX_COUNT > 1 )
+	#if ( COMMANDHANDLER_HISTORY_MAX_COUNT > 1 )
 	{
 		"led 1 1"
 	},
 	#endif
-	#if ( MONITOR_HISTORY_MAX_COUNT > 2 )
+	#if ( COMMANDHANDLER_HISTORY_MAX_COUNT > 2 )
 	{
 		"cls"
 	},
 	#endif
-	#if ( MONITOR_HISTORY_MAX_COUNT > 3 )
+	#if ( COMMANDHANDLER_HISTORY_MAX_COUNT > 3 )
 	{
 		"test"
 	},
 	#endif
-	#if ( MONITOR_HISTORY_MAX_COUNT > 4 )
+	#if ( COMMANDHANDLER_HISTORY_MAX_COUNT > 4 )
 	{
 		"reset"
 	}
 	#endif
-	#if ( MONITOR_HISTORY_MAX_COUNT > 5 )
-	#warning "Isn't set monitor history commands"
+	#if ( COMMANDHANDLER_HISTORY_MAX_COUNT > 5 )
+	#warning "Isn't set CommandHandler history commands"
 	#endif
-#elif  (!MONITOR_HISTORY_MAX_COUNT)
-#error "USE_MONITOR_HISTORY define is defined, but 'MONITOR_HISTORY_MAX_LENGTH'"
+#elif  (!COMMANDHANDLER_HISTORY_MAX_COUNT)
+#error "CONFIG_COMMANDHANDLER_USE_HISTORY define is defined, but 'COMMANDHANDLER_HISTORY_MAX_COUNT'"
 	"define is not set valid value."
 #endif
 };
@@ -139,7 +139,7 @@ static char MONITOR_HISTORY[MONITOR_HISTORY_MAX_COUNT][MONITOR_MAX_COMMAND_LENGT
 
 static void CommandHandler_ProcessReceivedCharacter(void);
 
-#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
 static void CommandHandler_CommandDelete(void);
 static void CommandHandler_CommandTabulator(void);
 static void CommandHandler_CommandResendLine(bool needRestoreCursor);
@@ -154,8 +154,8 @@ static bool CommandHandler_SearchCommand(void);
 
 
 
-#ifdef CONFIG_USE_MONITOR_HISTORY
-// Monitor history
+#ifdef CONFIG_COMMANDHANDLER_USE_HISTORY
+// CommandHandler history
 static void CommandHandler_HistorySave(void);
 static bool CommandHandler_HistoryFindInList(void);
 static void CommandHandler_HistoryLoad(uint8_t direction);
@@ -168,9 +168,9 @@ static CommandResult_t CommandHandler_RunCommand(CommandID_t commandID);
 static CommandResult_t CommandHandler_CheckArgumentNumIsGood(uint8_t receivedArgNum,
 		uint8_t commandArgNum);
 
-#ifdef MONITOR_GET_PASSWORD_ENABLE
+#ifdef CONFIG_COMMANDHANDLER_GET_PASSWORD_ENABLE
 static void CommandHandler_GetPassword(void);
-static bool MONITOR_CheckPassword(const char *string);
+static bool CommandHandler_CheckPassword(const char *string);
 #endif
 
 
@@ -181,27 +181,27 @@ static bool MONITOR_CheckPassword(const char *string);
 
 
 /**
- * \brief	Initialize Monitor program
+ * \brief	Initialize CommandHandler program
  */
 void CommandHandler_Init(void)
 {
 
 	// Initialize
 
-	MONITOR_CommandReceivedEvent = false;
-	MONITOR_CommandReceivedNotLastChar = false;
+	CommandHandler_CommandReceivedEvent = false;
+	CommandHandler_CommandReceivedNotLastChar = false;
 
-	MONITOR_CommandActualLength = 0;
-	MONITOR_CommandSentLength = 0;
-	MONITOR_CommandCursorPosition = 0;
+	CommandHandler_CommandActualLength = 0;
+	CommandHandler_CommandSentLength = 0;
+	CommandHandler_CommandCursorPosition = 0;
 
-#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
-	MONITOR_CommandEscapeSequenceReceived = false;
-	MONITOR_CommandEscapeSequenceInProgress = false;
-	MONITOR_CommandEscape_cnt = 0;
+#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
+	CommandHandler_CommandEscapeSequenceReceived = false;
+	CommandHandler_CommandEscapeSequenceInProgress = false;
+	CommandHandler_CommandEscape_cnt = 0;
 #endif
 
-	COMMAND_ArgCount = 0;
+	CommandHandler_CommandArgCount = 0;
 
 	// End of initialization
 
@@ -218,14 +218,14 @@ void CommandHandler_SendWelcome(void)
 
 	DelayMs(1);
 
-#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
 	CommandHandler_SendCls();						// Clean screen
 #endif
 	
-	MONITOR_SEND_WELCOME();					// Welcome message
+	COMMANDHANDLER_SEND_WELCOME();					// Welcome message
 
-	MONITOR_SEND_NEW_LINE();
-	MONITOR_SEND_PROMT_NEW_LINE();					// New promt
+	COMMANDHANDLER_SEND_NEW_LINE();
+	COMMANDHANDLER_SEND_PROMT_NEW_LINE();					// New promt
 
 	return;
 	
@@ -240,7 +240,7 @@ void CommandHandler_CheckCommand(void)
 {
 
 	// Initialize
-	//MONITOR_InitMonitor();	// Init
+	//CommandHandler_Init();	// Init
 
 
 #if RXBUFFERSIZE != 256
@@ -264,7 +264,7 @@ void CommandHandler_CheckCommand(void)
 	// Start receive
 	USART_StartReceiveMessage();
 
-#ifdef MONITOR_GET_PASSWORD_ENABLE
+#ifdef CONFIG_COMMANDHANDLER_GET_PASSWORD_ENABLE
 	CommandHandler_GetPassword();
 #endif
 
@@ -277,7 +277,7 @@ void CommandHandler_CheckCommand(void)
 	{
 
 		// Always checking the Command
-		if (MONITOR_CommandReceiveEnable)
+		if (CommandHandler_CommandReceiveEnable)
 		{
 
 #ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
@@ -301,62 +301,62 @@ void CommandHandler_CheckCommand(void)
 			CommandHandler_ProcessReceivedCharacter();
 			#endif
 
-			if (MONITOR_CommandReceivedEvent)
+			if (CommandHandler_CommandReceivedEvent)
 			{
 				// Clear event
-				MONITOR_CommandReceivedEvent = false;
+				CommandHandler_CommandReceivedEvent = false;
 
 				// Only one event will receive
-				if (MONITOR_CommandReceivedBackspace)
+				if (CommandHandler_CommandReceivedBackspace)
 				{
 					// Backspace
-					MONITOR_CommandReceivedBackspace = false;
+					CommandHandler_CommandReceivedBackspace = false;
 					CommandHandler_CommandBackspace();
 				}
-#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
-				else if (MONITOR_CommandReceivedDelete)
+#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
+				else if (CommandHandler_CommandReceivedDelete)
 				{
 					// Delete
-					MONITOR_CommandReceivedDelete = false;
+					CommandHandler_CommandReceivedDelete = false;
 					CommandHandler_CommandDelete();
 				}
-				else if (MONITOR_CommandReceivedNotLastChar)
+				else if (CommandHandler_CommandReceivedNotLastChar)
 				{
 					// Received inner character
 
-					MONITOR_CommandReceivedNotLastChar = false;
+					CommandHandler_CommandReceivedNotLastChar = false;
 
 					// Step right
 					CommandHandler_SendMessage(ESCAPE_CURSORRIGHT);
 					// Not Last char (it is inner character) - Refresh the line
 					CommandHandler_CommandResendLine(true);
 				}
-				else if (MONITOR_CommandEscapeSequenceReceived)
+				else if (CommandHandler_CommandEscapeSequenceReceived)
 				{
 					// Escape sequence
-					MONITOR_CommandEscapeSequenceReceived = false;
+					CommandHandler_CommandEscapeSequenceReceived = false;
 					CommandHandler_CommandEscapeCharValidation();
 				}
-				else if (MONITOR_CommandReceivedTabulator)
+				else if (CommandHandler_CommandReceivedTabulator)
 				{
 					// Received tabulator
-					MONITOR_CommandReceivedTabulator = false;
+					CommandHandler_CommandReceivedTabulator = false;
 					CommandHandler_CommandTabulator();
 				}
 #endif
-				else if (MONITOR_CommandReadable)
+				else if (CommandHandler_CommandReadable)
 				{
 					// Pressed Enter, EndCommand();
-					MONITOR_CommandReadable = false;
-					if (MONITOR_CommandActualLength > 0)
+					CommandHandler_CommandReadable = false;
+					if (CommandHandler_CommandActualLength > 0)
 					{
 						// There are some char in the line
 						// has an command
 						CommandHandler_ConvertSmallLetter();
 						
-						MONITOR_SEND_NEW_LINE();
+						COMMANDHANDLER_SEND_NEW_LINE();
 						
-						#ifdef CONFIG_USE_MONITOR_HISTORY
+						#ifdef CONFIG_COMMANDHANDLER_USE_HISTORY
 						// Save command to History
 						CommandHandler_HistorySave();
 						#endif
@@ -367,11 +367,11 @@ void CommandHandler_CheckCommand(void)
 					else
 					{
 						// There is no char in the line
-						MONITOR_SEND_PROMT_NEW_LINE();
+						COMMANDHANDLER_SEND_PROMT_NEW_LINE();
 					}
-					MONITOR_CommandActualLength = 0;
-					MONITOR_CommandSentLength = 0;
-					MONITOR_CommandCursorPosition = 0;
+					CommandHandler_CommandActualLength = 0;
+					CommandHandler_CommandSentLength = 0;
+					CommandHandler_CommandCursorPosition = 0;
 				}
 			}
 		}
@@ -397,37 +397,37 @@ static void CommandHandler_ProcessReceivedCharacter(void)
 		USART_ReceivedChar = USART_RxBuffer[USART_RxBufferReadCnt];
 		USART_RxBufferReadCnt++;
 
-#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
 		// ESCAPE SEQUENCE
-		if ( MONITOR_CommandEscapeSequenceInProgress )
+		if ( CommandHandler_CommandEscapeSequenceInProgress )
 		{
 			// Escape sequence in progress
-			// Copy escape characters to MONITOR_CommandActualEscape[]
+			// Copy escape characters to CommandHandler_CommandActualEscape[]
 			// TODO: Megcsinálni elegánsabban
-			if (MONITOR_CommandEscape_cnt == 1)
+			if (CommandHandler_CommandEscape_cnt == 1)
 			{
 				if (USART_ReceivedChar == '[')
 				{
-					MONITOR_CommandActualEscape[MONITOR_CommandEscape_cnt++] = USART_ReceivedChar;
+					CommandHandler_CommandActualEscape[CommandHandler_CommandEscape_cnt++] = USART_ReceivedChar;
 				}
 				else
 				{
 					// Wrong escape sequence
-					MONITOR_CommandEscapeSequenceInProgress = false;
-					MONITOR_CommandEscape_cnt = 0;
+					CommandHandler_CommandEscapeSequenceInProgress = false;
+					CommandHandler_CommandEscape_cnt = 0;
 				}
 			}
-			else if ( MONITOR_CommandEscape_cnt == 2)
+			else if ( CommandHandler_CommandEscape_cnt == 2)
 			{
-				MONITOR_CommandActualEscape[MONITOR_CommandEscape_cnt++] = USART_ReceivedChar;
+				CommandHandler_CommandActualEscape[CommandHandler_CommandEscape_cnt++] = USART_ReceivedChar;
 
 				// TODO: only work with escape sequence if 3 chars (ESC[A)
-				if (MONITOR_CommandActualEscape[2] != '3')
+				if (CommandHandler_CommandActualEscape[2] != '3')
 				{
 					// \e[A / B / C / D
-					MONITOR_CommandEscapeSequenceInProgress = false;
-					MONITOR_CommandEscapeSequenceReceived = true;
-					MONITOR_CommandReceivedEvent = true;
+					CommandHandler_CommandEscapeSequenceInProgress = false;
+					CommandHandler_CommandEscapeSequenceReceived = true;
+					CommandHandler_CommandReceivedEvent = true;
 					return;
 				}
 				else
@@ -436,33 +436,33 @@ static void CommandHandler_ProcessReceivedCharacter(void)
 					//MONITOR_CommandEscape_cnt++;
 				}
 			}
-			else if ( MONITOR_CommandEscape_cnt == 3)
+			else if ( CommandHandler_CommandEscape_cnt == 3)
 			{
-				MONITOR_CommandActualEscape[MONITOR_CommandEscape_cnt++] = USART_ReceivedChar;
+				CommandHandler_CommandActualEscape[CommandHandler_CommandEscape_cnt++] = USART_ReceivedChar;
 
-				if (MONITOR_CommandActualEscape[3] == '~')
+				if (CommandHandler_CommandActualEscape[3] == '~')
 				{
 					// TODO: At ZOC, it is delete char
 					// Delete button
-					MONITOR_CommandEscapeSequenceInProgress = false;
-					MONITOR_CommandReceivedDelete = true;
-					MONITOR_CommandReceivedEvent = true;
+					CommandHandler_CommandEscapeSequenceInProgress = false;
+					CommandHandler_CommandReceivedDelete = true;
+					CommandHandler_CommandReceivedEvent = true;
 					return;
 				}
 			}
 		}
 		else
 		{
-#endif	// #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+#endif	// #ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
 			// No escape sequence
 			// An character received
 
 			if ( USART_ReceivedChar  == '\x1B')	// 'ESC'
 			{
 				// receive an Escape sequence
-				MONITOR_CommandEscapeSequenceInProgress = true;
-				MONITOR_CommandActualEscape[0] = USART_ReceivedChar;
-				MONITOR_CommandEscape_cnt = 1;
+				CommandHandler_CommandEscapeSequenceInProgress = true;
+				CommandHandler_CommandActualEscape[0] = USART_ReceivedChar;
+				CommandHandler_CommandEscape_cnt = 1;
 			}
 			else
 			{
@@ -470,48 +470,48 @@ static void CommandHandler_ProcessReceivedCharacter(void)
 					(USART_ReceivedChar == '\0'))
 				{
 					// Received Enter
-					MONITOR_CommandReadable = true;
-					MONITOR_CommandActual[MONITOR_CommandActualLength] = '\0';
-					MONITOR_CommandReceivedEvent = true;
+					CommandHandler_CommandReadable = true;
+					CommandHandler_CommandActual[CommandHandler_CommandActualLength] = '\0';
+					CommandHandler_CommandReceivedEvent = true;
 					return;
 				}
 				else if (USART_ReceivedChar == USART_KEY_BACKSPACE)
 				{
 					// Received backspace
-					MONITOR_CommandReceivedBackspace = true;
-					MONITOR_CommandReceivedEvent = true;
+					CommandHandler_CommandReceivedBackspace = true;
+					CommandHandler_CommandReceivedEvent = true;
 					return;
 				}
-#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
 				else if (USART_ReceivedChar == USART_KEY_DELETE)
 				{
 					// Delete button
 					// TODO: Not work at ZOC, but work at other terminal?
-					MONITOR_CommandReceivedDelete = true;
-					MONITOR_CommandReceivedEvent = true;
+					CommandHandler_CommandReceivedDelete = true;
+					CommandHandler_CommandReceivedEvent = true;
 					return;
 				}
 				else if (USART_ReceivedChar == '\t')
 				{
 					// TAB
-					MONITOR_CommandReceivedTabulator = true;
-					MONITOR_CommandReceivedEvent = true;
+					CommandHandler_CommandReceivedTabulator = true;
+					CommandHandler_CommandReceivedEvent = true;
 					return;
 				}
-#endif	// #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+#endif	// #ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
 				else
 				{
 					// Simple char for the command
 					// shorted than max length?
-					if (MONITOR_CommandActualLength < MONITOR_MAX_COMMAND_LENGTH)
+					if (CommandHandler_CommandActualLength < COMMANDHANDLER_MAX_COMMAND_LENGTH)
 					{
-						if (MONITOR_CommandCursorPosition == MONITOR_CommandActualLength)
+						if (CommandHandler_CommandCursorPosition == CommandHandler_CommandActualLength)
 						{
 							// CursorPosition = CommandLength		(end character)
-							MONITOR_CommandActual[MONITOR_CommandActualLength] = USART_ReceivedChar;
-							MONITOR_CommandActualLength++;
-							MONITOR_CommandCursorPosition++;
-							if (MONITOR_CommandSendBackCharEnable)
+							CommandHandler_CommandActual[CommandHandler_CommandActualLength] = USART_ReceivedChar;
+							CommandHandler_CommandActualLength++;
+							CommandHandler_CommandCursorPosition++;
+							if (CommandHandler_CommandSendBackCharEnable)
 							{
 								// Send received character
 								CommandHandler_SendChar( USART_ReceivedChar );
@@ -520,18 +520,18 @@ static void CommandHandler_ProcessReceivedCharacter(void)
 						else
 						{
 							// CursorPosition < CommandLength		(inner character)
-							MONITOR_CommandActualLength++;
+							CommandHandler_CommandActualLength++;
 							// Copy
 							uint8_t i;
-							for (i = MONITOR_CommandActualLength; i > MONITOR_CommandCursorPosition; i--)
+							for (i = CommandHandler_CommandActualLength; i > CommandHandler_CommandCursorPosition; i--)
 							{
-								MONITOR_CommandActual[i] = MONITOR_CommandActual[i-1];
+								CommandHandler_CommandActual[i] = CommandHandler_CommandActual[i-1];
 							}
-							MONITOR_CommandActual [MONITOR_CommandCursorPosition] = USART_ReceivedChar;
-							MONITOR_CommandActual [MONITOR_CommandActualLength] = '\0';
-							MONITOR_CommandCursorPosition++;
-							MONITOR_CommandReceivedNotLastChar = true;
-							MONITOR_CommandReceivedEvent = true;
+							CommandHandler_CommandActual [CommandHandler_CommandCursorPosition] = USART_ReceivedChar;
+							CommandHandler_CommandActual [CommandHandler_CommandActualLength] = '\0';
+							CommandHandler_CommandCursorPosition++;
+							CommandHandler_CommandReceivedNotLastChar = true;
+							CommandHandler_CommandReceivedEvent = true;
 						}
 					}
 					else
@@ -541,7 +541,7 @@ static void CommandHandler_ProcessReceivedCharacter(void)
 					}
 
 				}
-#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
 			}
 #endif
 
@@ -561,14 +561,14 @@ static bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source)
 	bool isSuccessful = false;
 
 	// Separate command
-	COMMAND_ArgCount = CommandHandler_CommandParser();
-	MONITOR_CommandSource = source;
+	CommandHandler_CommandArgCount = CommandHandler_CommandParser();
+	CommandHandler_CommandSource = source;
 
-	if (COMMAND_ArgCount > 0)
+	if (CommandHandler_CommandArgCount > 0)
 	{
 		// Find and execute the command
 		isSuccessful = CommandHandler_SearchCommand();
-		MONITOR_SEND_NEW_LINE();
+		COMMANDHANDLER_SEND_NEW_LINE();
 	}
 	else
 	{
@@ -577,7 +577,7 @@ static bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source)
 	}
 
 	// Init new command
-	MONITOR_SEND_PROMT_NEW_LINE();
+	COMMANDHANDLER_SEND_PROMT_NEW_LINE();
 
 	return isSuccessful;
 }
@@ -595,11 +595,11 @@ static uint8_t CommandHandler_CommandParser(void)
 
 	uint8_t commandArgCount = 0;
 
-	commandArgCount = STRING_Splitter((char*)MONITOR_CommandActual, MONITOR_DelimiterChar,
-			COMMAND_Arguments, MONITOR_COMMAND_ARG_MAX_COUNT);
+	commandArgCount = STRING_Splitter((char*)CommandHandler_CommandActual, CommandHandler_DelimiterChar,
+			CommandHandler_CommandArguments, COMMANDHANDLER_COMMAND_ARG_MAX_COUNT);
 
 
-	if (commandArgCount > MONITOR_COMMAND_ARG_MAX_COUNT)
+	if (commandArgCount > COMMANDHANDLER_COMMAND_ARG_MAX_COUNT)
 	{
 		// Too many arguments
 		CommandHandler_SendMessage("Too many arguments!\r\n");
@@ -622,10 +622,10 @@ static bool CommandHandler_SearchCommand(void)
 	CommandResult_t result = CommandResult_Error_CommandNotFound;
 
 	// Search the command
-	for (i=0; i < MONITOR_CommandNum; i++)
+	for (i=0; i < CommandHandler_CommandNum; i++)
 	{
 
-		if (!StrCmp(COMMAND_Arguments[0],CommandList[i].name))
+		if (!StrCmp(CommandHandler_CommandArguments[0],CommandList[i].name))
 		{
 			// Found the command
 			result = CommandHandler_RunCommand(i);
@@ -653,31 +653,31 @@ static bool CommandHandler_SearchCommand(void)
 void CommandHandler_CommandBackspace(void)
 {
 
-	if (MONITOR_CommandActualLength > 0)
+	if (CommandHandler_CommandActualLength > 0)
 	{
 		// If has command
 		// Cursor at end?
-		if ( MONITOR_CommandCursorPosition == MONITOR_CommandActualLength)
+		if ( CommandHandler_CommandCursorPosition == CommandHandler_CommandActualLength)
 		{
 			// Cursor at end
 			// Delete from CommandActual, and Position--
-			MONITOR_CommandActual[--MONITOR_CommandCursorPosition] = '\0';
-			MONITOR_CommandActualLength--;
+			CommandHandler_CommandActual[--CommandHandler_CommandCursorPosition] = '\0';
+			CommandHandler_CommandActualLength--;
 			
 			// Delete last character on terminal
-#ifdef CONFIG_USE_TERMINAL_ZOC
+#ifdef CONFIG_COMMANDHANDLER_USE_TERMINAL_ZOC
 			USART_SEND_KEY_BACKSPACE();
 			USART_SEND_KEY_DEL();
 			USART_SEND_KEY_BACKSPACE();
 #endif		
 			
-#ifdef CONFIG_USE_TERMINAL_PUTTY
+#ifdef CONFIG_COMMANDHANDLER_USE_TERMINAL_PUTTY
 			
 			// v1
 			USART_SEND_KEY_DEL();
 #endif
 			
-#ifdef CONFIG_USE_TERMINAL_HYPERTERMINAL
+#ifdef CONFIG_COMMANDHANDLER_USE_TERMINAL_HYPERTERMINAL
 			
 			USART_SEND_KEY_BACKSPACE();
 
@@ -686,7 +686,7 @@ void CommandHandler_CommandBackspace(void)
 
 #endif
 		}
-#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
 		else
 		{
 			// CursorPosition != CommandLength, we are in command chars
@@ -696,7 +696,7 @@ void CommandHandler_CommandBackspace(void)
 
 			uint8_t i;
 
-			if ( MONITOR_CommandCursorPosition > 0 )
+			if ( CommandHandler_CommandCursorPosition > 0 )
 			{
 				// not at 0 position
 
@@ -704,14 +704,14 @@ void CommandHandler_CommandBackspace(void)
 				// copy CommandActual
 				// delete & resend
 
-				MONITOR_CommandActualLength--;
-				MONITOR_CommandCursorPosition--;
+				CommandHandler_CommandActualLength--;
+				CommandHandler_CommandCursorPosition--;
 
-				for ( i = MONITOR_CommandCursorPosition; i < MONITOR_CommandActualLength; i++ )
+				for ( i = CommandHandler_CommandCursorPosition; i < CommandHandler_CommandActualLength; i++ )
 				{
-					MONITOR_CommandActual[i] = MONITOR_CommandActual[i+1];		// copy
+					CommandHandler_CommandActual[i] = CommandHandler_CommandActual[i+1];		// copy
 				}
-				MONITOR_CommandActual[i] = '\0';
+				CommandHandler_CommandActual[i] = '\0';
 
 				// Send backspace = step left
 				USART_SEND_KEY_BACKSPACE();
@@ -726,25 +726,25 @@ void CommandHandler_CommandBackspace(void)
 				// Do nothing, cannot backspace
 			}
 		}
-#endif	// #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+#endif	// #ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
 	}
 	return;			// not do anything
 }
 
 
 
-#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
 /**
  * \brief	Delete button received
  */
 static void CommandHandler_CommandDelete(void)
 {
 
-	if (MONITOR_CommandActualLength > 0)
+	if (CommandHandler_CommandActualLength > 0)
 	{
 		// If has command
 		// Cursor at end?
-		if (MONITOR_CommandCursorPosition == MONITOR_CommandActualLength)
+		if (CommandHandler_CommandCursorPosition == CommandHandler_CommandActualLength)
 		{
 			// Do nothing at end
 		}
@@ -755,21 +755,21 @@ static void CommandHandler_CommandDelete(void)
 
 			uint8_t i;
 
-			if (MONITOR_CommandCursorPosition > 0)
+			if (CommandHandler_CommandCursorPosition > 0)
 			{
 				// not at 0 position
 				// Procedure:
 				// - Copy CommandActual after cursor
 				// - Resend command with original cursor position
 
-				MONITOR_CommandActualLength--;
+				CommandHandler_CommandActualLength--;
 
 				// Drop the backspaced character
-				for (i = MONITOR_CommandCursorPosition; i < MONITOR_CommandActualLength; i++)
+				for (i = CommandHandler_CommandCursorPosition; i < CommandHandler_CommandActualLength; i++)
 				{
-					MONITOR_CommandActual[i] = MONITOR_CommandActual[i+1];		// copy
+					CommandHandler_CommandActual[i] = CommandHandler_CommandActual[i+1];		// copy
 				}
-				MONITOR_CommandActual[i] = '\0';
+				CommandHandler_CommandActual[i] = '\0';
 
 				// Resend line with original cursor position
 				CommandHandler_CommandResendLine(true);
@@ -785,11 +785,11 @@ static void CommandHandler_CommandDelete(void)
 	return;
 
 }
-#endif	// #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+#endif	// #ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
 
 
 
-#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
 /**
  * \brief	Received tabulator command: Complete command
  */
@@ -798,21 +798,21 @@ static void CommandHandler_CommandTabulator(void)
 	// Find same command
 	uint8_t i;
 
-	for (i=0; i < MONITOR_CommandNum; i++)
+	for (i=0; i < CommandHandler_CommandNum; i++)
 	{
 		if (!StrCmpWithLength(CommandList[i].name,
-				(const char *)MONITOR_CommandActual,
-				MONITOR_CommandActualLength))
+				(const char *)CommandHandler_CommandActual,
+				CommandHandler_CommandActualLength))
 		{
 			// It is equal
 			// We write the first equal
 			// TODO: Lekezelni az esetleges több Tabulátort?
 			// Biztos jó, hogy az első egyezőt kiírjuk?
-			StrCpy((char *)MONITOR_CommandActual, CommandList[i].name);
+			StrCpy((char *)CommandHandler_CommandActual, CommandList[i].name);
 
-			MONITOR_CommandActualLength = StringLength(CommandList[i].name);
+			CommandHandler_CommandActualLength = StringLength(CommandList[i].name);
 
-			MONITOR_CommandCursorPosition = MONITOR_CommandActualLength;
+			CommandHandler_CommandCursorPosition = CommandHandler_CommandActualLength;
 
 			CommandHandler_CommandResendLine(false);
 
@@ -820,11 +820,11 @@ static void CommandHandler_CommandTabulator(void)
 		}
 	}
 }
-#endif // #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+#endif // #ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
 
 
 
-#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
 /**
  * \brief		Resend the actual line/command
  * 				NOTE: It save and restore the original cursor position
@@ -851,8 +851,8 @@ static void CommandHandler_CommandResendLine( bool needRestoreCursor)
 	CommandHandler_SendMessage(ESCAPE_CURSORLEFTLOTOF);
 
 	// Write new CommandActual
-	MONITOR_SEND_PROMT();
-	CommandHandler_SendMessage((const char *)MONITOR_CommandActual);
+	COMMANDHANDLER_SEND_PROMT();
+	CommandHandler_SendMessage((const char *)CommandHandler_CommandActual);
 
 	if (needRestoreCursor)
 	{
@@ -862,11 +862,11 @@ static void CommandHandler_CommandResendLine( bool needRestoreCursor)
 
 	return;
 }
-#endif	// #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+#endif	// #ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
 
 
 
-#ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
 /**
  * \brief	Process Escape sequence
  */
@@ -875,36 +875,36 @@ static bool CommandHandler_CommandEscapeCharValidation(void)
 	// return valid char, or 0 if invalid
 	// work with ANSI escape codes
 
-	if (MONITOR_CommandActualEscape[0] == '\x1B')				// ESC
+	if (CommandHandler_CommandActualEscape[0] == '\x1B')				// ESC
 	{
-		if ( MONITOR_CommandActualEscape[1] == '[' )			// '[', escape sequence 2. letter
+		if ( CommandHandler_CommandActualEscape[1] == '[' )			// '[', escape sequence 2. letter
 		{
 			// This is an escape sequence
 			// 'A' Up cursor = previous History command
-			if ( MONITOR_CommandActualEscape[2] == 'A' )
+			if ( CommandHandler_CommandActualEscape[2] == 'A' )
 			{
-				#ifdef CONFIG_USE_MONITOR_HISTORY
+				#ifdef CONFIG_COMMANDHANDLER_USE_HISTORY
 				CommandHandler_HistoryLoad ( 1 );
 				#endif
 				return true;
 			}
 			// 'B' Down cursor		// next History command
-			else if ( MONITOR_CommandActualEscape[2] == 'B' )
+			else if ( CommandHandler_CommandActualEscape[2] == 'B' )
 			{
-				#ifdef CONFIG_USE_MONITOR_HISTORY
+				#ifdef CONFIG_COMMANDHANDLER_USE_HISTORY
 				CommandHandler_HistoryLoad ( 0 );
 				#endif
 				return true;
 			}
 			// 'C' - Right cursor - Step right
-			else if (  MONITOR_CommandActualEscape[2] == 'C' )
+			else if (  CommandHandler_CommandActualEscape[2] == 'C' )
 			{
 				// Is cursor at end?
-				if ( MONITOR_CommandCursorPosition < MONITOR_CommandActualLength )
+				if ( CommandHandler_CommandCursorPosition < CommandHandler_CommandActualLength )
 				{
 					// Cursor within command
 					CommandHandler_SendMessage(ESCAPE_CURSORRIGHT);
-					MONITOR_CommandCursorPosition++;
+					CommandHandler_CommandCursorPosition++;
 					return true;
 				}
 				else
@@ -914,12 +914,12 @@ static bool CommandHandler_CommandEscapeCharValidation(void)
 				}
 			}
 			// 'D' Left cursor - Step left
-			else if (  MONITOR_CommandActualEscape[2] == 'D' )
+			else if (  CommandHandler_CommandActualEscape[2] == 'D' )
 			{
-				if ( MONITOR_CommandCursorPosition > 0 )				// if not at start
+				if ( CommandHandler_CommandCursorPosition > 0 )				// if not at start
 				{
 					CommandHandler_SendMessage(ESCAPE_CURSORLEFT);
-					MONITOR_CommandCursorPosition--;
+					CommandHandler_CommandCursorPosition--;
 					return true;
 				}
 				else
@@ -942,11 +942,11 @@ static bool CommandHandler_CommandEscapeCharValidation(void)
 	return false;
 
 }
-#endif	// #ifdef MONITOR_ESCAPE_SEQUENCE_ENABLE
+#endif	// #ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
 
 
 
-#ifdef CONFIG_USE_MONITOR_HISTORY
+#ifdef CONFIG_COMMANDHANDLER_USE_HISTORY
 /**
  * \brief	Save actual command to history
  */
@@ -960,22 +960,22 @@ static void CommandHandler_HistorySave(void)
 	}
 
 	// Actual save counter
-	if ( MONITOR_HISTORY_Save_cnt >= ( MONITOR_HISTORY_MAX_COUNT-1 ) )
+	if ( CommandHandler_HistorySaveCnt >= ( COMMANDHANDLER_HISTORY_MAX_COUNT-1 ) )
 	{
-		MONITOR_HISTORY_Save_cnt = 0;
+		CommandHandler_HistorySaveCnt = 0;
 	}
 	else
 	{
-		MONITOR_HISTORY_Save_cnt++;
+		CommandHandler_HistorySaveCnt++;
 	}
 
 	// Actual saved is the "last"
-	MONITOR_HISTORY_Load_cnt = MONITOR_HISTORY_Save_cnt;
+	CommandHandler_HistoryLoadCnt = CommandHandler_HistorySaveCnt;
 
 	// Save command
-	StrCpyMax( MONITOR_HISTORY[MONITOR_HISTORY_Save_cnt],
-			(char *)MONITOR_CommandActual,
-			MONITOR_MAX_COMMAND_LENGTH );
+	StrCpyMax( CommandHandler_HistoryList[CommandHandler_HistorySaveCnt],
+			(char *)CommandHandler_CommandActual,
+			COMMANDHANDLER_MAX_COMMAND_LENGTH );
 
 	return;
 
@@ -984,7 +984,7 @@ static void CommandHandler_HistorySave(void)
 
 
 
-#ifdef CONFIG_USE_MONITOR_HISTORY
+#ifdef CONFIG_COMMANDHANDLER_USE_HISTORY
 /**
  * \brief	Check, this command is in History?
  * \return	true, if has equal
@@ -994,10 +994,10 @@ static bool CommandHandler_HistoryFindInList(void)
 {
 	uint8_t i;
 	
-	for (i = 0; i < MONITOR_HISTORY_MAX_COUNT; i++)
+	for (i = 0; i < COMMANDHANDLER_HISTORY_MAX_COUNT; i++)
 	{
 		// Check, equal with command?
-		if ( !StrCmp((const char *)MONITOR_HISTORY[i],(const char * )MONITOR_CommandActual))
+		if ( !StrCmp((const char *)CommandHandler_HistoryList[i],(const char * )CommandHandler_CommandActual))
 		{
 			// If it is equal
 			// Has equal command
@@ -1013,7 +1013,7 @@ static bool CommandHandler_HistoryFindInList(void)
 
 
 
-#ifdef CONFIG_USE_MONITOR_HISTORY
+#ifdef CONFIG_COMMANDHANDLER_USE_HISTORY
 /**
  * \brief	Load history from list to actual command
  */
@@ -1023,13 +1023,13 @@ static void CommandHandler_HistoryLoad(uint8_t direction)
 	// down cursor
 	if (direction == 0) // direction == 0
 	{
-		if (MONITOR_HISTORY_Load_cnt >= (MONITOR_HISTORY_MAX_COUNT-1))
+		if (CommandHandler_HistoryLoadCnt >= (COMMANDHANDLER_HISTORY_MAX_COUNT-1))
 		{
-			MONITOR_HISTORY_Load_cnt = 0;
+			CommandHandler_HistoryLoadCnt = 0;
 		}
 		else
 		{
-			MONITOR_HISTORY_Load_cnt++;
+			CommandHandler_HistoryLoadCnt++;
 		}
 	}
 
@@ -1037,24 +1037,24 @@ static void CommandHandler_HistoryLoad(uint8_t direction)
 	// if direction == 1, copy actual
 
 	// Copy command and set cursor
-	StrCpy((char *)MONITOR_CommandActual, (const char *)MONITOR_HISTORY[MONITOR_HISTORY_Load_cnt]);
+	StrCpy((char *)CommandHandler_CommandActual, (const char *)CommandHandler_HistoryList[CommandHandler_HistoryLoadCnt]);
 
 	// cursor, length!
-	MONITOR_CommandCursorPosition = StringLength((const char *)MONITOR_CommandActual);
-	MONITOR_CommandActualLength = MONITOR_CommandCursorPosition;
+	CommandHandler_CommandCursorPosition = StringLength((const char *)CommandHandler_CommandActual);
+	CommandHandler_CommandActualLength = CommandHandler_CommandCursorPosition;
 
 	CommandHandler_CommandResendLine(false);
 
 	// Step load cnt
 	if (direction == 1) // direction == 0
 	{
-		if (MONITOR_HISTORY_Load_cnt <= 0)
+		if (CommandHandler_HistoryLoadCnt <= 0)
 		{
-			MONITOR_HISTORY_Load_cnt = MONITOR_HISTORY_MAX_COUNT-1;
+			CommandHandler_HistoryLoadCnt = COMMANDHANDLER_HISTORY_MAX_COUNT-1;
 		}
 		else
 		{
-			MONITOR_HISTORY_Load_cnt--;
+			CommandHandler_HistoryLoadCnt--;
 		}
 	}
 
@@ -1065,19 +1065,19 @@ static void CommandHandler_HistoryLoad(uint8_t direction)
 
 
 /**
- * \brief	Convert MONITOR_CommandActual (Actual command) to small letters
+ * \brief	Convert CommandHandler_CommandActual (Actual command) to small letters
  */
 static void CommandHandler_ConvertSmallLetter(void)
 {
 	uint8_t i;
 	
-	for (i = 0; MONITOR_CommandActual[i] != '\0'; i++)
+	for (i = 0; CommandHandler_CommandActual[i] != '\0'; i++)
 	{
-		if ( ( MONITOR_CommandActual[i] > 'A' ) && ( MONITOR_CommandActual[i] < 'Z' ) )
+		if ( ( CommandHandler_CommandActual[i] > 'A' ) && ( CommandHandler_CommandActual[i] < 'Z' ) )
 		{
 			// Need to change to small letter
 			// length between Big Letter and small letter
-			MONITOR_CommandActual[i] = MONITOR_CommandActual[i] - ( 'A' - 'a');
+			CommandHandler_CommandActual[i] = CommandHandler_CommandActual[i] - ( 'A' - 'a');
 		}
 	}
 
@@ -1161,7 +1161,7 @@ static CommandResult_t CommandHandler_RunCommand(CommandID_t commandID)
 
 	// Check argument nums
 	result = CommandHandler_CheckArgumentNumIsGood(
-			COMMAND_ArgCount, CommandList[commandID].commandArgNum);
+			CommandHandler_CommandArgCount, CommandList[commandID].commandArgNum);
 
 	if (result == CommandResult_Ok)
 	{
@@ -1175,7 +1175,7 @@ static CommandResult_t CommandHandler_RunCommand(CommandID_t commandID)
 		// End of warning suppress
 
 		// Execute the command function
-		result = thisFunction(COMMAND_ArgCount,(char**)COMMAND_Arguments);
+		result = thisFunction(CommandHandler_CommandArgCount,(char**)CommandHandler_CommandArguments);
 	}
 	else
 	{
@@ -1204,7 +1204,7 @@ void CommandHandler_PrintAllCommands(void)
 	CommandHandler_SendLine("Using help:\r\n"
 			"help <command>\r\n\r\n"
 			"Commands list:");
-	for (i=0; i < MONITOR_CommandNum; i++)
+	for (i=0; i < CommandHandler_CommandNum; i++)
 	{
 		// Write a command
 		CommandHandler_SendLine(CommandList[i].name);
@@ -1221,7 +1221,7 @@ void CommandHandler_SearchCommandAndPrintHelp(const char *command)
 	CommandID_t i;
 	bool isOk = false;
 
-	for (i=0; i < MONITOR_CommandNum; i++)
+	for (i=0; i < CommandHandler_CommandNum; i++)
 	{
 		// Find the command
 		if (!StrCmp(CommandList[i].name, command))
@@ -1267,11 +1267,11 @@ static CommandResult_t CommandHandler_CheckArgumentNumIsGood(uint8_t receivedArg
 		uint8_t commandArgNum)
 {
 	// Check commandArgNum. bit is set?
-	if (receivedArgNum > MONITOR_COMMAND_ARG_MAX_COUNT)
+	if (receivedArgNum > COMMANDHANDLER_COMMAND_ARG_MAX_COUNT)
 	{
 		return CommandResult_Error_TooManyArgument;
 	}
-	if (commandArgNum > MONITOR_COMMAND_ARG_MAX_NUM_BITS)
+	if (commandArgNum > COMMANDHANDLER_COMMAND_ARG_MAX_NUM_BITS)
 	{
 		return CommandResult_Error_CommandArgNumIsWrong;
 	}
@@ -1287,7 +1287,7 @@ static CommandResult_t CommandHandler_CheckArgumentNumIsGood(uint8_t receivedArg
 		volatile uint8_t maxRequiredArgNum = 0;
 		uint8_t minRequiredArgNum = 0;
 		uint8_t i;
-		for (i=0; i<MONITOR_COMMAND_ARG_MAX_COUNT; i++)
+		for (i=0; i<COMMANDHANDLER_COMMAND_ARG_MAX_COUNT; i++)
 		{
 			if (commandArgNum & (1 << i))
 			{
@@ -1325,7 +1325,7 @@ static CommandResult_t CommandHandler_CheckArgumentNumIsGood(uint8_t receivedArg
  */
 void CommandHandler_SendMessage(const char *message)
 {
-	COMMUNICATION_SendMessage(MONITOR_CommandSource, message);
+	COMMUNICATION_SendMessage(CommandHandler_CommandSource, message);
 }
 
 
@@ -1346,7 +1346,7 @@ void CommandHandler_SendLine(const char *message)
  */
 void CommandHandler_SendChar(char c)
 {
-	COMMUNICATION_SendChar(MONITOR_CommandSource, c);
+	COMMUNICATION_SendChar(CommandHandler_CommandSource, c);
 }
 
 
@@ -1385,7 +1385,7 @@ void CommandHandler_SendCls(void)
 
 
 
-#ifdef MONITOR_GET_PASSWORD_ENABLE
+#ifdef CONFIG_COMMANDHANDLER_GET_PASSWORD_ENABLE
 /**
  * \brief Get (and wait) Password
  */
@@ -1404,7 +1404,7 @@ static void CommandHandler_GetPassword(void)
 		CommandHandler_SendMessage("\r\nPassword:");
 
 		bool isTry = true;
-		MONITOR_CommandActualLength = 0;
+		CommandHandler_CommandActualLength = 0;
 
 		while (isTry)
 		{
@@ -1422,13 +1422,13 @@ static void CommandHandler_GetPassword(void)
 				{
 					// Pressed enter, check password
 					isTry = false;
-					MONITOR_CommandActual[MONITOR_CommandActualLength++] = '\0';
+					CommandHandler_CommandActual[CommandHandler_CommandActualLength++] = '\0';
 					USART_SendNewLine();
-					if (MONITOR_CheckPassword((const char*)MONITOR_CommandActual))
+					if (CommandHandler_CheckPassword((const char*)CommandHandler_CommandActual))
 					{
 						// Successful password
 						CommandHandler_SendLine("Successful password!");
-						MONITOR_CommandActualLength=0;
+						CommandHandler_CommandActualLength=0;
 						return;
 					}
 					else
@@ -1440,7 +1440,7 @@ static void CommandHandler_GetPassword(void)
 				else
 				{
 					// Copy character
-					MONITOR_CommandActual[MONITOR_CommandActualLength++] = USART_ReceivedChar;
+					CommandHandler_CommandActual[CommandHandler_CommandActualLength++] = USART_ReceivedChar;
 				}
 			}
 		}
@@ -1452,9 +1452,9 @@ static void CommandHandler_GetPassword(void)
 /**
  * \brief Check password
  */
-static bool MONITOR_CheckPassword(const char *string)
+static bool CommandHandler_CheckPassword(const char *string)
 {
-	if (!StrCmp(string,MONITOR_Password))
+	if (!StrCmp(string,CommandHandler_Password))
 	{
 		// Equal
 		return true;
@@ -1465,4 +1465,4 @@ static bool MONITOR_CheckPassword(const char *string)
 	}
 }
 
-#endif	// #ifdef MONITOR_GET_PASSWORD_ENABLE
+#endif	// #ifdef CONFIG_COMMANDHANDLER_GET_PASSWORD_ENABLE

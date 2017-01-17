@@ -272,7 +272,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 	#endif
 
 	#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-	if ( (UartHandle == &Debug_UartHandle) && (MONITOR_CommandReceiveEnable == true) )
+	if ( (UartHandle == &Debug_UartHandle) && (CommandHandler_CommandReceiveEnable == true) )
 	{
 		// Receive to next index
 		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[++USART_RxBufferWriteCounter], RXBUFFER_WAIT_LENGTH);

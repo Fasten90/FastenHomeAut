@@ -29,20 +29,17 @@
 //	Config defines
 
 
-#define MONITOR_MAX_COMMAND_LENGTH			(255U)
-#define MONITOR_COMMAND_ARG_MAX_COUNT		(3)
-#define MONITOR_COMMAND_ARG_MAX_NUM_BITS	(0x07)	// 0b111 <-- warning: "binary constants are a GCC extension
+#define COMMANDHANDLER_MAX_COMMAND_LENGTH			(255U)
+#define COMMANDHANDLER_COMMAND_ARG_MAX_COUNT		(3)
+#define COMMANDHANDLER_COMMAND_ARG_MAX_NUM_BITS	(0x07)	// 0b111 <-- warning: "binary constants are a GCC extension
 
-#define MONITOR_HISTORY_MAX_COUNT			(5)
-
-
-#define MONITOR_DUMMY_STRING				"____________________________________________\r\n"
+#define COMMANDHANDLER_HISTORY_MAX_COUNT			(5)
 
 
-#define MONITOR_SEND_WELCOME()								\
-		CommandHandler_SendMessage(								\
+#define COMMANDHANDLER_SEND_WELCOME()						\
+		CommandHandler_SendMessage(							\
 		"\r\n"												\
-		"Welcome in Monitor program!\r\n"					\
+		"Welcome in CommandHandler!\r\n"					\
 		"Version: " VERSION_DEFINE "\r\n"					\
 		"Date: " DATE_VERSION "\r\n"						\
 		"Time: "TIME_VERSION "\r\n"							\
@@ -52,19 +49,17 @@
 		"Try \"help\" command for help!\r\n")
 
 
-#define MONITOR_SEND_PROMT_NEW_LINE()	CommandHandler_SendMessage("\r\n# ")
+#define COMMANDHANDLER_SEND_PROMT_NEW_LINE()	CommandHandler_SendMessage("\r\n# ")
 
-#define MONITOR_SEND_PROMT()			CommandHandler_SendMessage("# ")
+#define COMMANDHANDLER_SEND_PROMT()				CommandHandler_SendMessage("# ")
 
-#define USART_SEND_DUMMYSTRING()		CommandHandler_SendMessage(MONITOR_DUMMY_STRING)
-
-#define MONITOR_SEND_NEW_LINE()			CommandHandler_SendMessage("\r\n")
+#define COMMANDHANDLER_SEND_NEW_LINE()			CommandHandler_SendMessage("\r\n")
 
 
 ///	DEFINES FOR CHARACTERS
 
-CONFIG_USE_TERMINAL_ZOC
-#if defined(CONFIG_USE_TERMINAL_ZOC) || defined(CONFIG_USE_TERMINAL_PUTTY)
+CONFIG_COMMANDHANDLER_USE_TERMINAL_ZOC
+#if defined(CONFIG_COMMANDHANDLER_USE_TERMINAL_ZOC) || defined(CONFIG_COMMANDHANDLER_USE_TERMINAL_PUTTY)
 #define USART_KEY_DELETE			(0x08)
 #define USART_KEY_BACKSPACE			(0x7F)
 #else
@@ -120,7 +115,7 @@ typedef enum
 
 
 /// Command Function pointer
-typedef CommandResult_t ( *FunctionPointer )( uint32_t argc, char** COMMAND_Arguments );
+typedef CommandResult_t ( *FunctionPointer )( uint32_t argc, char** CommandHandler_CommandArguments );
 
 
 /// CommandID
@@ -152,10 +147,10 @@ typedef struct
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-extern volatile char MONITOR_CommandActual[MONITOR_MAX_COMMAND_LENGTH];
-extern volatile CommProtocol_t MONITOR_CommandSource;
+extern volatile char CommandHandler_CommandActual[COMMANDHANDLER_MAX_COMMAND_LENGTH];
+extern volatile CommProtocol_t CommandHandler_CommandSource;
 
-extern const bool MONITOR_CommandReceiveEnable;
+extern const bool CommandHandler_CommandReceiveEnable;
 
 
 #ifdef CONFIG_USE_FREERTOS

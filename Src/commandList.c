@@ -295,7 +295,7 @@ const CommandStruct CommandList[] =
 // End of warning suppress
 
 
-const CommandID_t MONITOR_CommandNum = MONITOR_MAX_COMMAND_NUM;
+const CommandID_t CommandHandler_CommandNum = COMMANDHANDLER_MAX_COMMAND_NUM;
 
 
 /*------------------------------------------------------------------------------

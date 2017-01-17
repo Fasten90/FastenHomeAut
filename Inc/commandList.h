@@ -26,7 +26,7 @@
 
 #define NUM_OF(x) (sizeof(x)/sizeof(x[0]))
 	
-#define MONITOR_MAX_COMMAND_NUM				(uint8_t)( NUM_OF(CommandList))
+#define COMMANDHANDLER_MAX_COMMAND_NUM				(uint8_t)( NUM_OF(CommandList))
 
 
 /*------------------------------------------------------------------------------
@@ -42,7 +42,7 @@
 
 extern const CommandStruct CommandList[];
 
-extern const CommandID_t MONITOR_CommandNum;
+extern const CommandID_t CommandHandler_CommandNum;
 
 
 
@@ -116,8 +116,6 @@ CommandResult_t CommandFunction_rfm12b	( uint32_t argc, char** argv );
 CommandResult_t CommandFunction_keypad	( uint32_t argc, char** argv );
 CommandResult_t CommandFunction_standby	( uint32_t argc, char** argv );
 CommandResult_t CommandFunction_rtc	( uint32_t argc, char** argv );
-
-CommandResult_t CommandFunction_ESP8266	( uint32_t argc, char** argv );
 */
 
 
