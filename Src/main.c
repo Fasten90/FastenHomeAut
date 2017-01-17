@@ -185,7 +185,12 @@ int main(void)
 	}
 #endif	// #ifdef CONFIG_MODULE_SYSMANAGER_ENABLE
 	
+
+#ifdef CONFIG_MODULE_RTC_ENABLE
+	RTC_Init();
+#endif
 	
+
 #ifdef CONFIG_USE_FREERTOS
 	// FreeRTOS scheduler
 	vTaskStartScheduler();

@@ -78,6 +78,8 @@ CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv);
 
 CommandResult_t CommandFunction_ESP8266(uint32_t argc, char** argv);
 
+CommandResult_t CommandFunction_RTC(uint32_t argc, char** argv);
+
 CommandResult_t CommandFunction_raspberrypi(uint32_t argc, char** argv);
 
 CommandResult_t CommandFunction_flashdel(uint32_t argc, char** argv);
@@ -115,7 +117,6 @@ CommandResult_t CommandFunction_rominit	( uint32_t argc, char** argv );
 CommandResult_t CommandFunction_rfm12b	( uint32_t argc, char** argv );
 CommandResult_t CommandFunction_keypad	( uint32_t argc, char** argv );
 CommandResult_t CommandFunction_standby	( uint32_t argc, char** argv );
-CommandResult_t CommandFunction_rtc	( uint32_t argc, char** argv );
 */
 
 

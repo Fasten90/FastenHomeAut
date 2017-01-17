@@ -153,6 +153,9 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #include "SWO.h"
 #endif
 
+#ifdef CONFIG_MODULE_RTC_ENABLE
+#include "RTC.h"
+#endif
 
 void Error_Handler( void );
 

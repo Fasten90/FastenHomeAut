@@ -35,15 +35,31 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-/// DateTime structure
+
+/// Date structure
 typedef struct
 {
 	uint8_t year;
 	uint8_t month;
 	uint8_t day;
+} Date_t;
+
+
+
+/// Time structure
+typedef struct
+{
 	uint8_t hour;
 	uint8_t minute;
 	uint8_t second;
+} Time_t;
+
+
+/// DateTime structure
+typedef struct
+{
+	Date_t date;
+	Time_t time;
 } DateTime_t;
 
 
@@ -74,6 +90,10 @@ typedef struct
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 bool DateTime_ConvertStringToDateTime(const char *string, DateTime_t *dateTime);
+
+bool DateTime_ConvertDateStringToDate(char *str, Date_t *date);
+bool DateTime_ConvertTimeStringToTime(char *str, Time_t *time);
+
 uint8_t DateTime_PrintDateTimeToString(char *message, DateTime_t *dateTime);
 
 

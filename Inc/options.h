@@ -141,6 +141,8 @@
 
 	#define CONFIG_MODULE_COMMON_ADC_ENABLE
 
+	#define CONFIG_MODULE_RTC_ENABLE
+
 #endif
 
 

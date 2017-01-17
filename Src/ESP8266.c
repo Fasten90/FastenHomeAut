@@ -68,12 +68,18 @@ uint8_t ESP8266_DebugEnableFlag = 1;
 /// for debug
 const DateTime_t EventDateTime =
 {
-	.year = 17,
-	.month = 1,
-	.day = 14,
-	.hour = 20,
-	.minute = 0,
-	.second = 0
+	.date =
+	{
+		.year = 17,
+		.month = 1,
+		.day = 14
+	},
+	.time =
+	{
+		.hour = 20,
+		.minute = 0,
+		.second = 0
+	}
 };
 
 

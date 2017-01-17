@@ -198,6 +198,15 @@ const CommandStruct CommandList[] =
 		.commandArgNum = CommandArgument_2,
 	},
 #endif
+#ifdef CONFIG_MODULE_RTC_ENABLE
+	{
+		.name = "rtc",
+		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_RTC,
+		.description = "Use RTC (Real Time Clock)",
+		.syntax = "<setdate/settime> <date: 20yy-mm-dd/time: hh:mm:ss>",
+		.commandArgNum = CommandArgument_1 | CommandArgument_2,
+	},
+#endif
 #ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
 	{
 		.name = "#raspi",
@@ -955,6 +964,62 @@ CommandResult_t CommandFunction_ESP8266(uint32_t argc, char** argv)
 #endif
 
 
+
+#ifdef CONFIG_MODULE_RTC_ENABLE
+CommandResult_t CommandFunction_RTC(uint32_t argc, char** argv)
+{
+	CommandResult_t result = CommandResult_Unknown;
+
+	if (!StrCmp(argv[1], "setdate") && argc == 3)
+	{
+		// Set date
+		Date_t date;
+		if (DateTime_ConvertDateStringToDate(argv[2], &date))
+		{
+			// Successful
+			RTC_DateConfig(&date);
+			result = CommandResult_Ok_SendSuccessful;
+		}
+		else
+		{
+			result = CommandResult_Error_WrongArgument2;
+		}
+	}
+	else if (!StrCmp(argv[1], "settime") && argc == 3)
+	{
+		// Set time
+		Time_t time;
+		if (DateTime_ConvertTimeStringToTime(argv[2], &time))
+		{
+			// Successful
+			RTC_TimeConfig(&time);
+			result = CommandResult_Ok_SendSuccessful;
+		}
+		else
+		{
+			result = CommandResult_Error_WrongArgument2;
+		}
+	}
+	else if (!StrCmp(argv[1], "status"))
+	{
+		char datestring[20];
+		char timestring[20];
+		RTC_CalendarShow(datestring, timestring);
+		CommandHandler_Printf("RTC Date: %s Time: %s\r\n", datestring, timestring);
+
+		result = CommandResult_Ok;
+	}
+	else
+	{
+		result = CommandResult_Error_WrongArgument1;
+	}
+
+	return result;
+}
+#endif
+
+
+
 #ifdef CONFIG_MODULE_ADC_ENABLE
 /**
  * \brief	Temperature
@@ -1489,25 +1554,6 @@ CommandResult_t CommandFunction_standby	( uint32_t argc, char** argv ) {
 	LOWPOWER_GotoSTANDBYMode ();
 
 	// Exit from STANDBY mode is same with reset, this point is never reachable
-
-	return 1;
-}
-#endif
-
-
-
-#if 0
-CommandResult_t CommandFunction_rtc	( uint32_t argc, char** argv ) {
-
-	uint32_t Arg2Num;
-
-	Arg2Num = StringDecToNum(argv[1]);
-
-	CommandHandler_Printf("RTC wait %d second(s)\r\n",Arg2Num);
-
-	//RTC_WaitSeconds(Arg2Num);
-
-	CommandHandler_SendLine("End");
 
 	return 1;
 }
