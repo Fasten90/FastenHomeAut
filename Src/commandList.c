@@ -977,7 +977,7 @@ CommandResult_t CommandFunction_RTC(uint32_t argc, char** argv)
 		if (DateTime_ConvertDateStringToDate(argv[2], &date))
 		{
 			// Successful
-			RTC_DateConfig(&date);
+			RTC_SetDate(&date);
 			result = CommandResult_Ok_SendSuccessful;
 		}
 		else
@@ -992,7 +992,7 @@ CommandResult_t CommandFunction_RTC(uint32_t argc, char** argv)
 		if (DateTime_ConvertTimeStringToTime(argv[2], &time))
 		{
 			// Successful
-			RTC_TimeConfig(&time);
+			RTC_SetTime(&time);
 			result = CommandResult_Ok_SendSuccessful;
 		}
 		else
@@ -1002,10 +1002,18 @@ CommandResult_t CommandFunction_RTC(uint32_t argc, char** argv)
 	}
 	else if (!StrCmp(argv[1], "status"))
 	{
+		char datetimestring[30];
+		DateTime_t dateTime;
+		RTC_GetDateTime(&dateTime);
+		DateTime_PrintDateTimeToString(datetimestring, &dateTime);
+		CommandHandler_Printf("RTC Date and Time: %s\r\n");
+
+		/*
 		char datestring[20];
 		char timestring[20];
 		RTC_CalendarShow(datestring, timestring);
 		CommandHandler_Printf("RTC Date: %s Time: %s\r\n", datestring, timestring);
+		*/
 
 		result = CommandResult_Ok;
 	}

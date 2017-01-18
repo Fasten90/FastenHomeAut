@@ -10,7 +10,10 @@
  *		Last modified:	2017. jan. 17.
  */
 
-
+/*
+ * This file use ST example codes:
+ * STM32Cube_FW_F4_V1.14.0\Projects\STM32F446ZE-Nucleo\Examples\RTC\RTC_Calendar\
+ */
 
 
 /*------------------------------------------------------------------------------
@@ -141,8 +144,8 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef *hrtc)
 void RTC_CalendarConfig(DateTime_t *dateTime)
 {
 
-	RTC_DateConfig(&dateTime->date);
-	RTC_TimeConfig(&dateTime->time);
+	RTC_SetDate(&dateTime->date);
+	RTC_SetTime(&dateTime->time);
 
 
 	/*##-3- Writes a data in a RTC Backup data Register1 #######################*/
@@ -154,12 +157,11 @@ void RTC_CalendarConfig(DateTime_t *dateTime)
 /**
  * \brief	Set date
  */
-void RTC_DateConfig(Date_t *date)
+void RTC_SetDate(Date_t *date)
 {
 	RTC_DateTypeDef sdatestructure;
 
 	/*##-1- Configure the Date #################################################*/
-	/* Set Date: Tuesday February 18th 2014 */
 	sdatestructure.Year = date->year;
 	sdatestructure.Month = date->month;
 	sdatestructure.Date = date->day;
@@ -175,9 +177,9 @@ void RTC_DateConfig(Date_t *date)
 
 
 /**
- * \brief	Set date
+ * \brief	Set time
  */
-void RTC_TimeConfig(Time_t *time)
+void RTC_SetTime(Time_t *time)
 {
 
 	RTC_TimeTypeDef stimestructure;
@@ -201,16 +203,60 @@ void RTC_TimeConfig(Time_t *time)
 
 
 /**
+ * \brief	Get DateTime
+ */
+void RTC_GetDateTime(DateTime_t *dateTime)
+{
+	RTC_GetDate(&dateTime->date);
+	RTC_GetTime(&dateTime->time);
+}
+
+
+
+/**
+ * \brief	Get date
+ */
+void RTC_GetDate(Date_t *date)
+{
+	RTC_DateTypeDef sdatestructureget;
+
+	/* Get the RTC current Date */
+	HAL_RTC_GetDate(&RtcHandle, &sdatestructureget, RTC_FORMAT_BIN);
+
+	date->year = sdatestructureget.Year;
+	date->month = sdatestructureget.Month;
+	date->day = sdatestructureget.Date;
+}
+
+
+
+/**
+ * \brief	Get time
+ */
+void RTC_GetTime(Time_t *time)
+{
+	RTC_TimeTypeDef stimestructureget;
+
+	/* Get the RTC current Time */
+	HAL_RTC_GetTime(&RtcHandle, &stimestructureget, RTC_FORMAT_BIN);
+
+	time->hour = stimestructureget.Hours;
+	time->minute = stimestructureget.Minutes;
+	time->second = stimestructureget.Seconds;
+}
+
+
+
+/**
   * @brief  Display the current time and date.
-  * @param  showtime : pointer to buffer
   * @param  showdate : pointer to buffer
+  * @param  showtime : pointer to buffer
   * @retval None
   */
 void RTC_CalendarShow(char *showdate, char *showtime)
 {
 	RTC_DateTypeDef sdatestructureget;
 	RTC_TimeTypeDef stimestructureget;
-	// TODO: Átalakítani saját formátumra?
 
 	/* Get the RTC current Date */
 	HAL_RTC_GetDate(&RtcHandle, &sdatestructureget, RTC_FORMAT_BIN);
@@ -221,6 +267,7 @@ void RTC_CalendarShow(char *showdate, char *showtime)
 	/* Display time Format : hh:mm:ss */
 	usprintf((char *)showtime, "%02d:%02d:%02d", stimestructureget.Hours, stimestructureget.Minutes, stimestructureget.Seconds);
 }
+
 
 
 #endif	// #ifdef CONFIG_MODULE_RTC_ENABLE

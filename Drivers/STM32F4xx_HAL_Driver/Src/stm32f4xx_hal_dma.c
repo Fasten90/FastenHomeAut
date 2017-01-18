@@ -1007,6 +1007,8 @@ HAL_StatusTypeDef HAL_DMA_RegisterCallback(DMA_HandleTypeDef *hdma, HAL_DMA_Call
       hdma->XferAbortCallback = pCallback;
       break;
 
+    // Added code by VG for suppress warning
+    case HAL_DMA_XFER_ALL_CB_ID:
     default:
       break;
     }

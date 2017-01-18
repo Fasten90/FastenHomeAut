@@ -130,13 +130,13 @@ int main(void)
 #endif
 
 
-#ifdef CONFIG_MODULE_MONITOR_ENABLE
+#ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
 	// Monitor initialize
 	CommandHandler_Init();
 #endif
 
 
-#ifdef CONFIG_MODULE_MONITOR_ENABLE
+#ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
 #ifdef CONFIG_USE_FREERTOS
 	TaskHandle_t MONITOR_TaskHandle = NULL;
 	//xTaskCreate( vTaskCode, "NAME", STACK_SIZE, &ucParameterToPass, tskIDLE_PRIORITY, &xHandle );
@@ -148,7 +148,7 @@ int main(void)
 #else
 	CommandHandler_CheckCommand();	// infinite loop
 #endif
-#endif	// #ifdef CONFIG_MODULE_MONITOR_ENABLE
+#endif	// #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
 
 
 #ifdef CONFIG_MODULE_ESP8266_ENABLE

@@ -2106,6 +2106,8 @@ __weak void HAL_TIM_OnePulse_MspDeInit(TIM_HandleTypeDef *htim)
   */
 HAL_StatusTypeDef HAL_TIM_OnePulse_Start(TIM_HandleTypeDef *htim, uint32_t OutputChannel)
 {
+	// Added code by VG for suppress warning
+	(void)OutputChannel;
   /* Enable the Capture compare and the Input Capture channels 
     (in the OPM Mode the two possible channels that can be used are TIM_CHANNEL_1 and TIM_CHANNEL_2)
     if TIM_CHANNEL_1 is used as output, the TIM_CHANNEL_2 will be used as input and
@@ -2140,6 +2142,9 @@ HAL_StatusTypeDef HAL_TIM_OnePulse_Start(TIM_HandleTypeDef *htim, uint32_t Outpu
   */
 HAL_StatusTypeDef HAL_TIM_OnePulse_Stop(TIM_HandleTypeDef *htim, uint32_t OutputChannel)
 {
+	// Added code by VG for suppress warning
+	(void)OutputChannel;
+
   /* Disable the Capture compare and the Input Capture channels 
   (in the OPM Mode the two possible channels that can be used are TIM_CHANNEL_1 and TIM_CHANNEL_2)
   if TIM_CHANNEL_1 is used as output, the TIM_CHANNEL_2 will be used as input and
@@ -2174,6 +2179,9 @@ HAL_StatusTypeDef HAL_TIM_OnePulse_Stop(TIM_HandleTypeDef *htim, uint32_t Output
   */
 HAL_StatusTypeDef HAL_TIM_OnePulse_Start_IT(TIM_HandleTypeDef *htim, uint32_t OutputChannel)
 {
+  // Added code by VG for suppress warning
+  (void)OutputChannel;
+
   /* Enable the Capture compare and the Input Capture channels 
     (in the OPM Mode the two possible channels that can be used are TIM_CHANNEL_1 and TIM_CHANNEL_2)
     if TIM_CHANNEL_1 is used as output, the TIM_CHANNEL_2 will be used as input and
@@ -2214,6 +2222,9 @@ HAL_StatusTypeDef HAL_TIM_OnePulse_Start_IT(TIM_HandleTypeDef *htim, uint32_t Ou
   */
 HAL_StatusTypeDef HAL_TIM_OnePulse_Stop_IT(TIM_HandleTypeDef *htim, uint32_t OutputChannel)
 {
+  // Added code by VG for suppress warning
+  (void)OutputChannel;
+
   /* Disable the TIM Capture/Compare 1 interrupt */
   __HAL_TIM_DISABLE_IT(htim, TIM_IT_CC1);  
   

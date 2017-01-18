@@ -172,7 +172,7 @@
 					<sourceEntries>
 						<entry excluding="STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_msp_template.c|STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_timebase_tim_template.c|STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_timebase_rtc_alarm_template.c|STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_timebase_rtc_wakeup_template.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Inc"/>
-						<entry excluding="STM32_SelfTest_Library|STM32_SelfTest_Library/stm32f4xx_STLcpustartIARv5.s|STM32_SelfTest_Library/stm32fxx_STLRamMcMxIAR.s|STM32_SelfTest_Library/stm32f4xx_STLcpurunIARv5.s" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
+						<entry excluding="Third_Party|STM32_SelfTest_Library|STM32_SelfTest_Library/stm32f4xx_STLcpustartIARv5.s|STM32_SelfTest_Library/stm32fxx_STLRamMcMxIAR.s|STM32_SelfTest_Library/stm32f4xx_STLcpurunIARv5.s" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Src"/>
 					</sourceEntries>
 				</configuration>

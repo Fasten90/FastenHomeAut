@@ -756,6 +756,9 @@ HAL_StatusTypeDef HAL_ADCEx_MultiModeStop_DMA(ADC_HandleTypeDef* hadc)
   */
 uint32_t HAL_ADCEx_MultiModeGetValue(ADC_HandleTypeDef* hadc)
 {
+  // Added code by VG for suppress warning
+  (void)hadc;
+
   /* Return the multi mode conversion value */
   return ADC->CDR;
 }

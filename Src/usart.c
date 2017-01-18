@@ -445,6 +445,9 @@ void UART_ResetStatus(UART_HandleTypeDef *huart)
 		huart->RxXferSize = 0;
 	}
 #endif
+#ifndef CONFIG_MODULE_ESP8266_ENABLE
+	(void)huart;
+#endif
 }
 
 

@@ -50,8 +50,15 @@ bool DateTime_CheckValue(uint32_t originalValue, uint32_t minValue, uint32_t max
  */
 bool DateTime_ConvertStringToDateTime(const char *string, DateTime_t *dateTime)
 {
-	DateTimeString_t convertDateTime;
+#if DATETIME_OLD_CODE
+	DateTimeString_t dateTimeString;
+#else
+	char dateTimeString[DATETIME_STRING_MAX_LENGTH];
+#endif
+
+	DateTime_t convertedDateTime;
 	bool isOk = true;
+	char *separated[2];
 
 	if (StringLength(string) != (DATETIME_STRING_MAX_LENGTH - 1))
 	{
@@ -59,23 +66,43 @@ bool DateTime_ConvertStringToDateTime(const char *string, DateTime_t *dateTime)
 		return false;
 	}
 
-	StrCpy((char *)&convertDateTime, string);
-	// TODO: scanf
+	StrCpy((char *)&dateTimeString, string);
+
+	// Split at space: "2017-01-18 20:10:00"
+	if (STRING_Splitter(dateTimeString, ' ', separated, 2) == 2)
+	{
+		// Convert date/time strings
+		isOk &= DateTime_ConvertDateStringToDate(separated[0], &convertedDateTime.date);
+		isOk &= DateTime_ConvertTimeStringToTime(separated[1], &convertedDateTime.time);
+
+		if (isOk)
+		{
+			// Copy to parameter, if ok
+			memcpy(dateTime, &convertedDateTime, sizeof(DateTime_t));
+		}
+	}
+	else
+	{
+		isOk = false;
+	}
+
+
+#if DATETIME_OLD_CODE
 
 	// Check separators and put 0
-	if (convertDateTime.separator_1[0] == '-') convertDateTime.separator_1[0] = '\0';
+	if (dateTimeString.separator_1[0] == '-') dateTimeString.separator_1[0] = '\0';
 	else isOk = false;
 
-	if (convertDateTime.separator_2[0] == '-') convertDateTime.separator_2[0] = '\0';
+	if (dateTimeString.separator_2[0] == '-') dateTimeString.separator_2[0] = '\0';
 	else isOk = false;
 
-	if (convertDateTime.separator_space[0] == ' ') convertDateTime.separator_space[0] = '\0';
+	if (dateTimeString.separator_space[0] == ' ') dateTimeString.separator_space[0] = '\0';
 	else isOk = false;
 
-	if (convertDateTime.separator_4[0]== ':') convertDateTime.separator_4[0] = '\0';
+	if (dateTimeString.separator_4[0]== ':') convertDateTime.separator_4[0] = '\0';
 	else isOk = false;
 
-	if (convertDateTime.separator_5[0] == ':') convertDateTime.separator_5[0] = '\0';
+	if (dateTimeString.separator_5[0] == ':') dateTimeString.separator_5[0] = '\0';
 	else isOk = false;
 
 	// If separator characters are ok
@@ -83,25 +110,26 @@ bool DateTime_ConvertStringToDateTime(const char *string, DateTime_t *dateTime)
 	if (isOk)
 	{
 		uint32_t convertValue;
-		isOk &= StringToUnsignedDecimalNum(convertDateTime.year, &convertValue);
+		isOk &= StringToUnsignedDecimalNum(dateTimeString.year, &convertValue);
 		isOk &= DateTime_CheckValue(convertValue, 2017, 2050);
 		dateTime->date.year = (uint8_t)(convertValue - 2000);
-		isOk &= StringToUnsignedDecimalNum(convertDateTime.month, &convertValue);
+		isOk &= StringToUnsignedDecimalNum(dateTimeString.month, &convertValue);
 		isOk &= DateTime_CheckValue(convertValue, 0, 12);
 		dateTime->date.month = (uint8_t)convertValue;
-		isOk &= StringToUnsignedDecimalNum(convertDateTime.day, &convertValue);
+		isOk &= StringToUnsignedDecimalNum(dateTimeString.day, &convertValue);
 		isOk &= DateTime_CheckValue(convertValue, 0, 31);
 		dateTime->date.day = (uint8_t)convertValue;
-		isOk &= StringToUnsignedDecimalNum(convertDateTime.hour, &convertValue);
+		isOk &= StringToUnsignedDecimalNum(dateTimeString.hour, &convertValue);
 		isOk &= DateTime_CheckValue(convertValue, 0, 24);
 		dateTime->time.hour = (uint8_t)convertValue;
-		isOk &= StringToUnsignedDecimalNum(convertDateTime.minute, &convertValue);
+		isOk &= StringToUnsignedDecimalNum(dateTimeString.minute, &convertValue);
 		isOk &= DateTime_CheckValue(convertValue, 0, 60);
 		dateTime->time.minute = (uint8_t)convertValue;
-		isOk &= StringToUnsignedDecimalNum(convertDateTime.second, &convertValue);
+		isOk &= StringToUnsignedDecimalNum(dateTimeString.second, &convertValue);
 		isOk &= DateTime_CheckValue(convertValue, 0, 60);
 		dateTime->time.second = (uint8_t)convertValue;
 	}
+#endif
 
 	return isOk;
 }

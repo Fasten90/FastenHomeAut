@@ -39,9 +39,9 @@
 /// Date structure
 typedef struct
 {
-	uint8_t year;
-	uint8_t month;
-	uint8_t day;
+	uint8_t year;		///< Year - from 2000 (example: 2017 --> value 17
+	uint8_t month;		///< Month:	1-12
+	uint8_t day;		///< Day:	1-31
 } Date_t;
 
 
@@ -49,27 +49,29 @@ typedef struct
 /// Time structure
 typedef struct
 {
-	uint8_t hour;
-	uint8_t minute;
-	uint8_t second;
+	uint8_t hour;		///< Hour:	0-23
+	uint8_t minute;		///< Minute:0-59
+	uint8_t second;		///< Second:0-59
 } Time_t;
+
 
 
 /// DateTime structure
 typedef struct
 {
-	Date_t date;
-	Time_t time;
+	Date_t date;		///< Date
+	Time_t time;		///< Time
 } DateTime_t;
 
 
 
+/// DateTime string structure
 typedef struct
 {
 	char year[4];				// 2017
-	char separator_1[1];			// -
+	char separator_1[1];		// -
 	char month[2];				// 01
-	char separator_2[1];			// -
+	char separator_2[1];		// -
 	char day[2];				// 10
 	char separator_space[1];	// ' '
 	char hour[2];				// 20
