@@ -240,7 +240,7 @@ void CommandHandler_CheckCommand(void)
 {
 
 	// Initialize
-	//CommandHandler_Init();	// Init
+	//CommandHandler_Init();	// Init, now not need, called from main
 
 
 #if RXBUFFERSIZE != 256
@@ -249,7 +249,7 @@ void CommandHandler_CheckCommand(void)
 
 
 #ifdef CONFIG_USE_FREERTOS
-	vTaskDelay(10);
+	DelayMs(10);
 
 	xSemaphoreGive(DEBUG_USART_Tx_Semaphore);
 	// Enable sendings
