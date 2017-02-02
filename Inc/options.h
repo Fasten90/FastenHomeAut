@@ -208,11 +208,12 @@
 
 // ESP8266 settings
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-	// XXX: IfC ONFIG_ESP8266_IS_SERVER defined to 1, ESP8266 will be server, if not (0), it will be client
+	// XXX: IfC ONFIG_ESP8266_IS_SERVER defined to 1, ESP8266 will be server,
+	// if not (0), it will be client
 	#define CONFIG_ESP8266_IS_SERVER	0
 
-	#define CONFIG_ESP8266_WIFI_NETWORK_NAME		"ARTN16"
-	#define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD	"Easdg2011"
+	#define CONFIG_ESP8266_WIFI_NETWORK_NAME			"ARTN16"
+	#define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD		"Easdg2011"
 	#ifndef CONFIG_ESP8266_WIFI_NETWORK_PASSWORD
 		#warning "CONFIG_ESP8266_WIFI_NETWORK_PASSWORD defined not defined!"
 		#define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD	"Password"

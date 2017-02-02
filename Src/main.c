@@ -133,6 +133,7 @@ int main(void)
 #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
 	// Monitor initialize
 	CommandHandler_Init();
+	Terminal_Init();
 #endif
 
 

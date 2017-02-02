@@ -92,6 +92,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 #include "usart.h"
+#include "Terminal.h"
 #include "CommandHandler.h"
 #include "commandList.h"
 #endif
@@ -134,7 +135,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #endif
 
 #ifdef CONFIG_MODULE_FLASH_ENABLE
-#include "flash.h"	// Work, but not need
+#include <Flash_S25FL.h>	// Work, but not need
 #endif
 
 #ifdef CONFIG_MODULE_COMMON_DAC_ENABLE

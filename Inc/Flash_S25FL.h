@@ -2,8 +2,8 @@
  * Purpose:
  ******************************************************************************/
 
-#ifndef FLASH_H_
-#define FLASH_H_
+#ifndef FLASH_S25FL_H_
+#define FLASH_S25FL_H_
 
 
 /*------------------------------------------------------------------------------
@@ -167,4 +167,4 @@ void FLASH_Test_WithEraseWriteRead ( void );
 #endif	// #ifdef CONFIG_MODULE_FLASH_ENABLE
 
 
-#endif /* FLASH_H_ */
+#endif /* FLASH_S25FL_H_ */
