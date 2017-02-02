@@ -137,6 +137,25 @@ int main(void)
 #endif
 
 
+#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
+	// Task handler
+	TaskHandler_Init();
+
+	uint32_t actualTick = 0;
+	uint32_t oldTick = HAL_GetTick();
+	uint32_t elapsedTick = 0;
+
+	while (1)
+	{
+		actualTick = HAL_GetTick();
+		elapsedTick = actualTick - oldTick;
+		oldTick = actualTick;
+
+		TaskHandler_CheckSchedules(elapsedTick);
+	}
+#endif
+
+
 #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
 #ifdef CONFIG_USE_FREERTOS
 	TaskHandle_t MONITOR_TaskHandle = NULL;

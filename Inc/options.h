@@ -143,6 +143,8 @@
 
 	#define CONFIG_MODULE_RTC_ENABLE
 
+	#define CONFIG_MODULE_TASKHANDLER_ENABLE
+
 #endif
 
 

@@ -158,6 +158,11 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #include "RTC.h"
 #endif
 
+#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
+#include "TaskHandler.h"
+#include "TaskList.h"
+#endif
+
 void Error_Handler( void );
 
 
