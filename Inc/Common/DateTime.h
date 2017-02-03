@@ -30,6 +30,9 @@
 // 2017-01-10 19:56:00\0
 #define DATETIME_STRING_MAX_LENGTH			( 20 )
 
+#define DATETIME_DATE_YEAR_MAX_VALUE		( 2050 )
+#define DATETIME_DATE_YEAR_MIN_VALUE		( 2017 )
+
 
 /*------------------------------------------------------------------------------
  *  Type definitions
@@ -82,6 +85,21 @@ typedef struct
 	char end[1];				// '\0' or other
 } DateTimeString_t;
 
+
+
+typedef enum
+{
+	DateTimeCompare_Unknown,
+	DateTimeCompare_FirstOldSecondNew,
+	DateTimeCompare_FirstNewSecondOld,
+	DateTimeCompare_Equal,
+	DateTimeCompare_InvalidFirst,
+	DateTimeCompare_InvalidSecond,
+	DateTimeCompare_Invalid,
+	DateTimeCompare_Error_Parameter
+} DateTimeCompare_t;
+
+
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
@@ -98,6 +116,12 @@ bool DateTime_ConvertTimeStringToTime(char *str, Time_t *time);
 
 uint8_t DateTime_PrintDateTimeToString(char *message, DateTime_t *dateTime);
 
+bool DateTime_CheckDateTime(DateTime_t *dateTime);
+DateTimeCompare_t DateTime_CompareDateTime(DateTime_t *dateTime1, DateTime_t *dateTime2);
+
+#ifdef MODULE_DATETIME_UNITTEST_ENABLE
+void DateTime_UnitTest(void);
+#endif
 
 
 #endif /* DATETIME_H_ */

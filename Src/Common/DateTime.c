@@ -19,6 +19,9 @@
 #include "include.h"
 #include "DateTime.h"
 
+#ifdef MODULE_DATETIME_UNITTEST_ENABLE
+#include "unittest.h"
+#endif
 
 /*------------------------------------------------------------------------------
  *  Global variables
@@ -152,15 +155,15 @@ bool DateTime_ConvertDateStringToDate(char *str, Date_t *date)
 		uint32_t convertValue;
 
 		isOk &= StringToUnsignedDecimalNum(separated[0], &convertValue);
-		isOk &= DateTime_CheckValue(convertValue, 2017, 2050);
+		isOk &= DateTime_CheckValue(convertValue, DATETIME_DATE_YEAR_MIN_VALUE, DATETIME_DATE_YEAR_MAX_VALUE);
 		convertDate.year = (uint8_t)(convertValue - 2000);
 
 		isOk &= StringToUnsignedDecimalNum(separated[1], &convertValue);
-		isOk &= DateTime_CheckValue(convertValue, 0, 12);
+		isOk &= DateTime_CheckValue(convertValue, 1, 12);
 		convertDate.month = (uint8_t)convertValue;
 
 		isOk &= StringToUnsignedDecimalNum(separated[2], &convertValue);
-		isOk &= DateTime_CheckValue(convertValue, 0, 31);
+		isOk &= DateTime_CheckValue(convertValue, 1, 31);
 		convertDate.day = (uint8_t)convertValue;
 
 		// If ok, copy to parameter
@@ -195,15 +198,15 @@ bool DateTime_ConvertTimeStringToTime(char *str, Time_t *time)
 		uint32_t convertValue;
 
 		isOk &= StringToUnsignedDecimalNum(separated[0], &convertValue);
-		isOk &= DateTime_CheckValue(convertValue, 0, 24);
+		isOk &= DateTime_CheckValue(convertValue, 0, 23);
 		convertTime.hour = (uint8_t)convertValue;
 
 		isOk &= StringToUnsignedDecimalNum(separated[1], &convertValue);
-		isOk &= DateTime_CheckValue(convertValue, 0, 60);
+		isOk &= DateTime_CheckValue(convertValue, 0, 59);
 		convertTime.minute = (uint8_t)convertValue;
 
 		isOk &= StringToUnsignedDecimalNum(separated[2], &convertValue);
-		isOk &= DateTime_CheckValue(convertValue, 0, 60);
+		isOk &= DateTime_CheckValue(convertValue, 0, 59);
 		convertTime.second = (uint8_t)convertValue;
 
 		// If ok, copy to parameter
@@ -240,6 +243,25 @@ bool DateTime_CheckValue(uint32_t originalValue, uint32_t minValue, uint32_t max
 
 
 /**
+ * \brief	Check DateTime
+ */
+bool DateTime_CheckDateTime(DateTime_t *dateTime)
+{
+	bool isOk = true;
+
+	// Check values
+	isOk &= DateTime_CheckValue(dateTime->date.year, DATETIME_DATE_YEAR_MIN_VALUE, DATETIME_DATE_YEAR_MAX_VALUE);
+	isOk &= DateTime_CheckValue(dateTime->date.month, 1, 12);
+	isOk &= DateTime_CheckValue(dateTime->date.day, 1, 31);
+	isOk &= DateTime_CheckValue(dateTime->time.hour, 0, 24);
+	isOk &= DateTime_CheckValue(dateTime->time.minute, 0, 59);
+	isOk &= DateTime_CheckValue(dateTime->time.second, 0, 59);
+
+	return isOk;
+}
+
+
+/**
  * \brief	Print DateTime_t to string
  */
 uint8_t DateTime_PrintDateTimeToString(char *message, DateTime_t *dateTime)
@@ -253,4 +275,71 @@ uint8_t DateTime_PrintDateTimeToString(char *message, DateTime_t *dateTime)
 			dateTime->time.minute,
 			dateTime->time.second);
 }
+
+
+
+/**
+ * \brief	Compare DateTimes
+ */
+DateTimeCompare_t DateTime_CompareDateTime(DateTime_t *dateTime1, DateTime_t *dateTime2)
+{
+	DateTimeCompare_t compare = DateTimeCompare_Unknown;
+
+	if ((dateTime1 == NULL) || (dateTime2 == NULL))
+	{
+		return DateTimeCompare_Error_Parameter;
+	}
+
+	if (!DateTime_CheckDateTime(dateTime1) && !DateTime_CheckDateTime(dateTime2))
+	{
+		return DateTimeCompare_Invalid;
+	}
+
+	if (dateTime1->date.year < dateTime2->date.year) compare = DateTimeCompare_FirstOldSecondNew;
+	else if (dateTime1->date.year > dateTime2->date.year) compare = DateTimeCompare_FirstNewSecondOld;
+	else if (dateTime1->date.month < dateTime2->date.month) compare = DateTimeCompare_FirstOldSecondNew;
+	else if (dateTime1->date.month > dateTime2->date.month) compare = DateTimeCompare_FirstNewSecondOld;
+	else if (dateTime1->date.day < dateTime2->date.day) compare = DateTimeCompare_FirstOldSecondNew;
+	else if (dateTime1->date.day > dateTime2->date.day) compare = DateTimeCompare_FirstNewSecondOld;
+	else if (dateTime1->time.hour < dateTime2->time.hour) compare = DateTimeCompare_FirstOldSecondNew;
+	else if (dateTime1->time.hour > dateTime2->time.hour) compare = DateTimeCompare_FirstNewSecondOld;
+	else if (dateTime1->time.minute < dateTime2->time.minute) compare = DateTimeCompare_FirstOldSecondNew;
+	else if (dateTime1->time.minute > dateTime2->time.minute) compare = DateTimeCompare_FirstNewSecondOld;
+	else if (dateTime1->time.second < dateTime2->time.second) compare = DateTimeCompare_FirstOldSecondNew;
+	else if (dateTime1->time.second > dateTime2->time.second) compare = DateTimeCompare_FirstNewSecondOld;
+	else compare = DateTimeCompare_Equal;
+
+	return compare;
+}
+
+
+
+/**
+ * \brief	DateTime Unit test
+ */
+#ifdef MODULE_DATETIME_UNITTEST_ENABLE
+/**
+ * \brief	String module Unit Test
+ */
+void DateTime_UnitTest(void)
+{
+	// Test variables
+	DateTime_t test1;
+	DateTime_t test2;
+	DateTimeCompare_t comp;
+
+	// Start of unittest
+	UnitTest_Start("DateTime", __FILE__);
+
+	//test1 = { .date = { .year=17, .month=02, .day=03 }, .time = { .hour=12, .minute=12, .second=0 } };
+	//test2 = { { .year=17, .month=02, .day=03 }, { .hour=12, .minute=12, .second=0 } };
+	comp = DateTime_CompareDateTime(&test1, &test2);
+	UnitTest_CheckResult(comp == DateTimeCompare_Equal, "DateTime_CompareDateTime error", __LINE__);
+
+	// TODO: ...
+
+	UnitTest_End();
+}
+#endif
+
 

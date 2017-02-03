@@ -672,7 +672,7 @@ bool StringByteToNum(const char *str, uint8_t *byte)
  * \return	true, if successful
  * 			false, if has error
  */
-bool StringHexToNum (const char *str, uint32_t *hexValue)
+bool StringHexToNum(const char *str, uint32_t *hexValue)
 {
 	uint8_t i;
 	uint32_t calculatedValue = 0;
@@ -726,7 +726,7 @@ bool StringHexToNum (const char *str, uint32_t *hexValue)
  * \brief Convert decimal character to number (byte)
  * \return	value (number)
  */
-uint8_t DecimalCharToNum (char c)
+uint8_t DecimalCharToNum(char c)
 {
 	uint8_t value = 0;
 	if ((c >= '0') && (c <= '9'))
@@ -744,7 +744,7 @@ uint8_t DecimalCharToNum (char c)
  * \return	true, if successful
  * 			false, if has error
  */
-bool StringToUnsignedDecimalNum (const char *str, uint32_t *value)
+bool StringToUnsignedDecimalNum(const char *str, uint32_t *value)
 {
 	uint32_t calculatedValue = 0;
 	uint8_t i;
@@ -790,7 +790,7 @@ bool StringToUnsignedDecimalNum (const char *str, uint32_t *value)
  * \return	true, if successful
  * 			false, if has error
  */
-bool StringToSignedDecimalNum (const char *str, int32_t *value)
+bool StringToSignedDecimalNum(const char *str, int32_t *value)
 {
 	uint32_t convertValue = 0;
 	bool isNegative = false;
@@ -843,7 +843,7 @@ bool StringToSignedDecimalNum (const char *str, int32_t *value)
  * \return	true, if successful
  * 			false, if has error
  */
-bool StringToFloat (const char *str, float *Num)
+bool StringToFloat(const char *str, float *Num)
 {
 	bool isNegative = false;
 	uint8_t stringLength;
@@ -936,7 +936,7 @@ bool StringToFloat (const char *str, float *Num)
  * \return	length
  * 			0, if null string
  */
-uint8_t StringLength (const char *str)
+uint8_t StringLength(const char *str)
 {
 	uint8_t length = 0;
 
@@ -957,7 +957,8 @@ uint8_t StringLength (const char *str)
  * \return	1, if not equal
  * 			0, if equal
  */
-uint8_t StrCmp(const char *str1, const char *str2) {
+uint8_t StrCmp(const char *str1, const char *str2)
+{
 
 	while ( *str1 )
 	{
@@ -987,14 +988,15 @@ uint8_t StrCmp(const char *str1, const char *str2) {
  * \return	1, if not equal
  * 			0, if equal
  */
-uint8_t StrCmpWithLength(const char * ch1, const char *ch2, uint8_t length) {
+uint8_t StrCmpWithLength(const char * ch1, const char *ch2, uint8_t length)
+{
 	
 	// Check pointers + length
 	if ( ch1 == NULL || ch2 == NULL || length == 0 )
 	{
 		return 1;
 	}
-	
+
 	// Compare characters
 	uint8_t i;
 	for ( i = 0; i < length; i++ )
@@ -1066,7 +1068,7 @@ uint8_t StrCpyFixLength(char *dest, const char *str, uint8_t length)
  * \brief	Copy fix length string
  * \return	String length (=parameter)
  */
-uint8_t StrCpyFixLengthWithFillCharacter (char *dest, const char *str, uint8_t length, char fillChar)
+uint8_t StrCpyFixLengthWithFillCharacter(char *dest, const char *str, uint8_t length, char fillChar)
 {
 
 	uint8_t i;
@@ -1095,7 +1097,7 @@ uint8_t StrCpyFixLengthWithFillCharacter (char *dest, const char *str, uint8_t l
  * \brief	Copy string with max length
  * \return	String length
  */
-uint8_t StrCpyMax (char *dest, const char *str, uint8_t maxLength)
+uint8_t StrCpyMax(char *dest, const char *str, uint8_t maxLength)
 {
 
 	uint8_t length = 0;
@@ -1129,7 +1131,7 @@ uint8_t StrCpyMax (char *dest, const char *str, uint8_t maxLength)
  * \brief	Append string to dest's end
  * \length	New string's length (original + copied)
  */
-uint8_t StrAppend (char *dest, const char *str)
+uint8_t StrAppend(char *dest, const char *str)
 {
 	uint8_t length = 0;
 
@@ -1151,7 +1153,7 @@ uint8_t StrAppend (char *dest, const char *str)
  * \return	'findString' position in 'str'
  * 			-1	if not found
  */
-int16_t STRING_FindString (const char *str, const char *findString)
+int16_t STRING_FindString(const char *str, const char *findString)
 {
 	uint8_t i;
 	uint8_t length = StringLength(str);
@@ -1247,7 +1249,7 @@ uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint
 /**
  * \brief	Instead of sprintf()
  */
-uint8_t string_printf (char *str, const char *format, va_list ap)
+uint8_t string_printf(char *str, const char *format, va_list ap)
 {
 	// Used '%' parameters
 	// %d, %u, %x, %X, %w, %h, %b, %c, %s, %f
@@ -1446,7 +1448,7 @@ uint8_t string_printf (char *str, const char *format, va_list ap)
 /**
  * \brief	Function like sprintf(); Print to string
  */
-uint8_t usprintf (char *str, const char *format, ...)
+uint8_t usprintf(char *str, const char *format, ...)
 {
 	uint8_t length = 0;
 
@@ -1464,7 +1466,7 @@ uint8_t usprintf (char *str, const char *format, ...)
  * \brief	Function like printf(); Print on debug serial port
  * 			Copy character to buffer and after that, sending.
  */
-uint8_t uprintf (const char *format, ...)
+uint8_t uprintf(const char *format, ...)
 {
 	// Working in at:
 	char TxBuffer[TXBUFFERSIZE];
@@ -1483,7 +1485,7 @@ uint8_t uprintf (const char *format, ...)
 /**
  * \brief	String module Unit Test
  */
-void STRING_UnitTest (void)
+void STRING_UnitTest(void)
 {
 
 	char buffer[30];
