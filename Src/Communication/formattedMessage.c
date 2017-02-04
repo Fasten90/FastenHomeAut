@@ -17,7 +17,7 @@
 /**
  * \brief	Send message on debug with textcolor & backgroundcolor
  */
-void SendColouredMessageWithBackgroundColor (const char* message, FormattedStringColors_t textColor, FormattedStringColors_t backgroundColor)
+void SendColouredMessageWithBackgroundColor(const char* message, FormattedStringColors_t textColor, FormattedStringColors_t backgroundColor)
 {
 	// Send background color
 	SendBackgroundColor(backgroundColor);
@@ -34,7 +34,7 @@ void SendColouredMessageWithBackgroundColor (const char* message, FormattedStrin
 /**
  * \brief	Send message on debug with textcolor
  */
-void SendColouredMessage (const char* message, FormattedStringColors_t textColor)
+void SendColouredMessage(const char* message, FormattedStringColors_t textColor)
 {
 	// Send color escape
 	SendTextColor(textColor);
@@ -51,7 +51,7 @@ void SendColouredMessage (const char* message, FormattedStringColors_t textColor
 /**
  * \brief	Send textcolor escape sequence
  */
-void SendTextColor (FormattedStringColors_t textColor)
+void SendTextColor(FormattedStringColors_t textColor)
 {
 	USART_SendMessage(USART_ESCAPE_TEXT_START);
 	USART_SendChar('0' + textColor);
@@ -63,7 +63,7 @@ void SendTextColor (FormattedStringColors_t textColor)
 /**
  * \brief	Send backgroundcolor escape sequence
  */
-void SendBackgroundColor (FormattedStringColors_t backgroundColor)
+void SendBackgroundColor(FormattedStringColors_t backgroundColor)
 {
 	USART_SendMessage(USART_ESCAPE_BACKGROUND_START);
 	USART_SendChar('0' + backgroundColor);
@@ -75,7 +75,7 @@ void SendBackgroundColor (FormattedStringColors_t backgroundColor)
 /**
  * \brief	Send error message (black text, with red background)
  */
-void SendErrorMessage (const char *message)
+void SendErrorMessage(const char *message)
 {
 	// TODO: Will be MACRO()?
 	SendColouredMessageWithBackgroundColor(message,Color_Black,Color_Red);
@@ -86,7 +86,7 @@ void SendErrorMessage (const char *message)
 /**
  * \brief	Formatted messages Unit test
  */
-void FormattedMessage_Test (void)
+void FormattedMessage_Test(void)
 {
 	// Send colored messages
 	SendColouredMessage("Red text\r\n", Color_Red);
@@ -97,4 +97,5 @@ void FormattedMessage_Test (void)
 
 	SendErrorMessage("FATAL ERROR EXAMPLE\r\n");
 }
+
 
