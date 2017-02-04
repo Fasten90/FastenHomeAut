@@ -24,6 +24,8 @@ void * memmove(void * destination, const void * source, size_t num);
 
 void * meminit(void * ptr, size_t num);
 
+int memcmp(const void * ptr1, const void * ptr2, size_t num);
+
 
 
 #endif /* MEM_H_ */

@@ -18,7 +18,7 @@
  * \param[in]	source		from copy
  * \param[in]	num			How many length to copy (in bytes)?
  */
-void * memcpy (void * destination, const void * source, size_t num)
+void * memcpy(void * destination, const void * source, size_t num)
 {
 	size_t i;
 	uint8_t *dest = destination;
@@ -41,7 +41,7 @@ void * memcpy (void * destination, const void * source, size_t num)
  * \param[in]	value	With which value
  * \param[in]	num		How many length to set (in bytes)?
  */
-void * memset (void * ptr, int value, size_t num)
+void * memset(void * ptr, int value, size_t num)
 {
 	size_t i;
 	uint8_t *dest = ptr;
@@ -63,7 +63,7 @@ void * memset (void * ptr, int value, size_t num)
  * \param[in]	source		from copy
  * \param[in]	num			How many length to move (in bytes)?
  */
-void * memmove (void * destination, const void * source, size_t num)
+void * memmove(void * destination, const void * source, size_t num)
 {
 	size_t i;
 	uint8_t *dest = destination;
@@ -85,11 +85,42 @@ void * memmove (void * destination, const void * source, size_t num)
  * \param[out]	*ptr	Which area
  * \param[in]	num		How many length (in bytes)?
  */
-void * meminit (void * ptr, size_t num)
+void * meminit(void * ptr, size_t num)
 {
-
 	return memset(ptr,0,num);
+}
 
+
+
+/**
+ * \brief		Compare two memory buffer
+ * \param[in]	*ptr1	first buffer
+ * \param[in]	*ptr2	second buffer
+ * \param[in]	num		buffer length (compare length)
+ * \retval		0		if equal
+ * \retval		<0		first buffer has lower value
+ * \retval		>0		first buffer has greater value
+ */
+int memcmp(const void * ptr1, const void * ptr2, size_t num)
+{
+	size_t i;
+	const uint8_t *buffer1 = ptr1;
+	const uint8_t *buffer2 = ptr2;
+
+	for (i = 0; i < num; i++)
+	{
+		if (buffer1[i] < buffer2[i])
+		{
+			return (-1-i);
+		}
+		else if (buffer1[i] > buffer2[i])
+		{
+			return (1+i);
+		}
+	}
+
+	// If equal (there is no different)
+	return 0;
 }
 
 
