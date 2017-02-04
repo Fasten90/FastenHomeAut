@@ -112,6 +112,7 @@
 	#define CONFIG_MODULE_DEBUGUSART_ENABLE
 
 	#define CONFIG_MODULE_COMMANDHANDLER_ENABLE
+	#define CONFIG_MODULE_TERMINAL_ENABLE
 
 	//#define CONFIG_USE_FREERTOS
 
@@ -170,27 +171,30 @@
 								Monitor settings
 *******************************************************************************/
 
-/// XXX: Select your terminal
-/// for CommandHandler.c
-//#define CONFIG_COMMANDHANDLER_USE_TERMINAL_HYPERTERMINAL
-#define CONFIG_COMMANDHANDLER_USE_TERMINAL_ZOC
-//#define CONFIG_COMMANDHANDLER_USE_TERMINAL_PUTTY
+#ifdef CONFIG_MODULE_TERMINAL_ENABLE
+
+	/// XXX: Select your terminal
+	/// for CommandHandler.c
+	//#define CONFIG_COMMANDHANDLER_USE_TERMINAL_HYPERTERMINAL
+	#define CONFIG_COMMANDHANDLER_USE_TERMINAL_ZOC
+	//#define CONFIG_COMMANDHANDLER_USE_TERMINAL_PUTTY
 
 
-/// For wait password
-//#define CONFIG_COMMANDHANDLER_GET_PASSWORD_ENABLE
+	/// For wait password
+	//#define CONFIG_COMMANDHANDLER_GET_PASSWORD_ENABLE
 
 
-// Escape sequences
-// comment out, if you dont need escape sequence (cursors, history, cls, ...)
-#define CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
+	// Escape sequences
+	// comment out, if you dont need escape sequence (cursors, history, cls, ...)
+	#define CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
 
-#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
-	// If you want use monitor program's history
-	// Turn off, if has small memory, now it need 1.5k RAM
-	#define CONFIG_COMMANDHANDLER_USE_HISTORY
-#endif
+	#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
+		// If you want use monitor program's history
+		// Turn off, if has small memory, now it need 1.5k RAM
+		#define CONFIG_COMMANDHANDLER_USE_HISTORY
+	#endif
 
+#endif	// #ifdef CONFIG_MODULE_TERMINAL_ENABLE
 
 
 /*******************************************************************************
@@ -206,7 +210,7 @@
 /// Unit tests
 //#define MODULE_STRING_UNITTEST_ENABLE
 //#define MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
-#define MODULE_DATETIME_UNITTEST_ENABLE
+//#define MODULE_DATETIME_UNITTEST_ENABLE
 
 
 // ESP8266 settings

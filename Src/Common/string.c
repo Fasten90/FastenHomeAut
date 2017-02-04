@@ -63,7 +63,7 @@
  * \note	Only max INT_MAX / 2 number can be converted
  * \return	created string length
  */
-uint8_t SignedDecimalToString (int32_t value, char *str)
+uint8_t SignedDecimalToString(int32_t value, char *str)
 {
 	uint8_t length = 0;
 	
@@ -89,7 +89,7 @@ uint8_t SignedDecimalToString (int32_t value, char *str)
  * \brief	Convert unsigned decimal to string
  * \return	created string length
  */
-uint8_t UnsignedDecimalToString (uint32_t value, char *str)
+uint8_t UnsignedDecimalToString(uint32_t value, char *str)
 {
 
 	uint8_t length = 0;
@@ -187,7 +187,7 @@ uint8_t UnsignedDecimalToStringFill(uint32_t value, char *str, uint8_t fillLengt
 /**
  * \brief	Convert signed decimal (int32_t) to string with fill
  */
-uint8_t SignedDecimalToStringFill (int32_t value, char *str, uint8_t fillLength, char fillCharacter)
+uint8_t SignedDecimalToStringFill(int32_t value, char *str, uint8_t fillLength, char fillCharacter)
 {
 
 	uint8_t length = 0;
@@ -246,7 +246,7 @@ uint8_t SignedDecimalToStringFill (int32_t value, char *str, uint8_t fillLength,
  * \brief	Convet a octet (0-15) to Hexa character ('0' - '9' - 'A' - 'F')
  * \return	character (octet)
  */
-char HexToHexChar (uint8_t value)
+char HexToHexChar(uint8_t value)
 {
 	char hexChar;
 	if (value <= 9)
@@ -273,7 +273,7 @@ char HexToHexChar (uint8_t value)
  * \brief	Convert a byte to hexadecimal string
  * \return	Length
  */
-uint8_t ByteToHexaString (uint8_t byte, char *str)
+uint8_t ByteToHexaString(uint8_t byte, char *str)
 {
 	uint8_t length = 0;
 	uint8_t hex;
@@ -343,7 +343,7 @@ uint8_t DecimalToBinaryString(uint32_t value, char *str, uint8_t maxLength)
  * \brief	Convert value to hexadecimal string
  * \return	created string length
  */
-uint8_t DecimalToHexaString (uint32_t value, char *str, uint8_t length)
+uint8_t DecimalToHexaString(uint32_t value, char *str, uint8_t length)
 {
 	uint8_t i;
 	uint8_t octet;
@@ -373,7 +373,7 @@ uint8_t DecimalToHexaString (uint32_t value, char *str, uint8_t length)
  * \brief	Convert float value to String
  * \return	Length
  */
-uint8_t FloatToString (float value, char *str, uint8_t integerLength, uint8_t fractionLength)
+uint8_t FloatToString(float value, char *str, uint8_t integerLength, uint8_t fractionLength)
 {
 	uint8_t num;
 	uint8_t length = 0;
@@ -437,7 +437,7 @@ uint8_t FloatToString (float value, char *str, uint8_t integerLength, uint8_t fr
  * \brief	Look the string is hexa or not
  * \return	How many hexa characters are...
  */
-uint8_t StringIsHexadecimalString (const char *str)
+uint8_t StringIsHexadecimalString(const char *str)
 {
 	uint8_t length = 0;
 	uint8_t i;
@@ -471,7 +471,7 @@ uint8_t StringIsHexadecimalString (const char *str)
  * \return	> 0 : decimal number length
  * 			0 not number
  */
-uint8_t StringIsUnsignedDecimalString (const char *str)
+uint8_t StringIsUnsignedDecimalString(const char *str)
 {
 	uint8_t count = 0;
 	uint8_t i;
@@ -499,7 +499,7 @@ uint8_t StringIsUnsignedDecimalString (const char *str)
  * \return	> 0 : decimal number length
  * 			0 not number
  */
-uint8_t StringIsSignedDecimalString (const char *str)
+uint8_t StringIsSignedDecimalString(const char *str)
 {
 	uint8_t length = 0;
 
@@ -577,7 +577,7 @@ bool StringBinaryToNum(const char *str, uint32_t *num)
 		return false;
 	}
 
-	// TODO: Prefix ellenőrzés?
+	// TODO: Check Prefix ??
 	for (i=0; str[i]; i++)
 	{
 		if (str[i] == '1')
@@ -619,7 +619,7 @@ bool StringBinaryToNum(const char *str, uint32_t *num)
  * 			true	successful
  * 			false	failed
  */
-bool HexCharToHex (const char c, uint8_t *hexValue)
+bool HexCharToHex(const char c, uint8_t *hexValue)
 {
 	bool isOk = true;
 	*hexValue = 0;
@@ -1213,7 +1213,7 @@ uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint
 			}
 			if (j==0)
 			{
-				// one length parameter // TODO: Szebben megcsinálni
+				// one length parameter // TODO: Do with more beautiful
 				separated[parameters] = &source[i];
 			}
 			parameters++;

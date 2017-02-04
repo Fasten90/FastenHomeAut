@@ -20,6 +20,8 @@
 #include "Terminal.h"
 
 
+#ifdef CONFIG_MODULE_TERMINAL_ENABLE
+
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
@@ -921,3 +923,4 @@ static void CommandHandler_ConvertSmallLetter(void)
 }
 
 
+#endif	// #ifdef CONFIG_MODULE_TERMINAL_ENABLE

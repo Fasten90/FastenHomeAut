@@ -87,6 +87,7 @@ bool DateTime_ConvertStringToDateTime(const char *string, DateTime_t *dateTime)
 	}
 	else
 	{
+		// Failed split, wrong string
 		isOk = false;
 	}
 
