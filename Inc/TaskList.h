@@ -38,10 +38,10 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
+#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 extern Task_t TaskList[];
-
 extern const TaskID_t TasksNum;
-
+#endif
 
 /*------------------------------------------------------------------------------
  *  Global function declarations

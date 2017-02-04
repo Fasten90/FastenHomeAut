@@ -689,9 +689,14 @@ CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
 	STRING_UnitTest();
 #endif
 
+#ifdef MODULE_DATETIME_UNITTEST_ENABLE
+	DateTime_UnitTest();
+#endif
+
 #ifdef MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
 	HomeAutMessage_UnitTest();
 #endif
+
 
 	return CommandResult_Ok;
 }

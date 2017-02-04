@@ -17,8 +17,11 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 #include "include.h"
+#include "TaskList.h"
 #include "TaskHandler.h"
 
+
+#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 
 /*------------------------------------------------------------------------------
  *  Global variables
@@ -111,10 +114,11 @@ static void TaskHandler_RunTask(TaskID_t taskID)
 {
 	bool result = TaskList[taskID].taskFunction(taskID);
 
-	(result) ? uprintf("Successful run") : uprintf("Failed run");
+	(result) ? uprintf("Successful run\r\n") : uprintf("Failed run\r\n");
 
 	// Clear tick
 	TaskList[taskID].tick = 0;
 }
 
 
+#endif	// #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE

@@ -12,13 +12,13 @@
 
 
 
-
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
 #include "include.h"
 #include "TaskList.h"
 
+#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 
 /*------------------------------------------------------------------------------
  *  Global variables
@@ -118,3 +118,4 @@ static TaskResult_t Task3Function(TaskID_t id)
 }
 
 
+#endif //#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE

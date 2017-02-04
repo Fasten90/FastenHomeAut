@@ -50,6 +50,7 @@ bool DateTime_CheckValue(uint32_t originalValue, uint32_t minValue, uint32_t max
 /**
  * \brief	Convert DateTime string to DateTime_t
  * 			"2017-01-10 19:55:00  -> DateTime_t
+ * 			builded string length is: DATETIME_STRING_MAX_LENGTH
  */
 bool DateTime_ConvertStringToDateTime(const char *string, DateTime_t *dateTime)
 {
@@ -155,7 +156,7 @@ bool DateTime_ConvertDateStringToDate(char *str, Date_t *date)
 		uint32_t convertValue;
 
 		isOk &= StringToUnsignedDecimalNum(separated[0], &convertValue);
-		isOk &= DateTime_CheckValue(convertValue, DATETIME_DATE_YEAR_MIN_VALUE, DATETIME_DATE_YEAR_MAX_VALUE);
+		isOk &= DateTime_CheckValue(convertValue, DATETIME_DATE_YEAR_MIN_FULL_VALUE, DATETIME_DATE_YEAR_MAX_FULL_VALUE);
 		convertDate.year = (uint8_t)(convertValue - 2000);
 
 		isOk &= StringToUnsignedDecimalNum(separated[1], &convertValue);
@@ -244,6 +245,8 @@ bool DateTime_CheckValue(uint32_t originalValue, uint32_t minValue, uint32_t max
 
 /**
  * \brief	Check DateTime
+ * \retval	true	if ok (valid)
+ * \retval	false	if invalid
  */
 bool DateTime_CheckDateTime(DateTime_t *dateTime)
 {
@@ -253,7 +256,7 @@ bool DateTime_CheckDateTime(DateTime_t *dateTime)
 	isOk &= DateTime_CheckValue(dateTime->date.year, DATETIME_DATE_YEAR_MIN_VALUE, DATETIME_DATE_YEAR_MAX_VALUE);
 	isOk &= DateTime_CheckValue(dateTime->date.month, 1, 12);
 	isOk &= DateTime_CheckValue(dateTime->date.day, 1, 31);
-	isOk &= DateTime_CheckValue(dateTime->time.hour, 0, 24);
+	isOk &= DateTime_CheckValue(dateTime->time.hour, 0, 23);
 	isOk &= DateTime_CheckValue(dateTime->time.minute, 0, 59);
 	isOk &= DateTime_CheckValue(dateTime->time.second, 0, 59);
 
@@ -324,20 +327,100 @@ DateTimeCompare_t DateTime_CompareDateTime(DateTime_t *dateTime1, DateTime_t *da
 void DateTime_UnitTest(void)
 {
 	// Test variables
-	DateTime_t test1;
-	DateTime_t test2;
 	DateTimeCompare_t comp;
+	bool result;
 
 	// Start of unittest
 	UnitTest_Start("DateTime", __FILE__);
 
-	//test1 = { .date = { .year=17, .month=02, .day=03 }, .time = { .hour=12, .minute=12, .second=0 } };
-	//test2 = { { .year=17, .month=02, .day=03 }, { .hour=12, .minute=12, .second=0 } };
+	/*				Check DateTime_CompareDateTime function			*/
+
+	// Equal date
+	DateTime_t test1 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
+	DateTime_t test2 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
 	comp = DateTime_CompareDateTime(&test1, &test2);
 	UnitTest_CheckResult(comp == DateTimeCompare_Equal, "DateTime_CompareDateTime error", __LINE__);
 
-	// TODO: ...
+	// First older
+	DateTime_t test3 = { .date.year=17, .date.month=1, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
+	DateTime_t test4 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
+	comp = DateTime_CompareDateTime(&test3, &test4);
+	UnitTest_CheckResult(comp == DateTimeCompare_FirstOldSecondNew, "DateTime_CompareDateTime error", __LINE__);
 
+	// First older
+	DateTime_t test5 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
+	DateTime_t test6 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=1 };
+	comp = DateTime_CompareDateTime(&test5, &test6);
+	UnitTest_CheckResult(comp == DateTimeCompare_FirstOldSecondNew, "DateTime_CompareDateTime error", __LINE__);
+
+	// First newer
+	DateTime_t test7 = { .date.year=18, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
+	DateTime_t test8 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
+	comp = DateTime_CompareDateTime(&test7, &test8);
+	UnitTest_CheckResult(comp == DateTimeCompare_FirstNewSecondOld, "DateTime_CompareDateTime error", __LINE__);
+
+	// First newer
+	DateTime_t test9 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=13, .time.second=0 };
+	DateTime_t test10 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
+	comp = DateTime_CompareDateTime(&test9, &test10);
+	UnitTest_CheckResult(comp == DateTimeCompare_FirstNewSecondOld, "DateTime_CompareDateTime error", __LINE__);
+
+
+	/*				Check DateTime_CheckDateTime function			*/
+	// Check these dateTimes are valid?
+	result = true;
+	result &= DateTime_CheckDateTime(&test1);
+	result &= DateTime_CheckDateTime(&test2);
+	result &= DateTime_CheckDateTime(&test3);
+	result &= DateTime_CheckDateTime(&test4);
+	result &= DateTime_CheckDateTime(&test5);
+	result &= DateTime_CheckDateTime(&test6);
+	result &= DateTime_CheckDateTime(&test7);
+	result &= DateTime_CheckDateTime(&test8);
+	result &= DateTime_CheckDateTime(&test9);
+	result &= DateTime_CheckDateTime(&test10);
+	UnitTest_CheckResult(result == true, "DateTime_CheckDateTime error", __LINE__);
+
+	// Check these dateTimes are invalids?
+	DateTime_t test11 = { .date.year=150, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
+	DateTime_t test12 = { .date.year=17, .date.month=0, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
+	DateTime_t test13 = { .date.year=17, .date.month=2, .date.day=0, .time.hour=12, .time.minute=12, .time.second=0 };
+	DateTime_t test14 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=24, .time.minute=12, .time.second=0 };
+	DateTime_t test15 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=60, .time.second=0 };
+	DateTime_t test16 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=60 };
+	result = false;
+	result |= DateTime_CheckDateTime(&test11);
+	result |= DateTime_CheckDateTime(&test12);
+	result |= DateTime_CheckDateTime(&test13);
+	result |= DateTime_CheckDateTime(&test14);
+	result |= DateTime_CheckDateTime(&test15);
+	result |= DateTime_CheckDateTime(&test16);
+	UnitTest_CheckResult(result == false, "DateTime_CheckDateTime error", __LINE__);
+
+
+	/*			DateTime_ConvertStringToDateTime		*/
+	DateTime_t test300;
+	char strDateTime1[DATETIME_STRING_MAX_LENGTH] = { "2017-02-03 12:12:00" };
+	result = DateTime_ConvertStringToDateTime(strDateTime1, &test300);
+	UnitTest_CheckResult(result == true, "DateTime_ConvertStringToDateTime error", __LINE__);
+	UnitTest_CheckResult(((test300.date.year	== 17)
+						&& (test300.date.month	== 2)
+						&& (test300.date.day	== 3)
+						&& (test300.time.hour	== 12)
+						&& (test300.time.minute	== 12)
+						&& (test300.time.second	== 0)),
+			"DateTime_ConvertStringToDateTime error", __LINE__);
+
+
+	/*			DateTime_PrintDateTimeToString			*/
+	DateTime_t test400 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
+	char strDateTime2[DATETIME_STRING_MAX_LENGTH];
+	DateTime_PrintDateTimeToString(strDateTime2, &test400);
+	result = !StrCmp(strDateTime2, "2017-02-03 12:12:00");
+	UnitTest_CheckResult(result == true, "DateTime_ConvertStringToDateTime error", __LINE__);
+
+
+	// Finish
 	UnitTest_End();
 }
 #endif
