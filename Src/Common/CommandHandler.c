@@ -31,10 +31,6 @@
  *									Configs:
  ******************************************************************************/
 
-#ifdef CONFIG_COMMANDHANDLER_GET_PASSWORD_ENABLE
-static const char CommandHandler_Password[] = "password";
-#endif
-
 static const char CommandHandler_DelimiterChar = ' ';
 
 
@@ -46,14 +42,9 @@ static const char CommandHandler_DelimiterChar = ' ';
 
 volatile CommProtocol_t CommandHandler_CommandSource = 0;
 
+static char CommandHandler_ProcessedCommandActual[COMMANDHANDLER_MAX_COMMAND_LENGTH] = { 0 };
 static uint8_t CommandHandler_CommandArgCount = 0;
 static char *CommandHandler_CommandArguments[COMMANDHANDLER_COMMAND_ARG_MAX_COUNT] = { 0 } ;
-
-
-#ifdef CONFIG_USE_FREERTOS
-xSemaphoreHandle DEBUG_USART_Rx_Semaphore;
-xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
-#endif
 
 
 
@@ -68,11 +59,6 @@ static void CommandHandler_CheckResultAndRespond(CommandResult_t result);
 static CommandResult_t CommandHandler_RunCommand(CommandID_t commandID);
 static CommandResult_t CommandHandler_CheckArgumentNumIsGood(uint8_t receivedArgNum,
 		uint8_t commandArgNum);
-
-#ifdef CONFIG_COMMANDHANDLER_GET_PASSWORD_ENABLE
-static void CommandHandler_GetPassword(void);
-static bool CommandHandler_CheckPassword(const char *string);
-#endif
 
 
 
@@ -119,7 +105,7 @@ void CommandHandler_SendWelcome(void)
 	COMMANDHANDLER_SEND_WELCOME();					// Welcome message
 
 	COMMANDHANDLER_SEND_NEW_LINE();
-	COMMANDHANDLER_SEND_PROMT_NEW_LINE();					// New promt
+	COMMANDHANDLER_SEND_PROMT_NEW_LINE();			// New promt
 
 	return;
 	
@@ -129,13 +115,13 @@ void CommandHandler_SendWelcome(void)
 
 /**
  * \brief	Prepare (Separate) the command and Find and Run it...
- * 			TODO: Átalakítani char* átvevősre
  */
-bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source)
+bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source, char *command)
 {
 	bool isSuccessful = false;
 
 	// Separate command
+	StrCpyMax(CommandHandler_ProcessedCommandActual, command, COMMANDHANDLER_MAX_COMMAND_LENGTH);
 	CommandHandler_CommandArgCount = CommandHandler_CommandParser();
 	CommandHandler_CommandSource = source;
 
@@ -170,7 +156,7 @@ static uint8_t CommandHandler_CommandParser(void)
 
 	uint8_t commandArgCount = 0;
 
-	commandArgCount = STRING_Splitter((char*)CommandHandler_CommandActual, CommandHandler_DelimiterChar,
+	commandArgCount = STRING_Splitter((char*)CommandHandler_ProcessedCommandActual, CommandHandler_DelimiterChar,
 			CommandHandler_CommandArguments, COMMANDHANDLER_COMMAND_ARG_MAX_COUNT);
 
 
@@ -520,85 +506,3 @@ void CommandHandler_SendCls(void)
 }
 
 
-
-#ifdef CONFIG_COMMANDHANDLER_GET_PASSWORD_ENABLE
-/**
- * \brief Get (and wait) Password
- */
-static void CommandHandler_GetPassword(void)
-{
-
-	bool passwordIsOk = false;
-
-	// Wait first character
-	CommandHandler_SendLine("\r\nType a character:");
-	while (USART_RxBufferWriteCounter < 1);
-	USART_RxBufferReadCnt = 1;
-
-	while (!passwordIsOk)
-	{
-		CommandHandler_SendMessage("\r\nPassword:");
-
-		bool isTry = true;
-		CommandHandler_CommandActualLength = 0;
-
-		while (isTry)
-		{
-
-			// While Read cnt not equal than Write cnt
-			if (USART_RxBufferReadCnt != USART_RxBufferWriteCounter)
-			{
-				volatile char USART_ReceivedChar = '\0';
-
-				USART_ReceivedChar = USART_RxBuffer[USART_RxBufferReadCnt];
-				USART_RxBufferReadCnt++;
-				CommandHandler_SendChar('*');
-
-				if (USART_ReceivedChar == '\r' || USART_ReceivedChar == '\n')
-				{
-					// Pressed enter, check password
-					isTry = false;
-					CommandHandler_CommandActual[CommandHandler_CommandActualLength++] = '\0';
-					USART_SendNewLine();
-					if (CommandHandler_CheckPassword((const char*)CommandHandler_CommandActual))
-					{
-						// Successful password
-						CommandHandler_SendLine("Successful password!");
-						CommandHandler_CommandActualLength=0;
-						return;
-					}
-					else
-					{
-						// Failed password
-						CommandHandler_SendLine("Wrong password!");
-					}
-				}
-				else
-				{
-					// Copy character
-					CommandHandler_CommandActual[CommandHandler_CommandActualLength++] = USART_ReceivedChar;
-				}
-			}
-		}
-	}
-}
-
-
-
-/**
- * \brief Check password
- */
-static bool CommandHandler_CheckPassword(const char *string)
-{
-	if (!StrCmp(string,CommandHandler_Password))
-	{
-		// Equal
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-#endif	// #ifdef CONFIG_COMMANDHANDLER_GET_PASSWORD_ENABLE

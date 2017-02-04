@@ -180,7 +180,7 @@ void CommandHandler_Printf(const char *format, ...);
 void CommandHandler_PrintAllCommands(void);
 void CommandHandler_SearchCommandAndPrintHelp(const char *command);
 
-bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source);
+bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source, char *command);
 
 
 #endif /* COMMANDHANDLER_H_ */

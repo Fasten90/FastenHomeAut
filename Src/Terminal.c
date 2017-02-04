@@ -29,6 +29,10 @@
 /// USART Read cnt
 volatile uint8_t USART_RxBufferReadCnt = 0;
 
+#if ( RXBUFFERSIZE != 256 )
+#warning "Ring buffer counter error (USART_RxBufferReadCnt)"
+#endif
+
 /// Receive buffers
 volatile char CommandHandler_CommandActual[COMMANDHANDLER_MAX_COMMAND_LENGTH] = { 0 };
 volatile char CommandHandler_CommandActualEscape[4] = { 0 };
@@ -36,13 +40,14 @@ volatile char CommandHandler_CommandActualEscape[4] = { 0 };
 /// Enable command handler
 const bool CommandHandler_CommandReceiveEnable = true;
 
-/// Enable sending back: "Echo mode"
-static const bool CommandHandler_CommandSendBackCharEnable = true;
 
 
 /*------------------------------------------------------------------------------
  *  Local variables
  *----------------------------------------------------------------------------*/
+
+/// Enable sending back: "Echo mode"
+static const bool CommandHandler_CommandSendBackCharEnable = true;
 
 /// Variables For CommandHandler
 static volatile bool CommandHandler_CommandReceivedEvent = false;
@@ -110,6 +115,11 @@ static char CommandHandler_HistoryList[COMMANDHANDLER_HISTORY_MAX_COUNT][COMMAND
 #endif
 
 
+#ifdef CONFIG_COMMANDHANDLER_GET_PASSWORD_ENABLE
+static const char CommandHandler_Password[] = "password";
+#endif
+
+
 
 /*------------------------------------------------------------------------------
  *  Function declarations
@@ -135,6 +145,12 @@ static void CommandHandler_HistoryLoad(uint8_t direction);
 #endif
 
 static void CommandHandler_ConvertSmallLetter(void);
+
+#ifdef CONFIG_COMMANDHANDLER_GET_PASSWORD_ENABLE
+static void CommandHandler_GetPassword(void);
+static bool CommandHandler_CheckPassword(const char *string);
+#endif
+
 
 
 /*------------------------------------------------------------------------------
@@ -178,12 +194,6 @@ void CommandHandler_CheckCommand(void)
 
 	// Initialize
 	//CommandHandler_Init();	// Init, now not need, called from main
-
-
-#if RXBUFFERSIZE != 256
-#warning "Ring buffer counter error"
-#endif
-
 
 #ifdef CONFIG_USE_FREERTOS
 	DelayMs(10);
@@ -293,7 +303,7 @@ void CommandHandler_CheckCommand(void)
 						#endif
 
 						// Search command and run
-						CommandHandler_PrepareFindExecuteCommand(CommProt_DebugUart);
+						CommandHandler_PrepareFindExecuteCommand(CommProt_DebugUart, (char *)CommandHandler_CommandActual);
 					}
 					else
 					{
@@ -330,7 +340,7 @@ static void CommandHandler_ProcessReceivedCharacter(void)
 
 #ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
 		// ESCAPE SEQUENCE
-		if ( CommandHandler_CommandEscapeSequenceInProgress )
+		if (CommandHandler_CommandEscapeSequenceInProgress)
 		{
 			// Escape sequence in progress
 			// Copy escape characters to CommandHandler_CommandActualEscape[]
@@ -388,7 +398,7 @@ static void CommandHandler_ProcessReceivedCharacter(void)
 			// No escape sequence
 			// An character received
 
-			if ( USART_ReceivedChar  == '\x1B')	// 'ESC'
+			if (USART_ReceivedChar  == '\x1B')	// 'ESC'
 			{
 				// receive an Escape sequence
 				CommandHandler_CommandEscapeSequenceInProgress = true;
@@ -445,7 +455,8 @@ static void CommandHandler_ProcessReceivedCharacter(void)
 							if (CommandHandler_CommandSendBackCharEnable)
 							{
 								// Send received character
-								CommandHandler_SendChar( USART_ReceivedChar );
+								// TODO: We need to response on input channel
+								USART_SendChar(USART_ReceivedChar);
 							}
 						}
 						else
@@ -475,7 +486,6 @@ static void CommandHandler_ProcessReceivedCharacter(void)
 #ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
 			}
 #endif
-
 		} // Processed received characters
 
 	} // End of while
@@ -922,5 +932,89 @@ static void CommandHandler_ConvertSmallLetter(void)
 	return;
 }
 
+
+
+
+#ifdef CONFIG_COMMANDHANDLER_GET_PASSWORD_ENABLE
+/**
+ * \brief Get (and wait) Password
+ */
+static void CommandHandler_GetPassword(void)
+{
+
+	bool passwordIsOk = false;
+
+	// Wait first character
+	CommandHandler_SendLine("\r\nType a character:");
+	while (USART_RxBufferWriteCounter < 1);
+	USART_RxBufferReadCnt = 1;
+
+	while (!passwordIsOk)
+	{
+		CommandHandler_SendMessage("\r\nPassword:");
+
+		bool isTry = true;
+		CommandHandler_CommandActualLength = 0;
+
+		while (isTry)
+		{
+
+			// While Read cnt not equal than Write cnt
+			if (USART_RxBufferReadCnt != USART_RxBufferWriteCounter)
+			{
+				volatile char USART_ReceivedChar = '\0';
+
+				USART_ReceivedChar = USART_RxBuffer[USART_RxBufferReadCnt];
+				USART_RxBufferReadCnt++;
+				CommandHandler_SendChar('*');
+
+				if (USART_ReceivedChar == '\r' || USART_ReceivedChar == '\n')
+				{
+					// Pressed enter, check password
+					isTry = false;
+					CommandHandler_CommandActual[CommandHandler_CommandActualLength++] = '\0';
+					USART_SendNewLine();
+					if (CommandHandler_CheckPassword((const char*)CommandHandler_CommandActual))
+					{
+						// Successful password
+						CommandHandler_SendLine("Successful password!");
+						CommandHandler_CommandActualLength=0;
+						return;
+					}
+					else
+					{
+						// Failed password
+						CommandHandler_SendLine("Wrong password!");
+					}
+				}
+				else
+				{
+					// Copy character
+					CommandHandler_CommandActual[CommandHandler_CommandActualLength++] = USART_ReceivedChar;
+				}
+			}
+		}
+	}
+}
+
+
+
+/**
+ * \brief Check password
+ */
+static bool CommandHandler_CheckPassword(const char *string)
+{
+	if (!StrCmp(string,CommandHandler_Password))
+	{
+		// Equal
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+#endif	// #ifdef CONFIG_COMMANDHANDLER_GET_PASSWORD_ENABLE
 
 #endif	// #ifdef CONFIG_MODULE_TERMINAL_ENABLE

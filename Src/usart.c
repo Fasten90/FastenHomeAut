@@ -57,6 +57,12 @@ bool USART_SendEnable_flag = false;
 #endif
 
 
+#ifdef CONFIG_USE_FREERTOS
+xSemaphoreHandle DEBUG_USART_Rx_Semaphore;
+xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
+#endif
+
+
 
 /*------------------------------------------------------------------------------
  *  Function declarations
@@ -592,7 +598,7 @@ void USART_StartReceiveMessage(void)
 
 	// USART - Receive Message
 	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[USART_RxBufferWriteCounter], RXBUFFER_WAIT_LENGTH);
-	// TODO: Delete this comment: Javitott, mert ha valamikor nem fogadnank uzenetet, akkor itt megint beallunk uzenetvaro uzemmodba
+	// TODO: Delete this comment: Javított, mert ha valamikor nem fogadnank uzenetet, akkor itt megint beallunk uzenetvaro uzemmodba
 
 	#ifdef CONFIG_USE_FREERTOS
 	// Wait for semaphore
