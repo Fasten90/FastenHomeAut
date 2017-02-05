@@ -179,18 +179,6 @@ void Terminal_Init(void)
 	CommandHandler_CommandEscape_cnt = 0;
 #endif
 
-	// End of initialization
-
-	return;
-}
-
-
-
-/**
- * \brief	Always run, wait command and execute it
- */
-void CommandHandler_CheckCommand(void)
-{
 
 	// Initialize
 	//CommandHandler_Init();	// Init, now not need, called from main
@@ -209,9 +197,23 @@ void CommandHandler_CheckCommand(void)
 	CommandHandler_GetPassword();
 #endif
 
+	// End of initialization
+
+
 	// Welcome message
 	CommandHandler_SendWelcome();
 
+
+	return;
+}
+
+
+
+/**
+ * \brief	Always run, wait command and execute it
+ */
+void CommandHandler_CheckCommand(void)
+{
 
 	// Infinite "task" loop
 	while (1)
@@ -314,7 +316,14 @@ void CommandHandler_CheckCommand(void)
 					CommandHandler_CommandSentLength = 0;
 					CommandHandler_CommandCursorPosition = 0;
 				}
+			}	// CommandHandler_CommandReceivedEvent
+#ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
+			// If we has EvetnHandler, go out from infinite loop
+			else
+			{
+				return;
 			}
+#endif
 		}
 	}
 

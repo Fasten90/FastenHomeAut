@@ -283,6 +283,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 		// Receive to next index
 		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[++USART_RxBufferWriteCounter], RXBUFFER_WAIT_LENGTH);
 
+		#ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
+		// Set flag for EventHandler
+		EventHandler_SetEventFlag(Event_DebugUartReceivedCommand, EVENT_RUN);
+		#endif
+
 		#ifdef CONFIG_USE_FREERTOS
 		// Transmission end semaphore / flag: Give semaphore
 		xSemaphoreGiveFromISR(DEBUG_USART_Rx_Semaphore,0);

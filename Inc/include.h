@@ -94,7 +94,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #include "usart.h"
 #include "Terminal.h"
 #include "CommandHandler.h"
-#include "commandList.h"
+#include <CommandList.h>
 #endif
 
 #ifdef CONFIG_MODULE_LED_ENABLE
@@ -161,6 +161,10 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 #include "TaskHandler.h"
 #include "TaskList.h"
+#endif
+
+#ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
+#include "EventHandler.h"
 #endif
 
 void Error_Handler( void );

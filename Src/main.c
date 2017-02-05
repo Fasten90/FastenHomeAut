@@ -137,25 +137,6 @@ int main(void)
 #endif
 
 
-#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
-	// Task handler
-	TaskHandler_Init();
-
-	uint32_t actualTick = 0;
-	uint32_t oldTick = HAL_GetTick();
-	uint32_t elapsedTick = 0;
-
-	while (1)
-	{
-		actualTick = HAL_GetTick();
-		elapsedTick = actualTick - oldTick;
-		oldTick = actualTick;
-
-		TaskHandler_CheckSchedules(elapsedTick);
-	}
-#endif
-
-
 #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
 #ifdef CONFIG_USE_FREERTOS
 	TaskHandle_t MONITOR_TaskHandle = NULL;
@@ -209,6 +190,34 @@ int main(void)
 #ifdef CONFIG_MODULE_RTC_ENABLE
 	RTC_Init();
 #endif
+
+
+#if (defined(CONFIG_MODULE_TASKHANDLER_ENABLE) || defined(CONFIG_MODULE_EVENTHANDLER_ENABLE))
+
+	#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
+	// Task handler
+	TaskHandler_Init();
+
+	uint32_t actualTick = 0;
+	uint32_t oldTick = HAL_GetTick();
+	uint32_t elapsedTick = 0;
+	#endif
+
+	while (1)
+	{
+		#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
+		actualTick = HAL_GetTick();
+		elapsedTick = actualTick - oldTick;
+		oldTick = actualTick;
+
+		TaskHandler_CheckSchedules(elapsedTick);
+		#endif
+
+		#ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
+		EventHandler_CheckEvents();
+		#endif
+	}
+#endif
 	
 
 #ifdef CONFIG_USE_FREERTOS
@@ -216,7 +225,7 @@ int main(void)
 	vTaskStartScheduler();
 #endif
 	
-	
+
 	// Infinite loop - never reached
 	while (1)
 	{
