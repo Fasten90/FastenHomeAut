@@ -27,6 +27,10 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
+#define TASKHANDLER_
+
+
+// TaskResult defines
 #define TASK_RESULT_OK			(true)
 #define TASK_RESULT_FAILED		(false)
 

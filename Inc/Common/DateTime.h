@@ -28,7 +28,7 @@
  *----------------------------------------------------------------------------*/
 
 // 2017-01-10 19:56:00\0
-#define DATETIME_STRING_MAX_LENGTH			( 20 )
+#define DATETIME_STRING_MAX_LENGTH				( 20 )
 
 #define DATETIME_DATE_YEAR_MAX_FULL_VALUE		( 2050 )
 #define DATETIME_DATE_YEAR_MIN_FULL_VALUE		( 2017 )

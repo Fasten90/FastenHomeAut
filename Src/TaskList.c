@@ -50,6 +50,8 @@ Task_t TaskList[] =
 		.taskScheduleRate = 5000
 	}
 
+	// XXX: Add here new tasks
+
 };
 
 
@@ -85,7 +87,12 @@ const TaskID_t TasksNum = (sizeof(TaskList)/sizeof(TaskList[0]));
  */
 static TaskResult_t Task1Function(TaskID_t id)
 {
+#ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
 	uprintf("Run %s %d\r\n", TaskList[id].taskName, id);
+#else
+	(void)id;
+#endif
+
 	LED_SetLed(1, LED_SET_TOGGLE);
 
 	return TASK_RESULT_OK;
@@ -98,7 +105,12 @@ static TaskResult_t Task1Function(TaskID_t id)
  */
 static TaskResult_t Task2Function(TaskID_t id)
 {
+#ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
 	uprintf("Run %s %d\r\n", TaskList[id].taskName, id);
+#else
+	(void)id;
+#endif
+
 	LED_SetLed(2, LED_SET_TOGGLE);
 
 	return TASK_RESULT_OK;
@@ -111,11 +123,17 @@ static TaskResult_t Task2Function(TaskID_t id)
  */
 static TaskResult_t Task3Function(TaskID_t id)
 {
+#ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
 	uprintf("Run %s %d\r\n", TaskList[id].taskName, id);
+#else
+	(void)id;
+#endif
+
 	LED_SetLed(3, LED_SET_TOGGLE);
 
 	return TASK_RESULT_OK;
 }
+
 
 
 #endif //#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE

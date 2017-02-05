@@ -114,7 +114,11 @@ static void TaskHandler_RunTask(TaskID_t taskID)
 {
 	bool result = TaskList[taskID].taskFunction(taskID);
 
+#ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
 	(result) ? uprintf("Successful run\r\n") : uprintf("Failed run\r\n");
+#else
+	(void)result;
+#endif
 
 	// Clear tick
 	TaskList[taskID].tick = 0;

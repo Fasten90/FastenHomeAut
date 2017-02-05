@@ -1007,18 +1007,11 @@ CommandResult_t CommandFunction_RTC(uint32_t argc, char** argv)
 	}
 	else if (!StrCmp(argv[1], "status"))
 	{
-		char datetimestring[30];
+		char datetimestring[DATETIME_STRING_MAX_LENGTH];
 		DateTime_t dateTime;
 		RTC_GetDateTime(&dateTime);
 		DateTime_PrintDateTimeToString(datetimestring, &dateTime);
-		CommandHandler_Printf("RTC Date and Time: %s\r\n");
-
-		/*
-		char datestring[20];
-		char timestring[20];
-		RTC_CalendarShow(datestring, timestring);
-		CommandHandler_Printf("RTC Date: %s Time: %s\r\n", datestring, timestring);
-		*/
+		CommandHandler_Printf("RTC Date and Time: %s\r\n", datetimestring);
 
 		result = CommandResult_Ok;
 	}

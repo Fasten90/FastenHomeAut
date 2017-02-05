@@ -181,7 +181,6 @@ void Terminal_Init(void)
 
 
 	// Initialize
-	//CommandHandler_Init();	// Init, now not need, called from main
 
 #ifdef CONFIG_USE_FREERTOS
 	DelayMs(10);
