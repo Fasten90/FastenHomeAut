@@ -70,6 +70,7 @@ void TaskHandler_CheckSchedules(TaskTick_t elapsedTick)
 {
 	TaskID_t i;
 
+	// Time optimizing...
 	if (elapsedTick == 0)
 	{
 		return;

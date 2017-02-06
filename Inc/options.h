@@ -211,6 +211,7 @@
 
 /// Debug modes
 //#define CONFIG_TASKHANDLER_DEBUG_ENABLE
+//#define CONFIG_EVENTHANDLER_DEBUG_ENABLE
 
 
 /// Unit tests
