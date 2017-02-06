@@ -116,7 +116,7 @@ static void TaskHandler_RunTask(TaskID_t taskID)
 	bool result = TaskList[taskID].taskFunction(taskID);
 
 #ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
-	(result) ? uprintf("Successful run\r\n") : uprintf("Failed run\r\n");
+	uprintf("- %s task run %s\r\n", TaskList[taskID].taskName, (result) ? ("successful") : ("failed"));
 #else
 	(void)result;
 #endif

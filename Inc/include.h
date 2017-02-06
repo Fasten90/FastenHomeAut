@@ -167,7 +167,12 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #include "EventHandler.h"
 #endif
 
-void Error_Handler( void );
+#ifdef CONFIG_MODULE_WATCHDOG_ENABLE
+#include "Watchdog.h"
+#endif
+
+
+extern void Error_Handler(void);
 
 
 #endif /* INCLUDE_H_ */

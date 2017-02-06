@@ -25,30 +25,37 @@
  *----------------------------------------------------------------------------*/
 
 
-static TaskResult_t Task1Function(TaskID_t id);
-static TaskResult_t Task2Function(TaskID_t id);
-static TaskResult_t Task3Function(TaskID_t id);
-
+static TaskResult_t TaskLed1Function(TaskID_t id);
+static TaskResult_t TaskLed2Function(TaskID_t id);
+static TaskResult_t TaskLed3Function(TaskID_t id);
+static TaskResult_t TaskWatchdogClear(TaskID_t id);
 
 
 /// Tasks list
 Task_t TaskList[] =
 {
 	{
-		.taskName = "Task1",
-		.taskFunction = Task1Function,
+		.taskName = "Led200ms",
+		.taskFunction = TaskLed1Function,
 		.taskScheduleRate = 200
 	},
 	{
-		.taskName = "Task2",
-		.taskFunction = Task2Function,
+		.taskName = "Led1sec",
+		.taskFunction = TaskLed2Function,
 		.taskScheduleRate = 1000
 	},
 	{
-		.taskName = "Task3",
-		.taskFunction = Task3Function,
+		.taskName = "Led5sec",
+		.taskFunction = TaskLed3Function,
 		.taskScheduleRate = 5000
+	},
+#ifdef CONFIG_MODULE_WATCHDOG_ENABLE
+	{
+		.taskName = "WdtClr",
+		.taskFunction = TaskWatchdogClear,
+		.taskScheduleRate = 1000
 	}
+#endif
 
 	// XXX: Add here new tasks
 
@@ -85,7 +92,7 @@ const TaskID_t TasksNum = (sizeof(TaskList)/sizeof(TaskList[0]));
 /**
  * \brief
  */
-static TaskResult_t Task1Function(TaskID_t id)
+static TaskResult_t TaskLed1Function(TaskID_t id)
 {
 #ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
 	uprintf("Run %s %d\r\n", TaskList[id].taskName, id);
@@ -103,7 +110,7 @@ static TaskResult_t Task1Function(TaskID_t id)
 /**
  * \brief
  */
-static TaskResult_t Task2Function(TaskID_t id)
+static TaskResult_t TaskLed2Function(TaskID_t id)
 {
 #ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
 	uprintf("Run %s %d\r\n", TaskList[id].taskName, id);
@@ -121,7 +128,7 @@ static TaskResult_t Task2Function(TaskID_t id)
 /**
  * \brief
  */
-static TaskResult_t Task3Function(TaskID_t id)
+static TaskResult_t TaskLed3Function(TaskID_t id)
 {
 #ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
 	uprintf("Run %s %d\r\n", TaskList[id].taskName, id);
@@ -135,5 +142,15 @@ static TaskResult_t Task3Function(TaskID_t id)
 }
 
 
+
+#ifdef CONFIG_MODULE_WATCHDOG_ENABLE
+/**
+ * \brief	Watchdog clear task
+ */
+static TaskResult_t TaskWatchdogClear(TaskID_t id)
+{
+	Watchdog_Clear();
+}
+#endif
 
 #endif //#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE

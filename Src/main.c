@@ -192,6 +192,12 @@ int main(void)
 #endif
 
 
+#ifdef CONFIG_MODULE_WATCHDOG_ENABLE
+	// Watchdog
+	Watchdog_Init();
+#endif
+
+
 #if (defined(CONFIG_MODULE_TASKHANDLER_ENABLE) || defined(CONFIG_MODULE_EVENTHANDLER_ENABLE))
 
 	#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE

@@ -511,12 +511,26 @@ CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	// Suppress warning
 	(void)argc;
 	(void)argv;
-	//uint8_t i = 0;
-	//uint8_t buf[2];
 	
 	CommandHandler_SendLine("Test start");
 
+	/*
+	 * 		Test codes
+	 */
+
+
+	// Test SWO
 	COMMUNICATION_SendMessage(CommProt_SWO, "Test message on SWO\n");
+
+
+	// Test Watchdog clear with infinite loop
+	while (1);
+
+
+	/**
+	 * 		End of Test codes
+	 */
+
 
 	CommandHandler_SendLine("Test end");
 
