@@ -38,8 +38,8 @@
  *----------------------------------------------------------------------------*/
 
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
+//#pragma GCC diagnostic push
+//#pragma GCC diagnostic ignored "-Wpedantic"
 
 /// Commands list
 const CommandStruct CommandList[] =
@@ -47,96 +47,96 @@ const CommandStruct CommandList[] =
 
 	{
 		.name = "help",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_help,
+		.commandFunctionPointer = CommandFunction_help,
 		.commandArgNum = CommandArgument_0 | CommandArgument_1,
 		.description = "Commands's list, or write command's descriptions",
 		.syntax = "(command)",
 	},
 	{
 		.name = "version",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_version,
+		.commandFunctionPointer = CommandFunction_version,
 		.commandArgNum = CommandArgument_0,
 		.description = "Get version",
 		.syntax = NULL,
 	},
 	{
 		.name = "welcome",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_welcome,
+		.commandFunctionPointer = CommandFunction_welcome,
 		.commandArgNum = CommandArgument_0,
 		.description = "Send welcome message",
 		.syntax = NULL,
 	},
 	{
 		.name = "reset",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_reset,
+		.commandFunctionPointer = CommandFunction_reset,
 		.commandArgNum = CommandArgument_0,
 		.description = "Software reset",
 		.syntax = NULL,
 	},
 	{
 		.name = "cls",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_cls,
+		.commandFunctionPointer = CommandFunction_cls,
 		.commandArgNum = CommandArgument_0,
 		.description = "Clear Screen",
 		.syntax = NULL,
 	},
 	{
 		.name = "test",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_test,
+		.commandFunctionPointer = CommandFunction_test,
 		.commandArgNum = CommandArgument_0,
 		.description = NULL,
 		.syntax = NULL,
 	},
 	{
 		.name = "set",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_set,
+		.commandFunctionPointer = CommandFunction_set,
 		.commandArgNum = CommandArgument_2,
 		.description = "set global variable value",
 		.syntax = "<varName> <value>",
 	},
 	{
 		.name = "get",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_get,
+		.commandFunctionPointer = CommandFunction_get,
 		.description = "get global variable value",
 		.commandArgNum = CommandArgument_1,
 		.syntax = "<varName>",
 	},
 	{
 		.name = "?",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_GlobalVariableHelp,
+		.commandFunctionPointer = CommandFunction_GlobalVariableHelp,
 		.description = "help global variable",
 		.commandArgNum = CommandArgument_1,
 		.syntax = "<varName>",
 	},
 	{
 		.name = "list",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_GlobalVariableList,
+		.commandFunctionPointer = CommandFunction_GlobalVariableList,
 		.commandArgNum = CommandArgument_0,
 		.description = "List global variable",
 	},
 	{
 		.name = "listvalues",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_GlobalVariableValueList,
+		.commandFunctionPointer = CommandFunction_GlobalVariableValueList,
 		.commandArgNum = CommandArgument_0,
 		.description = "List global variable's values",
 	},
 	{
 		.name = "unittest",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_unittest,
+		.commandFunctionPointer = CommandFunction_unittest,
 		.commandArgNum = CommandArgument_0 | CommandArgument_1,
 		.description = "Run unit tests",
 		.syntax = "(modul)",
 	},
 	{
 		.name = "moduletest",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_moduletest,
+		.commandFunctionPointer = CommandFunction_moduletest,
 		.commandArgNum = CommandArgument_0,
 		.description = "Run module test",
 	},
 #ifdef CONFIG_MODULE_LED_ENABLE
 	{
 		.name = "led",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_led,
+		.commandFunctionPointer = CommandFunction_led,
 		.commandArgNum = CommandArgument_1 | CommandArgument_2,
 		.description = "Control LED",
 		.syntax = "<num> <on/off/toggle/status>",
@@ -145,21 +145,21 @@ const CommandStruct CommandList[] =
 #ifdef CONFIG_MODULE_COMMON_IO_ENABLE
 	{
 		.name = "ioinit",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_io,
+		.commandFunctionPointer = CommandFunction_io,
 		.commandArgNum = CommandArgument_2,
 		.description = "Init IO pins",
 		.syntax = "<port><pin> <input/output>",
 	},
 	{
 		.name = "ioout",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_io,
+		.commandFunctionPointer = CommandFunction_io,
 		.commandArgNum = CommandArgument_2,
 		.description = "Set output",
 		.syntax = "<port><pin> <set/reset>",
 	},
 	{
 		.name = "ioin",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_io,
+		.commandFunctionPointer = CommandFunction_io,
 		.commandArgNum = CommandArgument_1,
 		.description = "Get input",
 		.syntax = "<port><pin>",
@@ -168,7 +168,7 @@ const CommandStruct CommandList[] =
 #ifdef CONFIG_MODULE_COMMON_DAC_ENABLE
 	{
 		.name = "dac",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_dac,
+		.commandFunctionPointer = CommandFunction_dac,
 		.commandArgNum = CommandArgument_2,
 		.description = "Digital -> Analog",
 		.syntax = "<num> <voltage>"
@@ -177,13 +177,13 @@ const CommandStruct CommandList[] =
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
 	{
 		.name = "adc",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_adc,
+		.commandFunctionPointer = CommandFunction_adc,
 		.description = "Analog -> Digital",
 		.commandArgNum = CommandArgument_0,
 	},
 	{
 		.name = "adcread",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_adcread,
+		.commandFunctionPointer = CommandFunction_adcread,
 		.description = "ADC read continuous",
 		.syntax = "<milliSec> <num>",
 		.commandArgNum = CommandArgument_1 | CommandArgument_2,
@@ -192,7 +192,7 @@ const CommandStruct CommandList[] =
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 	{
 		.name = "esp8266",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_ESP8266,
+		.commandFunctionPointer = CommandFunction_ESP8266,
 		.description = "Use ESP8266 module",
 		.syntax = "<send> <message>",
 		.commandArgNum = CommandArgument_2,
@@ -201,7 +201,7 @@ const CommandStruct CommandList[] =
 #ifdef CONFIG_MODULE_RTC_ENABLE
 	{
 		.name = "rtc",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_RTC,
+		.commandFunctionPointer = CommandFunction_RTC,
 		.description = "Use RTC (Real Time Clock)",
 		.syntax = "<setdate/settime> <date: 20yy-mm-dd/time: hh:mm:ss>",
 		.commandArgNum = CommandArgument_1 | CommandArgument_2,
@@ -211,7 +211,7 @@ const CommandStruct CommandList[] =
 	{
 		.name = "#raspi",
 		.description = "Raspberry Pi HomeAutMessage sending",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_raspberrypi,
+		.commandFunctionPointer = CommandFunction_raspberrypi,
 		.commandArgNum = CommandArgument_2,
 		.syntax = NULL,
 	},
@@ -219,7 +219,7 @@ const CommandStruct CommandList[] =
 #ifdef CONFIG_MODULE_ADC_ENABLE
 	{
 		.name = "temperature",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_temp,
+		.commandFunctionPointer = CommandFunction_temp,
 		.description = "...",
 		.syntax = NULL,
 		.commandArgNum = CommandArgument_0,
@@ -228,7 +228,7 @@ const CommandStruct CommandList[] =
 #ifdef CONFIG_MODULE_FLASH_ENABLE
 	{
 		.name = "flashdel",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_flashdel,
+		.commandFunctionPointer = CommandFunction_flashdel,
 		.description = "Delete flash",
 		.syntax = "<address> <block/sector>",
 		.commandArgNum = CommandArgument_2,
@@ -236,7 +236,7 @@ const CommandStruct CommandList[] =
 
 	{
 		.name = "flashread",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_flashread,
+		.commandFunctionPointer = CommandFunction_flashread,
 		.description = "Read from flash",
 		.syntax = "<address>",
 		.commandArgNum = CommandArgument_1,
@@ -244,7 +244,7 @@ const CommandStruct CommandList[] =
 
 	{
 		.name = "flashwrite",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_flashwrite,
+		.commandFunctionPointer = CommandFunction_flashwrite,
 		.description = "Write flash",
 		.syntax = "<address> <byte>",
 		.commandArgNum = CommandArgument_2,
@@ -254,7 +254,7 @@ const CommandStruct CommandList[] =
 	/*
 	{
 		.name = "stop",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_stop,
+		.commandFunctionPointer = CommandFunction_stop,
 		.description = "stop\r\n"
 	},
 	*/
@@ -262,7 +262,7 @@ const CommandStruct CommandList[] =
 	/*
 	{
 		.name = "start",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_start,
+		.commandFunctionPointer = CommandFunction_start,
 		.description = "start\r\n"
 	},
 	*/
@@ -270,7 +270,7 @@ const CommandStruct CommandList[] =
 	/*
 	{
 		.name = "buzzer",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_buzzer,
+		.commandFunctionPointer = CommandFunction_buzzer,
 		.description = "buzzer\r\n"
 		"Syntax: buzzer on/off\r\n"
 		"Function: trivial\r\n"
@@ -280,7 +280,7 @@ const CommandStruct CommandList[] =
 	/*
 	{
 		.name = "dl",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_dl,
+		.commandFunctionPointer = CommandFunction_dl,
 		.description = "dl\r\n"
 					"Syntax: dl <destination> <size>\r\n"
 					"  <destination>: destination address (hexadecimal)\r\n"
@@ -292,7 +292,7 @@ const CommandStruct CommandList[] =
 	/*
 	{
 		.name = "esp8266",
-		.commandFunctionPointer = ( FunctionPointer *)CommandFunction_ESP8266,
+		.commandFunctionPointer = CommandFunction_ESP8266,
 		.description = "ESP8266 wifi modul bridge\r\n"
 	},
 	*/
@@ -300,7 +300,7 @@ const CommandStruct CommandList[] =
 };
 
 
-#pragma GCC diagnostic pop
+//#pragma GCC diagnostic pop
 // End of warning suppress
 
 

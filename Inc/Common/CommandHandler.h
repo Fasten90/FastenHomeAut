@@ -135,7 +135,7 @@ typedef enum
 typedef struct
 {
 	const char *name;								///< Name of command (which need type) [string]
-	const FunctionPointer *commandFunctionPointer;	///< Function pointer (which called)
+	const FunctionPointer commandFunctionPointer;	///< Function pointer (which called)
 	const char *description;						///< Command description (for help)
 	const char *syntax;								///< Command syntax
 	const CommandArgNum_t commandArgNum;			///< Required command argument num
