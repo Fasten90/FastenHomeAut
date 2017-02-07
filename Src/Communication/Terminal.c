@@ -366,7 +366,7 @@ static void CommandHandler_ProcessReceivedCharacter(void)
 					CommandHandler_CommandEscape_cnt = 0;
 				}
 			}
-			else if ( CommandHandler_CommandEscape_cnt == 2)
+			else if (CommandHandler_CommandEscape_cnt == 2)
 			{
 				CommandHandler_CommandActualEscape[CommandHandler_CommandEscape_cnt++] = USART_ReceivedChar;
 
@@ -385,7 +385,7 @@ static void CommandHandler_ProcessReceivedCharacter(void)
 					//MONITOR_CommandEscape_cnt++;
 				}
 			}
-			else if ( CommandHandler_CommandEscape_cnt == 3)
+			else if (CommandHandler_CommandEscape_cnt == 3)
 			{
 				CommandHandler_CommandActualEscape[CommandHandler_CommandEscape_cnt++] = USART_ReceivedChar;
 
@@ -415,7 +415,7 @@ static void CommandHandler_ProcessReceivedCharacter(void)
 			}
 			else
 			{
-				if ( (USART_ReceivedChar  == '\r') || (USART_ReceivedChar == '\n') ||
+				if ((USART_ReceivedChar  == '\r') || (USART_ReceivedChar == '\n') ||
 					(USART_ReceivedChar == '\0'))
 				{
 					// Received Enter
@@ -512,11 +512,11 @@ static bool CommandHandler_CommandEscapeCharValidation(void)
 
 	if (CommandHandler_CommandActualEscape[0] == '\x1B')				// ESC
 	{
-		if ( CommandHandler_CommandActualEscape[1] == '[' )			// '[', escape sequence 2. letter
+		if (CommandHandler_CommandActualEscape[1] == '[' )			// '[', escape sequence 2. letter
 		{
 			// This is an escape sequence
 			// 'A' Up cursor = previous History command
-			if ( CommandHandler_CommandActualEscape[2] == 'A' )
+			if (CommandHandler_CommandActualEscape[2] == 'A')
 			{
 				#ifdef CONFIG_COMMANDHANDLER_USE_HISTORY
 				CommandHandler_HistoryLoad ( 1 );
@@ -524,7 +524,7 @@ static bool CommandHandler_CommandEscapeCharValidation(void)
 				return true;
 			}
 			// 'B' Down cursor		// next History command
-			else if ( CommandHandler_CommandActualEscape[2] == 'B' )
+			else if (CommandHandler_CommandActualEscape[2] == 'B')
 			{
 				#ifdef CONFIG_COMMANDHANDLER_USE_HISTORY
 				CommandHandler_HistoryLoad ( 0 );
@@ -532,10 +532,10 @@ static bool CommandHandler_CommandEscapeCharValidation(void)
 				return true;
 			}
 			// 'C' - Right cursor - Step right
-			else if (  CommandHandler_CommandActualEscape[2] == 'C' )
+			else if (CommandHandler_CommandActualEscape[2] == 'C')
 			{
 				// Is cursor at end?
-				if ( CommandHandler_CommandCursorPosition < CommandHandler_CommandActualLength )
+				if (CommandHandler_CommandCursorPosition < CommandHandler_CommandActualLength)
 				{
 					// Cursor within command
 					CommandHandler_SendMessage(ESCAPE_CURSORRIGHT);
@@ -549,9 +549,9 @@ static bool CommandHandler_CommandEscapeCharValidation(void)
 				}
 			}
 			// 'D' Left cursor - Step left
-			else if (  CommandHandler_CommandActualEscape[2] == 'D' )
+			else if (CommandHandler_CommandActualEscape[2] == 'D')
 			{
-				if ( CommandHandler_CommandCursorPosition > 0 )				// if not at start
+				if (CommandHandler_CommandCursorPosition > 0)				// if not at start
 				{
 					CommandHandler_SendMessage(ESCAPE_CURSORLEFT);
 					CommandHandler_CommandCursorPosition--;
@@ -591,7 +591,7 @@ void CommandHandler_CommandBackspace(void)
 	{
 		// If has command
 		// Cursor at end?
-		if ( CommandHandler_CommandCursorPosition == CommandHandler_CommandActualLength)
+		if (CommandHandler_CommandCursorPosition == CommandHandler_CommandActualLength)
 		{
 			// Cursor at end
 			// Delete from CommandActual, and Position--
@@ -630,7 +630,7 @@ void CommandHandler_CommandBackspace(void)
 
 			uint8_t i;
 
-			if ( CommandHandler_CommandCursorPosition > 0 )
+			if (CommandHandler_CommandCursorPosition > 0)
 			{
 				// not at 0 position
 
@@ -641,7 +641,7 @@ void CommandHandler_CommandBackspace(void)
 				CommandHandler_CommandActualLength--;
 				CommandHandler_CommandCursorPosition--;
 
-				for ( i = CommandHandler_CommandCursorPosition; i < CommandHandler_CommandActualLength; i++ )
+				for (i = CommandHandler_CommandCursorPosition; i < CommandHandler_CommandActualLength; i++)
 				{
 					CommandHandler_CommandActual[i] = CommandHandler_CommandActual[i+1];		// copy
 				}
@@ -810,13 +810,13 @@ static void CommandHandler_HistorySave(void)
 {
 
 	// Has equal command?
-	if ( CommandHandler_HistoryFindInList() == true )
+	if (CommandHandler_HistoryFindInList() == true)
 	{
 		return;
 	}
 
 	// Actual save counter
-	if ( CommandHandler_HistorySaveCnt >= ( COMMANDHANDLER_HISTORY_MAX_COUNT-1 ) )
+	if (CommandHandler_HistorySaveCnt >= (COMMANDHANDLER_HISTORY_MAX_COUNT-1))
 	{
 		CommandHandler_HistorySaveCnt = 0;
 	}
@@ -829,9 +829,9 @@ static void CommandHandler_HistorySave(void)
 	CommandHandler_HistoryLoadCnt = CommandHandler_HistorySaveCnt;
 
 	// Save command
-	StrCpyMax( CommandHandler_HistoryList[CommandHandler_HistorySaveCnt],
+	StrCpyMax(CommandHandler_HistoryList[CommandHandler_HistorySaveCnt],
 			(char *)CommandHandler_CommandActual,
-			COMMANDHANDLER_MAX_COMMAND_LENGTH );
+			COMMANDHANDLER_MAX_COMMAND_LENGTH);
 
 	return;
 
@@ -853,7 +853,7 @@ static bool CommandHandler_HistoryFindInList(void)
 	for (i = 0; i < COMMANDHANDLER_HISTORY_MAX_COUNT; i++)
 	{
 		// Check, equal with command?
-		if ( !StrCmp((const char *)CommandHandler_HistoryList[i],(const char * )CommandHandler_CommandActual))
+		if (!StrCmp((const char *)CommandHandler_HistoryList[i],(const char * )CommandHandler_CommandActual))
 		{
 			// If it is equal
 			// Has equal command
@@ -929,11 +929,11 @@ static void CommandHandler_ConvertSmallLetter(void)
 
 	for (i = 0; CommandHandler_CommandActual[i] != '\0'; i++)
 	{
-		if ( ( CommandHandler_CommandActual[i] > 'A' ) && ( CommandHandler_CommandActual[i] < 'Z' ) )
+		if ((CommandHandler_CommandActual[i] > 'A') && (CommandHandler_CommandActual[i] < 'Z'))
 		{
 			// Need to change to small letter
 			// length between Big Letter and small letter
-			CommandHandler_CommandActual[i] = CommandHandler_CommandActual[i] - ( 'A' - 'a');
+			CommandHandler_CommandActual[i] = CommandHandler_CommandActual[i] - ('A' - 'a');
 		}
 	}
 
