@@ -149,7 +149,11 @@ static TaskResult_t TaskLed3Function(TaskID_t id)
  */
 static TaskResult_t TaskWatchdogClear(TaskID_t id)
 {
+	(void)id;
+
 	Watchdog_Clear();
+
+	return TASK_RESULT_OK;
 }
 #endif
 
