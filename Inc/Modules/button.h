@@ -1,7 +1,15 @@
-/*******************************************************************************
- * Purpose:
- ******************************************************************************/
-
+/*
+ *		button.h
+ *
+ *		Created on:		2016
+ *      Author:			Vizi Gábor
+ *		E-mail:			vizi.gabor90@gmail.com
+ *		Function:		-
+ *		Target:			STM32Fx
+ *		Version:		-
+ *		Last modified:	2017. febr. 8.
+ */
+ 
 #ifndef BUTTON_H_
 #define BUTTON_H_
 

@@ -1,6 +1,14 @@
-/*******************************************************************************
- * Purpose:
- ******************************************************************************/
+/*
+ *		IO.h
+ *
+ *		Created on:		2015
+ *      Author:			Vizi Gábor
+ *		E-mail:			vizi.gabor90@gmail.com
+ *		Function:		-
+ *		Target:			STM32Fx
+ *		Version:		-
+ *		Last modified:	2017. febr. 8.
+ */
 
 #ifndef IO_H_
 #define IO_H_
