@@ -44,13 +44,21 @@
 /// Commands list
 const CommandStruct CommandList[] =
 {
-
+	/*
+	 * Help:
+	 * 	.name = "StringOfCommand",
+	 * 	.commandFunctionPointer = function name,
+	 * 	.commandArgNum = CommandArgument_0 | CommandArgument_1 | CommandArgument_2,
+	 * 	.description = "Command description",
+	 * 	.syntax = "<required parameter> (optional parameter)"
+	 */
 	{
 		.name = "help",
 		.commandFunctionPointer = CommandFunction_help,
 		.commandArgNum = CommandArgument_0 | CommandArgument_1,
-		.description = "Commands's list, or write command's descriptions",
+		.description = "Commands's list, or print a command's description",
 		.syntax = "(command)",
+		.example = "version"
 	},
 	{
 		.name = "version",
@@ -88,18 +96,20 @@ const CommandStruct CommandList[] =
 		.syntax = NULL,
 	},
 	{
-		.name = "set",
-		.commandFunctionPointer = CommandFunction_set,
-		.commandArgNum = CommandArgument_2,
-		.description = "set global variable value",
-		.syntax = "<varName> <value>",
-	},
-	{
 		.name = "get",
 		.commandFunctionPointer = CommandFunction_get,
 		.description = "get global variable value",
 		.commandArgNum = CommandArgument_1,
 		.syntax = "<varName>",
+		.example = "devicename",
+	},
+	{
+		.name = "set",
+		.commandFunctionPointer = CommandFunction_set,
+		.commandArgNum = CommandArgument_2,
+		.description = "set global variable value",
+		.syntax = "<varName> <value>",
+		.example = "devicename MyDeviceName",
 	},
 	{
 		.name = "?",
@@ -107,6 +117,7 @@ const CommandStruct CommandList[] =
 		.description = "help global variable",
 		.commandArgNum = CommandArgument_1,
 		.syntax = "<varName>",
+		.example = "devicename",
 	},
 	{
 		.name = "list",
@@ -140,6 +151,7 @@ const CommandStruct CommandList[] =
 		.commandArgNum = CommandArgument_1 | CommandArgument_2,
 		.description = "Control LED",
 		.syntax = "<num> <on/off/toggle/status>",
+		.example = "1 on",
 	},
 #endif
 #ifdef CONFIG_MODULE_COMMON_IO_ENABLE
@@ -149,6 +161,7 @@ const CommandStruct CommandList[] =
 		.commandArgNum = CommandArgument_2,
 		.description = "Init IO pins",
 		.syntax = "<port><pin> <input/output>",
+		.example = "a1 input",
 	},
 	{
 		.name = "ioout",
@@ -156,6 +169,7 @@ const CommandStruct CommandList[] =
 		.commandArgNum = CommandArgument_2,
 		.description = "Set output",
 		.syntax = "<port><pin> <set/reset>",
+		.example = "a2 set",
 	},
 	{
 		.name = "ioin",
@@ -163,6 +177,7 @@ const CommandStruct CommandList[] =
 		.commandArgNum = CommandArgument_1,
 		.description = "Get input",
 		.syntax = "<port><pin>",
+		.example = "a1",
 	},
 #endif
 #ifdef CONFIG_MODULE_COMMON_DAC_ENABLE
@@ -172,6 +187,7 @@ const CommandStruct CommandList[] =
 		.commandArgNum = CommandArgument_2,
 		.description = "Digital -> Analog",
 		.syntax = "<num> <voltage>"
+		.example = "1 3.0",
 	},
 #endif
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
@@ -185,8 +201,9 @@ const CommandStruct CommandList[] =
 		.name = "adcread",
 		.commandFunctionPointer = CommandFunction_adcread,
 		.description = "ADC read continuous",
-		.syntax = "<milliSec> <num>",
+		.syntax = "<milliSec> (num)",
 		.commandArgNum = CommandArgument_1 | CommandArgument_2,
+		.example = "1000 1",
 	},
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
@@ -196,6 +213,7 @@ const CommandStruct CommandList[] =
 		.description = "Use ESP8266 module",
 		.syntax = "<send> <message>",
 		.commandArgNum = CommandArgument_2,
+		.example = "send ThisMessage",
 	},
 #endif
 #ifdef CONFIG_MODULE_RTC_ENABLE
@@ -203,8 +221,9 @@ const CommandStruct CommandList[] =
 		.name = "rtc",
 		.commandFunctionPointer = CommandFunction_RTC,
 		.description = "Use RTC (Real Time Clock)",
-		.syntax = "<setdate/settime> <date: 20yy-mm-dd/time: hh:mm:ss>",
+		.syntax = "<setdate/settime> <date: 20yy-mm-dd / time: hh:mm:ss>",
 		.commandArgNum = CommandArgument_1 | CommandArgument_2,
+		.example = "setdate 2017-02-08",
 	},
 #endif
 #ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
@@ -251,51 +270,18 @@ const CommandStruct CommandList[] =
 	},
 #endif
 
-	/*
-	{
-		.name = "stop",
-		.commandFunctionPointer = CommandFunction_stop,
-		.description = "stop\r\n"
-	},
-	*/
+
 
 	/*
-	{
-		.name = "start",
-		.commandFunctionPointer = CommandFunction_start,
-		.description = "start\r\n"
-	},
-	*/
-
-	/*
-	{
-		.name = "buzzer",
-		.commandFunctionPointer = CommandFunction_buzzer,
-		.description = "buzzer\r\n"
-		"Syntax: buzzer on/off\r\n"
-		"Function: trivial\r\n"
-	},
-	*/
-
-	/*
-	{
-		.name = "dl",
-		.commandFunctionPointer = CommandFunction_dl,
-		.description = "dl\r\n"
-					"Syntax: dl <destination> <size>\r\n"
-					"  <destination>: destination address (hexadecimal)\r\n"
-					"  <size>: byte's num (decimal)\r\n"
-					"Function: download from USART to destination address\r\n"
-	},
-	*/
-
-	/*
-	{
-		.name = "esp8266",
-		.commandFunctionPointer = CommandFunction_ESP8266,
-		.description = "ESP8266 wifi modul bridge\r\n"
-	},
-	*/
+	 * XXX: Add new commands here
+	 *
+	 * Help:
+	 * 	.name = "StringOfCommand",
+	 * 	.commandFunctionPointer = function name,
+	 * 	.commandArgNum = CommandArgument_0 | CommandArgument_1 | CommandArgument_2,
+	 * 	.description = "Command description",
+	 * 	.syntax = "<required parameter> (optional parameter)"
+	 */
 
 };
 
@@ -1225,142 +1211,6 @@ CommandResult_t CommandFunction_raspberrypi (uint32_t argc, char** argv)
 
 
 #if 0
-// Function: dl (download)
-// dl <destination> <size>
-// Download to <destination> address <size> bytes from USART
-CommandResult_t CommandFunction_dl ( uint32_t argc, char** argv )
-{
-
-	unsigned char * destination;
-	uint32_t size;
-	uint32_t Arg2Num;
-	uint32_t Arg3Num;
-
-	if ( argc < 3 ) { USART_SendString("Too few arguments!\r\n"); return 0; }
-	if ( argc > 3 ) { USART_SendString("Too many arguments!\r\n"); return 0; }
-
-	if ( StringIsHexadecimalString(argv[1]) ) Arg2Num = StringHexToNum(argv[1]);	// <destination> 	Convert hex to num
-	else { USART_SendString("Wrong 1. argument!\r\n"); return 0; }
-	if ( StringIsUnsignedDecimalString(argv[2]) ) Arg3Num = StringToUnsignedDecimalNum(argv[2]);	// <size>			Convert dec to num
-	else { USART_SendString("Wrong 2. argument!\r\n"); return 0; }
-
-	size = Arg3Num;
-	destination = (unsigned char *)Arg2Num;
-
-
-	// Ellenorizni kell, hogy uint16_t -e
-	if ( size > UINT16_MAX )
-	{
-		USART_SendString("The <size> is too large. Only work with maximum UINT16_MAX\r\n");
-		return RETURN_FALSE;
-	}
-
-	CommandHandler_Printf("Destination: 0x%w\r\n"
-			"Size: %d bytes\r\n",
-			destination,
-			size);
-
-
-
-	USART_SendString("Please send the binary file...\r\n");
-
-
-	/*
-	for ( i = 0; i < size; i++) {			// Loop: receive char and write, while  <size> byte-s not received.
-		//byte = USARTReceiveChar();		// TODO: helyette mas kell
-		HAL_UART_Receive(&UartHandle,&byte,1,1000);
-		*destination = byte;
-		destination++;
-	}
-	*/
-	//taskENTER_CRITICAL();				// TODO: FREERTOS
-
-	// TODO:
-	//
-	/*
-	uint8_t flash_status;
-
-	void save_data_to_flash() {
-
-	  flash_status = FLASH_COMPLETE;
-
-	  FLASH_Unlock();
-	  FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_OPERR |FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR |FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR);
-	  flash_status = FLASH_EraseSector(FLASH_Sector_3, VoltageRange_3);
-
-	  if (flash_status != FLASH_COMPLETE) {
-	    FLASH_Lock();
-	    return;
-	  }
-
-	  uint8_t* address = &flash_data[0];
-
-	  //program first run status bit
-	  flash_status = FLASH_ProgramByte((uint32_t)address, 0x00);
-	  address += 4;
-	  if (flash_status != FLASH_COMPLETE) {
-	    FLASH_Lock();
-	    return;
-	  }
-
-	}
-	*/
-	//*/
-
-	//HAL_UART_Receive(&UartHandle,destination,size,0xFFFFFFFF);
-
-	CommandHandler_SendLine("Jelenleg teszteles alatt, a FLASH programozassal gond van.");
-	//FLASH_Test();
-
-		//taskEXIT_CRITICAL(); 				// TODO: FREERTOS
-
-	USART_SendString("Arrived the binary file.\r\n");
-
-	return CommandResult_Ok;
-}
-#endif
-
-
-
-#if 0
-// Function: go (jump to an address)
-// go <destination>
-// jump <destination> address
-CommandResult_t CommandFunction_go ( uint32_t argc, char** argv ) {
-
-	uint32_t destination;
-	int ( *fpntr )( void );
-	uint32_t Arg2Num;
-
-	// TODO: USART_SendLine();
-	// TODO: CommandHandler_SendMessage(); ez irányítódjon át egy USART_SendString()-re
-
-	// Convert hex
-	if ( !StringHexToNum(argv[1],&Arg2Num,0))
-	{
-		return CommandResult_Error_WrongArgument1;
-	}
-
-	destination = Arg2Num;
-	CommandHandler_Printf("Go destination: 0x%w\r\n",
-			destination);
-
-
-	fpntr = (int (*) (void))destination;		// casting
-	fpntr();
-
-	// Now, for example: "go 20000151"
-
-	// We can use the "jump" ASM instruction, but not a good idea
-	// Programming manual page 92, B instruction
-
-	return CommandResult_Ok;
-}
-#endif
-
-
-
-#if 0
 // Function: mr (memory read)
 // mr <source> <size>
 // source: hex
@@ -1452,512 +1302,9 @@ CommandResult_t CommandFunction_mw ( uint32_t argc, char** argv ) {
 
 
 #if 0
-// Function: Go to STOP mode
-CommandResult_t CommandFunction_stop	( uint32_t argc, char** argv ) {
-
-	// Take anything before stop mode
-	LED_ALARM_ON();
-	LCD_Instr_DisplayClear();
-	LCD_SendString_2line("RadioAlarm","in STOP mode",2,2);
-
-	CommandHandler_SendLine("Go to STOP mode...\r\n"
-					"Wake up with USER button"
-					);
-
-	LOWPOWER_GotoStopMode();
-
-	LED_ALARM_OFF();
-	LCD_Instr_DisplayClear();
-	LCD_SendString_2line("RadioAlarm","",2,2);
-	CommandHandler_SendLine("End of STOP mode\r\n");
-
-	return 1;
-}
-#endif
-
-
-
-#if 0
-// Function: EEPROM read
-// Syntax: romr <address>
-CommandResult_t CommandFunction_romr	( uint32_t argc, char** argv ) {
-
-	uint32_t Arg2Num;
-
-	Arg2Num = StringDecToNum(argv[1]);
-
-	//CommandHandler_Printf("address: 0x%h\r\n"
-	//				"data:    0x%b\r\n",
-	//				Arg2Num,
-	//				EEPROM_ReadByte(Arg2Num)
-	//				);
-
-	return 1;
-}
-#endif
-
-
-
-#if 0
-// Function: EEPROM write
-// Syntax: romw <address> <data>
-CommandResult_t CommandFunction_romw	( uint32_t argc, char** argv ) {
-
-	uint32_t Arg2Num;
-	uint32_t Arg3Num;
-
-	Arg2Num = StringHexToNum(argv[1]);
-	Arg3Num = StringHexToNum(argv[2]);
-
-	CommandHandler_Printf("address: 0x%h\r\n"
-					"data:    0x%b\r\n",
-					Arg2Num,
-					Arg3Num);
-	//EEPROM_WriteByte(Arg2Num,Arg3Num);
-
-	return 1;
-}
-#endif
-
-
-
-#if 0
-// Function: Read EEPROM's status register
-CommandResult_t CommandFunction_romsr	( uint32_t argc, char** argv ) {
-
-	//CommandHandler_Printf("Status register: 0x%h\r\n",
-	//				EEPROM_ReadStatusRegister ()
-	//				);
-
-	return 1;
-}
-#endif
-
-
-
-#if 0
-// Function: EEPROM, Write Enable
-CommandResult_t CommandFunction_romwe	( uint32_t argc, char** argv ) {
-
-	//EEPROM_WriteEnable ();
-
-	CommandHandler_SendLine("EEPROM write enable");
-
-	return 1;
-}
-#endif
-
-
-
-#if 0
-// Function: initialize EEPROM
-CommandResult_t CommandFunction_rominit	( uint32_t argc, char** argv ) {
-
-	//EEPROM_Init ();
-
-	CommandHandler_SendLine("EEPROM initialized\r\n");
-
-	return 1;
-}
-#endif
-
-
-
-#if 0
-CommandResult_t CommandFunction_standby	( uint32_t argc, char** argv ) {
-
-	LCD_Instr_DisplayClear();
-	LCD_SendString_2line("RadioAlarm","in STANDBY mode",2,2);
-
-	CommandHandler_SendLine("Go to STANDBY mode. You can wake up(=reset) with RESET and USER button!");
-
-	LOWPOWER_GotoSTANDBYMode ();
-
-	// Exit from STANDBY mode is same with reset, this point is never reachable
-
-	return 1;
-}
-#endif
-
-
-
-#if 0
-CommandResult_t CommandFunction_start	( uint32_t argc, char** argv )
-{
-	(void)argc;
-	(void)argv;
-
-
-	CommandHandler_SendLine("start command...\r\n");
-
-
-	// Auto elinditasa a GLOBAL_CommandStartXXX() fuggvennyel
-	//GLOBAL_CommandStartMonitor();
-
-
-	return CommandResult_Ok;
-}
-#endif
-
-
-
-#if 0
-CommandResult_t CommandFunction_stop	( uint32_t argc, char** argv )
-{
-
-	//(void)argc;
-	//(void)argv;
-
-	//GLOBAL_CommandEmergencyStop();
-
-	CommandHandler_SendLine("$ Stop command! $");
-
-	return CommandResult_Ok;
-
-}
-#endif
-
-
-
-#if 0
-// Function: buzzer switch on/off
-CommandResult_t CommandFunction_buzzer	( uint32_t argc, char** argv ) {
-
-	if ( argc < 2 )
-	{
-		CommandHandler_SendLine("Too few arguments!");
-		return RETURN_FALSE;
-	}
-	if ( argc > 2 )
-	{
-		CommandHandler_SendLine("Too many arguments!");
-		return RETURN_FALSE;
-	}
-
-	if (!StrCmp(argv[1],"on"))
-	{
-		// TODO: Buzzer on
-		// Buzzer bekapcsolasa
-		//BUZZER_Test_Task ();	// Buzzer taszk, nem a legjobb megoldas!
-		CommandHandler_SendLine("Buzzer on (Important! This is an infinite loop!)");
-		//BUZZER_On(); // Important!! Before turn on, need BUZZER_Init() function.
-	}
-	else if (!StrCmp(argv[1],"off"))
-	{
-		// Buzzer kikapcsolása
-		//BUZZER_DeInit();
-		CommandHandler_SendLine("Buzzer off");
-	}
-
-	return CommandResult_Ok;
-}
-#endif
-
-
-
-
-#if 0
-CommandResult_t CommandFunction_accelerometer	( uint32_t argc, char** argv ) {
-
-	(void)argc;
-	(void)argv;
-
-	CommandHandler_SendLine("Accelerometer has been started...");
-
-	// TODO:
-	//ACCELEROMETER_Task();
-	//vTaskResume(ACCELEROMETER_TaskHandle);
-
-	CommandHandler_SendLine("End");
-
-	return CommandResult_Ok;
-}
-#endif
-
-
-
-#if 0
-CommandResult_t CommandFunction_gyroscope	( uint32_t argc, char** argv ) {
-
-	(void)argc;
-	(void)argv;
-
-	CommandHandler_SendLine("Gyroscope has been started...");
-
-	// TODO:
-	//GYROSCOPE_Task ();
-	//vTaskResume(GYROSCOPE_TaskHandle);
-
-	CommandHandler_SendLine("End");
-
-	return CommandResult_Ok;
-}
-#endif
-
-
-
-
-#if 0
-CommandResult_t CommandFunction_remotecontrol	( uint32_t argc, char** argv ) {
-
-
-	return CommandResult_Ok;
-}
-#endif
-
-
-
-#if 0
-CommandResult_t CommandFunction_proximity	( uint32_t argc, char** argv ) {
-
-	//(void)argc;
-	//(void)argv;
-
-	CommandHandler_SendLine("Jelenleg nincs funkcioja!");
-
-//	if ( argc < 2 )
-//	{
-//		CommandHandler_SendLine("Too few arguments!\r\n"
-//				" Use: \"prox on\" or \"prox off\"");
-//
-//		return RETURN_FALSE;
-//	}
-//	if ( argc > 2 )
-//	{
-//		CommandHandler_SendLine("Too many arguments!");
-//		return RETURN_FALSE;
-//	}
-//
-//
-//	if (!StrCmp(argv[1],"on"))
-//	{
-//
-//		// LOG start
-//		CommandHandler_SendLine("Proximity log on");
-//		LOG_QueueEnable_PROXIMITY = LOG_ENABLE;
-//
-//	}
-//	else if (!StrCmp(argv[1],"off"))
-//	{
-//
-//		// LOG end
-//		LOG_QueueEnable_PROXIMITY = LOG_DISABLE;
-//		CommandHandler_SendLine("Proximity log off");
-//
-//	}
-
-	//CommandHandler_SendLine("End");
-
-	return CommandResult_Ok;
-}
-#endif
-
-
-
-#if 0
-CommandResult_t CommandFunction_log ( uint32_t argc, char** argv )
-{
-
-	//(void)argc;
-
-	if ( argc < 2 )
-	{
-		CommandHandler_SendLine("Too few arguments!\r\n"
-				" Use: \"log on\" or \"log off\" or \"log on <task>\"");
-
-		return RETURN_FALSE;
-	}
-//	if ( argc > 2 )
-//	{
-//		CommandHandler_SendLine("Too many arguments!");
-//		return RETURN_FALSE;
-//	}
-
-	if ( argc == 2 )
-	{
-		if (!StrCmp(argv[1],"off"))
-		{
-			// LOG end
-			//LOG_Off();
-			/*
-			LOG_QueueEnable_LSA = LOG_DISABLE;
-			LOG_QueueEnable_LSA2 = LOG_DISABLE;
-			LOG_QueueEnable_LSA3 = LOG_DISABLE;
-			LOG_QueueEnable_ACCELEROMETER= LOG_DISABLE;
-			LOG_QueueEnable_GYROSCOPE = LOG_DISABLE;
-			LOG_QueueEnable_PROXIMITY = LOG_DISABLE;
-			LOG_QueueEnable_ROTARY = LOG_DISABLE;
-			LOG_QueueEnable_POSITION = LOG_DISABLE;
-			LOG_QueueEnable_MOTOR = LOG_DISABLE;
-			LOG_QueueEnable_SMstatus = LOG_DISABLE;
-			LOG_QueueEnable_SMevent = LOG_DISABLE;
-			LOG_QueueEnable_EXAMPLE = LOG_DISABLE;
-			LOG_QueueEnable_EXAMPLE2 = LOG_DISABLE;
-			LOG_QueueEnable_EXAMPLE3 = LOG_DISABLE;
-
-			xSemaphoreGive(LOG_TaskKill_Semaphore);
-			*/
-			MONITOR_CommandSendBackCharEnable = 1;	// Enable to send
-			CommandHandler_SendLine("Log off");
-		}
-		else
-		{
-			CommandHandler_SendLine("Wrong! Use \"log on <task>\" or \"log off\"");
-			return RETURN_FALSE;
-		}
-
-	}
-
-	/*
-	if ( argc == 2 )		// "log on", "log off"
-	{
-		if (!StrCmp(argv[1],"on"))
-		{
-
-			CommandHandler_SendLine("Log on");
-
-			// LOG start
-			vTaskResume(LOG_TaskHandle);
-
-		}
-		else if (!StrCmp(argv[1],"off"))
-		{
-
-			// LOG end
-			xSemaphoreGive(LOG_TaskKill_Semaphore);
-
-			//vTaskSuspend(LOG_TaskHandle );
-
-			//if ( xSemaphoreTake(LOG_TaskKill_Semaphore,10) == pdTRUE)
-			//{
-			//	vTaskDelete(LOG_TaskHandle);
-			//}
-
-			CommandHandler_SendLine("Log off");
-		}
-	}
-	else */
-	if (argc == 3 )	// log on/off <taszk>
-	{
-		if (!StrCmp(argv[1],"on"))
-		{
-
-			MONITOR_CommandSendBackCharEnable = 1; // Enable to send
-		}
-		else
-		{
-			CommandHandler_SendLine("2. argumentum rossz! \"on\" vagy \"off\" kell legyen!");
-			return RETURN_FALSE;
-		}
-	}
-	else
-	{
-		return RETURN_FALSE;
-	}
-
-	return CommandResult_Ok;
-
-}
-#endif
-
-
-
-#if 0
-CommandResult_t CommandFunction_exit ( uint32_t argc, char** argv )
-{
-	(void)argc;
-	(void)argv;
-
-
-	CommandHandler_SendLine("exit\r\n"
-			" MONITOR program leallitasa...");
-	//vTaskSuspend(DEBUG_TaskHandle);				// TODO: FREERTOS
-
-	return CommandResult_Ok;
-}
-#endif
-
-
-
-#if 0
-CommandResult_t CommandFunction_read ( uint32_t argc, char** argv )
-{
-
-	//int i;
-	// Distance kiiratas
-	//float GLOBAL_GetDistance(void)
-	/*
-	float *pFloat;
-	float temp;
-	uint8_t String[30];
-
-	temp = GLOBAL_GetDistance();
-
-	pFloat = &temp;
-	FloatToString(*pFloat, String);
-
-	CommandHandler_Printf("Distance: %s\r\n",String);
-	*/
-
-
-	// Rotary ertek kikuldese, utolso 200
-
-	uint32_t localDataRaw[200];
-	float localDataAvg[200];
-	int i;
-	float *pFloat;
-	uint8_t String[20];
-
-	(void)argc;
-	(void)argv;
-
-	for ( i=0; i<200; i++ )
-	{
-		//localDataRaw[i] = dataRaw[i];
-		//localDataAvg[i] = dataAvg[i];
-	}
-
-
-	CommandHandler_SendLine("\r\n"
-			"Raw:");
-	#ifdef CONFIG_USE_FREERTOS
-	vTaskDelay(1);
-	#else
-	HAL_Delay(1);
-	#endif
-	for (i=0; i<200; i++ )
-	{
-		CommandHandler_Printf("%d\r\n",localDataRaw[i]);
-		#ifdef CONFIG_USE_FREERTOS
-		vTaskDelay(1);
-		#else
-		HAL_Delay(1);
-		#endif
-	}
-
-	CommandHandler_SendLine("\r\n"
-			"Avg:");
-	for (i=0; i<200; i++ )
-	{
-		//CommandHandler_Printf("%d\r\n",localDataAvg[i]);	// egyszeru kiiratas, int. De az Avg float!
-
-		pFloat = &localDataAvg[i];
-		FloatToString(*pFloat, String);
-
-		CommandHandler_SendLine(String);
-	}
-
-
-	return CommandResult_Ok;
-
-}
-#endif
-
-
-
-#if 0
 // Function: ESP8266 bridge
-CommandResult_t CommandFunction_ESP8266	( uint32_t argc, char** argv ) {
+CommandResult_t CommandFunction_ESP8266	( uint32_t argc, char** argv )
+{
 
 	if ( argc > 1 )
 	{

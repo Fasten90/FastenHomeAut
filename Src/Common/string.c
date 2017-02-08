@@ -1440,7 +1440,6 @@ uint8_t string_printf(char *str, const char *format, va_list ap)
 	*string = '\0';
 
 	return (string-str);
-
 }
 
 

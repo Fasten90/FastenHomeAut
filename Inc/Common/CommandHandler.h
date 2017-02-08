@@ -138,6 +138,7 @@ typedef struct
 	const FunctionPointer commandFunctionPointer;	///< Function pointer (which called)
 	const char *description;						///< Command description (for help)
 	const char *syntax;								///< Command syntax
+	const char *example;								///< Example of parameters
 	const CommandArgNum_t commandArgNum;			///< Required command argument num
 } CommandStruct;
 
@@ -169,7 +170,7 @@ void CommandHandler_SendWelcome(void);
 
 void CommandHandler_CheckCommand(void);
 
-void CommandHandler_WriteCommandHelp(CommandID_t commandID);
+void CommandHandler_PrintCommandHelp(CommandID_t commandID);
 void CommandHandler_SendCls(void);
 
 void CommandHandler_SendMessage(const char *message);

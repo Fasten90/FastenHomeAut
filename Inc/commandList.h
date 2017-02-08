@@ -88,35 +88,9 @@ CommandResult_t CommandFunction_flashwrite(uint32_t argc, char** argv);
 CommandResult_t CommandFunction_temp(uint32_t argc, char** argv);
 
 /*
-CommandResult_t CommandFunction_buzzer	( uint32_t argc, char** argv );
-CommandResult_t CommandFunction_accelerometer	( uint32_t argc, char** argv );
-CommandResult_t CommandFunction_gyroscope	( uint32_t argc, char** argv );
-CommandResult_t CommandFunction_remotecontrol	( uint32_t argc, char** argv );
-CommandResult_t CommandFunction_proximity	( uint32_t argc, char** argv );
-CommandResult_t CommandFunction_log 	( uint32_t argc, char** argv );
-CommandResult_t CommandFunction_exit	( uint32_t argc, char** argv );
-CommandResult_t CommandFunction_read	( uint32_t argc, char** argv );
-
-CommandResult_t CommandFunction_start	( uint32_t argc, char** argv );
-CommandResult_t CommandFunction_stop	( uint32_t argc, char** argv );
-CommandResult_t CommandFunction_dl		( uint32_t argc, char** argv );
-CommandResult_t CommandFunction_go		( uint32_t argc, char** argv );
-
-CommandResult_t CommandFunction_mr		( uint32_t argc, char** argv );
-CommandResult_t CommandFunction_mw		( uint32_t argc, char** argv );
-CommandResult_t CommandFunction_btn	( uint32_t argc, char** argv );
-
-CommandResult_t CommandFunction_lcd	( uint32_t argc, char** argv );
-CommandResult_t CommandFunction_stop	( uint32_t argc, char** argv );
-CommandResult_t CommandFunction_romr	( uint32_t argc, char** argv );
-CommandResult_t CommandFunction_romw	( uint32_t argc, char** argv );
-CommandResult_t CommandFunction_romsr	( uint32_t argc, char** argv );
-CommandResult_t CommandFunction_romwe	( uint32_t argc, char** argv );
-CommandResult_t CommandFunction_rominit	( uint32_t argc, char** argv );
-
-CommandResult_t CommandFunction_rfm12b	( uint32_t argc, char** argv );
-CommandResult_t CommandFunction_keypad	( uint32_t argc, char** argv );
-CommandResult_t CommandFunction_standby	( uint32_t argc, char** argv );
+CommandResult_t CommandFunction_go(uint32_t argc, char** argv);
+CommandResult_t CommandFunction_mr(uint32_t argc, char** argv);
+CommandResult_t CommandFunction_mw(uint32_t argc, char** argv);
 */
 
 

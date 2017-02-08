@@ -200,10 +200,8 @@ static bool CommandHandler_SearchCommand(void)
 	// Write result
 	CommandHandler_CheckResultAndRespond(result);
 
-
 	// Return with validation
 	return CommandValid;
-
 }
 
 
@@ -308,7 +306,7 @@ static CommandResult_t CommandHandler_RunCommand(CommandID_t commandID)
 	// Write command help, if command run failed
 	if (needWriteHelp)
 	{
-		CommandHandler_WriteCommandHelp (commandID);
+		CommandHandler_PrintCommandHelp(commandID);
 	}
 
 	return result;
@@ -343,13 +341,13 @@ void CommandHandler_SearchCommandAndPrintHelp(const char *command)
 	CommandID_t i;
 	bool isOk = false;
 
-	for (i=0; i < CommandHandler_CommandNum; i++)
+	for (i = 0; i < CommandHandler_CommandNum; i++)
 	{
 		// Find the command
 		if (!StrCmp(CommandList[i].name, command))
 		{
 			// Command's describe
-			CommandHandler_WriteCommandHelp(i);
+			CommandHandler_PrintCommandHelp(i);
 			isOk = true;
 		}
 	}
@@ -363,21 +361,22 @@ void CommandHandler_SearchCommandAndPrintHelp(const char *command)
 
 
 /**
- * \brief	Write a command help
+ * \brief	Print a command help
  */
-void CommandHandler_WriteCommandHelp(CommandID_t commandID)
+void CommandHandler_PrintCommandHelp(CommandID_t commandID)
 {
 
 	// Print command to source
 	CommandHandler_Printf(
 			"Command name: %s\r\n"
 			"Function: %s\r\n"
-			"Syntax: %s %s\r\n",
+			"Syntax: %s %s\r\n"
+			"Example: %s %s\r\n"
+			"Note: <required parameter> (optional parameter)\r\n",
 			CommandList[commandID].name,
 			CommandList[commandID].description,
-			CommandList[commandID].name,
-			CommandList[commandID].syntax);
-
+			CommandList[commandID].name, CommandList[commandID].syntax,
+			CommandList[commandID].name, CommandList[commandID].example);
 }
 
 
@@ -409,7 +408,7 @@ static CommandResult_t CommandHandler_CheckArgumentNumIsGood(uint8_t receivedArg
 		volatile uint8_t maxRequiredArgNum = 0;
 		uint8_t minRequiredArgNum = 0;
 		uint8_t i;
-		for (i=0; i<COMMANDHANDLER_COMMAND_ARG_MAX_COUNT; i++)
+		for (i = 0; i < COMMANDHANDLER_COMMAND_ARG_MAX_COUNT; i++)
 		{
 			if (commandArgNum & (1 << i))
 			{
