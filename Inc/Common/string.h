@@ -30,8 +30,18 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define strlen(a)			StringLength(a)
+#define strlen(str)					StringLength(str)
 
+// int strncmp ( const char * str1, const char * str2, size_t num );
+// return: 0 equal, >0 and <0 is not equal
+// uint8_t StrCmpWithLength(const char * ch1, const char *ch2, uint8_t length)
+// return: 0 equal, 1 not equal
+// TODO: Be careful, return values are not equal
+#define strncmp(str1, str2, num)	StrCmpWithLength(str1, str2, num)
+
+// char * strncpy ( char * destination, const char * source, size_t num );
+// uint8_t StrCpyMax(char *dest, const char *str, uint8_t maxLength)
+#define strncpy(dest, src, num)		StrCpyMax(dest, src, num)
 
 
 /*------------------------------------------------------------------------------
