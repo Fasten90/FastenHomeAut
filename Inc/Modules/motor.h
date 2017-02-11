@@ -33,6 +33,16 @@
 #define PWM_MOTOR_SERVO_TIMER_PERIOD_VALUE		(uint32_t)(200 - 1)		// ms*10
 
 
+#define MOTOR_SERVO_MIN_ANGLE		(-90)
+#define MOTOR_SERVO_OFFSET_ANGLE	(90)
+#define MOTOR_SERVO_MAX_ANGLE		(+90)
+#define MOTOR_SERVO_ANGLE_INTERVAL	(MOTOR_SERVO_MAX_ANGLE-MOTOR_SERVO_MIN_ANGLE)
+#define MOTOR_SERVO_MIN_TIMER_VALUE	(10)		// ms*10
+#define MOTOR_SERVO_MAX_TIMER_VALUE (20)		// ms*10
+#define MOTOR_SERVO_TIMER_INTERVAL	(MOTOR_SERVO_MAX_TIMER_VALUE-MOTOR_SERVO_MIN_TIMER_VALUE)
+#define MOTOR_SERVO_TIME_FULL		(10000)		// ms*10
+
+
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
@@ -51,8 +61,8 @@
 
 void MOTOR_Init(void);
 
-void CommonPWM_1Init(uint8_t percent);
-void CommonPWM_2Init(int8_t angle);
+void Motor_DcMotorTimerInit(uint8_t percent);
+void Motor_ServoTimerInit(int8_t angle);
 
 
 #endif /* HWTESTER_COMMONPWM_H_ */

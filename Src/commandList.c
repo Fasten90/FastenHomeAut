@@ -206,11 +206,11 @@ const CommandStruct CommandList[] =
 		.example = "1000 1",
 	},
 #endif
-#ifdef CONFIG_MODULE_COMMON_PWM_ENABLE
+#ifdef CONFIG_MODULE_MOTOR_ENABLE
 	{
-		.name = "pwm",
-		.commandFunctionPointer = CommandFunction_PWM,
-		.description = "PWM",
+		.name = "motor",
+		.commandFunctionPointer = CommandFunction_Motor,
+		.description = "Motor handling",
 		.syntax = "...",
 		.commandArgNum = CommandArgument_1 | CommandArgument_2,
 	},
@@ -958,45 +958,59 @@ CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv)
 
 
 
-#ifdef CONFIG_MODULE_COMMON_PWM_ENABLE
-CommandResult_t CommandFunction_PWM(uint32_t argc, char** argv)
+#ifdef CONFIG_MODULE_MOTOR_ENABLE
+CommandResult_t CommandFunction_Motor(uint32_t argc, char** argv)
 {
 	(void)argc;
 
-
-	int32_t convertValue;
-	if (StringToSignedDecimalNum(argv[1], &convertValue))
+	if (!StrCmp("dc", argv[1]))
 	{
-		if (convertValue <= 90 && convertValue > -90)
+		uint32_t convertValue;
+		if (StringToUnsignedDecimalNum(argv[2], &convertValue))
 		{
-			int8_t angle = (int8_t)convertValue;
-			CommonPWM_2Init(angle);
-			return CommandResult_Ok_SendSuccessful;
+			if (convertValue <= 100)
+			{
+				uint32_t percent = (uint16_t)convertValue;
+				Motor_DcMotorTimerInit(percent);
+				return CommandResult_Ok_SendSuccessful;
+			}
+			else
+			{
+				return CommandResult_Error_WrongArgument2;
+			}
 		}
 		else
 		{
-			return CommandResult_Error_WrongArgument1;
+			return CommandResult_Error_WrongArgument2;
 		}
 	}
-
-	/*
-	if (StringToUnsignedDecimalNum(argv[1],&convertValue))
+	else if (!StrCmp("servo", argv[1]))
 	{
-		if (convertValue <= 100)
+		int32_t convertValue;
+		if (StringToSignedDecimalNum(argv[2], &convertValue))
 		{
-			uint32_t percent = (uint16_t)convertValue;
-			CommonPWM_1Init(percent);
-			return CommandResult_Ok_SendSuccessful;
+			if (convertValue <= 90 && convertValue > -90)
+			{
+				int8_t angle = (int8_t)convertValue;
+				Motor_ServoTimerInit(angle);
+				return CommandResult_Ok_SendSuccessful;
+			}
+			else
+			{
+				return CommandResult_Error_WrongArgument2;
+			}
 		}
 		else
 		{
-			return CommandResult_Error_WrongArgument1;
+			return CommandResult_Error_WrongArgument2;
 		}
-	}*/
+	}
 	else
 	{
 		return CommandResult_Error_WrongArgument1;
 	}
+
+	return CommandResult_Error_Unknown;
 }
 #endif
 

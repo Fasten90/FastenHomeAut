@@ -112,7 +112,7 @@ int main(void)
 #endif
 
 
-#ifdef CONFIG_MODULE_COMMON_PWM_ENABLE
+#ifdef CONFIG_MODULE_MOTOR_ENABLE
 	MOTOR_Init();
 #endif
 
