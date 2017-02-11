@@ -18,8 +18,6 @@
 
 #ifdef CONFIG_MODULE_LED_ENABLE
 
-extern void Error_Handler( void );
-
 #ifdef CONFIG_USE_PANEL_NODESMALL
 /* Timer handler declaration */
 TIM_HandleTypeDef    TimLedBlueHandle;

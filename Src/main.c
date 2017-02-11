@@ -112,6 +112,11 @@ int main(void)
 #endif
 
 
+#ifdef CONFIG_MODULE_COMMON_PWM_ENABLE
+	MOTOR_Init();
+#endif
+
+
 // DEBUG USART
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	USART_Init(&Debug_UartHandle);

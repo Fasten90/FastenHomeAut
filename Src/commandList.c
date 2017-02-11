@@ -206,6 +206,15 @@ const CommandStruct CommandList[] =
 		.example = "1000 1",
 	},
 #endif
+#ifdef CONFIG_MODULE_COMMON_PWM_ENABLE
+	{
+		.name = "pwm",
+		.commandFunctionPointer = CommandFunction_PWM,
+		.description = "PWM",
+		.syntax = "...",
+		.commandArgNum = CommandArgument_1 | CommandArgument_2,
+	},
+#endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 	{
 		.name = "esp8266",
@@ -944,6 +953,50 @@ CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv)
 	}
 
 	return CommandResult_Ok;
+}
+#endif
+
+
+
+#ifdef CONFIG_MODULE_COMMON_PWM_ENABLE
+CommandResult_t CommandFunction_PWM(uint32_t argc, char** argv)
+{
+	(void)argc;
+
+
+	int32_t convertValue;
+	if (StringToSignedDecimalNum(argv[1], &convertValue))
+	{
+		if (convertValue <= 90 && convertValue > -90)
+		{
+			int8_t angle = (int8_t)convertValue;
+			CommonPWM_2Init(angle);
+			return CommandResult_Ok_SendSuccessful;
+		}
+		else
+		{
+			return CommandResult_Error_WrongArgument1;
+		}
+	}
+
+	/*
+	if (StringToUnsignedDecimalNum(argv[1],&convertValue))
+	{
+		if (convertValue <= 100)
+		{
+			uint32_t percent = (uint16_t)convertValue;
+			CommonPWM_1Init(percent);
+			return CommandResult_Ok_SendSuccessful;
+		}
+		else
+		{
+			return CommandResult_Error_WrongArgument1;
+		}
+	}*/
+	else
+	{
+		return CommandResult_Error_WrongArgument1;
+	}
 }
 #endif
 
