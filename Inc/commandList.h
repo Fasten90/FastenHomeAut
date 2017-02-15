@@ -88,11 +88,11 @@ CommandResult_t CommandFunction_flashread(uint32_t argc, char** argv);
 CommandResult_t CommandFunction_flashwrite(uint32_t argc, char** argv);
 CommandResult_t CommandFunction_temp(uint32_t argc, char** argv);
 
-/*
-CommandResult_t CommandFunction_go(uint32_t argc, char** argv);
 CommandResult_t CommandFunction_mr(uint32_t argc, char** argv);
 CommandResult_t CommandFunction_mw(uint32_t argc, char** argv);
-*/
+
+CommandResult_t CommandFunction_go(uint32_t argc, char** argv);
+
 
 
 

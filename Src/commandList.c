@@ -261,7 +261,6 @@ const CommandStruct CommandList[] =
 		.syntax = "<address> <block/sector>",
 		.commandArgNum = CommandArgument_2,
 	},
-
 	{
 		.name = "flashread",
 		.commandFunctionPointer = CommandFunction_flashread,
@@ -269,7 +268,6 @@ const CommandStruct CommandList[] =
 		.syntax = "<address>",
 		.commandArgNum = CommandArgument_1,
 	},
-
 	{
 		.name = "flashwrite",
 		.commandFunctionPointer = CommandFunction_flashwrite,
@@ -278,8 +276,45 @@ const CommandStruct CommandList[] =
 		.commandArgNum = CommandArgument_2,
 	},
 #endif
-
-
+#ifdef CONFIG_DEBUG_RAMREAD_WRITE_COMMAND_ENABLE
+	{
+		.name = "mr",
+		.commandFunctionPointer = CommandFunction_mr,
+		.description = "Memory read",
+		.syntax = "<address> <size>",
+		.commandArgNum = CommandArgument_2,
+	},
+	{
+		.name = "mwb",
+		.commandFunctionPointer = CommandFunction_mw,
+		.description = "Memory write",
+		.syntax = "<address> <byte>",
+		.commandArgNum = CommandArgument_2,
+	},
+	{
+		.name = "mwh",
+		.commandFunctionPointer = CommandFunction_mw,
+		.description = "Memory write",
+		.syntax = "<address> <byte>",
+		.commandArgNum = CommandArgument_2,
+	},
+	{
+		.name = "mww",
+		.commandFunctionPointer = CommandFunction_mw,
+		.description = "Memory write",
+		.syntax = "<address> <byte>",
+		.commandArgNum = CommandArgument_2,
+	},
+#endif
+#ifdef CONFIG_DEBUG_GO_COMMAND_ENABLE
+	{
+		.name = "go",
+		.commandFunctionPointer = CommandFunction_go,
+		.description = "Jump to address",
+		.syntax = "<address>",
+		.commandArgNum = CommandArgument_1,
+	},
+#endif
 
 	/*
 	 * XXX: Add new commands here
@@ -1145,7 +1180,7 @@ CommandResult_t CommandFunction_temp(uint32_t argc, char** argv)
  * \brief	Flash erase
  * 			Use: 'flashdel <address> <block/sector>'
  */
-CommandResult_t CommandFunction_flashdel	( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_flashdel(uint32_t argc, char** argv)
 {
 	uint32_t Arg2Num;
 
@@ -1182,7 +1217,7 @@ CommandResult_t CommandFunction_flashdel	( uint32_t argc, char** argv )
  * \brief	Flash read
  * 			Use: 'flashread <address>'
  */
-CommandResult_t CommandFunction_flashread	( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_flashread(uint32_t argc, char** argv)
 {
 
 	uint32_t Arg2Num;
@@ -1213,12 +1248,12 @@ CommandResult_t CommandFunction_flashread	( uint32_t argc, char** argv )
  * \brief	Flash write
  * 			Use: 'flashwrite <address> <data>'
  */
-CommandResult_t CommandFunction_flashwrite	( uint32_t argc, char** argv )
+CommandResult_t CommandFunction_flashwrite(uint32_t argc, char** argv)
 {
 	uint32_t Arg2Num;
 
 	// Convert arg2 hex
-	if ( !StringHexToNum(argv[1],&Arg2Num))
+	if (!StringHexToNum(argv[1],&Arg2Num))
 	{
 		return CommandResult_Error_WrongArgument1;
 	}
@@ -1253,7 +1288,7 @@ CommandResult_t CommandFunction_flashwrite	( uint32_t argc, char** argv )
 /**
  * \brief	Raspberry Pi command
  */
-CommandResult_t CommandFunction_raspberrypi (uint32_t argc, char** argv)
+CommandResult_t CommandFunction_raspberrypi(uint32_t argc, char** argv)
 {
 	(void)argc;
 
@@ -1299,97 +1334,157 @@ CommandResult_t CommandFunction_raspberrypi (uint32_t argc, char** argv)
 
 
 
-#if 0
-// Function: mr (memory read)
-// mr <source> <size>
-// source: hex
-// size: dec
-// read <size> byte-s from <source> address
-CommandResult_t CommandFunction_mr ( uint32_t argc, char** argv ) {
-
+#ifdef CONFIG_DEBUG_RAMREAD_WRITE_COMMAND_ENABLE
+/*
+ * \brief	Function: mr (memory read)
+ * mr <source> <size>
+ * source: hex
+ * size: dec
+ * read <size> byte-s from <source> address
+ */
+CommandResult_t CommandFunction_mr(uint32_t argc, char** argv)
+{
+	(void)argc;
 
 	uint32_t *source;
-	uint32_t *p;
-	unsigned short int size;
-	uint32_t i;
+	int16_t size;
+	uint16_t i;
 	uint32_t Arg2Num;
 	uint32_t Arg3Num;
 
-	if ( argc < 3 ) {	USART_SendString("Too few arguments!\r\n");	return 0;	}
-	if ( argc > 3 ) {	USART_SendString("Too many arguments!\r\n");	return 0;	}
-
-	if ( StringIsHexadecimalString(argv[1]) ) Arg2Num = StringHexToNum(argv[1]);	// Convert arg2, source to hex
-	else { USART_SendString("Wrong 1. argument!"); return 2; }
-	if ( StringIsUnsignedDecimalString(argv[2]) ) Arg3Num = StringDecToNum(argv[2]);	// Convert arg3, size to dec
-	else { USART_SendString("Wrong 2. argument!"); return 2; }
-
-	source = ( uint32_t *) Arg2Num;		// casting for valid numbers
-	size = ( unsigned short int ) Arg3Num;	// <size> max 256
-	// TODO: checking the correct address
-
-	CommandHandler_Printf("Source: 0x%w\r\n"
-			"Size: %d\r\n",
-			source,size);
-
-	i=0;
-	for (p = source; p < source+size/4; p++) {
-		if ( !(i % 4) ) CommandHandler_Printf("\r\n 0x%w:",p);
-		CommandHandler_Printf(" %w",*p);
-		i++;
+	// Convert arg2, source to hex
+	if (!StringHexToNum(argv[1], &Arg2Num))
+	{
+		return CommandResult_Error_WrongArgument1;
+	}
+	// Convert arg3, size to dec
+	if (!StringToUnsignedDecimalNum(argv[2], &Arg3Num))
+	{
+		return CommandResult_Error_WrongArgument2;
 	}
 
-	return 1;
+	// casting for valid numbers
+	source = (uint32_t *)Arg2Num;
+	size = (int16_t)Arg3Num;
+	// <size> max 256
+
+	// TODO: checking the correct address
+
+	CommandHandler_Printf("Source: 0x%X\r\n"
+							"Size: %d\r\n",
+							source, size);
+
+	for (i = 0; i < size; i++)
+	{
+		if (!(i % 4))
+		{
+			// 0., 4., ...
+			CommandHandler_Printf("\r\n 0x%X:", (uint32_t)&source[i]);
+		}
+		CommandHandler_Printf(" %02X", source[i]);
+	}
+
+	return CommandResult_Ok;
 }
-#endif
 
 
 
-#if 0
-// FunctioN: mw - memory write
-// mwb <destination> <data>
-// destination: hex
-// data: hex
-// mwb, mwh, mww commands
-CommandResult_t CommandFunction_mw ( uint32_t argc, char** argv ) {
+/*
+ * \brief	FunctioN: mw - memory write
+ * mwb <destination> <data>
+ * destination: hex
+ * data: hex
+ * mwb, mwh, mww commands
+ */
+CommandResult_t CommandFunction_mw(uint32_t argc, char** argv)
+{
+	(void)argc;
 
-	unsigned char *destination1;
-	unsigned short int *destination2;
+	uint8_t *destination1;
+	uint16_t *destination2;
 	uint32_t *destination3;
 	uint32_t Arg2Num;
 	uint32_t Arg3Num;
 
-	if ( argc < 3 ) { USART_SendString("Too few arguments!\r\n");	return 0; }
-	if ( argc > 3 ) { USART_SendString("Too many arguments!\r\n"); return 0; }
-
-	if ( StringIsHexadecimalString(argv[1]) ) Arg2Num = StringHexToNum(argv[1]);	// Convert hex
-	else { USART_SendString("Wrong 1. argument!"); return 2; }
-	if ( StringIsHexadecimalString(argv[2]) ) Arg3Num = StringHexToNum(argv[2]);	// Convert hex
-	else { USART_SendString("Wrong 2. Argument!"); return 2; }
-
-
-	if (!StrCmp(argv[0],"mwb")) {
-		destination1 = ( unsigned char *) Arg2Num;
-		*destination1 = ( unsigned char ) Arg3Num;
-		CommandHandler_Printf("Write: %b to: %w",Arg3Num,Arg2Num);
+	// Convert hex
+	if (!StringHexToNum(argv[1], &Arg2Num))
+	{
+		return CommandResult_Error_WrongArgument1;
 	}
-	else if (!StrCmp(argv[0],"mwh")) {
-		destination2 = ( unsigned short int *) Arg2Num;
-		*destination2 = ( unsigned short int) Arg3Num;
-		CommandHandler_Printf("Write: %h to: %w",Arg3Num,Arg2Num);
-	}
-	else if (!StrCmp(argv[0],"mww")) {
-		destination3 = ( uint32_t *) Arg2Num;
-		*destination3 = ( uint32_t ) Arg3Num;
-		CommandHandler_Printf("Write: %w to: %w",Arg3Num,Arg2Num);
+	// Convert hex
+	if (!StringHexToNum(argv[2], &Arg3Num))
+	{
+		return CommandResult_Error_WrongArgument2;
 	}
 
+	if (!StrCmp(argv[0], "mwb"))
+	{
+		destination1 = (uint8_t *)Arg2Num;
+		*destination1 = (uint8_t)Arg3Num;
+		CommandHandler_Printf("Write: %02X to: %X", Arg3Num, Arg2Num);
+	}
+	else if (!StrCmp(argv[0], "mwh"))
+	{
+		destination2 = (uint16_t *)Arg2Num;
+		*destination2 = (uint16_t)Arg3Num;
+		CommandHandler_Printf("Write: %04X to: %X", Arg3Num, Arg2Num);
+	}
+	else if (!StrCmp(argv[0], "mww"))
+	{
+		destination3 = (uint32_t *)Arg2Num;
+		*destination3 = (uint32_t)Arg3Num;
+		CommandHandler_Printf("Write: %08X to: %X", Arg3Num, Arg2Num);
+	}
+	else
+	{
+		return CommandResult_Error_Unknown;
+	}
 
-	return 1;
+	return CommandResult_Ok;
 }
 #endif
 
 
 
+#ifdef CONFIG_DEBUG_GO_COMMAND_ENABLE
+/**
+ * \brief	Function: go (jump to an address)
+ * go <destination>
+ * jump <destination> address
+ */
+CommandResult_t CommandFunction_go(uint32_t argc, char** argv)
+{
+	(void)argc;
+
+	uint32_t destination;
+	int (*fpntr)(void);
+	uint32_t Arg2Num;
+
+
+	// Convert hex
+	if (!StringHexToNum(argv[1], &Arg2Num))
+	{
+		return CommandResult_Error_WrongArgument1;
+	}
+
+	destination = Arg2Num;
+	CommandHandler_Printf("Go destination: 0x%X\r\n", destination);
+
+	fpntr = (int (*)(void))destination;		// casting
+	fpntr();
+
+	// Now, for example: "go 20000151"
+
+	// We can use the "jump" ASM instruction, but not a good idea
+	// Programming manual page 92, B instruction
+
+	return CommandResult_Ok;
+}
+#endif
+
+
+
+// TODO: Delete
 #if 0
 // Function: ESP8266 bridge
 CommandResult_t CommandFunction_ESP8266	( uint32_t argc, char** argv )
