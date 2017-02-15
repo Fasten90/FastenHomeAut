@@ -100,7 +100,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #include "led.h"
 #endif
 
-#ifdef CONFIG_USE_LEDPWM_ENABLE
+#ifdef CONFIG_MODULE_LEDPWM_ENABLE
 #include "LedPWM.h"
 #endif
 

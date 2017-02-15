@@ -19,7 +19,7 @@
 #include "LedPWM.h"
 
 
-#ifdef CONFIG_USE_LEDPWM_ENABLE
+#ifdef CONFIG_MODULE_LEDPWM_ENABLE
 
 /*------------------------------------------------------------------------------
  *  Global variables
@@ -280,6 +280,6 @@ void LED_PWM_ChangePercent(TIM_HandleTypeDef *TimHandle, uint32_t timerChannel, 
 
 }
 
-#endif	// #ifdef CONFIG_USE_LEDPWM_ENABLE
+#endif	// #ifdef CONFIG_MODULE_LEDPWM_ENABLE
 
 
