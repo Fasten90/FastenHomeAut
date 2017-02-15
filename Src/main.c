@@ -100,7 +100,6 @@ int main(void)
 
 
 #ifdef CONFIG_MODULE_COMMON_DAC_ENABLE
-	HAL_DAC_MspInit(&DacHandle);	// TODO: there is no call for this?
 	DAC_Init();
 #endif
 
@@ -214,6 +213,7 @@ int main(void)
 	uint32_t elapsedTick = 0;
 	#endif
 
+	// Infinite loop
 	while (1)
 	{
 		#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
@@ -237,12 +237,9 @@ int main(void)
 #endif
 	
 
-	// Infinite loop - never reached
-	while (1)
-	{
-		Error_Handler();
-	}
-	
+	// Never reach this code
+	Error_Handler();
+
 }
 
 

@@ -44,6 +44,7 @@ void Error_Handler(void)
 	// Turn off LEDs
 	LED_BLUE_OFF();
 	LED_GREEN_OFF();
+	LED_RED_ON();
 
 #ifdef CONFIG_DEBUG_MODE
 	// Stop debugger
