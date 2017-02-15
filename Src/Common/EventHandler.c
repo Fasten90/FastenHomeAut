@@ -99,6 +99,7 @@ void EventHandler_SetEventFlag(EventName_t eventName, EventFlag_t flag)
 {
 	EventId_t i;
 
+	// TODO: eventName = ID ?
 	// Find event
 	for (i = 0; i < EventListNum; i++)
 	{

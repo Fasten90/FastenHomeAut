@@ -164,48 +164,9 @@ void BUTTON_Init ( void )
 }
 
 
-
-
-
-/**
-  * @brief EXTI line detection callbacks
-  * @param GPIO_Pin: Specifies the pins connected EXTI line
-  * @retval None
-  */
 /*
-// move to it.c
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-	if (GPIO_Pin == BUTTON_UP_GPIO_PIN)
-	{
-		// Toggle LED
-		LED_RED_TOGGLE();
-		BUTTON_Clicked |= ( ( 1 << PressedButton_Pressed) | ( 1 << PressedButton_Up ) );
-	}
-	if (GPIO_Pin == BUTTON_DOWN_GPIO_PIN)
-	{
-		// Toggle LED
-		LED_RED_TOGGLE();
-		BUTTON_Clicked |= ( ( 1 << PressedButton_Pressed) | ( 1 << PressedButton_Down ) );
-	}
-	if (GPIO_Pin == BUTTON_RIGHT_GPIO_PIN)
-	{
-		// Toggle LED
-		LED_RED_TOGGLE();
-		BUTTON_Clicked |= ( ( 1 << PressedButton_Pressed) | ( 1 << PressedButton_Right ) );
-	}
-	if (GPIO_Pin == BUTTON_LEFT_GPIO_PIN)
-	{
-		// Toggle LED
-		LED_RED_TOGGLE();
-		BUTTON_Clicked |= ( ( 1 << PressedButton_Pressed) | ( 1 << PressedButton_Left ) );
-	}
-	
-	//BUTTON_Clicked = 1;
-	
-}
-*/
-
+ * \note	EXTI GPIO callbacks function moved to it.c, because not every GPIO are button pin
+ */
 
 #endif	// #ifdef CONFIG_MODULE_BUTTON_ENABLE
 

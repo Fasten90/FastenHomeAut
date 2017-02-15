@@ -36,7 +36,11 @@ typedef enum
 {
 	Event_Unknown,
 	Event_TestExample,
-	Event_DebugUartReceivedCommand
+	Event_DebugUartReceivedCommand,
+
+#ifdef CONFIG_MODULE_BUTTON_ENABLE
+	Event_ButtonPressed
+#endif
 
 	// XXX: Add here new event
 

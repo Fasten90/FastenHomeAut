@@ -222,16 +222,6 @@ void CommandHandler_CheckCommand(void)
 		if (CommandHandler_CommandReceiveEnable)
 		{
 
-#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
-			// Test for Raspberry Pi
-			if (BUTTON_Clicked)
-			{
-				BUTTON_Clicked = 0;
-				RASPBERRYPI_SendMessage(1, Function_Alarm, Alarm_PressedButton , 17);
-			}
-#endif
-
-
 			#ifdef CONFIG_USE_FREERTOS
 			// Wait semaphore
 			if (xSemaphoreTake(DEBUG_USART_Rx_Semaphore,1000) == pdTRUE)

@@ -723,6 +723,7 @@ CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 
 	uint8_t i;
 
+
 #ifdef CONFIG_MODULE_LED_ENABLE
 	// LED test
 	CommandHandler_SendLine("LED test");
@@ -734,6 +735,8 @@ CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 		DelayMs(500);
 	}
 
+	Watchdog_Clear();
+
 	// LEDs off
 	for (i=LED_NUM_MIN; i<=LED_NUM_MAX; i++)
 	{
@@ -741,6 +744,25 @@ CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 		DelayMs(500);
 	}
 #endif	// #ifdef CONFIG_MODULE_LED_ENABLE
+
+
+#ifdef CONFIG_MODULE_BUTTON_ENABLE
+	// Clear flag
+	BUTTON_Clicked = 0;
+
+	CommandHandler_SendLine("\r\nButton test: Please press button!");
+
+	while (!BUTTON_Clicked)
+	{
+		CommandHandler_SendChar('.');
+		DelayMs(500);
+		Watchdog_Clear();
+	}
+
+	CommandHandler_SendLine("Button pressed");
+
+#endif
+
 
 	// Beep in terminal
 	CommandHandler_SendLine("Beep test");

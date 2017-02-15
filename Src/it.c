@@ -234,7 +234,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		BUTTON_Clicked |= ( ( 1 << PressedButton_Pressed) | ( 1 << PressedButton_Left ) );
 	}
 	
-	//BUTTON_Clicked = 1;
 #endif	// #ifdef CONFIG_MODULE_BUTTON_ENABLE
 #if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_NUCLEOF401RE)
 	if (GPIO_Pin == BUTTON_USER_GPIO_PIN)
@@ -243,6 +242,9 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		LED_GREEN_TOGGLE();
 		BUTTON_Clicked |= ( ( 1 << PressedButton_Pressed) | ( 1 << PressedButton_Up ) );
 	}
+#endif
+#ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
+	EventHandler_SetEventFlag(Event_ButtonPressed, EVENT_RUN);
 #endif
 #endif
 
