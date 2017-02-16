@@ -14,9 +14,9 @@
 #define COMMANDHANDLER_H_
 
 
+#include "Communication.h"
+#include "EscapeSequence.h"
 #include "include.h"
-#include "escapesequence.h"
-#include "communication.h"
 #include "board.h"
 #include "version.h"
 
@@ -31,7 +31,7 @@
 
 #define COMMANDHANDLER_MAX_COMMAND_LENGTH			(255U)
 #define COMMANDHANDLER_COMMAND_ARG_MAX_COUNT		(3)
-#define COMMANDHANDLER_COMMAND_ARG_MAX_NUM_BITS	(0x07)	// 0b111 <-- warning: "binary constants are a GCC extension
+#define COMMANDHANDLER_COMMAND_ARG_MAX_NUM_BITS		(0x07)	// 0b111 <-- warning: "binary constants are a GCC extension
 
 #define COMMANDHANDLER_HISTORY_MAX_COUNT			(5)
 

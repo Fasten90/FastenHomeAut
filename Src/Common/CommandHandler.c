@@ -11,17 +11,16 @@
  */
 
 
-#include <CommandList.h>
+#include "CommandList.h"
+#include "EscapeSequence.h"
 #include "include.h"
 #include "stdint.h"
-#include "escapesequence.h"
 #include "GlobalVarHandler.h"
-#include "communication.h"
-#ifdef MODULE_COMMANDHANDLER_UNITTEST_ENABLE
-#include "unittest.h"
-#endif
-
 #include "CommandHandler.h"
+
+#ifdef MODULE_COMMANDHANDLER_UNITTEST_ENABLE
+#include "UnitTest.h"
+#endif
 
 
 

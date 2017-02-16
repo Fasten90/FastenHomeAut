@@ -13,12 +13,12 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
-#include "commandList.h"
+#include "FormattedMessage.h"
+#include "CommandList.h"
 #include "include.h"
 
 #include "CommandHandler.h"
 #include "GlobalVarHandler.h"
-#include "formattedMessage.h"
 #include "Globals.h"
 
 

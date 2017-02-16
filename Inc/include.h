@@ -84,20 +84,21 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #include "MEM.h"
 
 #include "globals.h"
-#include "string.h"
-#include "calc.h"
+#include "String.h"
+#include "Calc.h"
 #include "DateTime.h"
-#include "network.h"
+#include "Network.h"
+#include "Communication.h"
 
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-#include "usart.h"
+#include "USART.h"
 #include "Terminal.h"
 #include "CommandHandler.h"
-#include <CommandList.h>
+#include "CommandList.h"
 #endif
 
 #ifdef CONFIG_MODULE_LED_ENABLE
-#include "led.h"
+#include "LED.h"
 #endif
 
 #ifdef CONFIG_MODULE_LEDPWM_ENABLE
@@ -105,7 +106,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #endif
 
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
-#include "button.h"
+#include "Button.h"
 #endif
 
 #ifdef CONFIG_MODULE_IO_ENABLE
@@ -138,7 +139,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #endif
 
 #ifdef CONFIG_MODULE_FLASH_ENABLE
-#include <Flash_S25FL.h>	// Work, but not need
+#include "Flash_S25FL.h"	// Work, but not need
 #endif
 
 #ifdef CONFIG_MODULE_COMMON_DAC_ENABLE
@@ -154,7 +155,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #endif
 
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
-#include "motor.h"
+#include "Motor.h"
 #endif
 
 #ifdef CONFIG_SWO_ENABLE
