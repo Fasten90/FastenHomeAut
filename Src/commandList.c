@@ -356,7 +356,7 @@ CommandResult_t CommandFunction_cls(uint32_t argc, char** argv)
 	(void)argc;
 	(void)argv;
 
-	CommandHandler_SendCls();
+	Terminal_SendCls();
 
 	return CommandResult_Ok;
 }
@@ -388,7 +388,7 @@ CommandResult_t CommandFunction_welcome(uint32_t argc, char** argv)
 	(void)argc;
 	(void)argv;
 
-	CommandHandler_SendWelcome();
+	Terminal_SendWelcome();
 
 	return CommandResult_Ok;
 }
@@ -745,7 +745,7 @@ CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
 	CommandHandler_UnitTest();
 #endif
 
-	return CommandResult_Ok;
+	return CommandResult_Ok_SendSuccessful;
 }
 
 
@@ -804,7 +804,7 @@ CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 
 	// Beep in terminal
 	CommandHandler_SendLine("Beep test");
-	CommandHandler_SendChar(USART_KEY_BELL);
+	CommandHandler_SendChar(TERMINAL_KEY_BELL);
 
 
 	// Send formatted messages

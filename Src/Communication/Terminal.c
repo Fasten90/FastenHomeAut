@@ -12,7 +12,6 @@
 
 
 
-
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
@@ -27,18 +26,21 @@
  *----------------------------------------------------------------------------*/
 
 /// USART Read cnt
-volatile uint8_t USART_RxBufferReadCnt = 0;
+volatile uint8_t Terminal_RxBufferReadCnt = 0;
 
 #if ( USART_RXBUFFERSIZE != 256 )
 #warning "Ring buffer counter error (USART_RxBufferReadCnt)"
 #endif
 
 /// Receive buffers
-volatile char CommandHandler_CommandActual[COMMANDHANDLER_MAX_COMMAND_LENGTH] = { 0 };
-volatile char CommandHandler_CommandActualEscape[4] = { 0 };
+volatile char Terminal_CommandActual[TERMINAL_MAX_COMMAND_LENGTH] = { 0 };
+
+#ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
+volatile char Terminal_CommandActualEscape[4] = { 0 };
+#endif
 
 /// Enable command handler
-const bool CommandHandler_CommandReceiveEnable = true;
+const bool Terminal_CommandReceiveEnable = true;
 
 
 
@@ -47,67 +49,67 @@ const bool CommandHandler_CommandReceiveEnable = true;
  *----------------------------------------------------------------------------*/
 
 /// Enable sending back: "Echo mode"
-static const bool CommandHandler_CommandSendBackCharEnable = true;
+static const bool Terminal_CommandSendBackCharEnable = true;
 
 /// Variables For CommandHandler
-static volatile bool CommandHandler_CommandReceivedEvent = false;
-static volatile bool CommandHandler_CommandReceivedLastChar = false;
-static volatile bool CommandHandler_CommandReceivedNotLastChar = false;
-static volatile bool CommandHandler_CommandReadable = false;
-static volatile bool CommandHandler_CommandReceivedBackspace = false;
+static volatile bool Terminal_CommandReceivedEvent = false;
+static volatile bool Terminal_CommandReceivedLastChar = false;
+static volatile bool Terminal_CommandReceivedNotLastChar = false;
+static volatile bool Terminal_CommandReadable = false;
+static volatile bool Terminal_CommandReceivedBackspace = false;
 
-#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
-static volatile bool CommandHandler_CommandReceivedDelete = false;
-static volatile bool CommandHandler_CommandReceivedTabulator = false;
+#ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
+static volatile bool Terminal_CommandReceivedDelete = false;
+static volatile bool Terminal_CommandReceivedTabulator = false;
 #endif
 
-static volatile uint8_t CommandHandler_CommandActualLength = 0;
-static volatile uint8_t CommandHandler_CommandSentLength = 0;
-static volatile uint8_t CommandHandler_CommandCursorPosition = 0;
+static volatile uint8_t Terminal_CommandActualLength = 0;
+static volatile uint8_t Terminal_CommandSentLength = 0;
+static volatile uint8_t Terminal_CommandCursorPosition = 0;
 
-static volatile bool CommandHandler_CommandEscapeSequenceReceived = false;
-static volatile uint8_t CommandHandler_CommandEscapeSequenceInProgress = 0;
-static volatile uint8_t CommandHandler_CommandEscape_cnt = 0;
+static volatile bool Terminal_CommandEscapeSequenceReceived = false;
+static volatile uint8_t Terminal_CommandEscapeSequenceInProgress = 0;
+static volatile uint8_t Terminal_CommandEscape_cnt = 0;
 
 
 
-#ifdef CONFIG_COMMANDHANDLER_USE_HISTORY
-static uint8_t CommandHandler_HistorySaveCnt = 0;
-static uint8_t CommandHandler_HistoryLoadCnt = 0;
-static char CommandHandler_HistoryList[COMMANDHANDLER_HISTORY_MAX_COUNT][COMMANDHANDLER_MAX_COMMAND_LENGTH] =
+#ifdef CONFIG_TERMINAL_USE_HISTORY
+static uint8_t Terminal_HistorySaveCnt = 0;
+static uint8_t Terminal_HistoryLoadCnt = 0;
+static char Terminal_HistoryList[TERMINAL_HISTORY_MAX_COUNT][TERMINAL_MAX_COMMAND_LENGTH] =
 {
 
-#if defined(CONFIG_COMMANDHANDLER_USE_HISTORY) && (COMMANDHANDLER_HISTORY_MAX_COUNT > 0)
+#if defined(CONFIG_TERMINAL_USE_HISTORY) && (TERMINAL_HISTORY_MAX_COUNT > 0)
 
-	#if ( COMMANDHANDLER_HISTORY_MAX_COUNT > 0 )
+	#if ( TERMINAL_HISTORY_MAX_COUNT > 0 )
 	{
 		"help"
 	},
 	#endif
-	#if ( COMMANDHANDLER_HISTORY_MAX_COUNT > 1 )
+	#if ( TERMINAL_HISTORY_MAX_COUNT > 1 )
 	{
 		"led 1 1"
 	},
 	#endif
-	#if ( COMMANDHANDLER_HISTORY_MAX_COUNT > 2 )
+	#if ( TERMINAL_HISTORY_MAX_COUNT > 2 )
 	{
 		"cls"
 	},
 	#endif
-	#if ( COMMANDHANDLER_HISTORY_MAX_COUNT > 3 )
+	#if ( TERMINAL_HISTORY_MAX_COUNT > 3 )
 	{
 		"test"
 	},
 	#endif
-	#if ( COMMANDHANDLER_HISTORY_MAX_COUNT > 4 )
+	#if ( TERMINAL_HISTORY_MAX_COUNT > 4 )
 	{
 		"reset"
 	}
 	#endif
-	#if ( COMMANDHANDLER_HISTORY_MAX_COUNT > 5 )
+	#if ( TERMINAL_HISTORY_MAX_COUNT > 5 )
 	#warning "Isn't set CommandHandler history commands"
 	#endif
-#elif  (!COMMANDHANDLER_HISTORY_MAX_COUNT)
+#elif  (!TERMINAL_HISTORY_MAX_COUNT)
 #error "CONFIG_COMMANDHANDLER_USE_HISTORY define is defined, but 'COMMANDHANDLER_HISTORY_MAX_COUNT'"
 	"define is not set valid value."
 #endif
@@ -115,8 +117,8 @@ static char CommandHandler_HistoryList[COMMANDHANDLER_HISTORY_MAX_COUNT][COMMAND
 #endif
 
 
-#ifdef CONFIG_COMMANDHANDLER_GET_PASSWORD_ENABLE
-static const char CommandHandler_Password[] = "password";
+#ifdef CONFIG_TERMINAL_GET_PASSWORD_ENABLE
+static const char Terminal_Password[] = "password";
 #endif
 
 
@@ -125,30 +127,30 @@ static const char CommandHandler_Password[] = "password";
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
-static void CommandHandler_ProcessReceivedCharacter(void);
+static void Terminal_ProcessReceivedCharacter(void);
 
-#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
-static void CommandHandler_CommandDelete(void);
-static void CommandHandler_CommandTabulator(void);
-static void CommandHandler_CommandResendLine(bool needRestoreCursor);
-static bool CommandHandler_CommandEscapeCharValidation(void);
+#ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
+static void Terminal_CommandDelete(void);
+static void Terminal_CommandTabulator(void);
+static void Terminal_CommandResendLine(bool needRestoreCursor);
+static bool Terminal_CommandEscapeCharValidation(void);
 #endif
 
-static void CommandHandler_CommandBackspace(void);
+static void Terminal_CommandBackspace(void);
 
 
-#ifdef CONFIG_COMMANDHANDLER_USE_HISTORY
+#ifdef CONFIG_TERMINAL_USE_HISTORY
 // CommandHandler history
-static void CommandHandler_HistorySave(void);
-static bool CommandHandler_HistoryFindInList(void);
-static void CommandHandler_HistoryLoad(uint8_t direction);
+static void Terminal_HistorySave(void);
+static bool Terminal_HistoryFindInList(void);
+static void Terminal_HistoryLoad(uint8_t direction);
 #endif
 
-static void CommandHandler_ConvertSmallLetter(void);
+static void Terminal_ConvertSmallLetter(void);
 
-#ifdef CONFIG_COMMANDHANDLER_GET_PASSWORD_ENABLE
-static void CommandHandler_GetPassword(void);
-static bool CommandHandler_CheckPassword(const char *string);
+#ifdef CONFIG_TERMINAL_GET_PASSWORD_ENABLE
+static void Terminal_GetPassword(void);
+static bool Terminal_CheckPassword(const char *string);
 #endif
 
 
@@ -166,17 +168,17 @@ void Terminal_Init(void)
 
 	// Initialize
 
-	CommandHandler_CommandReceivedEvent = false;
-	CommandHandler_CommandReceivedNotLastChar = false;
+	Terminal_CommandReceivedEvent = false;
+	Terminal_CommandReceivedNotLastChar = false;
 
-	CommandHandler_CommandActualLength = 0;
-	CommandHandler_CommandSentLength = 0;
-	CommandHandler_CommandCursorPosition = 0;
+	Terminal_CommandActualLength = 0;
+	Terminal_CommandSentLength = 0;
+	Terminal_CommandCursorPosition = 0;
 
-#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
-	CommandHandler_CommandEscapeSequenceReceived = false;
-	CommandHandler_CommandEscapeSequenceInProgress = false;
-	CommandHandler_CommandEscape_cnt = 0;
+#ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
+	Terminal_CommandEscapeSequenceReceived = false;
+	Terminal_CommandEscapeSequenceInProgress = false;
+	Terminal_CommandEscape_cnt = 0;
 #endif
 
 
@@ -192,16 +194,18 @@ void Terminal_Init(void)
 	// Start receive
 	USART_StartReceiveMessage();
 
-#ifdef CONFIG_COMMANDHANDLER_GET_PASSWORD_ENABLE
-	CommandHandler_GetPassword();
+#ifdef CONFIG_TERMINAL_GET_PASSWORD_ENABLE
+	Terminal_GetPassword();
 #endif
 
 	// End of initialization
 
 
 	// Welcome message
-	CommandHandler_SendWelcome();
+	Terminal_SendWelcome();
 
+	TERMINAL_SEND_NEW_LINE();
+	TERMINAL_SEND_PROMT_NEW_LINE();			// New promt
 
 	return;
 }
@@ -215,95 +219,97 @@ void CommandHandler_CheckCommand(void)
 {
 
 	// Infinite "task" loop
+	// \note	If use EventHandler, this loop is not infinite loop,
+	//			it will be return after finished
 	while (1)
 	{
 
 		// Always checking the Command
-		if (CommandHandler_CommandReceiveEnable)
+		if (Terminal_CommandReceiveEnable)
 		{
 
 			#ifdef CONFIG_USE_FREERTOS
 			// Wait semaphore
 			if (xSemaphoreTake(DEBUG_USART_Rx_Semaphore,1000) == pdTRUE)
 			{
-				CommandHandler_ProcessReceivedCharacter();
+				Terminal_ProcessReceivedCharacter();
 			}
 			#else
-			// If not used FreeRTOS, always check characters
-			CommandHandler_ProcessReceivedCharacter();
+			// If not used FreeRTOS / EventHandler, always check characters
+			Terminal_ProcessReceivedCharacter();
 			#endif
 
-			if (CommandHandler_CommandReceivedEvent)
+			if (Terminal_CommandReceivedEvent)
 			{
 				// Clear event
-				CommandHandler_CommandReceivedEvent = false;
+				Terminal_CommandReceivedEvent = false;
 
 				// Only one event will receive
-				if (CommandHandler_CommandReceivedBackspace)
+				if (Terminal_CommandReceivedBackspace)
 				{
 					// Backspace
-					CommandHandler_CommandReceivedBackspace = false;
-					CommandHandler_CommandBackspace();
+					Terminal_CommandReceivedBackspace = false;
+					Terminal_CommandBackspace();
 				}
-#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
-				else if (CommandHandler_CommandReceivedDelete)
+#ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
+				else if (Terminal_CommandReceivedDelete)
 				{
 					// Delete
-					CommandHandler_CommandReceivedDelete = false;
-					CommandHandler_CommandDelete();
+					Terminal_CommandReceivedDelete = false;
+					Terminal_CommandDelete();
 				}
-				else if (CommandHandler_CommandReceivedNotLastChar)
+				else if (Terminal_CommandReceivedNotLastChar)
 				{
 					// Received inner character
 
-					CommandHandler_CommandReceivedNotLastChar = false;
+					Terminal_CommandReceivedNotLastChar = false;
 
 					// Step right
 					CommandHandler_SendMessage(ESCAPE_CURSORRIGHT);
 					// Not Last char (it is inner character) - Refresh the line
-					CommandHandler_CommandResendLine(true);
+					Terminal_CommandResendLine(true);
 				}
-				else if (CommandHandler_CommandEscapeSequenceReceived)
+				else if (Terminal_CommandEscapeSequenceReceived)
 				{
 					// Escape sequence
-					CommandHandler_CommandEscapeSequenceReceived = false;
-					CommandHandler_CommandEscapeCharValidation();
+					Terminal_CommandEscapeSequenceReceived = false;
+					Terminal_CommandEscapeCharValidation();
 				}
-				else if (CommandHandler_CommandReceivedTabulator)
+				else if (Terminal_CommandReceivedTabulator)
 				{
 					// Received tabulator
-					CommandHandler_CommandReceivedTabulator = false;
-					CommandHandler_CommandTabulator();
+					Terminal_CommandReceivedTabulator = false;
+					Terminal_CommandTabulator();
 				}
 #endif
-				else if (CommandHandler_CommandReadable)
+				else if (Terminal_CommandReadable)
 				{
 					// Pressed Enter, EndCommand();
-					CommandHandler_CommandReadable = false;
-					if (CommandHandler_CommandActualLength > 0)
+					Terminal_CommandReadable = false;
+					if (Terminal_CommandActualLength > 0)
 					{
 						// There are some char in the line
 						// has an command
-						CommandHandler_ConvertSmallLetter();
+						Terminal_ConvertSmallLetter();
 
-						COMMANDHANDLER_SEND_NEW_LINE();
+						TERMINAL_SEND_NEW_LINE();
 
-						#ifdef CONFIG_COMMANDHANDLER_USE_HISTORY
+						#ifdef CONFIG_TERMINAL_USE_HISTORY
 						// Save command to History
-						CommandHandler_HistorySave();
+						Terminal_HistorySave();
 						#endif
 
 						// Search command and run
-						CommandHandler_PrepareFindExecuteCommand(CommProt_DebugUart, (char *)CommandHandler_CommandActual);
+						CommandHandler_PrepareFindExecuteCommand(CommProt_DebugUart, (char *)Terminal_CommandActual);
 					}
 					else
 					{
 						// There is no char in the line
-						COMMANDHANDLER_SEND_PROMT_NEW_LINE();
+						TERMINAL_SEND_PROMT_NEW_LINE();
 					}
-					CommandHandler_CommandActualLength = 0;
-					CommandHandler_CommandSentLength = 0;
-					CommandHandler_CommandCursorPosition = 0;
+					Terminal_CommandActualLength = 0;
+					Terminal_CommandSentLength = 0;
+					Terminal_CommandCursorPosition = 0;
 				}
 			}	// CommandHandler_CommandReceivedEvent
 #ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
@@ -325,48 +331,48 @@ void CommandHandler_CheckCommand(void)
 /**
  * \brief	Check received characters and make command (COMMAND_Actual)
  */
-static void CommandHandler_ProcessReceivedCharacter(void)
+static void Terminal_ProcessReceivedCharacter(void)
 {
 
 	// While Read cnt not equal than Write cnt
-	while (USART_RxBufferReadCnt != USART_RxBufferWriteCounter)
+	while (Terminal_RxBufferReadCnt != USART_RxBufferWriteCounter)
 	{
 		volatile char USART_ReceivedChar = '\0';
 
-		USART_ReceivedChar = USART_RxBuffer[USART_RxBufferReadCnt];
-		USART_RxBufferReadCnt++;
+		USART_ReceivedChar = USART_RxBuffer[Terminal_RxBufferReadCnt];
+		Terminal_RxBufferReadCnt++;
 
-#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
+#ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 		// ESCAPE SEQUENCE
-		if (CommandHandler_CommandEscapeSequenceInProgress)
+		if (Terminal_CommandEscapeSequenceInProgress)
 		{
 			// Escape sequence in progress
-			// Copy escape characters to CommandHandler_CommandActualEscape[]
+			// Copy escape characters to Terminal_CommandActualEscape[]
 			// TODO: Megcsinálni elegánsabban
-			if (CommandHandler_CommandEscape_cnt == 1)
+			if (Terminal_CommandEscape_cnt == 1)
 			{
 				if (USART_ReceivedChar == '[')
 				{
-					CommandHandler_CommandActualEscape[CommandHandler_CommandEscape_cnt++] = USART_ReceivedChar;
+					Terminal_CommandActualEscape[Terminal_CommandEscape_cnt++] = USART_ReceivedChar;
 				}
 				else
 				{
 					// Wrong escape sequence
-					CommandHandler_CommandEscapeSequenceInProgress = false;
-					CommandHandler_CommandEscape_cnt = 0;
+					Terminal_CommandEscapeSequenceInProgress = false;
+					Terminal_CommandEscape_cnt = 0;
 				}
 			}
-			else if (CommandHandler_CommandEscape_cnt == 2)
+			else if (Terminal_CommandEscape_cnt == 2)
 			{
-				CommandHandler_CommandActualEscape[CommandHandler_CommandEscape_cnt++] = USART_ReceivedChar;
+				Terminal_CommandActualEscape[Terminal_CommandEscape_cnt++] = USART_ReceivedChar;
 
 				// TODO: only work with escape sequence if 3 chars (ESC[A)
-				if (CommandHandler_CommandActualEscape[2] != '3')
+				if (Terminal_CommandActualEscape[2] != '3')
 				{
 					// \e[A / B / C / D
-					CommandHandler_CommandEscapeSequenceInProgress = false;
-					CommandHandler_CommandEscapeSequenceReceived = true;
-					CommandHandler_CommandReceivedEvent = true;
+					Terminal_CommandEscapeSequenceInProgress = false;
+					Terminal_CommandEscapeSequenceReceived = true;
+					Terminal_CommandReceivedEvent = true;
 					return;
 				}
 				else
@@ -375,82 +381,81 @@ static void CommandHandler_ProcessReceivedCharacter(void)
 					//MONITOR_CommandEscape_cnt++;
 				}
 			}
-			else if (CommandHandler_CommandEscape_cnt == 3)
+			else if (Terminal_CommandEscape_cnt == 3)
 			{
-				CommandHandler_CommandActualEscape[CommandHandler_CommandEscape_cnt++] = USART_ReceivedChar;
+				Terminal_CommandActualEscape[Terminal_CommandEscape_cnt++] = USART_ReceivedChar;
 
-				if (CommandHandler_CommandActualEscape[3] == '~')
+				if (Terminal_CommandActualEscape[3] == '~')
 				{
 					// TODO: At ZOC, it is delete char
 					// Delete button
-					CommandHandler_CommandEscapeSequenceInProgress = false;
-					CommandHandler_CommandReceivedDelete = true;
-					CommandHandler_CommandReceivedEvent = true;
+					Terminal_CommandEscapeSequenceInProgress = false;
+					Terminal_CommandReceivedDelete = true;
+					Terminal_CommandReceivedEvent = true;
 					return;
 				}
 			}
 		}
 		else
 		{
-#endif	// #ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
 			// No escape sequence
 			// An character received
-
 			if (USART_ReceivedChar  == '\x1B')	// 'ESC'
 			{
 				// receive an Escape sequence
-				CommandHandler_CommandEscapeSequenceInProgress = true;
-				CommandHandler_CommandActualEscape[0] = USART_ReceivedChar;
-				CommandHandler_CommandEscape_cnt = 1;
+				Terminal_CommandEscapeSequenceInProgress = true;
+				Terminal_CommandActualEscape[0] = USART_ReceivedChar;
+				Terminal_CommandEscape_cnt = 1;
 			}
 			else
 			{
+#endif
 				if ((USART_ReceivedChar  == '\r') || (USART_ReceivedChar == '\n') ||
 					(USART_ReceivedChar == '\0'))
 				{
 					// Received Enter
-					CommandHandler_CommandReadable = true;
-					CommandHandler_CommandActual[CommandHandler_CommandActualLength] = '\0';
-					CommandHandler_CommandReceivedEvent = true;
+					Terminal_CommandReadable = true;
+					Terminal_CommandActual[Terminal_CommandActualLength] = '\0';
+					Terminal_CommandReceivedEvent = true;
 					return;
 				}
-				else if (USART_ReceivedChar == USART_KEY_BACKSPACE)
+				else if (USART_ReceivedChar == TERMINAL_KEY_BACKSPACE)
 				{
 					// Received backspace
-					CommandHandler_CommandReceivedBackspace = true;
-					CommandHandler_CommandReceivedEvent = true;
+					Terminal_CommandReceivedBackspace = true;
+					Terminal_CommandReceivedEvent = true;
 					return;
 				}
-#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
-				else if (USART_ReceivedChar == USART_KEY_DELETE)
+#ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
+				else if (USART_ReceivedChar == TERMINAL_KEY_DELETE)
 				{
 					// Delete button
 					// TODO: Not work at ZOC, but work at other terminal?
-					CommandHandler_CommandReceivedDelete = true;
-					CommandHandler_CommandReceivedEvent = true;
+					Terminal_CommandReceivedDelete = true;
+					Terminal_CommandReceivedEvent = true;
 					return;
 				}
 				else if (USART_ReceivedChar == '\t')
 				{
 					// TAB
-					CommandHandler_CommandReceivedTabulator = true;
-					CommandHandler_CommandReceivedEvent = true;
+					Terminal_CommandReceivedTabulator = true;
+					Terminal_CommandReceivedEvent = true;
 					return;
 				}
-#endif	// #ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
+#endif	// #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 				else
 				{
 					// Simple char for the command
 					// shorted than max length?
-					if (CommandHandler_CommandActualLength < COMMANDHANDLER_MAX_COMMAND_LENGTH)
+					if (Terminal_CommandActualLength < TERMINAL_MAX_COMMAND_LENGTH)
 					{
-						if (CommandHandler_CommandCursorPosition == CommandHandler_CommandActualLength)
+						if (Terminal_CommandCursorPosition == Terminal_CommandActualLength)
 						{
 							// CursorPosition = CommandLength		(end character)
-							CommandHandler_CommandActual[CommandHandler_CommandActualLength] = USART_ReceivedChar;
-							CommandHandler_CommandActualLength++;
-							CommandHandler_CommandCursorPosition++;
-							if (CommandHandler_CommandSendBackCharEnable)
+							Terminal_CommandActual[Terminal_CommandActualLength] = USART_ReceivedChar;
+							Terminal_CommandActualLength++;
+							Terminal_CommandCursorPosition++;
+							if (Terminal_CommandSendBackCharEnable)
 							{
 								// Send received character
 								// TODO: We need to response on input channel
@@ -460,18 +465,18 @@ static void CommandHandler_ProcessReceivedCharacter(void)
 						else
 						{
 							// CursorPosition < CommandLength		(inner character)
-							CommandHandler_CommandActualLength++;
+							Terminal_CommandActualLength++;
 							// Copy
 							uint8_t i;
-							for (i = CommandHandler_CommandActualLength; i > CommandHandler_CommandCursorPosition; i--)
+							for (i = Terminal_CommandActualLength; i > Terminal_CommandCursorPosition; i--)
 							{
-								CommandHandler_CommandActual[i] = CommandHandler_CommandActual[i-1];
+								Terminal_CommandActual[i] = Terminal_CommandActual[i-1];
 							}
-							CommandHandler_CommandActual [CommandHandler_CommandCursorPosition] = USART_ReceivedChar;
-							CommandHandler_CommandActual [CommandHandler_CommandActualLength] = '\0';
-							CommandHandler_CommandCursorPosition++;
-							CommandHandler_CommandReceivedNotLastChar = true;
-							CommandHandler_CommandReceivedEvent = true;
+							Terminal_CommandActual [Terminal_CommandCursorPosition] = USART_ReceivedChar;
+							Terminal_CommandActual [Terminal_CommandActualLength] = '\0';
+							Terminal_CommandCursorPosition++;
+							Terminal_CommandReceivedNotLastChar = true;
+							Terminal_CommandReceivedEvent = true;
 						}
 					}
 					else
@@ -480,8 +485,8 @@ static void CommandHandler_ProcessReceivedCharacter(void)
 						// Do not copy/print...
 					}
 
+#ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 				}
-#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
 			}
 #endif
 		} // Processed received characters
@@ -491,45 +496,45 @@ static void CommandHandler_ProcessReceivedCharacter(void)
 
 
 
-#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
+#ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 /**
  * \brief	Process Escape sequence
  */
-static bool CommandHandler_CommandEscapeCharValidation(void)
+static bool Terminal_CommandEscapeCharValidation(void)
 {
 	// return valid char, or 0 if invalid
 	// work with ANSI escape codes
 
-	if (CommandHandler_CommandActualEscape[0] == '\x1B')				// ESC
+	if (Terminal_CommandActualEscape[0] == '\x1B')				// ESC
 	{
-		if (CommandHandler_CommandActualEscape[1] == '[' )			// '[', escape sequence 2. letter
+		if (Terminal_CommandActualEscape[1] == '[' )			// '[', escape sequence 2. letter
 		{
 			// This is an escape sequence
 			// 'A' Up cursor = previous History command
-			if (CommandHandler_CommandActualEscape[2] == 'A')
+			if (Terminal_CommandActualEscape[2] == 'A')
 			{
-				#ifdef CONFIG_COMMANDHANDLER_USE_HISTORY
-				CommandHandler_HistoryLoad ( 1 );
+				#ifdef CONFIG_TERMINAL_USE_HISTORY
+				Terminal_HistoryLoad ( 1 );
 				#endif
 				return true;
 			}
 			// 'B' Down cursor		// next History command
-			else if (CommandHandler_CommandActualEscape[2] == 'B')
+			else if (Terminal_CommandActualEscape[2] == 'B')
 			{
-				#ifdef CONFIG_COMMANDHANDLER_USE_HISTORY
-				CommandHandler_HistoryLoad ( 0 );
+				#ifdef CONFIG_TERMINAL_USE_HISTORY
+				Terminal_HistoryLoad ( 0 );
 				#endif
 				return true;
 			}
 			// 'C' - Right cursor - Step right
-			else if (CommandHandler_CommandActualEscape[2] == 'C')
+			else if (Terminal_CommandActualEscape[2] == 'C')
 			{
 				// Is cursor at end?
-				if (CommandHandler_CommandCursorPosition < CommandHandler_CommandActualLength)
+				if (Terminal_CommandCursorPosition < Terminal_CommandActualLength)
 				{
 					// Cursor within command
 					CommandHandler_SendMessage(ESCAPE_CURSORRIGHT);
-					CommandHandler_CommandCursorPosition++;
+					Terminal_CommandCursorPosition++;
 					return true;
 				}
 				else
@@ -539,12 +544,12 @@ static bool CommandHandler_CommandEscapeCharValidation(void)
 				}
 			}
 			// 'D' Left cursor - Step left
-			else if (CommandHandler_CommandActualEscape[2] == 'D')
+			else if (Terminal_CommandActualEscape[2] == 'D')
 			{
-				if (CommandHandler_CommandCursorPosition > 0)				// if not at start
+				if (Terminal_CommandCursorPosition > 0)				// if not at start
 				{
 					CommandHandler_SendMessage(ESCAPE_CURSORLEFT);
-					CommandHandler_CommandCursorPosition--;
+					Terminal_CommandCursorPosition--;
 					return true;
 				}
 				else
@@ -567,50 +572,50 @@ static bool CommandHandler_CommandEscapeCharValidation(void)
 	return false;
 
 }
-#endif	// #ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
+#endif	// #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 
 
 
 /**
  * \brief	Command's letter deleting (backspace)
  */
-void CommandHandler_CommandBackspace(void)
+void Terminal_CommandBackspace(void)
 {
 
-	if (CommandHandler_CommandActualLength > 0)
+	if (Terminal_CommandActualLength > 0)
 	{
 		// If has command
 		// Cursor at end?
-		if (CommandHandler_CommandCursorPosition == CommandHandler_CommandActualLength)
+		if (Terminal_CommandCursorPosition == Terminal_CommandActualLength)
 		{
 			// Cursor at end
 			// Delete from CommandActual, and Position--
-			CommandHandler_CommandActual[--CommandHandler_CommandCursorPosition] = '\0';
-			CommandHandler_CommandActualLength--;
+			Terminal_CommandActual[--Terminal_CommandCursorPosition] = '\0';
+			Terminal_CommandActualLength--;
 
 			// Delete last character on terminal
 #ifdef CONFIG_COMMANDHANDLER_USE_TERMINAL_ZOC
-			USART_SEND_KEY_BACKSPACE();
-			USART_SEND_KEY_DEL();
-			USART_SEND_KEY_BACKSPACE();
+			TERMINAL_SEND_KEY_BACKSPACE();
+			TERMINAL_SEND_KEY_DEL();
+			TERMINAL_SEND_KEY_BACKSPACE();
 #endif
 
 #ifdef CONFIG_COMMANDHANDLER_USE_TERMINAL_PUTTY
 
 			// v1
-			USART_SEND_KEY_DEL();
+			TERMINAL_SEND_KEY_DEL();
 #endif
 
 #ifdef CONFIG_COMMANDHANDLER_USE_TERMINAL_HYPERTERMINAL
 
-			USART_SEND_KEY_BACKSPACE();
+			TERMINAL_SEND_KEY_BACKSPACE();
 
 			// Delete & Resend
-			CommandHandler_CommandResendLine(true);
+			Terminal_CommandResendLine(true);
 
 #endif
 		}
-#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
+#ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 		else
 		{
 			// CursorPosition != CommandLength, we are in command chars
@@ -620,7 +625,7 @@ void CommandHandler_CommandBackspace(void)
 
 			uint8_t i;
 
-			if (CommandHandler_CommandCursorPosition > 0)
+			if (Terminal_CommandCursorPosition > 0)
 			{
 				// not at 0 position
 
@@ -628,20 +633,20 @@ void CommandHandler_CommandBackspace(void)
 				// copy CommandActual
 				// delete & resend
 
-				CommandHandler_CommandActualLength--;
-				CommandHandler_CommandCursorPosition--;
+				Terminal_CommandActualLength--;
+				Terminal_CommandCursorPosition--;
 
-				for (i = CommandHandler_CommandCursorPosition; i < CommandHandler_CommandActualLength; i++)
+				for (i = Terminal_CommandCursorPosition; i < Terminal_CommandActualLength; i++)
 				{
-					CommandHandler_CommandActual[i] = CommandHandler_CommandActual[i+1];		// copy
+					Terminal_CommandActual[i] = Terminal_CommandActual[i+1];		// copy
 				}
-				CommandHandler_CommandActual[i] = '\0';
+				Terminal_CommandActual[i] = '\0';
 
 				// Send backspace = step left
-				USART_SEND_KEY_BACKSPACE();
+				TERMINAL_SEND_KEY_BACKSPACE();
 
 				// Delete & Resend
-				CommandHandler_CommandResendLine(true);
+				Terminal_CommandResendLine(true);
 
 			}
 			else
@@ -650,25 +655,25 @@ void CommandHandler_CommandBackspace(void)
 				// Do nothing, cannot backspace
 			}
 		}
-#endif	// #ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
+#endif	// #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 	}
 	return;			// not do anything
 }
 
 
 
-#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
+#ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 /**
  * \brief	Delete button received
  */
-static void CommandHandler_CommandDelete(void)
+static void Terminal_CommandDelete(void)
 {
 
-	if (CommandHandler_CommandActualLength > 0)
+	if (Terminal_CommandActualLength > 0)
 	{
 		// If has command
 		// Cursor at end?
-		if (CommandHandler_CommandCursorPosition == CommandHandler_CommandActualLength)
+		if (Terminal_CommandCursorPosition == Terminal_CommandActualLength)
 		{
 			// Do nothing at end
 		}
@@ -679,24 +684,24 @@ static void CommandHandler_CommandDelete(void)
 
 			uint8_t i;
 
-			if (CommandHandler_CommandCursorPosition > 0)
+			if (Terminal_CommandCursorPosition > 0)
 			{
 				// not at 0 position
 				// Procedure:
 				// - Copy CommandActual after cursor
 				// - Resend command with original cursor position
 
-				CommandHandler_CommandActualLength--;
+				Terminal_CommandActualLength--;
 
 				// Drop the backspaced character
-				for (i = CommandHandler_CommandCursorPosition; i < CommandHandler_CommandActualLength; i++)
+				for (i = Terminal_CommandCursorPosition; i < Terminal_CommandActualLength; i++)
 				{
-					CommandHandler_CommandActual[i] = CommandHandler_CommandActual[i+1];		// copy
+					Terminal_CommandActual[i] = Terminal_CommandActual[i+1];		// copy
 				}
-				CommandHandler_CommandActual[i] = '\0';
+				Terminal_CommandActual[i] = '\0';
 
 				// Resend line with original cursor position
-				CommandHandler_CommandResendLine(true);
+				Terminal_CommandResendLine(true);
 			}
 			else
 			{
@@ -709,15 +714,15 @@ static void CommandHandler_CommandDelete(void)
 	return;
 
 }
-#endif	// #ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
+#endif	// #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 
 
 
-#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
+#ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 /**
  * \brief	Received tabulator command: Complete command
  */
-static void CommandHandler_CommandTabulator(void)
+static void Terminal_CommandTabulator(void)
 {
 	// Find same command
 	uint8_t i;
@@ -725,37 +730,37 @@ static void CommandHandler_CommandTabulator(void)
 	for (i=0; i < CommandHandler_CommandNum; i++)
 	{
 		if (!StrCmpWithLength(CommandList[i].name,
-				(const char *)CommandHandler_CommandActual,
-				CommandHandler_CommandActualLength))
+				(const char *)Terminal_CommandActual,
+				Terminal_CommandActualLength))
 		{
 			// It is equal
 			// We write the first equal
 			// TODO: Lekezelni az esetleges több Tabulátort?
 			// Biztos jó, hogy az első egyezőt kiírjuk?
-			StrCpy((char *)CommandHandler_CommandActual, CommandList[i].name);
+			StrCpy((char *)Terminal_CommandActual, CommandList[i].name);
 
-			CommandHandler_CommandActualLength = StringLength(CommandList[i].name);
+			Terminal_CommandActualLength = StringLength(CommandList[i].name);
 
-			CommandHandler_CommandCursorPosition = CommandHandler_CommandActualLength;
+			Terminal_CommandCursorPosition = Terminal_CommandActualLength;
 
-			CommandHandler_CommandResendLine(false);
+			Terminal_CommandResendLine(false);
 
 			return;
 		}
 	}
 }
-#endif // #ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
+#endif // #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 
 
 
 
 
-#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
+#ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 /**
  * \brief		Resend the actual line/command
  * 				NOTE: It save and restore the original cursor position
  */
-static void CommandHandler_CommandResendLine( bool needRestoreCursor)
+static void Terminal_CommandResendLine( bool needRestoreCursor)
 {
 	// Procedure:
 	// - Delete line
@@ -777,8 +782,8 @@ static void CommandHandler_CommandResendLine( bool needRestoreCursor)
 	CommandHandler_SendMessage(ESCAPE_CURSORLEFTLOTOF);
 
 	// Write new CommandActual
-	COMMANDHANDLER_SEND_PROMT();
-	CommandHandler_SendMessage((const char *)CommandHandler_CommandActual);
+	TERMINAL_SEND_PROMT();
+	CommandHandler_SendMessage((const char *)Terminal_CommandActual);
 
 	if (needRestoreCursor)
 	{
@@ -788,40 +793,40 @@ static void CommandHandler_CommandResendLine( bool needRestoreCursor)
 
 	return;
 }
-#endif	// #ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
+#endif	// #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 
 
 
-#ifdef CONFIG_COMMANDHANDLER_USE_HISTORY
+#ifdef CONFIG_TERMINAL_USE_HISTORY
 /**
  * \brief	Save actual command to history
  */
-static void CommandHandler_HistorySave(void)
+static void Terminal_HistorySave(void)
 {
 
 	// Has equal command?
-	if (CommandHandler_HistoryFindInList() == true)
+	if (Terminal_HistoryFindInList() == true)
 	{
 		return;
 	}
 
 	// Actual save counter
-	if (CommandHandler_HistorySaveCnt >= (COMMANDHANDLER_HISTORY_MAX_COUNT-1))
+	if (Terminal_HistorySaveCnt >= (TERMINAL_HISTORY_MAX_COUNT-1))
 	{
-		CommandHandler_HistorySaveCnt = 0;
+		Terminal_HistorySaveCnt = 0;
 	}
 	else
 	{
-		CommandHandler_HistorySaveCnt++;
+		Terminal_HistorySaveCnt++;
 	}
 
 	// Actual saved is the "last"
-	CommandHandler_HistoryLoadCnt = CommandHandler_HistorySaveCnt;
+	Terminal_HistoryLoadCnt = Terminal_HistorySaveCnt;
 
 	// Save command
-	StrCpyMax(CommandHandler_HistoryList[CommandHandler_HistorySaveCnt],
-			(char *)CommandHandler_CommandActual,
-			COMMANDHANDLER_MAX_COMMAND_LENGTH);
+	StrCpyMax(Terminal_HistoryList[Terminal_HistorySaveCnt],
+			(char *)Terminal_CommandActual,
+			TERMINAL_MAX_COMMAND_LENGTH);
 
 	return;
 
@@ -830,20 +835,20 @@ static void CommandHandler_HistorySave(void)
 
 
 
-#ifdef CONFIG_COMMANDHANDLER_USE_HISTORY
+#ifdef CONFIG_TERMINAL_USE_HISTORY
 /**
  * \brief	Check, this command is in History?
  * \return	true, if has equal
  * 			false, if not has equal
  */
-static bool CommandHandler_HistoryFindInList(void)
+static bool Terminal_HistoryFindInList(void)
 {
 	uint8_t i;
 
-	for (i = 0; i < COMMANDHANDLER_HISTORY_MAX_COUNT; i++)
+	for (i = 0; i < TERMINAL_HISTORY_MAX_COUNT; i++)
 	{
 		// Check, equal with command?
-		if (!StrCmp((const char *)CommandHandler_HistoryList[i],(const char * )CommandHandler_CommandActual))
+		if (!StrCmp((const char *)Terminal_HistoryList[i],(const char * )Terminal_CommandActual))
 		{
 			// If it is equal
 			// Has equal command
@@ -859,23 +864,23 @@ static bool CommandHandler_HistoryFindInList(void)
 
 
 
-#ifdef CONFIG_COMMANDHANDLER_USE_HISTORY
+#ifdef CONFIG_TERMINAL_USE_HISTORY
 /**
  * \brief	Load history from list to actual command
  */
-static void CommandHandler_HistoryLoad(uint8_t direction)
+static void Terminal_HistoryLoad(uint8_t direction)
 {
 
 	// down cursor
 	if (direction == 0) // direction == 0
 	{
-		if (CommandHandler_HistoryLoadCnt >= (COMMANDHANDLER_HISTORY_MAX_COUNT-1))
+		if (Terminal_HistoryLoadCnt >= (TERMINAL_HISTORY_MAX_COUNT-1))
 		{
-			CommandHandler_HistoryLoadCnt = 0;
+			Terminal_HistoryLoadCnt = 0;
 		}
 		else
 		{
-			CommandHandler_HistoryLoadCnt++;
+			Terminal_HistoryLoadCnt++;
 		}
 	}
 
@@ -883,24 +888,24 @@ static void CommandHandler_HistoryLoad(uint8_t direction)
 	// if direction == 1, copy actual
 
 	// Copy command and set cursor
-	StrCpy((char *)CommandHandler_CommandActual, (const char *)CommandHandler_HistoryList[CommandHandler_HistoryLoadCnt]);
+	StrCpy((char *)Terminal_CommandActual, (const char *)Terminal_HistoryList[Terminal_HistoryLoadCnt]);
 
 	// cursor, length!
-	CommandHandler_CommandCursorPosition = StringLength((const char *)CommandHandler_CommandActual);
-	CommandHandler_CommandActualLength = CommandHandler_CommandCursorPosition;
+	Terminal_CommandCursorPosition = StringLength((const char *)Terminal_CommandActual);
+	Terminal_CommandActualLength = Terminal_CommandCursorPosition;
 
-	CommandHandler_CommandResendLine(false);
+	Terminal_CommandResendLine(false);
 
 	// Step load cnt
 	if (direction == 1) // direction == 0
 	{
-		if (CommandHandler_HistoryLoadCnt <= 0)
+		if (Terminal_HistoryLoadCnt <= 0)
 		{
-			CommandHandler_HistoryLoadCnt = COMMANDHANDLER_HISTORY_MAX_COUNT-1;
+			Terminal_HistoryLoadCnt = TERMINAL_HISTORY_MAX_COUNT-1;
 		}
 		else
 		{
-			CommandHandler_HistoryLoadCnt--;
+			Terminal_HistoryLoadCnt--;
 		}
 	}
 
@@ -911,19 +916,19 @@ static void CommandHandler_HistoryLoad(uint8_t direction)
 
 
 /**
- * \brief	Convert CommandHandler_CommandActual (Actual command) to small letters
+ * \brief	Convert Terminal_CommandActual (Actual command) to small letters
  */
-static void CommandHandler_ConvertSmallLetter(void)
+static void Terminal_ConvertSmallLetter(void)
 {
 	uint8_t i;
 
-	for (i = 0; CommandHandler_CommandActual[i] != '\0'; i++)
+	for (i = 0; Terminal_CommandActual[i] != '\0'; i++)
 	{
-		if ((CommandHandler_CommandActual[i] > 'A') && (CommandHandler_CommandActual[i] < 'Z'))
+		if ((Terminal_CommandActual[i] >= 'A') && (Terminal_CommandActual[i] <= 'Z'))
 		{
 			// Need to change to small letter
 			// length between Big Letter and small letter
-			CommandHandler_CommandActual[i] = CommandHandler_CommandActual[i] - ('A' - 'a');
+			Terminal_CommandActual[i] = Terminal_CommandActual[i] - ('A' - 'a');
 		}
 	}
 
@@ -932,12 +937,42 @@ static void CommandHandler_ConvertSmallLetter(void)
 
 
 
+/**
+ * \brief	Send welcome message
+ */
+void Terminal_SendWelcome(void)
+{
 
-#ifdef CONFIG_COMMANDHANDLER_GET_PASSWORD_ENABLE
+	DelayMs(1);
+
+#ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
+	Terminal_SendCls();						// Clean screen
+#endif
+
+	TERMINAL_SEND_WELCOME();			// Welcome message
+
+	return;
+
+}
+
+
+
+/**
+ * \brief	Send CLS (Clear Screen)
+ */
+void Terminal_SendCls(void)
+{
+	CommandHandler_SendMessage(ESCAPE_ERASE_CLS);
+	CommandHandler_SendMessage(ESCAPE_CURSOR_TOPLEFT);
+}
+
+
+
+#ifdef CONFIG_TERMINAL_GET_PASSWORD_ENABLE
 /**
  * \brief Get (and wait) Password
  */
-static void CommandHandler_GetPassword(void)
+static void Terminal_GetPassword(void)
 {
 
 	bool passwordIsOk = false;
@@ -945,38 +980,38 @@ static void CommandHandler_GetPassword(void)
 	// Wait first character
 	CommandHandler_SendLine("\r\nType a character:");
 	while (USART_RxBufferWriteCounter < 1);
-	USART_RxBufferReadCnt = 1;
+	Terminal_RxBufferReadCnt = 1;
 
 	while (!passwordIsOk)
 	{
 		CommandHandler_SendMessage("\r\nPassword:");
 
 		bool isTry = true;
-		CommandHandler_CommandActualLength = 0;
+		Terminal_CommandActualLength = 0;
 
 		while (isTry)
 		{
 
 			// While Read cnt not equal than Write cnt
-			if (USART_RxBufferReadCnt != USART_RxBufferWriteCounter)
+			if (Terminal_RxBufferReadCnt != USART_RxBufferWriteCounter)
 			{
 				volatile char USART_ReceivedChar = '\0';
 
-				USART_ReceivedChar = USART_RxBuffer[USART_RxBufferReadCnt];
-				USART_RxBufferReadCnt++;
+				USART_ReceivedChar = USART_RxBuffer[Terminal_RxBufferReadCnt];
+				Terminal_RxBufferReadCnt++;
 				CommandHandler_SendChar('*');
 
 				if (USART_ReceivedChar == '\r' || USART_ReceivedChar == '\n')
 				{
 					// Pressed enter, check password
 					isTry = false;
-					CommandHandler_CommandActual[CommandHandler_CommandActualLength++] = '\0';
+					Terminal_CommandActual[Terminal_CommandActualLength++] = '\0';
 					USART_SendNewLine();
-					if (CommandHandler_CheckPassword((const char*)CommandHandler_CommandActual))
+					if (Terminal_CheckPassword((const char*)Terminal_CommandActual))
 					{
 						// Successful password
 						CommandHandler_SendLine("Successful password!");
-						CommandHandler_CommandActualLength=0;
+						Terminal_CommandActualLength=0;
 						return;
 					}
 					else
@@ -988,7 +1023,7 @@ static void CommandHandler_GetPassword(void)
 				else
 				{
 					// Copy character
-					CommandHandler_CommandActual[CommandHandler_CommandActualLength++] = USART_ReceivedChar;
+					Terminal_CommandActual[Terminal_CommandActualLength++] = USART_ReceivedChar;
 				}
 			}
 		}
@@ -1000,9 +1035,9 @@ static void CommandHandler_GetPassword(void)
 /**
  * \brief Check password
  */
-static bool CommandHandler_CheckPassword(const char *string)
+static bool Terminal_CheckPassword(const char *string)
 {
-	if (!StrCmp(string,CommandHandler_Password))
+	if (!StrCmp(string, Terminal_Password))
 	{
 		// Equal
 		return true;
@@ -1013,6 +1048,6 @@ static bool CommandHandler_CheckPassword(const char *string)
 	}
 }
 
-#endif	// #ifdef CONFIG_COMMANDHANDLER_GET_PASSWORD_ENABLE
+#endif	// #ifdef CONFIG_TERMINAL_GET_PASSWORD_ENABLE
 
 #endif	// #ifdef CONFIG_MODULE_TERMINAL_ENABLE

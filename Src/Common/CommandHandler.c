@@ -88,29 +88,6 @@ void CommandHandler_Init(void)
 
 
 /**
- * \brief	Send welcome message
- */
-void CommandHandler_SendWelcome(void)
-{
-
-	DelayMs(1);
-
-#ifdef CONFIG_COMMANDHANDLER_ESCAPE_SEQUENCE_ENABLE
-	CommandHandler_SendCls();						// Clean screen
-#endif
-	
-	COMMANDHANDLER_SEND_WELCOME();					// Welcome message
-
-	COMMANDHANDLER_SEND_NEW_LINE();
-	COMMANDHANDLER_SEND_PROMT_NEW_LINE();			// New promt
-
-	return;
-	
-}
-
-
-
-/**
  * \brief	Prepare (Separate) the command and Find and Run it...
  * \note	Be careful! Only one call enabled, because this module use global variables
  */
@@ -130,7 +107,7 @@ bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source, char *comma
 	{
 		// Find and execute the command
 		isSuccessful = CommandHandler_SearchCommand();
-		COMMANDHANDLER_SEND_NEW_LINE();
+		TERMINAL_SEND_NEW_LINE();
 	}
 	else
 	{
@@ -139,7 +116,7 @@ bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source, char *comma
 	}
 
 	// Init new command
-	COMMANDHANDLER_SEND_PROMT_NEW_LINE();
+	TERMINAL_SEND_PROMT_NEW_LINE();
 
 	return isSuccessful;
 }
@@ -494,17 +471,6 @@ void CommandHandler_Printf(const char *format, ...)
 
 	return;
 
-}
-
-
-
-/**
- * \brief	Send CLS (Clear Screen)
- */
-void CommandHandler_SendCls(void)
-{
-	CommandHandler_SendMessage(ESCAPE_ERASE_CLS);
-	CommandHandler_SendMessage(ESCAPE_CURSOR_TOPLEFT);
 }
 
 

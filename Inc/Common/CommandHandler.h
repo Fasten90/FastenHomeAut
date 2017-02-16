@@ -33,63 +33,6 @@
 #define COMMANDHANDLER_COMMAND_ARG_MAX_COUNT		(3)
 #define COMMANDHANDLER_COMMAND_ARG_MAX_NUM_BITS		(0x07)	// 0b111 <-- warning: "binary constants are a GCC extension
 
-#define COMMANDHANDLER_HISTORY_MAX_COUNT			(5)
-
-
-#define COMMANDHANDLER_SEND_WELCOME()						\
-		CommandHandler_SendMessage(							\
-		"\r\n"												\
-		"Welcome in CommandHandler!\r\n"					\
-		"Version: " VERSION_DEFINE "\r\n"					\
-		"Date: " DATE_VERSION "\r\n"						\
-		"Time: "TIME_VERSION "\r\n"							\
-		"Used panel: " BOARD_NAME "\r\n"					\
-		"(c) Copyright, Vizi Gabor\r\n"						\
-		"\r\n"												\
-		"Try \"help\" command for help!\r\n")
-
-
-#define COMMANDHANDLER_SEND_PROMT_NEW_LINE()	CommandHandler_SendMessage("\r\n# ")
-
-#define COMMANDHANDLER_SEND_PROMT()				CommandHandler_SendMessage("# ")
-
-#define COMMANDHANDLER_SEND_NEW_LINE()			CommandHandler_SendMessage("\r\n")
-
-
-///	DEFINES FOR CHARACTERS
-
-CONFIG_COMMANDHANDLER_USE_TERMINAL_ZOC
-#if defined(CONFIG_COMMANDHANDLER_USE_TERMINAL_ZOC) || defined(CONFIG_COMMANDHANDLER_USE_TERMINAL_PUTTY)
-#define USART_KEY_DELETE			(0x08)
-#define USART_KEY_BACKSPACE			(0x7F)
-#else
-#define USART_KEY_DELETE			(0x7F)
-#define USART_KEY_BACKSPACE			(0x08)
-#endif
-
-
-#define USART_KEY_ENTER				('\r')
-#define USART_KEY_SPACE				(' ')
-#define USART_KEY_ESCAPE			('\x1B')
-#define USART_KEY_BELL				('\a')
-
-
-// NOTE: Changed \e to \x1B
-#define USART_ESCAPESEQUENCE_1		('\x1B')
-#define USART_ESCAPESEQUENCE_2		('[')
-
-
-//	BUTTONS
-
-
-// 8 = BS = Backspace
-#define USART_SEND_KEY_BACKSPACE()	\
-		CommandHandler_SendChar(8)
-
-// 127 = DEL = Delete
-#define USART_SEND_KEY_DEL()		 \
-		CommandHandler_SendChar(127)
-
 
 
 /*------------------------------------------------------------------------------
@@ -148,10 +91,7 @@ typedef struct
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-extern volatile char CommandHandler_CommandActual[COMMANDHANDLER_MAX_COMMAND_LENGTH];
 extern volatile CommProtocol_t CommandHandler_CommandSource;
-
-extern const bool CommandHandler_CommandReceiveEnable;
 
 
 #ifdef CONFIG_USE_FREERTOS
@@ -166,12 +106,10 @@ extern xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
  *----------------------------------------------------------------------------*/
 
 void CommandHandler_Init(void);
-void CommandHandler_SendWelcome(void);
 
 void CommandHandler_CheckCommand(void);
 
 void CommandHandler_PrintCommandHelp(CommandID_t commandID);
-void CommandHandler_SendCls(void);
 
 void CommandHandler_SendMessage(const char *message);
 void CommandHandler_SendLine(const char *message);

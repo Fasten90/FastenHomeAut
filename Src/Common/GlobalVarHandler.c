@@ -1418,4 +1418,5 @@ static void GlobalVarHandler_PrintVariableDescriptions(VarID_t commandID, char *
 /**
  * \brief	GlobalVarHandler unit test
  */
+// TODO:
 void GlobalVarHandler_UnitTest(void);
