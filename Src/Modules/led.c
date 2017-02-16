@@ -61,7 +61,7 @@ static bool LED_SetGreenLed(LED_SetType ledSet);
 /**
 \brief	LED GPIO initialization (without TIMER)
 */
-void LED_Init( void )
+void LED_Init(void)
 {
 	
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -96,7 +96,7 @@ void LED_Init( void )
 /**
 \brief	LED blinking in infinite loop
 */
-void LED_Test ( void )
+void LED_Test(void)
 {
 
 	while(1)
@@ -293,7 +293,7 @@ bool LED_GetStatus(uint8_t num)
 /**
  * \brief	Get LED type from name
  */
-uint8_t LED_GetNumFromName (const char*name)
+uint8_t LED_GetNumFromName(const char*name)
 {
 	uint8_t i;
 	uint8_t ledNum = 0;
@@ -324,7 +324,7 @@ LED_SetType LED_GetTypeFromString (const char*typeString)
 
 	// TODO: Lehet, hogy kevesebbet foglalna nem ciklusként
 
-	for (i=0; i < LED_TYPE_COUNT; i++)
+	for (i = 0; i < LED_TYPE_COUNT; i++)
 	{
 		if (!StrCmp(LED_TypeNameList[i], typeString))
 		{

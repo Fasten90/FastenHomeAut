@@ -106,7 +106,7 @@ EventFunctionResult EventButtonPressed(EventType_t eventType, EventStatus_t even
 	(void)eventStatus;
 
 	// Toggle LED
-	LED_SetLed(1, LED_SET_TOGGLE);
+	LED_SetLed(LED_GREEN_NUM, LED_SET_TOGGLE);
 
 	// Clear flag
 	BUTTON_Clicked = 0;
