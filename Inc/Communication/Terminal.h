@@ -76,8 +76,8 @@
 
 
 // NOTE: Changed \e to \x1B
-#define TERMINAL_ESCAPESEQUENCE_1		('\x1B')
-#define TERMINAL_ESCAPESEQUENCE_2		('[')
+#define TERMINAL_ESCAPESEQUENCE_1	('\x1B')
+#define TERMINAL_ESCAPESEQUENCE_2	('[')
 
 
 //	BUTTONS

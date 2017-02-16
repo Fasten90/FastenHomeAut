@@ -107,16 +107,12 @@ bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source, char *comma
 	{
 		// Find and execute the command
 		isSuccessful = CommandHandler_SearchCommand();
-		TERMINAL_SEND_NEW_LINE();
 	}
 	else
 	{
 		// 0 Argument num, Cannot separated, this is not a command
 		isSuccessful = false;
 	}
-
-	// Init new command
-	TERMINAL_SEND_PROMT_NEW_LINE();
 
 	return isSuccessful;
 }

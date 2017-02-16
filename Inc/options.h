@@ -203,7 +203,7 @@
 	#ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 		// If you want use monitor program's history
 		// Turn off, if has small memory, now it need 1.5k RAM
-		#define CONFIG_TERMINAL_USE_HISTORY
+		#define CONFIG_TERMINAL_HISTORY_ENABLE
 	#endif
 
 #endif	// #ifdef CONFIG_MODULE_TERMINAL_ENABLE

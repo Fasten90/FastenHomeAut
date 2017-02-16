@@ -73,47 +73,38 @@ static volatile uint8_t Terminal_CommandEscape_cnt = 0;
 
 
 
-#ifdef CONFIG_TERMINAL_USE_HISTORY
+#ifdef CONFIG_TERMINAL_HISTORY_ENABLE
 static uint8_t Terminal_HistorySaveCnt = 0;
 static uint8_t Terminal_HistoryLoadCnt = 0;
-static char Terminal_HistoryList[TERMINAL_HISTORY_MAX_COUNT][TERMINAL_MAX_COMMAND_LENGTH] =
+static char Terminal_HistoryList[TERMINAL_HISTORY_MAX_COUNT][TERMINAL_MAX_COMMAND_LENGTH] = { 0 };
+
+#if (TERMINAL_HISTORY_MAX_COUNT > 0)
+static const char * const Terminal_HistoryInitList[] =
 {
-
-#if defined(CONFIG_TERMINAL_USE_HISTORY) && (TERMINAL_HISTORY_MAX_COUNT > 0)
-
 	#if ( TERMINAL_HISTORY_MAX_COUNT > 0 )
-	{
-		"help"
-	},
+	"help",
 	#endif
 	#if ( TERMINAL_HISTORY_MAX_COUNT > 1 )
-	{
-		"led 1 1"
-	},
+	"led 1 1",
 	#endif
 	#if ( TERMINAL_HISTORY_MAX_COUNT > 2 )
-	{
-		"cls"
-	},
+	"cls",
 	#endif
 	#if ( TERMINAL_HISTORY_MAX_COUNT > 3 )
-	{
-		"test"
-	},
+	"test",
 	#endif
 	#if ( TERMINAL_HISTORY_MAX_COUNT > 4 )
-	{
-		"reset"
-	}
+	"reset"
 	#endif
 	#if ( TERMINAL_HISTORY_MAX_COUNT > 5 )
 	#warning "Isn't set CommandHandler history commands"
 	#endif
-#elif  (!TERMINAL_HISTORY_MAX_COUNT)
+};
+#else
 #error "CONFIG_COMMANDHANDLER_USE_HISTORY define is defined, but 'COMMANDHANDLER_HISTORY_MAX_COUNT'"
 	"define is not set valid value."
 #endif
-};
+
 #endif
 
 
@@ -139,8 +130,9 @@ static bool Terminal_CommandEscapeCharValidation(void);
 static void Terminal_CommandBackspace(void);
 
 
-#ifdef CONFIG_TERMINAL_USE_HISTORY
+#ifdef CONFIG_TERMINAL_HISTORY_ENABLE
 // CommandHandler history
+static void Terminal_InitHistory(void);
 static void Terminal_HistorySave(void);
 static bool Terminal_HistoryFindInList(void);
 static void Terminal_HistoryLoad(uint8_t direction);
@@ -181,8 +173,11 @@ void Terminal_Init(void)
 	Terminal_CommandEscape_cnt = 0;
 #endif
 
+#ifdef CONFIG_TERMINAL_HISTORY_ENABLE
+	// Initialize History (fill with default commands)
+	Terminal_InitHistory();
+#endif
 
-	// Initialize
 
 #ifdef CONFIG_USE_FREERTOS
 	DelayMs(10);
@@ -190,6 +185,7 @@ void Terminal_Init(void)
 	xSemaphoreGive(DEBUG_USART_Tx_Semaphore);
 	// Enable sendings
 #endif
+
 
 	// Start receive
 	USART_StartReceiveMessage();
@@ -294,13 +290,17 @@ void CommandHandler_CheckCommand(void)
 
 						TERMINAL_SEND_NEW_LINE();
 
-						#ifdef CONFIG_TERMINAL_USE_HISTORY
+						#ifdef CONFIG_TERMINAL_HISTORY_ENABLE
 						// Save command to History
 						Terminal_HistorySave();
 						#endif
 
 						// Search command and run
-						CommandHandler_PrepareFindExecuteCommand(CommProt_DebugUart, (char *)Terminal_CommandActual);
+						CommandHandler_PrepareFindExecuteCommand(
+								CommProt_DebugUart, (char *)Terminal_CommandActual);
+						// Init new command
+						TERMINAL_SEND_NEW_LINE();
+						TERMINAL_SEND_PROMT_NEW_LINE();
 					}
 					else
 					{
@@ -513,7 +513,7 @@ static bool Terminal_CommandEscapeCharValidation(void)
 			// 'A' Up cursor = previous History command
 			if (Terminal_CommandActualEscape[2] == 'A')
 			{
-				#ifdef CONFIG_TERMINAL_USE_HISTORY
+				#ifdef CONFIG_TERMINAL_HISTORY_ENABLE
 				Terminal_HistoryLoad ( 1 );
 				#endif
 				return true;
@@ -521,7 +521,7 @@ static bool Terminal_CommandEscapeCharValidation(void)
 			// 'B' Down cursor		// next History command
 			else if (Terminal_CommandActualEscape[2] == 'B')
 			{
-				#ifdef CONFIG_TERMINAL_USE_HISTORY
+				#ifdef CONFIG_TERMINAL_HISTORY_ENABLE
 				Terminal_HistoryLoad ( 0 );
 				#endif
 				return true;
@@ -797,7 +797,23 @@ static void Terminal_CommandResendLine( bool needRestoreCursor)
 
 
 
-#ifdef CONFIG_TERMINAL_USE_HISTORY
+#ifdef CONFIG_TERMINAL_HISTORY_ENABLE
+/**
+ * \brief	Initialize History list with default commands
+ */
+static void Terminal_InitHistory(void)
+{
+	uint8_t i;
+
+	for (i = 0; i < TERMINAL_HISTORY_MAX_COUNT; i++)
+	{
+		StrCpyMax(Terminal_HistoryList[i], Terminal_HistoryInitList[i],
+				TERMINAL_MAX_COMMAND_LENGTH);
+	}
+}
+
+
+
 /**
  * \brief	Save actual command to history
  */
@@ -835,7 +851,7 @@ static void Terminal_HistorySave(void)
 
 
 
-#ifdef CONFIG_TERMINAL_USE_HISTORY
+#ifdef CONFIG_TERMINAL_HISTORY_ENABLE
 /**
  * \brief	Check, this command is in History?
  * \return	true, if has equal
@@ -864,7 +880,7 @@ static bool Terminal_HistoryFindInList(void)
 
 
 
-#ifdef CONFIG_TERMINAL_USE_HISTORY
+#ifdef CONFIG_TERMINAL_HISTORY_ENABLE
 /**
  * \brief	Load history from list to actual command
  */
