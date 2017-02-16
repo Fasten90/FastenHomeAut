@@ -25,9 +25,9 @@
  *----------------------------------------------------------------------------*/
 
 // Size of Transmission buffer
-#define TXBUFFERSIZE					256UL
+#define USART_TXBUFFERSIZE				256UL
 // Size of Reception buffer
-#define RXBUFFERSIZE					256UL
+#define USART_RXBUFFERSIZE				256UL
 #define RXBUFFER_WAIT_LENGTH			1
 
 
@@ -49,8 +49,8 @@ extern UART_HandleTypeDef Debug_UartHandle;
 extern UART_HandleTypeDef ESP8266_UartHandle;
 #endif
 
-extern volatile char USART_RxBuffer[RXBUFFERSIZE];
-extern volatile char USART_TxBuffer[TXBUFFERSIZE];
+extern volatile char USART_RxBuffer[USART_RXBUFFERSIZE];
+extern volatile char USART_TxBuffer[USART_TXBUFFERSIZE];
 
 extern volatile uint8_t USART_RxBufferWriteCounter;
 

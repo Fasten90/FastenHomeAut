@@ -15,6 +15,9 @@
 
 
 
+#define COMMUNICATION_PROTOCOL_BUFFER_SIZE		(100)
+
+
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
@@ -23,9 +26,10 @@ typedef enum
 {
 	CommProt_Unknown	= 0,
 	CommProt_DebugUart  = (1 << 0),
-	CommProt_SWO	= (1 << 1),
+	CommProt_SWO		= (1 << 1),
+	CommProt_Buffer		= (1 << 2),
 
-	CommProt_Disable	= (1 << 2)
+	CommProt_Disable	= (1 << 3)
 } CommProtocol_t;
 
 

@@ -44,15 +44,15 @@ UART_HandleTypeDef Debug_UartHandle;
 #endif
 
 
-volatile char USART_RxBuffer[RXBUFFERSIZE] = { 0 };
-volatile char USART_TxBuffer[TXBUFFERSIZE] = { 0 };
+volatile char USART_RxBuffer[USART_RXBUFFERSIZE] = { 0 };
+volatile char USART_TxBuffer[USART_TXBUFFERSIZE] = { 0 };
 
 volatile uint8_t USART_RxBufferWriteCounter = 0;
 
 bool USART_SendEnable_flag = false;
 
 
-#if RXBUFFERSIZE != 256
+#if USART_RXBUFFERSIZE != 256
 #warning "RxBufferCounter need to check!"
 #endif
 
@@ -478,10 +478,10 @@ uint8_t USART_SendMessage(const char *aTxBuffer)
 	{
 		return false;
 	}
-#if TXBUFFERSIZE < 256
-	if (length > TXBUFFERSIZE)
+#if USART_TXBUFFERSIZE < 256
+	if (length > USART_TXBUFFERSIZE)
 	{
-		length = TXBUFFERSIZE - 1;
+		length = USART_TXBUFFERSIZE - 1;
 	}
 #endif
 

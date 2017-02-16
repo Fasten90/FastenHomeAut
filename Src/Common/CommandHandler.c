@@ -17,13 +17,11 @@
 #include "escapesequence.h"
 #include "GlobalVarHandler.h"
 #include "communication.h"
+#ifdef MODULE_COMMANDHANDLER_UNITTEST_ENABLE
+#include "unittest.h"
+#endif
 
 #include "CommandHandler.h"
-
-#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
-#include "homeautmessage.h"
-#include "raspberrypi.h"
-#endif
 
 
 
@@ -115,17 +113,21 @@ void CommandHandler_SendWelcome(void)
 
 /**
  * \brief	Prepare (Separate) the command and Find and Run it...
+ * \note	Be careful! Only one call enabled, because this module use global variables
  */
 bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source, char *command)
 {
 	bool isSuccessful = false;
 
-	// Separate command
+	// Save command (to buffer)
 	StrCpyMax(CommandHandler_ProcessedCommandActual, command, COMMANDHANDLER_MAX_COMMAND_LENGTH);
+
+	// Separate command
 	CommandHandler_CommandArgCount = CommandHandler_CommandParser();
 	CommandHandler_CommandSource = source;
 
-	if (CommandHandler_CommandArgCount > 0)
+	if (CommandHandler_CommandArgCount > 0
+		&& CommandHandler_CommandArgCount <= COMMANDHANDLER_COMMAND_ARG_MAX_COUNT)
 	{
 		// Find and execute the command
 		isSuccessful = CommandHandler_SearchCommand();
@@ -156,14 +158,16 @@ static uint8_t CommandHandler_CommandParser(void)
 
 	uint8_t commandArgCount = 0;
 
-	commandArgCount = STRING_Splitter((char*)CommandHandler_ProcessedCommandActual, CommandHandler_DelimiterChar,
-			CommandHandler_CommandArguments, COMMANDHANDLER_COMMAND_ARG_MAX_COUNT);
+	commandArgCount = STRING_Splitter((char*)CommandHandler_ProcessedCommandActual,
+			CommandHandler_DelimiterChar, CommandHandler_CommandArguments,
+			COMMANDHANDLER_COMMAND_ARG_MAX_COUNT);
+	// TODO: Now, ArgCount never will be larger than 3
 
-
+	// Check argument num
 	if (commandArgCount > COMMANDHANDLER_COMMAND_ARG_MAX_COUNT)
 	{
 		// Too many arguments
-		CommandHandler_SendMessage("Too many arguments!\r\n");
+		CommandHandler_SendLine("Too many arguments!");
 		commandArgCount = 0;
 	}
 
@@ -186,7 +190,7 @@ static bool CommandHandler_SearchCommand(void)
 	for (i=0; i < CommandHandler_CommandNum; i++)
 	{
 
-		if (!StrCmp(CommandHandler_CommandArguments[0],CommandList[i].name))
+		if (!StrCmp(CommandHandler_CommandArguments[0], CommandList[i].name))
 		{
 			// Found the command
 			result = CommandHandler_RunCommand(i);
@@ -295,7 +299,7 @@ static CommandResult_t CommandHandler_RunCommand(CommandID_t commandID)
 		// End of warning suppress
 
 		// Execute the command function
-		result = thisFunction(CommandHandler_CommandArgCount,(char**)CommandHandler_CommandArguments);
+		result = thisFunction(CommandHandler_CommandArgCount, (char**)CommandHandler_CommandArguments);
 	}
 	else
 	{
@@ -480,7 +484,7 @@ void CommandHandler_Printf(const char *format, ...)
 {
 
 	// Working in at:
-	char txBuffer[TXBUFFERSIZE];
+	char txBuffer[USART_TXBUFFERSIZE];
 
 	va_list ap;									// argument pointer
 	va_start(ap, format); 						// ap on arg
@@ -505,3 +509,83 @@ void CommandHandler_SendCls(void)
 }
 
 
+
+#ifdef MODULE_COMMANDHANDLER_UNITTEST_ENABLE
+/**
+ * \brief	CommandHandler unit test
+ */
+void CommandHandler_UnitTest(void)
+{
+
+	// Start of unittest
+	UnitTest_Start("CommandHandler", __FILE__);
+
+#ifndef CONFIG_PROTOCOL_BUFFER_ENABLE
+#error "CommandHandler unit test need buffer protocol!"
+#endif
+
+	bool result;
+
+	// Check "version" (good) command
+	result = CommandHandler_PrepareFindExecuteCommand(CommProt_Buffer, "version");
+
+	// Check command execute result
+	UnitTest_CheckResult(result,
+			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	// Check command argument num
+	UnitTest_CheckResult(CommandHandler_CommandArgCount == 1,
+			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	// Check command source
+	UnitTest_CheckResult(CommandHandler_CommandSource == CommProt_Buffer,
+			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	// Check separated / splitted command
+	UnitTest_CheckResult(!StrCmp(CommandHandler_CommandArguments[0], "version"),
+			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	UnitTest_CheckResult(CommandHandler_CommandArguments[1] == NULL,
+			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+
+
+	// Check wrong command: not find
+	result = CommandHandler_PrepareFindExecuteCommand(CommProt_Buffer, "WrongCommand");
+	// Check command execute result
+	UnitTest_CheckResult(!result,
+			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	// Check command argument num: will be 1
+	UnitTest_CheckResult(CommandHandler_CommandArgCount == 	1,
+			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	// Check command source
+	UnitTest_CheckResult(CommandHandler_CommandSource == CommProt_Buffer,
+			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	// Check separated / splitted command
+	UnitTest_CheckResult(!StrCmp(CommandHandler_CommandArguments[0], "WrongCommand"),
+			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	UnitTest_CheckResult(CommandHandler_CommandArguments[1] == NULL,
+			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+
+
+	// Check wrong command: too many arguments ( >3)
+	result = CommandHandler_PrepareFindExecuteCommand(CommProt_Buffer, "version with lot of arguments");
+	// Check command execute result: true/successful, because CommandHandler will find "version" command
+	UnitTest_CheckResult(result == true,
+			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	// Check command argument num
+	UnitTest_CheckResult(CommandHandler_CommandArgCount == 	3,
+			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	// Check command source
+	UnitTest_CheckResult(CommandHandler_CommandSource == CommProt_Buffer,
+			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	// Check separated / splitted command
+	UnitTest_CheckResult(!StrCmp(CommandHandler_CommandArguments[0], "version"),
+			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	UnitTest_CheckResult(!StrCmp(CommandHandler_CommandArguments[1], "with"),
+			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	UnitTest_CheckResult(!StrCmp(CommandHandler_CommandArguments[2], "lot"),
+			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+
+
+	// End of unittest
+	UnitTest_End();
+
+}
+
+#endif

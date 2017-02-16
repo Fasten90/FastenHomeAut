@@ -741,6 +741,9 @@ CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
 	HomeAutMessage_UnitTest();
 #endif
 
+#ifdef MODULE_COMMANDHANDLER_UNITTEST_ENABLE
+	CommandHandler_UnitTest();
+#endif
 
 	return CommandResult_Ok;
 }

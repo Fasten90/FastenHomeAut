@@ -91,7 +91,7 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 static ProcessResult_t GlobalVarHandler_SetFloat(VarID_t commandID, const char *param);
 static ProcessResult_t GlobalVarHandler_SetBits(VarID_t commandID, const char *param);
 static ProcessResult_t GlobalVarHandler_SetString(VarID_t commandID, const char *param);
-static ProcessResult_t GLobalVarHandler_SetEnumerator(VarID_t commandID, const char *param);
+static ProcessResult_t GlobalVarHandler_SetEnumerator(VarID_t commandID, const char *param);
 
 
 
@@ -203,7 +203,7 @@ void GlobalVarHandler_ProcessCommand(
 	// Search command
 	VarID_t commandID = 0;
 
-	if (GlobalVarHandler_SearchVariableName(commandName,&commandID))
+	if (GlobalVarHandler_SearchVariableName(commandName, &commandID))
 	{
 		// Found, Check the source
 		if ((source & GlobalVarList[commandID].sourceEnable) || (GlobalVarList[commandID].sourceEnable == CommProt_Unknown))
@@ -212,7 +212,7 @@ void GlobalVarHandler_ProcessCommand(
 			if (setGetType == SetGet_Get)
 			{
 				// Get
-				result = GlobalVarHandler_GetCommand(commandID,resultBuffer,&resultBufferLength);
+				result = GlobalVarHandler_GetCommand(commandID, resultBuffer, &resultBufferLength);
 			}
 			else if (setGetType == SetGet_Set)
 			{
@@ -220,7 +220,7 @@ void GlobalVarHandler_ProcessCommand(
 				if (!GlobalVarList[commandID].isReadOnly)
 				{
 					// It not const, can set
-					result = GlobalVarHandler_SetCommand(commandID,param);
+					result = GlobalVarHandler_SetCommand(commandID, param);
 				}
 				else
 				{
@@ -250,7 +250,7 @@ void GlobalVarHandler_ProcessCommand(
 		result = Process_GlobalVariableNameNotFind;
 	}
 
-	GlobalVarHandler_WriteResults(result,resultBuffer,resultBufferLength);
+	GlobalVarHandler_WriteResults(result, resultBuffer, resultBufferLength);
 }
 
 
@@ -635,7 +635,7 @@ static ProcessResult_t GlobalVarHandler_SetCommand(const VarID_t commandID, cons
 			break;
 
 		case Type_Enumerator:
-			result = GLobalVarHandler_SetEnumerator(commandID, param);
+			result = GlobalVarHandler_SetEnumerator(commandID, param);
 			break;
 
 		// Wrong types
@@ -1052,7 +1052,7 @@ static ProcessResult_t GlobalVarHandler_SetString(VarID_t commandID, const char 
 /**
  * \brief	Set enumerator
  */
-static ProcessResult_t GLobalVarHandler_SetEnumerator(VarID_t commandID, const char *param)
+static ProcessResult_t GlobalVarHandler_SetEnumerator(VarID_t commandID, const char *param)
 {
 	ProcessResult_t result = Process_Unknown;
 	uint32_t enumValue = 0;
@@ -1370,7 +1370,7 @@ void GlobalVarHandler_ListAllVariableParameters(void)
 /**
  * \brief	Print all variable values
  */
-void GlobalVarHandler_PrintAllVariableValues (void)
+void GlobalVarHandler_PrintAllVariableValues(void)
 {
 	uint8_t i;
 	char resultBuffer[40];
@@ -1378,7 +1378,8 @@ void GlobalVarHandler_PrintAllVariableValues (void)
 
 	CommandHandler_Printf("Global variables:\r\n"
 			" %20s %20s\r\n",
-			"<Name>", "<Value>");
+			"<Name>",
+			"<Value>");
 
 	// Print all variables
 	for (i=0; i<GlobalVarMaxCommandNum; i++)
@@ -1397,7 +1398,7 @@ void GlobalVarHandler_PrintAllVariableValues (void)
 /**
  * \brief	Print global variable descriptions
  */
-static void GlobalVarHandler_PrintVariableDescriptions (VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength)
+static void GlobalVarHandler_PrintVariableDescriptions(VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength)
 {
 
 	if (*resultBufferLength >= 80)
@@ -1410,5 +1411,11 @@ static void GlobalVarHandler_PrintVariableDescriptions (VarID_t commandID, char 
 				GlobalVarList[commandID].description
 				);
 	}
-
 }
+
+
+
+/**
+ * \brief	GlobalVarHandler unit test
+ */
+void GlobalVarHandler_UnitTest(void);

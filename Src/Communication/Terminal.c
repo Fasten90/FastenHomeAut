@@ -29,7 +29,7 @@
 /// USART Read cnt
 volatile uint8_t USART_RxBufferReadCnt = 0;
 
-#if ( RXBUFFERSIZE != 256 )
+#if ( USART_RXBUFFERSIZE != 256 )
 #warning "Ring buffer counter error (USART_RxBufferReadCnt)"
 #endif
 

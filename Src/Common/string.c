@@ -1468,7 +1468,7 @@ uint8_t usprintf(char *str, const char *format, ...)
 uint8_t uprintf(const char *format, ...)
 {
 	// Working in at:
-	char TxBuffer[TXBUFFERSIZE];
+	char TxBuffer[USART_TXBUFFERSIZE];
 
 	va_list ap;									// argument pointer
 	va_start(ap, format); 						// ap on arg

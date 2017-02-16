@@ -183,5 +183,7 @@ void CommandHandler_SearchCommandAndPrintHelp(const char *command);
 
 bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source, char *command);
 
+void CommandHandler_UnitTest(void);
+
 
 #endif /* COMMANDHANDLER_H_ */

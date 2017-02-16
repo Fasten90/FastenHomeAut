@@ -183,8 +183,6 @@ void ESP8266_Init(void)
 	
 
 	//DelayMs(100);
-		
-	/////////////////////////////////////////////
 
 
 	return;
@@ -258,6 +256,7 @@ void ESP8266_Task(void)
 	{
 		// CONNECT / START OF SERVER
 		#if (CONFIG_ESP8266_IS_SERVER == 1)
+		// Server mode
 		if (ESP8266_ConnectionStatus != ESP8266_ConnectionStatus_SuccessfulServerStarted)
 		{
 			// Start server
@@ -265,11 +264,12 @@ void ESP8266_Task(void)
 
 		}
 		#elif (CONFIG_ESP8266_IS_SERVER == 0)
+		// Client mode
 		if (ESP8266_ConnectionStatus != ESP8266_WifiConnectionStatus_SuccessfulConnected)
 		{
 			// TODO: Find server
 
-			// Connect
+			// Connect to server
 			ESP8266_ConnectToServerInBlockingMode();
 
 		}
@@ -577,14 +577,12 @@ bool ESP8266_ConnectToWifiNetwork(void)
 	if (!StrCmp("AT+CIPSTA=\"9.6.5.14\"\r\r\n\r\nOK\r\n",(const char *)ESP8266_ReceiveBuffer))
 	{
 		// Ok
-		LED_GREEN_ON();
-		LED_RED_OFF();
+		ESP8266_LED_OK();
 	}
 	else
 	{
 		// Fail
-		LED_GREEN_OFF();
-		LED_RED_ON();
+		ESP8266_LED_FAIL();
 	}
 	
 	#endif
@@ -621,15 +619,13 @@ bool ESP8266_FindServer ( void )
 			(const char *)ESP8266_ReceiveBuffer))
 	{
 		// OK\r\nLinked
-		LED_GREEN_ON();
-		LED_RED_OFF();
+		ESP8266_LED_OK();
 		return true;
 	}
 	else
 	{
 		// ERROR\r\nUnli [nk]
-		LED_GREEN_OFF();
-		LED_RED_ON();		
+		ESP8266_LED_FAIL();
 		return false;
 	}
 	

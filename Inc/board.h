@@ -872,7 +872,7 @@
 
 #define DEBUG_USART_AF					GPIO_AF8_USART6
 
-#define DEBUG_USART_BAUDRATE			9600
+#define DEBUG_USART_BAUDRATE			115200
 
 
 // Definition for USARTx's NVIC
