@@ -11,9 +11,9 @@
  */
 
 
-#include "string.h"
-#include "usart.h"
-#include "unittest.h"
+#include "String.h"
+#include "USART.h"
+#include "UnitTest.h"
 
 
 /// VARIABLES

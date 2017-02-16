@@ -15,8 +15,7 @@
 
 #include "include.h"
 #include <stdarg.h>		// for "..." parameters in uprintf function
-#include "communication.h"
-#include "string.h"
+#include "String.h"
 
 #ifdef MODULE_STRING_UNITTEST_ENABLE
 #include "unittest.h"

@@ -23,7 +23,6 @@
 
 #include <stdarg.h>		// For "..." parameters in uprintf function
 
-#include "communication.h"
 
 
 /*------------------------------------------------------------------------------

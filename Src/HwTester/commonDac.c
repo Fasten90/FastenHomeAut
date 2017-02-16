@@ -11,11 +11,11 @@
  */
 
 
-#include "commonDac.h"
 #include "options.h"
 #include "include.h"
 #include "board.h"
 #include "stm32f4xx_hal.h"
+#include "CommonDac.h"
 
 
 #ifdef CONFIG_MODULE_COMMON_DAC_ENABLE

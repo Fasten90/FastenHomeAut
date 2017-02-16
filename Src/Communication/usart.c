@@ -16,9 +16,7 @@
 
 #include "include.h"
 #include "board.h"
-
-#include "usart.h"
-#include "CommandHandler.h"
+#include "USART.h"
 
 
 

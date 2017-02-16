@@ -5,8 +5,8 @@
  *      Author: Vizi Gábor
  */
 
+#include "Calc.h"
 #include "include.h"
-#include "calc.h"
 
 
 

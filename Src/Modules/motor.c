@@ -16,9 +16,9 @@
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
-#include "motor.h"
 #include "options.h"
 #include "include.h"
+#include "Motor.h"
 
 
 #ifdef CONFIG_MODULE_MOTOR_ENABLE

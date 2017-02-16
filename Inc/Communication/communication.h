@@ -14,6 +14,8 @@
 #define COMMUNICATION_H_
 
 
+#include "include.h"
+
 
 #define COMMUNICATION_PROTOCOL_BUFFER_SIZE		(100)
 

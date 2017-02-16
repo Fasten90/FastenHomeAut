@@ -16,7 +16,7 @@
 
 #include "options.h"
 #include "include.h"
-#include "raspberrypi.h"
+#include "RaspberryPI.h"
 
 
 /*------------------------------------------------------------------------------

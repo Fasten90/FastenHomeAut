@@ -15,7 +15,7 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 #include "include.h"
-#include "swo.h"
+#include "SWO.h"
 
 
 #ifdef CONFIG_SWO_ENABLE

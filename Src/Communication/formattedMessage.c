@@ -10,8 +10,8 @@
  *		Last modified:	2016.09.28
  */
 
-#include "usart.h"
-#include "formattedMessage.h"
+#include "USART.h"
+#include "FormattedMessage.h"
 
 
 /**

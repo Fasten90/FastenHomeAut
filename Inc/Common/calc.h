@@ -9,6 +9,8 @@
 #define CALC_H_
 
 
+#include "include.h"
+
 
 /*------------------------------------------------------------------------------
  *  Global function declarations

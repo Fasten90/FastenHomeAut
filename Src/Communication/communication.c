@@ -12,7 +12,7 @@
 
 #include "options.h"
 #include "include.h"
-#include "communication.h"
+#include "Communication.h"
 
 
 
