@@ -54,21 +54,31 @@ Type_Enumerator
 // TODO: Lehet, hogy lekérdező függvénybe kéne rakni?
 static const char const *GlobalVarTypesNames[] =
 {
-		// NOTE: Important!! Must be in the same order with VarType_t
-		"unknown",
-		"bool",
-		"uint8_t",
-		"int8_t",
-		"uint16_t",
-		"int16_t",
-		"uint32_t",
-		"int32_t",
-		"float",
-		"bits",
-		"string",
-		"enumerator",
-		NULL
+	// NOTE: Important!! Must be in the same order with VarType_t
+	"unknown",
+	"bool",
+	"uint8_t",
+	"int8_t",
+	"uint16_t",
+	"int16_t",
+	"uint32_t",
+	"int32_t",
+	"float",
+	"bits",
+	"string",
+	"enumerator",
+	NULL
 };
+
+// TODO: Macro for checking
+/*
+#if ((sizeof(GlobalVarTypesNames)/sizeof(GlobalVarTypesNames[0])) != Type_Count)
+#error "Syncronize 'Type_Count' with 'GlobalVarTypesNames'"
+#endif
+*/
+
+
+static CommProtocol_t GlobalVarHandler_Source = CommProt_Unknown;
 
 
 
@@ -76,15 +86,16 @@ static const char const *GlobalVarTypesNames[] =
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
-static ProcessResult_t GlobalVarHandler_GetCommand(VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
+static ProcessResult_t GlobalVarHandler_GetCommand(VarID_t commandID);
 static bool GlobalVarHandler_SearchVariableName(const char *commandName, VarID_t *commandID);
 static ProcessResult_t GlobalVarHandler_SetCommand(const VarID_t commandID, const char *param);
-static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBuffer, uint8_t resultBufferLength);
+static void GlobalVarHandler_WriteResults(ProcessResult_t result);
 static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t num);
-static void GlobalVarHandler_PrintVariableDescriptions (VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
-static uint8_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
-static uint8_t GlobalVarHandler_GetBits(const VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
-static uint8_t GlobalVarHandler_GetEnumerator(const VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength);
+static void GlobalVarHandler_PrintVariableDescriptions (VarID_t commandID);
+
+static void GlobalVarHandler_GetIntegerVariable(VarID_t commandID);
+static void GlobalVarHandler_GetBits(const VarID_t commandID);
+static void GlobalVarHandler_GetEnumerator(const VarID_t commandID);
 
 static ProcessResult_t GlobalVarHandler_SetBool(VarID_t commandID, const char *param);
 static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char *param);
@@ -190,13 +201,10 @@ bool GlobalVarHandler_CheckCommandStructAreValid(void)
  * \param	*param				received parameters after command
  * \param	setGetType			Set or get command
  * \param	source				Command source (e.g. USART)
- * \param	*resultBuffer		Buffer, which writing with result
- * \param	resultBufferLength	Buffer length
  */
 void GlobalVarHandler_ProcessCommand(
 		const char *commandName, const char *param,
-		SetGetType_t setGetType, CommProtocol_t source,
-		char *resultBuffer, uint8_t resultBufferLength)
+		SetGetType_t setGetType, CommProtocol_t source)
 {
 	 ProcessResult_t result = Process_Unknown;
 
@@ -212,7 +220,7 @@ void GlobalVarHandler_ProcessCommand(
 			if (setGetType == SetGet_Get)
 			{
 				// Get
-				result = GlobalVarHandler_GetCommand(commandID, resultBuffer, &resultBufferLength);
+				result = GlobalVarHandler_GetCommand(commandID);
 			}
 			else if (setGetType == SetGet_Set)
 			{
@@ -230,7 +238,7 @@ void GlobalVarHandler_ProcessCommand(
 			}
 			else if (setGetType == SetGet_Help)
 			{
-				GlobalVarHandler_PrintVariableDescriptions(commandID, resultBuffer, &resultBufferLength);
+				GlobalVarHandler_PrintVariableDescriptions(commandID);
 				result = Process_Ok_Answered;
 			}
 			else
@@ -250,7 +258,7 @@ void GlobalVarHandler_ProcessCommand(
 		result = Process_GlobalVariableNameNotFind;
 	}
 
-	GlobalVarHandler_WriteResults(result, resultBuffer, resultBufferLength);
+	GlobalVarHandler_WriteResults(result);
 }
 
 
@@ -284,10 +292,8 @@ static bool GlobalVarHandler_SearchVariableName(const char *commandName, VarID_t
 /**
  * \brief	Get command
  */
-static ProcessResult_t GlobalVarHandler_GetCommand(VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength)
+static ProcessResult_t GlobalVarHandler_GetCommand(VarID_t commandID)
 {
-	uint8_t length = 0;
-
 	// Check type
 	switch (GlobalVarList[commandID].type)
 	{
@@ -296,13 +302,11 @@ static ProcessResult_t GlobalVarHandler_GetCommand(VarID_t commandID, char *resu
 			bool *boolPointer = (bool *)GlobalVarList[commandID].varPointer;
 			if (*boolPointer)
 			{
-				length += StrCpyMax(resultBuffer, "1 / TRUE",
-						*resultBufferLength);
+				COMMUNICATION_SendMessage(GlobalVarHandler_Source, "1 / TRUE");
 			}
 			else
 			{
-				length += StrCpyMax(resultBuffer, "0 / FALSE",
-						*resultBufferLength);
+				COMMUNICATION_SendMessage(GlobalVarHandler_Source, "0 / FALSE");
 			}
 		}
 			break;
@@ -313,33 +317,30 @@ static ProcessResult_t GlobalVarHandler_GetCommand(VarID_t commandID, char *resu
 		case Type_Int8:
 		case Type_Int16:
 		case Type_Int32:
-			length += GlobalVarHandler_GetIntegerVariable(commandID,
-					resultBuffer, resultBufferLength);
+			GlobalVarHandler_GetIntegerVariable(commandID);
 			break;
 
 		case Type_Float:
 		{
 			float *floatPointer = (float *)GlobalVarList[commandID].varPointer;
 			float value = *floatPointer;
-			length += FloatToString(value, resultBuffer, 0, 2);
+			COMMUNICATION_Printf(GlobalVarHandler_Source, "%8.2f", value);
 		}
 			break;
 
 		case Type_Bits:
-			length += GlobalVarHandler_GetBits(commandID, resultBuffer, resultBufferLength);
+			GlobalVarHandler_GetBits(commandID);
 			break;
 
 		case Type_String:
 		{
 			const char *string = GlobalVarList[commandID].varPointer;
-			length += StrCpyMax(resultBuffer, string,
-					*resultBufferLength - length);
+			COMMUNICATION_SendMessage(GlobalVarHandler_Source, string);
 		}
 			break;
 
 		case Type_Enumerator:
-			length += GlobalVarHandler_GetEnumerator(commandID, resultBuffer,
-					resultBufferLength);
+			GlobalVarHandler_GetEnumerator(commandID);
 			break;
 
 		// Wrong types
@@ -355,26 +356,10 @@ static ProcessResult_t GlobalVarHandler_GetCommand(VarID_t commandID, char *resu
 	// Append unit, if need
 	if (GlobalVarList[commandID].unit)
 	{
-		// Space
-		length += StrCpyMax(&resultBuffer[length], " ", *resultBufferLength-length);
-		// Copy *unit
-		length += StrCpyMax(&resultBuffer[length],GlobalVarList[commandID].unit, *resultBufferLength-length);
+		// Print unit
+		COMMUNICATION_Printf(GlobalVarHandler_Source, " %s", GlobalVarList[commandID].unit);
 	}
 #endif
-
-
-	// Check length
-	// TODO: Check length
-	if (length <= *resultBufferLength)
-	{
-		*resultBufferLength -= length;
-	}
-	else
-	{
-		*resultBufferLength = 0;
-		// TODO: Buffer Overflow
-	}
-
 
 	return Process_Ok_Answered;
 }
@@ -385,9 +370,8 @@ static ProcessResult_t GlobalVarHandler_GetCommand(VarID_t commandID, char *resu
  * \brief	Get integer value
  * 			NOTE: Be careful, commandID not checked
  */
-static uint8_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength)
+static void GlobalVarHandler_GetIntegerVariable(VarID_t commandID)
 {
-	uint8_t length = 0;
 	VarType_t type = GlobalVarList[commandID].type;
 
 	if (GlobalVarList[commandID].isHex)
@@ -430,14 +414,13 @@ static uint8_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resu
 			// Octet num is ok
 			uint32_t *numPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
 			uint32_t num = *numPointer;
-			// TODO: Buffer túlírás ellenőrzés
-			length += StrCpy(resultBuffer,"0x");
-			length += DecimalToHexaString(num, &resultBuffer[length], octetNum);
+			char format[10];
+			sprintf(format, "0x%dX", octetNum);
+			COMMUNICATION_Printf(GlobalVarHandler_Source, format, num);
 		}
 		else
 		{
 			// Error, octet = 0
-			length = 0;
 		}
 	}
 	else
@@ -450,8 +433,7 @@ static uint8_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resu
 				uint8_t *numPointer =
 						(uint8_t *)GlobalVarList[commandID].varPointer;
 				uint8_t num = *numPointer;
-				// TODO: Buffer túlírás ellenőrzés
-				length += UnsignedDecimalToString(num, resultBuffer);
+				COMMUNICATION_Printf(GlobalVarHandler_Source, "%u", num);
 			}
 				break;
 
@@ -460,8 +442,7 @@ static uint8_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resu
 				uint16_t *numPointer =
 						(uint16_t *)GlobalVarList[commandID].varPointer;
 				uint16_t num = *numPointer;
-				// TODO: Buffer túlírás ellenőrzés
-				length += UnsignedDecimalToString(num, resultBuffer);
+				COMMUNICATION_Printf(GlobalVarHandler_Source, "%u", num);
 			}
 				break;
 
@@ -470,8 +451,7 @@ static uint8_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resu
 				uint32_t *numPointer =
 						(uint32_t *)GlobalVarList[commandID].varPointer;
 				uint32_t num = *numPointer;
-				// TODO: Buffer túlírás ellenőrzés
-				length += UnsignedDecimalToString(num, resultBuffer);
+				COMMUNICATION_Printf(GlobalVarHandler_Source, "%u", num);
 			}
 				break;
 
@@ -480,8 +460,7 @@ static uint8_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resu
 				int8_t *numPointer =
 						(int8_t *)GlobalVarList[commandID].varPointer;
 				int8_t num = *numPointer;
-				// TODO: Buffer túlírás ellenőrzés
-				length += SignedDecimalToString(num, resultBuffer);
+				COMMUNICATION_Printf(GlobalVarHandler_Source, "%d", num);
 			}
 				break;
 
@@ -490,8 +469,7 @@ static uint8_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resu
 				int16_t *numPointer =
 						(int16_t *)GlobalVarList[commandID].varPointer;
 				int16_t num = *numPointer;
-				// TODO: Buffer túlírás ellenőrzés
-				length += SignedDecimalToString(num, resultBuffer);
+				COMMUNICATION_Printf(GlobalVarHandler_Source, "%d", num);
 			}
 				break;
 
@@ -500,8 +478,7 @@ static uint8_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resu
 				int32_t *numPointer =
 						(int32_t *)GlobalVarList[commandID].varPointer;
 				int32_t num = *numPointer;
-				// TODO: Buffer túlírás ellenőrzés
-				length += SignedDecimalToString(num, resultBuffer);
+				COMMUNICATION_Printf(GlobalVarHandler_Source, "%d", num);
 			}
 				break;
 
@@ -515,16 +492,12 @@ static uint8_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resu
 			case Type_Count:
 			default:
 				// Wrong case
-				length = 0;
 				break;
 		}
 
 	}
 
-	// - length
-	*resultBufferLength -= length;
-
-	return length;
+	return;
 }
 
 
@@ -532,12 +505,10 @@ static uint8_t GlobalVarHandler_GetIntegerVariable(VarID_t commandID, char *resu
 /**
  * \brief
  */
-static uint8_t GlobalVarHandler_GetBits(const VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength)
+static void GlobalVarHandler_GetBits(const VarID_t commandID)
 {
-	(void)resultBufferLength;
 	uint32_t *numPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
 	uint32_t num = *numPointer;
-	uint8_t length = 0;
 
 	// xxxx11111yyyyyy
 	//     mask  shift
@@ -548,9 +519,9 @@ static uint8_t GlobalVarHandler_GetBits(const VarID_t commandID, char *resultBuf
 	// Shift to right, and mask to make our important bits
 	num = (num >> shift) & (power(2,bitLength)-1);
 
-	length += usprintf(resultBuffer, "0b%b", num);
+	COMMUNICATION_Printf(GlobalVarHandler_Source, "0b%b", num);
 
-	return length;
+	return;
 }
 
 
@@ -558,24 +529,21 @@ static uint8_t GlobalVarHandler_GetBits(const VarID_t commandID, char *resultBuf
 /**
  * \brief	Get enumerators
  */
-static uint8_t GlobalVarHandler_GetEnumerator(const VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength)
+static void GlobalVarHandler_GetEnumerator(const VarID_t commandID)
 {
 	uint8_t *enumPointer = (uint8_t *)GlobalVarList[commandID].varPointer;
 	uint8_t enumValue = *enumPointer;
-	uint8_t length = 0;		// TODO: Lehet, hogy nem így érdemes a hosszt figyelni
 	char *enumString;
 
 	// Print enum value
-	length += UnsignedDecimalToString(enumValue, resultBuffer);
-	length += StrCpy(&resultBuffer[length], " ");
-	// TODO: Check overflow
+	COMMUNICATION_Printf(GlobalVarHandler_Source, "%d ", enumValue);
 
 	// Check "enumList" pointer
 	if (GlobalVarList[commandID].enumList == NULL)
 	{
 		// TODO: Add new result type?
-		length += StrCpyMax(&resultBuffer[length],"ERROR - There is not set \"enumList\" pointer", *resultBufferLength-length);
-		return length;
+		COMMUNICATION_SendMessage(GlobalVarHandler_Source, "ERROR - There is not set \"enumList\" pointer");
+		return;
 	}
 
 	// If has good enumList
@@ -583,17 +551,17 @@ static uint8_t GlobalVarHandler_GetEnumerator(const VarID_t commandID, char *res
 	if (enumValue > GlobalVarList[commandID].maxValue)
 	{
 		// TODO: Add new result type?
-		length += StrCpyMax(&resultBuffer[length],"ERROR - Enum has too high value", *resultBufferLength-length);
-		return length;
+		COMMUNICATION_SendMessage(GlobalVarHandler_Source, "ERROR - Enum has too high value");
+		return;
 	}
 
 	// Good value
 	// Print enum string
 	enumString = (char *)GlobalVarList[commandID].enumList[enumValue];	// string pointer
-	length += StrCpyMax(&resultBuffer[length],enumString, *resultBufferLength-length);
+	COMMUNICATION_SendMessage(GlobalVarHandler_Source, enumString);
 
-	// Return length
-	return length;
+	// Return
+	return;
 
 }
 
@@ -682,38 +650,38 @@ static ProcessResult_t GlobalVarHandler_SetBool(VarID_t commandID, const char *p
 		// Not number
 
 		// Check it is "true" / "false" ?
-		if (!StrCmp((const char*)param,"true"))
+		if (!StrCmp((const char*)param, "true"))
 		{
 			boolVal = true;
 		}
-		else if (!StrCmp((const char*)param,"false"))
+		else if (!StrCmp((const char*)param, "false"))
 		{
 			boolVal = false;
 		}
 		// Check it is "on" / "off"?
-		else if (!StrCmp((const char*)param,"on"))
+		else if (!StrCmp((const char*)param, "on"))
 		{
 			boolVal = true;
 		}
-		else if (!StrCmp((const char*)param,"off"))
+		else if (!StrCmp((const char*)param, "off"))
 		{
 			boolVal = false;
 		}
 		// Check it is "enable" / "disable"
-		else if (!StrCmp((const char*)param,"enable"))
+		else if (!StrCmp((const char*)param, "enable"))
 		{
 			boolVal = true;
 		}
-		else if (!StrCmp((const char*)param,"disable"))
+		else if (!StrCmp((const char*)param, "disable"))
 		{
 			boolVal = false;
 		}
 		// Check it is "set" / "reset"
-		else if (!StrCmp((const char*)param,"set"))
+		else if (!StrCmp((const char*)param, "set"))
 		{
 			boolVal = true;
 		}
-		else if (!StrCmp((const char*)param,"reset"))
+		else if (!StrCmp((const char*)param, "reset"))
 		{
 			boolVal = false;
 		}
@@ -925,7 +893,7 @@ static ProcessResult_t GlobalVarHandler_SetFloat(VarID_t commandID, const char *
 	ProcessResult_t result = Process_Unknown;
 
 	float floatValue = 0.0f;
-	if (StringToFloat(param,&floatValue))
+	if (StringToFloat(param, &floatValue))
 	{
 		// Successful convert
 		result = GlobalVarHandler_CheckValue(commandID,(uint32_t)(int32_t)floatValue);
@@ -1239,7 +1207,7 @@ static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t n
 /**
  * \brief	Write process result
  */
-static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBuffer, uint8_t resultBufferLength)
+static void GlobalVarHandler_WriteResults(ProcessResult_t result)
 {
 	const char *pMessage = NULL;
 
@@ -1326,7 +1294,8 @@ static void GlobalVarHandler_WriteResults(ProcessResult_t result, char *resultBu
 			break;
 	}
 
-	StrCpyMax(resultBuffer, pMessage, resultBufferLength);
+	COMMUNICATION_SendMessage(GlobalVarHandler_Source, pMessage);
+
 }
 
 
@@ -1342,14 +1311,15 @@ void GlobalVarHandler_ListAllVariableParameters(void)
 	const char *header = "+-ID-+-------Name-----------+----Type----+--min--+--max--+-unit-+-----Description------+";
 
 	// Send header
-	CommandHandler_SendLine(header);
+	COMMUNICATION_SendMessage(GlobalVarHandler_Source, header);
 
 	// Rows (commands)
 	for (i=0; i<GlobalVarMaxCommandNum; i++)
 	{
 
 		// Print one command / line:
-		CommandHandler_Printf("| %2d | %20s | %10s | %5d | %5d | %4s | %20s |\r\n",
+		COMMUNICATION_Printf(GlobalVarHandler_Source,
+				"| %2d | %20s | %10s | %5d | %5d | %4s | %20s |\r\n",
 				i,
 				GlobalVarList[i].name,
 				GlobalVarTypesNames[GlobalVarList[i].type],
@@ -1361,7 +1331,7 @@ void GlobalVarHandler_ListAllVariableParameters(void)
 	}
 
 	// After commands (end)
-	CommandHandler_SendLine(header);
+	COMMUNICATION_SendMessage(GlobalVarHandler_Source, header);
 
 }
 
@@ -1373,24 +1343,23 @@ void GlobalVarHandler_ListAllVariableParameters(void)
 void GlobalVarHandler_PrintAllVariableValues(void)
 {
 	uint8_t i;
-	char resultBuffer[40];
-	uint8_t resultBufferLength;
 
-	CommandHandler_Printf("Global variables:\r\n"
+	COMMUNICATION_Printf(GlobalVarHandler_Source, "Global variables:\r\n"
 			" %20s %20s\r\n",
 			"<Name>",
 			"<Value>");
 
 	// Print all variables
-	for (i=0; i<GlobalVarMaxCommandNum; i++)
+	for (i = 0; i < GlobalVarMaxCommandNum; i++)
 	{
 		// Print a variable name and value
-		resultBufferLength = 40;
-		GlobalVarHandler_GetCommand(i,resultBuffer,&resultBufferLength);
-		CommandHandler_Printf(" %20s %20s\r\n", GlobalVarList[i].name, resultBuffer);
+		// TODO: Itt elrontotta a lehetőségeinket... ?
+		//COMMUNICATION_Printf(GlobalVarHandler_Source, " %20s %20s\r\n", GlobalVarList[i].name);
+		COMMUNICATION_Printf(GlobalVarHandler_Source, " %20s ", GlobalVarList[i].name);
+		GlobalVarHandler_GetCommand(i);
 	}
 
-	CommandHandler_SendLine("End of global variables");
+	COMMUNICATION_SendMessage(GlobalVarHandler_Source, "End of global variables\r\n");
 }
 
 
@@ -1398,19 +1367,17 @@ void GlobalVarHandler_PrintAllVariableValues(void)
 /**
  * \brief	Print global variable descriptions
  */
-static void GlobalVarHandler_PrintVariableDescriptions(VarID_t commandID, char *resultBuffer, uint8_t *resultBufferLength)
+static void GlobalVarHandler_PrintVariableDescriptions(VarID_t commandID)
 {
 
-	if (*resultBufferLength >= 80)
-	{
-		usprintf(resultBuffer, "Command help: %s, type:%s, min:%d, max:%d, desc:%s\r\n",
-				GlobalVarList[commandID].name,
-				GlobalVarTypesNames[GlobalVarList[commandID].type],
-				GlobalVarList[commandID].minValue,
-				GlobalVarList[commandID].maxValue,
-				GlobalVarList[commandID].description
-				);
-	}
+	COMMUNICATION_Printf(GlobalVarHandler_Source,
+			"Command help: %s, type:%s, min:%d, max:%d, desc:%s\r\n",
+			GlobalVarList[commandID].name,
+			GlobalVarTypesNames[GlobalVarList[commandID].type],
+			GlobalVarList[commandID].minValue,
+			GlobalVarList[commandID].maxValue,
+			GlobalVarList[commandID].description
+			);
 }
 
 

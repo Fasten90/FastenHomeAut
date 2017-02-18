@@ -119,7 +119,7 @@ uint8_t COMMUNICATION_Printf(CommProtocol_t protocol, const char *format, ...)
 
 	va_list ap;									// argument pointer
 	va_start(ap, format); 						// ap on arg
-	string_printf(txBuffer,format,ap);			// Separate and process
+	string_printf(txBuffer, format, ap);			// Separate and process
 	va_end(ap);						 			// Cleaning after end
 
 	length = COMMUNICATION_SendMessage(protocol, txBuffer);

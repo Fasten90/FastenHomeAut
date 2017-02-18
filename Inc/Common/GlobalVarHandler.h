@@ -127,8 +127,7 @@ typedef struct
 bool GlobalVarHandler_CheckCommandStructAreValid(void);
 void GlobalVarHandler_ProcessCommand(
 		const char *commandName, const char *param,
-		SetGetType_t setGetType, CommProtocol_t source,
-		char *resultBuffer, uint8_t resultBufferLength);
+		SetGetType_t setGetType, CommProtocol_t source);
 
 void GlobalVarHandler_ListAllVariableParameters(void);
 void GlobalVarHandler_PrintAllVariableValues(void);

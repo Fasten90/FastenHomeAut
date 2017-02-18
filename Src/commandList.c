@@ -579,17 +579,13 @@ CommandResult_t CommandFunction_set(uint32_t argc, char** argv)
 	// Suppress warning
 	(void)argc;
 
-	char resultBuffer[40];
-
+	// Process
 	GlobalVarHandler_ProcessCommand(
 			argv[1], argv[2],
-			SetGet_Set, CommProt_DebugUart,
-			resultBuffer, 40);
+			SetGet_Set, CommandHandler_CommandSource);
 
-	CommandHandler_SendLine(resultBuffer);
 
 	return CommandResult_Ok;
-
 }
 
 
@@ -603,17 +599,13 @@ CommandResult_t CommandFunction_get(uint32_t argc, char** argv)
 	// Suppress warning
 	(void)argc;
 
-	char resultBuffer[30];
-
+	// Process
 	GlobalVarHandler_ProcessCommand(
 			argv[1], argv[2],
-			SetGet_Get, CommProt_DebugUart,
-			resultBuffer, 30);
+			SetGet_Get, CommandHandler_CommandSource);
 
-	CommandHandler_SendMessage(resultBuffer);
 
 	return CommandResult_Ok;
-
 }
 
 
@@ -627,18 +619,13 @@ CommandResult_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** argv)
 	// Suppress warning
 	(void)argc;
 
-	char resultBuffer[80];
-
+	// Process
 	GlobalVarHandler_ProcessCommand(
 			argv[1], argv[2],
-			SetGet_Help, CommProt_DebugUart,
-			resultBuffer, 80);
-
-	CommandHandler_SendMessage(resultBuffer);
+			SetGet_Help, CommandHandler_CommandSource);
 
 
 	return CommandResult_Ok;
-
 }
 
 

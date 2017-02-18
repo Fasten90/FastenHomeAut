@@ -37,7 +37,7 @@ static const char CommandHandler_DelimiterChar = ' ';
  *----------------------------------------------------------------------------*/
 
 
-volatile CommProtocol_t CommandHandler_CommandSource = 0;
+volatile CommProtocol_t CommandHandler_CommandSource = CommProt_Unknown;
 
 static char CommandHandler_ProcessedCommandActual[COMMANDHANDLER_MAX_COMMAND_LENGTH] = { 0 };
 static uint8_t CommandHandler_CommandArgCount = 0;
