@@ -460,7 +460,7 @@ void CommandHandler_Printf(const char *format, ...)
 
 	va_list ap;									// argument pointer
 	va_start(ap, format); 						// ap on arg
-	string_printf(txBuffer,format,ap);			// Separate and process
+	string_printf(txBuffer, format, ap);		// Separate and process
 	va_end(ap);						 			// Cleaning after end
 
 	CommandHandler_SendMessage(txBuffer);

@@ -415,7 +415,7 @@ static void GlobalVarHandler_GetIntegerVariable(VarID_t commandID)
 			uint32_t *numPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
 			uint32_t num = *numPointer;
 			char format[10];
-			sprintf(format, "0x%dX", octetNum);
+			usprintf(format, "0x%dX", octetNum);
 			COMMUNICATION_Printf(GlobalVarHandler_Source, format, num);
 		}
 		else
