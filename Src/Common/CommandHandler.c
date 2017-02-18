@@ -70,11 +70,13 @@ static CommandResult_t CommandHandler_CheckArgumentNumIsGood(uint8_t receivedArg
 void CommandHandler_Init(void)
 {
 
+#ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
 	// Check GlobalVarList[]
 	if (GlobalVarHandler_CheckCommandStructAreValid() == false)
 	{
 		CommandHandler_SendLine("ERROR in GlobalVarList! Should correct that!");
 	}
+#endif
 
 	// TODO: Check CommandList[]
 
@@ -434,7 +436,8 @@ void CommandHandler_SendMessage(const char *message)
  */
 void CommandHandler_SendLine(const char *message)
 {
-	CommandHandler_SendMessage(message);
+	if (message != NULL)
+		CommandHandler_SendMessage(message);
 	CommandHandler_SendMessage("\r\n");
 }
 

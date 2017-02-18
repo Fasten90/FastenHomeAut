@@ -16,6 +16,8 @@
 #include "GlobalVariables.h"
 
 
+#ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
+
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
@@ -51,7 +53,6 @@ Type_Float,
 Type_String,
 Type_Enumerator
 */
-// TODO: Lehet, hogy lekérdező függvénybe kéne rakni?
 static const char * const GlobalVarTypesNames[] =
 {
 	// NOTE: Important!! Must be in the same order with VarType_t
@@ -106,7 +107,6 @@ static ProcessResult_t GlobalVarHandler_SetEnumerator(VarID_t commandID, const c
  */
 bool GlobalVarHandler_CheckCommandStructAreValid(void)
 {
-	// TODO: vagy itt futásidejűteszt, vagy makrókkal fordításidejű teszt?
 	// TODO: Macro for checking
 
 	//#error "Syncronize 'Type_Count' with 'GlobalVarTypesNames'"
@@ -511,7 +511,7 @@ static void GlobalVarHandler_GetBits(const VarID_t commandID)
 	// TODO: Check minValue and maxValue
 
 	// Shift to right, and mask to make our important bits
-	num = (num >> shift) & (power(2,bitLength)-1);
+	num = (num >> shift) & (power(2, bitLength)-1);
 
 	CommandHandler_Printf("0b%b", num);
 
@@ -1300,10 +1300,10 @@ void GlobalVarHandler_ListAllVariableParameters(void)
 	const char *header = "+-ID-+-------Name-----------+----Type----+--min--+--max--+-unit-+-----Description------+";
 
 	// Send header
-	CommandHandler_SendMessage(header);
+	CommandHandler_SendLine(header);
 
 	// Rows (commands)
-	for (i=0; i<GlobalVarMaxCommandNum; i++)
+	for (i = 0; i < GlobalVarMaxCommandNum; i++)
 	{
 
 		// Print one command / line:
@@ -1320,7 +1320,7 @@ void GlobalVarHandler_ListAllVariableParameters(void)
 	}
 
 	// After commands (end)
-	CommandHandler_SendMessage(header);
+	CommandHandler_SendLine(header);
 
 }
 
@@ -1342,13 +1342,13 @@ void GlobalVarHandler_PrintAllVariableValues(void)
 	for (i = 0; i < GlobalVarMaxCommandNum; i++)
 	{
 		// Print a variable name and value
-		// TODO: Itt elrontotta a lehetőségeinket... ?
 		//CommandHandler_Printf(" %20s %20s\r\n", GlobalVarList[i].name);
 		CommandHandler_Printf(" %20s ", GlobalVarList[i].name);
 		GlobalVarHandler_GetCommand(i);
+		CommandHandler_SendLine(NULL);
 	}
 
-	CommandHandler_SendMessage("End of global variables\r\n");
+	CommandHandler_SendLine("End of global variables");
 }
 
 
@@ -1360,7 +1360,11 @@ static void GlobalVarHandler_PrintVariableDescriptions(VarID_t commandID)
 {
 
 	CommandHandler_Printf(
-			"Command help: %s, type:%s, min:%d, max:%d, desc:%s\r\n",
+			"Command help: %s\r\n"
+			"type:%s\r\n"
+			"min:%d\r\n"
+			"max:%d\r\n"
+			"desc:%s\r\n",
 			GlobalVarList[commandID].name,
 			GlobalVarTypesNames[GlobalVarList[commandID].type],
 			GlobalVarList[commandID].minValue,
@@ -1376,3 +1380,5 @@ static void GlobalVarHandler_PrintVariableDescriptions(VarID_t commandID)
  */
 // TODO:
 void GlobalVarHandler_UnitTest(void);
+
+#endif	// #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE

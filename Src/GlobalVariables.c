@@ -16,6 +16,8 @@
 #include "Globals.h"
 
 
+#ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
+
 /// Global variables
 
 // Example variables
@@ -33,7 +35,7 @@ uint8_t enumValue = 2;
 
 
 ///< enumExample string list
-const char *const enumExampleList[] =
+const char * const enumExampleList[] =
 {
 	"example1enumstring",
 	"example2enumstring",
@@ -129,16 +131,16 @@ const GlobalVarCommand_t GlobalVarList[] =
 		}
 
 
-		// ADD new global variable here
+		// XXX: ADD new global variable here
 		/*
 			const VarType_t type;
 
-			void const *varPointer;
+			void * const varPointer;
 			const bool isReadOnly;
 
-			const void const *maxPointer;
-			const void const *minPointer;
-			const char const *unit;
+			const void * const maxPointer;
+			const void * const minPointer;
+			const char * const unit;
 
 			const uint8_t stringMaxLength;
 
@@ -152,3 +154,4 @@ const GlobalVarCommand_t GlobalVarList[] =
 const VarID_t GlobalVarMaxCommandNum = sizeof(GlobalVarList)/sizeof(GlobalVarList[0]);
 
 
+#endif	// #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE

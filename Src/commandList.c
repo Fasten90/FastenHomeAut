@@ -96,6 +96,20 @@ const CommandStruct CommandList[] =
 		.syntax = NULL,
 	},
 	{
+		.name = "unittest",
+		.commandFunctionPointer = CommandFunction_unittest,
+		.commandArgNum = CommandArgument_0 | CommandArgument_1,
+		.description = "Run unit tests",
+		.syntax = "(modul)",
+	},
+	{
+		.name = "moduletest",
+		.commandFunctionPointer = CommandFunction_moduletest,
+		.commandArgNum = CommandArgument_0,
+		.description = "Run module test",
+	},
+#ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
+	{
 		.name = "get",
 		.commandFunctionPointer = CommandFunction_get,
 		.description = "get global variable value",
@@ -131,19 +145,7 @@ const CommandStruct CommandList[] =
 		.commandArgNum = CommandArgument_0,
 		.description = "List global variable's values",
 	},
-	{
-		.name = "unittest",
-		.commandFunctionPointer = CommandFunction_unittest,
-		.commandArgNum = CommandArgument_0 | CommandArgument_1,
-		.description = "Run unit tests",
-		.syntax = "(modul)",
-	},
-	{
-		.name = "moduletest",
-		.commandFunctionPointer = CommandFunction_moduletest,
-		.commandArgNum = CommandArgument_0,
-		.description = "Run module test",
-	},
+#endif	// #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
 #ifdef CONFIG_MODULE_LED_ENABLE
 	{
 		.name = "led",
@@ -570,26 +572,7 @@ CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 
 
 
-/**
- * \brief	set global variable
- * 			Use: 'set <globalvariablename> <value>'
- */
-CommandResult_t CommandFunction_set(uint32_t argc, char** argv)
-{
-	// Suppress warning
-	(void)argc;
-
-	// Process
-	GlobalVarHandler_ProcessCommand(
-			argv[1], argv[2],
-			SetGet_Set, CommandHandler_CommandSource);
-
-
-	return CommandResult_Ok;
-}
-
-
-
+#ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
 /**
  * \brief	Get globalvar value
  * 			Use: 'get <globalvarname>'
@@ -603,6 +586,26 @@ CommandResult_t CommandFunction_get(uint32_t argc, char** argv)
 	GlobalVarHandler_ProcessCommand(
 			argv[1], argv[2],
 			SetGet_Get, CommandHandler_CommandSource);
+
+
+	return CommandResult_Ok;
+}
+
+
+
+/**
+ * \brief	set global variable
+ * 			Use: 'set <globalvariablename> <value>'
+ */
+CommandResult_t CommandFunction_set(uint32_t argc, char** argv)
+{
+	// Suppress warning
+	(void)argc;
+
+	// Process
+	GlobalVarHandler_ProcessCommand(
+			argv[1], argv[2],
+			SetGet_Set, CommandHandler_CommandSource);
 
 
 	return CommandResult_Ok;
@@ -662,6 +665,7 @@ CommandResult_t CommandFunction_GlobalVariableValueList(uint32_t argc,
 	return CommandResult_Ok;
 
 }
+#endif	// #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
 
 
 
