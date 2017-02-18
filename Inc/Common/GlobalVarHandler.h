@@ -55,6 +55,7 @@ typedef enum
 } VarType_t;
 
 
+
 /// Process result enumerator
 typedef enum
 {

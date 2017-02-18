@@ -76,6 +76,8 @@ void CommandHandler_Init(void)
 		CommandHandler_SendLine("ERROR in GlobalVarList! Should correct that!");
 	}
 
+	// TODO: Check CommandList[]
+
 	// Initialize
 
 	CommandHandler_CommandArgCount = 0;

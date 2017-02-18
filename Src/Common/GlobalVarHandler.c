@@ -52,7 +52,7 @@ Type_String,
 Type_Enumerator
 */
 // TODO: Lehet, hogy lekérdező függvénybe kéne rakni?
-static const char const *GlobalVarTypesNames[] =
+static const char * const GlobalVarTypesNames[] =
 {
 	// NOTE: Important!! Must be in the same order with VarType_t
 	"unknown",
@@ -66,16 +66,8 @@ static const char const *GlobalVarTypesNames[] =
 	"float",
 	"bits",
 	"string",
-	"enumerator",
-	NULL
+	"enumerator"
 };
-
-// TODO: Macro for checking
-/*
-#if ((sizeof(GlobalVarTypesNames)/sizeof(GlobalVarTypesNames[0])) != Type_Count)
-#error "Syncronize 'Type_Count' with 'GlobalVarTypesNames'"
-#endif
-*/
 
 
 
@@ -115,6 +107,11 @@ static ProcessResult_t GlobalVarHandler_SetEnumerator(VarID_t commandID, const c
 bool GlobalVarHandler_CheckCommandStructAreValid(void)
 {
 	// TODO: vagy itt futásidejűteszt, vagy makrókkal fordításidejű teszt?
+	// TODO: Macro for checking
+
+	//#error "Syncronize 'Type_Count' with 'GlobalVarTypesNames'"
+	BUILD_BUG_ON((sizeof(GlobalVarTypesNames)/sizeof(GlobalVarTypesNames[0])) != Type_Count);
+
 
 	VarID_t i;
 	bool hasError = false;
@@ -708,19 +705,14 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 	// If hex
 	if (GlobalVarList[commandID].isHex)
 	{
-		uint8_t length = 0;
-		if (param[0] == '0' && param[1] == 'x')
-		{
-			length = 2;
-		}
-		else
+		if (!(param[0] == '0' && param[1] == 'x'))
 		{
 			// Need set with "0x"
 			return Process_FailParamIsNotHexStart;
 		}
 
 		// Convert HexString to Num
-		if (StringHexToNum(&param[length],&num))
+		if (StringHexToNum(&param[2],&num))
 		{
 			// Is good num?
 			ProcessResult_t result = GlobalVarHandler_CheckValue(commandID, num);
