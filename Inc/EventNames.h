@@ -39,8 +39,12 @@ typedef enum
 	Event_DebugUartReceivedCommand,
 
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
-	Event_ButtonPressed
+	Event_ButtonPressed,
 #endif
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+	Event_Esp8266ReceivedMessage,
+#endif
+
 
 	// XXX: Add here new event
 

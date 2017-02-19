@@ -184,6 +184,11 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #define BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
 
 
+#ifndef CONFIG_MODULE_WATCHDOG_ENABLE
+#define Watchdog_Clear()
+#endif
+
+
 extern void Error_Handler(void);
 
 

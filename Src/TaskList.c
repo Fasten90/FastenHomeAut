@@ -28,7 +28,12 @@
 static TaskResult_t TaskLed1Function(TaskID_t id);
 static TaskResult_t TaskLed2Function(TaskID_t id);
 static TaskResult_t TaskLed3Function(TaskID_t id);
+#ifdef CONFIG_MODULE_WATCHDOG_ENABLE
 static TaskResult_t TaskWatchdogClear(TaskID_t id);
+#endif
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+static TaskResult_t TaskEsp8266(TaskID_t id);
+#endif
 
 
 /// Tasks list
@@ -53,7 +58,14 @@ Task_t TaskList[] =
 	{
 		.taskName = "WdtClr",
 		.taskFunction = TaskWatchdogClear,
-		.taskScheduleRate = 1000
+		.taskScheduleRate = 1000,
+	},
+#endif
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+	{
+		.taskName = "Esp8266",
+		.taskFunction = TaskEsp8266,
+		.taskScheduleRate = 1000,
 	}
 #endif
 
@@ -156,5 +168,20 @@ static TaskResult_t TaskWatchdogClear(TaskID_t id)
 	return TASK_RESULT_OK;
 }
 #endif
+
+
+
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+static TaskResult_t TaskEsp8266(TaskID_t id)
+{
+	(void)id;
+
+	ESP8266_StatusMachine();
+
+	return TASK_RESULT_OK;
+}
+#endif
+
+
 
 #endif //#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE

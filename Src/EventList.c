@@ -33,6 +33,8 @@
 EventFunctionResult EventExampleFunction(EventType_t eventType, EventStatus_t eventStatus);
 EventFunctionResult EventDebugUartCommandReceived(EventType_t eventType, EventStatus_t eventStatus);
 EventFunctionResult EventButtonPressed(EventType_t eventType, EventStatus_t eventStatus);
+EventFunctionResult EventEsp8266MessageReceived(EventType_t eventType, EventStatus_t eventStatus);
+
 
 
 /*------------------------------------------------------------------------------
@@ -58,8 +60,17 @@ EventHandler_t EventList[] =
 	.eventStringName = "ButtonPressed",
 	.eventType = EventType_Event,
 	.eventFunction = EventButtonPressed
-	}
+	},
 #endif
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+	{
+	.eventName = Event_Esp8266ReceivedMessage,
+	.eventStringName = "Esp8266ReceivedMessage",
+	.eventType = EventType_Event,
+	.eventFunction = EventEsp8266MessageReceived
+	},
+#endif
+
 
 	// XXX: Add new event here
 
@@ -116,6 +127,20 @@ EventFunctionResult EventButtonPressed(EventType_t eventType, EventStatus_t even
 	// Test for Raspberry Pi
 	RASPBERRYPI_SendMessage(1, Function_Alarm, Alarm_PressedButton , 17);
 	#endif
+
+	return EventFunctionResult_Ok;
+}
+#endif
+
+
+
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+EventFunctionResult EventEsp8266MessageReceived(EventType_t eventType, EventStatus_t eventStatus)
+{
+	(void)eventType;
+	(void)eventStatus;
+	//Event_Esp8266ReceivedMessage
+	ESP8266_StatusMachine();
 
 	return EventFunctionResult_Ok;
 }

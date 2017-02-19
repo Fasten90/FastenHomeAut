@@ -465,7 +465,7 @@ CommandResult_t CommandFunction_led(uint32_t argc, char** argv)
 	bool isFirstParamNum = false;
 	uint32_t Arg2Num;
 
-	if (StringToUnsignedDecimalNum(argv[1],&Arg2Num))
+	if (StringToUnsignedDecimalNum(argv[1], &Arg2Num))
 	{
 		isFirstParamNum = true;
 	}
@@ -490,6 +490,7 @@ CommandResult_t CommandFunction_led(uint32_t argc, char** argv)
 	if (isFirstParamNum == false && !StrCmp(argv[1], "status"))
 	{
 		// "status"
+		// TODO: GetLedStates(char *) function
 #ifdef CONFIG_USE_PANEL_STM32F4DISCOVERY
 		CommandHandler_Printf("Led status: %d %d %d\r\n",
 				LED_RED_STATUS(),
@@ -517,7 +518,7 @@ CommandResult_t CommandFunction_led(uint32_t argc, char** argv)
 
 		// Set LED
 		status = LED_SetLed(Arg2Num,setType);
-		CommandHandler_Printf("LED %d. status: %d\r\n",Arg2Num, status);
+		CommandHandler_Printf("LED %d. status: %d\r\n", Arg2Num, status);
 
 	}
 	else
@@ -1072,11 +1073,38 @@ CommandResult_t CommandFunction_ESP8266(uint32_t argc, char** argv)
 {
 	(void)argc;
 
-	if (!StrCmp(argv[1],"send"))
+	if (!StrCmp(argv[1], "sendonwifi"))
 	{
 		// Send message to ESP8266 sending queue, which will send on ESP8266 TCP connection
-		ESP8266_SendMessageToQueue(argv[2]);
+		ESP8266_SendMessageOnWifi(argv[2]);
 		return CommandResult_Ok_SendSuccessful;
+	}
+	else if (!StrCmp(argv[1], "sendtomodule"))
+	{
+		// Send forward to ESP8266 module last parameter
+		ESP8266_SendString(argv[2]);
+		return CommandResult_Ok_SendSuccessful;
+	}
+	else if (!StrCmp(argv[1], "debug"))
+	{
+		// Check debug on/off
+		if (!StrCmp(argv[2], "on"))
+		{
+			// On
+			ESP8266_DebugEnableFlag = true;
+			return CommandResult_Ok_SendSuccessful;
+		}
+		else if (!StrCmp(argv[2], "off"))
+		{
+			// Off
+			ESP8266_DebugEnableFlag = false;
+			return CommandResult_Ok_SendSuccessful;
+		}
+		else
+		{
+			// Wrong command
+			return CommandResult_Error_WrongArgument2;
+		}
 	}
 	else
 	{
@@ -1473,117 +1501,6 @@ CommandResult_t CommandFunction_go(uint32_t argc, char** argv)
 	// Programming manual page 92, B instruction
 
 	return CommandResult_Ok;
-}
-#endif
-
-
-
-// TODO: Delete
-#if 0
-// Function: ESP8266 bridge
-CommandResult_t CommandFunction_ESP8266	( uint32_t argc, char** argv )
-{
-
-	if ( argc > 1 )
-	{
-		CommandHandler_SendLine("Too many arguments!");
-		return RETURN_FALSE;
-	}
-
-
-
-	MONITOR_RemoteControl = 1;
-
-	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)MONITOR_RemoteControlBuffer, 1);	// TODO: hibalehetoseg: egy mar meglevo receive_IT utan hivjuk ezt
-
-	USART_SendString("Type your sendingmessage to ESP8266:\r\n");
-
-	while(1)
-	{
-
-		if (xSemaphoreTake(DEBUG_USART_Rx_Semaphore,1000) == pdTRUE)
-		{
-			// received an char
-			uint8_t receivedCharacter = MONITOR_RemoteControlBuffer[0];
-			if (receivedCharacter != '\r')
-			{
-				LED_GREEN_TOGGLE();
-				MONITOR_RemoteControlBuffer[1] = '\0';
-				ESP8266_SendString(MONITOR_RemoteControlBuffer);
-				USART_SendChar(MONITOR_RemoteControlBuffer[0]);
-			}
-			else if (receivedCharacter == '\r')
-			{
-				LED_GREEN_TOGGLE();
-				MONITOR_RemoteControlBuffer[0] = '\r';
-				MONITOR_RemoteControlBuffer[1] = '\n';
-				MONITOR_RemoteControlBuffer[2] = '\0';
-				USART_SendString("\r\nSended to ESP8266\r\n"
-								 "Wait for the response:\r\n");
-
-				// Receive from ESP8266 (and send on debug usart)
-				uint8_t isExit = 0;
-				HAL_StatusTypeDef status;
-
-				uint8_t exitBuffer[2] = { '\0', '\0' };
-				uint8_t buffer[100];
-				//exitBuffer[0] == 0;
-
-				// For Exit: wait char from Debug USART
-				HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)exitBuffer, 1);
-
-				ESP8266_UartHandle.RxXferCount = 0;
-				for (int i=0; i < 256; i++) buffer[i]='\0';
-
-				// Sending command on ESP8266
-				ESP8266_SendString(MONITOR_RemoteControlBuffer);	// sending "\r\n"
-
-				while(!isExit)
-				{
-					//if ( HAL_UART_Receive(&ESP8266_UartHandle, (uint8_t *)MONITOR_RemoteControlBuffer, 1, 100) == HAL_OK)
-
-					status = HAL_UART_Receive(&ESP8266_UartHandle, (uint8_t *)buffer, 256, 10000);
-					if (status == HAL_OK || status == HAL_TIMEOUT )
-					{
-						uint16_t length = ESP8266_UartHandle.RxXferCount;
-
-						if ( length > 0)
-						{
-							//USART_SendChar(MONITOR_RemoteControlBuffer[0]);	// blokkol és lassú
-
-							//HAL_UART_Transmit(&Debug_UartHandle, (uint8_t *)MONITOR_RemoteControlBuffer, 1,1);	// ez is lassú
-							HAL_UART_Transmit(&Debug_UartHandle, (uint8_t *)buffer, length,5000);	// ez is lassú
-							// TODO: nagyobb buffer és több karakter várása?
-
-							ESP8266_UartHandle.RxXferCount = 0;
-							for (int i=0; i < 256; i++) buffer[i]='\0';
-						}
-
-					}
-					if (xSemaphoreTake(DEBUG_USART_Rx_Semaphore,1) == pdTRUE)
-					{
-					//if ( exitBuffer[0] == '\r')
-					//{
-						isExit = 1;
-						USART_SendString("\r\nType your sending message to ESP8266\r\n");
-					}
-				}
-			}
-
-			// Receiving an char from debug uart
-			HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)MONITOR_RemoteControlBuffer, 1);
-		}
-		else
-		{
-		}
-
-	}
-
-	// Never reached, so it commented
-	MONITOR_RemoteControl = 0;
-
-	return CommandResult_Ok;
-
 }
 #endif
 

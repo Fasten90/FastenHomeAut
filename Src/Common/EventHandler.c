@@ -124,4 +124,24 @@ static void EventHandler_ClearEventFlag(EventId_t eventId)
 
 
 
+/**
+ * \brief	 Disable event
+ */
+void EventHandler_DisableEvent(EventId_t eventId)
+{
+	EventList[eventId].isDisabled = true;
+	EventList[eventId].flag = EVENT_NORUN;
+}
+
+
+
+/**
+ * \brief	Enable event
+ */
+void EventHandler_EnableEvent(EventId_t eventId)
+{
+	EventList[eventId].isDisabled = false;
+}
+
+
 #endif	// #ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE

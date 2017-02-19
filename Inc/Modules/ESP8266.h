@@ -24,6 +24,11 @@
  *----------------------------------------------------------------------------*/
 
 
+//#define ESP8266_USE_BLOCK_MODE
+
+#define ESP8266_DEBUG_PRINT(msg)					USART_SendLine(msg)
+
+
 
 /// Sending/Receiving content message max length
 #define ESP8266_TCP_MESSAGE_MAX_LENGTH			( HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH )
@@ -61,6 +66,8 @@
 /// ESP8266 receive buffer length
 #define ESP8266_BUFFER_LENGTH					( ESP8266_RECEIVEMESSAGE_MAX_LENGTH )
 
+//#define ESP8266_RECEIVE_LENGTH					( ESP8266_BUFFER_LENGTH )
+#define ESP8266_RECEIVE_LENGTH					( 1 )
 
 
 #define ESP8266_LED_OK()		LED_GREEN_ON();	\
@@ -115,7 +122,8 @@ typedef enum
 extern UART_HandleTypeDef Esp8266UartHandle;
 extern volatile uint8_t ESP8266_Uart_ReceivedCharFlag;
 extern uint8_t ESP8266_Receive_Mode_FixLength;
-extern uint8_t ESP8266_ReceiveBuffer_Cnt;
+extern volatile uint8_t ESP8266_ReceiveBuffer_WriteCnt;
+extern volatile uint8_t ESP8266_ReceiveBuffer_ReadCnt;
 extern volatile char ESP8266_ReceiveBuffer[];
 
 
@@ -133,7 +141,7 @@ extern ESP8266_TcpConnectionStatusType	ESP8266_TcpConnectionStatus;
 extern Network_IP_t ESP8266_MyIpAddress;
 
 
-extern uint8_t ESP8266_DebugEnableFlag;
+extern bool ESP8266_DebugEnableFlag;
 
 
 
@@ -155,7 +163,7 @@ bool ESP8266_StartServer(void);
 bool ESP8266_FindServer(void);
 bool ESP8266_ConnectToServer(Network_IP_t *ip, Network_Port_t port);
 
-bool ESP8266_SendMessageToQueue(char *message);
+bool ESP8266_SendMessageOnWifi(char *message);
 
 bool ESP8266_ReceiveFixTcpMessage(void);
 
@@ -166,6 +174,9 @@ bool ESP8266_CheckReceiveMessage(void);
 void ESP8266_WaitAnswer(uint32_t timeout);
 void ESP8266_ResetHardware(void);
 
+bool ESP8266_SendTcpMessage(const char *message);
+
+void ESP8266_StatusMachine(void);
 
 
 #endif /* ESP8266_H_*/

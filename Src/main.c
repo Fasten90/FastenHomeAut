@@ -68,6 +68,7 @@ int main(void)
 	/* MCU Configuration----------------------------------------------------------*/
 
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+
 	HAL_Init();
 
 	/* Configure the system clock */
@@ -171,13 +172,14 @@ int main(void)
 
 	ESP8266_Init();
 	
+#ifdef CONFIG_USE_FREERTOS
 	TaskHandle_t ESP8266_TaskHandle = NULL;
 	if (xTaskCreate( (pdTASK_CODE)ESP8266_Task, "ESP8266Task", ESP8266_TASK_STACK_SIZE, 0,
 				ESP8266_TASK_PRIORITY, &ESP8266_TaskHandle ) != pdPASS)
 	{
 		Error_Handler();
 	}
-	
+#endif
 #endif
 	
 	

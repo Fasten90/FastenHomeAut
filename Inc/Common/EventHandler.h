@@ -91,6 +91,9 @@ typedef struct
 void EventHandler_CheckEvents(void);
 void EventHandler_SetEventFlag(EventName_t eventName, EventFlag_t flag);
 
+void EventHandler_DisableEvent(EventId_t eventId);
+void EventHandler_EnableEvent(EventId_t eventId);
+
 
 
 #endif /* COMMON_EVENTHANDLER_H_ */

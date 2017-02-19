@@ -82,7 +82,7 @@ static bool USART_WaitForSend(uint16_t timeoutMilliSecond);
 /**
  * \brief	Initialize USART peripheral
  */
-void USART_Init ( UART_HandleTypeDef *UartHandle)
+void USART_Init(UART_HandleTypeDef *UartHandle)
 {
 	
 	// HW init, Port init, etc...
@@ -200,7 +200,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 		GPIO_InitStruct.Pin       = ESP8266_USART_TX_GPIO_PIN;
 		GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
 		GPIO_InitStruct.Pull      = GPIO_NOPULL;
-		GPIO_InitStruct.Speed     = GPIO_SPEED_MEDIUM;
+		GPIO_InitStruct.Speed     = GPIO_SPEED_FAST;
 		GPIO_InitStruct.Alternate = ESP8266_USART_AF;
 
 		HAL_GPIO_Init(ESP8266_USART_TX_GPIO_PORT, &GPIO_InitStruct);
@@ -247,6 +247,8 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 {
 	// For warning
 	(void)UartHandle;
+
+	// TODO: Check, which UART...
 
 	// Set transmission flag: trasfer complete	
 	#ifdef CONFIG_USE_FREERTOS
@@ -298,11 +300,12 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 	if (UartHandle == &ESP8266_UartHandle)
 	{
 		
-		#ifdef CONFIG_USE_FREERTOS
 		if (ESP8266_Receive_Mode_FixLength == 1)
 		{
 			// Received fix length message
-			xSemaphoreGiveFromISR(ESP8266_USART_Rx_Semaphore,0);
+			#ifdef CONFIG_USE_FREERTOS
+			xSemaphoreGiveFromISR(ESP8266_USART_Rx_Semaphore, 0);
+			#endif
 		}
 		else
 		{
@@ -310,21 +313,30 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 			// Put to Buffer and receive next char
 
 			// Save received character and wait new char
-			ESP8266_ReceiveBuffer_Cnt++;
+#if ESP8266_RECEIVE_LENGTH > 1
 			HAL_UART_Receive_IT(&ESP8266_UartHandle,
-					(uint8_t *)&ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_Cnt],
+					(uint8_t *)&ESP8266_ReceiveBuffer[0],
+					ESP8266_RECEIVE_LENGTH);
+#else
+			HAL_UART_Receive_IT(&ESP8266_UartHandle,
+					(uint8_t *)&ESP8266_ReceiveBuffer[++ESP8266_ReceiveBuffer_WriteCnt],
 					1);
 
-			if ((ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_Cnt] == '\n') && (ESP8266_ReceiveBuffer_Cnt >= 4))
+			if (ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_WriteCnt-1] == '\n')
 			{
 				// received an '\n' and not too short message
+				#ifdef CONFIG_USE_FREERTOS
 				xSemaphoreGiveFromISR(ESP8266_USART_Rx_Semaphore, 0);
+				#else
+				EventHandler_SetEventFlag(Event_Esp8266ReceivedMessage, EVENT_RUN);
+				#endif
 			}
+#endif
 		}
 	
-		#else
+		#ifndef CONFIG_USE_FREERTOS
 		// Not used FreeRTOS:
-		ESP8266_Uart_ReceivedCharFlag = 1;
+		//ESP8266_Uart_ReceivedCharFlag = 1;
 		#endif
 		
 	}
@@ -346,7 +358,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
 
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-	if (huart->Instance == DEBUG_USARTx )
+	if (huart == &Debug_UartHandle)
 	{
 
 		// TODO:
@@ -381,44 +393,21 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 	}
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-	else if (huart->Instance == ESP8266_USARTx)
+	else if (huart == &ESP8266_UartHandle)
 	{
 
 		// TODO: Sad, but sometime receive errors
+		UART_ResetStatus(&ESP8266_UartHandle);
 
-		__HAL_UART_CLEAR_FLAG(&ESP8266_UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
-
-		huart->ErrorCode = HAL_UART_ERROR_NONE;
-
-		/*
-		if (huart->TxXferSize > 0 && huart->RxXferSize > 0)
-		{
-			huart->gState = HAL_UART_STATE_BUSY_TX_RX;
-		}
-		else if (huart->TxXferSize > 0 && huart->RxXferSize <= 0)
-		{
-			huart->gState = HAL_UART_STATE_BUSY_TX;
-		}
-		else if (huart->TxXferSize <= 0 && huart->RxXferSize > 0)
-		{
-			huart->gState = HAL_UART_STATE_BUSY_RX;
-		}
-		else
-		{
-			huart->gState = HAL_UART_STATE_READY;
-		}*/
-		/*
-		huart->TxXferCount = 0;
-		huart->TxXferSize = 0;
-		huart->RxXferCount = 0;
-		huart->RxXferSize = 0;
-		*/
-		// TODO: !! IMPORTANT !! Do not give semaphore, because if you give semaphore, code "think", received a message
-		/*
-		if (ESP8266_USART_Rx_Semaphore != NULL)
-		{
-			xSemaphoreGiveFromISR(ESP8266_USART_Rx_Semaphore,0);
-		}*/
+#if ESP8266_RECEIVE_LENGTH > 1
+		HAL_UART_Receive_IT(&ESP8266_UartHandle,
+				(uint8_t *)&ESP8266_ReceiveBuffer[0],
+				ESP8266_RECEIVE_LENGTH);
+#else
+		HAL_UART_Receive_IT(&ESP8266_UartHandle,
+						(uint8_t *)&ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_WriteCnt],
+						1);
+#endif
 	}	
 #endif
 	else

@@ -71,6 +71,8 @@ typedef struct
 void TaskHandler_Init(void);
 void TaskHandler_CheckSchedules(TaskTick_t elapsedTick);
 
+void TaskHandler_SetTaskTime(TaskID_t taskID, TaskTick_t taskTick);
+void TaskHandler_DisableTask(TaskID_t taskID);
 
 
 

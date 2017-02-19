@@ -471,11 +471,11 @@ bool HomeAutMessage_CreateAndSendHomeAutMessage(
 #else
 		if (ESP8266_TcpConnectionStatus == ESP8266_TcpConnectionStatus_Connected)
 		{
-			ESP8266_SendTcpMessage((uint8_t *)&message);	// direct sending
+			return ESP8266_SendTcpMessage((const char *)&message);	// direct sending
 		}
 		else
 		{
-			return Return_Error;
+			return false;
 		}
 #endif
 	}	

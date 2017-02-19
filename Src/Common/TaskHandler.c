@@ -126,4 +126,27 @@ static void TaskHandler_RunTask(TaskID_t taskID)
 }
 
 
+
+/**
+ *	\brief	Initialize task
+ */
+void TaskHandler_SetTaskTime(TaskID_t taskID, TaskTick_t taskTick)
+{
+	 TaskList[taskID].isDisabled = false;
+	 TaskList[taskID].taskScheduleRate = taskTick;
+	 TaskList[taskID].tick = 0;
+}
+
+
+
+/**
+ * \brief	Disable task
+ */
+void TaskHandler_DisableTask(TaskID_t taskID)
+{
+	TaskList[taskID].isDisabled = true;
+}
+
+
+
 #endif	// #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE

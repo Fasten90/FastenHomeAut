@@ -70,7 +70,7 @@ typedef enum
 /// Function name - string parity table
 typedef struct
 {
-	const char *name;						///< Name of function
+	const char * const name;				///< Name of function
 	const HomeAut_FunctionType function;	///< Function enum
 } FunctionTypeParity;
 
@@ -147,7 +147,7 @@ typedef enum
 ///  Data type - string table
 typedef struct
 {
-	const char *name;						///< Name of Data [string]
+	const char * const name;				///< Name of Data [string]
 	const HomeAut_DataType type;			///< Data type
 } DataTypeParity;
 
