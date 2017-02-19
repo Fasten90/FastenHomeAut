@@ -112,6 +112,7 @@ typedef enum
 	Esp8266Status_StartWifiServerCheckResponse,
 	Esp8266Status_StartServer,
 	Esp8266Status_StartServerCheckResponse,
+	Esp8266Status_PrintIpAddress,
 
 	Esp8266Status_Idle,
 
@@ -1712,23 +1713,39 @@ void ESP8266_StatusMachine(void)
 			ESP8266_ReceiveBuffer_ReadCnt = ESP8266_ReceiveBuffer_WriteCnt;
 			break;
 
+		case Esp8266Status_PrintIpAddress:
+			// Get IP
+			// AT+CIFSR
+			ESP8266_StartReceive();
+			ESP8266_SendString(" AT+CIFSR\r\n");
+			ESP8266StatusMachine++;
+			ESP8266_DEBUG_PRINT("ESP8266_SM: Get IP address");
+			break;
+
 		case Esp8266Status_Idle:
 			// Check message, which can be anything...
 			// Link\r\n
 			// +IPD...
 			// Unlink
 			// Check, connect a new client?
-			if (!StrCmp("Link\r\n",(const char *)ESP8266_ReceiveBuffer))
+			// TODO: ESP8266_CheckReceivedMessage();
+			if (ESP8266_ReceiveBuffer_WriteCnt != ESP8266_ReceiveBuffer_ReadCnt)
 			{
-				DebugPrint("Client connected");
-				//ESP8266StatusMachine = Esp8266Status_Idle;
+				// Buffer changed
+				if (!StrCmp("Link\r\n", (const char *)&ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_ReadCnt]))
+				{
+					DebugPrint("Client connected");
+					//ESP8266StatusMachine = Esp8266Status_Idle;
+				}
+				else
+				{
+					DebugPrint("Received message:");
+					DebugPrint((const char *)&ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_ReadCnt]);
+				}
+				// TODO: Check, need send?
+				ESP8266_StartReceive();
+				ESP8266_ReceiveBuffer_ReadCnt = ESP8266_ReceiveBuffer_WriteCnt;
 			}
-			else
-			{
-				DebugPrint("Received message:");
-				DebugPrint((const char *)ESP8266_ReceiveBuffer);
-			}
-			ESP8266_StartReceive();
 			break;
 
 		default:
