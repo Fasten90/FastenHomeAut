@@ -1821,12 +1821,7 @@ void ESP8266_StatusMachine(void)
 
 	return;
 }
-
-
-
 #endif
-
-
 
 
 
