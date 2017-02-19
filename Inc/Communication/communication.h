@@ -32,8 +32,12 @@ typedef enum
 #ifdef CONFIG_PROTOCOL_BUFFER_ENABLE
 	CommProt_Buffer		= (1 << 2),
 #endif
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+	CommProt_ESP8266Wifi = (1 << 3),
+#endif
 
-	CommProt_Disable	= (1 << 3)
+	// XXX: Add here new Protocol, and correct the CommProt_Disable (largest bit)
+	CommProt_Disable	= (1 << 4)
 } CommProtocol_t;
 
 

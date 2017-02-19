@@ -43,6 +43,7 @@ volatile uint8_t ESP8266_Uart_ReceivedCharFlag;
 volatile char ESP8266_ReceiveBuffer[ESP8266_BUFFER_LENGTH];
 volatile char ESP8266_TransmitBuffer[ESP8266_BUFFER_LENGTH];
 
+char ESP8266_ReceivedTcpMessage[ESP8266_TCP_MESSAGE_MAX_LENGTH];
 
 ESP8266_WifiConnectionStatusType	ESP8266_ConnectionStatus
 			= ESP8266_WifiConnectionStatus_Unknown;
@@ -112,8 +113,9 @@ typedef enum
 	Esp8266Status_StartWifiServerCheckResponse,
 	Esp8266Status_StartServer,
 	Esp8266Status_StartServerCheckResponse,
-	Esp8266Status_PrintIpAddress,
+	Esp8266Status_PrintMyIpAddress,
 
+	Esp8266Status_BeforeIdle,
 	Esp8266Status_Idle,
 
 } ESP8266_StatusMachine_t;
@@ -127,11 +129,15 @@ static ESP8266_StatusMachine_t ESP8266StatusMachine = Esp8266Status_Unknown;
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
-
+#ifdef CONFIG_USE_FREERTOS
 static bool ESP8266_ReceiveUnknownTcpMessage(void);
+#endif
+
 static void ESP8266_StartReceive(void);
 
+#ifdef NOT_USED
 static bool ESP8266_CheckReceivedMessage(void);
+#endif
 
 #ifdef ESP8266_USE_BLOCK_MODE
 static void ESP8266_WaitMessageAndCheckSendingQueue(void);
@@ -1337,6 +1343,7 @@ bool ESP8266_SendMessageOnWifi(char *message)
 
 
 
+#ifdef NOT_USED
 /**
  * \brief	Check received a new TCP message
  */
@@ -1438,6 +1445,7 @@ static bool ESP8266_CheckReceivedMessage(void)
 
 	return isValidMessage;
 }
+#endif
 
 
 
@@ -1713,13 +1721,24 @@ void ESP8266_StatusMachine(void)
 			ESP8266_ReceiveBuffer_ReadCnt = ESP8266_ReceiveBuffer_WriteCnt;
 			break;
 
-		case Esp8266Status_PrintIpAddress:
+		case Esp8266Status_PrintMyIpAddress:
 			// Get IP
 			// AT+CIFSR
 			ESP8266_StartReceive();
 			ESP8266_SendString(" AT+CIFSR\r\n");
 			ESP8266StatusMachine++;
 			ESP8266_DEBUG_PRINT("ESP8266_SM: Get IP address");
+			break;
+
+		case Esp8266Status_BeforeIdle:
+			// Print IP
+			DebugPrint((const char *)&ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_ReadCnt]);
+			ESP8266_ReceiveBuffer_ReadCnt = ESP8266_ReceiveBuffer_WriteCnt;
+			ESP8266_StartReceive();
+			// Set TaskHandler to faster
+			TaskHandler_SetTaskTime(TASK_ESP8266_ID, 100);
+			ESP8266StatusMachine++;
+			ESP8266_DEBUG_PRINT("ESP8266_SM: Before idle");
 			break;
 
 		case Esp8266Status_Idle:
@@ -1734,12 +1753,56 @@ void ESP8266_StatusMachine(void)
 				// Buffer changed
 				if (!StrCmp("Link\r\n", (const char *)&ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_ReadCnt]))
 				{
-					DebugPrint("Client connected");
-					//ESP8266StatusMachine = Esp8266Status_Idle;
+					// "Link"
+					DebugPrint("Received \"Link\": a client connected\r\n");
+					// TODO: Step to IP address printing (connected clients)
+					//ESP8266StatusMachine = Esp8266Status_XXX;
+				}
+				else if (!StrCmp("Unlink\r\n", (const char *)&ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_ReadCnt]))
+				{
+					// "Unlink"
+					DebugPrint("Received \"Unlink\": a client disconnected\r\n");
+				}
+				else if (!StrCmp("\r\n+IPD,0,", (const char *)&ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_ReadCnt]))
+				{
+					// !!! TODO: If too fast received some characters (but not all), so this function is bad
+					// "+IPD,1,4:msg3"
+					// Check next parameter:
+					ESP8266_ReceiveBuffer_ReadCnt += StringLength("\r\n+IPD,0,");
+					// TODO: Use better function
+					int16_t commIndex = STRING_FindString((const char *)&ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_ReadCnt], ":");
+					if (commIndex > -1)
+					{
+						// Has ':'
+						// TODO: scanf
+						uint32_t length;
+						ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_ReadCnt + commIndex] = '\0';
+						if (StringToUnsignedDecimalNum((const char *)&ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_ReadCnt], &length))
+						{
+							if (length <= ESP8266_TCP_MESSAGE_MAX_LENGTH)
+							{
+								// Set position after ':'
+								ESP8266_ReceiveBuffer_ReadCnt += commIndex + 1;
+								// We have message source:
+								StrCpyMax(ESP8266_ReceivedTcpMessage,
+										(const char *)&ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_ReadCnt],
+										length);
+								DebugPrint("Received TCP message: ");
+								DebugPrint(ESP8266_ReceivedTcpMessage);
+								CommandHandler_PrepareFindExecuteCommand(CommProt_ESP8266Wifi, ESP8266_ReceivedTcpMessage);
+							}
+							else
+							{
+								// Received too large message
+								DebugPrint("Received too large TCP message: ");
+								DebugPrint((const char *)&ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_ReadCnt]);
+							}
+						}
+					}
 				}
 				else
 				{
-					DebugPrint("Received message:");
+					DebugPrint("Received unknown message: ");
 					DebugPrint((const char *)&ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_ReadCnt]);
 				}
 				// TODO: Check, need send?

@@ -60,6 +60,13 @@ uint8_t COMMUNICATION_SendMessage(CommProtocol_t protocol, const char *message)
 			length = StrCpyMax(Communication_Buffer, message, COMMUNICATION_PROTOCOL_BUFFER_SIZE);
 			break;
 #endif
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+		case CommProt_ESP8266Wifi:
+			//USART_SendMessage("ESP8266 wifi communication not implemented");
+			// TODO: Implement this
+			length = USART_SendMessage(message);
+			break;
+#endif
 		case CommProt_Disable:
 		default:
 			// Error, do not use
@@ -94,6 +101,11 @@ uint8_t COMMUNICATION_SendChar(CommProtocol_t protocol, char c)
 #ifdef CONFIG_PROTOCOL_BUFFER_ENABLE
 		case CommProt_Buffer:
 			Communication_Buffer[Communication_BufferCnt++] = c;
+			break;
+#endif
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+		case CommProt_ESP8266Wifi:
+			USART_SendChar(c);
 			break;
 #endif
 		case CommProt_Disable:
