@@ -68,7 +68,7 @@ static volatile uint8_t Terminal_CommandSentLength = 0;
 static volatile uint8_t Terminal_CommandCursorPosition = 0;
 
 static volatile bool Terminal_CommandEscapeSequenceReceived = false;
-static volatile uint8_t Terminal_CommandEscapeSequenceInProgress = 0;
+static volatile bool Terminal_CommandEscapeSequenceInProgress = false;
 static volatile uint8_t Terminal_CommandEscape_cnt = 0;
 
 

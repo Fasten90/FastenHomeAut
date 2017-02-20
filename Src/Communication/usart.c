@@ -550,7 +550,7 @@ bool USART_SendChar(char c)
 		// Successful take USART semaphore
 		USART_SendEnable_flag = false;
 
-		StrCpy((char *)USART_TxBuffer,buf);
+		StrCpy((char *)USART_TxBuffer, buf);
 
 		if (HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t *)USART_TxBuffer, 1)!= HAL_OK)
 		{

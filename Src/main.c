@@ -113,7 +113,7 @@ int main(void)
 
 
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
-	MOTOR_Init();
+	Motor_Init();
 #endif
 
 

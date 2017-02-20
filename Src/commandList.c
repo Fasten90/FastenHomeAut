@@ -1023,7 +1023,7 @@ CommandResult_t CommandFunction_Motor(uint32_t argc, char** argv)
 			if (convertValue <= 100)
 			{
 				uint32_t percent = (uint16_t)convertValue;
-				Motor_DcMotorTimerInit(percent);
+				Motor_DcMotorChangePercent(percent);
 				return CommandResult_Ok_SendSuccessful;
 			}
 			else
