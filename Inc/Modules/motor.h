@@ -56,6 +56,13 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
+typedef enum
+{
+	MotorDir_Unknown,
+	MotorDir_Forward,
+	MotorDir_Backward,
+	MotorDir_Stop
+} MotorDir_t;
 
 
 /*------------------------------------------------------------------------------
@@ -72,7 +79,9 @@ void Motor_Init(void);
 
 void Motor_DcMotorTimerInit(uint8_t percent);
 void Motor_ServoTimerInit(int8_t angle);
+void Motor_ServoChangeAngle(int8_t angle);
 
+void Motor_DcMotorSeDirection(MotorDir_t dir);
 void Motor_DcMotorChangePercent(uint8_t percent);
 
 

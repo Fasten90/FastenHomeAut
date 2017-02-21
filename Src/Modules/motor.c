@@ -66,6 +66,37 @@ void Motor_Init(void)
 
 
 /**
+ * \brief	Initialize DC motor GPIO-s
+ */
+static void Motor_DcMotorGpioInit(void)
+{
+	GPIO_InitTypeDef GPIO_InitStruct;
+
+	MOTOR_DC_DIRECTIONS_CLK_ENABLES();
+
+	GPIO_InitStruct.Pin = MOTOR_DC_DIR1_PIN;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+	GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+
+	HAL_GPIO_Init(MOTOR_DC_DIR1_PORT, &GPIO_InitStruct);
+
+	GPIO_InitStruct.Pin = MOTOR_DC_DIR2_PIN;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+	GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+
+	HAL_GPIO_Init(MOTOR_DC_DIR2_PORT, &GPIO_InitStruct);
+
+
+	// Stop direction
+	Motor_DcMotorSeDirection(MotorDir_Stop);
+
+}
+
+
+
+/**
  * \brief	Motor - Dc motor init
  */
 void Motor_DcMotorTimerInit(uint8_t percent)
@@ -141,38 +172,6 @@ void Motor_DcMotorTimerInit(uint8_t percent)
 
 
 /**
- * \brief	Initialize DC motor GPIO-s
- */
-static void Motor_DcMotorGpioInit(void)
-{
-	GPIO_InitTypeDef GPIO_InitStruct;
-
-	MOTOR_DC_DIRECTIONS_CLK_ENABLES();
-
-	GPIO_InitStruct.Pin = MOTOR_DC_DIR1_PIN;
-	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-	GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-
-	HAL_GPIO_Init(MOTOR_DC_DIR1_PORT, &GPIO_InitStruct);
-
-	GPIO_InitStruct.Pin = MOTOR_DC_DIR2_PIN;
-	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-	GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-
-	HAL_GPIO_Init(MOTOR_DC_DIR2_PORT, &GPIO_InitStruct);
-
-
-	// Forward:
-	HAL_GPIO_WritePin(MOTOR_DC_DIR1_PORT, MOTOR_DC_DIR1_PIN, SET);
-	HAL_GPIO_WritePin(MOTOR_DC_DIR2_PORT, MOTOR_DC_DIR2_PIN, RESET);
-
-}
-
-
-
-/**
  * \brief	Set DC motor PWM percent
  */
 void Motor_DcMotorChangePercent(uint8_t percent)
@@ -216,7 +215,32 @@ void Motor_DcMotorChangePercent(uint8_t percent)
 
 
 
-// TODO: Make SetDirection() function
+/**
+ * \brief	Set DC motor direction
+ */
+void Motor_DcMotorSeDirection(MotorDir_t dir)
+{
+	switch (dir)
+	{
+		case MotorDir_Forward:
+			HAL_GPIO_WritePin(MOTOR_DC_DIR1_PORT, MOTOR_DC_DIR1_PIN, SET);
+			HAL_GPIO_WritePin(MOTOR_DC_DIR2_PORT, MOTOR_DC_DIR2_PIN, RESET);
+			break;
+
+		case MotorDir_Backward:
+			HAL_GPIO_WritePin(MOTOR_DC_DIR1_PORT, MOTOR_DC_DIR1_PIN, RESET);
+			HAL_GPIO_WritePin(MOTOR_DC_DIR2_PORT, MOTOR_DC_DIR2_PIN, SET);
+			break;
+
+		case MotorDir_Unknown:
+		case MotorDir_Stop:
+		default:
+			HAL_GPIO_WritePin(MOTOR_DC_DIR1_PORT, MOTOR_DC_DIR1_PIN, RESET);
+			HAL_GPIO_WritePin(MOTOR_DC_DIR2_PORT, MOTOR_DC_DIR2_PIN, RESET);
+			break;
+	}
+
+}
 
 
 
@@ -295,9 +319,48 @@ void Motor_ServoTimerInit(int8_t angle)
 
 
 
-// TODO: Make an ChangePeriod function
-// void Motor_ServoChangeAngle
-// Use this function from CommandList.c
+/**
+ * \brief	Change angle for Servo motor
+ */
+void Motor_ServoChangeAngle(int8_t angle)
+{
+
+	/* Timer Output Compare Configuration Structure declaration */
+	TIM_OC_InitTypeDef sConfig;
+
+	uint32_t Pulse = 0;
+
+
+	Pulse = Motor_ServoConvertAngleToPeriod(angle);
+
+
+	/*##-2- Configure the PWM channels #########################################*/
+	/* Common configuration for all channels */
+	sConfig.OCMode       = TIM_OCMODE_PWM1;
+	sConfig.OCPolarity   = TIM_OCPOLARITY_HIGH;
+	sConfig.OCFastMode   = TIM_OCFAST_DISABLE;
+	sConfig.OCNPolarity  = TIM_OCNPOLARITY_LOW;
+	//sConfig.OCIdleState  = TIM_OCIDLESTATE_RESET;
+	//sConfig.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+
+	/* Set the pulse value for channel 1 */
+	sConfig.Pulse = Pulse;
+	if (HAL_TIM_PWM_ConfigChannel(&TimPWMServo_Handle, &sConfig, TIMER_PWM_SERVO_CHANNEL) != HAL_OK)
+	{
+		/* Configuration Error */
+		Error_Handler();
+	}
+
+
+	/*##-3- Start PWM signals generation #######################################*/
+	/* Start channel 2 */
+	if (HAL_TIM_PWM_Start(&TimPWMServo_Handle, TIMER_PWM_SERVO_CHANNEL) != HAL_OK)
+	{
+		/* PWM Generation Error */
+		Error_Handler();
+	}
+}
+
 
 
 
@@ -356,7 +419,6 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 	GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
 	GPIO_InitStruct.Alternate = TIMx_PWM_DC_GPIO_AF;
 	HAL_GPIO_Init(BOARD_PWM_DCMOTOR_PORT, &GPIO_InitStruct);
-
 
 
 	// PWM2 - Servo motor

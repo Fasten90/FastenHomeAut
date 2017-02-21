@@ -361,23 +361,12 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 	if (huart == &Debug_UartHandle)
 	{
 
-		// TODO:
-		// neha kapunk ORE errort.
+		// TODO: sometime receive ORE error.
 
-		//__HAL_UART_RESET_HANDLE_STATE(&BluetoothUartHandle);
-		//__HAL_UART_GET_FLAG(huart, UART_FLAG_TXE);
-		//__HAL_UART_CLEAR_FLAG(&BluetoothUartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
+		UART_ResetStatus(&Debug_UartHandle);
 
-		huart->ErrorCode = HAL_UART_ERROR_NONE;
-		huart->gState = HAL_UART_STATE_READY;
-		huart->TxXferCount = 0;
-		huart->TxXferSize = 0;
-		huart->RxXferCount = 0;
-		huart->RxXferSize = 0;
-
-		//__HAL_UART_FLUSH_DRREGISTER(&BluetoothUartHandle);
 		// Reinitialize USART
-		USART_Init(&Debug_UartHandle);
+		//USART_Init(&Debug_UartHandle);
 
 		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[USART_RxBufferWriteCounter], RXBUFFER_WAIT_LENGTH);
 		HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t *)"$", 1);
@@ -427,25 +416,18 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 void UART_ResetStatus(UART_HandleTypeDef *huart)
 {
 
-#ifdef CONFIG_MODULE_ESP8266_ENABLE
-	if (huart->Instance == ESP8266_USARTx)
-	{
-		// Delete previous receive:
-		__HAL_UART_FLUSH_DRREGISTER(huart);
-		__HAL_UART_CLEAR_FLAG(huart, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
+	// Delete previous receive:
+	__HAL_UART_FLUSH_DRREGISTER(huart);
+	__HAL_UART_CLEAR_FLAG(huart, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
 
-		huart->ErrorCode = HAL_UART_ERROR_NONE;
-		huart->gState = HAL_UART_STATE_READY;
+	huart->ErrorCode = HAL_UART_ERROR_NONE;
+	huart->gState = HAL_UART_STATE_READY;
 
-		huart->TxXferCount = 0;
-		huart->TxXferSize = 0;
-		huart->RxXferCount = 0;
-		huart->RxXferSize = 0;
-	}
-#endif
-#ifndef CONFIG_MODULE_ESP8266_ENABLE
-	(void)huart;
-#endif
+	huart->TxXferCount = 0;
+	huart->TxXferSize = 0;
+	huart->RxXferCount = 0;
+	huart->RxXferSize = 0;
+
 }
 
 
@@ -455,7 +437,6 @@ void UART_ResetStatus(UART_HandleTypeDef *huart)
  */
 uint8_t USART_SendMessage(const char *aTxBuffer)
 {
-	// TODO: Return type + Check Pointer
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	uint8_t length = 0;
 
@@ -463,7 +444,7 @@ uint8_t USART_SendMessage(const char *aTxBuffer)
 
 	if (length == 0)
 	{
-		return false;
+		return 0;
 	}
 #if USART_TXBUFFERSIZE < 256
 	if (length > USART_TXBUFFERSIZE)
@@ -478,7 +459,7 @@ uint8_t USART_SendMessage(const char *aTxBuffer)
 		
 		USART_SendEnable_flag = false;
 		
-		StrCpy((char *)USART_TxBuffer,aTxBuffer);
+		StrCpy((char *)USART_TxBuffer, aTxBuffer);
 
 		// ComIT
 		if (HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t*)USART_TxBuffer, length)!= HAL_OK)
@@ -590,7 +571,7 @@ void USART_StartReceiveMessage(void)
 
 	// USART - Receive Message
 	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[USART_RxBufferWriteCounter], RXBUFFER_WAIT_LENGTH);
-	// TODO: Delete this comment: Javított, mert ha valamikor nem fogadnank uzenetet, akkor itt megint beallunk uzenetvaro uzemmodba
+
 
 	#ifdef CONFIG_USE_FREERTOS
 	// Wait for semaphore
@@ -640,7 +621,7 @@ void USART_SendFloat(float value)
 {
 	char string[16];
 	
-	FloatToString(value,string,0,6);
+	FloatToString(value, string, 0, 6);
 	
 	USART_SendMessage(string);
 }

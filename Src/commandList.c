@@ -1017,13 +1017,27 @@ CommandResult_t CommandFunction_Motor(uint32_t argc, char** argv)
 
 	if (!StrCmp("dc", argv[1]))
 	{
-		uint32_t convertValue;
-		if (StringToUnsignedDecimalNum(argv[2], &convertValue))
+		int32_t convertValue;
+		if (StringToSignedDecimalNum(argv[2], &convertValue))
 		{
-			if (convertValue <= 100)
+			if (convertValue <= 100 && convertValue > 0)
 			{
-				uint32_t percent = (uint16_t)convertValue;
+				uint8_t percent = (uint8_t)convertValue;
 				Motor_DcMotorChangePercent(percent);
+				Motor_DcMotorSeDirection(MotorDir_Forward);
+				return CommandResult_Ok_SendSuccessful;
+			}
+			else if (convertValue == 0)
+			{
+				Motor_DcMotorChangePercent(0);
+				Motor_DcMotorSeDirection(MotorDir_Stop);
+				return CommandResult_Ok_SendSuccessful;
+			}
+			else if (convertValue < 0 && convertValue > -100)
+			{
+				uint8_t percent = (uint8_t)(convertValue * (-1));
+				Motor_DcMotorChangePercent(percent);
+				Motor_DcMotorSeDirection(MotorDir_Backward);
 				return CommandResult_Ok_SendSuccessful;
 			}
 			else
@@ -1041,10 +1055,10 @@ CommandResult_t CommandFunction_Motor(uint32_t argc, char** argv)
 		int32_t convertValue;
 		if (StringToSignedDecimalNum(argv[2], &convertValue))
 		{
-			if (convertValue <= 90 && convertValue > -90)
+			if (convertValue <= 90 && convertValue >= -90)
 			{
 				int8_t angle = (int8_t)convertValue;
-				Motor_ServoTimerInit(angle);
+				Motor_ServoChangeAngle(angle);
 				return CommandResult_Ok_SendSuccessful;
 			}
 			else
