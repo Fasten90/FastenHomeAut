@@ -34,7 +34,12 @@ TIM_HandleTypeDef    TimPWMServo_Handle;	// Servo motor
 /*------------------------------------------------------------------------------
  *  Local variables
  *----------------------------------------------------------------------------*/
+static MotorState_t ActualState = { 0 };
+static MotorState_t ControlState = { 0 };
 
+bool MotorTestSlide_Enabled = false;
+static uint8_t MotorTestSlide_AngleDir = 0;
+static uint8_t MotorTestSlide_DcDir = 0;
 
 
 /*------------------------------------------------------------------------------
@@ -429,6 +434,132 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 
 }
 
+
+
+/**
+ * \brief	Motor status machine
+ */
+void Motor_StatusMachine(void)
+{
+#define MOTOR_STATE_MACHINE_SPEED_CHANGE_LIMIT		(2)
+#define MOTOR_SERVO_CHANGE_LIMIT					(2)
+
+#define MOTOR_SLIDE_DCMOTOR_LIMIT_MAX				(50)
+#define MOTOR_SLIDE_DCMOTOR_LIMIT_MIN				(0)
+
+
+	if (MotorTestSlide_Enabled)
+	{
+		// Slide - Angle
+		if (MotorTestSlide_AngleDir)
+		{
+			if (ControlState.angle <= MOTOR_SERVO_MECHANICAL_MAX_ANGLE)
+			{
+				ControlState.angle += MOTOR_SERVO_CHANGE_LIMIT;
+			}
+			else
+			{
+				MotorTestSlide_AngleDir = 0;
+			}
+		}
+		else
+		{
+			if (ControlState.angle >= MOTOR_SERVO_MECHANICAL_MIN_ANGLE)
+			{
+				ControlState.angle -= MOTOR_SERVO_CHANGE_LIMIT;
+			}
+			else
+			{
+				MotorTestSlide_AngleDir = 1;
+			}
+		}
+
+		// Slide motor
+		if (MotorTestSlide_DcDir)
+		{
+			if (ControlState.dcPercent <= MOTOR_SLIDE_DCMOTOR_LIMIT_MAX)
+			{
+				ControlState.dcPercent += MOTOR_STATE_MACHINE_SPEED_CHANGE_LIMIT;
+			}
+			else
+			{
+				MotorTestSlide_DcDir = 0;
+			}
+		}
+		else
+		{
+			if (ControlState.dcPercent > (MOTOR_SLIDE_DCMOTOR_LIMIT_MIN + MOTOR_STATE_MACHINE_SPEED_CHANGE_LIMIT))
+			{
+				ControlState.dcPercent -= MOTOR_STATE_MACHINE_SPEED_CHANGE_LIMIT;
+			}
+			else
+			{
+				MotorTestSlide_DcDir = 1;
+			}
+		}
+	}
+	// End of slide
+
+	// DC motor control
+	if (ActualState.dir != ControlState.dir)
+	{
+		// Handle change direction
+		// TODO: Too fast stop
+		Motor_DcMotorChangePercent(0);
+		ActualState.dir = ControlState.dir;
+		ActualState.dcPercent = 0;
+	}
+	else
+	{
+		// Not need change direction
+		if (ActualState.dcPercent != ControlState.dcPercent)
+		{
+			// Set Dc motor
+			if (((ActualState.dcPercent - ControlState.dcPercent) < MOTOR_STATE_MACHINE_SPEED_CHANGE_LIMIT)
+				|| ((ControlState.dcPercent - ActualState.dcPercent) < MOTOR_STATE_MACHINE_SPEED_CHANGE_LIMIT))
+				{
+				// Small different, set to control value
+				ActualState.dcPercent =  ControlState.dcPercent;
+				Motor_DcMotorChangePercent(ActualState.dcPercent);
+				}
+			else
+			{
+				// Large different
+				if (ActualState.dcPercent < ControlState.dcPercent)
+				{
+					ActualState.dcPercent += MOTOR_STATE_MACHINE_SPEED_CHANGE_LIMIT;
+					Motor_DcMotorChangePercent(ActualState.dcPercent);
+				}
+				else
+				{
+					// ActualState.dcPercent > ControlState.dcPercent
+					ActualState.dcPercent -= MOTOR_STATE_MACHINE_SPEED_CHANGE_LIMIT;
+					Motor_DcMotorChangePercent(ActualState.dcPercent);
+				}
+			}
+		}
+		else
+		{
+		// Equal, not need set
+		}
+	}
+
+
+	// Control Servo motor
+	if (ActualState.angle != ControlState.angle)
+	{
+		if (ActualState.angle < ControlState.angle)
+		{
+			ActualState.angle += MOTOR_SERVO_CHANGE_LIMIT;
+		}
+		else
+		{
+			ActualState.angle -= MOTOR_SERVO_CHANGE_LIMIT;
+		}
+		Motor_ServoChangeAngle(ActualState.angle);
+	}
+
+}
 
 
 #endif

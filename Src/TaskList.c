@@ -34,7 +34,9 @@ static TaskResult_t TaskWatchdogClear(TaskID_t id);
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 static TaskResult_t TaskEsp8266(TaskID_t id);
 #endif
-
+#ifdef CONFIG_MODULE_MOTOR_ENABLE
+static TaskResult_t TaskMotor(TaskID_t id);
+#endif
 
 /// Tasks list
 Task_t TaskList[] =
@@ -68,7 +70,13 @@ Task_t TaskList[] =
 		.taskScheduleRate = 1000,
 	}
 #endif
-
+#ifdef CONFIG_MODULE_MOTOR_ENABLE
+	{
+		.taskName = "MotorTask",
+		.taskFunction = TaskMotor,
+		.taskScheduleRate = 100
+	}
+#endif
 	// XXX: Add here new tasks
 
 };
@@ -182,6 +190,18 @@ static TaskResult_t TaskEsp8266(TaskID_t id)
 }
 #endif
 
+
+
+#ifdef CONFIG_MODULE_MOTOR_ENABLE
+static TaskResult_t TaskMotor(TaskID_t id)
+{
+	(void)id;
+
+	Motor_StatusMachine();
+
+	return TASK_RESULT_OK;
+}
+#endif
 
 
 #endif //#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE

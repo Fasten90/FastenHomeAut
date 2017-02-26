@@ -65,6 +65,14 @@ typedef enum
 } MotorDir_t;
 
 
+typedef struct
+{
+	MotorDir_t dir;
+	uint8_t dcPercent;
+	int8_t angle;
+} MotorState_t;
+
+
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
@@ -84,6 +92,7 @@ void Motor_ServoChangeAngle(int8_t angle);
 void Motor_DcMotorSeDirection(MotorDir_t dir);
 void Motor_DcMotorChangePercent(uint8_t percent);
 
+void Motor_StatusMachine(void);
 
 
 #endif /* HWTESTER_COMMONPWM_H_ */
