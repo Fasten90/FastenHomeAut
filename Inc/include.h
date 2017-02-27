@@ -17,26 +17,9 @@
 #include "options.h"
 
 
-// #define assert_param(expr) ((void)0)	// incompatible redefinition ...
 
-
-// Include libs, important headers
-
-
-// bool typedef
-#include <stdbool.h>
-
-
-/// Integer typedefs
-
-typedef unsigned char				uint8_t;	
-typedef signed char					int8_t;		
-typedef short unsigned int			uint16_t;
-typedef short signed int			int16_t;
-#ifndef CONFIG_USE_COMPILER_GCC
-typedef unsigned int				uint32_t;
-typedef signed int					int32_t;
-#endif
+// Include standard types
+#include "GenericTypeDefs.h"
 
 
 
@@ -178,6 +161,10 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
 #include "Watchdog.h"
 #endif
+#ifndef CONFIG_MODULE_WATCHDOG_ENABLE
+#define Watchdog_Clear()
+#endif
+
 
 #include "Reset.h"
 
@@ -186,12 +173,12 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #define BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
 
 
-#ifndef CONFIG_MODULE_WATCHDOG_ENABLE
-#define Watchdog_Clear()
-#endif
+// #define assert_param(expr) ((void)0)	// incompatible redefinition ...
+
 
 
 extern void Error_Handler(void);
+
 
 
 #endif /* INCLUDE_H_ */

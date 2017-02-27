@@ -293,7 +293,7 @@ bool LED_GetStatus(uint8_t num)
 /**
  * \brief	Get LED type from name
  */
-uint8_t LED_GetNumFromName(const char*name)
+uint8_t LED_GetNumFromName(const char *name)
 {
 	uint8_t i;
 	uint8_t ledNum = 0;
@@ -317,12 +317,12 @@ uint8_t LED_GetNumFromName(const char*name)
 /**
  * \brief	Get type from string
  */
-LED_SetType LED_GetTypeFromString (const char*typeString)
+LED_SetType LED_GetTypeFromString (const char *typeString)
 {
 	uint8_t i;
 	LED_SetType ledType = 0;
 
-	// TODO: Lehet, hogy kevesebbet foglalna nem ciklusként
+	// TODO: Can we optimizing without loop?
 
 	for (i = 0; i < LED_TYPE_COUNT; i++)
 	{
@@ -334,6 +334,27 @@ LED_SetType LED_GetTypeFromString (const char*typeString)
 	}
 
 	return ledType;
+}
+
+
+
+/**
+ * \brief	Get LED status to string
+ */
+uint8_t LED_GetLedStates(char *str)
+{
+	uint8_t length;
+#ifdef CONFIG_USE_PANEL_STM32F4DISCOVERY
+	length = usprintf(str, "Led status: %d %d %d",
+			LED_GetStatus(1),
+			LED_GetStatus(2),
+			LED_GetStatus(3));
+#elif CONFIG_USE_PANEL_NUCLEOF401RE
+	length = usprintf(str, "Led status: %d",
+			LED_GREEN_STATUS());
+#endif
+
+	return length;
 }
 
 

@@ -459,23 +459,23 @@ CommandResult_t CommandFunction_led(uint32_t argc, char** argv)
 	// Suppress warning
 	(void)argc;
 
-	// TODO: Szépíteni
+	CommandResult_t result;
 
 	// Convert arg2, decimal
 	bool isFirstParamNum = false;
 	uint32_t Arg2Num;
+	bool isGetStatus = false;
 
+	// Check 1. argument
 	if (StringToUnsignedDecimalNum(argv[1], &Arg2Num))
 	{
 		isFirstParamNum = true;
 	}
-
-	// Check parameters
-	if (isFirstParamNum == true && (Arg2Num > LED_NUM_MAX || Arg2Num < LED_NUM_MIN))
+	else if (!StrCmp(argv[1], "status"))
 	{
-		return CommandResult_Error_WrongArgument1;
+		isGetStatus = true;
 	}
-	else if (isFirstParamNum == false)
+	else
 	{
 		// Not number, check it is color?
 		uint8_t ledNum = LED_GetNumFromName(argv[1]);
@@ -486,50 +486,56 @@ CommandResult_t CommandFunction_led(uint32_t argc, char** argv)
 		}
 	}
 
-	// Check 2. arg
-	if (isFirstParamNum == false && !StrCmp(argv[1], "status"))
+	// Continue
+	if (isGetStatus)
 	{
 		// "status"
-		// TODO: GetLedStates(char *) function
-#ifdef CONFIG_USE_PANEL_STM32F4DISCOVERY
-		CommandHandler_Printf("Led status: %d %d %d\r\n",
-				LED_RED_STATUS(),
-				LED_BLUE_STATUS(),
-				LED_GREEN_STATUS());
-#elif CONFIG_USE_PANEL_NUCLEOF401RE
-		CommandHandler_Printf("Led status: %d\r\n",
-						LED_GREEN_STATUS());
-#endif
+		// Print LEDs statuses
+		char str[25];
+		LED_GetLedStates(str);
+		CommandHandler_SendLine(str);
+		result = CommandResult_Ok;
 	}
 	else if (isFirstParamNum == true)
 	{
 		// 1. param = num (LED num)
 
-		// Get type
-		LED_SetType setType = LED_SET_DONTCARE;
-		bool status = false;
-		setType = LED_GetTypeFromString(argv[2]);
-
-		if (setType == LED_SET_DONTCARE)
+		// Check parameters
+		if (Arg2Num > LED_NUM_MAX || Arg2Num < LED_NUM_MIN)
 		{
-			// Error, do nothing
-			return CommandResult_Error_WrongArgument2;
+			// First argument is wrong number
+			result = CommandResult_Error_WrongArgument1;
 		}
+		else
+		{
+			// Good count
+			// Get type "set type"
+			LED_SetType setType = LED_SET_DONTCARE;
+			bool status = false;
+			setType = LED_GetTypeFromString(argv[2]);
 
-		// Set LED
-		status = LED_SetLed(Arg2Num,setType);
-		CommandHandler_Printf("LED %d. status: %d\r\n", Arg2Num, status);
-
+			if (setType == LED_SET_DONTCARE)
+			{
+				// Error, do nothing
+				result = CommandResult_Error_WrongArgument2;
+			}
+			else
+			{
+				// Set LED
+				status = LED_SetLed(Arg2Num,setType);
+				CommandHandler_Printf("LED %d. status: %d\r\n", Arg2Num, status);
+				result = CommandResult_Ok;
+			}
+		}
 	}
 	else
 	{
 		// First param is not status and not LED num
-		return CommandResult_Error_WrongArgument1;
+		result = CommandResult_Error_WrongArgument1;
 	}
 
 	
-	return CommandResult_Ok;
-
+	return result;
 }
 #endif
 
@@ -955,10 +961,10 @@ CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv)
 	uint16_t milliSec = 0;
 	uint8_t startNum = 0;
 	uint8_t endNum = ADC_BUFFER_SIZE-1;
-	// TODO: Elegánsabban megcsinálni:
+	// TODO: Make a more beautiful solve (for example: EventCheck
 	uint8_t uartWriteCntOld = USART_RxBufferWriteCounter;
 
-	if (StringToUnsignedDecimalNum(argv[1],&convertValue))
+	if (StringToUnsignedDecimalNum(argv[1], &convertValue))
 	{
 		milliSec = (uint16_t)convertValue;
 	}
@@ -971,7 +977,7 @@ CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv)
 	// Check 2. argument
 	if (argc == 3)
 	{
-		if (StringToUnsignedDecimalNum(argv[2],&convertValue))
+		if (StringToUnsignedDecimalNum(argv[2], &convertValue))
 		{
 			startNum = (uint8_t)convertValue;
 			endNum = startNum;
@@ -1404,7 +1410,7 @@ CommandResult_t CommandFunction_mr(uint32_t argc, char** argv)
 	size = (int16_t)Arg3Num;
 	// <size> max 256
 
-	// TODO: checking the correct address
+	// TODO: Checking the correct address
 
 	CommandHandler_Printf("Source: 0x%X\r\n"
 							"Size: %d\r\n",

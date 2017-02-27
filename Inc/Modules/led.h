@@ -50,8 +50,9 @@ void LED_Init(void);
 void LED_Test(void);
 bool LED_SetLed(uint8_t num, LED_SetType ledSet);
 bool LED_GetStatus(uint8_t num);
-uint8_t LED_GetNumFromName(const char*name);
-LED_SetType LED_GetTypeFromString(const char*typeString);
+uint8_t LED_GetNumFromName(const char *name);
+LED_SetType LED_GetTypeFromString(const char *typeString);
+uint8_t LED_GetLedStates(char *str);
 
 
 
