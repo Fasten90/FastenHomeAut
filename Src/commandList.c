@@ -34,6 +34,73 @@
 
 
 /*------------------------------------------------------------------------------
+ *		Global function declarations - Commands
+ *----------------------------------------------------------------------------*/
+
+
+static CommandResult_t CommandFunction_cls(uint32_t argc, char** argv);
+static CommandResult_t CommandFunction_help(uint32_t argc, char** argv);
+static CommandResult_t CommandFunction_version(uint32_t argc, char** argv);
+static CommandResult_t CommandFunction_welcome(uint32_t argc, char** argv);
+static CommandResult_t CommandFunction_reset(uint32_t argc, char** argv);
+static CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv);
+static CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv);
+static CommandResult_t CommandFunction_test(uint32_t argc, char** argv);
+
+#ifdef CONFIG_MODULE_LED_ENABLE
+static CommandResult_t CommandFunction_led(uint32_t argc, char** argv);
+#endif
+#ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
+static CommandResult_t CommandFunction_set(uint32_t argc, char** argv);
+static CommandResult_t CommandFunction_get(uint32_t argc, char** argv);
+static CommandResult_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** argv);
+static CommandResult_t CommandFunction_GlobalVariableList(uint32_t argc, char** argv);
+static CommandResult_t CommandFunction_GlobalVariableValueList(uint32_t argc, char** argv);
+#endif
+#ifdef CONFIG_MODULE_COMMON_DAC_ENABLE
+static CommandResult_t CommandFunction_dac(uint32_t argc, char** argv);
+#endif
+#ifdef CONFIG_MODULE_COMMON_IO_ENABLE
+static CommandResult_t CommandFunction_io(uint32_t argc, char** argv);
+#endif
+#ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
+static CommandResult_t CommandFunction_adc(uint32_t argc, char** argv);
+static CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv);
+#endif
+#ifdef CONFIG_MODULE_COMMON_PWM_ENABLE
+static CommandResult_t CommandFunction_PWM(uint32_t argc, char** argv);
+#endif
+#ifdef CONFIG_MODULE_MOTOR_ENABLE
+static CommandResult_t CommandFunction_Motor(uint32_t argc, char** argv);
+#endif
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+static CommandResult_t CommandFunction_ESP8266(uint32_t argc, char** argv);
+#endif
+#ifdef CONFIG_MODULE_RTC_ENABLE
+static CommandResult_t CommandFunction_RTC(uint32_t argc, char** argv);
+#endif
+#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
+static CommandResult_t CommandFunction_raspberrypi(uint32_t argc, char** argv);
+#endif
+#ifdef CONFIG_MODULE_FLASH_ENABLE
+static CommandResult_t CommandFunction_flashdel(uint32_t argc, char** argv);
+static CommandResult_t CommandFunction_flashread(uint32_t argc, char** argv);
+static CommandResult_t CommandFunction_flashwrite(uint32_t argc, char** argv);
+#endif
+#ifdef CONFIG_MODULE_TEMPERATURE_ENABLE
+static CommandResult_t CommandFunction_temp(uint32_t argc, char** argv);
+#endif
+#ifdef CONFIG_DEBUG_RAMREAD_WRITE_COMMAND_ENABLE
+static CommandResult_t CommandFunction_mr(uint32_t argc, char** argv);
+static CommandResult_t CommandFunction_mw(uint32_t argc, char** argv);
+#endif
+#ifdef CONFIG_DEBUG_GO_COMMAND_ENABLE
+static CommandResult_t CommandFunction_go(uint32_t argc, char** argv);
+#endif
+
+
+
+/*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
 
@@ -362,7 +429,7 @@ const CommandID_t CommandHandler_CommandNum = COMMANDHANDLER_MAX_COMMAND_NUM;
 /**
  * \brief	CLS: Clear screen
  */
-CommandResult_t CommandFunction_cls(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_cls(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -378,7 +445,7 @@ CommandResult_t CommandFunction_cls(uint32_t argc, char** argv)
 /**
  * \brief	Get version
  */
-CommandResult_t CommandFunction_version(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_version(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -394,7 +461,7 @@ CommandResult_t CommandFunction_version(uint32_t argc, char** argv)
 /**
  * \brief	Send Welcome message
  */
-CommandResult_t CommandFunction_welcome(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_welcome(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -412,7 +479,7 @@ CommandResult_t CommandFunction_welcome(uint32_t argc, char** argv)
  * 			Use: 'help', or 'help <CommandName>'
  * 			List commands or write the command's description
  */
-CommandResult_t CommandFunction_help(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_help(uint32_t argc, char** argv)
 {
 
 	if (argc == 1)
@@ -434,7 +501,7 @@ CommandResult_t CommandFunction_help(uint32_t argc, char** argv)
 /**
  * \brief	Reset command
  */
-CommandResult_t CommandFunction_reset(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_reset(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -454,6 +521,143 @@ CommandResult_t CommandFunction_reset(uint32_t argc, char** argv)
 
 
 
+/**
+ * \brief	Run module's unit tests
+ */
+static CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
+{
+	// Suppress warning
+	(void)argc;
+	(void)argv;
+
+	CommandHandler_SendLine("Start unittest");
+
+#ifdef MODULE_STRING_UNITTEST_ENABLE
+	STRING_UnitTest();
+#endif
+
+#ifdef MODULE_DATETIME_UNITTEST_ENABLE
+	DateTime_UnitTest();
+#endif
+
+#ifdef MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
+	HomeAutMessage_UnitTest();
+#endif
+
+#ifdef MODULE_COMMANDHANDLER_UNITTEST_ENABLE
+	CommandHandler_UnitTest();
+#endif
+
+	return CommandResult_Ok_SendSuccessful;
+}
+
+
+
+/**
+ * \brief	Run module test
+ */
+static CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
+{
+	// Suppress warning
+	(void)argc;
+	(void)argv;
+
+	uint8_t i;
+
+
+#ifdef CONFIG_MODULE_LED_ENABLE
+	// LED test
+	CommandHandler_SendLine("LED test");
+
+	// LEDs on
+	for (i=LED_NUM_MIN; i<=LED_NUM_MAX; i++)
+	{
+		LED_SetLed(i, LED_SET_ON);
+		DelayMs(500);
+	}
+
+	Watchdog_Clear();
+
+	// LEDs off
+	for (i=LED_NUM_MIN; i<=LED_NUM_MAX; i++)
+	{
+		LED_SetLed(i, LED_SET_OFF);
+		DelayMs(500);
+	}
+#endif	// #ifdef CONFIG_MODULE_LED_ENABLE
+
+
+#ifdef CONFIG_MODULE_BUTTON_ENABLE
+	// Clear flag
+	BUTTON_Clicked = 0;
+
+	CommandHandler_SendLine("\r\nButton test: Please press button!");
+
+	while (!BUTTON_Clicked)
+	{
+		CommandHandler_SendChar('.');
+		DelayMs(500);
+		Watchdog_Clear();
+	}
+
+	CommandHandler_SendLine("Button pressed");
+
+#endif
+
+
+	// Beep in terminal
+	CommandHandler_SendLine("Beep test");
+	CommandHandler_SendChar(TERMINAL_KEY_BELL);
+
+
+	// Send formatted messages
+	CommandHandler_SendLine("Formatted message test");
+	FormattedMessage_Test();
+
+
+	return CommandResult_Ok;
+}
+
+
+
+/**
+ * \brief	Test function
+ */
+static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
+{
+
+	// Suppress warning
+	(void)argc;
+	(void)argv;
+
+	CommandHandler_SendLine("Test start");
+
+	/*
+	 * 		Test codes
+	 */
+
+
+	// Test SWO
+	COMMUNICATION_SendMessage(CommProt_SWO, "Test message on SWO\n");
+
+
+	// Test Watchdog clear with infinite loop
+	while (1);
+
+
+	/**
+	 * 		End of Test codes
+	 */
+
+
+	CommandHandler_SendLine("Test end");
+
+	return CommandResult_Ok;
+
+}
+
+
+
 #ifdef CONFIG_MODULE_LED_ENABLE
 /**
  * \brief	Set LED (turn on, turn off, toggle, status)
@@ -464,7 +668,7 @@ CommandResult_t CommandFunction_reset(uint32_t argc, char** argv)
  *				led <num> status
  *				led status
  */
-CommandResult_t CommandFunction_led(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_led(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -551,50 +755,12 @@ CommandResult_t CommandFunction_led(uint32_t argc, char** argv)
 
 
 
-/**
- * \brief	Test function
- */
-CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
-{
-	
-	// Suppress warning
-	(void)argc;
-	(void)argv;
-	
-	CommandHandler_SendLine("Test start");
-
-	/*
-	 * 		Test codes
-	 */
-
-
-	// Test SWO
-	COMMUNICATION_SendMessage(CommProt_SWO, "Test message on SWO\n");
-
-
-	// Test Watchdog clear with infinite loop
-	while (1);
-
-
-	/**
-	 * 		End of Test codes
-	 */
-
-
-	CommandHandler_SendLine("Test end");
-
-	return CommandResult_Ok;
-
-}
-
-
-
 #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
 /**
  * \brief	Get globalvar value
  * 			Use: 'get <globalvarname>'
  */
-CommandResult_t CommandFunction_get(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_get(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -614,7 +780,7 @@ CommandResult_t CommandFunction_get(uint32_t argc, char** argv)
  * \brief	set global variable
  * 			Use: 'set <globalvariablename> <value>'
  */
-CommandResult_t CommandFunction_set(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_set(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -634,7 +800,7 @@ CommandResult_t CommandFunction_set(uint32_t argc, char** argv)
  * \brief	Global variable help
  * 			Use: '? <globalvar>'
  */
-CommandResult_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -653,7 +819,7 @@ CommandResult_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** argv)
 /**
  * \brief	List global variables
  */
-CommandResult_t CommandFunction_GlobalVariableList(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_GlobalVariableList(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -670,7 +836,7 @@ CommandResult_t CommandFunction_GlobalVariableList(uint32_t argc, char** argv)
 /**
  * \brief	Print all global variable values
  */
-CommandResult_t CommandFunction_GlobalVariableValueList(uint32_t argc,
+static CommandResult_t CommandFunction_GlobalVariableValueList(uint32_t argc,
 		char** argv)
 {
 	// Suppress warning
@@ -691,7 +857,7 @@ CommandResult_t CommandFunction_GlobalVariableValueList(uint32_t argc,
  * \brief	DAC function
  * 			Use: 'dac <channel> <voltage>'
  */
-CommandResult_t CommandFunction_dac(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_dac(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -726,105 +892,6 @@ CommandResult_t CommandFunction_dac(uint32_t argc, char** argv)
 
 
 
-/**
- * \brief	Run module's unit tests
- */
-CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
-{
-	// Suppress warning
-	(void)argc;
-	(void)argv;
-
-	CommandHandler_SendLine("Start unittest");
-
-#ifdef MODULE_STRING_UNITTEST_ENABLE
-	STRING_UnitTest();
-#endif
-
-#ifdef MODULE_DATETIME_UNITTEST_ENABLE
-	DateTime_UnitTest();
-#endif
-
-#ifdef MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
-	HomeAutMessage_UnitTest();
-#endif
-
-#ifdef MODULE_COMMANDHANDLER_UNITTEST_ENABLE
-	CommandHandler_UnitTest();
-#endif
-
-	return CommandResult_Ok_SendSuccessful;
-}
-
-
-
-/**
- * \brief	Run module test
- */
-CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
-{
-	// Suppress warning
-	(void)argc;
-	(void)argv;
-
-	uint8_t i;
-
-
-#ifdef CONFIG_MODULE_LED_ENABLE
-	// LED test
-	CommandHandler_SendLine("LED test");
-
-	// LEDs on
-	for (i=LED_NUM_MIN; i<=LED_NUM_MAX; i++)
-	{
-		LED_SetLed(i, LED_SET_ON);
-		DelayMs(500);
-	}
-
-	Watchdog_Clear();
-
-	// LEDs off
-	for (i=LED_NUM_MIN; i<=LED_NUM_MAX; i++)
-	{
-		LED_SetLed(i, LED_SET_OFF);
-		DelayMs(500);
-	}
-#endif	// #ifdef CONFIG_MODULE_LED_ENABLE
-
-
-#ifdef CONFIG_MODULE_BUTTON_ENABLE
-	// Clear flag
-	BUTTON_Clicked = 0;
-
-	CommandHandler_SendLine("\r\nButton test: Please press button!");
-
-	while (!BUTTON_Clicked)
-	{
-		CommandHandler_SendChar('.');
-		DelayMs(500);
-		Watchdog_Clear();
-	}
-
-	CommandHandler_SendLine("Button pressed");
-
-#endif
-
-
-	// Beep in terminal
-	CommandHandler_SendLine("Beep test");
-	CommandHandler_SendChar(TERMINAL_KEY_BELL);
-
-
-	// Send formatted messages
-	CommandHandler_SendLine("Formatted message test");
-	FormattedMessage_Test();
-
-
-	return CommandResult_Ok;
-}
-
-
-
 #ifdef CONFIG_MODULE_COMMON_IO_ENABLE
 /**
  * \brief	Common IO function
@@ -833,7 +900,7 @@ CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
  * 			"ioout <port><pin> <set/reset>"
  * 			"ioin <port><pin>
  */
-CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -937,7 +1004,7 @@ CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
  * \brief	Common ADC function
  * 			Read ADC values
  */
-CommandResult_t CommandFunction_adc(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_adc(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -963,7 +1030,7 @@ CommandResult_t CommandFunction_adc(uint32_t argc, char** argv)
  * \brief	Common ADC function
  * 			Read ADC values
  */
-CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv)
 {
 
 	uint8_t i;
@@ -1027,7 +1094,7 @@ CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv)
 
 
 #ifdef CONFIG_MODULE_COMMON_PWM_ENABLE
-CommandResult_t CommandFunction_PWM(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_PWM(uint32_t argc, char** argv)
 {
 	// Suppress unused args
 	(void)argc;
@@ -1061,7 +1128,7 @@ CommandResult_t CommandFunction_PWM(uint32_t argc, char** argv)
 
 
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
-CommandResult_t CommandFunction_Motor(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_Motor(uint32_t argc, char** argv)
 {
 	(void)argc;
 
@@ -1133,7 +1200,7 @@ CommandResult_t CommandFunction_Motor(uint32_t argc, char** argv)
 
 
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-CommandResult_t CommandFunction_ESP8266(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_ESP8266(uint32_t argc, char** argv)
 {
 	(void)argc;
 
@@ -1181,7 +1248,7 @@ CommandResult_t CommandFunction_ESP8266(uint32_t argc, char** argv)
 
 
 #ifdef CONFIG_MODULE_RTC_ENABLE
-CommandResult_t CommandFunction_RTC(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_RTC(uint32_t argc, char** argv)
 {
 	CommandResult_t result = CommandResult_Unknown;
 
@@ -1241,7 +1308,7 @@ CommandResult_t CommandFunction_RTC(uint32_t argc, char** argv)
  * \brief	Temperature
  * 			Read temperature and Vref values
  */
-CommandResult_t CommandFunction_temp(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_temp(uint32_t argc, char** argv)
 {
 
 	//uprintf("Temperature: %d [C]\r\n",ADC_GetTemp());
@@ -1266,7 +1333,7 @@ CommandResult_t CommandFunction_temp(uint32_t argc, char** argv)
  * \brief	Flash erase
  * 			Use: 'flashdel <address> <block/sector>'
  */
-CommandResult_t CommandFunction_flashdel(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_flashdel(uint32_t argc, char** argv)
 {
 	uint32_t Arg2Num;
 
@@ -1303,7 +1370,7 @@ CommandResult_t CommandFunction_flashdel(uint32_t argc, char** argv)
  * \brief	Flash read
  * 			Use: 'flashread <address>'
  */
-CommandResult_t CommandFunction_flashread(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_flashread(uint32_t argc, char** argv)
 {
 
 	uint32_t Arg2Num;
@@ -1334,7 +1401,7 @@ CommandResult_t CommandFunction_flashread(uint32_t argc, char** argv)
  * \brief	Flash write
  * 			Use: 'flashwrite <address> <data>'
  */
-CommandResult_t CommandFunction_flashwrite(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_flashwrite(uint32_t argc, char** argv)
 {
 	uint32_t Arg2Num;
 
@@ -1374,7 +1441,7 @@ CommandResult_t CommandFunction_flashwrite(uint32_t argc, char** argv)
 /**
  * \brief	Raspberry Pi command
  */
-CommandResult_t CommandFunction_raspberrypi(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_raspberrypi(uint32_t argc, char** argv)
 {
 	(void)argc;
 
@@ -1428,7 +1495,7 @@ CommandResult_t CommandFunction_raspberrypi(uint32_t argc, char** argv)
  * size: dec
  * read <size> byte-s from <source> address
  */
-CommandResult_t CommandFunction_mr(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_mr(uint32_t argc, char** argv)
 {
 	(void)argc;
 
@@ -1482,7 +1549,7 @@ CommandResult_t CommandFunction_mr(uint32_t argc, char** argv)
  * data: hex
  * mwb, mwh, mww commands
  */
-CommandResult_t CommandFunction_mw(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_mw(uint32_t argc, char** argv)
 {
 	(void)argc;
 
@@ -1538,7 +1605,7 @@ CommandResult_t CommandFunction_mw(uint32_t argc, char** argv)
  * go <destination>
  * jump <destination> address
  */
-CommandResult_t CommandFunction_go(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_go(uint32_t argc, char** argv)
 {
 	(void)argc;
 
