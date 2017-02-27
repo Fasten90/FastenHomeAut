@@ -10,8 +10,8 @@
  *		Last modified:	2017. febr. 11.
  */
 
-#ifndef HWTESTER_COMMONPWM_H_
-#define HWTESTER_COMMONPWM_H_
+#ifndef MOTOR_H_
+#define MOTOR_H_
 
 
 

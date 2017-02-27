@@ -112,13 +112,19 @@ int main(void)
 #endif
 
 
+#ifdef CONFIG_MODULE_COMMON_PWM_ENABLE
+	// Common PWM Initialize
+	CommonPWM_Init();
+#endif
+
+
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
 	Motor_Init();
 #endif
 
 
-// DEBUG USART
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+	// DEBUG USART
 	USART_Init(&Debug_UartHandle);
 #ifdef CONFIG_USE_FREERTOS
 	DEBUG_USART_Rx_Semaphore = NULL;

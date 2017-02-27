@@ -126,15 +126,19 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #endif
 
 #ifdef CONFIG_MODULE_COMMON_DAC_ENABLE
-#include "commonDac.h"
+#include "CommonDac.h"
 #endif
 
 #ifdef CONFIG_MODULE_COMMON_IO_ENABLE
-#include "commonIO.h"
+#include "CommonIO.h"
 #endif
 
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
-#include "commonAdc.h"
+#include "CommonAdc.h"
+#endif
+
+#ifdef CONFIG_MODULE_COMMON_PWM_ENABLE
+#include "CommonPWM.h"
 #endif
 
 #ifdef CONFIG_MODULE_MOTOR_ENABLE

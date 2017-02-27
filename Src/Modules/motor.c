@@ -398,7 +398,7 @@ static uint32_t Motor_ServoConvertAngleToPeriod(int8_t angle)
 
 
 /**
- * \brief	HAK driver function: PWM MspInit
+ * \brief	HAL driver function: PWM MspInit
  */
 void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 {

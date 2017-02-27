@@ -208,6 +208,16 @@ const CommandStruct CommandList[] =
 		.example = "1000 1",
 	},
 #endif
+#ifdef CONFIG_MODULE_COMMON_PWM_ENABLE
+	{
+		.name = "pwm",
+		.commandFunctionPointer = CommandFunction_PWM,
+		.commandArgNum = CommandArgument_1,
+		.description = "PWM",
+		.syntax = "<PWM percent>",
+		.example = "20",
+	},
+#endif
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
 	{
 		.name = "motor",
@@ -1011,6 +1021,40 @@ CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv)
 	}
 
 	return CommandResult_Ok;
+}
+#endif
+
+
+
+#ifdef CONFIG_MODULE_COMMON_PWM_ENABLE
+CommandResult_t CommandFunction_PWM(uint32_t argc, char** argv)
+{
+	// Suppress unused args
+	(void)argc;
+
+	uint8_t percent;
+	uint32_t convertValue;
+	CommandResult_t result;
+
+	if (StringToUnsignedDecimalNum(argv[1], &convertValue))
+	{
+		if (convertValue <= 100)
+		{
+			percent = (uint8_t)convertValue;
+			CommonPWM_ChangePercent(percent);
+			result = CommandResult_Ok;
+		}
+		else
+		{
+			result = CommandResult_Error_WrongArgument1;
+		}
+	}
+	else
+	{
+		result = CommandResult_Error_WrongArgument1;
+	}
+
+	return result;
 }
 #endif
 
