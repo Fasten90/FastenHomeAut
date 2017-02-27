@@ -200,6 +200,8 @@ void Terminal_Init(void)
 	// Welcome message
 	Terminal_SendWelcome();
 
+	Reset_PrintResetReasons();
+
 	TERMINAL_SEND_NEW_LINE();
 	TERMINAL_SEND_PROMT_NEW_LINE();			// New promt
 

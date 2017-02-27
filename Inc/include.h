@@ -179,6 +179,8 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #include "Watchdog.h"
 #endif
 
+#include "Reset.h"
+
 
 // Macro for checking
 #define BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
