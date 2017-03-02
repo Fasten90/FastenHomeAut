@@ -497,8 +497,20 @@ void Motor_StatusMachine(void)
 				MotorTestSlide_DcDir = 1;
 			}
 		}
+
+		// Check actual direction
+		if (ControlState.dcPercent > 0)
+		{
+			ControlState.dir = MotorDir_Forward;
+		}
+		else
+		{
+			// 0
+			ControlState.dir = MotorDir_Stop;
+		}
 	}
 	// End of slide
+
 
 	// DC motor control
 	if (ActualState.dir != ControlState.dir)
@@ -507,6 +519,7 @@ void Motor_StatusMachine(void)
 		// TODO: Too fast stop
 		Motor_DcMotorChangePercent(0);
 		ActualState.dir = ControlState.dir;
+		Motor_DcMotorSeDirection(ActualState.dir);
 		ActualState.dcPercent = 0;
 	}
 	else
@@ -560,6 +573,20 @@ void Motor_StatusMachine(void)
 	}
 
 }
+
+
+
+/**
+ * \brief	Set all motor state to 0 / default
+ * \note	Be careful, it is not immediate stop motors, it is only stop "control" states
+ */
+void Motor_ControlStop(void)
+{
+	ControlState.dcPercent = 0;
+	ControlState.dir = MotorDir_Stop;
+	ControlState.angle = 0;
+}
+
 
 
 #endif

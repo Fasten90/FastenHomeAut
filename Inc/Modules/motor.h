@@ -77,6 +77,8 @@ typedef struct
  *  Global variables
  *----------------------------------------------------------------------------*/
 
+extern bool MotorTestSlide_Enabled;
+
 
 
 /*------------------------------------------------------------------------------
@@ -93,6 +95,8 @@ void Motor_DcMotorSeDirection(MotorDir_t dir);
 void Motor_DcMotorChangePercent(uint8_t percent);
 
 void Motor_StatusMachine(void);
+void Motor_ControlStop(void);
+
 
 
 #endif /* HWTESTER_COMMONPWM_H_ */

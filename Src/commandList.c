@@ -1188,6 +1188,27 @@ static CommandResult_t CommandFunction_Motor(uint32_t argc, char** argv)
 			return CommandResult_Error_WrongArgument2;
 		}
 	}
+	else if (!StrCmp("slide", argv[1]))
+	{
+		// Slide
+		if (!StrCmp("on", argv[2]))
+		{
+			MotorTestSlide_Enabled = true;
+			return CommandResult_Ok_SendSuccessful;
+		}
+		else if (!StrCmp("off", argv[2]))
+		{
+			MotorTestSlide_Enabled = false;
+			Motor_ControlStop();
+			return CommandResult_Ok_SendSuccessful;
+		}
+		else
+		{
+			MotorTestSlide_Enabled = false;
+			Motor_ControlStop();
+			return CommandResult_Error_WrongArgument2;
+		}
+	}
 	else
 	{
 		return CommandResult_Error_WrongArgument1;
