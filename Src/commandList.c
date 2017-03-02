@@ -910,15 +910,15 @@ static CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
 		// Init
 		char port = argv[1][0];
 		uint32_t pin;
-		if (StringToUnsignedDecimalNum(&argv[1][1],&pin))
+		if (StringToUnsignedDecimalNum(&argv[1][1], &pin))
 		{
 			// TODO: enum stringesre
 			IO_Type io = IO_UNKNOWN;
-			if (!StrCmp(argv[2],"input"))
+			if (!StrCmp(argv[2], "input"))
 			{
 				io = IO_INPUT;
 			}
-			else if (!StrCmp(argv[2],"output"))
+			else if (!StrCmp(argv[2], "output"))
 			{
 				io = IO_OUTPUT;
 			}
@@ -927,7 +927,7 @@ static CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
 				return CommandResult_Error_WrongArgument2;
 			}
 
-			if (IO_Init(port,(uint8_t)pin,io))
+			if (IO_Init(port,(uint8_t)pin, io))
 			{
 				return CommandResult_Ok;
 			}
@@ -941,27 +941,27 @@ static CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
 			return CommandResult_Error_WrongArgument1;
 		}
 	}
-	else if (!StrCmp(argv[0],"ioout"))
+	else if (!StrCmp(argv[0], "ioout"))
 	{
 		// Output
 		char port = argv[1][0];
 		uint32_t pin;
-		if (StringToUnsignedDecimalNum(&argv[1][1],&pin))
+		if (StringToUnsignedDecimalNum(&argv[1][1], &pin))
 		{
 			Output_Type output = OUTPUT_DONTCARE;
-			if (!StrCmp(argv[2],"set"))
+			if (!StrCmp(argv[2], "set"))
 			{
 				output = OUTPUT_HIGH;
 			}
-			else if (!StrCmp(argv[2],"reset"))
+			else if (!StrCmp(argv[2], "reset"))
 			{
 				output = OUTPUT_LOW;
 			}
-			else if (!StrCmp(argv[2],"toggle"))
+			else if (!StrCmp(argv[2], "toggle"))
 			{
 				output = OUTPUT_TOGGLE;
 			}
-			else if (!StrCmp(argv[2],"status"))
+			else if (!StrCmp(argv[2], "status"))
 			{
 				output = OUTPUT_STATUS;
 			}
@@ -980,9 +980,9 @@ static CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
 		// Input
 		char port = argv[1][0];
 		uint32_t pin;
-		if (StringToUnsignedDecimalNum(&argv[1][1],&pin))
+		if (StringToUnsignedDecimalNum(&argv[1][1], &pin))
 		{
-			bool status = IO_ReadPin(port,pin);
+			bool status = IO_ReadPin(port, pin);
 			CommandHandler_Printf("Input status: %d\r\n", status);
 			return CommandResult_Ok;
 		}
@@ -1069,7 +1069,7 @@ static CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv)
 	// Loop for print
 	while (1)
 	{
-		for (i=startNum; i<=endNum; i++)
+		for (i = startNum; i <= endNum; i++)
 		{
 			// Convert & Print
 			ADC_ConvertAllMeasuredValues();
