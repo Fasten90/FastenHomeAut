@@ -19,8 +19,8 @@
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
+#include "EventLog.h"
 #include "include.h"
-#include "EventHandler.h"
 
 
 /*------------------------------------------------------------------------------
@@ -37,9 +37,13 @@
 typedef enum
 {
 	Event_Unknown,
+	Event_LogEventStated,
+#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 	Event_TestExample,
+#endif
+#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	Event_DebugUartReceivedCommand,
-
+#endif
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
 	Event_ButtonPressed,
 #endif
@@ -47,21 +51,11 @@ typedef enum
 	Event_Esp8266ReceivedMessage,
 #endif
 
-
 	// XXX: Add here new event
 
+	Event_Count
+
 } EventName_t;
-
-
-
-/*------------------------------------------------------------------------------
- *  Global variables
- *----------------------------------------------------------------------------*/
-
-
-/*------------------------------------------------------------------------------
- *  Global function declarations
- *----------------------------------------------------------------------------*/
 
 
 

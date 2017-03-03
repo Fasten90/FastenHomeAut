@@ -79,6 +79,9 @@ static CommandResult_t CommandFunction_ESP8266(uint32_t argc, char** argv);
 #ifdef CONFIG_MODULE_RTC_ENABLE
 static CommandResult_t CommandFunction_RTC(uint32_t argc, char** argv);
 #endif
+#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
+static CommandResult_t CommandFunctionEventLog(uint32_t argc, char** argv);
+#endif
 #ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
 static CommandResult_t CommandFunction_raspberrypi(uint32_t argc, char** argv);
 #endif
@@ -312,6 +315,16 @@ const CommandStruct CommandList[] =
 		.syntax = "<setdate/settime> <date: 20yy-mm-dd / time: hh:mm:ss>",
 		.commandArgNum = CommandArgument_1 | CommandArgument_2,
 		.example = "setdate 2017-02-08",
+	},
+#endif
+#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
+	{
+		.name = "eventlog",
+		.commandFunctionPointer = CommandFunctionEventLog,
+		.description = "List EventLog",
+		.syntax = NULL,
+		.commandArgNum = CommandArgument_0,
+		.example = NULL,
 	},
 #endif
 #ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
@@ -1319,6 +1332,21 @@ static CommandResult_t CommandFunction_RTC(uint32_t argc, char** argv)
 	}
 
 	return result;
+}
+#endif
+
+
+
+#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
+static CommandResult_t CommandFunctionEventLog(uint32_t argc, char** argv)
+{
+	(void)argc;
+	(void)argv;
+
+	// List all event logs
+	EventLog_PrintAllLogRecords();
+
+	return CommandResult_Ok;
 }
 #endif
 

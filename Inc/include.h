@@ -158,8 +158,8 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #include "TaskList.h"
 #endif
 
-#ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
-#include "EventHandler.h"
+#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
+#include "EventLog.h"
 #endif
 
 #ifdef CONFIG_MODULE_WATCHDOG_ENABLE

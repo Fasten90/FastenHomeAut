@@ -210,6 +210,12 @@ int main(void)
 #endif
 
 
+#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
+	// EventLog
+	EventLog_Init();
+#endif
+
+
 #if defined(CONFIG_MODULE_TASKHANDLER_ENABLE)
 
 	// Task handler

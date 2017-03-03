@@ -10,8 +10,8 @@
  *		Last modified:	2017. febr. 5.
  */
 
-#ifndef COMMON_EVENTHANDLER_H_
-#define COMMON_EVENTHANDLER_H_
+#ifndef COMMON_EVENTLOG_H_
+#define COMMON_EVENTLOG_H_
 
 
 
@@ -20,17 +20,19 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 #include "include.h"
+#include "EventList.h"
 
 
-#ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
+#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
 
 
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define EVENT_RUN			(true)
-#define	EVENT_NORUN			(false)
+#ifndef CONFIG_EVENTLOG_LOG_SIZE
+#define CONFIG_EVENTLOG_LOG_SIZE		(100)
+#endif
 
 
 /*------------------------------------------------------------------------------
@@ -41,43 +43,43 @@
 typedef enum
 {
 	EventType_Unknown,				///> Unknown type, do not use!
-	EventType_Event,				///> Event
+	EventType_SystemEvent,			///> System event
+	EventType_UserEvent,			///> User event
 	EventType_Warning,				///> Warning
-	Eventtype_Error					///> Error
+	Eventtype_Error,				///> Error
+	Eventtype_Finished				///> Finished
 } EventType_t;
-
-
-typedef enum
-{
-	EventFunctionResult_Unknown,
-	EventFunctionResult_Ok,
-	EventFunctionResult_Failed
-} EventFunctionResult;
 
 
 typedef uint32_t	EventStatus_t;
 
-
-typedef bool		EventFlag_t;
-
-
 typedef uint8_t		EventId_t;
 
+typedef uint8_t		LogCnt_t;
 
-/// Command Function pointer
-typedef EventFunctionResult ( *EventFunctionPointer )(EventType_t eventType, EventStatus_t eventStatus);
+#if CONFIG_EVENTLOG_LOG_SIZE > 255
+#error "LogCnt_t type is wrong!"
+#endif
 
 
 typedef struct
 {
 	EventName_t eventName;					///> Event ID (enum)
 	const char *eventStringName;			///> Event name
-	EventType_t eventType;					///> Event type: event, warning, error
-	EventFunctionPointer eventFunction;		///> Function which called
-	EventFlag_t flag;						///> Flag for run
-	EventStatus_t eventStatus;				///> Event status
-	bool isDisabled;						///> Event disabling
-} EventHandler_t;
+} EventTable_t;
+
+
+typedef struct
+{
+	EventName_t eventName;					///> Event name (enum)
+	EventType_t eventType;					///> Event type
+	EventStatus_t eventStatus;				///> Event status / informations
+	uint32_t tick;							///> Event tick
+#ifdef CONFIG_MODULE_RTC_ENABLE
+	DateTime_t dateTime;					///> Event date time
+#endif
+} EventLogRecord_t;
+
 
 
 /*------------------------------------------------------------------------------
@@ -90,13 +92,13 @@ typedef struct
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void EventHandler_CheckEvents(void);
-void EventHandler_SetEventFlag(EventName_t eventName, EventFlag_t flag);
-
-void EventHandler_DisableEvent(EventId_t eventId);
-void EventHandler_EnableEvent(EventId_t eventId);
-
-#endif // #ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
+void EventLog_Init(void);
+void EventLog_LogEvent(EventName_t eventName, EventType_t eventType, EventStatus_t eventStatus);
+void EventLog_PrintAllLogRecords(void);
 
 
-#endif /* COMMON_EVENTHANDLER_H_ */
+
+#endif // #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
+
+
+#endif /* COMMON_EVENTLOG_H_ */
