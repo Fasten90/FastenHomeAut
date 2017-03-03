@@ -39,7 +39,7 @@ typedef enum
 	Event_Unknown,
 	Event_LogEventStated,
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
-	Event_TestExample,
+	Event_TaskScheduled,
 #endif
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	Event_DebugUartReceivedCommand,

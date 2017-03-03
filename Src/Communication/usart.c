@@ -288,6 +288,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 		TaskHandler_RequestTaskScheduling(Task_ProcessDebugUartReceivedCommand);
 		#endif
 
+		#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
+		EventLog_LogEvent(Event_DebugUartReceivedCommand, EventType_UserEvent, USART_RxBufferWriteCounter);
+		#endif
+
 		#ifdef CONFIG_USE_FREERTOS
 		// Transmission end semaphore / flag: Give semaphore
 		xSemaphoreGiveFromISR(DEBUG_USART_Rx_Semaphore,0);

@@ -128,6 +128,9 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 #else
 	(void)result;
 #endif
+#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
+	EventLog_LogEvent(Event_TaskScheduled, EventType_SystemEvent, (taskID << 24 | source << 16));
+#endif
 
 	// Clear tick
 	TaskList[taskID].isRequestScheduling = false;

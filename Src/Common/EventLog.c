@@ -64,7 +64,12 @@ void EventLog_LogEvent(EventName_t eventName, EventType_t eventType, EventStatus
 {
 	if (LogCounter >= CONFIG_EVENTLOG_LOG_SIZE-1)
 	{
+#if EVENTLOG_BUFFER_USE_CIRCULAR == 1
 		LogCounter = 0;
+#else
+		// In not circular buffer mode, do not save record, exit
+		return;
+#endif
 	}
 
 	// Save event
