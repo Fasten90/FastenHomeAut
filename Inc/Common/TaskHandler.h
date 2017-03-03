@@ -22,7 +22,6 @@
 #include "include.h"
 
 
-
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
@@ -54,8 +53,19 @@ typedef struct
 	const TaskFunctionPointer taskFunction;		///> Task function
 	TaskTick_t tick;							///> Task tick [ms]
 	TaskTick_t taskScheduleRate;				///> Task scheduling rate [ms]
+	bool isRequestScheduling;					///> Task scheduling request (true, if request)
+	bool isPeriodisScheduleDisabled;			///> Task schedule (periodic) disabled
 	bool isDisabled;							///> Task is disabled/enabled
 } Task_t;
+
+
+typedef enum
+{
+	ScheduleSource_Unknown,						///> Unknown schedule reason
+	ScheduleSource_EventTriggered,				///> Triggered (event)
+	ScheduleSource_PeriodicSchedule				///> Periodical scheduling
+} ScheduleSource_t;
+
 
 
 /*------------------------------------------------------------------------------
@@ -69,10 +79,11 @@ typedef struct
  *----------------------------------------------------------------------------*/
 
 void TaskHandler_Init(void);
-void TaskHandler_CheckSchedules(TaskTick_t elapsedTick);
+void TaskHandler_Scheduler(TaskTick_t elapsedTick);
 
 void TaskHandler_SetTaskTime(TaskID_t taskID, TaskTick_t taskTick);
 void TaskHandler_DisableTask(TaskID_t taskID);
+void TaskHandler_RequestTaskScheduling(TaskID_t taskId);
 
 
 

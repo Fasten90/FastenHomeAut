@@ -25,18 +25,25 @@
  *----------------------------------------------------------------------------*/
 
 
-static TaskResult_t TaskLed1Function(TaskID_t id);
-static TaskResult_t TaskLed2Function(TaskID_t id);
-static TaskResult_t TaskLed3Function(TaskID_t id);
+static TaskResult_t TaskLed1Function(ScheduleSource_t source);
+static TaskResult_t TaskLed2Function(ScheduleSource_t source);
+static TaskResult_t TaskLed3Function(ScheduleSource_t source);
 #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
-static TaskResult_t TaskWatchdogClear(TaskID_t id);
+static TaskResult_t TaskWatchdogClear(ScheduleSource_t source);
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-static TaskResult_t TaskEsp8266(TaskID_t id);
+static TaskResult_t TaskEsp8266(ScheduleSource_t source);
 #endif
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
-static TaskResult_t TaskMotor(TaskID_t id);
+static TaskResult_t TaskMotor(ScheduleSource_t source);
 #endif
+#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+static TaskResult_t Task_ProcessDebugUartCommandReceived(ScheduleSource_t source);
+#endif
+#ifdef CONFIG_MODULE_BUTTON_ENABLE
+static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source);
+#endif
+
 
 /// Tasks list
 Task_t TaskList[] =
@@ -68,15 +75,32 @@ Task_t TaskList[] =
 		.taskName = "Esp8266",
 		.taskFunction = TaskEsp8266,
 		.taskScheduleRate = 1000,
-	}
+	},
 #endif
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
 	{
 		.taskName = "MotorTask",
 		.taskFunction = TaskMotor,
 		.taskScheduleRate = 100
-	}
+	},
 #endif
+#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+	{
+		.taskName = "DebugUartReceivedACommand",
+		.taskFunction = Task_ProcessDebugUartCommandReceived,
+		.isPeriodisScheduleDisabled = true,
+	},
+#endif
+#ifdef CONFIG_MODULE_BUTTON_ENABLE
+	{
+		.taskName = "ButtonPressed",
+		.taskFunction = Task_ProcessButtonPressed,
+		.isPeriodisScheduleDisabled = true,
+	},
+#endif
+
+	// \note Be careful, taskList order need to be equal with TaskName_t
+
 	// XXX: Add here new tasks
 
 };
@@ -112,12 +136,12 @@ const TaskID_t TasksNum = (sizeof(TaskList)/sizeof(TaskList[0]));
 /**
  * \brief
  */
-static TaskResult_t TaskLed1Function(TaskID_t id)
+static TaskResult_t TaskLed1Function(ScheduleSource_t source)
 {
 #ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
 	uprintf("Run %s %d\r\n", TaskList[id].taskName, id);
 #else
-	(void)id;
+	(void)source;
 #endif
 
 	LED_SetLed(1, LED_SET_TOGGLE);
@@ -130,12 +154,12 @@ static TaskResult_t TaskLed1Function(TaskID_t id)
 /**
  * \brief
  */
-static TaskResult_t TaskLed2Function(TaskID_t id)
+static TaskResult_t TaskLed2Function(ScheduleSource_t source)
 {
 #ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
 	uprintf("Run %s %d\r\n", TaskList[id].taskName, id);
 #else
-	(void)id;
+	(void)source;
 #endif
 
 	LED_SetLed(2, LED_SET_TOGGLE);
@@ -148,12 +172,12 @@ static TaskResult_t TaskLed2Function(TaskID_t id)
 /**
  * \brief
  */
-static TaskResult_t TaskLed3Function(TaskID_t id)
+static TaskResult_t TaskLed3Function(ScheduleSource_t source)
 {
 #ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
 	uprintf("Run %s %d\r\n", TaskList[id].taskName, id);
 #else
-	(void)id;
+	(void)source;
 #endif
 
 	LED_SetLed(3, LED_SET_TOGGLE);
@@ -167,9 +191,9 @@ static TaskResult_t TaskLed3Function(TaskID_t id)
 /**
  * \brief	Watchdog clear task
  */
-static TaskResult_t TaskWatchdogClear(TaskID_t id)
+static TaskResult_t TaskWatchdogClear(ScheduleSource_t source)
 {
-	(void)id;
+	(void)source;
 
 	Watchdog_Clear();
 
@@ -180,9 +204,9 @@ static TaskResult_t TaskWatchdogClear(TaskID_t id)
 
 
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-static TaskResult_t TaskEsp8266(TaskID_t id)
+static TaskResult_t TaskEsp8266(ScheduleSource_t source)
 {
-	(void)id;
+	(void)source;
 
 	ESP8266_StatusMachine();
 
@@ -193,15 +217,52 @@ static TaskResult_t TaskEsp8266(TaskID_t id)
 
 
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
-static TaskResult_t TaskMotor(TaskID_t id)
+static TaskResult_t TaskMotor(ScheduleSource_t source)
 {
-	(void)id;
+	(void)source;
 
 	Motor_StatusMachine();
 
 	return TASK_RESULT_OK;
 }
 #endif
+
+
+
+#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+static TaskResult_t Task_ProcessDebugUartCommandReceived(ScheduleSource_t source)
+{
+	(void)source;
+
+	CommandHandler_CheckCommand();
+
+	return TASK_RESULT_OK;
+}
+#endif
+
+
+
+#ifdef CONFIG_MODULE_BUTTON_ENABLE
+static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
+{
+	(void)source;
+
+	// Toggle LED
+	LED_SetLed(LED_GREEN_NUM, LED_SET_TOGGLE);
+
+	// Clear flag
+	BUTTON_Clicked = 0;
+
+
+	#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
+	// Test for Raspberry Pi
+	RASPBERRYPI_SendMessage(1, Function_Alarm, Alarm_PressedButton , 17);
+	#endif
+
+	return TASK_RESULT_OK;
+}
+#endif
+
 
 
 #endif //#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE

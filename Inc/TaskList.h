@@ -20,7 +20,7 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 #include "include.h"
-
+#include "TaskHandler.h"
 
 
 /*------------------------------------------------------------------------------
@@ -32,6 +32,31 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
+typedef enum
+{
+	Task_Led200ms,
+	Task_Led1sec,
+	Task_Led5sec,
+#ifdef CONFIG_MODULE_WATCHDOG_ENABLE
+	Task_WdtClr,
+#endif
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+	Task_Esp8266,
+#endif
+#ifdef CONFIG_MODULE_MOTOR_ENABLE
+	Task_MotorControl,
+#endif
+#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+	Task_ProcessDebugUartReceivedCommand,
+#endif
+#ifdef CONFIG_MODULE_BUTTON_ENABLE
+	Task_ButtonPressed,
+#endif
+
+	// XXX:
+
+	Task_Count
+} TaskName_t;
 
 
 /*------------------------------------------------------------------------------

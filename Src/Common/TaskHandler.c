@@ -40,7 +40,7 @@
  *----------------------------------------------------------------------------*/
 
 static void TaskHandler_IncrementTicks(TaskTick_t elapsedTick);
-static void TaskHandler_RunTask(TaskID_t taskID);
+static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source);
 
 
 /*------------------------------------------------------------------------------
@@ -65,8 +65,9 @@ void TaskHandler_Init(void)
 
 /**
  *	\brief	Schedule tasks (and increment elapsed time)
+ *	\note	Recommend call from main loop for scheduling
  */
-void TaskHandler_CheckSchedules(TaskTick_t elapsedTick)
+void TaskHandler_Scheduler(TaskTick_t elapsedTick)
 {
 	TaskID_t i;
 
@@ -82,11 +83,18 @@ void TaskHandler_CheckSchedules(TaskTick_t elapsedTick)
 	for (i = 0; i < TasksNum; i++)
 	{
 		// Need scheduling?
-		if (TaskList[i].tick >= TaskList[i].taskScheduleRate
+		if (!TaskList[i].isPeriodisScheduleDisabled
+			&& TaskList[i].tick >= TaskList[i].taskScheduleRate
 			&& !TaskList[i].isDisabled)
 		{
-			// Schedule...
-			TaskHandler_RunTask(i);
+			// Schedule - periodical
+			TaskHandler_RunTask(i, ScheduleSource_PeriodicSchedule);
+		}
+		else if (TaskList[i].isRequestScheduling
+			&& !TaskList[i].isDisabled)
+		{
+			// Schedule - event triggered
+			TaskHandler_RunTask(i, ScheduleSource_EventTriggered);
 		}
 	}
 }
@@ -111,9 +119,9 @@ static void TaskHandler_IncrementTicks(TaskTick_t elapsedTick)
 /**
  *	\brief Run task
  */
-static void TaskHandler_RunTask(TaskID_t taskID)
+static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 {
-	bool result = TaskList[taskID].taskFunction(taskID);
+	bool result = TaskList[taskID].taskFunction(source);
 
 #ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
 	uprintf("- %s task run %s\r\n", TaskList[taskID].taskName, (result) ? ("successful") : ("failed"));
@@ -122,6 +130,7 @@ static void TaskHandler_RunTask(TaskID_t taskID)
 #endif
 
 	// Clear tick
+	TaskList[taskID].isRequestScheduling = false;
 	TaskList[taskID].tick = 0;
 }
 
@@ -142,9 +151,25 @@ void TaskHandler_SetTaskTime(TaskID_t taskID, TaskTick_t taskTick)
 /**
  * \brief	Disable task
  */
-void TaskHandler_DisableTask(TaskID_t taskID)
+void TaskHandler_DisableTask(TaskName_t taskId)
 {
-	TaskList[taskID].isDisabled = true;
+	if (taskId < Task_Count)
+	{
+		TaskList[taskId].isDisabled = true;
+	}
+}
+
+
+
+/**
+ * \brief	Request task scheduling
+ */
+void TaskHandler_RequestTaskScheduling(TaskID_t taskId)
+{
+	if (taskId < Task_Count)
+	{
+		TaskList[taskId].isRequestScheduling = true;
+	}
 }
 
 

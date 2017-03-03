@@ -210,31 +210,23 @@ int main(void)
 #endif
 
 
-#if (defined(CONFIG_MODULE_TASKHANDLER_ENABLE) || defined(CONFIG_MODULE_EVENTHANDLER_ENABLE))
+#if defined(CONFIG_MODULE_TASKHANDLER_ENABLE)
 
-	#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 	// Task handler
 	TaskHandler_Init();
 
 	uint32_t actualTick = 0;
 	uint32_t oldTick = HAL_GetTick();
 	uint32_t elapsedTick = 0;
-	#endif
 
 	// Infinite loop
 	while (1)
 	{
-		#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 		actualTick = HAL_GetTick();
 		elapsedTick = actualTick - oldTick;
 		oldTick = actualTick;
 
-		TaskHandler_CheckSchedules(elapsedTick);
-		#endif
-
-		#ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
-		EventHandler_CheckEvents();
-		#endif
+		TaskHandler_Scheduler(elapsedTick);
 	}
 #endif
 	

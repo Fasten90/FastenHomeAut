@@ -34,18 +34,29 @@
  *----------------------------------------------------------------------------*/
 
 
+typedef enum
+{
+	Event_Unknown,
+	Event_TestExample,
+	Event_DebugUartReceivedCommand,
+
+#ifdef CONFIG_MODULE_BUTTON_ENABLE
+	Event_ButtonPressed,
+#endif
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+	Event_Esp8266ReceivedMessage,
+#endif
+
+
+	// XXX: Add here new event
+
+} EventName_t;
+
+
 
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
-
-#ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
-
-extern EventHandler_t EventList[];
-extern const EventId_t EventListNum;
-
-#endif	// #ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
-
 
 
 /*------------------------------------------------------------------------------

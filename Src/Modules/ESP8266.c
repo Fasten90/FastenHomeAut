@@ -1461,7 +1461,7 @@ static void ESP8266_FindLastMessage(void)
 
 
 
-#ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
+#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 
 /**
  * \brief	Configure ESP8266

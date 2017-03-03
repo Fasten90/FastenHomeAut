@@ -314,7 +314,7 @@ void CommandHandler_CheckCommand(void)
 					Terminal_CommandCursorPosition = 0;
 				}
 			}	// CommandHandler_CommandReceivedEvent
-#ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
+#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 			// If we has EvetnHandler, go out from infinite loop
 			else
 			{

@@ -243,8 +243,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		BUTTON_Clicked |= ( ( 1 << PressedButton_Pressed) | ( 1 << PressedButton_Up ) );
 	}
 #endif
-#ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
-	EventHandler_SetEventFlag(Event_ButtonPressed, EVENT_RUN);
+#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
+	TaskHandler_RequestTaskScheduling(Task_ButtonPressed);
 #endif
 #endif
 
