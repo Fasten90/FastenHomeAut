@@ -304,40 +304,26 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 	if (UartHandle == &ESP8266_UartHandle)
 	{
 		
-		if (ESP8266_Receive_Mode_FixLength == 1)
-		{
-			// Received fix length message
-			#ifdef CONFIG_USE_FREERTOS
-			xSemaphoreGiveFromISR(ESP8266_USART_Rx_Semaphore, 0);
-			#endif
-		}
-		else
-		{
-			// Received variable length message
-			// Put to Buffer and receive next char
 
-			// Save received character and wait new char
+		// Received fix length message
+		#ifdef CONFIG_USE_FREERTOS
+		xSemaphoreGiveFromISR(ESP8266_USART_Rx_Semaphore, 0);
+		#endif
+
+		// Received variable length message
+		// Put to Buffer and receive next char
+
+		// Save received character and wait new char
 #if ESP8266_RECEIVE_LENGTH > 1
-			HAL_UART_Receive_IT(&ESP8266_UartHandle,
-					(uint8_t *)&ESP8266_ReceiveBuffer[0],
-					ESP8266_RECEIVE_LENGTH);
+		HAL_UART_Receive_IT(&ESP8266_UartHandle,
+				(uint8_t *)&ESP8266_ReceiveBuffer[0],
+				ESP8266_RECEIVE_LENGTH);
 #else
-			HAL_UART_Receive_IT(&ESP8266_UartHandle,
-					(uint8_t *)&ESP8266_ReceiveBuffer[++ESP8266_ReceiveBuffer_WriteCnt],
-					1);
+		HAL_UART_Receive_IT(&ESP8266_UartHandle,
+				(uint8_t *)&ESP8266_ReceiveBuffer[++ESP8266_ReceiveBuffer_WriteCnt],
+				1);
 
-			// TODO: Delete this, not working
-			if (ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_WriteCnt-1] == '\n')
-			{
-				// received an '\n' and not too short message
-				#ifdef CONFIG_USE_FREERTOS
-				xSemaphoreGiveFromISR(ESP8266_USART_Rx_Semaphore, 0);
-				#else
-				TaskHandler_RequestTaskScheduling(Task_Esp8266);
-				#endif
-			}
 #endif
-		}
 	
 		#ifndef CONFIG_USE_FREERTOS
 		// Not used FreeRTOS:

@@ -1073,13 +1073,13 @@ uint8_t StrCpyFixLengthWithFillCharacter(char *dest, const char *str, uint8_t le
 	uint8_t i;
 
 	// Copy characters
-	for ( i = 0; (i < length) && (str[i]); i++ )
+	for (i = 0; (i < length) && (str[i]); i++)
 	{
 		dest[i] = str[i];
 	}
 
 	// Fill with character after string
-	if (i<length)
+	if (i < length)
 	{
 		for (; i < length; i++)
 		{
@@ -1093,7 +1093,7 @@ uint8_t StrCpyFixLengthWithFillCharacter(char *dest, const char *str, uint8_t le
 
 
 /**
- * \brief	Copy string with max length
+ * \brief	Copy ended string with max length
  * \return	String length
  */
 uint8_t StrCpyMax(char *dest, const char *str, uint8_t maxLength)
