@@ -25,17 +25,32 @@
 
 
 //#define ESP8266_USE_BLOCK_MODE
+/*
+ * Debug mode:	1 on
+ * 				0 off
+ */
+#define ESP8266_DEBUG_MODE			(1)
 
+#if ESP8266_DEBUG_MODE == 1
 #define ESP8266_DEBUG_PRINT(msg)					USART_SendLine(msg)
-
+#else
+#define ESP8266_DEBUG_PRINT(msg)
+#endif
 
 
 /// Sending/Receiving content message max length
+#ifdef HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH
 #define ESP8266_TCP_MESSAGE_MAX_LENGTH			( HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH )
 #define ESP8266_TCP_MESSAGE_MIN_LENGTH			( HOMEAUTMESSAGE_MESSAGE_MIN_LENGTH )
-
 /// ESP8266 queue item size
-#define ESP8266_MESSAGE_QUEUE_ITEM_SIZE			( HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH )
+#define ESP8266_MESSAGE_QUEUE_ITEM_SIZE			( ESP8266_TCP_MESSAGE_MAX_LENGTH )
+#else
+// If not defined HOMEAUTMESSAGE...
+#define ESP8266_TCP_MESSAGE_MAX_LENGTH			( 90 )
+#define ESP8266_TCP_MESSAGE_MIN_LENGTH			( 5 )
+/// ESP8266 queue item size
+#define ESP8266_MESSAGE_QUEUE_ITEM_SIZE			( ESP8266_TCP_MESSAGE_MAX_LENGTH )
+#endif
 
 
 /// Max messages num in queue

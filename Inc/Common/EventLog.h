@@ -48,8 +48,9 @@ typedef enum
 	EventType_SystemEvent,			///> System event
 	EventType_UserEvent,			///> User event
 	EventType_Warning,				///> Warning
-	Eventtype_Error,				///> Error
-	Eventtype_Finished				///> Finished
+	EventType_Error,				///> Error
+	EventType_Finished,				///> Finished
+	EventType_Required				///> Required
 } EventType_t;
 
 

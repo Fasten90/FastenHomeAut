@@ -332,7 +332,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 				#ifdef CONFIG_USE_FREERTOS
 				xSemaphoreGiveFromISR(ESP8266_USART_Rx_Semaphore, 0);
 				#else
-				EventHandler_SetEventFlag(Event_Esp8266ReceivedMessage, EVENT_RUN);
+				TaskHandler_RequestTaskScheduling(Task_Esp8266);
 				#endif
 			}
 #endif

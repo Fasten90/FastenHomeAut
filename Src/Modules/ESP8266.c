@@ -183,7 +183,7 @@ void ESP8266_Init(void)
 	// GPIO0 start with LOW level, after connecting will be on HIGH level
 	// GPIO2 pin is on HIGH level...
 
-	// TODO: Need?
+	// TODO: Need this pin?
 	GPIO_InitStruct.Pin       = ESP8266_GPIO2_GPIO_PIN;
 	GPIO_InitStruct.Mode      = GPIO_MODE_OUTPUT_PP ;
 	GPIO_InitStruct.Pull      = GPIO_PULLUP;
@@ -191,7 +191,7 @@ void ESP8266_Init(void)
 	HAL_GPIO_Init(ESP8266_GPIO2_GPIO_PORT, &GPIO_InitStruct);
 	HAL_GPIO_WritePin(ESP8266_GPIO2_GPIO_PORT, ESP8266_GPIO2_GPIO_PIN, GPIO_PIN_SET);
 
-	// TODO: Need?
+	// TODO: Need this pin?
 	GPIO_InitStruct.Pin       = ESP8266_GPIO0_GPIO_PIN;
 	GPIO_InitStruct.Mode      = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull      = GPIO_PULLDOWN;
@@ -705,7 +705,7 @@ bool ESP8266_ConnectToWifiNetwork(void)
 
 
 /**
- * \brief	TODO
+ * \brief	TODO: Implement this function
  */
 bool ESP8266_FindServer ( void )
 {
@@ -1468,8 +1468,6 @@ static void ESP8266_FindLastMessage(void)
  */
 void ESP8266_StatusMachine(void)
 {
-#define TASK_ESP8266_ID		(3)
-
 
 	ESP8266_FindLastMessage();
 
@@ -1487,8 +1485,8 @@ void ESP8266_StatusMachine(void)
 			ESP8266StatusMachine++;
 			// Wait 10sec
 			// Disable event
-			EventHandler_DisableEvent(Event_Esp8266ReceivedMessage);
-			TaskHandler_SetTaskTime(TASK_ESP8266_ID, 10000);
+			//TaskHandler_DisableTask(Task_Esp8266);
+			TaskHandler_SetTaskTime(Task_Esp8266, 10000);
 			ESP8266_DEBUG_PRINT("ESP8266_SM: Init");
 			break;
 
@@ -1499,8 +1497,8 @@ void ESP8266_StatusMachine(void)
 			USART_Init(&ESP8266_UartHandle);
 			ESP8266_StartReceive();
 			ESP8266StatusMachine++;
-			EventHandler_EnableEvent(Event_Esp8266ReceivedMessage);
-			TaskHandler_SetTaskTime(TASK_ESP8266_ID, 1000);
+			//TaskHandler_EnableTask(Task_Esp8266);
+			TaskHandler_SetTaskTime(Task_Esp8266, 1000);
 			ESP8266_DEBUG_PRINT("ESP8266_SM: After init");
 			break;
 
@@ -1512,7 +1510,7 @@ void ESP8266_StatusMachine(void)
 			ESP8266_StartReceive();	// TODO: Törléskor valamiért csak az 1. karakter érkezik meg. Ötlet: nagy bufferbe kéne fogadni?
 			ESP8266_SendString("ATE0\r\n");
 			ESP8266StatusMachine++;
-			TaskHandler_SetTaskTime(TASK_ESP8266_ID, 1000);
+			TaskHandler_SetTaskTime(Task_Esp8266, 1000);
 			ESP8266_DEBUG_PRINT("ESP8266_SM: Config ATE0");
 			break;
 
@@ -1702,7 +1700,7 @@ void ESP8266_StatusMachine(void)
 				ESP8266StatusMachine++;
 				DebugPrint("Successful started server\r\n");
 				// Disable task, because next state is wait client
-				//TaskHandler_DisableTask(TASK_ESP8266_ID);
+				//TaskHandler_DisableTask(Task_Esp8266);
 				ESP8266_StartReceive();
 			}
 			else if(!StrCmp("ERROR", (const char *)&ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_ReadCnt]))
@@ -1736,7 +1734,7 @@ void ESP8266_StatusMachine(void)
 			ESP8266_ReceiveBuffer_ReadCnt = ESP8266_ReceiveBuffer_WriteCnt;
 			ESP8266_StartReceive();
 			// Set TaskHandler to faster
-			TaskHandler_SetTaskTime(TASK_ESP8266_ID, 100);
+			TaskHandler_SetTaskTime(Task_Esp8266, 100);
 			ESP8266StatusMachine++;
 			ESP8266_DEBUG_PRINT("ESP8266_SM: Before idle");
 			break;
@@ -1813,7 +1811,7 @@ void ESP8266_StatusMachine(void)
 
 		default:
 			ESP8266StatusMachine = Esp8266Status_Init;
-			TaskHandler_SetTaskTime(TASK_ESP8266_ID, 1000);
+			TaskHandler_SetTaskTime(Task_Esp8266, 1000);
 			ESP8266_DEBUG_PRINT("ESP8266_SM: Error state!");
 			break;
 

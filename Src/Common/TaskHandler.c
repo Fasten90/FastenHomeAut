@@ -172,6 +172,9 @@ void TaskHandler_RequestTaskScheduling(TaskID_t taskId)
 	if (taskId < Task_Count)
 	{
 		TaskList[taskId].isRequestScheduling = true;
+#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
+		EventLog_LogEvent(Event_TaskScheduled, EventType_SystemEvent, taskId);
+#endif
 	}
 }
 
