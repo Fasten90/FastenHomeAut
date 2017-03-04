@@ -32,7 +32,8 @@
 #define ESP8266_DEBUG_MODE			(1)
 
 #if ESP8266_DEBUG_MODE == 1
-#define ESP8266_DEBUG_PRINT(msg)					USART_SendLine(msg)
+#define ESP8266_DEBUG_PRINT(msg)					USART_SendMessage("ESP8266: "); \
+													USART_SendLine(msg)
 #else
 #define ESP8266_DEBUG_PRINT(msg)
 #endif
@@ -79,7 +80,7 @@
 			+ ESP8266_HOMEAUT_MESSAGEBOTTOM_LENGTH )
 
 /// ESP8266 receive buffer length
-#define ESP8266_BUFFER_LENGTH					( ESP8266_RECEIVEMESSAGE_MAX_LENGTH )
+#define ESP8266_BUFFER_LENGTH					( 256U )
 
 //#define ESP8266_RECEIVE_LENGTH					( ESP8266_BUFFER_LENGTH )
 #define ESP8266_RECEIVE_LENGTH					( 1 )

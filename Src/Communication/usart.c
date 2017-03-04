@@ -326,6 +326,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 					(uint8_t *)&ESP8266_ReceiveBuffer[++ESP8266_ReceiveBuffer_WriteCnt],
 					1);
 
+			// TODO: Delete this, not working
 			if (ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_WriteCnt-1] == '\n')
 			{
 				// received an '\n' and not too short message
