@@ -17,7 +17,9 @@
 #include "include.h"
 #include "board.h"
 #include "USART.h"
-
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+#include "ESP8266.h"
+#endif
 
 
 /*------------------------------------------------------------------------------
