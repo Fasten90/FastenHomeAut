@@ -42,8 +42,13 @@ volatile uint8_t ESP8266_Uart_ReceivedCharFlag;
 
 volatile char ESP8266_ReceiveBuffer[ESP8266_BUFFER_LENGTH];
 volatile char ESP8266_TransmitBuffer[ESP8266_BUFFER_LENGTH];
+bool ESP8266_SendBuffer_EnableFlag = true;
+bool ESP8266_SendIsStarted_Flag = false;
+bool ESP8266_Sent_WaitSendOk_Flag = false;
+
 
 char ESP8266_ReceivedTcpMessage[ESP8266_TCP_MESSAGE_MAX_LENGTH];
+
 
 ESP8266_WifiConnectionStatusType	ESP8266_ConnectionStatus
 			= ESP8266_WifiConnectionStatus_Unknown;
@@ -154,7 +159,8 @@ static bool ESP8266_ConnectToServerInBlockingMode(void);
 #ifdef ESP8266_USE_BLOCK_MODE
 static bool ESP8266_SendTcpMessageBlockingMode(const char *message);
 #else
-static bool ESP8266_SendTcpMessageNonBlockingMode(const char *message);
+static bool ESP8266_SendTcpMessageNonBlockingMode_Start(const char *message);
+static bool ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void);
 #endif
 
 static bool ESP8266_ConvertIpString(char *message, Network_IP_t *ip);
@@ -440,6 +446,7 @@ void ESP8266_Task(void)
 
 
 
+#ifdef ESP8266_USE_BLOCK_MODE
 /**
  * \brief	Configure ESP8266
  */
@@ -528,9 +535,11 @@ bool ESP8266_Config(void)
 	
 	return true;
 }
+#endif	// #ifdef ESP8266_USE_BLOCK_MODE
 
 
 
+#ifdef ESP8266_USE_BLOCK_MODE
 /**
  * \brief	Connect to Wifi network
  */
@@ -711,9 +720,11 @@ bool ESP8266_ConnectToWifiNetwork(void)
 	
 	return true;
 }
+#endif	// #ifdef ESP8266_USE_BLOCK_MODE
 
 
 
+#ifdef ESP8266_USE_BLOCK_MODE
 /**
  * \brief	TODO: Implement this function
  */
@@ -751,9 +762,11 @@ bool ESP8266_FindServer ( void )
 	
 	//return true;
 }
+#endif
 
 
 
+#ifdef ESP8266_USE_BLOCK_MODE
 #if (CONFIG_ESP8266_IS_SERVER == 0)
 /**
  * \brief	Connect ESP8266 to server
@@ -808,9 +821,11 @@ bool ESP8266_ConnectToServer(Network_IP_t *ip, Network_Port_t port)
 	
 }
 #endif
+#endif
 
 
 
+#ifdef ESP8266_USE_BLOCK_MODE
 #if (CONFIG_ESP8266_IS_SERVER == 1)
 /**
  * \brief	Start ESP8266 server
@@ -855,19 +870,51 @@ bool ESP8266_StartServer ( void )
 	//return true;
 }
 #endif
+#endif
 
 
 
+/**
+ * \brief	Request send TCP message
+ */
+uint8_t ESP8266_RequestSendTcpMessage(const char * message)
+{
+	uint8_t length = 0;
+
+	// Copy to send buffer
+	if (ESP8266_SendBuffer_EnableFlag)
+	{
+		// Lock buffer
+		ESP8266_SendBuffer_EnableFlag = false;
+		// Copy message to buffer
+		length = StrCpyMax((char *)ESP8266_TransmitBuffer, message, ESP8266_TCP_MESSAGE_MAX_LENGTH);
+	}
+	else
+	{
+		// Cannot access to buffer
+		length = 0;
+	}
+
+	return length;
+}
+
+
+
+/**
+ * \brief	Send message (blocking or not blocking mode)
+ */
 bool ESP8266_SendTcpMessage(const char *message)
 {
 #ifdef ESP8266_USE_BLOCK_MODE
 	return ESP8266_SendTcpMessageBlockingMode(message);
 #else
-	return ESP8266_SendTcpMessageNonBlockingMode(message);
+	return ESP8266_SendTcpMessageNonBlockingMode_Start(message);
 #endif
 }
 
 
+
+#ifdef ESP8266_USE_BLOCK_MODE
 /**
  * \brief	Sending HomeAutMessage
  *			for example:
@@ -951,18 +998,87 @@ static bool ESP8266_SendTcpMessageBlockingMode(const char *message)
 	
 	return true;
 }
+#endif
 
 
 
 /**
  * \brief	Send message on TCP
  */
-static bool ESP8266_SendTcpMessageNonBlockingMode(const char *message)
+static bool ESP8266_SendTcpMessageNonBlockingMode_Start(const char *message)
 {
-	// TODO...
-	(void)message;
-	return false;
 
+	uint8_t length = StringLength(message);
+	char buffer[25]; // For "AT+CIPSEND=0,40\r\n"
+
+	// Check length
+	if (length >= ESP8266_TCP_MESSAGE_MAX_LENGTH)
+	{
+		// Wrong length
+		DebugPrint("Too long message!\r\n");
+		length = ESP8266_TCP_MESSAGE_MAX_LENGTH - 1;
+	}
+
+
+	/*
+	 * Send data
+	 * AT+CIPSEND
+	 * 1)single connection(+CIPMUX=0) AT+CIPSEND=<length>;
+	 * 2) multiple connection (+CIPMUX=1) AT+CIPSEND= <id>,<length>
+	 *
+	 * AT+CIPSEND=4,18
+	 * 18 byte to send: GET / HTTP/1.0\r\n\r\n
+	 *
+	 * Response:
+	 * 	SEND OK
+	 */
+
+
+	// Send ~ "AT+CIPSEND=0,40\r\n"
+	usprintf(buffer, "AT+CIPSEND=0,%d\r\n", length);
+	ESP8266_SendString(buffer);
+
+	ESP8266_SendIsStarted_Flag = true;
+
+	return true;
+}
+
+
+
+static bool ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void)
+{
+
+	// Check length
+	char * message = (char *)ESP8266_TransmitBuffer;
+	uint8_t length = StringLength((const char *)message);
+
+	if (length >= ESP8266_TCP_MESSAGE_MAX_LENGTH)
+	{
+		// Wrong length
+		DebugPrint("Too long message!\r\n");
+		length = ESP8266_TCP_MESSAGE_MAX_LENGTH - 1;
+	}
+
+
+	/////////////////////////
+	// Example:
+	// Send
+	// "GET / HTTP/1.0\r\n\r\n"
+	// Response:
+	// "SEND OK"
+
+	// Send message and wait response
+
+	ESP8266_SendString(message);
+
+	DebugPrint("ESP8266: Sent TCP message: ");
+	DebugPrint(message);
+	DebugPrint("\r\n");
+
+
+	ESP8266_Sent_WaitSendOk_Flag = true;
+
+	return true;
 }
 
 
@@ -1104,6 +1220,7 @@ void ESP8266_ClearReceiveBuffer(void)
 
 
 
+#ifdef ESP8266_USE_BLOCK_MODE
 /**
  *\brief		Wait for answer in blocking mode
  */
@@ -1130,6 +1247,7 @@ static void ESP8266_WaitAnswer(uint32_t timeout)
 	#endif
 	
 }
+#endif
 
 
 
@@ -1463,6 +1581,7 @@ static bool ESP8266_CheckReceivedMessage(void)
 
 
 
+#ifdef ESP8266_USE_BLOCK_MODE
 /**
  * \brief	Send message on wifi
  */
@@ -1474,6 +1593,7 @@ bool ESP8266_SendMessageOnWifi(char *message)
 	return ESP8266_SendTcpMessageBlockingMode(message);
 #endif
 }
+#endif
 
 
 
@@ -1845,6 +1965,8 @@ void ESP8266_StatusMachine(void)
 			ESP8266_DEBUG_PRINT("Get IP address");
 			break;
 
+		// TODO: ESP8266_ConvertIpString()
+
 		case Esp8266Status_BeforeIdle:
 			// Print IP address
 			DebugPrint((const char *)receiveBuffer);
@@ -1895,7 +2017,57 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 		bool goodMsgRcv = false;
 
 		// Buffer changed
-		if (!StrCmp("Link\r\n", (const char *)receiveBuffer))
+
+		if (ESP8266_SendIsStarted_Flag)
+		{
+			// Check, response is "> "
+			if (!StrCmp("> ", (const char *)receiveBuffer))
+			{
+				ESP8266_SendTcpMessageNonBlockingMode_SendMessage();
+				ESP8266_DEBUG_PRINT("\"> \" Received");
+				goodMsgRcv = true;
+				ESP8266_ClearReceive(false, sizeof("> ") - 1);
+
+			}
+			else if (!StrCmp("link is not\r\n", (const char *)receiveBuffer))
+			{
+				// Cannot send
+				ESP8266_SendBuffer_EnableFlag = true;
+				DebugPrint("ESP8266: Cannot send, link is nothing");
+				ESP8266_ClearReceive(false, sizeof("link is not\r\n") - 1);
+			}
+			// busy inet...\r\nERROR  TODO:
+			else
+			{
+				// Error
+				ESP8266_SendBuffer_EnableFlag = true;
+				DebugPrint("ESP8266: Cannot send, unknown error: \"");
+				DebugPrint(receiveBuffer);
+				DebugPrint("\"\r\n");
+			}
+
+			ESP8266_SendIsStarted_Flag = false;
+		}
+		else if (ESP8266_Sent_WaitSendOk_Flag)
+		{
+			if (!StrCmp("\r\nSEND OK\r\n", (const char *)receiveBuffer))
+			{
+				// OK, sending successful
+				DebugPrint("Sending successful");
+				goodMsgRcv = true;
+				ESP8266_ClearReceive(false, sizeof("\r\nSEND OK\r\n") - 1);
+			}
+			else
+			{
+				// Error, not received "SEND OK"
+				DebugPrint("Sending failed: \"");
+				DebugPrint(receiveBuffer);
+				DebugPrint("\"\r\n");
+			}
+			ESP8266_Sent_WaitSendOk_Flag = false;
+			ESP8266_SendBuffer_EnableFlag = true;
+		}
+		else if (!StrCmp("Link\r\n", (const char *)receiveBuffer))
 		{
 			// "Link"
 			DebugPrint("Received \"Link\": a client connected\r\n");
@@ -2011,7 +2183,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			ESP8266_ErrorCnt++;
 			if (ESP8266_ErrorCnt > 5 || receivedMessageLength > 50)
 			{
-				DebugPrint("ESP8266 Has lot of errors, clear buffer");
+				DebugPrint("ESP8266 Has lot of errors, cleared buffer\r\n");
 				// ~Reset buffer
 				ESP8266_ClearReceive(true, 0);
 			}
@@ -2022,6 +2194,13 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 	 * ESP8266_ReceiveBuffer_WriteCnt == ESP8266_ReceiveBuffer_ReadCnt
 	 * Do nothing...
 	 */
+	else if (ESP8266_SendBuffer_EnableFlag == false)
+	{
+		// We has message on SendBuffer
+		// ReadCnt = WriteCnt, so we are not receiving
+		// TODO: Be careful, it is not truth
+		ESP8266_SendTcpMessage((char *)ESP8266_TransmitBuffer);
+	}
 }
 
 

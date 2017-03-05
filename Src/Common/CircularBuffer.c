@@ -119,7 +119,7 @@ void CircularBuffer_Clear(char *receiveBuffer, uint16_t bufferSize, uint16_t rea
 	else if (readCnt > writeCnt)
 	{
 		// Buffer to end
-		for (i = 0; i <= bufferSize-readCnt; i++)
+		for (i = 0; i < bufferSize-readCnt; i++)
 		{
 			receiveBuffer[readCnt+i] = '\0';
 		}

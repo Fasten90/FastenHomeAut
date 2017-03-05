@@ -62,9 +62,8 @@ uint8_t COMMUNICATION_SendMessage(CommProtocol_t protocol, const char *message)
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 		case CommProt_ESP8266Wifi:
-			//USART_SendMessage("ESP8266 wifi communication not implemented");
-			// TODO: Implement this
-			length = USART_SendMessage(message);
+			// Send on wifi (TCP message)
+			length = ESP8266_RequestSendTcpMessage(message);
 			break;
 #endif
 		case CommProt_Disable:

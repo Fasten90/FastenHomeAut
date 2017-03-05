@@ -80,7 +80,7 @@
 			+ ESP8266_HOMEAUT_MESSAGEBOTTOM_LENGTH )
 
 /// ESP8266 receive buffer length
-#define ESP8266_BUFFER_LENGTH					( 256U )
+#define ESP8266_BUFFER_LENGTH					( 256UL )
 
 //#define ESP8266_RECEIVE_LENGTH					( ESP8266_BUFFER_LENGTH )
 #define ESP8266_RECEIVE_LENGTH					( 256 )
@@ -172,6 +172,8 @@ void ESP8266_Task(void);
 
 void ESP8266_Init(void);
 
+void ESP8266_ResetHardware(void);
+
 bool ESP8266_Config(void);
 bool ESP8266_ConnectToWifiNetwork(void);
 
@@ -187,10 +189,12 @@ bool ESP8266_WaitClientConnect(void);
 
 bool ESP8266_CheckReceiveMessage(void);
 
+#ifdef ESP8266_USE_BLOCK_MODE
 static void ESP8266_WaitAnswer(uint32_t timeout);
-void ESP8266_ResetHardware(void);
+#endif
 
 bool ESP8266_SendTcpMessage(const char *message);
+uint8_t ESP8266_RequestSendTcpMessage(const char * message);
 
 void ESP8266_StatusMachine(void);
 
