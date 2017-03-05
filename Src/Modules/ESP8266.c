@@ -5,8 +5,8 @@
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		ESP8266 communication
  *		Target:			STM32Fx
- *		Version:		v4
- *		Last modified:	2017.01.14
+ *		Version:		v5
+ *		Last modified:	2017.03.05
  */
 
 
@@ -1748,15 +1748,16 @@ void ESP8266_StatusMachine(void)
 			break;
 
 		case Esp8266Status_ConfigCipMuxCheckResponse:
-			if (!StrCmp("\r\nOK\r\n", (const char *)receiveBuffer))
+			if ((!StrCmp("\r\nOK\r\n", (const char *)receiveBuffer))
+				|| (!StrCmp("link is builded\r\n", (const char *)receiveBuffer)))
 			{
 				// "OK"
+				// TODO: "link is builded\r\n" message is not correct, but it is good for me
 				ESP8266_LED_OK();
 				ESP8266StatusMachine++;
 				ESP8266_DEBUG_PRINT("Config CIPMUX response ok");
 				//break;	// Step to next
 			}
-			// TODO: Put the "Link is builded\r\n" is OK
 			else
 			{
 				// Other... it is wrong
@@ -1966,6 +1967,7 @@ void ESP8266_StatusMachine(void)
 				{
 					DebugPrint("Received unknown message: ");
 					DebugPrint((const char *)receiveBuffer);
+					DebugPrint("\r\n");
 					//ESP8266_ReceiveBuffer_ReadCnt - do not clear
 				}
 				// TODO: Check, need send?
