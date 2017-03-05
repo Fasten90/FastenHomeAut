@@ -48,11 +48,14 @@
  */
 void CircularBuffer_Init(void)
 {
-
+	// TODO: Clear, if not need
 }
 
 
 
+/**
+ * \brief	Get characters from ReadCnt to WriteCnt
+ */
 uint8_t CircularBuffer_GetCharacters(char *receiveBuffer, char *str, uint16_t bufferSize, uint16_t writeCnt, uint16_t readCnt, bool putEnd)
 {
 	uint16_t i;
@@ -94,6 +97,39 @@ uint8_t CircularBuffer_GetCharacters(char *receiveBuffer, char *str, uint16_t bu
 	// else : readCnt == writeCnt
 
 	return i;
+}
+
+
+
+/**
+ * \brief	Clear buffer from readCnt to writeCnt
+ */
+void CircularBuffer_Clear(char *receiveBuffer, uint16_t bufferSize, uint16_t readCnt, uint16_t writeCnt)
+{
+	uint16_t i;
+
+	if (readCnt < writeCnt)
+	{
+		// No overflow
+		for (i = 0; i <= writeCnt-readCnt; i++)
+		{
+			receiveBuffer[readCnt+i] = '\0';
+		}
+	}
+	else if (readCnt > writeCnt)
+	{
+		// Buffer to end
+		for (i = 0; i <= bufferSize-readCnt; i++)
+		{
+			receiveBuffer[readCnt+i] = '\0';
+		}
+
+		// Begin of buffer
+		for (i = 0; i <= writeCnt; i++)
+		{
+			receiveBuffer[i] = '\0';
+		}
+	}
 }
 
 
