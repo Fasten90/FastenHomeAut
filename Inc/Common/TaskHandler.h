@@ -85,6 +85,8 @@ void TaskHandler_SetTaskTime(TaskID_t taskID, TaskTick_t taskTick);
 void TaskHandler_DisableTask(TaskID_t taskID);
 void TaskHandler_RequestTaskScheduling(TaskID_t taskId);
 
+void TaskHandler_UnitTest(void);
+
 
 
 #endif /* COMMON_TASKHANDLER_H_ */

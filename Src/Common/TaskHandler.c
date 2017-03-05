@@ -20,6 +20,11 @@
 #include "TaskList.h"
 #include "TaskHandler.h"
 
+#ifdef MODULE_TASKHANDLER_UNNITEST_ENABLE
+#include "UnitTest.h"
+#endif
+
+
 
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 
@@ -177,6 +182,102 @@ void TaskHandler_RequestTaskScheduling(TaskID_t taskId)
 #endif
 	}
 }
+
+
+
+#ifdef MODULE_TASKHANDLER_UNNITEST_ENABLE
+void TaskHandler_UnitTest(void)
+{
+
+	uint8_t i;
+	bool result;
+
+
+	// Start Unit test
+	UnitTest_Start("TaskHandler", __FILE__);
+
+
+
+	// Test Initialization
+
+	// Clear requests: Be careful, it make some wrongs
+	for (i = 0; i < TasksNum; i++)
+	{
+		TaskList[i].isRequestScheduling = false;
+	}
+	TaskHandler_Init();
+
+	// Check, all tick are 0?
+	for (i = 0; i < TasksNum; i++)
+	{
+		result = (TaskList[i].tick == 0);
+		UnitTest_CheckResult(result, "TaskHandler_Init error", __LINE__);
+	}
+
+
+
+	// Test Scheduler time elapsing
+
+	TaskHandler_Scheduler(1);
+
+	// Check all tick is incremented?
+	for (i = 0; i < TasksNum; i++)
+	{
+		result = (TaskList[i].tick == 1);
+		UnitTest_CheckResult(result, "TaskHandler_Scheduler error", __LINE__);
+	}
+
+
+
+	// TODO: Test TaskHandler_RunTask ?
+
+
+
+	// Test TaskHandler_SetTaskTime
+
+	uint32_t oldTaskScheduleRate;
+	oldTaskScheduleRate = TaskList[0].taskScheduleRate;
+
+	TaskHandler_SetTaskTime(0, 1234);
+	result = (TaskList[0].taskScheduleRate == 1234);
+	UnitTest_CheckResult(result, "TaskHandler_SetTaskTime Error", __LINE__);
+
+	TaskHandler_SetTaskTime(0, oldTaskScheduleRate);
+	result = (TaskList[0].taskScheduleRate == oldTaskScheduleRate);
+	UnitTest_CheckResult(result, "TaskHandler_SetTaskTime Error", __LINE__);
+
+
+
+	// Test task disabling
+
+	bool oldDisableValue = TaskList[0].isDisabled;
+
+	TaskHandler_DisableTask(0);
+	result = (TaskList[0].isDisabled == true);
+	UnitTest_CheckResult(result, "TaskHandler_DisableTask Error", __LINE__);
+
+	// Restore task disable value
+	TaskList[0].isDisabled = oldDisableValue;
+
+
+
+	// Test task request
+	bool oldRequest = TaskList[0].isRequestScheduling;
+
+	TaskHandler_RequestTaskScheduling(0);
+	result = (TaskList[0].isRequestScheduling == true);
+	UnitTest_CheckResult(result, "TaskHandler_RequestTaskScheduling Error", __LINE__);
+
+	// Restore task request value
+	TaskList[0].isRequestScheduling = oldRequest;
+
+
+
+	// Finish
+	UnitTest_End();
+
+}
+#endif
 
 
 

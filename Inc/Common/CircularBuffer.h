@@ -50,6 +50,8 @@ uint8_t CircularBuffer_GetCharacters(char *receiveBuffer, char *str,
 void CircularBuffer_Clear(char *receiveBuffer,
 		uint16_t bufferSize, uint16_t readCnt, uint16_t writeCnt);
 
+void CircularBuffer_UnitTest(void);
+
 
 
 #endif /* COMMON_CIRCULARBUFFER_H_ */

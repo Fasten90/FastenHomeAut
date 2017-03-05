@@ -561,7 +561,15 @@ static CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
 	CommandHandler_UnitTest();
 #endif
 
-	return CommandResult_Ok_SendSuccessful;
+#ifdef MODULE_CIRCULARBUFFER_UNITTEST_ENABLE
+	CircularBuffer_UnitTest();
+#endif
+
+#ifdef MODULE_TASKHANDLER_UNNITEST_ENABLE
+	TaskHandler_UnitTest();
+#endif
+
+	return CommandResult_Ok;
 }
 
 
