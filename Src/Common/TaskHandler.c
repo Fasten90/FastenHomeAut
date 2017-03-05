@@ -140,6 +140,12 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 	// Clear tick
 	TaskList[taskID].isRequestScheduling = false;
 	TaskList[taskID].tick = 0;
+
+	// Clear once run
+	if (TaskList[taskID].isRunOnce)
+	{
+		TaskList[taskID].isDisabled = true;
+	}
 }
 
 
@@ -147,11 +153,25 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 /**
  *	\brief	Initialize task
  */
-void TaskHandler_SetTaskTime(TaskID_t taskID, TaskTick_t taskTick)
+void TaskHandler_SetTaskPeriodicTime(TaskID_t taskID, TaskTick_t taskTick)
 {
 	 TaskList[taskID].isDisabled = false;
 	 TaskList[taskID].taskScheduleRate = taskTick;
 	 TaskList[taskID].tick = 0;
+	 TaskList[taskID].isRunOnce = false;
+}
+
+
+
+/**
+ *	\brief	Set Task scheduling 1x after x time
+ */
+void TaskHandler_SetTaskOnceRun(TaskID_t taskID, TaskTick_t taskTick)
+{
+	 TaskList[taskID].isDisabled = false;
+	 TaskList[taskID].taskScheduleRate = taskTick;
+	 TaskList[taskID].tick = 0;
+	 TaskList[taskID].isRunOnce = true;
 }
 
 
@@ -233,18 +253,50 @@ void TaskHandler_UnitTest(void)
 
 
 
-	// Test TaskHandler_SetTaskTime
+	// Test TaskHandler_SetTaskPeriodicTime
 
+	// Save values
 	uint32_t oldTaskScheduleRate;
+	bool oldOnceRun = TaskList[0].isRunOnce;
 	oldTaskScheduleRate = TaskList[0].taskScheduleRate;
 
-	TaskHandler_SetTaskTime(0, 1234);
+	TaskHandler_SetTaskPeriodicTime(0, 1234);
 	result = (TaskList[0].taskScheduleRate == 1234);
 	UnitTest_CheckResult(result, "TaskHandler_SetTaskTime Error", __LINE__);
+	result = (TaskList[0].isRunOnce == false);
+	UnitTest_CheckResult(result, "TaskHandler_SetTaskTime Error", __LINE__);
 
-	TaskHandler_SetTaskTime(0, oldTaskScheduleRate);
+	TaskHandler_SetTaskPeriodicTime(0, oldTaskScheduleRate);
 	result = (TaskList[0].taskScheduleRate == oldTaskScheduleRate);
 	UnitTest_CheckResult(result, "TaskHandler_SetTaskTime Error", __LINE__);
+	result = (TaskList[0].isRunOnce == false);
+	UnitTest_CheckResult(result, "TaskHandler_SetTaskTime Error", __LINE__);
+
+	// Restore
+	TaskList[0].isRunOnce = oldOnceRun;
+
+
+
+	// Test TaskHandler_SetTaskOnceRun
+
+	// Save values
+	oldOnceRun = TaskList[0].isRunOnce;
+	oldTaskScheduleRate =TaskList[0].taskScheduleRate;
+
+	TaskHandler_SetTaskOnceRun(0, 2345);
+	result = (TaskList[0].taskScheduleRate == 2345);
+	UnitTest_CheckResult(result, "TaskHandler_ScheduleTaskOnce Error", __LINE__);
+	result = (TaskList[0].isRunOnce == true);
+	UnitTest_CheckResult(result, "TaskHandler_ScheduleTaskOnce Error", __LINE__);
+
+	TaskHandler_SetTaskOnceRun(0, oldTaskScheduleRate);
+	result = (TaskList[0].taskScheduleRate == oldTaskScheduleRate);
+	UnitTest_CheckResult(result, "TaskHandler_ScheduleTaskOnce Error", __LINE__);
+	result = (TaskList[0].isRunOnce == true);
+	UnitTest_CheckResult(result, "TaskHandler_ScheduleTaskOnce Error", __LINE__);
+
+	// Restore
+	TaskList[0].isRunOnce = oldOnceRun;
 
 
 

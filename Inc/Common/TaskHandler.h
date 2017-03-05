@@ -55,6 +55,7 @@ typedef struct
 	TaskTick_t taskScheduleRate;				///> Task scheduling rate [ms]
 	bool isRequestScheduling;					///> Task scheduling request (true, if request)
 	bool isPeriodisScheduleDisabled;			///> Task schedule (periodic) disabled
+	bool isRunOnce;								///> Task scheduling once
 	bool isDisabled;							///> Task is disabled/enabled
 } Task_t;
 
@@ -81,7 +82,8 @@ typedef enum
 void TaskHandler_Init(void);
 void TaskHandler_Scheduler(TaskTick_t elapsedTick);
 
-void TaskHandler_SetTaskTime(TaskID_t taskID, TaskTick_t taskTick);
+void TaskHandler_SetTaskPeriodicTime(TaskID_t taskID, TaskTick_t taskTick);
+void TaskHandler_SetTaskOnceRun(TaskID_t taskID, TaskTick_t taskTick);
 void TaskHandler_DisableTask(TaskID_t taskID);
 void TaskHandler_RequestTaskScheduling(TaskID_t taskId);
 

@@ -1677,7 +1677,7 @@ void ESP8266_StatusMachine(void)
 			// Wait 10sec
 			// Disable event
 			//TaskHandler_DisableTask(Task_Esp8266);
-			TaskHandler_SetTaskTime(Task_Esp8266, 10000);
+			TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 10000);
 			ESP8266_DEBUG_PRINT("Init");
 			break;
 
@@ -1687,7 +1687,7 @@ void ESP8266_StatusMachine(void)
 			ESP8266_FirstStartReceive();
 			ESP8266StatusMachine++;
 			//TaskHandler_EnableTask(Task_Esp8266);
-			TaskHandler_SetTaskTime(Task_Esp8266, 1000);
+			TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 1000);
 			ESP8266_DEBUG_PRINT("After init");
 			break;
 
@@ -1699,7 +1699,7 @@ void ESP8266_StatusMachine(void)
 			ESP8266_StartReceive();
 			ESP8266_SendString("ATE0\r\n");
 			ESP8266StatusMachine++;
-			TaskHandler_SetTaskTime(Task_Esp8266, 1000);
+			TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 1000);
 			ESP8266_DEBUG_PRINT("Config ATE0");
 			break;
 
@@ -1973,7 +1973,7 @@ void ESP8266_StatusMachine(void)
 			ESP8266_ClearReceive(true, 0);
 			ESP8266_StartReceive();
 			// Set TaskHandler to faster
-			TaskHandler_SetTaskTime(Task_Esp8266, 100);
+			TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 100);
 			ESP8266StatusMachine++;
 			ESP8266_DEBUG_PRINT("Idle");
 			break;
@@ -1985,7 +1985,7 @@ void ESP8266_StatusMachine(void)
 
 		default:
 			ESP8266StatusMachine = Esp8266Status_Init;
-			TaskHandler_SetTaskTime(Task_Esp8266, 1000);
+			TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 1000);
 			ESP8266_DEBUG_PRINT("Error state!");
 			break;
 
