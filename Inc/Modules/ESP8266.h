@@ -187,7 +187,7 @@ bool ESP8266_WaitClientConnect(void);
 
 bool ESP8266_CheckReceiveMessage(void);
 
-void ESP8266_WaitAnswer(uint32_t timeout);
+static void ESP8266_WaitAnswer(uint32_t timeout);
 void ESP8266_ResetHardware(void);
 
 bool ESP8266_SendTcpMessage(const char *message);

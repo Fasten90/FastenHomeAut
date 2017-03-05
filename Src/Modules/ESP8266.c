@@ -164,6 +164,8 @@ static void DebugPrint(const char *debugString);
 static void ESP8266_FindLastMessage(void);
 static void ESP8266_ClearReceive(bool isFullClear, uint8_t stepLength);
 
+static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t receivedMessageLength);
+
 
 
 /*------------------------------------------------------------------------------
@@ -965,6 +967,7 @@ static bool ESP8266_SendTcpMessageNonBlockingMode(const char *message)
 
 
 
+#if NOT_USED
 /**
  *\brief		Receive HomeAutMessage
  *				length: 10+40
@@ -990,6 +993,7 @@ bool ESP8266_ReceiveFixTcpMessage(void)
 		
 	return true;
 }
+#endif
 
 
 
@@ -1103,7 +1107,7 @@ void ESP8266_ClearReceiveBuffer(void)
 /**
  *\brief		Wait for answer in blocking mode
  */
-void ESP8266_WaitAnswer(uint32_t timeout)
+static void ESP8266_WaitAnswer(uint32_t timeout)
 {
 	#ifdef CONFIG_USE_FREERTOS
 #if OLD_BLOCK
@@ -1352,16 +1356,6 @@ bool ESP8266_StartServerBlocking(void)
 #endif	// CONFIG_USE_FREERTOS
 
 
-bool ESP8266_SendMessageOnWifi(char *message)
-{
-#ifdef CONFIG_USE_FREERTOS
-	return ESP8266_SendMessageToQueue(message);
-#else
-	return ESP8266_SendTcpMessageBlockingMode(message);
-#endif
-}
-
-
 
 #ifdef NOT_USED
 /**
@@ -1470,6 +1464,20 @@ static bool ESP8266_CheckReceivedMessage(void)
 
 
 /**
+ * \brief	Send message on wifi
+ */
+bool ESP8266_SendMessageOnWifi(char *message)
+{
+#ifdef CONFIG_USE_FREERTOS
+	return ESP8266_SendMessageToQueue(message);
+#else
+	return ESP8266_SendTcpMessageBlockingMode(message);
+#endif
+}
+
+
+
+/**
  * \brief	Step Buffer WriteCnt to last character
  */
 static void ESP8266_FindLastMessage(void)
@@ -1533,32 +1541,7 @@ void ESP8266_StatusMachine(void)
 	}
 
 
-	// TODO: Do better code for receive handler - put to idle state...
-	if (ESP8266StatusMachine == Esp8266Status_Idle)
-	{
-
-		// Only enable large message with end with "\r\n"
-		uint8_t firstNewLine = STRING_FindString(
-				(const char *)receiveBuffer,
-				"\r\n");
-
-		if ((firstNewLine == 0
-				// After  \r\n+IPD,0,x:
-				&& (STRING_FindString(
-						(const char *)&receiveBuffer[11],
-						"\r\n") >= 0)
-				)
-			|| firstNewLine > 1)
-		{
-			// Received good message
-		}
-		else
-		{
-			// Not received "\r\n", or received at begin of buffer
-			return;
-		}
-	}
-
+	// Check ESP8266 status machine state
 	switch (ESP8266StatusMachine)
 	{
 
@@ -1863,7 +1846,7 @@ void ESP8266_StatusMachine(void)
 			break;
 
 		case Esp8266Status_BeforeIdle:
-			// Print IP
+			// Print IP address
 			DebugPrint((const char *)receiveBuffer);
 			ESP8266_ClearReceive(true, 0);
 			ESP8266_StartReceive();
@@ -1874,118 +1857,8 @@ void ESP8266_StatusMachine(void)
 			break;
 
 		case Esp8266Status_Idle:
-			/*
-			 * Check message, which can be anything...
-			 * Link\r\n
-			 * +IPD...
-			 * Unlink
-			 * Check, connect a new client?
-			 */
-			// TODO: ESP8266_CheckReceivedMessage();
-			if (ESP8266_ReceiveBuffer_WriteCnt != ESP8266_ReceiveBuffer_ReadCnt)
-			{
-				bool goodMsgRcv = false;
-
-				// Buffer changed
-				if (!StrCmp("Link\r\n", (const char *)receiveBuffer))
-				{
-					// "Link"
-					DebugPrint("Received \"Link\": a client connected\r\n");
-					// TODO: Step to IP address printing (connected clients)
-					//ESP8266StatusMachine = Esp8266Status_XXX;
-					ESP8266_ClearReceive(false, sizeof("Link\r\n") - 1);
-					goodMsgRcv = true;
-				}
-				else if (!StrCmp("Unlink\r\n", (const char *)receiveBuffer))
-				{
-					// "Unlink"
-					DebugPrint("Received \"Unlink\": a client disconnected\r\n");
-					ESP8266_ClearReceive(false, sizeof("Unlink\r\n") - 1);
-					goodMsgRcv = true;
-				}
-				else if (!StrCmp("\r\n+IPD,", (const char *)receiveBuffer))
-				{
-					// TODO: Channel (2 character is skipped:
-					// "\r\n+IPD,0,"
-					// !!! TODO: If too fast received some characters (but not all), so this function is bad
-					// "+IPD,1,4:msg3"
-					// Check next parameter:
-					uint8_t length = sizeof("\r\n+IPD,0,") - 1;
-					// TODO: Use better function
-					int16_t commIndex = STRING_FindString((const char *)&receiveBuffer[length], ":");
-					if (commIndex > -1)
-					{
-						// Has ':'
-						// TODO: scanf
-						uint32_t messageLength;
-						receiveBuffer[length + commIndex] = '\0';
-						if (StringToUnsignedDecimalNum((const char *)&receiveBuffer[length], &messageLength))
-						{
-							if (messageLength <= ESP8266_TCP_MESSAGE_MAX_LENGTH)
-							{
-								// Set position after ':'
-								length += commIndex + 1;
-
-								// We have message source:
-								// Save to global variable
-								// TODO: Event / set flag
-								StrCpyFixLength(ESP8266_ReceivedTcpMessage,
-										(const char *)&receiveBuffer[length],
-										messageLength);
-								ESP8266_ReceivedTcpMessage[messageLength] = '\0';
-
-								DebugPrint("Received TCP message: ");
-								DebugPrint(ESP8266_ReceivedTcpMessage);
-								DebugPrint("\r\n");
-
-								CommandHandler_PrepareFindExecuteCommand(CommProt_ESP8266Wifi, ESP8266_ReceivedTcpMessage);
-
-								ESP8266_ClearReceive(false, length + messageLength + sizeof("\r\nOK\r\n") - 1);
-								goodMsgRcv = true;
-							}
-							else
-							{
-								// Received too large message
-								DebugPrint("Received too large TCP message: ");
-								DebugPrint((const char *)receiveBuffer);
-								ESP8266_ClearReceive(true, 0);
-							}
-						}
-						else
-						{
-							DebugPrint("Received +IPD message with wrong length parameter\r\n");
-							//ESP8266_ReceiveBuffer_ReadCnt - do not clear
-						}
-					}
-					else
-					{
-						DebugPrint("Received +IPD message without ':'\r\n");
-						//ESP8266_ReceiveBuffer_ReadCnt - do not clear
-					}
-				}
-				else
-				{
-					DebugPrint("Received unknown message: ");
-					DebugPrint((const char *)receiveBuffer);
-					DebugPrint("\r\n");
-					//ESP8266_ReceiveBuffer_ReadCnt - do not clear
-				}
-				// TODO: Check, need send?
-				ESP8266_StartReceive();
-
-				// Error handling
-				if (!goodMsgRcv)
-				{
-					// If has a lot of error
-					ESP8266_ErrorCnt++;
-					if (ESP8266_ErrorCnt > 5 || receivedMessageLength > 50)
-					{
-						// ~Reset buffer
-						ESP8266_ClearReceive(true, 0);
-					}
-				}
-				//ESP8266_ClearReceive(true, 0); - do not clear
-			}
+			// Idle state (Check link, unlink, received message...)
+			ESP8266_CheckIdleStateMessage(receiveBuffer, receivedMessageLength);
 			break;
 
 		default:
@@ -2000,6 +1873,156 @@ void ESP8266_StatusMachine(void)
 }
 #endif
 
+
+
+/**
+ * \brief	Check idle state message
+ * 			- Link
+ * 			- Unlink
+ * 			- +IPD: Received message
+ */
+static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t receivedMessageLength)
+{
+	/*
+	 * Check message, which can be anything...
+	 * Link
+	 * Unlink
+	 * +IPD: Received message
+	 */
+	if (ESP8266_ReceiveBuffer_WriteCnt != ESP8266_ReceiveBuffer_ReadCnt)
+	{
+
+		bool goodMsgRcv = false;
+
+		// Buffer changed
+		if (!StrCmp("Link\r\n", (const char *)receiveBuffer))
+		{
+			// "Link"
+			DebugPrint("Received \"Link\": a client connected\r\n");
+			// TODO: Step to IP address printing (connected clients)
+			//ESP8266StatusMachine = Esp8266Status_XXX;
+			ESP8266_ClearReceive(false, sizeof("Link\r\n") - 1);
+			goodMsgRcv = true;
+		}
+		else if (!StrCmp("Unlink\r\n", (const char *)receiveBuffer))
+		{
+			// "Unlink"
+			DebugPrint("Received \"Unlink\": a client disconnected\r\n");
+			ESP8266_ClearReceive(false, sizeof("Unlink\r\n") - 1);
+			goodMsgRcv = true;
+		}
+		else if (!StrCmp("\r\n+IPD,", (const char *)receiveBuffer))
+		{
+			// Message form: "\r\n+IPD,1,4:msg3\r\nOK"
+			// Has got finish "\r\n"?
+			if (STRING_FindString(
+					(const char *)&receiveBuffer[sizeof("\r\n+IPD,")],
+					"\r\n") >= 0)
+			{
+				// Received good message, with finish "\r\n"
+
+				// TODO: Channel (2 character is skipped:)
+				// "+IPD,1,4:msg3"
+				// Check next parameter:
+				uint8_t length = sizeof("\r\n+IPD,0,") - 1;
+				// TODO: Use better function
+				int16_t commIndex = STRING_FindString((const char *)&receiveBuffer[length], ":");
+				if (commIndex > -1)
+				{
+					// Has ':'
+					// TODO: scanf
+					uint32_t messageLength;
+					receiveBuffer[length + commIndex] = '\0';
+					if (StringToUnsignedDecimalNum((const char *)&receiveBuffer[length], &messageLength))
+					{
+						if (messageLength <= ESP8266_TCP_MESSAGE_MAX_LENGTH)
+						{
+							// Set position after ':'
+							length += commIndex + 1;
+
+							// We have message source:
+							// Save to global variable
+							// TODO: Event / set flag
+							StrCpyFixLength(ESP8266_ReceivedTcpMessage,
+									(const char *)&receiveBuffer[length],
+									messageLength);
+							ESP8266_ReceivedTcpMessage[messageLength] = '\0';
+
+							DebugPrint("Received TCP message: ");
+							DebugPrint(ESP8266_ReceivedTcpMessage);
+							DebugPrint("\r\n");
+
+							CommandHandler_PrepareFindExecuteCommand(CommProt_ESP8266Wifi, ESP8266_ReceivedTcpMessage);
+
+							ESP8266_ClearReceive(false, length + messageLength + sizeof("\r\nOK\r\n") - 1);
+							goodMsgRcv = true;
+						}
+						else
+						{
+							// Received too large message
+							DebugPrint("Received too large TCP message: ");
+							DebugPrint((const char *)receiveBuffer);
+							ESP8266_ClearReceive(true, 0);
+						}
+					}
+					else
+					{
+						DebugPrint("Received +IPD message with wrong length parameter\r\n");
+						//ESP8266_ReceiveBuffer_ReadCnt - do not clear
+					}
+				}
+				else
+				{
+					DebugPrint("Received +IPD message without ':'\r\n");
+					//ESP8266_ReceiveBuffer_ReadCnt - do not clear
+				}
+			}
+			else
+			{
+				// +IPD hasn't got finish "\r\n"
+				DebugPrint("Received +IPD message without end\r\n");
+				DebugPrint((const char *)receiveBuffer);
+				DebugPrint("\r\n");
+			}
+		}
+		else if (receivedMessageLength < 6)
+		{
+			// Received too small message
+			DebugPrint("Received too small message: ");
+			DebugPrint((const char *)receiveBuffer);
+			DebugPrint("\r\n");
+			//ESP8266_ReceiveBuffer_ReadCnt - do not clear
+		}
+		else
+		{
+			// Received unknown message
+			DebugPrint("Received unknown message: ");
+			DebugPrint((const char *)receiveBuffer);
+			DebugPrint("\r\n");
+			//ESP8266_ReceiveBuffer_ReadCnt - do not clear
+		}
+
+
+		// Error handling
+		// If has lot of error, clear buffer
+		if (!goodMsgRcv)
+		{
+			// If has a lot of error
+			ESP8266_ErrorCnt++;
+			if (ESP8266_ErrorCnt > 5 || receivedMessageLength > 50)
+			{
+				DebugPrint("ESP8266 Has lot of errors, clear buffer");
+				// ~Reset buffer
+				ESP8266_ClearReceive(true, 0);
+			}
+		}
+	}
+	/*
+	 * else
+	 * ESP8266_ReceiveBuffer_WriteCnt == ESP8266_ReceiveBuffer_ReadCnt
+	 * Do nothing...
+	 */
+}
 
 
 #endif	// #ifdef CONFIG_MODULE_ESP8266_ENABLE
