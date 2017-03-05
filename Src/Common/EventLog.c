@@ -12,18 +12,23 @@
 
 
 
-
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
+
 #include "include.h"
 #include "EventList.h"
 #include "Communication.h"
 #include "EventLog.h"
 
+#ifdef MODULE_EVENTLOG_UNITTEST_ENABLE
+#include "UnitTest.h"
+#endif
+
 
 
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
+
 
 /*------------------------------------------------------------------------------
  *  Global variables
@@ -52,6 +57,9 @@ static void EventLog_PrintLog(char *str, EventLogRecord_t *logRecord);
 void EventLog_Init(void)
 {
 	memset(EventLogs, 0, sizeof(EventLogs));
+
+	LogCounter = 0;
+
 	EventLog_LogEvent(Event_LogEventStated, EventType_SystemEvent, 0);
 }
 
@@ -143,6 +151,62 @@ void EventLog_PrintAllLogRecords(void)
 	COMMUNICATION_SendMessage(comm, headertxt);
 	COMMUNICATION_SendMessage(comm, fixheader);
 }
+
+
+
+#ifdef MODULE_EVENTLOG_UNITTEST_ENABLE
+void EventLog_UnitTest(void)
+{
+
+	bool result;
+
+
+	// Start Unit test
+	UnitTest_Start("EventLog", __FILE__);
+
+
+	// Test EventLog initialize
+
+	EventLog_Init();
+
+	// Check, first record is "LogEventStarted" ?
+	result = true;
+	result &= (EventLogs[0].eventName == Event_LogEventStated);
+	result &= (EventLogs[0].eventType == EventType_SystemEvent);
+	result &= (EventLogs[0].eventStatus == 0);
+	result &= (EventLogs[0].tick != 0);
+	UnitTest_CheckResult(result, "EventLog_Init error", __LINE__);
+
+	// Check, second record is empty?
+	result = true;
+	result &= (EventLogs[1].eventName == 0);
+	result &= (EventLogs[1].eventType == 0);
+	result &= (EventLogs[1].eventStatus == 0);
+	result &= (EventLogs[1].tick == 0);
+	UnitTest_CheckResult(result, "EventLog_Init error", __LINE__);
+
+
+
+	// Test log event (record)
+
+	EventLog_LogEvent(Event_LogEventStated,
+			EventType_SystemEvent, 0x12345678);
+
+	// Check, second record is "LogEventStarted" ?
+	result = true;
+	result &= (EventLogs[1].eventName == Event_LogEventStated);
+	result &= (EventLogs[1].eventType == EventType_SystemEvent);
+	result &= (EventLogs[1].eventStatus == 0x12345678);
+	result &= (EventLogs[1].tick != 0);
+	UnitTest_CheckResult(result, "EventLog_LogEvent error", __LINE__);
+
+
+
+	// Finish unit test
+	UnitTest_End();
+
+}
+#endif
 
 
 

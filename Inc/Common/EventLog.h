@@ -99,6 +99,7 @@ void EventLog_Init(void);
 void EventLog_LogEvent(EventName_t eventName, EventType_t eventType, EventStatus_t eventStatus);
 void EventLog_PrintAllLogRecords(void);
 
+void EventLog_UnitTest(void);
 
 
 #endif // #ifdef CONFIG_MODULE_EVENTLOG_ENABLE

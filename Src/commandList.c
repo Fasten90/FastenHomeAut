@@ -569,6 +569,10 @@ static CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
 	TaskHandler_UnitTest();
 #endif
 
+#ifdef MODULE_EVENTLOG_UNITTEST_ENABLE
+	EventLog_UnitTest();
+#endif
+
 	return CommandResult_Ok;
 }
 
