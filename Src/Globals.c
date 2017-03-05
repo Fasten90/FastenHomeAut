@@ -56,6 +56,9 @@ void Error_Handler(void)
 	vTaskEndScheduler();
 #endif
 
+	// Reset...
+	NVIC_SystemReset();
+
 	// Infinite loop, do not disable interrupts ...
 	while(1)
 	{

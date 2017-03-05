@@ -64,6 +64,18 @@ void SysTick_Handler(void)
   /* USER CODE END SysTick_IRQn 1 */
 }
 
+
+/**
+ * @brief	HardFault handler
+ */
+void HardFault_Handler(void)
+{
+	// Original
+	//while(1);
+
+	Error_Handler();
+}
+
 /******************************************************************************/
 /* STM32F4xx Peripheral Interrupt Handlers                                    */
 /* Add here the Interrupt Handlers for the used peripherals.                  */

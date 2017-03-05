@@ -666,8 +666,25 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	COMMUNICATION_SendMessage(CommProt_SWO, "Test message on SWO\n");
 
 
+	// Test zero dividing
+	uint32_t a = 5;
+	uint32_t b = 0;
+	uint32_t c;
+
+	c = a/b;
+
+	uprintf("ZeroDivice result: %d\r\n", c);
+
+
+	// Test invalid pointer
+	const uint32_t constValue = 0x12345678;
+	uint32_t * wrongPointer = (uint32_t *)constValue;
+	*wrongPointer = 0;
+
+	uprintf("WrongPointer value: %d\r\n", *wrongPointer);
+
 	// Test Watchdog clear with infinite loop
-	while (1);
+	//while (1);
 
 
 	/**
