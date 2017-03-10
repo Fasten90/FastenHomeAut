@@ -1071,12 +1071,10 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void)
 
 	ESP8266_SendString(message);
 
-	DebugPrint("ESP8266: Sent TCP message: ");
+	DebugPrint("ESP8266: Sent TCP message: \"");
 	DebugPrint(message);
-	DebugPrint("\r\n");
+	DebugPrint("\"\r\n");
 
-
-	ESP8266_Sent_WaitSendOk_Flag = true;
 
 	return true;
 }
@@ -1603,9 +1601,19 @@ bool ESP8266_SendMessageOnWifi(char *message)
 static void ESP8266_FindLastMessage(void)
 {
 	// TODO: Not a good solve...
+	uint16_t i = 0;
 	while (ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_WriteCnt])
 	{
 		++ESP8266_ReceiveBuffer_WriteCnt;
+		++i;
+
+		if (i > ESP8266_BUFFER_LENGTH)
+		{
+			// Error
+			DebugPrint("Error: Buffer full, clear it...\r\n");
+			ESP8266_ClearReceive(true, 0);
+			break;
+		}
 	}
 }
 
@@ -2023,17 +2031,20 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			// Check, response is "> "
 			if (!StrCmp("> ", (const char *)receiveBuffer))
 			{
-				ESP8266_SendTcpMessageNonBlockingMode_SendMessage();
+				// Received "> ", we can send message
 				ESP8266_DEBUG_PRINT("\"> \" Received");
+				ESP8266_SendTcpMessageNonBlockingMode_SendMessage();
+
+				ESP8266_Sent_WaitSendOk_Flag = true;
+				TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 1000);
 				goodMsgRcv = true;
 				ESP8266_ClearReceive(false, sizeof("> ") - 1);
-
 			}
 			else if (!StrCmp("link is not\r\n", (const char *)receiveBuffer))
 			{
 				// Cannot send
 				ESP8266_SendBuffer_EnableFlag = true;
-				DebugPrint("ESP8266: Cannot send, link is nothing");
+				DebugPrint("ESP8266: Cannot send, link is nothing\r\n");
 				ESP8266_ClearReceive(false, sizeof("link is not\r\n") - 1);
 			}
 			// busy inet...\r\nERROR  TODO:
@@ -2041,11 +2052,12 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			{
 				// Error
 				ESP8266_SendBuffer_EnableFlag = true;
-				DebugPrint("ESP8266: Cannot send, unknown error: \"");
+				DebugPrint("ESP8266: Cannot send, not received \"> \"...\r\n"
+						"Received message: \"");
 				DebugPrint(receiveBuffer);
 				DebugPrint("\"\r\n");
 			}
-
+			// Clear send flag
 			ESP8266_SendIsStarted_Flag = false;
 		}
 		else if (ESP8266_Sent_WaitSendOk_Flag)
@@ -2053,7 +2065,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			if (!StrCmp("\r\nSEND OK\r\n", (const char *)receiveBuffer))
 			{
 				// OK, sending successful
-				DebugPrint("Sending successful");
+				DebugPrint("Sending successful\r\n");
 				goodMsgRcv = true;
 				ESP8266_ClearReceive(false, sizeof("\r\nSEND OK\r\n") - 1);
 			}
@@ -2064,6 +2076,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 				DebugPrint(receiveBuffer);
 				DebugPrint("\"\r\n");
 			}
+			TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 100);
 			ESP8266_Sent_WaitSendOk_Flag = false;
 			ESP8266_SendBuffer_EnableFlag = true;
 		}
@@ -2073,15 +2086,15 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			DebugPrint("Received \"Link\": a client connected\r\n");
 			// TODO: Step to IP address printing (connected clients)
 			//ESP8266StatusMachine = Esp8266Status_XXX;
-			ESP8266_ClearReceive(false, sizeof("Link\r\n") - 1);
 			goodMsgRcv = true;
+			ESP8266_ClearReceive(false, sizeof("Link\r\n") - 1);
 		}
 		else if (!StrCmp("Unlink\r\n", (const char *)receiveBuffer))
 		{
 			// "Unlink"
 			DebugPrint("Received \"Unlink\": a client disconnected\r\n");
-			ESP8266_ClearReceive(false, sizeof("Unlink\r\n") - 1);
 			goodMsgRcv = true;
+			ESP8266_ClearReceive(false, sizeof("Unlink\r\n") - 1);
 		}
 		else if (!StrCmp("\r\n+IPD,", (const char *)receiveBuffer))
 		{
@@ -2186,7 +2199,14 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 				DebugPrint("ESP8266 Has lot of errors, cleared buffer\r\n");
 				// ~Reset buffer
 				ESP8266_ClearReceive(true, 0);
+				ESP8266_ErrorCnt = 0;
 			}
+		}
+		else
+		{
+			// Received good message
+			// TODO: Think about ErrorCnt clearing...
+			ESP8266_ErrorCnt = 0;
 		}
 	}
 	/*
