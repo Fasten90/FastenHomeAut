@@ -61,7 +61,7 @@ void CircularBuffer_Init(void)
  */
 uint8_t CircularBuffer_GetCharacters(char *receiveBuffer, char *str, uint16_t bufferSize, uint16_t writeCnt, uint16_t readCnt, bool putEnd)
 {
-	uint16_t i;
+	uint16_t i = 0;
 
 	if (readCnt < writeCnt)
 	{

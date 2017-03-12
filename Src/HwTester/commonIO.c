@@ -16,15 +16,16 @@
 #include "CommonIO.h"
 
 
+#ifdef CONFIG_MODULE_COMMON_IO_ENABLE
 
 /*------------------------------------------------------------------------------
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
-bool IO_EnablePeripheralClock(char port);
-GPIO_TypeDef * IO_GetPort(char port);
-uint32_t IO_GetPin(uint8_t pin);
-uint32_t IO_GetMode(IO_Type io);
+static bool IO_EnablePeripheralClock(char port);
+static GPIO_TypeDef * IO_GetPort(char port);
+static uint32_t IO_GetPin(uint8_t pin);
+static uint32_t IO_GetMode(IO_Type io);
 
 
 
@@ -149,7 +150,7 @@ bool IO_ReadPin(char port, uint8_t pin)
 /**
  * \brief	Enable peripheral clock
  */
-bool IO_EnablePeripheralClock(char port)
+static bool IO_EnablePeripheralClock(char port)
 {
 
 	switch (port)
@@ -191,7 +192,7 @@ bool IO_EnablePeripheralClock(char port)
 /**
  * \brief	Convert "port name" to "port"
  */
-GPIO_TypeDef * IO_GetPort(char port)
+static GPIO_TypeDef * IO_GetPort(char port)
 {
 	GPIO_TypeDef *GPIO_port;
 
@@ -234,7 +235,7 @@ GPIO_TypeDef * IO_GetPort(char port)
 /**
  * \brief	Convert "num" to "pin"
  */
-uint32_t IO_GetPin(uint8_t pin)
+static uint32_t IO_GetPin(uint8_t pin)
 {
 
 	uint32_t returnPin;
@@ -301,7 +302,7 @@ uint32_t IO_GetPin(uint8_t pin)
 /**
  * \brief	Get IO mode
  */
-uint32_t IO_GetMode(IO_Type io)
+static uint32_t IO_GetMode(IO_Type io)
 {
 	uint32_t iomode;
 	switch (io)
@@ -324,3 +325,5 @@ uint32_t IO_GetMode(IO_Type io)
 
 	return iomode;
 }
+
+#endif	// #ifdef CONFIG_MODULE_COMMON_IO_ENABLE

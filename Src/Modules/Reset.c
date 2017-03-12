@@ -16,6 +16,7 @@
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
+#include "options.h"
 #include "include.h"
 #include "Reset.h"
 
@@ -64,7 +65,13 @@ uint32_t Reset_GetResetReason(void)
 		*	#define RCC_FLAG_WWDGRST                 ((uint8_t)0x7EU)
 		*	#define RCC_FLAG_LPWRRST                 ((uint8_t)0x7FU)
 		 */
+#ifdef CONFIG_MICROCONTROLLER_STM32F4xx
 		if (__HAL_RCC_GET_FLAG(RCC_FLAG_BORRST + i))
+#elif defined(CONFIG_MICROCONTROLLER_STM32F0xx)
+		if (__HAL_RCC_GET_FLAG(RCC_FLAG_OBLRST + i))
+#else
+#error "Unknown Microcontroller family"
+#endif
 		{
 			// Set flags, if have
 			resetReason |= (1 << i);

@@ -461,7 +461,7 @@ void CommandHandler_Printf(const char *format, ...)
 {
 
 	// Working in at:
-	char txBuffer[USART_TXBUFFERSIZE];
+	char txBuffer[COMMANDHANDLER_MAX_MESSAGE_LENGTH];
 
 	va_list ap;									// argument pointer
 	va_start(ap, format); 						// ap on arg

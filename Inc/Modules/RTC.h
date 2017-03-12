@@ -22,6 +22,7 @@
 #include "include.h"
 
 
+#ifdef CONFIG_MODULE_RTC_ENABLE
 
 /*------------------------------------------------------------------------------
  *  Macros & definitions
@@ -59,6 +60,10 @@ void RTC_GetDate(Date_t *date);
 void RTC_GetTime(Time_t *time);
 
 void RTC_CalendarShow(char *showdate, char *showtime);
+
+
+
+#endif // #ifdef CONFIG_MODULE_RTC_ENABLE
 
 
 #endif /* RTC_H_ */

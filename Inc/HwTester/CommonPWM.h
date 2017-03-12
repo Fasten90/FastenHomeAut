@@ -15,6 +15,7 @@
 
 
 
+#ifdef CONFIG_MODULE_COMMON_PWM_ENABLE
 
 /*------------------------------------------------------------------------------
  *  Includes
@@ -69,5 +70,7 @@ void CommonPWM_Init(void);
 void CommonPWM_ChangePercent(uint8_t percent);
 
 
+
+#endif	// #ifdef CONFIG_MODULE_COMMON_PWM_ENABLE
 
 #endif /* HWTESTER_COMMONPWM_H_ */

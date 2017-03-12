@@ -13,13 +13,15 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
-#include "FormattedMessage.h"
-#include "CommandList.h"
 #include "include.h"
 
+#include "FormattedMessage.h"
 #include "CommandHandler.h"
 #include "GlobalVarHandler.h"
 #include "Globals.h"
+#include "Terminal.h"
+
+#include "CommandList.h"
 
 
 
@@ -448,7 +450,9 @@ static CommandResult_t CommandFunction_cls(uint32_t argc, char** argv)
 	(void)argc;
 	(void)argv;
 
+#ifdef CONFIG_MODULE_TERMINAL_ENABLE
 	Terminal_SendCls();
+#endif
 
 	return CommandResult_Ok;
 }
@@ -480,7 +484,9 @@ static CommandResult_t CommandFunction_welcome(uint32_t argc, char** argv)
 	(void)argc;
 	(void)argv;
 
+#ifdef CONFIG_MODULE_TERMINAL_ENABLE
 	Terminal_SendWelcome();
+#endif
 
 	return CommandResult_Ok;
 }
@@ -587,10 +593,10 @@ static CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 	(void)argc;
 	(void)argv;
 
-	uint8_t i;
-
 
 #ifdef CONFIG_MODULE_LED_ENABLE
+	uint8_t i;
+
 	// LED test
 	CommandHandler_SendLine("LED test");
 
@@ -628,7 +634,6 @@ static CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 	CommandHandler_SendLine("Button pressed");
 
 #endif
-
 
 	// Beep in terminal
 	CommandHandler_SendLine("Beep test");

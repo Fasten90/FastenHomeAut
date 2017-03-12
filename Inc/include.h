@@ -35,6 +35,12 @@
 #endif
 
 
+#ifdef CONFIG_MICROCONTROLLER_STM32F0xx
+	// STM32F4 Discovery
+	#include "stm32f0xx_hal.h"
+	#include "stm32_hal_legacy.h"	// for defines
+#endif
+
 
 /// FreeRTOS includes
 #ifdef CONFIG_USE_FREERTOS
@@ -76,6 +82,10 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 #include "USART.h"
 #include "Terminal.h"
+// TODO: not the best
+#endif
+
+#ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
 #include "CommandHandler.h"
 #include "CommandList.h"
 #endif

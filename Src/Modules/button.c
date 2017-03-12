@@ -73,9 +73,7 @@ void BUTTON_Init ( void )
 	GPIO_InitStructure.Mode = GPIO_MODE_IT_RISING;
 	GPIO_InitStructure.Pull = GPIO_NOPULL;
 	
-#if defined(CONFIG_USE_PANEL_NODESMALL) \
-	|| defined(CONFIG_USE_PANEL_NODEMEDIUM) \
-	|| defined(CONFIG_USE_PANEL_HOMEAUTCENTERPANEL)
+#if defined(CONFIG_USE_PANEL_HOMEAUTPANELS)
 
 	GPIO_InitStructure.Pin = BUTTON_UP_GPIO_PIN;
 	HAL_GPIO_Init(BUTTON_UP_GPIO_PORT, &GPIO_InitStructure);
@@ -89,6 +87,7 @@ void BUTTON_Init ( void )
 	GPIO_InitStructure.Pin  = BUTTON_RIGHT_GPIO_PIN;
 	HAL_GPIO_Init(BUTTON_RIGHT_GPIO_PORT, &GPIO_InitStructure);
 #endif
+
 #if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_NUCLEOF401RE)
 	GPIO_InitStructure.Pin  = BUTTON_USER_GPIO_PIN;
 	HAL_GPIO_Init(BUTTON_USER_GPIO_PORT, &GPIO_InitStructure);
@@ -96,7 +95,7 @@ void BUTTON_Init ( void )
 	
 	// Config IT-s
 	
-#ifdef CONFIG_USE_PANEL_NODESMALL
+#ifdef CONFIG_USE_PANEL_HOMEAUTNODESMALL
 	
 	// Enable and set EXTI lines 0 to 1 Interrupt to the lowest priority
 	HAL_NVIC_SetPriority(EXTI0_1_IRQn, 1, 0);

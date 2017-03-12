@@ -3,28 +3,21 @@
 #include "include.h"
 #include "board.h"
 
-#ifdef CONFIG_USE_PANEL_NODESMALL
+#ifdef CONFIG_USE_PANEL_HOMEAUTNODESMALL
 	#include "stm32f0xx_hal.h"
 	#include "stm32f0xx.h"
 	#include "stm32f0xx_it.h"
 #endif
-#ifdef CONFIG_USE_PANEL_NODEMEDIUM
+#ifdef CONFIG_USE_PANEL_HOMEAUTNODEMEDIUM
 	#include "stm32l1xx_hal.h"
 	#include "stm32l1xx_it.h"
 #endif
 
 
 
-#ifdef CONFIG_USE_PANEL_NODESMALL
+#ifdef CONFIG_USE_PANEL_HOMEAUTNODESMALL
 /* External variables --------------------------------------------------------*/
  
-extern void xPortSysTickHandler(void);
-
-extern UART_HandleTypeDef BluetoothUartHandle;
-
-extern I2C_HandleTypeDef I2cHandle;
-
-
 
 void EXTI0_1_IRQHandler(void)
 {
@@ -67,16 +60,7 @@ void EXTI4_15_IRQHandler(void)
 }
 
 
-
-void I2Cx_DMA_TX_RX_IRQHandler(void)
-{
-  HAL_DMA_IRQHandler(I2cHandle.hdmarx);
-  HAL_DMA_IRQHandler(I2cHandle.hdmatx);
-}
-
-
 #endif 	// #ifdef CONFIG_USE_PANEL_NODESMALL
-
 
 
 
@@ -206,9 +190,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
 	// BUTTON MODULE
 
-#if defined(CONFIG_USE_PANEL_NODESMALL) \
-	|| defined(CONFIG_USE_PANEL_NODEMEDIUM) \
-	|| defined(CONFIG_USE_PANEL_HOMEAUTCENTERPANEL)
+#if defined(CONFIG_USE_PANEL_HOMEAUTPANELS)
 	if (GPIO_Pin == BUTTON_UP_GPIO_PIN)
 	{
 		// Toggle LED

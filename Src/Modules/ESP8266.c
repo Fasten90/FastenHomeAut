@@ -18,7 +18,9 @@
 #include "include.h"
 #include "ESP8266.h"
 #include "CircularBuffer.h"
-
+#include "TaskList.h"
+#include "CommandHandler.h"
+#include "USART.h"
 
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 

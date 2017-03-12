@@ -202,7 +202,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 		GPIO_InitStruct.Pin       = ESP8266_USART_TX_GPIO_PIN;
 		GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
 		GPIO_InitStruct.Pull      = GPIO_NOPULL;
-		GPIO_InitStruct.Speed     = GPIO_SPEED_FAST;
+		GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_HIGH;
 		GPIO_InitStruct.Alternate = ESP8266_USART_AF;
 
 		HAL_GPIO_Init(ESP8266_USART_TX_GPIO_PORT, &GPIO_InitStruct);
@@ -375,7 +375,10 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 	}
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-	else if (huart == &ESP8266_UartHandle)
+	#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+	else
+	#endif
+	if (huart == &ESP8266_UartHandle)
 	{
 
 		// TODO: Sad, but sometime receive errors
@@ -392,10 +395,13 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 #endif
 	}	
 #endif
+
+#if defined(CONFIG_MODULE_DEBUGUSART_ENABLE) || defined(CONFIG_MODULE_ESP8266_ENABLE)
 	else
 	{
 		Error_Handler();
 	}
+#endif
 	
 	return;
 }
@@ -480,7 +486,9 @@ uint8_t USART_SendMessage(const char *aTxBuffer)
 	}
 
 
-	#endif // #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#else // #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+	return 0;
+#endif
 }
 
 
@@ -513,7 +521,7 @@ bool USART_SendLine(const char *message)
  */
 bool USART_SendChar(char c)
 {
-	#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	char buf[2];
 	buf[0] = c;
 	buf[1] = '\0';
@@ -550,7 +558,9 @@ bool USART_SendChar(char c)
 	}
 
 
-	#endif // #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#else // #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+	return false;
+#endif
 }
 
 

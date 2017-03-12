@@ -17,6 +17,7 @@
 #include "include.h"
 
 
+#define COMMUNICATION_TXBUFFER_SIZE				(255U)
 #define COMMUNICATION_PROTOCOL_BUFFER_SIZE		(100)
 
 

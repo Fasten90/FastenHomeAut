@@ -16,6 +16,7 @@
 #include "version.h"
 
 
+
 const char Global_BoardName[]	= BOARD_NAME;
 const char Global_Version[]		= VERSION_DEFINE;
 

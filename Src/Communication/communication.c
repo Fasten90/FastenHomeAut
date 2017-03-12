@@ -126,7 +126,7 @@ uint8_t COMMUNICATION_Printf(CommProtocol_t protocol, const char *format, ...)
 	uint8_t length = 0;
 
 	// Working in at:
-	char txBuffer[USART_TXBUFFERSIZE];
+	char txBuffer[COMMUNICATION_TXBUFFER_SIZE];
 
 	va_list ap;									// argument pointer
 	va_start(ap, format); 						// ap on arg

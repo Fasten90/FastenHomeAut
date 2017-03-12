@@ -1466,15 +1466,19 @@ uint8_t usprintf(char *str, const char *format, ...)
  */
 uint8_t uprintf(const char *format, ...)
 {
+#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	// Working in at:
 	char TxBuffer[USART_TXBUFFERSIZE];
 
 	va_list ap;									// argument pointer
 	va_start(ap, format); 						// ap on arg
-	string_printf(TxBuffer,format,ap);			// Separate and process
+	string_printf(TxBuffer, format,ap);			// Separate and process
 	va_end(ap);						 			// Cleaning after end
 
 	return USART_SendMessage(TxBuffer);			// Send on Usart
+#else
+	return 0;
+#endif
 }
 
 

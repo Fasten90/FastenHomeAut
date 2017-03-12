@@ -14,7 +14,6 @@
 #include "options.h"
 #include "include.h"
 #include "board.h"
-#include "stm32f4xx_hal.h"
 #include "CommonDac.h"
 
 

@@ -16,6 +16,8 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 #include "include.h"
+#include "CommandList.h"
+#include "CommandHandler.h"
 #include "Terminal.h"
 
 
@@ -729,7 +731,7 @@ static void Terminal_CommandTabulator(void)
 	// Find same command
 	uint8_t i;
 
-	for (i=0; i < CommandHandler_CommandNum; i++)
+	for (i = 0; i < CommandHandler_CommandNum; i++)
 	{
 		if (!StrCmpWithLength(CommandList[i].name,
 				(const char *)Terminal_CommandActual,

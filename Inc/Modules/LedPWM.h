@@ -19,9 +19,11 @@
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
+#include "options.h"
 #include "include.h"
 
 
+#ifdef CONFIG_MODULE_LEDPWM_ENABLE
 
 /*------------------------------------------------------------------------------
  *  Macros & definitions
@@ -70,6 +72,8 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim);
 void LED_PWM_ChangePercent(TIM_HandleTypeDef *TimHandle,
 		uint32_t timerChannel, uint8_t percent);
 
+
+#endif	// #ifdef CONFIG_MODULE_LEDPWM_ENABLE
 
 
 #endif /* MODULES_LEDPWM_H_ */
