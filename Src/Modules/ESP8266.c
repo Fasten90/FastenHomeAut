@@ -58,7 +58,9 @@ ESP8266_TcpConnectionStatusType	ESP8266_TcpConnectionStatus
 			= ESP8266_TcpConnectionStatus_Unknown;
 
 ///< My IP address
-Network_IP_t ESP8266_MyIpAddress = { 0 };
+Network_IP_t ESP8266_MyWifiIpAddress = { 0 };
+Network_IP_t ESP8266_ExWifiIpAddress = { 0 };
+
 ///< Server IP address
 const Network_IP_t ESP8266_ServerAddress = { .IP = { 192, 168, 1, 62 } };
 
@@ -130,6 +132,7 @@ typedef enum
 	Esp8266Status_StartServer,
 	Esp8266Status_StartServerCheckResponse,
 	Esp8266Status_PrintMyIpAddress,
+	Esp8266Status_IpAddressResponse,
 
 	Esp8266Status_BeforeIdle,
 	Esp8266Status_Idle,
@@ -169,7 +172,7 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_Start(const char *message);
 static bool ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void);
 #endif
 
-static bool ESP8266_ConvertIpString(char *message, Network_IP_t *ip);
+static bool ESP8266_ConvertIpString(char *message);
 
 static void DebugPrint(const char *debugString);
 
@@ -288,25 +291,57 @@ void ESP8266_SendString(const char *str)
 /**
  * \brief	Convert IP string to IP number
  */
-static bool ESP8266_ConvertIpString(char *message, Network_IP_t *ip)
+static bool ESP8266_ConvertIpString(char *message)
 {
+	bool isOk = false;
+	int16_t pos1;
+	int16_t pos2;
 
-	// String come like "192.168.0.1\r\n"
-
-	int16_t pos = STRING_FindString(message, "\r\n");
-	if (pos >= 0)
+	// String come like "192.168.4.1\r\n192.168.1.34\r\n\r\nOK\r\n"
+	pos1 = STRING_FindString(message, "\r\n");
+	if (pos1 >= 0)
 	{
-		pos += 2;
-		message[pos] = '\0';
+		message[pos1] = '\0';
+		pos1 += 2;	// Skip "\r\n"
+		pos2 = STRING_FindString(&message[pos1], "\r\n");
+		if (pos2 >= 0)
+		{
+			message[pos1+pos2] = '\0';
+			isOk = true;
+		}
+		// else: there is no ending "\r\n"
 	}
 	else
 	{
 		// There is no ending "\r\n"
-		return false;
+		isOk = false;
 	}
 
-	// Process IP address string like "192.168.0.1" to Network_IP_t
-	return Network_ConvertIpAddressStringToIP(message, ip);
+	if (isOk)
+	{
+		// Process IP address string like "192.168.0.1" to Network_IP_t
+		isOk = Network_ConvertIpAddressStringToIP(message, &ESP8266_MyWifiIpAddress);
+		isOk &= Network_ConvertIpAddressStringToIP(&message[pos1], &ESP8266_ExWifiIpAddress);
+	}
+
+	return isOk;
+}
+
+
+
+/**
+ * \brief	Print ESP8266 IP addresses
+ */
+uint8_t ESP8266_PrintIpAddress(char * str)
+{
+	uint8_t length = 0;
+
+	length += StrCpy(&str[length], "MyWifi: ");
+	length += Network_PrintIp(&str[length], &ESP8266_MyWifiIpAddress);
+	length += StrCpy(&str[length], "\r\nExWifi: ");
+	length += Network_PrintIp(&str[length], &ESP8266_ExWifiIpAddress);
+
+	return length;
 }
 
 
@@ -2033,7 +2068,26 @@ void ESP8266_StatusMachine(void)
 			ESP8266_DEBUG_PRINT("Get IP address");
 			break;
 
-		// TODO: ESP8266_ConvertIpString()
+		case Esp8266Status_IpAddressResponse:
+			if (ESP8266_ConvertIpString(receiveBuffer))
+			{
+				// Good processing
+				ESP8266_DEBUG_PRINT("IP address processed");
+				ESP8266StatusMachine++;
+				ESP8266_ClearReceive(true, 0);
+			}
+			else
+			{
+				// Wrong / Not full response received
+				ESP8266_ErrorCnt++;
+				if (ESP8266_ErrorCnt > 3)
+				{
+					ESP8266_DEBUG_PRINT("IP address process failed");
+					ESP8266StatusMachine = Esp8266Status_PrintMyIpAddress;
+					ESP8266_ClearReceive(true, 0);
+				}
+			}
+			break;
 
 		case Esp8266Status_BeforeIdle:
 			// Print IP address

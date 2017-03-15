@@ -305,7 +305,7 @@ const CommandStruct CommandList[] =
 		.commandFunctionPointer = CommandFunction_ESP8266,
 		.description = "Use ESP8266 module",
 		.syntax = "<send> <message>",
-		.commandArgNum = CommandArgument_2,
+		.commandArgNum = CommandArgument_1 | CommandArgument_2,
 		.example = "send ThisMessage",
 	},
 #endif
@@ -1271,18 +1271,19 @@ static CommandResult_t CommandFunction_Motor(uint32_t argc, char** argv)
 static CommandResult_t CommandFunction_ESP8266(uint32_t argc, char** argv)
 {
 	(void)argc;
+	bool result = CommandResult_Unknown;
 
 	if (!StrCmp(argv[1], "sendonwifi"))
 	{
 		// Send message to ESP8266 sending queue, which will send on ESP8266 TCP connection
 		ESP8266_RequestSendTcpMessage(argv[2]);
-		return CommandResult_Ok_SendSuccessful;
+		result = CommandResult_Ok_SendSuccessful;
 	}
 	else if (!StrCmp(argv[1], "sendtomodule"))
 	{
 		// Send forward to ESP8266 module last parameter
 		ESP8266_SendString(argv[2]);
-		return CommandResult_Ok_SendSuccessful;
+		result = CommandResult_Ok_SendSuccessful;
 	}
 	else if (!StrCmp(argv[1], "debug"))
 	{
@@ -1291,25 +1292,35 @@ static CommandResult_t CommandFunction_ESP8266(uint32_t argc, char** argv)
 		{
 			// On
 			ESP8266_DebugEnableFlag = true;
-			return CommandResult_Ok_SendSuccessful;
+			result = CommandResult_Ok_SendSuccessful;
 		}
 		else if (!StrCmp(argv[2], "off"))
 		{
 			// Off
 			ESP8266_DebugEnableFlag = false;
-			return CommandResult_Ok_SendSuccessful;
+			result = CommandResult_Ok_SendSuccessful;
 		}
 		else
 		{
 			// Wrong command
-			return CommandResult_Error_WrongArgument2;
+			result = CommandResult_Error_WrongArgument2;
 		}
+	}
+	else if (!StrCmp(argv[1], "ip"))
+	{
+		// Print ESP8266 IP addresses
+		char ipBuffer[80];
+		ESP8266_PrintIpAddress(ipBuffer);
+		CommandHandler_SendLine(ipBuffer);
+		result = CommandResult_Ok;
 	}
 	else
 	{
 		// Wrong 1. parameter
-		return CommandResult_Error_WrongArgument1;
+		result = CommandResult_Error_WrongArgument1;
 	}
+
+	return result;
 }
 #endif
 

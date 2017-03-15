@@ -181,12 +181,12 @@ extern bool ESP8266_DebugEnableFlag;
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
+void ESP8266_Init(void);
+
 void ESP8266_SendString(const char *str);
 void ESP8266_ReceiveString(uint8_t length);
 void ESP8266_ClearReceiveBuffer(void);
 void ESP8266_Task(void);
-
-void ESP8266_Init(void);
 
 void ESP8266_ResetHardware(void);
 
@@ -213,6 +213,9 @@ bool ESP8266_SendTcpMessage(const char *message);
 uint8_t ESP8266_RequestSendTcpMessage(const char * message);
 
 void ESP8266_StatusMachine(void);
+
+uint8_t ESP8266_PrintIpAddress(char * str);
+
 
 
 #endif /* ESP8266_H_*/
