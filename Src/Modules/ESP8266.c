@@ -120,8 +120,13 @@ typedef enum
 	Esp8266Status_ConfigCipMux,
 	Esp8266Status_ConfigCipMuxCheckResponse,
 	Esp8266Status_WaitAfterSuccessfulConfig,
+#if CONFIG_ESP8266_WIFISERVER_ENABLE == 1
 	Esp8266Status_StartWifiServer,
 	Esp8266Status_StartWifiServerCheckResponse,
+#else
+	Esp8266Status_ConnectWifiNetwork,
+	Esp8266Status_ConnectWifiNetworkCheckResponse,
+#endif
 	Esp8266Status_StartServer,
 	Esp8266Status_StartServerCheckResponse,
 	Esp8266Status_PrintMyIpAddress,
@@ -1885,7 +1890,7 @@ void ESP8266_StatusMachine(void)
 			ESP8266_DEBUG_PRINT("Wait After successful config");
 			break;
 		// End of config
-
+#if CONFIG_ESP8266_WIFISERVER_ENABLE == 1
 		case Esp8266Status_StartWifiServer:
 			/*
 			 * AT+CWSAP="ESP8266HomeAutomation","AUT",1,0
@@ -1919,6 +1924,60 @@ void ESP8266_StatusMachine(void)
 			}
 			ESP8266_ClearReceive(true, 0);
 			break;
+		// End of "#if CONFIG_ESP8266_WIFISERVER_ENABLE == 1"
+#else
+		// Not wifi server (connect to network)
+		case Esp8266Status_ConnectWifiNetwork:
+			/*
+			 * Join to WiFi network
+			 * AT+CWJAP
+			 * Syntax: AT+CWJAP="networkname","password"
+			 */
+			ESP8266_StartReceive();
+			ESP8266_SendString("AT+CWJAP=\""
+					CONFIG_ESP8266_WIFI_NETWORK_NAME
+					"\",\""
+					CONFIG_ESP8266_WIFI_NETWORK_PASSWORD
+					"\"\r\n");
+			ESP8266StatusMachine++;
+			ESP8266_DEBUG_PRINT("Start connect to wifi network...");
+			break;
+
+		case Esp8266Status_ConnectWifiNetworkCheckResponse:
+
+			if (!StrCmp("\r\nOK\r\n", (const char *)receiveBuffer))
+			{
+				ESP8266_LED_OK();
+				ESP8266StatusMachine++;
+				ESP8266_DEBUG_PRINT("Wifi connect successful");
+				ESP8266_ClearReceive(true, 0);
+				//break;	// Step to next
+			}
+			else if (!StrCmp("\r\nFAIL", (const char *)receiveBuffer)
+					|| !StrCmp("\r\nERROR", (const char *)receiveBuffer))
+			{
+				// "FAIL"
+				// "ERROR"
+				ESP8266_LED_FAIL();
+				ESP8266_DEBUG_PRINT("Wifi connect failed");
+				ESP8266StatusMachine = Esp8266Status_ConnectWifiNetwork;
+				ESP8266_ClearReceive(true, 0);
+			}
+			else
+			{
+				// Not received response?
+				ESP8266_DEBUG_PRINT("Wifi connecting...");
+				ESP8266_DEBUG_PRINT(receiveBuffer);
+				ESP8266_ErrorCnt++;
+				if (ESP8266_ErrorCnt > 10)
+				{
+					ESP8266StatusMachine = Esp8266Status_ConnectWifiNetwork;
+					ESP8266_ClearReceive(true, 0);
+				}
+			}
+
+			break;
+#endif	// End of "CONFIG_ESP8266_WIFISERVER_ENABLE == 0"
 
 		case Esp8266Status_StartServer:
 			/*

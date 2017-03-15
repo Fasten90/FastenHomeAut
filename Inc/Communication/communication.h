@@ -37,7 +37,7 @@ typedef enum
 	CommProt_ESP8266Wifi = (1 << 3),
 #endif
 
-	// XXX: Add here new Protocol, and correct the CommProt_Disable (largest bit)
+	// XXX: Add here new Protocol, and correct the CommProt_Disable (largest bit be set)
 	CommProt_Disable	= (1 << 4)
 } CommProtocol_t;
 
