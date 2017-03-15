@@ -88,7 +88,8 @@ Task_t TaskList[] =
 	{
 		.taskName = "DebugUartReceivedACommand",
 		.taskFunction = Task_ProcessDebugUartCommandReceived,
-		.isPeriodisScheduleDisabled = true,
+		//.isPeriodisScheduleDisabled = true,
+		.taskScheduleRate = 50
 	},
 #endif
 #ifdef CONFIG_MODULE_BUTTON_ENABLE

@@ -30,6 +30,7 @@ volatile char USART_RxBuffer[USART_RXBUFFERSIZE] = { 0 };
 volatile char USART_TxBuffer[USART_TXBUFFERSIZE] = { 0 };
 
 volatile uint8_t USART_RxBufferWriteCounter = 0;
+volatile uint8_t USART_RxBufferReadCounter = 0;
 
 bool USART_SendEnable_flag = false;
 
@@ -208,8 +209,11 @@ void DebugUart_StartReceive(void)
 {
 
 	// USART - Receive Message
+#ifdef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
 	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[USART_RxBufferWriteCounter], RXBUFFER_WAIT_LENGTH);
-
+#else
+	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)USART_RxBuffer, USART_RXBUFFERSIZE);
+#endif
 
 	#ifdef CONFIG_USE_FREERTOS
 	// Wait for semaphore

@@ -147,6 +147,9 @@ static void Terminal_GetPassword(void);
 static bool Terminal_CheckPassword(const char *string);
 #endif
 
+static void DebugUart_FindLastMessage(void);
+static void DebugUart_ClearReceive(bool isFullClear, uint8_t stepLength);
+
 
 
 /*------------------------------------------------------------------------------
@@ -213,10 +216,85 @@ void Terminal_Init(void)
 
 
 /**
+ * \brief	Step Buffer WriteCnt to last character
+ */
+static void DebugUart_FindLastMessage(void)
+{
+	// TODO: Not a good solve...
+	uint16_t i = 0;
+	while (USART_RxBuffer[USART_RxBufferWriteCounter])
+	{
+		++USART_RxBufferWriteCounter;
+		++i;
+
+		if (i > USART_RXBUFFERSIZE)
+		{
+			// Error
+			DebugUart_SendMessage("Error: Buffer full, clear it...\r\n");
+			DebugUart_ClearReceive(true, 0);
+			// TODO:...
+			break;
+		}
+	}
+}
+
+
+
+/**
+ * \brief	Clear receive buffer
+ */
+static void DebugUart_ClearReceive(bool isFullClear, uint8_t stepLength)
+{
+	// Clear from ReadCnt to WriteCnt
+	if (isFullClear)
+	{
+		// Clear buffer
+		CircularBuffer_Clear((char *)USART_RxBuffer, USART_RXBUFFERSIZE,
+				USART_RxBufferReadCounter, USART_RxBufferWriteCounter);
+		USART_RxBufferReadCounter = USART_RxBufferWriteCounter;
+	}
+	else
+	{
+		// Not full clear from readCnt to writeCnt
+		CircularBuffer_Clear((char *)USART_RxBuffer, USART_RXBUFFERSIZE,
+				USART_RxBufferReadCounter,
+				USART_RxBufferReadCounter + stepLength);
+		USART_RxBufferReadCounter += stepLength;
+	}
+}
+
+
+
+/**
  * \brief	Always run, wait command and execute it
  */
 void CommandHandler_CheckCommand(void)
 {
+
+#ifndef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
+	// TODO: Beautification
+
+	DebugUart_FindLastMessage();
+
+	// If WriteCnt not equal with ReadCnt, we have received message
+	char receiveBuffer[USART_RXBUFFERSIZE+1];
+	uint16_t receivedMessageLength = 0;
+
+	// TODO: Refactor variables names
+	if (USART_RxBufferWriteCounter != USART_RxBufferReadCounter)
+	{
+		// Need copy to receiveBuffer
+		receivedMessageLength = CircularBuffer_GetCharacters(
+				(char *)USART_RxBuffer, receiveBuffer,
+				USART_RXBUFFERSIZE,
+				USART_RxBufferWriteCounter, USART_RxBufferReadCounter,
+				true);
+	}
+	else
+	{
+		return;
+	}
+#endif
 
 	// Infinite "task" loop
 	// \note	If use EventHandler, this loop is not infinite loop,
@@ -302,6 +380,9 @@ void CommandHandler_CheckCommand(void)
 						// Search command and run
 						CommandHandler_PrepareFindExecuteCommand(
 								CommProt_DebugUart, (char *)Terminal_CommandActual);
+
+						DebugUart_ClearReceive(false, Terminal_CommandActualLength);
+
 						// Init new command
 						TERMINAL_SEND_NEW_LINE();
 						TERMINAL_SEND_PROMT_NEW_LINE();

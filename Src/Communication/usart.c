@@ -254,6 +254,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 	#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	if ( (UartHandle == &Debug_UartHandle) && (Terminal_CommandReceiveEnable == true) )
 	{
+#ifdef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
 		// Receive to next index
 		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[++USART_RxBufferWriteCounter], RXBUFFER_WAIT_LENGTH);
 
@@ -270,7 +271,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 		// Transmission end semaphore / flag: Give semaphore
 		xSemaphoreGiveFromISR(DEBUG_USART_Rx_Semaphore,0);
 		#endif
-
+#else
+		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)USART_RxBuffer, USART_RXBUFFERSIZE);
+#endif
 	}
 	#endif	// #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	
@@ -333,7 +336,11 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 		// Reinitialize USART
 		//USART_Init(&Debug_UartHandle);
 
+#ifdef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
 		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[USART_RxBufferWriteCounter], RXBUFFER_WAIT_LENGTH);
+#else
+		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)USART_RxBuffer, USART_RXBUFFERSIZE);
+#endif
 		HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t *)"$", 1);
 		
 		#ifdef CONFIG_USE_FREERTOS

@@ -51,6 +51,7 @@ extern volatile char USART_RxBuffer[USART_RXBUFFERSIZE];
 extern volatile char USART_TxBuffer[USART_TXBUFFERSIZE];
 
 extern volatile uint8_t USART_RxBufferWriteCounter;
+extern volatile uint8_t USART_RxBufferReadCounter;
 
 extern bool USART_SendEnable_flag;
 
