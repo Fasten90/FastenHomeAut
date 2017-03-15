@@ -1475,7 +1475,7 @@ uint8_t uprintf(const char *format, ...)
 	string_printf(TxBuffer, format,ap);			// Separate and process
 	va_end(ap);						 			// Cleaning after end
 
-	return USART_SendMessage(TxBuffer);			// Send on Usart
+	return DebugUart_SendMessage(TxBuffer);			// Send on Usart
 #else
 	return 0;
 #endif

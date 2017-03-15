@@ -43,11 +43,11 @@ uint8_t COMMUNICATION_SendMessage(CommProtocol_t protocol, const char *message)
 	{
 		case CommProt_Unknown:
 			// Unknown, send on debug
-			length = USART_SendMessage(message);
+			length = DebugUart_SendMessage(message);
 			break;
 		case CommProt_DebugUart:
 			// Send on Usart
-			length = USART_SendMessage(message);
+			length = DebugUart_SendMessage(message);
 			break;
 		case CommProt_SWO:
 			// Send on SWO
@@ -87,10 +87,10 @@ uint8_t COMMUNICATION_SendChar(CommProtocol_t protocol, char c)
 	{
 		case CommProt_Unknown:
 			// Unknown, send on debug
-			USART_SendChar(c);
+			DebugUart_SendChar(c);
 			break;
 		case CommProt_DebugUart:
-			USART_SendChar(c);
+			DebugUart_SendChar(c);
 			break;
 		case CommProt_SWO:
 #ifdef CONFIG_SWO_ENABLE
@@ -104,7 +104,7 @@ uint8_t COMMUNICATION_SendChar(CommProtocol_t protocol, char c)
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 		case CommProt_ESP8266Wifi:
-			USART_SendChar(c);
+			DebugUart_SendChar(c);
 			break;
 #endif
 		case CommProt_Disable:

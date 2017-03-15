@@ -41,17 +41,9 @@
 /*------------------------------------------------------------------------------
  *  Global function declarations
  *----------------------------------------------------------------------------*/
+
 void USART_Init(UART_HandleTypeDef *UartHandle);
-
-void USART_StartReceiveMessage(void);
-
 void UART_ResetStatus(UART_HandleTypeDef *huart);
-
-bool USART_SendChar(char c);
-uint8_t USART_SendMessage(const char *aTxBuffer);
-bool USART_SendNewLine(void);
-bool USART_SendLine(const char *message);
-void USART_SendFloat(float value);
 
 
 

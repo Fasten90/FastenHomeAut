@@ -313,7 +313,7 @@ static void DebugPrint(const char *debugString)
 {
 	if (ESP8266_DebugEnableFlag)
 	{
-		USART_SendMessage(debugString);
+		DebugUart_SendMessage(debugString);
 	}
 }
 

@@ -58,6 +58,12 @@ extern bool USART_SendEnable_flag;
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
+void DebugUart_StartReceive(void);
+bool DebugUart_SendChar(char c);
+uint8_t DebugUart_SendMessage(const char *aTxBuffer);
+bool DebugUart_SendNewLine(void);
+bool DebugUart_SendLine(const char *message);
+
 
 
 #endif /* COMMUNICATION_DEBUGUART_H_ */

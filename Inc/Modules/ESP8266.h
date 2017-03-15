@@ -32,8 +32,8 @@
 #define ESP8266_DEBUG_MODE			(1)
 
 #if ESP8266_DEBUG_MODE == 1
-#define ESP8266_DEBUG_PRINT(msg)					USART_SendMessage("ESP8266: "); \
-													USART_SendLine(msg)
+#define ESP8266_DEBUG_PRINT(msg)					DebugUart_SendMessage("ESP8266: "); \
+													DebugUart_SendLine(msg)
 #else
 #define ESP8266_DEBUG_PRINT(msg)
 #endif

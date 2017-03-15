@@ -40,7 +40,7 @@ void SendColouredMessage(const char* message, FormattedStringColors_t textColor)
 	SendTextColor(textColor);
 
 	// Send message
-	USART_SendMessage(message);
+	DebugUart_SendMessage(message);
 
 	// Send color "end
 	SendTextColor(Color_Black);
@@ -53,9 +53,9 @@ void SendColouredMessage(const char* message, FormattedStringColors_t textColor)
  */
 void SendTextColor(FormattedStringColors_t textColor)
 {
-	USART_SendMessage(USART_ESCAPE_TEXT_START);
-	USART_SendChar('0' + textColor);
-	USART_SendMessage(USART_ESCAPE_TEXT_END);
+	DebugUart_SendMessage(USART_ESCAPE_TEXT_START);
+	DebugUart_SendChar('0' + textColor);
+	DebugUart_SendMessage(USART_ESCAPE_TEXT_END);
 }
 
 
@@ -65,9 +65,9 @@ void SendTextColor(FormattedStringColors_t textColor)
  */
 void SendBackgroundColor(FormattedStringColors_t backgroundColor)
 {
-	USART_SendMessage(USART_ESCAPE_BACKGROUND_START);
-	USART_SendChar('0' + backgroundColor);
-	USART_SendMessage(USART_ESCAPE_BACKGROUND_END);
+	DebugUart_SendMessage(USART_ESCAPE_BACKGROUND_START);
+	DebugUart_SendChar('0' + backgroundColor);
+	DebugUart_SendMessage(USART_ESCAPE_BACKGROUND_END);
 }
 
 

@@ -56,7 +56,7 @@ xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
-static bool USART_WaitForSend(uint16_t timeoutMilliSecond);
+static bool DebugUart_WaitForSend(uint16_t timeoutMilliSecond);
 
 
 
@@ -69,7 +69,7 @@ static bool USART_WaitForSend(uint16_t timeoutMilliSecond);
 /**
  * \brief	Send string on USART
  */
-uint8_t USART_SendMessage(const char *aTxBuffer)
+uint8_t DebugUart_SendMessage(const char *aTxBuffer)
 {
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	uint8_t length = 0;
@@ -87,7 +87,7 @@ uint8_t USART_SendMessage(const char *aTxBuffer)
 	}
 #endif
 
-	if (USART_WaitForSend(1000))
+	if (DebugUart_WaitForSend(1000))
 	{
 		// Take semaphore, can sending
 
@@ -131,9 +131,9 @@ uint8_t USART_SendMessage(const char *aTxBuffer)
 /**
  * \brief Send newline
  */
-bool USART_SendNewLine(void)
+bool DebugUart_SendNewLine(void)
 {
-	return USART_SendMessage("\r\n");
+	return DebugUart_SendMessage("\r\n");
 }
 
 
@@ -141,11 +141,11 @@ bool USART_SendNewLine(void)
 /**
  * \brief	Send message with newline
  */
-bool USART_SendLine(const char *message)
+bool DebugUart_SendLine(const char *message)
 {
 	bool isSuccessful = true;
-	isSuccessful &= USART_SendMessage(message);
-	isSuccessful &= USART_SendNewLine();
+	isSuccessful &= DebugUart_SendMessage(message);
+	isSuccessful &= DebugUart_SendNewLine();
 	return isSuccessful;
 }
 
@@ -154,7 +154,7 @@ bool USART_SendLine(const char *message)
 /**
  * \brief	Send a char on USART
  */
-bool USART_SendChar(char c)
+bool DebugUart_SendChar(char c)
 {
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	char buf[2];
@@ -162,7 +162,7 @@ bool USART_SendChar(char c)
 	buf[1] = '\0';
 
 
-	if (USART_WaitForSend(100))
+	if (DebugUart_WaitForSend(100))
 	{
 		// Successful take USART semaphore
 		USART_SendEnable_flag = false;
@@ -204,7 +204,7 @@ bool USART_SendChar(char c)
  * \brief	Receive message with IT
  */
  #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-void USART_StartReceiveMessage(void)
+void DebugUart_StartReceive(void)
 {
 
 	// USART - Receive Message
@@ -224,7 +224,7 @@ void USART_StartReceiveMessage(void)
 /**
  * \brief	Wait for USART sending
  */
-static bool USART_WaitForSend(uint16_t timeoutMilliSecond)
+static bool DebugUart_WaitForSend(uint16_t timeoutMilliSecond)
 {
 
 #ifdef CONFIG_USE_FREERTOS

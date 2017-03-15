@@ -190,7 +190,7 @@ void Terminal_Init(void)
 
 
 	// Start receive
-	USART_StartReceiveMessage();
+	DebugUart_StartReceive();
 
 #ifdef CONFIG_TERMINAL_GET_PASSWORD_ENABLE
 	Terminal_GetPassword();
@@ -463,7 +463,7 @@ static void Terminal_ProcessReceivedCharacter(void)
 							{
 								// Send received character
 								// TODO: We need to response on input channel
-								USART_SendChar(USART_ReceivedChar);
+								DebugUart_SendChar(USART_ReceivedChar);
 							}
 						}
 						else
