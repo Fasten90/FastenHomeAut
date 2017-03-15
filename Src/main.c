@@ -95,19 +95,19 @@ int main(void)
 
 #ifdef CONFIG_MODULE_IO_ENABLE
 	// IO
-	IO_Init();
+	CommonIO_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_COMMON_DAC_ENABLE
-	DAC_Init();
+	CommonDAC_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
 	CommonADC_Init();
 	// Test, blocking
-	//ADC_Test();
+	//CommonADC_Test();
 #endif
 
 

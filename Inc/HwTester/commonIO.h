@@ -49,9 +49,9 @@ typedef enum
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-bool IO_Init(char port, uint8_t pin, IO_Type io);
-bool IO_SetOutput(char port, uint8_t pin, Output_Type output);
-bool IO_ReadPin(char port, uint8_t pin);
+bool CommonIO_Init(char port, uint8_t pin, IO_Type io);
+bool CommonIO_SetOutput(char port, uint8_t pin, Output_Type output);
+bool CommonIO_ReadPin(char port, uint8_t pin);
 
 
 

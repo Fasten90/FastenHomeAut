@@ -46,8 +46,8 @@ extern DAC_HandleTypeDef    DacHandle;
  *----------------------------------------------------------------------------*/
 
 void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac);
-void DAC_Init(void);
-bool DAC_SetValue (DAC_Channel_t channel, float voltage);
+void CommonDAC_Init(void);
+bool CommonDAC_SetValue (DAC_Channel_t channel, float voltage);
 
 
 #endif

@@ -36,7 +36,7 @@ static uint32_t IO_GetMode(IO_Type io);
 /**
  * \brief	Initialize IO pin
  */
-bool IO_Init(char port, uint8_t pin, IO_Type io)
+bool CommonIO_Init(char port, uint8_t pin, IO_Type io)
 {
 
 	GPIO_InitTypeDef GPIO_InitStruct;
@@ -67,7 +67,7 @@ bool IO_Init(char port, uint8_t pin, IO_Type io)
 /**
  * \brief	Set output
  */
-bool IO_SetOutput(char port, uint8_t pin, Output_Type output)
+bool CommonIO_SetOutput(char port, uint8_t pin, Output_Type output)
 {
 	bool status = false;
 
@@ -125,7 +125,7 @@ bool IO_SetOutput(char port, uint8_t pin, Output_Type output)
 /**
  * \brief	Read input
  */
-bool IO_ReadPin(char port, uint8_t pin)
+bool CommonIO_ReadPin(char port, uint8_t pin)
 {
 	bool status = false;
 

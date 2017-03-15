@@ -32,6 +32,8 @@ static DAC_ChannelConfTypeDef sConfig;
  *  Functions
  *----------------------------------------------------------------------------*/
 
+static uint32_t CommonDAC_VoltageToBinary(float voltage);
+
 
 
 /**
@@ -70,7 +72,7 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac)
 /**
  * \brief	Initialize DAC
  */
-void DAC_Init(void)
+void CommonDAC_Init(void)
 {
 	//HAL_DAC_MspInit(&DacHandle);	// TODO: there is no call for this?
 
@@ -131,7 +133,7 @@ void DAC_Init(void)
 /**
  * \brief	Convert voltage to DA value
  */
-uint32_t DAC_VoltageToBinary (float voltage)
+static uint32_t CommonDAC_VoltageToBinary(float voltage)
 {
 	return voltage / COMMON_DAC_MAX_VOLTAGE * COMMON_DAC_DA_MAX_VALUE;
 }
@@ -141,7 +143,7 @@ uint32_t DAC_VoltageToBinary (float voltage)
 /**
  * \brief	Set DAC value
  */
-bool DAC_SetValue (DAC_Channel_t channel, float voltage)
+bool CommonDAC_SetValue(DAC_Channel_t channel, float voltage)
 {
 
 	uint32_t channelDefine = DACx_CHANNEL1;

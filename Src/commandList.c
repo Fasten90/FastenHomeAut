@@ -913,19 +913,19 @@ static CommandResult_t CommandFunction_dac(uint32_t argc, char** argv)
 	float voltage = 0.0f;
 
 	// Check 1. argument (num)
-	if (!StringToUnsignedDecimalNum(argv[1],&Arg2Num))
+	if (!StringToUnsignedDecimalNum(argv[1], &Arg2Num))
 	{
 		return CommandResult_Error_WrongArgument1;
 	}
 
 	// Check 2. argument (voltage)
-	if (!StringToFloat(argv[2],&voltage))
+	if (!StringToFloat(argv[2], &voltage))
 	{
 		return CommandResult_Error_WrongArgument2;
 	}
 
 	// Set DAC value
-	if (DAC_SetValue(Arg2Num,voltage))
+	if (CommonDAC_SetValue(Arg2Num, voltage))
 	{
 		return CommandResult_Ok_SendSuccessful;
 	}
@@ -952,7 +952,7 @@ static CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
 	// Suppress warning
 	(void)argc;
 
-	if (!StrCmp(argv[0],"ioinit"))
+	if (!StrCmp(argv[0], "ioinit"))
 	{
 		// Init
 		char port = argv[1][0];
@@ -974,7 +974,7 @@ static CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
 				return CommandResult_Error_WrongArgument2;
 			}
 
-			if (IO_Init(port,(uint8_t)pin, io))
+			if (CommonIO_Init(port, (uint8_t)pin, io))
 			{
 				return CommandResult_Ok;
 			}
@@ -1013,7 +1013,7 @@ static CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
 				output = OUTPUT_STATUS;
 			}
 			// Set output
-			bool status = IO_SetOutput(port,pin,output);
+			bool status = CommonIO_SetOutput(port,pin,output);
 			CommandHandler_Printf("Output status: %d\r\n", status);
 			return CommandResult_Ok;
 		}
@@ -1029,7 +1029,7 @@ static CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
 		uint32_t pin;
 		if (StringToUnsignedDecimalNum(&argv[1][1], &pin))
 		{
-			bool status = IO_ReadPin(port, pin);
+			bool status = CommonIO_ReadPin(port, pin);
 			CommandHandler_Printf("Input status: %d\r\n", status);
 			return CommandResult_Ok;
 		}
@@ -1059,7 +1059,7 @@ static CommandResult_t CommandFunction_adc(uint32_t argc, char** argv)
 
 	uint8_t i;
 
-	ADC_ConvertAllMeasuredValues();
+	CommonADC_ConvertAllMeasuredValues();
 
 	for (i=0; i<ADC_BUFFER_SIZE; i++)
 	{
@@ -1119,7 +1119,7 @@ static CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv)
 		for (i = startNum; i <= endNum; i++)
 		{
 			// Convert & Print
-			ADC_ConvertAllMeasuredValues();
+			CommonADC_ConvertAllMeasuredValues();
 			CommandHandler_Printf("ADC: %d. value: %2.2f\r\n", i, ADC_ConvertedValues[i]);
 		}
 
@@ -1398,7 +1398,7 @@ static CommandResult_t CommandFunction_temp(uint32_t argc, char** argv)
 	//uprintf("Vref: %d [mV]\r\n",ADC_GetVref());
 
 
-	ADC_ConvertAllMeasuredValues();
+	CommonADC_ConvertAllMeasuredValues();
 
 	uprintf("Temperature: ");
 	USART_SendFloat(ADC_ConvertedValue_InternalTemperature);
