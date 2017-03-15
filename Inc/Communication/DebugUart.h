@@ -1,28 +1,37 @@
 /*
- *		usart.h
+ *		DebugUart.h
  *
- *		Author: 		Vizi Gábor
+ *		Created on:		2017. márc. 15.
+ *      Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		usart communication
+ *		Function:		-
  *		Target:			STM32Fx
- *		Version:		v4
- *		Last modified:	2016.09.28
+ *		Version:		-
+ *		Last modified:	2017. márc. 15.
  */
 
-#ifndef USART_H_
-#define USART_H_
+#ifndef COMMUNICATION_DEBUGUART_H_
+#define COMMUNICATION_DEBUGUART_H_
+
+
 
 
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
-
 #include "include.h"
+
 
 
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
+
+// Size of Transmission buffer
+#define USART_TXBUFFERSIZE				256UL
+// Size of Reception buffer
+#define USART_RXBUFFERSIZE				256UL
+#define RXBUFFER_WAIT_LENGTH			1
 
 
 
@@ -36,23 +45,19 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
+extern UART_HandleTypeDef Debug_UartHandle;
 
+extern volatile char USART_RxBuffer[USART_RXBUFFERSIZE];
+extern volatile char USART_TxBuffer[USART_TXBUFFERSIZE];
+
+extern volatile uint8_t USART_RxBufferWriteCounter;
+
+extern bool USART_SendEnable_flag;
 
 /*------------------------------------------------------------------------------
  *  Global function declarations
  *----------------------------------------------------------------------------*/
-void USART_Init(UART_HandleTypeDef *UartHandle);
-
-void USART_StartReceiveMessage(void);
-
-void UART_ResetStatus(UART_HandleTypeDef *huart);
-
-bool USART_SendChar(char c);
-uint8_t USART_SendMessage(const char *aTxBuffer);
-bool USART_SendNewLine(void);
-bool USART_SendLine(const char *message);
-void USART_SendFloat(float value);
 
 
 
-#endif /* USART_H_ */
+#endif /* COMMUNICATION_DEBUGUART_H_ */

@@ -135,7 +135,8 @@ typedef enum
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-extern UART_HandleTypeDef Esp8266UartHandle;
+extern UART_HandleTypeDef ESP8266_UartHandle;
+
 extern volatile uint8_t ESP8266_Uart_ReceivedCharFlag;
 extern uint8_t ESP8266_Receive_Mode_FixLength;
 extern volatile uint8_t ESP8266_ReceiveBuffer_WriteCnt;

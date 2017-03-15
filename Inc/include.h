@@ -68,7 +68,12 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #include "board.h"
 
 
-/// MODULE INCLUDES
+/*------------------------------------------------------------------------------
+ *									Include modules
+ *----------------------------------------------------------------------------*/
+
+
+// Common modules
 
 #include "MEM.h"
 
@@ -79,10 +84,13 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #include "Network.h"
 #include "Communication.h"
 
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#if defined(CONFIG_MODULE_DEBUGUSART_ENABLE) || defined(CONFIG_MODULE_ESP8266_ENABLE)
 #include "USART.h"
+#endif
+
+#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 #include "Terminal.h"
-// TODO: not the best
+#include "DebugUart.h"
 #endif
 
 #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
