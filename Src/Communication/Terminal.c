@@ -248,7 +248,7 @@ static void DebugUart_ClearReceive(bool isFullClear, uint8_t stepLength)
 	// Clear from ReadCnt to WriteCnt
 	if (isFullClear)
 	{
-		// Clear buffer
+		// Full Clear buffer
 		CircularBuffer_Clear((char *)USART_RxBuffer, USART_RXBUFFERSIZE,
 				USART_RxBufferReadCounter, USART_RxBufferWriteCounter);
 		USART_RxBufferReadCounter = USART_RxBufferWriteCounter;
@@ -270,31 +270,6 @@ static void DebugUart_ClearReceive(bool isFullClear, uint8_t stepLength)
  */
 void CommandHandler_CheckCommand(void)
 {
-
-#ifndef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
-	// TODO: Beautification
-
-	DebugUart_FindLastMessage();
-
-	// If WriteCnt not equal with ReadCnt, we have received message
-	char receiveBuffer[USART_RXBUFFERSIZE+1];
-	uint16_t receivedMessageLength = 0;
-
-	// TODO: Refactor variables names
-	if (USART_RxBufferWriteCounter != USART_RxBufferReadCounter)
-	{
-		// Need copy to receiveBuffer
-		receivedMessageLength = CircularBuffer_GetCharacters(
-				(char *)USART_RxBuffer, receiveBuffer,
-				USART_RXBUFFERSIZE,
-				USART_RxBufferWriteCounter, USART_RxBufferReadCounter,
-				true);
-	}
-	else
-	{
-		return;
-	}
-#endif
 
 	// Infinite "task" loop
 	// \note	If use EventHandler, this loop is not infinite loop,
@@ -381,8 +356,6 @@ void CommandHandler_CheckCommand(void)
 						CommandHandler_PrepareFindExecuteCommand(
 								CommProt_DebugUart, (char *)Terminal_CommandActual);
 
-						DebugUart_ClearReceive(false, Terminal_CommandActualLength);
-
 						// Init new command
 						TERMINAL_SEND_NEW_LINE();
 						TERMINAL_SEND_PROMT_NEW_LINE();
@@ -407,8 +380,7 @@ void CommandHandler_CheckCommand(void)
 		}
 	}
 
-	// Infinite loop, never exit, never reached here.
-
+	// Infinite loop, never exit, never reached here, if blocking mode
 }
 
 
@@ -418,13 +390,45 @@ void CommandHandler_CheckCommand(void)
  */
 static void Terminal_ProcessReceivedCharacter(void)
 {
+#ifndef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
+	// TODO: Beautification
+	volatile uint8_t Terminal_RxBufferWriteCnt = 0;
+
+	DebugUart_FindLastMessage();
+
+	// If WriteCnt not equal with ReadCnt, we have received message
+	char receiveBuffer[USART_RXBUFFERSIZE+1];
+	uint16_t receivedMessageLength = 0;
+
+	// TODO: Refactor variables names
+	if (USART_RxBufferWriteCounter != USART_RxBufferReadCounter)
+	{
+		// Need copy to receiveBuffer
+		receivedMessageLength = CircularBuffer_GetCharacters(
+				(char *)USART_RxBuffer, receiveBuffer,
+				USART_RXBUFFERSIZE,
+				USART_RxBufferWriteCounter, USART_RxBufferReadCounter,
+				true);
+
+		DebugUart_ClearReceive(false, receivedMessageLength);
+
+		// TODO: Do better...
+		Terminal_RxBufferWriteCnt = receivedMessageLength;
+		Terminal_RxBufferReadCnt = 0;
+	}
+	else
+	{
+		return;
+	}
+#endif
+
 
 	// While Read cnt not equal than Write cnt
-	while (Terminal_RxBufferReadCnt != USART_RxBufferWriteCounter)
+	while (Terminal_RxBufferReadCnt < Terminal_RxBufferWriteCnt)
 	{
 		volatile char USART_ReceivedChar = '\0';
 
-		USART_ReceivedChar = USART_RxBuffer[Terminal_RxBufferReadCnt];
+		USART_ReceivedChar = receiveBuffer[Terminal_RxBufferReadCnt];
 		Terminal_RxBufferReadCnt++;
 
 #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
