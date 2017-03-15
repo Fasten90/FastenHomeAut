@@ -2148,6 +2148,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			//ESP8266StatusMachine = Esp8266Status_XXX;
 			goodMsgRcv = true;
 			ESP8266_ClearReceive(false, sizeof("Link\r\n") - 1);
+			ESP8266_LOG_EVENT(EVENT_LINK);
 		}
 		else if (!StrCmp("Unlink\r\n", (const char *)receiveBuffer))
 		{
@@ -2155,6 +2156,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			DebugPrint("Received \"Unlink\": a client disconnected\r\n");
 			goodMsgRcv = true;
 			ESP8266_ClearReceive(false, sizeof("Unlink\r\n") - 1);
+			ESP8266_LOG_EVENT(EVENT_UNLINK);
 		}
 		else if (!StrCmp("\r\n+IPD,", (const char *)receiveBuffer))
 		{
@@ -2201,6 +2203,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 
 							ESP8266_ClearReceive(false, length + messageLength + sizeof("\r\nOK\r\n") - 1);
 							goodMsgRcv = true;
+							ESP8266_LOG_EVENT(EVENT_RECEIVED_GOOD_TCP_MESSAGE);
 						}
 						else
 						{
@@ -2260,6 +2263,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 				// ~Reset buffer
 				ESP8266_ClearReceive(true, 0);
 				ESP8266_ErrorCnt = 0;
+				ESP8266_LOG_EVENT(EVENT_ERROR);
 			}
 		}
 		else

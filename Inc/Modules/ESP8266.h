@@ -39,6 +39,21 @@
 #endif
 
 
+#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
+#define ESP8266_LOG_EVENT(val)					EventLog_LogEvent(Event_Esp8266UserEvent, \
+												EventType_UserEvent, \
+												val \
+												)
+#else
+#define ESP8266_LOG_EVENT()
+#endif
+
+#define	EVENT_LINK								1
+#define	EVENT_UNLINK							2
+#define	EVENT_RECEIVED_GOOD_TCP_MESSAGE			3
+#define EVENT_ERROR								4
+
+
 /// Sending/Receiving content message max length
 #ifdef HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH
 #define ESP8266_TCP_MESSAGE_MAX_LENGTH			( HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH )

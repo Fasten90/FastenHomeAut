@@ -99,6 +99,10 @@ bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source, char *comma
 {
 	bool isSuccessful = false;
 
+#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
+	EventLog_LogEvent(Event_CommandHandler_ProcessCommand, EventType_Required, 0);
+#endif
+
 	// Save command (to buffer)
 	StrCpyMax(CommandHandler_ProcessedCommandActual, command, COMMANDHANDLER_MAX_COMMAND_LENGTH);
 
@@ -163,7 +167,7 @@ static bool CommandHandler_SearchCommand(void)
 	CommandResult_t result = CommandResult_Error_CommandNotFound;
 
 	// Search the command
-	for (i=0; i < CommandHandler_CommandNum; i++)
+	for (i = 0; i < CommandHandler_CommandNum; i++)
 	{
 
 		if (!StrCmp(CommandHandler_CommandArguments[0], CommandList[i].name))
@@ -171,6 +175,9 @@ static bool CommandHandler_SearchCommand(void)
 			// Found the command
 			result = CommandHandler_RunCommand(i);
 
+#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
+			EventLog_LogEvent(Event_CommandHandler_ProcessCommand, EventType_Finished, i);
+#endif
 			// Valid Command
 			CommandValid = true;
 			break;

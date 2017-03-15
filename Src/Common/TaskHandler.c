@@ -16,6 +16,7 @@
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
+#include "options.h"
 #include "include.h"
 #include "TaskList.h"
 #include "TaskHandler.h"
@@ -133,7 +134,7 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 #else
 	(void)result;
 #endif
-#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
+#ifdef CONFIG_EVENTLOG_TASKHANDLER_LOG_ENABLE
 	EventLog_LogEvent(Event_TaskScheduled, EventType_SystemEvent, (taskID << 24 | source << 16));
 #endif
 
@@ -197,7 +198,7 @@ void TaskHandler_RequestTaskScheduling(TaskID_t taskId)
 	if (taskId < Task_Count)
 	{
 		TaskList[taskId].isRequestScheduling = true;
-#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
+#ifdef CONFIG_EVENTLOG_TASKHANDLER_LOG_ENABLE
 		EventLog_LogEvent(Event_TaskScheduled, EventType_SystemEvent, taskId);
 #endif
 	}

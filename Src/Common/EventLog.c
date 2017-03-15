@@ -124,6 +124,7 @@ void EventLog_PrintAllLogRecords(void)
 	const char * const fixheader = "+-----+-----+----+------------+-----------+\r\n";
 	const char * const headertxt = "| ID  | Name|Type|   Status   |    Tick   |\r\n";
 
+	COMMUNICATION_SendMessage(comm, "\r\n");
 	COMMUNICATION_SendMessage(comm, fixheader);
 	COMMUNICATION_SendMessage(comm, headertxt);
 	COMMUNICATION_SendMessage(comm, fixheader);

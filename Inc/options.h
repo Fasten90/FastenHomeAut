@@ -211,20 +211,19 @@
 
 
 /*------------------------------------------------------------------------------
- *								Monitor settings
+ *								Terminal settings
  *----------------------------------------------------------------------------*/
 
 #ifdef CONFIG_MODULE_TERMINAL_ENABLE
 
 	/// XXX: Select your terminal
-	/// for CommandHandler.c
-	//#define CONFIG_COMMANDHANDLER_USE_TERMINAL_HYPERTERMINAL
-	#define CONFIG_COMMANDHANDLER_USE_TERMINAL_ZOC
-	//#define CONFIG_COMMANDHANDLER_USE_TERMINAL_PUTTY
+	//#define CONFIG_TERMINAL_USE_HYPERTERMINAL
+	#define CONFIG_TERMINAL_USE_ZOC
+	//#define CONFIG_TERMINAL_USE_PUTTY
 
 
 	/// For wait password
-	//#define CONFIG_COMMANDHANDLER_GET_PASSWORD_ENABLE
+	//#define CONFIG_TERMINAL_GET_PASSWORD_ENABLE
 
 
 	#define CONFIG_TERMINAL_PROMT_ENABLE
@@ -273,7 +272,7 @@
 
 // ESP8266 settings
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-	// XXX: IfC ONFIG_ESP8266_IS_SERVER defined to 1, ESP8266 will be server,
+	// XXX: If CONFIG_ESP8266_IS_SERVER defined to 1, ESP8266 will be server,
 	// if not (0), it will be client
 	#define CONFIG_ESP8266_IS_SERVER	0
 
@@ -285,6 +284,14 @@
 		#warning "CONFIG_ESP8266_WIFI_NETWORK_PASSWORD defined not defined!"
 		#define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD	"Password"
 	#endif
+
+#endif
+
+
+// EventLog settings
+#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
+
+	//#define CONFIG_EVENTLOG_TASKHANDLER_LOG_ENABLE
 
 #endif
 

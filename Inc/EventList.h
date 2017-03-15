@@ -42,13 +42,17 @@ typedef enum
 	Event_TaskScheduled,
 #endif
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-	Event_DebugUartReceivedCommand,
+	Event_DebugUartReceive,
 #endif
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
 	Event_ButtonPressed,
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 	Event_Esp8266ReceivedMessage,
+	Event_Esp8266UserEvent,
+#endif
+#ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
+	Event_CommandHandler_ProcessCommand,
 #endif
 
 	// XXX: Add here new event

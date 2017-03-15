@@ -263,7 +263,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 		#endif
 
 		#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
-		EventLog_LogEvent(Event_DebugUartReceivedCommand, EventType_UserEvent, USART_RxBufferWriteCounter);
+		EventLog_LogEvent(Event_DebugUartReceive, EventType_UserEvent, USART_RxBufferWriteCounter);
 		#endif
 
 		#ifdef CONFIG_USE_FREERTOS
