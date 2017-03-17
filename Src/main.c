@@ -131,12 +131,6 @@ int main(void)
 
 	SSD1306_clearDisplay();
 
-	// draw a single pixel
-	SSD1306_drawPixel(10, 10, WHITE);
-
-	SSD1306_display();
-
-	DelayMs(2000);
 
 #endif
 

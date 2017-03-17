@@ -27,50 +27,6 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-// TODO: Put to board.h
-
-#define SPIx                             SPI2
-#define SPIx_CLK_ENABLE()                __HAL_RCC_SPI2_CLK_ENABLE()
-#define SPIx_SCK_GPIO_CLK_ENABLE()       __HAL_RCC_GPIOB_CLK_ENABLE()
-#define SPIx_MOSI_GPIO_CLK_ENABLE()      __HAL_RCC_GPIOB_CLK_ENABLE()
-
-#define SPIx_FORCE_RESET()               __HAL_RCC_SPI2_FORCE_RESET()
-#define SPIx_RELEASE_RESET()             __HAL_RCC_SPI2_RELEASE_RESET()
-
-/* Definition for SPIx Pins */
-#define SPIx_SCK_PIN                     GPIO_PIN_13
-#define SPIx_SCK_GPIO_PORT               GPIOB
-#define SPIx_SCK_AF                      GPIO_AF5_SPI2
-
-#define SPIx_MOSI_PIN                    GPIO_PIN_15
-#define SPIx_MOSI_GPIO_PORT              GPIOB
-#define SPIx_MOSI_AF                     GPIO_AF5_SPI2
-
-
-#define DISPLAY_SSD1306_PINS_CLK_ENABLE()	__HAL_RCC_GPIOD_CLK_ENABLE()
-// TODO: Use CS
-#define SPIx_CS_GPIO_PIN				GPIO_PIN_9
-#define SPIx_CS_GPIO_PORT				GPIOD
-
-/* Definition for SPIx's NVIC */
-#define SPIx_IRQn						SPI2_IRQn
-#define SPIx_IRQHandler					SPI2_IRQHandler
-
-
-#define DISPLAY_SSD1306_RST_GPIO_PIN			GPIO_PIN_10
-#define DISPLAY_SSD1306_RST_GPIO_PORT			GPIOD
-
-#define DISPLAY_SSD1306_DATACOMMAND_GPIO_PIN	GPIO_PIN_11
-#define DISPLAY_SSD1306_DATACOMMAND_GPIO_PORT	GPIOD
-
-
-
-
-
-
-
-
-
 
 #define BLACK 0
 #define WHITE 1
@@ -166,8 +122,6 @@
 void Display_SSD1306_Init(void);
 
 
-void ssd1306_command(uint8_t c);
-
 void SSD1306_clearDisplay(void);
 void SSD1306_invertDisplay(uint8_t i);
 void SSD1306_display(void);
@@ -185,9 +139,6 @@ void SSD1306_drawPixel(int16_t x, int16_t y, uint16_t color);
 
 void SSD1306_drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
 void SSD1306_drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
-
-void SSD1306_fastSPIwrite(uint8_t c);
-
 
 void SSD1306_drawFastVLineInternal(int16_t x, int16_t y, int16_t h, uint16_t color);
 void SSD1306_drawFastHLineInternal(int16_t x, int16_t y, int16_t w, uint16_t color);
