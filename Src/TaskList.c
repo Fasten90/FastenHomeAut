@@ -25,9 +25,11 @@
  *----------------------------------------------------------------------------*/
 
 
+#ifdef CONFIG_MODULE_LED_ENABLE
 static TaskResult_t TaskLed1Function(ScheduleSource_t source);
 static TaskResult_t TaskLed2Function(ScheduleSource_t source);
 static TaskResult_t TaskLed3Function(ScheduleSource_t source);
+#endif
 #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
 static TaskResult_t TaskWatchdogClear(ScheduleSource_t source);
 #endif
@@ -48,6 +50,7 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source);
 /// Tasks list
 Task_t TaskList[] =
 {
+#ifdef CONFIG_MODULE_LED_ENABLE
 	{
 		.taskName = "Led200ms",
 		.taskFunction = TaskLed1Function,
@@ -63,6 +66,7 @@ Task_t TaskList[] =
 		.taskFunction = TaskLed3Function,
 		.taskScheduleRate = 5000
 	},
+#endif
 #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
 	{
 		.taskName = "WdtClr",
@@ -134,6 +138,8 @@ const TaskID_t TasksNum = (sizeof(TaskList)/sizeof(TaskList[0]));
 //TaskResult_t (*TaskFunctionPointer)(TaskID_t id);
 
 
+
+#ifdef CONFIG_MODULE_LED_ENABLE
 /**
  * \brief
  */
@@ -185,6 +191,7 @@ static TaskResult_t TaskLed3Function(ScheduleSource_t source)
 
 	return TASK_RESULT_OK;
 }
+#endif	// #ifdef CONFIG_MODULE_LED_ENABLE
 
 
 
@@ -249,7 +256,9 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 	(void)source;
 
 	// Toggle LED
+#ifdef CONFIG_MODULE_LED_ENABLE
 	LED_SetLed(LED_GREEN_NUM, LED_SET_TOGGLE);
+#endif
 
 	// Clear flag
 	BUTTON_Clicked = 0;

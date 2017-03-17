@@ -178,6 +178,12 @@
 #define LED_RED_STATUS()
 #define LED_BLUE_STATUS()
 #define LED_GREEN_STATUS()
+
+// TODO: Make an enum for this?
+#define LED_RED_NUM				1
+#define LED_BLUE_NUM			2
+#define LED_GREEN_NUM			3
+
 #endif
 
 

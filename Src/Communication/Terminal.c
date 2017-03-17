@@ -18,6 +18,7 @@
 #include "include.h"
 #include "CommandList.h"
 #include "CommandHandler.h"
+#include "CircularBuffer.h"
 #include "Terminal.h"
 
 

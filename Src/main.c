@@ -122,6 +122,25 @@ int main(void)
 #endif
 
 
+#ifdef CONFIG_MODULE_DISPLAY_ENABLE
+	Display_SSD1306_Init();
+
+	SSD1306_display();
+
+	DelayMs(2000);
+
+	SSD1306_clearDisplay();
+
+	// draw a single pixel
+	SSD1306_drawPixel(10, 10, WHITE);
+
+	SSD1306_display();
+
+	DelayMs(2000);
+
+#endif
+
+
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	// DEBUG USART
 	USART_Init(&Debug_UartHandle);
