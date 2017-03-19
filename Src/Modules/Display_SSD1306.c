@@ -17,6 +17,9 @@
 #include "include.h"
 #include "Display_SSD1306.h"
 
+#include "Font8x5.h"
+
+
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
 
 /*------------------------------------------------------------------------------
@@ -154,13 +157,10 @@ void Display_SSD1306_Init(void)
 
 	/*##-1- Enable peripherals and GPIO Clocks #################################*/
 	/* Enable GPIO TX/RX clock */
-	DISPLAY_SSD1306_SPIx_SCK_GPIO_CLK_ENABLE()
-	;
-	DISPLAY_SSD1306_SPIx_MOSI_GPIO_CLK_ENABLE()
-	;
+	DISPLAY_SSD1306_SPIx_SCK_GPIO_CLK_ENABLE();
+	DISPLAY_SSD1306_SPIx_MOSI_GPIO_CLK_ENABLE();
 	/* Enable SPI clock */
-	DISPLAY_SSD1306_SPIx_CLK_ENABLE()
-	;
+	DISPLAY_SSD1306_SPIx_CLK_ENABLE();
 
 	/*##-2- Configure peripheral GPIO ##########################################*/
 	/* SPI SCK GPIO pin configuration  */
@@ -185,8 +185,7 @@ void Display_SSD1306_Init(void)
 	//HAL_NVIC_EnableIRQ(SPIx_IRQn);
 
 	// Initialize other GPIO pins
-	DISPLAY_SSD1306_PINS_CLK_ENABLE()
-	;
+	DISPLAY_SSD1306_PINS_CLK_ENABLE();
 
 	// CS
 	GPIO_InitStruct.Pin = DISPLAY_SSD1306_SPIx_CS_GPIO_PIN;
@@ -322,6 +321,34 @@ static void SSD1306_HardwareInit(void)
 
 
 
+static void SSD1306_command(uint8_t c)
+{
+
+	// SPI
+
+	HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
+
+	HAL_GPIO_WritePin(DISPLAY_SSD1306_DATACOMMAND_GPIO_PORT,
+			DISPLAY_SSD1306_DATACOMMAND_GPIO_PIN, RESET);
+
+	HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, RESET);
+
+	SSD1306_fastSPIwrite(c);
+
+	HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
+
+}
+
+
+
+static void SSD1306_fastSPIwrite(uint8_t d)
+{
+	// TODO: ...
+	HAL_SPI_Transmit(&SpiHandle, &d, 1, 100);
+}
+
+
+
 // the most basic function, set a single pixel
 void SSD1306_drawPixel(int16_t x, int16_t y, uint16_t color)
 {
@@ -377,26 +404,6 @@ void SSD1306_invertDisplay(uint8_t i)
 	{
 		SSD1306_command(SSD1306_NORMALDISPLAY);
 	}
-}
-
-
-
-static void SSD1306_command(uint8_t c)
-{
-
-	// SPI
-
-	HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
-
-	HAL_GPIO_WritePin(DISPLAY_SSD1306_DATACOMMAND_GPIO_PORT,
-			DISPLAY_SSD1306_DATACOMMAND_GPIO_PIN, RESET);
-
-	HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, RESET);
-
-	SSD1306_fastSPIwrite(c);
-
-	HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
-
 }
 
 
@@ -552,14 +559,6 @@ void SSD1306_display(void)
 void SSD1306_clearDisplay(void)
 {
 	memset(buffer, 0, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8));
-}
-
-
-
-static void SSD1306_fastSPIwrite(uint8_t d)
-{
-	// TODO: ...
-	HAL_SPI_Transmit(&SpiHandle, &d, 1, 100);
 }
 
 
@@ -867,5 +866,50 @@ void SSD1306_drawFastVLineInternal(int16_t x, int16_t __y, int16_t __h,
 		}
 	}
 }
+
+
+
+void SSD1306_PrintString(const char *str, uint8_t line)
+{
+
+	uint8_t i;
+
+	for (i = 0; str[i]; i++)
+	{
+		SSD1306_PrintFont(str[i], i, line);
+	}
+
+}
+
+
+
+void SSD1306_PrintFont(uint8_t chr, uint8_t index, uint8_t line)
+{
+	// 5x8 pixel font
+	uint8_t i;
+	uint8_t j;
+#define FONT_WIDTH		(5)
+#define FONT_HEIGHT		(8)
+
+	for (i = 0; i < FONT_WIDTH; i++)
+	{
+		uint8_t x = index * (FONT_WIDTH + 1) + i;
+		for (j = 0; j < FONT_HEIGHT; j++)
+		{
+			uint8_t y = (line * (FONT_HEIGHT + 1)) + j;
+			if (font8x5[chr][i] & (1 << (7-j)))
+			{
+				SSD1306_drawPixel(x, y, WHITE);
+			}
+			else
+			{
+				SSD1306_drawPixel(x, y, BLACK);
+			}
+		}
+	}
+
+}
+
+
 
 #endif	// #ifdef CONFIG_MODULE_DISPLAY_ENABLE

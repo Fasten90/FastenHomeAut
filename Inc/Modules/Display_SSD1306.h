@@ -143,6 +143,8 @@ void SSD1306_drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
 void SSD1306_drawFastVLineInternal(int16_t x, int16_t y, int16_t h, uint16_t color);
 void SSD1306_drawFastHLineInternal(int16_t x, int16_t y, int16_t w, uint16_t color);
 
+void SSD1306_PrintString(const char *str, uint8_t line);
+void SSD1306_PrintFont(uint8_t chr, uint8_t index, uint8_t line);
 
 /*------------------------------------------------------------------------------
  *  Type definitions
