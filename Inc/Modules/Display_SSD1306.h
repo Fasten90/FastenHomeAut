@@ -72,6 +72,10 @@
   #define SSD1306_LCDHEIGHT                 16
 #endif
 
+#define DISPLAY_WIDTH						SSD1306_LCDWIDTH
+#define DISPLAY_HEIGHT						SSD1306_LCDHEIGHT
+
+
 #define SSD1306_SETCONTRAST 0x81
 #define SSD1306_DISPLAYALLON_RESUME 0xA4
 #define SSD1306_DISPLAYALLON 0xA5
@@ -145,6 +149,8 @@ void SSD1306_drawFastHLineInternal(int16_t x, int16_t y, int16_t w, uint16_t col
 
 void SSD1306_PrintString(const char *str, uint8_t line);
 void SSD1306_PrintFont(uint8_t chr, uint8_t index, uint8_t line);
+
+void DISPLAY_SSD1306_SPIx_IRQHandler(void);
 
 /*------------------------------------------------------------------------------
  *  Type definitions
