@@ -102,7 +102,9 @@ static CommandResult_t CommandFunction_mw(uint32_t argc, char** argv);
 #ifdef CONFIG_DEBUG_GO_COMMAND_ENABLE
 static CommandResult_t CommandFunction_go(uint32_t argc, char** argv);
 #endif
-
+#ifdef CONFIG_MODULE_DISPLAY_ENABLE
+static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv);
+#endif
 
 
 /*------------------------------------------------------------------------------
@@ -409,7 +411,15 @@ const CommandStruct CommandList[] =
 		.commandArgNum = CommandArgument_1,
 	},
 #endif
-
+#ifdef CONFIG_MODULE_DISPLAY_ENABLE
+	{
+		.name = "display",
+		.commandFunctionPointer = CommandFunction_Display,
+		.description = "Use display",
+		.syntax = "<write/clear> <line,msg>",
+		.commandArgNum = CommandArgument_1 | CommandArgument_2,
+	},
+#endif
 	/*
 	 * XXX: Add new commands here
 	 *
@@ -1730,5 +1740,55 @@ static CommandResult_t CommandFunction_go(uint32_t argc, char** argv)
 #endif
 
 
+
+#ifdef CONFIG_MODULE_DISPLAY_ENABLE
+/**
+ * \brief	Display module
+ */
+static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv)
+{
+	(void)argc;
+
+	CommandResult_t result = CommandResult_Unknown;
+
+	if (!StrCmp("write", argv[1]))
+	{
+		char *separated[2];
+		if (STRING_Splitter(argv[2], ',', separated, 2))
+		{
+			// Check line parameter
+			uint32_t line;
+			if (StringToUnsignedDecimalNum(separated[0], &line))
+			{
+				// Print line
+				SSD1306_PrintString(separated[1], line);
+				SSD1306_display();
+				result = CommandResult_Ok_SendSuccessful;
+			}
+			else
+			{
+				result = CommandResult_Error_WrongArgument2;
+			}
+		}
+		else
+		{
+			result = CommandResult_Error_WrongArgument2;
+		}
+	}
+	else if (!StrCmp("clear", argv[1]))
+	{
+		// Clear
+		SSD1306_clearDisplay();
+		SSD1306_display();
+		result = CommandResult_Ok_SendSuccessful;
+	}
+	else
+	{
+		result = CommandResult_Error_WrongArgument1;
+	}
+
+	return result;
+}
+#endif
 
 /* END OF COMMAND FUNCTIONS */

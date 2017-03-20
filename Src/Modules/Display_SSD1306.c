@@ -8,6 +8,15 @@
  *		Target:			STM32Fx
  *		Version:		-
  *		Last modified:	2017. márc. 16.
+ *		Help: An arduino (C++) code:
+ *			https://github.com/adafruit/Adafruit_SSD1306/blob/master/Adafruit_SSD1306.cpp
+ *		Modified:
+ *			- C++ --> C
+ *			- Renames, refactors
+ *			- Added comments
+ *			- porting (from Atmel to ST - HAL driver)
+ *			- Added string printing functions
+ *			- Use my font: 8x5
  */
 
 /*------------------------------------------------------------------------------
@@ -26,19 +35,14 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-SPI_HandleTypeDef SpiHandle;
 
-// TODO: ...
-
-#define HEIGHT			64
-#define WIDTH			128
 
 /*------------------------------------------------------------------------------
  *  Local variables
  *----------------------------------------------------------------------------*/
 
-// Help: An arduino (C++) code:
-// https://github.com/adafruit/Adafruit_SSD1306/blob/master/Adafruit_SSD1306.cpp
+static SPI_HandleTypeDef SpiHandle;
+
 // the memory buffer for the LCD
 static uint8_t buffer[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] =
 { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -352,7 +356,7 @@ static void SSD1306_fastSPIwrite(uint8_t d)
 // the most basic function, set a single pixel
 void SSD1306_drawPixel(int16_t x, int16_t y, uint16_t color)
 {
-	if ((x < 0) || (x >= WIDTH) || (y < 0) || (y >= HEIGHT))
+	if ((x < 0) || (x >= SSD1306_LCDWIDTH) || (y < 0) || (y >= SSD1306_LCDHEIGHT))
 		return;
 
 	// check rotation, move pixel around if necessary
@@ -361,15 +365,15 @@ void SSD1306_drawPixel(int16_t x, int16_t y, uint16_t color)
 	{
 		case 1:
 			ssd1306_swap(x, y);
-			x = WIDTH - x - 1;
+			x = SSD1306_LCDWIDTH - x - 1;
 			break;
 		case 2:
-			x = WIDTH - x - 1;
-			y = HEIGHT - y - 1;
+			x = SSD1306_LCDWIDTH - x - 1;
+			y = SSD1306_LCDHEIGHT - y - 1;
 			break;
 		case 3:
 			ssd1306_swap(x, y);
-			y = HEIGHT - y - 1;
+			y = SSD1306_LCDHEIGHT - y - 1;
 			break;
 		default:
 			break;
@@ -576,19 +580,19 @@ void SSD1306_drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color)
 			// 90 degree rotation, swap x & y for rotation, then invert x
 			bSwap = true;
 			ssd1306_swap(x, y);
-			x = WIDTH - x - 1;
+			x = SSD1306_LCDWIDTH - x - 1;
 			break;
 		case 2:
 			// 180 degree rotation, invert x and y - then shift y around for height.
-			x = WIDTH - x - 1;
-			y = HEIGHT - y - 1;
+			x = SSD1306_LCDWIDTH - x - 1;
+			y = SSD1306_LCDHEIGHT - y - 1;
 			x -= (w - 1);
 			break;
 		case 3:
 			// 270 degree rotation, swap x & y for rotation, then invert y  and adjust y for w (not to become h)
 			bSwap = true;
 			ssd1306_swap(x, y);
-			y = HEIGHT - y - 1;
+			y = SSD1306_LCDHEIGHT - y - 1;
 			y -= (w - 1);
 			break;
 		default:
@@ -611,7 +615,7 @@ void SSD1306_drawFastHLineInternal(int16_t x, int16_t y, int16_t w,
 		uint16_t color)
 {
 	// Do bounds/limit checks
-	if (y < 0 || y >= HEIGHT)
+	if (y < 0 || y >= SSD1306_LCDHEIGHT)
 	{
 		return;
 	}
@@ -624,9 +628,9 @@ void SSD1306_drawFastHLineInternal(int16_t x, int16_t y, int16_t w,
 	}
 
 	// make sure we don't go off the edge of the display
-	if ((x + w) > WIDTH)
+	if ((x + w) > SSD1306_LCDWIDTH)
 	{
-		w = (WIDTH - x);
+		w = (SSD1306_LCDWIDTH - x);
 	}
 
 	// if our width is now negative, punt
@@ -687,20 +691,20 @@ void SSD1306_drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color)
 			// 90 degree rotation, swap x & y for rotation, then invert x and adjust x for h (now to become w)
 			bSwap = true;
 			ssd1306_swap(x, y);
-			x = WIDTH - x - 1;
+			x = SSD1306_LCDWIDTH - x - 1;
 			x -= (h - 1);
 			break;
 		case 2:
 			// 180 degree rotation, invert x and y - then shift y around for height.
-			x = WIDTH - x - 1;
-			y = HEIGHT - y - 1;
+			x = SSD1306_LCDWIDTH - x - 1;
+			y = SSD1306_LCDHEIGHT - y - 1;
 			y -= (h - 1);
 			break;
 		case 3:
 			// 270 degree rotation, swap x & y for rotation, then invert y
 			bSwap = true;
 			ssd1306_swap(x, y);
-			y = HEIGHT - y - 1;
+			y = SSD1306_LCDHEIGHT - y - 1;
 			break;
 		default:
 			break;
@@ -723,7 +727,7 @@ void SSD1306_drawFastVLineInternal(int16_t x, int16_t __y, int16_t __h,
 {
 
 	// do nothing if we're off the left or right side of the screen
-	if (x < 0 || x >= WIDTH)
+	if (x < 0 || x >= SSD1306_LCDWIDTH)
 	{
 		return;
 	}
@@ -738,9 +742,9 @@ void SSD1306_drawFastVLineInternal(int16_t x, int16_t __y, int16_t __h,
 	}
 
 	// make sure we don't go past the height of the display
-	if ((__y + __h) > HEIGHT)
+	if ((__y + __h) > SSD1306_LCDHEIGHT)
 	{
-		__h = (HEIGHT - __y);
+		__h = (SSD1306_LCDHEIGHT - __y);
 	}
 
 	// if our height is now negative, punt
@@ -888,14 +892,15 @@ void SSD1306_PrintFont(uint8_t chr, uint8_t index, uint8_t line)
 	// 5x8 pixel font
 	uint8_t i;
 	uint8_t j;
-#define FONT_WIDTH		(5)
-#define FONT_HEIGHT		(8)
 
+	// Step on columns
 	for (i = 0; i < FONT_WIDTH; i++)
 	{
+		// Step on rows from top to bottom
 		uint8_t x = index * (FONT_WIDTH + 1) + i;
 		for (j = 0; j < FONT_HEIGHT; j++)
 		{
+			// Draw pixel to "screen"
 			uint8_t y = (line * (FONT_HEIGHT + 1)) + j;
 			if (font8x5[chr][i] & (1 << (7-j)))
 			{

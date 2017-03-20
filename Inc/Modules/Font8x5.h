@@ -30,6 +30,9 @@
 #define FONT_NUM			( 128 )
 #define FONT_STORE_SIZE		( 5 )
 
+#define FONT_HEIGHT			( 8 )
+#define FONT_WIDTH			( 5 )
+
 
 /*------------------------------------------------------------------------------
  *  Type definitions
@@ -41,7 +44,7 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-extern uint8_t font8x5[FONT_NUM][FONT_STORE_SIZE];
+extern const uint8_t font8x5[FONT_NUM][FONT_STORE_SIZE];
 
 
 
