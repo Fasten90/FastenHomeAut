@@ -76,6 +76,11 @@ int main(void)
 
 	// USER CODE:
 
+#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
+	// EventLog
+	EventLog_Init();
+#endif
+
 
 #ifdef CONFIG_MODULE_LED_ENABLE
 	// LED
@@ -228,12 +233,6 @@ int main(void)
 #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
 	// Watchdog
 	Watchdog_Init();
-#endif
-
-
-#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
-	// EventLog
-	EventLog_Init();
 #endif
 
 

@@ -28,6 +28,10 @@
 
 #include "Font8x5.h"
 
+#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
+#include "EventLog.h"
+#endif
+
 
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
 
@@ -276,6 +280,7 @@ void Display_SSD1306_Init(void)
 			DISPLAY_SPI_IRQ_PREEMT_PRIORITY, DISPLAY_SPI_IRQ_SUB_PRIORITY);
 	HAL_NVIC_EnableIRQ(DISPLAY_SSD1306_SPIx_IRQn);
 
+
 	// Initialize other GPIO pins
 	DISPLAY_SSD1306_PINS_CLK_ENABLE();
 
@@ -435,7 +440,7 @@ static void SSD1306_command(uint8_t c)
 
 static void SSD1306_fastSPIwrite(uint8_t d)
 {
-	HAL_SPI_Transmit(&SpiHandle, &d, 1, 100);
+	HAL_SPI_Transmit_IT(&SpiHandle, &d, 1);
 }
 
 
@@ -643,6 +648,10 @@ void SSD1306_display(void)
 	*/
 	HAL_SPI_Transmit_IT(&SpiHandle, buffer, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8));
 	Display_TransferInProgress = true;
+
+#ifdef CONFIG_EVENTLOG_DISPLAY_LOG_ENABLE
+	EventLog_LogEvent(Event_Display_SpiEvent, EventType_SystemEvent, 1);
+#endif
 
 	//HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
 
@@ -1008,28 +1017,37 @@ void SSD1306_PrintFont(uint8_t chr, uint8_t index, uint8_t line)
 
 
 
+/**
+ * \brief	Display SPI communicaton IRQ handler
+ */
 void DISPLAY_SSD1306_SPIx_IRQHandler(void)
 {
 	HAL_SPI_IRQHandler(&SpiHandle);
-
 }
 
 
+
 /**
-  * @brief  TxRx Transfer completed callback
-  * @param  hspi: SPI handle.
-  * @note   This example shows a simple way to report end of Interrupt TxRx transfer, and
-  *         you can add your own implementation.
+  * @brief Tx Transfer completed callback.
+  * @param  hspi: pointer to a SPI_HandleTypeDef structure that contains
+  *               the configuration information for SPI module.
   * @retval None
   */
-void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
+void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 {
 	// Suppress warning
 	(void)hspi;
 
 	HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
 	Display_TransferInProgress = false;
+
+#ifdef CONFIG_EVENTLOG_DISPLAY_LOG_ENABLE
+	EventLog_LogEvent(Event_Display_SpiEvent, EventType_SystemEvent, 2);
+#endif
+
 }
+
+
 
 /**
   * @brief  SPI error callbacks
@@ -1045,6 +1063,10 @@ void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
 
 	HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
 	Display_TransferInProgress = false;
+
+#ifdef CONFIG_EVENTLOG_DISPLAY_LOG_ENABLE
+	EventLog_LogEvent(Event_Display_SpiEvent, EventType_SystemEvent, 3);
+#endif
 }
 
 

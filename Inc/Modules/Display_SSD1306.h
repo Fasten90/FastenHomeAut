@@ -151,6 +151,9 @@ void SSD1306_PrintString(const char *str, uint8_t line);
 void SSD1306_PrintFont(uint8_t chr, uint8_t index, uint8_t line);
 
 void DISPLAY_SSD1306_SPIx_IRQHandler(void);
+void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi);
+void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi);
+
 
 /*------------------------------------------------------------------------------
  *  Type definitions

@@ -54,6 +54,9 @@ typedef enum
 #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
 	Event_CommandHandler_ProcessCommand,
 #endif
+#ifdef CONFIG_MODULE_DISPLAY_ENABLE
+	Event_Display_SpiEvent,
+#endif
 
 	// XXX: Add here new event
 
