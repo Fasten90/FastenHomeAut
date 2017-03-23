@@ -140,6 +140,7 @@ void SSD1306_stopscroll(void);
 void SSD1306_dim(bool dim);
 
 void SSD1306_drawPixel(int16_t x, int16_t y, uint16_t color);
+void SSD1306_drawImage(uint8_t sizex, uint8_t sizey, uint8_t setx, uint8_t sety, uint8_t *img);
 
 void SSD1306_drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
 void SSD1306_drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
@@ -153,6 +154,11 @@ void SSD1306_PrintFont(uint8_t chr, uint8_t index, uint8_t line);
 void DISPLAY_SSD1306_SPIx_IRQHandler(void);
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi);
 void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi);
+
+
+
+void Display_ChangeCarImage(void);
+
 
 
 /*------------------------------------------------------------------------------

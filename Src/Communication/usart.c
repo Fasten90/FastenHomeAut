@@ -229,9 +229,13 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 	xSemaphoreGiveFromISR(DEBUG_USART_Tx_Semaphore,(BaseType_t *)NULL);
 	#endif
 	
+#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	// Successful sending
-
-	USART_SendEnable_flag = true;
+	if (UartHandle == &Debug_UartHandle)
+	{
+		USART_SendEnable_flag = true;
+	}
+#endif
 
 }
 

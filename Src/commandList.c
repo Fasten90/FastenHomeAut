@@ -416,7 +416,8 @@ const CommandStruct CommandList[] =
 		.name = "display",
 		.commandFunctionPointer = CommandFunction_Display,
 		.description = "Use display",
-		.syntax = "<write/clear> <line,msg>",
+		.syntax = "<write/clear> (line,msg)",
+		.example = "write 1,message",
 		.commandArgNum = CommandArgument_1 | CommandArgument_2,
 	},
 #endif

@@ -45,6 +45,9 @@ static TaskResult_t Task_ProcessDebugUartCommandReceived(ScheduleSource_t source
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
 static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source);
 #endif
+#ifdef CONFIG_MODULE_DISPLAY_ENABLE
+static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source);
+#endif
 
 
 /// Tasks list
@@ -103,7 +106,13 @@ Task_t TaskList[] =
 		.isPeriodisScheduleDisabled = true,
 	},
 #endif
-
+#ifdef CONFIG_MODULE_DISPLAY_ENABLE
+	{
+		.taskName = "DisplayRefresh",
+		.taskFunction = Task_DisplayChangeImage,
+		.taskScheduleRate = 300
+	},
+#endif
 	// \note Be careful, taskList order need to be equal with TaskName_t
 
 	// XXX: Add here new tasks
@@ -270,6 +279,20 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 	#endif
 
 	return TASK_RESULT_OK;
+}
+#endif
+
+
+
+#ifdef CONFIG_MODULE_DISPLAY_ENABLE
+static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
+{
+	(void)source;
+
+	Display_ChangeCarImage();
+
+	return TASK_RESULT_OK;
+
 }
 #endif
 

@@ -132,6 +132,7 @@ int main(void)
 
 	SSD1306_display();
 
+	/*
 	DelayMs(2000);
 
 	SSD1306_clearDisplay();
@@ -144,6 +145,7 @@ int main(void)
 	SSD1306_PrintString(",.;?-*_()[]{}&", 5);
 	SSD1306_PrintString("ABCDEFGHIJKLMNOPQ", 6);
 	SSD1306_display();
+	*/
 
 
 #endif
@@ -170,11 +172,13 @@ int main(void)
 #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
 	// Monitor initialize
 	CommandHandler_Init();
+#endif
+#ifdef CONFIG_MODULE_TERMINAL_ENABLE
 	Terminal_Init();
 #endif
 
 
-#ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
+#ifdef CONFIG_MODULE_TERMINAL_ENABLE
 #ifdef CONFIG_USE_FREERTOS
 	TaskHandle_t MONITOR_TaskHandle = NULL;
 	//xTaskCreate( vTaskCode, "NAME", STACK_SIZE, &ucParameterToPass, tskIDLE_PRIORITY, &xHandle );
@@ -184,7 +188,7 @@ int main(void)
 		Error_Handler();
 	}
 #else
-	CommandHandler_CheckCommand();	// infinite loop
+	CommandHandler_CheckCommand();	// infinite loop, if not used TaskHandler
 #endif
 #endif	// #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
 
