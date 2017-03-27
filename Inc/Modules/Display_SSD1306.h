@@ -123,6 +123,39 @@
 #define SSD1306_VERTICAL_AND_LEFT_HORIZONTAL_SCROLL 0x2A
 
 
+
+/*------------------------------------------------------------------------------
+ *  Type definitions
+ *----------------------------------------------------------------------------*/
+
+typedef enum
+{
+	Font_Unknown,
+#ifdef CONFIG_MODULE_DISPLAY_FONT8X5_ENABLE
+	Font_8x5,
+#endif
+#ifdef CONFIG_MODULE_DISPLAY_FONT12X8_ENABLE
+	Font_12x8,
+#endif
+
+	Font_Count
+} Font_Type;
+
+
+
+/*------------------------------------------------------------------------------
+ *  Global variables
+ *----------------------------------------------------------------------------*/
+
+extern bool CarAnimationDisable_flag;
+
+
+
+/*------------------------------------------------------------------------------
+ *  Global function declarations
+ *----------------------------------------------------------------------------*/
+
+
 void Display_SSD1306_Init(void);
 
 
@@ -148,35 +181,18 @@ void SSD1306_drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
 void SSD1306_drawFastVLineInternal(int16_t x, int16_t y, int16_t h, uint16_t color);
 void SSD1306_drawFastHLineInternal(int16_t x, int16_t y, int16_t w, uint16_t color);
 
-void SSD1306_PrintString(const char *str, uint8_t line);
-void SSD1306_PrintFont(uint8_t chr, uint8_t index, uint8_t line);
+void SSD1306_PrintString(const char *str, uint8_t line, Font_Type font);
+void SSD1306_PrintFont8x5(uint8_t chr, uint8_t index, uint8_t line);
+void SSD1306_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line);
 
 void DISPLAY_SSD1306_SPIx_IRQHandler(void);
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi);
 void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi);
 
 
-
 void Display_ChangeCarImage(void);
-
-
-
-/*------------------------------------------------------------------------------
- *  Type definitions
- *----------------------------------------------------------------------------*/
-
-
-
-/*------------------------------------------------------------------------------
- *  Global variables
- *----------------------------------------------------------------------------*/
-
-
-
-/*------------------------------------------------------------------------------
- *  Global function declarations
- *----------------------------------------------------------------------------*/
-
+void SSD1306_Test8x5Font(void);
+void SSD1306_Test12x8Font(void);
 
 
 #endif /* MODULES_DISPLAY_SSD1306_H_ */

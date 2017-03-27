@@ -105,11 +105,13 @@ int main(void)
 
 
 #ifdef CONFIG_MODULE_COMMON_DAC_ENABLE
+	// Common DAC
 	CommonDAC_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
+	// Common ADC
 	CommonADC_Init();
 	// Test, blocking
 	//CommonADC_Test();
@@ -131,22 +133,6 @@ int main(void)
 	Display_SSD1306_Init();
 
 	SSD1306_display();
-
-	/*
-	DelayMs(2000);
-
-	SSD1306_clearDisplay();
-
-	SSD1306_PrintString("Text example", 0);
-	SSD1306_PrintString("Sari <3", 1);
-	SSD1306_PrintString("0123456789", 2);
-	SSD1306_PrintString("abcdefghijklm", 3);
-	SSD1306_PrintString("nopqrtsuvwxyz", 4);
-	SSD1306_PrintString(",.;?-*_()[]{}&", 5);
-	SSD1306_PrintString("ABCDEFGHIJKLMNOPQ", 6);
-	SSD1306_display();
-	*/
-
 
 #endif
 
