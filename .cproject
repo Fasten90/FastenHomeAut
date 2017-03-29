@@ -173,14 +173,24 @@
 							<tool id="com.atollic.truestudio.exe.debug.toolchain.secoutput.1466425502" name="Other" superClass="com.atollic.truestudio.exe.debug.toolchain.secoutput.839033486"/>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="com.atollic.truestudio.exe.debug.1518366166.1049153446" name="CommonSPI.c" rcbsApplicability="disable" resourcePath="Src/HwTester/CommonSPI.c" toolsToInvoke="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447.1140749097">
-						<tool id="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447.1140749097" name="C Compiler" superClass="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447"/>
-					</fileInfo>
 					<fileInfo id="com.atollic.truestudio.exe.debug.311825581.983937533" name="" rcbsApplicability="disable" resourcePath="nofile" toolsToInvoke="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447.1976695455">
 						<tool id="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447.1976695455" name="C Compiler" superClass="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447">
 							<inputType id="com.atollic.truestudio.gcc.input.1274347818" superClass="com.atollic.truestudio.gcc.input"/>
 						</tool>
 					</fileInfo>
+					<folderInfo id="com.atollic.truestudio.exe.debug.1518366166.46853365" name="/" resourcePath="Middlewares">
+						<toolChain id="com.atollic.truestudio.exe.debug.toolchain.2116459202" name="Atollic ARM Tools" superClass="com.atollic.truestudio.exe.debug.toolchain" unusedChildren="">
+							<option id="com.atollic.truestudio.toolchain_options.mcu.369284816.157736578" name="Microcontroller" superClass="com.atollic.truestudio.toolchain_options.mcu.369284816"/>
+							<option id="com.atollic.truestudio.toolchain_options.vendor.649027544.1423357709" name="Vendor name" superClass="com.atollic.truestudio.toolchain_options.vendor.649027544"/>
+							<tool id="com.atollic.truestudio.exe.debug.toolchain.as.1132769376" name="Assembler" superClass="com.atollic.truestudio.exe.debug.toolchain.as.1545899283"/>
+							<tool id="com.atollic.truestudio.exe.debug.toolchain.gcc.873221318" name="C Compiler" superClass="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447"/>
+							<tool id="com.atollic.truestudio.exe.debug.toolchain.ld.365824307" name="C Linker" superClass="com.atollic.truestudio.exe.debug.toolchain.ld.1444973427"/>
+							<tool id="com.atollic.truestudio.exe.debug.toolchain.gpp.772515380" name="C++ Compiler" superClass="com.atollic.truestudio.exe.debug.toolchain.gpp.981298185"/>
+							<tool id="com.atollic.truestudio.exe.debug.toolchain.ldcc.577036154" name="C++ Linker" superClass="com.atollic.truestudio.exe.debug.toolchain.ldcc.428260"/>
+							<tool id="com.atollic.truestudio.ar.base.369385746" name="Archiver" superClass="com.atollic.truestudio.ar.base.807120915"/>
+							<tool id="com.atollic.truestudio.exe.debug.toolchain.secoutput.518383055" name="Other" superClass="com.atollic.truestudio.exe.debug.toolchain.secoutput.839033486"/>
+						</toolChain>
+					</folderInfo>
 					<folderInfo id="com.atollic.truestudio.exe.debug.1518366166.1152236106" name="/" resourcePath="Middlewares/Third_Party">
 						<toolChain id="com.atollic.truestudio.exe.debug.toolchain.516234830" name="Atollic ARM Tools" superClass="com.atollic.truestudio.exe.debug.toolchain" unusedChildren="">
 							<option id="com.atollic.truestudio.toolchain_options.mcu.369284816.1739481361" name="Microcontroller" superClass="com.atollic.truestudio.toolchain_options.mcu.369284816"/>
@@ -222,7 +232,6 @@
 					<sourceEntries>
 						<entry excluding="STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_msp_template.c|STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_timebase_tim_template.c|STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_timebase_rtc_alarm_template.c|STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_timebase_rtc_wakeup_template.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 						<entry excluding="HwTester/CommonSPI.h|Old|template.h" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Inc"/>
-						<entry excluding="Third_Party|STM32_SelfTest_Library|STM32_SelfTest_Library/stm32f4xx_STLcpustartIARv5.s|STM32_SelfTest_Library/stm32fxx_STLRamMcMxIAR.s|STM32_SelfTest_Library/stm32f4xx_STLcpurunIARv5.s" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry excluding="HwTester/CommonSPI.c|syscalls.c|template.c|Old" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Src"/>
 					</sourceEntries>
 				</configuration>
@@ -293,4 +302,5 @@
 			</profile>
 		</scannerConfigBuildInfo>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 </cproject>

@@ -1201,15 +1201,15 @@ void SSD1306_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line)
 	uint8_t i;
 	uint8_t j;
 
-	// Step on columns
-	for (i = 0; i < FONT_12X8_WIDTH; i++)
+	// Step on rows from top to bottom
+	for (i = 0; i < FONT_12X8_HEIGHT; i++)
 	{
-		// Step on rows from top to bottom
-		uint8_t x = index * (FONT_12X8_WIDTH + 1) + i;
-		for (j = 0; j < FONT_12X8_HEIGHT; j++)
+		// Step on column from left to right
+		uint8_t y = (line * (FONT_12X8_HEIGHT + 1)) + i;
+		for (j = 0; j < FONT_12X8_WIDTH; j++)
 		{
 			// Draw pixel to "screen"
-			uint8_t y = (line * (FONT_12X8_HEIGHT + 1)) + j;
+			uint8_t x = index * (FONT_12X8_WIDTH + 1) + j;
 			if (Font12x8[chr][i] & (1 << (7-j)))
 			{
 				SSD1306_drawPixel(x, y, WHITE);
