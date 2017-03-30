@@ -38,6 +38,12 @@
 #define ESP8266_DEBUG_PRINT(msg)
 #endif
 
+#if ESP8266_DEBUG_MODE == 1
+#define ESP8266_DEBUG_PRINTF(...)					DebugUart_SendMessage("ESP8266: "); \
+													uprintf(__VA_ARGS__)
+#else
+#define ESP8266_DEBUG_PRINTF(...)
+#endif
 
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
 #define ESP8266_LOG_EVENT(val)					EventLog_LogEvent(Event_Esp8266UserEvent, \

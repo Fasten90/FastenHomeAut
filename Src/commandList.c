@@ -699,8 +699,24 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 
 	uprintf("WrongPointer value: %d\r\n", *wrongPointer);
 
+
 	// Test Watchdog clear with infinite loop
 	//while (1);
+
+
+	// Test variadic macros
+	// Warning: "ISO C does not permit named variadic macros [-Wvariadic-macros]
+	// in Atollic TrueSTUDIO, 7.1.1
+/*
+ * Example:
+ * #define eprintf(…) fprintf (stderr, __VA_ARGS__)
+ * #define eprintf(args…) fprintf (stderr, args)
+ */
+//#define eprintf(args...) uprintf(args)
+#define eprintf(...) 			uprintf(__VA_ARGS__)
+
+	eprintf("Test variadic %d %s\r\n", 20, "testtext");
+
 
 
 	/**

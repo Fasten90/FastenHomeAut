@@ -125,15 +125,16 @@ int main(void)
 
 
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
+	// Remote car motors
 	Motor_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
+	// Display
 	Display_SSD1306_Init();
-
+	// Display start screen
 	SSD1306_display();
-
 #endif
 
 
