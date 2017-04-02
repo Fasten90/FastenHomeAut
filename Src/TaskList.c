@@ -289,7 +289,7 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 {
 	(void)source;
 
-	if (!CarAnimationDisable_flag)
+	if (!Display_CarAnimationDisable_flag)
 	{
 		Display_ChangeCarImage();
 	}

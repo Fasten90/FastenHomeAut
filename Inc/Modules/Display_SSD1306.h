@@ -147,7 +147,7 @@ typedef enum
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-extern bool CarAnimationDisable_flag;
+extern bool Display_CarAnimationDisable_flag;
 
 
 
@@ -181,18 +181,11 @@ void SSD1306_drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
 void SSD1306_drawFastVLineInternal(int16_t x, int16_t y, int16_t h, uint16_t color);
 void SSD1306_drawFastHLineInternal(int16_t x, int16_t y, int16_t w, uint16_t color);
 
-void SSD1306_PrintString(const char *str, uint8_t line, Font_Type font);
-void SSD1306_PrintFont8x5(uint8_t chr, uint8_t index, uint8_t line);
-void SSD1306_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line);
-
 void DISPLAY_SSD1306_SPIx_IRQHandler(void);
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi);
 void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi);
 
 
-void Display_ChangeCarImage(void);
-void SSD1306_Test8x5Font(void);
-void SSD1306_Test12x8Font(void);
 
 
 #endif /* MODULES_DISPLAY_SSD1306_H_ */

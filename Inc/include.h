@@ -189,6 +189,8 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
 #include "Display_SSD1306.h"
+#include "Display.h"
+#include "DisplayImages.h"
 #endif
 
 #include "Reset.h"

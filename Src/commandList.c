@@ -1778,8 +1778,8 @@ static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv)
 			if (StringToUnsignedDecimalNum(separated[0], &line))
 			{
 				// Print line
-				SSD1306_PrintString(separated[1], line, Font_8x5);
-				SSD1306_display();
+				Display_PrintString(separated[1], line, Font_8x5);
+				Display_Activate();
 				result = CommandResult_Ok_SendSuccessful;
 			}
 			else
@@ -1795,22 +1795,22 @@ static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv)
 	else if (!StrCmp("clear", argv[1]))
 	{
 		// Clear
-		SSD1306_clearDisplay();
-		SSD1306_display();
+		Display_Clear();
+		Display_Activate();
 		result = CommandResult_Ok_SendSuccessful;
 	}
 	else if (!StrCmp("test1", argv[1]))
 	{
 		// Test code
-		CarAnimationDisable_flag = true;
-		SSD1306_Test8x5Font();
+		Display_CarAnimationDisable_flag = true;
+		Display_Test8x5Font();
 		result = CommandResult_Ok_SendSuccessful;
 	}
 	else if (!StrCmp("test2", argv[1]))
 	{
 		// Test code
-		CarAnimationDisable_flag = true;
-		SSD1306_Test12x8Font();
+		Display_CarAnimationDisable_flag = true;
+		Display_Test12x8Font();
 		result = CommandResult_Ok_SendSuccessful;
 	}
 	else
