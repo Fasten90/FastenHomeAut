@@ -31,7 +31,7 @@
 /// USART Read cnt
 volatile uint8_t Terminal_RxBufferReadCnt = 0;
 
-#if ( USART_RXBUFFERSIZE != 256 )
+#if ( DEBUGUART_RXBUFFERSIZE != 256 )
 #warning "Ring buffer counter error (USART_RxBufferReadCnt)"
 #endif
 
@@ -228,7 +228,7 @@ static void DebugUart_FindLastMessage(void)
 		++USART_RxBufferWriteCounter;
 		++i;
 
-		if (i > USART_RXBUFFERSIZE)
+		if (i > DEBUGUART_RXBUFFERSIZE)
 		{
 			// Error
 			DebugUart_SendMessage("Error: Buffer full, clear it...\r\n");
@@ -250,14 +250,14 @@ static void DebugUart_ClearReceive(bool isFullClear, uint8_t stepLength)
 	if (isFullClear)
 	{
 		// Full Clear buffer
-		CircularBuffer_Clear((char *)USART_RxBuffer, USART_RXBUFFERSIZE,
+		CircularBuffer_Clear((char *)USART_RxBuffer, DEBUGUART_RXBUFFERSIZE,
 				USART_RxBufferReadCounter, USART_RxBufferWriteCounter);
 		USART_RxBufferReadCounter = USART_RxBufferWriteCounter;
 	}
 	else
 	{
 		// Not full clear from readCnt to writeCnt
-		CircularBuffer_Clear((char *)USART_RxBuffer, USART_RXBUFFERSIZE,
+		CircularBuffer_Clear((char *)USART_RxBuffer, DEBUGUART_RXBUFFERSIZE,
 				USART_RxBufferReadCounter,
 				USART_RxBufferReadCounter + stepLength);
 		USART_RxBufferReadCounter += stepLength;
@@ -398,7 +398,7 @@ static void Terminal_ProcessReceivedCharacter(void)
 	DebugUart_FindLastMessage();
 
 	// If WriteCnt not equal with ReadCnt, we have received message
-	char receiveBuffer[USART_RXBUFFERSIZE+1];
+	char receiveBuffer[DEBUGUART_RXBUFFERSIZE+1];
 	uint16_t receivedMessageLength = 0;
 
 	// TODO: Refactor variables names
@@ -407,7 +407,7 @@ static void Terminal_ProcessReceivedCharacter(void)
 		// Need copy to receiveBuffer
 		receivedMessageLength = CircularBuffer_GetCharacters(
 				(char *)USART_RxBuffer, receiveBuffer,
-				USART_RXBUFFERSIZE,
+				DEBUGUART_RXBUFFERSIZE,
 				USART_RxBufferWriteCounter, USART_RxBufferReadCounter,
 				true);
 

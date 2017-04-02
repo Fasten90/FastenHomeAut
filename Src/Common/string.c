@@ -1468,7 +1468,7 @@ uint8_t uprintf(const char *format, ...)
 {
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	// Working in at:
-	char TxBuffer[USART_TXBUFFERSIZE];
+	char TxBuffer[DEBUGUART_TXBUFFERSIZE];
 
 	va_list ap;									// argument pointer
 	va_start(ap, format); 						// ap on arg

@@ -354,7 +354,7 @@ static void DebugPrint(const char *format, ...)
 	if (ESP8266_DebugEnableFlag)
 	{
 		// Working in at:
-		char TxBuffer[USART_TXBUFFERSIZE];
+		char TxBuffer[DEBUGUART_TXBUFFERSIZE];
 
 		va_list ap;									// argument pointer
 		va_start(ap, format); 						// ap on arg

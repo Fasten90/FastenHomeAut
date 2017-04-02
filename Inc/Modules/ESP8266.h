@@ -39,6 +39,7 @@
 #endif
 
 #if ESP8266_DEBUG_MODE == 1
+// Variadic Macro
 #define ESP8266_DEBUG_PRINTF(...)					DebugUart_SendMessage("ESP8266: "); \
 													uprintf(__VA_ARGS__)
 #else

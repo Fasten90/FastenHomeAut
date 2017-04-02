@@ -15,7 +15,6 @@
 
 
 
-
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
@@ -28,10 +27,14 @@
  *----------------------------------------------------------------------------*/
 
 // Size of Transmission buffer
-#define USART_TXBUFFERSIZE				256UL
+#define DEBUGUART_TXBUFFERSIZE				256UL
 // Size of Reception buffer
-#define USART_RXBUFFERSIZE				256UL
-#define RXBUFFER_WAIT_LENGTH			1
+#define DEBUGUART_RXBUFFERSIZE				256UL
+#define DEBUGUART_RXBUFFER_WAIT_LENGTH			1
+
+
+// Variadic macro
+#define DebugUart_Printf(...)		   uprintf(__VA_ARGS__)
 
 
 
@@ -47,13 +50,15 @@
 
 extern UART_HandleTypeDef Debug_UartHandle;
 
-extern volatile char USART_RxBuffer[USART_RXBUFFERSIZE];
-extern volatile char USART_TxBuffer[USART_TXBUFFERSIZE];
+extern volatile char USART_RxBuffer[DEBUGUART_RXBUFFERSIZE];
+extern volatile char USART_TxBuffer[DEBUGUART_TXBUFFERSIZE];
 
 extern volatile uint8_t USART_RxBufferWriteCounter;
 extern volatile uint8_t USART_RxBufferReadCounter;
 
 extern bool USART_SendEnable_flag;
+
+
 
 /*------------------------------------------------------------------------------
  *  Global function declarations

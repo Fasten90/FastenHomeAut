@@ -26,8 +26,8 @@
 
 UART_HandleTypeDef Debug_UartHandle;
 
-volatile char USART_RxBuffer[USART_RXBUFFERSIZE] = { 0 };
-volatile char USART_TxBuffer[USART_TXBUFFERSIZE] = { 0 };
+volatile char USART_RxBuffer[DEBUGUART_RXBUFFERSIZE] = { 0 };
+volatile char USART_TxBuffer[DEBUGUART_TXBUFFERSIZE] = { 0 };
 
 volatile uint8_t USART_RxBufferWriteCounter = 0;
 volatile uint8_t USART_RxBufferReadCounter = 0;
@@ -35,7 +35,7 @@ volatile uint8_t USART_RxBufferReadCounter = 0;
 bool USART_SendEnable_flag = false;
 
 
-#if USART_RXBUFFERSIZE != 256
+#if DEBUGUART_RXBUFFERSIZE != 256
 #warning "RxBufferCounter need to check!"
 #endif
 
@@ -81,10 +81,10 @@ uint8_t DebugUart_SendMessage(const char *aTxBuffer)
 	{
 		return 0;
 	}
-#if USART_TXBUFFERSIZE < 256
-	if (length > USART_TXBUFFERSIZE)
+#if DEBUGUART_TXBUFFERSIZE < 256
+	if (length > DEBUGUART_TXBUFFERSIZE)
 	{
-		length = USART_TXBUFFERSIZE - 1;
+		length = DEBUGUART_TXBUFFERSIZE - 1;
 	}
 #endif
 
@@ -210,9 +210,9 @@ void DebugUart_StartReceive(void)
 
 	// USART - Receive Message
 #ifdef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
-	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[USART_RxBufferWriteCounter], RXBUFFER_WAIT_LENGTH);
+	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[USART_RxBufferWriteCounter], DEBUGUART_RXBUFFER_WAIT_LENGTH);
 #else
-	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)USART_RxBuffer, USART_RXBUFFERSIZE);
+	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)USART_RxBuffer, DEBUGUART_RXBUFFERSIZE);
 #endif
 
 	#ifdef CONFIG_USE_FREERTOS
