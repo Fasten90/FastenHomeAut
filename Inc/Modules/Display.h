@@ -56,5 +56,8 @@ void Display_Clear(void);
 void Display_Activate(void);
 
 
+void Display_TestLoading(uint8_t percent);
+
+
 
 #endif /* MODULES_DISPLAY_H_ */

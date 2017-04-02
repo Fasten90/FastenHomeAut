@@ -289,9 +289,19 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 {
 	(void)source;
 
+	/*
 	if (!Display_CarAnimationDisable_flag)
 	{
 		Display_ChangeCarImage();
+	}
+	*/
+	static uint8_t cnt = 0;
+
+	Display_TestLoading(cnt++);
+
+	if (cnt >= 100)
+	{
+		cnt = 0;
 	}
 
 	return TASK_RESULT_OK;

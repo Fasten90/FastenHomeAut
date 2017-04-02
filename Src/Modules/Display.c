@@ -48,6 +48,8 @@ bool Display_CarAnimationDisable_flag = false;
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
+static void Display_FillRectangle(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color);
+
 
 
 /*------------------------------------------------------------------------------
@@ -207,6 +209,74 @@ void Display_Clear(void)
 void Display_Activate(void)
 {
 	SSD1306_display();
+}
+
+
+
+/**
+ * \brief	Fill rectangle with color
+ */
+static void Display_FillRectangle(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color)
+{
+//#define BLACK 0
+//#define WHITE 1
+	uint8_t i;
+	uint8_t j;
+
+	//
+	for (i=x; i<=x+width; i++)
+	{
+		for (j=y; j<=y+height; j++)
+		{
+			SSD1306_drawPixel(i, j, color);
+		}
+	}
+
+}
+
+
+
+void Display_LoadingInit(uint8_t x, uint8_t y, uint8_t width, uint8_t height)
+{
+	// Clear rectangle
+	Display_FillRectangle(x, y, width, height, BLACK);
+
+	// Init empty rectangle
+	SSD1306_drawFastVLine(x, y, height, WHITE);
+	SSD1306_drawFastVLine(x+width, y, height, WHITE);
+	SSD1306_drawFastHLine(x, y, width, WHITE);
+	SSD1306_drawFastHLine(x, y+height, width, WHITE);
+
+	// 0 percent
+
+}
+
+
+
+void Display_LoadingPercent(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t percent)
+{
+	// Fill rectangle
+	uint8_t percent_real = (float)width*percent/100;
+	Display_FillRectangle(x+2, y+2, percent_real, height-4, WHITE);
+}
+
+
+
+void Display_TestLoading(uint8_t percent)
+{
+	static uint8_t x = 20;
+	static uint8_t y = 20;
+	static uint8_t width = 80;
+	static uint8_t height = 40;
+
+	if (percent == 0)
+	{
+		Display_Clear();
+		Display_LoadingInit(x,  y,  width, height);
+	}
+	Display_LoadingPercent(x, y, width, height, percent);
+
+	Display_Activate();
 }
 
 
