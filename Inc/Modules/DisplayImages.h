@@ -39,11 +39,11 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-extern uint8_t buffer[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8];
+extern const uint8_t Display_CarImage[120 * 48 / 8];
 
-extern const uint8_t CarWheel1[16 * 16 / 8];
-extern const uint8_t CarWheel2[16 * 16 / 8];
-
+extern const uint8_t Display_CarWheel1[16 * 16 / 8];
+extern const uint8_t Display_CarWheel2[16 * 16 / 8];
+extern const uint8_t Display_CarWheel3[16 * 16 / 8];
 
 
 

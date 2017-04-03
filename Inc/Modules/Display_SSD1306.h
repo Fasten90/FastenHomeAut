@@ -173,7 +173,7 @@ void SSD1306_stopscroll(void);
 void SSD1306_dim(bool dim);
 
 void SSD1306_drawPixel(int16_t x, int16_t y, uint16_t color);
-void SSD1306_drawImage(uint8_t sizex, uint8_t sizey, uint8_t setx, uint8_t sety, uint8_t *img);
+void SSD1306_drawImage(uint8_t setx, uint8_t sety, uint8_t sizex, uint8_t sizey, uint8_t *img);
 
 void SSD1306_drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
 void SSD1306_drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);

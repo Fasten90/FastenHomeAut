@@ -50,6 +50,9 @@
 static SPI_HandleTypeDef SpiHandle;
 static bool Display_TransferInProgress = false;
 
+///< Actual image (screen buffer)
+static uint8_t buffer[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] = { 0 };
+
 
 
 /*------------------------------------------------------------------------------
@@ -312,15 +315,17 @@ void SSD1306_drawPixel(int16_t x, int16_t y, uint16_t color)
 }
 
 
-void SSD1306_drawImage(uint8_t sizex, uint8_t sizey, uint8_t setx, uint8_t sety, uint8_t *img)
+void SSD1306_drawImage(uint8_t setx, uint8_t sety, uint8_t sizex, uint8_t sizey, uint8_t *img)
 {
 	// TODO: Only 8n size can be used
 	uint8_t i;
 	uint8_t j;
 
-	for (i = 0; i < sizey; i++)
+	// Step on a row (left to right)
+	for (i = 0; i < sizex; i++)
 	{
-		for (j = 0; j < sizex/8; j++)
+		// Step on a column (a 1x8 column is a byte)
+		for (j = 0; j < sizey/8; j++)
 		{
 			// Copy an byte
 			buffer[sety/8*SSD1306_LCDWIDTH + setx + i + j*SSD1306_LCDWIDTH] =

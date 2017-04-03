@@ -39,7 +39,7 @@
  *  Local variables
  *----------------------------------------------------------------------------*/
 
-static bool CarActualState = false;
+static uint8_t CarActualStateCnt = 0;
 bool Display_CarAnimationDisable_flag = false;
 
 
@@ -144,29 +144,9 @@ void Display_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line)
 
 
 
-void Display_ChangeCarImage(void)
-{
-	uint8_t *img = NULL;
-
-	if (CarActualState)
-	{
-		CarActualState = false;
-		img = (uint8_t *)CarWheel1;
-	}
-	else
-	{
-		CarActualState = true;
-		img = (uint8_t *)CarWheel2;
-	}
-
-	SSD1306_drawImage(16, 16, 24, 40, img);
-	SSD1306_drawImage(16, 16, 96, 40, img);
-
-	Display_Activate();
-}
-
-
-
+/**
+ * \brief	Test 8x5 fonts
+ */
 void Display_Test8x5Font(void)
 {
 	Display_Clear();
@@ -184,6 +164,9 @@ void Display_Test8x5Font(void)
 
 
 
+/**
+ * \brief	Test 12x8 fonts
+ */
 void Display_Test12x8Font(void)
 {
 	Display_Clear();
@@ -199,6 +182,9 @@ void Display_Test12x8Font(void)
 
 
 
+/**
+ * \brief	Clear display - make empty screen
+ */
 void Display_Clear(void)
 {
 	SSD1306_clearDisplay();
@@ -206,6 +192,9 @@ void Display_Clear(void)
 
 
 
+/**
+ * \brief	Refresh Display
+ */
 void Display_Activate(void)
 {
 	SSD1306_display();
@@ -218,8 +207,6 @@ void Display_Activate(void)
  */
 static void Display_FillRectangle(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color)
 {
-//#define BLACK 0
-//#define WHITE 1
 	uint8_t i;
 	uint8_t j;
 
@@ -234,6 +221,10 @@ static void Display_FillRectangle(uint8_t x, uint8_t y, uint8_t width, uint8_t h
 
 }
 
+
+/*------------------------------------------------------------------------------
+ *  							Loading screen
+ *----------------------------------------------------------------------------*/
 
 
 void Display_LoadingInit(uint8_t x, uint8_t y, uint8_t width, uint8_t height)
@@ -264,17 +255,69 @@ void Display_LoadingPercent(uint8_t x, uint8_t y, uint8_t width, uint8_t height,
 
 void Display_TestLoading(uint8_t percent)
 {
-	static uint8_t x = 20;
-	static uint8_t y = 20;
+	static uint8_t x = 8;
+	static uint8_t y = 56;
 	static uint8_t width = 80;
-	static uint8_t height = 40;
+	static uint8_t height = 8;
 
 	if (percent == 0)
 	{
-		Display_Clear();
+		//Display_Clear();
 		Display_LoadingInit(x,  y,  width, height);
 	}
 	Display_LoadingPercent(x, y, width, height, percent);
+
+	Display_Activate();
+}
+
+
+
+/*------------------------------------------------------------------------------
+ *  							Car images
+ *----------------------------------------------------------------------------*/
+
+
+/**
+ * \brief	Load "Car" image to screen
+ */
+void Display_LoadCarImage(void)
+{
+	Display_Clear();
+
+	SSD1306_drawImage(8, 8, 120, 48, (uint8_t *)Display_CarImage);
+
+	Display_Activate();
+}
+
+
+
+/**
+ * \brief	Change "Car's wheels"
+ */
+void Display_ChangeCarImage(void)
+{
+	uint8_t *img = NULL;
+
+	if ((CarActualStateCnt % 4) == 0)
+	{
+		// 0.
+		img = (uint8_t *)Display_CarWheel1;
+	}
+	else if ((CarActualStateCnt % 4) == 2)
+	{
+		// 2.
+		img = (uint8_t *)Display_CarWheel3;
+	}
+	else
+	{
+		// 1., 3.
+		img = (uint8_t *)Display_CarWheel2;
+	}
+
+	SSD1306_drawImage(24, 40, 16, 16, img);
+	SSD1306_drawImage(96, 40, 16, 16, img);
+
+	CarActualStateCnt++;
 
 	Display_Activate();
 }

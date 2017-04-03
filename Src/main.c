@@ -134,7 +134,7 @@ int main(void)
 	// Display
 	Display_SSD1306_Init();
 	// Display start screen
-	SSD1306_display();
+	Display_LoadCarImage();
 #endif
 
 
