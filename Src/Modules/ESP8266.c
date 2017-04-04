@@ -28,9 +28,11 @@
  *----------------------------------------------------------------------------*/
 
 
+
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
+
 
 
 /*------------------------------------------------------------------------------
@@ -56,6 +58,12 @@ ESP8266_WifiConnectionStatusType	ESP8266_ConnectionStatus
 
 ESP8266_TcpConnectionStatusType	ESP8266_TcpConnectionStatus
 			= ESP8266_TcpConnectionStatus_Unknown;
+
+///< Connection Wifi network name
+static const char ESP8266_WifiNetworkName[] = CONFIG_ESP8266_WIFI_NETWORK_NAME;
+
+///< Connection Wifi network password
+static const char ESP8266_WifiNetworkPassword[] = CONFIG_ESP8266_WIFI_NETWORK_PASSWORD;
 
 ///< My IP address
 Network_IP_t ESP8266_MyWifiIpAddress = { 0 };
@@ -1971,11 +1979,16 @@ void ESP8266_StatusMachine(void)
 			 */
 			ESP8266_StartReceive();
 			// TODO: Make variable connecting?
-			ESP8266_SendString("AT+CWJAP=\""
+			char str[40];
+			// AT+CWJAP="networkname","password"
+			usprintf(str, "AT+CWJAP=\"%s\",\"%s\"\r\n",
+					ESP8266_WifiNetworkName, ESP8266_WifiNetworkPassword);
+			ESP8266_SendString(str);
+			/*ESP8266_SendString("AT+CWJAP=\""
 					CONFIG_ESP8266_WIFI_NETWORK_NAME
 					"\",\""
 					CONFIG_ESP8266_WIFI_NETWORK_PASSWORD
-					"\"\r\n");
+					"\"\r\n");*/
 			ESP8266StatusMachine++;
 			ESP8266_DEBUG_PRINT("Start connect to wifi network...");
 			break;

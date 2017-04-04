@@ -144,12 +144,12 @@ static void CommonPWM_HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 
 	// PWM1
 	// Configure GPIO pin
-	GPIO_InitStruct.Pin = COMMONPWM_PIN1_PIN;
+	GPIO_InitStruct.Pin = COMMONPWM_PIN1_GPIO_PIN;
 	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
 	GPIO_InitStruct.Alternate = COMMONPWM_TIMx_GPIO_AF;
-	HAL_GPIO_Init(COMMONPWM_PIN1_PORT, &GPIO_InitStruct);
+	HAL_GPIO_Init(COMMONPWM_PIN1_GPIO_PORT, &GPIO_InitStruct);
 
 }
 
