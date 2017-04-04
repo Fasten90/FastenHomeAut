@@ -95,7 +95,7 @@ void USART_Init(UART_HandleTypeDef *UartHandle)
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 		if (UartHandle == &Debug_UartHandle)
 		{
-			USART_SendEnable_flag = true;
+			DebugUart_SendEnable_flag = true;
 			__HAL_UART_CLEAR_FLAG(&Debug_UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
 
 		}
@@ -219,24 +219,22 @@ void ESP8266_USARTx_IRQHandler(void)
  */
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 {
-	// For warning
+#if !defined(CONFIG_MODULE_DEBUGUSART_ENABLE)
+	// Suppress warning
 	(void)UartHandle;
-
-	// TODO: Check, which UART...
-
-	// Set transmission flag: trasfer complete	
-	#ifdef CONFIG_USE_FREERTOS
-	xSemaphoreGiveFromISR(DEBUG_USART_Tx_Semaphore,(BaseType_t *)NULL);
-	#endif
+#endif
 	
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	// Successful sending
 	if (UartHandle == &Debug_UartHandle)
 	{
-		USART_SendEnable_flag = true;
+		// Set transmission flag: trasfer complete
+		#ifdef CONFIG_USE_FREERTOS
+		xSemaphoreGiveFromISR(DEBUG_USART_Tx_Semaphore,(BaseType_t *)NULL);
+		#endif
+		DebugUart_SendEnable_flag = true;
 	}
 #endif
-
 }
 
 
@@ -260,7 +258,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 	{
 #ifdef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
 		// Receive to next index
-		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[++USART_RxBufferWriteCounter], DEBUGUART_RXBUFFER_WAIT_LENGTH);
+		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&DebugUart_RxBuffer[++USART_RxBufferWriteCounter], DEBUGUART_RXBUFFER_WAIT_LENGTH);
 
 		#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 		// Set flag for TaskHandler
@@ -276,7 +274,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 		xSemaphoreGiveFromISR(DEBUG_USART_Rx_Semaphore, 0);
 		#endif
 #else
-		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)USART_RxBuffer, DEBUGUART_RXBUFFERSIZE);
+		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)DebugUart_RxBuffer, DEBUGUART_RXBUFFERSIZE);
 #endif
 	}
 	#endif	// #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
@@ -341,9 +339,9 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 		//USART_Init(&Debug_UartHandle);
 
 #ifdef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
-		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[USART_RxBufferWriteCounter], DEBUGUART_RXBUFFER_WAIT_LENGTH);
+		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&DebugUart_RxBuffer[USART_RxBufferWriteCounter], DEBUGUART_RXBUFFER_WAIT_LENGTH);
 #else
-		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)USART_RxBuffer, DEBUGUART_RXBUFFERSIZE);
+		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)DebugUart_RxBuffer, DEBUGUART_RXBUFFERSIZE);
 #endif
 		HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t *)"$", 1);
 		

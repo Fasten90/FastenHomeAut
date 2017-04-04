@@ -15,6 +15,8 @@
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
+
+#include "options.h"
 #include "include.h"
 #include "CommandList.h"
 #include "CommandHandler.h"
@@ -27,9 +29,6 @@
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
-
-/// USART Read cnt
-volatile uint8_t Terminal_RxBufferReadCnt = 0;
 
 #if ( DEBUGUART_RXBUFFERSIZE != 256 )
 #warning "Ring buffer counter error (USART_RxBufferReadCnt)"
@@ -223,9 +222,9 @@ static void DebugUart_FindLastMessage(void)
 {
 	// TODO: Not a good solve...
 	uint16_t i = 0;
-	while (USART_RxBuffer[USART_RxBufferWriteCounter])
+	while (DebugUart_RxBuffer[DebugUart_RxBufferWriteCnt])
 	{
-		++USART_RxBufferWriteCounter;
+		++DebugUart_RxBufferWriteCnt;
 		++i;
 
 		if (i > DEBUGUART_RXBUFFERSIZE)
@@ -250,17 +249,17 @@ static void DebugUart_ClearReceive(bool isFullClear, uint8_t stepLength)
 	if (isFullClear)
 	{
 		// Full Clear buffer
-		CircularBuffer_Clear((char *)USART_RxBuffer, DEBUGUART_RXBUFFERSIZE,
-				USART_RxBufferReadCounter, USART_RxBufferWriteCounter);
-		USART_RxBufferReadCounter = USART_RxBufferWriteCounter;
+		CircularBuffer_Clear((char *)DebugUart_RxBuffer, DEBUGUART_RXBUFFERSIZE,
+				DebugUart_RxBufferReadCnt, DebugUart_RxBufferWriteCnt);
+		DebugUart_RxBufferReadCnt = DebugUart_RxBufferWriteCnt;
 	}
 	else
 	{
 		// Not full clear from readCnt to writeCnt
-		CircularBuffer_Clear((char *)USART_RxBuffer, DEBUGUART_RXBUFFERSIZE,
-				USART_RxBufferReadCounter,
-				USART_RxBufferReadCounter + stepLength);
-		USART_RxBufferReadCounter += stepLength;
+		CircularBuffer_Clear((char *)DebugUart_RxBuffer, DEBUGUART_RXBUFFERSIZE,
+				DebugUart_RxBufferReadCnt,
+				DebugUart_RxBufferReadCnt + stepLength);
+		DebugUart_RxBufferReadCnt += stepLength;
 	}
 }
 
@@ -391,46 +390,43 @@ void CommandHandler_CheckCommand(void)
  */
 static void Terminal_ProcessReceivedCharacter(void)
 {
-#ifndef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
-	// TODO: Beautification
-	volatile uint8_t Terminal_RxBufferWriteCnt = 0;
 
+#ifndef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
+
+	// Find new received characters
 	DebugUart_FindLastMessage();
 
 	// If WriteCnt not equal with ReadCnt, we have received message
 	char receiveBuffer[DEBUGUART_RXBUFFERSIZE+1];
 	uint16_t receivedMessageLength = 0;
+	uint16_t i;
 
-	// TODO: Refactor variables names
-	if (USART_RxBufferWriteCounter != USART_RxBufferReadCounter)
+	// Received new character?
+	if (DebugUart_RxBufferWriteCnt != DebugUart_RxBufferReadCnt)
 	{
 		// Need copy to receiveBuffer
 		receivedMessageLength = CircularBuffer_GetCharacters(
-				(char *)USART_RxBuffer, receiveBuffer,
+				(char *)DebugUart_RxBuffer, receiveBuffer,
 				DEBUGUART_RXBUFFERSIZE,
-				USART_RxBufferWriteCounter, USART_RxBufferReadCounter,
+				DebugUart_RxBufferWriteCnt, DebugUart_RxBufferReadCnt,
 				true);
 
 		DebugUart_ClearReceive(false, receivedMessageLength);
-
-		// TODO: Do better...
-		Terminal_RxBufferWriteCnt = receivedMessageLength;
-		Terminal_RxBufferReadCnt = 0;
 	}
 	else
 	{
+		// Not received new characters
 		return;
 	}
 #endif
 
 
-	// While Read cnt not equal than Write cnt
-	while (Terminal_RxBufferReadCnt < Terminal_RxBufferWriteCnt)
+	// Process characters
+	for (i = 0; i < receivedMessageLength; i++)
 	{
-		volatile char USART_ReceivedChar = '\0';
+		volatile char receivedChar = '\0';
 
-		USART_ReceivedChar = receiveBuffer[Terminal_RxBufferReadCnt];
-		Terminal_RxBufferReadCnt++;
+		receivedChar = receiveBuffer[i];
 
 #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 		// ESCAPE SEQUENCE
@@ -441,9 +437,9 @@ static void Terminal_ProcessReceivedCharacter(void)
 			// TODO: Megcsinálni elegánsabban
 			if (Terminal_CommandEscape_cnt == 1)
 			{
-				if (USART_ReceivedChar == '[')
+				if (receivedChar == '[')
 				{
-					Terminal_CommandActualEscape[Terminal_CommandEscape_cnt++] = USART_ReceivedChar;
+					Terminal_CommandActualEscape[Terminal_CommandEscape_cnt++] = receivedChar;
 				}
 				else
 				{
@@ -454,7 +450,7 @@ static void Terminal_ProcessReceivedCharacter(void)
 			}
 			else if (Terminal_CommandEscape_cnt == 2)
 			{
-				Terminal_CommandActualEscape[Terminal_CommandEscape_cnt++] = USART_ReceivedChar;
+				Terminal_CommandActualEscape[Terminal_CommandEscape_cnt++] = receivedChar;
 
 				// TODO: only work with escape sequence if 3 chars (ESC[A)
 				if (Terminal_CommandActualEscape[2] != '3')
@@ -473,7 +469,7 @@ static void Terminal_ProcessReceivedCharacter(void)
 			}
 			else if (Terminal_CommandEscape_cnt == 3)
 			{
-				Terminal_CommandActualEscape[Terminal_CommandEscape_cnt++] = USART_ReceivedChar;
+				Terminal_CommandActualEscape[Terminal_CommandEscape_cnt++] = receivedChar;
 
 				if (Terminal_CommandActualEscape[3] == '~')
 				{
@@ -490,18 +486,18 @@ static void Terminal_ProcessReceivedCharacter(void)
 		{
 			// No escape sequence
 			// An character received
-			if (USART_ReceivedChar  == '\x1B')	// 'ESC'
+			if (receivedChar  == '\x1B')	// 'ESC'
 			{
 				// receive an Escape sequence
 				Terminal_CommandEscapeSequenceInProgress = true;
-				Terminal_CommandActualEscape[0] = USART_ReceivedChar;
+				Terminal_CommandActualEscape[0] = receivedChar;
 				Terminal_CommandEscape_cnt = 1;
 			}
 			else
 			{
 #endif
-				if ((USART_ReceivedChar  == '\r') || (USART_ReceivedChar == '\n') ||
-					(USART_ReceivedChar == '\0'))
+				if ((receivedChar  == '\r') || (receivedChar == '\n') ||
+					(receivedChar == '\0'))
 				{
 					// Received Enter
 					Terminal_CommandReadable = true;
@@ -509,7 +505,7 @@ static void Terminal_ProcessReceivedCharacter(void)
 					Terminal_CommandReceivedEvent = true;
 					return;
 				}
-				else if (USART_ReceivedChar == TERMINAL_KEY_BACKSPACE)
+				else if (receivedChar == TERMINAL_KEY_BACKSPACE)
 				{
 					// Received backspace
 					Terminal_CommandReceivedBackspace = true;
@@ -517,7 +513,7 @@ static void Terminal_ProcessReceivedCharacter(void)
 					return;
 				}
 #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
-				else if (USART_ReceivedChar == TERMINAL_KEY_DELETE)
+				else if (receivedChar == TERMINAL_KEY_DELETE)
 				{
 					// Delete button
 					// TODO: Not work at ZOC, but work at other terminal?
@@ -525,7 +521,7 @@ static void Terminal_ProcessReceivedCharacter(void)
 					Terminal_CommandReceivedEvent = true;
 					return;
 				}
-				else if (USART_ReceivedChar == '\t')
+				else if (receivedChar == '\t')
 				{
 					// TAB
 					Terminal_CommandReceivedTabulator = true;
@@ -542,14 +538,14 @@ static void Terminal_ProcessReceivedCharacter(void)
 						if (Terminal_CommandCursorPosition == Terminal_CommandActualLength)
 						{
 							// CursorPosition = CommandLength		(end character)
-							Terminal_CommandActual[Terminal_CommandActualLength] = USART_ReceivedChar;
+							Terminal_CommandActual[Terminal_CommandActualLength] = receivedChar;
 							Terminal_CommandActualLength++;
 							Terminal_CommandCursorPosition++;
 							if (Terminal_CommandSendBackCharEnable)
 							{
 								// Send received character
 								// TODO: We need to response on input channel
-								DebugUart_SendChar(USART_ReceivedChar);
+								DebugUart_SendChar(receivedChar);
 							}
 						}
 						else
@@ -562,7 +558,7 @@ static void Terminal_ProcessReceivedCharacter(void)
 							{
 								Terminal_CommandActual[i] = Terminal_CommandActual[i-1];
 							}
-							Terminal_CommandActual [Terminal_CommandCursorPosition] = USART_ReceivedChar;
+							Terminal_CommandActual [Terminal_CommandCursorPosition] = receivedChar;
 							Terminal_CommandActual [Terminal_CommandActualLength] = '\0';
 							Terminal_CommandCursorPosition++;
 							Terminal_CommandReceivedNotLastChar = true;
@@ -1085,8 +1081,8 @@ static void Terminal_GetPassword(void)
 
 	// Wait first character
 	CommandHandler_SendLine("\r\nType a character:");
-	while (USART_RxBufferWriteCounter < 1);
-	Terminal_RxBufferReadCnt = 1;
+	while (DebugUart_RxBufferWriteCnt < 1);
+	cnt = 1;
 
 	while (!passwordIsOk)
 	{
@@ -1099,12 +1095,12 @@ static void Terminal_GetPassword(void)
 		{
 
 			// While Read cnt not equal than Write cnt
-			if (Terminal_RxBufferReadCnt != USART_RxBufferWriteCounter)
+			if (cnt != DebugUart_RxBufferWriteCnt)
 			{
 				volatile char USART_ReceivedChar = '\0';
 
-				USART_ReceivedChar = USART_RxBuffer[Terminal_RxBufferReadCnt];
-				Terminal_RxBufferReadCnt++;
+				USART_ReceivedChar = DebugUart_RxBuffer[cnt];
+				cnt++;
 				CommandHandler_SendChar('*');
 
 				if (USART_ReceivedChar == '\r' || USART_ReceivedChar == '\n')

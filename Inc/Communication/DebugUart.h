@@ -50,13 +50,13 @@
 
 extern UART_HandleTypeDef Debug_UartHandle;
 
-extern volatile char USART_RxBuffer[DEBUGUART_RXBUFFERSIZE];
-extern volatile char USART_TxBuffer[DEBUGUART_TXBUFFERSIZE];
+extern volatile char DebugUart_RxBuffer[DEBUGUART_RXBUFFERSIZE];
+extern volatile char DebugUart_TxBuffer[DEBUGUART_TXBUFFERSIZE];
 
-extern volatile uint8_t USART_RxBufferWriteCounter;
-extern volatile uint8_t USART_RxBufferReadCounter;
+extern volatile uint8_t DebugUart_RxBufferWriteCnt;
+extern volatile uint8_t DebugUart_RxBufferReadCnt;
 
-extern bool USART_SendEnable_flag;
+extern bool DebugUart_SendEnable_flag;
 
 
 

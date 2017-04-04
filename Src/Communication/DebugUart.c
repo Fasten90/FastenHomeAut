@@ -12,12 +12,12 @@
 
 
 
-
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
 #include "include.h"
 #include "DebugUart.h"
+
 
 
 /*------------------------------------------------------------------------------
@@ -26,13 +26,13 @@
 
 UART_HandleTypeDef Debug_UartHandle;
 
-volatile char USART_RxBuffer[DEBUGUART_RXBUFFERSIZE] = { 0 };
-volatile char USART_TxBuffer[DEBUGUART_TXBUFFERSIZE] = { 0 };
+volatile char DebugUart_RxBuffer[DEBUGUART_RXBUFFERSIZE] = { 0 };
+volatile char DebugUart_TxBuffer[DEBUGUART_TXBUFFERSIZE] = { 0 };
 
-volatile uint8_t USART_RxBufferWriteCounter = 0;
-volatile uint8_t USART_RxBufferReadCounter = 0;
+volatile uint8_t DebugUart_RxBufferWriteCnt = 0;
+volatile uint8_t DebugUart_RxBufferReadCnt = 0;
 
-bool USART_SendEnable_flag = false;
+bool DebugUart_SendEnable_flag = false;
 
 
 #if DEBUGUART_RXBUFFERSIZE != 256
@@ -92,19 +92,19 @@ uint8_t DebugUart_SendMessage(const char *aTxBuffer)
 	{
 		// Take semaphore, can sending
 
-		USART_SendEnable_flag = false;
+		DebugUart_SendEnable_flag = false;
 
-		StrCpy((char *)USART_TxBuffer, aTxBuffer);
+		StrCpy((char *)DebugUart_TxBuffer, aTxBuffer);
 
 		// ComIT
-		if (HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t*)USART_TxBuffer, length)!= HAL_OK)
+		if (HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t*)DebugUart_TxBuffer, length)!= HAL_OK)
 		{
 			// NOTE: !!IMPORTANT!! Not sent message
 			//Error_Handler();
 			#ifdef CONFIG_USE_FREERTOS
 			xSemaphoreGive(DEBUG_USART_Tx_Semaphore);
 			#endif
-			USART_SendEnable_flag = true;	// Failed to send, now we can send message
+			DebugUart_SendEnable_flag = true;	// Failed to send, now we can send message
 
 			return 0;
 		}
@@ -166,18 +166,18 @@ bool DebugUart_SendChar(char c)
 	if (DebugUart_WaitForSend(100))
 	{
 		// Successful take USART semaphore
-		USART_SendEnable_flag = false;
+		DebugUart_SendEnable_flag = false;
 
-		StrCpy((char *)USART_TxBuffer, buf);
+		StrCpy((char *)DebugUart_TxBuffer, buf);
 
-		if (HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t *)USART_TxBuffer, 1)!= HAL_OK)
+		if (HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t *)DebugUart_TxBuffer, 1)!= HAL_OK)
 		{
 			// NOTE: !! IMPORTANT!! Not sent message
 			//Error_Handler();
 			#ifdef CONFIG_USE_FREERTOS
 			xSemaphoreGive(DEBUG_USART_Tx_Semaphore);
 			#endif
-			USART_SendEnable_flag = true;
+			DebugUart_SendEnable_flag = true;
 			return false;
 		}
 		else
@@ -210,9 +210,9 @@ void DebugUart_StartReceive(void)
 
 	// USART - Receive Message
 #ifdef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
-	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&USART_RxBuffer[USART_RxBufferWriteCounter], DEBUGUART_RXBUFFER_WAIT_LENGTH);
+	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&DebugUart_RxBuffer[DebugUart_RxBufferWriteCnt], DEBUGUART_RXBUFFER_WAIT_LENGTH);
 #else
-	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)USART_RxBuffer, DEBUGUART_RXBUFFERSIZE);
+	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)DebugUart_RxBuffer, DEBUGUART_RXBUFFERSIZE);
 #endif
 
 	#ifdef CONFIG_USE_FREERTOS
@@ -242,13 +242,13 @@ static bool DebugUart_WaitForSend(uint16_t timeoutMilliSecond)
 	}
 #else
 	// Wait for flag or timeout
-	while ((USART_SendEnable_flag != true) || (timeoutMilliSecond == 0))
+	while ((DebugUart_SendEnable_flag != true) || (timeoutMilliSecond == 0))
 	{
 		timeoutMilliSecond--;
 		DelayMs(1);
 	}
 
-	USART_SendEnable_flag = true;
+	DebugUart_SendEnable_flag = true;
 
 	return true;
 #endif
