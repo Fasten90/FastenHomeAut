@@ -255,9 +255,9 @@ void Display_LoadingPercent(uint8_t x, uint8_t y, uint8_t width, uint8_t height,
 
 void Display_TestLoading(uint8_t percent)
 {
-	static uint8_t x = 8;
+	static uint8_t x = 16;
 	static uint8_t y = 56;
-	static uint8_t width = 80;
+	static uint8_t width = 96;
 	static uint8_t height = 8;
 
 	if (percent == 0)
@@ -298,20 +298,20 @@ void Display_ChangeCarImage(void)
 {
 	uint8_t *img = NULL;
 
-	if ((CarActualStateCnt % 4) == 0)
+	if ((CarActualStateCnt % 3) == 0)
 	{
-		// 0.
-		img = (uint8_t *)Display_CarWheel1;
+		// 1.
+		img = (uint8_t *)Image_CarWheel_1_16x16;
 	}
-	else if ((CarActualStateCnt % 4) == 2)
+	else if ((CarActualStateCnt % 3) == 1)
 	{
 		// 2.
-		img = (uint8_t *)Display_CarWheel3;
+		img = (uint8_t *)Image_CarWheel_2_16x16;
 	}
 	else
 	{
-		// 1., 3.
-		img = (uint8_t *)Display_CarWheel2;
+		// 3.
+		img = (uint8_t *)Image_CarWheel_3_16x16;
 	}
 
 	SSD1306_drawImage(24, 40, 16, 16, img);

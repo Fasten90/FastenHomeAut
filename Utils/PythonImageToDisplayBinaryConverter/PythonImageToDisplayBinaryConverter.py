@@ -7,13 +7,19 @@ for 0.96'OLED
 
 
 # Parameters
-imagename = 'car_v2.bmp'
-codefilename = 'ImageCar'
-imagerealname = 'Car'
+imagename = 'Car_Wheel_3_16x16.bmp'
+codefilename = 'Image_CarWheel_3_16x16'
 
-img_width = 128
-img_height = 64
+img_width = 16
+img_height = 16
 
+"""
+imagename = 'car_v3_cutted_120x48.bmp'
+codefilename = 'Image_Car_120x48'
+
+img_width = 120
+img_height = 48
+"""
 
 print("Image file name: " + imagename)
 print("Code file name: " + codefilename)
@@ -127,7 +133,7 @@ for bitmap_line_index in range(0, sizey):
 # Print header of code file
 codefile.write("#include \"" + codefilename + ".h\"\n")
 codefile.write("\n\n\n")
-codefile.write("/* " + imagerealname + " */\n")
+codefile.write("/* " + codefilename + " */\n")
 
 
 
@@ -148,7 +154,8 @@ codefile.write("*/\n")
 
 # Print image to binary code
 
-codefile.write("const uint8_t image[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] = {\n")
+# "const uint8_t image[16 * 16 / 8] =
+codefile.write("const uint8_t " + codefilename + "[" + str(img_width) + " * " + str(img_height) + " / 8] = {\n")
 
 for row in range(0, int(img_height/8)):
 	for column in range(0, img_width):

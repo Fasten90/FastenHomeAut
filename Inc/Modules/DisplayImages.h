@@ -41,9 +41,9 @@
 
 extern const uint8_t Display_CarImage[120 * 48 / 8];
 
-extern const uint8_t Display_CarWheel1[16 * 16 / 8];
-extern const uint8_t Display_CarWheel2[16 * 16 / 8];
-extern const uint8_t Display_CarWheel3[16 * 16 / 8];
+extern const uint8_t Image_CarWheel_1_16x16[16 * 16 / 8];
+extern const uint8_t Image_CarWheel_2_16x16[16 * 16 / 8];
+extern const uint8_t Image_CarWheel_3_16x16[16 * 16 / 8];
 
 
 
