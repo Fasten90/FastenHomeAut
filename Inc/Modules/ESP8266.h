@@ -52,7 +52,7 @@
 												val \
 												)
 #else
-#define ESP8266_LOG_EVENT()
+#define ESP8266_LOG_EVENT(val)
 #endif
 
 #define	EVENT_LINK								1
