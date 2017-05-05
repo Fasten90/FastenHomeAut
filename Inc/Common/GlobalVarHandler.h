@@ -132,6 +132,7 @@ void GlobalVarHandler_ProcessCommand(
 
 void GlobalVarHandler_ListAllVariableParameters(void);
 void GlobalVarHandler_PrintAllVariableValues(void);
+void GlobalVarHandler_UnitTest(void);
 
 
 

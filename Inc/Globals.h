@@ -21,6 +21,7 @@
 
 extern const char Global_BoardName[];
 extern const char Global_Version[];
+extern const char Global_BoardMCU[];
 
 
 

@@ -4,43 +4,48 @@
  *  	Created on: 	2013.11.19.
  *      Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		University:		BME (BUTE)
- *		Project: 		RadioAlarm - Radio Alarm System Center module v2
+ *		Project: 		-
  *		Function:		board/panel defines: pins, ports, etc
- *		Target:			STM32F107RCT6
- *		Version:		v1
- *		Last modified:	2014.03.21
+ *		Target:			STM32Fx
+ *		Version:		-
+ *		Last modified:	2017.05.05
  */
 
 #ifndef BOARD_H_
 #define BOARD_H_
 
 
-#include "options.h" // what panel using
+#include "options.h" // which panel used
 
 
-/// BOARD NAME
 
+/*------------------------------------------------------------------------------
+ *							Board names / defines
+ *----------------------------------------------------------------------------*/
 
 #ifdef CONFIG_USE_PANEL_NUCLEOF401RE
-#define BOARD_NAME		"NucleoF401RE"
+	#define BOARD_NAME		"NucleoF401RE"
+	#define BOARD_MCU		"STM32F401RE"
 #elif CONFIG_USE_PANEL_STM32F4DISCOVERY
-#define BOARD_NAME		"STM32F4Discovery"
+	#define BOARD_NAME		"STM32F4Discovery"
+	#define BOARD_MCU		"STM32F407VGT6"
 #elif  CONFIG_USE_PANEL_HOMEAUTCENTERPANEL
-#define BOARD_NAME		"HomeAutCenterPanel"
+	#define BOARD_NAME		"HomeAutCenterPanel"
+	#define BOARD_MCU		"-"
 #elif  CONFIG_USE_PANEL_HOMEAUTNODESMALL
-#define BOARD_NAME		"HomeAutNodeSmall"
+	#define BOARD_NAME		"HomeAutNodeSmall"
+	#define BOARD_MCU		"-"
 #else
-#warning "Missed BOARD_NAME define!"
-#define BOARD_NAME		"UnknownBoard"
+	#warning "Missed BOARD_NAME define!"
+	#define BOARD_NAME		"UnknownBoard"
+	#define BOARD_MCU		"-"
 #endif
 
 
 
-
-///////////////////////////////////////////////////////////////////////////////
-// 			LED
-///////////////////////////////////////////////////////////////////////////////
+/*------------------------------------------------------------------------------
+ *								LED defines
+ *----------------------------------------------------------------------------*/
 
 
 #if defined(CONFIG_MODULE_LED_ENABLE) & defined(CONFIG_USE_PANEL_HOMEAUTCENTERPANEL)

@@ -11,9 +11,13 @@
  */
 
 
+#include "options.h"
 #include "include.h"
 #include "GlobalVarHandler.h"
 #include "GlobalVariables.h"
+#ifdef MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
+#include "UnitTest.h"
+#endif
 
 
 #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
@@ -1375,10 +1379,29 @@ static void GlobalVarHandler_PrintVariableDescriptions(VarID_t commandID)
 
 
 
+#ifdef MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
 /**
  * \brief	GlobalVarHandler unit test
  */
-// TODO:
-void GlobalVarHandler_UnitTest(void);
+void GlobalVarHandler_UnitTest(void)
+{
+	bool isOk;
+
+	// Start GlobalVarHandler Unittest
+	UnitTest_Start("GlobalVarHandler", __FILE__);
+
+	// Check GlobalVarHandler structs
+	isOk = GlobalVarHandler_CheckCommandStructAreValid();
+	UnitTest_CheckResult(isOk, "GlobalVarHandler structs are wrong", __LINE__);
+
+
+
+
+	// End of UnitTest
+	UnitTest_End();
+}
+#endif	// #ifdef MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
+
+
 
 #endif	// #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
