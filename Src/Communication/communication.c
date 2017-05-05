@@ -140,6 +140,7 @@ uint8_t COMMUNICATION_Printf(CommProtocol_t protocol, const char *format, ...)
 
 
 
+#ifdef CONFIG_PROTOCOL_BUFFER_ENABLE
 /**
  * \brief	Protocol buffer clear
  */
@@ -148,3 +149,4 @@ void COMMUNICATION_ClearProtocolBuffer(void)
 	memset(Communication_Buffer, 0, COMMUNICATION_PROTOCOL_BUFFER_SIZE);
 	Communication_BufferCnt = 0;
 }
+#endif	// #ifdef CONFIG_PROTOCOL_BUFFER_ENABLE
