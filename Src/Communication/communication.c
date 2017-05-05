@@ -20,12 +20,11 @@
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
-uint8_t COMMUNICATION_SendCharacterOnSWO(uint8_t ch);
-
 #ifdef CONFIG_PROTOCOL_BUFFER_ENABLE
 char Communication_Buffer[COMMUNICATION_PROTOCOL_BUFFER_SIZE];
 uint8_t Communication_BufferCnt = 0;
 #endif
+
 
 
 /*------------------------------------------------------------------------------
@@ -57,7 +56,8 @@ uint8_t COMMUNICATION_SendMessage(CommProtocol_t protocol, const char *message)
 #endif
 #ifdef CONFIG_PROTOCOL_BUFFER_ENABLE
 		case CommProt_Buffer:
-			length = StrCpyMax(Communication_Buffer, message, COMMUNICATION_PROTOCOL_BUFFER_SIZE);
+			length = StrCpyMax(&Communication_Buffer[Communication_BufferCnt], message, COMMUNICATION_PROTOCOL_BUFFER_SIZE-Communication_BufferCnt);
+			Communication_BufferCnt += length;
 			break;
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
@@ -140,3 +140,11 @@ uint8_t COMMUNICATION_Printf(CommProtocol_t protocol, const char *format, ...)
 
 
 
+/**
+ * \brief	Protocol buffer clear
+ */
+void COMMUNICATION_ClearProtocolBuffer(void)
+{
+	memset(Communication_Buffer, 0, COMMUNICATION_PROTOCOL_BUFFER_SIZE);
+	Communication_BufferCnt = 0;
+}

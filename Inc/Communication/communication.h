@@ -43,6 +43,18 @@ typedef enum
 
 
 
+
+/*------------------------------------------------------------------------------
+ *  Global variables
+ *----------------------------------------------------------------------------*/
+
+#ifdef CONFIG_PROTOCOL_BUFFER_ENABLE
+extern char Communication_Buffer[COMMUNICATION_PROTOCOL_BUFFER_SIZE];
+extern uint8_t Communication_BufferCnt;
+#endif
+
+
+
 /*------------------------------------------------------------------------------
  *  Global function declarations
  *----------------------------------------------------------------------------*/
@@ -51,6 +63,7 @@ uint8_t COMMUNICATION_SendMessage(CommProtocol_t protocol, const char *message);
 uint8_t COMMUNICATION_SendChar(CommProtocol_t protocol, char c);
 uint8_t COMMUNICATION_Printf(CommProtocol_t protocol, const char *format, ...);
 
+void COMMUNICATION_ClearProtocolBuffer(void);
 
 
 #endif /* COMMUNICATION_H_ */

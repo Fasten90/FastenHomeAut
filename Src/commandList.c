@@ -578,6 +578,10 @@ static CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
 	CommandHandler_UnitTest();
 #endif
 
+#ifdef MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
+	GlobalVarHandler_UnitTest();
+#endif
+
 #ifdef MODULE_CIRCULARBUFFER_UNITTEST_ENABLE
 	CircularBuffer_UnitTest();
 #endif

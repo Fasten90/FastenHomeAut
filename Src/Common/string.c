@@ -390,7 +390,7 @@ uint8_t FloatToString(float value, char *str, uint8_t integerLength, uint8_t fra
 
 	// Integer: minimum interLength length (if integer part is longer then this num, it printed)
 	calcValue = (uint32_t)value;
-	length += UnsignedDecimalToStringFill(calcValue,&str[length],integerLength,' ');
+	length += UnsignedDecimalToStringFill(calcValue, &str[length], integerLength, ' ');
 
 	// If has fractionLength parameter (=/= 0), print it
 	if (fractionLength)
@@ -1362,7 +1362,6 @@ uint8_t string_printf(char *str, const char *format, va_list ap)
 						string += DecimalToHexaString(uival, string, 8);
 					}
 					break;
-
 #if 0
 					// TODO: Delete w, h, b if not need
 				case 'w':

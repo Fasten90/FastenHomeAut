@@ -30,45 +30,39 @@ bool testBool = false;
 bool testCannotAccess = false;
 float testFloat = 0.0f;
 uint8_t testEnumValue = 0;
+uint32_t testBits = 0;
+
+
+///< enumExample string list
+const char * const testEnumExampleList[] =
+{
+	"exampleenumstring0",
+	"exampleenumstring1",
+	"exampleenumstring2",
+	"exampleenumstring3",
+	NULL
+};
 #endif
 
 
 char deviceName[20] = "Discovery";
 
 
-///< enumExample string list
-const char * const enumExampleList[] =
-{
-	"example1enumstring",
-	"example2enumstring",
-	"example3enumstring",
-	"example4enumstring",
-	NULL
-};
-
-
-
 ///< Global variables list
 const GlobalVarCommand_t GlobalVarList[] =
 {
+#ifdef MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
 	{
-		.name = "devicename",
-		.varPointer = deviceName,
-		.type = Type_String,
-		.maxValue = 20,
-		.description = "Device name"
+		.name = "testbool",
+		.varPointer = &testBool,
+		.type = Type_Bool
 	},
 	{
-		.name = "testUint8",
+		.name = "testuint8",
 		.varPointer = &testUint8,
 		.type = Type_Uint8,
 		.unit = "cm",
-		.description = "distance from hell"
-	},
-	{
-		.name = "bool",
-		.varPointer = &testBool,
-		.type = Type_Bool
+		.description = "test uint8 variable"
 	},
 	{
 		.name = "testint16",
@@ -87,11 +81,32 @@ const GlobalVarCommand_t GlobalVarList[] =
 		.isHex = true,
 	},
 	{
-		.name = "cannotaccess",
+		.name = "testcannotaccess",
 		.varPointer = &testCannotAccess,
 		.type = Type_Bool,
 		.sourceEnable = CommProt_Disable
 	},
+	{
+		.name = "testfloat",
+		.varPointer = &testFloat,
+		.type = Type_Float,
+	},
+	{
+		.name = "testenum",
+		.varPointer = &testEnumValue,
+		.type = Type_Enumerator,
+		.maxValue = 4,
+		.enumList = testEnumExampleList
+	},
+	{
+		.name = "testbit",
+		.varPointer = &testBits,
+		.type = Type_Bits,
+		.maxValue = 15,
+		.minValue = 8
+	},
+#endif	// #ifdef MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
+	// Normal Variables:
 	{
 		.name = "version",
 		.varPointer = (void * const)Global_Version,
@@ -99,16 +114,11 @@ const GlobalVarCommand_t GlobalVarList[] =
 		.isReadOnly = true
 	},
 	{
-		.name = "floattest",
-		.varPointer = &testFloat,
-		.type = Type_Float,
-	},
-	{
-		.name = "enumtest",
-		.varPointer = &testEnumValue,
-		.type = Type_Enumerator,
-		.maxValue = 4,
-		.enumList = enumExampleList
+		.name = "devicename",
+		.varPointer = deviceName,
+		.type = Type_String,
+		.maxValue = 20,
+		.description = "Device name"
 	},
 	{
 		.name = "boardname",
@@ -122,13 +132,6 @@ const GlobalVarCommand_t GlobalVarList[] =
 		.type = Type_String,
 		.isReadOnly = true
 	},
-	{
-		.name = "bittest",
-		.varPointer = &testUint32,
-		.type = Type_Bits,
-		.maxValue = 15,
-		.minValue = 8
-	}
 
 
 	// XXX: ADD new global variable here
