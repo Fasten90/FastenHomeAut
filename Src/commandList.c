@@ -679,9 +679,10 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 
 
 	// Test SWO
-	COMMUNICATION_SendMessage(CommProt_SWO, "Test message on SWO\n");
+	//COMMUNICATION_SendMessage(CommProt_SWO, "Test message on SWO\n");
 
 
+	/*
 	// Test zero dividing
 	uint32_t a = 5;
 	uint32_t b = 0;
@@ -690,15 +691,17 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	c = a/b;
 
 	uprintf("ZeroDivice result: %d\r\n", c);
+	*/
 
 
+	/*
 	// Test invalid pointer
 	const uint32_t constValue = 0x12345678;
 	uint32_t * wrongPointer = (uint32_t *)constValue;
 	*wrongPointer = 0;
 
 	uprintf("WrongPointer value: %d\r\n", *wrongPointer);
-
+	*/
 
 	// Test Watchdog clear with infinite loop
 	//while (1);
@@ -713,10 +716,26 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
  * #define eprintf(args…) fprintf (stderr, args)
  */
 //#define eprintf(args...) uprintf(args)
+/*
 #define eprintf(...) 			uprintf(__VA_ARGS__)
 
 	eprintf("Test variadic %d %s\r\n", 20, "testtext");
 
+*/
+
+
+	// Test code size with init value
+
+	/*
+	uint32_t testValue = 0;
+
+	if (HAL_GetTick())
+	{
+		testValue = HAL_GetTick();
+		uprintf("GetTick value test: %u", testValue);
+	}
+
+	*/
 
 
 	/**

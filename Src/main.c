@@ -96,10 +96,10 @@ int main(void)
 	// BUTTON
 	BUTTON_Init();
 #endif
-	
+
 
 #ifdef CONFIG_MODULE_IO_ENABLE
-	// IO
+	// Common IO
 	CommonIO_Init();
 #endif
 
@@ -139,7 +139,7 @@ int main(void)
 
 
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-	// DEBUG USART
+	// Debug UART
 	USART_Init(&Debug_UartHandle);
 #ifdef CONFIG_USE_FREERTOS
 	DEBUG_USART_Rx_Semaphore = NULL;
@@ -157,7 +157,7 @@ int main(void)
 
 
 #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
-	// Monitor initialize
+	// Command Handler + Terminal initialize
 	CommandHandler_Init();
 #endif
 #ifdef CONFIG_MODULE_TERMINAL_ENABLE
@@ -166,7 +166,8 @@ int main(void)
 
 
 #ifdef CONFIG_MODULE_TERMINAL_ENABLE
-#ifdef CONFIG_USE_FREERTOS
+#if defined(CONFIG_USE_FREERTOS)
+	// Terminal Task (FreeRTOS)
 	TaskHandle_t MONITOR_TaskHandle = NULL;
 	//xTaskCreate( vTaskCode, "NAME", STACK_SIZE, &ucParameterToPass, tskIDLE_PRIORITY, &xHandle );
 	if (xTaskCreate( (pdTASK_CODE)CommandHandler_CheckCommand, "MonitorTask", MONITOR_TASK_STACK_SIZE, 0,
@@ -174,16 +175,19 @@ int main(void)
 	{
 		Error_Handler();
 	}
-#else
-	CommandHandler_CheckCommand();	// infinite loop, if not used TaskHandler
+#elif !defined(CONFIG_MODULE_TASKHANDLER_ENABLE)
+	// Terminal infinite loop, if not used TaskHandler
+	CommandHandler_CheckCommand();
 #endif
 #endif	// #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
 
 
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 	// ESP8266
+	ESP8266_Init();
 
 #ifdef CONFIG_USE_FREERTOS
+	// ESP8266 FreeRTOS queues
 	ESP8266_USART_Rx_Semaphore = xSemaphoreCreateBinary();
 	ESP8266_SendMessage_Queue = xQueueCreate(
 			ESP8266_SENDMESSAGE_QUEUE_LENGTH,
@@ -191,14 +195,11 @@ int main(void)
 	ESP8266_ReceivedMessage_Queue = xQueueCreate(
 			ESP8266_RECEIVEMESSAGE_QUEUE_LENGTH,
 			ESP8266_MESSAGE_QUEUE_ITEM_SIZE);
-#endif
 
-	ESP8266_Init();
-	
-#ifdef CONFIG_USE_FREERTOS
+	// ESP8266 Task initialization
 	TaskHandle_t ESP8266_TaskHandle = NULL;
-	if (xTaskCreate( (pdTASK_CODE)ESP8266_Task, "ESP8266Task", ESP8266_TASK_STACK_SIZE, 0,
-				ESP8266_TASK_PRIORITY, &ESP8266_TaskHandle ) != pdPASS)
+	if (xTaskCreate((pdTASK_CODE)ESP8266_Task, "ESP8266Task", ESP8266_TASK_STACK_SIZE, 0,
+					ESP8266_TASK_PRIORITY, &ESP8266_TaskHandle) != pdPASS)
 	{
 		Error_Handler();
 	}
@@ -206,17 +207,19 @@ int main(void)
 #endif
 	
 	
-#ifdef CONFIG_MODULE_SYSMANAGER_ENABLE
+#if defined(CONFIG_MODULE_SYSMANAGER_ENABLE) && defined(CONFIG_USE_FREERTOS)
+	// SysManager
 	TaskHandle_t SYSMANAGER_TaskHandle = NULL;
 	if ( xTaskCreate( (pdTASK_CODE)SYSMANAGER_Task, "SysManagerTask", SYSMANAGER_TASK_STACK_SIZE, 0,
-				SYSMANAGER_TASK_PRIORITY, &SYSMANAGER_TaskHandle ) != pdPASS)
+					SYSMANAGER_TASK_PRIORITY, &SYSMANAGER_TaskHandle ) != pdPASS)
 	{
 		Error_Handler();
 	}
-#endif	// #ifdef CONFIG_MODULE_SYSMANAGER_ENABLE
+#endif
 	
 
 #ifdef CONFIG_MODULE_RTC_ENABLE
+	// RTC
 	RTC_Init();
 #endif
 
@@ -228,7 +231,6 @@ int main(void)
 
 
 #if defined(CONFIG_MODULE_TASKHANDLER_ENABLE)
-
 	// Task handler
 	TaskHandler_Init();
 
@@ -236,7 +238,7 @@ int main(void)
 	uint32_t oldTick = HAL_GetTick();
 	uint32_t elapsedTick = 0;
 
-	// Infinite loop
+	// Run TaskHandler - Infinite loop
 	while (1)
 	{
 		actualTick = HAL_GetTick();
@@ -246,18 +248,18 @@ int main(void)
 		TaskHandler_Scheduler(elapsedTick);
 	}
 #endif
-	
+
 
 #ifdef CONFIG_USE_FREERTOS
 	// FreeRTOS scheduler
 	vTaskStartScheduler();
 #endif
-	
 
-	// Never reach this code
+
+	// !! Never reach this code
 	Error_Handler();
 
-}
+}	// End of main
 
 
 

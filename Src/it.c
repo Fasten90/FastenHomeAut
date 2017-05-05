@@ -188,7 +188,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
-	// BUTTON MODULE
+	// Button handling
 
 #if defined(CONFIG_USE_PANEL_HOMEAUTPANELS)
 	if (GPIO_Pin == BUTTON_UP_GPIO_PIN)
@@ -215,7 +215,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		LED_RED_TOGGLE();
 		BUTTON_Clicked |= ( ( 1 << PressedButton_Pressed) | ( 1 << PressedButton_Left ) );
 	}
-	
 #endif	// #ifdef CONFIG_MODULE_BUTTON_ENABLE
 #if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_NUCLEOF401RE)
 	if (GPIO_Pin == BUTTON_USER_GPIO_PIN)
