@@ -742,6 +742,12 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	*/
 
 
+	// Stack overflow checker
+	uint8_t stackOverFlowCheckerVariable[1000];
+	memset(stackOverFlowCheckerVariable, 0xEF, 1000);
+
+
+
 	/**
 	 * 		End of Test codes
 	 */

@@ -33,12 +33,18 @@
  *  Local variables
  *----------------------------------------------------------------------------*/
 
+///> Days of months
+static const uint8_t days_of_month[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+
 
 
 /*------------------------------------------------------------------------------
  *  Function declarations
  *----------------------------------------------------------------------------*/
 bool DateTime_CheckValue(uint32_t originalValue, uint32_t minValue, uint32_t maxValue);
+static uint8_t DateTime_GetDaysOfMonth(uint8_t m, uint8_t y);
+static uint32_t DateTime_CalculateDateTimeSecond(DateTime_t *dateTime);
+static bool DateTime_CheckItIsLeapYear(uint8_t year);
 
 
 
@@ -265,6 +271,7 @@ bool DateTime_CheckDateTime(DateTime_t *dateTime)
 }
 
 
+
 /**
  * \brief	Print DateTime_t to string
  */
@@ -314,6 +321,237 @@ DateTimeCompare_t DateTime_CompareDateTime(DateTime_t *dateTime1, DateTime_t *da
 	else compare = DateTimeCompare_Equal;
 
 	return compare;
+}
+
+
+
+/**
+ * \brief	Different of two DateTime
+ * \retval	seconds
+ * 				if retval > 0, 1. DateTime is larger (later)
+ * 				if retval < 0, 1. DateTime is smaller (former)
+ * 				if retval == 0, wrong or no different
+ */
+int32_t DateTime_CalculateDifferentOf2DateTime(DateTime_t *dateTime1, DateTime_t *dateTime2)
+{
+	// Calculate seconds of DateTime
+	bool isOk = true;
+	uint32_t seconds1;
+	uint32_t seconds2;
+	int32_t different;
+
+	isOk &= DateTime_CheckDateTime(dateTime1);
+	isOk &= DateTime_CheckDateTime(dateTime2);
+
+	if (isOk)
+	{
+		// Ok
+		seconds1 = DateTime_CalculateDateTimeSecond(dateTime1);
+		seconds2 = DateTime_CalculateDateTimeSecond(dateTime2);
+		different = seconds1 - seconds2;
+	}
+	else
+	{
+		// Wrong
+		different = 0;
+	}
+
+	return different;
+}
+
+
+
+/**
+ * \brief	Calculate DateTime second
+ * 			Result it is elapsed seconds from 2000.01.01, 00:00:00
+ * 			If DateTime is smaller than 2000..., the result is 0
+ * 	\return
+ */
+static uint32_t DateTime_CalculateDateTimeSecond(DateTime_t *dateTime)
+{
+	uint32_t second = 0;
+	uint8_t i;
+
+	// Check DateTime, it is valid?
+	if (DateTime_CheckDateTime(dateTime))
+	{
+		// If valid...
+		// Calculate "full" years
+		for (i = 0; i < dateTime->date.year; i++)
+		{
+			// One year second = days of year * hours of day * minutes of hour * seconds of minute
+			second += 365 * 24 * 60 * 60;
+			// Check, this year is leap year?
+			if (DateTime_CheckItIsLeapYear(dateTime->date.year))
+			{
+				// Add one day
+				second += 24 * 60 * 60;
+			}
+		}
+
+		// Add part year's second
+		// Month
+		for (i = 1; i < dateTime->date.month; i++)
+		{
+			second += DateTime_GetDaysOfMonth(dateTime->date.year, i) * 24 * 60 * 60;
+		}
+
+		// Days
+		second += (dateTime->date.day -1) * 24 * 60 * 60;
+
+		// Hours
+		second += dateTime->time.hour * 60 * 60;
+
+		// Minutes
+		second += dateTime->time.minute * 60;
+
+		// Seconds
+		second += dateTime->time.second;
+	}
+	else
+	{
+		// Wrong
+		second = 0;
+	}
+
+	return second;
+}
+
+
+
+/**
+ * \brief	Check parameter year is Leap year?
+ * \retval	true	If leap year
+ * \retval	false	If not leap year
+ */
+static bool DateTime_CheckItIsLeapYear(uint8_t year)
+{
+	bool isLeapYear = false;
+
+	if (year%400 == 0)
+		isLeapYear = true;
+	else if (year%100 == 0)
+		isLeapYear = false;
+	else if (year%4 == 0)
+		isLeapYear = true;
+	else
+		isLeapYear = false;
+
+	return isLeapYear;
+}
+
+
+
+/**
+ * \brief		Get days of Month
+ * \retval		Parameter month's day number
+ */
+static uint8_t DateTime_GetDaysOfMonth(uint8_t year, uint8_t month)
+{
+
+	uint8_t days;
+	bool valid;
+
+	// Check parameters
+	if ((month == 0) || (month > 12))
+	{
+		valid = false;
+	}
+	else if (year > 99)
+	{
+		valid = false;
+	}
+	else
+	{
+		valid = true;
+	}
+
+	if (valid)
+	{
+		// If parameters are good, get days
+
+		if ((month == 2) && ((year & 0x03) == 0))
+		{
+			days = 29;
+		}
+		else
+		{
+			days = days_of_month[month - 1];
+		}
+	}
+	else
+	{
+		days = 0;
+	}
+
+	return days;
+}
+
+
+
+/**
+ * \brief	Step DateTime with more seconds
+ */
+void DateTime_Steps(DateTime_t *dateTime, uint32_t stepSeconds)
+{
+	uint32_t i;
+
+	if (stepSeconds < 10000)
+	{
+		for (i = 0; i < stepSeconds; i++)
+		{
+			DateTime_Step(dateTime);
+		}
+	}
+	// TODO: Else: do not steps, because too much seconds received
+
+}
+
+
+
+/**
+ * \brief		DateTime Second++
+ */
+void DateTime_Step(DateTime_t *dateTime)
+{
+	++dateTime->time.second;
+
+	if (dateTime->time.second > 59)
+	{
+		dateTime->time.second = 0;
+		++dateTime->time.minute;
+
+		if (dateTime->time.minute > 59)
+		{
+			dateTime->time.minute = 0;
+			++dateTime->time.minute;
+
+			if (dateTime->time.hour > 23)
+			{
+				dateTime->time.hour = 0;
+				++dateTime->date.day;
+
+				uint8_t days = DateTime_GetDaysOfMonth(dateTime->date.year, dateTime->date.month);
+
+				if (dateTime->date.day > days)
+				{
+					dateTime->date.day  = 1;
+					++dateTime->date.month;
+
+					if (dateTime->date.month > 12)
+					{
+						dateTime->date.month = 1;
+						++dateTime->date.year;
+
+						if (dateTime->date.year > 99)
+						{
+							dateTime->date.year = 0;
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 
@@ -419,6 +657,47 @@ void DateTime_UnitTest(void)
 	DateTime_PrintDateTimeToString(strDateTime2, &test400);
 	result = !StrCmp(strDateTime2, "2017-02-03 12:12:00");
 	UnitTest_CheckResult(result == true, "DateTime_ConvertStringToDateTime error", __LINE__);
+
+
+	/*			DateTime_CalculateDifferentOf2DateTime		*/
+
+	// 1 second
+	DateTime_t test500 = { { 17, 05, 06 }, { 20, 42, 00} };
+	DateTime_t test501 = { { 17, 05, 06 }, { 20, 42, 01} };
+	int32_t test500_diff = DateTime_CalculateDifferentOf2DateTime(&test500, &test501);
+	UnitTest_CheckResult(test500_diff == -1, "DateTime_CalculateDifferentOf2DateTime error", __LINE__);
+
+	// 1 day
+	DateTime_t test502 = { { 17, 05, 06 }, { 20, 42, 00} };
+	DateTime_t test503 = { { 17, 05, 07 }, { 20, 42, 00} };
+	int32_t test502_diff = DateTime_CalculateDifferentOf2DateTime(&test502, &test503);
+	UnitTest_CheckResult(test502_diff == -(24 * 60 * 60), "DateTime_CalculateDifferentOf2DateTime error", __LINE__);
+
+	// 1 month
+	DateTime_t test504 = { { 17, 06, 06 }, { 20, 42, 00} };
+	DateTime_t test505 = { { 17, 05, 06 }, { 20, 42, 00} };
+	int32_t test504_diff = DateTime_CalculateDifferentOf2DateTime(&test504, &test505);
+	UnitTest_CheckResult(test504_diff == (31 * 24 * 60 * 60), "DateTime_CalculateDifferentOf2DateTime error", __LINE__);
+
+	// 1 year
+	DateTime_t test506 = { { 18, 05, 07 }, { 20, 42, 00} };
+	DateTime_t test507 = { { 17, 05, 07 }, { 20, 42, 00} };
+	int32_t test506_diff = DateTime_CalculateDifferentOf2DateTime(&test506, &test507);
+	UnitTest_CheckResult(test506_diff == (365 * 24 * 60 * 60), "DateTime_CalculateDifferentOf2DateTime error", __LINE__);
+
+
+	/*			DateTime_Steps			*/
+	// Step 1 second
+	DateTime_t test601 = { { 17, 05, 07 }, { 20, 42, 00} };
+	DateTime_t test602 = { { 17, 05, 07 }, { 20, 42, 01} };
+	DateTime_Steps(&test601, 1);
+	UnitTest_CheckResult(!memcmp(&test601, &test602, sizeof(DateTime_t)), "DateTime_Steps error", __LINE__);
+
+	// Step 60 second
+	DateTime_t test603 = { { 17, 05, 07 }, { 20, 42, 59} };
+	DateTime_t test604 = { { 17, 05, 07 }, { 20, 44, 01} };
+	DateTime_Steps(&test603, 62);
+	UnitTest_CheckResult(!memcmp(&test603, &test604, sizeof(DateTime_t)), "DateTime_Steps error", __LINE__);
 
 
 	// Finish

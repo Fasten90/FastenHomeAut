@@ -121,6 +121,10 @@ uint8_t DateTime_PrintDateTimeToString(char *message, DateTime_t *dateTime);
 bool DateTime_CheckDateTime(DateTime_t *dateTime);
 DateTimeCompare_t DateTime_CompareDateTime(DateTime_t *dateTime1, DateTime_t *dateTime2);
 
+int32_t DateTime_CalculateDifferentOf2DateTime(DateTime_t *dateTime1, DateTime_t *dateTime2);
+void DateTime_Steps(DateTime_t *dateTime, uint32_t stepSeconds);
+void DateTime_Step(DateTime_t *dateTime);
+
 #ifdef MODULE_DATETIME_UNITTEST_ENABLE
 void DateTime_UnitTest(void);
 #endif

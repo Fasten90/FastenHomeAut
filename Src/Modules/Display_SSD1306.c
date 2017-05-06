@@ -823,7 +823,7 @@ void SSD1306_drawFastVLineInternal(int16_t x, int16_t __y, int16_t __h,
 
 
 /**
- * \brief	Display SPI communicaton IRQ handler
+ * \brief	Display SPI communication IRQ handler
  */
 void DISPLAY_SSD1306_SPIx_IRQHandler(void)
 {

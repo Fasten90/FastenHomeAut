@@ -2255,7 +2255,6 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 
 							// We have message source:
 							// Save to global variable
-							// TODO: Event / set flag
 							StrCpyFixLength(ESP8266_ReceivedTcpMessage,
 									(const char *)&receiveBuffer[length],
 									messageLength);
