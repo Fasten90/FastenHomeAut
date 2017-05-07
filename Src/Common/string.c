@@ -295,7 +295,8 @@ uint8_t ByteToHexaString(uint8_t byte, char *str)
 
 
 /**
- * \brief
+ * \brief	Convert decimal number to binary string
+ * 			For example: 10 (decimal) --> "1010" (binary)
  */
 uint8_t DecimalToBinaryString(uint32_t value, char *str, uint8_t maxLength)
 {

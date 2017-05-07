@@ -749,10 +749,14 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	*/
 
 
+	/*
+	// RTC - Print DateTime in one line with refreshing
+
 	DateTime_t actualDateTime = { { 17, 5, 7 }, { 19, 45, 0 } };
 
 	// Clear button state
 	BUTTON_Clicked = 0;
+	// Until pressed button...
 	while (!BUTTON_Clicked)
 	{
 		// Wait 1 second
@@ -771,10 +775,59 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 
 		CommandHandler_SendMessage(message);
 	}
+	*/
+
+
+	/*
+	uint8_t i;
+	char c;
+
+	for (i = 0; i <= 100; i++)
+	{
+		DelayMs(500);
+
+		// Clear line
+		CommandHandler_SendMessage(ESCAPE_DELETELINE);
+		CommandHandler_SendMessage(ESCAPE_CURSOR_TO_LINESTART);
+
+		// Send "/ 0-100%" - loading line
+		switch(i%4)
+		{
+			case 0:		c = '|'; 	break;
+			case 1:		c = '/';	break;
+			case 2: 	c = '-';	break;
+			case 3: 	c = '\\';	break;
+			default: 	c = '?';	break;
+		}
+
+		CommandHandler_Printf("%c %3d%%", c, i);
+	}
+	*/
 
 
 
-	//while ()
+	// Print DateTime test
+
+	DateTime_t actualDateTime = { { 17, 5, 7 }, { 21, 38, 0 } };
+
+	// Clear button state
+	BUTTON_Clicked = 0;
+	while (!BUTTON_Clicked)
+	{
+		// Step 1 second
+		DelayMs(1000);
+		DateTime_Step(&actualDateTime);
+
+		// Send actual DateTime
+		char message[80];
+		DateTime_PrintDateTimeToString(message, &actualDateTime);
+
+		Display_PrintString(message, 1, Font_8x5);
+
+		// Should display, because this test is blocked mode
+		Display_Activate();
+	}
+
 
 
 	/**
@@ -782,7 +835,8 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	 */
 
 
-	CommandHandler_SendLine("Test end");
+	CommandHandler_SendLine("\r\n"
+							"Test end");
 
 	return CommandResult_Ok;
 

@@ -700,6 +700,8 @@ void DateTime_UnitTest(void)
 	DateTime_Steps(&test603, 62);
 	UnitTest_CheckResult(!memcmp(&test603, &test604, sizeof(DateTime_t)), "DateTime_Steps error", __LINE__);
 
+	// TODO:
+	// Step fro 2017.12.31 23:59:59 -> to 2018.01.01 00:00:00
 
 	// Finish
 	UnitTest_End();
