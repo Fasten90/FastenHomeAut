@@ -274,6 +274,8 @@ bool DateTime_CheckDateTime(DateTime_t *dateTime)
 
 /**
  * \brief	Print DateTime_t to string
+ * 			like: "YYYY-MM-DD HH:mm:ss"
+ * 					19 character
  */
 uint8_t DateTime_PrintDateTimeToString(char *message, DateTime_t *dateTime)
 {
@@ -504,7 +506,6 @@ void DateTime_Steps(DateTime_t *dateTime, uint32_t stepSeconds)
 		}
 	}
 	// TODO: Else: do not steps, because too much seconds received
-
 }
 
 

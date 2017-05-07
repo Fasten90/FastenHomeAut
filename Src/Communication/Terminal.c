@@ -846,7 +846,7 @@ static void Terminal_CommandTabulator(void)
  * \brief		Resend the actual line/command
  * 				NOTE: It save and restore the original cursor position
  */
-static void Terminal_CommandResendLine( bool needRestoreCursor)
+static void Terminal_CommandResendLine(bool needRestoreCursor)
 {
 	// Procedure:
 	// - Delete line

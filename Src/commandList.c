@@ -743,9 +743,38 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 
 
 	// Stack overflow checker
+	/*
 	uint8_t stackOverFlowCheckerVariable[1000];
 	memset(stackOverFlowCheckerVariable, 0xEF, 1000);
+	*/
 
+
+	DateTime_t actualDateTime = { { 17, 5, 7 }, { 19, 45, 0 } };
+
+	// Clear button state
+	BUTTON_Clicked = 0;
+	while (!BUTTON_Clicked)
+	{
+		// Wait 1 second
+		DelayMs(1000);
+
+		// Step 1 second
+		DateTime_Step(&actualDateTime);
+
+		// Send actual DateTime
+		char message[80];
+		DateTime_PrintDateTimeToString(message, &actualDateTime);
+		CommandHandler_SendMessage(ESCAPE_DELETELINE);
+		// Cursor to line start
+		CommandHandler_SendMessage(ESCAPE_CURSOR_TO_LINESTART);
+		//CommandHandler_SendMessage(ESCAPE_CURSORLEFTLOTOF);
+
+		CommandHandler_SendMessage(message);
+	}
+
+
+
+	//while ()
 
 
 	/**

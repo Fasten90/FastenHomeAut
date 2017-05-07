@@ -310,7 +310,7 @@ uint8_t DecimalToBinaryString(uint32_t value, char *str, uint8_t maxLength)
 	}
 
 	// When reach this, bitIndex found the first '1'bit
-	for (i=0; i<maxLength; i++)
+	for (i = 0; i < maxLength; i++)
 	{
 		// It '1' or '0'?
 		if (value & (1 << bitIndex))
