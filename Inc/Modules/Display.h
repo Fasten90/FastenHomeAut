@@ -47,9 +47,7 @@
 void Display_PrintString(const char *str, uint8_t line, Font_Type font);
 void Display_PrintFont8x5(uint8_t chr, uint8_t index, uint8_t line);
 void Display_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line);
-
-void Display_Test8x5Font(void);
-void Display_Test12x8Font(void);
+void Display_PrintFont32x20(uint8_t chr, uint8_t index, uint8_t startposx, uint8_t startposy);
 
 void Display_Clear(void);
 void Display_Activate(void);
@@ -58,6 +56,13 @@ void Display_TestLoading(uint8_t percent);
 
 void Display_LoadCarImage(void);
 void Display_ChangeCarImage(void);
+
+void Display_SetClock(Time_t time);
+
+void Display_Test8x5Font(void);
+void Display_Test12x8Font(void);
+void Display_Test32x20Font(void);
+
 
 
 #endif /* MODULES_DISPLAY_H_ */

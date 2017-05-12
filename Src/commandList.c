@@ -665,6 +665,7 @@ static CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 
 
 
+#ifdef CONFIG_DEBUG_MODE
 /**
  * \brief	Test function
  */
@@ -824,6 +825,8 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 
 		Display_PrintString(message, 1, Font_8x5);
 
+		Display_SetClock(actualDateTime.time);
+
 		// Should display, because this test is blocked mode
 		Display_Activate();
 	}
@@ -841,6 +844,7 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	return CommandResult_Ok;
 
 }
+#endif	// #ifdef CONFIG_DEBUG_MODE
 
 
 
@@ -1911,6 +1915,8 @@ static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv)
 		Display_Activate();
 		result = CommandResult_Ok_SendSuccessful;
 	}
+#ifdef CONFIG_MODULE_DISPLAY_TEST
+#ifdef CONFIG_MODULE_DISPLAY_FONT8X5_ENABLE
 	else if (!StrCmp("test1", argv[1]))
 	{
 		// Test code
@@ -1918,6 +1924,8 @@ static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv)
 		Display_Test8x5Font();
 		result = CommandResult_Ok_SendSuccessful;
 	}
+#endif
+#ifdef CONFIG_MODULE_DISPLAY_FONT12X8_ENABLE
 	else if (!StrCmp("test2", argv[1]))
 	{
 		// Test code
@@ -1925,6 +1933,20 @@ static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv)
 		Display_Test12x8Font();
 		result = CommandResult_Ok_SendSuccessful;
 	}
+#endif
+#ifdef CONFIG_MODULE_DISPLAY_FONT32X20_ENABLE
+	else if  (!StrCmp("test3", argv[1]))
+	{
+		// Test code
+		Display_CarAnimationDisable_flag = true;
+
+		// Test font - 32x20
+		Display_Test32x20Font();
+
+		result = CommandResult_Ok_SendSuccessful;
+	}
+#endif
+#endif	// #ifdef CONFIG_MODULE_DISPLAY_TEST
 	else
 	{
 		result = CommandResult_Error_WrongArgument1;

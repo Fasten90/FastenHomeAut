@@ -2,6 +2,8 @@
 
 
 # Parameters
+
+"""
 imagename = 'Font_12x8_v2.bmp'
 codefilename = 'Font12x8'
 
@@ -13,7 +15,7 @@ font_store_width = 8
 column_storing = False
 
 """
-imagename = 'Fonts_8x5_v6.bmp'
+imagename = 'Font_8x5_v6.bmp'
 codefilename = 'Font8x5'
 
 fontname = "Font - 8x5"
@@ -22,7 +24,7 @@ font_store_height = 8
 font_store_width = 5
 
 column_storing = True
-"""
+
 
 font_line_numbers = 4
 font_character_numbers = 128

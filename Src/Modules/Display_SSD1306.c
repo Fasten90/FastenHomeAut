@@ -264,6 +264,9 @@ static void SSD1306_command(uint8_t c)
 
 
 
+/**
+ * \brief	Send command on SPI to Display
+ */
 static void SSD1306_fastSPIwrite(uint8_t d)
 {
 	HAL_SPI_Transmit_IT(&SpiHandle, &d, 1);
@@ -271,7 +274,9 @@ static void SSD1306_fastSPIwrite(uint8_t d)
 
 
 
-// the most basic function, set a single pixel
+/**
+ * \brief	The most basic function, set a single pixel
+ */
 void SSD1306_drawPixel(int16_t x, int16_t y, uint16_t color)
 {
 	if ((x < 0) || (x >= SSD1306_LCDWIDTH) || (y < 0) || (y >= SSD1306_LCDHEIGHT))
@@ -315,6 +320,10 @@ void SSD1306_drawPixel(int16_t x, int16_t y, uint16_t color)
 }
 
 
+
+/**
+ * \brief	Draw image (put pixel to buffer image)
+ */
 void SSD1306_drawImage(uint8_t setx, uint8_t sety, uint8_t sizex, uint8_t sizey, uint8_t *img)
 {
 	// TODO: Only 8n size can be used
@@ -332,12 +341,14 @@ void SSD1306_drawImage(uint8_t setx, uint8_t sety, uint8_t sizex, uint8_t sizey,
 					img[j*sizex + i];
 		}
 	}
-
-
 }
 
 
 
+/**
+ * \brief	Invert display
+ * TODO: Delete?
+ */
 void SSD1306_invertDisplay(uint8_t i)
 {
 	if (i)

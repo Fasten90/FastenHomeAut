@@ -137,6 +137,9 @@ typedef enum
 #ifdef CONFIG_MODULE_DISPLAY_FONT12X8_ENABLE
 	Font_12x8,
 #endif
+#ifdef CONFIG_MODULE_DISPLAY_FONT32X20_ENABLE
+	Font_32x20,
+#endif
 
 	Font_Count
 } Font_Type;
