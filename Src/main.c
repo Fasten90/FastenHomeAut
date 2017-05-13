@@ -133,8 +133,11 @@ int main(void)
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
 	// Display
 	Display_SSD1306_Init();
+
+	#ifdef CONFIG_MODULE_DISPLAY_SHOW_SCREEN
 	// Display start screen
 	Display_LoadCarImage();
+	#endif
 #endif
 
 

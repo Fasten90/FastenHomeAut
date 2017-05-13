@@ -188,7 +188,7 @@ void DISPLAY_SSD1306_SPIx_IRQHandler(void);
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi);
 void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi);
 
-
+void Display_SendOnTerminal(void);
 
 
 #endif /* MODULES_DISPLAY_SSD1306_H_ */

@@ -300,6 +300,7 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 {
 	(void)source;
 
+	#ifdef CONFIG_MODULE_DISPLAY_SHOW_SCREEN
 	// Car image
 	if (!Display_CarAnimationDisable_flag)
 	{
@@ -308,14 +309,15 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 
 
 	// Loading image
-	static uint8_t cnt = 0;
+	static uint8_t loadPercent = 0;
 
-	Display_TestLoading(cnt++);
+	Display_TestLoading(loadPercent++);
 
-	if (cnt >= 100)
+	if (loadPercent >= 100)
 	{
-		cnt = 0;
+		loadPercent = 0;
 	}
+	#endif
 
 	return TASK_RESULT_OK;
 
@@ -332,9 +334,9 @@ static TaskResult_t Task_SystemTimeSecondStep(ScheduleSource_t source)
 	// Step SystemTime +1 second
 	DateTime_Step(&DateTime_SystemTime);
 
-#ifdef CONFIG_MODULE_DISPLAY_ENABLE
+#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
 	// Display refresh
-	Display_SetClock(&DateTime_SystemTime.time);
+	Display_ShowClock(&DateTime_SystemTime.time);
 #endif
 
 	return TASK_RESULT_OK;

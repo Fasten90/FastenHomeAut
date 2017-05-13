@@ -57,7 +57,7 @@ void Display_TestLoading(uint8_t percent);
 void Display_LoadCarImage(void);
 void Display_ChangeCarImage(void);
 
-void Display_SetClock(Time_t *time);
+void Display_ShowClock(Time_t *time);
 
 void Display_Test8x5Font(void);
 void Display_Test12x8Font(void);

@@ -242,6 +242,11 @@ void Display_Clear(void)
 void Display_Activate(void)
 {
 	SSD1306_display();
+/*
+#ifdef CONFIG_MODULE_DISPLAY_TEST_WITH_TERMINAL
+	Display_SendOnTerminal();
+#endif
+*/
 }
 
 
@@ -372,7 +377,7 @@ void Display_ChangeCarImage(void)
 /**
  * \brief	Display time (HH:MM)
  */
-void Display_SetClock(Time_t *time)
+void Display_ShowClock(Time_t *time)
 {
 	// Set hour
 	Display_PrintFont32x20(time->hour/10, 0,

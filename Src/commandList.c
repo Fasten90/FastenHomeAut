@@ -807,6 +807,7 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 
 
 
+	/*
 	// Print DateTime test
 
 	DateTime_t actualDateTime = { { 17, 5, 7 }, { 21, 38, 0 } };
@@ -830,7 +831,12 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 		// Should display, because this test is blocked mode
 		Display_Activate();
 	}
+	*/
 
+
+#ifdef CONFIG_MODULE_DISPLAY_TEST_WITH_TERMINAL
+	Display_SendOnTerminal();
+#endif
 
 
 	/**

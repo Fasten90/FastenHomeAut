@@ -887,4 +887,32 @@ void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi)
 
 
 
+#ifdef CONFIG_MODULE_DISPLAY_TEST_WITH_TERMINAL
+/**
+ * \brief	Print Display (Actual screen) on debug port
+ */
+void Display_SendOnTerminal(void)
+{
+	uint8_t x;
+	uint8_t y;
+
+	for (y = 0; y < SSD1306_LCDHEIGHT; y++)
+	{
+		for (x = 0; x < SSD1306_LCDWIDTH; x++)
+		{
+			// Print pixel
+			char ch = ' ';
+			if (buffer[x + (y / 8) * SSD1306_LCDWIDTH] & (1 << (y & 7)))
+			{
+				ch = '#';
+			}
+			DebugUart_SendChar(ch);
+		}
+		DebugUart_SendNewLine();
+	}
+}
+#endif
+
+
+
 #endif	// #ifdef CONFIG_MODULE_DISPLAY_ENABLE
