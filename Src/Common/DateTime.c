@@ -27,6 +27,11 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
+#ifdef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
+///> System time (step by timer)
+DateTime_t DateTime_SystemTime = { 0 };
+#endif
+
 
 
 /*------------------------------------------------------------------------------

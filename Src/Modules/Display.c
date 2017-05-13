@@ -372,14 +372,14 @@ void Display_ChangeCarImage(void)
 /**
  * \brief	Display time (HH:MM)
  */
-void Display_SetClock(Time_t time)
+void Display_SetClock(Time_t *time)
 {
 	// Set hour
-	Display_PrintFont32x20(time.hour/10, 0,
+	Display_PrintFont32x20(time->hour/10, 0,
 			DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
 			DISPLAY_FONT32X20_CLOCK_START_POSITION_Y);
 
-	Display_PrintFont32x20(time.hour%10, 1,
+	Display_PrintFont32x20(time->hour%10, 1,
 			DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
 			DISPLAY_FONT32X20_CLOCK_START_POSITION_Y);
 
@@ -389,11 +389,11 @@ void Display_SetClock(Time_t time)
 			DISPLAY_FONT32X20_CLOCK_START_POSITION_Y);
 
 	// Set minute
-	Display_PrintFont32x20(time.minute/10, 3,
+	Display_PrintFont32x20(time->minute/10, 3,
 			DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
 			DISPLAY_FONT32X20_CLOCK_START_POSITION_Y);
 
-	Display_PrintFont32x20(time.minute%10, 4,
+	Display_PrintFont32x20(time->minute%10, 4,
 			DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
 			DISPLAY_FONT32X20_CLOCK_START_POSITION_Y);
 }

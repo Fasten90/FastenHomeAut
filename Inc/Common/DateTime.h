@@ -106,6 +106,10 @@ typedef enum
  *  Global variables
  *----------------------------------------------------------------------------*/
 
+#ifdef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
+extern DateTime_t DateTime_SystemTime;
+#endif
+
 
 
 /*------------------------------------------------------------------------------

@@ -78,7 +78,7 @@ static CommandResult_t CommandFunction_Motor(uint32_t argc, char** argv);
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 static CommandResult_t CommandFunction_ESP8266(uint32_t argc, char** argv);
 #endif
-#ifdef CONFIG_MODULE_RTC_ENABLE
+#if defined(CONFIG_MODULE_RTC_ENABLE) || defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
 static CommandResult_t CommandFunction_RTC(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
@@ -311,7 +311,7 @@ const CommandStruct CommandList[] =
 		.example = "send ThisMessage",
 	},
 #endif
-#ifdef CONFIG_MODULE_RTC_ENABLE
+#if defined(CONFIG_MODULE_RTC_ENABLE) || defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
 	{
 		.name = "rtc",
 		.commandFunctionPointer = CommandFunction_RTC,
@@ -825,7 +825,7 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 
 		Display_PrintString(message, 1, Font_8x5);
 
-		Display_SetClock(actualDateTime.time);
+		Display_SetClock(&actualDateTime.time);
 
 		// Should display, because this test is blocked mode
 		Display_Activate();
@@ -1469,7 +1469,7 @@ static CommandResult_t CommandFunction_ESP8266(uint32_t argc, char** argv)
 
 
 
-#ifdef CONFIG_MODULE_RTC_ENABLE
+#if defined(CONFIG_MODULE_RTC_ENABLE) || defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
 static CommandResult_t CommandFunction_RTC(uint32_t argc, char** argv)
 {
 	CommandResult_t result = CommandResult_Unknown;
@@ -1480,8 +1480,13 @@ static CommandResult_t CommandFunction_RTC(uint32_t argc, char** argv)
 		Date_t date;
 		if (DateTime_ConvertDateStringToDate(argv[2], &date))
 		{
-			// Successful
+			// Successful convert, set
+			#ifdef CONFIG_MODULE_RTC_ENABLE
 			RTC_SetDate(&date);
+			#elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
+			// TODO:
+			memcpy(&DateTime_SystemTime.date, &date, sizeof(Date_t));
+			#endif
 			result = CommandResult_Ok_SendSuccessful;
 		}
 		else
@@ -1495,8 +1500,13 @@ static CommandResult_t CommandFunction_RTC(uint32_t argc, char** argv)
 		Time_t time;
 		if (DateTime_ConvertTimeStringToTime(argv[2], &time))
 		{
-			// Successful
+			// Successful convert, set
+			#ifdef CONFIG_MODULE_RTC_ENABLE
 			RTC_SetTime(&time);
+			#elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
+			// TODO:
+			memcpy(&DateTime_SystemTime.time, &time, sizeof(Time_t));
+			#endif
 			result = CommandResult_Ok_SendSuccessful;
 		}
 		else
@@ -1508,7 +1518,12 @@ static CommandResult_t CommandFunction_RTC(uint32_t argc, char** argv)
 	{
 		char datetimestring[DATETIME_STRING_MAX_LENGTH];
 		DateTime_t dateTime;
+		#ifdef CONFIG_MODULE_RTC_ENABLE
 		RTC_GetDateTime(&dateTime);
+		#elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
+		// TODO:
+		memcpy(&dateTime, &DateTime_SystemTime, sizeof(DateTime_t));
+		#endif
 		DateTime_PrintDateTimeToString(datetimestring, &dateTime);
 		CommandHandler_Printf("RTC Date and Time: %s\r\n", datetimestring);
 

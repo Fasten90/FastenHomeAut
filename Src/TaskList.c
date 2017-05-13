@@ -48,6 +48,9 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source);
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
 static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source);
 #endif
+#ifdef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
+static TaskResult_t Task_SystemTimeSecondStep(ScheduleSource_t source);
+#endif
 
 
 /// Tasks list
@@ -113,6 +116,14 @@ Task_t TaskList[] =
 		.taskScheduleRate = 300
 	},
 #endif
+#ifdef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
+	{
+		.taskName = "SystemTime",
+		.taskFunction = Task_SystemTimeSecondStep,
+		.taskScheduleRate = 1000
+	},
+#endif
+
 	// \note Be careful, taskList order need to be equal with TaskName_t
 
 	// XXX: Add here new tasks
@@ -311,6 +322,24 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 }
 #endif
 
+
+
+#ifdef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
+static TaskResult_t Task_SystemTimeSecondStep(ScheduleSource_t source)
+{
+	(void)source;
+
+	// Step SystemTime +1 second
+	DateTime_Step(&DateTime_SystemTime);
+
+#ifdef CONFIG_MODULE_DISPLAY_ENABLE
+	// Display refresh
+	Display_SetClock(&DateTime_SystemTime.time);
+#endif
+
+	return TASK_RESULT_OK;
+}
+#endif
 
 
 #endif //#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
