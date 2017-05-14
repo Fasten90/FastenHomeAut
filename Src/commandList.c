@@ -834,9 +834,16 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	*/
 
 
+/*
 #ifdef CONFIG_MODULE_DISPLAY_TEST_WITH_TERMINAL
 	Display_SendOnTerminal();
 #endif
+*/
+
+
+	// Clock test
+	Display_TestClock();
+
 
 
 	/**

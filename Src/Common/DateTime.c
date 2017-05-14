@@ -530,7 +530,7 @@ void DateTime_Step(DateTime_t *dateTime)
 		if (dateTime->time.minute > 59)
 		{
 			dateTime->time.minute = 0;
-			++dateTime->time.minute;
+			++dateTime->time.hour;
 
 			if (dateTime->time.hour > 23)
 			{

@@ -62,6 +62,7 @@ void Display_ShowClock(Time_t *time);
 void Display_Test8x5Font(void);
 void Display_Test12x8Font(void);
 void Display_Test32x20Font(void);
+void Display_TestClock(void);
 
 
 

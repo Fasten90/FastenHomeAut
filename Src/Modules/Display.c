@@ -374,6 +374,7 @@ void Display_ChangeCarImage(void)
 
 
 
+#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
 /**
  * \brief	Display time (HH:MM)
  */
@@ -401,7 +402,11 @@ void Display_ShowClock(Time_t *time)
 	Display_PrintFont32x20(time->minute%10, 4,
 			DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
 			DISPLAY_FONT32X20_CLOCK_START_POSITION_Y);
+
+	// Refresh display
+	Display_Activate();
 }
+#endif
 
 
 
@@ -463,6 +468,31 @@ void Display_Test32x20Font(void)
 }
 #endif
 
+
+
+#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
+/**
+ * \brief	Test Clock show
+ */
+void Display_TestClock(void)
+{
+	uint8_t i;
+	DateTime_t dateTime = { { 17, 5, 14 }, { 0, 0, 0 } };
+
+	Display_Clear();
+
+
+	for (i = 0; i < 24*60; i++)
+	{
+		Display_ShowClock(&dateTime.time);
+		DelayMs(300);
+		// Step 1 minute
+		DateTime_Steps(&dateTime, 60);
+	}
+
+}
+
+#endif
 
 #endif	// #ifdef CONFIG_MODULE_DISPLAY_TEST
 
