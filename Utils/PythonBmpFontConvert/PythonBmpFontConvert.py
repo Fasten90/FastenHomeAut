@@ -1,10 +1,14 @@
-# TODO: Description
+"""
+Python - BMP -> Font converter
+For Display - HomeAut system (FastenNode)
+
+@author	Vizi Gábor
+"""
 
 
 # Parameters
 
-
-
+"""
 # Font 8x5 - 128 ASCII characters in 4 line
 imagename = 'Font_8x5_v6.bmp'
 codefilename = 'Font8x5'
@@ -19,7 +23,7 @@ byte_storing = 1
 
 font_line_numbers = 4
 font_character_numbers = 128
-
+"""
 
 """
 # Font 12x8 - 128 ASCII characters in 4 line
@@ -121,15 +125,26 @@ def print_font_to_codefile(font, index):
 	codefile.write("\t{ ")	
 
 	if column_storing:
+		# 1. 2. 3...
+		# 1. 2. 3...
+		# 1. 2. 3...
+		# 1. 2. 3...
+		# Step on colums ( --> )
 		for column in range(0, font_store_width):
+			# Create a column
+			# Step on rows:
+			#  |
+			#  |
+			#  ˇ
 			code_byte = 0x00
 			for row in range(0, font_store_height):
 				pixel = font[row][column]
 				if pixel <= 240:
 					code_byte |= 0x01
+				if row != font_store_height-1:
 					code_byte <<= 1
-				else:
-					code_byte <<= 1
+
+			# Mask & Write bytes
 			if byte_storing == 1:
 				code_byte &= 0xFF
 				codefile.write("0x" + format(code_byte, '02X'))
@@ -149,8 +164,8 @@ def print_font_to_codefile(font, index):
 				pixel = font[row][column]
 				if pixel <= 240:
 					code_byte |= 0x01
-					code_byte <<= 1
-				else:
+
+				if column != font_store_width-1:
 					code_byte <<= 1
 			code_byte &= 0xFF
 			codefile.write("0x" + format(code_byte, '02X'))
@@ -160,22 +175,26 @@ def print_font_to_codefile(font, index):
 	codefile.write(" },\n")
 
 
-
 # Convert pixel colours to one color (BLUE)
 skip_index = 0
 for i in range(0, sizex*sizey):
 	try:
 		if (sizex % 4) != 0:
 			if i % (sizex+1) == 0:
-				# Skip last byte
-				skip_index += 1
-			else:
-				bitmap[i] = bitmap_process[i*3+skip_index]
+				# Skip last byte(s) of row
+				skip_index += sizex%4
+			# Copy pixel
+			bitmap[i] = bitmap_process[i*3+skip_index]
 		else:
+			# Copy pixel without problem
 			bitmap[i] = bitmap_process[i*3]
 	except Exception as excpt:
 		print("Error:" + str(excpt))
 
+
+#if need_extend:
+	# Restore row length
+#	 sizex = original_sizex
 
 # Convert bitmap to top --> bottom bitmap
 for bitmap_line_index in range (0, sizey):
