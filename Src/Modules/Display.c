@@ -476,7 +476,7 @@ void Display_Test32x20Font(void)
  */
 void Display_TestClock(void)
 {
-	uint8_t i;
+	uint16_t i;
 	DateTime_t dateTime = { { 17, 5, 14 }, { 0, 0, 0 } };
 
 	Display_Clear();
@@ -491,7 +491,6 @@ void Display_TestClock(void)
 	}
 
 }
-
 #endif
 
 #endif	// #ifdef CONFIG_MODULE_DISPLAY_TEST

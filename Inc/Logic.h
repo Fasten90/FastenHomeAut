@@ -1,23 +1,26 @@
 /*
- *		button.h
+ *		Logic.h
  *
- *		Created on:		2016
+ *		Created on:		2017. máj. 23.
  *      Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		-
  *		Target:			STM32Fx
  *		Version:		-
- *		Last modified:	2017. febr. 8.
+ *		Last modified:	2017. máj. 23.
  */
- 
-#ifndef BUTTON_H_
-#define BUTTON_H_
+
+#ifndef LOGIC_H_
+#define LOGIC_H_
+
+
 
 
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
 #include "include.h"
+
 
 
 /*------------------------------------------------------------------------------
@@ -30,44 +33,13 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-typedef enum
-{
-#if BUTTON_NUM == 1
-	PressedButton_User,
-#elif BUTTON_NUM > 1
-	PressedButton_Up,
-	PressedButton_Down,
-	PressedButton_Right,
-	PressedButton_Left,
-#endif
-
-	// Last, do not use
-	PressedButton_Count
-} ButtonType_t;
-
-
-typedef enum
-{
-	ButtonPress_Short,
-	ButtonPress_Long
-} ButtonPressType_t;
 
 
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
-extern volatile uint8_t BUTTON_Clicked;
 
-
-/*------------------------------------------------------------------------------
- *  Local variables
- *----------------------------------------------------------------------------*/
-
-
-
-/*------------------------------------------------------------------------------
- *  Local function declarations
- *----------------------------------------------------------------------------*/
+void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type);
 
 
 
@@ -75,10 +47,6 @@ extern volatile uint8_t BUTTON_Clicked;
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void BUTTON_Init(void);
-bool BUTTON_GetButtonState(ButtonType_t button);
-//void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
 
 
-
-#endif /* TEMPLATE_H_ */
+#endif /* LOGIC_H_ */

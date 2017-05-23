@@ -17,6 +17,7 @@
  *----------------------------------------------------------------------------*/
 #include "include.h"
 #include "TaskList.h"
+#include "Logic.h"
 
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 
@@ -280,14 +281,73 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 	LED_SetLed(LED_GREEN_NUM, LED_SET_TOGGLE);
 #endif
 
+
+#ifdef CONFIG_MODULE_BUTTON_LONG_PRESS
+	static uint32_t BUTTON_PressTimeTick[BUTTON_NUM];
+	static uint8_t BUTTON_PressedButtons;
+
+	uint8_t i;
+	for (i = 0; i < PressedButton_Count; i++)
+	{
+		if (BUTTON_Clicked & (1 << i))
+		{
+			// Button pressed "first"
+			// Save: this button is pressed
+			if (!(BUTTON_PressedButtons & (1 << i)))
+			{
+				BUTTON_PressedButtons |= (1 << i);
+				BUTTON_PressTimeTick[i] = HAL_GetTick();
+			}
+			// Check the next time
+			TaskHandler_SetTaskOnceRun(Task_ButtonPressed, 10);
+		}
+		else
+		{
+			// Check, this button is in pressing state?
+			if (!BUTTON_GetButtonState(i))
+			{
+				// Not pressed = End of press
+				BUTTON_PressedButtons &= ~(1 << i);
+
+				// Handle button press
+				uint32_t buttonPressTime = HAL_GetTick() - BUTTON_PressTimeTick[i];
+
+				if (buttonPressTime > CONFIG_BUTTON_LONG_PRESS_TIME_TICK_LIMIT)
+				{
+					Logic_ButtonEventHandler(i, ButtonPress_Long);
+				}
+				else
+				{
+					Logic_ButtonEventHandler(i, ButtonPress_Short);
+				}
+				// Not need schedule ButtonTask at next time
+			}
+			else
+			{
+				// Button in pressing, Check button at next time
+				TaskHandler_SetTaskOnceRun(Task_ButtonPressed, 10);
+			}
+
+		}
+	}
+
+	/*
+	if (BUTTON_PressedButtons == 0)
+	{
+		// There is no button event
+
+	}*/
+#else
+	Logic_ButtonEventHandler(i, ButtonPress_Short);
+#endif
+
 	// Clear flag
 	BUTTON_Clicked = 0;
 
-
-	#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
+#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
 	// Test for Raspberry Pi
 	RASPBERRYPI_SendMessage(1, Function_Alarm, Alarm_PressedButton , 17);
-	#endif
+#endif
 
 	return TASK_RESULT_OK;
 }

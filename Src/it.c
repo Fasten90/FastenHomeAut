@@ -195,33 +195,33 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	{
 		// Toggle LED
 		LED_RED_TOGGLE();
-		BUTTON_Clicked |= ( ( 1 << PressedButton_Pressed) | ( 1 << PressedButton_Up ) );
+		BUTTON_Clicked |= (1 << PressedButton_Up);
 	}
 	if (GPIO_Pin == BUTTON_DOWN_GPIO_PIN)
 	{
 		// Toggle LED
 		LED_RED_TOGGLE();
-		BUTTON_Clicked |= ( ( 1 << PressedButton_Pressed) | ( 1 << PressedButton_Down ) );
+		BUTTON_Clicked |= (1 << PressedButton_Down);
 	}
 	if (GPIO_Pin == BUTTON_RIGHT_GPIO_PIN)
 	{
 		// Toggle LED
 		LED_RED_TOGGLE();
-		BUTTON_Clicked |= ( ( 1 << PressedButton_Pressed) | ( 1 << PressedButton_Right ) );
+		BUTTON_Clicked |= (1 << PressedButton_Right);
 	}
 	if (GPIO_Pin == BUTTON_LEFT_GPIO_PIN)
 	{
 		// Toggle LED
 		LED_RED_TOGGLE();
-		BUTTON_Clicked |= ( ( 1 << PressedButton_Pressed) | ( 1 << PressedButton_Left ) );
+		BUTTON_Clicked |= (1 << PressedButton_Left);
 	}
 #endif	// #ifdef CONFIG_MODULE_BUTTON_ENABLE
 #if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_NUCLEOF401RE)
 	if (GPIO_Pin == BUTTON_USER_GPIO_PIN)
 	{
 		// Toggle LED
-		LED_GREEN_TOGGLE();
-		BUTTON_Clicked |= ( ( 1 << PressedButton_Pressed) | ( 1 << PressedButton_Up ) );
+		//LED_GREEN_TOGGLE();
+		BUTTON_Clicked |= (1 << PressedButton_User);
 	}
 #endif
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE

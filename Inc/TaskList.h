@@ -52,6 +52,12 @@ typedef enum
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
 	Task_ButtonPressed,
 #endif
+#ifdef CONFIG_MODULE_DISPLAY_ENABLE
+	Task_Display,
+#endif
+#ifdef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
+	Task_SystemTime,
+#endif
 
 	// XXX:
 

@@ -96,6 +96,13 @@ void TaskHandler_Scheduler(TaskTick_t elapsedTick)
 			// Schedule - periodical
 			TaskHandler_RunTask(i, ScheduleSource_PeriodicSchedule);
 		}
+		else if (TaskList[i].isRunOnce
+			&& TaskList[i].tick >= TaskList[i].taskScheduleRate
+			&& !TaskList[i].isDisabled)
+		{
+			// Schedule - once
+			TaskHandler_RunTask(i, ScheduleSource_RunOnce);
+		}
 		else if (TaskList[i].isRequestScheduling
 			&& !TaskList[i].isDisabled)
 		{
@@ -127,7 +134,15 @@ static void TaskHandler_IncrementTicks(TaskTick_t elapsedTick)
  */
 static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 {
-	bool result = TaskList[taskID].taskFunction(source);
+	bool result = TASK_RESULT_FAILED;
+
+	// Clear once run
+	if (TaskList[taskID].isRunOnce)
+	{
+		TaskList[taskID].isDisabled = true;
+	}
+
+	TaskList[taskID].taskFunction(source);
 
 #ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
 	uprintf("- %s task run %s\r\n", TaskList[taskID].taskName, (result) ? ("successful") : ("failed"));
@@ -141,12 +156,6 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 	// Clear tick
 	TaskList[taskID].isRequestScheduling = false;
 	TaskList[taskID].tick = 0;
-
-	// Clear once run
-	if (TaskList[taskID].isRunOnce)
-	{
-		TaskList[taskID].isDisabled = true;
-	}
 }
 
 
@@ -156,10 +165,10 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
  */
 void TaskHandler_SetTaskPeriodicTime(TaskID_t taskID, TaskTick_t taskTick)
 {
+	 TaskList[taskID].isRunOnce = false;
 	 TaskList[taskID].isDisabled = false;
 	 TaskList[taskID].taskScheduleRate = taskTick;
 	 TaskList[taskID].tick = 0;
-	 TaskList[taskID].isRunOnce = false;
 }
 
 
@@ -169,10 +178,10 @@ void TaskHandler_SetTaskPeriodicTime(TaskID_t taskID, TaskTick_t taskTick)
  */
 void TaskHandler_SetTaskOnceRun(TaskID_t taskID, TaskTick_t taskTick)
 {
+	 TaskList[taskID].isRunOnce = true;
 	 TaskList[taskID].isDisabled = false;
 	 TaskList[taskID].taskScheduleRate = taskTick;
 	 TaskList[taskID].tick = 0;
-	 TaskList[taskID].isRunOnce = true;
 }
 
 
@@ -180,11 +189,11 @@ void TaskHandler_SetTaskOnceRun(TaskID_t taskID, TaskTick_t taskTick)
 /**
  * \brief	Disable task
  */
-void TaskHandler_DisableTask(TaskName_t taskId)
+void TaskHandler_DisableTask(TaskName_t taskID)
 {
-	if (taskId < Task_Count)
+	if (taskID < Task_Count)
 	{
-		TaskList[taskId].isDisabled = true;
+		TaskList[taskID].isDisabled = true;
 	}
 }
 
@@ -193,11 +202,12 @@ void TaskHandler_DisableTask(TaskName_t taskId)
 /**
  * \brief	Request task scheduling
  */
-void TaskHandler_RequestTaskScheduling(TaskID_t taskId)
+void TaskHandler_RequestTaskScheduling(TaskID_t taskID)
 {
-	if (taskId < Task_Count)
+	if (taskID < Task_Count)
 	{
-		TaskList[taskId].isRequestScheduling = true;
+		TaskList[taskID].isRequestScheduling = true;
+		TaskList[taskID].isDisabled = false;
 #ifdef CONFIG_EVENTLOG_TASKHANDLER_LOG_ENABLE
 		EventLog_LogEvent(Event_TaskScheduled, EventType_SystemEvent, taskId);
 #endif

@@ -23,43 +23,24 @@
 
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
 
-/*------------------------------------------------------------------------------
- *  Type definitions
- *----------------------------------------------------------------------------*/
 
 
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
+
 volatile uint8_t BUTTON_Clicked = 0;
 
-/*------------------------------------------------------------------------------
- *  Local variables
- *----------------------------------------------------------------------------*/
-
-
-/*------------------------------------------------------------------------------
- *  Function declarations
- *----------------------------------------------------------------------------*/
-
-
-/*------------------------------------------------------------------------------
- *  Local functions
- *----------------------------------------------------------------------------*/
 
 
 /*------------------------------------------------------------------------------
  *  Global functions
  *----------------------------------------------------------------------------*/
 
-/***************************************************************************//**
- * @brief
- * @details
- * @param[in]
- * @param[out]
- * @return
- ******************************************************************************/
-void BUTTON_Init ( void )
+/**
+ * \brief	Initialize buttons
+ */
+void BUTTON_Init(void)
 {
 
 	GPIO_InitTypeDef   GPIO_InitStructure;
@@ -163,10 +144,54 @@ void BUTTON_Init ( void )
 }
 
 
+
+/**
+ * \brief	Get Button state
+ */
+bool BUTTON_GetButtonState(ButtonType_t button)
+{
+	bool state = false;
+
+	switch (button)
+	{
+
+#if BUTTON_NUM == 1
+		case PressedButton_User:
+			state = (HAL_GPIO_ReadPin(BUTTON_USER_GPIO_PORT, BUTTON_USER_GPIO_PIN) == GPIO_PIN_SET) ? true : false;
+			break;
+
+#elif BUTTON_NUM > 1
+		case PressedButton_Up:
+			state = (HAL_GPIO_ReadPin(BUTTON_UP_GPIO, BUTTON_UP_GPIO_PIN) == GPIO_PIN_SET) ? true : false;
+			break;
+
+		case PressedButton_Down:
+			state = (HAL_GPIO_ReadPin(BUTTON_DOWN_GPIO, BUTTON_DOWN_GPIO_PIN) == GPIO_PIN_SET) ? true : false;
+			break;
+
+		case PressedButton_Right:
+			state = (HAL_GPIO_ReadPin(BUTTON_RIGHT_GPIO, BUTTON_RIGHT_GPIO_PIN) == GPIO_PIN_SET) ? true : false;
+			break;
+
+		case PressedButton_Left:
+			state = (HAL_GPIO_ReadPin(BUTTON_LEFT_GPIO, BUTTON_LEFT_GPIO_PIN) == GPIO_PIN_SET) ? true : false;
+			break;
+#endif
+
+		case PressedButton_Count:
+		default:
+			state = false;
+			break;
+	}
+
+	return state;
+}
+
+
 /*
  * \note	EXTI GPIO callbacks function moved to it.c, because not every GPIO are button pin
  */
 
+
+
 #endif	// #ifdef CONFIG_MODULE_BUTTON_ENABLE
-
-

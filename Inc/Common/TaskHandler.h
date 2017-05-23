@@ -64,7 +64,8 @@ typedef enum
 {
 	ScheduleSource_Unknown,						///> Unknown schedule reason
 	ScheduleSource_EventTriggered,				///> Triggered (event)
-	ScheduleSource_PeriodicSchedule				///> Periodical scheduling
+	ScheduleSource_PeriodicSchedule,			///> Periodical scheduling
+	ScheduleSource_RunOnce,						///> Run once
 } ScheduleSource_t;
 
 
@@ -85,7 +86,7 @@ void TaskHandler_Scheduler(TaskTick_t elapsedTick);
 void TaskHandler_SetTaskPeriodicTime(TaskID_t taskID, TaskTick_t taskTick);
 void TaskHandler_SetTaskOnceRun(TaskID_t taskID, TaskTick_t taskTick);
 void TaskHandler_DisableTask(TaskID_t taskID);
-void TaskHandler_RequestTaskScheduling(TaskID_t taskId);
+void TaskHandler_RequestTaskScheduling(TaskID_t taskID);
 
 void TaskHandler_UnitTest(void);
 
