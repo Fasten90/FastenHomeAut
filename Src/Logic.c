@@ -37,9 +37,10 @@ static uint8_t Logic_SystemTimeConfigState = 0;
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
+#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
 static void Logic_SystemTimeStepConfig(void);
 static void Logic_SystemTimeStepValue(void);
-
+#endif
 
 
 /*------------------------------------------------------------------------------
@@ -60,23 +61,31 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 	{
 		if (type == ButtonPress_Long)
 		{
-			DebugUart_SendLine("Button pressed a long time");
+			BUTTON_DEBUG_PRINT("Button pressed a long time");
+#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
 			Logic_SystemTimeStepConfig();
+#endif
 		}
 		else if (type == ButtonPress_Short)
 		{
-			DebugUart_SendLine("Button pressed a short time");
+			BUTTON_DEBUG_PRINT("Button pressed a short time");
+#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
 			Logic_SystemTimeStepValue();
+#endif
 		}
 	}
 
-#elif BUTTOn_NUM > 1
+#elif BUTTON_NUM > 1
 #warning "Implement this!"
 #endif
 }
 
 
 
+#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
+/**
+ * \brief	SystemTime - step function
+ */
 static void Logic_SystemTimeStepConfig(void)
 {
 	if (Logic_SystemTimeConfigState < 2)
@@ -87,6 +96,9 @@ static void Logic_SystemTimeStepConfig(void)
 
 
 
+/**
+ * \brief	SystemTime - increment selected value (hour, minute, or none)
+ */
 void Logic_SystemTimeStepValue(void)
 {
 	switch (Logic_SystemTimeConfigState)
@@ -110,6 +122,5 @@ void Logic_SystemTimeStepValue(void)
 		default:
 			break;
 	}
-
 }
-
+#endif	// #ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK

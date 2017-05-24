@@ -331,13 +331,8 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 		}
 	}
 
-	/*
-	if (BUTTON_PressedButtons == 0)
-	{
-		// There is no button event
-
-	}*/
 #else
+	// Button long press not used
 	Logic_ButtonEventHandler(i, ButtonPress_Short);
 #endif
 

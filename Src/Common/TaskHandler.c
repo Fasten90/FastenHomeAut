@@ -29,6 +29,8 @@
 
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 
+
+
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
@@ -39,6 +41,18 @@
  *  Local variables
  *----------------------------------------------------------------------------*/
 
+#ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
+#define TASKHANDLER_STATISTICS_LIMIT		(100)
+
+typedef struct
+{
+	uint32_t startTick;
+	uint32_t runTime;
+} TaskHandlerStat_t;
+
+static TaskHandlerStat_t TaskHandler_StatisticsRanTaskTicks[TASKHANDLER_STATISTICS_LIMIT] = { 0 };
+static uint8_t TaskHandler_StatisticsIndex = 0;
+#endif
 
 
 /*------------------------------------------------------------------------------
@@ -142,6 +156,11 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 		TaskList[taskID].isDisabled = true;
 	}
 
+#ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
+	// Measure run time:
+	uint32_t startTime = HAL_GetTick();
+#endif
+
 	TaskList[taskID].taskFunction(source);
 
 #ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
@@ -156,6 +175,19 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 	// Clear tick
 	TaskList[taskID].isRequestScheduling = false;
 	TaskList[taskID].tick = 0;
+
+#ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
+	uint32_t runTime = HAL_GetTick() - startTime;
+	TaskHandler_StatisticsRanTaskTicks[TaskHandler_StatisticsIndex].startTick = startTime;
+	TaskHandler_StatisticsRanTaskTicks[TaskHandler_StatisticsIndex].runTime = runTime;
+
+	TaskHandler_StatisticsIndex++;
+
+	if (TaskHandler_StatisticsIndex >= TASKHANDLER_STATISTICS_LIMIT)
+	{
+		TaskHandler_StatisticsIndex = 0;
+	}
+#endif
 }
 
 
@@ -213,6 +245,74 @@ void TaskHandler_RequestTaskScheduling(TaskID_t taskID)
 #endif
 	}
 }
+
+
+
+#ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
+/**
+ * \brief	Calculate and print TaskHandler statistics
+ */
+void TaskHandler_PrintStatistics(void)
+{
+	uint32_t oldestTick = HAL_GetTick();
+	uint8_t runTimes = 0;
+	uint8_t i;
+	uint32_t lastTick = 0;
+	//uint32_t lastRunTime = 0;
+
+	for (i = 0; i < TASKHANDLER_STATISTICS_LIMIT; i++)
+	{
+		if (TaskHandler_StatisticsRanTaskTicks[i].startTick > 0)
+		{
+			// This tick is "ran task tick"
+			if (TaskHandler_StatisticsRanTaskTicks[i].startTick < oldestTick)
+			{
+				// This tick is the oldest tick
+				oldestTick = TaskHandler_StatisticsRanTaskTicks[i].startTick;
+			}
+
+			// Time ++
+			runTimes += TaskHandler_StatisticsRanTaskTicks[i].runTime;
+			if (!(lastTick == TaskHandler_StatisticsRanTaskTicks[i].startTick
+				&& TaskHandler_StatisticsRanTaskTicks[i].runTime == 0) )
+				{
+				// Upper time
+				runTimes += 1;
+				}
+
+			// Save last values
+			lastTick = TaskHandler_StatisticsRanTaskTicks[i].startTick;
+			//lastRunTime = TaskHandler_StatisticsRanTaskTicks[i].runTime;
+		}
+	}
+
+	// If reached here, we have the oldest tick + ran num
+	// Calculate CPU usage
+	uint32_t actualTick = HAL_GetTick();
+	uint32_t allTime = actualTick - oldestTick;
+	uint8_t cpuPercent = runTimes / allTime;
+
+	uprintf("TaskHandler usage:\r\n"
+			" Last run time: %d\r\n"
+			" Recently run time: %d\r\n"
+			" Run times: %d [ms]\r\n"
+			" CPU Usage: %d%%\r\n",
+			oldestTick,
+			actualTick,
+			runTimes,
+			cpuPercent
+			);
+
+	// Print all table
+	for (i = 0; i < TASKHANDLER_STATISTICS_LIMIT; i++)
+	{
+		if (TaskHandler_StatisticsRanTaskTicks[i].startTick > 0)
+		{
+			uprintf("#%8d - %3d\r\n", TaskHandler_StatisticsRanTaskTicks[i].startTick, TaskHandler_StatisticsRanTaskTicks[i].runTime);
+		}
+	}
+}
+#endif
 
 
 

@@ -540,17 +540,22 @@ static CommandResult_t CommandFunction_reset(uint32_t argc, char** argv)
 	uint16_t i;
 
 	CommandHandler_SendLine("Reset...");
-	for (i=0; i<1000; i++);
 
+	// Wait
+	for (i = 0; i < 1000; i++);
+
+	// Reset
 	NVIC_SystemReset();
 
-	for (i=0; i<1000; i++);
+	// Wait
+	for (i = 0; i < 1000; i++);
 
 	return CommandResult_Ok;
 }
 
 
 
+#ifdef CONFIG_TEST_MODE
 /**
  * \brief	Run module's unit tests
  */
@@ -596,9 +601,11 @@ static CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
 
 	return CommandResult_Ok;
 }
+#endif	// #ifdef CONFIG_TEST_MODE
 
 
 
+#ifdef CONFIG_MODULE_TEST_ENABLE
 /**
  * \brief	Run module test
  */
@@ -662,10 +669,11 @@ static CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 
 	return CommandResult_Ok;
 }
+#endif	// #ifdef CONFIG_MODULE_TEST_ENABLE
 
 
 
-#ifdef CONFIG_DEBUG_MODE
+#ifdef CONFIG_TEST_MODE
 /**
  * \brief	Test function
  */
@@ -842,9 +850,13 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 
 
 	// Clock test
-	Display_TestClock();
+	//Display_TestClock();
 
 
+	// TaskHandler statistics test
+#ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
+	TaskHandler_PrintStatistics();
+#endif
 
 	/**
 	 * 		End of Test codes
@@ -857,7 +869,7 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	return CommandResult_Ok;
 
 }
-#endif	// #ifdef CONFIG_DEBUG_MODE
+#endif	// #ifdef CONFIG_TEST_MODE
 
 
 

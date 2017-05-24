@@ -26,8 +26,6 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define TASKHANDLER_
-
 
 // TaskResult defines
 #define TASK_RESULT_OK			(true)
@@ -87,6 +85,7 @@ void TaskHandler_SetTaskPeriodicTime(TaskID_t taskID, TaskTick_t taskTick);
 void TaskHandler_SetTaskOnceRun(TaskID_t taskID, TaskTick_t taskTick);
 void TaskHandler_DisableTask(TaskID_t taskID);
 void TaskHandler_RequestTaskScheduling(TaskID_t taskID);
+void TaskHandler_PrintStatistics(void);
 
 void TaskHandler_UnitTest(void);
 

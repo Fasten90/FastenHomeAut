@@ -253,14 +253,17 @@
 
 /// Debug
 #define CONFIG_DEBUG_MODE
+///> Test Mode: Enable "unittest", "test" command...
+#define CONFIG_TEST_MODE
+#define CONFIG_MODULE_TEST_ENABLE
 #define CONFIG_SWO_ENABLE
 //#define CONFIG_DEBUG_RAMREAD_WRITE_COMMAND_ENABLE
 //#define CONFIG_DEBUG_GO_COMMAND_ENABLE
 
 
-/// Debug modes
+/// Debug modes - Print debug message
 //#define CONFIG_TASKHANDLER_DEBUG_ENABLE
-//#define CONFIG_EVENTHANDLER_DEBUG_ENABLE
+//#define CONFIG_BUTTON_DEBUG_ENABLE
 
 
 /// Unit tests
@@ -330,6 +333,12 @@
 	#define CONFIG_BUTTON_LONG_PRESS_TIME_TICK_LIMIT		(300)
 #endif
 
+
+// TaskHandler settings
+#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
+	// Create CPU usage statistics:
+	//#define CONFIG_MODULE_TASKHANDLER_STATISTICS
+#endif
 
 
 #endif /* OPTIONS_H_ */

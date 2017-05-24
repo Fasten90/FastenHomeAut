@@ -27,6 +27,11 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
+#ifdef CONFIG_BUTTON_DEBUG_ENABLE
+#define BUTTON_DEBUG_PRINT(msg)		DebugUart_SendLine(msg)
+#else
+#define BUTTON_DEBUG_PRINT(msg)
+#endif
 
 
 /*------------------------------------------------------------------------------

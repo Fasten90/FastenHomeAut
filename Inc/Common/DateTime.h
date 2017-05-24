@@ -70,6 +70,7 @@ typedef struct
 
 
 
+#ifdef DATETIME_OLD_CODE
 /// DateTime string structure
 typedef struct
 {
@@ -86,6 +87,7 @@ typedef struct
 	char second[2];				// 00
 	char end[1];				// '\0' or other
 } DateTimeString_t;
+#endif
 
 
 
