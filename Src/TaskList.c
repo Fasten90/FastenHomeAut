@@ -52,6 +52,9 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source);
 #ifdef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
 static TaskResult_t Task_SystemTimeSecondStep(ScheduleSource_t source);
 #endif
+#ifdef CONFIG_MODULE_TASK_SOFTWARE_WATCHDOG_ENABLE
+static TaskResult_t Task_SoftwareWatchDog(ScheduleSource_t source);
+#endif
 
 
 /// Tasks list
@@ -122,6 +125,14 @@ Task_t TaskList[] =
 		.taskName = "SystemTime",
 		.taskFunction = Task_SystemTimeSecondStep,
 		.taskScheduleRate = 1000
+	},
+#endif
+#ifdef CONFIG_MODULE_TASK_SOFTWARE_WATCHDOG_ENABLE
+	{
+		.taskName = "SwWatchDog",
+		.taskFunction = Task_SoftwareWatchDog,
+		.taskScheduleRate = 1000,
+		.isTimeOutTask = true
 	},
 #endif
 
@@ -375,7 +386,6 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 	#endif
 
 	return TASK_RESULT_OK;
-
 }
 #endif
 
@@ -393,6 +403,25 @@ static TaskResult_t Task_SystemTimeSecondStep(ScheduleSource_t source)
 	// Display refresh
 	Display_ShowClock(&DateTime_SystemTime.time);
 #endif
+
+#ifdef CONFIG_MODULE_TASK_SOFTWARE_WATCHDOG_ENABLE
+	TaskHandler_ClearTimeoutTask(Task_SwWDT);
+#endif
+
+	return TASK_RESULT_OK;
+}
+#endif
+
+
+
+#ifdef CONFIG_MODULE_TASK_SOFTWARE_WATCHDOG_ENABLE
+static TaskResult_t Task_SoftwareWatchDog(ScheduleSource_t source)
+{
+	(void)source;
+
+	// Software WatchDog - Timeout task
+	// If This task is running, the system is lagging
+	DebugUart_SendLine("Software WatchdDog Timeout! System is lagging!\r\n");
 
 	return TASK_RESULT_OK;
 }

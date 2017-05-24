@@ -54,6 +54,7 @@ typedef struct
 	bool isRequestScheduling;					///> Task scheduling request (true, if request)
 	bool isPeriodisScheduleDisabled;			///> Task schedule (periodic) disabled
 	bool isRunOnce;								///> Task scheduling once
+	bool isTimeOutTask;							///> Task is work in TimeOut mode
 	bool isDisabled;							///> Task is disabled/enabled
 } Task_t;
 
@@ -64,6 +65,7 @@ typedef enum
 	ScheduleSource_EventTriggered,				///> Triggered (event)
 	ScheduleSource_PeriodicSchedule,			///> Periodical scheduling
 	ScheduleSource_RunOnce,						///> Run once
+	ScheduleSource_TimeOut						///> TimeOut
 } ScheduleSource_t;
 
 
@@ -85,6 +87,8 @@ void TaskHandler_SetTaskPeriodicTime(TaskID_t taskID, TaskTick_t taskTick);
 void TaskHandler_SetTaskOnceRun(TaskID_t taskID, TaskTick_t taskTick);
 void TaskHandler_DisableTask(TaskID_t taskID);
 void TaskHandler_RequestTaskScheduling(TaskID_t taskID);
+void TaskHandler_ClearTimeoutTask(TaskID_t taskID);
+
 void TaskHandler_PrintStatistics(void);
 
 void TaskHandler_UnitTest(void);

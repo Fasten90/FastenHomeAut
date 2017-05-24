@@ -58,6 +58,9 @@ typedef enum
 #ifdef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
 	Task_SystemTime,
 #endif
+#ifdef CONFIG_MODULE_TASK_SOFTWARE_WATCHDOG_ENABLE
+	Task_SwWDT,
+#endif
 
 	// XXX:
 

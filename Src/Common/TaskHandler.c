@@ -117,6 +117,13 @@ void TaskHandler_Scheduler(TaskTick_t elapsedTick)
 			// Schedule - once
 			TaskHandler_RunTask(i, ScheduleSource_RunOnce);
 		}
+		else if (TaskList[i].isTimeOutTask
+			&& TaskList[i].tick >= TaskList[i].taskScheduleRate
+			&& !TaskList[i].isDisabled)
+		{
+			// TimeOut task
+			TaskHandler_RunTask(i, ScheduleSource_TimeOut);
+		}
 		else if (TaskList[i].isRequestScheduling
 			&& !TaskList[i].isDisabled)
 		{
@@ -239,6 +246,24 @@ void TaskHandler_RequestTaskScheduling(TaskID_t taskID)
 	if (taskID < Task_Count)
 	{
 		TaskList[taskID].isRequestScheduling = true;
+		TaskList[taskID].isDisabled = false;
+#ifdef CONFIG_EVENTLOG_TASKHANDLER_LOG_ENABLE
+		EventLog_LogEvent(Event_TaskScheduled, EventType_SystemEvent, taskId);
+#endif
+	}
+}
+
+
+
+/**
+ * \brief	Clear TimeOut task tick
+ */
+void TaskHandler_ClearTimeoutTask(TaskID_t taskID)
+{
+	if (taskID < Task_Count && TaskList[taskID].isTimeOutTask == true)
+	{
+		// Clear
+		TaskList[taskID].tick = 0;
 		TaskList[taskID].isDisabled = false;
 #ifdef CONFIG_EVENTLOG_TASKHANDLER_LOG_ENABLE
 		EventLog_LogEvent(Event_TaskScheduled, EventType_SystemEvent, taskId);
@@ -435,6 +460,7 @@ void TaskHandler_UnitTest(void)
 	TaskList[0].isRequestScheduling = oldRequest;
 
 
+	// TODO: Test TimeOut task!
 
 	// Finish
 	UnitTest_End();
