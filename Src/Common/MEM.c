@@ -124,3 +124,14 @@ int memcmp(const void * ptr1, const void * ptr2, size_t num)
 }
 
 
+
+/**
+ * \brief	Fill large RAM buffer with GUARD values
+ * 			Useful for Stack size calculate (StackOverFlow checker)
+ */
+// Stack overflow checker
+void mem_StackFillWithGuardValues(void)
+{
+	uint8_t stackOverFlowCheckerVariable[1000];
+	memset(stackOverFlowCheckerVariable, 0xEF, 1000);
+}
