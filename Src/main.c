@@ -98,9 +98,15 @@ int main(void)
 #endif
 
 
-#ifdef CONFIG_MODULE_IO_ENABLE
+#ifdef CONFIG_MODULE_COMMON_IO_ENABLE
 	// Common IO
 	CommonIO_Init();
+#endif
+
+
+#ifdef CONFIG_MODULE_IO_ENABLE
+	// IO
+	IO_Init();
 #endif
 
 

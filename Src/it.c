@@ -16,21 +16,16 @@
 
 
 #ifdef CONFIG_USE_PANEL_HOMEAUTNODESMALL
-/* External variables --------------------------------------------------------*/
- 
+/*
+  EXTI0_1_IRQn
+  EXTI2_3_IRQn
+  EXTI4_15_IRQn               
+*/
 
 void EXTI0_1_IRQHandler(void)
 {
 	HAL_GPIO_EXTI_IRQHandler(BUTTON_RIGHT_GPIO_PIN);
 }
-
-
-/*
-  EXTI0_1_IRQn                = 5      // EXTI Line 0 and 1 Interrupts
-  EXTI2_3_IRQn                = 6      //EXTI Line 2 and 3 Interrupts
-  EXTI4_15_IRQn               
-*/
-
 
 /**
   * @brief  This function handles external lines 4 to 15 interrupt request.
@@ -58,8 +53,6 @@ void EXTI4_15_IRQHandler(void)
 	//HAL_GPIO_EXTI_IRQHandler(TAMPER_BUTTON_PIN);
 	
 }
-
-
 #endif 	// #ifdef CONFIG_USE_PANEL_NODESMALL
 
 
@@ -116,8 +109,6 @@ void EXTI15_10_IRQHandler(void)
 
 
 
-
-
 #ifdef CONFIG_USE_PANEL_HOMEAUTCENTERPANEL
 
 // Up		PC7
@@ -136,45 +127,40 @@ void EXTI9_5_IRQHandler(void)
 {
 	// 7-8-9
 	
-	if ( HAL_GPIO_ReadPin(BUTTON_LEFT_GPIO_PORT,BUTTON_LEFT_GPIO_PIN) == GPIO_PIN_SET)
+	if ( HAL_GPIO_ReadPin(BUTTON_LEFT_GPIO_PORT, BUTTON_LEFT_GPIO_PIN) == GPIO_PIN_SET)
 	{
 		HAL_GPIO_EXTI_IRQHandler(BUTTON_LEFT_GPIO_PIN);
 	}
-	if (HAL_GPIO_ReadPin(BUTTON_UP_GPIO_PORT,BUTTON_UP_GPIO_PIN) == GPIO_PIN_SET)
+	if (HAL_GPIO_ReadPin(BUTTON_UP_GPIO_PORT, BUTTON_UP_GPIO_PIN) == GPIO_PIN_SET)
 	{
 		HAL_GPIO_EXTI_IRQHandler(BUTTON_UP_GPIO_PIN);
 	}		
-	if (HAL_GPIO_ReadPin(BUTTON_DOWN_GPIO_PORT,BUTTON_DOWN_GPIO_PIN) == GPIO_PIN_SET)
+	if (HAL_GPIO_ReadPin(BUTTON_DOWN_GPIO_PORT, BUTTON_DOWN_GPIO_PIN) == GPIO_PIN_SET)
 	{
 		HAL_GPIO_EXTI_IRQHandler(BUTTON_DOWN_GPIO_PIN);
 	}
 }
-
 
 #endif //#ifdef CONFIG_USE_PANEL_CENTERPANEL
 
 
 
 #ifdef CONFIG_USE_PANEL_STM32F4DISCOVERY
-
 // PA0 - User button
 void EXTI0_IRQHandler(void)
 {
 	HAL_GPIO_EXTI_IRQHandler(BUTTON_USER_GPIO_PIN);
 }
-
 #endif	// #ifdef CONFIG_USE_PANEL_STM32F4DISCOVERY
 
 
 
 #ifdef CONFIG_USE_PANEL_NUCLEOF401RE
-
 // PC13 - User button
 void EXTI15_10_IRQHandler(void)
 {
 	HAL_GPIO_EXTI_IRQHandler(BUTTON_USER_GPIO_PIN);
 }
-
 #endif	// #ifdef CONFIG_USE_PANEL_NUCLEOF401RE
 
 
@@ -215,30 +201,45 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		LED_RED_TOGGLE();
 		BUTTON_Clicked |= (1 << PressedButton_Left);
 	}
+	#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
+	if (GPIO_Pin & (BUTTON_UP_GPIO_PIN | BUTTON_DOWN_GPIO_PIN | BUTTON_RIGHT_GPIO_PIN | BUTTON_LEFT_GPIO_PIN))
+	{
+		TaskHandler_RequestTaskScheduling(Task_ButtonPressed);
+	}
+	#endif
 #endif	// #ifdef CONFIG_MODULE_BUTTON_ENABLE
+
 #if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_NUCLEOF401RE)
 	if (GPIO_Pin == BUTTON_USER_GPIO_PIN)
 	{
 		// Toggle LED
 		//LED_GREEN_TOGGLE();
 		BUTTON_Clicked |= (1 << PressedButton_User);
+
+		#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
+		TaskHandler_RequestTaskScheduling(Task_ButtonPressed);
+		#endif
 	}
-#endif
-#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
-	TaskHandler_RequestTaskScheduling(Task_ButtonPressed);
 #endif
 #endif
 
-#ifdef CONFIG_USE_PANEL_NODEMEDIUM
+#if defined(CONFIG_MODULE_IO_ENABLE) && defined(CONFIG_MODULE_IO_INPUT_MOTION_ENABLE)
 	if (GPIO_Pin == SENSOR_MOTION_GPIO_PIN)
 	{
-		GLOBAL_IO_Sensor_Motion_Move = 1;
-	}
-	if (GPIO_Pin == SENSOR_SOUND_IMPACT_GPIO_PIN)
-	{
-		GLOBAL_IO_Sensor_Sound_Impact_Sound = 1;
+		// TODO: Check actual state !
+		//InputState_t inputState =
+		IO_SetInputState(Input_MotionMove, InputState_Active);
 	}
 #endif
+#if defined(CONFIG_MODULE_IO_ENABLE) && defined(CONFIG_MODULE_IO_INPUT_SOUNDIMPACT_ENABLE)
+	if (GPIO_Pin == SENSOR_SOUND_IMPACT_GPIO_PIN)
+	{
+		// TODO: Check actual state !
+		//InputState_t inputState =
+		IO_SetInputState(Input_SoundImpact, InputState_Active);
+	}
+#endif
+
 }	// End of HAL_GPIO_EXTI_Callback()
 
 
