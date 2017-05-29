@@ -563,6 +563,50 @@ void DateTime_Step(DateTime_t *dateTime)
 
 
 /**
+ * \brief	Get DateTime
+ */
+void DateTime_GetDateTime(DateTime_t *dateTime)
+{
+	#ifdef CONFIG_MODULE_RTC_ENABLE
+	RTC_GetDateTime(&dateTime);
+	#elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
+	// TODO:
+	memcpy(&dateTime, &DateTime_SystemTime, sizeof(DateTime_t));
+	#endif
+}
+
+
+
+/**
+ * \brief	Set date
+ */
+void DateTime_SetDate(Date_t *date)
+{
+	#ifdef CONFIG_MODULE_RTC_ENABLE
+	RTC_SetDate(&date);
+	#elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
+	memcpy(&DateTime_SystemTime.date, date, sizeof(Date_t));
+	#endif
+}
+
+
+
+/**
+ * \brief	Set time
+ */
+void DateTime_SetTime(Time_t *time)
+{
+	#ifdef CONFIG_MODULE_RTC_ENABLE
+	RTC_SetTime(&time);
+	#elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
+	// TODO:
+	memcpy(&DateTime_SystemTime.time, &time, sizeof(Time_t));
+	#endif
+}
+
+
+
+/**
  * \brief	DateTime Unit test
  */
 #ifdef MODULE_DATETIME_UNITTEST_ENABLE

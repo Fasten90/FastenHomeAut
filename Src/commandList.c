@@ -108,6 +108,9 @@ static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv);
 #ifdef CONFIG_MODULE_IO_ENABLE
 static CommandResult_t CommandFunction_IoStates(uint32_t argc, char** argv);
 #endif
+#ifdef CONFIG_MODULE_SIMULATION_ENABLE
+static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv);
+#endif
 
 /*------------------------------------------------------------------------------
  *  Global variables
@@ -433,6 +436,17 @@ const CommandStruct CommandList[] =
 		.commandArgNum = CommandArgument_0,
 	},
 #endif
+#ifdef CONFIG_MODULE_SIMULATION_ENABLE
+	{
+		.name = "simulation",
+		.commandFunctionPointer = CommandFunction_Simulation,
+		.description = "simulate event, errors, etc.",
+		.syntax = "",
+		.example = "",
+		.commandArgNum = CommandArgument_1 | CommandArgument_2,
+	},
+#endif
+
 
 	/*
 	 * XXX: Add new commands here
@@ -1513,12 +1527,7 @@ static CommandResult_t CommandFunction_RTC(uint32_t argc, char** argv)
 		if (DateTime_ConvertDateStringToDate(argv[2], &date))
 		{
 			// Successful convert, set
-			#ifdef CONFIG_MODULE_RTC_ENABLE
-			RTC_SetDate(&date);
-			#elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
-			// TODO:
-			memcpy(&DateTime_SystemTime.date, &date, sizeof(Date_t));
-			#endif
+			DateTime_SetDate(&date);
 			result = CommandResult_Ok_SendSuccessful;
 		}
 		else
@@ -1533,12 +1542,7 @@ static CommandResult_t CommandFunction_RTC(uint32_t argc, char** argv)
 		if (DateTime_ConvertTimeStringToTime(argv[2], &time))
 		{
 			// Successful convert, set
-			#ifdef CONFIG_MODULE_RTC_ENABLE
-			RTC_SetTime(&time);
-			#elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
-			// TODO:
-			memcpy(&DateTime_SystemTime.time, &time, sizeof(Time_t));
-			#endif
+			DateTime_SetTime(&time);
 			result = CommandResult_Ok_SendSuccessful;
 		}
 		else
@@ -1550,14 +1554,9 @@ static CommandResult_t CommandFunction_RTC(uint32_t argc, char** argv)
 	{
 		char datetimestring[DATETIME_STRING_MAX_LENGTH];
 		DateTime_t dateTime;
-		#ifdef CONFIG_MODULE_RTC_ENABLE
-		RTC_GetDateTime(&dateTime);
-		#elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
-		// TODO:
-		memcpy(&dateTime, &DateTime_SystemTime, sizeof(DateTime_t));
-		#endif
+		DateTime_GetDateTime(&dateTime);
 		DateTime_PrintDateTimeToString(datetimestring, &dateTime);
-		CommandHandler_Printf("RTC Date and Time: %s\r\n", datetimestring);
+		CommandHandler_Printf("Date and Time: %s\r\n", datetimestring);
 
 		result = CommandResult_Ok;
 	}
@@ -2031,8 +2030,59 @@ static CommandResult_t CommandFunction_IoStates(uint32_t argc, char** argv)
 				IO_GetOutputStateName(IO_GetOutputState(i)));
 	}
 #endif
+
+	return CommandResult_Ok;
 }
 #endif
 
+
+
+#ifdef CONFIG_MODULE_SIMULATION_ENABLE
+/**
+ * \brief	Simulation
+ */
+static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
+{
+	(void)argc;
+	CommandResult_t result = CommandResult_Unknown;
+
+#ifdef CONFIG_MODULE_IO_ENABLE
+	if (!StrCmp("input", argv[1]))
+	{
+		uint32_t pin;
+		if (StringToUnsignedDecimalNum(argv[2], &pin))
+		{
+			IO_SetInputState((Input_t)pin, InputState_Active);
+			result = CommandResult_Ok_SendSuccessful;
+		}
+		else
+		{
+			result = CommandResult_Error_WrongArgument2;
+		}
+	}
+	else if (!StrCmp("output", argv[1]))
+	{
+		uint32_t pin;
+		if (StringToUnsignedDecimalNum(argv[2], &pin))
+		{
+			IO_SetOutputState((Output_t)pin, OutputState_Active);
+			result = CommandResult_Ok_SendSuccessful;
+		}
+		else
+		{
+			result = CommandResult_Error_WrongArgument2;
+		}
+	}
+	else
+	{
+		result = CommandResult_Error_WrongArgument1;
+	}
+#else
+	(void)argv;
+#endif
+
+	return result;
+}
+#endif
 
 /* END OF COMMAND FUNCTIONS */
