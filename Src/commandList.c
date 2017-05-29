@@ -105,7 +105,9 @@ static CommandResult_t CommandFunction_go(uint32_t argc, char** argv);
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
 static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv);
 #endif
-
+#ifdef CONFIG_MODULE_IO_ENABLE
+static CommandResult_t CommandFunction_IoStates(uint32_t argc, char** argv);
+#endif
 
 /*------------------------------------------------------------------------------
  *  Global variables
@@ -421,6 +423,17 @@ const CommandStruct CommandList[] =
 		.commandArgNum = CommandArgument_1 | CommandArgument_2,
 	},
 #endif
+#ifdef CONFIG_MODULE_IO_ENABLE
+	{
+		.name = "iostates",
+		.commandFunctionPointer = CommandFunction_IoStates,
+		.description = "Get input-output states",
+		.syntax = "",
+		.example = "",
+		.commandArgNum = CommandArgument_0,
+	},
+#endif
+
 	/*
 	 * XXX: Add new commands here
 	 *
@@ -1989,5 +2002,37 @@ static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv)
 	return result;
 }
 #endif
+
+
+
+#ifdef CONFIG_MODULE_IO_ENABLE
+/**
+ * \brief	Get IO states
+ */
+static CommandResult_t CommandFunction_IoStates(uint32_t argc, char** argv)
+{
+	uint8_t i;
+#if IO_INPUTS_NUM > 0
+	CommandHandler_SendLine("Input states:");
+	for (i = 0; i < Input_Count; i++)
+	{
+		CommandHandler_Printf(" %20s %s\r\n",
+				IO_GetInputName(i),
+				IO_GetInputStateName(IO_GetInputState(i)));
+	}
+#endif
+
+#if IO_OUTPUTS_NUM > 0
+	CommandHandler_SendLine("Output states:");
+	for (i = 0; i < Output_Count; i++)
+	{
+		CommandHandler_Printf(" %20s %s\r\n",
+				IO_GetOutputName(i),
+				IO_GetOutputStateName(IO_GetOutputState(i)));
+	}
+#endif
+}
+#endif
+
 
 /* END OF COMMAND FUNCTIONS */
