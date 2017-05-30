@@ -438,7 +438,7 @@ const CommandStruct CommandList[] =
 #endif
 #ifdef CONFIG_MODULE_SIMULATION_ENABLE
 	{
-		.name = "simulation",
+		.name = "simulate",
 		.commandFunctionPointer = CommandFunction_Simulation,
 		.description = "simulate event, errors, etc.",
 		.syntax = "",
@@ -2074,12 +2074,18 @@ static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
 		}
 	}
 	else
+#endif
+	if (!StrCmp("infloop", argv[1]))
+	{
+		// Infinite loop test for WatchDog test
+		while(1);
+		result = CommandResult_Ok_SendSuccessful;
+	}
+	else
 	{
 		result = CommandResult_Error_WrongArgument1;
 	}
-#else
-	(void)argv;
-#endif
+
 
 	return result;
 }

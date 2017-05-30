@@ -235,14 +235,14 @@ void RTC_GetDate(Date_t *date)
  */
 void RTC_GetTime(Time_t *time)
 {
-	RTC_TimeTypeDef stimestructureget;
+	RTC_TimeTypeDef gettime;
 
 	/* Get the RTC current Time */
-	HAL_RTC_GetTime(&RtcHandle, &stimestructureget, RTC_FORMAT_BIN);
+	HAL_RTC_GetTime(&RtcHandle, &gettime, RTC_FORMAT_BIN);
 
-	time->hour = stimestructureget.Hours;
-	time->minute = stimestructureget.Minutes;
-	time->second = stimestructureget.Seconds;
+	time->hour = gettime.Hours;
+	time->minute = gettime.Minutes;
+	time->second = gettime.Seconds;
 }
 
 
@@ -255,17 +255,17 @@ void RTC_GetTime(Time_t *time)
   */
 void RTC_CalendarShow(char *showdate, char *showtime)
 {
-	RTC_DateTypeDef sdatestructureget;
-	RTC_TimeTypeDef stimestructureget;
+	RTC_DateTypeDef date;
+	RTC_TimeTypeDef time;
 
 	/* Get the RTC current Date */
-	HAL_RTC_GetDate(&RtcHandle, &sdatestructureget, RTC_FORMAT_BIN);
+	HAL_RTC_GetDate(&RtcHandle, &date, RTC_FORMAT_BIN);
 	/* Get the RTC current Time */
-	HAL_RTC_GetTime(&RtcHandle, &stimestructureget, RTC_FORMAT_BIN);
+	HAL_RTC_GetTime(&RtcHandle, &time, RTC_FORMAT_BIN);
 	/* Display date Format : mm-dd-yy */
-	usprintf((char *)showdate, "%4d-%02d-%02d", 2000 + sdatestructureget.Year, sdatestructureget.Month, sdatestructureget.Date);
+	usprintf((char *)showdate, "%4d-%02d-%02d", 2000 + date.Year, date.Month, date.Date);
 	/* Display time Format : hh:mm:ss */
-	usprintf((char *)showtime, "%02d:%02d:%02d", stimestructureget.Hours, stimestructureget.Minutes, stimestructureget.Seconds);
+	usprintf((char *)showtime, "%02d:%02d:%02d", time.Hours, time.Minutes, time.Seconds);
 }
 
 

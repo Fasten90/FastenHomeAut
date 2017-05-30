@@ -1051,10 +1051,24 @@ void Terminal_SendWelcome(void)
 	Terminal_SendCls();						// Clean screen
 #endif
 
-	TERMINAL_SEND_WELCOME();			// Welcome message
-
+	TERMINAL_SEND_WELCOME();				// Welcome message
+	// One long string are optimized
+/*
+	CommandHandler_SendMessage("Version: ");
+	CommandHandler_SendLine(VERSION_DEFINE);
+	CommandHandler_SendMessage("Compile date: ");
+	CommandHandler_SendMessage(DATE_VERSION);
+	CommandHandler_SendMessage(", ");
+	CommandHandler_SendLine(TIME_VERSION);
+	CommandHandler_SendMessage("Used panel: ");
+	CommandHandler_SendLine(BOARD_NAME);
+*/
+/*
+	CommandHandler_Printf("Version: %s\r\n", VERSION_DEFINE);
+	CommandHandler_Printf("Compile date: %s, %s\r\n", DATE_VERSION, TIME_VERSION);
+	CommandHandler_Printf("Used panel: %s\r\n", BOARD_NAME);
+*/
 	return;
-
 }
 
 

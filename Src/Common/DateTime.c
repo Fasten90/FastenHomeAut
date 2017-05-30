@@ -562,6 +562,7 @@ void DateTime_Step(DateTime_t *dateTime)
 
 
 
+#ifdef NO_OPTIMIZED_DATETIME
 /**
  * \brief	Get DateTime
  */
@@ -570,7 +571,6 @@ void DateTime_GetDateTime(DateTime_t *dateTime)
 	#ifdef CONFIG_MODULE_RTC_ENABLE
 	RTC_GetDateTime(&dateTime);
 	#elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
-	// TODO:
 	memcpy(&dateTime, &DateTime_SystemTime, sizeof(DateTime_t));
 	#endif
 }
@@ -599,10 +599,10 @@ void DateTime_SetTime(Time_t *time)
 	#ifdef CONFIG_MODULE_RTC_ENABLE
 	RTC_SetTime(&time);
 	#elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
-	// TODO:
 	memcpy(&DateTime_SystemTime.time, &time, sizeof(Time_t));
 	#endif
 }
+#endif
 
 
 

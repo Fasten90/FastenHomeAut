@@ -33,17 +33,17 @@
 #define TERMINAL_HISTORY_MAX_COUNT					(5)
 
 
+// Optimized version:
 #define TERMINAL_SEND_WELCOME()						\
 		CommandHandler_SendMessage(					\
 		"\r\n"										\
 		"Welcome in CommandHandler!\r\n"			\
-		"Version: " VERSION_DEFINE "\r\n"			\
-		"Date: " DATE_VERSION "\r\n"				\
-		"Time: "TIME_VERSION "\r\n"					\
-		"Used panel: " BOARD_NAME "\r\n"			\
 		"(c) Copyright, Vizi Gabor\r\n"				\
 		"\r\n"										\
-		"Try \"help\" command for help!\r\n")
+		"Try \"help\" command for help!\r\n"		\
+		"Version: "VERSION_DEFINE"\r\n" 			\
+		"Compile date: "DATE_VERSION", "TIME_VERSION"\r\n" \
+		"Used panel: "BOARD_NAME"\r\n")
 
 
 #ifdef CONFIG_TERMINAL_PROMT_ENABLE
@@ -53,6 +53,7 @@
 #define TERMINAL_SEND_PROMT_NEW_LINE()	CommandHandler_SendMessage("\r\n")
 #define TERMINAL_SEND_PROMT()
 #endif
+
 
 #define TERMINAL_SEND_NEW_LINE()		CommandHandler_SendMessage("\r\n")
 
