@@ -1116,7 +1116,6 @@ static CommandResult_t CommandFunction_GlobalVariableTrace(uint32_t argc,
 		// Good ID
 		if (!StrCmp("enable", argv[2]))
 		{
-			// TODO: Call GlobalVarHandler_ProcessCommand() ?
 			GlobalVarHandler_EnableTrace(id, true);
 			CommandHandler_Printf("Enabled trace: %d\r\n", id);
 			result = CommandResult_Ok;
@@ -1130,7 +1129,10 @@ static CommandResult_t CommandFunction_GlobalVariableTrace(uint32_t argc,
 	}
 	else
 	{
-		result = CommandResult_Error_WrongArgument1;
+		// First parameter is not "id", maybe "name", try process
+		GlobalVarHandler_ProcessCommand(argv[1], argv[2], SetGet_Trace, CommandHandler_CommandSource);
+		// TODO: Print anyting?
+		result = CommandResult_Ok;
 	}
 
 	return result;

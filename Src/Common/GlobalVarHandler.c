@@ -103,6 +103,8 @@ static ProcessResult_t GlobalVarHandler_SetBits(VarID_t commandID, const char *p
 static ProcessResult_t GlobalVarHandler_SetString(VarID_t commandID, const char *param);
 static ProcessResult_t GlobalVarHandler_SetEnumerator(VarID_t commandID, const char *param);
 
+static void GlobalVarHandler_SetTrace(VarID_t commandID, const char * param);
+
 
 
 /*------------------------------------------------------------------------------
@@ -244,6 +246,11 @@ void GlobalVarHandler_ProcessCommand(
 				GlobalVarHandler_PrintVariableDescriptions(commandID);
 				result = Process_Ok_Answered;
 			}
+			else if (setGetType == SetGet_Trace)
+			{
+				GlobalVarHandler_SetTrace(commandID, param);
+				result = Process_Ok_Answered;
+			}
 			else
 			{
 				result = Process_Unknown;
@@ -276,7 +283,7 @@ static bool GlobalVarHandler_SearchVariableName(const char *commandName, VarID_t
 	VarID_t i;
 
 	// Search
-	for (i=0; i<GlobalVar_MaxCommandNum; i++)
+	for (i = 0; i < GlobalVar_MaxCommandNum; i++)
 	{
 		if (!StrCmp(GlobalVarList[i].name, commandName))
 		{
@@ -1386,11 +1393,28 @@ static void GlobalVarHandler_PrintVariableDescriptions(VarID_t commandID)
 
 #ifdef CONFIG_GLOBALVAR_TRACE_ENABLE
 /**
+ * \brief	Set trace with string parameter
+ */
+static void GlobalVarHandler_SetTrace(VarID_t commandID, const char * param)
+{
+	if (!StrCmp("enable", param))
+	{
+		GlobalVarHandler_EnableTrace(commandID, true);
+	}
+	else
+	{
+		// TODO: Check "disable" or not?
+		GlobalVarHandler_EnableTrace(commandID, false);
+	}
+}
+
+
+
+/**
  * \brief	Enable / Disable trace
  */
 void GlobalVarHandler_EnableTrace(VarID_t id, bool isEnable)
 {
-	// TODO: call from Set-Get input?
 	if (id < GlobalVar_MaxCommandNum)
 	{
 		if (isEnable)
@@ -1422,7 +1446,6 @@ void GlobalVarHandler_RunTrace(void)
 		}
 
 	}
-
 }
 #endif
 
