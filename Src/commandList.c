@@ -58,7 +58,7 @@ static CommandResult_t CommandFunction_get(uint32_t argc, char** argv);
 static CommandResult_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** argv);
 static CommandResult_t CommandFunction_GlobalVariableList(uint32_t argc, char** argv);
 static CommandResult_t CommandFunction_GlobalVariableValueList(uint32_t argc, char** argv);
-#ifdef CONFIG_GLOBALVAR_TRACE_ENABLE
+#ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
 static CommandResult_t CommandFunction_GlobalVariableTrace(uint32_t argc, char** argv);
 #endif
 #endif
@@ -227,7 +227,7 @@ const CommandStruct CommandList[] =
 		.commandArgNum = CommandArgument_0,
 		.description = "List global variable's values",
 	},
-#ifdef CONFIG_GLOBALVAR_TRACE_ENABLE
+#ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
 	{
 		.name = "trace",
 		.commandFunctionPointer = CommandFunction_GlobalVariableTrace,
@@ -1098,7 +1098,7 @@ static CommandResult_t CommandFunction_GlobalVariableValueList(uint32_t argc,
 
 
 
-#ifdef CONFIG_GLOBALVAR_TRACE_ENABLE
+#ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
 /**
  * \brief	Enable/Disable trace
  */

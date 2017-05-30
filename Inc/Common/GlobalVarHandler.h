@@ -88,7 +88,7 @@ typedef enum
 	SetGet_Get,
 	SetGet_Set,
 	SetGet_Help,
-#ifdef CONFIG_GLOBALVAR_TRACE_ENABLE
+#ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
 	SetGet_Trace
 #endif
 } SetGetType_t;

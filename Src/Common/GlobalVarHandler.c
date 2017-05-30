@@ -76,7 +76,7 @@ static const char * const GlobalVarTypesNames[] =
 
 
 
-#ifdef CONFIG_GLOBALVAR_TRACE_ENABLE
+#ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
 static uint32_t GlobalVarHandler_TraceVarEnabled = 0;
 #endif
 
@@ -103,7 +103,9 @@ static ProcessResult_t GlobalVarHandler_SetBits(VarID_t commandID, const char *p
 static ProcessResult_t GlobalVarHandler_SetString(VarID_t commandID, const char *param);
 static ProcessResult_t GlobalVarHandler_SetEnumerator(VarID_t commandID, const char *param);
 
+#ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
 static void GlobalVarHandler_SetTrace(VarID_t commandID, const char * param);
+#endif
 
 
 
@@ -246,11 +248,13 @@ void GlobalVarHandler_ProcessCommand(
 				GlobalVarHandler_PrintVariableDescriptions(commandID);
 				result = Process_Ok_Answered;
 			}
+#ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
 			else if (setGetType == SetGet_Trace)
 			{
 				GlobalVarHandler_SetTrace(commandID, param);
 				result = Process_Ok_Answered;
 			}
+#endif
 			else
 			{
 				result = Process_Unknown;
@@ -1391,7 +1395,7 @@ static void GlobalVarHandler_PrintVariableDescriptions(VarID_t commandID)
 
 
 
-#ifdef CONFIG_GLOBALVAR_TRACE_ENABLE
+#ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
 /**
  * \brief	Set trace with string parameter
  */

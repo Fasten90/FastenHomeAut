@@ -55,7 +55,7 @@ static TaskResult_t Task_SystemTimeSecondStep(ScheduleSource_t source);
 #ifdef CONFIG_MODULE_TASK_SOFTWARE_WATCHDOG_ENABLE
 static TaskResult_t Task_SoftwareWatchDog(ScheduleSource_t source);
 #endif
-#ifdef CONFIG_GLOBALVAR_TRACE_ENABLE
+#ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
 static TaskResult_t Task_GlobalVarTrace(ScheduleSource_t source);
 #endif
 
@@ -137,11 +137,13 @@ Task_t TaskList[] =
 		.isTimeOutTask = true
 	},
 #endif
+#ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
 	{
 		.taskName = "GlVarTrace",
 		.taskFunction = Task_GlobalVarTrace,
 		.taskScheduleRate = 1000,
 	},
+#endif
 
 
 	// \note Be careful, taskList order need to be equal with TaskName_t
@@ -437,7 +439,7 @@ static TaskResult_t Task_SoftwareWatchDog(ScheduleSource_t source)
 
 
 
-#ifdef CONFIG_GLOBALVAR_TRACE_ENABLE
+#ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
 static TaskResult_t Task_GlobalVarTrace(ScheduleSource_t source)
 {
 	(void)source;
