@@ -58,6 +58,9 @@ static CommandResult_t CommandFunction_get(uint32_t argc, char** argv);
 static CommandResult_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** argv);
 static CommandResult_t CommandFunction_GlobalVariableList(uint32_t argc, char** argv);
 static CommandResult_t CommandFunction_GlobalVariableValueList(uint32_t argc, char** argv);
+#ifdef CONFIG_GLOBALVAR_TRACE_ENABLE
+static CommandResult_t CommandFunction_GlobalVariableTrace(uint32_t argc, char** argv);
+#endif
 #endif
 #ifdef CONFIG_MODULE_COMMON_DAC_ENABLE
 static CommandResult_t CommandFunction_dac(uint32_t argc, char** argv);
@@ -224,6 +227,14 @@ const CommandStruct CommandList[] =
 		.commandArgNum = CommandArgument_0,
 		.description = "List global variable's values",
 	},
+#ifdef CONFIG_GLOBALVAR_TRACE_ENABLE
+	{
+		.name = "trace",
+		.commandFunctionPointer = CommandFunction_GlobalVariableTrace,
+		.commandArgNum = CommandArgument_2,
+		.description = "Trace global variable's values",
+	},
+#endif
 #endif	// #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
 #ifdef CONFIG_MODULE_LED_ENABLE
 	{
@@ -1084,6 +1095,48 @@ static CommandResult_t CommandFunction_GlobalVariableValueList(uint32_t argc,
 	return CommandResult_Ok;
 
 }
+
+
+
+#ifdef CONFIG_GLOBALVAR_TRACE_ENABLE
+/**
+ * \brief	Enable/Disable trace
+ */
+static CommandResult_t CommandFunction_GlobalVariableTrace(uint32_t argc,
+		char** argv)
+{
+	CommandResult_t result = CommandResult_Unknown;
+
+	// Suppress warning
+	(void)argc;
+
+	uint32_t id;
+	if (StringToUnsignedDecimalNum(argv[1], &id))
+	{
+		// Good ID
+		if (!StrCmp("enable", argv[2]))
+		{
+			// TODO: Call GlobalVarHandler_ProcessCommand() ?
+			GlobalVarHandler_EnableTrace(id, true);
+			CommandHandler_Printf("Enabled trace: %d\r\n", id);
+			result = CommandResult_Ok;
+		}
+		else
+		{
+			GlobalVarHandler_EnableTrace(id, false);
+			CommandHandler_Printf("Disabled trace: %d\r\n", id);
+			result = CommandResult_Ok;
+		}
+	}
+	else
+	{
+		result = CommandResult_Error_WrongArgument1;
+	}
+
+	return result;
+}
+#endif
+
 #endif	// #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
 
 

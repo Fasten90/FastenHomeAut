@@ -20,7 +20,7 @@
  *----------------------------------------------------------------------------*/
 
 extern const GlobalVarCommand_t GlobalVarList[];
-extern const VarID_t GlobalVarMaxCommandNum;
+extern const VarID_t GlobalVar_MaxCommandNum;
 
 
 

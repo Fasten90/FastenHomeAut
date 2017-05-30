@@ -87,7 +87,10 @@ typedef enum
 	SetGet_Unknown = 0,
 	SetGet_Get,
 	SetGet_Set,
-	SetGet_Help
+	SetGet_Help,
+#ifdef CONFIG_GLOBALVAR_TRACE_ENABLE
+	SetGet_Log
+#endif
 } SetGetType_t;
 
 
@@ -132,6 +135,10 @@ void GlobalVarHandler_ProcessCommand(
 
 void GlobalVarHandler_ListAllVariableParameters(void);
 void GlobalVarHandler_PrintAllVariableValues(void);
+
+void GlobalVarHandler_EnableTrace(VarID_t id, bool isEnable);
+void GlobalVarHandler_RunTrace(void);
+
 void GlobalVarHandler_UnitTest(void);
 
 

@@ -76,6 +76,11 @@ static const char * const GlobalVarTypesNames[] =
 
 
 
+#ifdef CONFIG_GLOBALVAR_TRACE_ENABLE
+static uint32_t GlobalVarHandler_TraceVarEnabled = 0;
+#endif
+
+
 /*------------------------------------------------------------------------------
  *  Function declarations
  *----------------------------------------------------------------------------*/
@@ -120,7 +125,7 @@ bool GlobalVarHandler_CheckCommandStructAreValid(void)
 	VarID_t i;
 	bool hasError = false;
 
-	for (i=0; i < GlobalVarMaxCommandNum; i++)
+	for (i=0; i < GlobalVar_MaxCommandNum; i++)
 	{
 		if (GlobalVarList[i].name == NULL)
 		{
@@ -271,7 +276,7 @@ static bool GlobalVarHandler_SearchVariableName(const char *commandName, VarID_t
 	VarID_t i;
 
 	// Search
-	for (i=0; i<GlobalVarMaxCommandNum; i++)
+	for (i=0; i<GlobalVar_MaxCommandNum; i++)
 	{
 		if (!StrCmp(GlobalVarList[i].name, commandName))
 		{
@@ -1307,7 +1312,7 @@ void GlobalVarHandler_ListAllVariableParameters(void)
 	CommandHandler_SendLine(header);
 
 	// Rows (commands)
-	for (i = 0; i < GlobalVarMaxCommandNum; i++)
+	for (i = 0; i < GlobalVar_MaxCommandNum; i++)
 	{
 
 		// Print one command / line:
@@ -1335,7 +1340,7 @@ void GlobalVarHandler_ListAllVariableParameters(void)
  */
 void GlobalVarHandler_PrintAllVariableValues(void)
 {
-	uint8_t i;
+	VarID_t i;
 
 	CommandHandler_Printf("Global variables:\r\n"
 			" %20s %20s\r\n",
@@ -1343,7 +1348,7 @@ void GlobalVarHandler_PrintAllVariableValues(void)
 			"<Value>");
 
 	// Print all variables
-	for (i = 0; i < GlobalVarMaxCommandNum; i++)
+	for (i = 0; i < GlobalVar_MaxCommandNum; i++)
 	{
 		// Print a variable name and value
 		//CommandHandler_Printf(" %20s %20s\r\n", GlobalVarList[i].name);
@@ -1376,6 +1381,50 @@ static void GlobalVarHandler_PrintVariableDescriptions(VarID_t commandID)
 			GlobalVarList[commandID].description
 			);
 }
+
+
+
+#ifdef CONFIG_GLOBALVAR_TRACE_ENABLE
+/**
+ * \brief	Enable / Disable trace
+ */
+void GlobalVarHandler_EnableTrace(VarID_t id, bool isEnable)
+{
+	// TODO: call from Set-Get input?
+	if (id < GlobalVar_MaxCommandNum)
+	{
+		if (isEnable)
+			GlobalVarHandler_TraceVarEnabled |= (1 << id);
+		else
+			GlobalVarHandler_TraceVarEnabled &= ~(1 << id);
+	}
+}
+
+
+
+/**
+ * \brief	Trace GlobalVar
+ */
+void GlobalVarHandler_RunTrace(void)
+{
+	// TODO: Only use for max 32 variable
+	if (GlobalVarHandler_TraceVarEnabled)
+	{
+		uint8_t i;
+		for (i = 0; i < GlobalVar_MaxCommandNum; i++)
+		{
+			if (GlobalVarHandler_TraceVarEnabled & (1 << i))
+			{
+				CommandHandler_SendMessage("Trace: ");
+				GlobalVarHandler_GetCommand(i);
+				CommandHandler_SendLine("");
+			}
+		}
+
+	}
+
+}
+#endif
 
 
 

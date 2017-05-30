@@ -154,7 +154,7 @@ const GlobalVarCommand_t GlobalVarList[] =
 
 
 ///< GlobalVarList length
-const VarID_t GlobalVarMaxCommandNum = sizeof(GlobalVarList)/sizeof(GlobalVarList[0]);
+const VarID_t GlobalVar_MaxCommandNum = sizeof(GlobalVarList)/sizeof(GlobalVarList[0]);
 
 
 #endif	// #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
