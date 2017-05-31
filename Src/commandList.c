@@ -2100,47 +2100,64 @@ static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
 {
 	(void)argc;
 	CommandResult_t result = CommandResult_Unknown;
+	static bool Simulation_IsEnabled = false;
 
+	if (!Simulation_IsEnabled)
+	{
+		if (!StrCmp("enable", argv[1]) && argc == 2)
+		{
+			Simulation_IsEnabled = true;
+			result = CommandResult_Ok_SendSuccessful;
+		}
+		else
+		{
+			// Error
+			CommandHandler_SendLine("Simulation is not enabled!");
+			result = CommandResult_Error_WrongArgument1;
+		}
+	}
+	else
+	{
+		// Enabled simulation
+		if (!StrCmp("infloop", argv[1]))
+		{
+			// Infinite loop test for WatchDog test
+			while(1);
+			result = CommandResult_Ok_SendSuccessful;
+		}
 #ifdef CONFIG_MODULE_IO_ENABLE
-	if (!StrCmp("input", argv[1]))
-	{
-		uint32_t pin;
-		if (StringToUnsignedDecimalNum(argv[2], &pin))
+		else if (!StrCmp("input", argv[1]))
 		{
-			IO_SetInputState((Input_t)pin, InputState_Active);
-			result = CommandResult_Ok_SendSuccessful;
+			uint32_t pin;
+			if (StringToUnsignedDecimalNum(argv[2], &pin))
+			{
+				IO_SetInputState((Input_t)pin, InputState_Active);
+				result = CommandResult_Ok_SendSuccessful;
+			}
+			else
+			{
+				result = CommandResult_Error_WrongArgument2;
+			}
 		}
-		else
+		else if (!StrCmp("output", argv[1]))
 		{
-			result = CommandResult_Error_WrongArgument2;
+			uint32_t pin;
+			if (StringToUnsignedDecimalNum(argv[2], &pin))
+			{
+				IO_SetOutputState((Output_t)pin, OutputState_Active);
+				result = CommandResult_Ok_SendSuccessful;
+			}
+			else
+			{
+				result = CommandResult_Error_WrongArgument2;
+			}
 		}
-	}
-	else if (!StrCmp("output", argv[1]))
-	{
-		uint32_t pin;
-		if (StringToUnsignedDecimalNum(argv[2], &pin))
-		{
-			IO_SetOutputState((Output_t)pin, OutputState_Active);
-			result = CommandResult_Ok_SendSuccessful;
-		}
-		else
-		{
-			result = CommandResult_Error_WrongArgument2;
-		}
-	}
-	else
 #endif
-	if (!StrCmp("infloop", argv[1]))
-	{
-		// Infinite loop test for WatchDog test
-		while(1);
-		result = CommandResult_Ok_SendSuccessful;
+		else
+		{
+			result = CommandResult_Error_WrongArgument1;
+		}
 	}
-	else
-	{
-		result = CommandResult_Error_WrongArgument1;
-	}
-
 
 	return result;
 }
