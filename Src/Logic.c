@@ -30,7 +30,10 @@
  *  Local variables
  *----------------------------------------------------------------------------*/
 
+#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
 static uint8_t Logic_SystemTimeConfigState = 0;
+#endif
+
 
 
 /*------------------------------------------------------------------------------

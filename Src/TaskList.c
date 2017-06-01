@@ -18,6 +18,7 @@
 #include "include.h"
 #include "TaskList.h"
 #include "Logic.h"
+#include "GlobalVarHandler.h"
 
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 
@@ -27,9 +28,7 @@
 
 
 #ifdef CONFIG_MODULE_LED_ENABLE
-static TaskResult_t TaskLed1Function(ScheduleSource_t source);
-static TaskResult_t TaskLed2Function(ScheduleSource_t source);
-static TaskResult_t TaskLed3Function(ScheduleSource_t source);
+static TaskResult_t TaskLedFunction(ScheduleSource_t source);
 #endif
 #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
 static TaskResult_t TaskWatchdogClear(ScheduleSource_t source);
@@ -64,19 +63,9 @@ Task_t TaskList[] =
 {
 #ifdef CONFIG_MODULE_LED_ENABLE
 	{
-		.taskName = "Led200ms",
-		.taskFunction = TaskLed1Function,
-		.taskScheduleRate = 200
-	},
-	{
-		.taskName = "Led1sec",
-		.taskFunction = TaskLed2Function,
-		.taskScheduleRate = 1000
-	},
-	{
-		.taskName = "Led5sec",
-		.taskFunction = TaskLed3Function,
-		.taskScheduleRate = 5000
+		.taskName = "LedTask",
+		.taskFunction = TaskLedFunction,
+		.taskScheduleRate = 2
 	},
 #endif
 #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
@@ -185,7 +174,7 @@ const TaskID_t TasksNum = (sizeof(TaskList)/sizeof(TaskList[0]));
 /**
  * \brief
  */
-static TaskResult_t TaskLed1Function(ScheduleSource_t source)
+static TaskResult_t TaskLedFunction(ScheduleSource_t source)
 {
 #ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
 	uprintf("Run %s %d\r\n", TaskList[id].taskName, id);
@@ -193,43 +182,98 @@ static TaskResult_t TaskLed1Function(ScheduleSource_t source)
 	(void)source;
 #endif
 
-	LED_SetLed(1, LED_SET_TOGGLE);
 
-	return TASK_RESULT_OK;
-}
+#ifdef LED_OLD_STYLE
+	static uint8_t Task_LedCnt = 0;
 
+	LED_SetLed(LED_RED_NUM, LED_SET_TOGGLE);
+	if ((Task_LedCnt % 5) == 0)
+	{
+		// *5
+		LED_SetLed(LED_BLUE_NUM, LED_SET_TOGGLE);
+	}
+	if ((Task_LedCnt % 25) == 0)
+	{
+		// * 5 * 5 (=*25)
+		LED_SetLed(LED_GREEN_NUM, LED_SET_TOGGLE);
+	}
 
-
-/**
- * \brief
- */
-static TaskResult_t TaskLed2Function(ScheduleSource_t source)
-{
-#ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
-	uprintf("Run %s %d\r\n", TaskList[id].taskName, id);
-#else
-	(void)source;
+	Task_LedCnt++;
+	if (Task_LedCnt == 25)
+	{
+		Task_LedCnt = 0;
+	}
 #endif
 
-	LED_SetLed(2, LED_SET_TOGGLE);
-
-	return TASK_RESULT_OK;
-}
 
 
+	// 50 Hz --> 20ms
 
-/**
- * \brief
- */
-static TaskResult_t TaskLed3Function(ScheduleSource_t source)
-{
-#ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
-	uprintf("Run %s %d\r\n", TaskList[id].taskName, id);
-#else
-	(void)source;
-#endif
+	static uint8_t LED_PwmCnt = 0;
+	static uint8_t LED_PwmLimit = 0;
+	static const uint8_t LED_PwmMaxLimit = 10;
+	static bool LED_PwmLimitDir = false;
+	static uint8_t LED_100ms = 0;
+	static uint8_t LED_2ms = 0;
 
-	LED_SetLed(3, LED_SET_TOGGLE);
+
+	LED_2ms++;
+	if (LED_2ms >= 100/2)
+	{
+		// Run every 100. ms
+
+		LED_2ms = 0;
+		LED_100ms++;
+
+		// Change PWM percent
+
+		if (LED_PwmLimitDir)
+		{
+			LED_PwmLimit--;
+		}
+		else
+		{
+			LED_PwmLimit++;
+		}
+
+		if (LED_100ms >= 10)
+		{
+			// Run every 1000. msec
+			LED_100ms = 0;
+
+			// Change dir after 1 sec
+			if (LED_PwmLimit == 0)
+			{
+				LED_PwmLimitDir = false;
+			}
+			else
+			{
+				LED_PwmLimitDir = true;
+			}
+		}
+	}
+
+	// PWM limit: 0-10
+
+	// Check, need LED blinking?
+	if (LED_PwmCnt < LED_PwmLimit)
+	{
+		LED_SetLed(LED_GREEN_NUM, LED_SET_ON);
+	}
+	else
+	{
+		LED_SetLed(LED_GREEN_NUM, LED_SET_OFF);
+	}
+
+
+	// PWM counter
+	LED_PwmCnt++;
+	if (LED_PwmCnt >= LED_PwmMaxLimit)	// Max limit
+	{
+		LED_PwmCnt = 0;
+	}
+
+
 
 	return TASK_RESULT_OK;
 }

@@ -32,11 +32,29 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
+typedef enum
+{
+	Font_Unknown,
+#ifdef CONFIG_MODULE_DISPLAY_FONT8X5_ENABLE
+	Font_8x5,
+#endif
+#ifdef CONFIG_MODULE_DISPLAY_FONT12X8_ENABLE
+	Font_12x8,
+#endif
+#ifdef CONFIG_MODULE_DISPLAY_FONT32X20_ENABLE
+	Font_32x20,
+#endif
+
+	Font_Count
+} Font_Type;
+
 
 
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
+
+extern bool Display_CarAnimationDisable_flag;
 
 
 

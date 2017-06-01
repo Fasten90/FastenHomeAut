@@ -78,6 +78,12 @@ static const char * const GlobalVarTypesNames[] =
 
 #ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
 static uint32_t GlobalVarHandler_TraceVarEnabled = 0;
+
+#ifdef CONFIG_GLOBALVARHANDLER_TRACE_RAM_BUFFER
+#define GLOBALVARHANDLER_TRACE_BUFFER_SIZE 		(100U)
+static uint32_t GlobalVarHandler_TraceRamBuffer[GLOBALVARHANDLER_TRACE_BUFFER_SIZE] = { 0 };
+static uint8_t GlobalVarHandler_TraceRam_BufferCnt = 0;
+#endif
 #endif
 
 
@@ -92,7 +98,7 @@ static void GlobalVarHandler_WriteResults(ProcessResult_t result);
 static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t num);
 static void GlobalVarHandler_PrintVariableDescriptions (VarID_t commandID);
 
-static void GlobalVarHandler_GetIntegerVariable(VarID_t commandID);
+static void GlobalVarHandler_GetInteger(VarID_t commandID);
 static void GlobalVarHandler_GetBits(const VarID_t commandID);
 static void GlobalVarHandler_GetEnumerator(const VarID_t commandID);
 
@@ -129,7 +135,7 @@ bool GlobalVarHandler_CheckCommandStructAreValid(void)
 	VarID_t i;
 	bool hasError = false;
 
-	for (i=0; i < GlobalVar_MaxCommandNum; i++)
+	for (i = 0; i < GlobalVar_MaxCommandNum; i++)
 	{
 		if (GlobalVarList[i].name == NULL)
 		{
@@ -331,7 +337,7 @@ static ProcessResult_t GlobalVarHandler_GetCommand(VarID_t commandID)
 		case Type_Int8:
 		case Type_Int16:
 		case Type_Int32:
-			GlobalVarHandler_GetIntegerVariable(commandID);
+			GlobalVarHandler_GetInteger(commandID);
 			break;
 
 		case Type_Float:
@@ -384,7 +390,7 @@ static ProcessResult_t GlobalVarHandler_GetCommand(VarID_t commandID)
  * \brief	Get integer value
  * 			NOTE: Be careful, commandID not checked
  */
-static void GlobalVarHandler_GetIntegerVariable(VarID_t commandID)
+static void GlobalVarHandler_GetInteger(VarID_t commandID)
 {
 	VarType_t type = GlobalVarList[commandID].type;
 
@@ -430,6 +436,7 @@ static void GlobalVarHandler_GetIntegerVariable(VarID_t commandID)
 			uint32_t num = *numPointer;
 			char format[10];
 			usprintf(format, "0x%%%dX", octetNum);
+			// Example: "0x%2X"
 			CommandHandler_Printf(format, num);
 		}
 		else
@@ -462,10 +469,23 @@ static void GlobalVarHandler_GetIntegerVariable(VarID_t commandID)
 
 			case Type_Uint32:
 			{
-				uint32_t *numPointer =
+				if (GlobalVarList[commandID].isFunction)
+				{
+					// TODO: It is a test code, need general solve
+					/// Command Function pointer
+					typedef uint32_t (* glvar_uint32getfunc )(void);
+					glvar_uint32getfunc thisFunc = (glvar_uint32getfunc *)GlobalVarList[commandID].varPointer;
+					uint32_t value;
+					value = thisFunc();
+					CommandHandler_Printf("%u", value);
+				}
+				else
+				{
+					uint32_t *numPointer =
 						(uint32_t *)GlobalVarList[commandID].varPointer;
-				uint32_t num = *numPointer;
-				CommandHandler_Printf("%u", num);
+					uint32_t num = *numPointer;
+					CommandHandler_Printf("%u", num);
+				}
 			}
 				break;
 
@@ -1438,19 +1458,48 @@ void GlobalVarHandler_RunTrace(void)
 	// TODO: Only use for max 32 variable
 	if (GlobalVarHandler_TraceVarEnabled)
 	{
-		uint8_t i;
+		VarID_t i;
 		for (i = 0; i < GlobalVar_MaxCommandNum; i++)
 		{
 			if (GlobalVarHandler_TraceVarEnabled & (1 << i))
 			{
-				CommandHandler_SendMessage("Trace: ");
+#ifdef CONFIG_GLOBALVARHANDLER_TRACE_RAM_BUFFER
+				// TODO: Unknown size... Now use uint32_t
+				uint32_t * pnt = (uint32_t *)GlobalVarList[i].varPointer;
+				GlobalVarHandler_TraceRamBuffer[GlobalVarHandler_TraceRam_BufferCnt] = *pnt;
+				GlobalVarHandler_TraceRam_BufferCnt++;
+				if (GlobalVarHandler_TraceRam_BufferCnt >= GLOBALVARHANDLER_TRACE_BUFFER_SIZE)
+				{
+					GlobalVarHandler_TraceRam_BufferCnt = 0;
+					// TODO: Can we print, when buffer is full?
+					GlobalVarHandler_PrintTraceBuffer();
+				}
+#else
+				CommandHandler_SendMessage("Trace: %d - ", HAL_GetTick());
 				GlobalVarHandler_GetCommand(i);
 				CommandHandler_SendLine("");
+#endif
 			}
 		}
-
 	}
 }
+
+
+
+#ifdef CONFIG_GLOBALVARHANDLER_TRACE_RAM_BUFFER
+/**
+ * \brief	Print Trace buffer content
+ */
+void GlobalVarHandler_PrintTraceBuffer(void)
+{
+	uint8_t i;
+	for (i = 0; i < GLOBALVARHANDLER_TRACE_BUFFER_SIZE; i++)
+	{
+		CommandHandler_Printf("Value: %d = %u\r\n", i, GlobalVarHandler_TraceRamBuffer[i]);
+	}
+}
+#endif
+
 #endif
 
 

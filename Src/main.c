@@ -85,10 +85,12 @@ int main(void)
 #ifdef CONFIG_MODULE_LED_ENABLE
 	// LED
 	LED_Init();
-	
+
+#ifndef CONFIG_MODULE_TASKHANDLER_ENABLE
 	LED_BLUE_ON();
 	LED_GREEN_ON();
 	LED_RED_OFF();
+#endif
 #endif
 
 

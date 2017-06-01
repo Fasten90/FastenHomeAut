@@ -109,7 +109,10 @@ typedef struct
 
 	const CommProtocol_t sourceEnable;		///< Enabled sources (for set-get)
 
+	// TODO: Optimize these:
 	const bool isHex;						///< Set-get in hexadecimal?
+
+	const bool isFunction;					///< It is function?
 
 	const char * const *enumList;			///< Enum list, if it is enumerator
 
@@ -138,6 +141,7 @@ void GlobalVarHandler_PrintAllVariableValues(void);
 
 void GlobalVarHandler_EnableTrace(VarID_t id, bool isEnable);
 void GlobalVarHandler_RunTrace(void);
+void GlobalVarHandler_PrintTraceBuffer(void);
 
 void GlobalVarHandler_UnitTest(void);
 

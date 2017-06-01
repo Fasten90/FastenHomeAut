@@ -34,9 +34,7 @@
 
 typedef enum
 {
-	Task_Led200ms,
-	Task_Led1sec,
-	Task_Led5sec,
+	Task_Led,
 #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
 	Task_WdtClr,
 #endif

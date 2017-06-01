@@ -132,6 +132,14 @@ const GlobalVarCommand_t GlobalVarList[] =
 		.type = Type_String,
 		.isReadOnly = true
 	},
+	{
+		.name = "tick",
+		.varPointer = (void * const)HAL_GetTick,
+		.type = Type_Uint32,
+		.isReadOnly = true,
+		.isFunction = true
+	},
+
 
 
 	// XXX: ADD new global variable here
