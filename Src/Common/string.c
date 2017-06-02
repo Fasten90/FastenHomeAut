@@ -1482,133 +1482,133 @@ void STRING_UnitTest(void)
 
 	/// String compare StrCmp()
 	// Equal:
-	UnitTest_CheckResult(!StrCmp("example", "example"), "StrCmp error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp("example", "example"), "StrCmp error");
 	// Not equal:
-	UnitTest_CheckResult(StrCmp("example", "example1"), "StrCmp error", __LINE__);
-	UnitTest_CheckResult(StrCmp("example1", "example2"), "StrCmp error", __LINE__);
+	UNITTEST_ASSERT(StrCmp("example", "example1"), "StrCmp error");
+	UNITTEST_ASSERT(StrCmp("example1", "example2"), "StrCmp error");
 
 
 	// Float print tests
 	// "123.339996" ~ like "%0.6"
 	usprintf(buffer,"%f",123.34);
-	UnitTest_CheckResult(!StrCmp(buffer, "123.339996"), "Float error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "123.339996"), "Float error");
 	// "123"
 	usprintf(buffer,"%1.0f",123.34);
-	UnitTest_CheckResult(!StrCmp(buffer, "123"), "Float error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "123"), "Float error");
 	// "123.3"
 	usprintf(buffer, "%1.1f",123.34);
-	UnitTest_CheckResult(!StrCmp(buffer, "123.3"), "Float error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "123.3"), "Float error");
 	// "123.33999"
 	usprintf(buffer,"%1.5f",123.34);
-	UnitTest_CheckResult(!StrCmp(buffer, "123.33999"), "Float error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "123.33999"), "Float error");
 	// "  123.3"
 	usprintf(buffer, "%5.1f",123.34);
-	UnitTest_CheckResult(!StrCmp(buffer, "  123.3"), "Float error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "  123.3"), "Float error");
 	// "123.33999"
 	usprintf(buffer,"%5.5f",123.34);
-	UnitTest_CheckResult(!StrCmp(buffer, "  123.33999"), "Float error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "  123.33999"), "Float error");
 
 
 	// Integer print tests
 	// Printed: "123"
 	usprintf(buffer, "%0u",123);
-	UnitTest_CheckResult(!StrCmp(buffer, "123"), "Integer error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "123"), "Integer error");
 	// Printed:	"123"
 	usprintf(buffer, "%1u",123);
-	UnitTest_CheckResult(!StrCmp(buffer, "123"), "Integer error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "123"), "Integer error");
 	// Printed: " 123"
 	usprintf(buffer, "%4u",123);
-	UnitTest_CheckResult(!StrCmp(buffer, " 123"), "Integer error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, " 123"), "Integer error");
 	// Printed: "      123"
 	usprintf(buffer, "%9u",123);
-	UnitTest_CheckResult(!StrCmp(buffer, "      123"), "Integer error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "      123"), "Integer error");
 	// Printed: "00123", it is OK
 	usprintf(buffer, "%05u",123);
-	UnitTest_CheckResult(!StrCmp(buffer, "00123"), "Integer error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "00123"), "Integer error");
 
 	// Integer print tests (wrong examples):
 	usprintf(buffer, "%A5",123);		// Printed: "A5u", because 'A' is not a number
-	UnitTest_CheckResult(!StrCmp(buffer, "A5"), "Integer error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "A5"), "Integer error");
 	usprintf(buffer, "%-5u",123);		// Printed: "-5u", because '-' is not a number
-	UnitTest_CheckResult(!StrCmp(buffer, "-5u"), "Integer error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "-5u"), "Integer error");
 
 	// Signed Integer print tests:
 	// Printed: "-123"
 	usprintf(buffer, "%0d",-123);
-	UnitTest_CheckResult(!StrCmp(buffer, "-123"), "Integer error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "-123"), "Integer error");
 	// Printed:	"-123"
 	usprintf(buffer, "%1d",-123);
-	UnitTest_CheckResult(!StrCmp(buffer, "-123"), "Integer error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "-123"), "Integer error");
 	// Printed: "-123"
 	usprintf(buffer, "%4d",-123);
-	UnitTest_CheckResult(!StrCmp(buffer, "-123"), "Integer error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "-123"), "Integer error");
 	// Printed: "     -123"
 	usprintf(buffer, "%9d",-123);
-	UnitTest_CheckResult(!StrCmp(buffer, "     -123"), "Integer error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "     -123"), "Integer error");
 	// Printed: "-0123", it is OK
 	usprintf(buffer, "%05d",-123);
-	UnitTest_CheckResult(!StrCmp(buffer, "-00123"), "Integer error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "-00123"), "Integer error");
 
 	// Hexadecimal print tests:
 	usprintf(buffer, "0x%x",0xFFFFFFFF);
-	UnitTest_CheckResult(!StrCmp(buffer, "0xFFFFFFFF"), "Hexadecimal error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "0xFFFFFFFF"), "Hexadecimal error");
 	usprintf(buffer, "0x%01x",0xFFFFFFFF);
-	UnitTest_CheckResult(!StrCmp(buffer, "0xF"), "Hexadecimal error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "0xF"), "Hexadecimal error");
 	usprintf(buffer, "0x%02x",0xFFFFFFFF);
-	UnitTest_CheckResult(!StrCmp(buffer, "0xFF"), "Hexadecimal error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "0xFF"), "Hexadecimal error");
 	usprintf(buffer, "0x%03x",0xFFFFFFFF);
-	UnitTest_CheckResult(!StrCmp(buffer, "0xFFF"), "Hexadecimal error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "0xFFF"), "Hexadecimal error");
 	usprintf(buffer, "0x%04x",0xFFFFFFFF);
-	UnitTest_CheckResult(!StrCmp(buffer, "0xFFFF"), "Hexadecimal error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "0xFFFF"), "Hexadecimal error");
 	usprintf(buffer, "0x%05x",0xFFFFFFFF);
-	UnitTest_CheckResult(!StrCmp(buffer, "0xFFFFF"), "Hexadecimal error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "0xFFFFF"), "Hexadecimal error");
 	usprintf(buffer, "0x%06x",0xFFFFFFFF);
-	UnitTest_CheckResult(!StrCmp(buffer, "0xFFFFFF"), "Hexadecimal error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "0xFFFFFF"), "Hexadecimal error");
 	usprintf(buffer, "0x%07x",0xFFFFFFFF);
-	UnitTest_CheckResult(!StrCmp(buffer, "0xFFFFFFF"), "Hexadecimal error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "0xFFFFFFF"), "Hexadecimal error");
 	usprintf(buffer, "0x%08x",0xFFFFFFFF);
-	UnitTest_CheckResult(!StrCmp(buffer, "0xFFFFFFFF"), "Hexadecimal error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "0xFFFFFFFF"), "Hexadecimal error");
 	usprintf(buffer, "0x%09x",0xFFFFFFFF);
-	UnitTest_CheckResult(!StrCmp(buffer, "0x"), "Hexadecimal error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "0x"), "Hexadecimal error");
 
 	usprintf(buffer, "0x%01x",0x12345678);
-	UnitTest_CheckResult(!StrCmp(buffer, "0x8"), "Hexadecimal error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "0x8"), "Hexadecimal error");
 	usprintf(buffer, "0x%02x",0x12345678);
-	UnitTest_CheckResult(!StrCmp(buffer, "0x78"), "Hexadecimal error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "0x78"), "Hexadecimal error");
 	usprintf(buffer, "0x%03x",0x12345678);
-	UnitTest_CheckResult(!StrCmp(buffer, "0x678"), "Hexadecimal error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "0x678"), "Hexadecimal error");
 	usprintf(buffer, "0x%04x",0x12345678);
-	UnitTest_CheckResult(!StrCmp(buffer, "0x5678"), "Hexadecimal error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "0x5678"), "Hexadecimal error");
 	usprintf(buffer, "0x%05x",0x12345678);
-	UnitTest_CheckResult(!StrCmp(buffer, "0x45678"), "Hexadecimal error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "0x45678"), "Hexadecimal error");
 	usprintf(buffer, "0x%06x",0x12345678);
-	UnitTest_CheckResult(!StrCmp(buffer, "0x345678"), "Hexadecimal error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "0x345678"), "Hexadecimal error");
 	usprintf(buffer, "0x%07x",0x12345678);
-	UnitTest_CheckResult(!StrCmp(buffer, "0x2345678"), "Hexadecimal error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "0x2345678"), "Hexadecimal error");
 	usprintf(buffer, "0x%08x",0x12345678);
-	UnitTest_CheckResult(!StrCmp(buffer, "0x12345678"), "Hexadecimal error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "0x12345678"), "Hexadecimal error");
 	usprintf(buffer, "0x%09x",0x12345678);
-	UnitTest_CheckResult(!StrCmp(buffer, "0x"), "Hexadecimal error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "0x"), "Hexadecimal error");
 
 	// Binaries printf
 	usprintf(buffer, "0b%b",0x000000FF);
-	UnitTest_CheckResult(!StrCmp(buffer, "0b11111111"), "Binary error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "0b11111111"), "Binary error");
 	usprintf(buffer, "0b%b",0x00000055);
-	UnitTest_CheckResult(!StrCmp(buffer, "0b1010101"), "Binary error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "0b1010101"), "Binary error");
 
 	// String (%s)
 	// Standard %s print
 	usprintf(buffer, "%s", "text");
-	UnitTest_CheckResult(!StrCmp(buffer, "text"), "String error (%s)", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "text"), "String error (%s)");
 	// max 5 character
 	usprintf(buffer, "%5s", "longtext");
-	UnitTest_CheckResult(!StrCmp(buffer, "longt"), "String error (%s)", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "longt"), "String error (%s)");
 	// 10 character, need fill with ' '
 	usprintf(buffer, "%10s", "longtext");
-	UnitTest_CheckResult(!StrCmp(buffer, "longtext  "), "String error (%s)", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "longtext  "), "String error (%s)");
 	// max 10 character
 	usprintf(buffer, "%10s", "toolongtext");
-	UnitTest_CheckResult(!StrCmp(buffer, "toolongtex"), "String error (%s)", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(buffer, "toolongtex"), "String error (%s)");
 
 
 
@@ -1619,66 +1619,66 @@ void STRING_UnitTest(void)
 	// Byte
 	// Good bytes
 	result = StringByteToNum("00", &value8);
-	UnitTest_CheckResult(result, "StringByteToNum error", __LINE__);
-	UnitTest_CheckResult((value8 == 0x00), "StringByteToNum error", __LINE__);
+	UNITTEST_ASSERT(result, "StringByteToNum error");
+	UNITTEST_ASSERT((value8 == 0x00), "StringByteToNum error");
 	result = StringByteToNum("15", &value8);
-	UnitTest_CheckResult(result, "StringByteToNum error", __LINE__);
-	UnitTest_CheckResult((value8 == 0x15), "StringByteToNum error", __LINE__);
+	UNITTEST_ASSERT(result, "StringByteToNum error");
+	UNITTEST_ASSERT((value8 == 0x15), "StringByteToNum error");
 	result = StringByteToNum("FF", &value8);
-	UnitTest_CheckResult(result, "StringByteToNum error", __LINE__);
-	UnitTest_CheckResult((value8 == 0xFF), "StringByteToNum error", __LINE__);
+	UNITTEST_ASSERT(result, "StringByteToNum error");
+	UNITTEST_ASSERT((value8 == 0xFF), "StringByteToNum error");
 	// Wrong byte
 	result = StringByteToNum("FG", &value8);
-	UnitTest_CheckResult(!result, "StringByteToNum error", __LINE__);
+	UNITTEST_ASSERT(!result, "StringByteToNum error");
 
 
 	// Hexs
 	// Good hex
 	result = StringHexToNum("12345678", &value32);
-	UnitTest_CheckResult(result, "StringHexToNum error", __LINE__);
-	UnitTest_CheckResult(value32 == 0x12345678, "StringHexToNum error", __LINE__);
+	UNITTEST_ASSERT(result, "StringHexToNum error");
+	UNITTEST_ASSERT(value32 == 0x12345678, "StringHexToNum error");
 	// Wrong hex
 	result = StringHexToNum("123G5678", &value32);
-	UnitTest_CheckResult(!result, "StringHexToNum error", __LINE__);
+	UNITTEST_ASSERT(!result, "StringHexToNum error");
 
 
 	// Binaries
 	result = StringBinaryToNum("010101", &value32);
-	UnitTest_CheckResult(result, "StringBinaryToNum error", __LINE__);
-	UnitTest_CheckResult(value32 == 0x15, "StringHexToNum error", __LINE__);
+	UNITTEST_ASSERT(result, "StringBinaryToNum error");
+	UNITTEST_ASSERT(value32 == 0x15, "StringHexToNum error");
 	result = StringBinaryToNum("01010101010101010101010101010101", &value32);
-	UnitTest_CheckResult(result, "StringBinaryToNum error", __LINE__);
-	UnitTest_CheckResult(value32 == 0x55555555, "StringHexToNum error", __LINE__);
+	UNITTEST_ASSERT(result, "StringBinaryToNum error");
+	UNITTEST_ASSERT(value32 == 0x55555555, "StringHexToNum error");
 	result = StringBinaryToNum("010101010101010101010101010101010", &value32);
-	UnitTest_CheckResult(!result, "StringBinaryToNum error", __LINE__);
+	UNITTEST_ASSERT(!result, "StringBinaryToNum error");
 
 
 	// Decimals
 
 	// Good decimals
 	result = StringToSignedDecimalNum("-123",&ivalue32);
-	UnitTest_CheckResult(result, "StringToSignedDecimalNum error", __LINE__);
-	UnitTest_CheckResult(ivalue32 == -123, "StringToSignedDecimalNum error", __LINE__);
+	UNITTEST_ASSERT(result, "StringToSignedDecimalNum error");
+	UNITTEST_ASSERT(ivalue32 == -123, "StringToSignedDecimalNum error");
 
 	result = StringToUnsignedDecimalNum("123",&value32);
-	UnitTest_CheckResult(result, "StringToUnsignedDecimalNum error", __LINE__);
-	UnitTest_CheckResult(value32 == 123, "StringToUnsignedDecimalNum error", __LINE__);
+	UNITTEST_ASSERT(result, "StringToUnsignedDecimalNum error");
+	UNITTEST_ASSERT(value32 == 123, "StringToUnsignedDecimalNum error");
 
 	// Wrong decimals
 	result = StringToSignedDecimalNum("-123a",&ivalue32);
-	UnitTest_CheckResult(!result, "StringToSignedDecimalNum error", __LINE__);
+	UNITTEST_ASSERT(!result, "StringToSignedDecimalNum error");
 
 	result = StringToUnsignedDecimalNum("-123",&value32);
-	UnitTest_CheckResult(!result, "StringToUnsignedDecimalNum error", __LINE__);
+	UNITTEST_ASSERT(!result, "StringToUnsignedDecimalNum error");
 
 	// Float
 	// Good
 	result = StringToFloat("-123.3499", &fvalue);
-	UnitTest_CheckResult(result, "StringToFloat error", __LINE__);
-	UnitTest_CheckResult(((fvalue < -123.3498) && (fvalue > -123.3500)), "StringToFloat error", __LINE__);
+	UNITTEST_ASSERT(result, "StringToFloat error");
+	UNITTEST_ASSERT(((fvalue < -123.3498) && (fvalue > -123.3500)), "StringToFloat error");
 
 	result = StringToFloat("-123a.3999", &fvalue);
-	UnitTest_CheckResult(!result, "StringToFloat error", __LINE__);
+	UNITTEST_ASSERT(!result, "StringToFloat error");
 
 
 
@@ -1686,32 +1686,32 @@ void STRING_UnitTest(void)
 
 	// STRING_FindString()
 	ivalue16 = STRING_FindString("longtexttofinding","text");
-	UnitTest_CheckResult(ivalue16 == 4, "FindString error", __LINE__);
+	UNITTEST_ASSERT(ivalue16 == 4, "FindString error");
 	ivalue16 = STRING_FindString("longtexttofinding","wrongtext");
-	UnitTest_CheckResult(ivalue16 == -1, "FindString error", __LINE__);
+	UNITTEST_ASSERT(ivalue16 == -1, "FindString error");
 
 
 	// STRING_Splitter()
 	StrCpy(buffer, "need to separate this text");
 	value8 = STRING_Splitter(buffer, ' ', splitted, 10);
-	UnitTest_CheckResult(value8 == 5, "STRING_Splitter error", __LINE__);
-	UnitTest_CheckResult(!StrCmp(splitted[0],"need"), "STRING_Splitter error", __LINE__);
-	UnitTest_CheckResult(!StrCmp(splitted[1],"to"), "STRING_Splitter error", __LINE__);
-	UnitTest_CheckResult(!StrCmp(splitted[2],"separate"), "STRING_Splitter error", __LINE__);
-	UnitTest_CheckResult(!StrCmp(splitted[3],"this"), "STRING_Splitter error", __LINE__);
-	UnitTest_CheckResult(!StrCmp(splitted[4],"text"), "STRING_Splitter error", __LINE__);
-	UnitTest_CheckResult(splitted[5] == NULL, "STRING_Splitter error", __LINE__);
+	UNITTEST_ASSERT(value8 == 5, "STRING_Splitter error");
+	UNITTEST_ASSERT(!StrCmp(splitted[0],"need"), "STRING_Splitter error");
+	UNITTEST_ASSERT(!StrCmp(splitted[1],"to"), "STRING_Splitter error");
+	UNITTEST_ASSERT(!StrCmp(splitted[2],"separate"), "STRING_Splitter error");
+	UNITTEST_ASSERT(!StrCmp(splitted[3],"this"), "STRING_Splitter error");
+	UNITTEST_ASSERT(!StrCmp(splitted[4],"text"), "STRING_Splitter error");
+	UNITTEST_ASSERT(splitted[5] == NULL, "STRING_Splitter error");
 
 	StrCpy(buffer, "text");
 	value8 = STRING_Splitter(buffer, ' ', splitted, 10);
-	UnitTest_CheckResult(value8 == 1, "STRING_Splitter error", __LINE__);
-	UnitTest_CheckResult(!StrCmp(splitted[0],"text"), "STRING_Splitter error", __LINE__);
-	UnitTest_CheckResult(splitted[1] == NULL, "STRING_Splitter error", __LINE__);
+	UNITTEST_ASSERT(value8 == 1, "STRING_Splitter error");
+	UNITTEST_ASSERT(!StrCmp(splitted[0],"text"), "STRING_Splitter error");
+	UNITTEST_ASSERT(splitted[1] == NULL, "STRING_Splitter error");
 
 	StrCpy(buffer, "");
 	value8 = STRING_Splitter(buffer, ' ', splitted, 10);
-	UnitTest_CheckResult(value8 == 0, "STRING_Splitter error", __LINE__);
-	UnitTest_CheckResult(splitted[0] == NULL, "STRING_Splitter error", __LINE__);
+	UNITTEST_ASSERT(value8 == 0, "STRING_Splitter error");
+	UNITTEST_ASSERT(splitted[0] == NULL, "STRING_Splitter error");
 
 
 	// End of unittest

@@ -16,6 +16,7 @@
 #include "String.h"
 #include "DebugUart.h"
 #include "Communication.h"
+#include "MEM.h"
 
 
 

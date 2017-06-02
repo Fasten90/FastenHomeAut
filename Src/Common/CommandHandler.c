@@ -18,6 +18,9 @@
 #include "EscapeSequence.h"
 #include "GlobalVarHandler.h"
 #include "CommandHandler.h"
+#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
+#include "EventLog.h"
+#endif
 
 #ifdef MODULE_COMMANDHANDLER_UNITTEST_ENABLE
 #include "UnitTest.h"
@@ -504,57 +507,57 @@ void CommandHandler_UnitTest(void)
 	result = CommandHandler_PrepareFindExecuteCommand(CommProt_Buffer, "version");
 
 	// Check command execute result
-	UnitTest_CheckResult(result,
-			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	UNITTEST_ASSERT(result,
+			"CommandHandler_PrepareFindExecuteCommand error");
 	// Check command argument num
-	UnitTest_CheckResult(CommandHandler_CommandArgCount == 1,
-			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	UNITTEST_ASSERT(CommandHandler_CommandArgCount == 1,
+			"CommandHandler_PrepareFindExecuteCommand error");
 	// Check command source
-	UnitTest_CheckResult(CommandHandler_CommandSource == CommProt_Buffer,
-			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	UNITTEST_ASSERT(CommandHandler_CommandSource == CommProt_Buffer,
+			"CommandHandler_PrepareFindExecuteCommand error");
 	// Check separated / splitted command
-	UnitTest_CheckResult(!StrCmp(CommandHandler_CommandArguments[0], "version"),
-			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
-	UnitTest_CheckResult(CommandHandler_CommandArguments[1] == NULL,
-			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(CommandHandler_CommandArguments[0], "version"),
+			"CommandHandler_PrepareFindExecuteCommand error");
+	UNITTEST_ASSERT(CommandHandler_CommandArguments[1] == NULL,
+			"CommandHandler_PrepareFindExecuteCommand error");
 
 
 	// Check wrong command: not find
 	result = CommandHandler_PrepareFindExecuteCommand(CommProt_Buffer, "WrongCommand");
 	// Check command execute result
-	UnitTest_CheckResult(!result,
-			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	UNITTEST_ASSERT(!result,
+			"CommandHandler_PrepareFindExecuteCommand error");
 	// Check command argument num: will be 1
-	UnitTest_CheckResult(CommandHandler_CommandArgCount == 	1,
-			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	UNITTEST_ASSERT(CommandHandler_CommandArgCount == 	1,
+			"CommandHandler_PrepareFindExecuteCommand error");
 	// Check command source
-	UnitTest_CheckResult(CommandHandler_CommandSource == CommProt_Buffer,
-			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	UNITTEST_ASSERT(CommandHandler_CommandSource == CommProt_Buffer,
+			"CommandHandler_PrepareFindExecuteCommand error");
 	// Check separated / splitted command
-	UnitTest_CheckResult(!StrCmp(CommandHandler_CommandArguments[0], "WrongCommand"),
-			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
-	UnitTest_CheckResult(CommandHandler_CommandArguments[1] == NULL,
-			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(CommandHandler_CommandArguments[0], "WrongCommand"),
+			"CommandHandler_PrepareFindExecuteCommand error");
+	UNITTEST_ASSERT(CommandHandler_CommandArguments[1] == NULL,
+			"CommandHandler_PrepareFindExecuteCommand error");
 
 
 	// Check wrong command: too many arguments ( >3)
 	result = CommandHandler_PrepareFindExecuteCommand(CommProt_Buffer, "version with lot of arguments");
 	// Check command execute result: true/successful, because CommandHandler will find "version" command
-	UnitTest_CheckResult(result == true,
-			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	UNITTEST_ASSERT(result == true,
+			"CommandHandler_PrepareFindExecuteCommand error");
 	// Check command argument num
-	UnitTest_CheckResult(CommandHandler_CommandArgCount == 	3,
-			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	UNITTEST_ASSERT(CommandHandler_CommandArgCount == 	3,
+			"CommandHandler_PrepareFindExecuteCommand error");
 	// Check command source
-	UnitTest_CheckResult(CommandHandler_CommandSource == CommProt_Buffer,
-			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	UNITTEST_ASSERT(CommandHandler_CommandSource == CommProt_Buffer,
+			"CommandHandler_PrepareFindExecuteCommand error");
 	// Check separated / splitted command
-	UnitTest_CheckResult(!StrCmp(CommandHandler_CommandArguments[0], "version"),
-			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
-	UnitTest_CheckResult(!StrCmp(CommandHandler_CommandArguments[1], "with"),
-			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
-	UnitTest_CheckResult(!StrCmp(CommandHandler_CommandArguments[2], "lot"),
-			"CommandHandler_PrepareFindExecuteCommand error", __LINE__);
+	UNITTEST_ASSERT(!StrCmp(CommandHandler_CommandArguments[0], "version"),
+			"CommandHandler_PrepareFindExecuteCommand error");
+	UNITTEST_ASSERT(!StrCmp(CommandHandler_CommandArguments[1], "with"),
+			"CommandHandler_PrepareFindExecuteCommand error");
+	UNITTEST_ASSERT(!StrCmp(CommandHandler_CommandArguments[2], "lot"),
+			"CommandHandler_PrepareFindExecuteCommand error");
 
 
 	// End of unittest

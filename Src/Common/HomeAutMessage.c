@@ -10,8 +10,10 @@
  */
 
 
-#include <HomeAutMessage.h>
+#include "options.h"
 #include "include.h"
+#include "String.h"
+#include "HomeAutMessage.h"
 
 #ifdef MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
 #include "unittest.h"
@@ -505,14 +507,13 @@ void HomeAutMessage_UnitTest(void)
 
 
 	// It is valid message?
-	UnitTest_CheckResult(HomeAutMessage_CheckAndProcessMessage(
+	UNITTEST_ASSERT(HomeAutMessage_CheckAndProcessMessage(
 			TestMessage, &testInformation),
-			"HomeAutMessage Check function has error",
-			__LINE__);
+			"HomeAutMessage Check function has error");
 
 
 	// Check results (processed values)
-	UnitTest_CheckResult(
+	UNITTEST_ASSERT(
 			((testInformation.isValid == true)
 			// TODO: SourceAddress & TargetAddress vizsgálat kiegészítése
 			&& (testInformation.SourceAddress.IP[0] == 192)
@@ -522,21 +523,18 @@ void HomeAutMessage_UnitTest(void)
 			&& (testInformation.Function == Function_Command)
 			&& (testInformation.DataType == Command_Remote)
 			&& (testInformation.Data == 0x01234567)),
-			"HomeAutMessage processed value(s) error(s)",
-			__LINE__);
+			"HomeAutMessage processed value(s) error(s)");
 
 
 	// Check message creating
 	length = HomeAutMessage_CreateMessage(&testInformation, exampleStringMessage);
-	UnitTest_CheckResult(length == StringLength(TestMessage),
-			"HomeAutMessage CreateMessage error",
-			__LINE__);
+	UNITTEST_ASSERT(length == StringLength(TestMessage),
+			"HomeAutMessage CreateMessage error");
 
 
 	// Check created message
-	UnitTest_CheckResult(!StrCmp(TestMessage, exampleStringMessage),
-			"HomeAutMessage created message error",
-			__LINE__);
+	UNITTEST_ASSERT(!StrCmp(TestMessage, exampleStringMessage),
+			"HomeAutMessage created message error");
 
 
 	// Finish

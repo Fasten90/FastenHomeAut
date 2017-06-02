@@ -43,6 +43,8 @@
 #include "USART.h"
 #include "DebugUart.h"
 #include "Terminal.h"
+#include "EventLog.h"
+
 
 
 /* Private variables ---------------------------------------------------------*/

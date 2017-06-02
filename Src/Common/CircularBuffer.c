@@ -16,10 +16,13 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
+#include "options.h"
 #include "include.h"
 #include "CircularBuffer.h"
+#include "MEM.h"
 
 #ifdef MODULE_CIRCULARBUFFER_UNITTEST_ENABLE
+#include "String.h"
 #include "UnitTest.h"
 #endif
 
@@ -165,7 +168,7 @@ void CircularBuffer_UnitTest(void)
 			256, buffer256_writeCnt, buffer256_readCnt, true);
 
 	result = !StrCmp(emptyBuffer, "1234567890");
-	UnitTest_CheckResult(result, "ERROR in GetCharacters()", __LINE__);
+	UNITTEST_ASSERT(result, "ERROR in GetCharacters()");
 
 	// Test: ClearBuffer
 	CircularBuffer_Clear(buffer256, 256, buffer256_readCnt, buffer256_writeCnt);
@@ -174,7 +177,7 @@ void CircularBuffer_UnitTest(void)
 	{
 		// Check characters
 		result = (buffer256[i] == '\0');
-		UnitTest_CheckResult(result, "ERROR in Clear()", __LINE__);
+		UNITTEST_ASSERT(result, "ERROR in Clear()");
 	}
 
 
@@ -201,7 +204,7 @@ void CircularBuffer_UnitTest(void)
 			256, buffer256_writeCnt, buffer256_readCnt, true);
 
 	result = !StrCmp(emptyBuffer, "1234567890");
-	UnitTest_CheckResult(result, "ERROR in GetCharacters()", __LINE__);
+	UNITTEST_ASSERT(result, "ERROR in GetCharacters()");
 
 	// Test: ClearBuffer
 	CircularBuffer_Clear(buffer256, 256, buffer256_readCnt, buffer256_writeCnt);
@@ -210,7 +213,7 @@ void CircularBuffer_UnitTest(void)
 	{
 		// Check characters
 		result = (buffer256[251+i] == '\0');
-		UnitTest_CheckResult(result, "ERROR in Clear()", __LINE__);
+		UNITTEST_ASSERT(result, "ERROR in Clear()");
 	}
 
 

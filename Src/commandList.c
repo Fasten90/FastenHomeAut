@@ -26,6 +26,11 @@
 #include "Display.h"
 #include "LED.h"
 #include "Watchdog.h"
+#include "Calc.h"
+#include "CircularBuffer.h"
+#include "EventLog.h"
+#include "HomeAutMessage.h"
+#include "TaskHandler.h"
 
 #include "CommandList.h"
 

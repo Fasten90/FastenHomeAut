@@ -367,7 +367,7 @@ void TaskHandler_UnitTest(void)
 	for (i = 0; i < TasksNum; i++)
 	{
 		result = (TaskList[i].tick == 0);
-		UnitTest_CheckResult(result, "TaskHandler_Init error", __LINE__);
+		UNITTEST_ASSERT(result, "TaskHandler_Init error");
 	}
 
 
@@ -380,7 +380,7 @@ void TaskHandler_UnitTest(void)
 	for (i = 0; i < TasksNum; i++)
 	{
 		result = (TaskList[i].tick == 1);
-		UnitTest_CheckResult(result, "TaskHandler_Scheduler error", __LINE__);
+		UNITTEST_ASSERT(result, "TaskHandler_Scheduler error");
 	}
 
 
@@ -398,15 +398,15 @@ void TaskHandler_UnitTest(void)
 
 	TaskHandler_SetTaskPeriodicTime(0, 1234);
 	result = (TaskList[0].taskScheduleRate == 1234);
-	UnitTest_CheckResult(result, "TaskHandler_SetTaskTime Error", __LINE__);
+	UNITTEST_ASSERT(result, "TaskHandler_SetTaskTime Error");
 	result = (TaskList[0].isRunOnce == false);
-	UnitTest_CheckResult(result, "TaskHandler_SetTaskTime Error", __LINE__);
+	UNITTEST_ASSERT(result, "TaskHandler_SetTaskTime Error");
 
 	TaskHandler_SetTaskPeriodicTime(0, oldTaskScheduleRate);
 	result = (TaskList[0].taskScheduleRate == oldTaskScheduleRate);
-	UnitTest_CheckResult(result, "TaskHandler_SetTaskTime Error", __LINE__);
+	UNITTEST_ASSERT(result, "TaskHandler_SetTaskTime Error");
 	result = (TaskList[0].isRunOnce == false);
-	UnitTest_CheckResult(result, "TaskHandler_SetTaskTime Error", __LINE__);
+	UNITTEST_ASSERT(result, "TaskHandler_SetTaskTime Error");
 
 	// Restore
 	TaskList[0].isRunOnce = oldOnceRun;
@@ -421,15 +421,15 @@ void TaskHandler_UnitTest(void)
 
 	TaskHandler_SetTaskOnceRun(0, 2345);
 	result = (TaskList[0].taskScheduleRate == 2345);
-	UnitTest_CheckResult(result, "TaskHandler_ScheduleTaskOnce Error", __LINE__);
+	UNITTEST_ASSERT(result, "TaskHandler_ScheduleTaskOnce Error");
 	result = (TaskList[0].isRunOnce == true);
-	UnitTest_CheckResult(result, "TaskHandler_ScheduleTaskOnce Error", __LINE__);
+	UNITTEST_ASSERT(result, "TaskHandler_ScheduleTaskOnce Error");
 
 	TaskHandler_SetTaskOnceRun(0, oldTaskScheduleRate);
 	result = (TaskList[0].taskScheduleRate == oldTaskScheduleRate);
-	UnitTest_CheckResult(result, "TaskHandler_ScheduleTaskOnce Error", __LINE__);
+	UNITTEST_ASSERT(result, "TaskHandler_ScheduleTaskOnce Error");
 	result = (TaskList[0].isRunOnce == true);
-	UnitTest_CheckResult(result, "TaskHandler_ScheduleTaskOnce Error", __LINE__);
+	UNITTEST_ASSERT(result, "TaskHandler_ScheduleTaskOnce Error");
 
 	// Restore
 	TaskList[0].isRunOnce = oldOnceRun;
@@ -442,7 +442,7 @@ void TaskHandler_UnitTest(void)
 
 	TaskHandler_DisableTask(0);
 	result = (TaskList[0].isDisabled == true);
-	UnitTest_CheckResult(result, "TaskHandler_DisableTask Error", __LINE__);
+	UNITTEST_ASSERT(result, "TaskHandler_DisableTask Error");
 
 	// Restore task disable value
 	TaskList[0].isDisabled = oldDisableValue;
@@ -454,7 +454,7 @@ void TaskHandler_UnitTest(void)
 
 	TaskHandler_RequestTaskScheduling(0);
 	result = (TaskList[0].isRequestScheduling == true);
-	UnitTest_CheckResult(result, "TaskHandler_RequestTaskScheduling Error", __LINE__);
+	UNITTEST_ASSERT(result, "TaskHandler_RequestTaskScheduling Error");
 
 	// Restore task request value
 	TaskList[0].isRequestScheduling = oldRequest;

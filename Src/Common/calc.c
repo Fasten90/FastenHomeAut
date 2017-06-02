@@ -90,34 +90,34 @@ void Calc_UnitTest(void)
 
 
 	/*		 Test power()		*/
-	UNITTEST_ASSERT2(power(0,0)==1, "power error");
-	UNITTEST_ASSERT2(power(1,0)==1, "power error");
-	UNITTEST_ASSERT2(power(1,1)==1, "power error");
-	UNITTEST_ASSERT2(power(1,2)==1, "power error");
-	UNITTEST_ASSERT2(power(2,1)==2, "power error");
+	UNITTEST_ASSERT(power(0,0)==1, "power error");
+	UNITTEST_ASSERT(power(1,0)==1, "power error");
+	UNITTEST_ASSERT(power(1,1)==1, "power error");
+	UNITTEST_ASSERT(power(1,2)==1, "power error");
+	UNITTEST_ASSERT(power(2,1)==2, "power error");
 
-	UNITTEST_ASSERT2(power(2,2)==4, "power error");
-	UNITTEST_ASSERT2(power(2,10)==1024, "power error");
-	UNITTEST_ASSERT2(power(2,16)==65536, "power error");
-	UNITTEST_ASSERT2(power(1024,0)==1, "power error");
+	UNITTEST_ASSERT(power(2,2)==4, "power error");
+	UNITTEST_ASSERT(power(2,10)==1024, "power error");
+	UNITTEST_ASSERT(power(2,16)==65536, "power error");
+	UNITTEST_ASSERT(power(1024,0)==1, "power error");
 	// Overflow
-	UNITTEST_ASSERT2(power(2,32)==0, "power error");
+	UNITTEST_ASSERT(power(2,32)==0, "power error");
 
 
 
 	/*		power_secured()		*/
-	UNITTEST_ASSERT2(power_secured(0,0)==1, "power error");
-	UNITTEST_ASSERT2(power_secured(1,0)==1, "power error");
-	UNITTEST_ASSERT2(power_secured(1,1)==1, "power error");
-	UNITTEST_ASSERT2(power_secured(1,2)==1, "power error");
-	UNITTEST_ASSERT2(power_secured(2,1)==2, "power error");
+	UNITTEST_ASSERT(power_secured(0,0)==1, "power error");
+	UNITTEST_ASSERT(power_secured(1,0)==1, "power error");
+	UNITTEST_ASSERT(power_secured(1,1)==1, "power error");
+	UNITTEST_ASSERT(power_secured(1,2)==1, "power error");
+	UNITTEST_ASSERT(power_secured(2,1)==2, "power error");
 
-	UNITTEST_ASSERT2(power_secured(2,2)==4, "power error");
-	UNITTEST_ASSERT2(power_secured(2,10)==1024, "power error");
-	UNITTEST_ASSERT2(power_secured(2,16)==65536, "power error");
-	UNITTEST_ASSERT2(power_secured(1024,0)==1, "power error");
+	UNITTEST_ASSERT(power_secured(2,2)==4, "power error");
+	UNITTEST_ASSERT(power_secured(2,10)==1024, "power error");
+	UNITTEST_ASSERT(power_secured(2,16)==65536, "power error");
+	UNITTEST_ASSERT(power_secured(1024,0)==1, "power error");
 	// Overflow - but last
-	UNITTEST_ASSERT2(power_secured(2,32)==2147483648, "power error");
+	UNITTEST_ASSERT(power_secured(2,32)==2147483648, "power error");
 
 
 

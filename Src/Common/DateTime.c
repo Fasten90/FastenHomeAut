@@ -631,31 +631,31 @@ void DateTime_UnitTest(void)
 	DateTime_t test1 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
 	DateTime_t test2 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
 	comp = DateTime_CompareDateTime(&test1, &test2);
-	UnitTest_CheckResult(comp == DateTimeCompare_Equal, "DateTime_CompareDateTime error", __LINE__);
+	UNITTEST_ASSERT(comp == DateTimeCompare_Equal, "DateTime_CompareDateTime error");
 
 	// First older
 	DateTime_t test3 = { .date.year=17, .date.month=1, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
 	DateTime_t test4 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
 	comp = DateTime_CompareDateTime(&test3, &test4);
-	UnitTest_CheckResult(comp == DateTimeCompare_FirstOldSecondNew, "DateTime_CompareDateTime error", __LINE__);
+	UNITTEST_ASSERT(comp == DateTimeCompare_FirstOldSecondNew, "DateTime_CompareDateTime error");
 
 	// First older
 	DateTime_t test5 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
 	DateTime_t test6 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=1 };
 	comp = DateTime_CompareDateTime(&test5, &test6);
-	UnitTest_CheckResult(comp == DateTimeCompare_FirstOldSecondNew, "DateTime_CompareDateTime error", __LINE__);
+	UNITTEST_ASSERT(comp == DateTimeCompare_FirstOldSecondNew, "DateTime_CompareDateTime error");
 
 	// First newer
 	DateTime_t test7 = { .date.year=18, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
 	DateTime_t test8 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
 	comp = DateTime_CompareDateTime(&test7, &test8);
-	UnitTest_CheckResult(comp == DateTimeCompare_FirstNewSecondOld, "DateTime_CompareDateTime error", __LINE__);
+	UNITTEST_ASSERT(comp == DateTimeCompare_FirstNewSecondOld, "DateTime_CompareDateTime error");
 
 	// First newer
 	DateTime_t test9 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=13, .time.second=0 };
 	DateTime_t test10 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
 	comp = DateTime_CompareDateTime(&test9, &test10);
-	UnitTest_CheckResult(comp == DateTimeCompare_FirstNewSecondOld, "DateTime_CompareDateTime error", __LINE__);
+	UNITTEST_ASSERT(comp == DateTimeCompare_FirstNewSecondOld, "DateTime_CompareDateTime error");
 
 
 	/*				Check DateTime_CheckDateTime function			*/
@@ -671,7 +671,7 @@ void DateTime_UnitTest(void)
 	result &= DateTime_CheckDateTime(&test8);
 	result &= DateTime_CheckDateTime(&test9);
 	result &= DateTime_CheckDateTime(&test10);
-	UnitTest_CheckResult(result == true, "DateTime_CheckDateTime error", __LINE__);
+	UNITTEST_ASSERT(result == true, "DateTime_CheckDateTime error");
 
 	// Check these dateTimes are invalids?
 	DateTime_t test11 = { .date.year=150, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
@@ -687,21 +687,21 @@ void DateTime_UnitTest(void)
 	result |= DateTime_CheckDateTime(&test14);
 	result |= DateTime_CheckDateTime(&test15);
 	result |= DateTime_CheckDateTime(&test16);
-	UnitTest_CheckResult(result == false, "DateTime_CheckDateTime error", __LINE__);
+	UNITTEST_ASSERT(result == false, "DateTime_CheckDateTime error");
 
 
 	/*			DateTime_ConvertStringToDateTime		*/
 	DateTime_t test300;
 	char strDateTime1[DATETIME_STRING_MAX_LENGTH] = { "2017-02-03 12:12:00" };
 	result = DateTime_ConvertStringToDateTime(strDateTime1, &test300);
-	UnitTest_CheckResult(result == true, "DateTime_ConvertStringToDateTime error", __LINE__);
-	UnitTest_CheckResult(((test300.date.year	== 17)
+	UNITTEST_ASSERT(result == true, "DateTime_ConvertStringToDateTime error");
+	UNITTEST_ASSERT(((test300.date.year	== 17)
 						&& (test300.date.month	== 2)
 						&& (test300.date.day	== 3)
 						&& (test300.time.hour	== 12)
 						&& (test300.time.minute	== 12)
 						&& (test300.time.second	== 0)),
-			"DateTime_ConvertStringToDateTime error", __LINE__);
+			"DateTime_ConvertStringToDateTime error");
 
 
 	/*			DateTime_PrintDateTimeToString			*/
@@ -709,7 +709,7 @@ void DateTime_UnitTest(void)
 	char strDateTime2[DATETIME_STRING_MAX_LENGTH];
 	DateTime_PrintDateTimeToString(strDateTime2, &test400);
 	result = !StrCmp(strDateTime2, "2017-02-03 12:12:00");
-	UnitTest_CheckResult(result == true, "DateTime_ConvertStringToDateTime error", __LINE__);
+	UNITTEST_ASSERT(result == true, "DateTime_ConvertStringToDateTime error");
 
 
 	/*			DateTime_CalculateDifferentOf2DateTime		*/
@@ -718,25 +718,25 @@ void DateTime_UnitTest(void)
 	DateTime_t test500 = { { 17, 05, 06 }, { 20, 42, 00} };
 	DateTime_t test501 = { { 17, 05, 06 }, { 20, 42, 01} };
 	int32_t test500_diff = DateTime_CalculateDifferentOf2DateTime(&test500, &test501);
-	UnitTest_CheckResult(test500_diff == -1, "DateTime_CalculateDifferentOf2DateTime error", __LINE__);
+	UNITTEST_ASSERT(test500_diff == -1, "DateTime_CalculateDifferentOf2DateTime error");
 
 	// 1 day
 	DateTime_t test502 = { { 17, 05, 06 }, { 20, 42, 00} };
 	DateTime_t test503 = { { 17, 05, 07 }, { 20, 42, 00} };
 	int32_t test502_diff = DateTime_CalculateDifferentOf2DateTime(&test502, &test503);
-	UnitTest_CheckResult(test502_diff == -(24 * 60 * 60), "DateTime_CalculateDifferentOf2DateTime error", __LINE__);
+	UNITTEST_ASSERT(test502_diff == -(24 * 60 * 60), "DateTime_CalculateDifferentOf2DateTime error");
 
 	// 1 month
 	DateTime_t test504 = { { 17, 06, 06 }, { 20, 42, 00} };
 	DateTime_t test505 = { { 17, 05, 06 }, { 20, 42, 00} };
 	int32_t test504_diff = DateTime_CalculateDifferentOf2DateTime(&test504, &test505);
-	UnitTest_CheckResult(test504_diff == (31 * 24 * 60 * 60), "DateTime_CalculateDifferentOf2DateTime error", __LINE__);
+	UNITTEST_ASSERT(test504_diff == (31 * 24 * 60 * 60), "DateTime_CalculateDifferentOf2DateTime error");
 
 	// 1 year
 	DateTime_t test506 = { { 18, 05, 07 }, { 20, 42, 00} };
 	DateTime_t test507 = { { 17, 05, 07 }, { 20, 42, 00} };
 	int32_t test506_diff = DateTime_CalculateDifferentOf2DateTime(&test506, &test507);
-	UnitTest_CheckResult(test506_diff == (365 * 24 * 60 * 60), "DateTime_CalculateDifferentOf2DateTime error", __LINE__);
+	UNITTEST_ASSERT(test506_diff == (365 * 24 * 60 * 60), "DateTime_CalculateDifferentOf2DateTime error");
 
 
 	/*			DateTime_Steps			*/
@@ -744,19 +744,19 @@ void DateTime_UnitTest(void)
 	DateTime_t test601 = { { 17, 05, 07 }, { 20, 42, 00} };
 	DateTime_t test602 = { { 17, 05, 07 }, { 20, 42, 01} };
 	DateTime_Steps(&test601, 1);
-	UnitTest_CheckResult(!memcmp(&test601, &test602, sizeof(DateTime_t)), "DateTime_Steps error", __LINE__);
+	UNITTEST_ASSERT(!memcmp(&test601, &test602, sizeof(DateTime_t)), "DateTime_Steps error");
 
 	// Step 60 second
 	DateTime_t test603 = { { 17, 05, 07 }, { 20, 42, 59} };
 	DateTime_t test604 = { { 17, 05, 07 }, { 20, 44, 01} };
 	DateTime_Steps(&test603, 62);
-	UnitTest_CheckResult(!memcmp(&test603, &test604, sizeof(DateTime_t)), "DateTime_Steps error", __LINE__);
+	UNITTEST_ASSERT(!memcmp(&test603, &test604, sizeof(DateTime_t)), "DateTime_Steps error");
 
 	// Step from 2017.12.31 23:59:59 -> to 2018.01.01 00:00:00
 	DateTime_t test605 = { { 17, 12, 31 }, { 23, 59, 59 } };
 	DateTime_t test606 = { { 18, 1, 1 }, { 0, 0, 0 } };
 	DateTime_Steps(&test605, 1);
-	UnitTest_CheckResult(!memcmp(&test605, &test606, sizeof(DateTime_t)), "DateTime_Steps error", __LINE__);
+	UNITTEST_ASSERT(!memcmp(&test605, &test606, sizeof(DateTime_t)), "DateTime_Steps error");
 
 
 

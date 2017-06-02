@@ -1536,7 +1536,7 @@ void GlobalVarHandler_UnitTest(void)
 
 	// Check GlobalVarHandler structures
 	isOk = GlobalVarHandler_CheckCommandStructAreValid();
-	UnitTest_CheckResult(isOk, "GlobalVarHandler structs are wrong", __LINE__);
+	UNITTEST_ASSERT(isOk, "GlobalVarHandler structs are wrong");
 
 
 	// Test "testuint8" variable

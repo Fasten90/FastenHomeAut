@@ -16,9 +16,11 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
-#include "include.h"
+#include "options.h"
 #include "EventList.h"
 #include "Communication.h"
+#include "String.h"
+#include "MEM.h"
 #include "EventLog.h"
 
 #ifdef MODULE_EVENTLOG_UNITTEST_ENABLE
@@ -176,7 +178,7 @@ void EventLog_UnitTest(void)
 	result &= (EventLogs[0].eventType == EventType_SystemEvent);
 	result &= (EventLogs[0].eventStatus == 0);
 	result &= (EventLogs[0].tick != 0);
-	UnitTest_CheckResult(result, "EventLog_Init error", __LINE__);
+	UNITTEST_ASSERT(result, "EventLog_Init error");
 
 	// Check, second record is empty?
 	result = true;
@@ -184,7 +186,7 @@ void EventLog_UnitTest(void)
 	result &= (EventLogs[1].eventType == 0);
 	result &= (EventLogs[1].eventStatus == 0);
 	result &= (EventLogs[1].tick == 0);
-	UnitTest_CheckResult(result, "EventLog_Init error", __LINE__);
+	UNITTEST_ASSERT(result, "EventLog_Init error");
 
 
 
@@ -199,7 +201,7 @@ void EventLog_UnitTest(void)
 	result &= (EventLogs[1].eventType == EventType_SystemEvent);
 	result &= (EventLogs[1].eventStatus == 0x12345678);
 	result &= (EventLogs[1].tick != 0);
-	UnitTest_CheckResult(result, "EventLog_LogEvent error", __LINE__);
+	UNITTEST_ASSERT(result, "EventLog_LogEvent error");
 
 
 
