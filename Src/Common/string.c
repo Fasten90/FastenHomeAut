@@ -14,7 +14,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "include.h"
-#include <stdarg.h>		// for "..." parameters in uprintf function
+#include <stdarg.h>		// for "..." parameters in printf function
 #include "String.h"
 
 #ifdef MODULE_STRING_UNITTEST_ENABLE
@@ -1456,29 +1456,6 @@ uint8_t usprintf(char *str, const char *format, ...)
 	va_end(ap);						 			// Cleaning after end
 
 	return length;
-}
-
-
-
-/**
- * \brief	Function like printf(); Print on debug serial port
- * 			Copy character to buffer and after that, sending.
- */
-uint8_t uprintf(const char *format, ...)
-{
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-	// Working in at:
-	char TxBuffer[DEBUGUART_TXBUFFERSIZE];
-
-	va_list ap;									// argument pointer
-	va_start(ap, format); 						// ap on arg
-	string_printf(TxBuffer, format,ap);			// Separate and process
-	va_end(ap);						 			// Cleaning after end
-
-	return DebugUart_SendMessage(TxBuffer);		// Send on Usart
-#else
-	return 0;
-#endif
 }
 
 

@@ -14,7 +14,8 @@
 #define HOMEAUTMESSAGE_H_
 
 
-#include "include.h"
+#include "DateTime.h"
+#include "Network.h"
 
 
 

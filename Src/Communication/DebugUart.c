@@ -15,7 +15,11 @@
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
-#include "include.h"
+
+#include "options.h"
+#include <stdarg.h>		// for "..." parameters in printf function
+#include "String.h"
+#include "Globals.h"
 #include "DebugUart.h"
 
 
@@ -251,5 +255,28 @@ static bool DebugUart_WaitForSend(uint16_t timeoutMilliSecond)
 	DebugUart_SendEnable_flag = true;
 
 	return true;
+#endif
+}
+
+
+
+/**
+ * \brief	Function like printf(); Print on debug serial port
+ * 			Copy character to buffer and after that, sending.
+ */
+uint8_t uprintf(const char *format, ...)
+{
+#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+	// Working in at:
+	char TxBuffer[DEBUGUART_TXBUFFERSIZE];
+
+	va_list ap;									// argument pointer
+	va_start(ap, format); 						// ap on arg
+	string_printf(TxBuffer, format,ap);			// Separate and process
+	va_end(ap);						 			// Cleaning after end
+
+	return DebugUart_SendMessage(TxBuffer);		// Send on Usart
+#else
+	return 0;
 #endif
 }

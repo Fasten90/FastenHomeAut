@@ -15,12 +15,21 @@
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
-#include "include.h"
-#include "TaskList.h"
-#include "Logic.h"
-#include "GlobalVarHandler.h"
+
+#include "options.h"
 
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
+#include "Logic.h"
+#include "GlobalVarHandler.h"
+#include "Button.h"
+#include "LED.h"
+#include "DateTime.h"
+#include "CommandHandler.h"
+#include "Display.h"
+
+#include "TaskList.h"
+
+
 
 /*------------------------------------------------------------------------------
  *  Global variables

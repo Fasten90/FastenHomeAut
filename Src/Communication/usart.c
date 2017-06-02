@@ -21,6 +21,7 @@
 #endif
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 #include "DebugUart.h"
+#include "Terminal.h"
 #endif
 #include "USART.h"
 

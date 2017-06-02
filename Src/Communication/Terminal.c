@@ -17,14 +17,17 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
-#include "include.h"
+
+#ifdef CONFIG_MODULE_TERMINAL_ENABLE
+#include "String.h"
+#include "Globals.h"
 #include "CommandList.h"
 #include "CommandHandler.h"
 #include "CircularBuffer.h"
+#include "DebugUart.h"
+#include "Reset.h"
 #include "Terminal.h"
 
-
-#ifdef CONFIG_MODULE_TERMINAL_ENABLE
 
 /*------------------------------------------------------------------------------
  *  Global variables
@@ -1053,7 +1056,7 @@ void Terminal_SendWelcome(void)
 
 	TERMINAL_SEND_WELCOME();				// Welcome message
 	// One long string are optimized
-/*
+#ifdef TERMINAL_COMPILER_SIZE_LARGER_1
 	CommandHandler_SendMessage("Version: ");
 	CommandHandler_SendLine(VERSION_DEFINE);
 	CommandHandler_SendMessage("Compile date: ");
@@ -1062,13 +1065,12 @@ void Terminal_SendWelcome(void)
 	CommandHandler_SendLine(TIME_VERSION);
 	CommandHandler_SendMessage("Used panel: ");
 	CommandHandler_SendLine(BOARD_NAME);
-*/
-/*
+#endif
+#ifdef TERMINAL_COMPILER_SIZE_LARGER_2
 	CommandHandler_Printf("Version: %s\r\n", VERSION_DEFINE);
 	CommandHandler_Printf("Compile date: %s, %s\r\n", DATE_VERSION, TIME_VERSION);
 	CommandHandler_Printf("Used panel: %s\r\n", BOARD_NAME);
-*/
-	return;
+#endif
 }
 
 

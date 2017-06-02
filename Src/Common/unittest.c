@@ -12,10 +12,11 @@
 
 
 #include "String.h"
-#include "USART.h"
+#include "DebugUart.h"
 #include "UnitTest.h"
 
 
+#ifdef CONFIG_MODULE_UNITTEST_ENABLE
 /// VARIABLES
 
 static uint16_t UnitTest_ValidCnt = 0;
@@ -95,3 +96,5 @@ void UnitTest_End(void)
 		uprintf("UnitTest run successfully\r\n");
 	}
 }
+
+#endif	// #ifdef CONFIG_MODULE_UNITTEST_ENABLE

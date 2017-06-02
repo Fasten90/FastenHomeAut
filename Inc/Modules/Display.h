@@ -18,7 +18,12 @@
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
-#include "include.h"
+
+#include "options.h"
+
+#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
+#include "DateTime.h"
+#endif
 
 
 

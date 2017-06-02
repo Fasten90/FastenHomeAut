@@ -35,6 +35,14 @@
 /* Includes ------------------------------------------------------------------*/
 
 #include "include.h"
+#include "Button.h"
+#include "LED.h"
+#include "CommandHandler.h"
+#include "Display_SSD1306.h"
+#include "TaskHandler.h"
+#include "USART.h"
+#include "DebugUart.h"
+#include "Terminal.h"
 
 
 /* Private variables ---------------------------------------------------------*/

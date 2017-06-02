@@ -16,12 +16,15 @@
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
-#include "include.h"
+
+#include "String.h"
 #include "DateTime.h"
 
 #ifdef MODULE_DATETIME_UNITTEST_ENABLE
 #include "unittest.h"
 #endif
+
+
 
 /*------------------------------------------------------------------------------
  *  Global variables

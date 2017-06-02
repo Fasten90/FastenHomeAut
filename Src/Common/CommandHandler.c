@@ -10,11 +10,12 @@
  *		Last modified:	2017.01.16
  */
 
+#include "stdint.h"
+#include <stdarg.h>
 
+#include "String.h"
 #include "CommandList.h"
 #include "EscapeSequence.h"
-#include "include.h"
-#include "stdint.h"
 #include "GlobalVarHandler.h"
 #include "CommandHandler.h"
 

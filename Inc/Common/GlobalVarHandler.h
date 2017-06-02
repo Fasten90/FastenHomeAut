@@ -14,7 +14,7 @@
 #define GLOBALVARHANDLER_H_
 
 
-#include "include.h"
+#include "Communication.h"
 
 
 /*------------------------------------------------------------------------------

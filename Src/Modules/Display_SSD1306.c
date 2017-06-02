@@ -24,6 +24,9 @@
  *----------------------------------------------------------------------------*/
 #include "options.h"
 #include "include.h"
+#include "MEM.h"
+#include "Globals.h"
+#include "DebugUart.h"
 #include "Display_SSD1306.h"
 
 

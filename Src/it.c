@@ -2,6 +2,13 @@
 #include "options.h"
 #include "include.h"
 #include "board.h"
+#ifdef CONFIG_MODULE_BUTTON_ENABLE
+#include "Button.h"
+#endif
+#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
+#include "TaskHandler.h"
+#include "TaskList.h"
+#endif
 
 #ifdef CONFIG_USE_PANEL_HOMEAUTNODESMALL
 	#include "stm32f0xx_hal.h"

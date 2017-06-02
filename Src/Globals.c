@@ -10,10 +10,10 @@
  *		Last modified:	2016.11.23
  */
 
-#include "include.h"
 #include "options.h"
-#include "globals.h"
+#include "include.h"
 #include "version.h"
+#include "globals.h"
 
 
 

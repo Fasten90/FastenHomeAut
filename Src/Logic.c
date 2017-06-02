@@ -16,7 +16,10 @@
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
-#include "include.h"
+#include "DateTime.h"
+#include "Button.h"
+#include "TaskList.h"
+#include "TaskHandler.h"
 #include "Logic.h"
 
 

@@ -12,15 +12,21 @@
 
 
 #include "options.h"
-#include "include.h"
+
+#ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
+
+#include "String.h"
+#include "DebugUart.h"
 #include "GlobalVarHandler.h"
 #include "GlobalVariables.h"
+#include "CommandHandler.h"
+#include "Calc.h"
+
 #ifdef MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
 #include "UnitTest.h"
 #endif
 
 
-#ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
 
 /*------------------------------------------------------------------------------
  *  Macros & definitions

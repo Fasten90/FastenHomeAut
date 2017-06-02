@@ -15,7 +15,11 @@
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
-#include "include.h"
+#include "options.h"
+
+#include "Display_SSD1306.h"
+#include "DisplayImages.h"
+#include "Globals.h"
 #include "Display.h"
 
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
@@ -28,6 +32,10 @@
 #endif
 #ifdef CONFIG_MODULE_DISPLAY_FONT32X20_ENABLE
 #include "Font32x20.h"
+#endif
+
+#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
+#include "DateTime.h"
 #endif
 
 

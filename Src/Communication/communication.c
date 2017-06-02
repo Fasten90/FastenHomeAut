@@ -12,6 +12,9 @@
 
 #include "options.h"
 #include "include.h"
+#include <stdarg.h>
+#include "String.h"
+#include "DebugUart.h"
 #include "Communication.h"
 
 

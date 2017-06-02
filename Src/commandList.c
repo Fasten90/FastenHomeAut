@@ -15,11 +15,17 @@
 
 #include "include.h"
 
+#include "String.h"
 #include "FormattedMessage.h"
 #include "CommandHandler.h"
 #include "GlobalVarHandler.h"
 #include "Globals.h"
 #include "Terminal.h"
+#include "Button.h"
+#include "DateTime.h"
+#include "Display.h"
+#include "LED.h"
+#include "Watchdog.h"
 
 #include "CommandList.h"
 

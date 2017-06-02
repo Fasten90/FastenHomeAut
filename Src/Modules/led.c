@@ -10,8 +10,10 @@
  */
 
 #include "options.h"
-#include "include.h"
 #include "board.h"
+
+#include "String.h"
+#include "Globals.h"
 #include "LED.h"
 
 

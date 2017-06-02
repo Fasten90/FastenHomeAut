@@ -10,7 +10,7 @@
  *		Last modified:	2016.09.28
  */
 
-#include "USART.h"
+#include "DebugUart.h"
 #include "FormattedMessage.h"
 
 

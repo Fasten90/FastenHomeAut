@@ -17,6 +17,8 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 #include "include.h"
+#include "String.h"
+#include "DebugUart.h"
 #include "Network.h"
 
 

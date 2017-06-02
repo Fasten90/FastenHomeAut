@@ -69,6 +69,7 @@ bool DebugUart_SendChar(char c);
 uint8_t DebugUart_SendMessage(const char *aTxBuffer);
 bool DebugUart_SendNewLine(void);
 bool DebugUart_SendLine(const char *message);
+uint8_t uprintf(const char *format, ...);
 
 
 
