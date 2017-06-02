@@ -65,7 +65,11 @@ Task_t TaskList[] =
 	{
 		.taskName = "LedTask",
 		.taskFunction = TaskLedFunction,
+	#ifdef LED_OLD_STYLE
+		.taskScheduleRate = 200
+	#else
 		.taskScheduleRate = 2
+	#endif
 	},
 #endif
 #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
@@ -203,9 +207,7 @@ static TaskResult_t TaskLedFunction(ScheduleSource_t source)
 	{
 		Task_LedCnt = 0;
 	}
-#endif
-
-
+#else
 
 	// 50 Hz --> 20ms
 
@@ -215,7 +217,6 @@ static TaskResult_t TaskLedFunction(ScheduleSource_t source)
 	static bool LED_PwmLimitDir = false;
 	static uint8_t LED_100ms = 0;
 	static uint8_t LED_2ms = 0;
-
 
 	LED_2ms++;
 	if (LED_2ms >= 100/2)
@@ -265,7 +266,6 @@ static TaskResult_t TaskLedFunction(ScheduleSource_t source)
 		LED_SetLed(LED_GREEN_NUM, LED_SET_OFF);
 	}
 
-
 	// PWM counter
 	LED_PwmCnt++;
 	if (LED_PwmCnt >= LED_PwmMaxLimit)	// Max limit
@@ -273,7 +273,7 @@ static TaskResult_t TaskLedFunction(ScheduleSource_t source)
 		LED_PwmCnt = 0;
 	}
 
-
+#endif
 
 	return TASK_RESULT_OK;
 }

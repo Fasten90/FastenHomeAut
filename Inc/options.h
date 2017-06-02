@@ -352,4 +352,9 @@
 #endif
 
 
+#ifdef CONFIG_MODULE_LED_ENABLE
+	#define LED_OLD_STYLE
+#endif
+
+
 #endif /* OPTIONS_H_ */
