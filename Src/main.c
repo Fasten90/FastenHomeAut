@@ -95,7 +95,7 @@ int main(void)
 
 
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
-	// BUTTON
+	// Button
 	BUTTON_Init();
 #endif
 

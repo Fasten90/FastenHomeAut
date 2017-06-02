@@ -24,22 +24,21 @@ const char * const LED_NameList[] =
 {
 	// NOTE: Be careful, when change the order and num, syncronize with LED_NUM_MAX define
 #if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_HOMEAUTPANELS)
-	"red",
-	"blue",
 	"green",
+	"blue",
+	"red",
 #elif CONFIG_USE_PANEL_NUCLEOF401RE
 	"green",
 #else
 #warning "Miss CONFIG_USE_PANEL_.. define in LED names"
 #endif
-	NULL
 };				///< LED names
 
 
 /// LED types
 const char * const LED_TypeNameList[] =
 {
-	// NOTE: Syncronize with LED_SetType
+	// NOTE: Syncronize with LED_SetType_t
 	"-",
 	"on",
 	"off",
@@ -50,20 +49,23 @@ const char * const LED_TypeNameList[] =
 
 // Function prototypes
 
-static bool LED_SetRedLed(LED_SetType ledSet);
-static bool LED_SetBlueLed(LED_SetType ledSet);
-static bool LED_SetGreenLed(LED_SetType ledSet);
+static bool LED_SetRedLed(LED_SetType_t ledSet);
+static bool LED_SetBlueLed(LED_SetType_t ledSet);
+static bool LED_SetGreenLed(LED_SetType_t ledSet);
 
 
 // Functions
 
 
 /**
-\brief	LED GPIO initialization (without TIMER)
-*/
+ * \brief	LED GPIO initialization (without TIMER)
+ */
 void LED_Init(void)
 {
 	
+	BUILD_BUG_ON((sizeof(LED_TypeNameList)/sizeof(LED_TypeNameList[0])) != LED_TYPE_COUNT);
+	BUILD_BUG_ON((sizeof(LED_NameList)/sizeof(LED_NameList[0])) != (LED_Count - 1));
+
 	GPIO_InitTypeDef GPIO_InitStructure;
 
 	// GPIO Periph clock enable
@@ -71,7 +73,7 @@ void LED_Init(void)
 	
 	// Configure pin output pushpull mode
 	//GPIO_InitStructure.Alternate = GPIO_AF;
-	GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;	
+	GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStructure.Pin = BOARD_LED_GREEN_PIN;
 	GPIO_InitStructure.Pull = GPIO_NOPULL;
 	GPIO_InitStructure.Speed = GPIO_SPEED_LOW;
@@ -94,93 +96,29 @@ void LED_Init(void)
 
 
 /**
-\brief	LED blinking in infinite loop
-*/
+ * \brief	LED blinking in infinite loop
+ */
 void LED_Test(void)
 {
 
 	while(1)
 	{
 		// Set LEDs
-		LED_RED_ON();
-		LED_BLUE_ON();
 		LED_GREEN_ON();
+		LED_BLUE_ON();
+		LED_RED_ON();
 
 		// Delay
 		DelayMs(200);
 
 		// Set LEDs
-		LED_RED_OFF();
-		LED_BLUE_OFF();
 		LED_GREEN_OFF();
+		LED_BLUE_OFF();
+		LED_RED_OFF();
 
 		// Delay
 		DelayMs(200);
 	}
-}
-
-
-
-/**
- * \brief	Set red LED
- */
-static bool LED_SetRedLed(LED_SetType ledSet)
-{
-
-	switch (ledSet)
-	{
-		case LED_SET_ON:
-			LED_RED_ON();
-			break;
-		case LED_SET_OFF:
-			LED_RED_OFF();
-			break;
-		case LED_SET_TOGGLE:
-			LED_RED_TOGGLE();
-			break;
-		case LED_GET_STATUS:
-			break;
-		case LED_SET_DONTCARE:
-		case LED_TYPE_COUNT:
-			// Do not use
-			break;
-		default:
-			break;
-	}
-
-	return LED_RED_STATUS();
-}
-
-
-
-/**
- * \brief	Set blue LED
- */
-static bool LED_SetBlueLed(LED_SetType ledSet)
-{
-
-	switch (ledSet)
-	{
-		case LED_SET_ON:
-			LED_BLUE_ON();
-			break;
-		case LED_SET_OFF:
-			LED_BLUE_OFF();
-			break;
-		case LED_SET_TOGGLE:
-			LED_BLUE_TOGGLE();
-			break;
-		case LED_GET_STATUS:
-			break;
-		case LED_SET_DONTCARE:
-		case LED_TYPE_COUNT:
-			// Do not use
-			break;
-		default:
-			break;
-	}
-
-	return LED_BLUE_STATUS();
 }
 
 
@@ -188,7 +126,7 @@ static bool LED_SetBlueLed(LED_SetType ledSet)
 /**
  * \brief	Set green LED
  */
-static bool LED_SetGreenLed(LED_SetType ledSet)
+static bool LED_SetGreenLed(LED_SetType_t ledSet)
 {
 
 	switch (ledSet)
@@ -218,31 +156,97 @@ static bool LED_SetGreenLed(LED_SetType ledSet)
 
 
 /**
+ * \brief	Set blue LED
+ */
+static bool LED_SetBlueLed(LED_SetType_t ledSet)
+{
+
+	switch (ledSet)
+	{
+		case LED_SET_ON:
+			LED_BLUE_ON();
+			break;
+		case LED_SET_OFF:
+			LED_BLUE_OFF();
+			break;
+		case LED_SET_TOGGLE:
+			LED_BLUE_TOGGLE();
+			break;
+		case LED_GET_STATUS:
+			break;
+		case LED_SET_DONTCARE:
+		case LED_TYPE_COUNT:
+			// Do not use
+			break;
+		default:
+			break;
+	}
+
+	return LED_BLUE_STATUS();
+}
+
+
+
+/**
+ * \brief	Set red LED
+ */
+static bool LED_SetRedLed(LED_SetType_t ledSet)
+{
+
+	switch (ledSet)
+	{
+		case LED_SET_ON:
+			LED_RED_ON();
+			break;
+		case LED_SET_OFF:
+			LED_RED_OFF();
+			break;
+		case LED_SET_TOGGLE:
+			LED_RED_TOGGLE();
+			break;
+		case LED_GET_STATUS:
+			break;
+		case LED_SET_DONTCARE:
+		case LED_TYPE_COUNT:
+			// Do not use
+			break;
+		default:
+			break;
+	}
+
+	return LED_RED_STATUS();
+}
+
+
+
+/**
  * \brief	Set LED
  * \param	num		LED number
  * \param	ledSet	Which type (on, off, toggle)
  */
-bool LED_SetLed(uint8_t num, LED_SetType ledSet)
+bool LED_SetLed(LED_Pin_t pin, LED_SetType_t ledSet)
 {
 	bool state = false;
 
-	switch (num)
+	switch (pin)
 	{
 #if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_HOMEAUTPANELS)
-		case 1:
-			state = LED_SetRedLed(ledSet);
-			break;
-		case 2:
-			state = LED_SetBlueLed(ledSet);
-			break;
-		case 3:
+		case LED_Green:
 			state = LED_SetGreenLed(ledSet);
 			break;
+		case LED_Blue:
+			state = LED_SetBlueLed(ledSet);
+			break;
+		case LED_Red:
+			state = LED_SetRedLed(ledSet);
+			break;
 #elif CONFIG_USE_PANEL_NUCLEOF401RE
-		case 1:
+		case LED_Green:
 			state = LED_SetGreenLed(ledSet);
 			break;
 #endif
+		case LED_Unknown:
+		case LED_Count:
 		default:
 			state = false;
 			break;
@@ -259,27 +263,29 @@ bool LED_SetLed(uint8_t num, LED_SetType ledSet)
  * \return	true, if high
  * 			false, if low
  */
-bool LED_GetStatus(uint8_t num)
+bool LED_GetStatus(LED_Pin_t pin)
 {
 	bool status;
 
-	switch (num)
+	switch (pin)
 	{
 #ifdef CONFIG_USE_PANEL_STM32F4DISCOVERY
-		case 1:
-			status = LED_RED_STATUS();
-			break;
-		case 2:
-			status = LED_BLUE_STATUS();
-			break;
-		case 3:
+		case LED_Green:
 			status = LED_GREEN_STATUS();
 			break;
+		case LED_Blue:
+			status = LED_BLUE_STATUS();
+			break;
+		case LED_Red:
+			status = LED_RED_STATUS();
+			break;
 #elif CONFIG_USE_PANEL_NUCLEOF401RE
-		case 1:
+		case LED_Green:
 			status = LED_GREEN_STATUS();
 			break;
 #endif
+		case LED_Unknown:
+		case LED_Count:
 		default:
 			status = false;
 			break;
@@ -293,12 +299,12 @@ bool LED_GetStatus(uint8_t num)
 /**
  * \brief	Get LED type from name
  */
-uint8_t LED_GetNumFromName(const char *name)
+LED_Pin_t LED_GetNumFromName(const char *name)
 {
 	uint8_t i;
-	uint8_t ledNum = 0;
+	LED_Pin_t ledNum = LED_Unknown;
 
-	for (i=0; i < LED_NUM_MAX; i++)
+	for (i = 0; i < LED_Count - 1; i++)
 	{
 		if (!StrCmp(LED_NameList[i], name))
 		{
@@ -317,10 +323,10 @@ uint8_t LED_GetNumFromName(const char *name)
 /**
  * \brief	Get type from string
  */
-LED_SetType LED_GetTypeFromString (const char *typeString)
+LED_SetType_t LED_GetTypeFromString(const char *typeString)
 {
 	uint8_t i;
-	LED_SetType ledType = 0;
+	LED_SetType_t ledType = 0;
 
 	// TODO: Can we optimizing without loop?
 

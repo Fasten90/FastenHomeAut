@@ -971,7 +971,7 @@ static CommandResult_t CommandFunction_led(uint32_t argc, char** argv)
 		{
 			// Good count
 			// Get type "set type"
-			LED_SetType setType = LED_SET_DONTCARE;
+			LED_SetType_t setType = LED_SET_DONTCARE;
 			bool status = false;
 			setType = LED_GetTypeFromString(argv[2]);
 
