@@ -46,79 +46,84 @@
  *----------------------------------------------------------------------------*/
 
 
-static CommandResult_t CommandFunction_cls(uint32_t argc, char** argv);
-static CommandResult_t CommandFunction_help(uint32_t argc, char** argv);
-static CommandResult_t CommandFunction_version(uint32_t argc, char** argv);
-static CommandResult_t CommandFunction_welcome(uint32_t argc, char** argv);
-static CommandResult_t CommandFunction_reset(uint32_t argc, char** argv);
-static CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv);
-static CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv);
-static CommandResult_t CommandFunction_test(uint32_t argc, char** argv);
-
+	static CommandResult_t CommandFunction_cls(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_help(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_version(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_welcome(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_reset(uint32_t argc, char** argv);
+#ifdef CONFIG_MODULE_UNITTEST_ENABLE
+	static CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv);
+#endif
+#ifdef CONFIG_MODULE_TEST_ENABLE
+	static CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv);
+#endif
+#ifdef CONFIG_TEST_MODE
+	static CommandResult_t CommandFunction_test(uint32_t argc, char** argv);
+#endif
 #ifdef CONFIG_MODULE_LED_ENABLE
-static CommandResult_t CommandFunction_led(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_led(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
-static CommandResult_t CommandFunction_set(uint32_t argc, char** argv);
-static CommandResult_t CommandFunction_get(uint32_t argc, char** argv);
-static CommandResult_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** argv);
-static CommandResult_t CommandFunction_GlobalVariableList(uint32_t argc, char** argv);
-static CommandResult_t CommandFunction_GlobalVariableValueList(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_set(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_get(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_GlobalVariableList(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_GlobalVariableValueList(uint32_t argc, char** argv);
 #ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
-static CommandResult_t CommandFunction_GlobalVariableTrace(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_GlobalVariableTrace(uint32_t argc, char** argv);
 #endif
 #endif
 #ifdef CONFIG_MODULE_COMMON_DAC_ENABLE
-static CommandResult_t CommandFunction_dac(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_dac(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_COMMON_IO_ENABLE
-static CommandResult_t CommandFunction_io(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_io(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
-static CommandResult_t CommandFunction_adc(uint32_t argc, char** argv);
-static CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_adc(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_COMMON_PWM_ENABLE
-static CommandResult_t CommandFunction_PWM(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_PWM(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
-static CommandResult_t CommandFunction_Motor(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_Motor(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-static CommandResult_t CommandFunction_ESP8266(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_ESP8266(uint32_t argc, char** argv);
 #endif
 #if defined(CONFIG_MODULE_RTC_ENABLE) || defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
-static CommandResult_t CommandFunction_RTC(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_RTC(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
-static CommandResult_t CommandFunctionEventLog(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunctionEventLog(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
-static CommandResult_t CommandFunction_raspberrypi(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_raspberrypi(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_FLASH_ENABLE
-static CommandResult_t CommandFunction_flashdel(uint32_t argc, char** argv);
-static CommandResult_t CommandFunction_flashread(uint32_t argc, char** argv);
-static CommandResult_t CommandFunction_flashwrite(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_flashdel(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_flashread(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_flashwrite(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_TEMPERATURE_ENABLE
-static CommandResult_t CommandFunction_temp(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_temp(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_DEBUG_RAMREAD_WRITE_COMMAND_ENABLE
-static CommandResult_t CommandFunction_mr(uint32_t argc, char** argv);
-static CommandResult_t CommandFunction_mw(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_mr(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_mw(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_DEBUG_GO_COMMAND_ENABLE
-static CommandResult_t CommandFunction_go(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_go(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
-static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_IO_ENABLE
-static CommandResult_t CommandFunction_IoStates(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_IoStates(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_SIMULATION_ENABLE
-static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv);
 #endif
 
 /*------------------------------------------------------------------------------
@@ -184,18 +189,20 @@ const CommandStruct CommandList[] =
 		.syntax = NULL,
 	},
 	{
+		.name = "moduletest",
+		.commandFunctionPointer = CommandFunction_moduletest,
+		.commandArgNum = CommandArgument_0,
+		.description = "Run module test",
+	},
+#ifdef CONFIG_MODULE_UNITTEST_ENABLE
+	{
 		.name = "unittest",
 		.commandFunctionPointer = CommandFunction_unittest,
 		.commandArgNum = CommandArgument_0 | CommandArgument_1,
 		.description = "Run unit tests",
 		.syntax = "(modul)",
 	},
-	{
-		.name = "moduletest",
-		.commandFunctionPointer = CommandFunction_moduletest,
-		.commandArgNum = CommandArgument_0,
-		.description = "Run module test",
-	},
+#endif
 #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
 	{
 		.name = "get",
@@ -599,7 +606,7 @@ static CommandResult_t CommandFunction_reset(uint32_t argc, char** argv)
 
 
 
-#ifdef CONFIG_TEST_MODE
+#ifdef CONFIG_MODULE_UNITTEST_ENABLE
 /**
  * \brief	Run module's unit tests
  */
@@ -643,9 +650,13 @@ static CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
 	EventLog_UnitTest();
 #endif
 
+#ifdef MODULE_CALC_UNITTEST_ENABLE
+	Calc_UnitTest();
+#endif
+
 	return CommandResult_Ok;
 }
-#endif	// #ifdef CONFIG_TEST_MODE
+#endif	// #ifdef CONFIG_MODULE_UNITTEST_ENABLE
 
 
 

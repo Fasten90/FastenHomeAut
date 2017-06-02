@@ -46,6 +46,7 @@ void UnitTest_Start(const char *moduleName, const char *fileName)
 
 
 
+// TODO: Merge CheckResult() functions
 /**
  * \brief	Check unit test result
  */
@@ -66,6 +67,35 @@ void UnitTest_CheckResult(bool isValid, const char *errorString, uint32_t line)
 				"Case: \"%s\"\r\n"
 				"\r\n",
 				UnitTest_FileName, line,
+				errorString);
+		// TODO: Use SendErrorMessage()
+	}
+}
+
+
+
+/**
+ * \brief	Check unit test result (~assert) (+ condition string)
+ */
+void UnitTest_CheckResult2(bool isValid, const char *conString, const char *errorString, uint32_t line)
+{
+	if (isValid)
+	{
+		// Valid
+		UnitTest_ValidCnt++;
+	}
+	else
+	{
+		// Invalid
+		UnitTest_InvalidCnt++;
+
+		uprintf("\r\n"
+				"Error in \"%s\" at %d. line.\r\n"
+				"Condition: \"%s\"\r\n"
+				"Case: \"%s\"\r\n"
+				"\r\n",
+				UnitTest_FileName, line,
+				conString,
 				errorString);
 		// TODO: Use SendErrorMessage()
 	}
