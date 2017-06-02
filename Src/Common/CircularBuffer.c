@@ -12,16 +12,18 @@
 
 
 
-
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
+
 #include "include.h"
 #include "CircularBuffer.h"
 
 #ifdef MODULE_CIRCULARBUFFER_UNITTEST_ENABLE
 #include "UnitTest.h"
 #endif
+
+
 
 /*------------------------------------------------------------------------------
  *  Global variables
@@ -44,15 +46,6 @@
 /*------------------------------------------------------------------------------
  *  Functions
  *----------------------------------------------------------------------------*/
-
-
-/**
- * \brief
- */
-void CircularBuffer_Init(void)
-{
-	// TODO: Clear, if not need
-}
 
 
 
@@ -139,6 +132,9 @@ void CircularBuffer_Clear(char *receiveBuffer, uint16_t bufferSize, uint16_t rea
 
 
 #ifdef MODULE_CIRCULARBUFFER_UNITTEST_ENABLE
+/**
+ * \brief	CircularBuffer UnitTest
+ */
 void CircularBuffer_UnitTest(void)
 {
 	char buffer256[256];
