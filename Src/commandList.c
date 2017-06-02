@@ -663,7 +663,7 @@ static CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 	// LEDs on
 	for (i=LED_NUM_MIN; i<=LED_NUM_MAX; i++)
 	{
-		LED_SetLed(i, LED_SET_ON);
+		LED_SetLed(i, LED_Set_On);
 		DelayMs(500);
 	}
 
@@ -672,7 +672,7 @@ static CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 	// LEDs off
 	for (i=LED_NUM_MIN; i<=LED_NUM_MAX; i++)
 	{
-		LED_SetLed(i, LED_SET_OFF);
+		LED_SetLed(i, LED_Set_Off);
 		DelayMs(500);
 	}
 #endif	// #ifdef CONFIG_MODULE_LED_ENABLE
@@ -971,11 +971,11 @@ static CommandResult_t CommandFunction_led(uint32_t argc, char** argv)
 		{
 			// Good count
 			// Get type "set type"
-			LED_SetType_t setType = LED_SET_DONTCARE;
+			LED_SetType_t setType = LED_Set_DontCare;
 			bool status = false;
 			setType = LED_GetTypeFromString(argv[2]);
 
-			if (setType == LED_SET_DONTCARE)
+			if (setType == LED_Set_DontCare)
 			{
 				// Error, do nothing
 				result = CommandResult_Error_WrongArgument2;

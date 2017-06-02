@@ -63,7 +63,7 @@ static bool LED_SetGreenLed(LED_SetType_t ledSet);
 void LED_Init(void)
 {
 	
-	BUILD_BUG_ON((sizeof(LED_TypeNameList)/sizeof(LED_TypeNameList[0])) != LED_TYPE_COUNT);
+	BUILD_BUG_ON((sizeof(LED_TypeNameList)/sizeof(LED_TypeNameList[0])) != LED_Type_Count);
 	BUILD_BUG_ON((sizeof(LED_NameList)/sizeof(LED_NameList[0])) != (LED_Count - 1));
 
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -131,19 +131,19 @@ static bool LED_SetGreenLed(LED_SetType_t ledSet)
 
 	switch (ledSet)
 	{
-		case LED_SET_ON:
+		case LED_Set_On:
 			LED_GREEN_ON();
 			break;
-		case LED_SET_OFF:
+		case LED_Set_Off:
 			LED_GREEN_OFF();
 			break;
-		case LED_SET_TOGGLE:
+		case LED_Set_Toggle:
 			LED_GREEN_TOGGLE();
 			break;
-		case LED_GET_STATUS:
+		case LED_Get_Status:
 			break;
-		case LED_SET_DONTCARE:
-		case LED_TYPE_COUNT:
+		case LED_Set_DontCare:
+		case LED_Type_Count:
 			// Do not use
 			break;
 		default:
@@ -163,19 +163,19 @@ static bool LED_SetBlueLed(LED_SetType_t ledSet)
 
 	switch (ledSet)
 	{
-		case LED_SET_ON:
+		case LED_Set_On:
 			LED_BLUE_ON();
 			break;
-		case LED_SET_OFF:
+		case LED_Set_Off:
 			LED_BLUE_OFF();
 			break;
-		case LED_SET_TOGGLE:
+		case LED_Set_Toggle:
 			LED_BLUE_TOGGLE();
 			break;
-		case LED_GET_STATUS:
+		case LED_Get_Status:
 			break;
-		case LED_SET_DONTCARE:
-		case LED_TYPE_COUNT:
+		case LED_Set_DontCare:
+		case LED_Type_Count:
 			// Do not use
 			break;
 		default:
@@ -195,19 +195,19 @@ static bool LED_SetRedLed(LED_SetType_t ledSet)
 
 	switch (ledSet)
 	{
-		case LED_SET_ON:
+		case LED_Set_On:
 			LED_RED_ON();
 			break;
-		case LED_SET_OFF:
+		case LED_Set_Off:
 			LED_RED_OFF();
 			break;
-		case LED_SET_TOGGLE:
+		case LED_Set_Toggle:
 			LED_RED_TOGGLE();
 			break;
-		case LED_GET_STATUS:
+		case LED_Get_Status:
 			break;
-		case LED_SET_DONTCARE:
-		case LED_TYPE_COUNT:
+		case LED_Set_DontCare:
+		case LED_Type_Count:
 			// Do not use
 			break;
 		default:
@@ -330,7 +330,7 @@ LED_SetType_t LED_GetTypeFromString(const char *typeString)
 
 	// TODO: Can we optimizing without loop?
 
-	for (i = 0; i < LED_TYPE_COUNT; i++)
+	for (i = 0; i < LED_Type_Count; i++)
 	{
 		if (!StrCmp(LED_TypeNameList[i], typeString))
 		{

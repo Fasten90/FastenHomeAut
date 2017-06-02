@@ -190,16 +190,16 @@ static TaskResult_t TaskLedFunction(ScheduleSource_t source)
 #ifdef LED_OLD_STYLE
 	static uint8_t Task_LedCnt = 0;
 
-	LED_SetLed(LED_RED_NUM, LED_SET_TOGGLE);
+	LED_SetLed(LED_Green, LED_Set_Toggle);
 	if ((Task_LedCnt % 5) == 0)
 	{
 		// *5
-		LED_SetLed(LED_BLUE_NUM, LED_SET_TOGGLE);
+		LED_SetLed(LED_Blue, LED_Set_Toggle);
 	}
 	if ((Task_LedCnt % 25) == 0)
 	{
 		// * 5 * 5 (=*25)
-		LED_SetLed(LED_GREEN_NUM, LED_SET_TOGGLE);
+		LED_SetLed(LED_Red, LED_Set_Toggle);
 	}
 
 	Task_LedCnt++;
@@ -343,7 +343,8 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 
 	// Toggle LED
 #ifdef CONFIG_MODULE_LED_ENABLE
-	LED_SetLed(LED_GREEN_NUM, LED_SET_TOGGLE);
+	LED_SetLed(LED_Blue, LED_Set_Toggle);
+	LED_SetLed(LED_Blue, LED_Set_Toggle);
 #endif
 
 

@@ -39,13 +39,13 @@ typedef enum
 
 typedef enum
 {
-	LED_SET_DONTCARE,
-	LED_SET_ON,
-	LED_SET_OFF,
-	LED_SET_TOGGLE,
-	LED_GET_STATUS,
+	LED_Set_DontCare,
+	LED_Set_On,
+	LED_Set_Off,
+	LED_Set_Toggle,
+	LED_Get_Status,
 	// Do not use:
-	LED_TYPE_COUNT
+	LED_Type_Count
 } LED_SetType_t;
 
 
