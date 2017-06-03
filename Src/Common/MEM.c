@@ -8,6 +8,7 @@
 
 #include <stdlib.h>	// For size_t
 #include <stdint.h>	// For uintx_t
+#include "DebugUart.h"
 #include "MEM.h"
 
 
@@ -126,12 +127,43 @@ int memcmp(const void * ptr1, const void * ptr2, size_t num)
 
 
 /**
- * \brief	Fill large RAM buffer with GUARD values
+ * \brief	Stack overflow checker
+ * 			Fill large RAM buffer with GUARD values
  * 			Useful for Stack size calculate (StackOverFlow checker)
  */
-// Stack overflow checker
 void mem_StackFillWithGuardValues(void)
 {
 	uint8_t stackOverFlowCheckerVariable[1000];
 	memset(stackOverFlowCheckerVariable, 0xEF, 1000);
+}
+
+
+
+/**
+ * \brief	Check memory with local variable: how many bytes not filled by GUARD values?
+ */
+void mem_CheckStackGuardValues(void)
+{
+	uint16_t i = 0;
+	uint16_t guardGoodCnt = 0;
+	bool guardWasFound = false;
+	// Do not initialize buffer with fix values!!!!
+	uint8_t stackOverFlowCheckerVariable[1000];
+
+	for (i = 0; i < 1000; i++)
+	{
+		if (!guardWasFound && stackOverFlowCheckerVariable[i] == 0xEF)
+		{
+			guardWasFound = true;
+			guardGoodCnt = i;
+			uprintf("Guard was found at %d. byte\r\n", i);
+		}
+		else if (guardWasFound && stackOverFlowCheckerVariable[i] != 0xEF)
+		{
+			uprintf("Guard was wrong at %d. byte\r\n", i);
+			guardWasFound = false;
+		}
+	}
+
+	uprintf("MEM used: %d / %d, it is %d%%\r\n", guardGoodCnt, 1000, guardGoodCnt*100/1000);
 }

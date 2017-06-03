@@ -907,6 +907,18 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	//Display_TestClock();
 
 
+	static bool stackIsFilled = false;
+	if (!stackIsFilled)
+	{
+		mem_StackFillWithGuardValues();
+		stackIsFilled = true;
+	}
+	else
+	{
+		mem_CheckStackGuardValues();
+	}
+
+
 	// TaskHandler statistics test
 #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
 	TaskHandler_PrintStatistics();

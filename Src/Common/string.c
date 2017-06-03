@@ -960,9 +960,9 @@ uint8_t StringLength(const char *str)
 uint8_t StrCmp(const char *str1, const char *str2)
 {
 
-	while ( *str1 )
+	while (*str1)
 	{
-		if ( *str1 !=  *str2 )
+		if (*str1 !=  *str2)
 		{
 			return 1;	// not equal
 		}
@@ -970,7 +970,7 @@ uint8_t StrCmp(const char *str1, const char *str2)
 		str2++;
 	}
 
-	if (*str1)
+	if (*str2)
 	{
 		return 1;		// last str2 char has value, not equal
 	}
