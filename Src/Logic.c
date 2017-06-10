@@ -33,7 +33,7 @@
  *  Local variables
  *----------------------------------------------------------------------------*/
 
-#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
+#if defined(CONFIG_MODULE_DISPLAY_SHOW_CLOCK) && defined(CONFIG_MODULE_BUTTON_ENABLE)
 static uint8_t Logic_SystemTimeConfigState = 0;
 #endif
 
@@ -43,7 +43,7 @@ static uint8_t Logic_SystemTimeConfigState = 0;
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
-#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
+#if defined(CONFIG_MODULE_DISPLAY_SHOW_CLOCK) && defined(CONFIG_MODULE_BUTTON_ENABLE)
 static void Logic_SystemTimeStepConfig(void);
 static void Logic_SystemTimeStepValue(void);
 #endif
@@ -57,38 +57,44 @@ static void Logic_SystemTimeStepValue(void);
 
 /**
  * \brief	Button event handler
+ * 			Only one button handling (button = i. button
  */
 void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 {
-#if BUTTON_NUM == 1
-
+#if defined(CONFIG_MODULE_DISPLAY_SHOW_CLOCK) && (BUTTON_NUM == 1)
 	// One button mode
 	if (button == PressedButton_User)
 	{
 		if (type == ButtonPress_Long)
 		{
 			BUTTON_DEBUG_PRINT("Button pressed a long time");
-#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
 			Logic_SystemTimeStepConfig();
-#endif
 		}
 		else if (type == ButtonPress_Short)
 		{
 			BUTTON_DEBUG_PRINT("Button pressed a short time");
-#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
 			Logic_SystemTimeStepValue();
-#endif
 		}
 	}
-
-#elif BUTTON_NUM > 1
-#warning "Implement this!"
+#elif defined(CONFIG_MODULE_DISPLAY_SHOW_CLOCK) && (BUTTON_NUM > 1)
+	// More button mode
+	// TODO: Up-Down / Right-Up difference...
+	if ((button == PressedButton_Right) || (button == PressedButton_Left))
+	{
+		BUTTON_DEBUG_PRINT("Left-Right button pressed");
+		Logic_SystemTimeStepConfig();
+	}
+	else if ((button == PressedButton_Up) || (button == PressedButton_Down))
+	{
+		BUTTON_DEBUG_PRINT("Up-Down button pressed");
+		Logic_SystemTimeStepValue();
+	}
 #endif
 }
 
 
 
-#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
+#if defined(CONFIG_MODULE_DISPLAY_SHOW_CLOCK) && defined(CONFIG_MODULE_BUTTON_ENABLE)
 /**
  * \brief	SystemTime - step function
  */

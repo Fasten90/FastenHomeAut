@@ -107,8 +107,6 @@ extern xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
 
 void CommandHandler_Init(void);
 
-void CommandHandler_CheckCommand(void);
-
 void CommandHandler_PrintCommandHelp(CommandID_t commandID);
 
 void CommandHandler_SendMessage(const char *message);

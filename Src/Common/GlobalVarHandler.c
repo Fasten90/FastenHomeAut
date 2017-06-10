@@ -1471,6 +1471,7 @@ void GlobalVarHandler_RunTrace(void)
 			{
 #ifdef CONFIG_GLOBALVARHANDLER_TRACE_RAM_BUFFER
 				// TODO: Unknown size... Now use uint32_t
+				// TODO: Function !!!!
 				uint32_t * pnt = (uint32_t *)GlobalVarList[i].varPointer;
 				GlobalVarHandler_TraceRamBuffer[GlobalVarHandler_TraceRam_BufferCnt] = *pnt;
 				GlobalVarHandler_TraceRam_BufferCnt++;

@@ -174,10 +174,12 @@ static bool IO_EnablePeripheralClock(char port)
 			__GPIOD_CLK_ENABLE();
 			break;
 
+#ifndef CONFIG_MICROCONTROLLER_STM32F0xx
 		case 'e':
 		case 'E':
 			__GPIOE_CLK_ENABLE();
 			break;
+#endif
 
 		default:
 			 return false;
@@ -218,10 +220,12 @@ static GPIO_TypeDef * IO_GetPort(char port)
 			GPIO_port = GPIOD;
 			break;
 
+#ifndef CONFIG_MICROCONTROLLER_STM32F0xx
 		case 'e':
 		case 'E':
 			GPIO_port = GPIOE;
 			break;
+#endif
 
 		default:
 			GPIO_port = NULL;

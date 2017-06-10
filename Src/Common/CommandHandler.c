@@ -84,12 +84,6 @@ void CommandHandler_Init(void)
 
 	// TODO: Check CommandList[]
 
-	// Initialize
-
-	CommandHandler_CommandArgCount = 0;
-
-	// End of initialization
-
 	return;
 }
 

@@ -44,7 +44,8 @@
 #include "DebugUart.h"
 #include "Terminal.h"
 #include "EventLog.h"
-
+#include "Motor.h"
+#include "ESP8266.h"
 
 
 /* Private variables ---------------------------------------------------------*/
@@ -284,7 +285,7 @@ int main(void)
 
 
 
-#ifdef CONFIG_USE_PANEL_NODESMALL
+#if defined(CONFIG_USE_PANEL_NODESMALL) || defined(CONFIG_USE_PANEL_FASTENNODE)
 /**
  * System Clock Configuration
  */

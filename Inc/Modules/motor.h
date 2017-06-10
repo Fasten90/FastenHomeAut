@@ -29,14 +29,17 @@
 
 // DC Motor
 // DC Motor PWM control: 0-100% PWM
-#define PWM_TIMER_DCMOTOR_PERIOD_VALUE					(uint32_t)(666 - 1)  /* Period Value  */
+//#define PWM_TIMER_DCMOTOR_PERIOD_VALUE					(uint32_t)(666 - 1)  /* Period Value  */
+
+#define MOTOR_DCMOTOR_PWM_TIMER_PRESCALER				(100000U)				// ms*10 based timer
+#define MOTOR_DCMOTOR_PWM_TIMER_PERIOD_VALUE			(uint32_t)(2000 - 1)	// ms*100
 
 
 
 // Servo motor
 // Set Servo motor PWM from 10ms to 20ms, and 15ms (middle) is center angle
-#define PWM_MOTOR_SERVO_TIMER_PRESCALER			(100000U)				// ms*10 based timer
-#define PWM_MOTOR_SERVO_TIMER_PERIOD_VALUE		(uint32_t)(2000 - 1)	// ms*100
+#define MOTOR_SERVO_PWM_TIMER_PRESCALER			(100000U)				// ms*10 based timer
+#define MOTOR_SERVO_PWM_TIMER_PERIOD_VALUE		(uint32_t)(2000 - 1)	// ms*100
 
 #define MOTOR_SERVO_MIN_ANGLE		(-90)
 #define MOTOR_SERVO_OFFSET_ANGLE	(90)

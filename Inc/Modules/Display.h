@@ -80,7 +80,9 @@ void Display_TestLoading(uint8_t percent);
 void Display_LoadCarImage(void);
 void Display_ChangeCarImage(void);
 
+#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
 void Display_ShowClock(Time_t *time);
+#endif
 
 void Display_Test8x5Font(void);
 void Display_Test12x8Font(void);

@@ -18,12 +18,15 @@
  *----------------------------------------------------------------------------*/
 
 #include "Network.h"
-
+#include "DebugUart.h"
 
 
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
+
+
+#define ESP8266_DEBUG_TXBUFFERSIZE		256
 
 
 //#define ESP8266_USE_BLOCK_MODE
@@ -106,8 +109,7 @@
 /// ESP8266 receive buffer length
 #define ESP8266_BUFFER_LENGTH					( 256UL )
 
-//#define ESP8266_RECEIVE_LENGTH					( ESP8266_BUFFER_LENGTH )
-#define ESP8266_RECEIVE_LENGTH					( 256 )
+#define ESP8266_RECEIVE_LENGTH					( ESP8266_BUFFER_LENGTH )
 
 
 #define ESP8266_LED_OK()		LED_GREEN_ON();	\

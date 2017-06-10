@@ -23,6 +23,7 @@
 #include "DebugUart.h"
 
 
+#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 
 /*------------------------------------------------------------------------------
  *  Global variables
@@ -44,7 +45,7 @@ bool DebugUart_SendEnable_flag = false;
 #endif
 
 
-#if defined(CONFIG_USE_FREERTOS) && defined(CONFIG_MODULE_DEBUGUSART_ENABLE)
+#if defined(CONFIG_USE_FREERTOS)
 xSemaphoreHandle DEBUG_USART_Rx_Semaphore;
 xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
 #endif
@@ -76,7 +77,6 @@ static bool DebugUart_WaitForSend(uint16_t timeoutMilliSecond);
  */
 uint8_t DebugUart_SendMessage(const char *aTxBuffer)
 {
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	uint8_t length = 0;
 
 	length = StringLength(aTxBuffer);
@@ -98,7 +98,7 @@ uint8_t DebugUart_SendMessage(const char *aTxBuffer)
 
 		DebugUart_SendEnable_flag = false;
 
-		StrCpy((char *)DebugUart_TxBuffer, aTxBuffer);
+		StrCpyMax((char *)DebugUart_TxBuffer, aTxBuffer, DEBUGUART_TXBUFFERSIZE-1);
 
 		// ComIT
 		if (HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t*)DebugUart_TxBuffer, length)!= HAL_OK)
@@ -124,11 +124,6 @@ uint8_t DebugUart_SendMessage(const char *aTxBuffer)
 		// Cannot take semaphore, now USART is busy
 		return 0;
 	}
-
-
-#else // #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-	return 0;
-#endif
 }
 
 
@@ -161,7 +156,7 @@ bool DebugUart_SendLine(const char *message)
  */
 bool DebugUart_SendChar(char c)
 {
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+
 	char buf[2];
 	buf[0] = c;
 	buf[1] = '\0';
@@ -196,11 +191,6 @@ bool DebugUart_SendChar(char c)
 		// Failed to take semaphore
 		return false;
 	}
-
-
-#else // #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-	return false;
-#endif
 }
 
 
@@ -208,7 +198,6 @@ bool DebugUart_SendChar(char c)
 /**
  * \brief	Receive message with IT
  */
- #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 void DebugUart_StartReceive(void)
 {
 
@@ -225,7 +214,6 @@ void DebugUart_StartReceive(void)
 	#endif
 
 }
-#endif	// #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 
 
 
@@ -266,7 +254,6 @@ static bool DebugUart_WaitForSend(uint16_t timeoutMilliSecond)
  */
 uint8_t uprintf(const char *format, ...)
 {
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	// Working in at:
 	char TxBuffer[DEBUGUART_TXBUFFERSIZE];
 
@@ -276,7 +263,6 @@ uint8_t uprintf(const char *format, ...)
 	va_end(ap);						 			// Cleaning after end
 
 	return DebugUart_SendMessage(TxBuffer);		// Send on Usart
-#else
-	return 0;
-#endif
 }
+
+#endif	// #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE

@@ -82,8 +82,7 @@ void Display_SSD1306_Init(void)
 
 	/*##-1- Enable peripherals and GPIO Clocks #################################*/
 	/* Enable GPIO TX/RX clock */
-	DISPLAY_SSD1306_SPIx_SCK_GPIO_CLK_ENABLE();
-	DISPLAY_SSD1306_SPIx_MOSI_GPIO_CLK_ENABLE();
+	DISPLAY_SSD1306_SPIx_GPIO_CLK_ENABLES();
 	/* Enable SPI clock */
 	DISPLAY_SSD1306_SPIx_CLK_ENABLE();
 
@@ -92,7 +91,7 @@ void Display_SSD1306_Init(void)
 	GPIO_InitStruct.Pin = DISPLAY_SSD1306_SPIx_SCK_PIN;
 	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
 	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FAST;
+	GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
 	GPIO_InitStruct.Alternate = DISPLAY_SSD1306_SPIx_SCK_AF;
 
 	HAL_GPIO_Init(DISPLAY_SSD1306_SPIx_SCK_GPIO_PORT, &GPIO_InitStruct);
@@ -117,7 +116,7 @@ void Display_SSD1306_Init(void)
 	GPIO_InitStruct.Pin = DISPLAY_SSD1306_SPIx_CS_GPIO_PIN;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_PULLUP;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FAST;
+	GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
 
 	HAL_GPIO_Init(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, &GPIO_InitStruct);
 	HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
@@ -126,7 +125,7 @@ void Display_SSD1306_Init(void)
 	GPIO_InitStruct.Pin = DISPLAY_SSD1306_RST_GPIO_PIN;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_PULLUP;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FAST;
+	GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
 
 	HAL_GPIO_Init(DISPLAY_SSD1306_RST_GPIO_PORT, &GPIO_InitStruct);
 	HAL_GPIO_WritePin(DISPLAY_SSD1306_RST_GPIO_PORT,
@@ -136,7 +135,7 @@ void Display_SSD1306_Init(void)
 	GPIO_InitStruct.Pin = DISPLAY_SSD1306_DATACOMMAND_GPIO_PIN;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_PULLUP;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FAST;
+	GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
 
 	HAL_GPIO_Init(DISPLAY_SSD1306_DATACOMMAND_GPIO_PORT, &GPIO_InitStruct);
 

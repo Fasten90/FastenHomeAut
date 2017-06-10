@@ -271,10 +271,8 @@ static void DebugUart_ClearReceive(bool isFullClear, uint8_t stepLength)
 /**
  * \brief	Always run, wait command and execute it
  */
-void CommandHandler_CheckCommand(void)
+void Terminal_CheckCommand(void)
 {
-
-	// Infinite "task" loop
 	// \note	If use EventHandler, this loop is not infinite loop,
 	//			it will be return after finished
 	while (1)

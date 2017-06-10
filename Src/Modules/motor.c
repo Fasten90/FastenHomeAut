@@ -63,9 +63,11 @@ static void Motor_DcMotorGpioInit(void);
 void Motor_Init(void)
 {
 	Motor_DcMotorGpioInit();
-	Motor_DcMotorTimerInit(0);
 
+	Motor_DcMotorTimerInit(0);
+#if !defined(MOTOR_MOTORS_PWM_ON_ONE_TIMER)
 	Motor_ServoTimerInit(0);
+#endif
 }
 
 
@@ -77,21 +79,21 @@ static void Motor_DcMotorGpioInit(void)
 {
 	GPIO_InitTypeDef GPIO_InitStruct;
 
-	MOTOR_DC_DIRECTIONS_CLK_ENABLES();
+	MOTOR_DCMOTOR_DIRS_CLK_ENABLES();
 
-	GPIO_InitStruct.Pin = MOTOR_DC_DIR1_PIN;
+	GPIO_InitStruct.Pin = MOTOR_DCMOTOR_DIR1_GPIO_PIN;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
 	GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
 
-	HAL_GPIO_Init(MOTOR_DC_DIR1_PORT, &GPIO_InitStruct);
+	HAL_GPIO_Init(MOTOR_DCMOTOR_DIR1_GPIO_PORT, &GPIO_InitStruct);
 
-	GPIO_InitStruct.Pin = MOTOR_DC_DIR2_PIN;
+	GPIO_InitStruct.Pin = MOTOR_DCMOTOR_DIR2_GPIO_PIN;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
 	GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
 
-	HAL_GPIO_Init(MOTOR_DC_DIR2_PORT, &GPIO_InitStruct);
+	HAL_GPIO_Init(MOTOR_DCMOTOR_DIR2_GPIO_PORT, &GPIO_InitStruct);
 
 
 	// Stop direction
@@ -107,14 +109,9 @@ static void Motor_DcMotorGpioInit(void)
 void Motor_DcMotorTimerInit(uint8_t percent)
 {
 
-	/* Timer Output Compare Configuration Structure declaration */
-	TIM_OC_InitTypeDef sConfig;
-
 	/* Counter Prescaler value */
 	uint32_t PrescalerValue = 0;
 	uint32_t Period = 0;
-	uint32_t Pulse = 0;
-
 
 	// Called by HAL
 	//HAL_TIM_PWM_MspInit(NULL);
@@ -122,17 +119,17 @@ void Motor_DcMotorTimerInit(uint8_t percent)
 
 	/* Compute the prescaler value to have TIM3 counter clock equal to 16000000 Hz */
 	//uhPrescalerValue = (uint32_t)(SystemCoreClock / 16000000) - 1;
-	PrescalerValue = (uint32_t)(SystemCoreClock / 400000 ) - 1;
+	//PrescalerValue = (uint32_t)(SystemCoreClock / 400000 ) - 1;
+	PrescalerValue = (uint32_t)(SystemCoreClock / MOTOR_DCMOTOR_PWM_TIMER_PRESCALER ) - 1;
 
-	Period = PWM_TIMER_DCMOTOR_PERIOD_VALUE;
-	Pulse = Period * percent / 100;
+	Period = MOTOR_DCMOTOR_PWM_TIMER_PERIOD_VALUE;
 
 
 	/*##-1- Configure the TIM peripheral #######################################*/
 
 	// PWM1
 
-	TimPWMDcMotor_Handle.Instance = TIMx_PWM_DCMOTOR;
+	TimPWMDcMotor_Handle.Instance = MOTOR_DCMOTOR_PWM_TIMx;
 
 	TimPWMDcMotor_Handle.Init.Prescaler         = PrescalerValue;
 	TimPWMDcMotor_Handle.Init.Period            = Period;
@@ -145,33 +142,14 @@ void Motor_DcMotorTimerInit(uint8_t percent)
 		Error_Handler();
 	}
 
+	// Set DcMotor PWM value
+	Motor_DcMotorChangePercent(percent);
 
-	/*##-2- Configure the PWM channels #########################################*/
-	/* Common configuration for all channels */
-	sConfig.OCMode       = TIM_OCMODE_PWM1;
-	sConfig.OCPolarity   = TIM_OCNPOLARITY_LOW;		// TIM_OCPOLARITY_HIGH
-	sConfig.OCFastMode   = TIM_OCFAST_DISABLE;
-	sConfig.OCIdleState  = TIM_OCIDLESTATE_RESET;		// TIM_OCIDLESTATE_RESET
-	//sConfig.OCNPolarity  = TIM_OCNPOLARITY_HIGH;		// TIM_OCNPOLARITY_HIGH
-	//sConfig.OCNIdleState = TIM_OCNIDLESTATE_RESET;	// TIM_OCNIDLESTATE_RESET
-
-	/* Set the pulse value for channel 1 */
-	sConfig.Pulse = Pulse;
-	if (HAL_TIM_PWM_ConfigChannel(&TimPWMDcMotor_Handle, &sConfig, TIMER_PWM_DCMOTOR_CHANNEL) != HAL_OK)
-	{
-		/* Configuration Error */
-		Error_Handler();
-	}
-
-
-	/*##-3- Start PWM signals generation #######################################*/
-	/* Start channel 1 */
-	if (HAL_TIM_PWM_Start(&TimPWMDcMotor_Handle, TIMER_PWM_DCMOTOR_CHANNEL) != HAL_OK)
-	{
-		/* PWM Generation Error */
-		Error_Handler();
-	}
-
+#ifdef MOTOR_MOTORS_PWM_ON_ONE_TIMER
+	TimPWMServo_Handle = TimPWMDcMotor_Handle;
+	// Set Servo PWM value
+	Motor_ServoChangeAngle(0);
+#endif
 }
 
 
@@ -186,7 +164,7 @@ void Motor_DcMotorChangePercent(uint8_t percent)
 	TIM_OC_InitTypeDef sConfig;
 
 
-	uint32_t Pulse = PWM_TIMER_DCMOTOR_PERIOD_VALUE * percent / 100;	// % pecent calculate
+	uint32_t Pulse = MOTOR_DCMOTOR_PWM_TIMER_PERIOD_VALUE * percent / 100;	// % percent calculate
 
 
 	/*##-2- Configure the PWM channels #########################################*/
@@ -201,8 +179,12 @@ void Motor_DcMotorChangePercent(uint8_t percent)
 	/* Set the pulse value for channel 1 */
 	sConfig.Pulse = Pulse;
 
+
+	HAL_TIM_PWM_Stop(&TimPWMDcMotor_Handle, MOTOR_DCMOTOR_PWM_TIMER_CHANNEL);
+
+
 	// Config ...
-	if (HAL_TIM_PWM_ConfigChannel(&TimPWMDcMotor_Handle, &sConfig, TIMER_PWM_DCMOTOR_CHANNEL) != HAL_OK)
+	if (HAL_TIM_PWM_ConfigChannel(&TimPWMDcMotor_Handle, &sConfig, MOTOR_DCMOTOR_PWM_TIMER_CHANNEL) != HAL_OK)
 	{
 		/* Configuration Error */
 		Error_Handler();
@@ -210,7 +192,7 @@ void Motor_DcMotorChangePercent(uint8_t percent)
 
 
 	// Need start...
-	if (HAL_TIM_PWM_Start(&TimPWMDcMotor_Handle, TIMER_PWM_DCMOTOR_CHANNEL) != HAL_OK)
+	if (HAL_TIM_PWM_Start(&TimPWMDcMotor_Handle, MOTOR_DCMOTOR_PWM_TIMER_CHANNEL) != HAL_OK)
 	{
 		/* PWM Generation Error */
 		Error_Handler();
@@ -228,20 +210,20 @@ void Motor_DcMotorSeDirection(MotorDir_t dir)
 	switch (dir)
 	{
 		case MotorDir_Forward:
-			HAL_GPIO_WritePin(MOTOR_DC_DIR1_PORT, MOTOR_DC_DIR1_PIN, SET);
-			HAL_GPIO_WritePin(MOTOR_DC_DIR2_PORT, MOTOR_DC_DIR2_PIN, RESET);
+			HAL_GPIO_WritePin(MOTOR_DCMOTOR_DIR1_GPIO_PORT, MOTOR_DCMOTOR_DIR1_GPIO_PIN, SET);
+			HAL_GPIO_WritePin(MOTOR_DCMOTOR_DIR2_GPIO_PORT, MOTOR_DCMOTOR_DIR2_GPIO_PIN, RESET);
 			break;
 
 		case MotorDir_Backward:
-			HAL_GPIO_WritePin(MOTOR_DC_DIR1_PORT, MOTOR_DC_DIR1_PIN, RESET);
-			HAL_GPIO_WritePin(MOTOR_DC_DIR2_PORT, MOTOR_DC_DIR2_PIN, SET);
+			HAL_GPIO_WritePin(MOTOR_DCMOTOR_DIR1_GPIO_PORT, MOTOR_DCMOTOR_DIR1_GPIO_PIN, RESET);
+			HAL_GPIO_WritePin(MOTOR_DCMOTOR_DIR2_GPIO_PORT, MOTOR_DCMOTOR_DIR2_GPIO_PIN, SET);
 			break;
 
 		case MotorDir_Unknown:
 		case MotorDir_Stop:
 		default:
-			HAL_GPIO_WritePin(MOTOR_DC_DIR1_PORT, MOTOR_DC_DIR1_PIN, RESET);
-			HAL_GPIO_WritePin(MOTOR_DC_DIR2_PORT, MOTOR_DC_DIR2_PIN, RESET);
+			HAL_GPIO_WritePin(MOTOR_DCMOTOR_DIR1_GPIO_PORT, MOTOR_DCMOTOR_DIR1_GPIO_PIN, RESET);
+			HAL_GPIO_WritePin(MOTOR_DCMOTOR_DIR2_GPIO_PORT, MOTOR_DCMOTOR_DIR2_GPIO_PIN, RESET);
 			break;
 	}
 
@@ -255,29 +237,21 @@ void Motor_DcMotorSeDirection(MotorDir_t dir)
 void Motor_ServoTimerInit(int8_t angle)
 {
 
-	/* Timer Output Compare Configuration Structure declaration */
-	TIM_OC_InitTypeDef sConfig;
-
 	/* Counter Prescaler value */
 	uint32_t PrescalerValue = 0;
 	uint32_t Period = 0;
-	uint32_t Pulse = 0;
-
 
 	/* Compute the prescaler value -> 10000 value / sec */
-	PrescalerValue = (uint32_t)(SystemCoreClock / PWM_MOTOR_SERVO_TIMER_PRESCALER ) - 1;
+	PrescalerValue = (uint32_t)(SystemCoreClock / MOTOR_SERVO_PWM_TIMER_PRESCALER ) - 1;
 
 	// ms * 100 (100.000 = 1000 ms = 1sec
-	Period = PWM_MOTOR_SERVO_TIMER_PERIOD_VALUE;
-
-	Pulse = Motor_ServoConvertAngleToPeriod(angle);
+	Period = MOTOR_SERVO_PWM_TIMER_PERIOD_VALUE;
 
 
 	/*##-1- Configure the TIM peripheral #######################################*/
 
-
 	// PWM2
-	TimPWMServo_Handle.Instance = TIMx_PWM_SERVO;
+	TimPWMServo_Handle.Instance = MOTOR_SERVOMOTOR_PWM_TIMx;
 
 	TimPWMServo_Handle.Init.Prescaler         = PrescalerValue;
 	TimPWMServo_Handle.Init.Period            = Period;
@@ -293,33 +267,8 @@ void Motor_ServoTimerInit(int8_t angle)
 		Error_Handler();
 	}
 
-
-
-	/*##-2- Configure the PWM channels #########################################*/
-	/* Common configuration for all channels */
-	sConfig.OCMode       = TIM_OCMODE_PWM1;
-	sConfig.OCPolarity   = TIM_OCPOLARITY_HIGH;
-	sConfig.OCFastMode   = TIM_OCFAST_DISABLE;
-	sConfig.OCNPolarity  = TIM_OCNPOLARITY_LOW;
-	//sConfig.OCIdleState  = TIM_OCIDLESTATE_RESET;
-	//sConfig.OCNIdleState = TIM_OCNIDLESTATE_RESET;
-
-	/* Set the pulse value for channel 1 */
-	sConfig.Pulse = Pulse;
-	if (HAL_TIM_PWM_ConfigChannel(&TimPWMServo_Handle, &sConfig, TIMER_PWM_SERVO_CHANNEL) != HAL_OK)
-	{
-		/* Configuration Error */
-		Error_Handler();
-	}
-
-
-	/*##-3- Start PWM signals generation #######################################*/
-	/* Start channel 2 */
-	if (HAL_TIM_PWM_Start(&TimPWMServo_Handle, TIMER_PWM_SERVO_CHANNEL) != HAL_OK)
-	{
-		/* PWM Generation Error */
-		Error_Handler();
-	}
+	// Set PWM value
+	Motor_ServoChangeAngle(angle);
 }
 
 
@@ -333,10 +282,7 @@ void Motor_ServoChangeAngle(int8_t angle)
 	/* Timer Output Compare Configuration Structure declaration */
 	TIM_OC_InitTypeDef sConfig;
 
-	uint32_t Pulse = 0;
-
-
-	Pulse = Motor_ServoConvertAngleToPeriod(angle);
+	uint32_t Pulse = Motor_ServoConvertAngleToPeriod(angle);
 
 
 	/*##-2- Configure the PWM channels #########################################*/
@@ -350,7 +296,10 @@ void Motor_ServoChangeAngle(int8_t angle)
 
 	/* Set the pulse value for channel 1 */
 	sConfig.Pulse = Pulse;
-	if (HAL_TIM_PWM_ConfigChannel(&TimPWMServo_Handle, &sConfig, TIMER_PWM_SERVO_CHANNEL) != HAL_OK)
+
+	HAL_TIM_PWM_Stop(&TimPWMServo_Handle, MOTOR_SERVOMOTOR_PWM_TIMER_CHANNEL);
+
+	if (HAL_TIM_PWM_ConfigChannel(&TimPWMServo_Handle, &sConfig, MOTOR_SERVOMOTOR_PWM_TIMER_CHANNEL) != HAL_OK)
 	{
 		/* Configuration Error */
 		Error_Handler();
@@ -359,7 +308,7 @@ void Motor_ServoChangeAngle(int8_t angle)
 
 	/*##-3- Start PWM signals generation #######################################*/
 	/* Start channel 2 */
-	if (HAL_TIM_PWM_Start(&TimPWMServo_Handle, TIMER_PWM_SERVO_CHANNEL) != HAL_OK)
+	if (HAL_TIM_PWM_Start(&TimPWMServo_Handle, MOTOR_SERVOMOTOR_PWM_TIMER_CHANNEL) != HAL_OK)
 	{
 		/* PWM Generation Error */
 		Error_Handler();
@@ -410,27 +359,33 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 
 	//##-1- Enable peripherals and GPIO Clocks #################################
 	// TIMx Peripheral clock enable
-	TIMER_PWM_MOTORS_CLK_ENABLES();
+	MOTOR_MOTORS_PWM_TIMER_CLK_ENABLES();
 
 	// Enable GPIO Channels Clock
-	TIMER_PWM_MOTOR_GPIO_CLK_ENABLES();
+	MOTOR_MOTORS_PWM_GPIO_CLK_ENABLES();
 
 
 	// PWM1
 	//Configure GPIO pin
-	GPIO_InitStruct.Pin = BOARD_PWM_DCMOTOR_PIN;
+	GPIO_InitStruct.Pin = MOTOR_DCMOTOR_PWM_GPIO_PIN;
 	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-	GPIO_InitStruct.Alternate = TIMx_PWM_DC_GPIO_AF;
-	HAL_GPIO_Init(BOARD_PWM_DCMOTOR_PORT, &GPIO_InitStruct);
+	GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+	GPIO_InitStruct.Alternate = MOTOR_DCMOTOR_PWM_TIMx_GPIO_AF;
+	HAL_GPIO_Init(MOTOR_DCMOTOR_PWM_GPIO_PORT, &GPIO_InitStruct);
 
 
 	// PWM2 - Servo motor
 	//Configure GPIO pin
-	GPIO_InitStruct.Pin = BOARD_PWM_SERVO_PIN;
-	GPIO_InitStruct.Alternate = TIMx_PWM_SERVO_GPIO_AF;;
-	HAL_GPIO_Init(BOARD_PWM_SERVO_PORT, &GPIO_InitStruct);
+	GPIO_InitStruct.Pin = MOTOR_SERVOMOTOR_PWM_GPIO_PIN;
+	GPIO_InitStruct.Alternate = MOTOR_SERVOMOTOR_PWM_TIMx_GPIO_AF;;
+	HAL_GPIO_Init(MOTOR_SERVOMOTOR_PWM_GPIO_PORT, &GPIO_InitStruct);
+
+
+	// TODO: Added for Error handling... need it?
+#warning "Make beautiful!"
+	HAL_NVIC_SetPriority(TIM3_IRQn, 5, 0);
+	HAL_NVIC_EnableIRQ(TIM3_IRQn);
 
 }
 

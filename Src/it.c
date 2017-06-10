@@ -10,6 +10,7 @@
 #include "TaskList.h"
 #endif
 
+// TODO: Delete these, if not need
 #ifdef CONFIG_USE_PANEL_HOMEAUTNODESMALL
 	#include "stm32f0xx_hal.h"
 	#include "stm32f0xx.h"
@@ -171,6 +172,43 @@ void EXTI15_10_IRQHandler(void)
 #endif	// #ifdef CONFIG_USE_PANEL_NUCLEOF401RE
 
 
+#ifdef CONFIG_USE_PANEL_FASTENNODE
+
+/*
+BUTTON_UP			GPIOA0
+BUTTON_RIGHT		GPIOB8
+BUTTON_DOWN			GPIOB9
+BUTTON_LEFT			GPIOA15
+*/
+
+#ifdef CONFIG_MODULE_BUTTON_ENABLE
+void EXTI0_1_IRQHandler(void)
+{
+	if (HAL_GPIO_ReadPin(BUTTON_UP_GPIO_PORT, BUTTON_UP_GPIO_PIN) == GPIO_PIN_SET)
+	{
+		HAL_GPIO_EXTI_IRQHandler(BUTTON_UP_GPIO_PIN);
+	}
+}
+
+void EXTI4_15_IRQHandler(void)
+{
+	if (HAL_GPIO_ReadPin(BUTTON_RIGHT_GPIO_PORT, BUTTON_RIGHT_GPIO_PIN) == GPIO_PIN_SET)
+	{
+		HAL_GPIO_EXTI_IRQHandler(BUTTON_RIGHT_GPIO_PIN);
+	}
+	if (HAL_GPIO_ReadPin(BUTTON_DOWN_GPIO_PORT, BUTTON_DOWN_GPIO_PIN) == GPIO_PIN_SET)
+	{
+		HAL_GPIO_EXTI_IRQHandler(BUTTON_DOWN_GPIO_PIN);
+	}
+	if ( HAL_GPIO_ReadPin(BUTTON_LEFT_GPIO_PORT, BUTTON_LEFT_GPIO_PIN) == GPIO_PIN_SET)
+	{
+		HAL_GPIO_EXTI_IRQHandler(BUTTON_LEFT_GPIO_PIN);
+	}
+}
+#endif	// #ifdef CONFIG_MODULE_BUTTON_ENABLE
+
+#endif	// #ifdef CONFIG_USE_PANEL_FASTENNODE
+
 
 /**
   * @brief EXTI line detection callbacks
@@ -187,25 +225,25 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	if (GPIO_Pin == BUTTON_UP_GPIO_PIN)
 	{
 		// Toggle LED
-		LED_RED_TOGGLE();
+		//LED_RED_TOGGLE();
 		BUTTON_Clicked |= (1 << PressedButton_Up);
 	}
 	if (GPIO_Pin == BUTTON_DOWN_GPIO_PIN)
 	{
 		// Toggle LED
-		LED_RED_TOGGLE();
+		//LED_RED_TOGGLE();
 		BUTTON_Clicked |= (1 << PressedButton_Down);
 	}
 	if (GPIO_Pin == BUTTON_RIGHT_GPIO_PIN)
 	{
 		// Toggle LED
-		LED_RED_TOGGLE();
+		//LED_RED_TOGGLE();
 		BUTTON_Clicked |= (1 << PressedButton_Right);
 	}
 	if (GPIO_Pin == BUTTON_LEFT_GPIO_PIN)
 	{
 		// Toggle LED
-		LED_RED_TOGGLE();
+		//LED_RED_TOGGLE();
 		BUTTON_Clicked |= (1 << PressedButton_Left);
 	}
 	#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
@@ -257,4 +295,23 @@ void ADCx_DMA_IRQHandler(void)
   HAL_DMA_IRQHandler(AdcHandle.DMA_Handle);
 }
 #endif
+
+
+#if defined(CONFIG_USE_PANEL_FASTENNODE) && defined(CONFIG_MODULE_MOTOR_ENABLE)
+void TIM3_IRQHandler(void)
+{
+	// Error...
+	// TODO: Make beautiful
+#warning "Make beautiful!"
+	extern TIM_HandleTypeDef    TimPWMDcMotor_Handle;	// Dc motor
+	extern TIM_HandleTypeDef    TimPWMServo_Handle;	// Servo motor
+
+	__HAL_TIM_CLEAR_FLAG(&TimPWMDcMotor_Handle, 0xFFFFFFFF);
+	__HAL_TIM_CLEAR_FLAG(&TimPWMServo_Handle, 0xFFFFFFFF);
+
+	LED_RED_ON();
+	LED_RED_OFF();
+}
+#endif
+
 

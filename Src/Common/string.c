@@ -945,7 +945,8 @@ uint8_t StringLength(const char *str)
 		return 0;
 	}
 
-	while (str[length] !='\0') length++;	// Length = string length
+	// Added max length checking
+	while (str[length] !='\0' && length < 255) length++;	// Length = string length
 	return length;
 }
 
@@ -970,6 +971,10 @@ uint8_t StrCmp(const char *str1, const char *str2)
 		str2++;
 	}
 
+	// Good, equal
+	return 0;
+	/*
+	// Commented out, because first length are good
 	if (*str2)
 	{
 		return 1;		// last str2 char has value, not equal
@@ -977,7 +982,7 @@ uint8_t StrCmp(const char *str1, const char *str2)
 	else
 	{
 		return 0;		// last str2 char is '\0'
-	}
+	}*/
 
 }
 

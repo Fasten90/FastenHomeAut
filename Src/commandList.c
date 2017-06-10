@@ -28,9 +28,12 @@
 #include "Watchdog.h"
 #include "Calc.h"
 #include "CircularBuffer.h"
+#include "ESP8266.h"
 #include "EventLog.h"
 #include "HomeAutMessage.h"
 #include "TaskHandler.h"
+#include "Motor.h"
+#include "CommonIO.h"
 
 #include "CommandList.h"
 

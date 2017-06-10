@@ -88,7 +88,21 @@ void BUTTON_Init(void)
 	HAL_NVIC_EnableIRQ(EXTI4_15_IRQn); 
 	
 #endif
+
+
+#ifdef CONFIG_USE_PANEL_FASTENNODE
+
+	// Enable and set EXTI lines 0 to 1 Interrupt to the lowest priority
+	HAL_NVIC_SetPriority(EXTI0_1_IRQn, 1, 0);
+	HAL_NVIC_EnableIRQ(EXTI0_1_IRQn);
+
+
+	// Enable and set EXTI lines 4 to 15 Interrupt to the lowest priority
+	HAL_NVIC_SetPriority(EXTI4_15_IRQn, 2, 0);
+	HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);
 	
+#endif
+
 	
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
 	
@@ -147,6 +161,9 @@ void BUTTON_Init(void)
 
 /**
  * \brief	Get Button state
+ * 			Only one button can check
+ * \retval	true	if pressed/pressing
+ * 			false	if not or wrong button
  */
 bool BUTTON_GetButtonState(ButtonType_t button)
 {
@@ -161,20 +178,21 @@ bool BUTTON_GetButtonState(ButtonType_t button)
 			break;
 
 #elif BUTTON_NUM > 1
+			// Set (high) state = pressed state = true
 		case PressedButton_Up:
-			state = (HAL_GPIO_ReadPin(BUTTON_UP_GPIO, BUTTON_UP_GPIO_PIN) == GPIO_PIN_SET) ? true : false;
+			state = (HAL_GPIO_ReadPin(BUTTON_UP_GPIO_PORT, BUTTON_UP_GPIO_PIN) == GPIO_PIN_SET) ? true : false;
 			break;
 
 		case PressedButton_Down:
-			state = (HAL_GPIO_ReadPin(BUTTON_DOWN_GPIO, BUTTON_DOWN_GPIO_PIN) == GPIO_PIN_SET) ? true : false;
+			state = (HAL_GPIO_ReadPin(BUTTON_DOWN_GPIO_PORT, BUTTON_DOWN_GPIO_PIN) == GPIO_PIN_SET) ? true : false;
 			break;
 
 		case PressedButton_Right:
-			state = (HAL_GPIO_ReadPin(BUTTON_RIGHT_GPIO, BUTTON_RIGHT_GPIO_PIN) == GPIO_PIN_SET) ? true : false;
+			state = (HAL_GPIO_ReadPin(BUTTON_RIGHT_GPIO_PORT, BUTTON_RIGHT_GPIO_PIN) == GPIO_PIN_SET) ? true : false;
 			break;
 
 		case PressedButton_Left:
-			state = (HAL_GPIO_ReadPin(BUTTON_LEFT_GPIO, BUTTON_LEFT_GPIO_PIN) == GPIO_PIN_SET) ? true : false;
+			state = (HAL_GPIO_ReadPin(BUTTON_LEFT_GPIO_PORT, BUTTON_LEFT_GPIO_PIN) == GPIO_PIN_SET) ? true : false;
 			break;
 #endif
 

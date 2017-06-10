@@ -16,9 +16,15 @@
 
 #include "options.h"
 #include "include.h"
+#include <stdarg.h>		// For va_list
+#include "String.h"
 #include "CircularBuffer.h"
 #include "TaskList.h"
 #include "CommandHandler.h"
+#include "DateTime.h"
+#include "Globals.h"
+#include "USART.h"
+
 #include "ESP8266.h"
 
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
@@ -45,6 +51,11 @@ volatile uint8_t ESP8266_Uart_ReceivedCharFlag;
 
 volatile char ESP8266_ReceiveBuffer[ESP8266_BUFFER_LENGTH];
 volatile char ESP8266_TransmitBuffer[ESP8266_BUFFER_LENGTH];
+
+// Receive Cnt
+volatile uint8_t ESP8266_ReceiveBuffer_WriteCnt = 0;
+volatile uint8_t ESP8266_ReceiveBuffer_ReadCnt = 0;
+
 bool ESP8266_SendBuffer_EnableFlag = true;
 bool ESP8266_SendIsStarted_Flag = false;
 bool ESP8266_Sent_WaitSendOk_Flag = false;
@@ -75,17 +86,13 @@ const Network_IP_t ESP8266_ServerAddress = { .IP = { 192, 168, 1, 62 } };
 const Network_Port_t ESP8266_ServerPort = 2000;
 
 
-// Receive
-volatile uint8_t ESP8266_ReceiveBuffer_WriteCnt = 0;
-volatile uint8_t ESP8266_ReceiveBuffer_ReadCnt = 0;
-
 uint8_t ESP8266_ErrorCnt = 0;
 
 
 /// Debug
 bool ESP8266_DebugEnableFlag = 1;
 
-
+#ifdef CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
 /// for debug
 const DateTime_t EventDateTime =
 {
@@ -102,6 +109,7 @@ const DateTime_t EventDateTime =
 		.second = 0
 	}
 };
+#endif
 
 
 #ifdef CONFIG_USE_FREERTOS
@@ -330,6 +338,12 @@ static bool ESP8266_ConvertIpString(char *message)
 		// Process IP address string like "192.168.0.1" to Network_IP_t
 		isOk = Network_ConvertIpAddressStringToIP(message, &ESP8266_MyWifiIpAddress);
 		isOk &= Network_ConvertIpAddressStringToIP(&message[pos1], &ESP8266_ExWifiIpAddress);
+
+		if (isOk)
+		{
+			char ipBuffer[80];
+			ESP8266_PrintIpAddress(ipBuffer);
+		}
 	}
 
 	return isOk;
@@ -362,11 +376,11 @@ static void DebugPrint(const char *format, ...)
 	if (ESP8266_DebugEnableFlag)
 	{
 		// Working in at:
-		char TxBuffer[DEBUGUART_TXBUFFERSIZE];
+		char TxBuffer[ESP8266_DEBUG_TXBUFFERSIZE];
 
 		va_list ap;									// argument pointer
 		va_start(ap, format); 						// ap on arg
-		string_printf(TxBuffer, format,ap);			// Separate and process
+		string_printf(TxBuffer, format, ap);			// Separate and process
 		va_end(ap);						 			// Cleaning after end
 
 		DebugUart_SendMessage("ESP8266: ");
@@ -1213,6 +1227,7 @@ static void ESP8266_FirstStartReceive(void)
 
 
 
+// TODO: Delete
 /**
  * \brief	Switch to unknown length Receive mode
  */
@@ -1682,7 +1697,8 @@ static void ESP8266_ClearReceive(bool isFullClear, uint8_t stepLength)
 	{
 		// Clear buffer
 		CircularBuffer_Clear((char *)ESP8266_ReceiveBuffer, ESP8266_BUFFER_LENGTH,
-				ESP8266_ReceiveBuffer_ReadCnt, ESP8266_ReceiveBuffer_WriteCnt);
+				ESP8266_ReceiveBuffer_ReadCnt,
+				ESP8266_ReceiveBuffer_WriteCnt);
 		ESP8266_ReceiveBuffer_ReadCnt = ESP8266_ReceiveBuffer_WriteCnt;
 	}
 	else
@@ -1690,7 +1706,7 @@ static void ESP8266_ClearReceive(bool isFullClear, uint8_t stepLength)
 		// Not full clear from readCnt to writeCnt
 		CircularBuffer_Clear((char *)ESP8266_ReceiveBuffer, ESP8266_BUFFER_LENGTH,
 				ESP8266_ReceiveBuffer_ReadCnt,
-				ESP8266_ReceiveBuffer_ReadCnt + stepLength);
+				(uint8_t)(ESP8266_ReceiveBuffer_ReadCnt + stepLength));
 		ESP8266_ReceiveBuffer_ReadCnt += stepLength;
 	}
 }
@@ -2078,7 +2094,7 @@ void ESP8266_StatusMachine(void)
 			 * AT+CIFSR
 			 */
 			ESP8266_StartReceive();
-			ESP8266_SendString(" AT+CIFSR\r\n");
+			ESP8266_SendString("AT+CIFSR\r\n");
 			ESP8266StatusMachine++;
 			ESP8266_DEBUG_PRINT("Get IP address");
 			break;

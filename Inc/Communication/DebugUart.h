@@ -69,8 +69,12 @@ bool DebugUart_SendChar(char c);
 uint8_t DebugUart_SendMessage(const char *aTxBuffer);
 bool DebugUart_SendNewLine(void);
 bool DebugUart_SendLine(const char *message);
+#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 uint8_t uprintf(const char *format, ...);
-
+#else
+// Not realized
+#define uprintf(...)		(0)
+#endif
 
 
 #endif /* COMMUNICATION_DEBUGUART_H_ */

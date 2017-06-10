@@ -106,6 +106,7 @@ uint8_t CircularBuffer_GetCharacters(char *receiveBuffer, char *str, uint16_t bu
 void CircularBuffer_Clear(char *receiveBuffer, uint16_t bufferSize, uint16_t readCnt, uint16_t writeCnt)
 {
 	uint16_t i;
+	// TODO: Check, if writeCnt > bufferSize
 
 	if (readCnt < writeCnt)
 	{

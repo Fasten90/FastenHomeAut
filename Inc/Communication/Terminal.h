@@ -116,6 +116,8 @@ void Terminal_Init(void);
 void Terminal_SendWelcome(void);
 void Terminal_SendCls(void);
 
+void Terminal_CheckCommand(void);
+
 
 
 #endif /* TERMINAL_H_ */

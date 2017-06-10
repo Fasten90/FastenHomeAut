@@ -25,7 +25,10 @@
 #include "LED.h"
 #include "DateTime.h"
 #include "CommandHandler.h"
+#include "Terminal.h"
 #include "Display.h"
+#include "Motor.h"
+#include "ESP8266.h"
 
 #include "TaskList.h"
 
@@ -337,7 +340,7 @@ static TaskResult_t Task_ProcessDebugUartCommandReceived(ScheduleSource_t source
 {
 	(void)source;
 
-	CommandHandler_CheckCommand();
+	Terminal_CheckCommand();
 
 	return TASK_RESULT_OK;
 }
@@ -349,6 +352,7 @@ static TaskResult_t Task_ProcessDebugUartCommandReceived(ScheduleSource_t source
 static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 {
 	(void)source;
+	bool canSleep = true;
 
 	// Toggle LED
 #ifdef CONFIG_MODULE_LED_ENABLE
@@ -375,9 +379,11 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 			}
 			// Check the next time
 			TaskHandler_SetTaskOnceRun(Task_ButtonPressed, 10);
+			canSleep = false;
 		}
-		else
+		else if (BUTTON_PressedButtons & (1 << i))
 		{
+			// This button pressed at previous time
 			// Check, this button is in pressing state?
 			if (!BUTTON_GetButtonState(i))
 			{
@@ -396,13 +402,19 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 					Logic_ButtonEventHandler(i, ButtonPress_Short);
 				}
 				// Not need schedule ButtonTask at next time
+				// canSleep = true; // Stay true
 			}
 			else
 			{
 				// Button in pressing, Check button at next time
 				TaskHandler_SetTaskOnceRun(Task_ButtonPressed, 10);
+				canSleep = false;
 			}
-
+		}
+		else
+		{
+			// Not pressed at now and previous time!
+			// canSleep = true; // Stay true
 		}
 	}
 
@@ -413,6 +425,12 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 
 	// Clear flag
 	BUTTON_Clicked = 0;
+
+	if (canSleep)
+	{
+		// Button task can be sleep
+		TaskHandler_DisableTask(Task_ButtonPressed);
+	}
 
 #ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
 	// Test for Raspberry Pi

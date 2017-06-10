@@ -121,8 +121,9 @@ void USART_Init(UART_HandleTypeDef *UartHandle)
  */
 void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 {
-	
+#if defined(CONFIG_MODULE_DEBUGUSART_ENABLE) || defined(CONFIG_MODULE_ESP8266_ENABLE)
 	GPIO_InitTypeDef  GPIO_InitStruct;
+#endif
 
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	if (huart == &Debug_UartHandle)
@@ -138,7 +139,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 		GPIO_InitStruct.Pin       = DEBUG_USART_TX_GPIO_PIN;
 		GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
 		GPIO_InitStruct.Pull      = GPIO_NOPULL;
-		GPIO_InitStruct.Speed     = GPIO_SPEED_FAST;
+		GPIO_InitStruct.Speed     = GPIO_SPEED_HIGH;
 		GPIO_InitStruct.Alternate = DEBUG_USART_AF;		// It is initialize alternate function
 
 		HAL_GPIO_Init(DEBUG_USART_TX_GPIO_PORT, &GPIO_InitStruct);
