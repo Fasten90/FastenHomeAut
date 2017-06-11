@@ -11,6 +11,9 @@
 #include "DebugUart.h"
 #include "MEM.h"
 
+#ifdef MODULE_MEM_UNITTEST_ENABLE
+#include "UnitTest.h"
+#endif
 
 
 /**
@@ -167,3 +170,107 @@ void mem_CheckStackGuardValues(void)
 
 	uprintf("MEM used: %d / %d, it is %d%%\r\n", guardGoodCnt, 1000, guardGoodCnt*100/1000);
 }
+
+
+
+#ifdef MODULE_MEM_UNITTEST_ENABLE
+/**
+ * \brief	MEM module Unit Test
+ */
+void MEM_UnitTest(void)
+{
+	UnitTest_Start("MEM", __FILE__);
+
+
+
+	// Test memcmp
+	const uint8_t testBuffer1[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+	uint8_t testBuffer2[10];
+	uint8_t i;
+	for (i = 0; i < 10; i++)
+	{
+		testBuffer2[i] = i;
+	}
+
+	// Equal buffer
+	UNITTEST_ASSERT(!memcmp(testBuffer1, testBuffer2, 10), "memcmp");
+
+	// Different buffer
+	testBuffer2[9] = 0;
+	UNITTEST_ASSERT(memcmp(testBuffer1, testBuffer2, 10), "memcmp");
+
+	testBuffer2[9] = 9;
+	UNITTEST_ASSERT(!memcmp(testBuffer1, testBuffer2, 10), "memcmp");
+
+
+
+	// Test meminit
+	testBuffer2[0] = 0xFF;
+	testBuffer2[9] = 0xFF;
+	meminit(&testBuffer2[1], 8);
+	for (i = 1; i < 9; i++)
+	{
+		UNITTEST_ASSERT(testBuffer2[i] == 0, "meminit");
+	}
+	UNITTEST_ASSERT((testBuffer2[0] == 0xFF), "meminit");
+	UNITTEST_ASSERT((testBuffer2[9] == 0xFF), "meminit");
+
+
+
+	// Test memcpy
+	uint8_t testBuffer3[10];
+	testBuffer3[0] = 0xFF;
+	testBuffer3[9] = 0xFF;
+
+	memcpy(&testBuffer3[1], "12345678", 8);
+
+	UNITTEST_ASSERT((!memcmp("12345678", &testBuffer3[1], 8)), "memcpy");
+	UNITTEST_ASSERT((testBuffer3[0] == 0xFF), "memcpy");
+	UNITTEST_ASSERT((testBuffer3[9] == 0xFF), "memcpy");
+
+
+
+	// Test memset
+	testBuffer3[0] = 0xFF;
+	testBuffer3[9] = 0xFF;
+	memset(&testBuffer3[1], 0xAA, 8);
+	for (i = 1; i < 9; i++)
+	{
+		UNITTEST_ASSERT((testBuffer3[i] == 0xAA), "memset");
+	}
+	UNITTEST_ASSERT((testBuffer3[0] == 0xFF), "memset");
+	UNITTEST_ASSERT((testBuffer3[9] == 0xFF), "memset");
+
+
+	memset(&testBuffer3[1], 0, 8);
+	for (i = 1; i < 9; i++)
+	{
+		UNITTEST_ASSERT((testBuffer3[i] == 0), "memset");
+	}
+	UNITTEST_ASSERT((testBuffer3[0] == 0xFF), "memset");
+	UNITTEST_ASSERT((testBuffer3[9] == 0xFF), "memset");
+
+
+
+	// Test memmove
+	testBuffer2[0] = 0xFF;
+	testBuffer2[9] = 0xFF;
+	testBuffer3[0] = 0xFF;
+	testBuffer3[9] = 0xFF;
+	memset(&testBuffer2[1], 0xAA, 8);
+	memset(&testBuffer3[1], 0xFF, 8);
+
+	memmove(&testBuffer3[1], &testBuffer2[1], 8);
+
+	for (i = 1; i < 9; i++)
+	{
+		UNITTEST_ASSERT((testBuffer3[i] == 0xAA), "memset");
+	}
+	UNITTEST_ASSERT((testBuffer3[0] == 0xFF), "memset");
+	UNITTEST_ASSERT((testBuffer3[9] == 0xFF), "memset");
+
+
+	// Finish
+	UnitTest_End();
+}
+#endif	// #ifdef MODULE_MEM_UNITTEST_ENABLE

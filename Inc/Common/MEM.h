@@ -35,6 +35,8 @@ int memcmp(const void * ptr1, const void * ptr2, size_t num);
 void mem_StackFillWithGuardValues(void);
 void mem_CheckStackGuardValues(void);
 
+void MEM_UnitTest(void);
+
 
 
 #endif /* MEM_H_ */

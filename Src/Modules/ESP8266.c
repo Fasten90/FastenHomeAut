@@ -1670,33 +1670,35 @@ static void ESP8266_FindLastMessage(void)
 {
 	// TODO: Not a good solve...
 	uint16_t i = 0;
+	// TODO: Delete not need codes
 	//static bool needRestoreWriteCnt = false;
 
 	// Find last character in the buffer
 	//if (!needRestoreWriteCnt)
-		while (ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_WriteCnt])
+	while (ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_WriteCnt])
+	{
+		++ESP8266_ReceiveBuffer_WriteCnt;
+		++i;
+
+		if (i > ESP8266_BUFFER_LENGTH)
 		{
-			++ESP8266_ReceiveBuffer_WriteCnt;
-			++i;
+			// Buffer full - Error
+			DebugPrint("Error: Buffer full, clear it...\r\n");
 
-			if (i > ESP8266_BUFFER_LENGTH)
-			{
-				// Buffer full - Error
-				DebugPrint("Error: Buffer full, clear it...\r\n");
-
-				ESP8266_ClearFullReceiveBuffer();
-				//needRestoreWriteCnt = true;
-				//ESP8266_ReceiveBuffer_WriteCnt = 0;
-				//ESP8266_ReceiveBuffer_ReadCnt = 0;
-				ESP8266_ReceiveBuffer_WriteCnt = ESP8266_UartHandle.RxXferCount;
-				ESP8266_ReceiveBuffer_ReadCnt = ESP8266_ReceiveBuffer_WriteCnt;
-				//ESP8266_ClearReceive(true, 0);	// TODO: Not enough, clear all buffer
-				//ESP8266_ReceiveBuffer_ReadCnt = ESP8266_ReceiveBuffer_WriteCnt;
-				// TODO: Need restore writeCnt
-				break;
-			}
+			ESP8266_ClearFullReceiveBuffer();
+			//needRestoreWriteCnt = true;
+			//ESP8266_ReceiveBuffer_WriteCnt = 0;
+			//ESP8266_ReceiveBuffer_ReadCnt = 0;
+			ESP8266_ReceiveBuffer_WriteCnt = ESP8266_UartHandle.RxXferCount;
+			ESP8266_ReceiveBuffer_ReadCnt = ESP8266_ReceiveBuffer_WriteCnt;
+			//ESP8266_ClearReceive(true, 0);	// TODO: Not enough, clear all buffer
+			//ESP8266_ReceiveBuffer_ReadCnt = ESP8266_ReceiveBuffer_WriteCnt;
+			// TODO: Need restore writeCnt
+			break;
 		}
-	/*else
+	}
+#if 0
+	else
 	{
 		// Need restore writeCnt
 
@@ -1728,7 +1730,8 @@ static void ESP8266_FindLastMessage(void)
 			++i;
 		}
 		*/
-	//}
+	}
+#endif
 }
 
 

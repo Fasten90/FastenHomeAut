@@ -15,8 +15,9 @@
 #include <stdarg.h>
 #include "String.h"
 #include "DebugUart.h"
-#include "Communication.h"
+#include "ESP8266.h"
 #include "MEM.h"
+#include "Communication.h"
 
 
 

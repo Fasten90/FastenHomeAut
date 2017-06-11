@@ -34,6 +34,8 @@
 #include "TaskHandler.h"
 #include "Motor.h"
 #include "CommonIO.h"
+#include "MEM.h"
+#include "EventLog.h"
 
 #include "CommandList.h"
 
@@ -665,6 +667,10 @@ static CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
 
 #ifdef MODULE_CALC_UNITTEST_ENABLE
 	Calc_UnitTest();
+#endif
+
+#ifdef MODULE_MEM_UNITTEST_ENABLE
+	MEM_UnitTest();
 #endif
 
 	return CommandResult_Ok;
