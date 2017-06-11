@@ -101,7 +101,7 @@ uint8_t DebugUart_SendMessage(const char *aTxBuffer)
 		StrCpyMax((char *)DebugUart_TxBuffer, aTxBuffer, DEBUGUART_TXBUFFERSIZE-1);
 
 		// ComIT
-		if (HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t*)DebugUart_TxBuffer, length)!= HAL_OK)
+		if (HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t *)DebugUart_TxBuffer, length) != HAL_OK)
 		{
 			// NOTE: !!IMPORTANT!! Not sent message
 			//Error_Handler();
@@ -169,7 +169,7 @@ bool DebugUart_SendChar(char c)
 
 		StrCpy((char *)DebugUart_TxBuffer, buf);
 
-		if (HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t *)DebugUart_TxBuffer, 1)!= HAL_OK)
+		if (HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t *)DebugUart_TxBuffer, 1) != HAL_OK)
 		{
 			// NOTE: !! IMPORTANT!! Not sent message
 			//Error_Handler();
@@ -240,7 +240,8 @@ static bool DebugUart_WaitForSend(uint16_t timeoutMilliSecond)
 		DelayMs(1);
 	}
 
-	DebugUart_SendEnable_flag = true;
+	// TODO: Not a good idea...
+	//DebugUart_SendEnable_flag = true;
 
 	return true;
 #endif

@@ -1269,6 +1269,7 @@ uint8_t string_printf(char *str, const char *format, va_list ap)
 	char 	cval;		// character
 
 	char *string = str;
+	// TODO: Length checking !!! This function can be overflow
 
 	bool paramHasLength;
 	uint8_t paramNum1;

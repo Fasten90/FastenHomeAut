@@ -101,7 +101,7 @@
 	static CommandResult_t CommandFunction_ESP8266(uint32_t argc, char** argv);
 #endif
 #if defined(CONFIG_MODULE_RTC_ENABLE) || defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
-	static CommandResult_t CommandFunction_RTC(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_Time(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
 	static CommandResult_t CommandFunctionEventLog(uint32_t argc, char** argv);
@@ -350,9 +350,14 @@ const CommandStruct CommandList[] =
 #endif
 #if defined(CONFIG_MODULE_RTC_ENABLE) || defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
 	{
+	#if defined(CONFIG_MODULE_RTC_ENABLE)
 		.name = "rtc",
-		.commandFunctionPointer = CommandFunction_RTC,
 		.description = "Use RTC (Real Time Clock)",
+	#elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
+		.name = "system",
+		.description = "SystemTime",
+	#endif
+		.commandFunctionPointer = CommandFunction_Time,
 		.syntax = "<setdate/settime> <date: 20yy-mm-dd / time: hh:mm:ss>",
 		.commandArgNum = CommandArgument_1 | CommandArgument_2,
 		.example = "setdate 2017-02-08",
@@ -1608,7 +1613,7 @@ static CommandResult_t CommandFunction_ESP8266(uint32_t argc, char** argv)
 
 
 #if defined(CONFIG_MODULE_RTC_ENABLE) || defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
-static CommandResult_t CommandFunction_RTC(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_Time(uint32_t argc, char** argv)
 {
 	CommandResult_t result = CommandResult_Unknown;
 

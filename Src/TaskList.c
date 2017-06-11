@@ -40,7 +40,7 @@
 
 
 #ifdef CONFIG_MODULE_LED_ENABLE
-static TaskResult_t TaskLedFunction(ScheduleSource_t source);
+static TaskResult_t TaskLed(ScheduleSource_t source);
 #endif
 #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
 static TaskResult_t TaskWatchdogClear(ScheduleSource_t source);
@@ -76,7 +76,7 @@ Task_t TaskList[] =
 #ifdef CONFIG_MODULE_LED_ENABLE
 	{
 		.taskName = "LedTask",
-		.taskFunction = TaskLedFunction,
+		.taskFunction = TaskLed,
 	#ifdef LED_OLD_STYLE
 		.taskScheduleRate = 200
 	#else
@@ -190,7 +190,7 @@ const TaskID_t TasksNum = (sizeof(TaskList)/sizeof(TaskList[0]));
 /**
  * \brief
  */
-static TaskResult_t TaskLedFunction(ScheduleSource_t source)
+static TaskResult_t TaskLed(ScheduleSource_t source)
 {
 #ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
 	uprintf("Run %s %d\r\n", TaskList[id].taskName, id);
@@ -199,7 +199,30 @@ static TaskResult_t TaskLedFunction(ScheduleSource_t source)
 #endif
 
 
-#ifdef LED_OLD_STYLE
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+	// ESP8266 connection status LED
+
+	static uint8_t Task_LedCnt = 0;
+	// Blue led toggle every time
+	LED_SetLed(LED_Blue, LED_Set_Toggle);
+
+	if (((Task_LedCnt % 2) == 0) && (ESP8266_ConnectionStatus == ESP8266_WifiConnectionStatus_SuccessfulServerStarted))
+	{
+		// *2 - fast, if has connection
+		LED_SetLed(LED_Green, LED_Set_Toggle);
+	}
+	if (((Task_LedCnt % 5) == 0) && (ESP8266_ConnectionStatus != ESP8266_WifiConnectionStatus_SuccessfulServerStarted))
+	{
+		// *5 (slow - if there is no connection
+		LED_SetLed(LED_Green, LED_Set_Toggle);
+	}
+
+	Task_LedCnt++;
+	if (Task_LedCnt == 5)
+	{
+		Task_LedCnt = 0;
+	}
+#elif defined(LED_OLD_STYLE)
 	static uint8_t Task_LedCnt = 0;
 
 	LED_SetLed(LED_Green, LED_Set_Toggle);

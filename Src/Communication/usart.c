@@ -98,7 +98,6 @@ void USART_Init(UART_HandleTypeDef *UartHandle)
 		{
 			DebugUart_SendEnable_flag = true;
 			__HAL_UART_CLEAR_FLAG(&Debug_UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
-
 		}
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
@@ -337,6 +336,8 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 
 		UART_ResetStatus(&Debug_UartHandle);
 
+		DebugUart_SendEnable_flag = true;
+
 		// Reinitialize USART
 		//USART_Init(&Debug_UartHandle);
 
@@ -354,7 +355,6 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 			xSemaphoreGiveFromISR(DEBUG_USART_Tx_Semaphore, 0);
 		}
 		#endif
-		
 	}
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE

@@ -303,6 +303,7 @@ void TIM3_IRQHandler(void)
 	// Error...
 	// TODO: Make beautiful
 #warning "Make beautiful!"
+#warning "Delete, not need, never run"
 	extern TIM_HandleTypeDef    TimPWMDcMotor_Handle;	// Dc motor
 	extern TIM_HandleTypeDef    TimPWMServo_Handle;	// Servo motor
 

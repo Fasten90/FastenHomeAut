@@ -26,7 +26,7 @@
  *----------------------------------------------------------------------------*/
 
 
-#define ESP8266_DEBUG_TXBUFFERSIZE		256
+#define ESP8266_DEBUG_TXBUFFERSIZE		DEBUGUART_TXBUFFERSIZE
 
 
 //#define ESP8266_USE_BLOCK_MODE
@@ -196,7 +196,7 @@ void ESP8266_Init(void);
 
 void ESP8266_SendString(const char *str);
 void ESP8266_ReceiveString(uint8_t length);
-void ESP8266_ClearReceiveBuffer(void);
+void ESP8266_ClearFullReceiveBuffer(void);
 void ESP8266_Task(void);
 
 void ESP8266_ResetHardware(void);
