@@ -342,21 +342,35 @@
 
 // ESP8266 settings
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-	// XXX: If CONFIG_ESP8266_IS_SERVER defined to 1, ESP8266 will be server,
-	// if not (0), it will be client
-	#define CONFIG_ESP8266_IS_SERVER	0
 
-	//#define CONFIG_ESP8266_WIFISERVER_ENABLE	1
+	// Module will be WiFi network "server"
+	#define CONFIG_ESP8266_IS_WIFI_HOST	0
 
-	#define CONFIG_ESP8266_WIFI_NETWORK_NAME			"ARTN16"
-	#define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD		"Easdg2011"
-	#ifndef CONFIG_ESP8266_WIFI_NETWORK_PASSWORD
-		#warning "CONFIG_ESP8266_WIFI_NETWORK_PASSWORD defined not defined!"
-		#define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD	"Password"
-	#endif
+	// XXX: If CONFIG_ESP8266_IS_TCP_SERVER defined to 1, ESP8266 will be TCP server,
+	// if not (0), it will be TCP client
+	#define CONFIG_ESP8266_IS_TCP_SERVER	0
 
+
+	#if CONFIG_ESP8266_IS_WIFI_HOST == 0
+		#define CONFIG_ESP8266_WIFI_NETWORK_NAME			"ARTN16"
+		#define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD		"Easdg2011"
+		#ifndef CONFIG_ESP8266_WIFI_NETWORK_PASSWORD
+			#warning "CONFIG_ESP8266_WIFI_NETWORK_PASSWORD defined not defined!"
+			#define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD	"Password"
+		#endif
 	// TODO:
 	//#define CONFIG_ESP8266_WIFI_NETWORK_NAME			"Esp8266HomeAut"
+	#endif
+
+
+	#if CONFIG_ESP8266_IS_TCP_SERVER == 0
+		#define CONFIG_ESP8266_TCP_SERVER_IP_1	(192)
+		#define CONFIG_ESP8266_TCP_SERVER_IP_2	(168)
+		#define CONFIG_ESP8266_TCP_SERVER_IP_3	(1)
+		#define CONFIG_ESP8266_TCP_SERVER_IP_4	(62)
+
+		#define CONFIG_ESP8266_TCP_SERVER_PORT	(2000)
+	#endif
 
 #endif
 
@@ -403,6 +417,7 @@
 #endif
 
 
+// LED settings
 #ifdef CONFIG_MODULE_LED_ENABLE
 	#define LED_OLD_STYLE
 #endif

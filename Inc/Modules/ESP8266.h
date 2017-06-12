@@ -107,9 +107,11 @@
 			+ ESP8266_HOMEAUT_MESSAGEBOTTOM_LENGTH )
 
 /// ESP8266 receive buffer length
-#define ESP8266_BUFFER_LENGTH					( 256UL )
+#define ESP8266_RX_BUFFER_LENGTH				( 256UL )
 
-#define ESP8266_RECEIVE_LENGTH					( ESP8266_BUFFER_LENGTH )
+#define ESP8266_RECEIVE_LENGTH					( ESP8266_RX_BUFFER_LENGTH )
+
+#define ESP8266_TX_BUFFER_LENGTH				( 128U )
 
 
 #define ESP8266_LED_OK()		LED_GREEN_ON();	\
@@ -165,10 +167,11 @@ extern UART_HandleTypeDef ESP8266_UartHandle;
 
 extern volatile uint8_t ESP8266_Uart_ReceivedCharFlag;
 extern uint8_t ESP8266_Receive_Mode_FixLength;
-extern volatile uint8_t ESP8266_ReceiveBuffer_WriteCnt;
-extern volatile uint8_t ESP8266_ReceiveBuffer_ReadCnt;
-extern volatile char ESP8266_ReceiveBuffer[];
+extern volatile uint8_t ESP8266_RxBuffer_WriteCnt;
+extern volatile uint8_t ESP8266_RxBuffer_ReadCnt;
+extern volatile char ESP8266_RxBuffer[];
 
+extern volatile bool ESP8266_SendEnable_flag;
 
 #ifdef CONFIG_USE_FREERTOS
 extern xSemaphoreHandle ESP8266_USART_Rx_Semaphore;

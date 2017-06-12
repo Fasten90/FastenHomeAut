@@ -58,17 +58,24 @@ typedef enum
 	Esp8266Status_ConfigCipMux,
 	Esp8266Status_ConfigCipMuxCheckResponse,
 	Esp8266Status_WaitAfterSuccessfulConfig,
-#if CONFIG_ESP8266_WIFISERVER_ENABLE == 1
-	Esp8266Status_StartWifiServer,
-	Esp8266Status_StartWifiServerCheckResponse,
+#if CONFIG_ESP8266_IS_WIFI_HOST == 1
+	Esp8266Status_StartWifiHost,
+	Esp8266Status_StartWifiHostCheckResponse,
 #else
 	Esp8266Status_ConnectWifiNetwork,
 	Esp8266Status_ConnectWifiNetworkCheckResponse,
 #endif
-	Esp8266Status_StartServer,
-	Esp8266Status_StartServerCheckResponse,
+#if CONFIG_ESP8266_IS_TCP_SERVER == 1
+	Esp8266Status_StartTcpServer,
+	Esp8266Status_StartTcpServerCheckResponse,
+#else
+	Esp8266Status_ConnectTcpServer,
+	Esp8266Status_ConnectTcpServerCheckResponse,
+#endif
+#if CONFIG_ESP8266_IS_TCP_SERVER == 1
 	Esp8266Status_PrintMyIpAddress,
 	Esp8266Status_IpAddressResponse,
+#endif
 
 	Esp8266Status_BeforeIdle,
 	Esp8266Status_Idle,
@@ -87,19 +94,24 @@ UART_HandleTypeDef ESP8266_UartHandle;
 volatile uint8_t ESP8266_Uart_ReceivedCharFlag;
 #endif
 
-volatile char ESP8266_ReceiveBuffer[ESP8266_BUFFER_LENGTH];
-volatile char ESP8266_TransmitBuffer[ESP8266_BUFFER_LENGTH];
+volatile char ESP8266_RxBuffer[ESP8266_RX_BUFFER_LENGTH];
+char ESP8266_TxBuffer[ESP8266_TX_BUFFER_LENGTH];
 
 // Receive Cnt
-volatile uint8_t ESP8266_ReceiveBuffer_WriteCnt = 0;
-volatile uint8_t ESP8266_ReceiveBuffer_ReadCnt = 0;
+volatile uint8_t ESP8266_RxBuffer_WriteCnt = 0;
+volatile uint8_t ESP8266_RxBuffer_ReadCnt = 0;
 
-bool ESP8266_SendBuffer_EnableFlag = true;
-bool ESP8266_SendIsStarted_Flag = false;
-bool ESP8266_Sent_WaitSendOk_Flag = false;
+volatile bool ESP8266_SendEnable_flag = false;
 
-
+// TCP message receive buffer
+char ESP8266_TcpTransmitBuffer[ESP8266_TCP_MESSAGE_MAX_LENGTH];
 char ESP8266_ReceivedTcpMessage[ESP8266_TCP_MESSAGE_MAX_LENGTH];
+
+// TCP Message sending flags
+bool ESP8266_TcpSendBuffer_EnableFlag = true;
+bool ESP8266_TcpSendIsStarted_Flag = false;
+bool ESP8266_TcpSent_WaitSendOk_Flag = false;
+
 
 
 ESP8266_WifiConnectionStatusType	ESP8266_ConnectionStatus
@@ -108,27 +120,39 @@ ESP8266_WifiConnectionStatusType	ESP8266_ConnectionStatus
 ESP8266_TcpConnectionStatusType		ESP8266_TcpConnectionStatus
 			= ESP8266_TcpConnectionStatus_Unknown;
 
+#if CONFIG_ESP8266_IS_WIFI_HOST == 0
 ///< Connection Wifi network name
 static const char ESP8266_WifiNetworkName[] = CONFIG_ESP8266_WIFI_NETWORK_NAME;
 
 ///< Connection Wifi network password
 static const char ESP8266_WifiNetworkPassword[] = CONFIG_ESP8266_WIFI_NETWORK_PASSWORD;
+#endif
+
+
+#if CONFIG_ESP8266_IS_TCP_SERVER == 0
+///< Server Tcp IP address, port (if I am client and need connect to server)
+static const Network_IP_t ESP8266_ServerAddress = { .IP =
+{
+	CONFIG_ESP8266_TCP_SERVER_IP_1,
+	CONFIG_ESP8266_TCP_SERVER_IP_2,
+	CONFIG_ESP8266_TCP_SERVER_IP_3,
+	CONFIG_ESP8266_TCP_SERVER_IP_4
+} };
+
+static const Network_Port_t ESP8266_ServerPort = CONFIG_ESP8266_TCP_SERVER_PORT;
+#endif
+
 
 ///< My IP address
 Network_IP_t ESP8266_MyWifiIpAddress = { 0 };
 Network_IP_t ESP8266_ExWifiIpAddress = { 0 };
 
-///< Server IP address, port
-const Network_IP_t ESP8266_ServerAddress = { .IP = { 192, 168, 1, 62 } };
-const Network_Port_t ESP8266_ServerPort = 2000;
 
 ///< Error counter
 uint8_t ESP8266_ErrorCnt = 0;
 
-
 ///< Debug enable
 bool ESP8266_DebugEnableFlag = 1;
-
 
 #if defined(CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE) && !defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
 /// for debug
@@ -186,6 +210,8 @@ static bool ESP8266_SendTcpMessageBlockingMode(const char *message);
 static bool ESP8266_SendTcpMessageNonBlockingMode_Start(const char *message);
 static bool ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void);
 #endif
+
+static bool ESP8266_WaitForSend(uint16_t timeoutMilliSecond);
 
 static bool ESP8266_ConvertIpString(char *message);
 
@@ -300,10 +326,50 @@ void ESP8266_SendString(const char *str)
 {
 	uint8_t length = StringLength(str);
 
-	if (HAL_UART_Transmit(&ESP8266_UartHandle, (uint8_t*)str, length, 5000) != HAL_OK)
+	if (length > ESP8266_TX_BUFFER_LENGTH)
 	{
-		Error_Handler();
+		length = ESP8266_TX_BUFFER_LENGTH;
 	}
+
+	if (ESP8266_WaitForSend(200))
+	{
+		// Copy if can send
+		StrCpyFixLength(ESP8266_TxBuffer, str, length);
+
+		if (HAL_UART_Transmit_IT(&ESP8266_UartHandle, (uint8_t*)ESP8266_TxBuffer, length) == HAL_OK)
+		{
+			ESP8266_SendEnable_flag = false;
+		}
+		else
+		{
+			Error_Handler();
+		}
+	}
+	else
+	{
+		// Cannot send, because cannot take flag
+		DebugPrint("Cannot take sending flag");
+	}
+}
+
+
+
+/**
+ * \brief	Wait for USART sending
+ */
+static bool ESP8266_WaitForSend(uint16_t timeoutMilliSecond)
+{
+	// Wait for flag or timeout
+	while ((ESP8266_SendEnable_flag != true) || (timeoutMilliSecond == 0))
+	{
+		timeoutMilliSecond--;
+		DelayMs(1);
+	}
+
+	// TODO: Not a good idea...
+	//ESP8266_SendEnable_flag = true;
+
+	return ESP8266_SendEnable_flag;
 }
 
 
@@ -460,7 +526,7 @@ void ESP8266_Task(void)
 	while (1)
 	{
 		// CONNECT / START OF SERVER
-		#if (CONFIG_ESP8266_IS_SERVER == 1)
+		#if (CONFIG_ESP8266_IS_TCP_SERVER == 1)
 		// Server mode
 		if (ESP8266_ConnectionStatus != ESP8266_WifiConnectionStatus_SuccessfulServerStarted)
 		{
@@ -468,7 +534,7 @@ void ESP8266_Task(void)
 			ESP8266_StartServerBlocking();
 
 		}
-		#elif (CONFIG_ESP8266_IS_SERVER == 0)
+		#elif (CONFIG_ESP8266_IS_TCP_SERVER == 0)
 		// Client mode
 		if (ESP8266_ConnectionStatus != ESP8266_WifiConnectionStatus_SuccessfulConnected)
 		{
@@ -479,7 +545,7 @@ void ESP8266_Task(void)
 
 		}
 		#else
-		#error "CONFIG_ESP8266_IS_SERVER define isnt correct."
+		#error "CONFIG_ESP8266_IS_TCP_SERVER define isnt correct."
 		#endif
 
 
@@ -541,7 +607,7 @@ bool ESP8266_Config(void)
 
 	ESP8266_WaitAnswer(1000);
 
-	if (!StrCmp("ATE0\r\r\n\r\nOK\r\n",(const char *)ESP8266_ReceiveBuffer))
+	if (!StrCmp("ATE0\r\r\n\r\nOK\r\n",(const char *)ESP8266_RxBuffer))
 	{
 		// Ok
 		ESP8266_LED_OK();
@@ -565,7 +631,7 @@ bool ESP8266_Config(void)
 	ESP8266_WaitAnswer(1000);
 
 	
-	if (!StrCmp("\r\nOK\r\n",(const char *)ESP8266_ReceiveBuffer))
+	if (!StrCmp("\r\nOK\r\n",(const char *)ESP8266_RxBuffer))
 	{
 		ESP8266_LED_OK();
 	}
@@ -593,12 +659,12 @@ bool ESP8266_Config(void)
 
 	ESP8266_WaitAnswer(1000);
 	
-	if (!StrCmp("OK\r\n",(const char *)ESP8266_ReceiveBuffer))
+	if (!StrCmp("OK\r\n",(const char *)ESP8266_RxBuffer))
 	{
 		// "OK"
 		ESP8266_LED_OK();
 	}
-	else if (!StrCmp("no change\r\n",(const char *)ESP8266_ReceiveBuffer))
+	else if (!StrCmp("no change\r\n",(const char *)ESP8266_RxBuffer))
 	{
 		// "no change"
 		ESP8266_LED_OK();
@@ -642,19 +708,19 @@ bool ESP8266_ConnectToWifiNetwork(void)
 	
 	ESP8266_WaitAnswer(20000);
 	
-	if (!StrCmp("\r\nOK\r\n", (const char *)ESP8266_ReceiveBuffer))
+	if (!StrCmp("\r\nOK\r\n", (const char *)ESP8266_RxBuffer))
 	{
 		// "OK"
 		ESP8266_LED_OK();
 	}
-	else if (!StrCmp("\r\nFAIL", (const char *)ESP8266_ReceiveBuffer))
+	else if (!StrCmp("\r\nFAIL", (const char *)ESP8266_RxBuffer))
 	{
 		// "FAIL"
 		// AT+CWJAP=\"networkname\",\"password\"\r\r\n\r\nFAIL\r\n")
 		ESP8266_LED_FAIL();
 		return false;
 	}
-	else if (!StrCmp("\r\nERRO", (const char *)ESP8266_ReceiveBuffer))
+	else if (!StrCmp("\r\nERRO", (const char *)ESP8266_RxBuffer))
 	{
 		// "ERROR"
 		// AT+CWJAP=\"networkname\",\"password\"\r\r\n\r\nERROR\r\n")
@@ -683,7 +749,7 @@ bool ESP8266_ConnectToWifiNetwork(void)
 	
 	ESP8266_WaitAnswer(2000);
 	
-	if (!StrCmp("\r\nOK\r\n", (const char *)ESP8266_ReceiveBuffer))
+	if (!StrCmp("\r\nOK\r\n", (const char *)ESP8266_RxBuffer))
 	{
 		ESP8266_LED_OK();
 	}
@@ -711,7 +777,7 @@ bool ESP8266_ConnectToWifiNetwork(void)
 	ESP8266_WaitAnswer(2000);
 	
 	// Check and convert IP address
-	if (ESP8266_ConvertIpString((char *)ESP8266_ReceiveBuffer, &ESP8266_MyIpAddress))
+	if (ESP8266_ConvertIpString((char *)ESP8266_RxBuffer, &ESP8266_MyIpAddress))
 	{
 		DebugPrint("Successful convert IP address\r\n");
 	}
@@ -731,7 +797,7 @@ bool ESP8266_ConnectToWifiNetwork(void)
 	
 	// TODO: Check this commented section
 	/*
-	#ifdef CONFIG_ESP8266_IS_SERVER
+	#ifdef CONFIG_ESP8266_IS_TCP_SERVER
 	
 	// AT+CWDHCP - Enable/Disable DHCP
 	// Set 	AT+CWDHCP=mode,en 	OK
@@ -747,13 +813,13 @@ bool ESP8266_ConnectToWifiNetwork(void)
 
 	// AT+CWDHCP=1,0\r\n
 	// mode = 1, dhcp = 0 = disable
-	ESP8266_ReceiveString((unsigned char *)ESP8266_ReceiveBuffer,StringLength((uint8_t *)"AT+CWDHCP=1,0\r\r\n\r\nOK\r\n"));
+	ESP8266_ReceiveString((unsigned char *)ESP8266_RxBuffer,StringLength((uint8_t *)"AT+CWDHCP=1,0\r\r\n\r\nOK\r\n"));
 	
 	ESP8266_SendString((uint8_t *)"AT+CWDHCP=1,0\r\n");
 	
 	ESP8266_WaitAnswer();
 	
-	if (!StrCmp("AT+CWDHCP=1,0\r\r\n\r\nOK\r\n",(const char *)ESP8266_ReceiveBuffer))
+	if (!StrCmp("AT+CWDHCP=1,0\r\r\n\r\nOK\r\n",(const char *)ESP8266_RxBuffer))
 	{
 		// Ok
 		LED_GREEN_ON();
@@ -774,14 +840,14 @@ bool ESP8266_ConnectToWifiNetwork(void)
 	//	AT+CIPSTA=<ip>
 	///////////////////////////////
 	
-	ESP8266_ReceiveString((unsigned char *)ESP8266_ReceiveBuffer,
+	ESP8266_ReceiveString((unsigned char *)ESP8266_RxBuffer,
 	StringLength((uint8_t *)"AT+CIPSTA=\"9.6.5.14\"\r\r\n\r\nOK\r\n"));
 	
 	ESP8266_SendString((uint8_t *)"AT+CIPSTA=\"9.6.5.14\"\r\n");
 	
 	ESP8266_WaitAnswer();
 	
-	if (!StrCmp("AT+CIPSTA=\"9.6.5.14\"\r\r\n\r\nOK\r\n",(const char *)ESP8266_ReceiveBuffer))
+	if (!StrCmp("AT+CIPSTA=\"9.6.5.14\"\r\r\n\r\nOK\r\n",(const char *)ESP8266_RxBuffer))
 	{
 		// Ok
 		ESP8266_LED_OK();
@@ -825,7 +891,7 @@ bool ESP8266_FindServer ( void )
 	
 	// TODO: WTF, what is this parameter
 	if (!StrCmp("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-			(const char *)ESP8266_ReceiveBuffer))
+			(const char *)ESP8266_RxBuffer))
 	{
 		// OK\r\nLinked
 		ESP8266_LED_OK();
@@ -844,7 +910,7 @@ bool ESP8266_FindServer ( void )
 
 
 
-#if defined(ESP8266_USE_BLOCK_MODE) &&(CONFIG_ESP8266_IS_SERVER == 0)
+#if defined(ESP8266_USE_BLOCK_MODE) &&(CONFIG_ESP8266_IS_TCP_SERVER == 0)
 /**
  * \brief	Connect ESP8266 to server
  */
@@ -877,13 +943,13 @@ bool ESP8266_ConnectToServer(Network_IP_t *ip, Network_Port_t port)
 
 	ESP8266_WaitAnswer(5000);
 	
-	if (!StrCmp("\r\nOK\r\nLinked\r\n", (const char *)ESP8266_ReceiveBuffer))
+	if (!StrCmp("\r\nOK\r\nLinked\r\n", (const char *)ESP8266_RxBuffer))
 	{
 		// OK\r\nLinked
 		ESP8266_LED_OK();
 		return true;
 	}
-	if (!StrCmp("ALREADY CONNECT", (const char *)ESP8266_ReceiveBuffer))
+	if (!StrCmp("ALREADY CONNECT", (const char *)ESP8266_RxBuffer))
 	{
 		// "ALREADY CONNECT"
 		ESP8266_LED_OK();
@@ -901,7 +967,7 @@ bool ESP8266_ConnectToServer(Network_IP_t *ip, Network_Port_t port)
 
 
 
-#if defined(ESP8266_USE_BLOCK_MODE) && (CONFIG_ESP8266_IS_SERVER == 1)
+#if defined(ESP8266_USE_BLOCK_MODE) && (CONFIG_ESP8266_IS_TCP_SERVER == 1)
 /**
  * \brief	Start ESP8266 server
  */
@@ -928,7 +994,7 @@ bool ESP8266_StartServer ( void )
 	ESP8266_WaitAnswer();
 	
 	
-	if (!StrCmp("AT+CIPSERVER=1,2000\r\r\n\r\nOK\r\n",(const char *)ESP8266_ReceiveBuffer))
+	if (!StrCmp("AT+CIPSERVER=1,2000\r\r\n\r\nOK\r\n",(const char *)ESP8266_RxBuffer))
 	{
 		// OK
 		ESP8266_LED_OK();
@@ -990,11 +1056,11 @@ static bool ESP8266_SendTcpMessageBlockingMode(const char *message)
 	
 	ESP8266_WaitAnswer(5000);
 	
-	if (!StrCmp("> ", (const char *)ESP8266_ReceiveBuffer))
+	if (!StrCmp("> ", (const char *)ESP8266_RxBuffer))
 	{
 		ESP8266_LED_OK();
 	}
-	else if (!StrCmp("link is not\r\n", (const char *)&ESP8266_ReceiveBuffer[1]))
+	else if (!StrCmp("link is not\r\n", (const char *)&ESP8266_RxBuffer[1]))
 	{
 		ESP8266_LED_FAIL();
 		return false;
@@ -1020,7 +1086,7 @@ static bool ESP8266_SendTcpMessageBlockingMode(const char *message)
 
 	ESP8266_WaitAnswer(5000);
 	
-	if (!StrCmp("\r\nSEND OK\r\n", (const char *)ESP8266_ReceiveBuffer))
+	if (!StrCmp("\r\nSEND OK\r\n", (const char *)ESP8266_RxBuffer))
 	{
 		ESP8266_LED_OK();
 	}
@@ -1079,10 +1145,10 @@ static bool ESP8266_ReceiveUnknownTcpMessage(void)
 	ESP8266_ClearFullReceiveBuffer();
 	
 	// BufferCnt = 0;
-	ESP8266_ReceiveBuffer_WriteCnt = 0;
+	ESP8266_RxBuffer_WriteCnt = 0;
 	
 	// Start receive (wait 1 character)
-	HAL_UART_Receive_IT(&ESP8266_UartHandle, (uint8_t *)&ESP8266_ReceiveBuffer[0], 1);
+	HAL_UART_Receive_IT(&ESP8266_UartHandle, (uint8_t *)&ESP8266_RxBuffer[0], 1);
 
 	// Wait message
 	//ESP8266_WaitAnswer();	// Only wait ...
@@ -1143,30 +1209,30 @@ static void ESP8266_WaitMessageAndCheckSendingQueue(void)
 			return;
 		}
 		// If not received a lot of char...
-		else if (ESP8266_ReceiveBuffer_WriteCnt < 2)
+		else if (ESP8266_RxBuffer_WriteCnt < 2)
 		{
 			// Need to sending?
 			if (xQueueReceive(ESP8266_SendMessage_Queue,
-					(void *)ESP8266_TransmitBuffer,
+					(void *)ESP8266_TcpTransmitBuffer,
 					(portTickType)0) == pdPASS)
 			{
 				// Sending...
 				// TODO: Csinálni egy receive mode váltás függvényt!!
 				ESP8266_Receive_Mode_FixLength = 1;	// fix length, because receiving "> "
-				ESP8266_ReceiveBuffer_WriteCnt = 0;
-				ESP8266_TransmitBuffer[40] = '\0';	// end of buffer need to put an end char
+				ESP8266_RxBuffer_WriteCnt = 0;
+				ESP8266_TcpTransmitBuffer[40] = '\0';	// end of buffer need to put an end char
 				
 				// Clear UART states
 				UART_ResetStatus(&ESP8266_UartHandle);
 				
 				// Sending
-				if (ESP8266_SendTcpMessageBlockingMode((char *)ESP8266_TransmitBuffer))
+				if (ESP8266_SendTcpMessageBlockingMode((char *)ESP8266_TcpTransmitBuffer))
 				{
 					if (ESP8266_DebugEnableFlag)
 					{
 						uprintf("Successful sent a message:\r\n"
 								"  %s\r\n",
-								(const char *)ESP8266_TransmitBuffer);
+								(const char *)ESP8266_TcpTransmitBuffer);
 					}
 				}
 				else
@@ -1175,17 +1241,17 @@ static void ESP8266_WaitMessageAndCheckSendingQueue(void)
 					{
 						uprintf("Failed sending message:\r\n"
 								"  %s\r\n",
-								(const char *)ESP8266_TransmitBuffer);
+								(const char *)ESP8266_TcpTransmitBuffer);
 					}
 				}
 
 				
 				// Reset the receive buffer:
-				ESP8266_ReceiveBuffer_WriteCnt = 0;
+				ESP8266_RxBuffer_WriteCnt = 0;
 				ESP8266_Receive_Mode_FixLength = 0;
 
 				// Start receive
-				HAL_UART_Receive_IT(&ESP8266_UartHandle, (uint8_t *)ESP8266_ReceiveBuffer, 1);
+				HAL_UART_Receive_IT(&ESP8266_UartHandle, (uint8_t *)ESP8266_RxBuffer, 1);
 			}
 		
 		}
@@ -1209,19 +1275,19 @@ static void ESP8266_LoopSending(void)
 	{
 		// Need to sending?
 		if (xQueueReceive(ESP8266_SendMessage_Queue,
-				(void * )ESP8266_TransmitBuffer,
+				(void * )ESP8266_TcpTransmitBuffer,
 				( portTickType )0 ) == pdPASS)
 		{
 
 			// Sending
-			if (ESP8266_SendTcpMessageBlockingMode((char *)ESP8266_TransmitBuffer))
+			if (ESP8266_SendTcpMessageBlockingMode((char *)ESP8266_TcpTransmitBuffer))
 			{
 				// Successful sent
 				if (ESP8266_DebugEnableFlag)
 				{
 					uprintf("Successful sent a message:\r\n"
 							"  %s\r\n",
-							(const char *)ESP8266_TransmitBuffer);
+							(const char *)ESP8266_TcpTransmitBuffer);
 				}
 			}
 			else
@@ -1231,7 +1297,7 @@ static void ESP8266_LoopSending(void)
 				{
 					uprintf("Failed sending message:\r\n"
 							"  %s\r\n",
-							(const char *)ESP8266_TransmitBuffer);
+							(const char *)ESP8266_TcpTransmitBuffer);
 				}
 			}
 		}
@@ -1289,7 +1355,7 @@ bool ESP8266_WaitClientConnect( void)
 
 
 
-#if (CONFIG_ESP8266_IS_SERVER == 0)
+#if (CONFIG_ESP8266_IS_TCP_SERVER == 0)
 /**
  * \brief	Connect to server, with blocking
  */
@@ -1328,7 +1394,7 @@ static bool ESP8266_ConnectToServerInBlockingMode(void)
 
 
 
-#if (CONFIG_ESP8266_IS_SERVER == 1)
+#if (CONFIG_ESP8266_IS_TCP_SERVER == 1)
 bool ESP8266_StartServerBlocking(void)
 {
 	// Start server
@@ -1363,19 +1429,19 @@ static bool ESP8266_CheckReceivedMessage(void)
 	DebugPrint("Received a message\r\n");
 
 
-	if (ESP8266_ReceiveBuffer_WriteCnt >= ESP8266_RECEIVEMESSAGE_MIN_LENGTH)
+	if (ESP8266_RxBuffer_WriteCnt >= ESP8266_RECEIVEMESSAGE_MIN_LENGTH)
 	{
 
 		// TODO: Change DebugPrint-s
 		// TODO: Modify separated good message......
 		DebugPrint("Valid HomeAut message received:\r\n"
 					"%s",
-					(char *)ESP8266_ReceiveBuffer
+					(char *)ESP8266_RxBuffer
 					);
 
 #ifdef CONFIG_USE_FREERTOS
 		if (xQueueSend(ESP8266_ReceivedMessage_Queue,
-				(const void *)ESP8266_ReceiveBuffer,
+				(const void *)ESP8266_RxBuffer,
 				1000) != pdPASS)
 		{
 			// Successful sent to queue
@@ -1390,39 +1456,39 @@ static bool ESP8266_CheckReceivedMessage(void)
 #endif
 	}
 	// Check for unconnect, or other messages...
-	else if (!StrCmpWithLength((const char *)ESP8266_ReceiveBuffer, "Link", 4))
+	else if (!StrCmpWithLength((const char *)ESP8266_RxBuffer, "Link", 4))
 	{
 		// Received: "Link"
 		isValidMessage = true;
 
-		#if (CONFIG_ESP8266_IS_SERVER == 1)
+		#if (CONFIG_ESP8266_IS_TCP_SERVER == 1)
 		// TODO: Process connecting, add new IP to list
 		DebugPrint("A client connected.\r\n");
 		#else
 		DebugPrint("Received \"Link\". This device is in client mode, dont understand it.\r\n");
 		#endif
 	}
-	else if (!StrCmpWithLength((const char *)ESP8266_ReceiveBuffer, "Unlink", 6))
+	else if (!StrCmpWithLength((const char *)ESP8266_RxBuffer, "Unlink", 6))
 	{
 		// Received: "Unlink"
 		isValidMessage = true;
 
 		// TODO: Process disconnecting, delete IP from list
-		#if (CONFIG_ESP8266_IS_SERVER == 1)
+		#if (CONFIG_ESP8266_IS_TCP_SERVER == 1)
 		DebugPrint("A client disconnected.\r\n");
 		#else
 		DebugPrint("Disconnected. Need to reconnect\r\n");
 		ESP8266_ConnectionStatus = ESP8266_WifiConnectionStatus_ClosedConnection;
 		#endif
 	}
-	else if (!StrCmpWithLength((const char *)ESP8266_ReceiveBuffer, "OK", 2))
+	else if (!StrCmpWithLength((const char *)ESP8266_RxBuffer, "OK", 2))
 	{
 		// Received: "OK"
 		// Note: This arrived after received an x length message (now, after 40 length homeautmessage)
 		isValidMessage = true;
 		DebugPrint("Received an OK\r\n");
 	}
-	else if (!StrCmpWithLength((const char *)ESP8266_ReceiveBuffer, "", 1))
+	else if (!StrCmpWithLength((const char *)ESP8266_RxBuffer, "", 1))
 	{
 		// Received: ""
 		// Note: This arrived after received an x length message (now, after 40 length homeautmessage) + "\r\n" after ""
@@ -1433,7 +1499,7 @@ static bool ESP8266_CheckReceivedMessage(void)
 	{
 		// Not valid message
 		isValidMessage = false;
-		DebugPrint("Received not valid message: %s\r\n", (char *)&ESP8266_ReceiveBuffer[0]);
+		DebugPrint("Received not valid message: %s\r\n", (char *)&ESP8266_RxBuffer[0]);
 	}
 
 
@@ -1472,7 +1538,7 @@ void ESP8266_ReceiveString(uint8_t length)
 #endif
 
 	// Receive
-	HAL_UART_Receive_IT(&ESP8266_UartHandle, (uint8_t *)ESP8266_ReceiveBuffer, length);
+	HAL_UART_Receive_IT(&ESP8266_UartHandle, (uint8_t *)ESP8266_RxBuffer, length);
 }
 #endif
 
@@ -1486,12 +1552,12 @@ uint8_t ESP8266_RequestSendTcpMessage(const char * message)
 	uint8_t length = 0;
 
 	// Copy to send buffer
-	if (ESP8266_SendBuffer_EnableFlag)
+	if (ESP8266_TcpSendBuffer_EnableFlag)
 	{
 		// Lock buffer
-		ESP8266_SendBuffer_EnableFlag = false;
+		ESP8266_TcpSendBuffer_EnableFlag = false;
 		// Copy message to buffer
-		length = StrCpyMax((char *)ESP8266_TransmitBuffer, message, ESP8266_TCP_MESSAGE_MAX_LENGTH);
+		length = StrCpyMax((char *)ESP8266_TcpTransmitBuffer, message, ESP8266_TCP_MESSAGE_MAX_LENGTH);
 	}
 	else
 	{
@@ -1538,7 +1604,7 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_Start(const char *message)
 	usprintf(buffer, "AT+CIPSEND=0,%d\r\n", length);
 	ESP8266_SendString(buffer);
 
-	ESP8266_SendIsStarted_Flag = true;
+	ESP8266_TcpSendIsStarted_Flag = true;
 
 	return true;
 }
@@ -1553,8 +1619,7 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void)
 {
 
 	// Check length
-	char * message = (char *)ESP8266_TransmitBuffer;
-	uint8_t length = StringLength((const char *)message);
+	uint8_t length = StringLength((const char *)ESP8266_TcpTransmitBuffer);
 
 	if (length >= ESP8266_TCP_MESSAGE_MAX_LENGTH)
 	{
@@ -1572,29 +1637,34 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void)
 	 */
 
 	// Send message and wait response
-	ESP8266_SendString(message);
+	ESP8266_SendString(ESP8266_TcpTransmitBuffer);
 
-	DebugPrint("Send TCP message: \"%s\"\r\n", message);
+	DebugPrint("Send TCP message: \"%s\"\r\n", ESP8266_TcpTransmitBuffer);
 
 	return true;
 }
 
 
 
+/**
+ * \brief	ESP8266 receive-sending full reinitialize
+ */
 static void ESP8266_FirstStartReceive(void)
 {
 	// Clear buffer
 	ESP8266_ClearFullReceiveBuffer();
 
 	// BufferCnt = 0;
-	ESP8266_ReceiveBuffer_WriteCnt = 0;
-	ESP8266_ReceiveBuffer_ReadCnt = 0;
+	ESP8266_RxBuffer_WriteCnt = 0;
+	ESP8266_RxBuffer_ReadCnt = 0;
 
 	UART_ResetStatus(&ESP8266_UartHandle);
 
+	ESP8266_SendEnable_flag = true;
+
 	// Start receive (wait x character)
 	HAL_UART_Receive_IT(&ESP8266_UartHandle,
-			(uint8_t *)&ESP8266_ReceiveBuffer[0],
+			(uint8_t *)&ESP8266_RxBuffer[0],
 			ESP8266_RECEIVE_LENGTH);
 }
 
@@ -1606,9 +1676,9 @@ static void ESP8266_FirstStartReceive(void)
 void ESP8266_ClearFullReceiveBuffer(void)
 {
 	uint16_t i;
-	for (i = 0; i < ESP8266_BUFFER_LENGTH; i++)
+	for (i = 0; i < ESP8266_RX_BUFFER_LENGTH; i++)
 	{
-		ESP8266_ReceiveBuffer[i] = '\0';
+		ESP8266_RxBuffer[i] = '\0';
 	}
 }
 
@@ -1626,24 +1696,24 @@ static void ESP8266_FindLastMessage(void)
 
 	// Find last character in the buffer
 	//if (!needRestoreWriteCnt)
-	while (ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_WriteCnt])
+	while (ESP8266_RxBuffer[ESP8266_RxBuffer_WriteCnt])
 	{
-		++ESP8266_ReceiveBuffer_WriteCnt;
+		++ESP8266_RxBuffer_WriteCnt;
 		++i;
 
-		if (i > ESP8266_BUFFER_LENGTH)
+		if (i > ESP8266_RX_BUFFER_LENGTH)
 		{
 			// Buffer full - Error
 			DebugPrint("Error: Buffer full, clear it...\r\n");
 
 			ESP8266_ClearFullReceiveBuffer();
 			//needRestoreWriteCnt = true;
-			//ESP8266_ReceiveBuffer_WriteCnt = 0;
-			//ESP8266_ReceiveBuffer_ReadCnt = 0;
-			ESP8266_ReceiveBuffer_WriteCnt = ESP8266_UartHandle.RxXferCount;
-			ESP8266_ReceiveBuffer_ReadCnt = ESP8266_ReceiveBuffer_WriteCnt;
+			//ESP8266_RxBuffer_WriteCnt = 0;
+			//ESP8266_RxBuffer_ReadCnt = 0;
+			ESP8266_RxBuffer_WriteCnt = ESP8266_UartHandle.RxXferCount;
+			ESP8266_RxBuffer_ReadCnt = ESP8266_RxBuffer_WriteCnt;
 			//ESP8266_ClearReceive(true, 0);	// TODO: Not enough, clear all buffer
-			//ESP8266_ReceiveBuffer_ReadCnt = ESP8266_ReceiveBuffer_WriteCnt;
+			//ESP8266_RxBuffer_ReadCnt = ESP8266_RxBuffer_WriteCnt;
 			// TODO: Need restore writeCnt
 			break;
 		}
@@ -1653,29 +1723,29 @@ static void ESP8266_FindLastMessage(void)
 	{
 		// Need restore writeCnt
 
-		ESP8266_ReceiveBuffer_WriteCnt = ESP8266_UartHandle.RxXferCount;
-		ESP8266_ReceiveBuffer_ReadCnt = ESP8266_ReceiveBuffer_WriteCnt;
+		ESP8266_RxBuffer_WriteCnt = ESP8266_UartHandle.RxXferCount;
+		ESP8266_RxBuffer_ReadCnt = ESP8266_RxBuffer_WriteCnt;
 		needRestoreWriteCnt = false;
 
 		/*
 		bool foundFirstCharacter = false;
 
-		while (i < ESP8266_BUFFER_LENGTH)
+		while (i < ESP8266_RX_BUFFER_LENGTH)
 		{
 			// TODO: Not good for [yz ----- x] buffer contain
-			if (!foundFirstCharacter && ESP8266_ReceiveBuffer[i])
+			if (!foundFirstCharacter && ESP8266_RxBuffer[i])
 			{
 				// Found first character
 				foundFirstCharacter = true;
-				ESP8266_ReceiveBuffer_ReadCnt = i;
+				ESP8266_RxBuffer_ReadCnt = i;
 				// Secured, but not need
-				ESP8266_ReceiveBuffer_WriteCnt = i;
+				ESP8266_RxBuffer_WriteCnt = i;
 				needRestoreWriteCnt = false;
 			}
-			if (foundFirstCharacter && (ESP8266_ReceiveBuffer[i] == '\0'))
+			if (foundFirstCharacter && (ESP8266_RxBuffer[i] == '\0'))
 			{
 				// Found last character
-				ESP8266_ReceiveBuffer_WriteCnt = i;
+				ESP8266_RxBuffer_WriteCnt = i;
 			}
 
 			++i;
@@ -1696,30 +1766,30 @@ static void ESP8266_ClearReceive(bool isFullClear, uint8_t stepLength)
 	if (isFullClear)
 	{
 		// Clear all buffer
-		CircularBuffer_Clear((char *)ESP8266_ReceiveBuffer, ESP8266_BUFFER_LENGTH,
-				ESP8266_ReceiveBuffer_ReadCnt,
-				ESP8266_ReceiveBuffer_WriteCnt);
-		ESP8266_ReceiveBuffer_ReadCnt = ESP8266_ReceiveBuffer_WriteCnt;
+		CircularBuffer_Clear((char *)ESP8266_RxBuffer, ESP8266_RX_BUFFER_LENGTH,
+				ESP8266_RxBuffer_ReadCnt,
+				ESP8266_RxBuffer_WriteCnt);
+		ESP8266_RxBuffer_ReadCnt = ESP8266_RxBuffer_WriteCnt;
 	}
 	else
 	{
 		// Not full clear from readCnt to writeCnt
-		CircularBuffer_Clear((char *)ESP8266_ReceiveBuffer, ESP8266_BUFFER_LENGTH,
-				ESP8266_ReceiveBuffer_ReadCnt,
-				(uint8_t)(ESP8266_ReceiveBuffer_ReadCnt + stepLength));
+		CircularBuffer_Clear((char *)ESP8266_RxBuffer, ESP8266_RX_BUFFER_LENGTH,
+				ESP8266_RxBuffer_ReadCnt,
+				(uint8_t)(ESP8266_RxBuffer_ReadCnt + stepLength));
 
 		// Increment ReadCnt
-		if (ESP8266_ReceiveBuffer_ReadCnt <  ESP8266_ReceiveBuffer_WriteCnt)
+		if (ESP8266_RxBuffer_ReadCnt <  ESP8266_RxBuffer_WriteCnt)
 		{
-			ESP8266_ReceiveBuffer_ReadCnt += stepLength;
-			if (ESP8266_ReceiveBuffer_ReadCnt > ESP8266_ReceiveBuffer_WriteCnt)
+			ESP8266_RxBuffer_ReadCnt += stepLength;
+			if (ESP8266_RxBuffer_ReadCnt > ESP8266_RxBuffer_WriteCnt)
 			{
-				ESP8266_ReceiveBuffer_ReadCnt = ESP8266_ReceiveBuffer_WriteCnt;
+				ESP8266_RxBuffer_ReadCnt = ESP8266_RxBuffer_WriteCnt;
 			}
 		}
-		else if (ESP8266_ReceiveBuffer_ReadCnt >  ESP8266_ReceiveBuffer_WriteCnt)
+		else if (ESP8266_RxBuffer_ReadCnt >  ESP8266_RxBuffer_WriteCnt)
 		{
-			ESP8266_ReceiveBuffer_ReadCnt += stepLength;
+			ESP8266_RxBuffer_ReadCnt += stepLength;
 		}
 	}
 }
@@ -1738,16 +1808,16 @@ void ESP8266_StatusMachine(void)
 	ESP8266_FindLastMessage();
 
 	// If WriteCnt not equal with ReadCnt, we have received message
-	char receiveBuffer[ESP8266_BUFFER_LENGTH+1];
+	char receiveBuffer[ESP8266_RX_BUFFER_LENGTH+1];
 	uint16_t receivedMessageLength = 0;
 
-	if (ESP8266_ReceiveBuffer_WriteCnt != ESP8266_ReceiveBuffer_ReadCnt)
+	if (ESP8266_RxBuffer_WriteCnt != ESP8266_RxBuffer_ReadCnt)
 	{
 		// Need copy to receiveBuffer
 		receivedMessageLength = CircularBuffer_GetCharacters(
-				(char *)ESP8266_ReceiveBuffer, receiveBuffer,
-				ESP8266_BUFFER_LENGTH,
-				ESP8266_ReceiveBuffer_WriteCnt, ESP8266_ReceiveBuffer_ReadCnt,
+				(char *)ESP8266_RxBuffer, receiveBuffer,
+				ESP8266_RX_BUFFER_LENGTH,
+				ESP8266_RxBuffer_WriteCnt, ESP8266_RxBuffer_ReadCnt,
 				true);
 	}
 
@@ -1967,8 +2037,8 @@ void ESP8266_StatusMachine(void)
 			ESP8266_DEBUG_PRINT("Wait After successful config");
 			break;
 		// End of config
-#if CONFIG_ESP8266_WIFISERVER_ENABLE == 1
-		case Esp8266Status_StartWifiServer:
+#if CONFIG_ESP8266_IS_WIFI_HOST == 1
+		case Esp8266Status_StartWifiHost:
 			/*
 			 * AT+CWSAP="ESP8266HomeAutomation","AUT",1,0
 			 * 3. param = channel
@@ -1982,7 +2052,7 @@ void ESP8266_StatusMachine(void)
 			ESP8266_DEBUG_PRINT("Wifi server create");
 			break;
 
-		case Esp8266Status_StartWifiServerCheckResponse:
+		case Esp8266Status_StartWifiHostCheckResponse:
 			if (!StrCmp("\r\nOK\r\n", (const char *)receiveBuffer))
 			{
 				ESP8266_LED_OK();
@@ -1993,15 +2063,15 @@ void ESP8266_StatusMachine(void)
 			else
 			{
 				ESP8266_LED_FAIL();
-				ESP8266StatusMachine = Esp8266Status_StartWifiServer;
+				ESP8266StatusMachine = Esp8266Status_StartWifiHost;
 				ESP8266_DEBUG_PRINTF("Wifi server create failed, received message: \"%s\"\r\n",
 													 (const char *)receiveBuffer);
 			}
 			ESP8266_ClearReceive(true, 0);
 			break;
-		// End of "#if CONFIG_ESP8266_WIFISERVER_ENABLE == 1"
+		// End of "#if CONFIG_ESP8266_IS_WIFI_HOST == 1"
 #else
-		// Not wifi server (connect to network)
+		// Not WiFi host (connect to network)
 		case Esp8266Status_ConnectWifiNetwork:
 			/*
 			 * Join to WiFi network
@@ -2058,9 +2128,10 @@ void ESP8266_StatusMachine(void)
 			}
 
 			break;
-#endif	// End of "CONFIG_ESP8266_WIFISERVER_ENABLE == 0"
+#endif	// End of "CONFIG_ESP8266_IS_WIFI_HOST == 0"
 
-		case Esp8266Status_StartServer:
+#if CONFIG_ESP8266_IS_TCP_SERVER == 1
+		case Esp8266Status_StartTcpServer:
 			/*
 			 * AT+CIPSERVER
 			 * set as server/listen()
@@ -2075,7 +2146,7 @@ void ESP8266_StatusMachine(void)
 			ESP8266_DEBUG_PRINT("Start server");
 			break;
 
-		case Esp8266Status_StartServerCheckResponse:
+		case Esp8266Status_StartTcpServerCheckResponse:
 			// Check CIPSERVER response
 			if (!StrCmp("\r\nOK\r\n", (const char *)receiveBuffer)
 				|| !StrCmp("no change\r\n", (const char *)receiveBuffer))
@@ -2092,18 +2163,111 @@ void ESP8266_StatusMachine(void)
 			{
 				// ERROR
 				ESP8266_LED_FAIL();
-				ESP8266StatusMachine = Esp8266Status_StartServer;
+				ESP8266StatusMachine = Esp8266Status_StartTcpServer;
 				DebugPrint("Failed started server (ERROR)\r\n");
 			}
 			else
 			{
 				ESP8266_LED_FAIL();
-				ESP8266StatusMachine = Esp8266Status_StartServer;
+				ESP8266StatusMachine = Esp8266Status_StartTcpServer;
 				DebugPrint("Failed started server\r\n");
 			}
 			ESP8266_ClearReceive(true, 0);
 			break;
+#else	// End of #if CONFIG_ESP8266_IS_TCP_SERVER == 1
+//  #if CONFIG_ESP8266_IS_TCP_SERVER == 0
 
+		case Esp8266Status_ConnectTcpServer:
+
+			/*
+			 * AT+CIPSTART=?
+			 * (CIPMUX=0) AT+CIPSTART = <type>,<addr>,<port>
+			 * (CIPMUX=1) AT+CIPSTART=  <id><type>,<addr>, <port>
+			 * AT+CIPSTART=4,"TCP","google.com",80
+			 *	Now: AT+CIPSTART=0,"TCP","9.6.5.14",2000
+			 *		id=0, TCP, 9.6.5.14, port:2000
+			 *
+			 * Response:
+			 * OK
+			 * Linked
+			 */
+
+			ESP8266_StartReceive();
+			// Original string: "AT+CIPSTART=0,\"TCP\",\"192.168.1.62\",2000\r\n"
+			char buffer[60];
+			uint8_t length = 0;
+			length += usprintf(buffer, "AT+CIPSTART=0,\"TCP\",\"");
+			length += Network_PrintIp(&buffer[length], (Network_IP_t *)&ESP8266_ServerAddress);
+			length += usprintf(&buffer[length], "\",%d\r\n", ESP8266_ServerPort);
+			ESP8266_SendString(buffer);
+
+			ESP8266StatusMachine++;
+			ESP8266_DEBUG_PRINT("Start connect TCP");
+
+			break;
+
+		case Esp8266Status_ConnectTcpServerCheckResponse:
+			if (!StrCmp("\r\nOK\r\n", (const char *)receiveBuffer)
+				|| !StrCmp("\r\nOK\r\nLinked\r\n", (const char *)receiveBuffer))
+			{
+				// OK
+				// Linked
+				ESP8266_LED_OK();
+				ESP8266StatusMachine++;
+				DebugPrint("Successful connect to TCP server\r\n");
+				ESP8266_ClearReceive(true, 0);
+			}
+			else if (!StrCmp("ALREADY CONNECT\r\n", (const char *)receiveBuffer)
+				||   !StrCmp("ALREAY CONNECT\r\n", (const char *)receiveBuffer))
+			{
+				// OK
+				// Already connected
+				ESP8266_LED_OK();
+				ESP8266StatusMachine++;
+				DebugPrint("Successful connect to TCP server (already connected)\r\n");
+				ESP8266_ClearReceive(true, 0);
+			}
+			else if (!StrCmp("\r\nbusy p...\r\n", (const char *)receiveBuffer))
+			{
+				// Error
+				ESP8266_LED_FAIL();
+				ESP8266StatusMachine = Esp8266Status_ConnectTcpServer;
+				DebugPrint("Failed connect to TCP server (port is busy)\r\n");
+				ESP8266_ClearReceive(true, 0);
+			}
+			else if (!StrCmp("\r\nERROR\r\nUnlink", (const char *)receiveBuffer))
+			{
+				// Error
+				ESP8266_LED_FAIL();
+				ESP8266_ErrorCnt++;
+				ESP8266StatusMachine = Esp8266Status_ConnectTcpServer;
+				DebugPrint("Failed connect to TCP server (unlink)\r\n");
+				ESP8266_ClearReceive(true, 0);
+			}
+			else
+			{
+				// Unknown error..
+				ESP8266_LED_FAIL();
+				ESP8266_ErrorCnt++;
+				// Do not step state ?
+				if (receivedMessageLength > 0)
+					DebugPrint("Unkown received message: \"%s\" at connection to TCP server\r\n", receiveBuffer);
+				else
+					DebugPrint("Not received message at connection to TCP server\r\n");
+				if (ESP8266_ErrorCnt > 5)
+				{
+					// Has lot of errors
+					ESP8266StatusMachine = Esp8266Status_ConnectTcpServer;
+					ESP8266_ErrorCnt = 0;
+					DebugPrint("Error... Restart connecting...\r\n");
+					ESP8266_ClearReceive(true, 0);
+				}
+			}
+
+			break;
+#endif	//#if CONFIG_ESP8266_IS_TCP_SERVER == 0
+#if CONFIG_ESP8266_IS_TCP_SERVER == 1
+		// TODO: Check, if we are WiFi and TCP client, we can't run this command?
 		case Esp8266Status_PrintMyIpAddress:
 			/* Get IP
 			 * AT+CIFSR
@@ -2134,6 +2298,7 @@ void ESP8266_StatusMachine(void)
 				}
 			}
 			break;
+#endif	// #if CONFIG_ESP8266_IS_TCP_SERVER == 1
 
 		case Esp8266Status_BeforeIdle:
 			// Print IP address
@@ -2181,14 +2346,14 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 	 * Unlink
 	 * +IPD: Received message
 	 */
-	if (ESP8266_ReceiveBuffer_WriteCnt != ESP8266_ReceiveBuffer_ReadCnt)
+	if (ESP8266_RxBuffer_WriteCnt != ESP8266_RxBuffer_ReadCnt)
 	{
 
 		bool goodMsgRcv = false;
 
 		// Buffer changed
 
-		if (ESP8266_SendIsStarted_Flag)
+		if (ESP8266_TcpSendIsStarted_Flag)
 		{
 			// Check, response is "> "
 			if (!StrCmp("> ", (const char *)receiveBuffer))
@@ -2197,7 +2362,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 				ESP8266_DEBUG_PRINT("\"> \" Received");
 				ESP8266_SendTcpMessageNonBlockingMode_SendMessage();
 
-				ESP8266_Sent_WaitSendOk_Flag = true;
+				ESP8266_TcpSent_WaitSendOk_Flag = true;
 				TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 1000);
 				goodMsgRcv = true;
 				ESP8266_ClearReceive(false, sizeof("> ") - 1);
@@ -2205,7 +2370,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			else if (!StrCmp("link is not\r\n", (const char *)receiveBuffer))
 			{
 				// Cannot send
-				ESP8266_SendBuffer_EnableFlag = true;
+				ESP8266_TcpSendBuffer_EnableFlag = true;
 				DebugPrint("ESP8266: Cannot send, link is nothing\r\n");
 				ESP8266_ClearReceive(false, sizeof("link is not\r\n") - 1);
 			}
@@ -2213,16 +2378,16 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			else
 			{
 				// Error
-				ESP8266_SendBuffer_EnableFlag = true;
+				ESP8266_TcpSendBuffer_EnableFlag = true;
 				/*DebugPrint("Cannot send, not received \"> \"...\r\n"
 						"Received message: \"%s\"\r\n", receiveBuffer);*/
 				DebugPrint("Cannot send, not received \"> \"...\r\n");
 				ESP8266_ClearReceive(true, 0);
 			}
 			// Clear send flag
-			ESP8266_SendIsStarted_Flag = false;
+			ESP8266_TcpSendIsStarted_Flag = false;
 		}
-		else if (ESP8266_Sent_WaitSendOk_Flag)
+		else if (ESP8266_TcpSent_WaitSendOk_Flag)
 		{
 			if (!StrCmp("\r\nSEND OK\r\n", (const char *)receiveBuffer))
 			{
@@ -2238,8 +2403,8 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 				ESP8266_ClearReceive(true, 0);
 			}
 			TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 100);
-			ESP8266_Sent_WaitSendOk_Flag = false;
-			ESP8266_SendBuffer_EnableFlag = true;
+			ESP8266_TcpSent_WaitSendOk_Flag = false;
+			ESP8266_TcpSendBuffer_EnableFlag = true;
 		}
 		else if (!StrCmp("Link\r\n", (const char *)receiveBuffer))
 		{
@@ -2313,13 +2478,13 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 					else
 					{
 						DebugPrint("Received +IPD message with wrong length parameter\r\n");
-						//ESP8266_ReceiveBuffer_ReadCnt - do not clear
+						//ESP8266_RxBuffer_ReadCnt - do not clear
 					}
 				}
 				else
 				{
 					DebugPrint("Received +IPD message without ':'\r\n");
-					//ESP8266_ReceiveBuffer_ReadCnt - do not clear
+					//ESP8266_RxBuffer_ReadCnt - do not clear
 				}
 			}
 			else
@@ -2332,13 +2497,13 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 		{
 			// Received too small message
 			DebugPrint("Received too small message: \"%s\"\r\n", (const char *)receiveBuffer);
-			//ESP8266_ReceiveBuffer_ReadCnt - do not clear
+			//ESP8266_RxBuffer_ReadCnt - do not clear
 		}
 		else
 		{
 			// Received unknown message
 			DebugPrint("Received unknown message: \"%s\"\r\n", (const char *)receiveBuffer);
-			//ESP8266_ReceiveBuffer_ReadCnt - do not clear
+			//ESP8266_RxBuffer_ReadCnt - do not clear
 		}
 
 
@@ -2366,15 +2531,15 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 	}
 	/*
 	 * else
-	 * ESP8266_ReceiveBuffer_WriteCnt == ESP8266_ReceiveBuffer_ReadCnt
+	 * ESP8266_RxBuffer_WriteCnt == ESP8266_RxBuffer_ReadCnt
 	 * Do nothing...
 	 */
-	else if (ESP8266_SendBuffer_EnableFlag == false)
+	else if (ESP8266_TcpSendBuffer_EnableFlag == false)
 	{
 		// We has message on SendBuffer
 		// ReadCnt = WriteCnt, so we are not receiving
 		// TODO: Be careful, it is not truth
-		ESP8266_SEND_TCP_MESSAGE((char *)ESP8266_TransmitBuffer);
+		ESP8266_SEND_TCP_MESSAGE((char *)ESP8266_TcpTransmitBuffer);
 	}
 }
 

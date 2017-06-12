@@ -233,7 +233,7 @@ ReturnType SysManager_GetMyNetworkState ( void )
 {
 
 	// Has connected / Started
-	//#if ( CONFIG_ESP8266_IS_SERVER == 1 )
+	//#if ( CONFIG_ESP8266_IS_TCP_SERVER == 1 )
 	#ifdef CONFIG_USE_PANEL_CENTERPANEL
 	// Server
 	if ( ESP8266_ConnectionStatus == ESP8266_ConnectionStatus_SuccessfulServerStarted )

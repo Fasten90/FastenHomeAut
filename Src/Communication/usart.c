@@ -229,11 +229,18 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 	// Successful sending
 	if (UartHandle == &Debug_UartHandle)
 	{
-		// Set transmission flag: trasfer complete
+		// Set transmission flag: transfer complete
 		#ifdef CONFIG_USE_FREERTOS
 		xSemaphoreGiveFromISR(DEBUG_USART_Tx_Semaphore,(BaseType_t *)NULL);
 		#endif
 		DebugUart_SendEnable_flag = true;
+	}
+#endif
+
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+	if (UartHandle == &ESP8266_UartHandle)
+	{
+		ESP8266_SendEnable_flag = true;
 	}
 #endif
 }
@@ -297,11 +304,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 		// Save received character and wait new char
 		#if ESP8266_RECEIVE_LENGTH > 1
 		HAL_UART_Receive_IT(&ESP8266_UartHandle,
-				(uint8_t *)&ESP8266_ReceiveBuffer[0],
+				(uint8_t *)&ESP8266_RxBuffer[0],
 				ESP8266_RECEIVE_LENGTH);
 		#else
 		HAL_UART_Receive_IT(&ESP8266_UartHandle,
-				(uint8_t *)&ESP8266_ReceiveBuffer[++ESP8266_ReceiveBuffer_WriteCnt],
+				(uint8_t *)&ESP8266_RxBuffer[++ESP8266_RxBuffer_WriteCnt],
 				1);
 		#endif
 	
@@ -365,13 +372,15 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 		// TODO: Sad, but sometime receive errors
 		UART_ResetStatus(&ESP8266_UartHandle);
 
+		ESP8266_SendEnable_flag = true;
+
 #if ESP8266_RECEIVE_LENGTH > 1
 		HAL_UART_Receive_IT(&ESP8266_UartHandle,
-				(uint8_t *)&ESP8266_ReceiveBuffer[0],
+				(uint8_t *)&ESP8266_RxBuffer[0],
 				ESP8266_RECEIVE_LENGTH);
 #else
 		HAL_UART_Receive_IT(&ESP8266_UartHandle,
-						(uint8_t *)&ESP8266_ReceiveBuffer[ESP8266_ReceiveBuffer_WriteCnt],
+						(uint8_t *)&ESP8266_RxBuffer[ESP8266_RxBuffer_WriteCnt],
 						1);
 #endif
 	}	
