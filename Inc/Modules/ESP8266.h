@@ -220,12 +220,18 @@ bool ESP8266_CheckReceiveMessage(void);
 static void ESP8266_WaitAnswer(uint32_t timeout);
 #endif
 
-bool ESP8266_SendTcpMessage(const char *message);
 uint8_t ESP8266_RequestSendTcpMessage(const char * message);
 
 void ESP8266_StatusMachine(void);
 
 uint8_t ESP8266_PrintIpAddress(char * str);
+
+
+#ifdef ESP8266_USE_BLOCK_MODE
+#define ESP8266_SEND_TCP_MESSAGE(msg)	ESP8266_SendTcpMessageBlockingMode(msg)
+#else
+#define ESP8266_SEND_TCP_MESSAGE(msg)	ESP8266_SendTcpMessageNonBlockingMode_Start(msg);
+#endif
 
 
 

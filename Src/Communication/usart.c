@@ -257,7 +257,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 	#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	if ( (UartHandle == &Debug_UartHandle) && (Terminal_CommandReceiveEnable == true) )
 	{
-#ifdef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
+		#ifdef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
 		// Receive to next index
 		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&DebugUart_RxBuffer[++USART_RxBufferWriteCounter], DEBUGUART_RXBUFFER_WAIT_LENGTH);
 
@@ -274,16 +274,17 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 		// Transmission end semaphore / flag: Give semaphore
 		xSemaphoreGiveFromISR(DEBUG_USART_Rx_Semaphore, 0);
 		#endif
-#else
+		#else
 		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)DebugUart_RxBuffer, DEBUGUART_RXBUFFERSIZE);
-#endif
+		#endif
 	}
 	#endif	// #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	
+
 	#ifdef CONFIG_MODULE_ESP8266_ENABLE
 	if (UartHandle == &ESP8266_UartHandle)
 	{
-		
+		// ESP8266 WiFi module
 
 		// Received fix length message
 		#ifdef CONFIG_USE_FREERTOS
@@ -294,29 +295,26 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 		// Put to Buffer and receive next char
 
 		// Save received character and wait new char
-#if ESP8266_RECEIVE_LENGTH > 1
+		#if ESP8266_RECEIVE_LENGTH > 1
 		HAL_UART_Receive_IT(&ESP8266_UartHandle,
 				(uint8_t *)&ESP8266_ReceiveBuffer[0],
 				ESP8266_RECEIVE_LENGTH);
-#else
+		#else
 		HAL_UART_Receive_IT(&ESP8266_UartHandle,
 				(uint8_t *)&ESP8266_ReceiveBuffer[++ESP8266_ReceiveBuffer_WriteCnt],
 				1);
-
-#endif
-	
-		#ifndef CONFIG_USE_FREERTOS
-		// Not used FreeRTOS:
-		//ESP8266_Uart_ReceivedCharFlag = 1;
 		#endif
-		
+	
+		#if !defined(CONFIG_USE_FREERTOS) && defined(ESP8266_USE_BLOCK_MODE)
+		// Not used FreeRTOS:
+		ESP8266_Uart_ReceivedCharFlag = 1;
+		#endif
 	}
 	#endif
 
 	#ifdef CONFIG_USE_FREERTOS
 	taskENABLE_INTERRUPTS();
 	#endif
-	
 }
 
 

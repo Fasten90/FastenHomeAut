@@ -106,7 +106,13 @@ uint8_t CircularBuffer_GetCharacters(char *receiveBuffer, char *str, uint16_t bu
 void CircularBuffer_Clear(char *receiveBuffer, uint16_t bufferSize, uint16_t readCnt, uint16_t writeCnt)
 {
 	uint16_t i;
+
 	// TODO: Check, if writeCnt > bufferSize
+	if (writeCnt >= bufferSize)
+	{
+		// Change to end of buffer (for avoid overflow)
+		writeCnt = bufferSize - 1;
+	}
 
 	if (readCnt < writeCnt)
 	{
@@ -216,6 +222,9 @@ void CircularBuffer_UnitTest(void)
 		result = (buffer256[251+i] == '\0');
 		UNITTEST_ASSERT(result, "ERROR in Clear()");
 	}
+
+
+	// TODO: Test: writeCnt > BUFFER_SIZE
 
 
 	// Finish unittest

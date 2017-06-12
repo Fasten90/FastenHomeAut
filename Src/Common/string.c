@@ -578,7 +578,7 @@ bool StringBinaryToNum(const char *str, uint32_t *num)
 	}
 
 	// TODO: Check Prefix ??
-	for (i=0; str[i]; i++)
+	for (i = 0; str[i]; i++)
 	{
 		if (str[i] == '1')
 		{
@@ -1382,8 +1382,7 @@ uint8_t string_printf(char *str, const char *format, va_list ap)
 					ival = va_arg(ap, int);
 					string += DecimalToHexaString(ival, string, 4);
 					break;
-#endif
-#if 0
+
 				case 'b':
 					// Hex	// 8 bits	// 2 hex	// 1 byte
 					ival = va_arg(ap, int);

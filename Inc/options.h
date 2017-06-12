@@ -227,7 +227,7 @@
 	#define CONFIG_MODULE_BUTTON_ENABLE
 
 
-	//#define CONFIG_MODULE_ESP8266_ENABLE
+	#define CONFIG_MODULE_ESP8266_ENABLE
 
 	//#define CONFIG_MODULE_MOTOR_ENABLE
 
@@ -250,43 +250,8 @@
 #endif
 
 
-
 /*------------------------------------------------------------------------------
- *								Terminal settings
- *----------------------------------------------------------------------------*/
-
-#ifdef CONFIG_MODULE_TERMINAL_ENABLE
-
-	//#define CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
-
-	/// XXX: Select your terminal
-	//#define CONFIG_TERMINAL_USE_HYPERTERMINAL
-	#define CONFIG_TERMINAL_USE_ZOC
-	//#define CONFIG_TERMINAL_USE_PUTTY
-
-
-	/// For wait password
-	//#define CONFIG_TERMINAL_GET_PASSWORD_ENABLE
-
-
-	#define CONFIG_TERMINAL_PROMT_ENABLE
-
-	// Escape sequences
-	// comment out, if you dont need escape sequence (cursors, history, cls, ...)
-	#define CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
-
-	#ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
-		// If you want use monitor program's history
-		// Turn off, if has small memory, now it need 1.5k RAM
-		#define CONFIG_TERMINAL_HISTORY_ENABLE
-	#endif
-
-#endif	// #ifdef CONFIG_MODULE_TERMINAL_ENABLE
-
-
-
-/*------------------------------------------------------------------------------
- *								Other settings
+ *								Debug - UnitTest settings
  *----------------------------------------------------------------------------*/
 
 
@@ -332,6 +297,49 @@
 #endif
 
 
+/*------------------------------------------------------------------------------
+ *								Module settings
+ *----------------------------------------------------------------------------*/
+
+
+/*------------------------------------------------------------------------------
+ *								Terminal settings
+ *----------------------------------------------------------------------------*/
+
+#ifdef CONFIG_MODULE_TERMINAL_ENABLE
+
+	//#define CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
+
+	/// XXX: Select your terminal
+	//#define CONFIG_TERMINAL_USE_HYPERTERMINAL
+	#define CONFIG_TERMINAL_USE_ZOC
+	//#define CONFIG_TERMINAL_USE_PUTTY
+
+
+	/// For wait password
+	//#define CONFIG_TERMINAL_GET_PASSWORD_ENABLE
+
+
+	#define CONFIG_TERMINAL_PROMT_ENABLE
+
+	// Escape sequences
+	// comment out, if you dont need escape sequence (cursors, history, cls, ...)
+	#define CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
+
+	#ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
+		// If you want use monitor program's history
+		// Turn off, if has small memory, now it need 1.5k RAM
+		#define CONFIG_TERMINAL_HISTORY_ENABLE
+	#endif
+
+#endif	// #ifdef CONFIG_MODULE_TERMINAL_ENABLE
+
+
+/*------------------------------------------------------------------------------
+ *								Other module settings
+ *----------------------------------------------------------------------------*/
+
+
 // ESP8266 settings
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 	// XXX: If CONFIG_ESP8266_IS_SERVER defined to 1, ESP8266 will be server,
@@ -346,6 +354,9 @@
 		#warning "CONFIG_ESP8266_WIFI_NETWORK_PASSWORD defined not defined!"
 		#define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD	"Password"
 	#endif
+
+	// TODO:
+	//#define CONFIG_ESP8266_WIFI_NETWORK_NAME			"Esp8266HomeAut"
 
 #endif
 
