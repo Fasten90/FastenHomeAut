@@ -204,6 +204,7 @@ void ESP8266_Task(void);
 
 void ESP8266_ResetHardware(void);
 
+#ifdef ESP8266_USE_BLOCK_MODE
 bool ESP8266_Config(void);
 bool ESP8266_ConnectToWifiNetwork(void);
 
@@ -211,15 +212,12 @@ bool ESP8266_StartServer(void);
 bool ESP8266_FindServer(void);
 bool ESP8266_ConnectToServer(Network_IP_t *ip, Network_Port_t port);
 
-bool ESP8266_SendMessageOnWifi(char *message);
-
 bool ESP8266_ReceiveFixTcpMessage(void);
 
 bool ESP8266_WaitClientConnect(void);
 
 bool ESP8266_CheckReceiveMessage(void);
 
-#ifdef ESP8266_USE_BLOCK_MODE
 static void ESP8266_WaitAnswer(uint32_t timeout);
 #endif
 

@@ -71,6 +71,7 @@ typedef enum
 #else
 	Esp8266Status_ConnectTcpServer,
 	Esp8266Status_ConnectTcpServerCheckResponse,
+	Esp8266Status_ConnectTcpServerCheckFinish,
 #endif
 #if CONFIG_ESP8266_IS_TCP_SERVER == 1
 	Esp8266Status_PrintMyIpAddress,
@@ -130,7 +131,7 @@ static const char ESP8266_WifiNetworkPassword[] = CONFIG_ESP8266_WIFI_NETWORK_PA
 
 
 #if CONFIG_ESP8266_IS_TCP_SERVER == 0
-///< Server Tcp IP address, port (if I am client and need connect to server)
+///< Server TCP IP address, port (if I am client and need connect to server)
 static const Network_IP_t ESP8266_ServerAddress = { .IP =
 {
 	CONFIG_ESP8266_TCP_SERVER_IP_1,
@@ -150,6 +151,7 @@ Network_IP_t ESP8266_ExWifiIpAddress = { 0 };
 
 ///< Error counter
 uint8_t ESP8266_ErrorCnt = 0;
+
 
 ///< Debug enable
 bool ESP8266_DebugEnableFlag = 1;
@@ -1689,25 +1691,25 @@ void ESP8266_ClearFullReceiveBuffer(void)
  */
 static void ESP8266_FindLastMessage(void)
 {
+	ESP8266_RxBuffer_WriteCnt = ESP8266_RX_BUFFER_LENGTH - ESP8266_UartHandle.RxXferCount;
+
 	// TODO: Not a good solve...
+	//
+	/*
 	uint16_t i = 0;
-	// TODO: Delete not need codes
-	//static bool needRestoreWriteCnt = false;
 
 	// Find last character in the buffer
-	//if (!needRestoreWriteCnt)
 	while (ESP8266_RxBuffer[ESP8266_RxBuffer_WriteCnt])
 	{
 		++ESP8266_RxBuffer_WriteCnt;
 		++i;
 
-		if (i > ESP8266_RX_BUFFER_LENGTH)
+		if ((i > ESP8266_RX_BUFFER_LENGTH) || (((ESP8266_RX_BUFFER_LENGTH - ESP8266_UartHandle.RxXferCount) - ESP8266_RxBuffer_WriteCnt) > 100))
 		{
 			// Buffer full - Error
 			DebugPrint("Error: Buffer full, clear it...\r\n");
 
 			ESP8266_ClearFullReceiveBuffer();
-			//needRestoreWriteCnt = true;
 			//ESP8266_RxBuffer_WriteCnt = 0;
 			//ESP8266_RxBuffer_ReadCnt = 0;
 			ESP8266_RxBuffer_WriteCnt = ESP8266_UartHandle.RxXferCount;
@@ -1717,42 +1719,8 @@ static void ESP8266_FindLastMessage(void)
 			// TODO: Need restore writeCnt
 			break;
 		}
-	}
-#if 0
-	else
-	{
-		// Need restore writeCnt
-
-		ESP8266_RxBuffer_WriteCnt = ESP8266_UartHandle.RxXferCount;
-		ESP8266_RxBuffer_ReadCnt = ESP8266_RxBuffer_WriteCnt;
-		needRestoreWriteCnt = false;
-
-		/*
-		bool foundFirstCharacter = false;
-
-		while (i < ESP8266_RX_BUFFER_LENGTH)
-		{
-			// TODO: Not good for [yz ----- x] buffer contain
-			if (!foundFirstCharacter && ESP8266_RxBuffer[i])
-			{
-				// Found first character
-				foundFirstCharacter = true;
-				ESP8266_RxBuffer_ReadCnt = i;
-				// Secured, but not need
-				ESP8266_RxBuffer_WriteCnt = i;
-				needRestoreWriteCnt = false;
-			}
-			if (foundFirstCharacter && (ESP8266_RxBuffer[i] == '\0'))
-			{
-				// Found last character
-				ESP8266_RxBuffer_WriteCnt = i;
-			}
-
-			++i;
-		}
-		*/
-	}
-#endif
+	}//
+	*/
 }
 
 
@@ -1820,6 +1788,18 @@ void ESP8266_StatusMachine(void)
 				ESP8266_RxBuffer_WriteCnt, ESP8266_RxBuffer_ReadCnt,
 				true);
 	}
+
+
+	// Print all received chars:
+	{
+		static uint8_t RxPrintCnt = 0;
+		if (RxPrintCnt != ESP8266_UartHandle.RxXferCount)
+		{
+			DebugUart_Printf("ESP8266 Received: %s", receiveBuffer);
+			RxPrintCnt = ESP8266_UartHandle.RxXferCount;
+		}
+	}
+
 
 
 	// Check ESP8266 status machine state
@@ -2079,7 +2059,8 @@ void ESP8266_StatusMachine(void)
 			 * Syntax: AT+CWJAP="networkname","password"
 			 */
 			ESP8266_StartReceive();
-			// TODO: Make variable connecting?
+			//ESP8266_ClearReceive(true, 0);
+			// TODO: Make define network + pw?
 			char str[40];
 			// AT+CWJAP="networkname","password"
 			usprintf(str, "AT+CWJAP=\"%s\",\"%s\"\r\n",
@@ -2091,6 +2072,7 @@ void ESP8266_StatusMachine(void)
 					CONFIG_ESP8266_WIFI_NETWORK_PASSWORD
 					"\"\r\n");*/
 			ESP8266StatusMachine++;
+			TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 1000);
 			ESP8266_DEBUG_PRINT("Start connect to wifi network...");
 			break;
 
@@ -2118,12 +2100,14 @@ void ESP8266_StatusMachine(void)
 			{
 				// Not received response?
 				ESP8266_DEBUG_PRINT("Wifi connecting...");
-				ESP8266_DEBUG_PRINT(receiveBuffer);
+				if (receivedMessageLength)
+					ESP8266_DEBUG_PRINT(receiveBuffer);
 				ESP8266_ErrorCnt++;
 				if (ESP8266_ErrorCnt > 10)
 				{
 					ESP8266StatusMachine = Esp8266Status_ConnectWifiNetwork;
 					ESP8266_ClearReceive(true, 0);
+					ESP8266_DEBUG_PRINT("Restart connect to wifi network...");
 				}
 			}
 
@@ -2202,20 +2186,21 @@ void ESP8266_StatusMachine(void)
 			ESP8266_SendString(buffer);
 
 			ESP8266StatusMachine++;
+			TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 1000);
 			ESP8266_DEBUG_PRINT("Start connect TCP");
 
 			break;
 
 		case Esp8266Status_ConnectTcpServerCheckResponse:
-			if (!StrCmp("\r\nOK\r\n", (const char *)receiveBuffer)
-				|| !StrCmp("\r\nOK\r\nLinked\r\n", (const char *)receiveBuffer))
+
+			if (!StrCmp("\r\nOK\r\n", (const char *)receiveBuffer))
 			{
 				// OK
-				// Linked
-				ESP8266_LED_OK();
+				// Need Wait...
 				ESP8266StatusMachine++;
-				DebugPrint("Successful connect to TCP server\r\n");
-				ESP8266_ClearReceive(true, 0);
+				ESP8266_ClearReceive(false, sizeof("\r\nOK\r\n")-1);
+				DebugPrint("OK... Wait result...\r\n");
+
 			}
 			else if (!StrCmp("ALREADY CONNECT\r\n", (const char *)receiveBuffer)
 				||   !StrCmp("ALREAY CONNECT\r\n", (const char *)receiveBuffer))
@@ -2223,7 +2208,7 @@ void ESP8266_StatusMachine(void)
 				// OK
 				// Already connected
 				ESP8266_LED_OK();
-				ESP8266StatusMachine++;
+				ESP8266StatusMachine += 2;	// Jump CheckFinish
 				DebugPrint("Successful connect to TCP server (already connected)\r\n");
 				ESP8266_ClearReceive(true, 0);
 			}
@@ -2231,8 +2216,30 @@ void ESP8266_StatusMachine(void)
 			{
 				// Error
 				ESP8266_LED_FAIL();
-				ESP8266StatusMachine = Esp8266Status_ConnectTcpServer;
-				DebugPrint("Failed connect to TCP server (port is busy)\r\n");
+				//ESP8266StatusMachine ...;	// Stay here
+				DebugPrint("Failed connect to TCP server (port is busy)... Wait...\r\n");
+				// TODO: Wait... ?
+				ESP8266_ClearReceive(false, sizeof("\r\nbusy p...\r\n")-1);
+			}
+			else
+			{
+				if (ESP8266_ErrorCnt > 5)
+				{
+					// Has lot of errors
+					ESP8266StatusMachine = Esp8266Status_ConnectTcpServer;
+					ESP8266_ErrorCnt = 0;
+					DebugPrint("Error... Restart connecting...\r\n");
+					ESP8266_ClearReceive(true, 0);
+				}
+			}
+
+		case Esp8266Status_ConnectTcpServerCheckFinish:
+			if (!StrCmp("\r\nOK\r\nLinked\r\n", (const char *)receiveBuffer))
+			{
+				// OK Linked
+				ESP8266_LED_OK();
+				ESP8266StatusMachine++;
+				DebugPrint("Successful connect to TCP server\r\n");
 				ESP8266_ClearReceive(true, 0);
 			}
 			else if (!StrCmp("\r\nERROR\r\nUnlink", (const char *)receiveBuffer))
@@ -2240,7 +2247,7 @@ void ESP8266_StatusMachine(void)
 				// Error
 				ESP8266_LED_FAIL();
 				ESP8266_ErrorCnt++;
-				ESP8266StatusMachine = Esp8266Status_ConnectTcpServer;
+				ESP8266StatusMachine = Esp8266Status_ConnectWifiNetwork;
 				DebugPrint("Failed connect to TCP server (unlink)\r\n");
 				ESP8266_ClearReceive(true, 0);
 			}
@@ -2261,6 +2268,7 @@ void ESP8266_StatusMachine(void)
 					ESP8266_ErrorCnt = 0;
 					DebugPrint("Error... Restart connecting...\r\n");
 					ESP8266_ClearReceive(true, 0);
+					// TODO: Csekkolni, hogy van-e hálózat?
 				}
 			}
 
@@ -2371,8 +2379,10 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			{
 				// Cannot send
 				ESP8266_TcpSendBuffer_EnableFlag = true;
-				DebugPrint("ESP8266: Cannot send, link is nothing\r\n");
+				DebugPrint("Cannot send, link is nothing\r\n");
 				ESP8266_ClearReceive(false, sizeof("link is not\r\n") - 1);
+				// Request TCP reconnect
+				ESP8266StatusMachine = Esp8266Status_ConnectTcpServer;
 			}
 			// busy inet...\r\nERROR  TODO:
 			else
@@ -2398,6 +2408,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			}
 			else
 			{
+				// TODO: Egyéb válasz is lehet?
 				// Error, not received "SEND OK"
 				DebugPrint("Sending failed: \"%s\"\r\n", receiveBuffer);
 				ESP8266_ClearReceive(true, 0);

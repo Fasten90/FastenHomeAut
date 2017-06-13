@@ -41,6 +41,25 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
+#if defined(CONFIG_FUNCTION_REMOTECONTROLLER)
+typedef enum
+{
+	Car_BackForward_Stop,
+	Car_BackForward_Fordward,
+	Car_BackForward_Back
+} Car_BackForward_t;
+
+
+typedef enum
+{
+	Car_Turning_Straight,
+	Car_Turning_Left,
+	Car_Turning_Right
+} Car_Turning_t;
+
+
+#endif
+
 
 
 /*------------------------------------------------------------------------------
