@@ -343,12 +343,28 @@
 // ESP8266 settings
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 
-	// Module will be WiFi network "server"
-	#define CONFIG_ESP8266_IS_WIFI_HOST	0
+	// ESP8266 Debug mode:
+	// 1 - on
+	// 0 - off
+	#define ESP8266_DEBUG_MODE			(1)
 
-	// XXX: If CONFIG_ESP8266_IS_TCP_SERVER defined to 1, ESP8266 will be TCP server,
-	// if not (0), it will be TCP client
+
+	// ESP8266 - Connection type
+	// 1 - Dynamic (Can change WiFi and TCP client/server
+	// 0 - Static, fix connection type (only server or only client)
+	#define CONFIG_ESP8266_CONNECT_DYNAMIC		0
+
+
+	// Module will be WiFi network "server"
+	// 1 - WifiHost
+	// 0 - Not WifiHost (client)
+	#define CONFIG_ESP8266_IS_WIFI_HOST		0
+
+	// Module TCP state
+	// 1 - ESP8266 will be TCP server,
+	// 0 - will be TCP client
 	#define CONFIG_ESP8266_IS_TCP_SERVER	0
+
 
 	//#define CONFIG_ESP8266_TCP_SERVER_ON_ESP8266
 	#define CONFIG_ESP8266_TCP_SERVER_ON_HOMENETWORK
@@ -357,9 +373,10 @@
 	#if CONFIG_ESP8266_IS_WIFI_HOST == 0
 		#ifdef CONFIG_ESP8266_TCP_SERVER_ON_ESP8266
 			#define CONFIG_ESP8266_WIFI_NETWORK_NAME			"ESP8266HomeAutomation"
-			#define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD		""
+			#define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD		"AUT"
 		#elif defined(CONFIG_ESP8266_TCP_SERVER_ON_HOMENETWORK)
 			#define CONFIG_ESP8266_WIFI_NETWORK_NAME			"ARTN16"
+			//#define CONFIG_ESP8266_WIFI_NETWORK_NAME			"USR5461"
 			#define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD		"Easdg2011"
 		#endif
 
@@ -377,14 +394,19 @@
 			#define CONFIG_ESP8266_TCP_SERVER_IP_2	(168)
 			#define CONFIG_ESP8266_TCP_SERVER_IP_3	(4)
 			#define CONFIG_ESP8266_TCP_SERVER_IP_4	(1)
+			#define CONFIG_ESP8266_TCP_SERVER_IP_STRING		"192.168.4.1"
 		#elif defined(CONFIG_ESP8266_TCP_SERVER_ON_HOMENETWORK)
 			#define CONFIG_ESP8266_TCP_SERVER_IP_1	(192)
 			#define CONFIG_ESP8266_TCP_SERVER_IP_2	(168)
 			#define CONFIG_ESP8266_TCP_SERVER_IP_3	(1)
 			#define CONFIG_ESP8266_TCP_SERVER_IP_4	(62)
+			#define CONFIG_ESP8266_TCP_SERVER_IP_STRING		"192.168.1.62"
 		#endif
 
-		#define CONFIG_ESP8266_TCP_SERVER_PORT	(2000)
+		//#define STR(a)	#a
+
+		#define CONFIG_ESP8266_TCP_SERVER_PORT			(2000)
+		#define CONFIG_ESP8266_TCP_SERVER_PORT_STRING	"2000"
 	#endif
 
 #endif
@@ -411,7 +433,7 @@
 
 	// Functions
 	//#define CONFIG_MODULE_DISPLAY_SHOW_SCREEN
-	#define CONFIG_MODULE_DISPLAY_SHOW_CLOCK
+	//#define CONFIG_MODULE_DISPLAY_SHOW_CLOCK
 #endif
 
 
@@ -449,9 +471,16 @@
 	#ifndef CONFIG_MODULE_ESP8266_ENABLE
 		#define CONFIG_MODULE_ESP8266_ENABLE
 	#endif
+	#define CONFIG_FUNCTION_ESP8266_WRITE_IP_TO_DISPLAY
 #endif
 
-#define CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK
+
+//#define CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK
+#ifdef CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK
+	#ifndef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
+		#define CONFIG_MODULE_DISPLAY_SHOW_CLOCK
+	#endif
+#endif
 
 
 #endif /* OPTIONS_H_ */

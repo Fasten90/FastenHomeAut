@@ -30,11 +30,16 @@
 
 
 //#define ESP8266_USE_BLOCK_MODE
+
+
 /*
- * Debug mode:	1 on
- * 				0 off
+ * ESP8266 Debug mode:	1 on
+ * 						0 off
  */
-#define ESP8266_DEBUG_MODE			(1)
+#ifndef ESP8266_DEBUG_MODE
+	#define ESP8266_DEBUG_MODE			(1)
+#endif
+
 
 #if ESP8266_DEBUG_MODE == 1
 #define ESP8266_DEBUG_PRINT(msg)					DebugUart_SendMessage("ESP8266: "); \
@@ -184,9 +189,6 @@ extern ESP8266_WifiConnectionStatusType	ESP8266_ConnectionStatus;
 extern ESP8266_TcpConnectionStatusType	ESP8266_TcpConnectionStatus;
 
 
-extern Network_IP_t ESP8266_MyIpAddress;
-
-
 extern bool ESP8266_DebugEnableFlag;
 
 
@@ -227,12 +229,6 @@ void ESP8266_StatusMachine(void);
 
 uint8_t ESP8266_PrintIpAddress(char * str);
 
-
-#ifdef ESP8266_USE_BLOCK_MODE
-#define ESP8266_SEND_TCP_MESSAGE(msg)	ESP8266_SendTcpMessageBlockingMode(msg)
-#else
-#define ESP8266_SEND_TCP_MESSAGE(msg)	ESP8266_SendTcpMessageNonBlockingMode_Start(msg);
-#endif
 
 
 

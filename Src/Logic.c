@@ -308,3 +308,12 @@ void Logic_SystemTimeStepValue(void)
 	}
 }
 #endif	// #ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
+
+
+
+#ifdef CONFIG_FUNCTION_ESP8266_WRITE_IP_TO_DISPLAY
+void Logic_WriteIpToDisplay(void)
+{
+	// TODO:
+}
+#endif

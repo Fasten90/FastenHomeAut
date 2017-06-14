@@ -73,6 +73,9 @@ void Error_Handler(void);
 
 
 
+/**
+ * \brief	Main
+ */
 int main(void)
 {
 
