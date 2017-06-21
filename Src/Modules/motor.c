@@ -12,7 +12,6 @@
 
 
 
-
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
@@ -23,9 +22,21 @@
 
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
 
+
+// MOTOR - Status machine values
+
+#define MOTOR_STATE_MACHINE_SPEED_CHANGE_LIMIT		(2)
+#define MOTOR_SERVO_CHANGE_LIMIT					(2)
+
+#define MOTOR_SLIDE_DCMOTOR_LIMIT_MAX				(50)
+#define MOTOR_SLIDE_DCMOTOR_LIMIT_MIN				(0)
+
+
+
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
+
 TIM_HandleTypeDef    TimPWMDcMotor_Handle;	// Dc motor
 TIM_HandleTypeDef    TimPWMServo_Handle;	// Servo motor
 
@@ -34,6 +45,7 @@ TIM_HandleTypeDef    TimPWMServo_Handle;	// Servo motor
 /*------------------------------------------------------------------------------
  *  Local variables
  *----------------------------------------------------------------------------*/
+
 static MotorState_t ActualState = { 0 };
 static MotorState_t ControlState = { 0 };
 
@@ -383,9 +395,10 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 
 
 	// TODO: Added for Error handling... need it?
-#warning "Make beautiful!"
+#if UNUSED
 	HAL_NVIC_SetPriority(TIM3_IRQn, 5, 0);
 	HAL_NVIC_EnableIRQ(TIM3_IRQn);
+#endif
 
 }
 
@@ -396,12 +409,6 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
  */
 void Motor_StatusMachine(void)
 {
-#define MOTOR_STATE_MACHINE_SPEED_CHANGE_LIMIT		(2)
-#define MOTOR_SERVO_CHANGE_LIMIT					(2)
-
-#define MOTOR_SLIDE_DCMOTOR_LIMIT_MAX				(50)
-#define MOTOR_SLIDE_DCMOTOR_LIMIT_MIN				(0)
-
 
 	if (MotorTestSlide_Enabled)
 	{

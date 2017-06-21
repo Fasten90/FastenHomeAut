@@ -298,11 +298,10 @@ void ADCx_DMA_IRQHandler(void)
 
 
 #if defined(CONFIG_USE_PANEL_FASTENNODE) && defined(CONFIG_MODULE_MOTOR_ENABLE)
+#if UNUSED
 void TIM3_IRQHandler(void)
 {
 	// Error...
-	// TODO: Make beautiful
-#warning "Make beautiful!"
 #warning "Delete, not need, never run"
 	extern TIM_HandleTypeDef    TimPWMDcMotor_Handle;	// Dc motor
 	extern TIM_HandleTypeDef    TimPWMServo_Handle;	// Servo motor
@@ -313,6 +312,7 @@ void TIM3_IRQHandler(void)
 	LED_RED_ON();
 	LED_RED_OFF();
 }
+#endif
 #endif
 
 

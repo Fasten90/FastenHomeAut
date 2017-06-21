@@ -363,7 +363,14 @@ static TaskResult_t Task_ProcessDebugUartCommandReceived(ScheduleSource_t source
 {
 	(void)source;
 
+#ifdef CONFIG_MODULE_TERMINAL_ENABLE
 	Terminal_CheckCommand();
+#else
+	if (DebugUart_CommandReceiveEnable)
+	{
+		DebugUart_ProcessReceivedCharacters();
+	}
+#endif
 
 	return TASK_RESULT_OK;
 }

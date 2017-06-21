@@ -44,9 +44,6 @@ volatile char Terminal_CommandActual[TERMINAL_MAX_COMMAND_LENGTH] = { 0 };
 volatile char Terminal_CommandActualEscape[4] = { 0 };
 #endif
 
-/// Enable command handler
-const bool Terminal_CommandReceiveEnable = true;
-
 
 
 /*------------------------------------------------------------------------------
@@ -150,9 +147,6 @@ static void Terminal_GetPassword(void);
 static bool Terminal_CheckPassword(const char *string);
 #endif
 
-static void DebugUart_FindLastMessage(void);
-static void DebugUart_ClearReceive(bool isFullClear, uint8_t stepLength);
-
 
 
 /*------------------------------------------------------------------------------
@@ -219,56 +213,6 @@ void Terminal_Init(void)
 
 
 /**
- * \brief	Step Buffer WriteCnt to last character
- */
-static void DebugUart_FindLastMessage(void)
-{
-	// TODO: Not a good solve...
-	uint16_t i = 0;
-	while (DebugUart_RxBuffer[DebugUart_RxBufferWriteCnt])
-	{
-		++DebugUart_RxBufferWriteCnt;
-		++i;
-
-		if (i > DEBUGUART_RXBUFFERSIZE)
-		{
-			// Error
-			DebugUart_SendMessage("Error: Buffer full, clear it...\r\n");
-			DebugUart_ClearReceive(true, 0);
-			// TODO:...
-			break;
-		}
-	}
-}
-
-
-
-/**
- * \brief	Clear receive buffer
- */
-static void DebugUart_ClearReceive(bool isFullClear, uint8_t stepLength)
-{
-	// Clear from ReadCnt to WriteCnt
-	if (isFullClear)
-	{
-		// Full Clear buffer
-		CircularBuffer_Clear((char *)DebugUart_RxBuffer, DEBUGUART_RXBUFFERSIZE,
-				DebugUart_RxBufferReadCnt, DebugUart_RxBufferWriteCnt);
-		DebugUart_RxBufferReadCnt = DebugUart_RxBufferWriteCnt;
-	}
-	else
-	{
-		// Not full clear from readCnt to writeCnt
-		CircularBuffer_Clear((char *)DebugUart_RxBuffer, DEBUGUART_RXBUFFERSIZE,
-				DebugUart_RxBufferReadCnt,
-				DebugUart_RxBufferReadCnt + stepLength);
-		DebugUart_RxBufferReadCnt += stepLength;
-	}
-}
-
-
-
-/**
  * \brief	Always run, wait command and execute it
  */
 void Terminal_CheckCommand(void)
@@ -279,7 +223,7 @@ void Terminal_CheckCommand(void)
 	{
 
 		// Always checking the Command
-		if (Terminal_CommandReceiveEnable)
+		if (DebugUart_CommandReceiveEnable)
 		{
 
 			#ifdef CONFIG_USE_FREERTOS

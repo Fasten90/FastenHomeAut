@@ -20,6 +20,9 @@
 #include <stdarg.h>		// for "..." parameters in printf function
 #include "String.h"
 #include "Globals.h"
+#include "CircularBuffer.h"
+#include "Communication.h"
+#include "CommandHandler.h"
 #include "DebugUart.h"
 
 
@@ -38,6 +41,9 @@ volatile uint8_t DebugUart_RxBufferWriteCnt = 0;
 volatile uint8_t DebugUart_RxBufferReadCnt = 0;
 
 bool DebugUart_SendEnable_flag = false;
+
+/// Enable command receiving
+const bool DebugUart_CommandReceiveEnable = true;
 
 
 #if DEBUGUART_RXBUFFERSIZE != 256
@@ -247,6 +253,101 @@ static bool DebugUart_WaitForSend(uint16_t timeoutMilliSecond)
 #endif
 }
 
+
+
+/**
+ * \brief	Step Buffer WriteCnt to last character
+ */
+void DebugUart_FindLastMessage(void)
+{
+	// TODO: Not a good solve...
+	uint16_t i = 0;
+	while (DebugUart_RxBuffer[DebugUart_RxBufferWriteCnt])
+	{
+		++DebugUart_RxBufferWriteCnt;
+		++i;
+
+		if (i > DEBUGUART_RXBUFFERSIZE)
+		{
+			// Error
+			DebugUart_SendMessage("Error: Buffer full, clear it...\r\n");
+			DebugUart_ClearReceive(true, 0);
+			// TODO:...
+			break;
+		}
+	}
+}
+
+
+
+/**
+ * \brief	Clear receive buffer
+ */
+void DebugUart_ClearReceive(bool isFullClear, uint8_t stepLength)
+{
+	// Clear from ReadCnt to WriteCnt
+	if (isFullClear)
+	{
+		// Full Clear buffer
+		CircularBuffer_Clear((char *)DebugUart_RxBuffer, DEBUGUART_RXBUFFERSIZE,
+				DebugUart_RxBufferReadCnt, DebugUart_RxBufferWriteCnt);
+		DebugUart_RxBufferReadCnt = DebugUart_RxBufferWriteCnt;
+	}
+	else
+	{
+		// Not full clear from readCnt to writeCnt
+		CircularBuffer_Clear((char *)DebugUart_RxBuffer, DEBUGUART_RXBUFFERSIZE,
+				DebugUart_RxBufferReadCnt,
+				DebugUart_RxBufferReadCnt + stepLength);
+		DebugUart_RxBufferReadCnt += stepLength;
+	}
+}
+
+
+
+#if !defined(CONFIG_MODULE_TERMINAL_ENABLE)
+/**
+ * \brief	Process received characters
+ */
+void DebugUart_ProcessReceivedCharacters(void)
+{
+
+	// Find new received characters
+	DebugUart_FindLastMessage();
+
+	// If WriteCnt not equal with ReadCnt, we have received message
+	char receiveBuffer[DEBUGUART_RXBUFFERSIZE+1];
+	uint16_t receivedMessageLength = 0;
+
+	// Received new character?
+	if (DebugUart_RxBufferWriteCnt != DebugUart_RxBufferReadCnt)
+	{
+		// Need copy to receiveBuffer
+		receivedMessageLength = CircularBuffer_GetCharacters(
+				(char *)DebugUart_RxBuffer, receiveBuffer,
+				DEBUGUART_RXBUFFERSIZE,
+				DebugUart_RxBufferWriteCnt, DebugUart_RxBufferReadCnt,
+				true);
+
+		DebugUart_ClearReceive(false, receivedMessageLength);
+
+
+		uint8_t newLinePos = STRING_FindString(receiveBuffer, "\r\n");
+
+		if (newLinePos > 0)
+		{
+			receiveBuffer[newLinePos] = '\0';
+			// Search command and run
+			CommandHandler_PrepareFindExecuteCommand(
+				CommProt_DebugUart, (char *)receiveBuffer);
+
+		}
+
+	}
+
+
+}
+#endif
 
 
 /**

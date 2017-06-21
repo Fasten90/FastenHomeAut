@@ -76,5 +76,10 @@ uint8_t uprintf(const char *format, ...);
 #define uprintf(...)		(0)
 #endif
 
+void DebugUart_FindLastMessage(void);
+void DebugUart_ClearReceive(bool isFullClear, uint8_t stepLength);
+void DebugUart_ProcessReceivedCharacters(void);
+
+
 
 #endif /* COMMUNICATION_DEBUGUART_H_ */

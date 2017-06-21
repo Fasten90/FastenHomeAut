@@ -262,7 +262,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 	#endif
 
 	#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-	if ( (UartHandle == &Debug_UartHandle) && (Terminal_CommandReceiveEnable == true) )
+	if ( (UartHandle == &Debug_UartHandle) && (DebugUart_CommandReceiveEnable == true) )
 	{
 		#ifdef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
 		// Receive to next index
