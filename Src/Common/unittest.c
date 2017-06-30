@@ -13,6 +13,7 @@
 
 #include "String.h"
 #include "DebugUart.h"
+#include "FormattedMessage.h"
 #include "UnitTest.h"
 
 
@@ -91,11 +92,19 @@ void UnitTest_End(void)
 
 	if (UnitTest_InvalidCnt)
 	{
+#ifdef CONFIG_MODULE_FORMATTEDMESSAGE_ENABLE
+		SendErrorMessage("UnitTest run failed\r\n");
+#else
 		uprintf("UnitTest run failed\r\n");
+#endif
 	}
 	else
 	{
+#ifdef CONFIG_MODULE_FORMATTEDMESSAGE_ENABLE
+		SendColouredMessage("UnitTest run successfully\r\n", Color_Green);
+#else
 		uprintf("UnitTest run successfully\r\n");
+#endif
 	}
 }
 

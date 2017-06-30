@@ -14,6 +14,7 @@
 #include <stdarg.h>
 
 #include "String.h"
+#include "DebugUart.h"
 #include "CommandList.h"
 #include "EscapeSequence.h"
 #include "GlobalVarHandler.h"
@@ -119,6 +120,16 @@ bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source, char *comma
 		// 0 Argument num, Cannot separated, this is not a command
 		isSuccessful = false;
 	}
+
+#if defined(CONFIG_COMMANDHANDLER_NOTIFY_NOT_DEBUG_COMMAND) && defined(CONFIG_MODULE_DEBUGUSART_ENABLE)
+	if (source != CommProt_DebugUart)
+	{
+		uprintf("Received command: \"%s\", from %s\r\n",
+			command,
+			COMMUNICATION_GetProtocolName(source)
+			);
+	}
+#endif
 
 	return isSuccessful;
 }

@@ -43,6 +43,7 @@ typedef enum
 #endif
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
 	Task_MotorControl,
+	Task_MotorTimeout,
 #endif
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	Task_ProcessDebugUartReceivedCommand,

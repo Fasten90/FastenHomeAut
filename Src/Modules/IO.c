@@ -48,15 +48,20 @@ const char * const IO_InputNames[] =
 #ifdef CONFIG_MODULE_IO_INPUT_SOUNDIMPACT_ENABLE
 	"SoundImpact",
 #endif
+#ifdef CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE
+	"BatteryCharger",
+#endif
 };
 
 
+#if IO_OUTPUTS_NUM > 0
 const char * const IO_OutputNames[] =
 {
 #ifdef CONFIG_MODULE_IO_OUTPUT_EXAMPLE_ENABLE
 	"Example",
 #endif
 };
+#endif
 
 
 
@@ -68,6 +73,7 @@ const char * const IO_InputStateNames[] =
 };
 
 
+#if IO_OUTPUTS_NUM > 0
 const char * const IO_OutputStateNames[] =
 {
 	"Unknown",
@@ -75,6 +81,7 @@ const char * const IO_OutputStateNames[] =
 	"Inactive",
 	"Toggle",
 };
+#endif
 
 
 
@@ -107,12 +114,15 @@ void IO_Init(void)
 	// Size check
 	BUILD_BUG_ON((sizeof(IO_InputNames)/sizeof(IO_InputNames[0])) != Input_Count);
 	//#error "IO_InputNames and Input_t aren't syncronized!"
+	BUILD_BUG_ON((sizeof(IO_InputStateNames)/sizeof(IO_InputStateNames[0])) != InputState_Count);
 
+
+#if IO_OUTPUTS_NUM > 0
 	BUILD_BUG_ON((sizeof(IO_OutputNames)/sizeof(IO_OutputNames[0])) != Output_Count);
 	//#error "IO_OutputNames and Output_t aren't syncronized!"
-
-	BUILD_BUG_ON((sizeof(IO_InputStateNames)/sizeof(IO_InputStateNames[0])) != InputState_Count);
 	BUILD_BUG_ON((sizeof(IO_OutputStateNames)/sizeof(IO_OutputStateNames[0])) != OutputState_Count);
+#endif
+
 
 
 	GPIO_InitTypeDef GPIO_InitStruct;
@@ -169,10 +179,25 @@ void IO_Init(void)
 	HAL_NVIC_EnableIRQ(SENSOR_SOUND_MOTION_INT_EXTI_IRQn);
 #endif
 
+
+#ifdef CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE
+	IO_INPUT_BATTERYCHARGER_CLK_ENABLES();
+
+	// BatteryCharger
+	// Down: active
+	// Up: not active
+	GPIO_InitStruct.Pin = IO_INPUT_BATTERYCHARGER_GPIO_PIN;
+	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	HAL_GPIO_Init(IO_INPUT_BATTERYCHARGER_GPIO_PORT, &GPIO_InitStruct);
+
+#endif
+
 }
 
 
 
+#if IO_OUTPUTS_NUM > 0
 /**
  * \brief	Set output state
  */
@@ -216,6 +241,7 @@ void IO_SetOutputState(Output_t outputpin, OutputState_t outstate)
 		}
 	}
 }
+#endif
 
 
 
@@ -248,11 +274,13 @@ InputState_t IO_GetInputState(Input_t inputpin)
 		// Values are okays
 		inputstate = IO_InputStates[inputpin];
 	}
+	else
+	{
+		return InputState_Unknown;
+	}
 
-	return inputstate;
 
 	// TODO: Read or do not read?
-/*
 	switch (inputpin)
 	{
 #ifdef CONFIG_MODULE_IO_INPUT_MOTION_ENABLE
@@ -264,14 +292,28 @@ InputState_t IO_GetInputState(Input_t inputpin)
 #ifdef CONFIG_MODULE_IO_INPUT_SOUNDIMPACT_ENABLE
 	Input_SoundImpact,
 #endif
+#ifdef CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE
+		case Input_BatteryCharger:
+			if (HAL_GPIO_ReadPin(IO_INPUT_BATTERYCHARGER_GPIO_PORT, IO_INPUT_BATTERYCHARGER_GPIO_PIN) == GPIO_PIN_SET)
+				IO_InputStates[inputpin] = InputState_Active;
+			else
+				IO_InputStates[inputpin] = InputState_Inactive;
+			break;
+#endif
 
+		case Input_Count:
+		default:
+			break;
 	}
-*/
 
+	inputstate = IO_InputStates[inputpin];
+
+	return inputstate;
 }
 
 
 
+#if IO_OUTPUTS_NUM > 0
 /**
  * \brief	Get Output State
  */
@@ -305,6 +347,7 @@ OutputState_t IO_GetOutputState(Output_t outputpin)
 */
 
 }
+#endif
 
 
 
@@ -326,6 +369,7 @@ const char * IO_GetInputName(Input_t inputpin)
 
 
 
+#if IO_OUTPUTS_NUM > 0
 /**
  * \brief	Get input name
  */
@@ -341,6 +385,7 @@ const char * IO_GetOutputName(Output_t outputpin)
 
 	return str;
 }
+#endif
 
 
 
@@ -362,6 +407,7 @@ const char * IO_GetInputStateName(InputState_t input)
 
 
 
+#if IO_OUTPUTS_NUM > 0
 /**
  * \brief	Get input name
  */
@@ -377,6 +423,7 @@ const char * IO_GetOutputStateName(OutputState_t output)
 
 	return str;
 }
+#endif
 
 
 

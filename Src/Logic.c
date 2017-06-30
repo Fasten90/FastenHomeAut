@@ -23,6 +23,7 @@
 #include "TaskList.h"
 #include "TaskHandler.h"
 #include "String.h"
+#include "IO.h"
 #include "Logic.h"
 
 
@@ -315,5 +316,23 @@ void Logic_SystemTimeStepValue(void)
 void Logic_WriteIpToDisplay(void)
 {
 	// TODO:
+#warning "Implement this!"
+}
+#endif
+
+
+
+#ifdef CONFIG_FUNCTION_CHARGER
+void Logic_CheckCharger(void)
+{
+	if (IO_GetInputState(Input_BatteryCharger) == InputState_Active)
+	{
+		// Battery is charging...
+		uprintf("Battery is charging...\r\n");
+	}
+	else
+	{
+		uprintf("Battery is not charging...\r\n");
+	}
 }
 #endif

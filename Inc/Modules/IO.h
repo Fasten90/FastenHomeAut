@@ -39,8 +39,11 @@ typedef enum
 #ifdef CONFIG_MODULE_IO_INPUT_SOUNDIMPACT_ENABLE
 	Input_SoundImpact,
 #endif
-
-	// XXX:
+#ifdef CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE
+	Input_BatteryCharger,
+#endif
+	// XXX: Add here
+	// NOTE: Do not forget Sync with IO_InputNames
 
 	Input_Count
 } Input_t;

@@ -14,6 +14,8 @@
 #include "FormattedMessage.h"
 
 
+
+#ifdef CONFIG_MODULE_FORMATTEDMESSAGE_ENABLE
 /**
  * \brief	Send message on debug with textcolor & backgroundcolor
  */
@@ -23,7 +25,7 @@ void SendColouredMessageWithBackgroundColor(const char* message, FormattedString
 	SendBackgroundColor(backgroundColor);
 
 	// Send colored message
-	SendColouredMessage(message,textColor);
+	SendColouredMessage(message, textColor);
 
 	// Send background color = white
 	SendBackgroundColor(Color_White);
@@ -97,5 +99,4 @@ void FormattedMessage_Test(void)
 
 	SendErrorMessage("FATAL ERROR EXAMPLE\r\n");
 }
-
-
+#endif

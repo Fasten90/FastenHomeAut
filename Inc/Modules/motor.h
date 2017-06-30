@@ -97,9 +97,11 @@ void Motor_ServoChangeAngle(int8_t angle);
 void Motor_DcMotorSeDirection(MotorDir_t dir);
 void Motor_DcMotorChangePercent(uint8_t percent);
 
-void Motor_StatusMachine(void);
+void Motor_StateMachine(void);
 void Motor_ControlStop(void);
 
+void Motor_StateMachine_SetAngle(int8_t angle);
+void Motor_StateMachine_SetDc(int16_t dc);
 
 
 #endif /* HWTESTER_COMMONPWM_H_ */

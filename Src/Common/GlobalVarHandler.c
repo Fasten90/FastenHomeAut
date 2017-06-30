@@ -77,7 +77,7 @@ static const char * const GlobalVarTypesNames[] =
 	"float",
 	"bits",
 	"string",
-	"enumerator"
+	"enum"
 };
 
 
@@ -202,7 +202,7 @@ bool GlobalVarHandler_CheckCommandStructAreValid(void)
 	if (hasError)
 	{
 		// Error
-		uprintf("Error in %d. (%s) command\r\n", i, GlobalVarList[i].name);
+		CommandHandler_Printf("Error in %d. (%s) command\r\n", i, GlobalVarList[i].name);
 #ifdef CONFIG_DEBUG_MODE
 		// Stop debugger
 		__asm("BKPT #0\n");		// ASM: Break debugger
@@ -321,60 +321,82 @@ static bool GlobalVarHandler_SearchVariableName(const char *commandName, VarID_t
 static ProcessResult_t GlobalVarHandler_GetCommand(VarID_t commandID)
 {
 	// Check type
-	switch (GlobalVarList[commandID].type)
+	if (!GlobalVarList[commandID].isFunction)
 	{
-		case Type_Bool:
+		// Variable (and not function)
+		switch (GlobalVarList[commandID].type)
 		{
-			bool *boolPointer = (bool *)GlobalVarList[commandID].varPointer;
-			if (*boolPointer)
+			case Type_Bool:
 			{
-				CommandHandler_SendMessage("1 / TRUE");
+				bool *boolPointer = (bool *)GlobalVarList[commandID].varPointer;
+				if (*boolPointer)
+				{
+					CommandHandler_SendMessage("1 / TRUE");
+				}
+				else
+				{
+					CommandHandler_SendMessage("0 / FALSE");
+				}
 			}
-			else
+				break;
+
+			case Type_Uint8:
+			case Type_Uint16:
+			case Type_Uint32:
+			case Type_Int8:
+			case Type_Int16:
+			case Type_Int32:
+				GlobalVarHandler_GetInteger(commandID);
+				break;
+
+			case Type_Float:
 			{
-				CommandHandler_SendMessage("0 / FALSE");
+				float *floatPointer = (float *)GlobalVarList[commandID].varPointer;
+				float value = *floatPointer;
+				CommandHandler_Printf("%0.2f", value);
 			}
+				break;
+
+			case Type_Bits:
+				GlobalVarHandler_GetBits(commandID);
+				break;
+
+			case Type_String:
+			{
+				const char *string = GlobalVarList[commandID].varPointer;
+				CommandHandler_SendMessage(string);
+			}
+				break;
+
+			case Type_Enumerator:
+				GlobalVarHandler_GetEnumerator(commandID);
+				break;
+
+			// Wrong types
+			case Type_Unknown:
+			case Type_Count:
+			default:
+				return Process_FailParam;
+				break;
 		}
-			break;
+	}
+	// if (GlobalVarList[commandID].isFunction)
+	else
+	{
+		// Get Function pointer
+		GetFunctionPointer getFunction = (GetFunctionPointer)GlobalVarList[commandID].functionPointer;
+		// TODO: Make to other integer and float and bool
 
-		case Type_Uint8:
-		case Type_Uint16:
-		case Type_Uint32:
-		case Type_Int8:
-		case Type_Int16:
-		case Type_Int32:
-			GlobalVarHandler_GetInteger(commandID);
-			break;
+		/*
+		/// Command Function pointer
+		// TODO: It is a test code, need general solve
+		typedef uint32_t (* glvar_uint32getfunc )(void);
+		glvar_uint32getfunc getFunction = (glvar_uint32getfunc *)GlobalVarList[commandID].functionPointer;
+		*/
 
-		case Type_Float:
-		{
-			float *floatPointer = (float *)GlobalVarList[commandID].varPointer;
-			float value = *floatPointer;
-			CommandHandler_Printf("%0.2f", value);
-		}
-			break;
-
-		case Type_Bits:
-			GlobalVarHandler_GetBits(commandID);
-			break;
-
-		case Type_String:
-		{
-			const char *string = GlobalVarList[commandID].varPointer;
-			CommandHandler_SendMessage(string);
-		}
-			break;
-
-		case Type_Enumerator:
-			GlobalVarHandler_GetEnumerator(commandID);
-			break;
-
-		// Wrong types
-		case Type_Unknown:
-		case Type_Count:
-		default:
-			return Process_FailParam;
-			break;
+		uint32_t value;
+		value = getFunction();
+		CommandHandler_Printf("%u", value);
 	}
 
 
@@ -405,7 +427,7 @@ static void GlobalVarHandler_GetInteger(VarID_t commandID)
 		// Get in Hex format
 
 		uint8_t octetNum = 0;
-		switch(type)
+		switch (type)
 		{
 			case Type_Uint8:
 				octetNum = 2;
@@ -475,23 +497,10 @@ static void GlobalVarHandler_GetInteger(VarID_t commandID)
 
 			case Type_Uint32:
 			{
-				if (GlobalVarList[commandID].isFunction)
-				{
-					// TODO: It is a test code, need general solve
-					/// Command Function pointer
-					typedef uint32_t (* glvar_uint32getfunc )(void);
-					glvar_uint32getfunc thisFunc = (glvar_uint32getfunc *)GlobalVarList[commandID].varPointer;
-					uint32_t value;
-					value = thisFunc();
-					CommandHandler_Printf("%u", value);
-				}
-				else
-				{
-					uint32_t *numPointer =
-						(uint32_t *)GlobalVarList[commandID].varPointer;
-					uint32_t num = *numPointer;
-					CommandHandler_Printf("%u", num);
-				}
+				uint32_t *numPointer =
+					(uint32_t *)GlobalVarList[commandID].varPointer;
+				uint32_t num = *numPointer;
+				CommandHandler_Printf("%u", num);
 			}
 				break;
 
@@ -1482,6 +1491,7 @@ void GlobalVarHandler_RunTrace(void)
 					GlobalVarHandler_PrintTraceBuffer();
 				}
 #else
+				// Trace (print) to debug port
 				CommandHandler_SendMessage("Trace: %d - ", HAL_GetTick());
 				GlobalVarHandler_GetCommand(i);
 				CommandHandler_SendLine("");

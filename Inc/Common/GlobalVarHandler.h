@@ -94,6 +94,14 @@ typedef enum
 } SetGetType_t;
 
 
+/// Get function pointer
+typedef uint32_t ( *GetFunctionPointer )( void );
+/// Set function pointer
+typedef bool ( *SetFunctionPointer )( uint32_t param );
+/// General function pointer
+typedef void ( *GeneralFunctionPointer )( void );
+
+
 /// GlobalVarCommand structure for set-get global variables
 typedef struct
 {
@@ -104,15 +112,17 @@ typedef struct
 	void * const varPointer;				///< Pointer of variable
 	const bool isReadOnly;					///< Is read only?
 
+	const bool isFunction;					///< It is function?
+	const GeneralFunctionPointer functionPointer;	///< Function
+
 	const uint32_t maxValue;				///< Max value
 	const uint32_t minValue;				///< Min value
 
 	const CommProtocol_t sourceEnable;		///< Enabled sources (for set-get)
 
-	// TODO: Optimize these:
+	// TODO: Optimize these: isHex (bool), isReadOnly (bool), isFunction (bool)
 	const bool isHex;						///< Set-get in hexadecimal?
 
-	const bool isFunction;					///< It is function?
 
 	const char * const *enumList;			///< Enum list, if it is enumerator
 

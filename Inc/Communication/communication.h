@@ -63,6 +63,8 @@ uint8_t COMMUNICATION_SendMessage(CommProtocol_t protocol, const char *message);
 uint8_t COMMUNICATION_SendChar(CommProtocol_t protocol, char c);
 uint8_t COMMUNICATION_Printf(CommProtocol_t protocol, const char *format, ...);
 
+const char * COMMUNICATION_GetProtocolName(CommProtocol_t protocol);
+
 void COMMUNICATION_ClearProtocolBuffer(void);
 
 

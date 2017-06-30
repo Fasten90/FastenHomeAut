@@ -46,6 +46,7 @@
 #include "EventLog.h"
 #include "Motor.h"
 #include "ESP8266.h"
+#include "IO.h"
 
 
 /* Private variables ---------------------------------------------------------*/

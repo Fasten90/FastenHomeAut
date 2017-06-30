@@ -350,6 +350,7 @@ void DebugUart_ProcessReceivedCharacters(void)
 #endif
 
 
+
 /**
  * \brief	Function like printf(); Print on debug serial port
  * 			Copy character to buffer and after that, sending.

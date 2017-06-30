@@ -405,9 +405,9 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 
 
 /**
- * \brief	Motor status machine
+ * \brief	Motor state machine
  */
-void Motor_StatusMachine(void)
+void Motor_StateMachine(void)
 {
 
 	if (MotorTestSlide_Enabled)
@@ -547,6 +547,35 @@ void Motor_ControlStop(void)
 	ControlState.dcPercent = 0;
 	ControlState.dir = MotorDir_Stop;
 	ControlState.angle = 0;
+}
+
+
+
+void Motor_StateMachine_SetAngle(int8_t angle)
+{
+	ControlState.angle = angle;
+}
+
+
+
+void Motor_StateMachine_SetDc(int16_t dc)
+{
+	if (dc > 0)
+	{
+		ControlState.dcPercent = dc;
+		ControlState.dir = MotorDir_Forward;
+	}
+	else if (dc < 0)
+	{
+		ControlState.dcPercent = -dc;
+		ControlState.dir = MotorDir_Backward;
+	}
+	else
+	{
+		// = 0
+		ControlState.dcPercent = 0;
+		ControlState.dir = MotorDir_Stop;
+	}
 }
 
 

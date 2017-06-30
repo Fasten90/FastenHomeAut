@@ -36,6 +36,8 @@
 #include "CommonIO.h"
 #include "MEM.h"
 #include "EventLog.h"
+#include "TaskList.h"
+#include "IO.h"
 
 #include "CommandList.h"
 
@@ -46,15 +48,16 @@
  *----------------------------------------------------------------------------*/
 
 
+
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
 
+
 /*------------------------------------------------------------------------------
  *		Global function declarations - Commands
  *----------------------------------------------------------------------------*/
-
 
 	static CommandResult_t CommandFunction_cls(uint32_t argc, char** argv);
 	static CommandResult_t CommandFunction_help(uint32_t argc, char** argv);
@@ -135,6 +138,8 @@
 #ifdef CONFIG_MODULE_SIMULATION_ENABLE
 	static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv);
 #endif
+
+
 
 /*------------------------------------------------------------------------------
  *  Global variables
@@ -731,14 +736,17 @@ static CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 
 #endif
 
+
 	// Beep in terminal
 	CommandHandler_SendLine("Beep test");
 	CommandHandler_SendChar(TERMINAL_KEY_BELL);
 
 
 	// Send formatted messages
+#ifdef CONFIG_MODULE_FORMATTEDMESSAGE_ENABLE
 	CommandHandler_SendLine("Formatted message test");
 	FormattedMessage_Test();
+#endif
 
 
 	return CommandResult_Ok;
@@ -1470,90 +1478,109 @@ static CommandResult_t CommandFunction_PWM(uint32_t argc, char** argv)
 static CommandResult_t CommandFunction_Motor(uint32_t argc, char** argv)
 {
 	(void)argc;
+	CommandResult_t result = CommandResult_Unknown;
+
 
 	if (!StrCmp("dc", argv[1]))
 	{
+		// Set DC motor
 		int32_t convertValue;
 		if (StringToSignedDecimalNum(argv[2], &convertValue))
 		{
+			/*
 			if (convertValue <= 100 && convertValue > 0)
 			{
 				uint8_t percent = (uint8_t)convertValue;
 				Motor_DcMotorChangePercent(percent);
 				Motor_DcMotorSeDirection(MotorDir_Forward);
-				return CommandResult_Ok_SendSuccessful;
+				result = CommandResult_Ok_SendSuccessful;
 			}
 			else if (convertValue == 0)
 			{
 				Motor_DcMotorChangePercent(0);
 				Motor_DcMotorSeDirection(MotorDir_Stop);
-				return CommandResult_Ok_SendSuccessful;
+				result = CommandResult_Ok_SendSuccessful;
 			}
 			else if (convertValue < 0 && convertValue > -100)
 			{
 				uint8_t percent = (uint8_t)(convertValue * (-1));
 				Motor_DcMotorChangePercent(percent);
 				Motor_DcMotorSeDirection(MotorDir_Backward);
-				return CommandResult_Ok_SendSuccessful;
+				result = CommandResult_Ok_SendSuccessful;
+			}
+			*/
+			if (convertValue <= 100 && convertValue > -100)
+			{
+				int8_t percent = (uint8_t)convertValue;
+				Motor_StateMachine_SetDc(percent);
+				TaskHandler_ClearTimeoutTask(Task_MotorTimeout);
+				result = CommandResult_Ok_SendSuccessful;
 			}
 			else
 			{
-				return CommandResult_Error_WrongArgument2;
+				result = CommandResult_Error_WrongArgument2;
 			}
 		}
 		else
 		{
-			return CommandResult_Error_WrongArgument2;
+			result = CommandResult_Error_WrongArgument2;
 		}
 	}
 	else if (!StrCmp("servo", argv[1]))
 	{
+		// Set servo motor
 		int32_t convertValue;
 		if (StringToSignedDecimalNum(argv[2], &convertValue))
 		{
 			if (convertValue <= 90 && convertValue >= -90)
 			{
+
 				int8_t angle = (int8_t)convertValue;
+				/*
 				Motor_ServoChangeAngle(angle);
-				return CommandResult_Ok_SendSuccessful;
+				*/
+				Motor_StateMachine_SetAngle(angle);
+				TaskHandler_ClearTimeoutTask(Task_MotorTimeout);
+
+				result = CommandResult_Ok_SendSuccessful;
 			}
 			else
 			{
-				return CommandResult_Error_WrongArgument2;
+				result = CommandResult_Error_WrongArgument2;
 			}
 		}
 		else
 		{
-			return CommandResult_Error_WrongArgument2;
+			result = CommandResult_Error_WrongArgument2;
 		}
 	}
 	else if (!StrCmp("slide", argv[1]))
 	{
-		// Slide
+		// Motor Slide (DC and Servo too)
 		if (!StrCmp("on", argv[2]))
 		{
 			MotorTestSlide_Enabled = true;
-			return CommandResult_Ok_SendSuccessful;
+			result = CommandResult_Ok_SendSuccessful;
 		}
 		else if (!StrCmp("off", argv[2]))
 		{
 			MotorTestSlide_Enabled = false;
 			Motor_ControlStop();
-			return CommandResult_Ok_SendSuccessful;
+			result = CommandResult_Ok_SendSuccessful;
 		}
 		else
 		{
 			MotorTestSlide_Enabled = false;
 			Motor_ControlStop();
-			return CommandResult_Error_WrongArgument2;
+			result = CommandResult_Error_WrongArgument2;
 		}
 	}
 	else
 	{
-		return CommandResult_Error_WrongArgument1;
+		result = CommandResult_Error_WrongArgument1;
 	}
 
-	return CommandResult_Error_Unknown;
+	return result;
 }
 #endif
 
@@ -1565,28 +1592,28 @@ static CommandResult_t CommandFunction_ESP8266(uint32_t argc, char** argv)
 	(void)argc;
 	bool result = CommandResult_Unknown;
 
-	if (!StrCmp(argv[1], "sendonwifi"))
+	if (!StrCmp("sendonwifi", argv[1]))
 	{
 		// Send message to ESP8266 sending queue, which will send on ESP8266 TCP connection
 		ESP8266_RequestSendTcpMessage(argv[2]);
 		result = CommandResult_Ok_SendSuccessful;
 	}
-	else if (!StrCmp(argv[1], "sendtomodule"))
+	else if (!StrCmp("sendtomodule", argv[1]))
 	{
 		// Send forward to ESP8266 module last parameter
 		ESP8266_SendString(argv[2]);
 		result = CommandResult_Ok_SendSuccessful;
 	}
-	else if (!StrCmp(argv[1], "debug"))
+	else if (!StrCmp("debug", argv[1]))
 	{
 		// Check debug on/off
-		if (!StrCmp(argv[2], "on"))
+		if (!StrCmp("on", argv[2]))
 		{
 			// On
 			ESP8266_DebugEnableFlag = true;
 			result = CommandResult_Ok_SendSuccessful;
 		}
-		else if (!StrCmp(argv[2], "off"))
+		else if (!StrCmp("off", argv[2]))
 		{
 			// Off
 			ESP8266_DebugEnableFlag = false;
@@ -1598,7 +1625,7 @@ static CommandResult_t CommandFunction_ESP8266(uint32_t argc, char** argv)
 			result = CommandResult_Error_WrongArgument2;
 		}
 	}
-	else if (!StrCmp(argv[1], "ip"))
+	else if (!StrCmp("ip", argv[1]))
 	{
 		// Print ESP8266 IP addresses
 		char ipBuffer[80];

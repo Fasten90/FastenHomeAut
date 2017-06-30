@@ -49,7 +49,8 @@ static TaskResult_t TaskWatchdogClear(ScheduleSource_t source);
 static TaskResult_t TaskEsp8266(ScheduleSource_t source);
 #endif
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
-static TaskResult_t TaskMotor(ScheduleSource_t source);
+static TaskResult_t Task_Motor(ScheduleSource_t source);
+static TaskResult_t Task_MotorConnStop(ScheduleSource_t source);
 #endif
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 static TaskResult_t Task_ProcessDebugUartCommandReceived(ScheduleSource_t source);
@@ -101,8 +102,14 @@ Task_t TaskList[] =
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
 	{
 		.taskName = "MotorTask",
-		.taskFunction = TaskMotor,
+		.taskFunction = Task_Motor,
 		.taskScheduleRate = 100
+	},
+	{
+		.taskName = "MotorConnStopTimeout",
+		.taskFunction = Task_MotorConnStop,
+		.taskScheduleRate = 500,
+		.isTimeOutTask = true
 	},
 #endif
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
@@ -346,11 +353,22 @@ static TaskResult_t TaskEsp8266(ScheduleSource_t source)
 
 
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
-static TaskResult_t TaskMotor(ScheduleSource_t source)
+static TaskResult_t Task_Motor(ScheduleSource_t source)
 {
 	(void)source;
 
-	Motor_StatusMachine();
+	Motor_StateMachine();
+
+	return TASK_RESULT_OK;
+}
+
+
+
+static TaskResult_t Task_MotorConnStop(ScheduleSource_t source)
+{
+	(void)source;
+
+	Motor_ControlStop();
 
 	return TASK_RESULT_OK;
 }

@@ -30,6 +30,20 @@ char Communication_Buffer[COMMUNICATION_PROTOCOL_BUFFER_SIZE];
 uint8_t Communication_BufferCnt = 0;
 #endif
 
+///> Protocol names
+static const char * const ProtocolNameList[] =
+{
+	"Unknown",
+	"DebugUart",
+	"SWO"
+#ifdef CONFIG_PROTOCOL_BUFFER_ENABLE
+	"Buffer",
+#endif
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+	"ESP8266Wifi",
+#endif
+	""
+};
 
 
 /*------------------------------------------------------------------------------
@@ -145,6 +159,26 @@ uint8_t COMMUNICATION_Printf(CommProtocol_t protocol, const char *format, ...)
 	length = COMMUNICATION_SendMessage(protocol, txBuffer);
 
 	return length;
+}
+
+
+
+/**
+ * \brief	Get protocol name
+ */
+const char * COMMUNICATION_GetProtocolName(CommProtocol_t protocol)
+{
+	uint8_t i;
+	const char * pnt = NULL;
+
+	// Search smallest bit
+	for (i=0; i < CommProt_Disable; i++)
+	{
+		if (protocol & (1 << i))
+		{
+			pnt = ProtocolNameList[i];
+		}
+	}
 }
 
 
