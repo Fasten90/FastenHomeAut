@@ -17,6 +17,11 @@
 #include "GenericTypeDefs.h"
 
 
+#define	CONFIG_MEM_CHECK_POINTERS		1
+
+#define CONFIG_MEM_STACK_GUARD_LENGTH	(1000U)
+#define CONFIG_MEM_STACK_GUARD_VALUE	(0xEF)
+
 
 /*------------------------------------------------------------------------------
  *  Global function declarations

@@ -28,6 +28,13 @@ void * memcpy(void * destination, const void * source, size_t num)
 	uint8_t *dest = destination;
 	const uint8_t *src = source;
 
+#if CONFIG_MEM_CHECK_POINTERS == 1
+	if (destination == NULL || source == NULL)
+	{
+		return NULL;
+	}
+#endif
+
 	for (i=0; i < num; i++)
 	{
 		dest[i] = src[i];
@@ -49,6 +56,13 @@ void * memset(void * ptr, int value, size_t num)
 {
 	size_t i;
 	uint8_t *dest = ptr;
+
+#if CONFIG_MEM_CHECK_POINTERS == 1
+	if (ptr == NULL)
+	{
+		return NULL;
+	}
+#endif
 
 	for (i=0; i < num; i++)
 	{
@@ -73,6 +87,13 @@ void * memmove(void * destination, const void * source, size_t num)
 	uint8_t *dest = destination;
 	uint8_t *src = (uint8_t *)source;
 
+#if CONFIG_MEM_CHECK_POINTERS == 1
+	if (destination == NULL || source == NULL)
+	{
+		return NULL;
+	}
+#endif
+
 	for (i=0; i < num; i++)
 	{
 		dest[i] = src[i];
@@ -91,7 +112,7 @@ void * memmove(void * destination, const void * source, size_t num)
  */
 void * meminit(void * ptr, size_t num)
 {
-	return memset(ptr,0,num);
+	return memset(ptr, 0, num);
 }
 
 
@@ -110,6 +131,13 @@ int memcmp(const void * ptr1, const void * ptr2, size_t num)
 	size_t i;
 	const uint8_t *buffer1 = ptr1;
 	const uint8_t *buffer2 = ptr2;
+
+#if CONFIG_MEM_CHECK_POINTERS == 1
+	if (ptr1 == NULL || ptr2 == NULL)
+	{
+		return -1;
+	}
+#endif
 
 	for (i = 0; i < num; i++)
 	{
@@ -136,8 +164,10 @@ int memcmp(const void * ptr1, const void * ptr2, size_t num)
  */
 void mem_StackFillWithGuardValues(void)
 {
-	uint8_t stackOverFlowCheckerVariable[1000];
-	memset(stackOverFlowCheckerVariable, 0xEF, 1000);
+	uint8_t stackOverFlowCheckerVariable[CONFIG_MEM_STACK_GUARD_LENGTH];
+	memset(stackOverFlowCheckerVariable,
+			CONFIG_MEM_STACK_GUARD_VALUE,
+			CONFIG_MEM_STACK_GUARD_LENGTH);
 }
 
 
@@ -151,24 +181,27 @@ void mem_CheckStackGuardValues(void)
 	uint16_t guardGoodCnt = 0;
 	bool guardWasFound = false;
 	// Do not initialize buffer with fix values!!!!
-	uint8_t stackOverFlowCheckerVariable[1000];
+	uint8_t stackOverFlowCheckerVariable[CONFIG_MEM_STACK_GUARD_LENGTH];
 
-	for (i = 0; i < 1000; i++)
+	for (i = 0; i < CONFIG_MEM_STACK_GUARD_LENGTH; i++)
 	{
-		if (!guardWasFound && stackOverFlowCheckerVariable[i] == 0xEF)
+		if (!guardWasFound && stackOverFlowCheckerVariable[i] == CONFIG_MEM_STACK_GUARD_VALUE)
 		{
 			guardWasFound = true;
 			guardGoodCnt = i;
 			uprintf("Guard was found at %d. byte\r\n", i);
 		}
-		else if (guardWasFound && stackOverFlowCheckerVariable[i] != 0xEF)
+		else if (guardWasFound && stackOverFlowCheckerVariable[i] != CONFIG_MEM_STACK_GUARD_VALUE)
 		{
 			uprintf("Guard was wrong at %d. byte\r\n", i);
 			guardWasFound = false;
 		}
 	}
 
-	uprintf("MEM used: %d / %d, it is %d%%\r\n", guardGoodCnt, 1000, guardGoodCnt*100/1000);
+	uprintf("MEM used: %d / %d, it is %d%%\r\n",
+			guardGoodCnt,
+			CONFIG_MEM_STACK_GUARD_LENGTH,
+			guardGoodCnt * 100/ CONFIG_MEM_STACK_GUARD_LENGTH);
 }
 
 
