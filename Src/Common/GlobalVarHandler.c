@@ -383,15 +383,17 @@ static ProcessResult_t GlobalVarHandler_GetCommand(VarID_t commandID)
 	// if (GlobalVarList[commandID].isFunction)
 	else
 	{
+		// Function
+
 		// Get Function pointer
-		GetFunctionPointer getFunction = (GetFunctionPointer)GlobalVarList[commandID].functionPointer;
+		GetFunctionPointer getFunction = (GetFunctionPointer)GlobalVarList[commandID].getFunctionPointer;
 		// TODO: Make to other integer and float and bool
 
 		/*
 		/// Command Function pointer
 		// TODO: It is a test code, need general solve
 		typedef uint32_t (* glvar_uint32getfunc )(void);
-		glvar_uint32getfunc getFunction = (glvar_uint32getfunc *)GlobalVarList[commandID].functionPointer;
+		glvar_uint32getfunc getFunction = (glvar_uint32getfunc *)GlobalVarList[commandID].getFunctionPointer;
 		*/
 
 		uint32_t value;
@@ -624,43 +626,100 @@ static ProcessResult_t GlobalVarHandler_SetCommand(const VarID_t commandID, cons
 
 	ProcessResult_t result = Process_Unknown;
 
-	switch (GlobalVarList[commandID].type)
+	if (!GlobalVarList[commandID].isFunction)
 	{
-		case Type_Bool:
-			result = GlobalVarHandler_SetBool(commandID, param);
-			break;
+		// Variable type (not function)
+		switch (GlobalVarList[commandID].type)
+		{
+			case Type_Bool:
+				result = GlobalVarHandler_SetBool(commandID, param);
+				break;
 
-		case Type_Uint8:
-		case Type_Uint16:
-		case Type_Uint32:
-		case Type_Int8:
-		case Type_Int16:
-		case Type_Int32:
-			result = GlobalVarHandler_SetInteger(commandID, param);
-			break;
+			case Type_Uint8:
+			case Type_Uint16:
+			case Type_Uint32:
+			case Type_Int8:
+			case Type_Int16:
+			case Type_Int32:
+				result = GlobalVarHandler_SetInteger(commandID, param);
+				break;
 
-		case Type_Float:
-			result = GlobalVarHandler_SetFloat(commandID, param);
-			break;
+			case Type_Float:
+				result = GlobalVarHandler_SetFloat(commandID, param);
+				break;
 
-		case Type_Bits:
-			result = GlobalVarHandler_SetBits(commandID, param);
-			break;
+			case Type_Bits:
+				result = GlobalVarHandler_SetBits(commandID, param);
+				break;
 
-		case Type_String:
-			result = GlobalVarHandler_SetString(commandID, param);
-			break;
+			case Type_String:
+				result = GlobalVarHandler_SetString(commandID, param);
+				break;
 
-		case Type_Enumerator:
-			result = GlobalVarHandler_SetEnumerator(commandID, param);
-			break;
+			case Type_Enumerator:
+				result = GlobalVarHandler_SetEnumerator(commandID, param);
+				break;
 
-		// Wrong types
-		case Type_Unknown:
-		case Type_Count:
-		default:
-			result = Process_FailType;
-			break;
+			// Wrong types
+			case Type_Unknown:
+			case Type_Count:
+			default:
+				result = Process_FailType;
+				break;
+		}
+	}
+	else // = if (GlobalVarList[commandID].isFunction)
+	{
+		// Function
+		// Set value
+
+		// Set Function pointer
+		SetFunctionPointer setFunction = (SetFunctionPointer)GlobalVarList[commandID].setFunctionPointer;
+		// TODO: Make to other integer and float and bool
+
+		uint32_t num = 0;
+		if (StringToUnsignedDecimalNum(param, &num))
+		{
+			if (setFunction(num))
+			{
+				// Successful set
+				result = Process_Ok_SetSuccessful_SendOk;
+			}
+			else
+			{
+				// Failed set
+				// TODO: Process_FailSet
+				result = Process_Unknown;
+			}
+		}
+		else
+		{
+			// Wrong convert
+			result = Process_FailParamIsNotNumber;
+		}
+
+		/*
+		// Variable type (not function)
+		switch (GlobalVarList[commandID].type)
+		{
+			case Type_Bool:
+				result = GlobalVarHandler_SetBool(commandID, param);
+				break;
+
+			case Type_Uint8:
+			case Type_Uint16:
+			case Type_Uint32:
+			case Type_Int8:
+			case Type_Int16:
+			case Type_Int32:
+				result = GlobalVarHandler_SetInteger(commandID, param);
+				break;
+
+			case Type_Float:
+				result = GlobalVarHandler_SetFloat(commandID, param);
+				break;
+		}
+		*/
 	}
 
 	// Return with result

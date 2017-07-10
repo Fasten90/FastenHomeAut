@@ -113,7 +113,8 @@ typedef struct
 	const bool isReadOnly;					///< Is read only?
 
 	const bool isFunction;					///< It is function?
-	const GeneralFunctionPointer functionPointer;	///< Function
+	const GeneralFunctionPointer getFunctionPointer;	///< Function
+	const GeneralFunctionPointer setFunctionPointer;	///< Function
 
 	const uint32_t maxValue;				///< Max value
 	const uint32_t minValue;				///< Min value
