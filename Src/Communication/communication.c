@@ -177,8 +177,11 @@ const char * COMMUNICATION_GetProtocolName(CommProtocol_t protocol)
 		if (protocol & (1 << i))
 		{
 			pnt = ProtocolNameList[i];
+			break;
 		}
 	}
+
+	return pnt;
 }
 
 
