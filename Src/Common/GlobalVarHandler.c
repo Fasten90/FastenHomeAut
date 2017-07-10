@@ -81,6 +81,9 @@ static const char * const GlobalVarTypesNames[] =
 };
 
 
+// TODO: Put guard value around this value?
+uint32_t GlobarVarHandler_TemporaryValue = 0;
+
 
 #ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
 static uint32_t GlobalVarHandler_TraceVarEnabled = 0;
@@ -107,6 +110,7 @@ static void GlobalVarHandler_PrintVariableDescriptions (VarID_t commandID);
 static void GlobalVarHandler_GetInteger(VarID_t commandID);
 static void GlobalVarHandler_GetBits(const VarID_t commandID);
 static void GlobalVarHandler_GetEnumerator(const VarID_t commandID);
+static void GlobalVarHandler_GetFunctionValue(const VarID_t commandID);
 
 static ProcessResult_t GlobalVarHandler_SetBool(VarID_t commandID, const char *param);
 static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char *param);
@@ -155,7 +159,32 @@ bool GlobalVarHandler_CheckCommandStructAreValid(void)
 			break;
 		}
 
-		if (GlobalVarList[i].varPointer == NULL)
+		if (GlobalVarList[i].varPointer == NULL && !GlobalVarList[i].isFunction)
+		{
+			hasError = true;
+			break;
+		}
+
+		if (GlobalVarList[i].isFunction && GlobalVarList[i].type == Type_String)
+		{
+			hasError = true;
+			break;
+		}
+
+		if (GlobalVarList[i].isFunction && GlobalVarList[i].varPointer == NULL)
+		{
+			hasError = true;
+			break;
+		}
+
+		if (GlobalVarList[i].getFunctionPointer == NULL && GlobalVarList[i].isFunction)
+		{
+			hasError = true;
+			break;
+		}
+
+		if (GlobalVarList[i].setFunctionPointer == NULL && GlobalVarList[i].isFunction
+				&& !GlobalVarList[i].isReadOnly)
 		{
 			hasError = true;
 			break;
@@ -321,86 +350,68 @@ static bool GlobalVarHandler_SearchVariableName(const char *commandName, VarID_t
 static ProcessResult_t GlobalVarHandler_GetCommand(VarID_t commandID)
 {
 	// Check type
-	if (!GlobalVarList[commandID].isFunction)
+	if (GlobalVarList[commandID].isFunction)
 	{
-		// Variable (and not function)
-		switch (GlobalVarList[commandID].type)
+		// Get function variable to *varPointer
+		GlobalVarHandler_GetFunctionValue(commandID);
+	}
+
+	// Get Variable
+	switch (GlobalVarList[commandID].type)
+	{
+		case Type_Bool:
 		{
-			case Type_Bool:
+			bool *boolPointer = (bool *)GlobalVarList[commandID].varPointer;
+			if (*boolPointer)
 			{
-				bool *boolPointer = (bool *)GlobalVarList[commandID].varPointer;
-				if (*boolPointer)
-				{
-					CommandHandler_SendMessage("1 / TRUE");
-				}
-				else
-				{
-					CommandHandler_SendMessage("0 / FALSE");
-				}
+				CommandHandler_SendMessage("1 / TRUE");
 			}
-				break;
-
-			case Type_Uint8:
-			case Type_Uint16:
-			case Type_Uint32:
-			case Type_Int8:
-			case Type_Int16:
-			case Type_Int32:
-				GlobalVarHandler_GetInteger(commandID);
-				break;
-
-			case Type_Float:
+			else
 			{
-				float *floatPointer = (float *)GlobalVarList[commandID].varPointer;
-				float value = *floatPointer;
-				CommandHandler_Printf("%0.2f", value);
+				CommandHandler_SendMessage("0 / FALSE");
 			}
-				break;
-
-			case Type_Bits:
-				GlobalVarHandler_GetBits(commandID);
-				break;
-
-			case Type_String:
-			{
-				const char *string = GlobalVarList[commandID].varPointer;
-				CommandHandler_SendMessage(string);
-			}
-				break;
-
-			case Type_Enumerator:
-				GlobalVarHandler_GetEnumerator(commandID);
-				break;
-
-			// Wrong types
-			case Type_Unknown:
-			case Type_Count:
-			default:
-				return Process_FailParam;
-				break;
 		}
+			break;
+
+		case Type_Uint8:
+		case Type_Uint16:
+		case Type_Uint32:
+		case Type_Int8:
+		case Type_Int16:
+		case Type_Int32:
+			GlobalVarHandler_GetInteger(commandID);
+			break;
+
+		case Type_Float:
+		{
+			float *floatPointer = (float *)GlobalVarList[commandID].varPointer;
+			float value = *floatPointer;
+			CommandHandler_Printf("%0.2f", value);
+		}
+			break;
+
+		case Type_Bits:
+			GlobalVarHandler_GetBits(commandID);
+			break;
+
+		case Type_String:
+		{
+			const char *string = GlobalVarList[commandID].varPointer;
+			CommandHandler_SendMessage(string);
+		}
+			break;
+
+		case Type_Enumerator:
+			GlobalVarHandler_GetEnumerator(commandID);
+			break;
+
+		// Wrong types
+		case Type_Unknown:
+		case Type_Count:
+		default:
+			return Process_FailParam;
+			break;
 	}
-	// if (GlobalVarList[commandID].isFunction)
-	else
-	{
-		// Function
-
-		// Get Function pointer
-		GetFunctionPointer getFunction = (GetFunctionPointer)GlobalVarList[commandID].getFunctionPointer;
-		// TODO: Make to other integer and float and bool
-
-		/*
-		/// Command Function pointer
-		// TODO: It is a test code, need general solve
-		typedef uint32_t (* glvar_uint32getfunc )(void);
-		glvar_uint32getfunc getFunction = (glvar_uint32getfunc *)GlobalVarList[commandID].getFunctionPointer;
-		*/
-
-		uint32_t value;
-		value = getFunction();
-		CommandHandler_Printf("%u", value);
-	}
-
 
 #ifdef GLOBALVARHANDLER_UNIT_ENABLE
 	// Append unit, if need
@@ -554,7 +565,7 @@ static void GlobalVarHandler_GetInteger(VarID_t commandID)
 
 
 /**
- * \brief
+ * \brief	Get bits / get binary values
  */
 static void GlobalVarHandler_GetBits(const VarID_t commandID)
 {
@@ -619,6 +630,23 @@ static void GlobalVarHandler_GetEnumerator(const VarID_t commandID)
 
 
 /**
+ * \brief	Get function value
+ */
+static void GlobalVarHandler_GetFunctionValue(const VarID_t commandID)
+{
+	// Variable type checked at GlobalVarHandler_CheckCommandStructAreValid()
+
+	// Get Function pointer
+	GetFunctionPointer getFunction = (GetFunctionPointer)GlobalVarList[commandID].getFunctionPointer;
+	// TODO: Make to other integer and float and bool
+
+	GlobarVarHandler_TemporaryValue = 0;
+	GlobarVarHandler_TemporaryValue = getFunction();
+}
+
+
+
+/**
  * \brief	Set command
  */
 static ProcessResult_t GlobalVarHandler_SetCommand(const VarID_t commandID, const char *param)
@@ -626,100 +654,67 @@ static ProcessResult_t GlobalVarHandler_SetCommand(const VarID_t commandID, cons
 
 	ProcessResult_t result = Process_Unknown;
 
-	if (!GlobalVarList[commandID].isFunction)
+
+	// Variable type
+	switch (GlobalVarList[commandID].type)
 	{
-		// Variable type (not function)
-		switch (GlobalVarList[commandID].type)
-		{
-			case Type_Bool:
-				result = GlobalVarHandler_SetBool(commandID, param);
-				break;
+		case Type_Bool:
+			result = GlobalVarHandler_SetBool(commandID, param);
+			break;
 
-			case Type_Uint8:
-			case Type_Uint16:
-			case Type_Uint32:
-			case Type_Int8:
-			case Type_Int16:
-			case Type_Int32:
-				result = GlobalVarHandler_SetInteger(commandID, param);
-				break;
+		case Type_Uint8:
+		case Type_Uint16:
+		case Type_Uint32:
+		case Type_Int8:
+		case Type_Int16:
+		case Type_Int32:
+			result = GlobalVarHandler_SetInteger(commandID, param);
+			break;
 
-			case Type_Float:
-				result = GlobalVarHandler_SetFloat(commandID, param);
-				break;
+		case Type_Float:
+			result = GlobalVarHandler_SetFloat(commandID, param);
+			break;
 
-			case Type_Bits:
-				result = GlobalVarHandler_SetBits(commandID, param);
-				break;
+		case Type_Bits:
+			result = GlobalVarHandler_SetBits(commandID, param);
+			break;
 
-			case Type_String:
-				result = GlobalVarHandler_SetString(commandID, param);
-				break;
+		case Type_String:
+			result = GlobalVarHandler_SetString(commandID, param);
+			break;
 
-			case Type_Enumerator:
-				result = GlobalVarHandler_SetEnumerator(commandID, param);
-				break;
+		case Type_Enumerator:
+			result = GlobalVarHandler_SetEnumerator(commandID, param);
+			break;
 
-			// Wrong types
-			case Type_Unknown:
-			case Type_Count:
-			default:
-				result = Process_FailType;
-				break;
-		}
+		// Wrong types
+		case Type_Unknown:
+		case Type_Count:
+		default:
+			result = Process_FailType;
+			break;
 	}
-	else // = if (GlobalVarList[commandID].isFunction)
+
+	if (GlobalVarList[commandID].isFunction)
 	{
 		// Function
 		// Set value
 
 		// Set Function pointer
 		SetFunctionPointer setFunction = (SetFunctionPointer)GlobalVarList[commandID].setFunctionPointer;
-		// TODO: Make to other integer and float and bool
 
-		uint32_t num = 0;
-		if (StringToUnsignedDecimalNum(param, &num))
+		// Set value with parameter
+		if (setFunction(GlobarVarHandler_TemporaryValue))
 		{
-			if (setFunction(num))
-			{
-				// Successful set
-				result = Process_Ok_SetSuccessful_SendOk;
-			}
-			else
-			{
-				// Failed set
-				// TODO: Process_FailSet
-				result = Process_Unknown;
-			}
+			// Successful set
+			result = Process_Ok_SetSuccessful_SendOk;
 		}
 		else
 		{
-			// Wrong convert
-			result = Process_FailParamIsNotNumber;
+			// Failed set
+			// TODO: Process_FailSet
+			result = Process_Unknown;
 		}
-
-		/*
-		// Variable type (not function)
-		switch (GlobalVarList[commandID].type)
-		{
-			case Type_Bool:
-				result = GlobalVarHandler_SetBool(commandID, param);
-				break;
-
-			case Type_Uint8:
-			case Type_Uint16:
-			case Type_Uint32:
-			case Type_Int8:
-			case Type_Int16:
-			case Type_Int32:
-				result = GlobalVarHandler_SetInteger(commandID, param);
-				break;
-
-			case Type_Float:
-				result = GlobalVarHandler_SetFloat(commandID, param);
-				break;
-		}
-		*/
 	}
 
 	// Return with result
@@ -1529,20 +1524,28 @@ void GlobalVarHandler_EnableTrace(VarID_t id, bool isEnable)
  */
 void GlobalVarHandler_RunTrace(void)
 {
-	// TODO: Only use for max 32 variable
+	// TODO: Only use for max 32bits (4byte) variable
 	if (GlobalVarHandler_TraceVarEnabled)
 	{
 		VarID_t i;
 		for (i = 0; i < GlobalVar_MaxCommandNum; i++)
 		{
+			// Step on GlobalVar list
 			if (GlobalVarHandler_TraceVarEnabled & (1 << i))
 			{
+				// Need trace
 #ifdef CONFIG_GLOBALVARHANDLER_TRACE_RAM_BUFFER
 				// TODO: Unknown size... Now use uint32_t
-				// TODO: Function !!!!
-				uint32_t * pnt = (uint32_t *)GlobalVarList[i].varPointer;
-				GlobalVarHandler_TraceRamBuffer[GlobalVarHandler_TraceRam_BufferCnt] = *pnt;
+				// TODO: Only function values saved to Temporary variable...
+				// TODO: Save tick?
+				// TODO: Save VarID (for known type)?
+
+				GlobalVarHandler_GetCommand(i);
+
+				GlobalVarHandler_TraceRamBuffer[GlobalVarHandler_TraceRam_BufferCnt] = GlobarVarHandler_TemporaryValue;
 				GlobalVarHandler_TraceRam_BufferCnt++;
+
+				// Check buffer is full?
 				if (GlobalVarHandler_TraceRam_BufferCnt >= GLOBALVARHANDLER_TRACE_BUFFER_SIZE)
 				{
 					GlobalVarHandler_TraceRam_BufferCnt = 0;
@@ -1551,7 +1554,7 @@ void GlobalVarHandler_RunTrace(void)
 				}
 #else
 				// Trace (print) to debug port
-				CommandHandler_SendMessage("Trace: %d - ", HAL_GetTick());
+				CommandHandler_Printf("Trace: %d - ", HAL_GetTick());
 				GlobalVarHandler_GetCommand(i);
 				CommandHandler_SendLine("");
 #endif
@@ -1571,6 +1574,7 @@ void GlobalVarHandler_PrintTraceBuffer(void)
 	uint8_t i;
 	for (i = 0; i < GLOBALVARHANDLER_TRACE_BUFFER_SIZE; i++)
 	{
+		// TODO: Unknown type... uint32_t, int32_t, float, bool, enum
 		CommandHandler_Printf("Value: %d = %u\r\n", i, GlobalVarHandler_TraceRamBuffer[i]);
 	}
 }

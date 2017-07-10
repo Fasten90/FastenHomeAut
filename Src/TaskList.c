@@ -564,8 +564,7 @@ static TaskResult_t Task_GlobalVarTrace(ScheduleSource_t source)
 {
 	(void)source;
 
-	// Software WatchDog - Timeout task
-	// If This task is running, the system is lagging
+	// Trace GlobalVars
 	GlobalVarHandler_RunTrace();
 
 	return TASK_RESULT_OK;

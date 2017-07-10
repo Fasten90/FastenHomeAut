@@ -15,17 +15,19 @@
 
 
 
-
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
+
 #include "include.h"
 #include "TaskHandler.h"
+
 
 
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
+
 
 
 /*------------------------------------------------------------------------------
@@ -60,11 +62,15 @@ typedef enum
 #ifdef CONFIG_MODULE_TASK_SOFTWARE_WATCHDOG_ENABLE
 	Task_SwWDT,
 #endif
+#ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
+	Task_Trace,
+#endif
 
 	// XXX:
 
 	Task_Count
 } TaskName_t;
+
 
 
 /*------------------------------------------------------------------------------
@@ -75,6 +81,8 @@ typedef enum
 extern Task_t TaskList[];
 extern const TaskID_t TasksNum;
 #endif
+
+
 
 /*------------------------------------------------------------------------------
  *  Global function declarations

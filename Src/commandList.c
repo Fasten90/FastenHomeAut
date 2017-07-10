@@ -1169,6 +1169,7 @@ static CommandResult_t CommandFunction_GlobalVariableTrace(uint32_t argc,
 	uint32_t id;
 	if (StringToUnsignedDecimalNum(argv[1], &id))
 	{
+		// "trace <id> enable/disable"
 		// Good ID
 		if (!StrCmp("enable", argv[2]))
 		{
@@ -1185,6 +1186,7 @@ static CommandResult_t CommandFunction_GlobalVariableTrace(uint32_t argc,
 	}
 	else
 	{
+		// trace <varname> enable/disable
 		// First parameter is not "id", maybe "name", try process
 		GlobalVarHandler_ProcessCommand(argv[1], argv[2], SetGet_Trace, CommandHandler_CommandSource);
 		// TODO: Print anyting?

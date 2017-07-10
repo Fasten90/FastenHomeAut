@@ -25,6 +25,8 @@ const char Global_BoardName[]	= BOARD_NAME;
 const char Global_Version[]		= VERSION_DEFINE;
 const char Global_BoardMCU[]	= BOARD_MCU;
 
+char Global_DeviceName[20] 		= BOARD_NAME;
+
 
 
 /*------------------------------------------------------------------------------

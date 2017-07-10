@@ -36,4 +36,5 @@ uint32_t power_secured(uint32_t a, uint8_t b);
 void Calc_UnitTest(void);
 
 
+
 #endif /* CALC_H_ */

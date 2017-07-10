@@ -7,7 +7,7 @@
  *		Function:		Global Variable Handler: Handle set-get variable from uart or other
  *		Target:			STM32Fx
  *		Version:		v4
- *		Last modified:	2016.09.28
+ *		Last modified:	2017.07.10
  */
 
 #include "GlobalVarHandler.h"
@@ -44,8 +44,6 @@ const char * const testEnumExampleList[] =
 };
 #endif
 
-
-char deviceName[20] = "Discovery";
 
 
 ///< Global variables list
@@ -115,7 +113,7 @@ const GlobalVarCommand_t GlobalVarList[] =
 	},
 	{
 		.name = "devicename",
-		.varPointer = deviceName,
+		.varPointer = Global_DeviceName,
 		.type = Type_String,
 		.maxValue = 20,
 		.description = "Device name"
@@ -134,10 +132,12 @@ const GlobalVarCommand_t GlobalVarList[] =
 	},
 	{
 		.name = "tick",
-		.varPointer = (void * const)HAL_GetTick,
+		.varPointer = (void * const)&GlobarVarHandler_TemporaryValue,
+		.getFunctionPointer = (void * const)HAL_GetTick,
 		.type = Type_Uint32,
 		.isReadOnly = true,
-		.isFunction = true
+		.isFunction = true,
+		.description = "Tick counter"
 	},
 
 
@@ -163,6 +163,7 @@ const GlobalVarCommand_t GlobalVarList[] =
 
 ///< GlobalVarList length
 const VarID_t GlobalVar_MaxCommandNum = sizeof(GlobalVarList)/sizeof(GlobalVarList[0]);
+
 
 
 #endif	// #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
