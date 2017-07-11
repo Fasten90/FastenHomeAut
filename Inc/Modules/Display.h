@@ -24,7 +24,9 @@
 #ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
 #include "DateTime.h"
 #endif
-
+#ifdef CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK
+#include "Logic.h"
+#endif
 
 
 /*------------------------------------------------------------------------------
@@ -83,6 +85,8 @@ void Display_ChangeCarImage(void);
 #ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
 void Display_ShowClock(Time_t *time);
 #endif
+void Display_ShowClockHalf(Time_t *time, DisplayClock_ChangeState_t displayState);
+
 
 void Display_Test8x5Font(void);
 void Display_Test12x8Font(void);

@@ -29,6 +29,7 @@
 #include "Display.h"
 #include "Motor.h"
 #include "ESP8266.h"
+#include "Display.h"
 
 #include "TaskList.h"
 
@@ -515,6 +516,58 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 	}
 	#endif
 
+	#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
+	// Display refresh
+
+	// Display vibrate function: if we are in setting mode, hour or minute will vibrate
+	static bool Display_VibrateStateHide = false;
+
+	if (source == ScheduleSource_EventTriggered)
+		Display_VibrateStateHide = false;
+
+
+	switch (Logic_GetSystemTimeState())
+	{
+		case DisplayClock_Hour:
+			// Hour setting
+			if (Display_VibrateStateHide)
+			{
+				Display_ShowClockHalf(&DateTime_SystemTime.time, DisplayClock_Minute);
+				Display_VibrateStateHide = false;
+			}
+			else
+			{
+				Display_ShowClock(&DateTime_SystemTime.time);
+				Display_VibrateStateHide = true;
+			}
+			TaskHandler_SetTaskOnceRun(Task_Display, 500);
+			break;
+
+		case DisplayClock_Minute:
+			// Minute settings
+			if (Display_VibrateStateHide)
+			{
+				Display_ShowClockHalf(&DateTime_SystemTime.time, DisplayClock_Hour);
+				Display_VibrateStateHide = false;
+			}
+			else
+			{
+				Display_ShowClock(&DateTime_SystemTime.time);
+				Display_VibrateStateHide = true;
+			}
+			TaskHandler_SetTaskOnceRun(Task_Display, 500);
+			break;
+
+		case DisplayClock_HourAndMinute:
+		case DisplayClock_Count:
+		default:
+			// Not in setting
+			Display_ShowClock(&DateTime_SystemTime.time);
+			TaskHandler_DisableTask(Task_Display);
+			break;
+	}
+	#endif
+
 	return TASK_RESULT_OK;
 }
 #endif
@@ -524,19 +577,24 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 #ifdef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
 static TaskResult_t Task_SystemTimeSecondStep(ScheduleSource_t source)
 {
+	// TODO: If not called by fix 1000ms, it is not accurate
+	//	Idea: give scheduling ms by parameter
 	(void)source;
 
 	// Step SystemTime +1 second
 	DateTime_Step(&DateTime_SystemTime);
 
-#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
-	// Display refresh
-	Display_ShowClock(&DateTime_SystemTime.time);
-#endif
 
-#ifdef CONFIG_MODULE_TASK_SOFTWARE_WATCHDOG_ENABLE
+	#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
+	// Display refresh
+	if (DateTime_SystemTime.time.second == 0)
+		TaskHandler_RequestTaskScheduling(Task_Display);
+	#endif
+
+
+	#ifdef CONFIG_MODULE_TASK_SOFTWARE_WATCHDOG_ENABLE
 	TaskHandler_ClearTimeoutTask(Task_SwWDT);
-#endif
+	#endif
 
 	return TASK_RESULT_OK;
 }

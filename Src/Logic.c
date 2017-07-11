@@ -12,7 +12,6 @@
 
 
 
-
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
@@ -38,8 +37,8 @@
  *  Local variables
  *----------------------------------------------------------------------------*/
 
-#if defined(CONFIG_MODULE_DISPLAY_SHOW_CLOCK) && defined(CONFIG_MODULE_BUTTON_ENABLE)
-static uint8_t Logic_SystemTimeConfigState = 0;
+#if defined(CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK)
+static DisplayClock_ChangeState_t Logic_SystemTimeConfigState = 0;
 #endif
 
 
@@ -52,6 +51,7 @@ static uint8_t Logic_SystemTimeConfigState = 0;
 static void Logic_SystemTimeStepConfig(void);
 static void Logic_SystemTimeStepValue(void);
 #endif
+
 
 
 /*------------------------------------------------------------------------------
@@ -267,15 +267,17 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 
 
 
-#if defined(CONFIG_MODULE_DISPLAY_SHOW_CLOCK) && defined(CONFIG_MODULE_BUTTON_ENABLE)
+#if defined(CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK)
 /**
  * \brief	SystemTime - step function
  */
 static void Logic_SystemTimeStepConfig(void)
 {
-	if (Logic_SystemTimeConfigState < 2)
-		Logic_SystemTimeConfigState++;
-	else
+	// Change "setting" column
+	TaskHandler_RequestTaskScheduling(Task_Display);
+
+	Logic_SystemTimeConfigState++;
+	if (Logic_SystemTimeConfigState >= DisplayClock_Count)
 		Logic_SystemTimeConfigState = 0;
 }
 
@@ -284,29 +286,42 @@ static void Logic_SystemTimeStepConfig(void)
 /**
  * \brief	SystemTime - increment selected value (hour, minute, or none)
  */
-void Logic_SystemTimeStepValue(void)
+static void Logic_SystemTimeStepValue(void)
 {
 	switch (Logic_SystemTimeConfigState)
 	{
-		case 0:
+		case DisplayClock_HourAndMinute:
 			// Unknown
 			break;
 
-		case 1:
+		case DisplayClock_Hour:
 			// Hour
 			DateTime_Steps(&DateTime_SystemTime, 60*60);
-			TaskHandler_RequestTaskScheduling(Task_SystemTime);
+			TaskHandler_RequestTaskScheduling(Task_Display);
 			break;
 
-		case 2:
+		case DisplayClock_Minute:
 			// Minute
 			DateTime_Steps(&DateTime_SystemTime, 60);
-			TaskHandler_RequestTaskScheduling(Task_SystemTime);
+			TaskHandler_RequestTaskScheduling(Task_Display);
 			break;
 
+		case DisplayClock_Count:
 		default:
+			// Error !
+			Logic_SystemTimeConfigState = 0;
 			break;
 	}
+}
+
+
+
+/**
+ * \brief	Get system time (settings) state
+ */
+DisplayClock_ChangeState_t Logic_GetSystemTimeState(void)
+{
+	return Logic_SystemTimeConfigState;
 }
 #endif	// #ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
 

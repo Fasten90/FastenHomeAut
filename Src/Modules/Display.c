@@ -37,6 +37,9 @@
 #ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
 #include "DateTime.h"
 #endif
+#ifdef CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK
+#include "Logic.h"
+#endif
 
 
 #define DISPLAY_FONT32X20_CLOCK_START_POSITION_X		( ( 128 - 5*20)/2 )
@@ -410,6 +413,51 @@ void Display_ShowClock(Time_t *time)
 	Display_PrintFont32x20(time->minute%10, 4,
 			DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
 			DISPLAY_FONT32X20_CLOCK_START_POSITION_Y);
+
+	// Refresh display
+	Display_Activate();
+}
+#endif
+
+
+
+#ifdef CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK
+/**
+ * \brief	Display time (HH:MM)
+ */
+void Display_ShowClockHalf(Time_t *time, DisplayClock_ChangeState_t displayState)
+{
+	// Clear
+	Display_Clear();
+
+	if (displayState == DisplayClock_Hour)
+	{
+		// Set hour
+		Display_PrintFont32x20(time->hour/10, 0,
+				DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
+				DISPLAY_FONT32X20_CLOCK_START_POSITION_Y);
+
+		Display_PrintFont32x20(time->hour%10, 1,
+				DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
+				DISPLAY_FONT32X20_CLOCK_START_POSITION_Y);
+	}
+
+	// ':'
+	Display_PrintFont32x20(':', 2,
+			DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
+			DISPLAY_FONT32X20_CLOCK_START_POSITION_Y);
+
+	if (displayState == DisplayClock_Minute)
+	{
+		// Set minute
+		Display_PrintFont32x20(time->minute/10, 3,
+				DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
+				DISPLAY_FONT32X20_CLOCK_START_POSITION_Y);
+
+		Display_PrintFont32x20(time->minute%10, 4,
+				DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
+				DISPLAY_FONT32X20_CLOCK_START_POSITION_Y);
+	}
 
 	// Refresh display
 	Display_Activate();

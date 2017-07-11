@@ -56,8 +56,20 @@ typedef enum
 	Car_Turning_Left,
 	Car_Turning_Right
 } Car_Turning_t;
+#endif
 
 
+
+#if defined(CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK)
+typedef enum
+{
+	DisplayClock_HourAndMinute,
+	DisplayClock_Hour,
+	DisplayClock_Minute,
+
+	// Do not use!
+	DisplayClock_Count
+} DisplayClock_ChangeState_t;
 #endif
 
 
@@ -66,13 +78,15 @@ typedef enum
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type);
-
 
 
 /*------------------------------------------------------------------------------
  *  Global function declarations
  *----------------------------------------------------------------------------*/
+
+void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type);
+
+DisplayClock_ChangeState_t Logic_GetSystemTimeState(void);
 
 
 

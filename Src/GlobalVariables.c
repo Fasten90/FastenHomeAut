@@ -149,6 +149,10 @@ const GlobalVarCommand_t GlobalVarList[] =
 		void * const varPointer;
 		const bool isReadOnly;
 
+		const bool isFunction;
+		const GeneralFunctionPointer getFunctionPointer;
+		const GeneralFunctionPointer setFunctionPointer;
+
 		const void * const maxPointer;
 		const void * const minPointer;
 		const char * const unit;
