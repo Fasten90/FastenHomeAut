@@ -56,7 +56,7 @@ typedef enum
 
 
 
-/// Process result enumerator
+///< Process result enumerator
 typedef enum
 {
 	Process_Unknown = 0,
@@ -81,7 +81,7 @@ typedef enum
 } ProcessResult_t;
 
 
-/// GlobalVariable Set-Get type enumerator
+///< GlobalVariable Set-Get type enumerator
 typedef enum
 {
 	SetGet_Unknown = 0,
@@ -94,15 +94,15 @@ typedef enum
 } SetGetType_t;
 
 
-/// Get function pointer
+///< Get function pointer
 typedef uint32_t ( *GetFunctionPointer )( void );
-/// Set function pointer
+///< Set function pointer
 typedef bool ( *SetFunctionPointer )( uint32_t param );
-/// General function pointer
+///< General function pointer
 typedef void ( *GeneralFunctionPointer )( void );
 
 
-/// GlobalVarCommand structure for set-get global variables
+///< GlobalVarCommand structure for set-get global variables
 typedef struct
 {
 
@@ -125,7 +125,7 @@ typedef struct
 	const bool isHex;						///< Set-get in hexadecimal?
 
 
-	const char * const *enumList;			///< Enum list, if it is enumerator
+	const char * const * enumList;			///< Enum list, if it is enumerator
 
 #ifdef GLOBALVARHANDLER_UNIT_ENABLE
 	const char * const unit;				///< units [string], example: [cm]
@@ -136,6 +136,14 @@ typedef struct
 
 } GlobalVarCommand_t;
 
+
+///< Trace log record
+typedef struct
+{
+	uint32_t tick;
+	uint32_t data;
+	uint32_t varID;
+} GlobalVar_TraceLogRecord_t;
 
 
 /*------------------------------------------------------------------------------
