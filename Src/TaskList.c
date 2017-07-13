@@ -41,7 +41,7 @@
 
 
 #ifdef CONFIG_MODULE_LED_ENABLE
-static TaskResult_t TaskLed(ScheduleSource_t source);
+static TaskResult_t Task_LedBlink(ScheduleSource_t source);
 #endif
 #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
 static TaskResult_t TaskWatchdogClear(ScheduleSource_t source);
@@ -78,7 +78,7 @@ Task_t TaskList[] =
 #ifdef CONFIG_MODULE_LED_ENABLE
 	{
 		.taskName = "LedTask",
-		.taskFunction = TaskLed,
+		.taskFunction = Task_LedBlink,
 	#ifdef LED_OLD_STYLE
 		.taskScheduleRate = 200
 	#else
@@ -198,7 +198,7 @@ const TaskID_t TasksNum = (sizeof(TaskList)/sizeof(TaskList[0]));
 /**
  * \brief
  */
-static TaskResult_t TaskLed(ScheduleSource_t source)
+static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 {
 #ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
 	uprintf("Run %s %d\r\n", TaskList[id].taskName, id);
@@ -250,7 +250,7 @@ static TaskResult_t TaskLed(ScheduleSource_t source)
 	{
 		Task_LedCnt = 0;
 	}
-#else
+#elif defined(LED_PWM_STYLE)
 
 	// 50 Hz --> 20ms
 
@@ -302,11 +302,11 @@ static TaskResult_t TaskLed(ScheduleSource_t source)
 	// Check, need LED blinking?
 	if (LED_PwmCnt < LED_PwmLimit)
 	{
-		LED_SetLed(LED_GREEN_NUM, LED_SET_ON);
+		LED_SetLed(LED_Green, LED_Set_On);
 	}
 	else
 	{
-		LED_SetLed(LED_GREEN_NUM, LED_SET_OFF);
+		LED_SetLed(LED_Green, LED_Set_Off);
 	}
 
 	// PWM counter

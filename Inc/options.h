@@ -466,7 +466,8 @@
 
 // LED settings
 #ifdef CONFIG_MODULE_LED_ENABLE
-	#define LED_OLD_STYLE
+	//#define LED_OLD_STYLE
+	#define LED_PWM_STYLE
 #endif
 
 

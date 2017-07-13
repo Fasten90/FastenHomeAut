@@ -1184,6 +1184,21 @@ static CommandResult_t CommandFunction_GlobalVariableTrace(uint32_t argc,
 			result = CommandResult_Ok;
 		}
 	}
+	else if(!StrCmp("period", argv[1]))
+	{
+		// Trace period time setting
+		uint32_t time;
+		if (StringToUnsignedDecimalNum(argv[2], &time))
+		{
+			// Parameter is good, set Trace task periodic time
+			TaskHandler_SetTaskPeriodicTime(Task_Trace, time);
+			result = CommandResult_Ok;
+		}
+		else
+		{
+			result = CommandResult_Error_WrongArgument2;
+		}
+	}
 	else
 	{
 		// trace <varname> enable/disable
