@@ -41,15 +41,37 @@
 static DisplayClock_ChangeState_t Logic_SystemTimeConfigState = 0;
 #endif
 
+#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
+uint8_t DisplayInput_LetterPosition = 0;
+
+// TODO: Refactor
+#define DisplayInput_LetterPosition_MaxLimit	10
+#define DisplayInput_LetterPosition_MinLimit	0
+
+char DisplayInput_ActualRealString[DisplayInput_LetterPosition_MaxLimit+1] = { ' ' };
+static uint8_t DisplayInput_ActualString[DisplayInput_LetterPosition_MaxLimit] = { 0 };
+
+static char const Display_Characters[] = { ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
+	't', 'u', 'v', 'w', 'x', 'y', 'z' };
+
+static uint8_t const Display_Characters_size = sizeof(Display_Characters)/sizeof(Display_Characters[0]);
+#endif
+
 
 
 /*------------------------------------------------------------------------------
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
-#if defined(CONFIG_MODULE_DISPLAY_SHOW_CLOCK) && defined(CONFIG_MODULE_BUTTON_ENABLE)
+#ifdef CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK
 static void Logic_SystemTimeStepConfig(void);
 static void Logic_SystemTimeStepValue(void);
+#endif
+
+#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
+static void Logic_StepLetterPosition(int8_t step);
+static void Logic_StepLetterNextValue(int8_t step);
 #endif
 
 
@@ -66,6 +88,30 @@ static void Logic_SystemTimeStepValue(void);
  */
 void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 {
+
+	switch (button)
+	{
+		case PressedButton_Right:
+			BUTTON_DEBUG_PRINT("Right button pressed");
+			break;
+
+		case PressedButton_Left:
+			BUTTON_DEBUG_PRINT("Left button pressed");
+			break;
+
+		case PressedButton_Up:
+			BUTTON_DEBUG_PRINT("Up button pressed");
+			break;
+
+		case PressedButton_Down:
+			BUTTON_DEBUG_PRINT("Down button pressed");
+			break;
+
+		case PressedButton_Count:
+		default:
+			break;
+	}
+
 #if defined(CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK) && (BUTTON_NUM == 1)
 	// One button mode
 	(void)type;
@@ -88,12 +134,10 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 	// TODO: Up-Down / Right-Up difference...
 	if ((button == PressedButton_Right) || (button == PressedButton_Left))
 	{
-		BUTTON_DEBUG_PRINT("Left-Right button pressed");
 		Logic_SystemTimeStepConfig();
 	}
 	else if ((button == PressedButton_Up) || (button == PressedButton_Down))
 	{
-		BUTTON_DEBUG_PRINT("Up-Down button pressed");
 		Logic_SystemTimeStepValue();
 	}
 #endif
@@ -127,7 +171,6 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 	if (button == PressedButton_Right)
 	{
 		// Right
-		BUTTON_DEBUG_PRINT("Right button pressed");
 
 		if (Car_TurningState == Car_Turning_Right)
 		{
@@ -155,7 +198,6 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 	else if (button == PressedButton_Left)
 	{
 		// Left
-		BUTTON_DEBUG_PRINT("Left button pressed");
 
 		if (Car_TurningState == Car_Turning_Left)
 		{
@@ -183,7 +225,6 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 	else if (button == PressedButton_Up)
 	{
 		// Up
-		BUTTON_DEBUG_PRINT("Up button pressed");
 
 		if (Car_BackForwardState == Car_BackForward_Fordward)
 		{
@@ -211,8 +252,6 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 	else if (button == PressedButton_Down)
 	{
 		// Down
-		BUTTON_DEBUG_PRINT("Down button pressed");
-
 		if (Car_BackForwardState == Car_BackForward_Back)
 		{
 			// Larger speed
@@ -238,7 +277,8 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 	}
 
 
-	if ( Car_BackForward_PreviousValue != Car_BackForward_ActualValue)
+	// Check, need send command?
+	if (Car_BackForward_PreviousValue != Car_BackForward_ActualValue)
 	{
 		// Changed
 		DebugUart_Printf("Changed BackFordward value: previous: %d, now: %d\r\n",
@@ -264,8 +304,100 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 		ESP8266_RequestSendTcpMessage(msg);
 	}
 
+#endif	// CONFIG_FUNCTION_REMOTECONTROLLER
+
+#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
+
+
+	// Check buttons
+	switch (button)
+	{
+		case PressedButton_Right:
+			// Right
+			Logic_StepLetterPosition((type == ButtonPress_Short) ? 1 : 5);
+			break;
+
+		case PressedButton_Left:
+			// Left
+			Logic_StepLetterPosition((type == ButtonPress_Short) ? -1 : -5);
+			break;
+
+		case PressedButton_Up:
+			// Up
+			Logic_StepLetterNextValue((type == ButtonPress_Short) ? -1 : -5);
+			break;
+
+		case PressedButton_Down:
+			// Down
+			Logic_StepLetterNextValue((type == ButtonPress_Short) ? 1 : 5);
+			break;
+
+		case PressedButton_Count:
+		default:
+			// Error!
+			break;
+	}
+
 #endif
 }
+
+
+#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
+/**
+ * \brief	Step active letter selection to next (left-right)
+ */
+static void Logic_StepLetterPosition(int8_t step)
+{
+	DisplayInput_LetterPosition += step;
+	if (DisplayInput_LetterPosition > DisplayInput_LetterPosition_MaxLimit)
+	{
+		DisplayInput_LetterPosition = DisplayInput_LetterPosition_MinLimit;
+	}
+	// We dont need handle "value < min", because it will step to last letter
+
+	TaskHandler_RequestTaskScheduling(Task_Display);
+}
+
+
+
+/**
+ * \brief	Step Letter value to next (up-down)
+ */
+static void Logic_StepLetterNextValue(int8_t step)
+{
+	uint8_t selectedLetter = DisplayInput_ActualString[DisplayInput_LetterPosition];
+
+	if (step < 0 && selectedLetter > 0 && (int8_t)selectedLetter-step > 0)
+	{
+		// Can go "down"
+		selectedLetter--;
+	}
+	else if (step < 0)
+	{
+		// "Underflow"
+		selectedLetter = Display_Characters_size - 1;
+	}
+	else if (step > 0 && (uint8_t)(selectedLetter+step) < sizeof(Display_Characters)/sizeof(Display_Characters[0]))
+	{
+		// Can go "up"
+		selectedLetter++;
+	}
+	else if (step > 0)
+	{
+		// "Overflow"
+		selectedLetter = 0;
+	}
+
+	// Save actual letter
+	DisplayInput_ActualString[DisplayInput_LetterPosition] = selectedLetter;
+
+	// Convert to realstring
+	DisplayInput_ActualRealString[DisplayInput_LetterPosition] = Display_Characters[selectedLetter];
+
+	// Refresh display
+	TaskHandler_RequestTaskScheduling(Task_Display);
+}
+#endif
 
 
 

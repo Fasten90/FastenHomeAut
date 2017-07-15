@@ -160,6 +160,9 @@ int main(void)
 	#ifdef CONFIG_MODULE_DISPLAY_SHOW_SCREEN
 	// Display start screen
 	Display_LoadCarImage();
+	#else
+	Display_Clear();
+	Display_Activate();
 	#endif
 #endif
 

@@ -196,6 +196,7 @@ const CommandStruct CommandList[] =
 		.description = "Clear Screen",
 		.syntax = NULL,
 	},
+#ifdef CONFIG_TEST_MODE
 	{
 		.name = "test",
 		.commandFunctionPointer = CommandFunction_test,
@@ -203,12 +204,15 @@ const CommandStruct CommandList[] =
 		.description = NULL,
 		.syntax = NULL,
 	},
+#endif
+#ifdef CONFIG_MODULE_TEST_ENABLE
 	{
 		.name = "moduletest",
 		.commandFunctionPointer = CommandFunction_moduletest,
 		.commandArgNum = CommandArgument_0,
 		.description = "Run module test",
 	},
+#endif
 #ifdef CONFIG_MODULE_UNITTEST_ENABLE
 	{
 		.name = "unittest",

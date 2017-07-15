@@ -259,23 +259,27 @@
  *----------------------------------------------------------------------------*/
 
 
-/// Debug
-#define CONFIG_DEBUG_MODE
+///> Debug
+//#define CONFIG_DEBUG_MODE
 
 ///> Test Mode: Enable "test" command...
-#define CONFIG_TEST_MODE
+//#define CONFIG_TEST_MODE
 
 ///> Module test: Enable "moduletest" command ~hwtest
-#define CONFIG_MODULE_TEST_ENABLE
+//#define CONFIG_MODULE_TEST_ENABLE
 
 ///> Simulation mode:
 //#define CONFIG_MODULE_SIMULATION_ENABLE
 
-#define CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
-#define CONFIG_GLOBALVARHANDLER_TRACE_RAM_BUFFER
 //#define CONFIG_SWO_ENABLE
 //#define CONFIG_DEBUG_RAMREAD_WRITE_COMMAND_ENABLE
 //#define CONFIG_DEBUG_GO_COMMAND_ENABLE
+
+
+#define CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
+#define CONFIG_GLOBALVARHANDLER_TRACE_RAM_BUFFER
+
+//#define CONFIG_GLOBALVARHANDLER_CHECK_ENABLE
 
 
 /// Debug modes - Print debug message
@@ -476,6 +480,7 @@
 
 // Functions
 
+// Remote controller (for car) function
 //#define CONFIG_FUNCTION_REMOTECONTROLLER
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER
 	#ifndef CONFIG_MODULE_BUTTON_ENABLE
@@ -488,14 +493,32 @@
 #endif
 
 
-#define CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK
+// Display Clock function
+//#define CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK
 #ifdef CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK
 	#ifndef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
 		#define CONFIG_MODULE_DISPLAY_SHOW_CLOCK
 	#endif
+	#ifndef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
+		#define CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
+	#endif
 #endif
 
 
+// Display input function
+#define CONFIG_FUNCTION_DISPLAY_INPUT
+#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
+	#ifndef CONFIG_MODULE_DISPLAY_ENABLE
+		#define CONFIG_MODULE_DISPLAY_ENABLE
+	#endif
+	#ifndef CONFIG_MODULE_BUTTON_ENABLE
+		#define CONFIG_MODULE_BUTTON_ENABLE
+	#endif
+#endif
+
+
+
+/// Charger function
 //#define CONFIG_FUNCTION_CHARGER
 
 

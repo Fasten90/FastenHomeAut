@@ -75,7 +75,7 @@ static CommandResult_t CommandHandler_CheckArgumentNumIsGood(uint8_t receivedArg
 void CommandHandler_Init(void)
 {
 
-#ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
+#if defined(CONFIG_MODULE_GLOBALVARHANDLER_ENABLE) && defined(CONFIG_GLOBALVARHANDLER_CHECK_ENABLE)
 	// Check GlobalVarList[]
 	if (GlobalVarHandler_CheckCommandStructAreValid() == false)
 	{

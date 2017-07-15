@@ -304,12 +304,12 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 	// Check, need LED blinking?
 	if (LED_PwmCnt < LED_PwmLimit)
 	{
-		LED_SetLed(LED_Green, LED_Set_On);
-		//LED_SetLed(LED_Green, LED_Set_Toggle);
+		LED_SetLed(LED_Blue, LED_Set_On);
+		//LED_SetLed(LED_Blue, LED_Set_Toggle);
 	}
 	else
 	{
-		LED_SetLed(LED_Green, LED_Set_Off);
+		LED_SetLed(LED_Blue, LED_Set_Off);
 	}
 
 	// PWM counter
@@ -408,8 +408,8 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 
 	// Toggle LED
 #ifdef CONFIG_MODULE_LED_ENABLE
-	LED_SetLed(LED_Blue, LED_Set_Toggle);
-	LED_SetLed(LED_Blue, LED_Set_Toggle);
+	LED_SetLed(LED_Green, LED_Set_Toggle);
+	LED_SetLed(LED_Green, LED_Set_Toggle);
 #endif
 
 
@@ -569,6 +569,56 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 			TaskHandler_DisableTask(Task_Display);
 			break;
 	}
+	#endif
+
+	#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
+	static bool Display_VibrateLetter = false;
+
+
+	if (source == ScheduleSource_EventTriggered)
+	{
+		// Button press triggering
+		Display_VibrateLetter = false;
+
+		// Display "all" string
+		Display_PrintString(DisplayInput_ActualRealString, 2, Font_12x8);
+		Display_Activate();
+
+		TaskHandler_SetTaskOnceRun(Task_Display, 500);
+	}
+	else
+	{
+		// Vibration, if need (periodical)
+		if (Display_VibrateLetter)
+		{
+			// Vibrate
+			Display_VibrateLetter = false;
+			if (DisplayInput_ActualRealString[DisplayInput_LetterPosition] == ' ')
+			{
+				// There is a space character, Display a white box
+				Display_PrintFont12x8((char)0x01, DisplayInput_LetterPosition, 2);
+			}
+			else
+			{
+				// There is a normal character... vibrate with hiding
+				Display_PrintFont12x8(' ', DisplayInput_LetterPosition, 2);
+			}
+			Display_Activate();
+			TaskHandler_SetTaskOnceRun(Task_Display, 500);
+		}
+		else
+		{
+			// Normal
+			Display_PrintFont12x8(
+				DisplayInput_ActualRealString[DisplayInput_LetterPosition],
+				DisplayInput_LetterPosition, 2);
+			Display_Activate();
+
+			Display_VibrateLetter = true;
+			TaskHandler_SetTaskOnceRun(Task_Display, 500);
+		}
+	}
+
 	#endif
 
 	return TASK_RESULT_OK;

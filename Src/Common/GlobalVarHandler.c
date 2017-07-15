@@ -130,6 +130,7 @@ static void GlobalVarHandler_SetTrace(VarID_t commandID, const char * param);
  *----------------------------------------------------------------------------*/
 
 
+#ifdef CONFIG_GLOBALVARHANDLER_CHECK_ENABLE
 /**
  * \brief	Check the GlobalVarList[], are set valid?
  * \retval	true	 ok
@@ -240,6 +241,7 @@ bool GlobalVarHandler_CheckCommandStructAreValid(void)
 
 	return !hasError;
 }
+#endif
 
 
 
@@ -1666,6 +1668,10 @@ void GlobalVarHandler_UnitTest(void)
 
 
 	// Check GlobalVarHandler structures
+#ifndef CONFIG_GLOBALVARHANDLER_CHECK_ENABLE
+	#define CONFIG_GLOBALVARHANDLER_CHECK_ENABLE
+	#warning "Need enable GlobalVarChecker"
+#endif
 	isOk = GlobalVarHandler_CheckCommandStructAreValid();
 	UNITTEST_ASSERT(isOk, "GlobalVarHandler structs are wrong");
 

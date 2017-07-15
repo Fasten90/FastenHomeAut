@@ -78,6 +78,11 @@ typedef enum
  *  Global variables
  *----------------------------------------------------------------------------*/
 
+#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
+extern uint8_t DisplayInput_LetterPosition;
+extern char DisplayInput_ActualRealString[];
+#endif
+
 
 
 /*------------------------------------------------------------------------------
@@ -86,7 +91,9 @@ typedef enum
 
 void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type);
 
+#if defined(CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK)
 DisplayClock_ChangeState_t Logic_GetSystemTimeState(void);
+#endif
 
 
 
