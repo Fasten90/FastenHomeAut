@@ -261,10 +261,13 @@
 
 /// Debug
 #define CONFIG_DEBUG_MODE
+
 ///> Test Mode: Enable "test" command...
 #define CONFIG_TEST_MODE
+
 ///> Module test: Enable "moduletest" command ~hwtest
 #define CONFIG_MODULE_TEST_ENABLE
+
 ///> Simulation mode:
 //#define CONFIG_MODULE_SIMULATION_ENABLE
 

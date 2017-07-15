@@ -260,6 +260,7 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 	static bool LED_PwmLimitDir = false;
 	static uint8_t LED_100ms = 0;
 	static uint8_t LED_2ms = 0;
+	static const uint8_t LED_PWM_ChangeDir_100ms_limit = 10;
 
 	LED_2ms++;
 	if (LED_2ms >= 100/2)
@@ -280,9 +281,10 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 			LED_PwmLimit++;
 		}
 
-		if (LED_100ms >= 10)
+		// Change direction
+		if (LED_100ms >= LED_PWM_ChangeDir_100ms_limit)
 		{
-			// Run every 1000. msec
+			// Run every 1000. msec = every sec
 			LED_100ms = 0;
 
 			// Change dir after 1 sec
@@ -303,6 +305,7 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 	if (LED_PwmCnt < LED_PwmLimit)
 	{
 		LED_SetLed(LED_Green, LED_Set_On);
+		//LED_SetLed(LED_Green, LED_Set_Toggle);
 	}
 	else
 	{

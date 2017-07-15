@@ -151,10 +151,18 @@ uint8_t COMMUNICATION_Printf(CommProtocol_t protocol, const char *format, ...)
 	// Working in at:
 	char txBuffer[COMMUNICATION_TXBUFFER_SIZE];
 
+#ifdef CONFIG_DEBUG_MODE
+	txBuffer[COMMUNICATION_TXBUFFER_SIZE-1] = 0xEF;
+#endif
+
 	va_list ap;									// argument pointer
 	va_start(ap, format); 						// ap on arg
-	string_printf(txBuffer, format, ap);			// Separate and process
+	string_printf(txBuffer, format,ap);			// Separate and process
 	va_end(ap);						 			// Cleaning after end
+
+#ifdef CONFIG_DEBUG_MODE
+	if (txBuffer[COMMUNICATION_TXBUFFER_SIZE-1] != 0xEF) DEBUG_BREAKPOINT();
+#endif
 
 	length = COMMUNICATION_SendMessage(protocol, txBuffer);
 

@@ -27,12 +27,12 @@
 
 #include "ESP8266.h"
 
+
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
-
 
 #ifdef ESP8266_USE_BLOCK_MODE
 #define ESP8266_SEND_TCP_MESSAGE(msg)	ESP8266_SendTcpMessageBlockingMode(msg)
@@ -468,15 +468,24 @@ static void DebugPrint(const char *format, ...)
 	if (ESP8266_DebugEnableFlag)
 	{
 		// Working in at:
-		char TxBuffer[ESP8266_DEBUG_TXBUFFERSIZE];
+		char txBuffer[ESP8266_DEBUG_TXBUFFERSIZE];
+
+#ifdef CONFIG_DEBUG_MODE
+		txBuffer[ESP8266_DEBUG_TXBUFFERSIZE-1] = 0xEF;
+#endif
 
 		va_list ap;									// argument pointer
 		va_start(ap, format); 						// ap on arg
-		string_printf(TxBuffer, format, ap);		// Separate and process
+		string_printf(txBuffer, format, ap);		// Separate and process
 		va_end(ap);						 			// Cleaning after end
+
+#ifdef CONFIG_DEBUG_MODE
+		if (txBuffer[ESP8266_DEBUG_TXBUFFERSIZE-1] != 0xEF) DEBUG_BREAKPOINT();
+#endif
 
 		DebugUart_SendMessage("ESP8266: ");
 		DebugUart_SendMessage(TxBuffer);			// Send on DebugUart
+
 	}
 }
 

@@ -479,10 +479,18 @@ void CommandHandler_Printf(const char *format, ...)
 	// Working in at:
 	char txBuffer[COMMANDHANDLER_MAX_MESSAGE_LENGTH];
 
+#ifdef CONFIG_DEBUG_MODE
+	txBuffer[COMMANDHANDLER_MAX_MESSAGE_LENGTH-1] = 0xEF;
+#endif
+
 	va_list ap;									// argument pointer
 	va_start(ap, format); 						// ap on arg
 	string_printf(txBuffer, format, ap);		// Separate and process
 	va_end(ap);						 			// Cleaning after end
+
+#ifdef CONFIG_DEBUG_MODE
+	if (txBuffer[COMMANDHANDLER_MAX_MESSAGE_LENGTH-1] != 0xEF) DEBUG_BREAKPOINT();
+#endif
 
 	CommandHandler_SendMessage(txBuffer);
 

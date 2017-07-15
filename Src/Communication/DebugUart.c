@@ -358,14 +358,24 @@ void DebugUart_ProcessReceivedCharacters(void)
 uint8_t uprintf(const char *format, ...)
 {
 	// Working in at:
-	char TxBuffer[DEBUGUART_TXBUFFERSIZE];
+	char txBuffer[DEBUGUART_TXBUFFERSIZE];
+
+#ifdef CONFIG_DEBUG_MODE
+	txBuffer[DEBUGUART_TXBUFFERSIZE-1] = 0xEF;
+#endif
 
 	va_list ap;									// argument pointer
 	va_start(ap, format); 						// ap on arg
-	string_printf(TxBuffer, format,ap);			// Separate and process
+	string_printf(txBuffer, format,ap);			// Separate and process
 	va_end(ap);						 			// Cleaning after end
 
-	return DebugUart_SendMessage(TxBuffer);		// Send on Usart
+#ifdef CONFIG_DEBUG_MODE
+	if (txBuffer[DEBUGUART_TXBUFFERSIZE-1] != 0xEF) DEBUG_BREAKPOINT();
+#endif
+
+	return DebugUart_SendMessage(txBuffer);		// Send on Usart
 }
+
+
 
 #endif	// #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
