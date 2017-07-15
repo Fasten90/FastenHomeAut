@@ -1,10 +1,14 @@
 /*
- * MEM.c
+ *		MEM.c
  *
- *  Created on: Aug 31, 2016
- *      Author: Vizi Gábor
+ *		Created on:		2016.08.31
+ *		Author: 		Vizi Gábor
+ *		E-mail:			vizi.gabor90@gmail.com
+ *		Function:		MEM functions
+ *		Target:			STM32Fx
+ *		Version:		v1
+ *		Last modified:	2017.07.15
  */
-
 
 #include <stdlib.h>	// For size_t
 #include <stdint.h>	// For uintx_t
@@ -70,7 +74,6 @@ void * memset(void * ptr, int value, size_t num)
 	}
 
 	return NULL;
-
 }
 
 
