@@ -271,7 +271,7 @@ bool LED_GetStatus(LED_Pin_t pin)
 
 	switch (pin)
 	{
-#ifdef CONFIG_USE_PANEL_STM32F4DISCOVERY
+#if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_HOMEAUTPANELS)
 		case LED_Green:
 			status = LED_GREEN_STATUS();
 			break;

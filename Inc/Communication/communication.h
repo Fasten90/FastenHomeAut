@@ -29,7 +29,9 @@ typedef enum
 {
 	CommProt_Unknown	= 0,
 	CommProt_DebugUart  = (1 << 0),
+#ifdef CONFIG_SWO_ENABLE
 	CommProt_SWO		= (1 << 1),
+#endif
 #ifdef CONFIG_PROTOCOL_BUFFER_ENABLE
 	CommProt_Buffer		= (1 << 2),
 #endif

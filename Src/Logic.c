@@ -68,6 +68,7 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 {
 #if defined(CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK) && (BUTTON_NUM == 1)
 	// One button mode
+	(void)type;
 	if (button == PressedButton_User)
 	{
 		if (type == ButtonPress_Long)
@@ -83,6 +84,7 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 	}
 #elif defined(CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK) && (BUTTON_NUM > 1)
 	// More button mode
+	(void)type;
 	// TODO: Up-Down / Right-Up difference...
 	if ((button == PressedButton_Right) || (button == PressedButton_Left))
 	{

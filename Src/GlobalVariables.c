@@ -133,7 +133,7 @@ const GlobalVarCommand_t GlobalVarList[] =
 	{
 		.name = "tick",
 		.varPointer = (void * const)&GlobarVarHandler_TemporaryValue,
-		.getFunctionPointer = (void * const)HAL_GetTick,
+		.getFunctionPointer = (GeneralFunctionPointer)HAL_GetTick,
 		.type = Type_Uint32,
 		.isReadOnly = true,
 		.isFunction = true,

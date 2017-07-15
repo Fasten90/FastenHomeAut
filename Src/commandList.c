@@ -2157,6 +2157,9 @@ static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv)
  */
 static CommandResult_t CommandFunction_IoStates(uint32_t argc, char** argv)
 {
+	(void)argc;
+	(void)argv;
+
 	uint8_t i;
 #if IO_INPUTS_NUM > 0
 	CommandHandler_SendLine("Input states:");
