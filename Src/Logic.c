@@ -368,6 +368,7 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 }
 
 
+
 #ifdef CONFIG_FUNCTION_DISPLAY_INPUT
 /**
  * \brief	Step active letter selection to next (left-right)
@@ -375,11 +376,15 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 static void Logic_StepLetterPosition(int8_t step)
 {
 	DisplayInput_LetterPosition += step;
-	if (DisplayInput_LetterPosition > DisplayInput_LetterPosition_MaxLimit)
+	if (step > 0 && (DisplayInput_LetterPosition > DisplayInput_LetterPosition_MaxLimit))
 	{
 		DisplayInput_LetterPosition = DisplayInput_LetterPosition_MinLimit;
 	}
-	// We dont need handle "value < min", because it will step to last letter
+	else if (step < 0 && (DisplayInput_LetterPosition > DisplayInput_LetterPosition_MaxLimit))
+	{
+		// Check "underflow"
+		DisplayInput_LetterPosition = DisplayInput_LetterPosition_MaxLimit;
+	}
 
 	TaskHandler_RequestTaskScheduling(Task_Display);
 }
