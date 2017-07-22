@@ -45,20 +45,26 @@ typedef uint32_t TaskTick_t;
 typedef TaskResult_t (*TaskFunctionPointer)(TaskID_t id);
 
 
+///> Task struct
 typedef struct
 {
-	const char *taskName;						///> Task Name
-	const TaskFunctionPointer taskFunction;		///> Task function
-	TaskTick_t tick;							///> Task tick [ms]
-	TaskTick_t taskScheduleRate;				///> Task scheduling rate [ms]
-	bool isRequestScheduling;					///> Task scheduling request (true, if request)
-	bool isPeriodisScheduleDisabled;			///> Task schedule (periodic) disabled
-	bool isRunOnce;								///> Task scheduling once
-	bool isTimeOutTask;							///> Task is work in TimeOut mode
-	bool isDisabled;							///> Task is disabled/enabled
+	const char *taskName;						///> Task Name - Init
+	const TaskFunctionPointer taskFunction;		///> Task function - Init
+	TaskTick_t tick;							///> Task tick [ms] - RunTime
+	TaskTick_t taskScheduleRate;				///> Task scheduling rate [ms] - Init/Runtime
+	bool isRequestScheduling;					///> Task scheduling request (true, if request) - Runtime
+	bool isPeriodisScheduleDisabled;			///> Task schedule (periodic) disabled - Init/Runtime
+	bool isRunOnce;								///> Task scheduling once - Init/Runtime
+	bool isTimeOutTask;							///> Task is work in TimeOut mode - Init/Runtime
+	bool isDisabled;							///> Task is disabled/enabled - Init/Runtime
+
+#ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
+	uint32_t taskRunCount;						///> How many times ran [count]
+#endif
 } Task_t;
 
 
+///> Shedule source (Why executed the task by TaskHandler)
 typedef enum
 {
 	ScheduleSource_Unknown,						///> Unknown schedule reason
@@ -90,6 +96,7 @@ void TaskHandler_RequestTaskScheduling(TaskID_t taskID);
 void TaskHandler_ClearTimeoutTask(TaskID_t taskID);
 
 void TaskHandler_PrintStatistics(void);
+void TaskHandler_PrintTaskRunCounts(void);
 
 void TaskHandler_UnitTest(void);
 

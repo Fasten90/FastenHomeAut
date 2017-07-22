@@ -20,6 +20,7 @@
 #include "include.h"
 #include "TaskList.h"
 #include "TaskHandler.h"
+#include "CommandHandler.h"
 
 #ifdef MODULE_TASKHANDLER_UNNITEST_ENABLE
 #include "UnitTest.h"
@@ -184,6 +185,8 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 	TaskList[taskID].tick = 0;
 
 #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
+	TaskList[taskID].taskRunCount++;
+
 	uint32_t runTime = HAL_GetTick() - startTime;
 	TaskHandler_StatisticsRanTaskTicks[TaskHandler_StatisticsIndex].startTick = startTime;
 	TaskHandler_StatisticsRanTaskTicks[TaskHandler_StatisticsIndex].runTime = runTime;
@@ -317,7 +320,7 @@ void TaskHandler_PrintStatistics(void)
 	uint32_t allTime = actualTick - oldestTick;
 	uint8_t cpuPercent = runTimes / allTime;
 
-	uprintf("TaskHandler usage:\r\n"
+	CommandHandler_Printf("TaskHandler usage:\r\n"
 			" Last run time: %d\r\n"
 			" Recently run time: %d\r\n"
 			" Run times: %d [ms]\r\n"
@@ -333,8 +336,24 @@ void TaskHandler_PrintStatistics(void)
 	{
 		if (TaskHandler_StatisticsRanTaskTicks[i].startTick > 0)
 		{
-			uprintf("#%8d - %3d\r\n", TaskHandler_StatisticsRanTaskTicks[i].startTick, TaskHandler_StatisticsRanTaskTicks[i].runTime);
+			CommandHandler_Printf("#%8d - %3d\r\n", TaskHandler_StatisticsRanTaskTicks[i].startTick, TaskHandler_StatisticsRanTaskTicks[i].runTime);
 		}
+	}
+}
+
+
+
+/**
+ * \brief	Print TaskHandler runtimes statistics (Run counts)
+ */
+void TaskHandler_PrintTaskRunCounts(void)
+{
+	TaskID_t i;
+
+	CommandHandler_Printf("+ %20s + %9s +\r\n", "<TaskName>", "<RunCnt>");
+	for (i = 0; i < Task_Count; i++)
+	{
+		CommandHandler_Printf("| %20s | %9u |\r\n", TaskList[i].taskName, TaskList[i].taskRunCount);
 	}
 }
 #endif

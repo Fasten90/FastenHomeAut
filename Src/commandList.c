@@ -139,7 +139,9 @@
 #ifdef CONFIG_MODULE_SIMULATION_ENABLE
 	static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv);
 #endif
-
+#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
+	static CommandResult_t CommandFunction_TaskHandler(uint32_t argc, char** argv);
+#endif
 
 
 /*------------------------------------------------------------------------------
@@ -495,7 +497,16 @@ const CommandStruct CommandList[] =
 		.commandArgNum = CommandArgument_1 | CommandArgument_2,
 	},
 #endif
-
+#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
+	{
+		.name = "taskhandler",
+		.commandFunctionPointer = CommandFunction_TaskHandler,
+		.description = "taskhandler functions",
+		.syntax = "",
+		.example = "",
+		.commandArgNum = CommandArgument_1 | CommandArgument_2,
+	},
+#endif
 
 	/*
 	 * XXX: Add new commands here
@@ -914,14 +925,8 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	 */
 
 
-	// TaskHandler statistics test
-#ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
-	TaskHandler_PrintStatistics();
-#endif
-
-
 	// print() test
-	printf("Example");
+	//printf("Example");
 
 
 	/**
@@ -2295,6 +2300,42 @@ static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
 		{
 			result = CommandResult_Error_WrongArgument1;
 		}
+	}
+
+	return result;
+}
+#endif
+
+
+
+#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
+/**
+ * \brief	Simulation
+ */
+static CommandResult_t CommandFunction_TaskHandler(uint32_t argc, char** argv)
+{
+	(void)argc;
+	CommandResult_t result = CommandResult_Unknown;
+
+	#ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
+	if (!StrCmp("statistics", argv[1]))
+	{
+		// TaskHandler statistics
+		TaskHandler_PrintStatistics();
+
+		result = CommandResult_Ok_SendSuccessful;
+	}
+	else if (!StrCmp("runcounts", argv[1]))
+	{
+		// TaskHandler - Run counts
+		TaskHandler_PrintTaskRunCounts();
+
+		result = CommandResult_Ok_SendSuccessful;
+	}
+	#endif
+	else
+	{
+		result = CommandResult_Error_WrongArgument1;
 	}
 
 	return result;
