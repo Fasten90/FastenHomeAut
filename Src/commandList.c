@@ -24,6 +24,7 @@
 #include "Button.h"
 #include "DateTime.h"
 #include "Display.h"
+#include "Display_SSD1306.h"
 #include "LED.h"
 #include "Watchdog.h"
 #include "Calc.h"
@@ -893,13 +894,6 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	*/
 
 
-/*
-#ifdef CONFIG_MODULE_DISPLAY_TEST_WITH_TERMINAL
-	Display_SendOnTerminal();
-#endif
-*/
-
-
 	// Clock test
 	//Display_TestClock();
 
@@ -917,7 +911,7 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	{
 		mem_CheckStackGuardValues();
 	}
-*/
+	 */
 
 
 	// TaskHandler statistics test
@@ -926,17 +920,8 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 #endif
 
 
-
-	// Const write
-	static const char const buffer[] = "blabla";
-	char * pnt = (char *)buffer;
-
-
-	uprintf("Buffer: %s\r\n", buffer);
-
-	pnt[2] = 'e';
-
-	uprintf("Buffer: %s\r\n", buffer);
+	// print() test
+	printf("Example");
 
 
 	/**
@@ -2129,6 +2114,14 @@ static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv)
 		// Test font - 32x20
 		Display_Test32x20Font();
 
+		result = CommandResult_Ok_SendSuccessful;
+	}
+#endif
+#ifdef CONFIG_MODULE_DISPLAY_TEST_WITH_TERMINAL
+	else if (!StrCmp("debugprint", argv[1]))
+	{
+		// Debugprint Display
+		Display_SendOnTerminal();
 		result = CommandResult_Ok_SendSuccessful;
 	}
 #endif

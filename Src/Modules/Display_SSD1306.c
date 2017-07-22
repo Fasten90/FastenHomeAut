@@ -898,8 +898,17 @@ void Display_SendOnTerminal(void)
 	uint8_t x;
 	uint8_t y;
 
+	// Print top frame row
+	DebugUart_SendChar('+');
+	for (x = 0; x < SSD1306_LCDWIDTH; x++) DebugUart_SendChar('-');
+	DebugUart_SendLine("+");
+
+	// Print every row
 	for (y = 0; y < SSD1306_LCDHEIGHT; y++)
 	{
+		DebugUart_SendChar('|');
+
+		// Print every pixel on row (=column)
 		for (x = 0; x < SSD1306_LCDWIDTH; x++)
 		{
 			// Print pixel
@@ -910,8 +919,15 @@ void Display_SendOnTerminal(void)
 			}
 			DebugUart_SendChar(ch);
 		}
-		DebugUart_SendNewLine();
+
+		// |\r\n
+		DebugUart_SendLine("|");
 	}
+
+	// Print bottom frame row
+	DebugUart_SendChar('+');
+	for (x = 0; x < SSD1306_LCDWIDTH; x++) DebugUart_SendChar('-');
+	DebugUart_SendLine("+");
 }
 #endif
 
