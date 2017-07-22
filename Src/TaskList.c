@@ -591,29 +591,52 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 		// Vibration, if need (periodical)
 		if (Display_VibrateLetter)
 		{
-			// Vibrate
-			Display_VibrateLetter = false;
-			if (DisplayInput_ActualRealString[DisplayInput_LetterPosition] == ' ')
+			// Vibrate (not show char)
+			if (DisplayInput_LetterPosition == DisplayInput_LetterPosition_MaxLimit)
 			{
-				// There is a space character, Display a white box
-				Display_PrintFont12x8((char)0x01, DisplayInput_LetterPosition, 2);
+				// OK
+				Display_PrintFont12x8('O', DisplayInput_LetterPosition_MaxLimit, 2, CHAR_INVERSE);
+				Display_PrintFont12x8('K', DisplayInput_LetterPosition_MaxLimit + 1, 2, CHAR_INVERSE);
 			}
 			else
 			{
-				// There is a normal character... vibrate with hiding
-				Display_PrintFont12x8(' ', DisplayInput_LetterPosition, 2);
+				// Normal char
+				// It is empty char? (=space)
+				if (DisplayInput_ActualRealString[DisplayInput_LetterPosition] == ' ')
+				{
+					// There is a space character, Display a white box
+					Display_PrintFont12x8((char)0x01, DisplayInput_LetterPosition, 2, CHAR_INVERSE_NOT);
+				}
+				else
+				{
+					// There is a normal character... vibrate with hiding
+					Display_PrintFont12x8(' ', DisplayInput_LetterPosition, 2, CHAR_INVERSE_NOT);
+				}
 			}
+
 			Display_Activate();
+			Display_VibrateLetter = false;
 			TaskHandler_SetTaskOnceRun(Task_Display, 500);
 		}
 		else
 		{
-			// Normal
-			Display_PrintFont12x8(
-				DisplayInput_ActualRealString[DisplayInput_LetterPosition],
-				DisplayInput_LetterPosition, 2);
-			Display_Activate();
+			// Normal (show char)
+			if (DisplayInput_LetterPosition == DisplayInput_LetterPosition_MaxLimit)
+			{
+				// OK
+				Display_PrintFont12x8('O', DisplayInput_LetterPosition_MaxLimit, 2, CHAR_INVERSE_NOT);
+				Display_PrintFont12x8('K', DisplayInput_LetterPosition_MaxLimit + 1, 2, CHAR_INVERSE_NOT);
+			}
+			else
+			{
+				// Normal char
+				Display_PrintFont12x8(
+					DisplayInput_ActualRealString[DisplayInput_LetterPosition],
+					DisplayInput_LetterPosition, 2, CHAR_INVERSE_NOT);
+			}
 
+
+			Display_Activate();
 			Display_VibrateLetter = true;
 			TaskHandler_SetTaskOnceRun(Task_Display, 500);
 		}

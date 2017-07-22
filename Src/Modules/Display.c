@@ -96,7 +96,7 @@ void Display_PrintString(const char *str, uint8_t line, Font_Type font)
 #ifdef CONFIG_MODULE_DISPLAY_FONT12X8_ENABLE
 			case Font_12x8:
 				// Print ASCII character (0-127)
-				Display_PrintFont12x8(str[i], i, line);
+				Display_PrintFont12x8(str[i], i, line, CHAR_INVERSE_NOT);
 				break;
 #endif
 #ifdef CONFIG_MODULE_DISPLAY_FONT32X20_ENABLE
@@ -161,7 +161,7 @@ void Display_PrintFont8x5(uint8_t chr, uint8_t index, uint8_t line)
  * \param	index	- column
  * \param	line	- line / row
  */
-void Display_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line)
+void Display_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line, bool inverse)
 {
 	// 12x8 pixel font
 	uint8_t i;
@@ -178,11 +178,11 @@ void Display_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line)
 			uint8_t x = index * (FONT_12X8_WIDTH + 1) + j;
 			if (Font12x8[chr][i] & (1 << (7-j)))
 			{
-				SSD1306_drawPixel(x, y, WHITE);
+				SSD1306_drawPixel(x, y, inverse ? BLACK : WHITE);
 			}
 			else
 			{
-				SSD1306_drawPixel(x, y, BLACK);
+				SSD1306_drawPixel(x, y, inverse ? WHITE : BLACK);
 			}
 		}
 	}

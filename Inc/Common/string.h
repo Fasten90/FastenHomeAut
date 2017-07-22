@@ -116,6 +116,7 @@ uint8_t StrCpyMax(char *dest, const char *str, uint8_t maxLength);
 uint8_t StrAppend(char *dest, const char *src);
 
 // Find & Separators
+void StrTrim(char *str);
 int16_t STRING_FindString(const char *str, const char *findString);
 uint8_t STRING_Splitter(char *source, char delimiterChar,
 		char **separated, uint8_t parameterMaxCount);

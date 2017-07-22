@@ -79,6 +79,8 @@ typedef enum
  *----------------------------------------------------------------------------*/
 
 #ifdef CONFIG_FUNCTION_DISPLAY_INPUT
+#define DisplayInput_LetterPosition_MaxLimit	11
+
 extern uint8_t DisplayInput_LetterPosition;
 extern char DisplayInput_ActualRealString[];
 #endif
@@ -88,6 +90,8 @@ extern char DisplayInput_ActualRealString[];
 /*------------------------------------------------------------------------------
  *  Global function declarations
  *----------------------------------------------------------------------------*/
+
+void Logic_Display_Init(void);
 
 void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type);
 

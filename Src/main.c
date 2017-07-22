@@ -47,6 +47,7 @@
 #include "Motor.h"
 #include "ESP8266.h"
 #include "IO.h"
+#include "Display.h"
 
 
 /* Private variables ---------------------------------------------------------*/
@@ -157,13 +158,7 @@ int main(void)
 	// Display
 	Display_SSD1306_Init();
 
-	#ifdef CONFIG_MODULE_DISPLAY_SHOW_SCREEN
-	// Display start screen
-	Display_LoadCarImage();
-	#else
-	Display_Clear();
-	Display_Activate();
-	#endif
+	Logic_Display_Init();
 #endif
 
 

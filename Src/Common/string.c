@@ -1151,6 +1151,37 @@ uint8_t StrAppend(char *dest, const char *str)
 
 
 /**
+ * \brief	Trim string (cut space and others at end)
+ */
+void StrTrim(char *str)
+{
+	// Check pointer
+	if (str == NULL)
+	{
+		return;
+	}
+
+	uint8_t length = StringLength(str) - 1;
+	uint8_t i;
+
+	for (i = length; i > 0; i--)
+	{
+		if (str[i] == ' ')
+		{
+			// Replace ' ' to \0
+			str[i] = '\0';
+		}
+		else
+		{
+			// Not space, good character, end
+			return;
+		}
+	}
+}
+
+
+
+/**
  * \brief	Find small string in big string
  * 			like strstr()
  * \param	*str	scanned string
@@ -1686,8 +1717,10 @@ void STRING_UnitTest(void)
 	UNITTEST_ASSERT(!result, "StringToFloat error");
 
 
-
 	/// String function testing
+
+	// TODO: Test StrTrim()
+
 
 	// STRING_FindString()
 	ivalue16 = STRING_FindString("longtexttofinding","text");
@@ -1717,6 +1750,7 @@ void STRING_UnitTest(void)
 	value8 = STRING_Splitter(buffer, ' ', splitted, 10);
 	UNITTEST_ASSERT(value8 == 0, "STRING_Splitter error");
 	UNITTEST_ASSERT(splitted[0] == NULL, "STRING_Splitter error");
+
 
 
 	// End of unittest

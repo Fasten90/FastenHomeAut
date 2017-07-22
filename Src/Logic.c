@@ -24,6 +24,9 @@
 #include "String.h"
 #include "IO.h"
 #include "Logic.h"
+#include "Display.h"
+#include "CommandHandler.h"
+#include "Communication.h"
 
 
 
@@ -45,14 +48,13 @@ static DisplayClock_ChangeState_t Logic_SystemTimeConfigState = 0;
 uint8_t DisplayInput_LetterPosition = 0;
 
 // TODO: Refactor
-#define DisplayInput_LetterPosition_MaxLimit	10
 #define DisplayInput_LetterPosition_MinLimit	0
 
-char DisplayInput_ActualRealString[DisplayInput_LetterPosition_MaxLimit+1] = { ' ' };
+char DisplayInput_ActualRealString[DisplayInput_LetterPosition_MaxLimit] = { 0 };
 static uint8_t DisplayInput_ActualString[DisplayInput_LetterPosition_MaxLimit] = { 0 };
 
 static char const Display_Characters[] = { ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
+	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
 	't', 'u', 'v', 'w', 'x', 'y', 'z' };
 
 static uint8_t const Display_Characters_size = sizeof(Display_Characters)/sizeof(Display_Characters[0]);
@@ -79,6 +81,30 @@ static void Logic_StepLetterNextValue(int8_t step);
 /*------------------------------------------------------------------------------
  *  Functions
  *----------------------------------------------------------------------------*/
+
+
+
+void Logic_Display_Init(void)
+{
+	#ifdef CONFIG_MODULE_DISPLAY_SHOW_SCREEN
+	// Display start screen
+	Display_LoadCarImage();
+	#else
+	Display_Clear();
+	Display_Activate();
+	#endif
+
+	#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
+	// Fill real string with empty character
+	memset(DisplayInput_ActualRealString, ' ', sizeof(DisplayInput_ActualRealString)/sizeof(DisplayInput_ActualRealString[0]) - 1);
+	// Last char not need fill with ' ', because it is end character
+
+	// Create OK button
+	Display_PrintFont12x8('O', DisplayInput_LetterPosition_MaxLimit, 2, CHAR_INVERSE_NOT);
+	Display_PrintFont12x8('K', DisplayInput_LetterPosition_MaxLimit + 1, 2, CHAR_INVERSE_NOT);
+
+	#endif
+}
 
 
 
@@ -367,7 +393,16 @@ static void Logic_StepLetterNextValue(int8_t step)
 {
 	uint8_t selectedLetter = DisplayInput_ActualString[DisplayInput_LetterPosition];
 
-	if (step < 0 && selectedLetter > 0 && (int8_t)selectedLetter-step > 0)
+	if (DisplayInput_LetterPosition == DisplayInput_LetterPosition_MaxLimit)
+	{
+		// At "OK" button --> Run command
+		// TODO: CommPort --> Display
+		char str[DisplayInput_LetterPosition_MaxLimit];
+		StrCpyMax(str, DisplayInput_ActualRealString, DisplayInput_LetterPosition_MaxLimit);
+		StrTrim(str);
+		CommandHandler_PrepareFindExecuteCommand(CommProt_DebugUart, str);
+	}
+	else if (step < 0 && selectedLetter > 0 && (int8_t)selectedLetter-step > 0)
 	{
 		// Can go "down"
 		selectedLetter--;

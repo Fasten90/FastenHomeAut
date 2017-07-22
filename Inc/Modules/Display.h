@@ -33,6 +33,9 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
+#define	CHAR_INVERSE_NOT			(false)
+#define CHAR_INVERSE				(true)
+
 
 
 /*------------------------------------------------------------------------------
@@ -71,7 +74,7 @@ extern bool Display_CarAnimationDisable_flag;
 
 void Display_PrintString(const char *str, uint8_t line, Font_Type font);
 void Display_PrintFont8x5(uint8_t chr, uint8_t index, uint8_t line);
-void Display_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line);
+void Display_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line, bool inverse);
 void Display_PrintFont32x20(uint8_t chr, uint8_t index, uint8_t startposx, uint8_t startposy);
 
 void Display_Clear(void);
@@ -84,8 +87,8 @@ void Display_ChangeCarImage(void);
 
 #ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
 void Display_ShowClock(Time_t *time);
-#endif
 void Display_ShowClockHalf(Time_t *time, DisplayClock_ChangeState_t displayState);
+#endif
 
 
 void Display_Test8x5Font(void);
