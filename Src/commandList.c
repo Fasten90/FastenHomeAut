@@ -777,35 +777,6 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	 */
 
 
-	// Test SWO
-	//COMMUNICATION_SendMessage(CommProt_SWO, "Test message on SWO\n");
-
-
-	/*
-	// Test zero dividing
-	uint32_t a = 5;
-	uint32_t b = 0;
-	uint32_t c;
-
-	c = a/b;
-
-	uprintf("ZeroDivice result: %d\r\n", c);
-	*/
-
-
-	/*
-	// Test invalid pointer
-	const uint32_t constValue = 0x12345678;
-	uint32_t * wrongPointer = (uint32_t *)constValue;
-	*wrongPointer = 0;
-
-	uprintf("WrongPointer value: %d\r\n", *wrongPointer);
-	*/
-
-	// Test Watchdog clear with infinite loop
-	//while (1);
-
-
 	// Test variadic macros
 	// Warning: "ISO C does not permit named variadic macros [-Wvariadic-macros]
 	// in Atollic TrueSTUDIO, 7.1.1
@@ -2245,18 +2216,58 @@ static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
 		}
 		else if (!StrCmp("genfault", argv[1]))
 		{
-			// Generate Fault to test FaultHandler()
+			if (!StrCmp("constwrite", argv[2]))
+			{
+				// Generate Fault to test FaultHandler()
 
-			// Const write
-			static const char const buffer[] = "const";
-			char * pnt = (char *)buffer;
+				// Const write
+				static const char const buffer[] = "const";
+				char * pnt = (char *)buffer;
 
-			uprintf("Buffer: %s\r\n", buffer);
+				uprintf("Buffer: %s\r\n", buffer);
 
-			pnt[2] = 'e';
+				pnt[2] = 'e';
 
-			uprintf("Buffer: %s\r\n", buffer);
+				uprintf("Buffer: %s\r\n", buffer);
+
+				result = CommandResult_Ok_SendSuccessful;
+			}
+			else if (!StrCmp("zerodivide", argv[2]))
+			{
+				// Test zero dividing
+				uint32_t a = 5;
+				uint32_t b = 0;
+				uint32_t c;
+
+				c = a/b;
+
+				uprintf("ZeroDivice result: %d\r\n", c);
+
+				result = CommandResult_Ok_SendSuccessful;
+			}
+			else if (!StrCmp("failpointer", argv[2]))
+			{
+				// Test invalid pointer
+				const uint32_t constValue = 0x12345678;
+				uint32_t * wrongPointer = (uint32_t *)constValue;
+				*wrongPointer = 0;
+
+				uprintf("WrongPointer value: %d\r\n", *wrongPointer);
+
+				result = CommandResult_Ok_SendSuccessful;
+			}
+			else
+			{
+				result = CommandResult_Error_WrongArgument2;
+			}
 		}
+#ifdef CONFIG_SWO_ENABLE
+		else if (!StrCmp("SWO", argv[1]))
+		{
+			// Test SWO
+			COMMUNICATION_SendMessage(CommProt_SWO, "Test message on SWO\n");
+		}
+#endif
 #ifdef CONFIG_MODULE_IO_ENABLE
 		else if (!StrCmp("input", argv[1]))
 		{
