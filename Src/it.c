@@ -190,6 +190,7 @@ void EXTI0_1_IRQHandler(void)
 void EXTI4_15_IRQHandler(void)
 {
 	/*
+	// Original mode: It sometimes not handle the IRQ and the sw will crash (infinite loop)
 	if (HAL_GPIO_ReadPin(BUTTON_RIGHT_GPIO_PORT, BUTTON_RIGHT_GPIO_PIN) == GPIO_PIN_SET)
 	{
 		HAL_GPIO_EXTI_IRQHandler(BUTTON_RIGHT_GPIO_PIN);

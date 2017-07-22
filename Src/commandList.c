@@ -933,6 +933,9 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	//Display_TestClock();
 
 
+
+	// Stack test
+	/*
 	static bool stackIsFilled = false;
 	if (!stackIsFilled)
 	{
@@ -943,12 +946,27 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	{
 		mem_CheckStackGuardValues();
 	}
+*/
 
 
 	// TaskHandler statistics test
 #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
 	TaskHandler_PrintStatistics();
 #endif
+
+
+
+	// Const write
+	static const char const buffer[] = "blabla";
+	char * pnt = (char *)buffer;
+
+
+	uprintf("Buffer: %s\r\n", buffer);
+
+	pnt[2] = 'e';
+
+	uprintf("Buffer: %s\r\n", buffer);
+
 
 	/**
 	 * 		End of Test codes
@@ -2220,9 +2238,24 @@ static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
 		// Enabled simulation
 		if (!StrCmp("infloop", argv[1]))
 		{
+			// @note	Be careful!!!!
 			// Infinite loop test for WatchDog test
 			while(1);
 			result = CommandResult_Ok_SendSuccessful;
+		}
+		else if (!StrCmp("genfault", argv[1]))
+		{
+			// Generate Fault to test FaultHandler()
+
+			// Const write
+			static const char const buffer[] = "const";
+			char * pnt = (char *)buffer;
+
+			uprintf("Buffer: %s\r\n", buffer);
+
+			pnt[2] = 'e';
+
+			uprintf("Buffer: %s\r\n", buffer);
 		}
 #ifdef CONFIG_MODULE_IO_ENABLE
 		else if (!StrCmp("input", argv[1]))
@@ -2238,6 +2271,7 @@ static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
 				result = CommandResult_Error_WrongArgument2;
 			}
 		}
+	#if IO_OUTPUTS_NUM > 0
 		else if (!StrCmp("output", argv[1]))
 		{
 			uint32_t pin;
@@ -2251,6 +2285,7 @@ static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
 				result = CommandResult_Error_WrongArgument2;
 			}
 		}
+	#endif
 #endif
 		else
 		{

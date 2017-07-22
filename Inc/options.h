@@ -260,26 +260,20 @@
 
 
 ///> Debug
-//#define CONFIG_DEBUG_MODE
+#define CONFIG_DEBUG_MODE
 
 ///> Test Mode: Enable "test" command...
-//#define CONFIG_TEST_MODE
+#define CONFIG_TEST_MODE
 
 ///> Module test: Enable "moduletest" command ~hwtest
 //#define CONFIG_MODULE_TEST_ENABLE
 
-///> Simulation mode:
-//#define CONFIG_MODULE_SIMULATION_ENABLE
+///> Simulation mode: Enable "simulate" command
+#define CONFIG_MODULE_SIMULATION_ENABLE
 
 //#define CONFIG_SWO_ENABLE
 //#define CONFIG_DEBUG_RAMREAD_WRITE_COMMAND_ENABLE
 //#define CONFIG_DEBUG_GO_COMMAND_ENABLE
-
-
-#define CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
-#define CONFIG_GLOBALVARHANDLER_TRACE_RAM_BUFFER
-
-//#define CONFIG_GLOBALVARHANDLER_CHECK_ENABLE
 
 
 /// Debug modes - Print debug message
@@ -346,13 +340,21 @@
 #endif	// #ifdef CONFIG_MODULE_TERMINAL_ENABLE
 
 
-#ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
-	#define CONFIG_COMMANDHANDLER_NOTIFY_NOT_DEBUG_COMMAND
-#endif
 
 /*------------------------------------------------------------------------------
  *								Other module settings
  *----------------------------------------------------------------------------*/
+
+// CommandHandler settings
+#ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
+	#define CONFIG_COMMANDHANDLER_NOTIFY_NOT_DEBUG_COMMAND
+#endif
+
+
+// GlobalVarHandler settings
+#define CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
+#define CONFIG_GLOBALVARHANDLER_TRACE_RAM_BUFFER
+//#define CONFIG_GLOBALVARHANDLER_CHECK_ENABLE
 
 
 // ESP8266 settings
@@ -452,10 +454,6 @@
 #endif
 
 
-// System time
-#define CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
-
-
 // Button settings
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
 	#define CONFIG_MODULE_BUTTON_LONG_PRESS
@@ -468,6 +466,9 @@
 	// Create CPU usage statistics:
 	//#define CONFIG_MODULE_TASKHANDLER_STATISTICS
 	//#define CONFIG_MODULE_TASK_SOFTWARE_WATCHDOG_ENABLE
+
+	// System time
+	#define CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
 #endif
 
 
@@ -478,7 +479,10 @@
 #endif
 
 
-// Functions
+/*------------------------------------------------------------------------------
+ *								Functions
+ *----------------------------------------------------------------------------*/
+
 
 // Remote controller (for car) function
 //#define CONFIG_FUNCTION_REMOTECONTROLLER
@@ -515,7 +519,6 @@
 		#define CONFIG_MODULE_BUTTON_ENABLE
 	#endif
 #endif
-
 
 
 /// Charger function

@@ -48,6 +48,7 @@
 #include "ESP8266.h"
 #include "IO.h"
 #include "Display.h"
+#include "Logic.h"
 
 
 /* Private variables ---------------------------------------------------------*/
