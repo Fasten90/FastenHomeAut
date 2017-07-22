@@ -636,7 +636,7 @@ bool ESP8266_Config(void)
 
 	ESP8266_WaitAnswer(1000);
 
-	if (!StrCmp("ATE0\r\r\n\r\nOK\r\n",(const char *)ESP8266_RxBuffer))
+	if (!StrCmpFirst("ATE0\r\r\n\r\nOK\r\n",(const char *)ESP8266_RxBuffer))
 	{
 		// Ok
 		ESP8266_LED_OK();
@@ -660,7 +660,7 @@ bool ESP8266_Config(void)
 	ESP8266_WaitAnswer(1000);
 
 	
-	if (!StrCmp("\r\nOK\r\n",(const char *)ESP8266_RxBuffer))
+	if (!StrCmpFirst("\r\nOK\r\n",(const char *)ESP8266_RxBuffer))
 	{
 		ESP8266_LED_OK();
 	}
@@ -688,12 +688,12 @@ bool ESP8266_Config(void)
 
 	ESP8266_WaitAnswer(1000);
 	
-	if (!StrCmp("OK\r\n",(const char *)ESP8266_RxBuffer))
+	if (!StrCmpFirst("OK\r\n",(const char *)ESP8266_RxBuffer))
 	{
 		// "OK"
 		ESP8266_LED_OK();
 	}
-	else if (!StrCmp("no change\r\n",(const char *)ESP8266_RxBuffer))
+	else if (!StrCmpFirst("no change\r\n",(const char *)ESP8266_RxBuffer))
 	{
 		// "no change"
 		ESP8266_LED_OK();
@@ -737,19 +737,19 @@ bool ESP8266_ConnectToWifiNetwork(void)
 	
 	ESP8266_WaitAnswer(20000);
 	
-	if (!StrCmp("\r\nOK\r\n", (const char *)ESP8266_RxBuffer))
+	if (!StrCmpFirst("\r\nOK\r\n", (const char *)ESP8266_RxBuffer))
 	{
 		// "OK"
 		ESP8266_LED_OK();
 	}
-	else if (!StrCmp("\r\nFAIL", (const char *)ESP8266_RxBuffer))
+	else if (!StrCmpFirst("\r\nFAIL", (const char *)ESP8266_RxBuffer))
 	{
 		// "FAIL"
 		// AT+CWJAP=\"networkname\",\"password\"\r\r\n\r\nFAIL\r\n")
 		ESP8266_LED_FAIL();
 		return false;
 	}
-	else if (!StrCmp("\r\nERRO", (const char *)ESP8266_RxBuffer))
+	else if (!StrCmpFirst("\r\nERRO", (const char *)ESP8266_RxBuffer))
 	{
 		// "ERROR"
 		// AT+CWJAP=\"networkname\",\"password\"\r\r\n\r\nERROR\r\n")
@@ -778,7 +778,7 @@ bool ESP8266_ConnectToWifiNetwork(void)
 	
 	ESP8266_WaitAnswer(2000);
 	
-	if (!StrCmp("\r\nOK\r\n", (const char *)ESP8266_RxBuffer))
+	if (!StrCmpFirst("\r\nOK\r\n", (const char *)ESP8266_RxBuffer))
 	{
 		ESP8266_LED_OK();
 	}
@@ -848,7 +848,7 @@ bool ESP8266_ConnectToWifiNetwork(void)
 	
 	ESP8266_WaitAnswer();
 	
-	if (!StrCmp("AT+CWDHCP=1,0\r\r\n\r\nOK\r\n",(const char *)ESP8266_RxBuffer))
+	if (!StrCmpFirst("AT+CWDHCP=1,0\r\r\n\r\nOK\r\n",(const char *)ESP8266_RxBuffer))
 	{
 		// Ok
 		LED_GREEN_ON();
@@ -876,7 +876,7 @@ bool ESP8266_ConnectToWifiNetwork(void)
 	
 	ESP8266_WaitAnswer();
 	
-	if (!StrCmp("AT+CIPSTA=\"9.6.5.14\"\r\r\n\r\nOK\r\n",(const char *)ESP8266_RxBuffer))
+	if (!StrCmpFirst("AT+CIPSTA=\"9.6.5.14\"\r\r\n\r\nOK\r\n",(const char *)ESP8266_RxBuffer))
 	{
 		// Ok
 		ESP8266_LED_OK();
@@ -919,7 +919,7 @@ bool ESP8266_FindServer ( void )
 	ESP8266_WaitAnswer(5000);
 	
 	// TODO: WTF, what is this parameter
-	if (!StrCmp("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+	if (!StrCmpFirst("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
 			(const char *)ESP8266_RxBuffer))
 	{
 		// OK\r\nLinked
@@ -972,13 +972,13 @@ bool ESP8266_ConnectToServer(Network_IP_t *ip, Network_Port_t port)
 
 	ESP8266_WaitAnswer(5000);
 	
-	if (!StrCmp("\r\nOK\r\nLinked\r\n", (const char *)ESP8266_RxBuffer))
+	if (!StrCmpFirst("\r\nOK\r\nLinked\r\n", (const char *)ESP8266_RxBuffer))
 	{
 		// OK\r\nLinked
 		ESP8266_LED_OK();
 		return true;
 	}
-	if (!StrCmp("ALREADY CONNECT", (const char *)ESP8266_RxBuffer))
+	if (!StrCmpFirst("ALREADY CONNECT", (const char *)ESP8266_RxBuffer))
 	{
 		// "ALREADY CONNECT"
 		ESP8266_LED_OK();
@@ -1023,7 +1023,7 @@ bool ESP8266_StartServer ( void )
 	ESP8266_WaitAnswer();
 	
 	
-	if (!StrCmp("AT+CIPSERVER=1,2000\r\r\n\r\nOK\r\n",(const char *)ESP8266_RxBuffer))
+	if (!StrCmpFirst("AT+CIPSERVER=1,2000\r\r\n\r\nOK\r\n",(const char *)ESP8266_RxBuffer))
 	{
 		// OK
 		ESP8266_LED_OK();
@@ -1085,11 +1085,11 @@ static bool ESP8266_SendTcpMessageBlockingMode(const char *message)
 	
 	ESP8266_WaitAnswer(5000);
 	
-	if (!StrCmp("> ", (const char *)ESP8266_RxBuffer))
+	if (!StrCmpFirst("> ", (const char *)ESP8266_RxBuffer))
 	{
 		ESP8266_LED_OK();
 	}
-	else if (!StrCmp("link is not\r\n", (const char *)&ESP8266_RxBuffer[1]))
+	else if (!StrCmpFirst("link is not\r\n", (const char *)&ESP8266_RxBuffer[1]))
 	{
 		ESP8266_LED_FAIL();
 		return false;
@@ -1115,7 +1115,7 @@ static bool ESP8266_SendTcpMessageBlockingMode(const char *message)
 
 	ESP8266_WaitAnswer(5000);
 	
-	if (!StrCmp("\r\nSEND OK\r\n", (const char *)ESP8266_RxBuffer))
+	if (!StrCmpFirst("\r\nSEND OK\r\n", (const char *)ESP8266_RxBuffer))
 	{
 		ESP8266_LED_OK();
 	}
@@ -1485,7 +1485,7 @@ static bool ESP8266_CheckReceivedMessage(void)
 #endif
 	}
 	// Check for unconnect, or other messages...
-	else if (!StrCmpWithLength((const char *)ESP8266_RxBuffer, "Link", 4))
+	else if (!StrCmpFirst("Link", (const char *)ESP8266_RxBuffer))
 	{
 		// Received: "Link"
 		isValidMessage = true;
@@ -1497,7 +1497,7 @@ static bool ESP8266_CheckReceivedMessage(void)
 		DebugPrint("Received \"Link\". This device is in client mode, dont understand it.\r\n");
 		#endif
 	}
-	else if (!StrCmpWithLength((const char *)ESP8266_RxBuffer, "Unlink", 6))
+	else if (!StrCmpFirst("Unlink", (const char *)ESP8266_RxBuffer))
 	{
 		// Received: "Unlink"
 		isValidMessage = true;
@@ -1510,14 +1510,14 @@ static bool ESP8266_CheckReceivedMessage(void)
 		ESP8266_ConnectionStatus = ESP8266_WifiConnectionStatus_ClosedConnection;
 		#endif
 	}
-	else if (!StrCmpWithLength((const char *)ESP8266_RxBuffer, "OK", 2))
+	else if (!StrCmpFirst("OK", (const char *)ESP8266_RxBuffer))
 	{
 		// Received: "OK"
 		// Note: This arrived after received an x length message (now, after 40 length homeautmessage)
 		isValidMessage = true;
 		DebugPrint("Received an OK\r\n");
 	}
-	else if (!StrCmpWithLength((const char *)ESP8266_RxBuffer, "", 1))
+	else if (!StrCmpFirst("", (const char *)ESP8266_RxBuffer))
 	{
 		// Received: ""
 		// Note: This arrived after received an x length message (now, after 40 length homeautmessage) + "\r\n" after ""
@@ -1880,8 +1880,8 @@ void ESP8266_StatusMachine(void)
 			break;
 
 		case Esp2866Status_ConfigAte0CheckResponse:
-			if (!StrCmp("ATE0\r\r\n\r\nOK\r\n", (const char *)receiveBuffer)
-				|| !StrCmp("\r\nOK\r\n", (const char *)receiveBuffer))
+			if (!StrCmpFirst("ATE0\r\r\n\r\nOK\r\n", (const char *)receiveBuffer)
+				|| !StrCmpFirst("\r\nOK\r\n", (const char *)receiveBuffer))
 			{
 				// Ok
 				ESP8266_LED_OK();
@@ -1912,7 +1912,7 @@ void ESP8266_StatusMachine(void)
 			break;
 
 		case Esp8266Status_ConfigAtCheckResponse:
-			if (!StrCmp("\r\nOK\r\n", (const char *)receiveBuffer))
+			if (!StrCmpFirst("\r\nOK\r\n", (const char *)receiveBuffer))
 			{
 				ESP8266_LED_OK();
 				ESP8266StatusMachine++;
@@ -1950,8 +1950,8 @@ void ESP8266_StatusMachine(void)
 			break;
 
 		case Esp8266Status_ConfigCwModeCheckResponse:
-			if ((!StrCmp("OK\r\n", (const char *)receiveBuffer))
-				|| (!StrCmp("no change\r\n", (const char *)receiveBuffer)))
+			if ((!StrCmpFirst("OK\r\n", (const char *)receiveBuffer))
+				|| (!StrCmpFirst("no change\r\n", (const char *)receiveBuffer)))
 			{
 				// "OK"
 				ESP8266_LED_OK();
@@ -1989,7 +1989,7 @@ void ESP8266_StatusMachine(void)
 			break;
 
 		case Esp8266Status_ConfigCwDhcpCheckResponse:
-			if (!StrCmp("OK\r\n", (const char *)receiveBuffer))
+			if (!StrCmpFirst("OK\r\n", (const char *)receiveBuffer))
 			{
 				// "OK"
 				ESP8266_LED_OK();
@@ -1997,7 +1997,7 @@ void ESP8266_StatusMachine(void)
 				ESP8266_DEBUG_PRINT("Config CWDHCP response ok");
 				//break;	// Step to next
 			}
-			else if (!StrCmp("no change\r\n",(const char *)receiveBuffer))
+			else if (!StrCmpFirst("no change\r\n",(const char *)receiveBuffer))
 			{
 				// "no change"
 				ESP8266_LED_OK();
@@ -2032,8 +2032,8 @@ void ESP8266_StatusMachine(void)
 			break;
 
 		case Esp8266Status_ConfigCipMuxCheckResponse:
-			if ((!StrCmp("\r\nOK\r\n", (const char *)receiveBuffer))
-				|| (!StrCmp("link is builded\r\n", (const char *)receiveBuffer)))
+			if ((!StrCmpFirst("\r\nOK\r\n", (const char *)receiveBuffer))
+				|| (!StrCmpFirst("link is builded\r\n", (const char *)receiveBuffer)))
 			{
 				// "OK"
 				// TODO: "link is builded\r\n" message is not correct, but it is good for me
@@ -2075,7 +2075,7 @@ void ESP8266_StatusMachine(void)
 			break;
 
 		case Esp8266Status_StartWifiHostCheckResponse:
-			if (!StrCmp("\r\nOK\r\n", (const char *)receiveBuffer))
+			if (!StrCmpFirst("\r\nOK\r\n", (const char *)receiveBuffer))
 			{
 				ESP8266_LED_OK();
 				ESP8266StatusMachine++;
@@ -2123,14 +2123,14 @@ void ESP8266_StatusMachine(void)
 
 		case Esp8266Status_ConnectWifiNetworkCheckResponse:
 
-			if (!StrCmp("\r\nOK\r\n", (const char *)receiveBuffer))
+			if (!StrCmpFirst("\r\nOK\r\n", (const char *)receiveBuffer))
 			{
 				// Command OK, step to wait response
 				ESP8266StatusMachine += 2;	// TODO: Now, it skipped wait finish
 				ESP8266_DEBUG_PRINT("Wifi connect command OK");
 				ESP8266_ClearReceive(false, sizeof("\r\nOK\r\n")-1);
 			}
-			else if (!StrCmp("\r\nbusy p...\r\n", (const char *)receiveBuffer))
+			else if (!StrCmpFirst("\r\nbusy p...\r\n", (const char *)receiveBuffer))
 			{
 				// "busy p..."
 				// I hope, connection in progress
@@ -2138,8 +2138,8 @@ void ESP8266_StatusMachine(void)
 				ESP8266_DEBUG_PRINT("Wait... (busy)\r\n");
 				ESP8266_ClearReceive(false, sizeof("\r\nbusy p...\r\n")-1);
 			}
-			else if (!StrCmp("\r\nFAIL", (const char *)receiveBuffer)
-					|| !StrCmp("\r\nERROR", (const char *)receiveBuffer))
+			else if (!StrCmpFirst("\r\nFAIL", (const char *)receiveBuffer)
+					|| !StrCmpFirst("\r\nERROR", (const char *)receiveBuffer))
 			{
 				// TODO: This is need? Can we drop out?
 				// "FAIL"
@@ -2180,7 +2180,7 @@ void ESP8266_StatusMachine(void)
 
 		case Esp8266Status_ConnectWifiNetworkCheckFinish:
 
-			if (!StrCmp("\r\nOK\r\n", (const char *)receiveBuffer))
+			if (!StrCmpFirst("\r\nOK\r\n", (const char *)receiveBuffer))
 			{
 				// OK
 				// Command OK, step to wait response
@@ -2189,8 +2189,8 @@ void ESP8266_StatusMachine(void)
 				ESP8266_DEBUG_PRINT("Wifi connect successful");
 				ESP8266_ClearReceive(false, sizeof("\r\nOK\r\n")-1);
 			}
-			else if (!StrCmp("\r\nFAIL", (const char *)receiveBuffer)
-					|| !StrCmp("\r\nERROR", (const char *)receiveBuffer))
+			else if (!StrCmpFirst("\r\nFAIL", (const char *)receiveBuffer)
+					|| !StrCmpFirst("\r\nERROR", (const char *)receiveBuffer))
 			{
 				// "FAIL"
 				// "ERROR"
@@ -2301,8 +2301,8 @@ void ESP8266_StatusMachine(void)
 
 		case Esp8266Status_StartTcpServerCheckResponse:
 			// Check CIPSERVER response
-			if (!StrCmp("\r\nOK\r\n", (const char *)receiveBuffer)
-				|| !StrCmp("no change\r\n", (const char *)receiveBuffer))
+			if (!StrCmpFirst("\r\nOK\r\n", (const char *)receiveBuffer)
+				|| !StrCmpFirst("no change\r\n", (const char *)receiveBuffer))
 			{
 				// OK
 				ESP8266_LED_OK();
@@ -2312,7 +2312,7 @@ void ESP8266_StatusMachine(void)
 				//TaskHandler_DisableTask(Task_Esp8266);
 				ESP8266_StartReceive();
 			}
-			else if (!StrCmp("ERROR", (const char *)receiveBuffer))
+			else if (!StrCmpFirst("ERROR", (const char *)receiveBuffer))
 			{
 				// ERROR
 				ESP8266_LED_FAIL();
@@ -2370,7 +2370,7 @@ void ESP8266_StatusMachine(void)
 
 		case Esp8266Status_ConnectTcpServerCheckResponse:
 
-			if (!StrCmp("\r\nOK\r\n", (const char *)receiveBuffer))
+			if (!StrCmpFirst("\r\nOK\r\n", (const char *)receiveBuffer))
 			{
 				// OK
 				// Need Wait...
@@ -2378,8 +2378,8 @@ void ESP8266_StatusMachine(void)
 				DebugPrint("OK... Wait finish...\r\n");
 				ESP8266_ClearReceive(false, sizeof("\r\nOK\r\n")-1);
 			}
-			else if (!StrCmp("ALREADY CONNECT\r\n", (const char *)receiveBuffer)
-				||   !StrCmp("ALREAY CONNECT\r\n", (const char *)receiveBuffer))
+			else if (!StrCmpFirst("ALREADY CONNECT\r\n", (const char *)receiveBuffer)
+				||   !StrCmpFirst("ALREAY CONNECT\r\n", (const char *)receiveBuffer))
 			{
 				// OK
 				// Already connected
@@ -2388,7 +2388,7 @@ void ESP8266_StatusMachine(void)
 				DebugPrint("Successful connect to TCP server (already connected)\r\n");
 				ESP8266_ClearReceive(true, 0);
 			}
-			else if (!StrCmp("\r\nbusy p...\r\n", (const char *)receiveBuffer))
+			else if (!StrCmpFirst("\r\nbusy p...\r\n", (const char *)receiveBuffer))
 			{
 				// busy p...
 				ESP8266StatusMachine++;	// I hope, the command in progress
@@ -2396,7 +2396,7 @@ void ESP8266_StatusMachine(void)
 				// TODO: Wait... ?
 				ESP8266_ClearReceive(false, sizeof("\r\nbusy p...\r\n")-1);
 			}
-			else if (!StrCmp("no ip\r\n", (const char *)receiveBuffer))
+			else if (!StrCmpFirst("no ip\r\n", (const char *)receiveBuffer))
 			{
 				// Error, no IP
 				ESP8266StatusMachine = Esp8266Status_ConnectWifiNetwork;
@@ -2422,8 +2422,8 @@ void ESP8266_StatusMachine(void)
 			break;
 
 		case Esp8266Status_ConnectTcpServerCheckFinish:
-			if (!StrCmp("\r\nOK\r\nLinked\r\n", (const char *)receiveBuffer)
-				|| !StrCmp("Linked\r\n", (const char *)receiveBuffer))
+			if (!StrCmpFirst("\r\nOK\r\nLinked\r\n", (const char *)receiveBuffer)
+				|| !StrCmpFirst("Linked\r\n", (const char *)receiveBuffer))
 			{
 				// OK Linked
 				ESP8266_LED_OK();
@@ -2431,7 +2431,7 @@ void ESP8266_StatusMachine(void)
 				DebugPrint("Successful connect to TCP server\r\n");
 				ESP8266_ClearReceive(true, 0);
 			}
-			else if (!StrCmp("\r\nERROR\r\nUnlink", (const char *)receiveBuffer))
+			else if (!StrCmpFirst("\r\nERROR\r\nUnlink", (const char *)receiveBuffer))
 			{
 				// Error
 				// It is TCP connection error, not WiFi error
@@ -2441,7 +2441,7 @@ void ESP8266_StatusMachine(void)
 				DebugPrint("Failed connect to TCP server (unlink)\r\n");
 				ESP8266_ClearReceive(true, 0);
 			}
-			else if (!StrCmp("\r\nFAIL\r\n", (const char *)receiveBuffer))
+			else if (!StrCmpFirst("\r\nFAIL\r\n", (const char *)receiveBuffer))
 			{
 				// Error
 				// It is TCP connection error, not WiFi error TODO: It is true??? XXX
@@ -2540,7 +2540,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 		if (ESP8266_TcpSendIsStarted_Flag)
 		{
 			// Check, response is "> "
-			if (!StrCmp("> ", (const char *)receiveBuffer))
+			if (!StrCmpFirst("> ", (const char *)receiveBuffer))
 			{
 				// Received "> ", we can send message
 				ESP8266_DEBUG_PRINT("Received \"> \"");
@@ -2551,7 +2551,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 				goodMsgRcv = true;
 				ESP8266_ClearReceive(false, sizeof("> ") - 1);
 			}
-			else if (!StrCmp("link is not\r\n", (const char *)receiveBuffer))
+			else if (!StrCmpFirst("link is not\r\n", (const char *)receiveBuffer))
 			{
 				// Cannot send
 				ESP8266_TcpSendBuffer_EnableFlag = true;
@@ -2562,7 +2562,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 				ESP8266StatusMachine = Esp8266Status_ConnectTcpServer;
 #endif
 			}
-			else if (!StrCmp("busy inet...\r\nERROR\r\n", (const char *)receiveBuffer))
+			else if (!StrCmpFirst("busy inet...\r\nERROR\r\n", (const char *)receiveBuffer))
 			{
 				// Error...
 				// TODO: What we need to do?
@@ -2585,7 +2585,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 		}
 		else if (ESP8266_TcpSent_WaitSendOk_Flag)
 		{
-			if (!StrCmp("\r\nSEND OK\r\n", (const char *)receiveBuffer))
+			if (!StrCmpFirst("\r\nSEND OK\r\n", (const char *)receiveBuffer))
 			{
 				// OK, sending successful
 				DebugPrint("Sending successful\r\n");
@@ -2603,7 +2603,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			ESP8266_TcpSent_WaitSendOk_Flag = false;
 			ESP8266_TcpSendBuffer_EnableFlag = true;
 		}
-		else if (!StrCmp("Link\r\n", (const char *)receiveBuffer))
+		else if (!StrCmpFirst("Link\r\n", (const char *)receiveBuffer))
 		{
 			// "Link"
 			DebugPrint("Received \"Link\": a client connected\r\n");
@@ -2613,7 +2613,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			ESP8266_ClearReceive(false, sizeof("Link\r\n") - 1);
 			ESP8266_LOG_EVENT(EVENT_LINK);
 		}
-		else if (!StrCmp("Unlink\r\n", (const char *)receiveBuffer))
+		else if (!StrCmpFirst("Unlink\r\n", (const char *)receiveBuffer))
 		{
 			// "Unlink"
 			DebugPrint("Received \"Unlink\": a client disconnected\r\n");
@@ -2622,7 +2622,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			ESP8266_LOG_EVENT(EVENT_UNLINK);
 		}
 #if CONFIG_ESP8266_IS_TCP_SERVER == 0
-		else if (!StrCmp("\r\nERROR\r\nUnlink\r\n", (const char *)receiveBuffer))
+		else if (!StrCmpFirst("\r\nERROR\r\nUnlink\r\n", (const char *)receiveBuffer))
 		{
 			// "Unlink"
 			DebugPrint("Received \"Unlink\": a tcp disconnected\r\n");
@@ -2632,7 +2632,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			ESP8266_LOG_EVENT(EVENT_UNLINK);
 		}
 #endif
-		else if (!StrCmp("\r\n+IPD,", (const char *)receiveBuffer))
+		else if (!StrCmpFirst("\r\n+IPD,", (const char *)receiveBuffer))
 		{
 			// Message form: "\r\n+IPD,1,4:msg3\r\nOK"
 			// Has got finish "\r\n"?

@@ -981,7 +981,7 @@ static CommandResult_t CommandFunction_led(uint32_t argc, char** argv)
 	{
 		isFirstParamNum = true;
 	}
-	else if (!StrCmp(argv[1], "status"))
+	else if (!StrCmp("status", argv[1]))
 	{
 		isGetStatus = true;
 	}
@@ -1262,7 +1262,7 @@ static CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
 	// Suppress warning
 	(void)argc;
 
-	if (!StrCmp(argv[0], "ioinit"))
+	if (!StrCmp("ioinit", argv[0]))
 	{
 		// Init
 		char port = argv[1][0];
@@ -1271,11 +1271,11 @@ static CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
 		{
 			// TODO: enum stringesre
 			IO_Type io = IO_UNKNOWN;
-			if (!StrCmp(argv[2], "input"))
+			if (!StrCmp("input", argv[2]))
 			{
 				io = IO_INPUT;
 			}
-			else if (!StrCmp(argv[2], "output"))
+			else if (!StrCmp("output", argv[2]))
 			{
 				io = IO_OUTPUT;
 			}
@@ -1298,7 +1298,7 @@ static CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
 			return CommandResult_Error_WrongArgument1;
 		}
 	}
-	else if (!StrCmp(argv[0], "ioout"))
+	else if (!StrCmp("ioout", argv[0]))
 	{
 		// Output
 		char port = argv[1][0];
@@ -1306,19 +1306,19 @@ static CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
 		if (StringToUnsignedDecimalNum(&argv[1][1], &pin))
 		{
 			Output_Type output = OUTPUT_DONTCARE;
-			if (!StrCmp(argv[2], "set"))
+			if (!StrCmp("set", argv[2]))
 			{
 				output = OUTPUT_HIGH;
 			}
-			else if (!StrCmp(argv[2], "reset"))
+			else if (!StrCmp("reset", argv[2]))
 			{
 				output = OUTPUT_LOW;
 			}
-			else if (!StrCmp(argv[2], "toggle"))
+			else if (!StrCmp("toggle", argv[2]))
 			{
 				output = OUTPUT_TOGGLE;
 			}
-			else if (!StrCmp(argv[2], "status"))
+			else if (!StrCmp("status", argv[2]))
 			{
 				output = OUTPUT_STATUS;
 			}
@@ -1332,7 +1332,7 @@ static CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
 			return CommandResult_Error_Unknown;
 		}
 	}
-	else if (!StrCmp(argv[0],"ioin"))
+	else if (!StrCmp("ioin", argv[0]))
 	{
 		// Input
 		char port = argv[1][0];
@@ -1660,7 +1660,7 @@ static CommandResult_t CommandFunction_Time(uint32_t argc, char** argv)
 {
 	CommandResult_t result = CommandResult_Unknown;
 
-	if (!StrCmp(argv[1], "setdate") && argc == 3)
+	if (!StrCmp("setdate", argv[1]) && argc == 3)
 	{
 		// Set date
 		Date_t date;
@@ -1675,7 +1675,7 @@ static CommandResult_t CommandFunction_Time(uint32_t argc, char** argv)
 			result = CommandResult_Error_WrongArgument2;
 		}
 	}
-	else if (!StrCmp(argv[1], "settime") && argc == 3)
+	else if (!StrCmp("settime", argv[1]) && argc == 3)
 	{
 		// Set time
 		Time_t time;
@@ -1690,7 +1690,7 @@ static CommandResult_t CommandFunction_Time(uint32_t argc, char** argv)
 			result = CommandResult_Error_WrongArgument2;
 		}
 	}
-	else if (!StrCmp(argv[1], "status"))
+	else if (!StrCmp("status", argv[1]))
 	{
 		char datetimestring[DATETIME_STRING_MAX_LENGTH];
 		DateTime_t dateTime;
@@ -1767,11 +1767,11 @@ static CommandResult_t CommandFunction_flashdel(uint32_t argc, char** argv)
 	}
 
 
-	if (!StrCmp(argv[2],"block"))
+	if (!StrCmp("block", argv[2]))
 	{
 		FLASH_BlockErase(Arg2Num,5000);
 	}
-	else if (!StrCmp(argv[2],"sector"))
+	else if (!StrCmp("sector", argv[2]))
 	{
 		FLASH_SectorErase(Arg2Num,5000);
 	}
@@ -1869,7 +1869,7 @@ static CommandResult_t CommandFunction_raspberrypi(uint32_t argc, char** argv)
 	(void)argc;
 
 	// Check arg 2
-	if (!StrCmp(argv[1],"setout"))
+	if (!StrCmp("setout", argv[1]))
 	{
 		// setout
 		/*
@@ -1993,19 +1993,19 @@ static CommandResult_t CommandFunction_mw(uint32_t argc, char** argv)
 		return CommandResult_Error_WrongArgument2;
 	}
 
-	if (!StrCmp(argv[0], "mwb"))
+	if (!StrCmp("mwb", argv[0]))
 	{
 		destination1 = (uint8_t *)Arg2Num;
 		*destination1 = (uint8_t)Arg3Num;
 		CommandHandler_Printf("Write: %02X to: %X", Arg3Num, Arg2Num);
 	}
-	else if (!StrCmp(argv[0], "mwh"))
+	else if (!StrCmp("mwh", argv[0]))
 	{
 		destination2 = (uint16_t *)Arg2Num;
 		*destination2 = (uint16_t)Arg3Num;
 		CommandHandler_Printf("Write: %04X to: %X", Arg3Num, Arg2Num);
 	}
-	else if (!StrCmp(argv[0], "mww"))
+	else if (!StrCmp("mww", argv[0]))
 	{
 		destination3 = (uint32_t *)Arg2Num;
 		*destination3 = (uint32_t)Arg3Num;

@@ -110,6 +110,7 @@ bool StringToFloat(const char *str, float *Num);
 // Standard string functions:
 uint8_t StringLength(const char *str);
 uint8_t StrCmp(const char * str1, const char *str2);
+uint8_t StrCmpFirst(const char *str1, const char *str2);
 uint8_t StrCmpWithLength(const char * str1, const char *str2, uint8_t length);
 uint8_t StrCpy(char *dest, const char *src);
 uint8_t StrCpyFixLength(char *dest, const char *src, uint8_t length);

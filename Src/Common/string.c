@@ -971,9 +971,6 @@ uint8_t StrCmp(const char *str1, const char *str2)
 		str2++;
 	}
 
-	// Good, equal
-	return 0;
-	/*
 	// Commented out, because first length are good
 	if (*str2)
 	{
@@ -982,8 +979,32 @@ uint8_t StrCmp(const char *str1, const char *str2)
 	else
 	{
 		return 0;		// last str2 char is '\0'
-	}*/
+	}
+}
 
+
+
+/**
+ * \brief	Compare two string (with first string length)
+ * \return	1, if not equal
+ * 			0, if equal
+* 	\note	Be careful! If second string longer than first string and the begin of string are equal, the return value will be "equal" (0)
+ */
+uint8_t StrCmpFirst(const char *str1, const char *str2)
+{
+
+	while (*str1)
+	{
+		if (*str1 !=  *str2)
+		{
+			return 1;	// not equal
+		}
+		str1++;
+		str2++;
+	}
+
+	// Good, equal
+	return 0;
 }
 
 
@@ -1522,6 +1543,16 @@ void STRING_UnitTest(void)
 	// Not equal:
 	UNITTEST_ASSERT(StrCmp("example", "example1"), "StrCmp error");
 	UNITTEST_ASSERT(StrCmp("example1", "example2"), "StrCmp error");
+	UNITTEST_ASSERT(StrCmp("example1", "example"), "StrCmp error");
+
+
+	// StrCmpFirst()
+	// Equal:
+	UNITTEST_ASSERT(!StrCmpFirst("example", "example"), "StrCmp error");
+	UNITTEST_ASSERT(!StrCmpFirst("example", "example1"), "StrCmp error");
+	// Not equal:
+	UNITTEST_ASSERT(StrCmpFirst("example1", "example2"), "StrCmp error");
+	UNITTEST_ASSERT(StrCmpFirst("example1", "example"), "StrCmp error");
 
 
 	// Float print tests

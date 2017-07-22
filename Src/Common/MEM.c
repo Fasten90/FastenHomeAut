@@ -39,7 +39,7 @@ void * memcpy(void * destination, const void * source, size_t num)
 	}
 #endif
 
-	for (i=0; i < num; i++)
+	for (i = 0; i < num; i++)
 	{
 		dest[i] = src[i];
 	}
@@ -68,7 +68,7 @@ void * memset(void * ptr, int value, size_t num)
 	}
 #endif
 
-	for (i=0; i < num; i++)
+	for (i = 0; i < num; i++)
 	{
 		dest[i] = (uint8_t)value;
 	}
@@ -97,7 +97,7 @@ void * memmove(void * destination, const void * source, size_t num)
 	}
 #endif
 
-	for (i=0; i < num; i++)
+	for (i = 0; i < num; i++)
 	{
 		dest[i] = src[i];
 		src[i] = 0;
