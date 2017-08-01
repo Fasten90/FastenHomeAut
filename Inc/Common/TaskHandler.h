@@ -32,6 +32,15 @@
 #define TASK_RESULT_FAILED		(false)
 
 
+#ifdef CONFIG_DEBUG_SW_WATCHDOG_ENABLE
+#define TASKHANDLER_SW_WATCHDOG()		TaskHandler_SwWatchdog()
+#else
+#define TASKHANDLER_SW_WATCHDOG()
+#endif
+
+
+#define TASKHANDLER_SW_WATCHDOG_PERIOD		(1000U)					// TaskHandler Sw Watchdog period time [ms]
+
 
 /*------------------------------------------------------------------------------
  *  Type definitions
@@ -97,6 +106,8 @@ void TaskHandler_ClearTimeoutTask(TaskID_t taskID);
 
 void TaskHandler_PrintStatistics(void);
 void TaskHandler_PrintTaskRunCounts(void);
+
+void TaskHandler_SwWatchdog(void);
 
 void TaskHandler_UnitTest(void);
 

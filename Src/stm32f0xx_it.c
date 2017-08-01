@@ -38,7 +38,7 @@
 
 /* USER CODE BEGIN 0 */
 #include "Globals.h"
-
+#include "TaskHandler.h"
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
@@ -111,7 +111,7 @@ void SysTick_Handler(void)
   HAL_IncTick();
   HAL_SYSTICK_IRQHandler();
   /* USER CODE BEGIN SysTick_IRQn 1 */
-
+  TASKHANDLER_SW_WATCHDOG();
   /* USER CODE END SysTick_IRQn 1 */
 }
 

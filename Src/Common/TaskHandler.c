@@ -21,6 +21,8 @@
 #include "TaskList.h"
 #include "TaskHandler.h"
 #include "CommandHandler.h"
+#include "DebugUart.h"
+#include "String.h"
 
 #ifdef MODULE_TASKHANDLER_UNNITEST_ENABLE
 #include "UnitTest.h"
@@ -54,6 +56,11 @@ typedef struct
 static TaskHandlerStat_t TaskHandler_StatisticsRanTaskTicks[TASKHANDLER_STATISTICS_LIMIT] = { 0 };
 static uint8_t TaskHandler_StatisticsIndex = 0;
 #endif
+
+#ifdef CONFIG_DEBUG_SW_WATCHDOG_ENABLE
+static uint32_t TaskHandler_RunCnt;
+#endif
+
 
 
 /*------------------------------------------------------------------------------
@@ -99,6 +106,10 @@ void TaskHandler_Scheduler(TaskTick_t elapsedTick)
 	}
 
 	TaskHandler_IncrementTicks(elapsedTick);
+
+#ifdef CONFIG_DEBUG_SW_WATCHDOG_ENABLE
+	TaskHandler_RunCnt++;
+#endif
 
 	// Check list
 	for (i = 0; i < TasksNum; i++)
@@ -355,6 +366,39 @@ void TaskHandler_PrintTaskRunCounts(void)
 	{
 		CommandHandler_Printf("| %20s | %9u |\r\n", TaskList[i].taskName, TaskList[i].taskRunCount);
 	}
+}
+#endif
+
+
+
+#ifdef CONFIG_DEBUG_SW_WATCHDOG_ENABLE
+/**
+ *	\brief	TaskHandler - Software WatchDog
+ *	\note	Call this function from timer / SysTickHandler
+ *			If main TaskHandler cnt is not increment, we know, the TaskHandler frozened
+ */
+void TaskHandler_SwWatchdog(void)
+{
+	static uint32_t ms = 0;
+	static uint32_t TaskHandler_LastRunCnt = 0;
+
+	ms++;
+	if (ms >= TASKHANDLER_SW_WATCHDOG_PERIOD)
+	{
+		ms = 0;
+		if (TaskHandler_RunCnt == TaskHandler_LastRunCnt)
+		{
+			// TaskHandler cn is not changed... :(
+			const char * msg = "TaskHandler frozened...\r\n";
+			HAL_UART_Transmit(&Debug_UartHandle, (uint8_t *)msg, StringLength(msg), 10);
+
+			// Be careful: Error_Handler is use the SysTick handler...
+			Error_Handler();
+		}
+
+		TaskHandler_LastRunCnt = TaskHandler_RunCnt;
+	}
+
 }
 #endif
 

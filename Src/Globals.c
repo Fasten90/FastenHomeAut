@@ -58,10 +58,10 @@ void Error_Handler(void)
 	LED_GREEN_OFF();
 	LED_RED_ON();
 
-#ifdef CONFIG_DEBUG_MODE
+
 	// Stop debugger
-	__asm("BKPT #0\n");		// ASM: Break debugger
-#endif
+	DEBUG_BREAKPOINT();
+
 
 #ifdef CONFIG_USE_FREERTOS
 	// End task scheduling
@@ -70,11 +70,14 @@ void Error_Handler(void)
 
 	// Reset...
 	NVIC_SystemReset();
+	// TODO: It is not the best solution, The user will not detect the reset
 
 	// Infinite loop, do not disable interrupts ...
-	while(1)
+	uint8_t cnt = 8;
+	while(cnt--)
 	{
 		LED_RED_TOGGLE();
 		DelayMs(125);
 	}
+
 }

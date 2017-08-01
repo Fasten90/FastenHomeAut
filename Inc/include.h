@@ -75,7 +75,14 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 // #define assert_param(expr) ((void)0)	// incompatible redefinition ...
 
 
+#ifdef CONFIG_DEBUG_MODE
 #define DEBUG_BREAKPOINT()		__asm("BKPT #0\n")		// ASM: Break debugger
+#else
+#define DEBUG_BREAKPOINT()
+#endif
+
+
+#define STR(a)					#a
 
 
 extern void Error_Handler(void);
