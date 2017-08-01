@@ -20,13 +20,20 @@
 #endif
 
 
+#if CONFIG_MEM_CHECK_POINTER_RANGE == 1
+#define MEM_CHECK_POINTER_RANGE(_pnt, _size)		if (!mem_CheckPointer(_pnt, _size)) Error_Handler()
+#else
+#define MEM_CHECK_POINTER_RANGE(_pnt, _size)		(void)_pnt; (void)_size
+#endif
+
+
 /**
  * \brief	Memory copy
  * \param[out]	destination	where to copy
  * \param[in]	source		from copy
  * \param[in]	num			How many length to copy (in bytes)?
  */
-void * memcpy(void * destination, const void * source, size_t num)
+void * memcpy(void * destination, const void * source, size_t size)
 {
 	size_t i;
 	uint8_t *dest = destination;
@@ -39,7 +46,7 @@ void * memcpy(void * destination, const void * source, size_t num)
 	}
 #endif
 
-	for (i = 0; i < num; i++)
+	for (i = 0; i < size; i++)
 	{
 		dest[i] = src[i];
 	}
@@ -56,7 +63,7 @@ void * memcpy(void * destination, const void * source, size_t num)
  * \param[in]	value	With which value
  * \param[in]	num		How many length to set (in bytes)?
  */
-void * memset(void * ptr, int value, size_t num)
+void * memset(void * ptr, int value, size_t size)
 {
 	size_t i;
 	uint8_t *dest = ptr;
@@ -66,9 +73,10 @@ void * memset(void * ptr, int value, size_t num)
 	{
 		return NULL;
 	}
+	MEM_CHECK_POINTER_RANGE(ptr, size);
 #endif
 
-	for (i = 0; i < num; i++)
+	for (i = 0; i < size; i++)
 	{
 		dest[i] = (uint8_t)value;
 	}
@@ -84,7 +92,7 @@ void * memset(void * ptr, int value, size_t num)
  * \param[in]	source		from copy
  * \param[in]	num			How many length to move (in bytes)?
  */
-void * memmove(void * destination, const void * source, size_t num)
+void * memmove(void * destination, const void * source, size_t size)
 {
 	size_t i;
 	uint8_t *dest = destination;
@@ -95,9 +103,11 @@ void * memmove(void * destination, const void * source, size_t num)
 	{
 		return NULL;
 	}
+	MEM_CHECK_POINTER_RANGE((void *)destination, size);
+	MEM_CHECK_POINTER_RANGE((void *)source, size);
 #endif
 
-	for (i = 0; i < num; i++)
+	for (i = 0; i < size; i++)
 	{
 		dest[i] = src[i];
 		src[i] = 0;
@@ -129,7 +139,7 @@ void * meminit(void * ptr, size_t num)
  * \retval		<0		first buffer has lower value
  * \retval		>0		first buffer has greater value
  */
-int memcmp(const void * ptr1, const void * ptr2, size_t num)
+int memcmp(const void * ptr1, const void * ptr2, size_t size)
 {
 	size_t i;
 	const uint8_t *buffer1 = ptr1;
@@ -140,9 +150,11 @@ int memcmp(const void * ptr1, const void * ptr2, size_t num)
 	{
 		return -1;
 	}
+	MEM_CHECK_POINTER_RANGE((void *)ptr1, size);
+	MEM_CHECK_POINTER_RANGE((void *)ptr2, size);
 #endif
 
-	for (i = 0; i < num; i++)
+	for (i = 0; i < size; i++)
 	{
 		if (buffer1[i] < buffer2[i])
 		{
@@ -205,6 +217,29 @@ void mem_CheckStackGuardValues(void)
 			guardGoodCnt,
 			CONFIG_MEM_STACK_GUARD_LENGTH,
 			guardGoodCnt * 100/ CONFIG_MEM_STACK_GUARD_LENGTH);
+}
+
+
+
+/**
+ * \brief	Check pointer is in good memory range?
+ * \retval	true	is ok
+ * \retval	false	wrong
+ */
+bool mem_CheckPointer(void * pnt, size_t size)
+{
+#define MEM_FLASH_START		(0x80000000 + 64*1024)
+#define MEM_FLASH_END		(0x08000000)
+#define MEM_RAM_START		(0x20000000)
+#define MEM_RAM_END			(0x20002000)
+
+	if (((uint32_t)pnt >= MEM_RAM_START && (uint32_t)pnt + size < MEM_RAM_END)
+		|| ((uint32_t)pnt >= MEM_FLASH_START && (uint32_t)pnt + size < MEM_FLASH_END))
+	{
+		return true;
+	}
+
+	return false;
 }
 
 

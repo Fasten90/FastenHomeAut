@@ -1180,7 +1180,7 @@ static CommandResult_t CommandFunction_GlobalVariableTrace(uint32_t argc,
 		{
 			// Parameter is good, set Trace task periodic time
 			TaskHandler_SetTaskPeriodicTime(Task_Trace, time);
-			result = CommandResult_Ok;
+			result = CommandResult_Ok_SendSuccessful;
 		}
 		else
 		{
@@ -1193,7 +1193,7 @@ static CommandResult_t CommandFunction_GlobalVariableTrace(uint32_t argc,
 		// First parameter is not "id", maybe "name", try process
 		GlobalVarHandler_ProcessCommand(argv[1], argv[2], SetGet_Trace, CommandHandler_CommandSource);
 		// TODO: Print anyting?
-		result = CommandResult_Ok;
+		result = CommandResult_Ok_SendSuccessful;
 	}
 
 	return result;

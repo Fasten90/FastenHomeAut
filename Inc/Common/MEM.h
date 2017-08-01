@@ -23,6 +23,7 @@
 
 
 #define	CONFIG_MEM_CHECK_POINTERS		1
+#define CONFIG_MEM_CHECK_POINTER_RANGE	1
 
 #define CONFIG_MEM_STACK_GUARD_LENGTH	(1000U)
 #define CONFIG_MEM_STACK_GUARD_VALUE	(0xEF)
@@ -32,18 +33,20 @@
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void * memcpy(void * destination, const void * source, size_t num);
+void * memcpy(void * destination, const void * source, size_t size);
 
-void * memset(void * ptr, int value, size_t num);
+void * memset(void * ptr, int value, size_t size);
 
-void * memmove(void * destination, const void * source, size_t num);
+void * memmove(void * destination, const void * source, size_t size);
 
 void * meminit(void * ptr, size_t num);
 
-int memcmp(const void * ptr1, const void * ptr2, size_t num);
+int memcmp(const void * ptr1, const void * ptr2, size_t size);
 
 void mem_StackFillWithGuardValues(void);
 void mem_CheckStackGuardValues(void);
+
+bool mem_CheckPointer(void * pnt, size_t size);
 
 void MEM_UnitTest(void);
 
