@@ -39,6 +39,7 @@
 #include "EventLog.h"
 #include "TaskList.h"
 #include "IO.h"
+#include "LinkedList.h"
 
 #include "CommandList.h"
 
@@ -692,6 +693,10 @@ static CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
 
 #ifdef MODULE_MEM_UNITTEST_ENABLE
 	MEM_UnitTest();
+#endif
+
+#ifdef MODULE_LINKEDLIST_UNITTEST_ENABLE
+	LinkedList_UnitTest();
 #endif
 
 	return CommandResult_Ok;
@@ -2310,7 +2315,7 @@ static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
 
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 /**
- * \brief	Simulation
+ * \brief	TaksHandler functions
  */
 static CommandResult_t CommandFunction_TaskHandler(uint32_t argc, char** argv)
 {
@@ -2323,14 +2328,14 @@ static CommandResult_t CommandFunction_TaskHandler(uint32_t argc, char** argv)
 		// TaskHandler statistics
 		TaskHandler_PrintStatistics();
 
-		result = CommandResult_Ok_SendSuccessful;
+		result = CommandResult_Ok;
 	}
 	else if (!StrCmp("runcounts", argv[1]))
 	{
 		// TaskHandler - Run counts
 		TaskHandler_PrintTaskRunCounts();
 
-		result = CommandResult_Ok_SendSuccessful;
+		result = CommandResult_Ok;
 	}
 	#endif
 	else
