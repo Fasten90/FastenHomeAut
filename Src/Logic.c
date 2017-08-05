@@ -83,7 +83,7 @@ static void Logic_StepLetterNextValue(int8_t step);
  *----------------------------------------------------------------------------*/
 
 
-
+#ifdef CONFIG_MODULE_DISPLAY_ENABLE
 void Logic_Display_Init(void)
 {
 	#ifdef CONFIG_MODULE_DISPLAY_SHOW_SCREEN
@@ -105,16 +105,18 @@ void Logic_Display_Init(void)
 
 	#endif
 }
+#endif
 
 
 
+#ifdef CONFIG_MODULE_BUTTON_ENABLE
 /**
  * \brief	Button event handler
  * 			Only one button handling (button = i. button
  */
 void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 {
-
+#if BUTTON_NUM == 4
 	switch (button)
 	{
 		case PressedButton_Right:
@@ -137,6 +139,9 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 		default:
 			break;
 	}
+#elif BUTTON_NUM == 1
+	BUTTON_DEBUG_PRINT("Button pressed");
+#endif
 
 #if defined(CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK) && (BUTTON_NUM == 1)
 	// One button mode
@@ -333,8 +338,6 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 #endif	// CONFIG_FUNCTION_REMOTECONTROLLER
 
 #ifdef CONFIG_FUNCTION_DISPLAY_INPUT
-
-
 	// Check buttons
 	switch (button)
 	{
@@ -366,6 +369,7 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 
 #endif
 }
+#endif
 
 
 

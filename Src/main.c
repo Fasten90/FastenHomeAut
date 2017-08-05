@@ -53,10 +53,6 @@
 
 /* Private variables ---------------------------------------------------------*/
 
-
-/* USER CODE BEGIN 0 */
-
-
 #if defined(CONFIG_MODULE_DEBUGUSART_ENABLE) && defined(CONFIG_USE_FREERTOS)
 extern xSemaphoreHandle DEBUG_USART_Rx_Semaphore;
 extern xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
@@ -66,8 +62,6 @@ extern xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
 extern xQueueHandle ESP8266_SendMessage_Queue;
 #endif
 
-
-/* USER CODE END 0 */
 
 
 /* Private function prototypes -----------------------------------------------*/
