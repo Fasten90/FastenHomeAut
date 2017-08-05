@@ -1,0 +1,56 @@
+Project configs:
+
+# Includes:
+Inc
+Drivers/CMSIS/Include
+Drivers/CMSIS/Device/ST/STM32F4xx/Include
+Drivers/STM32F4xx_HAL_Driver/Inc
+Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
+
+If have FreeRTOS: (default: no)
+Middlewares/Third_Party/FreeRTOS/Source/include
+Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
+
+If have Trace: (default: no)
+Middlewares/Third_Party/TraceRecorder/include
+
+If have STL: (default: no)
+Middlewares/STM32_SelfTest_Library/inc
+
+If have ETH: (default: no)
+Middlewares/LwIP/src/include
+Middlewares/LwIP/system
+
+
+# Paths and Symbols:
+
+HAL defines:
+STM32F407xx
+USE_HAL_DRIVER
+
+Fasten lib defines:
+CONFIG_USE_PANEL_DISCOVERY
+CONFIG_USE_DEV_ECLIPSE
+
+
+
+# Other
+Exclude all not need files
+	- e.g. STL library: 3 assembly files
+	
+
+# Other settings
+- Set Warnings
+- Enable extra warning flags
+
+- Set Linker
+
+- Do not use default libraries (C Linker -> General)
+	!! Be careful, ETH lib need it
+
+If have FreeRTOS:
+heap_1 vs heap_4
+
+If have CRC (STL):
+	- Add CRC data to linker
+
