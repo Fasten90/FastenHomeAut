@@ -71,6 +71,9 @@ static TaskResult_t Task_SoftwareWatchDog(ScheduleSource_t source);
 #ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
 static TaskResult_t Task_GlobalVarTrace(ScheduleSource_t source);
 #endif
+#ifdef CONFIG_FUNCTION_CHARGER
+static TaskResult_t Task_InputOutput(ScheduleSource_t source);
+#endif
 
 /// Tasks list
 Task_t TaskList[] =
@@ -157,7 +160,13 @@ Task_t TaskList[] =
 		.taskScheduleRate = 1000,
 	},
 #endif
-
+#ifdef CONFIG_FUNCTION_CHARGER
+	{
+		.taskName = "IOtask",
+		.taskFunction = Task_InputOutput,
+		.taskScheduleRate = 1000,
+	}
+#endif
 
 	// \note Be careful, taskList order need to be equal with TaskName_t
 
@@ -506,16 +515,30 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 	{
 		Display_ChangeCarImage();
 	}
+	#endif
 
-
+	#ifdef CONFIG_FUNCTION_CHARGER
 	// Loading image
 	static uint8_t loadPercent = 0;
 
-	Display_TestLoading(loadPercent++);
-
-	if (loadPercent >= 100)
+	if (Logic_BatteryIsCharging)
 	{
-		loadPercent = 0;
+		Display_ChargeLoading(loadPercent);
+		loadPercent += 5;
+
+		if (loadPercent >= 100)
+		{
+			loadPercent = 0;
+		}
+		// Require periodical schedule
+		TaskHandler_SetTaskOnceRun(Task_Display, 1000);
+	}
+	else
+	{
+		// Not charging:
+		// Display an xy percent
+		// TODO: Display actual voltage of battery
+		Display_ChargeLoading(34);
 	}
 	#endif
 
@@ -654,7 +677,7 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 static TaskResult_t Task_SystemTimeSecondStep(ScheduleSource_t source)
 {
 	// TODO: If not called by fix 1000ms, it is not accurate
-	//	Idea: give scheduling ms by parameter
+	// Idea: give scheduling ms by parameter
 	(void)source;
 
 	// Step SystemTime +1 second
@@ -696,10 +719,25 @@ static TaskResult_t Task_SoftwareWatchDog(ScheduleSource_t source)
 #ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
 static TaskResult_t Task_GlobalVarTrace(ScheduleSource_t source)
 {
+	// UNUSED parameter
 	(void)source;
 
 	// Trace GlobalVars
 	GlobalVarHandler_RunTrace();
+
+	return TASK_RESULT_OK;
+}
+#endif
+
+
+
+#ifdef CONFIG_FUNCTION_CHARGER
+static TaskResult_t Task_InputOutput(ScheduleSource_t source)
+{
+	// UNUSED parameter
+	(void)source;
+
+	Logic_CheckCharger();
 
 	return TASK_RESULT_OK;
 }

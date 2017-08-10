@@ -264,10 +264,12 @@ int main(void)
 	// Run TaskHandler - Infinite loop
 	while (1)
 	{
+		// Calculate elapsed tick
 		actualTick = HAL_GetTick();
 		elapsedTick = actualTick - oldTick;
 		oldTick = actualTick;
 
+		// Run task scheduler
 		TaskHandler_Scheduler(elapsedTick);
 	}
 #endif

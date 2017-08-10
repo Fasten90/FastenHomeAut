@@ -86,6 +86,10 @@ extern char DisplayInput_ActualRealString[];
 #endif
 
 
+#ifdef CONFIG_FUNCTION_CHARGER
+extern bool Logic_BatteryIsCharging;
+#endif
+
 
 /*------------------------------------------------------------------------------
  *  Global function declarations
@@ -99,6 +103,7 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type);
 DisplayClock_ChangeState_t Logic_GetSystemTimeState(void);
 #endif
 
+void Logic_CheckCharger(void);
 
 
 #endif /* LOGIC_H_ */

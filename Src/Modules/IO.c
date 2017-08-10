@@ -269,10 +269,15 @@ InputState_t IO_GetInputState(Input_t inputpin)
 {
 	InputState_t inputstate = InputState_Unknown;
 
-	if (inputpin < Input_Count && inputstate > InputState_Unknown)
+	if (inputpin < Input_Count)
 	{
-		// Values are okays
+		// Pin value is okay
 		inputstate = IO_InputStates[inputpin];
+		if (inputstate == InputState_Unknown || inputstate >= InputState_Count)
+		{
+			// Wrong input state
+			inputstate = InputState_Unknown;
+		}
 	}
 	else
 	{
@@ -295,9 +300,9 @@ InputState_t IO_GetInputState(Input_t inputpin)
 #ifdef CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE
 		case Input_BatteryCharger:
 			if (HAL_GPIO_ReadPin(IO_INPUT_BATTERYCHARGER_GPIO_PORT, IO_INPUT_BATTERYCHARGER_GPIO_PIN) == GPIO_PIN_SET)
-				IO_InputStates[inputpin] = InputState_Active;
-			else
 				IO_InputStates[inputpin] = InputState_Inactive;
+			else
+				IO_InputStates[inputpin] = InputState_Active;
 			break;
 #endif
 

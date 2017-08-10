@@ -34,6 +34,10 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
+#ifdef CONFIG_FUNCTION_CHARGER
+bool Logic_BatteryIsCharging = false;
+#endif
+
 
 
 /*------------------------------------------------------------------------------
@@ -518,14 +522,47 @@ void Logic_WriteIpToDisplay(void)
 #ifdef CONFIG_FUNCTION_CHARGER
 void Logic_CheckCharger(void)
 {
-	if (IO_GetInputState(Input_BatteryCharger) == InputState_Active)
+	InputState_t chargeState = IO_GetInputState(Input_BatteryCharger);
+	bool isCharging = false;
+
+	// Check actual state
+	switch (chargeState)
 	{
-		// Battery is charging...
-		uprintf("Battery is charging...\r\n");
+		case InputState_Active:
+			// Battery is charging...
+			isCharging = true;
+			break;
+
+		case InputState_Inactive:
+			// Battery is not charging
+			isCharging = false;
+			break;
+
+		case InputState_Unknown:
+		case InputState_Count:
+		default:
+			uprintf("Battery charge state error!\r\n");
+			//break;
+			return;
+			// Do not continue to execute, because input state is not correct!
 	}
-	else
+
+
+	if (Logic_BatteryIsCharging != isCharging)
 	{
-		uprintf("Battery is not charging...\r\n");
+		// Charge state is changed!
+		Logic_BatteryIsCharging = isCharging;
+
+		// Require Display task run
+		TaskHandler_RequestTaskScheduling(Task_Display);
+
+		// Print actual state
+		if (isCharging)
+			uprintf("Battery is charging...\r\n");
+		else
+			uprintf("Battery is not charging...\r\n");
 	}
+
+
 }
 #endif

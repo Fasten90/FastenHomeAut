@@ -65,8 +65,11 @@ typedef enum
 #ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
 	Task_Trace,
 #endif
+#ifdef CONFIG_FUNCTION_CHARGER
+	Task_IO,
+#endif
 
-	// XXX:
+	// XXX: Add new Task enum here!
 
 	Task_Count
 } TaskName_t;

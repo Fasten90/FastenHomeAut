@@ -511,7 +511,7 @@
 
 
 // Display input function
-//#define CONFIG_FUNCTION_DISPLAY_INPUT
+#define CONFIG_FUNCTION_DISPLAY_INPUT
 #ifdef CONFIG_FUNCTION_DISPLAY_INPUT
 	#ifndef CONFIG_MODULE_DISPLAY_ENABLE
 		#define CONFIG_MODULE_DISPLAY_ENABLE
@@ -523,7 +523,8 @@
 
 
 /// Charger function
-//#define CONFIG_FUNCTION_CHARGER
+#define CONFIG_FUNCTION_CHARGER
+
 
 
 #endif /* OPTIONS_H_ */

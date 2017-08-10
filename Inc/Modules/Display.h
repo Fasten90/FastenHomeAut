@@ -81,6 +81,7 @@ void Display_Clear(void);
 void Display_Activate(void);
 
 void Display_TestLoading(uint8_t percent);
+void Display_ChargeLoading(uint8_t percent);
 
 void Display_LoadCarImage(void);
 void Display_ChangeCarImage(void);

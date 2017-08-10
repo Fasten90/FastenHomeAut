@@ -332,6 +332,22 @@ void Display_TestLoading(uint8_t percent)
 
 
 
+void Display_ChargeLoading(uint8_t percent)
+{
+	static const uint8_t x = 100;
+	static const uint8_t y = 4;
+	static uint8_t width = 24;
+	static uint8_t height = 8;
+
+	Display_LoadingInit(x,  y,  width, height);
+
+	Display_LoadingPercent(x, y, width, height, percent);
+
+	//Display_Activate();
+}
+
+
+
 /*------------------------------------------------------------------------------
  *  							Car images
  *----------------------------------------------------------------------------*/
