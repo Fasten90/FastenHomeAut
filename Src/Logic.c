@@ -54,7 +54,9 @@ uint8_t DisplayInput_LetterPosition = 0;
 // TODO: Refactor
 #define DisplayInput_LetterPosition_MinLimit	0
 
-char DisplayInput_ActualRealString[DisplayInput_LetterPosition_MaxLimit] = { 0 };
+#define DisplayInput_StringLimit	(DisplayInput_LetterPosition_MaxLimit + 1)
+
+char DisplayInput_ActualRealString[DisplayInput_StringLimit] = { 0 };
 static uint8_t DisplayInput_ActualString[DisplayInput_LetterPosition_MaxLimit] = { 0 };
 
 static char const Display_Characters[] = { ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
@@ -100,7 +102,7 @@ void Logic_Display_Init(void)
 
 	#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
 	// Fill real string with empty character
-	memset(DisplayInput_ActualRealString, ' ', sizeof(DisplayInput_ActualRealString)/sizeof(DisplayInput_ActualRealString[0]) - 1);
+	memset(DisplayInput_ActualRealString, ' ', DisplayInput_StringLimit-1);
 	// Last char not need fill with ' ', because it is end character
 
 	// Create OK button
@@ -411,8 +413,8 @@ static void Logic_StepLetterNextValue(int8_t step)
 	{
 		// At "OK" button --> Run command
 		// TODO: CommPort --> Display
-		char str[DisplayInput_LetterPosition_MaxLimit];
-		StrCpyMax(str, DisplayInput_ActualRealString, DisplayInput_LetterPosition_MaxLimit);
+		char str[DisplayInput_StringLimit];
+		StrCpyMax(str, DisplayInput_ActualRealString, DisplayInput_StringLimit);
 		StrTrim(str);
 		CommandHandler_PrepareFindExecuteCommand(CommProt_DebugUart, str);
 	}
@@ -437,11 +439,15 @@ static void Logic_StepLetterNextValue(int8_t step)
 		selectedLetter = 0;
 	}
 
-	// Save actual letter
-	DisplayInput_ActualString[DisplayInput_LetterPosition] = selectedLetter;
+	if (DisplayInput_LetterPosition != DisplayInput_LetterPosition_MaxLimit)
+	{
+		// If change letter
+		// Save actual letter
+		DisplayInput_ActualString[DisplayInput_LetterPosition] = selectedLetter;
 
-	// Convert to realstring
-	DisplayInput_ActualRealString[DisplayInput_LetterPosition] = Display_Characters[selectedLetter];
+		// Convert to realstring
+		DisplayInput_ActualRealString[DisplayInput_LetterPosition] = Display_Characters[selectedLetter];
+	}
 
 	// Refresh display
 	TaskHandler_RequestTaskScheduling(Task_Display);
