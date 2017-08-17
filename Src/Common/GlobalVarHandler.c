@@ -1574,7 +1574,7 @@ void GlobalVarHandler_RunTrace(void)
 #else
 				// Trace (print) to debug port
 				CommandHandler_Printf("Trace: %d - ", HAL_GetTick());
-				GlobalVarHandler_GetVariable(&GlobalVarList[i]);
+				GlobalVarHandler_GetVariable((GlobalVarCommand_t *)&GlobalVarList[i]);
 				CommandHandler_SendLine("");
 #endif
 			}

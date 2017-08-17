@@ -934,6 +934,11 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	// print() test
 	//printf("Example");
 
+#include "Debug.h"
+	Debug_Print(Debug_ESP8266, "Formatted %s", "text");
+
+	Debug_Print(Debug_New, "Number: %d,%d,%d", 0, 1, 2);
+
 
 	/**
 	 * 		End of Test codes

@@ -30,11 +30,11 @@
 #define DEBUGUART_TXBUFFERSIZE				256UL
 // Size of Reception buffer
 #define DEBUGUART_RXBUFFERSIZE				256UL
-#define DEBUGUART_RXBUFFER_WAIT_LENGTH			1
+#define DEBUGUART_RXBUFFER_WAIT_LENGTH		1
 
 
 // Variadic macro
-#define DebugUart_Printf(...)		   uprintf(__VA_ARGS__)
+#define DebugUart_Printf(...)				uprintf(__VA_ARGS__)
 
 
 
@@ -66,7 +66,7 @@ extern bool DebugUart_SendEnable_flag;
 
 void DebugUart_StartReceive(void);
 bool DebugUart_SendChar(char c);
-uint8_t DebugUart_SendMessage(const char *aTxBuffer);
+uint8_t DebugUart_SendMessage(const char *message);
 bool DebugUart_SendNewLine(void);
 bool DebugUart_SendLine(const char *message);
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE

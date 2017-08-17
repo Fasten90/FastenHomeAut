@@ -81,11 +81,11 @@ static bool DebugUart_WaitForSend(uint16_t timeoutMilliSecond);
 /**
  * \brief	Send string on USART
  */
-uint8_t DebugUart_SendMessage(const char *aTxBuffer)
+uint8_t DebugUart_SendMessage(const char *message)
 {
 	uint8_t length = 0;
 
-	length = StringLength(aTxBuffer);
+	length = StringLength(message);
 
 	if (length == 0)
 	{
@@ -104,7 +104,7 @@ uint8_t DebugUart_SendMessage(const char *aTxBuffer)
 
 		DebugUart_SendEnable_flag = false;
 
-		StrCpyMax((char *)DebugUart_TxBuffer, aTxBuffer, DEBUGUART_TXBUFFERSIZE-1);
+		StrCpyMax((char *)DebugUart_TxBuffer, message, DEBUGUART_TXBUFFERSIZE-1);
 
 		// ComIT
 		if (HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t *)DebugUart_TxBuffer, length) != HAL_OK)
@@ -366,7 +366,7 @@ uint8_t uprintf(const char *format, ...)
 
 	va_list ap;									// argument pointer
 	va_start(ap, format); 						// ap on arg
-	string_printf(txBuffer, format,ap);			// Separate and process
+	string_printf(txBuffer, format, ap);		// Separate and process
 	va_end(ap);						 			// Cleaning after end
 
 #ifdef CONFIG_DEBUG_MODE
