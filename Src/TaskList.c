@@ -540,17 +540,17 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 		// Not charging:
 		// Display an xy percent
 		// TODO: Display actual voltage of battery
-#ifdef CONFIG_MODULE_ADC_ENABLE
+		#ifdef CONFIG_MODULE_ADC_ENABLE
 		float voltage = ADC_GetValue(ADC_Vsource);
 		uint8_t percent = voltage / VSOURCE_BATTERY_MAX_VOLTAGE * 100;
 		Display_ChargeLoading(percent);
-#else
+		#else
 		Display_ChargeLoading(34);
-#endif
+		#endif
 	}
 	#endif
 
-	#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
+	#ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
 	// Display refresh
 
 	// Display vibrate function: if we are in setting mode, hour or minute will vibrate
@@ -600,6 +600,10 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 			TaskHandler_DisableTask(Task_Display);
 			break;
 	}
+	#elif defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK)
+	// Only show clock
+	Display_ShowClock(&DateTime_SystemTime.time);
+	TaskHandler_DisableTask(Task_Display);
 	#endif
 
 	#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
@@ -692,7 +696,7 @@ static TaskResult_t Task_SystemTimeSecondStep(ScheduleSource_t source)
 	DateTime_Step(&DateTime_SystemTime);
 
 
-	#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
+	#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
 	// Display refresh
 	if (DateTime_SystemTime.time.second == 0)
 		TaskHandler_RequestTaskScheduling(Task_Display);

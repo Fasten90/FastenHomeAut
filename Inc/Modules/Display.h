@@ -21,10 +21,10 @@
 
 #include "options.h"
 
-#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
+#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
 #include "DateTime.h"
 #endif
-#ifdef CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK
+#ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
 #include "Logic.h"
 #endif
 
@@ -86,8 +86,10 @@ void Display_ChargeLoading(uint8_t percent);
 void Display_LoadCarImage(void);
 void Display_ChangeCarImage(void);
 
-#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
+#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
 void Display_ShowClock(Time_t *time);
+#endif
+#ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
 void Display_ShowClockHalf(Time_t *time, DisplayClock_ChangeState_t displayState);
 #endif
 

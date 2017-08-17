@@ -20,6 +20,7 @@
 #include "Display_SSD1306.h"
 #include "DisplayImages.h"
 #include "Globals.h"
+#include "String.h"
 #include "Display.h"
 
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
@@ -34,16 +35,17 @@
 #include "Font32x20.h"
 #endif
 
-#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
+#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
 #include "DateTime.h"
 #endif
-#ifdef CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK
+#ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
 #include "Logic.h"
 #endif
 
 
 #define DISPLAY_FONT32X20_CLOCK_START_POSITION_X		( ( 128 - 5*20)/2 )
 #define DISPLAY_FONT32X20_CLOCK_START_POSITION_Y		( ( 64 - 1*32)/2 )
+
 
 
 /*------------------------------------------------------------------------------
@@ -401,12 +403,14 @@ void Display_ChangeCarImage(void)
 
 
 
-#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
+#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
 /**
  * \brief	Display time (HH:MM)
  */
 void Display_ShowClock(Time_t *time)
 {
+#ifdef CONFIG_DISPAY_CLOCK_LARGE
+	// Show clock: large version
 	// Set hour
 	Display_PrintFont32x20(time->hour/10, 0,
 			DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
@@ -429,6 +433,11 @@ void Display_ShowClock(Time_t *time)
 	Display_PrintFont32x20(time->minute%10, 4,
 			DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
 			DISPLAY_FONT32X20_CLOCK_START_POSITION_Y);
+#elif defined(CONFIG_DISPLAY_CLOCK_SMALL)
+	char clock[10];
+	usprintf(clock, "%02d:%02d:%02d", time->hour, time->minute, time->second);
+	Display_PrintString(clock, 0, Font_12x8);
+#endif
 
 	// Refresh display
 	Display_Activate();
@@ -437,7 +446,7 @@ void Display_ShowClock(Time_t *time)
 
 
 
-#ifdef CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK
+#ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
 /**
  * \brief	Display time (HH:MM)
  */
@@ -542,7 +551,7 @@ void Display_Test32x20Font(void)
 
 
 
-#ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
+#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
 /**
  * \brief	Test Clock show
  */

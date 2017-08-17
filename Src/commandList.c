@@ -2090,7 +2090,7 @@ static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv)
 		result = CommandResult_Ok_SendSuccessful;
 	}
 #ifdef CONFIG_MODULE_DISPLAY_TEST
-#ifdef CONFIG_MODULE_DISPLAY_FONT8X5_ENABLE
+	#ifdef CONFIG_MODULE_DISPLAY_FONT8X5_ENABLE
 	else if (!StrCmp("test1", argv[1]))
 	{
 		// Test code
@@ -2098,8 +2098,8 @@ static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv)
 		Display_Test8x5Font();
 		result = CommandResult_Ok_SendSuccessful;
 	}
-#endif
-#ifdef CONFIG_MODULE_DISPLAY_FONT12X8_ENABLE
+	#endif
+	#ifdef CONFIG_MODULE_DISPLAY_FONT12X8_ENABLE
 	else if (!StrCmp("test2", argv[1]))
 	{
 		// Test code
@@ -2107,8 +2107,8 @@ static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv)
 		Display_Test12x8Font();
 		result = CommandResult_Ok_SendSuccessful;
 	}
-#endif
-#ifdef CONFIG_MODULE_DISPLAY_FONT32X20_ENABLE
+	#endif
+	#ifdef CONFIG_MODULE_DISPLAY_FONT32X20_ENABLE
 	else if  (!StrCmp("test3", argv[1]))
 	{
 		// Test code
@@ -2119,7 +2119,8 @@ static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv)
 
 		result = CommandResult_Ok_SendSuccessful;
 	}
-#endif
+	#endif
+#endif	// #ifdef CONFIG_MODULE_DISPLAY_TEST
 #ifdef CONFIG_MODULE_DISPLAY_TEST_WITH_TERMINAL
 	else if (!StrCmp("debugprint", argv[1]))
 	{
@@ -2128,7 +2129,6 @@ static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv)
 		result = CommandResult_Ok_SendSuccessful;
 	}
 #endif
-#endif	// #ifdef CONFIG_MODULE_DISPLAY_TEST
 	else
 	{
 		result = CommandResult_Error_WrongArgument1;
