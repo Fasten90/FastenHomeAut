@@ -107,19 +107,19 @@ void CircularBuffer_Clear(char *receiveBuffer, uint16_t bufferSize, uint16_t rea
 {
 	uint16_t i;
 
-	// TODO: Check, if writeCnt > bufferSize
+	// Check, if writeCnt > bufferSize
 	if (writeCnt >= bufferSize)
 	{
 		// Change to end of buffer (for avoid overflow)
-		writeCnt = bufferSize - 1;
+		writeCnt = bufferSize;
 	}
 
 	if (readCnt < writeCnt)
 	{
 		// No overflow
-		for (i = 0; i < writeCnt-readCnt; i++)
+		for (i = readCnt; i < writeCnt; i++)
 		{
-			receiveBuffer[readCnt+i] = '\0';
+			receiveBuffer[i] = '\0';
 		}
 	}
 	else if (readCnt > writeCnt)
@@ -147,7 +147,7 @@ void CircularBuffer_Clear(char *receiveBuffer, uint16_t bufferSize, uint16_t rea
  */
 void CircularBuffer_UnitTest(void)
 {
-	char buffer256[256];
+	char buffer256[257];	// 256 + 1 "overflow" checker byte
 	uint16_t buffer256_writeCnt = 0;
 	uint16_t buffer256_readCnt = 0;
 
@@ -166,27 +166,27 @@ void CircularBuffer_UnitTest(void)
 	 * 		Test data in begin of buffer
 	 */
 	// TODO: Put some characters to buffer...
-	StrCpy(buffer256, "1234567890");
-	buffer256_writeCnt = sizeof("1234567890") - 1;
+	StrCpy(buffer256, "0123456789xx");
+	buffer256_writeCnt = sizeof("0123456789") - 1;
 	buffer256_readCnt = 0;
 
 	// Test: Get characters
 	CircularBuffer_GetCharacters(buffer256, emptyBuffer,
 			256, buffer256_writeCnt, buffer256_readCnt, true);
 
-	result = !StrCmp(emptyBuffer, "1234567890");
+	result = !StrCmp(emptyBuffer, "0123456789");
 	UNITTEST_ASSERT(result, "ERROR in GetCharacters()");
 
 	// Test: ClearBuffer
 	CircularBuffer_Clear(buffer256, 256, buffer256_readCnt, buffer256_writeCnt);
 	// Check, buffer is cleared?
-	for (i = 0; i < sizeof(1234567890); i++)
+	for (i = 0; i < sizeof("0123456789")-1; i++)
 	{
 		// Check characters
-		result = (buffer256[i] == '\0');
-		UNITTEST_ASSERT(result, "ERROR in Clear()");
+		UNITTEST_ASSERT(buffer256[i] == '\0', "ERROR in Clear()");
 	}
-
+	// Check, do not overflowed by clear
+	UNITTEST_ASSERT(!StrCmp("xx", &buffer256[buffer256_writeCnt]), "ERROR: Clear() is overflowed");
 
 	/*
 	 * 		Test data in end of buffer (overflow!)
@@ -206,6 +206,8 @@ void CircularBuffer_UnitTest(void)
 	buffer256_writeCnt = 5;
 	buffer256_readCnt = 251;
 
+	buffer256[256] = 0xEF;	// "After buffer"
+
 	// Test: Get characters
 	CircularBuffer_GetCharacters(buffer256, emptyBuffer,
 			256, buffer256_writeCnt, buffer256_readCnt, true);
@@ -222,9 +224,18 @@ void CircularBuffer_UnitTest(void)
 		result = (buffer256[251+i] == '\0');
 		UNITTEST_ASSERT(result, "ERROR in Clear()");
 	}
+	// Check overflow
+	UNITTEST_ASSERT(buffer256[256] == 0xEF, "ERROR: Clear() is overflowed()");
 
 
-	// TODO: Test: writeCnt > BUFFER_SIZE
+
+	// Test: writeCnt > BUFFER_SIZE
+
+	buffer256[255] = 0xEF;	// In buffer end
+	buffer256[256] = 0xEF;	// "After buffer"
+	CircularBuffer_Clear(buffer256, 256, 200, 256);
+	UNITTEST_ASSERT(buffer256[255] == 0, "ERROR: Clear() is not work with too large writeCnt");
+	UNITTEST_ASSERT(buffer256[256] == 0xEF, "ERROR: Clear() is overflowed()");
 
 
 	// Finish unittest
