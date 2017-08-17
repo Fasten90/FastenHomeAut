@@ -1,5 +1,5 @@
 /*
- *		command.c
+ *		CommandList.c
  *
  *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
@@ -40,6 +40,7 @@
 #include "TaskList.h"
 #include "IO.h"
 #include "LinkedList.h"
+#include "ADC.h"
 
 #include "CommandList.h"
 
@@ -399,7 +400,7 @@ const CommandStruct CommandList[] =
 #endif
 #ifdef CONFIG_MODULE_ADC_ENABLE
 	{
-		.name = "temperature",
+		.name = "adc",
 		.commandFunctionPointer = CommandFunction_adc,
 		.description = "...",
 		.syntax = NULL,
@@ -1730,8 +1731,8 @@ static CommandResult_t CommandFunction_adc(uint32_t argc, char** argv)
 	(void)argc;
 	(void)argv;
 
-	// TODO: Print ADC values
-#warning "TODO"
+	// Print ADC values
+	ADC_PrintAllValues();
 
 	return CommandResult_Ok;
 }

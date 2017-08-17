@@ -295,7 +295,7 @@ static float ADC_ConvertToVoltage(uint32_t readValue)
 /**
  * \brief	Convert Source voltage
  */
-static float ADC_ConvertToSourceVoltage (uint32_t readValue)
+static float ADC_ConvertToSourceVoltage(uint32_t readValue)
 {
 	float voltage;
 
@@ -314,10 +314,26 @@ float ADC_GetValue(ADC_MeasurementData_t meas)
 	float value = 0.0f;
 
 	if (meas < ADC_Count)
-		value = ADC_MeasuredValues[meas];
+		value = ADC_ConvertedValues[meas];
 
 	return value;
 }
+
+
+
+/**
+ * \brief	Print all ADC values
+ */
+void ADC_PrintAllValues(void)
+{
+	uint8_t i;
+
+	for (i = 0; i < ADC_BUFFER_SIZE; i++)
+	{
+		uprintf("%d - %f", i, ADC_ConvertedValues[i]);
+	}
+}
+
 
 
 #endif

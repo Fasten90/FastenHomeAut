@@ -75,19 +75,8 @@ void ADC_ConvertAllMeasuredValues(void);
 
 float ADC_GetValue(ADC_MeasurementData_t meas);
 
+void ADC_PrintAllValues(void);
 
-// TODO: Delete these
-/*
-void ADC_Test ( void );
-void ADC_Run( void );
-
-float ADC_ConvertToVoltage (uint32_t readValue);
-float ADC_ConvertInternalTempSensorValue (uint32_t readValue);
-
-void DMA1_Channel1_IRQHandler(void);
-void ADC1_IRQHandler(void);
-void ADC1_DMA_IRQHandler(void);
-*/
 
 
 #endif // #ifdef CONFIG_MODULE_ADC_ENABLE
