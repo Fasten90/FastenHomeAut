@@ -55,6 +55,10 @@ volatile float			ADC_ConvertedValues[ADC_BUFFER_SIZE];
  *  Local functions
  *----------------------------------------------------------------------------*/
 
+static float ADC_ConvertToVoltage(uint32_t readValue);
+static float ADC_ConvertToSourceVoltage(uint32_t readValue);
+
+
 
 /*------------------------------------------------------------------------------
  *  Global functions
@@ -277,7 +281,7 @@ void ADC_ConvertAllMeasuredValues(void)
 /**
  * \brief	Convert read value to voltage
  */
-float ADC_ConvertToVoltage(uint32_t readValue)
+static float ADC_ConvertToVoltage(uint32_t readValue)
 {
 	float voltage;
 
@@ -291,7 +295,7 @@ float ADC_ConvertToVoltage(uint32_t readValue)
 /**
  * \brief	Convert Source voltage
  */
-float ADC_ConvertToSourceVoltage (uint32_t readValue)
+static float ADC_ConvertToSourceVoltage (uint32_t readValue)
 {
 	float voltage;
 
@@ -300,6 +304,20 @@ float ADC_ConvertToSourceVoltage (uint32_t readValue)
 	return voltage;
 }
 
+
+
+/**
+ * \brief	Get ADC value
+ */
+float ADC_GetValue(ADC_MeasurementData_t meas)
+{
+	float value = 0.0f;
+
+	if (meas < ADC_Count)
+		value = ADC_MeasuredValues[meas];
+
+	return value;
+}
 
 
 #endif

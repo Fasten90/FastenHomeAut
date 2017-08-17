@@ -386,11 +386,12 @@ static void Logic_StepLetterPosition(int8_t step)
 	DisplayInput_LetterPosition += step;
 	if (step > 0 && (DisplayInput_LetterPosition > DisplayInput_LetterPosition_MaxLimit))
 	{
+		// Overflow
 		DisplayInput_LetterPosition = DisplayInput_LetterPosition_MinLimit;
 	}
 	else if (step < 0 && (DisplayInput_LetterPosition > DisplayInput_LetterPosition_MaxLimit))
 	{
-		// Check "underflow"
+		// Underflow
 		DisplayInput_LetterPosition = DisplayInput_LetterPosition_MaxLimit;
 	}
 
@@ -418,7 +419,7 @@ static void Logic_StepLetterNextValue(int8_t step)
 	else if (step < 0 && selectedLetter > 0 && (int8_t)selectedLetter-step > 0)
 	{
 		// Can go "down"
-		selectedLetter--;
+		selectedLetter -= step;
 	}
 	else if (step < 0)
 	{
@@ -428,7 +429,7 @@ static void Logic_StepLetterNextValue(int8_t step)
 	else if (step > 0 && (uint8_t)(selectedLetter+step) < sizeof(Display_Characters)/sizeof(Display_Characters[0]))
 	{
 		// Can go "up"
-		selectedLetter++;
+		selectedLetter += step;
 	}
 	else if (step > 0)
 	{

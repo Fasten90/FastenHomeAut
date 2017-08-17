@@ -72,8 +72,8 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle);
 
 
 void ADC_ConvertAllMeasuredValues(void);
-float ADC_ConvertToVoltage(uint32_t readValue);
-float ADC_ConvertToSourceVoltage(uint32_t readValue);
+
+float ADC_GetValue(ADC_MeasurementData_t meas);
 
 
 // TODO: Delete these
