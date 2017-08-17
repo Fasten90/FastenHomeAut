@@ -14,6 +14,8 @@
 #include "GlobalVariables.h"
 
 #include "Globals.h"
+#include "ADC.h"
+
 
 
 #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
@@ -139,6 +141,14 @@ const GlobalVarCommand_t GlobalVarList[] =
 		.isFunction = true,
 		.description = "Tick counter"
 	},
+	{
+		.name = "vsource",
+		.varPointer = (void * const)&ADC_ConvertedValues[0],
+		.type = Type_Float,
+		.isReadOnly = true,
+		.unit = "V",
+		.description = "Vsource"
+	}
 
 
 

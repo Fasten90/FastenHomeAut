@@ -19,6 +19,7 @@
 #include "options.h"
 
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
+
 #include "Logic.h"
 #include "GlobalVarHandler.h"
 #include "Button.h"
@@ -30,6 +31,7 @@
 #include "Motor.h"
 #include "ESP8266.h"
 #include "Display.h"
+#include "ADC.h"
 
 #include "TaskList.h"
 
@@ -738,6 +740,8 @@ static TaskResult_t Task_InputOutput(ScheduleSource_t source)
 	(void)source;
 
 	Logic_CheckCharger();
+
+	ADC_ConvertAllMeasuredValues();
 
 	return TASK_RESULT_OK;
 }

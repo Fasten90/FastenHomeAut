@@ -1715,6 +1715,46 @@ BUTTON_LEFT			GPIOA15
 #define IO_INPUTS_NUM	1
 
 
+
+#define ADC_BUFFER_SIZE					(1)
+
+
+// VSOURCE_ADC
+// PB1
+// ADC_IN9
+#define	ADC_VSOURCE_GPIO_PORT			GPIOB
+#define	ADC_VSOURCE_GPIO_PIN			GPIO_PIN_1
+#define	ADC_VSOURCE_CHANNEL				ADC_CHANNEL_9
+
+
+#define ADC_TEMPSENSOR_CHANNEL			ADC_CHANNEL_16
+#define ADC_VREFINT_CHANNEL				ADC_CHANNEL_17
+
+
+#define ADCx                            ADC1
+#define ADCx_CLK_ENABLE()               __HAL_RCC_ADC1_CLK_ENABLE()
+#define DMAx_CLK_ENABLE()               __HAL_RCC_DMA1_CLK_ENABLE()
+#define ADCx_CHANNEL_GPIO_CLK_ENABLE()  __HAL_RCC_GPIOB_CLK_ENABLE()
+
+
+/* Definition for ADCx's DMA */
+#define ADCx_DMA_CHANNEL                DMA1_Channel1
+
+/* Definition for ADCx's NVIC */
+#define ADCx_DMA_IRQn                   DMA1_Channel1_IRQn
+#define ADCx_DMA_IRQHandler             DMA1_Channel1_IRQHandler
+
+/* ADC DMA Interrupt priorities */
+#define ADC_DMA_PREEMT_PRIORITY			15
+#define ADC_DMA_SUB_PRIORITY			0
+
+#define ADC_VOLTAGE_MAX					(3.3f)
+#define ADC_RESOLUTION_MAX				(4095U)
+
+#define ADC_SOURCE_VOLTAGE_MUL			10
+
+
+
 #endif	// CONFIG_USE_PANEL_FASTENNODE
 
 

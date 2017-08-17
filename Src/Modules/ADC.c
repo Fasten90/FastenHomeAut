@@ -1,26 +1,28 @@
 /*
- *		commonAdc.c
+ *		adc.c
  *
- *		Created on:		2016. nov. 21.
+ *		Created on:		2015
  *      Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		-
  *		Target:			STM32Fx
  *		Version:		-
- *		Last modified:	2016. dec. 13.
+ *		Last modified:	2017. febr. 8.
  */
 
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
-#include "include.h"
-#include "CommonAdc.h"
+
+#include "board.h"
+#include "ADC.h"
 
 
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
-#ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
+#ifdef CONFIG_MODULE_ADC_ENABLE
+
 
 
 /*------------------------------------------------------------------------------
@@ -33,16 +35,10 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-// ADC handle declaration
 ADC_HandleTypeDef		AdcHandle;
+volatile uint32_t		ADC_MeasuredValues[ADC_BUFFER_SIZE];
+volatile float			ADC_ConvertedValues[ADC_BUFFER_SIZE];
 
-// Measured values
-volatile uint32_t		ADC_MeasuredValues[ADC_BUFFER_SIZE] = { 0 };
-
-// Calculated values
-volatile float			ADC_ConvertedValues[ADC_BUFFER_SIZE] = { 0 };
-
-volatile uint32_t		ADC_MeasureCnt = 0;
 
 
 /*------------------------------------------------------------------------------
@@ -50,11 +46,9 @@ volatile uint32_t		ADC_MeasureCnt = 0;
  *----------------------------------------------------------------------------*/
 
 
-
 /*------------------------------------------------------------------------------
  *  Function declarations
  *----------------------------------------------------------------------------*/
-
 
 
 /*------------------------------------------------------------------------------
@@ -62,19 +56,18 @@ volatile uint32_t		ADC_MeasureCnt = 0;
  *----------------------------------------------------------------------------*/
 
 
-
 /*------------------------------------------------------------------------------
  *  Global functions
  *----------------------------------------------------------------------------*/
-extern void Error_Handler(void);
-
-
 
 /**
- * \brief	Initialize ADC
+ * \brief	Initialize IOs
  */
-void CommonADC_Init(void)
+void ADC_Init(void)
 {
+
+	HAL_ADC_MspInit(&AdcHandle);
+
 	ADC_ChannelConfTypeDef   sConfig;
 
 	//HAL_ADC_MspInit(&AdcHandle);	// Called by HAL driver
@@ -82,20 +75,18 @@ void CommonADC_Init(void)
 	/* Configuration of AdcHandle init structure: ADC parameters and regular group */
 	AdcHandle.Instance = ADCx;
 
-	AdcHandle.Init.ClockPrescaler        = ADC_CLOCKPRESCALER_PCLK_DIV8;
+	AdcHandle.Init.ClockPrescaler        = ADC_CLOCK_SYNC_PCLK_DIV4;
 	AdcHandle.Init.Resolution            = ADC_RESOLUTION_12B;
 	AdcHandle.Init.ScanConvMode          = ENABLE;							/* Sequencer enabled (ADC conversion on several channels, successively, following settings below) */
 	AdcHandle.Init.ContinuousConvMode    = ENABLE;							/* Continuous mode disabled to have only 1 rank converted at each conversion trig, and because discontinuous mode is enabled */
 	AdcHandle.Init.DiscontinuousConvMode = DISABLE;							/* Sequencer of regular group will convert the sequence in several sub-divided sequences */
-	AdcHandle.Init.NbrOfDiscConversion   = 0;								/* Sequencer of regular group will convert ranks one by one, at each conversion trig */
 	AdcHandle.Init.ExternalTrigConvEdge  = ADC_EXTERNALTRIGCONVEDGE_NONE;
-	AdcHandle.Init.ExternalTrigConv      = ADC_EXTERNALTRIGCONV_T1_CC1;		/* Trig of conversion start done manually by software, without external event */
+	//AdcHandle.Init.ExternalTrigConv      = ADC_EXTERNALTRIGCONV;		/* Trig of conversion start done manually by software, without external event */
 	AdcHandle.Init.DataAlign             = ADC_DATAALIGN_RIGHT;
-	AdcHandle.Init.NbrOfConversion       = ADC_BUFFER_SIZE;					/* Sequencer of regular group will convert the 3 first ranks: rank1, rank2, rank3 */
 	AdcHandle.Init.DMAContinuousRequests = ENABLE;							/* ADC-DMA continuous requests to match with DMA configured in circular mode */
 	AdcHandle.Init.EOCSelection          = DISABLE;
 
-	
+
 	if (HAL_ADC_Init(&AdcHandle) != HAL_OK)
 	{
 		/* ADC initialization error */
@@ -110,10 +101,9 @@ void CommonADC_Init(void)
 	/*       temperature sensor) constraints.                                   */
 	/*       For example, sampling time of temperature sensor must be higher    */
 	/*       than 4us. Refer to device datasheet for min/typ/max values.        */
-	sConfig.Channel      = ADCx_CHANNEL_1;
+	sConfig.Channel      = ADC_VSOURCE_CHANNEL;
 	sConfig.Rank         = 1;
-	sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
-	sConfig.Offset		 = 0;
+	sConfig.SamplingTime = ADC_SAMPLETIME_239CYCLES_5;	// TODO: Make define for sampling times
 
 	if (HAL_ADC_ConfigChannel(&AdcHandle, &sConfig) != HAL_OK)
 	{
@@ -126,7 +116,7 @@ void CommonADC_Init(void)
 	/* Replicate previous rank settings, change only channel and rank */
 	sConfig.Channel      = ADC_CHANNEL_2;
 	sConfig.Rank         = 2;
-	sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
+	sConfig.SamplingTime = ADC_SAMPLETIME_239CYCLES_5;
 
 	if (HAL_ADC_ConfigChannel(&AdcHandle, &sConfig) != HAL_OK)
 	{
@@ -139,7 +129,7 @@ void CommonADC_Init(void)
 	/* Replicate previous rank settings, change only channel and rank */
 	sConfig.Channel      = ADC_CHANNEL_3;
 	sConfig.Rank         = 3;
-	sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
+	sConfig.SamplingTime = ADC_SAMPLETIME_239CYCLES_5;
 
 	if (HAL_ADC_ConfigChannel(&AdcHandle, &sConfig) != HAL_OK)
 	{
@@ -161,7 +151,6 @@ void CommonADC_Init(void)
 		/* Start Error */
 		Error_Handler();
 	}
-  
 }
 
 
@@ -171,7 +160,7 @@ void CommonADC_Init(void)
  */
 void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 {
-	
+
 	GPIO_InitTypeDef GPIO_InitStruct;
 	static DMA_HandleTypeDef DmaHandle;
 
@@ -185,10 +174,10 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 
 
 	/*##- 2- Configure peripheral GPIO */
-	GPIO_InitStruct.Pin = ADCx_CHANNEL_PIN_1;
+	GPIO_InitStruct.Pin = ADC_VSOURCE_GPIO_PIN;
 	GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	HAL_GPIO_Init(ADCx_CHANNEL_GPIO_PORT, &GPIO_InitStruct);
+	HAL_GPIO_Init(ADC_VSOURCE_GPIO_PORT, &GPIO_InitStruct);
 
 #if ADC_BUFFER_SIZE >= 2
 	GPIO_InitStruct.Pin = ADCx_CHANNEL_PIN_2;
@@ -198,7 +187,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 	GPIO_InitStruct.Pin = ADCx_CHANNEL_PIN_3;
 	HAL_GPIO_Init(ADCx_CHANNEL_GPIO_PORT, &GPIO_InitStruct);
 #endif
-	
+
 #if ADC_BUFFER_SIZE > 3
 #warning "ADC num is not 3, need extend the channel configs"
 #endif
@@ -206,8 +195,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 	/*##- 3- Configure DMA */
 
 	/* Configure DMA parameters */
-	DmaHandle.Instance					= ADCx_DMA_STREAM;
-	DmaHandle.Init.Channel				= ADCx_DMA_CHANNEL;
+	DmaHandle.Instance					= ADCx_DMA_CHANNEL;
 	DmaHandle.Init.Direction			= DMA_PERIPH_TO_MEMORY;
 	DmaHandle.Init.PeriphInc			= DMA_PINC_DISABLE;
 	DmaHandle.Init.MemInc				= DMA_MINC_ENABLE;
@@ -215,10 +203,6 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 	DmaHandle.Init.MemDataAlignment		= DMA_MDATAALIGN_WORD;
 	DmaHandle.Init.Mode					= DMA_CIRCULAR;
 	DmaHandle.Init.Priority				= DMA_PRIORITY_LOW;
-	DmaHandle.Init.FIFOMode				= DMA_FIFOMODE_DISABLE;
-	DmaHandle.Init.FIFOThreshold		= DMA_FIFO_THRESHOLD_HALFFULL;
-	DmaHandle.Init.MemBurst				= DMA_MBURST_SINGLE;
-	DmaHandle.Init.PeriphBurst			= DMA_PBURST_SINGLE;
 
 	/* Deinitialize  & Initialize the DMA for new transfer */
 	HAL_DMA_Init(&DmaHandle);
@@ -229,7 +213,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 	/* NVIC configuration for DMA Input data interrupt */
 	HAL_NVIC_SetPriority(ADCx_DMA_IRQn, ADC_DMA_PREEMT_PRIORITY, ADC_DMA_SUB_PRIORITY);
 	HAL_NVIC_EnableIRQ(ADCx_DMA_IRQn);
-	
+
 }
 
 
@@ -241,34 +225,51 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 {
 	// Suppress warning
 	(void)AdcHandle;
+}
 
-	ADC_MeasureCnt++;
+
+void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
+{
+	(void)hadc;
+}
+
+
+void HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
+{
+	(void)hadc;
+	DEBUG_BREAKPOINT();
 }
 
 
 
 /**
- * \brief	Infinite loop: print ADC values
- * 			NOTE: Be careful, it is blocking mode
+ * \brief	Convert all measurements
  */
-void CommonADC_Test(void)
+void ADC_ConvertAllMeasuredValues(void)
 {
-	
-	while (1)
+	// TODO: We can convert in a loop, but some ADC not work in standard measuring
+	uint8_t i;
+
+	for (i = 0; i < ADC_BUFFER_SIZE; i++)
 	{
-		uint8_t i;
-		
-		DelayMs(10);
-
-		uprintf("#\r\n");
-		for (i = 0; i < ADC_BUFFER_SIZE; i++)
+		switch((ADC_MeasurementData_t)i)
 		{
-			uprintf("%d. value: %d\r\n", i, ADC_MeasuredValues[i]);
-		}
-		
-		DelayMs(1000);
-	}
+			case ADC_Vsource:
+				// Convert source voltage
+				ADC_ConvertedValues[i] = ADC_ConvertToSourceVoltage(ADC_MeasuredValues[i]);
+				break;
 
+			case ADC_StandardVoltageExample:
+				// Convert standard
+				ADC_ConvertedValues[i] = ADC_ConvertToVoltage(ADC_MeasuredValues[i]);
+				break;
+
+			case ADC_Count:
+			default:
+				// Error
+				break;
+		}
+	}
 }
 
 
@@ -276,11 +277,11 @@ void CommonADC_Test(void)
 /**
  * \brief	Convert read value to voltage
  */
-float CommonADC_ConvertToVoltage(uint32_t readValue)
+float ADC_ConvertToVoltage(uint32_t readValue)
 {
 	float voltage;
 
-	voltage = (float)readValue * COMMON_ADC_VOLTAGE_MAX / COMMON_ADC_RESOLUTION_MAX;
+	voltage = (float)readValue * ADC_VOLTAGE_MAX / ADC_RESOLUTION_MAX;
 
 	return voltage;
 }
@@ -288,20 +289,17 @@ float CommonADC_ConvertToVoltage(uint32_t readValue)
 
 
 /**
- * \brief	Convert all read values
+ * \brief	Convert Source voltage
  */
-void CommonADC_ConvertAllMeasuredValues(void)
+float ADC_ConvertToSourceVoltage (uint32_t readValue)
 {
-	
-	uint8_t i;
-	
-	for (i = 0; i < ADC_BUFFER_SIZE; i++)
-	{
-		
-		ADC_ConvertedValues[i] = CommonADC_ConvertToVoltage(ADC_MeasuredValues[i]);
-	}
+	float voltage;
+
+	voltage = (float)readValue * ADC_VOLTAGE_MAX / ADC_RESOLUTION_MAX * ADC_SOURCE_VOLTAGE_MUL;
+
+	return voltage;
 }
 
 
 
-#endif // #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
+#endif

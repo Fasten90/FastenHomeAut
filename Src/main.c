@@ -49,6 +49,7 @@
 #include "IO.h"
 #include "Display.h"
 #include "Logic.h"
+#include "ADC.h"
 
 
 /* Private variables ---------------------------------------------------------*/
@@ -120,6 +121,12 @@ int main(void)
 #ifdef CONFIG_MODULE_IO_ENABLE
 	// IO
 	IO_Init();
+#endif
+
+
+#ifdef CONFIG_MODULE_ADC_ENABLE
+	// ADC
+	ADC_Init();
 #endif
 
 

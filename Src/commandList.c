@@ -121,8 +121,8 @@
 	static CommandResult_t CommandFunction_flashread(uint32_t argc, char** argv);
 	static CommandResult_t CommandFunction_flashwrite(uint32_t argc, char** argv);
 #endif
-#ifdef CONFIG_MODULE_TEMPERATURE_ENABLE
-	static CommandResult_t CommandFunction_temp(uint32_t argc, char** argv);
+#ifdef CONFIG_MODULE_ADC_ENABLE
+	static CommandResult_t CommandFunction_adc(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_DEBUG_RAMREAD_WRITE_COMMAND_ENABLE
 	static CommandResult_t CommandFunction_mr(uint32_t argc, char** argv);
@@ -400,7 +400,7 @@ const CommandStruct CommandList[] =
 #ifdef CONFIG_MODULE_ADC_ENABLE
 	{
 		.name = "temperature",
-		.commandFunctionPointer = CommandFunction_temp,
+		.commandFunctionPointer = CommandFunction_adc,
 		.description = "...",
 		.syntax = NULL,
 		.commandArgNum = CommandArgument_0,
@@ -1723,22 +1723,15 @@ static CommandResult_t CommandFunctionEventLog(uint32_t argc, char** argv)
 
 #ifdef CONFIG_MODULE_ADC_ENABLE
 /**
- * \brief	Temperature
- * 			Read temperature and Vref values
+ * \brief	Read ADC values
  */
-static CommandResult_t CommandFunction_temp(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_adc(uint32_t argc, char** argv)
 {
+	(void)argc;
+	(void)argv;
 
-	//uprintf("Temperature: %d [C]\r\n",ADC_GetTemp());
-	//uprintf("Vref: %d [mV]\r\n",ADC_GetVref());
-
-
-	CommonADC_ConvertAllMeasuredValues();
-
-	uprintf("Temperature: ");
-	USART_SendFloat(ADC_ConvertedValue_InternalTemperature);
-	uprintf(" [C]\r\n");
-
+	// TODO: Print ADC values
+#warning "TODO"
 
 	return CommandResult_Ok;
 }

@@ -9,6 +9,9 @@
 #include "TaskHandler.h"
 #include "TaskList.h"
 #endif
+#ifdef CONFIG_MODULE_ADC_ENABLE
+#include "ADC.h"
+#endif
 
 // TODO: Delete these, if not need
 #ifdef CONFIG_USE_PANEL_HOMEAUTNODESMALL
@@ -324,7 +327,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 
 
-#if defined(CONFIG_MODULE_COMMON_ADC_ENABLE)
+#if defined(CONFIG_MODULE_COMMON_ADC_ENABLE) || defined(CONFIG_MODULE_ADC_ENABLE)
 void ADCx_DMA_IRQHandler(void)
 {
   HAL_DMA_IRQHandler(AdcHandle.DMA_Handle);
