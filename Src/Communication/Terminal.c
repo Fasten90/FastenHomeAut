@@ -895,7 +895,7 @@ static bool Terminal_HistoryFindInList(void)
 	for (i = 0; i < TERMINAL_HISTORY_MAX_COUNT; i++)
 	{
 		// Check, equal with command?
-		if (!StrCmp((const char *)Terminal_HistoryList[i],(const char * )Terminal_CommandActual))
+		if (!StrCmp((const char *)Terminal_HistoryList[i], (const char *)Terminal_CommandActual))
 		{
 			// If it is equal
 			// Has equal command

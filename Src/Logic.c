@@ -44,7 +44,7 @@ bool Logic_BatteryIsCharging = false;
  *  Local variables
  *----------------------------------------------------------------------------*/
 
-#if defined(CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK)
+#if defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK)
 static DisplayClock_ChangeState_t Logic_SystemTimeConfigState = 0;
 #endif
 
@@ -72,7 +72,7 @@ static uint8_t const Display_Characters_size = sizeof(Display_Characters)/sizeof
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
-#ifdef CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK
+#ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
 static void Logic_SystemTimeStepConfig(void);
 static void Logic_SystemTimeStepValue(void);
 #endif
@@ -149,7 +149,7 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 	BUTTON_DEBUG_PRINT("Button pressed");
 #endif
 
-#if defined(CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK) && (BUTTON_NUM == 1)
+#if defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK) && (BUTTON_NUM == 1)
 	// One button mode
 	(void)type;
 	if (button == PressedButton_User)
@@ -165,7 +165,7 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 			Logic_SystemTimeStepValue();
 		}
 	}
-#elif defined(CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK) && (BUTTON_NUM > 1)
+#elif defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK) && (BUTTON_NUM > 1)
 	// More button mode
 	(void)type;
 	// TODO: Up-Down / Right-Up difference...
@@ -456,7 +456,7 @@ static void Logic_StepLetterNextValue(int8_t step)
 
 
 
-#if defined(CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK)
+#if defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK)
 /**
  * \brief	SystemTime - step function
  */

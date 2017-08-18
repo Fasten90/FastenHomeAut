@@ -60,7 +60,7 @@ typedef enum
 
 
 
-#if defined(CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK)
+#if defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK)
 typedef enum
 {
 	DisplayClock_HourAndMinute,
@@ -99,7 +99,7 @@ void Logic_Display_Init(void);
 
 void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type);
 
-#if defined(CONFIG_FUNCTION_CHANGE_DISPLAY_CLOCK)
+#if defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK)
 DisplayClock_ChangeState_t Logic_GetSystemTimeState(void);
 #endif
 

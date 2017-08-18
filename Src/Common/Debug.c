@@ -81,6 +81,9 @@ DebugRecord_t DebugTasks[] =
  */
 void Debug_Print(Debug_t debugTask, const char *format, ...)
 {
+	// Check DebugTasks list size
+	BUILD_BUG_ON((sizeof(DebugTasks)/sizeof(DebugTasks[0])) == (Debug_Count-1));
+
 	if (debugTask >= Debug_Count)
 		return;
 
