@@ -57,8 +57,13 @@ typedef enum
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
+#ifdef CONFIG_MODULE_DEBUG
 void Debug_Print(Debug_t debugTask, const char *format, ...);
-
+void Debug_EnableDisable(Debug_t task, bool enable);
+#else
+// Empty macro for suppress warnings
+#define Debug_Print(...)
+#endif
 
 
 #endif /* COMMON_DEBUG_H_ */

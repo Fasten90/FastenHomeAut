@@ -17,6 +17,8 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
+
+#ifdef CONFIG_MODULE_DEBUG
 #include "FormattedMessage.h"
 #include "String.h"
 #include "DebugUart.h"
@@ -113,3 +115,18 @@ void Debug_Print(Debug_t debugTask, const char *format, ...)
 }
 
 
+
+/**
+ * \brief	Enable-Disable debug print
+ */
+void Debug_EnableDisable(Debug_t task, bool enable)
+{
+	if (task >= Debug_Count)
+		return;
+
+	DebugTasks[task].isEnabled = enable;
+}
+
+
+
+#endif	// #ifdef CONFIG_MODULE_DEBUG

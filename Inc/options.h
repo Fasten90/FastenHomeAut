@@ -284,6 +284,7 @@
 
 
 // Debug - Formatted text (colored texts)
+#define CONFIG_MODULE_DEBUG
 #define CONFIG_MODULE_FORMATTEDMESSAGE_ENABLE
 
 

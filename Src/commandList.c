@@ -939,6 +939,13 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 
 	Debug_Print(Debug_New, "Number: %d,%d,%d", 0, 1, 2);
 
+	Debug_EnableDisable(Debug_ESP8266, false);
+
+	Debug_EnableDisable(Debug_New, true);
+
+	Debug_Print(Debug_ESP8266, "Formatted %s", "text");
+
+	Debug_Print(Debug_New, "Number: %d,%d,%d", 0, 1, 2);
 
 	/**
 	 * 		End of Test codes
