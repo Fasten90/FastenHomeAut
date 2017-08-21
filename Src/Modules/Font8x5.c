@@ -2,6 +2,8 @@
 #include "Font8x5.h"
 
 
+#ifdef CONFIG_DISPLAY_FONT8X5_ENABLE
+
 /* Font - 8x5 */
 const uint8_t Font8x5[FONT_8X5_NUM][FONT_8X5_STORE_SIZE] =
 {
@@ -25,15 +27,13 @@ const uint8_t Font8x5[FONT_8X5_NUM][FONT_8X5_STORE_SIZE] =
 		{ 0x00, 0x00, 0x00, 0x00, 0x00 },
 		/* Font: "	" (dec: 9, hex: 0x09) */
 		{ 0x00, 0x00, 0x00, 0x00, 0x00 },
-		/* Font: "
-	" (dec: 10, hex: 0x0A) */
+		/* Font: "" (dec: 10, hex: 0x0A) */
 		{ 0x00, 0x00, 0x00, 0x00, 0x00 },
 		/* Font: "" (dec: 11, hex: 0x0B) */
 		{ 0x00, 0x00, 0x00, 0x00, 0x00 },
 		/* Font: "" (dec: 12, hex: 0x0C) */
 		{ 0x00, 0x00, 0x00, 0x00, 0x00 },
-		/* Font: "
-	" (dec: 13, hex: 0x0D) */
+		/* Font: "" (dec: 13, hex: 0x0D) */
 		{ 0x00, 0x00, 0x00, 0x00, 0x00 },
 		/* Font: "" (dec: 14, hex: 0x0E) */
 		{ 0x00, 0x00, 0x00, 0x00, 0x00 },
@@ -265,3 +265,5 @@ const uint8_t Font8x5[FONT_8X5_NUM][FONT_8X5_STORE_SIZE] =
 		{ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF },
 };
 /* End of font*/
+
+#endif	// #ifdef CONFIG_DISPLAY_FONT8X5_ENABLE

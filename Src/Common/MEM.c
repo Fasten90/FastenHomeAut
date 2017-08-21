@@ -196,6 +196,7 @@ void mem_CheckStackGuardValues(void)
 	uint16_t guardGoodCnt = 0;
 	bool guardWasFound = false;
 	// Do not initialize buffer with fix values!!!!
+	// (cppcheck style) Variable 'stackOverFlowCheckerVariable' is not assigned a value.
 	uint8_t stackOverFlowCheckerVariable[CONFIG_MEM_STACK_GUARD_LENGTH];
 
 	for (i = 0; i < CONFIG_MEM_STACK_GUARD_LENGTH; i++)

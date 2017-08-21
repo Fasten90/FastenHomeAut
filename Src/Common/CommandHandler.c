@@ -272,7 +272,7 @@ static void CommandHandler_CheckResultAndRespond(CommandResult_t result)
 static CommandResult_t CommandHandler_RunCommand(CommandID_t commandID)
 {
 
-	CommandResult_t result = CommandResult_Unknown;
+	CommandResult_t result;
 	bool needWriteHelp = false;
 
 	// Check argument nums

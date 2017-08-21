@@ -947,6 +947,7 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 
 	Debug_Print(Debug_New, "Number: %d,%d,%d", 0, 1, 2);
 
+
 	/**
 	 * 		End of Test codes
 	 */
@@ -1028,9 +1029,8 @@ static CommandResult_t CommandFunction_led(uint32_t argc, char** argv)
 		{
 			// Good count
 			// Get type "set type"
-			LED_SetType_t setType = LED_Set_DontCare;
+			LED_SetType_t setType = LED_GetTypeFromString(argv[2]);
 			bool status = false;
-			setType = LED_GetTypeFromString(argv[2]);
 
 			if (setType == LED_Set_DontCare)
 			{
@@ -2103,7 +2103,7 @@ static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv)
 		result = CommandResult_Ok_SendSuccessful;
 	}
 #ifdef CONFIG_MODULE_DISPLAY_TEST
-	#ifdef CONFIG_MODULE_DISPLAY_FONT8X5_ENABLE
+	#ifdef CONFIG_DISPLAY_FONT8X5_ENABLE
 	else if (!StrCmp("test1", argv[1]))
 	{
 		// Test code
@@ -2112,7 +2112,7 @@ static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv)
 		result = CommandResult_Ok_SendSuccessful;
 	}
 	#endif
-	#ifdef CONFIG_MODULE_DISPLAY_FONT12X8_ENABLE
+	#ifdef CONFIG_DISPLAY_FONT12X8_ENABLE
 	else if (!StrCmp("test2", argv[1]))
 	{
 		// Test code
@@ -2121,7 +2121,7 @@ static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv)
 		result = CommandResult_Ok_SendSuccessful;
 	}
 	#endif
-	#ifdef CONFIG_MODULE_DISPLAY_FONT32X20_ENABLE
+	#ifdef CONFIG_DISPLAY_FONT32X20_ENABLE
 	else if  (!StrCmp("test3", argv[1]))
 	{
 		// Test code
@@ -2230,6 +2230,7 @@ static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
 				// Generate Fault to test FaultHandler()
 
 				// Const write
+				//(cppcheck error) Modifying string literal "const" directly or indirectly is undefined behaviour.
 				static const char const buffer[] = "const";
 				char * pnt = (char *)buffer;
 
@@ -2243,11 +2244,14 @@ static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
 			}
 			else if (!StrCmp("zerodivide", argv[2]))
 			{
-				// Test zero dividing
+				/* Test zero dividing
+				 * \note !! Be careful !! It is an error, the sw will crach !!
+				 */
 				uint32_t a = 5;
 				uint32_t b = 0;
 				uint32_t c;
 
+				//(cppcheck error) Division by zero.
 				c = a/b;
 
 				uprintf("ZeroDivice result: %d\r\n", c);

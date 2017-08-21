@@ -38,6 +38,10 @@ typedef enum
 {
 	Debug_ESP8266,
 	Debug_New,
+	/*
+	 * XXX: Add here new Debug task enums
+	 * \note	Do not forget syncronize with DebugTasks
+	 */
 
 	// Do not use, it used for enum count
 	Debug_Count

@@ -351,7 +351,7 @@ LED_SetType_t LED_GetTypeFromString(const char *typeString)
  */
 uint8_t LED_GetLedStates(char *str)
 {
-	uint8_t length;
+	uint8_t length = 0;
 #if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_HOMEAUTPANELS)
 	length = usprintf(str, "Led status: %d %d %d",
 			LED_GetStatus(1),

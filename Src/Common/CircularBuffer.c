@@ -218,7 +218,13 @@ void CircularBuffer_UnitTest(void)
 	// Test: ClearBuffer
 	CircularBuffer_Clear(buffer256, 256, buffer256_readCnt, buffer256_writeCnt);
 	// Check, buffer is cleared?
-	for (i = 0; i < sizeof(1234567890); i++)
+	for (i = 0; i < 256-251; i++)
+	{
+		// Check characters
+		result = (buffer256[251+i] == '\0');
+		UNITTEST_ASSERT(result, "ERROR in Clear()");
+	}
+	for (i = 0; i < 251-256+sizeof("1234567890"); i++)
 	{
 		// Check characters
 		result = (buffer256[251+i] == '\0');

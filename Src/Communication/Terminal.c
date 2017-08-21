@@ -369,9 +369,7 @@ static void Terminal_ProcessReceivedCharacter(void)
 	// Process characters
 	for (i = 0; i < receivedMessageLength; i++)
 	{
-		volatile char receivedChar = '\0';
-
-		receivedChar = receiveBuffer[i];
+		volatile char receivedChar = receiveBuffer[i];
 
 #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 		// ESCAPE SEQUENCE
@@ -1055,9 +1053,7 @@ static void Terminal_GetPassword(void)
 			// While Read cnt not equal than Write cnt
 			if (cnt != DebugUart_RxBufferWriteCnt)
 			{
-				volatile char USART_ReceivedChar = '\0';
-
-				USART_ReceivedChar = DebugUart_RxBuffer[cnt];
+				volatile char USART_ReceivedChar = DebugUart_RxBuffer[cnt];
 				cnt++;
 				CommandHandler_SendChar('*');
 

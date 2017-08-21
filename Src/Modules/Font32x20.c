@@ -6,7 +6,7 @@
  * This font contain only 11 "font character": 0-9 (numbers) + ':' character for hour displaying
  */
 
-#ifdef CONFIG_MODULE_DISPLAY_FONT32X20_ENABLE
+#ifdef CONFIG_DISPLAY_FONT32X20_ENABLE
 
 
 /* Font - 32x20 */
@@ -40,4 +40,4 @@ const uint32_t Font32x20[FONT_32X20_NUM][FONT_32X20_STORE_SIZE] =
 
 
 
-#endif	// #ifdef CONFIG_MODULE_DISPLAY_FONT32X20_ENABLE
+#endif	// #ifdef CONFIG_DISPLAY_FONT32X20_ENABLE

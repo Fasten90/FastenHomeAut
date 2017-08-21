@@ -820,7 +820,7 @@ bool StringToSignedDecimalNum(const char *str, int32_t *value)
 		if (isNegative)
 		{
 			// Negative, converted value need * -1
-			*value = -1 * convertValue;
+			*value = -1 * (int32_t)convertValue;
 		}
 		else
 		{
@@ -946,7 +946,7 @@ uint8_t StringLength(const char *str)
 	}
 
 	// Added max length checking
-	while (str[length] !='\0' && length < 255) length++;	// Length = string length
+	while ((length < 255) && (str[length] !='\0')) length++;	// Length = string length
 	return length;
 }
 

@@ -236,7 +236,7 @@ ReturnType TEMPERATURE_GetTemperature ( void )
 float TEMPERATURE_ConvertLM75AdTemperatureValue(int16_t measuredValue)
 {
 	
-	float calculatedValue = 0.0;
+	float calculatedValue;
 	// fenti 11 biten ábrázolja az értéket
 	measuredValue = measuredValue >> 5;
 	

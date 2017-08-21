@@ -25,13 +25,13 @@
 
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
 
-#ifdef CONFIG_MODULE_DISPLAY_FONT8X5_ENABLE
+#ifdef CONFIG_DISPLAY_FONT8X5_ENABLE
 #include "Font8x5.h"
 #endif
-#ifdef CONFIG_MODULE_DISPLAY_FONT12X8_ENABLE
+#ifdef CONFIG_DISPLAY_FONT12X8_ENABLE
 #include "Font12x8.h"
 #endif
-#ifdef CONFIG_MODULE_DISPLAY_FONT32X20_ENABLE
+#ifdef CONFIG_DISPLAY_FONT32X20_ENABLE
 #include "Font32x20.h"
 #endif
 
@@ -89,19 +89,19 @@ void Display_PrintString(const char *str, uint8_t line, Font_Type font)
 	{
 		switch (font)
 		{
-#ifdef CONFIG_MODULE_DISPLAY_FONT8X5_ENABLE
+#ifdef CONFIG_DISPLAY_FONT8X5_ENABLE
 			case Font_8x5:
 				// Print ASCII character (0-127)
 				Display_PrintFont8x5(str[i], i, line);
 				break;
 #endif
-#ifdef CONFIG_MODULE_DISPLAY_FONT12X8_ENABLE
+#ifdef CONFIG_DISPLAY_FONT12X8_ENABLE
 			case Font_12x8:
 				// Print ASCII character (0-127)
 				Display_PrintFont12x8(str[i], i, line, CHAR_INVERSE_NOT);
 				break;
 #endif
-#ifdef CONFIG_MODULE_DISPLAY_FONT32X20_ENABLE
+#ifdef CONFIG_DISPLAY_FONT32X20_ENABLE
 			case Font_32x20:
 				// Print numbers (for Clock)
 				Display_PrintFont32x20(str[i], i,
@@ -119,7 +119,7 @@ void Display_PrintString(const char *str, uint8_t line, Font_Type font)
 
 
 
-#ifdef CONFIG_MODULE_DISPLAY_FONT8X5_ENABLE
+#ifdef CONFIG_DISPLAY_FONT8X5_ENABLE
 /**
  * \brief	Print a 8x5 pixel (very small) character to display
  * \param	chr		- which character (ASCII - 0-127)
@@ -156,7 +156,7 @@ void Display_PrintFont8x5(uint8_t chr, uint8_t index, uint8_t line)
 
 
 
-#ifdef CONFIG_MODULE_DISPLAY_FONT12X8_ENABLE
+#ifdef CONFIG_DISPLAY_FONT12X8_ENABLE
 /**
  * \brief	Print a 12x8 pixel character to display
  * \param	chr		- which character (ASCII - 0-127)
@@ -193,7 +193,7 @@ void Display_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line, bool invers
 
 
 
-#ifdef CONFIG_MODULE_DISPLAY_FONT32X20_ENABLE
+#ifdef CONFIG_DISPLAY_FONT32X20_ENABLE
 /**
  * \brief	Print 32x20 font
  */
@@ -493,7 +493,7 @@ void Display_ShowClockHalf(Time_t *time, DisplayClock_ChangeState_t displayState
 
 #ifdef CONFIG_MODULE_DISPLAY_TEST
 
-#ifdef CONFIG_MODULE_DISPLAY_FONT8X5_ENABLE
+#ifdef CONFIG_DISPLAY_FONT8X5_ENABLE
 /**
  * \brief	Test 8x5 fonts
  */
@@ -515,7 +515,7 @@ void Display_Test8x5Font(void)
 
 
 
-#ifdef CONFIG_MODULE_DISPLAY_FONT12X8_ENABLE
+#ifdef CONFIG_DISPLAY_FONT12X8_ENABLE
 /**
  * \brief	Test 12x8 fonts
  */
@@ -535,7 +535,7 @@ void Display_Test12x8Font(void)
 
 
 
-#ifdef CONFIG_MODULE_DISPLAY_FONT32X20_ENABLE
+#ifdef CONFIG_DISPLAY_FONT32X20_ENABLE
 /**
  * \brief	Test 32x20 fonts
  */
