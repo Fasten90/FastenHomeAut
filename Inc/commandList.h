@@ -24,8 +24,6 @@
  *----------------------------------------------------------------------------*/
 
 
-#define NUM_OF(x) (sizeof(x)/sizeof(x[0]))
-	
 #define COMMANDHANDLER_MAX_COMMAND_NUM				(uint8_t)(NUM_OF(CommandList))
 
 

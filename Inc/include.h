@@ -68,6 +68,10 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 
 
+// Macro for list's element size/num
+#define NUM_OF(x) (sizeof(x)/sizeof(x[0]))
+
+
 // Macro for checking
 // Error, if condition is true
 // Ok, if condition is false

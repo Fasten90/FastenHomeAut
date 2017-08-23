@@ -50,7 +50,7 @@ static const uint8_t days_of_month[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31,
  *  Function declarations
  *----------------------------------------------------------------------------*/
 bool DateTime_CheckValue(uint32_t originalValue, uint32_t minValue, uint32_t maxValue);
-static uint8_t DateTime_GetDaysOfMonth(uint8_t m, uint8_t y);
+static uint8_t DateTime_GetDaysOfMonth(uint8_t year, uint8_t month);
 static uint32_t DateTime_CalculateDateTimeSecond(DateTime_t *dateTime);
 static bool DateTime_CheckItIsLeapYear(uint8_t year);
 

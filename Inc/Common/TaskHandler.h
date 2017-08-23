@@ -50,11 +50,23 @@ typedef bool TaskResult_t;
 typedef uint8_t TaskID_t;
 typedef uint32_t TaskTick_t;
 
-/// Task Function pointer
-typedef TaskResult_t (*TaskFunctionPointer)(TaskID_t id);
+
+///> Schedule source (Why executed the task by TaskHandler)
+typedef enum
+{
+	ScheduleSource_Unknown,						///> Unknown schedule reason
+	ScheduleSource_EventTriggered,				///> Triggered (event)
+	ScheduleSource_PeriodicSchedule,			///> Periodical scheduling
+	ScheduleSource_RunOnce,						///> Run once
+	ScheduleSource_TimeOut						///> TimeOut
+} ScheduleSource_t;
 
 
-///> Task struct
+///> Task Function pointer
+typedef TaskResult_t (*TaskFunctionPointer)(ScheduleSource_t source);
+
+
+///> Task structure
 typedef struct
 {
 	const char *taskName;						///> Task Name - Init
@@ -71,17 +83,6 @@ typedef struct
 	uint32_t taskRunCount;						///> How many times ran [count]
 #endif
 } Task_t;
-
-
-///> Shedule source (Why executed the task by TaskHandler)
-typedef enum
-{
-	ScheduleSource_Unknown,						///> Unknown schedule reason
-	ScheduleSource_EventTriggered,				///> Triggered (event)
-	ScheduleSource_PeriodicSchedule,			///> Periodical scheduling
-	ScheduleSource_RunOnce,						///> Run once
-	ScheduleSource_TimeOut						///> TimeOut
-} ScheduleSource_t;
 
 
 

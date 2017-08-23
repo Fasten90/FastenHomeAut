@@ -51,9 +51,9 @@ extern float GLOBAL_TemperatureValue_LM75;
 /*------------------------------------------------------------------------------
  *  Global function declarations
  *----------------------------------------------------------------------------*/
-void TEMPERATURE_I2C_Init ( void );
+void TEMPERATURE_I2C_Init(void);
 void HAL_I2C_MspInit(I2C_HandleTypeDef *hi2c);
-ReturnType TEMPERATURE_GetTemperature ( void );
+ReturnType TEMPERATURE_GetTemperature (void);
 
 
 #endif // #ifdef MODUL_TEMPERATURE_ENABLE

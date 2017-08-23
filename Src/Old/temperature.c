@@ -81,7 +81,7 @@ float TEMPERATURE_ConvertLM75AdTemperatureValue(int16_t measuredValue);
  * @return
 ******************************************************************************/
 
-void TEMPERATURE_I2C_Init ( void )
+void TEMPERATURE_I2C_Init(void)
 {
 	
 	HAL_I2C_MspInit(&I2cHandle);
@@ -142,7 +142,7 @@ void TEMPERATURE_I2C_Init ( void )
 
 
 
-ReturnType TEMPERATURE_GetTemperature ( void )
+ReturnType TEMPERATURE_GetTemperature(void)
 {
 
 
@@ -215,7 +215,7 @@ ReturnType TEMPERATURE_GetTemperature ( void )
 
 	
 	// Convert value
-	float temperature = 0.0;
+	float temperature;
 	int16_t receivedValue = 0;
 	receivedValue = TEMPERATURE_ReceiveBuffer[0] <<8 | TEMPERATURE_ReceiveBuffer[1];
 	temperature = TEMPERATURE_ConvertLM75AdTemperatureValue(receivedValue);
@@ -251,9 +251,7 @@ float TEMPERATURE_ConvertLM75AdTemperatureValue(int16_t measuredValue)
 
 
 
-
-
-void TEMPERATURE_I2C_Init_Test ( void )
+void TEMPERATURE_I2C_Init_Test(void)
 {
 	
 	HAL_I2C_MspInit(&I2cHandle);

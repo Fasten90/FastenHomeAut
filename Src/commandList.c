@@ -2162,7 +2162,10 @@ static CommandResult_t CommandFunction_IoStates(uint32_t argc, char** argv)
 	(void)argc;
 	(void)argv;
 
+#if IO_INPUTS_NUM > 0 || IO_OUTPUTS_NUM > 0
 	uint8_t i;
+#endif
+
 #if IO_INPUTS_NUM > 0
 	CommandHandler_SendLine("Input states:");
 	for (i = 0; i < Input_Count; i++)
@@ -2227,10 +2230,13 @@ static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
 		{
 			if (!StrCmp("constwrite", argv[2]))
 			{
-				// Generate Fault to test FaultHandler()
+				/*
+				 * Generate Fault to test FaultHandler()
+				 * \note	!! Be careful !! It is an error, the sw will crash (go to FaultHandler) !!
+				 */
 
 				// Const write
-				//(cppcheck error) Modifying string literal "const" directly or indirectly is undefined behaviour.
+				// cppcheck-suppress stringLiteralWrite
 				static const char const buffer[] = "const";
 				char * pnt = (char *)buffer;
 
@@ -2245,13 +2251,14 @@ static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
 			else if (!StrCmp("zerodivide", argv[2]))
 			{
 				/* Test zero dividing
-				 * \note !! Be careful !! It is an error, the sw will crach !!
+				 * \note !! Be careful !! It is an error, the sw will crash (go to FaultHandler) !!
 				 */
 				uint32_t a = 5;
 				uint32_t b = 0;
 				uint32_t c;
 
-				//(cppcheck error) Division by zero.
+				// Zero division
+				// cppcheck-suppress zerodiv
 				c = a/b;
 
 				uprintf("ZeroDivice result: %d\r\n", c);

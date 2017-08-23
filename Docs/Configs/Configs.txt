@@ -2,6 +2,11 @@ Project configs:
 
 # Includes:
 Inc
+Inc/Common
+Inc/Communication
+Inc/HwTester
+Inc/Modules
+
 Drivers/CMSIS/Include
 Drivers/CMSIS/Device/ST/STM32F4xx/Include
 Drivers/STM32F4xx_HAL_Driver/Inc

@@ -197,6 +197,7 @@ void mem_CheckStackGuardValues(void)
 	bool guardWasFound = false;
 	// Do not initialize buffer with fix values!!!!
 	// (cppcheck style) Variable 'stackOverFlowCheckerVariable' is not assigned a value.
+	// cppcheck-suppress unassignedVariable
 	uint8_t stackOverFlowCheckerVariable[CONFIG_MEM_STACK_GUARD_LENGTH];
 
 	for (i = 0; i < CONFIG_MEM_STACK_GUARD_LENGTH; i++)

@@ -316,13 +316,20 @@ void Terminal_CheckCommand(void)
 				}
 			}	// CommandHandler_CommandReceivedEvent
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
-			// If we has EvetnHandler, go out from infinite loop
+			// If we has EventHandler, go out from infinite loop
 			else
 			{
 				return;
 			}
 #endif
 		}
+#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
+		else
+		{
+			// We must return, if DebugUart is disabled, and TaskHandler used
+			return;
+		}
+#endif
 	}
 
 	// Infinite loop, never exit, never reached here, if blocking mode

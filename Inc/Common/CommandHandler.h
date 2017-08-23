@@ -58,7 +58,7 @@ typedef enum
 
 
 /// Command Function pointer
-typedef CommandResult_t ( *FunctionPointer )( uint32_t argc, char** CommandHandler_CommandArguments );
+typedef CommandResult_t ( *CommandHandlerFunctionPointer )( uint32_t argc, char** CommandHandler_CommandArguments );
 
 
 /// CommandID
@@ -78,7 +78,7 @@ typedef enum
 typedef struct
 {
 	const char *name;								///< Name of command (which need type) [string]
-	const FunctionPointer commandFunctionPointer;	///< Function pointer (which called)
+	const CommandHandlerFunctionPointer commandFunctionPointer;	///< Function pointer (which called)
 	const char *description;						///< Command description (for help)
 	const char *syntax;								///< Command syntax
 	const char *example;								///< Example of parameters

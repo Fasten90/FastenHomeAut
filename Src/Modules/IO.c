@@ -110,12 +110,12 @@ const char * const IO_OutputStateNames[] =
  */
 void IO_Init(void)
 {
-
+#if IO_INPUTS_NUM > 0
 	// Size check
 	BUILD_BUG_ON((sizeof(IO_InputNames)/sizeof(IO_InputNames[0])) != Input_Count);
 	//#error "IO_InputNames and Input_t aren't syncronized!"
 	BUILD_BUG_ON((sizeof(IO_InputStateNames)/sizeof(IO_InputStateNames[0])) != InputState_Count);
-
+#endif
 
 #if IO_OUTPUTS_NUM > 0
 	BUILD_BUG_ON((sizeof(IO_OutputNames)/sizeof(IO_OutputNames[0])) != Output_Count);
@@ -124,9 +124,10 @@ void IO_Init(void)
 #endif
 
 
-
+#if (IO_INPUTS_NUM > 0) || (IO_OUTPUTS_NUM)
 	GPIO_InitTypeDef GPIO_InitStruct;
-	
+#endif
+
 	
 #ifdef CONFIG_MODULE_IO_OUTPUT_EXAMPLE_ENABLE
 	// OUTPUTS - RELAYS

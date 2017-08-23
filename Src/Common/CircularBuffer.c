@@ -227,7 +227,7 @@ void CircularBuffer_UnitTest(void)
 	for (i = 0; i < 251-256+sizeof("1234567890"); i++)
 	{
 		// Check characters
-		result = (buffer256[251+i] == '\0');
+		result = (buffer256[i] == '\0');
 		UNITTEST_ASSERT(result, "ERROR in Clear()");
 	}
 	// Check overflow

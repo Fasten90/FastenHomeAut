@@ -60,7 +60,7 @@ static void LinkedList_PrintListItem(ListItem * item);
  */
 void LinkedList_Init(void)
 {
-	memset(MyList_StoreBuffer, 0, (size_t)(sizeof(MyList_StoreBuffer)/sizeof(MyList_StoreBuffer[0])));
+	memset(MyList_StoreBuffer, 0, sizeof(MyList_StoreBuffer));
 
 	MyList_first = NULL;
 	MyList_last = NULL;

@@ -64,7 +64,7 @@ static uint8_t buffer[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] = { 0 };
 
 static void SSD1306_HardwareInit(void);
 static void SSD1306_command(uint8_t c);
-static void SSD1306_fastSPIwrite(uint8_t c);
+static void SSD1306_fastSPIwrite(uint8_t d);
 
 
 

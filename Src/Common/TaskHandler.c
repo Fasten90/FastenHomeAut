@@ -71,6 +71,7 @@ static void TaskHandler_IncrementTicks(TaskTick_t elapsedTick);
 static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source);
 
 
+
 /*------------------------------------------------------------------------------
  *  Functions
  *----------------------------------------------------------------------------*/
@@ -81,6 +82,10 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source);
  */
 void TaskHandler_Init(void)
 {
+	// Check TaskList size and enums
+	// TODO: Correct this
+	//BUILD_BUG_ON((sizeof(TaskList)/sizeof(TaskList[0])) != Task_Count);
+
 	TaskID_t i;
 
 	for (i = 0; i < TasksNum; i++)

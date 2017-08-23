@@ -170,9 +170,8 @@ Task_t TaskList[] =
 	}
 #endif
 
-	// \note Be careful, taskList order need to be equal with TaskName_t
-
 	// XXX: Add here new tasks
+	// \note Be careful, taskList order need to be equal with TaskName_t
 
 };
 
@@ -201,7 +200,8 @@ const TaskID_t TasksNum = (sizeof(TaskList)/sizeof(TaskList[0]));
 
 
 // XXX: Function form:
-//TaskResult_t (*TaskFunctionPointer)(TaskID_t id);
+//typedef TaskResult_t (*TaskFunctionPointer)(ScheduleSource_t source);
+// static TaskResult_t Task_Name(ScheduleSource_t source);
 
 
 

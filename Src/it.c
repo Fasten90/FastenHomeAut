@@ -331,7 +331,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 #if defined(CONFIG_MODULE_COMMON_ADC_ENABLE) || defined(CONFIG_MODULE_ADC_ENABLE)
 void ADCx_DMA_IRQHandler(void)
 {
-  HAL_DMA_IRQHandler(AdcHandle.DMA_Handle);
+	HAL_DMA_IRQHandler(AdcHandle.DMA_Handle);
 }
 #endif
 

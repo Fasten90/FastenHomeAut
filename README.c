@@ -14,7 +14,7 @@
  * Requirements
  * ------------------------
  *
- * Recommended IDE is the Atollic TrueSTUDIO 6.0, but you can use newer or an other IDE.
+ * Recommended IDE is the Atollic TrueSTUDIO 6.0 or newer, but you can use newer or an other IDE.
  * - Install [Atollic TrueSTUDIO](http://atollic.com/)
  * - Install a terminal (serial port reader) software
  * 
@@ -30,6 +30,7 @@
  *     - PC6 (TX)
  *     - PC7 (RX)
  *     - GND
+ *     - Check the actual pin configurations in Inc\board.h file!
  *   + Plug in the UART-USB converter
  * - Start serial terminal
  *   + For example:
@@ -37,7 +38,7 @@
  *      - PuTTY
  *      - ZOC
  *      - [FastenTerminal](http://fasten.e5tv.hu/)
- * - Connect Terminal to Serial COM port, with 9600 baudrate, and 8N1 configs
+ * - Connect Terminal to Serial COM port, with 115200 baudrate, and 8N1 configs
  * - Type "help" and press enter (send with '\\r' or '\\n' or together '\\r\\n')
  *   + Now, you set "help" command and available commands printed out on terminal
  * - Enjoy it
@@ -94,6 +95,9 @@
  * - Read and check Atollic tutorials
  * - Download or request HomeAut embedded codes / project
  * - Develop it, write codes
+ *   + Use Doxygen document comment style
+ *   + Use cppcheck static code analyzer
+ *   + Read "Configs.txt" --> Docs\Configs\Configs.txt for project configuration
  * - Compile
  * - Debug / Program your device
  * - Enjoy it
