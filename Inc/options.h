@@ -275,6 +275,9 @@
 
 //#define CONFIG_DEBUG_SW_WATCHDOG_ENABLE
 
+///> SelfTests
+#define CONFIG_DEBUG_SELFTEST
+
 
 /// Debug modes - Print debug message
 //#define CONFIG_TASKHANDLER_DEBUG_ENABLE

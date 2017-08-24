@@ -80,6 +80,10 @@ static TaskResult_t Task_InputOutput(ScheduleSource_t source);
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
 static TaskResult_t Task_CommonAdcFunction(ScheduleSource_t source);
 #endif
+#ifdef CONFIG_DEBUG_SELFTEST
+static TaskResult_t Task_SelfTestFunction(ScheduleSource_t source);
+#endif
+
 
 ///> Tasks list
 Task_t TaskList[] =
@@ -171,7 +175,7 @@ Task_t TaskList[] =
 		.taskName = "IOtask",
 		.taskFunction = Task_InputOutput,
 		.taskScheduleRate = 1000,
-	}
+	},
 #endif
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
 	{
@@ -179,8 +183,17 @@ Task_t TaskList[] =
 		.taskFunction = Task_CommonAdcFunction,
 		.taskScheduleRate = 1000,
 		.isDisabled = true,
-	}
+	},
 #endif
+#ifdef CONFIG_DEBUG_SELFTEST
+	{
+		.taskName ="SelfTest",
+		.taskFunction = Task_SelfTestFunction,
+		.taskScheduleRate = 1000,
+		.isRunOnce = true,
+	},
+#endif
+
 
 	// XXX: Add here new tasks
 	// \note Be careful, taskList order need to be equal with TaskName_t
@@ -804,6 +817,29 @@ static TaskResult_t Task_CommonAdcFunction(ScheduleSource_t source)
 	return TASK_RESULT_OK;
 }
 #endif
+
+
+
+#ifdef CONFIG_DEBUG_SELFTEST
+static TaskResult_t Task_SelfTestFunction(ScheduleSource_t source)
+{
+	(void)source;
+
+	// SelfTest:
+
+	#if defined(CONFIG_MODULE_ADC_ENABLE) || defined(CONFIG_MODULE_COMMON_ADC_ENABLE)
+	// Check ADC-DMA
+	if (ADC_RunCnt == 0)
+	{
+		// ADC is not run...
+		Error_Handler();
+	}
+	#endif
+
+	return TASK_RESULT_OK;
+}
+#endif
+
 
 
 #endif //#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE

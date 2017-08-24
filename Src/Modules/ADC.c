@@ -41,6 +41,10 @@ ADC_HandleTypeDef		AdcHandle;
 volatile uint32_t		ADC_MeasuredValues[ADC_BUFFER_SIZE];
 volatile float			ADC_ConvertedValues[ADC_BUFFER_SIZE];
 
+#ifdef CONFIG_DEBUG_SELFTEST
+volatile uint32_t		ADC_RunCnt = 0;
+#endif
+
 
 
 /*------------------------------------------------------------------------------
@@ -227,10 +231,14 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 /**
  * \brief	ADC callback function for HAL driver
  */
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
 	// Suppress warning
-	(void)AdcHandle;
+	(void)hadc;
+
+#ifdef CONFIG_DEBUG_SELFTEST
+	ADC_RunCnt++;
+#endif
 }
 
 

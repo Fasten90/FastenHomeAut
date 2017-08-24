@@ -512,9 +512,9 @@ const CommandStruct CommandList[] =
 		.name = "taskhandler",
 		.commandFunctionPointer = CommandFunction_TaskHandler,
 		.description = "taskhandler functions",
-		.syntax = "",
+		.syntax = "<statistics/runcounts>",
 		.example = "",
-		.commandArgNum = CommandArgument_1 | CommandArgument_2,
+		.commandArgNum = CommandArgument_1,
 	},
 #endif
 #ifdef CONFIG_MODULE_DEBUG

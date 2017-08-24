@@ -71,7 +71,9 @@ typedef enum
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
 	Task_CommonAdc,
 #endif
-
+#ifdef CONFIG_DEBUG_SELFTEST
+	Task_SelfTest,
+#endif
 	// XXX: Add new Task enum here!
 	// \note: !! Be careful !! Sync with TaskList
 
