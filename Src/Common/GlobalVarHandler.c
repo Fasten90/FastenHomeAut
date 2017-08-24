@@ -1403,6 +1403,16 @@ static void GlobalVarHandler_WriteResults(ProcessResult_t result)
 
 
 
+/*
+ * \brief	Send header (for List all variables)
+ */
+static GlobalVarHandler_ListAllVariable_SendHeader(void)
+{
+	CommandHandler_Printf("+-%2c-+-%20c-+-%10c-+-%5c-+-%5c-+-%4c-+-%20c-+\r\n", '-', '-', '-', '-', '-', '-', '-');
+}
+
+
+
 /**
  * \brief	List all variables
  */
@@ -1411,10 +1421,12 @@ void GlobalVarHandler_ListAllVariableParameters(void)
 	VarID_t i;
 
 	// TODO: Enumokat is kiírni, ha van?
-	const char *header = "+-ID-+-------Name-----------+----Type----+--min--+--max--+-unit-+-----Description------+";
 
 	// Send header
-	CommandHandler_SendLine(header);
+	GlobalVarHandler_ListAllVariable_SendHeader();
+	CommandHandler_Printf("| %2s | %20s | %10s | %5s | %5s | %4s | %20s |\r\n",
+			"ID", "Name", "Type", "Min", "Max", "Unit", "Description");
+	GlobalVarHandler_ListAllVariable_SendHeader();
 
 	// Rows (commands)
 	for (i = 0; i < GlobalVar_MaxCommandNum; i++)
@@ -1434,8 +1446,7 @@ void GlobalVarHandler_ListAllVariableParameters(void)
 	}
 
 	// After commands (end)
-	CommandHandler_SendLine(header);
-
+	GlobalVarHandler_ListAllVariable_SendHeader();
 }
 
 
@@ -1475,10 +1486,10 @@ static void GlobalVarHandler_PrintVariableDescriptions(VarID_t commandID)
 
 	CommandHandler_Printf(
 			"Command help: %s\r\n"
-			"type:%s\r\n"
-			"min:%d\r\n"
-			"max:%d\r\n"
-			"desc:%s\r\n",
+			"type: %s\r\n"
+			"min:  %d\r\n"
+			"max:  %d\r\n"
+			"desc: %s\r\n",
 			GlobalVarList[commandID].name,
 			GlobalVarTypesNames[GlobalVarList[commandID].type],
 			GlobalVarList[commandID].minValue,
