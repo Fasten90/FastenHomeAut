@@ -51,6 +51,7 @@ typedef struct
 {
 	uint32_t startTick;
 	uint32_t runTime;
+	TaskID_t taskId;
 } TaskHandlerStat_t;
 
 static TaskHandlerStat_t TaskHandler_StatisticsRanTaskTicks[TASKHANDLER_STATISTICS_LIMIT] = { 0 };
@@ -206,6 +207,7 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 	uint32_t runTime = HAL_GetTick() - startTime;
 	TaskHandler_StatisticsRanTaskTicks[TaskHandler_StatisticsIndex].startTick = startTime;
 	TaskHandler_StatisticsRanTaskTicks[TaskHandler_StatisticsIndex].runTime = runTime;
+	TaskHandler_StatisticsRanTaskTicks[TaskHandler_StatisticsIndex].taskId = taskID;
 
 	TaskHandler_StatisticsIndex++;
 
@@ -337,24 +339,32 @@ void TaskHandler_PrintStatistics(void)
 	uint8_t cpuPercent = runTimes / allTime;
 
 	CommandHandler_Printf("TaskHandler usage:\r\n"
-			" Last run time: %d\r\n"
-			" Recently run time: %d\r\n"
-			" Run times: %d [ms]\r\n"
+			" Logged time: %d\r\n"
+			" All tasks runtimes: %d [ms]\r\n"
 			" CPU Usage: %d%%\r\n",
-			oldestTick,
-			actualTick,
+			actualTick - oldestTick,
 			runTimes,
 			cpuPercent
 			);
+
+	CommandHandler_Printf("+%11c+%5c+-%20c-+\r\n", '-', '-', '-');
+	CommandHandler_Printf("+%11s|%5s| %20s |\r\n", "<StartTick>", "<Run>", "<TaskName>");
+	CommandHandler_Printf("+%11c+%5c+-%20c-+\r\n", '-', '-', '-');
 
 	// Print all table
 	for (i = 0; i < TASKHANDLER_STATISTICS_LIMIT; i++)
 	{
 		if (TaskHandler_StatisticsRanTaskTicks[i].startTick > 0)
 		{
-			CommandHandler_Printf("#%8d - %3d\r\n", TaskHandler_StatisticsRanTaskTicks[i].startTick, TaskHandler_StatisticsRanTaskTicks[i].runTime);
+			// Print: "<StartTick> - <RunTime: ms> - <TaskName>"
+			CommandHandler_Printf("| %9d | %3d | %20s |\r\n",
+					TaskHandler_StatisticsRanTaskTicks[i].startTick,
+					TaskHandler_StatisticsRanTaskTicks[i].runTime,
+					TaskList[TaskHandler_StatisticsRanTaskTicks[i].taskId].taskName);
 		}
 	}
+
+	CommandHandler_Printf("+%11c+%5c+-%20c-+\r\n", '-', '-', '-');
 }
 
 
@@ -366,11 +376,16 @@ void TaskHandler_PrintTaskRunCounts(void)
 {
 	TaskID_t i;
 
-	CommandHandler_Printf("+ %20s + %9s +\r\n", "<TaskName>", "<RunCnt>");
+	CommandHandler_Printf("+-%20c-+-%9c-+\r\n", '-', '-');
+	CommandHandler_Printf("| %20s | %9s |\r\n", "<TaskName>", "<RunCnt>");
+	CommandHandler_Printf("+-%20c-+-%9c-+\r\n", '-', '-');
+
 	for (i = 0; i < Task_Count; i++)
 	{
 		CommandHandler_Printf("| %20s | %9u |\r\n", TaskList[i].taskName, TaskList[i].taskRunCount);
 	}
+
+	CommandHandler_Printf("+-%20c-+-%9c-+\r\n", '-', '-');
 }
 #endif
 

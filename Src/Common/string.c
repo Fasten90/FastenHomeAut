@@ -1154,6 +1154,34 @@ uint8_t StrCpyMax(char *dest, const char *str, uint8_t maxLength)
 
 
 /**
+ * \brief	Copy character x count
+ * \return	String length
+ */
+uint8_t StrCpyCharacter(char *dest, char c, uint8_t num)
+{
+	uint8_t i;
+
+	// Check parameters
+	if (dest == NULL || num == 0)
+	{
+		return 0;
+	}
+
+	// Copy characters
+	for (i = 0; i < num; i++)
+	{
+		dest[i] = c;
+	}
+
+	// Put end
+	dest[i] = '\0';
+
+	return i;
+}
+
+
+
+/**
  * \brief	Append string to dest's end
  * \length	New string's length (original + copied)
  */
@@ -1449,9 +1477,18 @@ uint8_t string_printf(char *str, const char *format, va_list ap)
 
 				case 'c':
 					cval = va_arg(ap, int);					// Char
-					*string = cval;							// Copy to string
-					string++;
-					*string = '\0';
+					if (paramHasLength)
+					{
+						// Copy more character
+						string += StrCpyCharacter(string, cval, (paramNum1 * 10 + paramNum2));
+					}
+					else
+					{
+						// Default: copy one character
+						*string = cval;							// Copy to string
+						string++;
+						*string = '\0';
+					}
 					break;
 
 				case 'f':
@@ -1749,6 +1786,9 @@ void STRING_UnitTest(void)
 
 
 	/// String function testing
+
+	// TODO: uint8_t StrCpyCharacter(char *dest, char c, uint8_t num)
+
 
 	// TODO: Test StrTrim()
 
