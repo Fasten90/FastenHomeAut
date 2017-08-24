@@ -579,6 +579,8 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 		#ifdef CONFIG_MODULE_ADC_ENABLE
 		float voltage = ADC_GetValue(ADC_Vsource);
 		uint8_t percent = voltage / VSOURCE_BATTERY_MAX_VOLTAGE * 100;
+		if (percent > 100)
+			percent = 100;
 		Display_ChargeLoading(percent);
 		#else
 		Display_ChargeLoading(34);

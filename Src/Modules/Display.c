@@ -309,7 +309,7 @@ void Display_LoadingInit(uint8_t x, uint8_t y, uint8_t width, uint8_t height)
 void Display_LoadingPercent(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t percent)
 {
 	// Fill rectangle
-	uint8_t percent_real = (float)width*percent/100;
+	uint8_t percent_real = (float)(width-4)*percent/100;
 	Display_FillRectangle(x+2, y+2, percent_real, height-4, WHITE);
 }
 

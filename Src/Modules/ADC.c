@@ -266,7 +266,7 @@ void ADC_ConvertAllMeasuredValues(void)
 
 	for (i = 0; i < ADC_BUFFER_SIZE; i++)
 	{
-		switch((ADC_MeasurementData_t)i)
+		switch ((ADC_MeasurementData_t)i)
 		{
 			case ADC_Vsource:
 				// Convert source voltage

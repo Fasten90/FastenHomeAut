@@ -874,6 +874,7 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	*/
 
 
+
 	/*
 	uint8_t i;
 	char c;
@@ -952,7 +953,10 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	// print() test
 	//printf("Example");
 
-#include "Debug.h"
+
+	// Debug test
+	/*
+	#include "Debug.h"
 	Debug_Print(Debug_ESP8266, "Formatted %s", "text");
 
 	Debug_Print(Debug_New, "Number: %d,%d,%d", 0, 1, 2);
@@ -964,6 +968,8 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	Debug_Print(Debug_ESP8266, "Formatted %s", "text");
 
 	Debug_Print(Debug_New, "Number: %d,%d,%d", 0, 1, 2);
+	*/
+
 
 
 	/**
@@ -1223,7 +1229,6 @@ static CommandResult_t CommandFunction_GlobalVariableTrace(uint32_t argc,
 		// trace <varname> enable/disable
 		// First parameter is not "id", maybe "name", try process
 		GlobalVarHandler_ProcessCommand(argv[1], argv[2], SetGet_Trace, CommandHandler_CommandSource);
-		// TODO: Print anyting?
 		result = CommandResult_Ok_SendSuccessful;
 	}
 

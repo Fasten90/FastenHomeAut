@@ -423,7 +423,8 @@ static void Logic_StepLetterNextValue(int8_t step)
 	else if (step < 0 && selectedLetter > 0 && (int8_t)selectedLetter-step > 0)
 	{
 		// Can go "down"
-		selectedLetter -= step;
+		// += (- value) => -=
+		selectedLetter += step;
 	}
 	else if (step < 0)
 	{

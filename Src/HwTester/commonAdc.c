@@ -45,9 +45,12 @@ volatile uint32_t		ADC_MeasuredValues[ADC_BUFFER_SIZE] = { 0 };
 // Calculated values
 volatile float			ADC_ConvertedValues[ADC_BUFFER_SIZE] = { 0 };
 
-volatile uint32_t		ADC_MeasureCnt = 0;
-
 static uint8_t			ADC_PrintNum = 0;
+
+#ifdef CONFIG_DEBUG_SELFTEST
+volatile uint32_t		ADC_RunCnt = 0;
+#endif
+
 
 
 /*------------------------------------------------------------------------------
@@ -247,7 +250,9 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 	// Suppress warning
 	(void)AdcHandle;
 
-	ADC_MeasureCnt++;
+#ifdef CONFIG_DEBUG_SELFTEST
+	ADC_RunCnt++;
+#endif
 }
 
 
