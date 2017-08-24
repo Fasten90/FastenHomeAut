@@ -40,7 +40,9 @@
 #include "TaskList.h"
 #include "IO.h"
 #include "LinkedList.h"
+#include "CommonAdc.h"
 #include "ADC.h"
+#include "CommonDac.h"
 
 #include "CommandList.h"
 
@@ -270,6 +272,8 @@ const CommandStruct CommandList[] =
 		.commandFunctionPointer = CommandFunction_GlobalVariableTrace,
 		.commandArgNum = CommandArgument_2,
 		.description = "Trace global variable's values",
+		.syntax = "<varname> <enable/disable>; period <period:ms>",
+		.example = "tick enable"
 	},
 #endif
 #endif	// #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
@@ -315,8 +319,8 @@ const CommandStruct CommandList[] =
 		.commandFunctionPointer = CommandFunction_dac,
 		.commandArgNum = CommandArgument_2,
 		.description = "Digital -> Analog",
-		.syntax = "<num> <voltage>"
-		.example = "1 3.0",
+		.syntax = "<num> <voltage>",
+		.example = "1 3.0"
 	},
 #endif
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
@@ -1379,7 +1383,7 @@ static CommandResult_t CommandFunction_adc(uint32_t argc, char** argv)
 
 	CommonADC_ConvertAllMeasuredValues();
 
-	for (i=0; i<ADC_BUFFER_SIZE; i++)
+	for (i = 0; i < ADC_BUFFER_SIZE; i++)
 	{
 		CommandHandler_Printf("ADC: %d. value: %2.2f\r\n", i, ADC_ConvertedValues[i]);
 	}
@@ -1398,22 +1402,26 @@ static CommandResult_t CommandFunction_adc(uint32_t argc, char** argv)
 static CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv)
 {
 
-	uint8_t i;
 	uint32_t convertValue;
 	uint16_t milliSec = 0;
-	uint8_t startNum = 0;
-	uint8_t endNum = ADC_BUFFER_SIZE-1;
-	// TODO: Make a more beautiful solve (for example: EventCheck
-	uint8_t uartWriteCntOld = USART_RxBufferWriteCounter;
+	CommandResult_t result;
 
+	// TODO: Make a more beautiful solve (for example: EventCheck)
 	if (StringToUnsignedDecimalNum(argv[1], &convertValue))
 	{
+		// Received good period value
 		milliSec = (uint16_t)convertValue;
+	}
+	else if (!StrCmp("stop", argv[1]))
+	{
+		// Stop
+		TaskHandler_DisableTask(Task_CommonAdc);
+		result = CommandResult_Ok_SendSuccessful;
 	}
 	else
 	{
 		// First argument is wrong
-		return CommandResult_Error_WrongArgument1;
+		result = CommandResult_Error_WrongArgument1;
 	}
 
 	// Check 2. argument
@@ -1421,38 +1429,28 @@ static CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv)
 	{
 		if (StringToUnsignedDecimalNum(argv[2], &convertValue))
 		{
-			startNum = (uint8_t)convertValue;
-			endNum = startNum;
+			if (convertValue < ADC_BUFFER_SIZE)
+			{
+				// Is Ok
+				TaskHandler_RequestTaskScheduling(Task_CommonAdc);
+				TaskHandler_SetTaskPeriodicTime(Task_CommonAdc, milliSec);
+				CommonADC_SetPrintNum(convertValue);
+				result = CommandResult_Ok_SendSuccessful;
+			}
+			else
+			{
+				// Wrong ADC num
+				result = CommandResult_Error_WrongArgument2;
+			}
 		}
 		else
 		{
 			// Second argument is wrong
-			return CommandResult_Error_WrongArgument2;
+			result = CommandResult_Error_WrongArgument2;
 		}
 	}
 
-	// Loop for print
-	while (1)
-	{
-		for (i = startNum; i <= endNum; i++)
-		{
-			// Convert & Print
-			CommonADC_ConvertAllMeasuredValues();
-			CommandHandler_Printf("ADC: %d. value: %2.2f\r\n", i, ADC_ConvertedValues[i]);
-		}
-
-		// Delay
-		DelayMs(milliSec);
-
-		if (uartWriteCntOld != USART_RxBufferWriteCounter)
-		{
-			// Received a new char
-			CommandHandler_SendLine("ADC read is interrupted");
-			break;
-		}
-	}
-
-	return CommandResult_Ok;
+	return result;
 }
 #endif
 

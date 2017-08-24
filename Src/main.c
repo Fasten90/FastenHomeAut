@@ -49,6 +49,9 @@
 #include "IO.h"
 #include "Display.h"
 #include "Logic.h"
+#include "CommonIO.h"
+#include "CommonAdc.h"
+#include "CommonDac.h"
 #include "ADC.h"
 
 
@@ -112,21 +115,12 @@ int main(void)
 #endif
 
 
-#ifdef CONFIG_MODULE_COMMON_IO_ENABLE
-	// Common IO
-	CommonIO_Init();
-#endif
+	// Common IO not need initializing
 
 
 #ifdef CONFIG_MODULE_IO_ENABLE
 	// IO
 	IO_Init();
-#endif
-
-
-#ifdef CONFIG_MODULE_ADC_ENABLE
-	// ADC
-	ADC_Init();
 #endif
 
 
@@ -141,6 +135,12 @@ int main(void)
 	CommonADC_Init();
 	// Test, blocking
 	//CommonADC_Test();
+#endif
+
+
+#ifdef CONFIG_MODULE_ADC_ENABLE
+	// ADC
+	ADC_Init();
 #endif
 
 

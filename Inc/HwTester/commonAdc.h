@@ -32,13 +32,15 @@
  *----------------------------------------------------------------------------*/
 
 
+
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
 
 extern ADC_HandleTypeDef		AdcHandle;
-extern volatile uint32_t		ADC_MeasuredValues[];
-extern volatile float			ADC_ConvertedValues[];
+extern volatile uint32_t		ADC_MeasuredValues[ADC_BUFFER_SIZE];
+extern volatile float			ADC_ConvertedValues[ADC_BUFFER_SIZE];
+
 
 
 /*------------------------------------------------------------------------------
@@ -46,9 +48,11 @@ extern volatile float			ADC_ConvertedValues[];
  *----------------------------------------------------------------------------*/
 
 
+
 /*------------------------------------------------------------------------------
  *  Local function declarations
  *----------------------------------------------------------------------------*/
+
 
 
 /*------------------------------------------------------------------------------
@@ -60,11 +64,12 @@ void CommonADC_Init(void);
 float CommonADC_ConvertToVoltage(uint32_t readValue);
 void CommonADC_ConvertAllMeasuredValues(void);
 void CommonADC_Test(void);
+void CommonADC_SetPrintNum(uint8_t adcChannel);
+void CommonADC_PrintAdcValue(uint8_t adcChannel);
+void CommonADC_PrintAdc(void);
 
 void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc);
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle);
-
-
 
 
 

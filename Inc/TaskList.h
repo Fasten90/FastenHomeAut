@@ -68,8 +68,12 @@ typedef enum
 #ifdef CONFIG_FUNCTION_CHARGER
 	Task_IO,
 #endif
+#ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
+	Task_CommonAdc,
+#endif
 
 	// XXX: Add new Task enum here!
+	// \note: !! Be careful !! Sync with TaskList
 
 	Task_Count
 } TaskName_t;

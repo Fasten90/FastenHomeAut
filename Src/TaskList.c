@@ -31,6 +31,7 @@
 #include "Motor.h"
 #include "ESP8266.h"
 #include "Display.h"
+#include "CommonAdc.h"
 #include "ADC.h"
 
 #include "TaskList.h"
@@ -76,8 +77,11 @@ static TaskResult_t Task_GlobalVarTrace(ScheduleSource_t source);
 #ifdef CONFIG_FUNCTION_CHARGER
 static TaskResult_t Task_InputOutput(ScheduleSource_t source);
 #endif
+#ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
+static TaskResult_t Task_CommonAdcFunction(ScheduleSource_t source);
+#endif
 
-/// Tasks list
+///> Tasks list
 Task_t TaskList[] =
 {
 #ifdef CONFIG_MODULE_LED_ENABLE
@@ -169,10 +173,29 @@ Task_t TaskList[] =
 		.taskScheduleRate = 1000,
 	}
 #endif
+#ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
+	{
+		.taskName = "CommonAdc",
+		.taskFunction = Task_CommonAdcFunction,
+		.taskScheduleRate = 1000,
+		.isDisabled = true,
+	}
+#endif
 
 	// XXX: Add here new tasks
 	// \note Be careful, taskList order need to be equal with TaskName_t
+	/*
+	const char *taskName;						///> Task Name - Init
+	const TaskFunctionPointer taskFunction;		///> Task function - Init
+	TaskTick_t taskScheduleRate;				///> Task scheduling rate [ms] - Init/Runtime
+	bool isRequestScheduling;					///> Task scheduling request (true, if request) - Runtime
+	bool isPeriodisScheduleDisabled;			///> Task schedule (periodic) disabled - Init/Runtime
+	bool isRunOnce;								///> Task scheduling once - Init/Runtime
+	bool isTimeOutTask;							///> Task is work in TimeOut mode - Init/Runtime
+	bool isDisabled;							///> Task is disabled/enabled - Init/Runtime
 
+	!! Do not use other fields !!
+	*/
 };
 
 
@@ -757,6 +780,30 @@ static TaskResult_t Task_InputOutput(ScheduleSource_t source)
 }
 #endif
 
+
+
+#ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
+static TaskResult_t Task_CommonAdcFunction(ScheduleSource_t source)
+{
+	(void)source;
+
+	// Convert ADC values
+	CommonADC_ConvertAllMeasuredValues();
+
+	// Print
+	CommonADC_PrintAdc();
+
+	// Check it is interrupted (with button)?
+	if (BUTTON_Clicked)
+	{
+		// Pressed button. Stop ADC printing
+		CommandHandler_SendLine("ADC read is interrupted");
+		TaskHandler_DisableTask(Task_CommonAdc);
+	}
+
+	return TASK_RESULT_OK;
+}
+#endif
 
 
 #endif //#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE

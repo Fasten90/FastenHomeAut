@@ -12,6 +12,9 @@
 #ifdef CONFIG_MODULE_ADC_ENABLE
 #include "ADC.h"
 #endif
+#ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
+#include "CommonADC.h"
+#endif
 
 // TODO: Delete these, if not need
 #ifdef CONFIG_USE_PANEL_HOMEAUTNODESMALL

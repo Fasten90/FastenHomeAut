@@ -146,6 +146,8 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 			break;
 	}
 #elif BUTTON_NUM == 1
+	(void)button;
+	(void)type;
 	BUTTON_DEBUG_PRINT("Button pressed");
 #endif
 

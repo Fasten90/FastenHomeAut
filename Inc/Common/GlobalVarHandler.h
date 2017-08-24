@@ -105,7 +105,6 @@ typedef void ( *GeneralFunctionPointer )( void );
 ///< GlobalVarCommand structure for set-get global variables
 typedef struct
 {
-
 	const char * const name;				///< Name of global variable [string]
 	const VarType_t type;					///< Type of global variable
 
@@ -123,7 +122,6 @@ typedef struct
 
 	// TODO: Optimize these: isHex (bool), isReadOnly (bool), isFunction (bool)
 	const bool isHex;						///< Set-get in hexadecimal?
-
 
 	const char * const * enumList;			///< Enum list, if it is enumerator
 

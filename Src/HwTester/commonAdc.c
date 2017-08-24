@@ -14,6 +14,9 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 #include "include.h"
+#include "CommandHandler.h"
+#include "Globals.h"
+#include "DebugUart.h"
 #include "CommonAdc.h"
 
 
@@ -43,6 +46,8 @@ volatile uint32_t		ADC_MeasuredValues[ADC_BUFFER_SIZE] = { 0 };
 volatile float			ADC_ConvertedValues[ADC_BUFFER_SIZE] = { 0 };
 
 volatile uint32_t		ADC_MeasureCnt = 0;
+
+static uint8_t			ADC_PrintNum = 0;
 
 
 /*------------------------------------------------------------------------------
@@ -249,7 +254,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 
 /**
  * \brief	Infinite loop: print ADC values
- * 			NOTE: Be careful, it is blocking mode
+ * \note	!! Be careful, it is blocking mode !!
  */
 void CommonADC_Test(void)
 {
@@ -292,14 +297,54 @@ float CommonADC_ConvertToVoltage(uint32_t readValue)
  */
 void CommonADC_ConvertAllMeasuredValues(void)
 {
-	
 	uint8_t i;
 	
 	for (i = 0; i < ADC_BUFFER_SIZE; i++)
 	{
-		
+		// Convert all values
 		ADC_ConvertedValues[i] = CommonADC_ConvertToVoltage(ADC_MeasuredValues[i]);
 	}
+}
+
+
+
+/**
+ * \brief	Set "Print num"
+ */
+void CommonADC_SetPrintNum(uint8_t adcChannel)
+{
+	if (adcChannel < ADC_BUFFER_SIZE)
+		ADC_PrintNum = adcChannel;
+	else
+		ADC_PrintNum = 0;
+}
+
+
+
+/**
+ * \brief	Print x. adcChannel value (converted!)
+ */
+void CommonADC_PrintAdcValue(uint8_t adcChannel)
+{
+	if (adcChannel < ADC_BUFFER_SIZE)
+	{
+		// Print
+		CommandHandler_Printf("ADC: %d. value: %2.2f\r\n", adcChannel, ADC_ConvertedValues[adcChannel]);
+	}
+	else
+	{
+		CommandHandler_Printf("ERROR! Wrong ADC channel: %d!", adcChannel);
+	}
+}
+
+
+
+/**
+ * \brief	Print saved channel's ADC
+ */
+void CommonADC_PrintAdc(void)
+{
+	CommonADC_PrintAdcValue(ADC_PrintNum);
 }
 
 

@@ -74,7 +74,7 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac)
  */
 void CommonDAC_Init(void)
 {
-	//HAL_DAC_MspInit(&DacHandle);	// TODO: there is no call for this?
+	HAL_DAC_MspInit(&DacHandle);	// TODO: there is no call for this?
 
 	/*##-1- Configure the DAC peripheral */
 	DacHandle.Instance = DACx;
@@ -170,7 +170,7 @@ bool CommonDAC_SetValue(DAC_Channel_t channel, float voltage)
 	}
 
 	// Check value
-	dacValue = DAC_VoltageToBinary(voltage);
+	dacValue = CommonDAC_VoltageToBinary(voltage);
 
 	if (HAL_DAC_SetValue(&DacHandle, channelDefine, DAC_ALIGN_12B_R, dacValue) != HAL_OK)
 	{

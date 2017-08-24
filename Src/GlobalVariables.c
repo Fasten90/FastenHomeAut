@@ -141,6 +141,7 @@ const GlobalVarCommand_t GlobalVarList[] =
 		.isFunction = true,
 		.description = "Tick counter"
 	},
+#ifdef CONFIG_MODULE_ADC_ENABLE
 	{
 		.name = "vsource",
 		.varPointer = (void * const)&ADC_ConvertedValues[0],
@@ -149,27 +150,34 @@ const GlobalVarCommand_t GlobalVarList[] =
 		.unit = "V",
 		.description = "Vsource"
 	}
+#endif
 
 
-
-	// XXX: ADD new global variable here
+	// XXX: Add new global variable here
 	/*
-		const VarType_t type;
 
-		void * const varPointer;
-		const bool isReadOnly;
+	const char * const name;				///< Name of global variable [string]
+	const VarType_t type;					///< Type of global variable
 
-		const bool isFunction;
-		const GeneralFunctionPointer getFunctionPointer;
-		const GeneralFunctionPointer setFunctionPointer;
+	void * const varPointer;				///< Pointer of variable
+	const bool isReadOnly;					///< Is read only?
 
-		const void * const maxPointer;
-		const void * const minPointer;
-		const char * const unit;
+	const bool isFunction;					///< It is function?
+	const GeneralFunctionPointer getFunctionPointer;	///< Function
+	const GeneralFunctionPointer setFunctionPointer;	///< Function
 
-		const uint8_t stringMaxLength;
+	const uint32_t maxValue;				///< Max value
+	const uint32_t minValue;				///< Min value
 
-		const CommandSource_t sourceEnable;
+	const CommProtocol_t sourceEnable;		///< Enabled sources (for set-get)
+
+	const bool isHex;						///< Set-get in hexadecimal?
+
+	const char * const * enumList;			///< Enum list, if it is enumerator
+
+	const char * const unit;				///< units [string], example: [cm]
+
+	const char * const description;			///< descriptions of global variable [string]
 	 */
 };
 
