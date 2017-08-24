@@ -41,7 +41,6 @@ static const char CommandHandler_DelimiterChar = ' ';
  *								Global variables
  *----------------------------------------------------------------------------*/
 
-
 volatile CommProtocol_t CommandHandler_CommandSource = CommProt_Unknown;
 
 static char CommandHandler_ProcessedCommandActual[COMMANDHANDLER_MAX_COMMAND_LENGTH] = { 0 };

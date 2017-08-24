@@ -1406,7 +1406,7 @@ static void GlobalVarHandler_WriteResults(ProcessResult_t result)
 /*
  * \brief	Send header (for List all variables)
  */
-static GlobalVarHandler_ListAllVariable_SendHeader(void)
+static void GlobalVarHandler_ListAllVariable_SendHeader(void)
 {
 	CommandHandler_Printf("+-%2c-+-%20c-+-%10c-+-%5c-+-%5c-+-%4c-+-%20c-+\r\n", '-', '-', '-', '-', '-', '-', '-');
 }

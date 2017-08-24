@@ -33,7 +33,7 @@ typedef struct
 	const char * name;
 	bool isEnabled;
 	FormattedStringColors_t color;
-	// TODO: Idea: add background color
+	FormattedStringColors_t background;
 } DebugRecord_t;
 
 
@@ -91,6 +91,8 @@ void Debug_Print(Debug_t debugTask, const char *format, ...)
 	{
 		// Taskname:
 		SendTextColor(DebugTasks[debugTask].color);
+		if (DebugTasks[debugTask].background) SendBackgroundColor(DebugTasks[debugTask].background);
+
 		uprintf("%s: ", DebugTasks[debugTask].name);
 
 		// Send debug message:
@@ -114,6 +116,7 @@ void Debug_Print(Debug_t debugTask, const char *format, ...)
 
 		// Set default color
 		SendTextColor(Color_Black);
+		if (DebugTasks[debugTask].background) SendBackgroundColor(Color_White);
 	}
 }
 
@@ -122,12 +125,37 @@ void Debug_Print(Debug_t debugTask, const char *format, ...)
 /**
  * \brief	Enable-Disable debug print
  */
-void Debug_EnableDisable(Debug_t task, bool enable)
+bool Debug_EnableDisable(Debug_t task, bool enable)
 {
 	if (task >= Debug_Count)
-		return;
+		return false;
 
 	DebugTasks[task].isEnabled = enable;
+	return true;
+}
+
+
+
+/**
+ * \brief	Enable-Disable debug task with name
+ */
+bool Debug_SetDebugTaskWithName(char *name, bool enable)
+{
+	uint8_t i;
+	bool result = false;
+
+	for (i = 0; i < NUM_OF(DebugTasks); i++)
+	{
+		if (!StrCmp(name, DebugTasks[i].name))
+		{
+			// Found
+			DebugTasks[i].isEnabled = enable;
+			result = true;
+			break;
+		}
+	}
+
+	return result;
 }
 
 

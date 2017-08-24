@@ -63,7 +63,8 @@ typedef enum
 
 #ifdef CONFIG_MODULE_DEBUG
 void Debug_Print(Debug_t debugTask, const char *format, ...);
-void Debug_EnableDisable(Debug_t task, bool enable);
+bool Debug_EnableDisable(Debug_t task, bool enable);
+bool Debug_SetDebugTaskWithName(char *name, bool enable);
 #else
 // Empty macro for suppress warnings
 #define Debug_Print(...)

@@ -43,6 +43,7 @@
 #include "CommonAdc.h"
 #include "ADC.h"
 #include "CommonDac.h"
+#include "Debug.h"
 
 #include "CommandList.h"
 
@@ -145,6 +146,9 @@
 #endif
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 	static CommandResult_t CommandFunction_TaskHandler(uint32_t argc, char** argv);
+#endif
+#ifdef CONFIG_MODULE_DEBUG
+	static CommandResult_t CommandFunction_Debug(uint32_t argc, char** argv);
 #endif
 
 
@@ -511,6 +515,16 @@ const CommandStruct CommandList[] =
 		.syntax = "",
 		.example = "",
 		.commandArgNum = CommandArgument_1 | CommandArgument_2,
+	},
+#endif
+#ifdef CONFIG_MODULE_DEBUG
+	{
+		.name = "debug",
+		.commandFunctionPointer = CommandFunction_Debug,
+		.description = "Debug enable/disable",
+		.syntax = "<taskname/taskid> <enable/disable>",
+		.example = "",
+		.commandArgNum = CommandArgument_2,
 	},
 #endif
 
@@ -2356,6 +2370,71 @@ static CommandResult_t CommandFunction_TaskHandler(uint32_t argc, char** argv)
 	else
 	{
 		result = CommandResult_Error_WrongArgument1;
+	}
+
+	return result;
+}
+#endif
+
+
+
+#ifdef CONFIG_MODULE_DEBUG
+static CommandResult_t CommandFunction_Debug(uint32_t argc, char** argv)
+{
+	(void)argc;
+
+	uint32_t value;
+	bool enable = false;
+	bool isOk = false;
+	CommandResult_t result;
+
+	if (!StrCmp("enable", argv[2]))
+	{
+		// Enable
+		enable = true;
+		isOk = true;
+	}
+	else if (!StrCmp("disable", argv[2]))
+	{
+		// Disable
+		enable = false;
+		isOk = true;
+	}
+	else
+	{
+		// Wrong 2. parameter
+		isOk = false;
+		result = CommandResult_Error_WrongArgument2;
+	}
+
+	if (isOk)
+	{
+		// Check 1. parameter
+		if (StringToUnsignedDecimalNum(argv[1], &value))
+		{
+			// 1. parameter is number
+			if (Debug_EnableDisable((Debug_t)value, enable))
+			{
+				// Successful
+				result = CommandResult_Ok_SendSuccessful;
+			}
+			else
+			{
+				result = CommandResult_Error_WrongArgument1;
+			}
+		}
+		else
+		{
+			// Find in "list"
+			if (Debug_SetDebugTaskWithName(argv[1], enable))
+			{
+				result = CommandResult_Ok_SendSuccessful;
+			}
+			else
+			{
+				result = CommandResult_Error_WrongArgument1;
+			}
+		}
 	}
 
 	return result;
