@@ -31,7 +31,7 @@
  *----------------------------------------------------------------------------*/
 
 #ifdef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
-///> System time (step by timer)
+///< System time (step by timer)
 DateTime_t DateTime_SystemTime = { 0 };
 #endif
 
@@ -41,7 +41,7 @@ DateTime_t DateTime_SystemTime = { 0 };
  *  Local variables
  *----------------------------------------------------------------------------*/
 
-///> Days of months
+///< Days of months
 static const uint8_t days_of_month[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
 

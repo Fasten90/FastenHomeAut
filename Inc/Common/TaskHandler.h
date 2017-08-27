@@ -51,36 +51,36 @@ typedef uint8_t TaskID_t;
 typedef uint32_t TaskTick_t;
 
 
-///> Schedule source (Why executed the task by TaskHandler)
+///< Schedule source (Why executed the task by TaskHandler)
 typedef enum
 {
-	ScheduleSource_Unknown,						///> Unknown schedule reason
-	ScheduleSource_EventTriggered,				///> Triggered (event)
-	ScheduleSource_PeriodicSchedule,			///> Periodical scheduling
-	ScheduleSource_RunOnce,						///> Run once
-	ScheduleSource_TimeOut						///> TimeOut
+	ScheduleSource_Unknown,						///< Unknown schedule reason
+	ScheduleSource_EventTriggered,				///< Triggered (event)
+	ScheduleSource_PeriodicSchedule,			///< Periodical scheduling
+	ScheduleSource_RunOnce,						///< Run once
+	ScheduleSource_TimeOut						///< TimeOut
 } ScheduleSource_t;
 
 
-///> Task Function pointer
+///< Task Function pointer
 typedef TaskResult_t (*TaskFunctionPointer)(ScheduleSource_t source);
 
 
-///> Task structure
+///< Task structure
 typedef struct
 {
-	const char *taskName;						///> Task Name - Init
-	const TaskFunctionPointer taskFunction;		///> Task function - Init
-	TaskTick_t tick;							///> Task tick [ms] - RunTime
-	TaskTick_t taskScheduleRate;				///> Task scheduling rate [ms] - Init/Runtime
-	bool isRequestScheduling;					///> Task scheduling request (true, if request) - Runtime
-	bool isPeriodisScheduleDisabled;			///> Task schedule (periodic) disabled - Init/Runtime
-	bool isRunOnce;								///> Task scheduling once - Init/Runtime
-	bool isTimeOutTask;							///> Task is work in TimeOut mode - Init/Runtime
-	bool isDisabled;							///> Task is disabled/enabled - Init/Runtime
+	const char *taskName;						///< Task Name - Init
+	const TaskFunctionPointer taskFunction;		///< Task function - Init
+	TaskTick_t tick;							///< Task tick [ms] - RunTime
+	TaskTick_t taskScheduleRate;				///< Task scheduling rate [ms] - Init/Runtime
+	bool isRequestScheduling;					///< Task scheduling request (true, if request) - Runtime
+	bool isPeriodisScheduleDisabled;			///< Task schedule (periodic) disabled - Init/Runtime
+	bool isRunOnce;								///< Task scheduling once - Init/Runtime
+	bool isTimeOutTask;							///< Task is work in TimeOut mode - Init/Runtime
+	bool isDisabled;							///< Task is disabled/enabled - Init/Runtime
 
 #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
-	uint32_t taskRunCount;						///> How many times ran [count]
+	uint32_t taskRunCount;						///< How many times ran [count]
 #endif
 } Task_t;
 

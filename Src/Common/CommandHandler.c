@@ -82,7 +82,21 @@ void CommandHandler_Init(void)
 	}
 #endif
 
-	// TODO: Check CommandList[]
+	// Check CommandList[]
+	CommandID_t i;
+	for (i = 0; i < CommandHandler_CommandNum; i++)
+	{
+		// Need command function pointer
+		ASSERT(CommandList[i].commandFunctionPointer != NULL);
+
+		// Need name
+		ASSERT(CommandList[i].name != NULL);
+
+		// Need command argument number
+		ASSERT(CommandList[i].commandArgNum != 0);
+
+		// example, description, syntax are optional parameters
+	}
 
 	return;
 }

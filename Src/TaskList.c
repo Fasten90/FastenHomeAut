@@ -85,7 +85,7 @@ static TaskResult_t Task_SelfTestFunction(ScheduleSource_t source);
 #endif
 
 
-///> Tasks list
+///< Tasks list
 Task_t TaskList[] =
 {
 #ifdef CONFIG_MODULE_LED_ENABLE
@@ -139,6 +139,7 @@ Task_t TaskList[] =
 		.taskName = "ButtonPressed",
 		.taskFunction = Task_ProcessButtonPressed,
 		.isPeriodisScheduleDisabled = true,
+		.taskScheduleRate = 10
 	},
 #endif
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
@@ -198,14 +199,14 @@ Task_t TaskList[] =
 	// XXX: Add here new tasks
 	// \note Be careful, taskList order need to be equal with TaskName_t
 	/*
-	const char *taskName;						///> Task Name - Init
-	const TaskFunctionPointer taskFunction;		///> Task function - Init
-	TaskTick_t taskScheduleRate;				///> Task scheduling rate [ms] - Init/Runtime
-	bool isRequestScheduling;					///> Task scheduling request (true, if request) - Runtime
-	bool isPeriodisScheduleDisabled;			///> Task schedule (periodic) disabled - Init/Runtime
-	bool isRunOnce;								///> Task scheduling once - Init/Runtime
-	bool isTimeOutTask;							///> Task is work in TimeOut mode - Init/Runtime
-	bool isDisabled;							///> Task is disabled/enabled - Init/Runtime
+	const char *taskName;						///< Task Name - Init
+	const TaskFunctionPointer taskFunction;		///< Task function - Init
+	TaskTick_t taskScheduleRate;				///< Task scheduling rate [ms] - Init/Runtime
+	bool isRequestScheduling;					///< Task scheduling request (true, if request) - Runtime
+	bool isPeriodisScheduleDisabled;			///< Task schedule (periodic) disabled - Init/Runtime
+	bool isRunOnce;								///< Task scheduling once - Init/Runtime
+	bool isTimeOutTask;							///< Task is work in TimeOut mode - Init/Runtime
+	bool isDisabled;							///< Task is disabled/enabled - Init/Runtime
 
 	!! Do not use other fields !!
 	*/
@@ -213,7 +214,7 @@ Task_t TaskList[] =
 
 
 
-/// Tasks num
+///< Tasks num
 const TaskID_t TasksNum = (sizeof(TaskList)/sizeof(TaskList[0]));
 
 

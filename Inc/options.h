@@ -257,16 +257,16 @@
  *----------------------------------------------------------------------------*/
 
 
-///> Debug
+///< Debug
 #define CONFIG_DEBUG_MODE
 
-///> Test Mode: Enable "test" command...
+///< Test Mode: Enable "test" command...
 #define CONFIG_TEST_MODE
 
-///> Module test: Enable "moduletest" command ~hwtest
+///< Module test: Enable "moduletest" command ~hwtest
 //#define CONFIG_MODULE_TEST_ENABLE
 
-///> Simulation mode: Enable "simulate" command
+///< Simulation mode: Enable "simulate" command
 //#define CONFIG_MODULE_SIMULATION_ENABLE
 
 //#define CONFIG_SWO_ENABLE
@@ -275,7 +275,7 @@
 
 //#define CONFIG_DEBUG_SW_WATCHDOG_ENABLE
 
-///> SelfTests
+///< SelfTests
 #define CONFIG_DEBUG_SELFTEST
 
 
@@ -363,7 +363,7 @@
 // GlobalVarHandler settings
 #define CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
 //#define CONFIG_GLOBALVARHANDLER_TRACE_RAM_BUFFER
-//#define CONFIG_GLOBALVARHANDLER_CHECK_ENABLE
+#define CONFIG_GLOBALVARHANDLER_CHECK_ENABLE
 
 
 // ESP8266 settings

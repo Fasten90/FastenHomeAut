@@ -71,6 +71,7 @@ extern xQueueHandle ESP8266_SendMessage_Queue;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 void Error_Handler(void);
+void Assert_Function(char *file, uint32_t line, char *exp);
 
 
 
@@ -414,6 +415,15 @@ void assert_failed(uint8_t* file, uint32_t line)
 }
 
 #endif
+
+
+
+void Assert_Function(char *file, uint32_t line, char *exp)
+{
+	uprintf("File: %s, %d. line: %s", file, line, exp);
+	DEBUG_BREAKPOINT();
+}
+
 
 /**
   * @}

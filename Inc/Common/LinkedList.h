@@ -37,7 +37,7 @@
 
 typedef uint32_t	ListItem_Value_t;
 
-///> ListItem for LinkedList
+///< ListItem for LinkedList
 typedef struct ListItem
 {
 	ListItem_Value_t val;

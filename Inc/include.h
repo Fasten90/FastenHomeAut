@@ -91,7 +91,14 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #define STR(a)					#a
 
 
+#define UNUSED_ARGUMENT(param)	((void)param)
+
+
+#define ASSERT(__e)				((__e) ? (void)0 : Assert_Function(__FILE__, __LINE__, #__e))
+
+
 extern void Error_Handler(void);
+extern void Assert_Function(char *file, uint32_t line, char *exp);
 
 
 

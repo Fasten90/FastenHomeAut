@@ -40,7 +40,7 @@
  *----------------------------------------------------------------------------*/
 
 
-/// Command results
+///< Command results
 typedef enum
 {
 	CommandResult_Unknown = 0,
@@ -57,15 +57,15 @@ typedef enum
 } CommandResult_t;
 
 
-/// Command Function pointer
+///< Command Function pointer
 typedef CommandResult_t ( *CommandHandlerFunctionPointer )( uint32_t argc, char** CommandHandler_CommandArguments );
 
 
-/// CommandID
+///< CommandID
 typedef uint8_t CommandID_t;
 
 
-/// CommandArgNum type
+///< CommandArgNum type
 typedef enum
 {
 	CommandArgument_0 = (1 << 0),
@@ -74,7 +74,7 @@ typedef enum
 } CommandArgNum_t;
 
 
-/// Command structure
+///< Command structure
 typedef struct
 {
 	const char *name;											///< Name of command (which need type) [string]

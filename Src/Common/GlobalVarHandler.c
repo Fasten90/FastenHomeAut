@@ -148,6 +148,9 @@ bool GlobalVarHandler_CheckCommandStructAreValid(void)
 
 	for (i = 0; i < GlobalVar_MaxCommandNum; i++)
 	{
+		// TODO: ASSERT()-tel?
+		// TODO: Put some comments for reason / checks
+
 		if (GlobalVarList[i].name == NULL)
 		{
 			hasError = true;
@@ -233,10 +236,8 @@ bool GlobalVarHandler_CheckCommandStructAreValid(void)
 	{
 		// Error
 		CommandHandler_Printf("Error in %d. (%s) command\r\n", i, GlobalVarList[i].name);
-#ifdef CONFIG_DEBUG_MODE
-		// Stop debugger
-		__asm("BKPT #0\n");		// ASM: Break debugger
-#endif
+		// !! Need code fix !!
+		DEBUG_BREAKPOINT();
 	}
 
 	return !hasError;

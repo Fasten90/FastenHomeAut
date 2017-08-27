@@ -30,7 +30,7 @@ char Communication_Buffer[COMMUNICATION_PROTOCOL_BUFFER_SIZE];
 uint8_t Communication_BufferCnt = 0;
 #endif
 
-///> Protocol names
+///< Protocol names
 static const char * const ProtocolNameList[] =
 {
 	"Unknown",

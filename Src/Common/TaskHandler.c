@@ -83,15 +83,34 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source);
  */
 void TaskHandler_Init(void)
 {
-	// Check TaskList size and enums
-	// TODO: Correct this
-	//BUILD_BUG_ON((sizeof(TaskList)/sizeof(TaskList[0])) != Task_Count);
-
 	TaskID_t i;
 
+	// Check TaskList size and enums
+	BUILD_BUG_ON(TasksNum != Task_Count);
+
+	// Check TaskList contain
+	for (i = 0; i < TasksNum; i++)
+	{
+		// Need task function
+		ASSERT(TaskList[i].taskFunction != NULL);
+
+		// Need task name
+		ASSERT(TaskList[i].taskName != NULL);
+
+		// Need period
+		ASSERT(TaskList[i].taskScheduleRate != 0);
+
+		/*if (isWrong)
+			uprintf("TaskHandler list error in %d. element (name: %s)", i, TaskList[i].taskName);*/
+	}
+
+
+	// TODO: Szétbontani dinamikusabb és statikusabb információkra?
+	// Init task ticks
 	for (i = 0; i < TasksNum; i++)
 	{
 		TaskList[i].tick = 0;
+		TaskList[i].taskRunCount = 0;
 	}
 }
 

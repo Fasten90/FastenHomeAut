@@ -45,13 +45,13 @@
 
 typedef enum
 {
-	EventType_Unknown,				///> Unknown type, do not use!
-	EventType_SystemEvent,			///> System event
-	EventType_UserEvent,			///> User event
-	EventType_Warning,				///> Warning
-	EventType_Error,				///> Error
-	EventType_Finished,				///> Finished
-	EventType_Required				///> Required
+	EventType_Unknown,				///< Unknown type, do not use!
+	EventType_SystemEvent,			///< System event
+	EventType_UserEvent,			///< User event
+	EventType_Warning,				///< Warning
+	EventType_Error,				///< Error
+	EventType_Finished,				///< Finished
+	EventType_Required				///< Required
 } EventType_t;
 
 
@@ -68,19 +68,19 @@ typedef uint8_t		LogCnt_t;
 
 typedef struct
 {
-	EventName_t eventName;					///> Event ID (enum)
-	const char *eventStringName;			///> Event name
+	EventName_t eventName;					///< Event ID (enum)
+	const char *eventStringName;			///< Event name
 } EventTable_t;
 
 
 typedef struct
 {
-	EventName_t eventName;					///> Event name (enum)
-	EventType_t eventType;					///> Event type
-	EventStatus_t eventStatus;				///> Event status / informations
-	uint32_t tick;							///> Event tick
+	EventName_t eventName;					///< Event name (enum)
+	EventType_t eventType;					///< Event type
+	EventStatus_t eventStatus;				///< Event status / informations
+	uint32_t tick;							///< Event tick
 #ifdef CONFIG_MODULE_RTC_ENABLE
-	DateTime_t dateTime;					///> Event date time
+	DateTime_t dateTime;					///< Event date time
 #endif
 } EventLogRecord_t;
 
