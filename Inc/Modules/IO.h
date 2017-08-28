@@ -45,8 +45,9 @@ typedef enum
 #ifdef CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE
 	Input_BatteryCharger,
 #endif
-	// XXX: Add here
-	// NOTE: Do not forget Sync with IO_InputNames
+
+	// XXX: Add here new inputs
+	// \note: Do not forget Sync with IO_InputNames
 
 	Input_Count
 } Input_t;
@@ -58,7 +59,8 @@ typedef enum
 	Output_Example,
 #endif
 
-	// XXX:
+	// XXX: Add here new outputs
+	// \note: Do not forget Sync with IO_OutputNames
 
 	Output_Count
 } Output_t;

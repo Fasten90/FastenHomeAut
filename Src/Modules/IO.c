@@ -40,6 +40,7 @@ OutputState_t IO_OutputStates[Output_Count];
 #endif
 
 
+#if IO_INPUTS_NUM > 0
 const char * const IO_InputNames[] =
 {
 #ifdef CONFIG_MODULE_IO_INPUT_MOTION_ENABLE
@@ -51,7 +52,11 @@ const char * const IO_InputNames[] =
 #ifdef CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE
 	"BatteryCharger",
 #endif
+
+	// XXX: Add here new inputs
+	// \note: Do not forget Sync with Input_t
 };
+#endif
 
 
 #if IO_OUTPUTS_NUM > 0
@@ -60,17 +65,21 @@ const char * const IO_OutputNames[] =
 #ifdef CONFIG_MODULE_IO_OUTPUT_EXAMPLE_ENABLE
 	"Example",
 #endif
+
+	// XXX: Add here new outputs
+	// \note: Do not forget Sync with Output_t
 };
 #endif
 
 
-
+#if IO_INPUTS_NUM > 0
 const char * const IO_InputStateNames[] =
 {
 	"Unknown",
 	"Active",
 	"Inactive"
 };
+#endif
 
 
 #if IO_OUTPUTS_NUM > 0
