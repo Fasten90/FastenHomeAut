@@ -30,12 +30,12 @@ Middlewares/LwIP/system
 # Paths and Symbols:
 
 HAL defines:
-STM32F407xx
+STM32F407xx or STM32F030x8
 USE_HAL_DRIVER
 
 Fasten lib defines:
-CONFIG_USE_PANEL_DISCOVERY
-CONFIG_USE_DEV_ECLIPSE
+CONFIG_USE_PANEL_STM32F4DISCOVERY or CONFIG_USE_PANEL_FASTENNODE
+CONFIG_USE_COMPILER_GCC
 
 
 
@@ -58,4 +58,13 @@ heap_1 vs heap_4
 
 If have CRC (STL):
 	- Add CRC data to linker
+
+
+# Eclipse/Atollic TrueSTUDIO templates:
+Set in Windows -> Preferences --> C/C++ --> Code style --> Code Templates:
+- Comments - Files
+- Comments - Methods
+- Files - C Source File - Default C source template
+- Files - C Header File - Default C header template
+from Docs\Templates\template_xxx.xml templates
 

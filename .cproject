@@ -43,6 +43,7 @@
 									<listOptionValue builtIn="false" value="CONFIG_USE_PANEL_HOMEAUTNODESMALL=1"/>
 									<listOptionValue builtIn="false" value="CONFIG_USE_PANEL_FASTENNODE=1"/>
 									<listOptionValue builtIn="false" value="STM32F030x8"/>
+									<listOptionValue builtIn="false" value="CONFIG_USE_PANEL_STM32F4DISCOVERY=1"/>
 								</option>
 								<option id="com.atollic.truestudio.common_options.target.interwork.247925497" name="Mix ARM/Thumb" superClass="com.atollic.truestudio.common_options.target.interwork" useByScannerDiscovery="false"/>
 								<inputType id="com.atollic.truestudio.as.input.374932590" name="Input" superClass="com.atollic.truestudio.as.input"/>
@@ -161,7 +162,9 @@
 						</tool>
 					</fileInfo>
 					<fileInfo id="com.atollic.truestudio.exe.debug.1518366166.695105971" name="startup_stm32f030x6.s" rcbsApplicability="disable" resourcePath="Drivers/CMSIS/Device/ST/STM32F0xx/Source/gcc/startup_stm32f030x6.s" toolsToInvoke="com.atollic.truestudio.exe.debug.toolchain.as.1545899283.1969357314">
-						<tool id="com.atollic.truestudio.exe.debug.toolchain.as.1545899283.1969357314" name="Assembler" superClass="com.atollic.truestudio.exe.debug.toolchain.as.1545899283"/>
+						<tool id="com.atollic.truestudio.exe.debug.toolchain.as.1545899283.1969357314" name="Assembler" superClass="com.atollic.truestudio.exe.debug.toolchain.as.1545899283">
+							<inputType id="com.atollic.truestudio.as.input.1397159877" name="Input" superClass="com.atollic.truestudio.as.input"/>
+						</tool>
 					</fileInfo>
 					<folderInfo id="com.atollic.truestudio.exe.debug.1518366166.544965544" name="/" resourcePath="Drivers/STM32F4xx_HAL_Driver">
 						<toolChain id="com.atollic.truestudio.exe.debug.toolchain.135206392" name="Atollic ARM Tools" superClass="com.atollic.truestudio.exe.debug.toolchain" unusedChildren="">
