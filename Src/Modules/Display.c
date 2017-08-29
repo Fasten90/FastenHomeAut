@@ -58,7 +58,6 @@
  *  Local variables
  *----------------------------------------------------------------------------*/
 
-static uint8_t CarActualStateCnt = 0;
 bool Display_CarAnimationDisable_flag = false;
 
 
@@ -272,10 +271,11 @@ static void Display_FillRectangle(uint8_t x, uint8_t y, uint8_t width, uint8_t h
 	uint8_t i;
 	uint8_t j;
 
-	//
-	for (i=x; i<=x+width; i++)
+	// Step on columns
+	for (i = x; i <= x + width; i++)
 	{
-		for (j=y; j<=y+height; j++)
+		// Step on rows
+		for (j = y; j <= y + height; j++)
 		{
 			SSD1306_drawPixel(i, j, color);
 		}
@@ -284,9 +284,11 @@ static void Display_FillRectangle(uint8_t x, uint8_t y, uint8_t width, uint8_t h
 }
 
 
+
 /*------------------------------------------------------------------------------
  *  							Loading screen
  *----------------------------------------------------------------------------*/
+
 
 
 void Display_LoadingInit(uint8_t x, uint8_t y, uint8_t width, uint8_t height)
@@ -375,6 +377,7 @@ void Display_LoadCarImage(void)
  */
 void Display_ChangeCarImage(void)
 {
+	static uint8_t CarActualStateCnt = 0;
 	uint8_t *img = NULL;
 
 	if ((CarActualStateCnt % 3) == 0)
@@ -393,6 +396,7 @@ void Display_ChangeCarImage(void)
 		img = (uint8_t *)Image_CarWheel_3_16x16;
 	}
 
+	// Draw 2 wheel
 	SSD1306_drawImage(24, 40, 16, 16, img);
 	SSD1306_drawImage(96, 40, 16, 16, img);
 

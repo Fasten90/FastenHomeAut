@@ -10,7 +10,7 @@
  *		Last modified:	2017.01.16
  */
 
-#include "stdint.h"
+#include <stdint.h>
 #include <stdarg.h>
 
 #include "String.h"

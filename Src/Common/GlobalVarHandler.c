@@ -1157,9 +1157,12 @@ static ProcessResult_t GlobalVarHandler_SetEnumerator(VarID_t commandID, const c
 		}
 		else
 		{
+			bool isOk = false;
+
 			// Not number, check string
 			for (i = 0; i < GlobalVarList[commandID].maxValue; i++)
 			{
+
 				// It is equal string?
 				if (StrCmp(param, GlobalVarList[commandID].enumList[i]) == 0)
 				{
@@ -1167,11 +1170,15 @@ static ProcessResult_t GlobalVarHandler_SetEnumerator(VarID_t commandID, const c
 					// Set value
 					*enumPointer = i;
 					result = Process_Ok_SetSuccessful_SendOk;
+					isOk = true;
 				}
 			}
 
-			// Not found, it is invalid string
-			result = Process_InvalidValue_NotEnumString;
+			if (!isOk)
+			{
+				// Not found, it is invalid string
+				result = Process_InvalidValue_NotEnumString;
+			}
 		}
 	}
 
@@ -1616,11 +1623,11 @@ void GlobalVarHandler_PrintTraceBuffer(void)
 			.name = GlobalVarList[index].name,
 			.type = GlobalVarList[index].type,
 
-			// Extreme !!
+			// Extreme critics !!
 			.varPointer = (void *)&GlobalVarHandler_TraceRamBuffer[i].data,
-			.isReadOnly = GlobalVarList[index].name,
+			.isReadOnly = GlobalVarList[index].isReadOnly,
 
-			// Extreme !!
+			// Extreme critics !!
 			.isFunction = false,
 			.getFunctionPointer = NULL,
 			.setFunctionPointer = NULL,

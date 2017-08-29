@@ -25,6 +25,10 @@
 #define MIN(a, b)			((a < b) ? a : b)
 
 
+// float       pow( float base, float exp );
+#define pow(_base, _exp)	power(_base, _exp)
+
+
 
 /*------------------------------------------------------------------------------
  *  Global function declarations
