@@ -49,7 +49,9 @@ typedef enum
 typedef enum
 {
 	ButtonPress_Short,
-	ButtonPress_Long
+	ButtonPress_Long,
+	ButtonPress_Continuous,
+	ButtonPress_ReleasedContinuous
 } ButtonPressType_t;
 
 
@@ -77,6 +79,10 @@ extern volatile uint8_t BUTTON_Clicked;
 
 void BUTTON_Init(void);
 bool BUTTON_GetButtonState(ButtonType_t button);
+
+const char * BUTTON_GetButtonName(ButtonType_t button);
+const char * BUTTON_GetPressTypeName(ButtonPressType_t pressType);
+
 //void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
 
 

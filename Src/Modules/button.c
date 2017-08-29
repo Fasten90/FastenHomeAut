@@ -206,6 +206,83 @@ bool BUTTON_GetButtonState(ButtonType_t button)
 }
 
 
+
+/**
+ * \brief	Get button name
+ */
+const char * BUTTON_GetButtonName(ButtonType_t button)
+{
+	char * buttonName = NULL;
+
+#if BUTTON_NUM == 4
+	switch (button)
+	{
+		case PressedButton_Right:
+			buttonName = "right";
+			break;
+
+		case PressedButton_Left:
+			buttonName = "left";
+			break;
+
+		case PressedButton_Up:
+			buttonName = "up";
+			break;
+
+		case PressedButton_Down:
+			buttonName = "down";
+			break;
+
+		case PressedButton_Count:
+		default:
+			buttonName = "";
+			break;
+	}
+#elif BUTTON_NUM == 0
+	if (button == PressButton_User)
+		buttonName = "user";
+#endif
+
+	return buttonName;
+}
+
+
+
+/**
+ * \brief	Get button press name
+ */
+const char * BUTTON_GetPressTypeName(ButtonPressType_t pressType)
+{
+	char * name = NULL;
+
+	switch (pressType)
+	{
+		case ButtonPress_Short:
+			name = "short";
+			break;
+
+		case ButtonPress_Long:
+			name = "long";
+			break;
+
+		case ButtonPress_Continuous:
+			name = "continuous";
+			break;
+
+		case ButtonPress_ReleasedContinuous:
+			name = "released";
+			break;
+
+		default:
+			name = "";
+			break;
+	}
+
+	return name;
+}
+
+
+
 /*
  * \note	EXTI GPIO callbacks function moved to it.c, because not every GPIO are button pin
  */

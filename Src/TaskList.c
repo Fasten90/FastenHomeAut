@@ -495,7 +495,17 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 
 				if (buttonPressTime > CONFIG_BUTTON_LONG_PRESS_TIME_TICK_LIMIT)
 				{
-					Logic_ButtonEventHandler(i, ButtonPress_Long);
+					// Long button, but need to check, this is an Continuous button pressing?
+					if (buttonPressTime > CONFIG_BUTTON_CONTINUOUS_PRESS_TIME_TICK_LIMIT)
+					{
+						// Continuous button release, do not run ButtonHandler
+						Logic_ButtonEventHandler(i, ButtonPress_ReleasedContinuous);
+					}
+					else
+					{
+						// Released "long" button pressing
+						Logic_ButtonEventHandler(i, ButtonPress_Long);
+					}
 				}
 				else
 				{
@@ -506,9 +516,22 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 			}
 			else
 			{
-				// Button in pressing, Check button at next time
-				TaskHandler_SetTaskOnceRun(Task_ButtonPressed, 10);
-				canSleep = false;
+				// Button in pressing,
+				uint32_t buttonPressTime = HAL_GetTick() - BUTTON_PressTimeTick[i];
+
+				if (buttonPressTime > CONFIG_BUTTON_CONTINUOUS_PRESS_TIME_TICK_LIMIT)
+				{
+					// Continuous stepping
+					Logic_ButtonEventHandler(i, ButtonPress_Continuous);
+					TaskHandler_SetTaskOnceRun(Task_ButtonPressed, 100);
+					canSleep = false;
+				}
+				else
+				{
+					// Check button at next time, for know: continuous button pressing or long/short?
+					TaskHandler_SetTaskOnceRun(Task_ButtonPressed, 10);
+					canSleep = false;
+				}
 			}
 		}
 		else
@@ -575,8 +598,7 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 	else
 	{
 		// Not charging:
-		// Display an xy percent
-		// TODO: Display actual voltage of battery
+		// Display actual voltage of battery
 		#ifdef CONFIG_MODULE_ADC_ENABLE
 		float voltage = ADC_GetValue(ADC_Vsource);
 		uint8_t percent = voltage / VSOURCE_BATTERY_MAX_VOLTAGE * 100;
@@ -656,8 +678,15 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 
 		// Display "all" string
 		Display_PrintString(DisplayInput_ActualRealString, 2, Font_12x8);
-		Display_Activate();
 
+		// It is empty char? (=space)
+		if (DisplayInput_ActualRealString[DisplayInput_LetterPosition] == ' ')
+		{
+			// There is a space character, Display a white box
+			Display_PrintFont12x8((char)0x01, DisplayInput_LetterPosition, 2, CHAR_INVERSE_NOT);
+		}
+
+		Display_Activate();
 		TaskHandler_SetTaskOnceRun(Task_Display, 500);
 	}
 	else
@@ -708,7 +737,6 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 					DisplayInput_ActualRealString[DisplayInput_LetterPosition],
 					DisplayInput_LetterPosition, 2, CHAR_INVERSE_NOT);
 			}
-
 
 			Display_Activate();
 			Display_VibrateLetter = true;

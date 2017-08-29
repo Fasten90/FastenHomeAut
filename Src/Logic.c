@@ -123,28 +123,11 @@ void Logic_Display_Init(void)
 void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 {
 #if BUTTON_NUM == 4
-	switch (button)
-	{
-		case PressedButton_Right:
-			BUTTON_DEBUG_PRINT("Right button pressed");
-			break;
+	const char * buttonName = BUTTON_GetButtonName(button);
+	const char * typeName = BUTTON_GetPressTypeName(type);
 
-		case PressedButton_Left:
-			BUTTON_DEBUG_PRINT("Left button pressed");
-			break;
+	uprintf("Button: %s pressed %s\r\n", buttonName, typeName);
 
-		case PressedButton_Up:
-			BUTTON_DEBUG_PRINT("Up button pressed");
-			break;
-
-		case PressedButton_Down:
-			BUTTON_DEBUG_PRINT("Down button pressed");
-			break;
-
-		case PressedButton_Count:
-		default:
-			break;
-	}
 #elif BUTTON_NUM == 1
 	(void)button;
 	(void)type;
@@ -347,34 +330,36 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 
 #ifdef CONFIG_FUNCTION_DISPLAY_INPUT
 	// Check buttons
-	switch (button)
+	if (type != ButtonPress_ReleasedContinuous)
 	{
-		case PressedButton_Right:
-			// Right
-			Logic_StepLetterPosition((type == ButtonPress_Short) ? 1 : 5);
-			break;
+		switch (button)
+		{
+			case PressedButton_Right:
+				// Right
+				Logic_StepLetterPosition((type == ButtonPress_Short || type == ButtonPress_Continuous) ? 1 : 3);
+				break;
 
-		case PressedButton_Left:
-			// Left
-			Logic_StepLetterPosition((type == ButtonPress_Short) ? -1 : -5);
-			break;
+			case PressedButton_Left:
+				// Left
+				Logic_StepLetterPosition((type == ButtonPress_Short || type == ButtonPress_Continuous) ? -1 : -3);
+				break;
 
-		case PressedButton_Up:
-			// Up
-			Logic_StepLetterNextValue((type == ButtonPress_Short) ? -1 : -5);
-			break;
+			case PressedButton_Up:
+				// Up
+				Logic_StepLetterNextValue((type == ButtonPress_Short || type == ButtonPress_Continuous) ? -1 : -3);
+				break;
 
-		case PressedButton_Down:
-			// Down
-			Logic_StepLetterNextValue((type == ButtonPress_Short) ? 1 : 5);
-			break;
+			case PressedButton_Down:
+				// Down
+				Logic_StepLetterNextValue((type == ButtonPress_Short || type == ButtonPress_Continuous) ? 1 : 3);
+				break;
 
-		case PressedButton_Count:
-		default:
-			// Error!
-			break;
+			case PressedButton_Count:
+			default:
+				// Error!
+				break;
+		}
 	}
-
 #endif
 }
 #endif
