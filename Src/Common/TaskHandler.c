@@ -59,7 +59,8 @@ static uint8_t TaskHandler_StatisticsIndex = 0;
 #endif
 
 #ifdef CONFIG_DEBUG_SW_WATCHDOG_ENABLE
-static uint32_t TaskHandler_RunCnt;
+static uint32_t TaskHandler_RunCnt = 0;
+static const char * TaskHandler_ActualTask = NULL;
 #endif
 
 
@@ -200,6 +201,10 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 		TaskList[taskID].isDisabled = true;
 	}
 
+#ifdef CONFIG_DEBUG_SW_WATCHDOG_ENABLE
+	TaskHandler_ActualTask = (const char *)TaskList[taskID].taskName;
+#endif
+
 #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
 	// Measure run time:
 	uint32_t startTime = HAL_GetTick();
@@ -234,6 +239,10 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 	{
 		TaskHandler_StatisticsIndex = 0;
 	}
+#endif
+
+#ifdef CONFIG_DEBUG_SW_WATCHDOG_ENABLE
+	TaskHandler_ActualTask = NULL;
 #endif
 }
 
@@ -428,7 +437,8 @@ void TaskHandler_SwWatchdog(void)
 		if (TaskHandler_RunCnt == TaskHandler_LastRunCnt)
 		{
 			// TaskHandler cn is not changed... :(
-			const char * msg = "TaskHandler frozened...\r\n";
+			char msg[60];
+			usprintf(msg, "TaskHandler frozened: %s\r\n",TaskHandler_ActualTask);
 			HAL_UART_Transmit(&Debug_UartHandle, (uint8_t *)msg, StringLength(msg), 10);
 
 			// Be careful: Error_Handler is use the SysTick handler...
@@ -437,7 +447,6 @@ void TaskHandler_SwWatchdog(void)
 
 		TaskHandler_LastRunCnt = TaskHandler_RunCnt;
 	}
-
 }
 #endif
 
