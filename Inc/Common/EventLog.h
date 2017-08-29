@@ -22,6 +22,7 @@
 #include "options.h"
 #include "GenericTypeDefs.h"
 #include "EventList.h"
+#include "DateTime.h"
 
 
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
@@ -79,7 +80,7 @@ typedef struct
 	EventType_t eventType;					///< Event type
 	EventStatus_t eventStatus;				///< Event status / informations
 	uint32_t tick;							///< Event tick
-#ifdef CONFIG_MODULE_RTC_ENABLE
+#if defined(CONFIG_MODULE_RTC_ENABLE) || defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
 	DateTime_t dateTime;					///< Event date time
 #endif
 } EventLogRecord_t;

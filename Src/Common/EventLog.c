@@ -21,6 +21,7 @@
 #include "Communication.h"
 #include "String.h"
 #include "MEM.h"
+#include "DateTime.h"
 #include "EventLog.h"
 
 #ifdef MODULE_EVENTLOG_UNITTEST_ENABLE
@@ -87,12 +88,13 @@ void EventLog_LogEvent(EventName_t eventName, EventType_t eventType, EventStatus
 	EventLogs[LogCounter].eventType = eventType;
 	EventLogs[LogCounter].eventStatus = eventStatus;
 	EventLogs[LogCounter].tick = HAL_GetTick();
-#ifdef CONFIG_MODULE_RTC_ENABLE
+#if defined(CONFIG_MODULE_RTC_ENABLE)
 	RTC_GetDateTime(&EventLogs[LogCounter].dateTime);
+#elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
+	EventLogs[LogCounter].dateTime = DateTime_SystemTime;
 #endif
 
 	LogCounter++;
-
 }
 
 

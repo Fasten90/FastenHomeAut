@@ -29,7 +29,9 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
+// size_t strlen ( const char * str );
 #define strlen(str)					StringLength(str)
+
 
 // int strncmp ( const char * str1, const char * str2, size_t num );
 // return: 0 equal, >0 and <0 is not equal
@@ -38,12 +40,19 @@
 // TODO: Be careful, return values are not equal
 #define strncmp(str1, str2, num)	StrCmpWithLength(str1, str2, num)
 
+
 // char * strncpy ( char * destination, const char * source, size_t num );
 // uint8_t StrCpyMax(char *dest, const char *str, uint8_t maxLength)
 #define strncpy(dest, src, num)		StrCpyMax(dest, src, num)
 
 
 #define printf(...)					uprintf(__VA_ARGS__)
+
+
+// char * strstr ( const char *, const char * )
+// TODO: Be careful, return value types not equal (uint vs. char *)
+#define strstr(str1, str2)			STRING_FindString(str1, str2)
+
 
 
 /*------------------------------------------------------------------------------
