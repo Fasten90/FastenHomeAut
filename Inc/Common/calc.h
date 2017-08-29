@@ -37,6 +37,8 @@
 uint32_t power(uint32_t a, uint8_t b);
 uint32_t power_secured(uint32_t a, uint8_t b);
 
+uint8_t DigitNum(uint32_t num, uint8_t radix);
+
 void Calc_UnitTest(void);
 
 

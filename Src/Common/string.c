@@ -1787,10 +1787,25 @@ void STRING_UnitTest(void)
 
 	/// String function testing
 
-	// TODO: uint8_t StrCpyCharacter(char *dest, char c, uint8_t num)
+	// Test: uint8_t StrCpyCharacter(char *dest, char c, uint8_t num)
+	StrCpyCharacter(buffer, 'a', 10);
+	uint8_t i;
+	for (i = 0; i < 10; i++)
+	{
+		UNITTEST_ASSERT(buffer[i] == 'a', "StrCpyCharacter error");
+	}
+	// Check end character
+	UNITTEST_ASSERT(buffer[10] == '\0', "StrCpyCharacter error");
 
 
-	// TODO: Test StrTrim()
+	// Test: Test StrTrim()
+	StrCpy(buffer, "String with spaces end...    ");
+	StrTrim(buffer);
+	UNITTEST_ASSERT(!StrCmp("String with spaces end...", buffer), "StrTrim error");
+
+	StrCpy(buffer, "End without space.");
+	StrTrim(buffer);
+	UNITTEST_ASSERT(!StrCmp("End without space.", buffer), "StrTrim error");
 
 
 	// STRING_FindString()

@@ -971,6 +971,9 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	*/
 
 
+	uprintf("DigitNum test: %d\r\n", DigitNum(2000, 10));
+	uprintf("DigitNum test: %d\r\n", DigitNum(2000, 0));
+
 
 	/**
 	 * 		End of Test codes
@@ -981,7 +984,6 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 							"Test end");
 
 	return CommandResult_Ok;
-
 }
 #endif	// #ifdef CONFIG_TEST_MODE
 
@@ -1156,7 +1158,6 @@ static CommandResult_t CommandFunction_GlobalVariableList(uint32_t argc, char** 
 	GlobalVarHandler_ListAllVariableParameters();
 
 	return CommandResult_Ok;
-
 }
 
 
@@ -1174,7 +1175,6 @@ static CommandResult_t CommandFunction_GlobalVariableValueList(uint32_t argc,
 	GlobalVarHandler_PrintAllVariableValues();
 
 	return CommandResult_Ok;
-
 }
 
 
@@ -1274,7 +1274,6 @@ static CommandResult_t CommandFunction_dac(uint32_t argc, char** argv)
 	{
 		return CommandResult_Error_WrongArgumentNum;
 	}
-
 }
 #endif
 
@@ -1381,7 +1380,6 @@ static CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
 	}
 
 	return CommandResult_Ok;
-
 }
 #endif
 
@@ -1871,7 +1869,6 @@ static CommandResult_t CommandFunction_flashwrite(uint32_t argc, char** argv)
 			Arg2Num,
 			Arg3Num);
 
-
 	return CommandResult_Ok;
 }
 #endif	// #ifdef CONFIG_MODULE_FLASH_ENABLE
@@ -1922,7 +1919,6 @@ static CommandResult_t CommandFunction_raspberrypi(uint32_t argc, char** argv)
 		// Wrong command - not "setout"
 		return CommandResult_Error_WrongArgument1;
 	}
-
 }
 #endif
 
