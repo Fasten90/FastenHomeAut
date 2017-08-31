@@ -304,15 +304,15 @@ uint16_t Module_LargeExample(uint32_t a, uint32_t b)
 		switch (b)
 		{
 			case 0:
-			      ToDo1();
-			      break;
+				ToDo1();
+				break;
 			case 1:
-			      ToDo2();
-			      break;
+				ToDo2();
+				break;
 			case 3:
 			default:
-			      ToDo3();
-			      break;
+				ToDo3();
+				break;
 		}
 		aNumber += 12345;
 	}
@@ -327,5 +327,21 @@ uint16_t Module_LargeExample(uint32_t a, uint32_t b)
 	}
 	return aNumber;
 }
+
+
+// The function at above is a doxygen comment style example too
+
+// Other Doxygen comments example
+
+typedef struct
+{
+	uint8_t value1;			///< Value1 description
+	uint16_t value2;		///< Value3 description
+} MyStruct_t;
+
+
+
+///< Global variable description
+uint8_t Module_GlobalVar = 0;
 
 

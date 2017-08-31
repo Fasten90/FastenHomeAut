@@ -237,31 +237,31 @@ static void CommandHandler_CheckResultAndRespond(CommandResult_t result)
 			break;
 
 		case CommandResult_Error_WrongArgument1:
-			pMessage ="Wrong argument (1.)";
+			pMessage = "Wrong argument (1.)";
 			break;
 
 		case CommandResult_Error_WrongArgument2:
-			pMessage ="Wrong argument (2.)";
+			pMessage = "Wrong argument (2.)";
 			break;
 
 		case CommandResult_Error_TooFewArgument:
-			pMessage ="Too few argument";
+			pMessage = "Too few argument";
 			break;
 
 		case CommandResult_Error_TooManyArgument:
-			pMessage ="Too many argument";
+			pMessage = "Too many argument";
 			break;
 
 		case CommandResult_Error_WrongArgumentNum:
-			pMessage ="Wrong argument num";
+			pMessage = "Wrong argument num";
 			break;
 
 		case CommandResult_Error_CommandArgNumIsWrong:
-			pMessage ="Command set is wrong";
+			pMessage = "Command set is wrong";
 			break;
 
 		case CommandResult_Error_Unknown:
-			pMessage ="Unknown error";
+			pMessage = "Unknown error";
 			break;
 
 		case CommandResult_Error_CommandNotFound:
@@ -270,7 +270,7 @@ static void CommandHandler_CheckResultAndRespond(CommandResult_t result)
 			break;
 
 		default:
-			pMessage ="Unknown command process";
+			pMessage = "Unknown command process";
 			break;
 	}
 

@@ -238,8 +238,8 @@ const char * BUTTON_GetButtonName(ButtonType_t button)
 			buttonName = "";
 			break;
 	}
-#elif BUTTON_NUM == 0
-	if (button == PressButton_User)
+#elif BUTTON_NUM == 1
+	if (button == PressedButton_User)
 		buttonName = "user";
 #endif
 

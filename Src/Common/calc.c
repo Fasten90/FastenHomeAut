@@ -141,7 +141,7 @@ void Calc_UnitTest(void)
 	UNITTEST_ASSERT(power_secured(2, 16)==65536, "power error");
 	UNITTEST_ASSERT(power_secured(1024, 0)==1, "power error");
 	// Overflow - but last
-	//UNITTEST_ASSERT(power_secured(2, 32)==2147483648, "power error");
+	UNITTEST_ASSERT(power_secured(2, 32)==2147483648, "power error");
 
 
 
