@@ -209,6 +209,8 @@ bool BUTTON_GetButtonState(ButtonType_t button)
 
 /**
  * \brief	Get button name
+ * \brief	button	button type
+ * \retval	Button name (string)
  */
 const char * BUTTON_GetButtonName(ButtonType_t button)
 {
@@ -250,6 +252,8 @@ const char * BUTTON_GetButtonName(ButtonType_t button)
 
 /**
  * \brief	Get button press name
+ * \param	pressType	button press type
+ * \retval	press type name (string)
  */
 const char * BUTTON_GetPressTypeName(ButtonPressType_t pressType)
 {
