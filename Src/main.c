@@ -96,6 +96,10 @@ int main(void)
 	// EventLog
 	EventLog_Init();
 #endif
+#ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
+	// EventHandler
+	EventHandler_Init();
+#endif
 
 
 #ifdef CONFIG_MODULE_LED_ENABLE

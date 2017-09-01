@@ -28,11 +28,9 @@
 #include "Globals.h"
 #include "DebugUart.h"
 #include "Display_SSD1306.h"
+#include "TaskList.h"
+#include "EventHandler.h"
 
-
-#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
-#include "EventLog.h"
-#endif
 
 
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
@@ -512,9 +510,8 @@ void SSD1306_display(void)
 	HAL_SPI_Transmit_IT(&SpiHandle, buffer, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8));
 	Display_TransferInProgress = true;
 
-#ifdef CONFIG_EVENTLOG_DISPLAY_LOG_ENABLE
-	EventLog_LogEvent(Event_Display_SpiEvent, EventType_SystemEvent, 1);
-#endif
+	// Save event
+	EventHandler_GenerateEvent(Event_Display_SpiEvent, 1, Task_Display);
 
 	//HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
 
@@ -859,10 +856,8 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 	HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
 	Display_TransferInProgress = false;
 
-#ifdef CONFIG_EVENTLOG_DISPLAY_LOG_ENABLE
-	EventLog_LogEvent(Event_Display_SpiEvent, EventType_SystemEvent, 2);
-#endif
-
+	// Save event
+	EventHandler_GenerateEvent(Event_Display_SpiEvent, 2, Task_Display);
 }
 
 
@@ -882,9 +877,8 @@ void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi)
 	HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
 	Display_TransferInProgress = false;
 
-#ifdef CONFIG_EVENTLOG_DISPLAY_LOG_ENABLE
-	EventLog_LogEvent(Event_Display_SpiEvent, EventType_SystemEvent, 3);
-#endif
+	// Save event
+	EventHandler_GenerateEvent(Event_Display_SpiEvent, 3, Task_Display);
 }
 
 

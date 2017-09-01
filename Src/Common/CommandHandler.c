@@ -19,9 +19,8 @@
 #include "EscapeSequence.h"
 #include "GlobalVarHandler.h"
 #include "CommandHandler.h"
-#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
-#include "EventLog.h"
-#endif
+#include "TaskList.h"
+#include "EventHandler.h"
 
 #ifdef MODULE_COMMANDHANDLER_UNITTEST_ENABLE
 #include "UnitTest.h"
@@ -111,9 +110,7 @@ bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source, char *comma
 {
 	bool isSuccessful = false;
 
-#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
-	EventLog_LogEvent(Event_CommandHandler_ProcessCommand, EventType_Required, 0);
-#endif
+	EventHandler_GenerateEvent(Event_CommandHandler_ProcessCommand, 0, Task_ProcessDebugUartReceivedCommand);
 
 	// Save command (to buffer)
 	StrCpyMax(CommandHandler_ProcessedCommandActual, command, COMMANDHANDLER_MAX_COMMAND_LENGTH);
@@ -197,9 +194,9 @@ static bool CommandHandler_SearchCommand(void)
 			// Found the command
 			result = CommandHandler_RunCommand(i);
 
-#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
-			EventLog_LogEvent(Event_CommandHandler_ProcessCommand, EventType_Finished, i);
-#endif
+			// Event
+			EventHandler_GenerateEvent(Event_CommandHandler_ProcessCommand, i, Task_ProcessDebugUartReceivedCommand);
+
 			// Valid Command
 			CommandValid = true;
 			break;

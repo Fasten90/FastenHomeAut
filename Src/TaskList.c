@@ -33,6 +33,7 @@
 #include "Display.h"
 #include "CommonAdc.h"
 #include "ADC.h"
+#include "EventHandler.h"
 
 #include "TaskList.h"
 
@@ -128,7 +129,7 @@ Task_t TaskList[] =
 #endif
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	{
-		.taskName = "DebugUartReceivedACommand",
+		.taskName = "DbgUartCommandRecv",
 		.taskFunction = Task_ProcessDebugUartCommandReceived,
 		//.isPeriodisScheduleDisabled = true,
 		.taskScheduleRate = 50
@@ -500,16 +501,19 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 					{
 						// Continuous button release, do not run ButtonHandler
 						Logic_ButtonEventHandler(i, ButtonPress_ReleasedContinuous);
+						EventHandler_GenerateEvent(Event_ButtonPressed, (i<<8 | ButtonPress_ReleasedContinuous), Task_ButtonPressed);
 					}
 					else
 					{
 						// Released "long" button pressing
 						Logic_ButtonEventHandler(i, ButtonPress_Long);
+						EventHandler_GenerateEvent(Event_ButtonPressed, (i<<8 | ButtonPress_Long), Task_ButtonPressed);
 					}
 				}
 				else
 				{
 					Logic_ButtonEventHandler(i, ButtonPress_Short);
+					EventHandler_GenerateEvent(Event_ButtonPressed, (i<<8 | ButtonPress_Short), Task_ButtonPressed);
 				}
 				// Not need schedule ButtonTask at next time
 				// canSleep = true; // Stay true
@@ -523,6 +527,7 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 				{
 					// Continuous stepping
 					Logic_ButtonEventHandler(i, ButtonPress_Continuous);
+					EventHandler_GenerateEvent(Event_ButtonPressed, (i<<8 | ButtonPress_Continuous), Task_ButtonPressed);
 					TaskHandler_SetTaskOnceRun(Task_ButtonPressed, 100);
 					canSleep = false;
 				}

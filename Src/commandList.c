@@ -31,12 +31,12 @@
 #include "CircularBuffer.h"
 #include "ESP8266.h"
 #include "EventLog.h"
+#include "EventHandler.h"
 #include "HomeAutMessage.h"
 #include "TaskHandler.h"
 #include "Motor.h"
 #include "CommonIO.h"
 #include "MEM.h"
-#include "EventLog.h"
 #include "TaskList.h"
 #include "IO.h"
 #include "LinkedList.h"
@@ -115,7 +115,7 @@
 	static CommandResult_t CommandFunction_Time(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
-	static CommandResult_t CommandFunctionEventLog(uint32_t argc, char** argv);
+	static CommandResult_t CommandFunction_EventLog(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
 	static CommandResult_t CommandFunction_raspberrypi(uint32_t argc, char** argv);
@@ -390,7 +390,7 @@ const CommandStruct CommandList[] =
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
 	{
 		.name = "eventlog",
-		.commandFunctionPointer = CommandFunctionEventLog,
+		.commandFunctionPointer = CommandFunction_EventLog,
 		.description = "List EventLog",
 		.syntax = NULL,
 		.commandArgNum = CommandArgument_0,
@@ -716,6 +716,10 @@ static CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
 
 #ifdef MODULE_LINKEDLIST_UNITTEST_ENABLE
 	LinkedList_UnitTest();
+#endif
+
+#ifdef MODULE_EVENTHANDLER_UNITTEST_ENABLE
+	EventHandler_UnitTest();
 #endif
 
 	return CommandResult_Ok;
@@ -1735,7 +1739,7 @@ static CommandResult_t CommandFunction_Time(uint32_t argc, char** argv)
 
 
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
-static CommandResult_t CommandFunctionEventLog(uint32_t argc, char** argv)
+static CommandResult_t CommandFunction_EventLog(uint32_t argc, char** argv)
 {
 	(void)argc;
 	(void)argv;

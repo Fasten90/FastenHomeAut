@@ -1,5 +1,5 @@
 /*
- *		EventHandler.c
+ *		EventLog.c
  *
  *		Created on:		2017. febr. 5.
  *      Author:			Vizi Gábor
@@ -23,6 +23,7 @@
 #include "MEM.h"
 #include "DateTime.h"
 #include "EventLog.h"
+#include "TaskList.h"
 
 #ifdef MODULE_EVENTLOG_UNITTEST_ENABLE
 #include "UnitTest.h"
@@ -38,7 +39,7 @@
  *----------------------------------------------------------------------------*/
 
 static EventLogRecord_t EventLogs[CONFIG_EVENTLOG_LOG_SIZE] = { 0 };
-static LogCnt_t LogCounter = 0;
+static EventLogCnt_t LogCounter = 0;
 
 
 
@@ -46,7 +47,7 @@ static LogCnt_t LogCounter = 0;
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
-static void EventLog_PrintLog(char *str, EventLogRecord_t *logRecord);
+static void EventLog_PrintLog(char *str, EventLogCnt_t cnt, EventLogRecord_t *logRecord);
 
 
 
@@ -55,7 +56,7 @@ static void EventLog_PrintLog(char *str, EventLogRecord_t *logRecord);
  *----------------------------------------------------------------------------*/
 
 /**
- * \brief	Initialize EventHandler
+ * \brief	Initialize EventLog
  */
 void EventLog_Init(void)
 {
@@ -63,7 +64,7 @@ void EventLog_Init(void)
 
 	LogCounter = 0;
 
-	EventLog_LogEvent(Event_LogEventStated, EventType_SystemEvent, 0);
+	EventHandler_GenerateEvent(Event_LogEventStated, 0, 0);
 }
 
 
@@ -71,11 +72,12 @@ void EventLog_Init(void)
 /**
  * \brief	Log event (to history)
  */
-void EventLog_LogEvent(EventName_t eventName, EventType_t eventType, EventStatus_t eventStatus)
+void EventLog_LogEvent(EventName_t eventName, EventData_t eventData, TaskID_t taskSource, EventType_t eventType)
 {
-	if (LogCounter >= CONFIG_EVENTLOG_LOG_SIZE-1)
+	if (LogCounter > CONFIG_EVENTLOG_LOG_SIZE-1)
 	{
 #if EVENTLOG_BUFFER_USE_CIRCULAR == 1
+		// In circular buffer mode, continue at begin of buffer
 		LogCounter = 0;
 #else
 		// In not circular buffer mode, do not save record, exit
@@ -85,8 +87,9 @@ void EventLog_LogEvent(EventName_t eventName, EventType_t eventType, EventStatus
 
 	// Save event
 	EventLogs[LogCounter].eventName = eventName;
+	EventLogs[LogCounter].eventData = eventData;
 	EventLogs[LogCounter].eventType = eventType;
-	EventLogs[LogCounter].eventStatus = eventStatus;
+	EventLogs[LogCounter].taskSource = taskSource;
 	EventLogs[LogCounter].tick = HAL_GetTick();
 #if defined(CONFIG_MODULE_RTC_ENABLE)
 	RTC_GetDateTime(&EventLogs[LogCounter].dateTime);
@@ -102,13 +105,24 @@ void EventLog_LogEvent(EventName_t eventName, EventType_t eventType, EventStatus
 /**
  * \brief	Print log
  */
-static void EventLog_PrintLog(char *str, EventLogRecord_t *logRecord)
+static void EventLog_PrintLog(char *str, EventLogCnt_t cnt, EventLogRecord_t *logRecord)
 {
-	usprintf(str, "| %3u | %2u | 0x%X | %9u |",
-			logRecord->eventName,
-			logRecord->eventType,
-			logRecord->eventStatus,
-			logRecord->tick);
+	if (logRecord->eventName > Event_Count)
+		return;
+
+	char timeStr[DATETIME_STRING_MAX_LENGTH];
+	DateTime_PrintDateTimeToString(timeStr, &logRecord->dateTime);
+
+
+	usprintf(str, "| %3u | %20s | %9u | %20s | 0x%X | %10s | %20s |\r\n",
+			cnt,
+			timeStr,
+			logRecord->tick,
+			EventList[logRecord->eventName].name,
+			logRecord->eventData,
+			EventHandler_GetEventTypeName(logRecord->eventType),
+			TaskList[logRecord->taskSource].taskName
+			);
 }
 
 
@@ -121,12 +135,12 @@ void EventLog_PrintAllLogRecords(void)
 	// TODO: Get communication protocol from parameter
 	CommProtocol_t comm = CommProt_DebugUart;
 
-	LogCnt_t i;
-	char str[40];
+	EventLogCnt_t i;
+	char str[120];
 
 	// Send header
-	const char * const fixheader = "+-----+-----+----+------------+-----------+\r\n";
-	const char * const headertxt = "| ID  | Name|Type|   Status   |    Tick   |\r\n";
+	const char * const fixheader = "+-----+----------------------+-----------+----------------------+------------+------------+----------------------+\r\n";
+	const char * const headertxt = "|  Id |       DateTime       |    Tick   |      EventName       |   Data     | EventType  |       Taskname       |\r\n";
 
 	COMMUNICATION_SendMessage(comm, "\r\n");
 	COMMUNICATION_SendMessage(comm, fixheader);
@@ -139,10 +153,8 @@ void EventLog_PrintAllLogRecords(void)
 	{
 		if (EventLogs[i].eventName)
 		{
-			EventLog_PrintLog(str, &EventLogs[i]);
-			COMMUNICATION_Printf(comm, "| %3u ", i);
+			EventLog_PrintLog(str, i, &EventLogs[i]);
 			COMMUNICATION_SendMessage(comm, str);
-			COMMUNICATION_SendMessage(comm, "\r\n");
 		}
 		else
 		{

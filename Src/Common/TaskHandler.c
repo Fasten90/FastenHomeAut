@@ -23,6 +23,7 @@
 #include "CommandHandler.h"
 #include "DebugUart.h"
 #include "String.h"
+#include "EventHandler.h"
 
 #ifdef MODULE_TASKHANDLER_UNNITEST_ENABLE
 #include "UnitTest.h"
@@ -218,7 +219,7 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 	(void)result;
 #endif
 #ifdef CONFIG_EVENTLOG_TASKHANDLER_LOG_ENABLE
-	EventLog_LogEvent(Event_TaskScheduled, EventType_SystemEvent, (taskID << 24 | source << 16));
+	EventHandler_GenerateEvent(Event_TaskScheduled, taskID, 0);
 #endif
 
 	// Clear tick
@@ -297,7 +298,7 @@ void TaskHandler_RequestTaskScheduling(TaskID_t taskID)
 		TaskList[taskID].isRequestScheduling = true;
 		TaskList[taskID].isDisabled = false;
 #ifdef CONFIG_EVENTLOG_TASKHANDLER_LOG_ENABLE
-		EventLog_LogEvent(Event_TaskScheduled, EventType_SystemEvent, taskId);
+		EventHandler_GenerateEvent(Event_TaskRequired, taskID, 0);
 #endif
 	}
 }
@@ -315,7 +316,7 @@ void TaskHandler_ClearTimeoutTask(TaskID_t taskID)
 		TaskList[taskID].tick = 0;
 		TaskList[taskID].isDisabled = false;
 #ifdef CONFIG_EVENTLOG_TASKHANDLER_LOG_ENABLE
-		EventLog_LogEvent(Event_TaskScheduled, EventType_SystemEvent, taskId);
+		EventHandler_GenerateEvent(Event_TaskCleared, taskID, 0);
 #endif
 	}
 }

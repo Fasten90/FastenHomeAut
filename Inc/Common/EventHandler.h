@@ -1,5 +1,5 @@
 /*
- *		EventLog.h
+ *		EventHandler.h
  *
  *		Created on:		2017. febr. 5.
  *      Author:			Vizi Gábor
@@ -10,34 +10,29 @@
  *		Last modified:	2017. febr. 5.
  */
 
-#ifndef COMMON_EVENTLOG_H_
-#define COMMON_EVENTLOG_H_
-
+#ifndef COMMON_EVENTHANDLER_H_
+#define COMMON_EVENTHANDLER_H_
 
 
 
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
+
 #include "options.h"
 #include "GenericTypeDefs.h"
 #include "EventList.h"
-#include "EventHandler.h"
 #include "DateTime.h"
 
 
-#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
+
+#ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
 
 
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#ifndef CONFIG_EVENTLOG_LOG_SIZE
-#define CONFIG_EVENTLOG_LOG_SIZE		(100)
-#endif
-
-#define EVENTLOG_BUFFER_USE_CIRCULAR	0
 
 
 /*------------------------------------------------------------------------------
@@ -45,24 +40,29 @@
  *----------------------------------------------------------------------------*/
 
 
-typedef uint8_t		EventLogCnt_t;
+typedef uint32_t	EventData_t;
 
-#if CONFIG_EVENTLOG_LOG_SIZE > 255
-#error "LogCnt_t type is wrong!"
-#endif
+typedef uint8_t		EventId_t;
 
 
+///< Event - dynamic struct
 typedef struct
 {
-	EventName_t eventName;					///< Event name (enum)
-	EventData_t eventData;					///< Event data / informations
-	EventType_t eventType;					///< Event type
-	TaskID_t taskSource;					///< Event source (Task)
-	uint32_t tick;							///< Event tick
-#if defined(CONFIG_MODULE_RTC_ENABLE) || defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
-	DateTime_t dateTime;					///< Event date time
-#endif
-} EventLogRecord_t;
+	uint32_t tick;
+	EventLogSubscription_t eventRaised;
+} EventRun_t;
+
+
+typedef enum
+{
+	EventType_Unknown,
+	EventType_Raised,
+	EventType_Get,
+	EventType_Cleared,
+
+	// Do not use this!
+	EventType_Count
+} EventType_t;
 
 
 
@@ -76,15 +76,20 @@ typedef struct
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void EventLog_Init(void);
-void EventLog_LogEvent(EventName_t eventName, EventData_t eventData, TaskID_t taskSource, EventType_t eventType);
-void EventLog_PrintAllLogRecords(void);
+void EventHandler_Init(void);
+void EventHandler_GenerateEvent(EventName_t eventName, EventData_t eventData, TaskID_t taskSource);
+bool EventHandler_CheckEventState(EventName_t eventName, TaskID_t taskSource);
+void EventHandler_ClearEvent(EventName_t eventName, TaskID_t taskSource);
+const char * EventHandler_GetEventTypeName(EventType_t eventType);
 
-void EventLog_UnitTest(void);
+void EventHandler_UnitTest(void);
 
+#else
 
+#define EventHandler_GenerateEvent(...)
+bool EventHandler_CheckEventState(...)
 
 #endif // #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
 
 
-#endif /* COMMON_EVENTLOG_H_ */
+#endif /* COMMON_EVENTHANDLER_H_ */
