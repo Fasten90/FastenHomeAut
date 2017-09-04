@@ -19,6 +19,7 @@
  *  Macros
  *----------------------------------------------------------------------------*/
 
+// if con == true, is valid
 #define UNITTEST_ASSERT(con, errorstring)			UnitTest_CheckResult(con, #con, errorstring, __LINE__)
 
 

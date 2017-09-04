@@ -676,6 +676,18 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 	static bool Display_VibrateLetter = false;
 
 
+	static uint8_t DisplayInput_OldLetterPosition = 0;
+	if ((DisplayInput_OldLetterPosition != DisplayInput_LetterPosition)
+		&& (DisplayInput_OldLetterPosition == DisplayInput_LetterPosition_MaxLimit))
+	{
+		// OK
+		Display_PrintFont12x8('O', DisplayInput_LetterPosition_MaxLimit, 2, CHAR_INVERSE_NOT);
+		Display_PrintFont12x8('K', DisplayInput_LetterPosition_MaxLimit + 1, 2, CHAR_INVERSE_NOT);
+	}
+	// Save old value
+	DisplayInput_OldLetterPosition = DisplayInput_LetterPosition;
+
+	// Button clicked
 	if (source == ScheduleSource_EventTriggered)
 	{
 		// Button press triggering

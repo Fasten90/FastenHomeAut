@@ -24,6 +24,7 @@
 #include "DateTime.h"
 #include "EventLog.h"
 #include "TaskList.h"
+#include "Debug.h"
 
 #ifdef MODULE_EVENTLOG_UNITTEST_ENABLE
 #include "UnitTest.h"
@@ -48,6 +49,7 @@ static EventLogCnt_t LogCounter = 0;
  *----------------------------------------------------------------------------*/
 
 static void EventLog_PrintLog(char *str, EventLogCnt_t cnt, EventLogRecord_t *logRecord);
+static void EventLog_DebugPrintLog(EventLogRecord_t * eventRecord);
 
 
 
@@ -97,8 +99,31 @@ void EventLog_LogEvent(EventName_t eventName, EventData_t eventData, TaskID_t ta
 	EventLogs[LogCounter].dateTime = DateTime_SystemTime;
 #endif
 
+#ifdef CONFIG_MODULE_DEBUG_ENABLE
+	if (eventName != Event_LogEventStated)
+		EventLog_DebugPrintLog(&EventLogs[LogCounter]);
+#endif
+
 	LogCounter++;
 }
+
+
+
+#ifdef CONFIG_MODULE_DEBUG_ENABLE
+/**
+ * \brief	Debug print
+ */
+static void EventLog_DebugPrintLog(EventLogRecord_t * eventRecord)
+{
+	Debug_Print(Debug_EventHandler,
+			"%s - Data: 0x%X, type: %s, task: %s, tick: %d",
+			EventList[eventRecord->eventName].name,
+			eventRecord->eventData,
+			EventHandler_GetEventTypeName(eventRecord->eventType),
+			TaskList[eventRecord->taskSource].taskName,
+			eventRecord->tick);
+}
+#endif
 
 
 
@@ -189,8 +214,8 @@ void EventLog_UnitTest(void)
 	// Check, first record is "LogEventStarted" ?
 	result = true;
 	result &= (EventLogs[0].eventName == Event_LogEventStated);
-	result &= (EventLogs[0].eventType == EventType_SystemEvent);
-	result &= (EventLogs[0].eventStatus == 0);
+	result &= (EventLogs[0].eventType == EventType_Raised);
+	result &= (EventLogs[0].eventData == 0);
 	result &= (EventLogs[0].tick != 0);
 	UNITTEST_ASSERT(result, "EventLog_Init error");
 
@@ -198,7 +223,7 @@ void EventLog_UnitTest(void)
 	result = true;
 	result &= (EventLogs[1].eventName == 0);
 	result &= (EventLogs[1].eventType == 0);
-	result &= (EventLogs[1].eventStatus == 0);
+	result &= (EventLogs[1].eventData == 0);
 	result &= (EventLogs[1].tick == 0);
 	UNITTEST_ASSERT(result, "EventLog_Init error");
 
@@ -207,13 +232,13 @@ void EventLog_UnitTest(void)
 	// Test log event (record)
 
 	EventLog_LogEvent(Event_LogEventStated,
-			EventType_SystemEvent, 0x12345678);
+			0x12345678, 0, EventType_Raised);
 
 	// Check, second record is "LogEventStarted" ?
 	result = true;
 	result &= (EventLogs[1].eventName == Event_LogEventStated);
-	result &= (EventLogs[1].eventType == EventType_SystemEvent);
-	result &= (EventLogs[1].eventStatus == 0x12345678);
+	result &= (EventLogs[1].eventType == EventType_Raised);
+	result &= (EventLogs[1].eventData == 0x12345678);
 	result &= (EventLogs[1].tick != 0);
 	UNITTEST_ASSERT(result, "EventLog_LogEvent error");
 

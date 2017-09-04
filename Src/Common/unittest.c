@@ -14,6 +14,7 @@
 #include "String.h"
 #include "DebugUart.h"
 #include "FormattedMessage.h"
+#include "Terminal.h"
 #include "UnitTest.h"
 
 
@@ -94,6 +95,7 @@ void UnitTest_End(void)
 	{
 #ifdef CONFIG_MODULE_FORMATTEDMESSAGE_ENABLE
 		SendErrorMessage("UnitTest run failed\r\n");
+		DebugUart_SendChar(TERMINAL_KEY_BELL);
 #else
 		uprintf("UnitTest run failed\r\n");
 #endif

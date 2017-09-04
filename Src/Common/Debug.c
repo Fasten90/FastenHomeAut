@@ -18,7 +18,7 @@
 
 #include "options.h"
 
-#ifdef CONFIG_MODULE_DEBUG
+#ifdef CONFIG_MODULE_DEBUG_ENABLE
 #include "FormattedMessage.h"
 #include "String.h"
 #include "DebugUart.h"
@@ -44,16 +44,30 @@ typedef struct
 
 DebugRecord_t DebugTasks[] =
 {
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
 	{
 		.name = "ESP8266",
 		.isEnabled = true,
 		.color = Color_Blue,
 	},
+#endif
+#ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
+	{
+		.name = "Event",
+		.isEnabled = true,
+		.color = Color_Blue,
+	},
+#endif
 	{
 		.name = "New",
 		.isEnabled = true,
 		.color = Color_Red
 	}
+
+	/*
+	 * XXX: Add here new Debug task struct
+	 * \note	Do not forget syncronize with Debug_t enum
+	 */
 };
 
 
@@ -160,4 +174,4 @@ bool Debug_SetDebugTaskWithName(char *name, bool enable)
 
 
 
-#endif	// #ifdef CONFIG_MODULE_DEBUG
+#endif	// #ifdef CONFIG_MODULE_DEBUG_ENABLE

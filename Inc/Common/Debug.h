@@ -36,8 +36,13 @@
 
 typedef enum
 {
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
 	Debug_ESP8266,
-	Debug_New,
+#endif
+#ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
+	Debug_EventHandler,
+#endif
+
 	/*
 	 * XXX: Add here new Debug task enums
 	 * \note	Do not forget syncronize with DebugTasks
@@ -61,7 +66,7 @@ typedef enum
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-#ifdef CONFIG_MODULE_DEBUG
+#ifdef CONFIG_MODULE_DEBUG_ENABLE
 void Debug_Print(Debug_t debugTask, const char *format, ...);
 bool Debug_EnableDisable(Debug_t task, bool enable);
 bool Debug_SetDebugTaskWithName(char *name, bool enable);

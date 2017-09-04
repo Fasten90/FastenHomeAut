@@ -93,7 +93,11 @@ void EventHandler_GenerateEvent(EventName_t eventName, EventData_t eventData, Ta
 
 	// Save event
 	Events[eventName].tick = HAL_GetTick();									// Actual tick
+#ifdef CONFIG_EVENTHANDLER_REQUIRED_TASK_MODE
 	Events[eventName].eventRaised = EventList[eventName].subscription;		// Fill with subscription (tasks)
+#else
+	Events[eventName].eventRaised = 0xFFFFFFFF;								// Fill all bits
+#endif
 
 	// Check, need require a task run?
 	if (EventList[eventName].isHasRequiredTask)
@@ -125,6 +129,7 @@ bool EventHandler_CheckEventState(EventName_t eventName, TaskID_t taskSource)
 	if (Events[eventName].eventRaised & (1 << taskSource))
 	{
 		isRaised = true;
+		Events[eventName].eventRaised &= ~(1 << taskSource);
 	}
 	else
 	{
@@ -198,26 +203,71 @@ const char * EventHandler_GetEventTypeName(EventType_t eventType)
 
 
 #ifdef MODULE_EVENTHANDLER_UNITTEST_ENABLE
+/**
+ * \brief	EventHandler UnitTest
+ */
 void EventHandler_UnitTest(void)
 {
-
-	bool result;
-
-
 	// Start Unit test
 	UnitTest_Start("EventHandler", __FILE__);
 
 
 	// Test EventHandler initialize
-	// TODO: Do it...
-	result = true;
-	UNITTEST_ASSERT(result, "EventHandler... error");
+	EventHandler_Init();
+
+	// Check, EventList is "free"?
+	// \note: Do not forget, this work well, if there is no an interrupted event
+
+	uint32_t i;
+	for (i = 0; i < NUM_OF(Events); i++)
+	{
+		if (i != Event_LogEventStated)
+		{
+			UNITTEST_ASSERT(Events[i].tick == 0, "EventList is not cleared!");
+			UNITTEST_ASSERT(Events[i].eventRaised == 0, "EventList is not cleared!");
+		}
+		// LogEventStarted --> has value
+	}
+
+
+	// Test EventHandler_GenerateEvent() & EventHandler_CheckEventState() pair
+
+	// Test: 0. event, 0 data, 0. task source
+	EventHandler_GenerateEvent(0, 0, 0);
+	// Get 0. event, 0. task source
+	UNITTEST_ASSERT(EventHandler_CheckEventState(0, 0) == true, "Event - generate and check is wrong");
+	// It is cleared?
+	UNITTEST_ASSERT(EventHandler_CheckEventState(0, 0) == false, "Event - generate and check is wrong");
+	// Get other event - it is not was set
+#ifdef CONFIG_EVENTHANDLER_REQUIRED_TASK_MODE
+	UNITTEST_ASSERT(EventHandler_CheckEventState(1, 1) == false, "Event - generate and check is wrong");
+#else
+	UNITTEST_ASSERT(EventHandler_CheckEventState(1, 1) == true, "Event - generate and check is wrong");
+#endif
+
+
+	// Test with other parameters
+	EventHandler_GenerateEvent(Event_LogEventStated, 0xFFFFFFFF, Event_LogEventStated);
+	// Get 0. event, 0. task source
+	UNITTEST_ASSERT(EventHandler_CheckEventState(Event_LogEventStated, 10) == true, "Event - generate and check is wrong");
+	// It is cleared?
+	UNITTEST_ASSERT(EventHandler_CheckEventState(Event_LogEventStated, 10) == false, "Event - generate and check is wrong");
+	// Get other event - it is not was set
+	UNITTEST_ASSERT(EventHandler_CheckEventState(Event_LogEventStated, 9) == true, "Event - generate and check is wrong");
+
+
+	// Test EventHandler_ClearEvent
+	// Set the Event
+	EventHandler_GenerateEvent(Event_LogEventStated, 0xFFFFFFFF, 10);
+	// Clear the event
+	EventHandler_ClearEvent(Event_LogEventStated, 10);
+	// Check, event is "cleared" ?
+	UNITTEST_ASSERT(EventHandler_CheckEventState(Event_LogEventStated, 10) == false, "Event - Clear is wrong");
 
 
 
 	// Finish unit test
 	UnitTest_End();
-
 }
 #endif
 

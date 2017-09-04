@@ -50,7 +50,9 @@ typedef struct
 {
 	const char * name;						///< Event name (string)
 	bool isNeedLog;							///< Need log?
+#ifdef CONFIG_EVENTHANDLER_REQUIRED_TASK_MODE
 	EventLogSubscription_t subscription;	///< Subscriptions (bits)
+#endif
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 	bool isHasRequiredTask;					///< Need require task scheduling? (Valid with below variable)
 	TaskID_t requiredTaskRunId;				///< Task, which need execute, when event raised

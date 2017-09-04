@@ -147,7 +147,7 @@
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 	static CommandResult_t CommandFunction_TaskHandler(uint32_t argc, char** argv);
 #endif
-#ifdef CONFIG_MODULE_DEBUG
+#ifdef CONFIG_MODULE_DEBUG_ENABLE
 	static CommandResult_t CommandFunction_Debug(uint32_t argc, char** argv);
 #endif
 
@@ -517,7 +517,7 @@ const CommandStruct CommandList[] =
 		.commandArgNum = CommandArgument_1,
 	},
 #endif
-#ifdef CONFIG_MODULE_DEBUG
+#ifdef CONFIG_MODULE_DEBUG_ENABLE
 	{
 		.name = "debug",
 		.commandFunctionPointer = CommandFunction_Debug,
@@ -800,6 +800,12 @@ static CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 
 
 #ifdef CONFIG_TEST_MODE
+
+inline void Increment(uint32_t * i)
+{
+	*i++;
+}
+
 /**
  * \brief	Test function
  */
@@ -978,6 +984,8 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	uprintf("DigitNum test: %d\r\n", DigitNum(2000, 10));
 	uprintf("DigitNum test: %d\r\n", DigitNum(2000, 0));
 
+	uint32_t a = 0;
+	Increment(a);
 
 	/**
 	 * 		End of Test codes
@@ -2383,7 +2391,7 @@ static CommandResult_t CommandFunction_TaskHandler(uint32_t argc, char** argv)
 
 
 
-#ifdef CONFIG_MODULE_DEBUG
+#ifdef CONFIG_MODULE_DEBUG_ENABLE
 static CommandResult_t CommandFunction_Debug(uint32_t argc, char** argv)
 {
 	(void)argc;
