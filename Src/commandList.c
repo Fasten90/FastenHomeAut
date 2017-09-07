@@ -2359,13 +2359,13 @@ static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
 			if (argc == 3)
 			{
 				bool isOk = true;
-				if (!StrCmp("Up", argv[2]))
+				if (!StrCmp("up", argv[2]))
 					Logic_ButtonEventHandler(PressedButton_Up, ButtonPress_Short);
-				else if (!StrCmp("Down", argv[2]))
+				else if (!StrCmp("down", argv[2]))
 					Logic_ButtonEventHandler(PressedButton_Down, ButtonPress_Short);
-				else if (!StrCmp("Right", argv[2]))
+				else if (!StrCmp("right", argv[2]))
 					Logic_ButtonEventHandler(PressedButton_Right, ButtonPress_Short);
-				else if (!StrCmp("Left", argv[2]))
+				else if (!StrCmp("left", argv[2]))
 					Logic_ButtonEventHandler(PressedButton_Left, ButtonPress_Short);
 				else
 					isOk = false;
@@ -2374,6 +2374,10 @@ static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
 					result = CommandResult_Ok_SendSuccessful;
 				else
 					result = CommandResult_Error_WrongArgument2;
+			}
+			else
+			{
+				CommandResult_Error_TooFewArgument;
 			}
 
 		}
