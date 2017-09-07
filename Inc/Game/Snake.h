@@ -1,17 +1,17 @@
 /*
- *		Debug.h
+ *		Snake.h
  *
- *		Created on:		2017. aug. 17.
+ *		Created on:		2017-09-06
  *      Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		-
  *		Target:			STM32Fx
  *		Version:		-
- *		Last modified:	2017. aug. 17.
+ *		Last modified:	2017. szept. 6.
  */
 
-#ifndef COMMON_DEBUG_H_
-#define COMMON_DEBUG_H_
+#ifndef GAME_SNAKE_H_
+#define GAME_SNAKE_H_
 
 
 
@@ -19,8 +19,8 @@
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
+
 #include "include.h"
-#include "FormattedMessage.h"
 
 
 
@@ -36,24 +36,26 @@
 
 typedef enum
 {
-#ifdef CONFIG_MODULE_ESP8266_ENABLE
-	Debug_ESP8266,
-#endif
-#ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
-	Debug_EventHandler,
-#endif
-#ifdef CONFIG_FUNCTION_GAME_SNAKE
-	Debug_GameSnake,
-#endif
+	Step_Unknown,
 
-	/*
-	 * XXX: Add here new Debug task enums
-	 * \note	Do not forget syncronize with DebugTasks
-	 */
+	// "User buttons"
+	Step_Up,
+	Step_Down,
+	Step_Right,
+	Step_Left,
 
-	// Do not use, it used for enum count
-	Debug_Count
-} Debug_t;
+	Step_Gift,
+
+	// Do not use! Only for checking
+	Step_Count
+} SnakeStep_t;
+
+
+typedef struct
+{
+	uint8_t x;
+	uint8_t y;
+} SnakeCoord_t;
 
 
 
@@ -63,20 +65,14 @@ typedef enum
 
 
 
-
-
 /*------------------------------------------------------------------------------
  *  Global function declarations
  *----------------------------------------------------------------------------*/
-
-#ifdef CONFIG_MODULE_DEBUG_ENABLE
-void Debug_Print(Debug_t debugTask, const char *format, ...);
-bool Debug_EnableDisable(Debug_t task, bool enable);
-bool Debug_SetDebugTaskWithName(char *name, bool enable);
-#else
-// Empty macro for suppress warnings
-#define Debug_Print(...)
-#endif
+void Snake_Init(void);
+void Snake_Step(SnakeStep_t step);
+void Snake_Draw(void);
+SnakeStep_t Snake_GetLastStep(void);
 
 
-#endif /* COMMON_DEBUG_H_ */
+
+#endif /* GAME_SNAKE_H_ */

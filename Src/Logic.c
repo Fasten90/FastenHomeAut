@@ -28,6 +28,9 @@
 #include "CommandHandler.h"
 #include "Communication.h"
 
+#ifdef CONFIG_FUNCTION_GAME_SNAKE
+#include "Snake.h"
+#endif
 
 
 /*------------------------------------------------------------------------------
@@ -110,6 +113,10 @@ void Logic_Display_Init(void)
 	Display_PrintFont12x8('K', DisplayInput_LetterPosition_MaxLimit + 1, 2, CHAR_INVERSE_NOT);
 
 	#endif
+
+#ifdef CONFIG_FUNCTION_GAME_SNAKE
+	Snake_Init();
+#endif
 }
 #endif
 
@@ -361,6 +368,41 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 		}
 	}
 #endif
+
+#ifdef CONFIG_FUNCTION_GAME_SNAKE
+	// Check buttons
+	if (type != ButtonPress_ReleasedContinuous)
+	{
+		switch (button)
+		{
+			case PressedButton_Right:
+				// Right
+				Snake_Step(Step_Right);
+				break;
+
+			case PressedButton_Left:
+				// Left
+				Snake_Step(Step_Left);
+				break;
+
+			case PressedButton_Up:
+				// Up
+				Snake_Step(Step_Up);
+				break;
+
+			case PressedButton_Down:
+				// Down
+				Snake_Step(Step_Down);
+				break;
+
+			case PressedButton_Count:
+			default:
+				// Error!
+				break;
+		}
+	}
+#endif
+
 }
 #endif
 

@@ -106,10 +106,12 @@ void EventHandler_GenerateEvent(EventName_t eventName, EventData_t eventData, Ta
 	}
 
 	// Log event, if need
+#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
 	if (EventList[eventName].isNeedLog)
 	{
 		EventLog_LogEvent(eventName, eventData, taskSource, EventType_Raised);
 	}
+#endif
 }
 
 
@@ -139,10 +141,12 @@ bool EventHandler_CheckEventState(EventName_t eventName, TaskID_t taskSource)
 	// TODO: Check is is subscripted?
 
 	// Log event, if need
+#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
 	if (EventList[eventName].isNeedLog)
 	{
 		EventLog_LogEvent(eventName, taskSource, taskSource, EventType_Get);
 	}
+#endif
 
 	return isRaised;
 }
@@ -163,10 +167,12 @@ void EventHandler_ClearEvent(EventName_t eventName, TaskID_t taskSource)
 	Events[eventName].eventRaised = 0;
 
 	// Log event, if need
+#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
 	if (EventList[eventName].isNeedLog)
 	{
 		EventLog_LogEvent(eventName, taskSource, taskSource, EventType_Get);
 	}
+#endif
 }
 
 

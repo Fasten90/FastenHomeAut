@@ -44,6 +44,7 @@
 #include "ADC.h"
 #include "CommonDac.h"
 #include "Debug.h"
+#include "Logic.h"
 
 #include "CommandList.h"
 
@@ -984,8 +985,16 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	uprintf("DigitNum test: %d\r\n", DigitNum(2000, 10));
 	uprintf("DigitNum test: %d\r\n", DigitNum(2000, 0));
 
+
 	uint32_t a = 0;
-	Increment(a);
+	Increment(&a);
+	uprintf("Incremented value: %d", a);
+
+
+	// Snake
+#include "Snake.h"
+	Snake_Init();
+
 
 	/**
 	 * 		End of Test codes
@@ -2342,6 +2351,32 @@ static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
 			}
 		}
 	#endif
+#endif
+#ifdef CONFIG_MODULE_BUTTON_ENABLE
+		else if (!StrCmp("buttonpress", argv[1]))
+		{
+			// Button press simulation
+			if (argc == 3)
+			{
+				bool isOk = true;
+				if (!StrCmp("Up", argv[2]))
+					Logic_ButtonEventHandler(PressedButton_Up, ButtonPress_Short);
+				else if (!StrCmp("Down", argv[2]))
+					Logic_ButtonEventHandler(PressedButton_Down, ButtonPress_Short);
+				else if (!StrCmp("Right", argv[2]))
+					Logic_ButtonEventHandler(PressedButton_Right, ButtonPress_Short);
+				else if (!StrCmp("Left", argv[2]))
+					Logic_ButtonEventHandler(PressedButton_Left, ButtonPress_Short);
+				else
+					isOk = false;
+
+				if (isOk)
+					result = CommandResult_Ok_SendSuccessful;
+				else
+					result = CommandResult_Error_WrongArgument2;
+			}
+
+		}
 #endif
 		else
 		{

@@ -58,6 +58,13 @@ DebugRecord_t DebugTasks[] =
 		.color = Color_Blue,
 	},
 #endif
+#ifdef CONFIG_FUNCTION_GAME_SNAKE
+	{
+		.name = "Snake",
+		.isEnabled = true,
+		.color = Color_Green
+	},
+#endif
 	{
 		.name = "New",
 		.isEnabled = true,

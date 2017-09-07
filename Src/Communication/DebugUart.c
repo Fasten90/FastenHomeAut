@@ -340,7 +340,6 @@ void DebugUart_ProcessReceivedCharacters(void)
 			// Search command and run
 			CommandHandler_PrepareFindExecuteCommand(
 				CommProt_DebugUart, (char *)receiveBuffer);
-
 		}
 
 	}

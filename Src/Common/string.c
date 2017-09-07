@@ -1097,13 +1097,20 @@ uint8_t StrCpyFixLength(char *dest, const char *str, uint8_t length)
 uint8_t StrCpyFixLengthWithFillCharacter(char *dest, const char *str, uint8_t length, char fillChar)
 {
 
-	uint8_t i;
+	uint8_t i = 0;
 
-	// Copy characters
-	for (i = 0; (i < length) && (str[i]); i++)
+	if (dest == NULL)
+		return 0;
+
+	if (str != NULL)
 	{
-		dest[i] = str[i];
+		// Copy characters
+		for (i = 0; (i < length) && (str[i]); i++)
+		{
+			dest[i] = str[i];
+		}
 	}
+
 
 	// Fill with character after string
 	if (i < length)
