@@ -44,6 +44,7 @@
 #include "ADC.h"
 #include "CommonDac.h"
 #include "Debug.h"
+#include "DebugList.h"
 #include "Logic.h"
 
 #include "CommandList.h"
@@ -2246,7 +2247,7 @@ static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
 		{
 			// Error
 			CommandHandler_SendLine("Simulation is not enabled!");
-			result = CommandResult_Error_WrongArgument1;
+			result = CommandResult_Ok;	// Not ok, but do not send other error message
 		}
 	}
 	else

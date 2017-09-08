@@ -19,63 +19,21 @@
 #include "options.h"
 
 #ifdef CONFIG_MODULE_DEBUG_ENABLE
+
+#include <stdarg.h>// for "va_list"
 #include "FormattedMessage.h"
 #include "String.h"
 #include "DebugUart.h"
-#include <stdarg.h>// for "va_list"
+#include "DebugList.h"
 
 #include "Debug.h"
-
-
-
-typedef struct
-{
-	const char * name;
-	bool isEnabled;
-	FormattedStringColors_t color;
-	FormattedStringColors_t background;
-} DebugRecord_t;
-
 
 
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-DebugRecord_t DebugTasks[] =
-{
-#ifdef CONFIG_MODULE_ESP8266_ENABLE
-	{
-		.name = "ESP8266",
-		.isEnabled = true,
-		.color = Color_Blue,
-	},
-#endif
-#ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
-	{
-		.name = "Event",
-		.isEnabled = true,
-		.color = Color_Blue,
-	},
-#endif
-#ifdef CONFIG_FUNCTION_GAME_SNAKE
-	{
-		.name = "Snake",
-		.isEnabled = true,
-		.color = Color_Green
-	},
-#endif
-	{
-		.name = "New",
-		.isEnabled = true,
-		.color = Color_Red
-	}
-
-	/*
-	 * XXX: Add here new Debug task struct
-	 * \note	Do not forget syncronize with Debug_t enum
-	 */
-};
+extern DebugRecord_t DebugTasks[];
 
 
 
@@ -103,7 +61,7 @@ DebugRecord_t DebugTasks[] =
 void Debug_Print(Debug_t debugTask, const char *format, ...)
 {
 	// Check DebugTasks list size
-	BUILD_BUG_ON((sizeof(DebugTasks)/sizeof(DebugTasks[0])) == (Debug_Count-1));
+	BUILD_BUG_ON(DebugTaskListNum == (Debug_Count-1));
 
 	if (debugTask >= Debug_Count)
 		return;
@@ -165,7 +123,7 @@ bool Debug_SetDebugTaskWithName(char *name, bool enable)
 	uint8_t i;
 	bool result = false;
 
-	for (i = 0; i < NUM_OF(DebugTasks); i++)
+	for (i = 0; i < DebugTaskListNum; i++)
 	{
 		if (!StrCmp(name, DebugTasks[i].name))
 		{

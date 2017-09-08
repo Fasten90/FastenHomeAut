@@ -1,47 +1,25 @@
 /*
- *		Debug.h
+ *		DebugList.c
  *
- *		Created on:		2017. aug. 17.
+ *		Created on:		2017-09-08
  *      Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		-
  *		Target:			STM32Fx
  *		Version:		-
- *		Last modified:	2017. aug. 17.
+ *		Last modified:	2017. szept. 8.
  */
 
-#ifndef COMMON_DEBUG_H_
-#define COMMON_DEBUG_H_
-
-
 
 
 /*------------------------------------------------------------------------------
- *  Includes
+ *  Header files
  *----------------------------------------------------------------------------*/
+
 #include "include.h"
 #include "FormattedMessage.h"
+#include "Debug.h"
 #include "DebugList.h"
-
-
-
-/*------------------------------------------------------------------------------
- *  Macros & definitions
- *----------------------------------------------------------------------------*/
-
-
-
-/*------------------------------------------------------------------------------
- *  Type definitions
- *----------------------------------------------------------------------------*/
-
-typedef struct
-{
-	const char * name;					///< Name (string)
-	bool isEnabled;						///< Need to debugprint?
-	FormattedStringColors_t color;		///< Text color
-	FormattedStringColors_t background;	///< Background color
-} DebugRecord_t;
 
 
 
@@ -49,20 +27,70 @@ typedef struct
  *  Global variables
  *----------------------------------------------------------------------------*/
 
+///< Debug(task) list
+DebugRecord_t DebugTasks[] =
+{
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+	{
+		.name = "ESP8266",
+		.isEnabled = true,
+		.color = Color_Blue,
+	},
+#endif
+#ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
+	{
+		.name = "Event",
+		.isEnabled = true,
+		.color = Color_Blue,
+	},
+#endif
+#ifdef CONFIG_FUNCTION_GAME_SNAKE
+	{
+		.name = "Snake",
+		.isEnabled = true,
+		.color = Color_Green
+	},
+#endif
+	{
+		.name = "New",
+		.isEnabled = true,
+		.color = Color_Red
+	}
+
+	/*
+	 * XXX: Add here new Debug task struct
+	 * \note	Do not forget syncronize with Debug_t enum
+	 */
+};
+
+
+uint8_t DebugTaskListNum = NUM_OF(DebugTasks);
+
 
 
 /*------------------------------------------------------------------------------
- *  Global function declarations
+ *  Local variables
  *----------------------------------------------------------------------------*/
 
-#ifdef CONFIG_MODULE_DEBUG_ENABLE
-void Debug_Print(Debug_t debugTask, const char *format, ...);
-bool Debug_EnableDisable(Debug_t task, bool enable);
-bool Debug_SetDebugTaskWithName(char *name, bool enable);
-#else
-// Empty macro for suppress warnings
-#define Debug_Print(...)
-#endif
 
 
-#endif /* COMMON_DEBUG_H_ */
+/*------------------------------------------------------------------------------
+ *  Function declarations
+ *----------------------------------------------------------------------------*/
+
+
+
+/*------------------------------------------------------------------------------
+ *  Functions
+ *----------------------------------------------------------------------------*/
+
+
+/**
+ * \brief
+ */
+void DebugList_Init(void)
+{
+
+}
+
+
