@@ -48,8 +48,8 @@ typedef uint8_t		EventId_t;
 ///< Event - dynamic struct
 typedef struct
 {
-	uint32_t tick;
-	EventLogSubscription_t eventRaised;
+	uint32_t tick;								///< Tick (When occurred the event)
+	EventLogSubscription_t eventRaised;			///< Event flags
 } EventRun_t;
 
 
@@ -90,6 +90,7 @@ void EventHandler_UnitTest(void);
 bool EventHandler_CheckEventState(...)
 
 #endif // #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
+
 
 
 #endif /* COMMON_EVENTHANDLER_H_ */

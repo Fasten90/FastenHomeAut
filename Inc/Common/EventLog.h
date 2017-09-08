@@ -52,6 +52,7 @@ typedef uint8_t		EventLogCnt_t;
 #endif
 
 
+///< EventLog Record structure for log
 typedef struct
 {
 	EventName_t eventName;					///< Event name (enum)

@@ -51,13 +51,6 @@ typedef enum
 } SnakeStep_t;
 
 
-typedef struct
-{
-	uint8_t x;
-	uint8_t y;
-} SnakeCoord_t;
-
-
 
 /*------------------------------------------------------------------------------
  *  Global variables

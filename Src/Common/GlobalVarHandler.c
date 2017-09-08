@@ -829,100 +829,101 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 			return Process_FailParamIsNotHexNumber;
 		}
 	} // End of "isHex"
-
-	// TODO: else if legyen
-	// If it is not hex
-	// It is unsigned integers?
-	if (varType == Type_Uint8 || varType == Type_Uint16 || varType == Type_Uint32)
+	else
 	{
-		// Unsigned types
-
-		uint32_t num = 0;
-		if (StringToUnsignedDecimalNum(param, &num))
+		// If it is not hex
+		// It is unsigned integers?
+		if (varType == Type_Uint8 || varType == Type_Uint16 || varType == Type_Uint32)
 		{
-			ProcessResult_t result;
-			result = GlobalVarHandler_CheckValue(commandID, num);
+			// Unsigned types
 
-			if (result == Process_Ok_SetSuccessful_SendOk)
+			uint32_t num = 0;
+			if (StringToUnsignedDecimalNum(param, &num))
 			{
-				// Good
-				if (varType == Type_Uint8)
+				ProcessResult_t result;
+				result = GlobalVarHandler_CheckValue(commandID, num);
+
+				if (result == Process_Ok_SetSuccessful_SendOk)
 				{
-					uint8_t *numPointer = (uint8_t *)GlobalVarList[commandID].varPointer;
-					*numPointer = num;
+					// Good
+					if (varType == Type_Uint8)
+					{
+						uint8_t *numPointer = (uint8_t *)GlobalVarList[commandID].varPointer;
+						*numPointer = num;
+					}
+					else if (varType == Type_Uint16)
+					{
+						uint16_t *numPointer = (uint16_t *)GlobalVarList[commandID].varPointer;
+						*numPointer = num;
+					}
+					else if (varType == Type_Uint32)
+					{
+						uint32_t *numPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
+						*numPointer = num;
+					}
+					//else - not reaching
+					return Process_Ok_SetSuccessful_SendOk;
 				}
-				else if (varType == Type_Uint16)
+				else
 				{
-					uint16_t *numPointer = (uint16_t *)GlobalVarList[commandID].varPointer;
-					*numPointer = num;
+					// Wrong
+					return result;
 				}
-				else if (varType == Type_Uint32)
-				{
-					uint32_t *numPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
-					*numPointer = num;
-				}
-				//else - not reaching
-				return Process_Ok_SetSuccessful_SendOk;
+
+				// NOTE: Do not return from here
+				//return Process_Ok_SetSuccessful_SendOk;
 			}
 			else
 			{
-				// Wrong
-				return result;
+				return Process_FailParamIsNotNumber;
 			}
-
-			// NOTE: Do not return from here
-			//return Process_Ok_SetSuccessful_SendOk;
 		}
-		else
+
+		// It is signed integers?
+		if (varType == Type_Int8 || varType == Type_Int16 || varType == Type_Int32)
 		{
-			return Process_FailParamIsNotNumber;
-		}
-	}
+			// Signed types
 
-	// It is signed integers?
-	if (varType == Type_Int8 || varType == Type_Int16 || varType == Type_Int32)
-	{
-		// Signed types
-
-		int32_t num = 0;
-		if (StringToSignedDecimalNum(param, &num))
-		{
-			ProcessResult_t result;
-			result = GlobalVarHandler_CheckValue(commandID, num);
-
-			if (result == Process_Ok_SetSuccessful_SendOk)
+			int32_t num = 0;
+			if (StringToSignedDecimalNum(param, &num))
 			{
-				// Good
-				if (varType == Type_Int8)
+				ProcessResult_t result;
+				result = GlobalVarHandler_CheckValue(commandID, num);
+
+				if (result == Process_Ok_SetSuccessful_SendOk)
 				{
-					uint8_t *numPointer = (uint8_t *)GlobalVarList[commandID].varPointer;
-					*numPointer = num;
+					// Good
+					if (varType == Type_Int8)
+					{
+						uint8_t *numPointer = (uint8_t *)GlobalVarList[commandID].varPointer;
+						*numPointer = num;
+					}
+					else if (varType == Type_Int16)
+					{
+						uint16_t *numPointer = (uint16_t *)GlobalVarList[commandID].varPointer;
+						*numPointer = num;
+					}
+					else if (varType == Type_Int32)
+					{
+						uint32_t *numPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
+						*numPointer = num;
+					}
+					//else - not reaching
+					return Process_Ok_SetSuccessful_SendOk;
 				}
-				else if (varType == Type_Int16)
+				else
 				{
-					uint16_t *numPointer = (uint16_t *)GlobalVarList[commandID].varPointer;
-					*numPointer = num;
+					// Wrong
+					return result;
 				}
-				else if (varType == Type_Int32)
-				{
-					uint32_t *numPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
-					*numPointer = num;
-				}
-				//else - not reaching
-				return Process_Ok_SetSuccessful_SendOk;
+
+				// NOTE: Do not return from here
+				//return Process_Ok_SetSuccessful_SendOk;
 			}
 			else
 			{
-				// Wrong
-				return result;
+				return Process_FailParamIsNotNumber;
 			}
-
-			// NOTE: Do not return from here
-			//return Process_Ok_SetSuccessful_SendOk;
-		}
-		else
-		{
-			return Process_FailParamIsNotNumber;
 		}
 	}
 
@@ -1371,7 +1372,7 @@ void GlobalVarHandler_ListAllVariableParameters(void)
 {
 	VarID_t i;
 
-	// TODO: Enumokat is kiírni, ha van?
+	// TODO: Enumokat is kiírni, ha van? Egy sorba körülményes felsorolni az összes enumot
 
 	// Send header
 	GlobalVarHandler_ListAllVariable_SendHeader();
