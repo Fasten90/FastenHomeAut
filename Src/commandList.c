@@ -802,11 +802,6 @@ static CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 
 #ifdef CONFIG_TEST_MODE
 
-inline void Increment(uint32_t * i)
-{
-	*i++;
-}
-
 /**
  * \brief	Test function
  */
@@ -982,13 +977,17 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	*/
 
 
+	/*
 	uprintf("DigitNum test: %d\r\n", DigitNum(2000, 10));
 	uprintf("DigitNum test: %d\r\n", DigitNum(2000, 0));
+	*/
 
 
+#include "Calc.h"
 	uint32_t a = 0;
 	Increment(&a);
 	uprintf("Incremented value: %d", a);
+
 
 
 	// Snake
@@ -2377,9 +2376,8 @@ static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
 			}
 			else
 			{
-				CommandResult_Error_TooFewArgument;
+				result = CommandResult_Error_TooFewArgument;
 			}
-
 		}
 #endif
 		else

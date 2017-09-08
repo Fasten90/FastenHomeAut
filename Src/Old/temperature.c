@@ -522,8 +522,8 @@ void TEMPERATURE_I2C_Init_Test(void)
 void HAL_I2C_MspInit(I2C_HandleTypeDef *hi2c)
 {
 	
-	static DMA_HandleTypeDef hdma_tx;
-	static DMA_HandleTypeDef hdma_rx;
+	static DMA_HandleTypeDef hdma_tx = { 0 };
+	static DMA_HandleTypeDef hdma_rx = { 0 };
 
 	GPIO_InitTypeDef  GPIO_InitStruct;
 

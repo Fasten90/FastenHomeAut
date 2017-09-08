@@ -67,8 +67,8 @@ bool Snake_GameInProgress = false;
  *----------------------------------------------------------------------------*/
 
 static bool Snake_StepIsValid(SnakeStep_t lastStep, SnakeStep_t actualStep);
-static void Snake_AddNewCoord(SnakeStep_t step, SnakeCoord_t coord);
-static bool Snake_CheckCollision(SnakeStep_t step, SnakeCoord_t coord);
+static void Snake_AddNewCoord(SnakeStep_t step);
+static bool Snake_CheckCollision(SnakeStep_t step);
 static SnakeCoord_t Snake_ConvertStepToCoordinate(SnakeStep_t step);
 static void Snake_CaptureGift(SnakeCoord_t coord);
 static void Snake_PutNewGift(void);
@@ -122,10 +122,10 @@ void Snake_Step(SnakeStep_t step)
 	{
 		// it is possible step!
 		// Check collision
-		if (!Snake_CheckCollision(step, Snake_StartPoint))
+		if (!Snake_CheckCollision(step))
 		{
 			// No collision, add new point
-			Snake_AddNewCoord(step, Snake_StartPoint);
+			Snake_AddNewCoord(step);
 
 			if (!Snake_CaptureEvent)
 			{
@@ -144,7 +144,7 @@ void Snake_Step(SnakeStep_t step)
 		}
 		else
 		{
-			Snake_AddNewCoord(step, Snake_StartPoint);
+			Snake_AddNewCoord(step);
 
 			PRINT("Collision!\r\n");
 			// TODO: Finish game!
@@ -198,12 +198,11 @@ static bool Snake_StepIsValid(SnakeStep_t lastStep, SnakeStep_t actualStep)
 
 
 
-static void Snake_AddNewCoord(SnakeStep_t step, SnakeCoord_t coord)
+static void Snake_AddNewCoord(SnakeStep_t step)
 {
 	Snake_Matrix[Snake_StartPoint.x][Snake_StartPoint.y] = step;
 
-	SnakeCoord_t changeCoord = { 0 };
-	changeCoord = Snake_ConvertStepToCoordinate(step);
+	SnakeCoord_t changeCoord = Snake_ConvertStepToCoordinate(step);
 
 	Snake_StartPoint.x += changeCoord.x;
 	Snake_StartPoint.y += changeCoord.y;
@@ -211,11 +210,10 @@ static void Snake_AddNewCoord(SnakeStep_t step, SnakeCoord_t coord)
 
 
 
-static bool Snake_CheckCollision(SnakeStep_t step, SnakeCoord_t coord)
+static bool Snake_CheckCollision(SnakeStep_t step)
 {
-	SnakeCoord_t changeCoord = { 0 };
+	SnakeCoord_t changeCoord = Snake_ConvertStepToCoordinate(step);
 	bool isCollision = false;
-	changeCoord = Snake_ConvertStepToCoordinate(step);
 
 	changeCoord.x += Snake_StartPoint.x;
 	changeCoord.y += Snake_StartPoint.y;

@@ -104,6 +104,14 @@ uint8_t DigitNum(uint32_t num, uint8_t radix)
 
 
 
+inline uint32_t Increment(uint32_t * i)
+{
+	(*i)++;
+	return (*i);
+}
+
+
+
 #ifdef MODULE_CALC_UNITTEST_ENABLE
 /**
  * \brief	Calc UnitTest
