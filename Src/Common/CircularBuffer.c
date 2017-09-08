@@ -162,10 +162,11 @@ void CircularBuffer_UnitTest(void)
 	// Test buffer256
 	memset(buffer256, 0, 256);
 
+
 	/*
 	 * 		Test data in begin of buffer
 	 */
-	// TODO: Put some characters to buffer...
+	// Put some characters to buffer...
 	StrCpy(buffer256, "0123456789xx");
 	buffer256_writeCnt = sizeof("0123456789") - 1;
 	buffer256_readCnt = 0;
@@ -187,6 +188,7 @@ void CircularBuffer_UnitTest(void)
 	}
 	// Check, do not overflowed by clear
 	UNITTEST_ASSERT(!StrCmp("xx", &buffer256[buffer256_writeCnt]), "ERROR: Clear() is overflowed");
+
 
 	/*
 	 * 		Test data in end of buffer (overflow!)

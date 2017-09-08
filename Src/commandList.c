@@ -1320,7 +1320,7 @@ static CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
 		uint32_t pin;
 		if (StringToUnsignedDecimalNum(&argv[1][1], &pin))
 		{
-			// TODO: enum stringesre
+			// TODO: with enum string?
 			IO_Type io = IO_UNKNOWN;
 			if (!StrCmp("input", argv[2]))
 			{
@@ -1444,7 +1444,7 @@ static CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv)
 	uint16_t milliSec = 0;
 	CommandResult_t result;
 
-	// TODO: Make a more beautiful solve (for example: EventCheck)
+	// Check 1. argument
 	if (StringToUnsignedDecimalNum(argv[1], &convertValue))
 	{
 		// Received good period value

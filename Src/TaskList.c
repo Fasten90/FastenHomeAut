@@ -579,7 +579,7 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 {
 	(void)source;
 
-	static Display_MenuActive = false;
+	static bool Display_MenuActive = false;
 
 	if (Display_MenuActive)
 	{

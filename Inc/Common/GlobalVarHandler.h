@@ -138,9 +138,9 @@ typedef struct
 ///< Trace log record
 typedef struct
 {
-	uint32_t tick;
-	uint32_t data;
-	uint32_t varID;
+	uint32_t tick;							///< Trace - tick
+	uint32_t data;							///< Trace - data (value)
+	uint32_t varID;							///< Trace - GlobalVar ID
 } GlobalVar_TraceLogRecord_t;
 
 
@@ -156,7 +156,7 @@ extern uint32_t GlobarVarHandler_TemporaryValue;
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-bool GlobalVarHandler_CheckCommandStructAreValid(void);
+void GlobalVarHandler_CheckCommandStructAreValid(void);
 void GlobalVarHandler_ProcessCommand(
 		const char *commandName, const char *param,
 		SetGetType_t setGetType, CommProtocol_t source);

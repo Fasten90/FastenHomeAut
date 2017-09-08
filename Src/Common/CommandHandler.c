@@ -75,10 +75,7 @@ void CommandHandler_Init(void)
 
 #if defined(CONFIG_MODULE_GLOBALVARHANDLER_ENABLE) && defined(CONFIG_GLOBALVARHANDLER_CHECK_ENABLE)
 	// Check GlobalVarList[]
-	if (GlobalVarHandler_CheckCommandStructAreValid() == false)
-	{
-		CommandHandler_SendLine("ERROR in GlobalVarList! Should correct that!");
-	}
+	GlobalVarHandler_CheckCommandStructAreValid();
 #endif
 
 	// Check CommandList[]
@@ -160,7 +157,7 @@ static uint8_t CommandHandler_CommandParser(void)
 	commandArgCount = STRING_Splitter((char*)CommandHandler_ProcessedCommandActual,
 			CommandHandler_DelimiterChar, CommandHandler_CommandArguments,
 			COMMANDHANDLER_COMMAND_ARG_MAX_COUNT);
-	// TODO: Now, ArgCount never will be larger than 3
+	// NOTE: Now, ArgCount never will be larger than COMMANDHANDLER_COMMAND_ARG_MAX_COUNT
 
 	// Check argument num
 	if (commandArgCount > COMMANDHANDLER_COMMAND_ARG_MAX_COUNT)
@@ -505,7 +502,6 @@ void CommandHandler_Printf(const char *format, ...)
 	CommandHandler_SendMessage(txBuffer);
 
 	return;
-
 }
 
 
@@ -569,7 +565,7 @@ void CommandHandler_UnitTest(void)
 	UNITTEST_ASSERT(result == true,
 			"CommandHandler_PrepareFindExecuteCommand error");
 	// Check command argument num
-	UNITTEST_ASSERT(CommandHandler_CommandArgCount == 	3,
+	UNITTEST_ASSERT(CommandHandler_CommandArgCount == 3,
 			"CommandHandler_PrepareFindExecuteCommand error");
 	// Check command source
 	UNITTEST_ASSERT(CommandHandler_CommandSource == CommProt_Buffer,

@@ -135,112 +135,55 @@ static void GlobalVarHandler_SetTrace(VarID_t commandID, const char * param);
  * \brief	Check the GlobalVarList[], are set valid?
  * \retval	true	 ok
  */
-bool GlobalVarHandler_CheckCommandStructAreValid(void)
+void GlobalVarHandler_CheckCommandStructAreValid(void)
 {
-	// TODO: Macro for checking
-
 	//#error "Syncronize 'Type_Count' with 'GlobalVarTypesNames'"
-	BUILD_BUG_ON((sizeof(GlobalVarTypesNames)/sizeof(GlobalVarTypesNames[0])) != Type_Count);
-
+	BUILD_BUG_ON(NUM_OF(GlobalVarTypesNames) != Type_Count);
 
 	VarID_t i;
-	bool hasError = false;
 
 	for (i = 0; i < GlobalVar_MaxCommandNum; i++)
 	{
-		// TODO: ASSERT()-tel?
 		// TODO: Put some comments for reason / checks
 
-		if (GlobalVarList[i].name == NULL)
+		ASSERT(GlobalVarList[i].varPointer != NULL);
+
+		ASSERT(GlobalVarList[i].type != Type_Unknown);
+
+		ASSERT(GlobalVarList[i].name != NULL);
+
+		ASSERT(StringLength(GlobalVarList[i].name) < GLOBALVARHANDLER_NAME_MAX_LENGTH);
+
+
+		if (GlobalVarList[i].isFunction)
 		{
-			hasError = true;
-			break;
+			ASSERT(GlobalVarList[i].type != Type_String);
+
+			ASSERT(GlobalVarList[i].getFunctionPointer != NULL);
+
+			if (!GlobalVarList[i].isReadOnly)
+			{
+				ASSERT(GlobalVarList[i].setFunctionPointer != NULL);
+			}
 		}
 
-		if (StringLength(GlobalVarList[i].name) >= GLOBALVARHANDLER_NAME_MAX_LENGTH)
+		if (GlobalVarList[i].type == Type_Enumerator)
 		{
-			hasError = true;
-			break;
+			ASSERT(GlobalVarList[i].enumList != NULL);
 		}
 
-		if (GlobalVarList[i].varPointer == NULL && !GlobalVarList[i].isFunction)
+		if (GlobalVarList[i].type == Type_String && !GlobalVarList[i].isReadOnly)
 		{
-			hasError = true;
-			break;
-		}
-
-		if (GlobalVarList[i].isFunction && GlobalVarList[i].type == Type_String)
-		{
-			hasError = true;
-			break;
-		}
-
-		if (GlobalVarList[i].isFunction && GlobalVarList[i].varPointer == NULL)
-		{
-			hasError = true;
-			break;
-		}
-
-		if (GlobalVarList[i].getFunctionPointer == NULL && GlobalVarList[i].isFunction)
-		{
-			hasError = true;
-			break;
-		}
-
-		if (GlobalVarList[i].setFunctionPointer == NULL && GlobalVarList[i].isFunction
-				&& !GlobalVarList[i].isReadOnly)
-		{
-			hasError = true;
-			break;
-		}
-
-		if (GlobalVarList[i].type == Type_Unknown)
-		{
-			hasError = true;
-			break;
-		}
-
-		if ((GlobalVarList[i].type == Type_Enumerator) && (GlobalVarList[i].enumList == NULL))
-		{
-			hasError = true;
-			break;
-		}
-
-		if ((GlobalVarList[i].type == Type_String) && (GlobalVarList[i].maxValue == 0) && (!GlobalVarList[i].isReadOnly))
-		{
-			hasError = true;
-			break;
+			ASSERT(GlobalVarList[i].maxValue != 0);
 		}
 
 		if (GlobalVarList[i].type == Type_Bits)
 		{
-			if (GlobalVarList[i].maxValue > 31)
-			{
-				hasError = true;
-				break;
-			}
-			if (GlobalVarList[i].minValue > 31)
-			{
-				hasError = true;
-				break;
-			}
-			if (GlobalVarList[i].minValue > GlobalVarList[i].maxValue)
-			{
-				hasError = true;
-				break;
-			}
+			ASSERT(GlobalVarList[i].maxValue <= 31);
+			ASSERT(GlobalVarList[i].minValue > 31);
+			ASSERT(GlobalVarList[i].minValue <= GlobalVarList[i].maxValue);
 		}
 	}
-
-	if (hasError)
-	{
-		// Error
-		CommandHandler_Printf("Error in %d. (%s) command\r\n", i, GlobalVarList[i].name);
-		// !! Need code fix !!
-		DEBUG_BREAKPOINT();
-	}
-
-	return !hasError;
 }
 #endif
 

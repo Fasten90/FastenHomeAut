@@ -11,6 +11,11 @@
  */
 
 
+
+/*------------------------------------------------------------------------------
+ *  Header files
+ *----------------------------------------------------------------------------*/
+
 #include "String.h"
 #include "DebugUart.h"
 #include "FormattedMessage.h"
@@ -19,7 +24,12 @@
 
 
 #ifdef CONFIG_MODULE_UNITTEST_ENABLE
-/// VARIABLES
+
+
+
+/*------------------------------------------------------------------------------
+ *  Local variables
+ *----------------------------------------------------------------------------*/
 
 static uint16_t UnitTest_ValidCnt = 0;
 static uint16_t UnitTest_InvalidCnt = 0;
@@ -27,8 +37,10 @@ static uint16_t UnitTest_InvalidCnt = 0;
 static const char *UnitTest_FileName = NULL;
 
 
-/// FUNCTIONS
 
+/*------------------------------------------------------------------------------
+ *  Functions
+ *----------------------------------------------------------------------------*/
 
 
 /**

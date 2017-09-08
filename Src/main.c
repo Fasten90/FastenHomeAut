@@ -53,6 +53,7 @@
 #include "CommonAdc.h"
 #include "CommonDac.h"
 #include "ADC.h"
+#include "Globals.h"
 
 
 /* Private variables ---------------------------------------------------------*/
@@ -424,7 +425,9 @@ void assert_failed(uint8_t* file, uint32_t line)
 
 void Assert_Function(char *file, uint32_t line, char *exp)
 {
-	uprintf("File: %s, %d. line: %s", file, line, exp);
+	uprintf("File: %s, %d. line: %s\r\n", file, line, exp);
+	DelayMs(100);
+	LED_SetLed(LED_Red, LED_Set_On);
 	DEBUG_BREAKPOINT();
 }
 

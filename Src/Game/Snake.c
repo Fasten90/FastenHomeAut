@@ -20,6 +20,7 @@
 #include "Display.h"
 #include "Display_SSD1306.h"
 #include "DebugList.h"
+#include "Debug.h"
 #include "String.h"
 #include "Snake.h"
 
