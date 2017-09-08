@@ -106,7 +106,19 @@ uint8_t DigitNum(uint32_t num, uint8_t radix)
 
 inline uint32_t Increment(uint32_t * i)
 {
-	(*i)++;
+	if (*i < UINT32_MAX)
+		(*i)++;
+
+	return (*i);
+}
+
+
+
+inline uint32_t Decrement(uint32_t * i)
+{
+	if (*i > 0)
+		(*i)--;
+
 	return (*i);
 }
 
@@ -165,6 +177,30 @@ void Calc_UnitTest(void)
 	UNITTEST_ASSERT(DigitNum(100, 10) == 3, "DigitNum error");
 	UNITTEST_ASSERT(DigitNum(1000, 10) == 4, "DigitNum error");
 	UNITTEST_ASSERT(DigitNum(999, 10) == 3, "DigitNum error");
+
+
+
+	/*		Increment()			*/
+	uint32_t num = 0;
+	// Check with normal example
+	UNITTEST_ASSERT(Increment(&num)==1, "Increment error");
+	UNITTEST_ASSERT(num==1, "Increment error");
+	// Check with overflow possibility
+	num = UINT32_MAX;
+	UNITTEST_ASSERT(Increment(&num)==UINT32_MAX, "Increment error");
+	UNITTEST_ASSERT(num==UINT32_MAX, "Increment error");
+
+
+
+	/*		Decrement()			*/
+	num = 1;
+	// Check with normal example
+	UNITTEST_ASSERT(Decrement(&num)==0, "Decrement error");
+	UNITTEST_ASSERT(num==0, "Decrement error");
+	// Check with underflow possibility
+	num = 0;
+	UNITTEST_ASSERT(Decrement(&num)==0, "Decrement error");
+	UNITTEST_ASSERT(num==0, "Decrement error");
 
 
 

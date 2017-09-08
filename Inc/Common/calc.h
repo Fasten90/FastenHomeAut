@@ -40,6 +40,8 @@ uint32_t power_secured(uint32_t a, uint8_t b);
 uint8_t DigitNum(uint32_t num, uint8_t radix);
 
 uint32_t Increment(uint32_t * i);
+uint32_t Decrement(uint32_t * i);
+
 
 void Calc_UnitTest(void);
 
