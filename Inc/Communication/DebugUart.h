@@ -18,7 +18,9 @@
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
+
 #include "include.h"
+#include "CircularBuffer.h"
 
 
 
@@ -53,8 +55,7 @@ extern UART_HandleTypeDef Debug_UartHandle;
 extern volatile char DebugUart_RxBuffer[DEBUGUART_RXBUFFERSIZE];
 extern volatile char DebugUart_TxBuffer[DEBUGUART_TXBUFFERSIZE];
 
-extern volatile uint8_t DebugUart_RxBufferWriteCnt;
-extern volatile uint8_t DebugUart_RxBufferReadCnt;
+extern CircularBufferInfo_t DebugUart_RxBuffStruct;
 
 extern bool DebugUart_SendEnable_flag;
 
@@ -64,6 +65,7 @@ extern bool DebugUart_SendEnable_flag;
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
+void DebugUart_Init(void);
 void DebugUart_StartReceive(void);
 bool DebugUart_SendChar(char c);
 uint8_t DebugUart_SendMessage(const char *message);

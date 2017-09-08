@@ -159,6 +159,7 @@ int main(void)
 	}
 #endif	//#ifdef CONFIG_USE_FREERTOS
 #ifndef CONFIG_MODULE_TERMINAL_ENABLE
+	DebugUart_Init();
 	// Start receive
 	DebugUart_StartReceive();
 #endif

@@ -20,6 +20,7 @@
 #include "include.h"
 #include "CircularBuffer.h"
 #include "MEM.h"
+#include "DebugUart.h"
 
 #ifdef MODULE_CIRCULARBUFFER_UNITTEST_ENABLE
 #include "String.h"
@@ -53,47 +54,75 @@
 
 
 /**
+ * \brief	Initialize CircularBuffer
+ */
+void CircularBuffer_Init(CircularBufferInfo_t *circBuff)
+{
+	// Check buffer parameters
+	ASSERT(circBuff->buffer != NULL);
+	ASSERT(circBuff->size > 0);
+	ASSERT(circBuff->name != NULL);
+
+	CircularBuffer_FullClear(circBuff);
+
+	circBuff->readCnt = 0;
+	circBuff->writeCnt = 0;
+}
+
+
+
+/**
+ * \brief	Clear entire buffer
+ */
+void CircularBuffer_FullClear(CircularBufferInfo_t *circBuff)
+{
+	memset(circBuff->buffer, 0, circBuff->size);
+}
+
+
+
+/**
  * \brief	Get characters from ReadCnt to WriteCnt
  */
-uint8_t CircularBuffer_GetCharacters(char *receiveBuffer, char *str, uint16_t bufferSize, uint16_t writeCnt, uint16_t readCnt, bool putEnd)
+uint16_t CircularBuffer_GetCharacters(CircularBufferInfo_t *circBuff, char * message, bool putEnd)
 {
 	uint16_t i = 0;
 
-	if (readCnt < writeCnt)
+	if (circBuff->readCnt < circBuff->writeCnt)
 	{
 		// No overflow
-		for (i = 0; i < writeCnt-readCnt; i++)
+		for (i = 0; i < circBuff->writeCnt-circBuff->readCnt; i++)
 		{
-			str[i] = receiveBuffer[readCnt+i];
+			message[i] = circBuff->buffer[circBuff->readCnt+i];
 		}
 		// Put end
 		if (putEnd)
 		{
-			str[i] =  '\0';
+			message[i] =  '\0';
 		}
 	}
-	else if (readCnt > writeCnt)
+	else if (circBuff->readCnt > circBuff->writeCnt)
 	{
 		// Buffer to end
-		for (i = 0; i < bufferSize-readCnt; i++)
+		for (i = 0; i < circBuff->size-circBuff->readCnt; i++)
 		{
-			str[i] = receiveBuffer[readCnt+i];
+			message[i] = circBuff->buffer[circBuff->readCnt+i];
 		}
 
 		uint16_t oldCnt = i;
 		// Begin of buffer
-		for (i = 0; i < writeCnt; i++)
+		for (i = 0; i < circBuff->writeCnt; i++)
 		{
-			str[oldCnt+i] = receiveBuffer[i];
+			message[oldCnt+i] = circBuff->buffer[i];
 		}
 		// Put end
 		i += oldCnt;
 		if (putEnd)
 		{
-			str[i] =  '\0';
+			message[i] =  '\0';
 		}
 	}
-	// else if (readCnt == writeCnt) - Do nothing
+	// else if (circBuff->readCnt == circBuff->writeCnt) - Do nothing
 
 	return i;
 }
@@ -103,40 +132,86 @@ uint8_t CircularBuffer_GetCharacters(char *receiveBuffer, char *str, uint16_t bu
 /**
  * \brief	Clear buffer from readCnt to writeCnt
  */
-void CircularBuffer_Clear(char *receiveBuffer, uint16_t bufferSize, uint16_t readCnt, uint16_t writeCnt)
+void CircularBuffer_ClearLast(CircularBufferInfo_t *circBuff)
 {
 	uint16_t i;
 
 	// Check, if writeCnt > bufferSize
-	if (writeCnt >= bufferSize)
+	if (circBuff->writeCnt >= circBuff->size)
 	{
 		// Change to end of buffer (for avoid overflow)
-		writeCnt = bufferSize;
+		circBuff->writeCnt = circBuff->size;
 	}
 
-	if (readCnt < writeCnt)
+	if (circBuff->readCnt < circBuff->writeCnt)
 	{
 		// No overflow
-		for (i = readCnt; i < writeCnt; i++)
+		for (i = circBuff->readCnt; i < circBuff->writeCnt; i++)
 		{
-			receiveBuffer[i] = '\0';
+			circBuff->buffer[i] = '\0';
 		}
 	}
-	else if (readCnt > writeCnt)
+	else if (circBuff->readCnt > circBuff->writeCnt)
 	{
 		// Buffer to end
-		for (i = 0; i < bufferSize-readCnt; i++)
+		for (i = 0; i < circBuff->size-circBuff->readCnt; i++)
 		{
-			receiveBuffer[readCnt+i] = '\0';
+			circBuff->buffer[circBuff->readCnt+i] = '\0';
 		}
 
 		// Begin of buffer
-		for (i = 0; i < writeCnt; i++)
+		for (i = 0; i < circBuff->writeCnt; i++)
 		{
-			receiveBuffer[i] = '\0';
+			circBuff->buffer[i] = '\0';
 		}
 	}
-	// else if (readCnt == writeCnt) - Do nothing
+	// else if (circBuff->readCnt == circBuff->writeCnt) - Do nothing
+
+	circBuff->readCnt = circBuff->writeCnt;
+}
+
+
+
+/**
+ * \brief	Find last character in the Circular buffer
+ * \note	Recommend if haven't "PutCharacter" function
+ */
+void CircularBuffer_FindLastMessage(CircularBufferInfo_t *circBuff)
+{
+	// TODO: Not a good solve...
+	uint16_t i = 0;
+	while (circBuff->buffer[circBuff->writeCnt])
+	{
+		++circBuff->writeCnt;
+		++i;
+
+		if (circBuff->writeCnt >= circBuff->size)
+		{
+			circBuff->writeCnt = 0;
+		}
+
+		if (i > circBuff->size)
+		{
+			// Buffer "overflow" error
+			uprintf("Error: CircularBuffer full, clear it: %s\r\n", circBuff->name);
+			// Reinit buffer (counter, buffer content)
+			CircularBuffer_Init(circBuff);
+			// TODO:...
+			break;
+		}
+	}
+}
+
+
+
+/**
+ * \brief	Return with there is a new character in the buffer?
+ * \retval	true	Has new character
+ * \retval	false	Hasn't new character
+ */
+bool CircularBuffer_HasNewMessage(CircularBufferInfo_t *circBuff)
+{
+	return (circBuff->readCnt != circBuff->writeCnt);
 }
 
 

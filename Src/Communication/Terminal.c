@@ -346,24 +346,23 @@ static void Terminal_ProcessReceivedCharacter(void)
 #ifndef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
 
 	// Find new received characters
-	DebugUart_FindLastMessage();
+	CircularBuffer_FindLastMessage(&DebugUart_RxBuffStruct);
 
 	// If WriteCnt not equal with ReadCnt, we have received message
 	char receiveBuffer[DEBUGUART_RXBUFFERSIZE+1];
 	uint16_t receivedMessageLength = 0;
-	uint16_t i;
 
 	// Received new character?
-	if (DebugUart_RxBufferWriteCnt != DebugUart_RxBufferReadCnt)
+	if (CircularBuffer_HasNewMessage(&DebugUart_RxBuffStruct))
 	{
 		// Need copy to receiveBuffer
 		receivedMessageLength = CircularBuffer_GetCharacters(
-				(char *)DebugUart_RxBuffer, receiveBuffer,
-				DEBUGUART_RXBUFFERSIZE,
-				DebugUart_RxBufferWriteCnt, DebugUart_RxBufferReadCnt,
+				&DebugUart_RxBuffStruct,
+				receiveBuffer,
 				true);
 
-		DebugUart_ClearReceive(false, receivedMessageLength);
+		// TODO: Create Get&Clear function
+		CircularBuffer_ClearLast(&DebugUart_RxBuffStruct);
 	}
 	else
 	{
@@ -374,6 +373,7 @@ static void Terminal_ProcessReceivedCharacter(void)
 
 
 	// Process characters
+	uint16_t i;
 	for (i = 0; i < receivedMessageLength; i++)
 	{
 		volatile char receivedChar = receiveBuffer[i];
@@ -384,7 +384,7 @@ static void Terminal_ProcessReceivedCharacter(void)
 		{
 			// Escape sequence in progress
 			// Copy escape characters to Terminal_CommandActualEscape[]
-			// TODO: Megcsinálni elegánsabban
+			// TODO: Do more beautiful
 			if (Terminal_CommandEscape_cnt == 1)
 			{
 				if (receivedChar == '[')
