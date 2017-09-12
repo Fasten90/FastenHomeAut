@@ -825,16 +825,17 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	// in Atollic TrueSTUDIO, 7.1.1
 /*
  * Example:
- * #define eprintf(…) fprintf (stderr, __VA_ARGS__)
- * #define eprintf(args…) fprintf (stderr, args)
+ * #define eprintf(...) fprintf (stderr, __VA_ARGS__)
+ * #define eprintf(args...) fprintf (stderr, args)
  */
-//#define eprintf(args...) uprintf(args)
-/*
-#define eprintf(...) 			uprintf(__VA_ARGS__)
 
-	eprintf("Test variadic %d %s\r\n", 20, "testtext");
+	//#define eprintf(args...) uprintf(args)
+	/*
+	#define eprintf(...) 			uprintf(__VA_ARGS__)
 
-*/
+		eprintf("Test variadic %d %s\r\n", 20, "testtext");
+
+	*/
 
 
 	// Test code size with init value
@@ -1798,7 +1799,7 @@ static CommandResult_t CommandFunction_flashdel(uint32_t argc, char** argv)
 	uint32_t Arg2Num;
 
 	// Convert arg2 hex
-	if ( !StringHexToNum(argv[1],&Arg2Num))
+	if (!StringHexToNum(argv[1], &Arg2Num))
 	{
 		return CommandResult_Error_WrongArgument1;
 	}
@@ -1806,11 +1807,11 @@ static CommandResult_t CommandFunction_flashdel(uint32_t argc, char** argv)
 
 	if (!StrCmp("block", argv[2]))
 	{
-		FLASH_BlockErase(Arg2Num,5000);
+		FLASH_BlockErase(Arg2Num, 5000);
 	}
 	else if (!StrCmp("sector", argv[2]))
 	{
-		FLASH_SectorErase(Arg2Num,5000);
+		FLASH_SectorErase(Arg2Num, 5000);
 	}
 	else
 	{
@@ -1836,14 +1837,14 @@ static CommandResult_t CommandFunction_flashread(uint32_t argc, char** argv)
 	uint32_t Arg2Num;
 
 	// Convert arg2 hex
-	if ( !StringHexToNum(argv[1],&Arg2Num))
+	if (!StringHexToNum(argv[1], &Arg2Num))
 	{
 		return CommandResult_Error_WrongArgument1;
 	}
 
 
 	uint8_t Buffer[1];
-	FLASH_Read(Arg2Num,Buffer,1,5000);
+	FLASH_Read(Arg2Num,Buffer, 1, 5000);
 
 
 	CommandHandler_Printf("address: 0x%w\r\n"
@@ -1866,13 +1867,13 @@ static CommandResult_t CommandFunction_flashwrite(uint32_t argc, char** argv)
 	uint32_t Arg2Num;
 
 	// Convert arg2 hex
-	if (!StringHexToNum(argv[1],&Arg2Num))
+	if (!StringHexToNum(argv[1], &Arg2Num))
 	{
 		return CommandResult_Error_WrongArgument1;
 	}
 
 	// Convert arg3, decimal
-	if (!StringToUnsignedDecimalNum(argv[2],&Arg3Num))
+	if (!StringToUnsignedDecimalNum(argv[2], &Arg3Num))
 	{
 		return CommandResult_Error_WrongArgument2;
 	}
@@ -1882,7 +1883,7 @@ static CommandResult_t CommandFunction_flashwrite(uint32_t argc, char** argv)
 
 	Buffer[0] = (uint8_t)Arg3Num;
 
-	FLASH_Write(Arg2Num,Buffer,1,5000);
+	FLASH_Write(Arg2Num, Buffer, 1, 5000);
 
 
 	CommandHandler_Printf("address: 0x%w\r\n"
@@ -1917,7 +1918,7 @@ static CommandResult_t CommandFunction_raspberrypi(uint32_t argc, char** argv)
 
 		// Convert arg3, decimal
 		uint32_t value;
-		if (!StringToUnsignedDecimalNum(argv[2],&value))
+		if (!StringToUnsignedDecimalNum(argv[2], &value))
 		{
 			return CommandResult_Error_WrongArgument2;
 		}

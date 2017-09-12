@@ -141,6 +141,7 @@ void TaskHandler_Scheduler(TaskTick_t elapsedTick)
 	// Check list
 	for (i = 0; i < TasksNum; i++)
 	{
+		// TODO: kintebb helyezni az isDisabled-et
 		// Need scheduling?
 		if (!TaskList[i].isPeriodisScheduleDisabled
 			&& TaskList[i].tick >= TaskList[i].taskScheduleRate
@@ -211,6 +212,7 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 	uint32_t startTime = HAL_GetTick();
 #endif
 
+	// Execute task
 	TaskList[taskID].taskFunction(source);
 
 #ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
@@ -335,6 +337,7 @@ void TaskHandler_PrintStatistics(void)
 	uint32_t lastTick = 0;
 	//uint32_t lastRunTime = 0;
 
+	// Calculate Statistics values
 	for (i = 0; i < TASKHANDLER_STATISTICS_LIMIT; i++)
 	{
 		if (TaskHandler_StatisticsRanTaskTicks[i].startTick > 0)

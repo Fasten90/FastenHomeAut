@@ -412,7 +412,8 @@ static void GlobalVarHandler_GetInteger(GlobalVarCommand_t * command)
 			case Type_Unknown:
 			case Type_Count:
 			default:
-				// Error... TODO: ?
+				// Error...
+				// TODO: Error handling, if wrong types... (unexpected types)
 				octetNum = 0;
 				break;
 		}
@@ -570,9 +571,7 @@ static void GlobalVarHandler_GetEnumerator(GlobalVarCommand_t * command)
 	enumString = (char *)command->enumList[enumValue];	// string pointer
 	CommandHandler_SendMessage(enumString);
 
-	// Return
 	return;
-
 }
 
 
@@ -836,8 +835,6 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 		if (varType == Type_Uint8 || varType == Type_Uint16 || varType == Type_Uint32)
 		{
 			// Unsigned types
-
-			uint32_t num = 0;
 			if (StringToUnsignedDecimalNum(param, &num))
 			{
 				ProcessResult_t result;
@@ -1011,12 +1008,12 @@ static ProcessResult_t GlobalVarHandler_SetBits(VarID_t commandID, const char *p
 				uint32_t *valueNeedSet = (uint32_t *)GlobalVarList[commandID].varPointer;
 				// Clear bits
 				uint8_t i;
-				for (i = GlobalVarList[commandID].minValue;
-					 i < GlobalVarList[commandID].maxValue;
+				for (i = (uint8_t)GlobalVarList[commandID].minValue;
+					 i < (uint8_t)GlobalVarList[commandID].maxValue;
 					 i++)
 				{
 					// Clear bit
-					*valueNeedSet &= ~(1 << i);
+					*valueNeedSet &= (uint32_t)~(1 << i);
 				}
 				// Set new value
 				*valueNeedSet |= num;

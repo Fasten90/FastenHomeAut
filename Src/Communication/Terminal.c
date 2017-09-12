@@ -55,7 +55,6 @@ static const bool Terminal_CommandSendBackCharEnable = true;
 
 /// Variables For CommandHandler
 static volatile bool Terminal_CommandReceivedEvent = false;
-static volatile bool Terminal_CommandReceivedLastChar = false;
 static volatile bool Terminal_CommandReceivedNotLastChar = false;
 static volatile bool Terminal_CommandReadable = false;
 static volatile bool Terminal_CommandReceivedBackspace = false;
@@ -449,6 +448,7 @@ static void Terminal_ProcessReceivedCharacter(void)
 				if ((receivedChar  == '\r') || (receivedChar == '\n') ||
 					(receivedChar == '\0'))
 				{
+					// TODO: Ha 2 sortörés karakter jött, csak "egyszer" írjunk ki promt-ot
 					// Received Enter
 					Terminal_CommandReadable = true;
 					Terminal_CommandActual[Terminal_CommandActualLength] = '\0';
