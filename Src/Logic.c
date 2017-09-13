@@ -27,6 +27,11 @@
 #include "Display.h"
 #include "CommandHandler.h"
 #include "Communication.h"
+#include "Calc.h"
+
+#ifdef CONFIG_FUNCTION_CHARGER
+#include "ADC.h"
+#endif
 
 #ifdef CONFIG_FUNCTION_GAME_SNAKE
 #include "Snake.h"
@@ -40,6 +45,11 @@
 #ifdef CONFIG_FUNCTION_CHARGER
 bool Logic_BatteryIsCharging = false;
 #endif
+
+
+static volatile bool Logic_Display_ChangedState = false;
+static volatile DisplayMenu_t Logic_Display_ActualState = Menu_Main;
+static volatile DisplayMenu_t Logic_Display_SelectedState = Menu_Main;
 
 
 
@@ -75,6 +85,8 @@ static uint8_t const Display_Characters_size = sizeof(Display_Characters)/sizeof
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
+static void Logic_Display_MainMenu(void);
+
 #ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
 static void Logic_SystemTimeStepConfig(void);
 static void Logic_SystemTimeStepValue(void);
@@ -85,38 +97,64 @@ static void Logic_StepLetterPosition(int8_t step);
 static void Logic_StepLetterNextValue(int8_t step);
 #endif
 
+#ifdef CONFIG_FUNCTION_GAME_SNAKE
+static void Logic_Display_Snake(void);
+#endif
+
+#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
+static void Logic_Display_Input(ScheduleSource_t source);
+#endif
+
+#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
+static void Logic_Display_CarAnimation(void);
+#endif
+
 
 
 /*------------------------------------------------------------------------------
  *  Functions
  *----------------------------------------------------------------------------*/
 
-
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
 void Logic_Display_Init(void)
 {
-	#ifdef CONFIG_MODULE_DISPLAY_SHOW_SCREEN
-	// Display start screen
-	Display_LoadCarImage();
-	#else
 	Display_Clear();
+
+	switch (Logic_Display_ActualState)
+	{
+		#ifdef CONFIG_FUNCTION_GAME_SNAKE
+		case Menu_Snake:
+			Snake_Init();
+			break;
+		#endif
+
+		#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
+		case Menu_Car:
+			// Display start screen
+			Display_LoadCarImage();
+			break;
+		#endif
+
+		#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
+		case Menu_Input:
+			// Fill real string with empty character
+			memset(DisplayInput_ActualRealString, ' ', DisplayInput_StringLimit-1);
+			// Last char not need fill with ' ', because it is end character
+
+			// Create OK button
+			// TODO: Create button?
+			Display_PrintFont12x8('O', DisplayInput_LetterPosition_MaxLimit, 2, CHAR_INVERSE_NOT);
+			Display_PrintFont12x8('K', DisplayInput_LetterPosition_MaxLimit + 1, 2, CHAR_INVERSE_NOT);
+			break;
+		#endif
+
+		case Menu_Main:
+		case Menu_Count:
+		default:
+			break;
+	}
+
 	Display_Activate();
-	#endif
-
-	#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
-	// Fill real string with empty character
-	memset(DisplayInput_ActualRealString, ' ', DisplayInput_StringLimit-1);
-	// Last char not need fill with ' ', because it is end character
-
-	// Create OK button
-	Display_PrintFont12x8('O', DisplayInput_LetterPosition_MaxLimit, 2, CHAR_INVERSE_NOT);
-	Display_PrintFont12x8('K', DisplayInput_LetterPosition_MaxLimit + 1, 2, CHAR_INVERSE_NOT);
-
-	#endif
-
-#ifdef CONFIG_FUNCTION_GAME_SNAKE
-	Snake_Init();
-#endif
 }
 #endif
 
@@ -335,30 +373,23 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 
 #endif	// CONFIG_FUNCTION_REMOTECONTROLLER
 
-#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
-	// Check buttons
-	if (type != ButtonPress_ReleasedContinuous)
+	if (Logic_Display_ActualState == Menu_Main)
 	{
 		switch (button)
 		{
 			case PressedButton_Right:
-				// Right
-				Logic_StepLetterPosition((type == ButtonPress_Short || type == ButtonPress_Continuous) ? 1 : 3);
-				break;
-
 			case PressedButton_Left:
-				// Left
-				Logic_StepLetterPosition((type == ButtonPress_Short || type == ButtonPress_Continuous) ? -1 : -3);
+				Logic_Display_ChangeState(Logic_Display_SelectedState);
 				break;
 
 			case PressedButton_Up:
-				// Up
-				Logic_StepLetterNextValue((type == ButtonPress_Short || type == ButtonPress_Continuous) ? -1 : -3);
+				if (Logic_Display_SelectedState > 0)
+					Logic_Display_SelectedState--;
 				break;
 
 			case PressedButton_Down:
-				// Down
-				Logic_StepLetterNextValue((type == ButtonPress_Short || type == ButtonPress_Continuous) ? 1 : 3);
+				if (Logic_Display_SelectedState < Menu_Count-1)
+					Logic_Display_SelectedState++;
 				break;
 
 			case PressedButton_Count:
@@ -366,39 +397,80 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 				// Error!
 				break;
 		}
+
+		TaskHandler_RequestTaskScheduling(Task_Display);
+	}
+
+#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
+	// Check buttons
+	if (Logic_Display_ActualState == Menu_Input)
+	{
+		if (type != ButtonPress_ReleasedContinuous)
+		{
+			switch (button)
+			{
+				case PressedButton_Right:
+					// Right
+					Logic_StepLetterPosition((type == ButtonPress_Short || type == ButtonPress_Continuous) ? 1 : 3);
+					break;
+
+				case PressedButton_Left:
+					// Left
+					Logic_StepLetterPosition((type == ButtonPress_Short || type == ButtonPress_Continuous) ? -1 : -3);
+					break;
+
+				case PressedButton_Up:
+					// Up
+					Logic_StepLetterNextValue((type == ButtonPress_Short || type == ButtonPress_Continuous) ? -1 : -3);
+					break;
+
+				case PressedButton_Down:
+					// Down
+					Logic_StepLetterNextValue((type == ButtonPress_Short || type == ButtonPress_Continuous) ? 1 : 3);
+					break;
+
+				case PressedButton_Count:
+				default:
+					// Error!
+					break;
+			}
+		}
 	}
 #endif
 
 #ifdef CONFIG_FUNCTION_GAME_SNAKE
-	// Check buttons
-	if (type != ButtonPress_ReleasedContinuous)
+	if (Logic_Display_ActualState == Menu_Snake)
 	{
-		switch (button)
+		// Check buttons
+		if (type != ButtonPress_ReleasedContinuous)
 		{
-			case PressedButton_Right:
-				// Right
-				Snake_Step(Step_Right);
-				break;
+			switch (button)
+			{
+				case PressedButton_Right:
+					// Right
+					Snake_Step(Step_Right);
+					break;
 
-			case PressedButton_Left:
-				// Left
-				Snake_Step(Step_Left);
-				break;
+				case PressedButton_Left:
+					// Left
+					Snake_Step(Step_Left);
+					break;
 
-			case PressedButton_Up:
-				// Up
-				Snake_Step(Step_Up);
-				break;
+				case PressedButton_Up:
+					// Up
+					Snake_Step(Step_Up);
+					break;
 
-			case PressedButton_Down:
-				// Down
-				Snake_Step(Step_Down);
-				break;
+				case PressedButton_Down:
+					// Down
+					Snake_Step(Step_Down);
+					break;
 
-			case PressedButton_Count:
-			default:
-				// Error!
-				break;
+				case PressedButton_Count:
+				default:
+					// Error!
+					break;
+			}
 		}
 	}
 #endif
@@ -603,3 +675,283 @@ void Logic_CheckCharger(void)
 
 }
 #endif
+
+
+
+void Logic_DisplayHandler(ScheduleSource_t source)
+{
+	if (Logic_Display_ChangedState)
+	{
+		Logic_Display_ChangedState = false;
+		Logic_Display_Init();
+	}
+
+	switch (Logic_Display_ActualState)
+	{
+		case Menu_Main:
+			Logic_Display_MainMenu();
+			break;
+
+#ifdef CONFIG_FUNCTION_GAME_SNAKE
+		case Menu_Snake:
+			Logic_Display_Snake();
+			break;
+#endif
+#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
+		case Menu_Input:
+			Logic_Display_Input(source);
+			break;
+#endif
+#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
+		case Menu_Car:
+			Logic_Display_CarAnimation();
+			break;
+#endif
+		case Menu_Count:
+		default:
+			Logic_Display_MainMenu();
+			break;
+	}
+}
+
+
+
+static void Logic_Display_MainMenu(void)
+{
+	// Main menu
+	#ifdef CONFIG_FUNCTION_CHARGER
+	// Loading image
+	static uint8_t loadPercent = 0;
+
+	if (Logic_BatteryIsCharging)
+	{
+		Display_ChargeLoading(loadPercent);
+		loadPercent += 5;
+
+		if (loadPercent >= 100)
+		{
+			loadPercent = 0;
+		}
+		// Require periodical schedule
+		TaskHandler_SetTaskOnceRun(Task_Display, 1000);
+	}
+	else
+	{
+		// Not charging:
+		// Display actual voltage of battery
+		#ifdef CONFIG_MODULE_ADC_ENABLE
+		float voltage = ADC_GetValue(ADC_Vsource);
+		uint8_t percent = voltage / VSOURCE_BATTERY_MAX_VOLTAGE * 100;
+		if (percent > 100)
+			percent = 100;
+		Display_ChargeLoading(percent);
+		#else
+		Display_ChargeLoading(34);
+		#endif
+	}
+	#endif
+
+	#ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
+	// Display refresh
+
+	// Display vibrate function: if we are in setting mode, hour or minute will vibrate
+	static bool Display_VibrateStateHide = false;
+
+	if (source == ScheduleSource_EventTriggered)
+		Display_VibrateStateHide = false;
+
+
+	switch (Logic_GetSystemTimeState())
+	{
+		case DisplayClock_Hour:
+			// Hour setting
+			if (Display_VibrateStateHide)
+			{
+				Display_ShowClockHalf(&DateTime_SystemTime.time, DisplayClock_Minute);
+				Display_VibrateStateHide = false;
+			}
+			else
+			{
+				Display_ShowClock(&DateTime_SystemTime.time);
+				Display_VibrateStateHide = true;
+			}
+			TaskHandler_SetTaskOnceRun(Task_Display, 500);
+			break;
+
+		case DisplayClock_Minute:
+			// Minute settings
+			if (Display_VibrateStateHide)
+			{
+				Display_ShowClockHalf(&DateTime_SystemTime.time, DisplayClock_Hour);
+				Display_VibrateStateHide = false;
+			}
+			else
+			{
+				Display_ShowClock(&DateTime_SystemTime.time);
+				Display_VibrateStateHide = true;
+			}
+			TaskHandler_SetTaskOnceRun(Task_Display, 500);
+			break;
+
+		case DisplayClock_HourAndMinute:
+		case DisplayClock_Count:
+		default:
+			// Not in setting
+			Display_ShowClock(&DateTime_SystemTime.time);
+			TaskHandler_DisableTask(Task_Display);
+			break;
+	}
+	#elif defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK)
+	// Only show clock
+	Display_ShowClock(&DateTime_SystemTime.time);
+	TaskHandler_DisableTask(Task_Display);
+	#endif
+
+	// Print menu
+	uint8_t i = 2;
+	// TODO: Handle "inverse"
+	// TODO: Do with smaller text
+	//Logic_Display_SelectedState
+#ifdef CONFIG_FUNCTION_GAME_SNAKE
+	Display_PrintString("Snake", i, Font_12x8);
+	i++;
+#endif
+#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
+	Display_PrintString("Input", i, Font_12x8);
+	i++;
+#endif
+#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
+	Display_PrintString("Car animation", i, Font_12x8);
+	i++;
+#endif
+}
+
+
+
+#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
+static void Logic_Display_Input(ScheduleSource_t source)
+{
+	static bool Display_VibrateLetter = false;
+
+	static uint8_t DisplayInput_OldLetterPosition = 0;
+	if ((DisplayInput_OldLetterPosition != DisplayInput_LetterPosition)
+		&& (DisplayInput_OldLetterPosition == DisplayInput_LetterPosition_MaxLimit))
+	{
+		// OK
+		Display_PrintFont12x8('O', DisplayInput_LetterPosition_MaxLimit, 2, CHAR_INVERSE_NOT);
+		Display_PrintFont12x8('K', DisplayInput_LetterPosition_MaxLimit + 1, 2, CHAR_INVERSE_NOT);
+	}
+	// Save old value
+	DisplayInput_OldLetterPosition = DisplayInput_LetterPosition;
+
+	// Button clicked
+	if (source == ScheduleSource_EventTriggered)
+	{
+		// Button press triggering
+		Display_VibrateLetter = false;
+
+		// Display "all" string
+		Display_PrintString(DisplayInput_ActualRealString, 2, Font_12x8);
+
+		// It is empty char? (=space)
+		if (DisplayInput_ActualRealString[DisplayInput_LetterPosition] == ' ')
+		{
+			// There is a space character, Display a white box
+			Display_PrintFont12x8((char)0x01, DisplayInput_LetterPosition, 2, CHAR_INVERSE_NOT);
+		}
+
+		Display_Activate();
+		TaskHandler_SetTaskOnceRun(Task_Display, 500);
+	}
+	else
+	{
+		// Vibration, if need (periodical)
+		if (Display_VibrateLetter)
+		{
+			// Vibrate (not show char)
+			if (DisplayInput_LetterPosition == DisplayInput_LetterPosition_MaxLimit)
+			{
+				// OK
+				Display_PrintFont12x8('O', DisplayInput_LetterPosition_MaxLimit, 2, CHAR_INVERSE);
+				Display_PrintFont12x8('K', DisplayInput_LetterPosition_MaxLimit + 1, 2, CHAR_INVERSE);
+			}
+			else
+			{
+				// Normal char
+				// It is empty char? (=space)
+				if (DisplayInput_ActualRealString[DisplayInput_LetterPosition] == ' ')
+				{
+					// There is a space character, Display a white box
+					Display_PrintFont12x8((char)0x01, DisplayInput_LetterPosition, 2, CHAR_INVERSE_NOT);
+				}
+				else
+				{
+					// There is a normal character... vibrate with hiding
+					Display_PrintFont12x8(' ', DisplayInput_LetterPosition, 2, CHAR_INVERSE_NOT);
+				}
+			}
+
+			Display_Activate();
+			Display_VibrateLetter = false;
+			TaskHandler_SetTaskOnceRun(Task_Display, 500);
+		}
+		else
+		{
+			// Normal (show char)
+			if (DisplayInput_LetterPosition == DisplayInput_LetterPosition_MaxLimit)
+			{
+				// OK
+				Display_PrintFont12x8('O', DisplayInput_LetterPosition_MaxLimit, 2, CHAR_INVERSE_NOT);
+				Display_PrintFont12x8('K', DisplayInput_LetterPosition_MaxLimit + 1, 2, CHAR_INVERSE_NOT);
+			}
+			else
+			{
+				// Normal char
+				Display_PrintFont12x8(
+					DisplayInput_ActualRealString[DisplayInput_LetterPosition],
+					DisplayInput_LetterPosition, 2, CHAR_INVERSE_NOT);
+			}
+
+			Display_Activate();
+			Display_VibrateLetter = true;
+			TaskHandler_SetTaskOnceRun(Task_Display, 500);
+		}
+	}
+}
+#endif
+
+
+
+#ifdef CONFIG_FUNCTION_GAME_SNAKE
+static void Logic_Display_Snake(void)
+{
+	static SnakeStep_t SnakeStep = Step_Unknown;
+
+	// Periodical stepping
+	SnakeStep = Snake_GetLastStep();
+
+	Snake_Step(SnakeStep);
+
+	TaskHandler_SetTaskOnceRun(Task_Display, 500);
+}
+#endif
+
+
+
+#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
+static void Logic_Display_CarAnimation(void)
+{
+	// Car image
+	// TODO: Optimize this?
+	Display_ChangeCarImage();
+}
+#endif
+
+
+
+void Logic_Display_ChangeState(DisplayMenu_t nextState)
+{
+	Logic_Display_ChangedState = true;
+	Logic_Display_ActualState = nextState;
+	TaskHandler_RequestTaskScheduling(Task_Display);
+}

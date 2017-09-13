@@ -15,15 +15,16 @@
 
 
 
-
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
 #include "Button.h"
+#include "TaskHandler.h"
 
 #ifdef CONFIG_BUTTON_DEBUG_ENABLE
 #include "DebugUart.h"
 #endif
+
 
 
 /*------------------------------------------------------------------------------
@@ -35,6 +36,7 @@
 #else
 #define BUTTON_DEBUG_PRINT(msg)
 #endif
+
 
 
 /*------------------------------------------------------------------------------
@@ -74,6 +76,21 @@ typedef enum
 
 
 
+typedef enum
+{
+	Menu_Main,
+#ifdef CONFIG_FUNCTION_GAME_SNAKE
+	Menu_Snake,
+#endif
+	Menu_Input,
+	Menu_Car,
+
+	// Count
+	Menu_Count
+} DisplayMenu_t;
+
+
+
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
@@ -91,6 +108,7 @@ extern bool Logic_BatteryIsCharging;
 #endif
 
 
+
 /*------------------------------------------------------------------------------
  *  Global function declarations
  *----------------------------------------------------------------------------*/
@@ -104,6 +122,10 @@ DisplayClock_ChangeState_t Logic_GetSystemTimeState(void);
 #endif
 
 void Logic_CheckCharger(void);
+
+void Logic_DisplayHandler(ScheduleSource_t source);
+
+void Logic_Display_ChangeState(DisplayMenu_t nextState);
 
 
 #endif /* LOGIC_H_ */
