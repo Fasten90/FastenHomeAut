@@ -938,10 +938,6 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	*/
 
 
-	// Clock test
-	//Display_TestClock();
-
-
 
 	// Stack test
 	/*
@@ -2116,7 +2112,7 @@ static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv)
 			if (StringToUnsignedDecimalNum(separated[0], &line))
 			{
 				// Print line
-				Display_PrintString(separated[1], line, Font_8x5);
+				Display_PrintString(separated[1], line, Font_8x5, NO_FORMAT);
 				Display_Activate();
 				result = CommandResult_Ok_SendSuccessful;
 			}

@@ -90,6 +90,14 @@ typedef enum
 } DisplayMenu_t;
 
 
+typedef enum
+{
+	SnakeMenu_NewGame,
+	SnakeMenu_Exit,
+
+	SnakeMenu_Count
+} DisplaySnakeMenu_t;
+
 
 /*------------------------------------------------------------------------------
  *  Global variables
@@ -126,6 +134,9 @@ void Logic_CheckCharger(void);
 void Logic_DisplayHandler(ScheduleSource_t source);
 
 void Logic_Display_ChangeState(DisplayMenu_t nextState);
+bool Logic_Display_GetClockIsNeedRefresh(void);
+void Logic_Display_Snake_ChangeToMenu(void);
+
 
 
 #endif /* LOGIC_H_ */

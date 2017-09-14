@@ -52,6 +52,8 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
+const FontFormat_t Display_NoFormat = { 0 };
+
 
 
 /*------------------------------------------------------------------------------
@@ -79,11 +81,45 @@ static void Display_FillRectangle(uint8_t x, uint8_t y, uint8_t width, uint8_t h
 /**
  * \brief	Print ASCII text string to display
  */
-void Display_PrintString(const char *str, uint8_t line, Font_Type font)
+void Display_PrintString(const char *str, uint8_t line, FontType_t font, FontFormat_t format)
 {
 
 	uint8_t i;
+	uint8_t index_offset = 0;
 
+	// Handle "centering" text
+	if (format.Format_Center)
+	{
+		format.Format_Center = 0;
+		uint8_t length = StringLength(str);
+		uint8_t fontWidth = 0;
+		switch (font)
+		{
+#ifdef CONFIG_DISPLAY_FONT8X5_ENABLE
+			case Font_8x5:
+				fontWidth = 5;
+				break;
+#endif
+#ifdef CONFIG_DISPLAY_FONT12X8_ENABLE
+			case Font_12x8:
+				fontWidth = 8;
+				break;
+#endif
+#ifdef CONFIG_DISPLAY_FONT32X20_ENABLE
+			case Font_32x20:
+				fontWidth = 20;
+				break;
+#endif
+			case Font_Unknown:
+			case Font_Count:
+			default:
+				break;
+		}
+		// Calculate empty/2 space (index, not pixel!)
+		index_offset = (DISPLAY_WIDTH - length * fontWidth)/2/fontWidth;
+	}
+
+	// Print text
 	for (i = 0; str[i]; i++)
 	{
 		switch (font)
@@ -91,21 +127,22 @@ void Display_PrintString(const char *str, uint8_t line, Font_Type font)
 #ifdef CONFIG_DISPLAY_FONT8X5_ENABLE
 			case Font_8x5:
 				// Print ASCII character (0-127)
-				Display_PrintFont8x5(str[i], i, line);
+				Display_PrintFont8x5(str[i], i+index_offset, line, format);
 				break;
 #endif
 #ifdef CONFIG_DISPLAY_FONT12X8_ENABLE
 			case Font_12x8:
 				// Print ASCII character (0-127)
-				Display_PrintFont12x8(str[i], i, line, CHAR_INVERSE_NOT);
+				Display_PrintFont12x8(str[i], i+index_offset, line, format);
 				break;
 #endif
 #ifdef CONFIG_DISPLAY_FONT32X20_ENABLE
 			case Font_32x20:
 				// Print numbers (for Clock)
-				Display_PrintFont32x20(str[i], i,
+				Display_PrintFont32x20(str[i], i+index_offset,
 					DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
-					DISPLAY_FONT32X20_CLOCK_START_POSITION_Y);
+					DISPLAY_FONT32X20_CLOCK_START_POSITION_Y,
+					format);
 				break;
 #endif
 			case Font_Unknown:
@@ -125,12 +162,13 @@ void Display_PrintString(const char *str, uint8_t line, Font_Type font)
  * \param	index	- column
  * \param	line	- line / row
  */
-void Display_PrintFont8x5(uint8_t chr, uint8_t index, uint8_t line)
+void Display_PrintFont8x5(uint8_t chr, uint8_t index, uint8_t line, FontFormat_t format)
 {
 	// 8x5 pixel font
 	uint8_t i;
 	uint8_t j;
 
+	// TODO: Handle "underline"
 	// Step on columns
 	for (i = 0; i < FONT_8X5_WIDTH; i++)
 	{
@@ -142,11 +180,13 @@ void Display_PrintFont8x5(uint8_t chr, uint8_t index, uint8_t line)
 			uint8_t y = (line * (FONT_8X5_HEIGHT + 1)) + j;
 			if (Font8x5[chr][i] & (1 << (7-j)))
 			{
-				SSD1306_drawPixel(x, y, WHITE);
+				SSD1306_drawPixel(x, y,
+						format.Format_Inverse ? BLACK : WHITE);
 			}
 			else
 			{
-				SSD1306_drawPixel(x, y, BLACK);
+				SSD1306_drawPixel(x, y,
+						format.Format_Inverse ? WHITE : BLACK);
 			}
 		}
 	}
@@ -162,7 +202,7 @@ void Display_PrintFont8x5(uint8_t chr, uint8_t index, uint8_t line)
  * \param	index	- column
  * \param	line	- line / row
  */
-void Display_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line, bool inverse)
+void Display_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line, FontFormat_t format)
 {
 	// 12x8 pixel font
 	uint8_t i;
@@ -179,11 +219,13 @@ void Display_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line, bool invers
 			uint8_t x = index * (FONT_12X8_WIDTH + 1) + j;
 			if (Font12x8[chr][i] & (1 << (7-j)))
 			{
-				SSD1306_drawPixel(x, y, inverse ? BLACK : WHITE);
+				SSD1306_drawPixel(x, y,
+						format.Format_Inverse ? BLACK : WHITE);
 			}
 			else
 			{
-				SSD1306_drawPixel(x, y, inverse ? WHITE : BLACK);
+				SSD1306_drawPixel(x, y,
+						format.Format_Inverse ? WHITE : BLACK);
 			}
 		}
 	}
@@ -196,7 +238,7 @@ void Display_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line, bool invers
 /**
  * \brief	Print 32x20 font
  */
-void Display_PrintFont32x20(uint8_t chr, uint8_t index, uint8_t startposx, uint8_t startposy)
+void Display_PrintFont32x20(uint8_t chr, uint8_t index, uint8_t startposx, uint8_t startposy, FontFormat_t format)
 {
 	// 32x20 pixel font
 	uint8_t i;
@@ -225,11 +267,13 @@ void Display_PrintFont32x20(uint8_t chr, uint8_t index, uint8_t startposx, uint8
 			uint8_t y = startposy + j;
 			if (Font32x20[chr][i] & (1 << (31-j)))
 			{
-				SSD1306_drawPixel(x, y, WHITE);
+				SSD1306_drawPixel(x, y,
+						format.Format_Inverse ? BLACK : WHITE);
 			}
 			else
 			{
-				SSD1306_drawPixel(x, y, BLACK);
+				SSD1306_drawPixel(x, y,
+						format.Format_Inverse ? WHITE : BLACK);
 			}
 		}
 	}
@@ -440,7 +484,7 @@ void Display_ShowClock(Time_t *time)
 #elif defined(CONFIG_DISPLAY_CLOCK_SMALL)
 	char clock[10];
 	usprintf(clock, "%02d:%02d:%02d", time->hour, time->minute, time->second);
-	Display_PrintString(clock, 0, Font_12x8);
+	Display_PrintString(clock, 0, Font_12x8, NO_FORMAT);
 #endif
 
 	// Refresh display
@@ -505,13 +549,13 @@ void Display_Test8x5Font(void)
 {
 	Display_Clear();
 
-	Display_PrintString("Text example", 0, Font_8x5);
-	Display_PrintString("Sari <3", 1, Font_8x5);
-	Display_PrintString("0123456789", 2, Font_8x5);
-	Display_PrintString("abcdefghijklm", 3, Font_8x5);
-	Display_PrintString("nopqrstuvwxyz", 4, Font_8x5);
-	Display_PrintString(",.;?-*_()[]{}&", 5, Font_8x5);
-	Display_PrintString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 6, Font_8x5);
+	Display_PrintString("Text example", 0, Font_8x5, NO_FORMAT);
+	Display_PrintString("Sari <3", 1, Font_8x5, NO_FORMAT);
+	Display_PrintString("0123456789", 2, Font_8x5, NO_FORMAT);
+	Display_PrintString("abcdefghijklm", 3, Font_8x5, NO_FORMAT);
+	Display_PrintString("nopqrstuvwxyz", 4, Font_8x5, NO_FORMAT);
+	Display_PrintString(",.;?-*_()[]{}&", 5, Font_8x5, NO_FORMAT);
+	Display_PrintString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 6, Font_8x5, NO_FORMAT);
 
 	Display_Activate();
 }
@@ -527,11 +571,11 @@ void Display_Test12x8Font(void)
 {
 	Display_Clear();
 
-	Display_PrintString("0123456789", 0, Font_12x8);
-	Display_PrintString("abcdefghijklm", 1, Font_12x8);
-	Display_PrintString("nopqrtsuvwxyz", 2, Font_12x8);
-	Display_PrintString(",.;?-*_()[]{}&", 3, Font_12x8);
-	Display_PrintString("ABCDEFGHIJKLMNOPQ", 4, Font_12x8);
+	Display_PrintString("0123456789", 0, Font_12x8, NO_FORMAT);
+	Display_PrintString("abcdefghijklm", 1, Font_12x8, NO_FORMAT);
+	Display_PrintString("nopqrtsuvwxyz", 2, Font_12x8, NO_FORMAT);
+	Display_PrintString(",.;?-*_()[]{}&", 3, Font_12x8, NO_FORMAT);
+	Display_PrintString("ABCDEFGHIJKLMNOPQ", 4, Font_12x8, NO_FORMAT);
 
 	Display_Activate();
 }
@@ -547,7 +591,7 @@ void Display_Test32x20Font(void)
 {
 	Display_Clear();
 
-	Display_PrintString("12:34", 0, Font_32x20);
+	Display_PrintString("12:34", 0, Font_32x20, NO_FORMAT);
 
 	Display_Activate();
 }

@@ -22,6 +22,7 @@
 #include "DebugList.h"
 #include "Debug.h"
 #include "String.h"
+#include "Logic.h"
 #include "Snake.h"
 
 
@@ -291,7 +292,7 @@ void Snake_Draw(void)
 	// Print header (Score)
 	char string[20];
 	usprintf(string, "Score: %d", Snake_Score);
-	Display_PrintString(string, 0, Font_8x5);
+	Display_PrintString(string, 0, Font_8x5, NO_FORMAT);
 
 	// Header Line
 	uint8_t pixel;
@@ -383,9 +384,12 @@ static void Snake_DeleteLastPoint(void)
 
 static void Snake_FinishLose(void)
 {
-	Display_PrintString("End :(", 3, Font_12x8);
+	Display_PrintString("End :(", 2, Font_12x8, NO_FORMAT);
 
 	Snake_GameInProgress = false;
+
+	Logic_Display_ChangeState(Menu_Snake);
+	Logic_Display_Snake_ChangeToMenu();
 }
 
 

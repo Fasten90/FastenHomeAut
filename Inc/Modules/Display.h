@@ -33,8 +33,7 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define	CHAR_INVERSE_NOT			(false)
-#define CHAR_INVERSE				(true)
+#define NO_FORMAT				(Display_NoFormat)
 
 
 
@@ -56,7 +55,15 @@ typedef enum
 #endif
 
 	Font_Count
-} Font_Type;
+} FontType_t;
+
+
+typedef struct
+{
+	uint32_t Format_Center:		1;
+	uint32_t Format_Inverse:	1;
+	uint32_t Format_Underline:	1;
+} FontFormat_t;
 
 
 
@@ -65,6 +72,7 @@ typedef enum
  *----------------------------------------------------------------------------*/
 
 extern bool Display_CarAnimationDisable_flag;
+const FontFormat_t Display_NoFormat;
 
 
 
@@ -72,10 +80,10 @@ extern bool Display_CarAnimationDisable_flag;
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void Display_PrintString(const char *str, uint8_t line, Font_Type font);
-void Display_PrintFont8x5(uint8_t chr, uint8_t index, uint8_t line);
-void Display_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line, bool inverse);
-void Display_PrintFont32x20(uint8_t chr, uint8_t index, uint8_t startposx, uint8_t startposy);
+void Display_PrintString(const char *str, uint8_t line, FontType_t font, FontFormat_t format);
+void Display_PrintFont8x5(uint8_t chr, uint8_t index, uint8_t line, FontFormat_t format);
+void Display_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line, FontFormat_t format);
+void Display_PrintFont32x20(uint8_t chr, uint8_t index, uint8_t startposx, uint8_t startposy, FontFormat_t format);
 
 void Display_Clear(void);
 void Display_Activate(void);
