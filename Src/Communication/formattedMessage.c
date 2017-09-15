@@ -1,14 +1,15 @@
 /*
- *		formattedMessage.c
- *
- *		Created on:		2016.09.10
+ *		FormattedMessage.c
+ *		Created on:		2016-09-10
  *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		Formatted (colored / backgroundcolor) message
  *		Target:			STM32Fx
  *		Version:		v4
- *		Last modified:	2016.09.28
+ *		Last modified:	2016-09-28
  */
+
+
 
 #include "DebugUart.h"
 #include "FormattedMessage.h"

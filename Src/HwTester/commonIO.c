@@ -1,13 +1,12 @@
 /*
- *		commonIO.c
- *
- *		Created on:		2016. nov. 28.
- *      Author:			Vizi Gábor
+ *		CommonIO.c
+ *		Created on:		2016-11-28
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Common IO
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2016. nov. 28.
+ *		Version:		v1
+ *		Last modified:	2016-11-28
  */
 
 

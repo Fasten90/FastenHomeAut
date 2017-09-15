@@ -1,13 +1,12 @@
 /*
  *		DebugList.h
- *
  *		Created on:		2017-09-08
- *      Author:			Vizi Gábor
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Debug "task" list
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. szept. 8.
+ *		Version:		v1
+ *		Last modified:	2017-09-08
  */
 
 #ifndef DEBUGLIST_H_

@@ -1,18 +1,16 @@
 /*
  *		DateTime.h
- *
- *		Created on:		2017. jan. 10.
- *      Author:			Vizi Gábor
+ *		Created on:		2017-01-10
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		DateTime handling
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. jan. 10.
+ *		Version:		v1
+ *		Last modified:	2017-01-10
  */
 
 #ifndef DATETIME_H_
 #define DATETIME_H_
-
 
 
 

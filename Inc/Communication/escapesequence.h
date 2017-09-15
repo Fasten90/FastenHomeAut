@@ -1,17 +1,17 @@
 /*
- *		escapesequence.h
- *
- *		Created on:		2016. nov. 29.
- *      Author:			Vizi Gábor
+ *		EscapeSequence.h
+ *		Created on:		2016-11-29
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Escape sequences
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2016. nov. 29.
+ *		Version:		v1
+ *		Last modified:	2016-11-29
  */
 
 #ifndef ESCAPESEQUENCE_H_
 #define ESCAPESEQUENCE_H_
+
 
 
 /*------------------------------------------------------------------------------

@@ -1,18 +1,16 @@
 /*
  *		LedPWM.h
- *
- *		Created on:		2017. febr. 15.
- *      Author:			Vizi Gábor
+ *		Created on:		2017-02-15
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		LED PWM
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. febr. 15.
+ *		Version:		v1
+ *		Last modified:	2017-02-15
  */
 
 #ifndef MODULES_LEDPWM_H_
 #define MODULES_LEDPWM_H_
-
 
 
 

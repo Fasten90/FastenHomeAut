@@ -1,21 +1,20 @@
 /*
  *		Watchdog.c
- *
- *		Created on:		2017. febr. 6.
- *      Author:			Vizi Gábor
+ *		Created on:		2017-02-06
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Watchdog
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. febr. 6.
+ *		Version:		v1
+ *		Last modified:	2017-02-06
  */
-
 
 
 
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
+
 #include "include.h"
 #include "Watchdog.h"
 

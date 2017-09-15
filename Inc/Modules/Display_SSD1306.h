@@ -1,13 +1,12 @@
 /*
  *		Display_SSD1306.h
- *
- *		Created on:		2017. márc. 16.
- *      Author:			Vizi Gábor
+ *		Created on:		2017-03-16
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Display - SSD1306 driver
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. márc. 16.
+ *		Version:		v1
+ *		Last modified:	2017-03-16
  */
 
 #ifndef MODULES_DISPLAY_SSD1306_H_
@@ -15,10 +14,10 @@
 
 
 
-
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
+
 #include "include.h"
 
 

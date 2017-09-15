@@ -1,3 +1,14 @@
+/*
+ *		LED.h
+ *		Creat on:		2016-01-01
+ *		Author: 		Vizi Gábor
+ *		E-mail:			vizi.gabor90@gmail.com
+ *		Function:		LED functions
+ *		Target:			STM32Fx
+ *		Version:		v2
+ *		Last modified:	2016-11-23
+ */
+
 #ifndef LED_H_
 #define LED_H_
 

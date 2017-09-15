@@ -2,7 +2,7 @@
  *		Font32x20.h
  *
  *		Created on:		2017. máj. 12.
- *      Author:			Vizi Gábor
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		-
  *		Target:			STM32Fx

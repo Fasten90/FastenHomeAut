@@ -1,18 +1,16 @@
 /*
  *		EventLog.h
- *
- *		Created on:		2017. febr. 5.
- *      Author:			Vizi Gábor
+ *		Created on:		2017-02-05
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Event logger
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. febr. 5.
+ *		Version:		v1
+ *		Last modified:	2017-02-05
  */
 
 #ifndef COMMON_EVENTLOG_H_
 #define COMMON_EVENTLOG_H_
-
 
 
 

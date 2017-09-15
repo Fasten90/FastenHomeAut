@@ -1,13 +1,15 @@
 /*
- *		led.c
- *
+ *		LED.c
+ *		Creat on:		2016-01-01
  *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		LED functions
  *		Target:			STM32Fx
  *		Version:		v2
- *		Last modified:	2016.11.23
+ *		Last modified:	2016-11-23
  */
+
+
 
 #include "options.h"
 #include "board.h"
@@ -21,7 +23,7 @@
 #ifdef CONFIG_MODULE_LED_ENABLE
 
 
-/// LED names
+///< LED names
 const char * const LED_NameList[] =
 {
 	// NOTE: Be careful, when change the order and num, syncronize with LED_NUM_MAX define
@@ -37,7 +39,7 @@ const char * const LED_NameList[] =
 };				///< LED names
 
 
-/// LED types
+///< LED types
 const char * const LED_TypeNameList[] =
 {
 	// NOTE: Syncronize with LED_SetType_t

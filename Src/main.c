@@ -5,7 +5,10 @@
  */
 
 
-/* Includes ------------------------------------------------------------------*/
+
+/*------------------------------------------------------------------------------
+ *  Includes
+ *----------------------------------------------------------------------------*/
 
 #include "include.h"
 #include "Button.h"
@@ -29,7 +32,10 @@
 #include "Globals.h"
 
 
-/* Private variables ---------------------------------------------------------*/
+
+/*------------------------------------------------------------------------------
+ *  Local variables
+ *----------------------------------------------------------------------------*/
 
 #if defined(CONFIG_MODULE_DEBUGUSART_ENABLE) && defined(CONFIG_USE_FREERTOS)
 extern xSemaphoreHandle DEBUG_USART_Rx_Semaphore;
@@ -42,15 +48,22 @@ extern xQueueHandle ESP8266_SendMessage_Queue;
 
 
 
-/* Private function prototypes -----------------------------------------------*/
+/*------------------------------------------------------------------------------
+ *  Function declarations
+ *----------------------------------------------------------------------------*/
+
 void SystemClock_Config(void);
 void Error_Handler(void);
 void Assert_Function(char *file, uint32_t line, char *exp);
 
 
 
+/*------------------------------------------------------------------------------
+ *  Functions
+ *----------------------------------------------------------------------------*/
+
 /**
- * \brief	Main
+ * \brief	Main function
  */
 int main(void)
 {
@@ -138,7 +151,6 @@ int main(void)
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
 	// Display
 	Display_SSD1306_Init();
-
 	Logic_Display_Init();
 #endif
 
@@ -371,10 +383,6 @@ void SystemClock_Config(void)
 
 
 
-/* USER CODE BEGIN 4 */
-
-/* USER CODE END 4 */
-
 #ifdef USE_FULL_ASSERT
 
 /**
@@ -406,13 +414,6 @@ void Assert_Function(char *file, uint32_t line, char *exp)
 }
 
 
-/**
-  * @}
-  */ 
-
-/**
-  * @}
-*/ 
 
 #ifdef CONFIG_USE_FREERTOS
 

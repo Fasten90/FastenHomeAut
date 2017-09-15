@@ -1,13 +1,12 @@
 /*
  *		Watchdog.h
- *
- *		Created on:		2017. febr. 6.
- *      Author:			Vizi Gábor
+ *		Created on:		2017-02-06
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Watchdog
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. febr. 6.
+ *		Version:		v1
+ *		Last modified:	2017-02-06
  */
 
 #ifndef MODULES_WATCHDOG_H_
@@ -15,10 +14,10 @@
 
 
 
-
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
+
 #include "include.h"
 
 

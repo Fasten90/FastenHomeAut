@@ -1,12 +1,12 @@
 /*
- *		string.c
- *
+ *		String.c
+ *		Created on:		2016-01-01
  *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		String manipulation functions
  *		Target:			STM32Fx
  *		Version:		v4
- *		Last modified:	2016.09.28
+ *		Last modified:	2016-09-28
  */
 
 

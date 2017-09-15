@@ -1,36 +1,39 @@
 /*
- *		command.h
- *
+ *		CommandList.h
+ *		Created on:		2016-01-01
  *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Command list
+ *		Function:		General commands's list
  *		Target:			STM32Fx
  *		Version:		v4
- *		Last modified:	2016.09.28
+ *		Last modified:	2016-09-28
  */
 
 #ifndef COMMANDLIST_H_
 #define COMMANDLIST_H_
 
 
+
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
+
 #include "include.h"
 #include "CommandHandler.h"
+
+
 
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-
 #define COMMANDHANDLER_MAX_COMMAND_NUM				(uint8_t)(NUM_OF(CommandList))
+
 
 
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
-
 
 
 

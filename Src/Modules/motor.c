@@ -1,13 +1,12 @@
 /*
- *		commonPWM.c
- *
- *		Created on:		2017. febr. 11.
- *      Author:			Vizi Gábor
+ *		Motor.c
+ *		Created on:		2017-02-11
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Motor control
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. febr. 11.
+ *		Version:		v1
+ *		Last modified:	2017-02-11
  */
 
 
@@ -15,6 +14,7 @@
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
+
 #include "options.h"
 #include "include.h"
 #include "Motor.h"

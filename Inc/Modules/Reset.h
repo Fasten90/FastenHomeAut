@@ -1,24 +1,23 @@
 /*
  *		Reset.h
- *
- *		Created on:		2017. febr. 27.
- *      Author:			Vizi Gábor
+ *		Created on:		2017-02-27
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Reset module
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. febr. 27.
+ *		Version:		v1
+ *		Last modified:	2017-02-27
  */
 
-#ifndef MODULES_RESET_H_
-#define MODULES_RESET_H_
-
+#ifndef RESET_H_
+#define RESET_H_
 
 
 
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
+
 #include "include.h"
 
 
@@ -85,4 +84,4 @@ void Reset_PrintResetReasons(void);
 
 
 
-#endif /* MODULES_RESET_H_ */
+#endif /* RESET_H_ */

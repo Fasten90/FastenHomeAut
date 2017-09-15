@@ -1,24 +1,23 @@
 /*
  *		RTC.c
- *
- *		Created on:		2017. jan. 17.
- *      Author:			Vizi Gábor
+ *		Created on:		2017-01-17
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		RTC (Real Time Clock)
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. jan. 17.
- */
-
-/*
+ *		Version:		v1
+ *		Last modified:	2017-01-17
+ *
  * This file use ST example codes:
  * STM32Cube_FW_F4_V1.14.0\Projects\STM32F446ZE-Nucleo\Examples\RTC\RTC_Calendar\
  */
 
 
+
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
+
 #include "include.h"
 #include "RTC.h"
 

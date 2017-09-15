@@ -1,13 +1,12 @@
 /*
  *		EventList.c
- *
  *		Created on:		2017-08-31
- *      Author:			Vizi Gábor
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Event list
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. aug. 31.
+ *		Version:		v1
+ *		Last modified:	2017-08-31
  */
 
 
@@ -96,9 +95,9 @@ const Event_t EventList[] =
 };
 
 
-
 ///< Events num
 const EventId_t EventsNum = sizeof(EventList)/sizeof(EventList[0]);
+
 
 
 /*------------------------------------------------------------------------------

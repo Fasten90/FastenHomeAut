@@ -1,24 +1,24 @@
 /*
  *		CommonSPI.h
- *
- *		Created on:		2017. márc. 16.
- *      Author:			Vizi Gábor
+ *		Created on:		2017-03-16
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Common SPI
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. márc. 16.
+ *		Version:		v1
+ *		Last modified:	2017-03-16
  */
+
 
 #ifndef HWTESTER_COMMONSPI_H_
 #define HWTESTER_COMMONSPI_H_
 
 
 
-
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
+
 #include "include.h"
 
 

@@ -1,13 +1,12 @@
 /*
- *		unittest.c
- *
- *		Created on:		2016. nov. 24.
- *      Author:			Vizi Gábor
+ *		UnitTest.c
+ *		Created on:		2016-11-24
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		UnitTest module
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2016. nov. 24.
+ *		Version:		v1
+ *		Last modified:	2016-11-24
  */
 
 

@@ -1,15 +1,16 @@
 /*
  *		IO.c
- *
- *		Created on:		2015.
- *      Author:			Vizi Gábor
+ *		Created on:		2016-01-01
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		IO module (Input-Output)
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. febr. 8.
+ *		Version:		v1
+ *		Last modified:	2017-02-08
  */
  
+
+
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/

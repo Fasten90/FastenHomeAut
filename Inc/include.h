@@ -1,13 +1,12 @@
 /*
  *		include.h
- *
- *  	Created on: 	2013.11.19.
+ *  	Created on: 	2013-11-19
  *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		include file for project
  *		Target:			STM32Fx
  *		Version:		v4
- *		Last modified:	2016.09.28
+ *		Last modified:	2016-09-28
  */
 
 #ifndef INCLUDE_H_

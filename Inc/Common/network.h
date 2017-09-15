@@ -1,13 +1,12 @@
 /*
- *		network.h
- *
- *		Created on:		2017. jan. 14.
- *      Author:			Vizi Gábor
+ *		Network.h
+ *		Created on:		2017-01-14
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Network general functions
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. jan. 14.
+ *		Version:		v1
+ *		Last modified:	2017-01-14
  */
 
 #ifndef NETWORK_H_

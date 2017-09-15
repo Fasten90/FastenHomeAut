@@ -1,14 +1,12 @@
 /*
- * board.h
- *
- *  	Created on: 	2013.11.19.
- *      Author: 		Vizi Gábor
+ *		board.h
+ *  	Created on: 	2013-11-19
+ *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Project: 		-
  *		Function:		board/panel defines: pins, ports, etc
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017.05.05
+ *		Version:		v1
+ *		Last modified:	2017-05-05
  */
 
 #ifndef BOARD_H_

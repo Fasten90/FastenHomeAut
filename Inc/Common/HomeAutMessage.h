@@ -1,13 +1,12 @@
 /*
- *		homeautmessage.h
- *
- *		Created on:		2015
+ *		HomeAutMessage.h
+ *		Created on:		2016.01.01
  *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		HomeAutMessage - Create a Home automation message
+ *		Function:		HomeAutMessage message handling
  *		Target:			STM32Fx
- *		Version:		v5
- *		Last modified:	2017.01.08.
+ *		Version:		v4
+ *		Last modified:	2016.09.28
  */
 
 #ifndef HOMEAUTMESSAGE_H_

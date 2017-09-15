@@ -1,13 +1,12 @@
 /*
  *		DisplayImages.c
- *
- *		Created on:		2017. ápr. 2.
- *      Author:			Vizi Gábor
+ *		Created on:		2017-04-02
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Display - images
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. ápr. 2.
+ *		Version:		v1
+ *		Last modified:	2017-04-02
  */
 
 
@@ -15,6 +14,7 @@
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
+
 #include "include.h"
 #include "DisplayImages.h"
 

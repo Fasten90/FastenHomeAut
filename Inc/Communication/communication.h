@@ -1,13 +1,12 @@
 /*
- *		communication.h
- *
- *		Created on:		2016. dec. 3.
- *      Author:			Vizi Gábor
+ *		Communication.h
+ *		Created on:		2016-12-03
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Communication module
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2016. dec. 3.
+ *		Version:		v1
+ *		Last modified:	2016-12-03
  */
 
 #ifndef COMMUNICATION_H_
@@ -19,6 +18,7 @@
 
 #define COMMUNICATION_TXBUFFER_SIZE				(255U)
 #define COMMUNICATION_PROTOCOL_BUFFER_SIZE		(100)
+
 
 
 /*------------------------------------------------------------------------------

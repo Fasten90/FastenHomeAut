@@ -1,13 +1,12 @@
 /*
- *		formattedMessage.h
- *
- *		Created on:		2016.09.10
+ *		FormattedMessage.h
+ *		Created on:		2016-09-10
  *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		Formatted (colored / backgroundcolor) message
  *		Target:			STM32Fx
  *		Version:		v4
- *		Last modified:	2016.09.28
+ *		Last modified:	2016-09-28
  */
 
 #ifndef FORMATTEDMESSAGE_H_

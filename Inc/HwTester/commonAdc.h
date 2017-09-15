@@ -1,12 +1,12 @@
 /*
- *		commonAdc.h
- *
- *		Author: 		Vizi Gábor
+ *		CommonAdc.h
+ *		Created on:		2016-11-21
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Common ADC: Measure more ADC input
+ *		Function:		Common ADC (Analog-to-Digital Converter)
  *		Target:			STM32Fx
  *		Version:		v1
- *		Last modified:	2016.12.08
+ *		Last modified:	2016-12-13
  */
 
 #ifndef COMMONADC_H_
@@ -16,6 +16,7 @@
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
+
 #include "include.h"
 
 

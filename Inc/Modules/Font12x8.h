@@ -2,7 +2,7 @@
  *		Font12x8.h
  *
  *		Created on:		2017. márc. 27.
- *      Author:			Vizi Gábor
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		-
  *		Target:			STM32Fx

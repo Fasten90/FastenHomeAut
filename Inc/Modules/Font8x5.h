@@ -2,7 +2,7 @@
  *		Font8x5.h
  *
  *		Created on:		2017. márc. 19.
- *      Author:			Vizi Gábor
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		-
  *		Target:			STM32Fx

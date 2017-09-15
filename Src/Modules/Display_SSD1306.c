@@ -1,13 +1,12 @@
 /*
  *		Display_SSD1306.c
- *
- *		Created on:		2017. márc. 16.
- *      Author:			Vizi Gábor
+ *		Created on:		2017-03-16
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Display - SSD1306 driver
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. márc. 16.
+ *		Version:		v1
+ *		Last modified:	2017-03-16
  *		Help: An arduino (C++) code:
  *			https://github.com/adafruit/Adafruit_SSD1306/blob/master/Adafruit_SSD1306.cpp
  *		Modified:
@@ -19,9 +18,12 @@
  *			- Use my font: 8x5
  */
 
+
+
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
+
 #include "options.h"
 #include "include.h"
 #include "MEM.h"

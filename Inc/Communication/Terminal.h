@@ -1,13 +1,12 @@
 /*
  *		Terminal.h
- *
- *		Created on:		2017. febr. 2.
- *      Author:			Vizi Gábor
+ *		Created on:		2017-02-02
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Terminal
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. febr. 2.
+ *		Version:		v1
+ *		Last modified:	2017-02-02
  */
 
 #ifndef TERMINAL_H_
@@ -15,10 +14,10 @@
 
 
 
-
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
+
 #include "include.h"
 
 

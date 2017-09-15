@@ -1,16 +1,17 @@
 /*
- *		usart.h
- *
+ *		USART.h
+ *		Created on:		2016-01-01
  *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		usart communication
+ *		Function:		USART communication
  *		Target:			STM32Fx
  *		Version:		v4
- *		Last modified:	2016.09.28
+ *		Last modified:	2016-09-28
  */
 
 #ifndef USART_H_
 #define USART_H_
+
 
 
 /*------------------------------------------------------------------------------
@@ -18,6 +19,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "include.h"
+
 
 
 /*------------------------------------------------------------------------------

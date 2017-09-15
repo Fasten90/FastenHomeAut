@@ -1,15 +1,13 @@
 /*
  *		SecuredDataTypes.c
- *
- *		Created on:		2017. aug. 24.
- *      Author:			Vizi Gábor
+ *		Created on:		2017-08-24
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Secure data types and handlers
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. aug. 24.
+ *		Version:		v1
+ *		Last modified:	2017-08-24
  */
-
 
 
 

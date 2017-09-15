@@ -1,13 +1,12 @@
 /*
  *		Logic.c
- *
- *		Created on:		2017. máj. 23.
- *      Author:			Vizi Gábor
+ *		Created on:		2017-06-23
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Logical functions
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. máj. 23.
+ *		Version:		v1
+ *		Last modified:	2017-06-23
  */
 
 

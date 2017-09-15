@@ -1,14 +1,15 @@
 /*
- *		communication.c
- *
- *		Created on:		2016. dec. 3.
- *      Author:			Vizi Gábor
+ *		Communication.c
+ *		Created on:		2016-12-03
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Communication module
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2016. dec. 3.
+ *		Version:		v1
+ *		Last modified:	2016-12-03
  */
+
+
 
 #include "options.h"
 #include "include.h"

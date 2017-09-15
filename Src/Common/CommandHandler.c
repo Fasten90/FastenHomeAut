@@ -1,14 +1,15 @@
 /*
  *		CommandHandler.c
- *
- *		Created on:		2013.10.08.
+ *		Created on:		2013-10-08.
  *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		Command Handler: communication with UART, execute commands
  *		Target:			STM32Fx
  *		Version:		v4
- *		Last modified:	2017.01.16
+ *		Last modified:	2017-01-16
  */
+
+
 
 #include <stdint.h>
 #include <stdarg.h>

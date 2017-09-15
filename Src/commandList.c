@@ -1,13 +1,15 @@
 /*
  *		CommandList.c
- *
+ *		Created on:		2016-01-01
  *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		General commands's list
  *		Target:			STM32Fx
  *		Version:		v4
- *		Last modified:	2016.09.28
+ *		Last modified:	2016-09-28
  */
+
+
 
 /*------------------------------------------------------------------------------
  *  Header files
@@ -159,10 +161,8 @@
  *----------------------------------------------------------------------------*/
 
 
-//#pragma GCC diagnostic push
-//#pragma GCC diagnostic ignored "-Wpedantic"
 
-/// Commands list
+///< Commands list
 const CommandStruct CommandList[] =
 {
 	/*
@@ -544,16 +544,9 @@ const CommandStruct CommandList[] =
 };
 
 
-//#pragma GCC diagnostic pop
-// End of warning suppress
-
 
 const CommandID_t CommandHandler_CommandNum = COMMANDHANDLER_MAX_COMMAND_NUM;
 
-
-/*------------------------------------------------------------------------------
- *  Global functions
- *----------------------------------------------------------------------------*/
 
 
 /*------------------------------------------------------------------------------

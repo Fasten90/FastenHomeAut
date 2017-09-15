@@ -1,13 +1,12 @@
 /*
  *		version.h
- *
- *		Created on:		2016. dec. 11.
- *      Author:			Vizi Gábor
+ *		Created on:		2016-12-11
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Version
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2016. dec. 11.
+ *		Version:		v1
+ *		Last modified:	2016-12-11
  */
 
 #ifndef VERSION_H_

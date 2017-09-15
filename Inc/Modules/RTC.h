@@ -1,24 +1,24 @@
 /*
  *		RTC.h
- *
- *		Created on:		2017. jan. 17.
- *      Author:			Vizi Gábor
+ *		Created on:		2017-01-17
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		RTC (Real Time Clock)
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. jan. 17.
+ *		Version:		v1
+ *		Last modified:	2017-01-17
  */
+
 
 #ifndef RTC_H_
 #define RTC_H_
 
 
 
-
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
+
 #include "include.h"
 
 

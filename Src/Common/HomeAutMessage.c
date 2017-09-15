@@ -1,6 +1,6 @@
 /*
- *		homeautmessage.c
- *
+ *		HomeAutMessage.c
+ *		Created on:		2016.01.01
  *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		HomeAutMessage message handling

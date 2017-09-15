@@ -2,7 +2,7 @@
  *		GenericTypeDefs.h
  *
  *		Created on:		2017. febr. 27.
- *      Author:			Vizi Gábor
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		-
  *		Target:			STM32Fx

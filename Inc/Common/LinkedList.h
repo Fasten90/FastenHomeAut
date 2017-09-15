@@ -1,13 +1,12 @@
 /*
- *		linkedlist.h
- *
- *		Created on:		2017. aug. 1.
- *      Author:			Vizi Gábor
+ *		LinkedList.h
+ *		Created on:		2017-08-01
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Linked list handler
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. aug. 1.
+ *		Version:		v1
+ *		Last modified:	2017-08-01
  */
 
 #ifndef COMMON_LINKEDLIST_H_
@@ -15,10 +14,10 @@
 
 
 
-
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
+
 #include "include.h"
 
 
@@ -28,6 +27,7 @@
  *----------------------------------------------------------------------------*/
 
 #define LINKEDLIST_STORE_LENGTH		(10U)
+
 
 
 /*------------------------------------------------------------------------------

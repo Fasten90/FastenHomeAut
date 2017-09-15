@@ -2,7 +2,7 @@
  *		CodingStyle.c
  *
  *		Created on:		2017-08-30
- *      Author:			Vizi Gábor
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		-
  *		Target:			STM32Fx

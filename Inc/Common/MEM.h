@@ -1,13 +1,12 @@
 /*
- *		MEM.c
- *
- *		Created on:		2016.08.31
+ *		MEM.h
+ *		Created on:		2016-08-31
  *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		MEM functions
  *		Target:			STM32Fx
  *		Version:		v1
- *		Last modified:	2017.07.15
+ *		Last modified:	2017-07-15
  */
 
 #ifndef MEM_H_

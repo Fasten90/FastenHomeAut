@@ -1,18 +1,20 @@
 /*
- *		commonAdc.c
- *
- *		Created on:		2016. nov. 21.
- *      Author:			Vizi Gábor
+ *		CommonAdc.c
+ *		Created on:		2016-11-21
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Common ADC (Analog-to-Digital Converter)
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2016. dec. 13.
+ *		Version:		v1
+ *		Last modified:	2016-12-13
  */
+
+
 
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
+
 #include "include.h"
 #include "CommandHandler.h"
 #include "Globals.h"
@@ -23,6 +25,7 @@
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
+
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
 
 

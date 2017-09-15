@@ -1,19 +1,20 @@
 /*
- *		swo.c
- *
- *		Created on:		2016. dec. 14.
- *      Author:			Vizi Gábor
+ *		SWO.c
+ *		Created on:		2016-12-14
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		SWO (Serial Wire Output)
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2016. dec. 14.
+ *		Version:		v1
+ *		Last modified:	2016-12-14
  */
+
 
 
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
+
 #include "include.h"
 #include "SWO.h"
 
@@ -31,7 +32,6 @@
 /*------------------------------------------------------------------------------
  *  Functions
  *----------------------------------------------------------------------------*/
-
 
 /**
  * \brief	Send string on SWO

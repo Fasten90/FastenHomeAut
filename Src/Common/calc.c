@@ -1,13 +1,12 @@
 /*
  *		Calc.c
- *
- *		Created on:		2016.09.26
- *      Author:			Vizi Gábor
+ *		Created on:		2016-09-26
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Calculate / Math functions
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017.06.02.
+ *		Version:		v1
+ *		Last modified:	2017-06-02
  */
 
 #include "options.h"

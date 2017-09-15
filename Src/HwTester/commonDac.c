@@ -1,14 +1,14 @@
 /*
- *		commonDac.c
- *
- *		Created on:		2016. nov. 21.
- *      Author:			Vizi Gábor
+ *		CommonDac.c
+ *		Created on:		2016-11-21
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Common DAC (Digital-to-Analog Converter)
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2016. dec. 13.
+ *		Version:		v1
+ *		Last modified:	2016-12-13
  */
+
 
 
 #include "options.h"

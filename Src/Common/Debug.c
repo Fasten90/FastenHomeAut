@@ -1,13 +1,12 @@
 /*
  *		Debug.c
- *
- *		Created on:		2017. aug. 17.
- *      Author:			Vizi Gábor
+ *		Created on:		2017-08-17
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Debug print
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. aug. 17.
+ *		Version:		v1
+ *		Last modified:	2017-08-17
  */
 
 

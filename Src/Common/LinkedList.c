@@ -1,21 +1,20 @@
 /*
  *		LinkedList.c
- *
- *		Created on:		2017. aug. 1.
- *      Author:			Vizi Gábor
+ *		Created on:		2017-08-01
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Linked list handler
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. aug. 1.
+ *		Version:		v1
+ *		Last modified:	2017-08-01
  */
-
 
 
 
 /*------------------------------------------------------------------------------
  *  Header files
  *----------------------------------------------------------------------------*/
+
 #include "include.h"
 #include "MEM.h"
 #include "DebugUart.h"
@@ -24,15 +23,16 @@
 
 
 
+#ifdef CONFIG_MODULE_LINKEDLIST_ENABLE
 
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-ListItem MyList_StoreBuffer[LINKEDLIST_STORE_LENGTH];
+ListItem MyList_StoreBuffer[LINKEDLIST_STORE_LENGTH] = { 0 };
 
-ListItem *MyList_first;
-ListItem *MyList_last;
+ListItem *MyList_first = NULL;
+ListItem *MyList_last = NULL;
 
 
 
@@ -47,6 +47,7 @@ ListItem *MyList_last;
  *----------------------------------------------------------------------------*/
 
 static void LinkedList_PrintListItem(ListItem * item);
+static int16_t LinkedList_SearchFreeSpace(void);
 
 
 
@@ -58,9 +59,13 @@ static void LinkedList_PrintListItem(ListItem * item);
 /**
  * \brief	Initialize LinkedList
  */
-void LinkedList_Init(void)
+void LinkedList_Init(ListItem * linkedList, uint16_t size)
 {
-	memset(MyList_StoreBuffer, 0, sizeof(MyList_StoreBuffer));
+	// TODO: Correct these?
+	linkedList = MyList_StoreBuffer;
+	size = NUM_OF(MyList_StoreBuffer);
+
+	memset(linkedList, 0, size * sizeof(ListItem));
 
 	MyList_first = NULL;
 	MyList_last = NULL;
@@ -68,15 +73,32 @@ void LinkedList_Init(void)
 
 
 
-void LinkedList_AddFirstItem(ListItem_Value_t value)
+static void LinkedList_AddFirstItem(ListItem_Value_t value)
 {
-	MyList_StoreBuffer[0].val = value;
-	MyList_StoreBuffer[0].next = NULL;
-	MyList_StoreBuffer[0].prev = NULL;
-	MyList_StoreBuffer[0].isBusy = true;
+	if (MyList_first == NULL)
+	{
+		MyList_StoreBuffer[0].val = value;
+		MyList_StoreBuffer[0].next = NULL;
+		MyList_StoreBuffer[0].prev = NULL;
+		MyList_StoreBuffer[0].isBusy = true;
 
-	MyList_first = &MyList_StoreBuffer[0];
-	MyList_last = &MyList_StoreBuffer[0];
+		MyList_first = &MyList_StoreBuffer[0];
+		MyList_last  = &MyList_StoreBuffer[0];
+	}
+	else
+	{
+		// Has first element
+		int16_t freePos = LinkedList_SearchFreeSpace();
+		if (freePos > 0)
+		{
+			MyList_StoreBuffer[freePos].val = value;
+			MyList_StoreBuffer[freePos].next = MyList_first;
+			MyList_StoreBuffer[freePos].isBusy = true;
+
+			MyList_StoreBuffer[freePos].prev = NULL;
+			MyList_first = &MyList_StoreBuffer[freePos];
+		}
+	}
 }
 
 
@@ -94,25 +116,22 @@ bool LinkedList_AddItem(ListItem_Value_t value)
 	else
 	{
 		// There is list
-		uint8_t i;
-		for (i = 0; i < LINKEDLIST_STORE_LENGTH; i++)
+		int16_t freePos = LinkedList_SearchFreeSpace();
+		if (freePos > 0)
 		{
-			if (MyList_StoreBuffer[i].isBusy == false)
-			{
-				// Empty
-				MyList_StoreBuffer[i].val = value;
-				MyList_StoreBuffer[i].next = NULL;
-				MyList_StoreBuffer[i].isBusy = true;
+			// Empty
+			MyList_StoreBuffer[freePos].val = value;
+			MyList_StoreBuffer[freePos].next = NULL;
+			MyList_StoreBuffer[freePos].isBusy = true;
 
-				MyList_StoreBuffer[i].prev = MyList_last;
-				MyList_last->next = &MyList_StoreBuffer[i];
-				MyList_last = &MyList_StoreBuffer[i];
+			MyList_StoreBuffer[freePos].prev = MyList_last;
+			MyList_last->next = &MyList_StoreBuffer[freePos];
+			MyList_last = &MyList_StoreBuffer[freePos];
 
-				result = true;
-				// Added item
-				break;
-			}
+			result = true;
+			// Added item
 		}
+		// else --> Full, no free space
 	}
 
 	return result;
@@ -120,7 +139,23 @@ bool LinkedList_AddItem(ListItem_Value_t value)
 
 
 
+static int16_t LinkedList_SearchFreeSpace(void)
+{
+	int16_t i;
+	for (i = 0; (uint16_t)i < LINKEDLIST_STORE_LENGTH; i++)
+	{
+		if (MyList_StoreBuffer[i].isBusy == false)
+		{
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+
 // TODO: Implement Add item after an item (pointer)
+
 
 // TODO: Implement Add item before an item (pointer)
 
@@ -264,4 +299,6 @@ void LinkedList_UnitTest(void)
 	UnitTest_End();
 
 }
-#endif
+#endif	// #ifdef MODULE_LINKEDLIST_UNITTEST_ENABLE
+
+#endif	// #ifdef CONFIG_MODULE_LINKEDLIST_ENABLE

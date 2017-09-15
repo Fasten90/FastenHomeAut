@@ -1,13 +1,12 @@
 /*
  *		CircularBuffer.h
- *
- *		Created on:		2017. márc. 4.
- *      Author:			Vizi Gábor
+ *		Created on:		2017-03-04
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Circular buffer handler
  *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. márc. 4.
+ *		Version:		v1
+ *		Last modified:	2017-03-04
  */
 
 #ifndef COMMON_CIRCULARBUFFER_H_
