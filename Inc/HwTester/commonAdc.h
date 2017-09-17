@@ -39,8 +39,8 @@
  *----------------------------------------------------------------------------*/
 
 extern ADC_HandleTypeDef		AdcHandle;
-extern volatile uint32_t		ADC_MeasuredValues[ADC_BUFFER_SIZE];
-extern volatile float			ADC_ConvertedValues[ADC_BUFFER_SIZE];
+extern volatile uint32_t		ADC_MeasuredValues[ADC_CHANNEL_NUM];
+extern volatile float			ADC_ConvertedValues[ADC_CHANNEL_NUM];
 
 
 

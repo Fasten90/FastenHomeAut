@@ -145,17 +145,24 @@ static uint32_t CommonDAC_VoltageToBinary(float voltage)
  */
 bool CommonDAC_SetValue(DAC_Channel_t channel, float voltage)
 {
-
-	uint32_t channelDefine = DACx_CHANNEL1;
+	uint32_t channelDefine = 0;
 	uint32_t dacValue = 0;
+
+	// Check voltage
+	if (voltage > COMMON_DAC_MAX_VOLTAGE)
+	{
+		// Cut value
+		voltage = COMMON_DAC_MAX_VOLTAGE;
+	}
+	else if (voltage < 0.0)
+	{
+		// Cut value
+		voltage = 0.0;
+	}
 
 	// Check channel
 	switch (channel)
 	{
-		case Channel_Unknown:
-			channelDefine = DACx_CHANNEL1;
-			break;
-
 		case Channel_1:
 			channelDefine = DACx_CHANNEL1;
 			break;
@@ -164,8 +171,9 @@ bool CommonDAC_SetValue(DAC_Channel_t channel, float voltage)
 			channelDefine = DACx_CHANNEL2;
 			break;
 
+		case Channel_Unknown:
 		default:
-			channelDefine = DACx_CHANNEL1;
+			return false;
 			break;
 	}
 
@@ -175,7 +183,8 @@ bool CommonDAC_SetValue(DAC_Channel_t channel, float voltage)
 	if (HAL_DAC_SetValue(&DacHandle, channelDefine, DAC_ALIGN_12B_R, dacValue) != HAL_OK)
 	{
 		/* Setting value Error */
-		Error_Handler();
+		//Error_Handler();
+		return false;
 	}
 
 	return true;

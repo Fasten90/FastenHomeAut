@@ -1261,11 +1261,11 @@ static CommandResult_t CommandFunction_dac(uint32_t argc, char** argv)
 	// Suppress warning
 	(void)argc;
 
-	uint32_t Arg2Num;
+	uint32_t channelNum;
 	float voltage = 0.0f;
 
 	// Check 1. argument (num)
-	if (!StringToUnsignedDecimalNum(argv[1], &Arg2Num))
+	if (!StringToUnsignedDecimalNum(argv[1], &channelNum))
 	{
 		return CommandResult_Error_WrongArgument1;
 	}
@@ -1277,7 +1277,7 @@ static CommandResult_t CommandFunction_dac(uint32_t argc, char** argv)
 	}
 
 	// Set DAC value
-	if (CommonDAC_SetValue(Arg2Num, voltage))
+	if (CommonDAC_SetValue(channelNum, voltage))
 	{
 		return CommandResult_Ok_SendSuccessful;
 	}
@@ -1411,7 +1411,7 @@ static CommandResult_t CommandFunction_adc(uint32_t argc, char** argv)
 
 	CommonADC_ConvertAllMeasuredValues();
 
-	for (i = 0; i < ADC_BUFFER_SIZE; i++)
+	for (i = 0; i < ADC_CHANNEL_NUM; i++)
 	{
 		CommandHandler_Printf("ADC: %d. value: %2.2f\r\n", i, ADC_ConvertedValues[i]);
 	}
@@ -1457,7 +1457,7 @@ static CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv)
 	{
 		if (StringToUnsignedDecimalNum(argv[2], &convertValue))
 		{
-			if (convertValue < ADC_BUFFER_SIZE)
+			if (convertValue < ADC_CHANNEL_NUM)
 			{
 				// Is Ok
 				TaskHandler_RequestTaskScheduling(Task_CommonAdc);

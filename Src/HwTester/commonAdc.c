@@ -43,10 +43,10 @@
 ADC_HandleTypeDef		AdcHandle;
 
 // Measured values
-volatile uint32_t		ADC_MeasuredValues[ADC_BUFFER_SIZE] = { 0 };
+volatile uint32_t		ADC_MeasuredValues[ADC_CHANNEL_NUM] = { 0 };
 
 // Calculated values
-volatile float			ADC_ConvertedValues[ADC_BUFFER_SIZE] = { 0 };
+volatile float			ADC_ConvertedValues[ADC_CHANNEL_NUM] = { 0 };
 
 static uint8_t			ADC_PrintNum = 0;
 
@@ -102,7 +102,7 @@ void CommonADC_Init(void)
 	AdcHandle.Init.ExternalTrigConvEdge  = ADC_EXTERNALTRIGCONVEDGE_NONE;
 	AdcHandle.Init.ExternalTrigConv      = ADC_EXTERNALTRIGCONV_T1_CC1;		/* Trig of conversion start done manually by software, without external event */
 	AdcHandle.Init.DataAlign             = ADC_DATAALIGN_RIGHT;
-	AdcHandle.Init.NbrOfConversion       = ADC_BUFFER_SIZE;					/* Sequencer of regular group will convert the 3 first ranks: rank1, rank2, rank3 */
+	AdcHandle.Init.NbrOfConversion       = ADC_CHANNEL_NUM;					/* Sequencer of regular group will convert the 3 first ranks: rank1, rank2, rank3 */
 	AdcHandle.Init.DMAContinuousRequests = ENABLE;							/* ADC-DMA continuous requests to match with DMA configured in circular mode */
 	AdcHandle.Init.EOCSelection          = DISABLE;
 
@@ -132,7 +132,7 @@ void CommonADC_Init(void)
 		Error_Handler();
 	}
 
-#if ADC_BUFFER_SIZE >= 2
+#if ADC_CHANNEL_NUM >= 2
 	/* Configuration of channel on ADCx regular group on sequencer rank 2 */
 	/* Replicate previous rank settings, change only channel and rank */
 	sConfig.Channel      = ADC_CHANNEL_2;
@@ -145,7 +145,7 @@ void CommonADC_Init(void)
 		Error_Handler();
 	}
 #endif
-#if ADC_BUFFER_SIZE >= 3
+#if ADC_CHANNEL_NUM >= 3
 	/* Configuration of channel on ADCx regular group on sequencer rank 3 */
 	/* Replicate previous rank settings, change only channel and rank */
 	sConfig.Channel      = ADC_CHANNEL_3;
@@ -159,14 +159,14 @@ void CommonADC_Init(void)
 	}
 #endif
 
-#if ADC_BUFFER_SIZE > 3
+#if ADC_CHANNEL_NUM > 3
 #warning "ADC num is not 3, need extend the channel configs"
 #endif
 
 	/* Start ADC conversion on regular group with transfer by DMA */
 	if (HAL_ADC_Start_DMA(&AdcHandle,
 						(uint32_t *)ADC_MeasuredValues,
-						ADC_BUFFER_SIZE
+						ADC_CHANNEL_NUM
 					   ) != HAL_OK)
 	{
 		/* Start Error */
@@ -201,16 +201,16 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(ADCx_CHANNEL_GPIO_PORT, &GPIO_InitStruct);
 
-#if ADC_BUFFER_SIZE >= 2
+#if ADC_CHANNEL_NUM >= 2
 	GPIO_InitStruct.Pin = ADCx_CHANNEL_PIN_2;
 	HAL_GPIO_Init(ADCx_CHANNEL_GPIO_PORT, &GPIO_InitStruct);
 #endif
-#if ADC_BUFFER_SIZE >= 3
+#if ADC_CHANNEL_NUM >= 3
 	GPIO_InitStruct.Pin = ADCx_CHANNEL_PIN_3;
 	HAL_GPIO_Init(ADCx_CHANNEL_GPIO_PORT, &GPIO_InitStruct);
 #endif
 	
-#if ADC_BUFFER_SIZE > 3
+#if ADC_CHANNEL_NUM > 3
 #warning "ADC num is not 3, need extend the channel configs"
 #endif
 
@@ -274,7 +274,7 @@ void CommonADC_Test(void)
 		DelayMs(10);
 
 		uprintf("#\r\n");
-		for (i = 0; i < ADC_BUFFER_SIZE; i++)
+		for (i = 0; i < ADC_CHANNEL_NUM; i++)
 		{
 			uprintf("%d. value: %d\r\n", i, ADC_MeasuredValues[i]);
 		}
@@ -307,7 +307,7 @@ void CommonADC_ConvertAllMeasuredValues(void)
 {
 	uint8_t i;
 	
-	for (i = 0; i < ADC_BUFFER_SIZE; i++)
+	for (i = 0; i < ADC_CHANNEL_NUM; i++)
 	{
 		// Convert all values
 		ADC_ConvertedValues[i] = CommonADC_ConvertToVoltage(ADC_MeasuredValues[i]);
@@ -321,7 +321,7 @@ void CommonADC_ConvertAllMeasuredValues(void)
  */
 void CommonADC_SetPrintNum(uint8_t adcChannel)
 {
-	if (adcChannel < ADC_BUFFER_SIZE)
+	if (adcChannel < ADC_CHANNEL_NUM)
 		ADC_PrintNum = adcChannel;
 	else
 		ADC_PrintNum = 0;
@@ -334,7 +334,7 @@ void CommonADC_SetPrintNum(uint8_t adcChannel)
  */
 void CommonADC_PrintAdcValue(uint8_t adcChannel)
 {
-	if (adcChannel < ADC_BUFFER_SIZE)
+	if (adcChannel < ADC_CHANNEL_NUM)
 	{
 		// Print
 		CommandHandler_Printf("ADC: %d. value: %2.2f\r\n", adcChannel, ADC_ConvertedValues[adcChannel]);

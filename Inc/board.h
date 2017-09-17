@@ -228,14 +228,14 @@
 #ifdef CONFIG_USE_PANEL_NODESMALL
 
 
-#define BOARD_USE_ADC			ADC1
+#define BOARD_USE_ADC				ADC1
 
 
 #define ADC_COMMON_PORT				GPIOA
 #define ADC_COMMON_CLK_ENABLE()		__GPIOA_CLK_ENABLE()
 
 
-#define ADC_BUFFER_SIZE				( 5 )
+#define ADC_CHANNEL_NUM				( 5 )
 
 
 
@@ -288,7 +288,7 @@
 		__GPIOC_CLK_ENABLE()
 
 
-#define ADC_BUFFER_SIZE				( 5 )	
+#define ADC_CHANNEL_NUM				( 5 )	
 // now: Vsource, ligh, mic, prox, internal temp
 
 
@@ -343,7 +343,7 @@
 
 // ANALOG
 
-#define ADC_BUFFER_SIZE					(3)
+#define ADC_CHANNEL_NUM					(3)
 
 
 #define ADCx                            ADC1
@@ -1714,7 +1714,7 @@ BUTTON_LEFT			GPIOA15
 
 
 
-#define ADC_BUFFER_SIZE					(1)
+#define ADC_CHANNEL_NUM					(1)
 
 
 // VSOURCE_ADC

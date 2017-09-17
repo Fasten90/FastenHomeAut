@@ -40,8 +40,8 @@
  *----------------------------------------------------------------------------*/
 
 ADC_HandleTypeDef		AdcHandle;
-volatile uint32_t		ADC_MeasuredValues[ADC_BUFFER_SIZE];
-volatile float			ADC_ConvertedValues[ADC_BUFFER_SIZE];
+volatile uint32_t		ADC_MeasuredValues[ADC_CHANNEL_NUM];
+volatile float			ADC_ConvertedValues[ADC_CHANNEL_NUM];
 
 #ifdef CONFIG_DEBUG_SELFTEST
 volatile uint32_t		ADC_RunCnt = 0;
@@ -123,7 +123,7 @@ void ADC_Init(void)
 		Error_Handler();
 	}
 
-#if ADC_BUFFER_SIZE >= 2
+#if ADC_CHANNEL_NUM >= 2
 	/* Configuration of channel on ADCx regular group on sequencer rank 2 */
 	/* Replicate previous rank settings, change only channel and rank */
 	sConfig.Channel      = ADC_CHANNEL_2;
@@ -136,7 +136,7 @@ void ADC_Init(void)
 		Error_Handler();
 	}
 #endif
-#if ADC_BUFFER_SIZE >= 3
+#if ADC_CHANNEL_NUM >= 3
 	/* Configuration of channel on ADCx regular group on sequencer rank 3 */
 	/* Replicate previous rank settings, change only channel and rank */
 	sConfig.Channel      = ADC_CHANNEL_3;
@@ -150,14 +150,14 @@ void ADC_Init(void)
 	}
 #endif
 
-#if ADC_BUFFER_SIZE > 3
+#if ADC_CHANNEL_NUM > 3
 #warning "ADC num is not 3, need extend the channel configs"
 #endif
 
 	/* Start ADC conversion on regular group with transfer by DMA */
 	if (HAL_ADC_Start_DMA(&AdcHandle,
 						(uint32_t *)ADC_MeasuredValues,
-						ADC_BUFFER_SIZE
+						ADC_CHANNEL_NUM
 					   ) != HAL_OK)
 	{
 		/* Start Error */
@@ -191,16 +191,16 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(ADC_VSOURCE_GPIO_PORT, &GPIO_InitStruct);
 
-#if ADC_BUFFER_SIZE >= 2
+#if ADC_CHANNEL_NUM >= 2
 	GPIO_InitStruct.Pin = ADCx_CHANNEL_PIN_2;
 	HAL_GPIO_Init(ADCx_CHANNEL_GPIO_PORT, &GPIO_InitStruct);
 #endif
-#if ADC_BUFFER_SIZE >= 3
+#if ADC_CHANNEL_NUM >= 3
 	GPIO_InitStruct.Pin = ADCx_CHANNEL_PIN_3;
 	HAL_GPIO_Init(ADCx_CHANNEL_GPIO_PORT, &GPIO_InitStruct);
 #endif
 
-#if ADC_BUFFER_SIZE > 3
+#if ADC_CHANNEL_NUM > 3
 #warning "ADC num is not 3, need extend the channel configs"
 #endif
 
@@ -266,7 +266,7 @@ void ADC_ConvertAllMeasuredValues(void)
 	// TODO: We can convert in a loop, but some ADC not work in standard measuring
 	uint8_t i;
 
-	for (i = 0; i < ADC_BUFFER_SIZE; i++)
+	for (i = 0; i < ADC_CHANNEL_NUM; i++)
 	{
 		switch ((ADC_MeasurementData_t)i)
 		{
@@ -340,7 +340,7 @@ void ADC_PrintAllValues(void)
 {
 	uint8_t i;
 
-	for (i = 0; i < ADC_BUFFER_SIZE; i++)
+	for (i = 0; i < ADC_CHANNEL_NUM; i++)
 	{
 		uprintf("%d - %f", i, ADC_ConvertedValues[i]);
 	}

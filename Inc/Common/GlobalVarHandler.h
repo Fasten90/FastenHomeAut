@@ -34,7 +34,7 @@
 typedef uint8_t VarID_t;
 
 
-/// GlobalVariable type
+///< GlobalVariable type
 /// \note	This enum has an "name list" (GlobalVarTypesNames), Must be in the same order with it!
 typedef enum
 {
