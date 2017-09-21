@@ -291,12 +291,8 @@ static CommandResult_t CommandHandler_RunCommand(CommandID_t commandID)
 	{
 		// Good, found & argument num is ok
 
-//#pragma GCC diagnostic push
-//#pragma GCC diagnostic ignored "-Wpedantic"
 		// Call function
 		CommandHandlerFunctionPointer thisFunction = (CommandHandlerFunctionPointer)CommandList[commandID].commandFunctionPointer;
-//#pragma GCC diagnostic pop
-		// End of warning suppress
 
 		// Execute the command function
 		result = thisFunction(CommandHandler_CommandArgCount, (char**)CommandHandler_CommandArguments);
