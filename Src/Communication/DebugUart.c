@@ -51,11 +51,6 @@ bool DebugUart_SendEnable_flag = false;
 const bool DebugUart_CommandReceiveEnable = true;
 
 
-#if DEBUGUART_RXBUFFERSIZE != 256
-#warning "RxBufferCounter need to check!"
-#endif
-
-
 #if defined(CONFIG_USE_FREERTOS)
 xSemaphoreHandle DEBUG_USART_Rx_Semaphore;
 xSemaphoreHandle DEBUG_USART_Tx_Semaphore;

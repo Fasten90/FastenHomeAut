@@ -22,6 +22,7 @@
 #include "CommonAdc.h"
 
 
+
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
@@ -39,13 +40,13 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-// ADC handle declaration
+///< ADC handle declaration
 ADC_HandleTypeDef		AdcHandle;
 
-// Measured values
+///< Measured values
 volatile uint32_t		ADC_MeasuredValues[ADC_CHANNEL_NUM] = { 0 };
 
-// Calculated values
+///< Calculated values
 volatile float			ADC_ConvertedValues[ADC_CHANNEL_NUM] = { 0 };
 
 static uint8_t			ADC_PrintNum = 0;
@@ -77,6 +78,7 @@ volatile uint32_t		ADC_RunCnt = 0;
 /*------------------------------------------------------------------------------
  *  Global functions
  *----------------------------------------------------------------------------*/
+
 extern void Error_Handler(void);
 
 
@@ -121,10 +123,11 @@ void CommonADC_Init(void)
 	/*       temperature sensor) constraints.                                   */
 	/*       For example, sampling time of temperature sensor must be higher    */
 	/*       than 4us. Refer to device datasheet for min/typ/max values.        */
-	sConfig.Channel      = ADCx_CHANNEL_1;
-	sConfig.Rank         = 1;
 	sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
 	sConfig.Offset		 = 0;
+
+	sConfig.Channel      = ADCx_CHANNEL_1;
+	sConfig.Rank         = 1;
 
 	if (HAL_ADC_ConfigChannel(&AdcHandle, &sConfig) != HAL_OK)
 	{
@@ -135,9 +138,8 @@ void CommonADC_Init(void)
 #if ADC_CHANNEL_NUM >= 2
 	/* Configuration of channel on ADCx regular group on sequencer rank 2 */
 	/* Replicate previous rank settings, change only channel and rank */
-	sConfig.Channel      = ADC_CHANNEL_2;
+	sConfig.Channel      = ADCx_CHANNEL_2;
 	sConfig.Rank         = 2;
-	sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
 
 	if (HAL_ADC_ConfigChannel(&AdcHandle, &sConfig) != HAL_OK)
 	{
@@ -148,9 +150,8 @@ void CommonADC_Init(void)
 #if ADC_CHANNEL_NUM >= 3
 	/* Configuration of channel on ADCx regular group on sequencer rank 3 */
 	/* Replicate previous rank settings, change only channel and rank */
-	sConfig.Channel      = ADC_CHANNEL_3;
+	sConfig.Channel      = ADCx_CHANNEL_3;
 	sConfig.Rank         = 3;
-	sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
 
 	if (HAL_ADC_ConfigChannel(&AdcHandle, &sConfig) != HAL_OK)
 	{
@@ -240,7 +241,6 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 	/* NVIC configuration for DMA Input data interrupt */
 	HAL_NVIC_SetPriority(ADCx_DMA_IRQn, ADC_DMA_PREEMT_PRIORITY, ADC_DMA_SUB_PRIORITY);
 	HAL_NVIC_EnableIRQ(ADCx_DMA_IRQn);
-	
 }
 
 
@@ -281,7 +281,6 @@ void CommonADC_Test(void)
 		
 		DelayMs(1000);
 	}
-
 }
 
 

@@ -46,7 +46,7 @@
 /**
  * \brief	Check convert table (monotonity)
  */
-bool ConvertTable_Init(ConverTable_t *table)
+bool ConvertTable_Init(const ConverTable_t * table)
 {
 	// Check monotonity
 	uint16_t i;
@@ -66,7 +66,7 @@ bool ConvertTable_Init(ConverTable_t *table)
 /**
  * \brief	Get convert value (uint32_t --> float)
  */
-float ConvertTable_GetValue(const ConverTable_t *table, uint32_t value)
+float ConvertTable_GetValue(const ConverTable_t * table, uint32_t value)
 {
 	uint16_t i;
 	float retval = 0.0;

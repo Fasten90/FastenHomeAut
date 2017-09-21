@@ -42,8 +42,8 @@ typedef struct
 
 typedef struct
 {
-	ConvertTableRecord_t *recordList;		///< List (ADC-Converted value)
-	uint16_t size;							///< Size
+	const ConvertTableRecord_t *recordList;	///< List (ADC-Converted value)
+	const uint16_t size;					///< Size
 } ConverTable_t;
 
 
@@ -58,8 +58,8 @@ typedef struct
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-bool ConvertTable_Init(ConverTable_t *table);
-float ConvertTable_GetValue(const ConverTable_t *table, uint32_t value);
+bool ConvertTable_Init(const ConverTable_t * table);
+float ConvertTable_GetValue(const ConverTable_t * table, uint32_t value);
 void ConvertTable_UnitTest(void);
 
 

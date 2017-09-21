@@ -58,6 +58,7 @@ bool Get_SecuredBool(SecuredBool_t *data)
 	}
 	else
 	{
+		// Invalid
 		return false;
 	}
 }
@@ -65,7 +66,7 @@ bool Get_SecuredBool(SecuredBool_t *data)
 
 
 /**
- * \brief	Get secured bool value
+ * \brief	Set secured bool value
  */
 void Set_SecuredBool(SecuredBool_t *data, bool value)
 {
@@ -81,7 +82,7 @@ void Set_SecuredBool(SecuredBool_t *data, bool value)
 
 
 /**
- * \brief	Get secured bool value
+ * \brief	Get secured uint32_t value
  */
 uint32_t Get_SecuredUint32(SecuredUint32_t *data)
 {
@@ -97,6 +98,7 @@ uint32_t Get_SecuredUint32(SecuredUint32_t *data)
 	}
 	else
 	{
+		// Invalid
 		return 0;
 	}
 }
@@ -104,7 +106,7 @@ uint32_t Get_SecuredUint32(SecuredUint32_t *data)
 
 
 /**
- * \brief	Get secured bool value
+ * \brief	Set secured uint32_t value
  */
 void Set_SecuredUint32(SecuredUint32_t *data, uint32_t value)
 {

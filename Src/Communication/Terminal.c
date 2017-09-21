@@ -28,15 +28,12 @@
 #include "Terminal.h"
 
 
+
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-#if ( DEBUGUART_RXBUFFERSIZE != 256 )
-#warning "Ring buffer counter error (USART_RxBufferReadCnt)"
-#endif
-
-/// Receive buffers
+///< Receive buffer
 volatile char Terminal_CommandActual[TERMINAL_MAX_COMMAND_LENGTH] = { 0 };
 
 #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
@@ -49,10 +46,10 @@ volatile char Terminal_CommandActualEscape[4] = { 0 };
  *  Local variables
  *----------------------------------------------------------------------------*/
 
-/// Enable sending back: "Echo mode"
+///< Enable sending back: "Echo mode"
 static const bool Terminal_CommandSendBackCharEnable = true;
 
-/// Variables For CommandHandler
+///< Variables For CommandHandler
 static volatile bool Terminal_CommandReceivedEvent = false;
 static volatile bool Terminal_CommandReceivedNotLastChar = false;
 static volatile bool Terminal_CommandReadable = false;
@@ -70,7 +67,6 @@ static volatile uint8_t Terminal_CommandCursorPosition = 0;
 static volatile bool Terminal_CommandEscapeSequenceReceived = false;
 static volatile bool Terminal_CommandEscapeSequenceInProgress = false;
 static volatile uint8_t Terminal_CommandEscape_cnt = 0;
-
 
 
 #ifdef CONFIG_TERMINAL_HISTORY_ENABLE
@@ -110,6 +106,7 @@ static const char * const Terminal_HistoryInitList[] =
 
 #ifdef CONFIG_TERMINAL_GET_PASSWORD_ENABLE
 static const char Terminal_Password[] = "password";
+static bool Terminal_PasswordIsOk = false;
 #endif
 
 
@@ -142,6 +139,7 @@ static void Terminal_ConvertSmallLetter(void);
 
 #ifdef CONFIG_TERMINAL_GET_PASSWORD_ENABLE
 static void Terminal_GetPassword(void);
+inline static void Terminal_SendGetPassword(void);
 static bool Terminal_CheckPassword(const char *string);
 #endif
 
@@ -157,7 +155,6 @@ static bool Terminal_CheckPassword(const char *string);
  */
 void Terminal_Init(void)
 {
-
 	// Initialize
 
 	Terminal_CommandReceivedEvent = false;
@@ -190,22 +187,16 @@ void Terminal_Init(void)
 	// Start receive
 	DebugUart_StartReceive();
 
-#ifdef CONFIG_TERMINAL_GET_PASSWORD_ENABLE
-	Terminal_GetPassword();
-#endif
-
 	// End of initialization
 
 
+#ifdef CONFIG_TERMINAL_GET_PASSWORD_ENABLE
+	Terminal_SendGetPassword();
+#else
 	// Welcome message
 	Terminal_SendWelcome();
+#endif
 
-	Reset_PrintResetReasons();
-
-	TERMINAL_SEND_NEW_LINE();
-	TERMINAL_SEND_PROMT_NEW_LINE();			// New promt
-
-	return;
 }
 
 
@@ -219,18 +210,25 @@ void Terminal_CheckCommand(void)
 	//			it will be return after finished
 	while (1)
 	{
+#ifdef CONFIG_TERMINAL_GET_PASSWORD_ENABLE
+		if (!Terminal_PasswordIsOk)
+		{
+			Terminal_GetPassword();
+			return;
+		}
+#endif
 
 		// Always checking the Command
 		if (DebugUart_CommandReceiveEnable)
 		{
 
-			#ifdef CONFIG_USE_FREERTOS
+#ifdef CONFIG_USE_FREERTOS
 			// Wait semaphore
 			if (xSemaphoreTake(DEBUG_USART_Rx_Semaphore,1000) == pdTRUE)
 			{
 				Terminal_ProcessReceivedCharacter();
 			}
-			#else
+#else
 			// If not used FreeRTOS / EventHandler, always check characters
 			Terminal_ProcessReceivedCharacter();
 			#endif
@@ -329,7 +327,6 @@ void Terminal_CheckCommand(void)
 		}
 #endif
 	}
-
 	// Infinite loop, never exit, never reached here, if blocking mode
 }
 
@@ -342,7 +339,6 @@ static void Terminal_ProcessReceivedCharacter(void)
 {
 
 #ifndef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
-
 	// Find new received characters
 	CircularBuffer_FindLastMessage(&DebugUart_RxBuffStruct);
 
@@ -605,7 +601,6 @@ static bool Terminal_CommandEscapeCharValidation(void)
 	}
 
 	return false;
-
 }
 #endif	// #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 
@@ -745,9 +740,6 @@ static void Terminal_CommandDelete(void)
 			}
 		}
 	}
-
-	return;
-
 }
 #endif	// #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 
@@ -780,7 +772,7 @@ static void Terminal_CommandTabulator(void)
 
 			Terminal_CommandResendLine(false);
 
-			return;
+			break;
 		}
 	}
 }
@@ -825,8 +817,6 @@ static void Terminal_CommandResendLine(bool needRestoreCursor)
 		// Restore the position
 		CommandHandler_SendMessage(ESCAPE_RESTORECURSOR);
 	}
-
-	return;
 }
 #endif	// #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 
@@ -854,7 +844,6 @@ static void Terminal_InitHistory(void)
  */
 static void Terminal_HistorySave(void)
 {
-
 	// Has equal command?
 	if (Terminal_HistoryFindInList() == true)
 	{
@@ -878,9 +867,6 @@ static void Terminal_HistorySave(void)
 	StrCpyMax(Terminal_HistoryList[Terminal_HistorySaveCnt],
 			(char *)Terminal_CommandActual,
 			TERMINAL_MAX_COMMAND_LENGTH);
-
-	return;
-
 }
 #endif
 
@@ -909,7 +895,6 @@ static bool Terminal_HistoryFindInList(void)
 
 	// There is no equal command
 	return false;
-
 }
 #endif
 
@@ -921,8 +906,7 @@ static bool Terminal_HistoryFindInList(void)
  */
 static void Terminal_HistoryLoad(uint8_t direction)
 {
-
-	// down cursor
+	// Down cursor
 	if (direction == 0) // direction == 0
 	{
 		if (Terminal_HistoryLoadCnt >= (TERMINAL_HISTORY_MAX_COUNT-1))
@@ -935,7 +919,7 @@ static void Terminal_HistoryLoad(uint8_t direction)
 		}
 	}
 
-	// up cursor
+	// Up cursor
 	// if direction == 1, copy actual
 
 	// Copy command and set cursor
@@ -959,8 +943,6 @@ static void Terminal_HistoryLoad(uint8_t direction)
 			Terminal_HistoryLoadCnt--;
 		}
 	}
-
-	return;
 }
 #endif
 
@@ -982,8 +964,6 @@ static void Terminal_ConvertSmallLetter(void)
 			Terminal_CommandActual[i] = Terminal_CommandActual[i] - ('A' - 'a');
 		}
 	}
-
-	return;
 }
 
 
@@ -993,7 +973,6 @@ static void Terminal_ConvertSmallLetter(void)
  */
 void Terminal_SendWelcome(void)
 {
-
 	DelayMs(1);
 
 #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
@@ -1017,6 +996,11 @@ void Terminal_SendWelcome(void)
 	CommandHandler_Printf("Compile date: %s, %s\r\n", DATE_VERSION, TIME_VERSION);
 	CommandHandler_Printf("Used panel: %s\r\n", BOARD_NAME);
 #endif
+
+	Reset_PrintResetReasons();
+
+	TERMINAL_SEND_NEW_LINE();
+	TERMINAL_SEND_PROMT_NEW_LINE();			// New promt
 }
 
 
@@ -1038,56 +1022,66 @@ void Terminal_SendCls(void)
  */
 static void Terminal_GetPassword(void)
 {
-
-	bool passwordIsOk = false;
-
-	// Wait first character
-	CommandHandler_SendLine("\r\nType a character:");
-	while (DebugUart_RxBufferWriteCnt < 1);
-	cnt = 1;
-
-	while (!passwordIsOk)
+	if (!Terminal_PasswordIsOk)
 	{
-		CommandHandler_SendMessage("\r\nPassword:");
+		// Find new received characters
+		CircularBuffer_FindLastMessage(&DebugUart_RxBuffStruct);
 
-		bool isTry = true;
-		Terminal_CommandActualLength = 0;
+		// If WriteCnt not equal with ReadCnt, we have received message
+		char receiveBuffer[DEBUGUART_RXBUFFERSIZE+1];
+		uint16_t receivedMessageLength = 0;
 
-		while (isTry)
+		// Received new character?
+		if (CircularBuffer_HasNewMessage(&DebugUart_RxBuffStruct))
 		{
+			// Need copy to receiveBuffer
+			receivedMessageLength = CircularBuffer_GetCharacters(
+					&DebugUart_RxBuffStruct,
+					receiveBuffer,
+					true);
+		}
+		else
+		{
+			// Not received new characters
+			return;
+		}
 
-			// While Read cnt not equal than Write cnt
-			if (cnt != DebugUart_RxBufferWriteCnt)
-			{
-				volatile char USART_ReceivedChar = DebugUart_RxBuffer[cnt];
-				cnt++;
+		static uint16_t PasswordLength = 0;
+
+		if (PasswordLength != receivedMessageLength)
+		{
+			// Send '*' if pressed character
+			while (receivedMessageLength--)
 				CommandHandler_SendChar('*');
+		}
+		else
+		{
+			// There is no change
+			return;
+		}
 
-				if (USART_ReceivedChar == '\r' || USART_ReceivedChar == '\n')
-				{
-					// Pressed enter, check password
-					isTry = false;
-					Terminal_CommandActual[Terminal_CommandActualLength++] = '\0';
-					USART_SendNewLine();
-					if (Terminal_CheckPassword((const char*)Terminal_CommandActual))
-					{
-						// Successful password
-						CommandHandler_SendLine("Successful password!");
-						Terminal_CommandActualLength=0;
-						return;
-					}
-					else
-					{
-						// Failed password
-						CommandHandler_SendLine("Wrong password!");
-					}
-				}
-				else
-				{
-					// Copy character
-					Terminal_CommandActual[Terminal_CommandActualLength++] = USART_ReceivedChar;
-				}
+		// Check enter
+		if (STRING_FindString(receiveBuffer, "\r") || STRING_FindString(receiveBuffer, "\n"))
+		{
+			// Pressed enter, check password
+			StrTrim(receiveBuffer);
+			CommandHandler_SendLine("");
+			if (Terminal_CheckPassword((const char*)receiveBuffer))
+			{
+				// Successful password
+				CommandHandler_SendLine("Successful password!");
+				Terminal_PasswordIsOk = true;
+				Terminal_SendWelcome();
 			}
+			else
+			{
+				// Failed password
+				CommandHandler_SendLine("Wrong password!");
+			}
+
+			// TODO: Create Get&Clear function
+			CircularBuffer_ClearLast(&DebugUart_RxBuffStruct);
+			PasswordLength = 0;
 		}
 	}
 }
@@ -1095,19 +1089,21 @@ static void Terminal_GetPassword(void)
 
 
 /**
+ * \brief	Send "Get password" text
+ */
+inline static void Terminal_SendGetPassword(void)
+{
+	CommandHandler_SendMessage("\r\nPassword: ");
+}
+
+
+
+/**
  * \brief Check password
  */
-static bool Terminal_CheckPassword(const char *string)
+inline static bool Terminal_CheckPassword(const char *string)
 {
-	if (!StrCmp(string, Terminal_Password))
-	{
-		// Equal
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	return ((!StrCmp(string, Terminal_Password)) ? true : false);
 }
 
 #endif	// #ifdef CONFIG_TERMINAL_GET_PASSWORD_ENABLE

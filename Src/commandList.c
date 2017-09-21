@@ -48,6 +48,7 @@
 #include "Debug.h"
 #include "DebugList.h"
 #include "Logic.h"
+#include "ConvertTable.h"
 
 #include "CommandList.h"
 

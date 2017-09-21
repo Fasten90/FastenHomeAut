@@ -107,6 +107,7 @@ extern volatile char Terminal_CommandActual[TERMINAL_MAX_COMMAND_LENGTH];
 extern const bool DebugUart_CommandReceiveEnable;
 
 
+
 /*------------------------------------------------------------------------------
  *  Global function declarations
  *----------------------------------------------------------------------------*/

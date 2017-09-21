@@ -77,8 +77,6 @@ int main(void)
 	SystemClock_Config();
 
 
-	// USER CODE:
-
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
 	// EventLog
 	EventLog_Init();
@@ -421,8 +419,9 @@ void Assert_Function(char *file, uint32_t line, char *exp)
 
 void vApplicationTickHook( void )
 {
-	// TODO: What is this?
+	// Not used
 }
+
 /*-----------------------------------------------------------*/
 
 void vApplicationMallocFailedHook( void )
@@ -441,6 +440,7 @@ void vApplicationMallocFailedHook( void )
 	//for( ;; );
 	Error_Handler();
 }
+
 /*-----------------------------------------------------------*/
 
 void vApplicationIdleHook( void )
@@ -455,6 +455,7 @@ void vApplicationIdleHook( void )
 	function, because it is the responsibility of the idle task to clean up
 	memory allocated by the kernel to any task that has since been deleted. */
 }
+
 /*-----------------------------------------------------------*/
 
 void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName )
@@ -469,5 +470,7 @@ void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName )
 	//for( ;; );
 	Error_Handler();
 }
+
 /*-----------------------------------------------------------*/
+
 #endif	// #ifdef CONFIG_USE_FREERTOS

@@ -1220,7 +1220,7 @@ void StrTrim(char *str)
 
 	for (i = length; i > 0; i--)
 	{
-		if (str[i] == ' ')
+		if (str[i] == ' ' || str[i] == '\t' || str[i] == '\r' || str[i] == '\n')
 		{
 			// Replace ' ' to \0
 			str[i] = '\0';
@@ -1263,7 +1263,6 @@ int16_t STRING_FindString(const char *str, const char *findString)
 	}
 
 	return -1;
-
 }
 
 
