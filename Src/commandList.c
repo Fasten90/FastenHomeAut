@@ -717,6 +717,10 @@ static CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
 	EventHandler_UnitTest();
 #endif
 
+#ifdef MODULE_CONVERTTABLE_UNITTEST_ENABLE
+	ConvertTable_UnitTest();
+#endif
+
 	return CommandResult_Ok;
 }
 #endif	// #ifdef CONFIG_MODULE_UNITTEST_ENABLE
@@ -1254,7 +1258,7 @@ static CommandResult_t CommandFunction_GlobalVariableTrace(uint32_t argc,
 #ifdef CONFIG_MODULE_COMMON_DAC_ENABLE
 /**
  * \brief	DAC function
- * 			Use: 'dac <channel> <voltage>'
+ *			Use: 'dac <channel> <voltage>'
  */
 static CommandResult_t CommandFunction_dac(uint32_t argc, char** argv)
 {
@@ -1264,7 +1268,7 @@ static CommandResult_t CommandFunction_dac(uint32_t argc, char** argv)
 	uint32_t channelNum;
 	float voltage = 0.0f;
 
-	// Check 1. argument (num)
+	// Check 1. argument (channel num)
 	if (!StringToUnsignedDecimalNum(argv[1], &channelNum))
 	{
 		return CommandResult_Error_WrongArgument1;
