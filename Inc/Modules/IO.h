@@ -102,7 +102,7 @@ typedef enum
 void IO_Init(void);
 
 void IO_SetOutputState(Output_t outputpin, OutputState_t outstate);
-void IO_SetInputState(Input_t inputpin, InputState_t inputstate);
+bool IO_SetInputState(Input_t inputpin, InputState_t inputstate);
 
 InputState_t IO_GetInputState(Input_t inputpin);
 OutputState_t IO_GetOutputState(Output_t outputpin);

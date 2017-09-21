@@ -210,7 +210,7 @@
 
 	// Enabled modules
 	#define CONFIG_MODULE_DEBUGUSART_ENABLE
-	#define CONFIG_MODULE_TERMINAL_ENABLE
+	//#define CONFIG_MODULE_TERMINAL_ENABLE
 	//#define CONFIG_MODULE_FORMATTEDMESSAGE_ENABLE
 
 	#define CONFIG_MODULE_TASKHANDLER_ENABLE
@@ -335,8 +335,8 @@
 	//#define CONFIG_TERMINAL_USE_PUTTY
 
 
-	/// For wait password
-	#define CONFIG_TERMINAL_GET_PASSWORD_ENABLE
+	///< Wait password and until not received good password, commands are not evaluated
+	//#define CONFIG_TERMINAL_GET_PASSWORD_ENABLE
 
 
 	#define CONFIG_TERMINAL_PROMT_ENABLE
@@ -348,7 +348,7 @@
 	#ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 		// If you want use monitor program's history
 		// Turn off, if has small memory, now it need 1.5k RAM
-		#define CONFIG_TERMINAL_HISTORY_ENABLE
+		//#define CONFIG_TERMINAL_HISTORY_ENABLE
 	#endif
 
 #endif	// #ifdef CONFIG_MODULE_TERMINAL_ENABLE

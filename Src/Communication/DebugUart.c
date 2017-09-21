@@ -286,10 +286,12 @@ void DebugUart_ProcessReceivedCharacters(void)
 				receiveBuffer,
 				true);
 
-		// TODO: Create Get&Clear function
-		CircularBuffer_ClearLast(&DebugUart_RxBuffStruct);
-
-		uint8_t newLinePos = STRING_FindString(receiveBuffer, "\r\n");
+		// TODO: Do more beautiful solution
+		int16_t newLinePos = STRING_FindString(receiveBuffer, "\r");
+		if (newLinePos < 0)
+		{
+			newLinePos = STRING_FindString(receiveBuffer, "\n");
+		}
 
 		if (newLinePos > 0)
 		{
@@ -297,6 +299,9 @@ void DebugUart_ProcessReceivedCharacters(void)
 			// Search command and run
 			CommandHandler_PrepareFindExecuteCommand(
 				CommProt_DebugUart, (char *)receiveBuffer);
+
+			// TODO: Create Get&Clear function
+			CircularBuffer_ClearLast(&DebugUart_RxBuffStruct);
 		}
 
 		// TODO: Do not get all messages, which received. Only which are processed...

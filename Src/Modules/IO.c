@@ -259,8 +259,10 @@ void IO_SetOutputState(Output_t outputpin, OutputState_t outstate)
 /**
  * \brief	Set (Save) input state
  */
-void IO_SetInputState(Input_t inputpin, InputState_t inputstate)
+bool IO_SetInputState(Input_t inputpin, InputState_t inputstate)
 {
+	bool isOk = false;
+
 	if (inputpin < Input_Count && inputstate > InputState_Unknown && inputstate < InputState_Count)
 	{
 		// Values are okays
@@ -268,7 +270,11 @@ void IO_SetInputState(Input_t inputpin, InputState_t inputstate)
 
 		// TODO: Request task schedule...
 		//TaskHandler_RequestTaskScheduling(Task_);
+
+		isOk = true;
 	}
+
+	return isOk;
 }
 
 

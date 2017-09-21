@@ -67,7 +67,6 @@ void Assert_Function(char *file, uint32_t line, char *exp);
  */
 int main(void)
 {
-
 	/* MCU Configuration----------------------------------------------------------*/
 
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */

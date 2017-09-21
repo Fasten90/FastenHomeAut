@@ -746,7 +746,7 @@ static CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 	CommandHandler_SendLine("LED test");
 
 	// LEDs on
-	for (i=LED_NUM_MIN; i<=LED_NUM_MAX; i++)
+	for (i = LED_NUM_MIN; i <= LED_NUM_MAX; i++)
 	{
 		LED_SetLed(i, LED_Set_On);
 		DelayMs(500);
@@ -755,7 +755,7 @@ static CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 	Watchdog_Clear();
 
 	// LEDs off
-	for (i=LED_NUM_MIN; i<=LED_NUM_MAX; i++)
+	for (i = LED_NUM_MIN; i <= LED_NUM_MAX; i++)
 	{
 		LED_SetLed(i, LED_Set_Off);
 		DelayMs(500);
@@ -769,6 +769,7 @@ static CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 
 	CommandHandler_SendLine("\r\nButton test: Please press button!");
 
+	// TODO: Implement with Event...
 	while (!BUTTON_Clicked)
 	{
 		CommandHandler_SendChar('.');
@@ -777,7 +778,6 @@ static CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 	}
 
 	CommandHandler_SendLine("Button pressed");
-
 #endif
 
 
@@ -791,7 +791,6 @@ static CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 	CommandHandler_SendLine("Formatted message test");
 	FormattedMessage_Test();
 #endif
-
 
 	return CommandResult_Ok;
 }
@@ -2290,7 +2289,7 @@ static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
 				// cppcheck-suppress zerodiv
 				c = a/b;
 
-				uprintf("ZeroDivice result: %d\r\n", c);
+				uprintf("ZeroDivide result: %d\r\n", c);
 
 				result = CommandResult_Ok_SendSuccessful;
 			}
@@ -2323,8 +2322,14 @@ static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
 			uint32_t pin;
 			if (StringToUnsignedDecimalNum(argv[2], &pin))
 			{
-				IO_SetInputState((Input_t)pin, InputState_Active);
-				result = CommandResult_Ok_SendSuccessful;
+				if (IO_SetInputState((Input_t)pin, InputState_Active))
+				{
+					result = CommandResult_Ok_SendSuccessful;
+				}
+				else
+				{
+					result = CommandResult_Error_WrongArgument2;
+				}
 			}
 			else
 			{
@@ -2373,6 +2378,48 @@ static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
 			else
 			{
 				result = CommandResult_Error_TooFewArgument;
+			}
+		}
+#endif
+#ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
+		else if (!StrCmp("event", argv[1]))
+		{
+			// Generate an event
+			if (StringIsUnsignedDecimalString(argv[2]))
+			{
+				// Event "number"
+				uint32_t value;
+				if (StringToUnsignedDecimalNum(argv[2], &value))
+				{
+					EventHandler_GenerateEvent(value, 0, Task_ProcessDebugUartReceivedCommand);
+					result = CommandResult_Ok_SendSuccessful;
+				}
+				else
+				{
+					result = CommandResult_Error_WrongArgument2;
+				}
+			}
+			else
+			{
+				// Not number, search string in event list
+				EventId_t i;
+				bool isOk = false;
+
+				for (i = 0; i < EventsNum; i++)
+				{
+					if (!StrCmp(EventList[i].name, argv[2]))
+					{
+						// Equal
+						EventHandler_GenerateEvent(i, 0, Task_ProcessDebugUartReceivedCommand);
+						isOk = true;
+						break;
+					}
+				}
+
+				if (isOk)
+					result = CommandResult_Ok_SendSuccessful;
+				else
+					result = CommandResult_Error_WrongArgument2;
 			}
 		}
 #endif
