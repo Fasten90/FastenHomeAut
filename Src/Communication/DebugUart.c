@@ -171,11 +171,9 @@ bool DebugUart_SendLine(const char *message)
  */
 bool DebugUart_SendChar(char c)
 {
-
 	char buf[2];
 	buf[0] = c;
 	buf[1] = '\0';
-
 
 	if (DebugUart_WaitForSend(100))
 	{
@@ -270,41 +268,43 @@ static bool DebugUart_WaitForSend(uint16_t timeoutMilliSecond)
  */
 void DebugUart_ProcessReceivedCharacters(void)
 {
-
-	// Find new received characters
-	CircularBuffer_FindLastMessage(&DebugUart_RxBuffStruct);
-
-	// If WriteCnt not equal with ReadCnt, we have received message
-	char receiveBuffer[DEBUGUART_RXBUFFERSIZE+1];
-
-	// Received new character?
-	if (CircularBuffer_HasNewMessage(&DebugUart_RxBuffStruct))
+	if (DebugUart_CommandReceiveEnable)
 	{
-		// Need copy to receiveBuffer
-		CircularBuffer_GetCharacters(
-				&DebugUart_RxBuffStruct,
-				receiveBuffer,
-				true);
+		// Find new received characters
+		CircularBuffer_FindLastMessage(&DebugUart_RxBuffStruct);
 
-		// TODO: Do more beautiful solution
-		int16_t newLinePos = STRING_FindString(receiveBuffer, "\r");
-		if (newLinePos < 0)
+		// If WriteCnt not equal with ReadCnt, we have received message
+		char receiveBuffer[DEBUGUART_RXBUFFERSIZE+1];
+
+		// Received new character?
+		if (CircularBuffer_HasNewMessage(&DebugUart_RxBuffStruct))
 		{
-			newLinePos = STRING_FindString(receiveBuffer, "\n");
+			// Need copy to receiveBuffer
+			CircularBuffer_GetCharacters(
+					&DebugUart_RxBuffStruct,
+					receiveBuffer,
+					true);
+
+			// TODO: Do more beautiful solution
+			int16_t newLinePos = STRING_FindString(receiveBuffer, "\r");
+			if (newLinePos < 0)
+			{
+				newLinePos = STRING_FindString(receiveBuffer, "\n");
+			}
+
+			if (newLinePos > 0)
+			{
+				receiveBuffer[newLinePos] = '\0';
+				// Search command and run
+				CommandHandler_PrepareFindExecuteCommand(
+					CommProt_DebugUart, (char *)receiveBuffer);
+
+				// TODO: Create Get&Clear function
+				CircularBuffer_ClearLast(&DebugUart_RxBuffStruct);
+			}
+
+			// TODO: Do not get all messages, which received. Only which are processed...
 		}
-
-		if (newLinePos > 0)
-		{
-			receiveBuffer[newLinePos] = '\0';
-			// Search command and run
-			CommandHandler_PrepareFindExecuteCommand(
-				CommProt_DebugUart, (char *)receiveBuffer);
-
-			// TODO: Create Get&Clear function
-			CircularBuffer_ClearLast(&DebugUart_RxBuffStruct);
-		}
-
-		// TODO: Do not get all messages, which received. Only which are processed...
 	}
 }
 #endif

@@ -228,6 +228,7 @@ static GPIO_TypeDef * IO_GetPort(char port)
 
 		default:
 			GPIO_port = NULL;
+			break;
 	}
 
 	return GPIO_port;
@@ -248,53 +249,70 @@ static uint32_t IO_GetPin(uint8_t pin)
 		case 0:
 			returnPin = GPIO_PIN_0;
 			break;
+
 		case 1:
 			returnPin = GPIO_PIN_1;
 			break;
+
 		case 2:
 			returnPin = GPIO_PIN_2;
 			break;
+
 		case 3:
 			returnPin = GPIO_PIN_3;
 			break;
+
 		case 4:
 			returnPin = GPIO_PIN_4;
 			break;
+
 		case 5:
 			returnPin = GPIO_PIN_5;
 			break;
+
 		case 6:
 			returnPin = GPIO_PIN_6;
 			break;
+
 		case 7:
 			returnPin = GPIO_PIN_7;
 			break;
+
 		case 8:
 			returnPin = GPIO_PIN_8;
 			break;
+
 		case 9:
 			returnPin = GPIO_PIN_9;
 			break;
+
 		case 10:
 			returnPin = GPIO_PIN_10;
 			break;
+
 		case 11:
 			returnPin = GPIO_PIN_11;
 			break;
+
 		case 12:
 			returnPin = GPIO_PIN_12;
 			break;
+
 		case 13:
 			returnPin = GPIO_PIN_13;
 			break;
+
 		case 14:
 			returnPin = GPIO_PIN_14;
 			break;
+
 		case 15:
 			returnPin = GPIO_PIN_15;
 			break;
+
 		default:
 			returnPin = 0xFFFFFFFFU;
+			break;
 	}
 
 	return returnPin;
@@ -307,7 +325,8 @@ static uint32_t IO_GetPin(uint8_t pin)
  */
 static uint32_t IO_GetMode(IO_Type io)
 {
-	uint32_t iomode;
+	uint32_t iomode = 0;
+
 	switch (io)
 	{
 		case IO_INPUT:

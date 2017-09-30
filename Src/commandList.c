@@ -1093,7 +1093,6 @@ static CommandResult_t CommandFunction_led(uint32_t argc, char** argv)
 		result = CommandResult_Error_WrongArgument1;
 	}
 
-	
 	return result;
 }
 #endif

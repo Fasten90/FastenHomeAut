@@ -58,7 +58,7 @@ DebugRecord_t DebugTasks[] =
 
 	/*
 	 * XXX: Add here new Debug task struct
-	 * \note	Do not forget syncronize with Debug_t enum
+	 * \note	Do not forget synchronize with Debug_t enum
 	 */
 };
 
@@ -82,14 +82,3 @@ uint8_t DebugTaskListNum = NUM_OF(DebugTasks);
 /*------------------------------------------------------------------------------
  *  Functions
  *----------------------------------------------------------------------------*/
-
-
-/**
- * \brief
- */
-void DebugList_Init(void)
-{
-
-}
-
-

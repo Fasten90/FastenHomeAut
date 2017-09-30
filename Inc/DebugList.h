@@ -47,7 +47,7 @@ typedef enum
 
 	/*
 	 * XXX: Add here new Debug task enums
-	 * \note	Do not forget syncronize with DebugTasks
+	 * \note	Do not forget synchronize with DebugTasks
 	 */
 
 	// Do not use, it used for enum count
