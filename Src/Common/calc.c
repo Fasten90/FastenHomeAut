@@ -52,7 +52,9 @@ uint32_t power_secured(uint32_t a, uint8_t b)
 	uint32_t prevNum;
 
 	if (b == 0)
+	{
 		num = 1;
+	}
 	else
 	{
 		num = a;
@@ -64,12 +66,12 @@ uint32_t power_secured(uint32_t a, uint8_t b)
 			{
 				// Overflow! Return with "largest" value
 				num = prevNum;
+
 				break;
 			}
 			else
 			{
-				// Save value
-				prevNum = num;
+				prevNum = num;		// Save value
 			}
 		}
 	}
@@ -106,7 +108,9 @@ uint8_t DigitNum(uint32_t num, uint8_t radix)
 inline uint32_t Increment(uint32_t * i)
 {
 	if (*i < UINT32_MAX)
+	{
 		(*i)++;
+	}
 
 	return (*i);
 }
@@ -116,7 +120,9 @@ inline uint32_t Increment(uint32_t * i)
 inline uint32_t Decrement(uint32_t * i)
 {
 	if (*i > 0)
+	{
 		(*i)--;
+	}
 
 	return (*i);
 }
@@ -130,7 +136,6 @@ inline uint32_t Decrement(uint32_t * i)
 void Calc_UnitTest(void)
 {
 	UnitTest_Start("Calc", __FILE__);
-
 
 	/*		 Test power()		*/
 	UNITTEST_ASSERT(power(0, 0)==1, "power error");
@@ -147,7 +152,6 @@ void Calc_UnitTest(void)
 	UNITTEST_ASSERT(power(2, 32)==0, "power error");
 
 
-
 	/*		power_secured()		*/
 	UNITTEST_ASSERT(power_secured(0, 0)==1, "power error");
 	UNITTEST_ASSERT(power_secured(1, 0)==1, "power error");
@@ -159,9 +163,9 @@ void Calc_UnitTest(void)
 	UNITTEST_ASSERT(power_secured(2, 10)==1024, "power error");
 	UNITTEST_ASSERT(power_secured(2, 16)==65536, "power error");
 	UNITTEST_ASSERT(power_secured(1024, 0)==1, "power error");
+
 	// Overflow - but last
 	UNITTEST_ASSERT(power_secured(2, 32)==2147483648, "power error");
-
 
 
 	/*		DigitNum()			*/
@@ -178,7 +182,6 @@ void Calc_UnitTest(void)
 	UNITTEST_ASSERT(DigitNum(999, 10) == 3, "DigitNum error");
 
 
-
 	/*		Increment()			*/
 	uint32_t num = 0;
 	// Check with normal example
@@ -188,7 +191,6 @@ void Calc_UnitTest(void)
 	num = UINT32_MAX;
 	UNITTEST_ASSERT(Increment(&num)==UINT32_MAX, "Increment error");
 	UNITTEST_ASSERT(num==UINT32_MAX, "Increment error");
-
 
 
 	/*		Decrement()			*/
@@ -202,9 +204,7 @@ void Calc_UnitTest(void)
 	UNITTEST_ASSERT(num==0, "Decrement error");
 
 
-
 	// Finish
 	UnitTest_End();
-
 }
 #endif

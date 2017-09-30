@@ -12,7 +12,6 @@
 #ifndef COMMANDHANDLER_H_
 #define COMMANDHANDLER_H_
 
-
 #include "Communication.h"
 #include "EscapeSequence.h"
 #include "include.h"
@@ -20,13 +19,12 @@
 #include "version.h"
 
 
+
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-
 //	Config defines
-
 #define COMMANDHANDLER_MAX_MESSAGE_LENGTH			(255U)
 #define COMMANDHANDLER_MAX_COMMAND_LENGTH			(255U)
 #define COMMANDHANDLER_COMMAND_ARG_MAX_COUNT		(3)
@@ -37,7 +35,6 @@
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
-
 
 ///< Command results
 typedef enum
@@ -119,6 +116,7 @@ void CommandHandler_SearchCommandAndPrintHelp(const char *command);
 bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source, char *command);
 
 void CommandHandler_UnitTest(void);
+
 
 
 #endif /* COMMANDHANDLER_H_ */

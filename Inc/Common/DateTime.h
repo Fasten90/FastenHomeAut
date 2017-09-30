@@ -29,20 +29,19 @@
  *----------------------------------------------------------------------------*/
 
 // 2017-01-10 19:56:00\0
-#define DATETIME_STRING_MAX_LENGTH				( 20 )
+#define DATETIME_STRING_MAX_LENGTH				(20)
 
-#define DATETIME_DATE_YEAR_MAX_FULL_VALUE		( 2050 )
-#define DATETIME_DATE_YEAR_MIN_FULL_VALUE		( 2017 )
-#define DATETIME_DATE_YEAR_MAX_VALUE			( DATETIME_DATE_YEAR_MAX_FULL_VALUE - 2000 )
-#define DATETIME_DATE_YEAR_MIN_VALUE			( DATETIME_DATE_YEAR_MIN_FULL_VALUE - 2000 )
+#define DATETIME_DATE_YEAR_MAX_FULL_VALUE		(2050)
+#define DATETIME_DATE_YEAR_MIN_FULL_VALUE		(2017)
+#define DATETIME_DATE_YEAR_MAX_VALUE			(DATETIME_DATE_YEAR_MAX_FULL_VALUE - 2000)
+#define DATETIME_DATE_YEAR_MIN_VALUE			(DATETIME_DATE_YEAR_MIN_FULL_VALUE - 2000)
 
 
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-
-/// Date structure
+///< Date structure
 typedef struct
 {
 	uint8_t year;		///< Year - from 2000 (example: 2017 --> value 17
@@ -51,8 +50,7 @@ typedef struct
 } Date_t;
 
 
-
-/// Time structure
+///< Time structure
 typedef struct
 {
 	uint8_t hour;		///< Hour:	0-23
@@ -61,8 +59,7 @@ typedef struct
 } Time_t;
 
 
-
-/// DateTime structure
+///< DateTime structure
 typedef struct
 {
 	Date_t date;		///< Date
@@ -70,9 +67,8 @@ typedef struct
 } DateTime_t;
 
 
-
 #ifdef DATETIME_OLD_CODE
-/// DateTime string structure
+///< DateTime string structure
 typedef struct
 {
 	char year[4];				// 2017
@@ -91,7 +87,7 @@ typedef struct
 #endif
 
 
-
+///< DateTime compare results (two DateTime compared)
 typedef enum
 {
 	DateTimeCompare_Unknown,
@@ -103,6 +99,7 @@ typedef enum
 	DateTimeCompare_Invalid,
 	DateTimeCompare_Error_Parameter
 } DateTimeCompare_t;
+
 
 
 /*------------------------------------------------------------------------------
@@ -118,6 +115,7 @@ extern DateTime_t DateTime_SystemTime;
 /*------------------------------------------------------------------------------
  *  Global function declarations
  *----------------------------------------------------------------------------*/
+
 bool DateTime_ConvertStringToDateTime(const char *string, DateTime_t *dateTime);
 
 bool DateTime_ConvertDateStringToDate(char *str, Date_t *date);
@@ -139,13 +137,13 @@ void DateTime_SetTime(Time_t *time);
 #else
 
 #ifdef CONFIG_MODULE_RTC_ENABLE
-#define DateTime_GetDateTime(dateTime)		RTC_GetDateTime(&dateTime)
-#define DateTime_SetDate(date)				RTC_SetDate(date)
-#define DateTime_SetTime(time)				RTC_SetTime(time)
+	#define DateTime_GetDateTime(dateTime)		RTC_GetDateTime(&dateTime)
+	#define DateTime_SetDate(date)				RTC_SetDate(date)
+	#define DateTime_SetTime(time)				RTC_SetTime(time)
 #else
-#define DateTime_GetDateTime(_dateTime)		memcpy(_dateTime, &DateTime_SystemTime, sizeof(DateTime_t))
-#define DateTime_SetDate(_date)				memcpy(&DateTime_SystemTime.date, _date, sizeof(Date_t))
-#define DateTime_SetTime(_time)				memcpy(&DateTime_SystemTime.time, _time, sizeof(Time_t))
+	#define DateTime_GetDateTime(_dateTime)		memcpy(_dateTime, &DateTime_SystemTime, sizeof(DateTime_t))
+	#define DateTime_SetDate(_date)				memcpy(&DateTime_SystemTime.date, _date, sizeof(Date_t))
+	#define DateTime_SetTime(_time)				memcpy(&DateTime_SystemTime.time, _time, sizeof(Time_t))
 #endif
 
 #endif
@@ -153,6 +151,7 @@ void DateTime_SetTime(Time_t *time);
 #ifdef MODULE_DATETIME_UNITTEST_ENABLE
 void DateTime_UnitTest(void);
 #endif
+
 
 
 #endif /* DATETIME_H_ */

@@ -19,7 +19,9 @@
 #include "CommonSPI.h"
 
 
+
 #ifdef CONFIG_MODULE_COMMONSPI_ENABLE
+
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
@@ -42,9 +44,13 @@
  *  Functions
  *----------------------------------------------------------------------------*/
 
+/*
+ * TODO: This module is not finished!!
+ */
+
 
 /**
- * \brief
+ * \brief	Common SPI initialization for general SPI message sending (IT mode)
  */
 void CommonSPI_Init(void)
 {
@@ -149,8 +155,8 @@ void CommonSPI_Init(void)
 	  while (HAL_SPI_GetState(&SpiHandle) != HAL_SPI_STATE_READY)
 	  {
 	  }
-
 }
+
 
 
 #endif	// CONFIG_MODULE_COMMONSPI_ENABLE

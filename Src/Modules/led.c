@@ -11,17 +11,26 @@
 
 
 
+/*------------------------------------------------------------------------------
+ *  Header files
+ *----------------------------------------------------------------------------*/
+
+#include "LED.h"
 #include "options.h"
 #include "board.h"
 
 #include "String.h"
 #include "Globals.h"
-#include "LED.h"
 
 
 
 #ifdef CONFIG_MODULE_LED_ENABLE
 
+
+
+/*------------------------------------------------------------------------------
+ *  Global variables
+ *----------------------------------------------------------------------------*/
 
 ///< LED names
 const char * const LED_NameList[] =
@@ -36,7 +45,7 @@ const char * const LED_NameList[] =
 #else
 #warning "Miss CONFIG_USE_PANEL_.. define in LED names"
 #endif
-};				///< LED names
+};
 
 
 ///< LED types
@@ -51,14 +60,20 @@ const char * const LED_TypeNameList[] =
 };
 
 
-// Function prototypes
+
+/*------------------------------------------------------------------------------
+ *  Function declarations
+ *----------------------------------------------------------------------------*/
 
 static bool LED_SetRedLed(LED_SetType_t ledSet);
 static bool LED_SetBlueLed(LED_SetType_t ledSet);
 static bool LED_SetGreenLed(LED_SetType_t ledSet);
 
 
-// Functions
+
+/*------------------------------------------------------------------------------
+ *  Functions
+ *----------------------------------------------------------------------------*/
 
 
 /**
@@ -94,7 +109,6 @@ void LED_Init(void)
 	LED_RED_OFF();
 	LED_BLUE_OFF();
 	LED_GREEN_OFF();
-	
 }
 
 
@@ -138,22 +152,24 @@ static bool LED_SetGreenLed(LED_SetType_t ledSet)
 		case LED_Set_On:
 			LED_GREEN_ON();
 			break;
+
 		case LED_Set_Off:
 			LED_GREEN_OFF();
 			break;
+
 		case LED_Set_Toggle:
 			LED_GREEN_TOGGLE();
 			break;
+
 		case LED_Get_Status:
-			break;
 		case LED_Set_DontCare:
 		case LED_Type_Count:
-			// Do not use
-			break;
 		default:
+			// Do nothing
 			break;
 	}
 
+	// Return with LED status, so LED_Get_Status state is handled with this
 	return LED_GREEN_STATUS();
 }
 
@@ -170,19 +186,20 @@ static bool LED_SetBlueLed(LED_SetType_t ledSet)
 		case LED_Set_On:
 			LED_BLUE_ON();
 			break;
+
 		case LED_Set_Off:
 			LED_BLUE_OFF();
 			break;
+
 		case LED_Set_Toggle:
 			LED_BLUE_TOGGLE();
 			break;
+
 		case LED_Get_Status:
-			break;
 		case LED_Set_DontCare:
 		case LED_Type_Count:
-			// Do not use
-			break;
 		default:
+			// Do nothing
 			break;
 	}
 
@@ -202,19 +219,20 @@ static bool LED_SetRedLed(LED_SetType_t ledSet)
 		case LED_Set_On:
 			LED_RED_ON();
 			break;
+
 		case LED_Set_Off:
 			LED_RED_OFF();
 			break;
+
 		case LED_Set_Toggle:
 			LED_RED_TOGGLE();
 			break;
+
 		case LED_Get_Status:
-			break;
 		case LED_Set_DontCare:
 		case LED_Type_Count:
-			// Do not use
-			break;
 		default:
+			// Do nothing
 			break;
 	}
 
@@ -238,9 +256,11 @@ bool LED_SetLed(LED_Pin_t pin, LED_SetType_t ledSet)
 		case LED_Green:
 			state = LED_SetGreenLed(ledSet);
 			break;
+
 		case LED_Blue:
 			state = LED_SetBlueLed(ledSet);
 			break;
+
 		case LED_Red:
 			state = LED_SetRedLed(ledSet);
 			break;
@@ -257,7 +277,6 @@ bool LED_SetLed(LED_Pin_t pin, LED_SetType_t ledSet)
 	}
 
 	return state;
-
 }
 
 
@@ -277,12 +296,15 @@ bool LED_GetStatus(LED_Pin_t pin)
 		case LED_Green:
 			status = LED_GREEN_STATUS();
 			break;
+
 		case LED_Blue:
 			status = LED_BLUE_STATUS();
 			break;
+
 		case LED_Red:
 			status = LED_RED_STATUS();
 			break;
+
 #elif CONFIG_USE_PANEL_NUCLEOF401RE
 		case LED_Green:
 			status = LED_GREEN_STATUS();
@@ -319,7 +341,6 @@ LED_Pin_t LED_GetNumFromName(const char *name)
 	}
 
 	return ledNum;
-
 }
 
 

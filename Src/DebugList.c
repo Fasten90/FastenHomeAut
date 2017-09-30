@@ -29,25 +29,11 @@
 ///< Debug(task) list
 DebugRecord_t DebugTasks[] =
 {
-#ifdef CONFIG_MODULE_ESP8266_ENABLE
-	{
-		.name = "ESP8266",
-		.isEnabled = true,
-		.color = Color_Blue,
-	},
-#endif
 #ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
 	{
 		.name = "Event",
 		.isEnabled = true,
 		.color = Color_Blue,
-	},
-#endif
-#ifdef CONFIG_FUNCTION_GAME_SNAKE
-	{
-		.name = "Snake",
-		.isEnabled = true,
-		.color = Color_Green
 	},
 #endif
 	{
@@ -82,3 +68,5 @@ uint8_t DebugTaskListNum = NUM_OF(DebugTasks);
 /*------------------------------------------------------------------------------
  *  Functions
  *----------------------------------------------------------------------------*/
+
+

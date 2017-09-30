@@ -9,14 +9,12 @@
  *		Last modified:	2017-01-16
  */
 
-
-
+#include "CommandList.h"
 #include <stdint.h>
 #include <stdarg.h>
-
 #include "String.h"
+
 #include "DebugUart.h"
-#include "CommandList.h"
 #include "EscapeSequence.h"
 #include "GlobalVarHandler.h"
 #include "CommandHandler.h"
@@ -67,13 +65,11 @@ static CommandResult_t CommandHandler_CheckArgumentNumIsGood(uint8_t receivedArg
  *								Functions
  *----------------------------------------------------------------------------*/
 
-
 /**
  * \brief	Initialize CommandHandler program
  */
 void CommandHandler_Init(void)
 {
-
 #if defined(CONFIG_MODULE_GLOBALVARHANDLER_ENABLE) && defined(CONFIG_GLOBALVARHANDLER_CHECK_ENABLE)
 	// Check GlobalVarList[]
 	GlobalVarHandler_CheckCommandStructAreValid();
@@ -132,10 +128,7 @@ bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source, char *comma
 #if defined(CONFIG_COMMANDHANDLER_NOTIFY_NOT_DEBUG_COMMAND) && defined(CONFIG_MODULE_DEBUGUSART_ENABLE)
 	if (source != CommProt_DebugUart)
 	{
-		uprintf("Received command: \"%s\", from %s\r\n",
-			command,
-			COMMUNICATION_GetProtocolName(source)
-			);
+		uprintf("Received command: \"%s\", from %s\r\n",command, COMMUNICATION_GetProtocolName(source));
 	}
 #endif
 
@@ -152,8 +145,7 @@ bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source, char *comma
  */
 static uint8_t CommandHandler_CommandParser(void)
 {
-
-	uint8_t commandArgCount = 0;
+	uint8_t commandArgCount;
 
 	commandArgCount = STRING_Splitter((char*)CommandHandler_ProcessedCommandActual,
 			CommandHandler_DelimiterChar, CommandHandler_CommandArguments,
@@ -178,7 +170,6 @@ static uint8_t CommandHandler_CommandParser(void)
  */
 static bool CommandHandler_SearchCommand(void)
 {
-
 	CommandID_t i;
 	bool CommandValid = false;
 	CommandResult_t result = CommandResult_Error_CommandNotFound;
@@ -260,7 +251,7 @@ static void CommandHandler_CheckResultAndRespond(CommandResult_t result)
 			break;
 
 		case CommandResult_Error_CommandNotFound:
-			pMessage = 	"Unknown Command\r\n"
+			pMessage = "Unknown Command\r\n"
 						"Type \"help\" for help";
 			break;
 
@@ -279,7 +270,6 @@ static void CommandHandler_CheckResultAndRespond(CommandResult_t result)
  */
 static CommandResult_t CommandHandler_RunCommand(CommandID_t commandID)
 {
-
 	CommandResult_t result;
 	bool needWriteHelp = false;
 
@@ -365,7 +355,6 @@ void CommandHandler_SearchCommandAndPrintHelp(const char *command)
  */
 void CommandHandler_PrintCommandHelp(CommandID_t commandID)
 {
-
 	// Print command to source
 	CommandHandler_Printf(
 			"Command name: %s\r\n"
@@ -479,7 +468,6 @@ void CommandHandler_SendChar(char c)
  */
 void CommandHandler_Printf(const char *format, ...)
 {
-
 	// Working in at:
 	char txBuffer[COMMANDHANDLER_MAX_MESSAGE_LENGTH];
 
@@ -509,7 +497,6 @@ void CommandHandler_Printf(const char *format, ...)
  */
 void CommandHandler_UnitTest(void)
 {
-
 	// Start of unittest
 	UnitTest_Start("CommandHandler", __FILE__);
 
@@ -575,10 +562,8 @@ void CommandHandler_UnitTest(void)
 	UNITTEST_ASSERT(!StrCmp(CommandHandler_CommandArguments[2], "lot"),
 			"CommandHandler_PrepareFindExecuteCommand error");
 
-
 	// End of unittest
 	UnitTest_End();
-
 }
 
 #endif

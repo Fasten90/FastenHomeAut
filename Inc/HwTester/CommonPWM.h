@@ -14,7 +14,11 @@
 
 
 
+#include "options.h"
+
 #ifdef CONFIG_MODULE_COMMON_PWM_ENABLE
+
+
 
 /*------------------------------------------------------------------------------
  *  Includes

@@ -51,7 +51,6 @@
  *----------------------------------------------------------------------------*/
 
 
-
 /**
  * \brief	Initialize CircularBuffer
  */
@@ -179,6 +178,7 @@ void CircularBuffer_FindLastMessage(CircularBufferInfo_t *circBuff)
 {
 	// TODO: Not a good solve...
 	uint16_t i = 0;
+
 	while (circBuff->buffer[circBuff->writeCnt])
 	{
 		++circBuff->writeCnt;
@@ -246,8 +246,7 @@ void CircularBuffer_UnitTest(void)
 	buffer256_readCnt = 0;
 
 	// Test: Get characters
-	CircularBuffer_GetCharacters(buffer256, emptyBuffer,
-			256, buffer256_writeCnt, buffer256_readCnt, true);
+	CircularBuffer_GetCharacters(buffer256, emptyBuffer, 256, buffer256_writeCnt, buffer256_readCnt, true);
 
 	result = !StrCmp(emptyBuffer, "0123456789");
 	UNITTEST_ASSERT(result, "ERROR in GetCharacters()");
@@ -285,8 +284,7 @@ void CircularBuffer_UnitTest(void)
 	buffer256[256] = 0xEF;	// "After buffer"
 
 	// Test: Get characters
-	CircularBuffer_GetCharacters(buffer256, emptyBuffer,
-			256, buffer256_writeCnt, buffer256_readCnt, true);
+	CircularBuffer_GetCharacters(buffer256, emptyBuffer, 256, buffer256_writeCnt, buffer256_readCnt, true);
 
 	result = !StrCmp(emptyBuffer, "1234567890");
 	UNITTEST_ASSERT(result, "ERROR in GetCharacters()");
@@ -310,7 +308,6 @@ void CircularBuffer_UnitTest(void)
 	UNITTEST_ASSERT(buffer256[256] == 0xEF, "ERROR: Clear() is overflowed()");
 
 
-
 	// Test: writeCnt > BUFFER_SIZE
 
 	buffer256[255] = 0xEF;	// In buffer end
@@ -322,6 +319,5 @@ void CircularBuffer_UnitTest(void)
 
 	// Finish unittest
 	UnitTest_End();
-
 }
 #endif

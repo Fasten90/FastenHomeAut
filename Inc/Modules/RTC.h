@@ -9,7 +9,6 @@
  *		Last modified:	2017-01-17
  */
 
-
 #ifndef RTC_H_
 #define RTC_H_
 
@@ -28,9 +27,10 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-/* Defines related to Clock configuration */
-#define RTC_ASYNCH_PREDIV  0x7F   /* LSE as RTC clock */
-#define RTC_SYNCH_PREDIV   0x00FF /* LSE as RTC clock */
+// Defines related to Clock configuration
+#define RTC_ASYNCH_PREDIV	0x7F	// LSE as RTC clock
+#define RTC_SYNCH_PREDIV	0x00FF	// LSE as RTC clock
+
 
 
 /*------------------------------------------------------------------------------
@@ -48,6 +48,7 @@
 /*------------------------------------------------------------------------------
  *  Global function declarations
  *----------------------------------------------------------------------------*/
+
 void RTC_Init(void);
 void HAL_RTC_MspInit(RTC_HandleTypeDef *hrtc);
 

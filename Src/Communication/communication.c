@@ -11,9 +11,9 @@
 
 
 
+#include <stdarg.h>
 #include "options.h"
 #include "include.h"
-#include <stdarg.h>
 #include "String.h"
 #include "DebugUart.h"
 #include "ESP8266.h"
@@ -47,6 +47,7 @@ static const char * const ProtocolNameList[] =
 };
 
 
+
 /*------------------------------------------------------------------------------
  *  Functions
  *----------------------------------------------------------------------------*/
@@ -65,6 +66,7 @@ uint8_t COMMUNICATION_SendMessage(CommProtocol_t protocol, const char *message)
 			// Unknown, send on debug
 			length = DebugUart_SendMessage(message);
 			break;
+
 		case CommProt_DebugUart:
 			// Send on Usart
 			length = DebugUart_SendMessage(message);
@@ -112,6 +114,7 @@ uint8_t COMMUNICATION_SendChar(CommProtocol_t protocol, char c)
 			// Unknown, send on debug
 			DebugUart_SendChar(c);
 			break;
+
 		case CommProt_DebugUart:
 			DebugUart_SendChar(c);
 			break;

@@ -17,6 +17,7 @@
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
+
 #include "options.h"
 #include "GenericTypeDefs.h"
 #include "EventList.h"
@@ -46,7 +47,7 @@
 typedef uint8_t		EventLogCnt_t;
 
 #if CONFIG_EVENTLOG_LOG_SIZE > 255
-#error "LogCnt_t type is wrong!"
+	#error "LogCnt_t type is wrong!"
 #endif
 
 

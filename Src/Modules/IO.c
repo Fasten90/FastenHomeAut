@@ -100,14 +100,17 @@ const char * const IO_OutputStateNames[] =
  *----------------------------------------------------------------------------*/
 
 
+
 /*------------------------------------------------------------------------------
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
 
+
 /*------------------------------------------------------------------------------
  *  Local functions
  *----------------------------------------------------------------------------*/
+
 
 
 /*------------------------------------------------------------------------------
@@ -138,12 +141,11 @@ void IO_Init(void)
 	GPIO_InitTypeDef GPIO_InitStruct;
 #endif
 
-	
+
 #ifdef CONFIG_MODULE_IO_OUTPUT_EXAMPLE_ENABLE
 	// OUTPUTS - RELAYS
 	
 	RELAY_PINS_CLK_ENABLES();
-	
 	
 	GPIO_InitStruct.Pin = RELAY_1_GPIO_PIN;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -151,12 +153,10 @@ void IO_Init(void)
 	HAL_GPIO_Init(RELAY_1_GPIO_PORT, &GPIO_InitStruct);
 
 	RELAY_1_OFF();
-	
 #endif
 
 
 #ifdef CONFIG_MODULE_IO_INPUT_MOTION_ENABLE
-	
 	SENSOR_MOTION_GPIO_PINS_CLK_ENABLE();
 	
 	// SENSOR_MOTION
@@ -169,7 +169,6 @@ void IO_Init(void)
 	
 
 #ifdef CONFIG_MODULE_IO_INPUT_SOUNDIMPACT_ENABLE
-
 	SENSOR_SOUND_GPIO_PINS_CLK_ENABLE();
 
 	// SENSOR_SOUND_IMPACT
@@ -178,7 +177,6 @@ void IO_Init(void)
 	GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;	// sounding
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(SENSOR_SOUND_IMPACT_GPIO_PORT, &GPIO_InitStruct);
-	
 #endif
 
 
@@ -201,9 +199,7 @@ void IO_Init(void)
 	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(IO_INPUT_BATTERYCHARGER_GPIO_PORT, &GPIO_InitStruct);
-
 #endif
-
 }
 
 
@@ -259,10 +255,8 @@ void IO_SetOutputState(Output_t outputpin, OutputState_t outstate)
 /**
  * \brief	Set (Save) input state
  */
-bool IO_SetInputState(Input_t inputpin, InputState_t inputstate)
+void IO_SetInputState(Input_t inputpin, InputState_t inputstate)
 {
-	bool isOk = false;
-
 	if (inputpin < Input_Count && inputstate > InputState_Unknown && inputstate < InputState_Count)
 	{
 		// Values are okays
@@ -270,11 +264,7 @@ bool IO_SetInputState(Input_t inputpin, InputState_t inputstate)
 
 		// TODO: Request task schedule...
 		//TaskHandler_RequestTaskScheduling(Task_);
-
-		isOk = true;
 	}
-
-	return isOk;
 }
 
 

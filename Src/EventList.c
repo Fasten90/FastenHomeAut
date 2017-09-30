@@ -24,7 +24,7 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-
+///< Event list for Event handler
 const Event_t EventList[] =
 {
 	{
@@ -96,7 +96,7 @@ const Event_t EventList[] =
 
 
 ///< Events num
-const EventId_t EventsNum = sizeof(EventList)/sizeof(EventList[0]);
+const EventId_t EventsNum = NUM_OF(EventList);
 
 
 

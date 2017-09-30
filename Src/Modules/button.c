@@ -19,6 +19,7 @@
 #include "Button.h"
 
 
+
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
@@ -39,18 +40,16 @@ volatile uint8_t BUTTON_Clicked = 0;
  *  Global functions
  *----------------------------------------------------------------------------*/
 
+
 /**
  * \brief	Initialize buttons
  */
 void BUTTON_Init(void)
 {
-
 	GPIO_InitTypeDef   GPIO_InitStructure;
 
-	
 	// Enable GPIO clocks
 	BUTTON_CLK_ENABLES();
-
 
 	// Configure x pin as input floating
 	GPIO_InitStructure.Mode = GPIO_MODE_IT_RISING;
@@ -72,6 +71,7 @@ void BUTTON_Init(void)
 #endif
 
 #if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_NUCLEOF401RE)
+	// User	button
 	GPIO_InitStructure.Pin  = BUTTON_USER_GPIO_PIN;
 	HAL_GPIO_Init(BUTTON_USER_GPIO_PORT, &GPIO_InitStructure);
 #endif
@@ -156,7 +156,6 @@ void BUTTON_Init(void)
 			BUTTON_USER_INTERRUPT_SUB_PRIORITY);
 	HAL_NVIC_EnableIRQ(BUTTON_USER_EXTI_IRQn);
 #endif
-
 }
 
 
@@ -173,7 +172,6 @@ bool BUTTON_GetButtonState(ButtonType_t button)
 
 	switch (button)
 	{
-
 #if BUTTON_NUM == 1
 		case PressedButton_User:
 			state = (HAL_GPIO_ReadPin(BUTTON_USER_GPIO_PORT, BUTTON_USER_GPIO_PIN) == GPIO_PIN_SET) ? true : false;

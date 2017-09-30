@@ -9,7 +9,6 @@
  *		Last modified:	2017-08-31
  */
 
-
 #ifndef EVENTLIST_H_
 #define EVENTLIST_H_
 
@@ -36,7 +35,6 @@
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
-
 
 // \note: Please Do not change these typedefs!
 typedef uint8_t		EventId_t;
@@ -100,6 +98,11 @@ typedef enum
 
 } EventName_t;
 
+
+
+/*------------------------------------------------------------------------------
+ *  Global variables
+ *----------------------------------------------------------------------------*/
 
 extern const Event_t EventList[];
 

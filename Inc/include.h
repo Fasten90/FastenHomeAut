@@ -93,9 +93,6 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #define UNUSED_ARGUMENT(param)	((void)param)
 
 
-// Assert
-// if condition is true, it is ok
-// if condition is false, it will generate error
 #define ASSERT(__e)				((__e) ? (void)0 : Assert_Function(__FILE__, __LINE__, #__e))
 
 

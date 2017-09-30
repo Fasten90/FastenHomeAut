@@ -54,5 +54,4 @@ bool CommonIO_ReadPin(char port, uint8_t pin);
 
 
 
-
 #endif /* COMMONIO_H_ */

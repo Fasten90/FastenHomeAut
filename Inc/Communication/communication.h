@@ -13,8 +13,18 @@
 #define COMMUNICATION_H_
 
 
+
+/*------------------------------------------------------------------------------
+ *  Includes
+ *----------------------------------------------------------------------------*/
+
 #include "include.h"
 
+
+
+/*------------------------------------------------------------------------------
+ *  Macros
+ *----------------------------------------------------------------------------*/
 
 #define COMMUNICATION_TXBUFFER_SIZE				(255U)
 #define COMMUNICATION_PROTOCOL_BUFFER_SIZE		(100)
@@ -68,6 +78,7 @@ uint8_t COMMUNICATION_Printf(CommProtocol_t protocol, const char *format, ...);
 const char * COMMUNICATION_GetProtocolName(CommProtocol_t protocol);
 
 void COMMUNICATION_ClearProtocolBuffer(void);
+
 
 
 #endif /* COMMUNICATION_H_ */

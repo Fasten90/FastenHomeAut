@@ -69,6 +69,7 @@ static volatile bool Terminal_CommandEscapeSequenceInProgress = false;
 static volatile uint8_t Terminal_CommandEscape_cnt = 0;
 
 
+
 #ifdef CONFIG_TERMINAL_HISTORY_ENABLE
 static uint8_t Terminal_HistorySaveCnt = 0;
 static uint8_t Terminal_HistoryLoadCnt = 0;
@@ -93,12 +94,11 @@ static const char * const Terminal_HistoryInitList[] =
 	"reset"
 	#endif
 	#if ( TERMINAL_HISTORY_MAX_COUNT > 5 )
-	#warning "Isn't set CommandHandler history commands"
+		#warning "Isn't set CommandHandler history commands"
 	#endif
 };
 #else
-#error "CONFIG_COMMANDHANDLER_USE_HISTORY define is defined, but 'COMMANDHANDLER_HISTORY_MAX_COUNT'"
-	"define is not set valid value."
+	#error "CONFIG_COMMANDHANDLER_USE_HISTORY define is defined, but 'COMMANDHANDLER_HISTORY_MAX_COUNT' define is not set valid value."
 #endif
 
 #endif
@@ -106,7 +106,6 @@ static const char * const Terminal_HistoryInitList[] =
 
 #ifdef CONFIG_TERMINAL_GET_PASSWORD_ENABLE
 static const char Terminal_Password[] = "password";
-static bool Terminal_PasswordIsOk = false;
 #endif
 
 
@@ -139,7 +138,6 @@ static void Terminal_ConvertSmallLetter(void);
 
 #ifdef CONFIG_TERMINAL_GET_PASSWORD_ENABLE
 static void Terminal_GetPassword(void);
-inline static void Terminal_SendGetPassword(void);
 static bool Terminal_CheckPassword(const char *string);
 #endif
 
@@ -155,8 +153,6 @@ static bool Terminal_CheckPassword(const char *string);
  */
 void Terminal_Init(void)
 {
-	// Initialize
-
 	Terminal_CommandReceivedEvent = false;
 	Terminal_CommandReceivedNotLastChar = false;
 
@@ -221,7 +217,6 @@ void Terminal_CheckCommand(void)
 		// Always checking the Command
 		if (DebugUart_CommandReceiveEnable)
 		{
-
 #ifdef CONFIG_USE_FREERTOS
 			// Wait semaphore
 			if (xSemaphoreTake(DEBUG_USART_Rx_Semaphore,1000) == pdTRUE)
@@ -258,10 +253,8 @@ void Terminal_CheckCommand(void)
 
 					Terminal_CommandReceivedNotLastChar = false;
 
-					// Step right
-					CommandHandler_SendMessage(ESCAPE_CURSORRIGHT);
-					// Not Last char (it is inner character) - Refresh the line
-					Terminal_CommandResendLine(true);
+					CommandHandler_SendMessage(ESCAPE_CURSORRIGHT);		// Step right
+					Terminal_CommandResendLine(true);					// Not Last char (it is inner character) - Refresh the line
 				}
 				else if (Terminal_CommandEscapeSequenceReceived)
 				{
@@ -327,6 +320,7 @@ void Terminal_CheckCommand(void)
 		}
 #endif
 	}
+
 	// Infinite loop, never exit, never reached here, if blocking mode
 }
 
@@ -337,23 +331,20 @@ void Terminal_CheckCommand(void)
  */
 static void Terminal_ProcessReceivedCharacter(void)
 {
-
 #ifndef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
+
 	// Find new received characters
 	CircularBuffer_FindLastMessage(&DebugUart_RxBuffStruct);
 
 	// If WriteCnt not equal with ReadCnt, we have received message
-	char receiveBuffer[DEBUGUART_RXBUFFERSIZE+1];
+	char receiveBuffer[DEBUGUART_RX_BUFFER_SIZE+1];
 	uint16_t receivedMessageLength = 0;
 
 	// Received new character?
 	if (CircularBuffer_HasNewMessage(&DebugUart_RxBuffStruct))
 	{
 		// Need copy to receiveBuffer
-		receivedMessageLength = CircularBuffer_GetCharacters(
-				&DebugUart_RxBuffStruct,
-				receiveBuffer,
-				true);
+		receivedMessageLength = CircularBuffer_GetCharacters(&DebugUart_RxBuffStruct, receiveBuffer, true);
 
 		// TODO: Create Get&Clear function
 		CircularBuffer_ClearLast(&DebugUart_RxBuffStruct);
@@ -396,13 +387,14 @@ static void Terminal_ProcessReceivedCharacter(void)
 			{
 				Terminal_CommandActualEscape[Terminal_CommandEscape_cnt++] = receivedChar;
 
-				// TODO: only work with escape sequence if 3 chars (ESC[A)
+				// TODO: only works with escape sequence if 3 chars (ESC[A)
 				if (Terminal_CommandActualEscape[2] != '3')
 				{
 					// \e[A / B / C / D
 					Terminal_CommandEscapeSequenceInProgress = false;
 					Terminal_CommandEscapeSequenceReceived = true;
 					Terminal_CommandReceivedEvent = true;
+
 					return;
 				}
 				else
@@ -422,6 +414,7 @@ static void Terminal_ProcessReceivedCharacter(void)
 					Terminal_CommandEscapeSequenceInProgress = false;
 					Terminal_CommandReceivedDelete = true;
 					Terminal_CommandReceivedEvent = true;
+
 					return;
 				}
 			}
@@ -430,7 +423,7 @@ static void Terminal_ProcessReceivedCharacter(void)
 		{
 			// No escape sequence
 			// An character received
-			if (receivedChar  == '\x1B')	// 'ESC'
+			if (receivedChar  == TERMINAL_KEY_ESCAPE)
 			{
 				// receive an Escape sequence
 				Terminal_CommandEscapeSequenceInProgress = true;
@@ -440,8 +433,7 @@ static void Terminal_ProcessReceivedCharacter(void)
 			else
 			{
 #endif
-				if ((receivedChar  == '\r') || (receivedChar == '\n') ||
-					(receivedChar == '\0'))
+				if ((receivedChar  == '\r') || (receivedChar == '\n') || (receivedChar == '\0'))
 				{
 					// TODO: Ha 2 sortörés karakter jött, csak "egyszer" írjunk ki promt-ot
 					// Received Enter
@@ -455,6 +447,7 @@ static void Terminal_ProcessReceivedCharacter(void)
 					// Received backspace
 					Terminal_CommandReceivedBackspace = true;
 					Terminal_CommandReceivedEvent = true;
+
 					return;
 				}
 #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
@@ -464,6 +457,7 @@ static void Terminal_ProcessReceivedCharacter(void)
 					// TODO: Not work at ZOC, but work at other terminal?
 					Terminal_CommandReceivedDelete = true;
 					Terminal_CommandReceivedEvent = true;
+
 					return;
 				}
 				else if (receivedChar == '\t')
@@ -471,6 +465,7 @@ static void Terminal_ProcessReceivedCharacter(void)
 					// TAB
 					Terminal_CommandReceivedTabulator = true;
 					Terminal_CommandReceivedEvent = true;
+
 					return;
 				}
 #endif	// #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
@@ -529,14 +524,12 @@ static void Terminal_ProcessReceivedCharacter(void)
 
 #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 /**
- * \brief	Process Escape sequence
+ * \brief	Process Escape sequence, works with ANSI escape codes
+ * @return	valid char, or 0 if invalid
  */
 static bool Terminal_CommandEscapeCharValidation(void)
 {
-	// return valid char, or 0 if invalid
-	// work with ANSI escape codes
-
-	if (Terminal_CommandActualEscape[0] == '\x1B')				// ESC
+	if (Terminal_CommandActualEscape[0] == TERMINAL_KEY_ESCAPE)	// ESC
 	{
 		if (Terminal_CommandActualEscape[1] == '[' )			// '[', escape sequence 2. letter
 		{
@@ -544,17 +537,17 @@ static bool Terminal_CommandEscapeCharValidation(void)
 			// 'A' Up cursor = previous History command
 			if (Terminal_CommandActualEscape[2] == 'A')
 			{
-				#ifdef CONFIG_TERMINAL_HISTORY_ENABLE
-				Terminal_HistoryLoad ( 1 );
-				#endif
+#ifdef CONFIG_TERMINAL_HISTORY_ENABLE
+				Terminal_HistoryLoad(1);
+#endif
 				return true;
 			}
 			// 'B' Down cursor		// next History command
 			else if (Terminal_CommandActualEscape[2] == 'B')
 			{
-				#ifdef CONFIG_TERMINAL_HISTORY_ENABLE
-				Terminal_HistoryLoad ( 0 );
-				#endif
+#ifdef CONFIG_TERMINAL_HISTORY_ENABLE
+				Terminal_HistoryLoad(0);
+#endif
 				return true;
 			}
 			// 'C' - Right cursor - Step right
@@ -566,6 +559,7 @@ static bool Terminal_CommandEscapeCharValidation(void)
 					// Cursor within command
 					CommandHandler_SendMessage(ESCAPE_CURSORRIGHT);
 					Terminal_CommandCursorPosition++;
+
 					return true;
 				}
 				else
@@ -581,6 +575,7 @@ static bool Terminal_CommandEscapeCharValidation(void)
 				{
 					CommandHandler_SendMessage(ESCAPE_CURSORLEFT);
 					Terminal_CommandCursorPosition--;
+
 					return true;
 				}
 				else
@@ -602,6 +597,7 @@ static bool Terminal_CommandEscapeCharValidation(void)
 
 	return false;
 }
+
 #endif	// #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 
 
@@ -611,7 +607,6 @@ static bool Terminal_CommandEscapeCharValidation(void)
  */
 void Terminal_CommandBackspace(void)
 {
-
 	if (Terminal_CommandActualLength > 0)
 	{
 		// If has command
@@ -637,12 +632,10 @@ void Terminal_CommandBackspace(void)
 #endif
 
 #ifdef CONFIG_TERMINAL_USE_HYPERTERMINAL
-
 			TERMINAL_SEND_KEY_BACKSPACE();
 
 			// Delete & Resend
 			Terminal_CommandResendLine(true);
-
 #endif
 		}
 #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
@@ -687,6 +680,7 @@ void Terminal_CommandBackspace(void)
 		}
 #endif	// #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 	}
+
 	return;			// not do anything
 }
 
@@ -698,7 +692,6 @@ void Terminal_CommandBackspace(void)
  */
 static void Terminal_CommandDelete(void)
 {
-
 	if (Terminal_CommandActualLength > 0)
 	{
 		// If has command
@@ -740,6 +733,8 @@ static void Terminal_CommandDelete(void)
 			}
 		}
 	}
+
+	return;
 }
 #endif	// #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 
@@ -756,9 +751,7 @@ static void Terminal_CommandTabulator(void)
 
 	for (i = 0; i < CommandHandler_CommandNum; i++)
 	{
-		if (!StrCmpWithLength(CommandList[i].name,
-				(const char *)Terminal_CommandActual,
-				Terminal_CommandActualLength))
+		if (!StrCmpWithLength(CommandList[i].name, (const char *)Terminal_CommandActual, Terminal_CommandActualLength))
 		{
 			// It is equal
 			// We write the first equal
@@ -772,13 +765,11 @@ static void Terminal_CommandTabulator(void)
 
 			Terminal_CommandResendLine(false);
 
-			break;
+			return;
 		}
 	}
 }
 #endif // #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
-
-
 
 
 
@@ -817,6 +808,8 @@ static void Terminal_CommandResendLine(bool needRestoreCursor)
 		// Restore the position
 		CommandHandler_SendMessage(ESCAPE_RESTORECURSOR);
 	}
+
+	return;		// TODO minek?
 }
 #endif	// #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 
@@ -832,8 +825,7 @@ static void Terminal_InitHistory(void)
 
 	for (i = 0; i < TERMINAL_HISTORY_MAX_COUNT; i++)
 	{
-		StrCpyMax(Terminal_HistoryList[i], Terminal_HistoryInitList[i],
-				TERMINAL_MAX_COMMAND_LENGTH);
+		StrCpyMax(Terminal_HistoryList[i], Terminal_HistoryInitList[i], TERMINAL_MAX_COMMAND_LENGTH);
 	}
 }
 
@@ -1104,6 +1096,7 @@ inline static void Terminal_SendGetPassword(void)
 inline static bool Terminal_CheckPassword(const char *string)
 {
 	return ((!StrCmp(string, Terminal_Password)) ? true : false);
+	}
 }
 
 #endif	// #ifdef CONFIG_TERMINAL_GET_PASSWORD_ENABLE

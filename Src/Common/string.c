@@ -15,12 +15,12 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
-#include "include.h"
 #include <stdarg.h>		// for "..." parameters in printf function
+#include "include.h"
 #include "String.h"
 
 #ifdef MODULE_STRING_UNITTEST_ENABLE
-#include "unittest.h"
+	#include "unittest.h"
 #endif
 
 
@@ -52,7 +52,6 @@
 /*------------------------------------------------------------------------------
  *  Global functions
  *----------------------------------------------------------------------------*/
-
 
 
 /**
@@ -88,7 +87,6 @@ uint8_t SignedDecimalToString(int32_t value, char *str)
  */
 uint8_t UnsignedDecimalToString(uint32_t value, char *str)
 {
-
 	uint8_t length = 0;
 	bool isStarted = false;
 
@@ -128,7 +126,6 @@ uint8_t UnsignedDecimalToString(uint32_t value, char *str)
  */
 uint8_t UnsignedDecimalLength(uint32_t value)
 {
-
 	uint8_t length = 0;
 
 	if (value == 0)
@@ -186,7 +183,6 @@ uint8_t UnsignedDecimalToStringFill(uint32_t value, char *str, uint8_t fillLengt
  */
 uint8_t SignedDecimalToStringFill(int32_t value, char *str, uint8_t fillLength, char fillCharacter)
 {
-
 	uint8_t length = 0;
 	uint8_t i;
 
@@ -240,12 +236,13 @@ uint8_t SignedDecimalToStringFill(int32_t value, char *str, uint8_t fillLength, 
 
 
 /**
- * \brief	Convet a octet (0-15) to Hexa character ('0' - '9' - 'A' - 'F')
+ * \brief	Convert a octet (0-15) to Hexa character ('0' - '9' - 'A' - 'F')
  * \return	character (octet)
  */
 char HexToHexChar(uint8_t value)
 {
 	char hexChar;
+
 	if (value <= 9)
 	{
 		// 0- 9
@@ -287,7 +284,6 @@ uint8_t ByteToHexaString(uint8_t byte, char *str)
 	str[length] = '\0';
 
 	return length;
-
 }
 
 
@@ -298,7 +294,6 @@ uint8_t ByteToHexaString(uint8_t byte, char *str)
  */
 uint8_t DecimalToBinaryString(uint32_t value, char *str, uint8_t maxLength)
 {
-
 	uint8_t i;
 	uint8_t bitIndex = 31;
 
@@ -362,7 +357,6 @@ uint8_t DecimalToHexaString(uint32_t value, char *str, uint8_t length)
 	str[length] = '\0';
 
 	return length;
-
 }
 
 
@@ -386,7 +380,6 @@ uint8_t FloatToString(float value, char *str, uint8_t integerLength, uint8_t fra
 		value = (value * (-1));	// make positive
 	}
 
-
 	// Integer: minimum interLength length (if integer part is longer then this num, it printed)
 	calcValue = (uint32_t)value;
 	length += UnsignedDecimalToStringFill(calcValue, &str[length], integerLength, ' ');
@@ -394,10 +387,8 @@ uint8_t FloatToString(float value, char *str, uint8_t integerLength, uint8_t fra
 	// If has fractionLength parameter (=/= 0), print it
 	if (fractionLength)
 	{
-
 		// Point '.'
 		str[length++] = '.';
-
 
 		// Fraction:
 		// float : 4.567
@@ -424,7 +415,6 @@ uint8_t FloatToString(float value, char *str, uint8_t integerLength, uint8_t fra
 
 	// Put end char
 	str[length] = '\0';
-
 
 	return length;
 }
@@ -525,6 +515,7 @@ uint8_t StringIsSignedDecimalString(const char *str)
 bool IsHexChar(const char c)
 {
 	bool isOk = false;
+
 	if ((c >= '0') && (c <='9'))
 	{
 		isOk = true;
@@ -551,6 +542,7 @@ bool IsHexChar(const char c)
 bool IsDecimalChar (const char c)
 {
 	bool isOk = false;
+
 	if ((c >= '0') && (c <='9'))
 	{
 		isOk = true;
@@ -603,8 +595,8 @@ bool StringBinaryToNum(const char *str, uint32_t *num)
 
 	// Finish
 	*num = value;
-	return true;
 
+	return true;
 }
 
 
@@ -620,6 +612,7 @@ bool StringBinaryToNum(const char *str, uint32_t *num)
 bool HexCharToHex(const char c, uint8_t *hexValue)
 {
 	bool isOk = true;
+
 	*hexValue = 0;
 	if ((c >= '0') && (c <='9'))
 	{
@@ -650,7 +643,6 @@ bool HexCharToHex(const char c, uint8_t *hexValue)
  */
 bool StringByteToNum(const char *str, uint8_t *byte)
 {
-
 	uint8_t calculatedByte1 = 0;
 	uint8_t calculatedByte2 = 0;
 	bool result = true;
@@ -831,7 +823,6 @@ bool StringToSignedDecimalNum(const char *str, int32_t *value)
 	{
 		return false;
 	}
-
 }
 
 
@@ -958,7 +949,6 @@ uint8_t StringLength(const char *str)
  */
 uint8_t StrCmp(const char *str1, const char *str2)
 {
-
 	while (*str1)
 	{
 		if (*str1 !=  *str2)
@@ -969,6 +959,7 @@ uint8_t StrCmp(const char *str1, const char *str2)
 		str2++;
 	}
 
+	// TODO mi van kikommentezve?!
 	// Commented out, because first length are good
 	if (*str2)
 	{
@@ -990,7 +981,6 @@ uint8_t StrCmp(const char *str1, const char *str2)
  */
 uint8_t StrCmpFirst(const char *str1, const char *str2)
 {
-
 	while (*str1)
 	{
 		if (*str1 !=  *str2)
@@ -1014,7 +1004,6 @@ uint8_t StrCmpFirst(const char *str1, const char *str2)
  */
 uint8_t StrCmpWithLength(const char * ch1, const char *ch2, uint8_t length)
 {
-	
 	// Check pointers + length
 	if ( ch1 == NULL || ch2 == NULL || length == 0 )
 	{
@@ -1074,7 +1063,6 @@ uint8_t StrCpy(char *dest, const char *str)
  */
 uint8_t StrCpyFixLength(char *dest, const char *str, uint8_t length)
 {
-
 	uint8_t i;
 
 	// Copy characters
@@ -1094,7 +1082,6 @@ uint8_t StrCpyFixLength(char *dest, const char *str, uint8_t length)
  */
 uint8_t StrCpyFixLengthWithFillCharacter(char *dest, const char *str, uint8_t length, char fillChar)
 {
-
 	uint8_t i = 0;
 
 	if (dest == NULL)
@@ -1108,7 +1095,6 @@ uint8_t StrCpyFixLengthWithFillCharacter(char *dest, const char *str, uint8_t le
 			dest[i] = str[i];
 		}
 	}
-
 
 	// Fill with character after string
 	if (i < length)
@@ -1130,7 +1116,6 @@ uint8_t StrCpyFixLengthWithFillCharacter(char *dest, const char *str, uint8_t le
  */
 uint8_t StrCpyMax(char *dest, const char *str, uint8_t maxLength)
 {
-
 	uint8_t length = 0;
 	length = StringLength(str);
 
@@ -1195,11 +1180,9 @@ uint8_t StrAppend(char *dest, const char *str)
 	uint8_t length = 0;
 
 	length = StringLength(dest);
-
 	length += StrCpy(&dest[length],str);
 
 	return length;
-
 }
 
 
@@ -1322,15 +1305,13 @@ uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint
 			// Not ended, count
 			if (j == 0)
 			{
-				// New string found
-				separated[parameters] = &source[i];
+				separated[parameters] = &source[i];		// New string found
 			}
 			j++;
 		}
 	}
 
 	return parameters;
-
 }
 
 
@@ -1499,8 +1480,7 @@ uint8_t string_printf(char *str, const char *format, va_list ap)
 					flval = va_arg(ap, double);				// Double / Float
 					if (paramHasLength)
 					{
-						string += FloatToString(flval, string,
-								paramNum1, paramNum2);
+						string += FloatToString(flval, string, paramNum1, paramNum2);
 					}
 					else
 					{
@@ -1514,8 +1494,7 @@ uint8_t string_printf(char *str, const char *format, va_list ap)
 					{
 						// String copy with length
 						uint8_t stringLength = paramNum1*10 + paramNum2;
-						string += StrCpyFixLengthWithFillCharacter(string, sval,
-								stringLength, ' ');
+						string += StrCpyFixLengthWithFillCharacter(string, sval, stringLength, ' ');
 					}
 					else
 					{
@@ -1564,7 +1543,6 @@ uint8_t usprintf(char *str, const char *format, ...)
  */
 void STRING_UnitTest(void)
 {
-
 	char buffer[30];
 	uint8_t value8;
 	bool result;
@@ -1597,39 +1575,50 @@ void STRING_UnitTest(void)
 
 
 	// Float print tests
+
 	// "123.339996" ~ like "%0.6"
 	usprintf(buffer,"%f",123.34);
 	UNITTEST_ASSERT(!StrCmp(buffer, "123.339996"), "Float error");
+
 	// "123"
 	usprintf(buffer,"%1.0f",123.34);
 	UNITTEST_ASSERT(!StrCmp(buffer, "123"), "Float error");
+
 	// "123.3"
 	usprintf(buffer, "%1.1f",123.34);
 	UNITTEST_ASSERT(!StrCmp(buffer, "123.3"), "Float error");
+
 	// "123.33999"
 	usprintf(buffer,"%1.5f",123.34);
 	UNITTEST_ASSERT(!StrCmp(buffer, "123.33999"), "Float error");
+
 	// "  123.3"
 	usprintf(buffer, "%5.1f",123.34);
 	UNITTEST_ASSERT(!StrCmp(buffer, "  123.3"), "Float error");
+
 	// "123.33999"
 	usprintf(buffer,"%5.5f",123.34);
 	UNITTEST_ASSERT(!StrCmp(buffer, "  123.33999"), "Float error");
 
 
 	// Integer print tests
+
 	// Printed: "123"
 	usprintf(buffer, "%0u",123);
 	UNITTEST_ASSERT(!StrCmp(buffer, "123"), "Integer error");
+
 	// Printed:	"123"
 	usprintf(buffer, "%1u",123);
 	UNITTEST_ASSERT(!StrCmp(buffer, "123"), "Integer error");
+
 	// Printed: " 123"
 	usprintf(buffer, "%4u",123);
 	UNITTEST_ASSERT(!StrCmp(buffer, " 123"), "Integer error");
+
 	// Printed: "      123"
 	usprintf(buffer, "%9u",123);
 	UNITTEST_ASSERT(!StrCmp(buffer, "      123"), "Integer error");
+
 	// Printed: "00123", it is OK
 	usprintf(buffer, "%05u",123);
 	UNITTEST_ASSERT(!StrCmp(buffer, "00123"), "Integer error");
@@ -1641,18 +1630,23 @@ void STRING_UnitTest(void)
 	UNITTEST_ASSERT(!StrCmp(buffer, "-5u"), "Integer error");
 
 	// Signed Integer print tests:
+
 	// Printed: "-123"
 	usprintf(buffer, "%0d",-123);
 	UNITTEST_ASSERT(!StrCmp(buffer, "-123"), "Integer error");
+
 	// Printed:	"-123"
 	usprintf(buffer, "%1d",-123);
 	UNITTEST_ASSERT(!StrCmp(buffer, "-123"), "Integer error");
+
 	// Printed: "-123"
 	usprintf(buffer, "%4d",-123);
 	UNITTEST_ASSERT(!StrCmp(buffer, "-123"), "Integer error");
+
 	// Printed: "     -123"
 	usprintf(buffer, "%9d",-123);
 	UNITTEST_ASSERT(!StrCmp(buffer, "     -123"), "Integer error");
+
 	// Printed: "-0123", it is OK
 	usprintf(buffer, "%05d",-123);
 	UNITTEST_ASSERT(!StrCmp(buffer, "-00123"), "Integer error");
@@ -1705,15 +1699,19 @@ void STRING_UnitTest(void)
 	UNITTEST_ASSERT(!StrCmp(buffer, "0b1010101"), "Binary error");
 
 	// String (%s)
+
 	// Standard %s print
 	usprintf(buffer, "%s", "text");
 	UNITTEST_ASSERT(!StrCmp(buffer, "text"), "String error (%s)");
+
 	// max 5 character
 	usprintf(buffer, "%5s", "longtext");
 	UNITTEST_ASSERT(!StrCmp(buffer, "longt"), "String error (%s)");
+
 	// 10 character, need fill with ' '
 	usprintf(buffer, "%10s", "longtext");
 	UNITTEST_ASSERT(!StrCmp(buffer, "longtext  "), "String error (%s)");
+
 	// max 10 character
 	usprintf(buffer, "%10s", "toolongtext");
 	UNITTEST_ASSERT(!StrCmp(buffer, "toolongtex"), "String error (%s)");
@@ -1725,6 +1723,7 @@ void STRING_UnitTest(void)
 	// string -> decimal
 
 	// Byte
+
 	// Good bytes
 	result = StringByteToNum("00", &value8);
 	UNITTEST_ASSERT(result, "StringByteToNum error");
@@ -1735,16 +1734,19 @@ void STRING_UnitTest(void)
 	result = StringByteToNum("FF", &value8);
 	UNITTEST_ASSERT(result, "StringByteToNum error");
 	UNITTEST_ASSERT((value8 == 0xFF), "StringByteToNum error");
+
 	// Wrong byte
 	result = StringByteToNum("FG", &value8);
 	UNITTEST_ASSERT(!result, "StringByteToNum error");
 
 
 	// Hexs
+
 	// Good hex
 	result = StringHexToNum("12345678", &value32);
 	UNITTEST_ASSERT(result, "StringHexToNum error");
 	UNITTEST_ASSERT(value32 == 0x12345678, "StringHexToNum error");
+
 	// Wrong hex
 	result = StringHexToNum("123G5678", &value32);
 	UNITTEST_ASSERT(!result, "StringHexToNum error");
@@ -1780,6 +1782,7 @@ void STRING_UnitTest(void)
 	UNITTEST_ASSERT(!result, "StringToUnsignedDecimalNum error");
 
 	// Float
+
 	// Good
 	result = StringToFloat("-123.3499", &fvalue);
 	UNITTEST_ASSERT(result, "StringToFloat error");
@@ -1842,12 +1845,8 @@ void STRING_UnitTest(void)
 	UNITTEST_ASSERT(splitted[0] == NULL, "STRING_Splitter error");
 
 
-
 	// End of unittest
 	UnitTest_End();
-
-
-	return;
 }
 #endif	// #ifdef MODULE_STRING_UNITTEST_ENABLE
 

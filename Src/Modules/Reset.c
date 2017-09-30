@@ -46,7 +46,6 @@
  *----------------------------------------------------------------------------*/
 
 
-
 /**
  * \brief Get reset reason
  */
@@ -184,6 +183,6 @@ void Reset_PrintResetReasons(void)
 	Reset_GetResetReasonString(resetReason, str);
 
 	uprintf("Reset reason: %s", str);
-
 }
+
 

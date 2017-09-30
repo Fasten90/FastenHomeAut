@@ -143,6 +143,7 @@ typedef struct
 } GlobalVar_TraceLogRecord_t;
 
 
+
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
@@ -156,9 +157,7 @@ extern uint32_t GlobarVarHandler_TemporaryValue;
  *----------------------------------------------------------------------------*/
 
 void GlobalVarHandler_CheckCommandStructAreValid(void);
-void GlobalVarHandler_ProcessCommand(
-		const char *commandName, const char *param,
-		SetGetType_t setGetType, CommProtocol_t source);
+void GlobalVarHandler_ProcessCommand(const char *commandName, const char *param, SetGetType_t setGetType, CommProtocol_t source);
 
 void GlobalVarHandler_ListAllVariableParameters(void);
 void GlobalVarHandler_PrintAllVariableValues(void);

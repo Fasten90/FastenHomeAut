@@ -19,7 +19,7 @@
 #include "DateTime.h"
 
 #ifdef MODULE_DATETIME_UNITTEST_ENABLE
-#include "unittest.h"
+	#include "unittest.h"
 #endif
 
 
@@ -47,6 +47,7 @@ static const uint8_t days_of_month[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31,
 /*------------------------------------------------------------------------------
  *  Function declarations
  *----------------------------------------------------------------------------*/
+
 bool DateTime_CheckValue(uint32_t originalValue, uint32_t minValue, uint32_t maxValue);
 static uint8_t DateTime_GetDaysOfMonth(uint8_t year, uint8_t month);
 static uint32_t DateTime_CalculateDateTimeSecond(DateTime_t *dateTime);
@@ -437,13 +438,21 @@ static bool DateTime_CheckItIsLeapYear(uint8_t year)
 	bool isLeapYear = false;
 
 	if (year%400 == 0)
+	{
 		isLeapYear = true;
+	}
 	else if (year%100 == 0)
+	{
 		isLeapYear = false;
+	}
 	else if (year%4 == 0)
+	{
 		isLeapYear = true;
+	}
 	else
+	{
 		isLeapYear = false;
+	}
 
 	return isLeapYear;
 }
@@ -456,7 +465,6 @@ static bool DateTime_CheckItIsLeapYear(uint8_t year)
  */
 static uint8_t DateTime_GetDaysOfMonth(uint8_t year, uint8_t month)
 {
-
 	uint8_t days;
 	bool valid;
 
@@ -755,7 +763,6 @@ void DateTime_UnitTest(void)
 	DateTime_t test606 = { { 18, 1, 1 }, { 0, 0, 0 } };
 	DateTime_Steps(&test605, 1);
 	UNITTEST_ASSERT(!memcmp(&test605, &test606, sizeof(DateTime_t)), "DateTime_Steps error");
-
 
 
 	// Finish

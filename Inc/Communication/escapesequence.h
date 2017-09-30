@@ -13,7 +13,6 @@
 #define ESCAPESEQUENCE_H_
 
 
-
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
@@ -32,14 +31,12 @@
 
 
 // CSI 2 K: delete entire line
-#define ESCAPE_DELETELINE		\
-	("\x1B" "[2K")
+#define ESCAPE_DELETELINE				("\x1B" "[2K")
 
 
 // CSI n G	CHA – Cursor Horizontal Absolute	Moves the cursor to column n.
 // CSI 1 G  -> go start of line
-#define ESCAPE_CURSOR_TO_LINESTART	\
-	("\x1B" "[1G")
+#define ESCAPE_CURSOR_TO_LINESTART		("\x1B" "[1G")
 
 
 // CSI n A	CUU – Cursor Up	Moves the cursor n (default 1) cells in the given direction.
@@ -47,36 +44,30 @@
 // CSI n B	CUD – Cursor Down
 // CSI n C	CUF – Cursor Forward
 // CSI n D	CUB – Cursor Back
-#define ESCAPE_CURSORRIGHT	\
-	("\x1B" "[C")
+#define ESCAPE_CURSORRIGHT				("\x1B" "[C")
 
 
 // Cursor step left
-#define ESCAPE_CURSORLEFT	\
-	("\x1B" "[D")
+#define ESCAPE_CURSORLEFT				("\x1B" "[D")
 
 
 // Cursor go left (loft of step)
-#define ESCAPE_CURSORLEFTLOTOF	\
-	("\x1B" "[100D")
+#define ESCAPE_CURSORLEFTLOTOF			("\x1B" "[100D")
 
 
 // CURSOR SAVE/RESTORE
-//CSI s	SCP – Save Cursor Position	Saves the cursor position.
-#define ESCAPE_SAVECURSOR	\
-	("\x1B" "[s")
+//	CSI s	SCP – Save Cursor Position	Saves the cursor position.
+#define ESCAPE_SAVECURSOR				("\x1B" "[s")
 
 
 //CSI u	RCP – Restore Cursor Position	Restores the cursor position.
-#define ESCAPE_RESTORECURSOR	\
-	("\x1B" "[u")
+#define ESCAPE_RESTORECURSOR			("\x1B" "[u")
 
 
 // Erase Functions:
 // (CSI in UTF-8 is 0xC2, 0x9B) = ESC+[
 // ESC[2J Clear screen and home cursor
-#define ESCAPE_ERASE_CLS		\
-	("\x1B" "[2J")
+#define ESCAPE_ERASE_CLS				("\x1B" "[2J")
 
 
 // Goto top left corner
@@ -86,8 +77,7 @@
 // ;
 // 1 = column
 // H
-#define ESCAPE_CURSOR_TOPLEFT	\
-	("\x1B" "[1;1H")
+#define ESCAPE_CURSOR_TOPLEFT			("\x1B" "[1;1H")
 
 
 /*------------------------------------------------------------------------------
@@ -96,57 +86,46 @@
  
 // CSI n m 	SGR – Select Graphic Rendition
 // 40–47 	Set background color 	40 + x, where x is from the color table below
-#define ESCAPE_BACKGROUND_GREEN	\
-		("\x1B" "[42m")
+#define ESCAPE_BACKGROUND_GREEN			("\x1B" "[42m")
 
-#define ESCAPE_BACKGROUND_RED		\
-		("\x1B" "[41m")
+#define ESCAPE_BACKGROUND_RED			("\x1B" "[41m")
 
-#define ESCAPE_BACKGROUND_WHITE	\
-		("\x1B" "[47m")
+#define ESCAPE_BACKGROUND_WHITE			("\x1B" "[47m")
 
-#define ESCAPE_TEXT_BLACK			\
-		("\x1B" "[30m")
+#define ESCAPE_TEXT_BLACK				("\x1B" "[30m")
 
+#define ESCAPE_BACKGROUND_DEFAULT		("\x1B" "[49m")		// NOTE: Does not work in Hyperterminal
 
-// NOTE: Not work in Hyperterminal
-#define ESCAPE_BACKGROUND_DEFAULT	\
-		("\x1B" "[49m")
+#define ESCAPE_RESET					("\x1B" "[0m")		// NOTE: At Hyperterminal the background will be black
 
+#define ESCAPE_SEND_CLS					ESCAPE_ERASE_CLS ESCAPE_CURSOR_TOPLEFT
 
-// NOTE: At Hyperterminal the background will be black
-#define ESCAPE_RESET				\
-		("\x1B" "[0m")
+// Example:
+// "\x1B" "[30m" = Black text color
 
+#define USART_ESCAPE_TEXT_START			"\x1B" "[3"
+#define USART_ESCAPE_TEXT_END			"m"
 
+// Example:
+// "\x1B" "[47m" = White background color
+#define USART_ESCAPE_BACKGROUND_START	"\x1B" "[4"
+#define USART_ESCAPE_BACKGROUND_END		"m"
 
-// TODO: Sortörlésre?
-// CSI n D	CUB – Cursor Back
-// CSI n K	EL – Erase in Line	Erases part of the line. If n is zero (or missing), clear from cursor to the end of the line.
-// PROBLEM: this is delete everything after cursor
-/*
-// Cursor back
-USART_SendChar(27);	// 27 = ESCAPE
-USART_SendChar(91);	// 91 = [
-USART_SendChar('1');
-USART_SendChar('D');
-
-// Delete from cursor to end of line
-USART_SendChar(27);	// 27 = ESCAPE
-USART_SendChar(91);	// 91 = [
-USART_SendChar('0');
-USART_SendChar('K');
-*/
-
-
-
-#define ESCAPE_SEND_CLS				\
-		ESCAPE_ERASE_CLS		\
-		ESCAPE_CURSOR_TOPLEFT
-
-
-
-
-
+/**
+ * Color enum for Escape sequence
+ * Intensity 	0 	1 	2 	3 	4 	5 	6 	7
+ * Normal 	Black 	Red 	Green 	Yellow 	Blue 	Magenta 	Cyan 	White
+ */
+typedef enum
+{
+	Color_Black = 0,
+	Color_Red,
+	Color_Green,
+	Color_Yellow,
+	Color_Blue,
+	Color_Magenta,
+	Color_Cyan,
+	Color_White
+} FormattedStringColors_t;
 
 #endif /* ESCAPESEQUENCE_H_ */

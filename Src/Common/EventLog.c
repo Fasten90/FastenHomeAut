@@ -26,7 +26,7 @@
 #include "Debug.h"
 
 #ifdef MODULE_EVENTLOG_UNITTEST_ENABLE
-#include "UnitTest.h"
+	#include "UnitTest.h"
 #endif
 
 
@@ -78,11 +78,9 @@ void EventLog_LogEvent(EventName_t eventName, EventData_t eventData, TaskID_t ta
 	if (LogCounter > CONFIG_EVENTLOG_LOG_SIZE-1)
 	{
 #if EVENTLOG_BUFFER_USE_CIRCULAR == 1
-		// In circular buffer mode, continue at begin of buffer
-		LogCounter = 0;
+		LogCounter = 0;			// In circular buffer mode, continue at begin of buffer
 #else
-		// In not circular buffer mode, do not save record, exit
-		return;
+		return;					// In not circular buffer mode, do not save record, exit
 #endif
 	}
 
@@ -136,7 +134,6 @@ static void EventLog_PrintLog(char *str, EventLogCnt_t cnt, EventLogRecord_t *lo
 
 	char timeStr[DATETIME_STRING_MAX_LENGTH];
 	DateTime_PrintDateTimeToString(timeStr, &logRecord->dateTime);
-
 
 	usprintf(str, "| %3u | %20s | %9u | %20s | 0x%X | %10s | %20s |\r\n",
 			cnt,
@@ -198,9 +195,7 @@ void EventLog_PrintAllLogRecords(void)
 #ifdef MODULE_EVENTLOG_UNITTEST_ENABLE
 void EventLog_UnitTest(void)
 {
-
 	bool result;
-
 
 	// Start Unit test
 	UnitTest_Start("EventLog", __FILE__);
@@ -227,11 +222,9 @@ void EventLog_UnitTest(void)
 	UNITTEST_ASSERT(result, "EventLog_Init error");
 
 
-
 	// Test log event (record)
 
-	EventLog_LogEvent(Event_LogEventStated,
-			0x12345678, 0, EventType_Raised);
+	EventLog_LogEvent(Event_LogEventStated, 0x12345678, 0, EventType_Raised);
 
 	// Check, second record is "LogEventStarted" ?
 	result = true;
@@ -240,7 +233,6 @@ void EventLog_UnitTest(void)
 	result &= (EventLogs[1].eventData == 0x12345678);
 	result &= (EventLogs[1].tick != 0);
 	UNITTEST_ASSERT(result, "EventLog_LogEvent error");
-
 
 
 	// Finish unit test

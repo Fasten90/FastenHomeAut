@@ -225,6 +225,7 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 
 	// Clear tick
 	TaskList[taskID].isRequestScheduling = false;
+	// TODO: tick nullázás vagy kivonás?
 	TaskList[taskID].tick = 0;
 
 #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
@@ -441,6 +442,7 @@ void TaskHandler_SwWatchdog(void)
 		{
 			// TaskHandler cn is not changed... :(
 			char msg[60];
+
 			usprintf(msg, "TaskHandler frozened: %s\r\n",TaskHandler_ActualTask);
 			HAL_UART_Transmit(&Debug_UartHandle, (uint8_t *)msg, StringLength(msg), 10);
 
@@ -458,14 +460,11 @@ void TaskHandler_SwWatchdog(void)
 #ifdef MODULE_TASKHANDLER_UNNITEST_ENABLE
 void TaskHandler_UnitTest(void)
 {
-
 	uint8_t i;
 	bool result;
 
-
 	// Start Unit test
 	UnitTest_Start("TaskHandler", __FILE__);
-
 
 
 	// Test Initialization
@@ -483,7 +482,6 @@ void TaskHandler_UnitTest(void)
 		result = (TaskList[i].tick == 0);
 		UNITTEST_ASSERT(result, "TaskHandler_Init error");
 	}
-
 
 
 	// Test Scheduler time elapsing

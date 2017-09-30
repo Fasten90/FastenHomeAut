@@ -1,7 +1,7 @@
 /*
  *		CommonIO.c
  *		Created on:		2016-11-28
- *		Author:			Vizi Gábor
+ *		Author:			Vizi G�bor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		Common IO
  *		Target:			STM32Fx
@@ -32,6 +32,7 @@ static uint32_t IO_GetMode(IO_Type io);
  *  Functions
  *----------------------------------------------------------------------------*/
 
+
 /**
  * \brief	Initialize IO pin
  */
@@ -41,6 +42,7 @@ bool CommonIO_Init(char port, uint8_t pin, IO_Type io)
 	GPIO_InitTypeDef GPIO_InitStruct;
 
 	GPIO_TypeDef *GPIO_port = IO_GetPort(port);
+	bool clk = IO_EnablePeripheralClock(port);
 
 	GPIO_InitStruct.Pin = IO_GetPin(pin);
 
@@ -54,8 +56,7 @@ bool CommonIO_Init(char port, uint8_t pin, IO_Type io)
 		return false;
 	}
 
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	//GPIO_InitStruct.Alternate = // TODO:
+	// GPIO_InitStruct.Alternate -> don't care
 	HAL_GPIO_Init(GPIO_port, &GPIO_InitStruct);
 
 	return true;
@@ -114,6 +115,7 @@ bool CommonIO_SetOutput(char port, uint8_t pin, Output_Type output)
 
 		default:
 			status = false;
+			break;
 	}
 
 	return status;
@@ -151,6 +153,7 @@ bool CommonIO_ReadPin(char port, uint8_t pin)
  */
 static bool IO_EnablePeripheralClock(char port)
 {
+	bool ok = true;
 
 	switch (port)
 	{
@@ -163,6 +166,7 @@ static bool IO_EnablePeripheralClock(char port)
 		case 'B':
 			__GPIOB_CLK_ENABLE();
 			break;
+
 		case 'c':
 		case 'C':
 			__GPIOC_CLK_ENABLE();
@@ -181,11 +185,11 @@ static bool IO_EnablePeripheralClock(char port)
 #endif
 
 		default:
-			 return false;
+			ok = false;
+			break;
 	}
 
-	return true;
-
+	return ok;
 }
 
 
@@ -207,8 +211,8 @@ static GPIO_TypeDef * IO_GetPort(char port)
 		case 'b':
 		case 'B':
 			GPIO_port = GPIOB;
-
 			break;
+
 		case 'c':
 		case 'C':
 			GPIO_port = GPIOC;
@@ -241,7 +245,6 @@ static GPIO_TypeDef * IO_GetPort(char port)
  */
 static uint32_t IO_GetPin(uint8_t pin)
 {
-
 	uint32_t returnPin;
 
 	switch (pin)
@@ -339,13 +342,13 @@ static uint32_t IO_GetMode(IO_Type io)
 
 		case IO_UNKNOWN:
 		case IO_COUNT:
-			break;
-
 		default:
 			break;
 	}
 
 	return iomode;
 }
+
+
 
 #endif	// #ifdef CONFIG_MODULE_COMMON_IO_ENABLE

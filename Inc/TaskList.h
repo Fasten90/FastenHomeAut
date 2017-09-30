@@ -33,6 +33,7 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
+///< Task's enums for Task schedule requiring
 typedef enum
 {
 	Task_Led,

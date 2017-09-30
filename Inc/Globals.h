@@ -13,8 +13,9 @@
 #define GLOBALS_H_
 
 
-
 #include "include.h"
+
+
 
 /*------------------------------------------------------------------------------
  *  Global variables
@@ -23,7 +24,6 @@
 extern const char Global_BoardName[];
 extern const char Global_Version[];
 extern const char Global_BoardMCU[];
-
 extern char Global_DeviceName[];
 
 
@@ -34,6 +34,7 @@ extern char Global_DeviceName[];
 
 void DelayMs(uint32_t ms);
 void Error_Handler(void);
+
 
 
 #endif /* GLOBALS_H_ */

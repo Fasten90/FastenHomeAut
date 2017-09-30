@@ -42,6 +42,8 @@
 
 ///< ADC handle declaration
 ADC_HandleTypeDef		AdcHandle;
+static DMA_HandleTypeDef  DmaHandle;
+
 
 ///< Measured values
 volatile uint32_t		ADC_MeasuredValues[ADC_CHANNEL_NUM] = { 0 };
@@ -83,8 +85,13 @@ extern void Error_Handler(void);
 
 
 
+/*------------------------------------------------------------------------------
+ * Functions
+ *----------------------------------------------------------------------------*/
+
+
 /**
- * \brief	Initialize ADC
+ * \brief	Initialize ADC with DMA
  */
 void CommonADC_Init(void)
 {

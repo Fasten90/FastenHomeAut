@@ -45,11 +45,11 @@
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
+// Watchdog enabled: function implement in .c file
 void Watchdog_Init(void);
 void Watchdog_Clear(void);
 
 #else
-
 // If Watchdog not enabled
 #define Watchdog_Clear()
 

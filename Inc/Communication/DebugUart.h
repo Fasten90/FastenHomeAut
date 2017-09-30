@@ -1,7 +1,7 @@
 /*
  *		DebugUart.h
  *		Created on:		2017-03-15
- *		Author:			Vizi Gábor
+ *		Author:			Vizi G�bor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		Debug uart functions
  *		Target:			STM32Fx
@@ -9,8 +9,8 @@
  *		Last modified:	2017-03-15
  */
 
-#ifndef COMMUNICATION_DEBUGUART_H_
-#define COMMUNICATION_DEBUGUART_H_
+#ifndef DEBUGUART_H_
+#define DEBUGUART_H_
 
 
 
@@ -18,7 +18,7 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
-#include "include.h"
+#include "GenericTypeDefs.h"
 #include "CircularBuffer.h"
 
 
@@ -28,14 +28,14 @@
  *----------------------------------------------------------------------------*/
 
 // Size of Transmission buffer
-#define DEBUGUART_TXBUFFERSIZE				256UL
+#define DEBUGUART_TX_BUFFER_SIZE				256UL
 // Size of Reception buffer
-#define DEBUGUART_RXBUFFERSIZE				256UL
+#define DEBUGUART_RX_BUFFER_SIZE				256UL
 #define DEBUGUART_RXBUFFER_WAIT_LENGTH		1
 
 
 // Variadic macro
-#define DebugUart_Printf(...)				uprintf(__VA_ARGS__)
+#define DebugUart_Printf(...)					uprintf(__VA_ARGS__)
 
 
 
@@ -51,8 +51,8 @@
 
 extern UART_HandleTypeDef Debug_UartHandle;
 
-extern volatile char DebugUart_RxBuffer[DEBUGUART_RXBUFFERSIZE];
-extern volatile char DebugUart_TxBuffer[DEBUGUART_TXBUFFERSIZE];
+extern volatile char DebugUart_RxBuffer[DEBUGUART_RX_BUFFER_SIZE];
+extern volatile char DebugUart_TxBuffer[DEBUGUART_TX_BUFFER_SIZE];
 
 extern CircularBufferInfo_t DebugUart_RxBuffStruct;
 
@@ -83,4 +83,4 @@ void DebugUart_ProcessReceivedCharacters(void);
 
 
 
-#endif /* COMMUNICATION_DEBUGUART_H_ */
+#endif /* DEBUGUART_H_ */

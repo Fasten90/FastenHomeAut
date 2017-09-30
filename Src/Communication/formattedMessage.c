@@ -9,14 +9,13 @@
  *		Last modified:	2016-09-28
  */
 
-
-
 #include "DebugUart.h"
 #include "FormattedMessage.h"
 
 
 
 #ifdef CONFIG_MODULE_FORMATTEDMESSAGE_ENABLE
+
 /**
  * \brief	Send message on debug with textcolor & backgroundcolor
  */
@@ -100,4 +99,5 @@ void FormattedMessage_Test(void)
 
 	SendErrorMessage("FATAL ERROR EXAMPLE\r\n");
 }
+
 #endif

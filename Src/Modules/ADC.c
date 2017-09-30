@@ -20,12 +20,11 @@
 #include "DebugUart.h"
 
 
+#ifdef CONFIG_MODULE_ADC_ENABLE
 
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
-
-#ifdef CONFIG_MODULE_ADC_ENABLE
 
 
 
@@ -54,9 +53,11 @@ volatile uint32_t		ADC_RunCnt = 0;
  *----------------------------------------------------------------------------*/
 
 
+
 /*------------------------------------------------------------------------------
  *  Function declarations
  *----------------------------------------------------------------------------*/
+
 
 
 /*------------------------------------------------------------------------------
@@ -72,12 +73,12 @@ static float ADC_ConvertToSourceVoltage(uint32_t readValue);
  *  Global functions
  *----------------------------------------------------------------------------*/
 
+
 /**
  * \brief	Initialize IOs
  */
 void ADC_Init(void)
 {
-
 	HAL_ADC_MspInit(&AdcHandle);
 
 	ADC_ChannelConfTypeDef   sConfig;
@@ -225,7 +226,6 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 	/* NVIC configuration for DMA Input data interrupt */
 	HAL_NVIC_SetPriority(ADCx_DMA_IRQn, ADC_DMA_PREEMT_PRIORITY, ADC_DMA_SUB_PRIORITY);
 	HAL_NVIC_EnableIRQ(ADCx_DMA_IRQn);
-
 }
 
 
@@ -244,12 +244,20 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 }
 
 
+
+/**
+ * \brief	ADC callback function - called by HAL
+ */
 void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
 {
 	(void)hadc;
 }
 
 
+
+/**
+ * \brief	ADC error function - called by HAL
+ */
 void HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
 {
 	(void)hadc;

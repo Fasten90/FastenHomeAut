@@ -1,15 +1,14 @@
 /*
  *		MEM.c
- *		Created on:		2016-08-31
- *		Author: 		Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		MEM functions
  *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-07-15
+ *		Function:		MEM functions
  */
 
 
+
+/*------------------------------------------------------------------------------
+ *  Includes
+ *----------------------------------------------------------------------------*/
 
 #include <stdlib.h>	// For size_t
 #include <stdint.h>	// For uintx_t
@@ -17,15 +16,20 @@
 #include "MEM.h"
 
 #ifdef MODULE_MEM_UNITTEST_ENABLE
-#include "UnitTest.h"
+	#include "UnitTest.h"
 #endif
-
 
 #if CONFIG_MEM_CHECK_POINTER_RANGE == 1
-#define MEM_CHECK_POINTER_RANGE(_pnt, _size)		if (!mem_CheckPointer(_pnt, _size)) Error_Handler()
+	#define MEM_CHECK_POINTER_RANGE(_pnt, _size)		if (!mem_CheckPointer(_pnt, _size)) Error_Handler()
 #else
-#define MEM_CHECK_POINTER_RANGE(_pnt, _size)		(void)_pnt; (void)_size
+	#define MEM_CHECK_POINTER_RANGE(_pnt, _size)		(void)_pnt; (void)_size
 #endif
+
+
+
+/*------------------------------------------------------------------------------
+ *  Functions
+ *----------------------------------------------------------------------------*/
 
 
 /**
@@ -41,7 +45,7 @@ void * memcpy(void * destination, const void * source, size_t size)
 	const uint8_t *src = source;
 
 #if CONFIG_MEM_CHECK_POINTERS == 1
-	if (destination == NULL || source == NULL)
+	if (dest != NULL || src != NULL)
 	{
 		return NULL;
 	}
@@ -53,7 +57,6 @@ void * memcpy(void * destination, const void * source, size_t size)
 	}
 
 	return NULL;
-
 }
 
 
@@ -70,7 +73,7 @@ void * memset(void * ptr, int value, size_t size)
 	uint8_t *dest = ptr;
 
 #if CONFIG_MEM_CHECK_POINTERS == 1
-	if (ptr == NULL)
+	if (dest == NULL)
 	{
 		return NULL;
 	}
@@ -100,7 +103,7 @@ void * memmove(void * destination, const void * source, size_t size)
 	uint8_t *src = (uint8_t *)source;
 
 #if CONFIG_MEM_CHECK_POINTERS == 1
-	if (destination == NULL || source == NULL)
+	if (dest == NULL || src == NULL)
 	{
 		return NULL;
 	}
@@ -147,7 +150,7 @@ int memcmp(const void * ptr1, const void * ptr2, size_t size)
 	const uint8_t *buffer2 = ptr2;
 
 #if CONFIG_MEM_CHECK_POINTERS == 1
-	if (ptr1 == NULL || ptr2 == NULL)
+	if (buffer1 == NULL || buffer2 == NULL)
 	{
 		return -1;
 	}
@@ -167,8 +170,7 @@ int memcmp(const void * ptr1, const void * ptr2, size_t size)
 		}
 	}
 
-	// If equal (there is no different)
-	return 0;
+	return 0;		// If equal (there is no different)
 }
 
 
@@ -181,9 +183,7 @@ int memcmp(const void * ptr1, const void * ptr2, size_t size)
 void mem_StackFillWithGuardValues(void)
 {
 	uint8_t stackOverFlowCheckerVariable[CONFIG_MEM_STACK_GUARD_LENGTH];
-	memset(stackOverFlowCheckerVariable,
-			CONFIG_MEM_STACK_GUARD_VALUE,
-			CONFIG_MEM_STACK_GUARD_LENGTH);
+	memset(stackOverFlowCheckerVariable, CONFIG_MEM_STACK_GUARD_VALUE, CONFIG_MEM_STACK_GUARD_LENGTH);
 }
 
 
@@ -231,7 +231,7 @@ void mem_CheckStackGuardValues(void)
  */
 bool mem_CheckPointer(void * pnt, size_t size)
 {
-#define MEM_FLASH_START		(0x80000000 + 64*1024)
+#define MEM_FLASH_START		(0x80000000 + 64*1024)		// TODO miért itt vannak?!
 #define MEM_FLASH_END		(0x08000000)
 #define MEM_RAM_START		(0x20000000)
 #define MEM_RAM_END			(0x20002000)
@@ -256,11 +256,11 @@ void MEM_UnitTest(void)
 	UnitTest_Start("MEM", __FILE__);
 
 
-
 	// Test memcmp
 	const uint8_t testBuffer1[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 	uint8_t testBuffer2[10];
 	uint8_t i;
+
 	for (i = 0; i < 10; i++)
 	{
 		testBuffer2[i] = i;
@@ -290,7 +290,6 @@ void MEM_UnitTest(void)
 	UNITTEST_ASSERT((testBuffer2[9] == 0xFF), "meminit");
 
 
-
 	// Test memcpy
 	uint8_t testBuffer3[10];
 	testBuffer3[0] = 0xFF;
@@ -301,7 +300,6 @@ void MEM_UnitTest(void)
 	UNITTEST_ASSERT((!memcmp("12345678", &testBuffer3[1], 8)), "memcpy");
 	UNITTEST_ASSERT((testBuffer3[0] == 0xFF), "memcpy");
 	UNITTEST_ASSERT((testBuffer3[9] == 0xFF), "memcpy");
-
 
 
 	// Test memset
@@ -323,7 +321,6 @@ void MEM_UnitTest(void)
 	}
 	UNITTEST_ASSERT((testBuffer3[0] == 0xFF), "memset");
 	UNITTEST_ASSERT((testBuffer3[9] == 0xFF), "memset");
-
 
 
 	// Test memmove

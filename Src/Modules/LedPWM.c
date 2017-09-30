@@ -19,15 +19,17 @@
 #include "LedPWM.h"
 
 
+
 #ifdef CONFIG_MODULE_LEDPWM_ENABLE
 
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-/* Timer handler declaration */
+// Timer handler declaration
 TIM_HandleTypeDef    TimLedBlueHandle;
 TIM_HandleTypeDef    TimLedGreenHandle;
+
 
 
 /*------------------------------------------------------------------------------
@@ -52,7 +54,7 @@ TIM_HandleTypeDef    TimLedGreenHandle;
  */
 void LedPWM_Init(void)
 {
-
+	// Timer Output Compare Configuration Structure declaration
 	/* Timer Output Compare Configuration Structure declaration */
 	TIM_OC_InitTypeDef sConfig;
 
@@ -277,9 +279,8 @@ void LED_PWM_ChangePercent(TIM_HandleTypeDef *TimHandle, uint32_t timerChannel, 
 		/* PWM Generation Error */
 		Error_Handler();
 	}
-
 }
 
+
+
 #endif	// #ifdef CONFIG_MODULE_LEDPWM_ENABLE
-
-

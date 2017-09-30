@@ -9,9 +9,8 @@
  *		Last modified:	2017-03-16
  */
 
-
-#ifndef HWTESTER_COMMONSPI_H_
-#define HWTESTER_COMMONSPI_H_
+#ifndef COMMONSPI_H_
+#define COMMONSPI_H_
 
 
 
@@ -47,4 +46,4 @@
 
 
 
-#endif /* HWTESTER_COMMONSPI_H_ */
+#endif /* COMMONSPI_H_ */

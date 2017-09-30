@@ -1,7 +1,7 @@
 /*
  *		IO.h
  *		Created on:		2016-01-01
- *		Author:			Vizi Gábor
+ *		Author:			Vizi G�bor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		IO module (Input-Output)
  *		Target:			STM32Fx
@@ -11,6 +11,7 @@
 
 #ifndef IO_H_
 #define IO_H_
+
 
 
 /*------------------------------------------------------------------------------
@@ -88,6 +89,7 @@ typedef enum
 } OutputState_t;
 
 
+
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
@@ -102,7 +104,7 @@ typedef enum
 void IO_Init(void);
 
 void IO_SetOutputState(Output_t outputpin, OutputState_t outstate);
-bool IO_SetInputState(Input_t inputpin, InputState_t inputstate);
+void IO_SetInputState(Input_t inputpin, InputState_t inputstate);
 
 InputState_t IO_GetInputState(Input_t inputpin);
 OutputState_t IO_GetOutputState(Output_t outputpin);

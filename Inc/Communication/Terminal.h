@@ -46,50 +46,46 @@
 
 
 #ifdef CONFIG_TERMINAL_PROMT_ENABLE
-#define TERMINAL_SEND_PROMT_NEW_LINE()	CommandHandler_SendMessage("\r\n# ")
-#define TERMINAL_SEND_PROMT()			CommandHandler_SendMessage("# ")
+	#define TERMINAL_SEND_PROMT_NEW_LINE()	CommandHandler_SendMessage("\r\n# ")
+	#define TERMINAL_SEND_PROMT()			CommandHandler_SendMessage("# ")
 #else
-#define TERMINAL_SEND_PROMT_NEW_LINE()	CommandHandler_SendMessage("\r\n")
-#define TERMINAL_SEND_PROMT()
+	#define TERMINAL_SEND_PROMT_NEW_LINE()	CommandHandler_SendMessage("\r\n")
+	#define TERMINAL_SEND_PROMT()
 #endif
 
 
-#define TERMINAL_SEND_NEW_LINE()		CommandHandler_SendMessage("\r\n")
+#define TERMINAL_SEND_NEW_LINE()			CommandHandler_SendMessage("\r\n")
 
 
-///	DEFINES FOR CHARACTERS
+///	Defines for characters
 
-#if defined(CONFIG_TERMINAL_USE_ZOC) \
- || defined(CONFIG_TERMINAL_USE_PUTTY)
-#define TERMINAL_KEY_DELETE			(0x08)
-#define TERMINAL_KEY_BACKSPACE		(0x7F)
+#if defined(CONFIG_TERMINAL_USE_ZOC) || defined(CONFIG_TERMINAL_USE_PUTTY)
+	#define TERMINAL_KEY_DELETE				(0x08)
+	#define TERMINAL_KEY_BACKSPACE			(0x7F)
 #else
-#define TERMINAL_KEY_DELETE			(0x7F)
-#define TERMINAL_KEY_BACKSPACE		(0x08)
+	#define TERMINAL_KEY_DELETE				(0x7F)
+	#define TERMINAL_KEY_BACKSPACE			(0x08)
 #endif
 
 
-#define TERMINAL_KEY_ENTER			('\r')
-#define TERMINAL_KEY_SPACE			(' ')
-#define TERMINAL_KEY_ESCAPE			('\x1B')
-#define TERMINAL_KEY_BELL			('\a')
+#define TERMINAL_KEY_ENTER					('\r')
+#define TERMINAL_KEY_SPACE					(' ')
+#define TERMINAL_KEY_ESCAPE					('\x1B')
+#define TERMINAL_KEY_BELL					('\a')
 
 
-// NOTE: Changed \e to \x1B
-#define TERMINAL_ESCAPESEQUENCE_1	('\x1B')
-#define TERMINAL_ESCAPESEQUENCE_2	('[')
+#define TERMINAL_ESCAPESEQUENCE_1			('\x1B')
+#define TERMINAL_ESCAPESEQUENCE_2			('[')
 
 
 //	BUTTONS
 
 
 // 8 = BS = Backspace
-#define TERMINAL_SEND_KEY_BACKSPACE()	\
-		CommandHandler_SendChar(8)
+#define TERMINAL_SEND_KEY_BACKSPACE()		CommandHandler_SendChar(8)
 
 // 127 = DEL = Delete
-#define TERMINAL_SEND_KEY_DEL()		 	\
-		CommandHandler_SendChar(127)
+#define TERMINAL_SEND_KEY_DEL()		 		CommandHandler_SendChar(127)
 
 
 

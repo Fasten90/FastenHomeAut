@@ -67,9 +67,12 @@ void EventHandler_Init(void)
 	for (i = 0; i < TasksNum; i++)
 	{
 		if (EventList[i].isHasRequiredTask)
+		{
 			ASSERT(EventList[i].requiredTaskRunId < TasksNum);
+		}
 	}
 
+	memset(Events, 0, sizeof(Events));			// Fill with default value
 
 	// Fill with default value
 	memset(Events, 0, sizeof(Events));
@@ -187,6 +190,7 @@ void EventHandler_ClearEvent(EventName_t eventName, TaskID_t taskSource)
 const char * EventHandler_GetEventTypeName(EventType_t eventType)
 {
 	const char * str = NULL;
+
 	switch (eventType)
 	{
 		case EventType_Raised:
@@ -244,10 +248,13 @@ void EventHandler_UnitTest(void)
 
 	// Test: 0. event, 0 data, 0. task source
 	EventHandler_GenerateEvent(0, 0, 0);
+
 	// Get 0. event, 0. task source
 	UNITTEST_ASSERT(EventHandler_CheckEventState(0, 0) == true, "Event - generate and check is wrong");
+
 	// It is cleared?
 	UNITTEST_ASSERT(EventHandler_CheckEventState(0, 0) == false, "Event - generate and check is wrong");
+
 	// Get other event - it is not was set
 #ifdef CONFIG_EVENTHANDLER_REQUIRED_TASK_MODE
 	UNITTEST_ASSERT(EventHandler_CheckEventState(1, 1) == false, "Event - generate and check is wrong");
@@ -258,27 +265,33 @@ void EventHandler_UnitTest(void)
 
 	// Test with other parameters
 	EventHandler_GenerateEvent(Event_LogEventStated, 0xFFFFFFFF, Event_LogEventStated);
+
 	// Get 0. event, 0. task source
 	UNITTEST_ASSERT(EventHandler_CheckEventState(Event_LogEventStated, 10) == true, "Event - generate and check is wrong");
+
 	// It is cleared?
 	UNITTEST_ASSERT(EventHandler_CheckEventState(Event_LogEventStated, 10) == false, "Event - generate and check is wrong");
+
 	// Get other event - it is not was set
 	UNITTEST_ASSERT(EventHandler_CheckEventState(Event_LogEventStated, 9) == true, "Event - generate and check is wrong");
 
 
 	// Test EventHandler_ClearEvent
+
 	// Set the Event
 	EventHandler_GenerateEvent(Event_LogEventStated, 0xFFFFFFFF, 10);
+
 	// Clear the event
 	EventHandler_ClearEvent(Event_LogEventStated, 10);
+
 	// Check, event is "cleared" ?
 	UNITTEST_ASSERT(EventHandler_CheckEventState(Event_LogEventStated, 10) == false, "Event - Clear is wrong");
-
 
 
 	// Finish unit test
 	UnitTest_End();
 }
+
 #endif
 
 

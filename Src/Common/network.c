@@ -15,6 +15,7 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
+#include <Network.h>
 #include "include.h"
 #include "String.h"
 #include "DebugUart.h"
@@ -83,7 +84,6 @@ uint8_t Network_PrintIpOnDebug(char *str, Network_IP_t *ip)
  */
 bool Network_ConvertIpAddressStringToIP(char *message, Network_IP_t *address)
 {
-
 	// Process String like "192.168.0.1"
 
 	char *separated[4];

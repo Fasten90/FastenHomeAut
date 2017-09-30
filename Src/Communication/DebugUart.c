@@ -33,14 +33,14 @@
 
 UART_HandleTypeDef Debug_UartHandle;
 
-volatile char DebugUart_RxBuffer[DEBUGUART_RXBUFFERSIZE] = { 0 };
-volatile char DebugUart_TxBuffer[DEBUGUART_TXBUFFERSIZE] = { 0 };
+volatile char DebugUart_RxBuffer[DEBUGUART_RX_BUFFER_SIZE] = { 0 };
+volatile char DebugUart_TxBuffer[DEBUGUART_TX_BUFFER_SIZE] = { 0 };
 
 CircularBufferInfo_t DebugUart_RxBuffStruct =
 {
 	.buffer = (char *)DebugUart_RxBuffer,
 	.name = "DebugUart_RxBuffer",
-	.size = DEBUGUART_RXBUFFERSIZE
+	.size = DEBUGUART_RX_BUFFER_SIZE
 };
 
 
@@ -100,12 +100,10 @@ uint8_t DebugUart_SendMessage(const char *message)
 	{
 		return 0;
 	}
-#if DEBUGUART_TXBUFFERSIZE < 256
-	if (length > DEBUGUART_TXBUFFERSIZE)
+	if (length > DEBUGUART_TX_BUFFER_SIZE)
 	{
-		length = DEBUGUART_TXBUFFERSIZE - 1;
+		length = DEBUGUART_TX_BUFFER_SIZE - 1;
 	}
-#endif
 
 	if (DebugUart_WaitForSend(1000))
 	{
@@ -113,16 +111,16 @@ uint8_t DebugUart_SendMessage(const char *message)
 
 		DebugUart_SendEnable_flag = false;
 
-		StrCpyMax((char *)DebugUart_TxBuffer, message, DEBUGUART_TXBUFFERSIZE-1);
+		StrCpyMax((char *)DebugUart_TxBuffer, message, DEBUGUART_TX_BUFFER_SIZE-1);
 
 		// ComIT
 		if (HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t *)DebugUart_TxBuffer, length) != HAL_OK)
 		{
 			// NOTE: !!IMPORTANT!! Not sent message
 			//Error_Handler();
-			#ifdef CONFIG_USE_FREERTOS
+#ifdef CONFIG_USE_FREERTOS
 			xSemaphoreGive(DEBUG_USART_Tx_Semaphore);
-			#endif
+#endif
 			DebugUart_SendEnable_flag = true;	// Failed to send, now we can send message
 
 			return 0;
@@ -154,13 +152,15 @@ bool DebugUart_SendNewLine(void)
 
 
 /**
- * \brief	Send message with newline
+ * \brief Send message with newline
  */
 bool DebugUart_SendLine(const char *message)
 {
 	bool isSuccessful = true;
+
 	isSuccessful &= DebugUart_SendMessage(message);
 	isSuccessful &= DebugUart_SendNewLine();
+
 	return isSuccessful;
 }
 
@@ -172,6 +172,7 @@ bool DebugUart_SendLine(const char *message)
 bool DebugUart_SendChar(char c)
 {
 	char buf[2];
+
 	buf[0] = c;
 	buf[1] = '\0';
 
@@ -186,10 +187,11 @@ bool DebugUart_SendChar(char c)
 		{
 			// NOTE: !! IMPORTANT!! Not sent message
 			//Error_Handler();
-			#ifdef CONFIG_USE_FREERTOS
+#ifdef CONFIG_USE_FREERTOS
 			xSemaphoreGive(DEBUG_USART_Tx_Semaphore);
-			#endif
+#endif
 			DebugUart_SendEnable_flag = true;
+
 			return false;
 		}
 		else
@@ -201,8 +203,7 @@ bool DebugUart_SendChar(char c)
 	}
 	else
 	{
-		// Failed to take semaphore
-		return false;
+		return false;	// Failed to take semaphore
 	}
 }
 
@@ -213,19 +214,17 @@ bool DebugUart_SendChar(char c)
  */
 void DebugUart_StartReceive(void)
 {
-
 	// USART - Receive Message
 #ifdef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
 	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&DebugUart_RxBuffer[DebugUart_RxBufferWriteCnt], DEBUGUART_RXBUFFER_WAIT_LENGTH);
 #else
-	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)DebugUart_RxBuffer, DEBUGUART_RXBUFFERSIZE);
+	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)DebugUart_RxBuffer, DEBUGUART_RX_BUFFER_SIZE);
 #endif
 
-	#ifdef CONFIG_USE_FREERTOS
+#ifdef CONFIG_USE_FREERTOS
 	// Wait for semaphore
 	xSemaphoreTake(DEBUG_USART_Rx_Semaphore, (portTickType) 1000);
-	#endif
-
+#endif
 }
 
 
@@ -235,7 +234,6 @@ void DebugUart_StartReceive(void)
  */
 static bool DebugUart_WaitForSend(uint16_t timeoutMilliSecond)
 {
-
 #ifdef CONFIG_USE_FREERTOS
 	if (xSemaphoreTake(DEBUG_USART_Tx_Semaphore, (portTickType)timeoutMilliSecond) == pdPASS)
 	{
@@ -274,7 +272,7 @@ void DebugUart_ProcessReceivedCharacters(void)
 		CircularBuffer_FindLastMessage(&DebugUart_RxBuffStruct);
 
 		// If WriteCnt not equal with ReadCnt, we have received message
-		char receiveBuffer[DEBUGUART_RXBUFFERSIZE+1];
+		char receiveBuffer[DEBUGUART_RX_BUFFER_SIZE+1];
 
 		// Received new character?
 		if (CircularBuffer_HasNewMessage(&DebugUart_RxBuffStruct))
@@ -295,12 +293,12 @@ void DebugUart_ProcessReceivedCharacters(void)
 			if (newLinePos > 0)
 			{
 				receiveBuffer[newLinePos] = '\0';
-				// Search command and run
-				CommandHandler_PrepareFindExecuteCommand(
-					CommProt_DebugUart, (char *)receiveBuffer);
+					// Search command and run
+					CommandHandler_PrepareFindExecuteCommand(
+						CommProt_DebugUart, (char *)receiveBuffer);
 
-				// TODO: Create Get&Clear function
-				CircularBuffer_ClearLast(&DebugUart_RxBuffStruct);
+					// TODO: Create Get&Clear function
+					CircularBuffer_ClearLast(&DebugUart_RxBuffStruct);
 			}
 
 			// TODO: Do not get all messages, which received. Only which are processed...
@@ -318,10 +316,10 @@ void DebugUart_ProcessReceivedCharacters(void)
 uint8_t uprintf(const char *format, ...)
 {
 	// Working in at:
-	char txBuffer[DEBUGUART_TXBUFFERSIZE];
+	char txBuffer[DEBUGUART_TX_BUFFER_SIZE];
 
 #ifdef CONFIG_DEBUG_MODE
-	txBuffer[DEBUGUART_TXBUFFERSIZE-1] = 0xEF;
+	txBuffer[DEBUGUART_TX_BUFFER_SIZE-1] = 0xEF;
 #endif
 
 	va_list ap;									// argument pointer
@@ -330,7 +328,7 @@ uint8_t uprintf(const char *format, ...)
 	va_end(ap);						 			// Cleaning after end
 
 #ifdef CONFIG_DEBUG_MODE
-	if (txBuffer[DEBUGUART_TXBUFFERSIZE-1] != 0xEF) DEBUG_BREAKPOINT();
+	if (txBuffer[DEBUGUART_TX_BUFFER_SIZE-1] != 0xEF) DEBUG_BREAKPOINT();
 #endif
 
 	return DebugUart_SendMessage(txBuffer);		// Send on Usart

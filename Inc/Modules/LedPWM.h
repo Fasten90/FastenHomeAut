@@ -9,14 +9,15 @@
  *		Last modified:	2017-02-15
  */
 
-#ifndef MODULES_LEDPWM_H_
-#define MODULES_LEDPWM_H_
+#ifndef LEDPWM_H_
+#define LEDPWM_H_
 
 
 
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
+
 #include "options.h"
 #include "include.h"
 
@@ -54,7 +55,6 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-
 extern TIM_HandleTypeDef    TimLedBlueHandle;
 extern TIM_HandleTypeDef    TimLedGreenHandle;
 
@@ -64,14 +64,13 @@ extern TIM_HandleTypeDef    TimLedGreenHandle;
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-
 void LedPWM_Init(void);
 void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim);
 void LED_PWM_ChangePercent(TIM_HandleTypeDef *TimHandle,
 		uint32_t timerChannel, uint8_t percent);
 
 
+
 #endif	// #ifdef CONFIG_MODULE_LEDPWM_ENABLE
 
-
-#endif /* MODULES_LEDPWM_H_ */
+#endif /* LEDPWM_H_ */

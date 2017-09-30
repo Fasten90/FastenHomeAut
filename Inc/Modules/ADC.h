@@ -23,8 +23,6 @@
 
 #ifdef CONFIG_MODULE_ADC_ENABLE
 
-
-
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
@@ -35,10 +33,12 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
+///< ADC "device" list
 typedef enum
 {
 	ADC_Vsource,
 	ADC_StandardVoltageExample,
+
 	// Do not use, only for count
 	ADC_Count
 } ADC_MeasurementData_t;
@@ -62,9 +62,11 @@ extern volatile uint32_t		ADC_RunCnt;
  *----------------------------------------------------------------------------*/
 
 
+
 /*------------------------------------------------------------------------------
  *  Local function declarations
  *----------------------------------------------------------------------------*/
+
 
 
 /*------------------------------------------------------------------------------
@@ -74,7 +76,6 @@ extern volatile uint32_t		ADC_RunCnt;
 void ADC_Init( void );
 void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc);
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle);
-
 
 void ADC_ConvertAllMeasuredValues(void);
 

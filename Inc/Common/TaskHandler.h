@@ -26,16 +26,15 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-
 // TaskResult defines
 #define TASK_RESULT_OK			(true)
 #define TASK_RESULT_FAILED		(false)
 
 
 #ifdef CONFIG_DEBUG_SW_WATCHDOG_ENABLE
-#define TASKHANDLER_SW_WATCHDOG()		TaskHandler_SwWatchdog()
+	#define TASKHANDLER_SW_WATCHDOG()		TaskHandler_SwWatchdog()
 #else
-#define TASKHANDLER_SW_WATCHDOG()
+	#define TASKHANDLER_SW_WATCHDOG()
 #endif
 
 

@@ -9,8 +9,8 @@
  *		Last modified:	2017-02-27
  */
 
-#ifndef RESET_H_
-#define RESET_H_
+#ifndef MODULES_RESET_H_
+#define MODULES_RESET_H_
 
 
 
@@ -25,16 +25,16 @@
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
-/*
-  *            @arg RCC_FLAG_BORRST: POR/PDR or BOR reset.
-  *            @arg RCC_FLAG_PINRST: Pin reset.
-  *            @arg RCC_FLAG_PORRST: POR/PDR reset.
-  *            @arg RCC_FLAG_SFTRST: Software reset.
-  *            @arg RCC_FLAG_IWDGRST: Independent Watchdog reset.
-  *            @arg RCC_FLAG_WWDGRST: Window Watchdog reset.
-  *            @arg RCC_FLAG_LPWRRST: Low Power reset.
-  */
 
+/*
+ *	@arg RCC_FLAG_BORRST: POR/PDR or BOR reset.
+ *	@arg RCC_FLAG_PINRST: Pin reset.
+ *	@arg RCC_FLAG_PORRST: POR/PDR reset.
+ *	@arg RCC_FLAG_SFTRST: Software reset.
+ *	@arg RCC_FLAG_IWDGRST: Independent Watchdog reset.
+ *	@arg RCC_FLAG_WWDGRST: Window Watchdog reset.
+ *	@arg RCC_FLAG_LPWRRST: Low Power reset.
+ */
 #define RESET_RCC_ALL_RESET_FLAGS	( RCC_FLAG_BORRST \
 									| RCC_FLAG_PINRST \
 									| RCC_FLAG_PORRST \
@@ -50,6 +50,7 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
+///< Reset reason (Why reseted
 typedef enum
 {
 	ResetReason_Unknown = 0x00,	///< Unknown
@@ -63,7 +64,6 @@ typedef enum
 	ResetReason_Count = 0x80,	///< Max value of reset reason
 	ResetReason_Mask = 0xFF		///< Reset reason mask
 } ResetReason_t;
-
 
 
 
@@ -84,4 +84,4 @@ void Reset_PrintResetReasons(void);
 
 
 
-#endif /* RESET_H_ */
+#endif /* MODULES_RESET_H_ */

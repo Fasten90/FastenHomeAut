@@ -18,11 +18,9 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
-#include "include.h"
-
 #include <stdbool.h>	// For bool
-
 #include <stdarg.h>		// For "..." parameters in uprintf function
+#include "include.h"
 
 
 
@@ -76,10 +74,8 @@
 uint8_t SignedDecimalToString(int32_t value, char *str);
 uint8_t UnsignedDecimalToString(uint32_t value, char *str);
 uint8_t UnsignedDecimalLength(uint32_t value);
-uint8_t UnsignedDecimalToStringFill(uint32_t value, char *str,
-		uint8_t fillLength, char fillCharacter);
-uint8_t SignedDecimalToStringFill(int32_t value, char *str,
-		uint8_t fillLength, char fillCharacter);
+uint8_t UnsignedDecimalToStringFill(uint32_t value, char *str, uint8_t fillLength, char fillCharacter);
+uint8_t SignedDecimalToStringFill(int32_t value, char *str, uint8_t fillLength, char fillCharacter);
 
 // Num -> Binary String converter
 uint8_t DecimalToBinaryString(uint32_t value, char *str, uint8_t maxLength);
@@ -90,8 +86,7 @@ uint8_t ByteToHexaString(uint8_t byte, char *str);
 char HexToHexChar(uint8_t octet);
 
 // Float --> String converter
-uint8_t FloatToString(float value, char *str,
-		uint8_t integerLength, uint8_t fractionLength);
+uint8_t FloatToString(float value, char *str, uint8_t integerLength, uint8_t fractionLength);
 
 // String checkers
 bool IsHexChar(const char c);
@@ -124,8 +119,7 @@ uint8_t StrCmpFirst(const char *str1, const char *str2);
 uint8_t StrCmpWithLength(const char * str1, const char *str2, uint8_t length);
 uint8_t StrCpy(char *dest, const char *src);
 uint8_t StrCpyFixLength(char *dest, const char *src, uint8_t length);
-uint8_t StrCpyFixLengthWithFillCharacter(char *dest, const char *str,
-		uint8_t length, char fillChar);
+uint8_t StrCpyFixLengthWithFillCharacter(char *dest, const char *str, uint8_t length, char fillChar);
 uint8_t StrCpyMax(char *dest, const char *str, uint8_t maxLength);
 uint8_t StrCpyCharacter(char *dest, char c, uint8_t num);
 uint8_t StrAppend(char *dest, const char *src);
@@ -133,8 +127,7 @@ uint8_t StrAppend(char *dest, const char *src);
 // Find & Separators
 void StrTrim(char *str);
 int16_t STRING_FindString(const char *str, const char *findString);
-uint8_t STRING_Splitter(char *source, char delimiterChar,
-		char **separated, uint8_t parameterMaxCount);
+uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint8_t parameterMaxCount);
 
 // Send functions
 // !! IMPORTANT !! Send formatted string on USART !!

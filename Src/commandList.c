@@ -545,8 +545,7 @@ const CommandStruct CommandList[] =
 };
 
 
-
-const CommandID_t CommandHandler_CommandNum = COMMANDHANDLER_MAX_COMMAND_NUM;
+const CommandID_t CommandHandler_CommandNum = NUM_OF(CommandList);
 
 
 
@@ -2321,14 +2320,8 @@ static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
 			uint32_t pin;
 			if (StringToUnsignedDecimalNum(argv[2], &pin))
 			{
-				if (IO_SetInputState((Input_t)pin, InputState_Active))
-				{
-					result = CommandResult_Ok_SendSuccessful;
-				}
-				else
-				{
-					result = CommandResult_Error_WrongArgument2;
-				}
+				IO_SetInputState((Input_t)pin, InputState_Active);
+				result = CommandResult_Ok_SendSuccessful;
 			}
 			else
 			{

@@ -25,7 +25,6 @@
 const char Global_BoardName[]	= BOARD_NAME;
 const char Global_Version[]		= VERSION_DEFINE;
 const char Global_BoardMCU[]	= BOARD_MCU;
-
 char Global_DeviceName[20] 		= BOARD_NAME;
 
 
@@ -59,7 +58,6 @@ void Error_Handler(void)
 	LED_GREEN_OFF();
 	LED_RED_ON();
 
-
 	// Stop debugger
 	DEBUG_BREAKPOINT();
 
@@ -80,5 +78,4 @@ void Error_Handler(void)
 		LED_RED_TOGGLE();
 		DelayMs(125);
 	}
-
 }

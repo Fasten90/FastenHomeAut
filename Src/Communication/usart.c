@@ -283,7 +283,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 		xSemaphoreGiveFromISR(DEBUG_USART_Rx_Semaphore, 0);
 		#endif
 		#else
-		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)DebugUart_RxBuffer, DEBUGUART_RXBUFFERSIZE);
+		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)DebugUart_RxBuffer, DEBUGUART_RX_BUFFER_SIZE);
 		#endif
 	}
 	#endif	// #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
@@ -350,7 +350,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 #ifdef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
 		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&DebugUart_RxBuffer[USART_RxBufferWriteCounter], DEBUGUART_RXBUFFER_WAIT_LENGTH);
 #else
-		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)DebugUart_RxBuffer, DEBUGUART_RXBUFFERSIZE);
+		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)DebugUart_RxBuffer, DEBUGUART_RX_BUFFER_SIZE);
 #endif
 		HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t *)"$", 1);
 		
