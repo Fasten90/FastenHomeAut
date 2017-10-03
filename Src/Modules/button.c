@@ -79,7 +79,6 @@ void BUTTON_Init(void)
 	// Config IT-s
 	
 #ifdef CONFIG_USE_PANEL_HOMEAUTNODESMALL
-	
 	// Enable and set EXTI lines 0 to 1 Interrupt to the lowest priority
 	HAL_NVIC_SetPriority(EXTI0_1_IRQn, 1, 0);
 	HAL_NVIC_EnableIRQ(EXTI0_1_IRQn); 
@@ -88,12 +87,10 @@ void BUTTON_Init(void)
 	// Enable and set EXTI lines 4 to 15 Interrupt to the lowest priority
 	HAL_NVIC_SetPriority(EXTI4_15_IRQn, 2, 0);
 	HAL_NVIC_EnableIRQ(EXTI4_15_IRQn); 
-	
 #endif
 
 
 #ifdef CONFIG_USE_PANEL_FASTENNODE
-
 	// Enable and set EXTI lines 0 to 1 Interrupt to the lowest priority
 	HAL_NVIC_SetPriority(EXTI0_1_IRQn, 1, 0);
 	HAL_NVIC_EnableIRQ(EXTI0_1_IRQn);
@@ -102,12 +99,10 @@ void BUTTON_Init(void)
 	// Enable and set EXTI lines 4 to 15 Interrupt to the lowest priority
 	HAL_NVIC_SetPriority(EXTI4_15_IRQn, 2, 0);
 	HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);
-	
 #endif
 
 	
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
-	
 	// 0, 2, 9, 13. pins
 	
 	// Enable and set EXTI lines
@@ -123,12 +118,10 @@ void BUTTON_Init(void)
 	
 	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 4, 0);
 	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn); 
-
 #endif
 	
 	
 #ifdef CONFIG_USE_PANEL_HOMEAUTCENTERPANEL
-	
 	// Up		PC7
 	// Down		PC8
 	// Right	PA0
@@ -141,13 +134,10 @@ void BUTTON_Init(void)
 	// Enable and set EXTI lines
 	HAL_NVIC_SetPriority(EXTI9_5_IRQn, 2, 0);
 	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn); 
-	
-
 #endif
 
 
 #if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_NUCLEOF401RE)
-
 	// User	button
 
 	// Enable and set EXTI lines
@@ -214,7 +204,7 @@ bool BUTTON_GetButtonState(ButtonType_t button)
  */
 const char * BUTTON_GetButtonName(ButtonType_t button)
 {
-	char * buttonName = NULL;
+	const char * buttonName = NULL;
 
 #if BUTTON_NUM == 4
 	switch (button)
@@ -257,7 +247,7 @@ const char * BUTTON_GetButtonName(ButtonType_t button)
  */
 const char * BUTTON_GetPressTypeName(ButtonPressType_t pressType)
 {
-	char * name = NULL;
+	const char * name = NULL;
 
 	switch (pressType)
 	{

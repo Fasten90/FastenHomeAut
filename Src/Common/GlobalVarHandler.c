@@ -31,17 +31,6 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define BOOL_MAX	(1)		// TODO miért ide?
-
-/*
-#define UINT8_MAX	(0xFF)
-#define INT8_MAX	(0x7F)
-#define UINT16_MAX	(0xFFFF)
-#define INT16_MAX	(0x7FFF)
-#define UINT32_MAX	(0xFFFFFFFF)
-#define INT32_MAX	(0x7FFFFFFF)
-*/
-
 
 
 /*------------------------------------------------------------------------------
@@ -1202,15 +1191,7 @@ static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t n
 			break;
 
 		case Type_Float:
-			// TODO: Not a good compare in float type
-			if ((int32_t)num > INT32_MAX)
-			{
-				result = Process_InvalidValue_TooMuch;
-			}
-			else if ((int32_t)num < INT32_MIN)
-			{
-				result = Process_InvalidValue_TooSmall;
-			}
+			// TODO: How to check float type value?
 			break;
 
 		case Type_Bits:

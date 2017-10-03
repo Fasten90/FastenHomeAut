@@ -34,7 +34,7 @@ char Global_DeviceName[20] 		= BOARD_NAME;
  *----------------------------------------------------------------------------*/
 
 /**
- * \brief	Delay (ms)
+ * \brief		Delay (ms)
  * \param[in]	ms	millisecond, which time delay
  */
 void DelayMs(uint32_t ms)

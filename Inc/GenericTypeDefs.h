@@ -19,11 +19,27 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
+// bool typedef
+#include <stdbool.h>
 #include "include.h"
 
 
-// bool typedef
-#include <stdbool.h>
+
+
+/*------------------------------------------------------------------------------
+ *  Macros
+ *----------------------------------------------------------------------------*/
+
+#define BOOL_MAX	(1)
+
+/*
+#define UINT8_MAX	(0xFF)
+#define INT8_MAX	(0x7F)
+#define UINT16_MAX	(0xFFFF)
+#define INT16_MAX	(0x7FFF)
+#define UINT32_MAX	(0xFFFFFFFF)
+#define INT32_MAX	(0x7FFFFFFF)
+*/
 
 
 

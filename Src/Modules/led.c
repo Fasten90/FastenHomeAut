@@ -35,7 +35,7 @@
 ///< LED names
 const char * const LED_NameList[] =
 {
-	// NOTE: Be careful, when change the order and num, syncronize with LED_NUM_MAX define
+	// NOTE: Be careful, when change the order and num, synchronize with LED_NUM_MAX define
 #if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_HOMEAUTPANELS)
 	"green",
 	"blue",
@@ -51,7 +51,7 @@ const char * const LED_NameList[] =
 ///< LED types
 const char * const LED_TypeNameList[] =
 {
-	// NOTE: Syncronize with LED_SetType_t
+	// NOTE: Synchronize with LED_SetType_t
 	"-",
 	"on",
 	"off",
@@ -81,16 +81,15 @@ static bool LED_SetGreenLed(LED_SetType_t ledSet);
  */
 void LED_Init(void)
 {
-	
 	BUILD_BUG_ON((sizeof(LED_TypeNameList)/sizeof(LED_TypeNameList[0])) != LED_Type_Count);
 	BUILD_BUG_ON((sizeof(LED_NameList)/sizeof(LED_NameList[0])) != (LED_Count - 1));
 
 	GPIO_InitTypeDef GPIO_InitStructure;
 
-	// GPIO Periph clock enable
+	// GPIO Peripheral clock enable
 	LED_PORT_CLK_ENABLES();
 	
-	// Configure pin output pushpull mode
+	// Configure pins
 	//GPIO_InitStructure.Alternate = GPIO_AF;
 	GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStructure.Pin = BOARD_LED_GREEN_PIN;
@@ -115,10 +114,10 @@ void LED_Init(void)
 
 /**
  * \brief	LED blinking in infinite loop
+ * \note	!! It is blocking !!
  */
 void LED_Test(void)
 {
-
 	while(1)
 	{
 		// Set LEDs
@@ -330,6 +329,7 @@ LED_Pin_t LED_GetNumFromName(const char *name)
 	uint8_t i;
 	LED_Pin_t ledNum = LED_Unknown;
 
+	// Search LED name in the list
 	for (i = 0; i < LED_Count - 1; i++)
 	{
 		if (!StrCmp(LED_NameList[i], name))
@@ -353,8 +353,7 @@ LED_SetType_t LED_GetTypeFromString(const char *typeString)
 	uint8_t i;
 	LED_SetType_t ledType = 0;
 
-	// TODO: Can we optimizing without loop?
-
+	// Search LED type string in the list
 	for (i = 0; i < LED_Type_Count; i++)
 	{
 		if (!StrCmp(LED_TypeNameList[i], typeString))

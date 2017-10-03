@@ -293,7 +293,7 @@
 
 
 ///< Unit tests
-#define CONFIG_MODULE_UNITTEST_ENABLE
+//#define CONFIG_MODULE_UNITTEST_ENABLE
 #ifdef CONFIG_MODULE_UNITTEST_ENABLE
 	//#define MODULE_STRING_UNITTEST_ENABLE
 	//#define MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
@@ -308,7 +308,7 @@
 	//#define MODULE_CALC_UNITTEST_ENABLE
 	//#define MODULE_MEM_UNITTEST_ENABLE
 	//#define MODULE_LINKEDLIST_UNITTEST_ENABLE
-	#define MODULE_CONVERTTABLE_UNITTEST_ENABLE
+	//#define MODULE_CONVERTTABLE_UNITTEST_ENABLE
 	//#define MODULE_SECUREDDATATYPES_UNITTEST_ENABLE
 
 	#if defined(MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE) && !defined(CONFIG_PROTOCOL_BUFFER_ENABLE)
@@ -359,6 +359,7 @@
 /*------------------------------------------------------------------------------
  *								Other module settings
  *----------------------------------------------------------------------------*/
+
 
 // CommandHandler settings
 #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
@@ -494,7 +495,7 @@
 
 
 /*------------------------------------------------------------------------------
- *								Functions
+ *								Logical functions
  *----------------------------------------------------------------------------*/
 
 
