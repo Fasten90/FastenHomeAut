@@ -44,6 +44,19 @@
 
 
 
+#ifdef STM32F030x8
+#define MEM_FLASH_START		(0x08000000)
+#define MEM_FLASH_END		(0x08000000 + 64*1024)
+#define MEM_RAM_START		(0x20000000)
+#define MEM_RAM_END			(0x20002000)
+#elif STM32F40xx
+#warning "Set these values"
+#else
+#warning "ERROR! memory FLASH - RAM values are missed"
+#endif
+
+
+
 /*------------------------------------------------------------------------------
  *								LED defines
  *----------------------------------------------------------------------------*/

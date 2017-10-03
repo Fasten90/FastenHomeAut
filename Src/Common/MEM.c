@@ -45,10 +45,12 @@ void * memcpy(void * destination, const void * source, size_t size)
 	const uint8_t *src = source;
 
 #if CONFIG_MEM_CHECK_POINTERS == 1
-	if (dest != NULL || src != NULL)
+	if (dest == NULL || src == NULL)
 	{
 		return NULL;
 	}
+	MEM_CHECK_POINTER_RANGE((void *)destination, size);
+	MEM_CHECK_POINTER_RANGE((void *)source, size);
 #endif
 
 	for (i = 0; i < size; i++)
@@ -103,7 +105,7 @@ void * memmove(void * destination, const void * source, size_t size)
 	uint8_t *src = (uint8_t *)source;
 
 #if CONFIG_MEM_CHECK_POINTERS == 1
-	if (dest == NULL || src == NULL)
+	if ((dest == NULL) || (src == NULL))
 	{
 		return NULL;
 	}
@@ -150,7 +152,7 @@ int memcmp(const void * ptr1, const void * ptr2, size_t size)
 	const uint8_t *buffer2 = ptr2;
 
 #if CONFIG_MEM_CHECK_POINTERS == 1
-	if (buffer1 == NULL || buffer2 == NULL)
+	if ((buffer1 == NULL) || (buffer2 == NULL))
 	{
 		return -1;
 	}
@@ -231,18 +233,20 @@ void mem_CheckStackGuardValues(void)
  */
 bool mem_CheckPointer(void * pnt, size_t size)
 {
-#define MEM_FLASH_START		(0x80000000 + 64*1024)		// TODO miért itt vannak?!
-#define MEM_FLASH_END		(0x08000000)
-#define MEM_RAM_START		(0x20000000)
-#define MEM_RAM_END			(0x20002000)
+	bool isOk = false;
 
-	if (((uint32_t)pnt >= MEM_RAM_START && (uint32_t)pnt + size < MEM_RAM_END)
-		|| ((uint32_t)pnt >= MEM_FLASH_START && (uint32_t)pnt + size < MEM_FLASH_END))
+	// Check pointer range is in RAM or FLASH?
+	if (((uint32_t)pnt >= MEM_RAM_START && ((uint32_t)pnt + size) < MEM_RAM_END)
+		|| ((uint32_t)pnt >= MEM_FLASH_START && ((uint32_t)pnt + size) < MEM_FLASH_END))
 	{
-		return true;
+		isOk = true;
+	}
+	else
+	{
+		isOk = false;
 	}
 
-	return false;
+	return isOk;
 }
 
 
@@ -257,7 +261,7 @@ void MEM_UnitTest(void)
 
 
 	// Test memcmp
-	const uint8_t testBuffer1[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+	static const uint8_t testBuffer1[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 	uint8_t testBuffer2[10];
 	uint8_t i;
 
@@ -277,9 +281,9 @@ void MEM_UnitTest(void)
 	UNITTEST_ASSERT(!memcmp(testBuffer1, testBuffer2, 10), "memcmp");
 
 
-
 	// Test meminit
 	testBuffer2[0] = 0xFF;
+	testBuffer2[5] = 0xAA;		// Check, it will be cleared (to 0)?
 	testBuffer2[9] = 0xFF;
 	meminit(&testBuffer2[1], 8);
 	for (i = 1; i < 9; i++)
@@ -335,10 +339,10 @@ void MEM_UnitTest(void)
 
 	for (i = 1; i < 9; i++)
 	{
-		UNITTEST_ASSERT((testBuffer3[i] == 0xAA), "memset");
+		UNITTEST_ASSERT((testBuffer3[i] == 0xAA), "memmove");
 	}
-	UNITTEST_ASSERT((testBuffer3[0] == 0xFF), "memset");
-	UNITTEST_ASSERT((testBuffer3[9] == 0xFF), "memset");
+	UNITTEST_ASSERT((testBuffer3[0] == 0xFF), "memmove");
+	UNITTEST_ASSERT((testBuffer3[9] == 0xFF), "memmove");
 
 
 	// Finish

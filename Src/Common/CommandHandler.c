@@ -314,7 +314,7 @@ void CommandHandler_PrintAllCommands(void)
 	CommandHandler_SendLine("Using help:\r\n"
 			"help <command>\r\n\r\n"
 			"Commands list:");
-	for (i=0; i < CommandHandler_CommandNum; i++)
+	for (i = 0; i < CommandHandler_CommandNum; i++)
 	{
 		// Write a command
 		CommandHandler_SendLine(CommandList[i].name);

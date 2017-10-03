@@ -25,6 +25,8 @@
 #include "Snake.h"
 
 
+#ifdef CONFIG_FUNCTION_GAME_SNAKE
+
 
 typedef struct
 {
@@ -470,3 +472,7 @@ static void Snake_DrawGiftToPoint(uint16_t x, uint16_t y)
 	}
 
 }
+
+#endif	// #ifdef CONFIG_FUNCTION_GAME_SNAKE
+
+
