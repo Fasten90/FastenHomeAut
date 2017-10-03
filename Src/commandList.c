@@ -721,6 +721,10 @@ static CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
 	ConvertTable_UnitTest();
 #endif
 
+#ifdef MODULE_SECUREDDATATYPES_UNITTEST_ENABLE
+	SecuredDataTypes_UnitTest();
+#endif
+
 	return CommandResult_Ok;
 }
 #endif	// #ifdef CONFIG_MODULE_UNITTEST_ENABLE

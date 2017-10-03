@@ -61,6 +61,8 @@ void Set_SecuredBool(SecuredBool_t *data, bool value);
 uint32_t Get_SecuredUint32(SecuredUint32_t *data);
 void Set_SecuredUint32(SecuredUint32_t *data, uint32_t value);
 
+void SecuredDataTypes_UnitTest(void);
+
 
 
 #endif /* COMMON_SECUREDDATATYPES_H_ */

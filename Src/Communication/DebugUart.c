@@ -92,7 +92,7 @@ void DebugUart_Init(void)
  */
 uint8_t DebugUart_SendMessage(const char *message)
 {
-	uint8_t length = 0;
+	uint16_t length = 0;
 
 	length = StringLength(message);
 
@@ -100,6 +100,7 @@ uint8_t DebugUart_SendMessage(const char *message)
 	{
 		return 0;
 	}
+
 	if (length > DEBUGUART_TX_BUFFER_SIZE)
 	{
 		length = DEBUGUART_TX_BUFFER_SIZE - 1;

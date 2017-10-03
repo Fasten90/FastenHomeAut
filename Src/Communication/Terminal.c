@@ -18,6 +18,7 @@
 #include "options.h"
 
 #ifdef CONFIG_MODULE_TERMINAL_ENABLE
+
 #include "String.h"
 #include "Globals.h"
 #include "CommandList.h"
