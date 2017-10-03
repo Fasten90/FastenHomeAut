@@ -155,6 +155,10 @@
 #ifdef CONFIG_MODULE_DEBUG_ENABLE
 	static CommandResult_t CommandFunction_Debug(uint32_t argc, char** argv);
 #endif
+#ifdef CONFIG_MODULE_BUTTON_ENABLE
+	static CommandResult_t CommandFunction_Button(uint32_t argc, char** argv);
+#endif
+
 
 
 /*------------------------------------------------------------------------------
@@ -528,6 +532,16 @@ const CommandStruct CommandList[] =
 		.syntax = "<taskname/taskid> <enable/disable>",
 		.example = "",
 		.commandArgNum = CommandArgument_2,
+	},
+#endif
+#ifdef CONFIG_MODULE_BUTTON_ENABLE
+	{
+		.name = "button",
+		.commandFunctionPointer = CommandFunction_Button,
+		.description = "Button state",
+		.syntax = "",
+		.example = "",
+		.commandArgNum = CommandArgument_0,
 	},
 #endif
 
@@ -980,18 +994,19 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	uprintf("DigitNum test: %d\r\n", DigitNum(2000, 0));
 	*/
 
-
+	/*
 #include "Calc.h"
 	uint32_t a = 0;
 	Increment(&a);
 	uprintf("Incremented value: %d", a);
+	 */
 
 
-
+	/*
 	// Snake
 #include "Snake.h"
 	Snake_Init();
-
+	 */
 
 	/**
 	 * 		End of Test codes
@@ -2529,5 +2544,36 @@ static CommandResult_t CommandFunction_Debug(uint32_t argc, char** argv)
 	return result;
 }
 #endif
+
+
+
+#ifdef CONFIG_MODULE_BUTTON_ENABLE
+static CommandResult_t CommandFunction_Button(uint32_t argc, char** argv)
+{
+	UNUSED(argc);
+	UNUSED(argv);
+
+#if BUTTON_NUM > 1
+	uint8_t i;
+
+	// Print all button state
+	for (i = 0; i < BUTTON_NUM; i++)
+	{
+		bool buttonState = BUTTON_GetButtonState(i);
+		const char * buttonName = BUTTON_GetButtonName(i);
+
+		CommandHandler_Printf("Button: %s is %s\r\n", buttonName, buttonState ? "pressed" : "released");
+	}
+#else
+	// Print one button state
+	bool buttonState = BUTTON_GetButtonState(0);
+	const char * buttonName = BUTTON_GetButtonName(0);
+	CommandHandler_Printf("Button: %s is %s\r\n", buttonName, buttonState ? "pressed" : "released");
+#endif
+
+	return CommandResult_Ok;
+}
+#endif
+
 
 /* END OF COMMAND FUNCTIONS */
