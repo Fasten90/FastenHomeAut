@@ -33,6 +33,7 @@
 #include "CommonAdc.h"
 #include "ADC.h"
 #include "EventHandler.h"
+#include "HomeAutMessage.h"
 #ifdef CONFIG_FUNCTION_GAME_SNAKE
 #include "Snake.h"
 #endif
@@ -559,9 +560,9 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 		TaskHandler_DisableTask(Task_ButtonPressed);
 	}
 
-#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
-	// Test for Raspberry Pi
-	RASPBERRYPI_SendMessage(1, Function_Alarm, Alarm_PressedButton , 17);
+#ifdef CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
+	// Test for HomeAutMessage
+	HomeAutMessage_SendMessage(1, Function_Alarm, Alarm_PressedButton, 17);
 #endif
 
 	return TASK_RESULT_OK;

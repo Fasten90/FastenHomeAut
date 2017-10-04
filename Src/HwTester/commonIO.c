@@ -45,9 +45,6 @@ bool CommonIO_Init(char port, uint8_t pin, IO_Type io)
 	bool clk = IO_EnablePeripheralClock(port);
 
 	GPIO_InitStruct.Pin = IO_GetPin(pin);
-
-	bool clk = IO_EnablePeripheralClock(port);
-
 	GPIO_InitStruct.Mode = IO_GetMode(io);
 
 	// Check parameters

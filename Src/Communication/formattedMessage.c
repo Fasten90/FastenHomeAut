@@ -10,6 +10,7 @@
  */
 
 #include "DebugUart.h"
+#include "EscapeSequence.h"
 #include "FormattedMessage.h"
 
 

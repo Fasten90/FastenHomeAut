@@ -106,7 +106,7 @@ void TaskHandler_Init(void)
 	}
 
 
-	// TODO: Szétbontani dinamikusabb és statikusabb információkra?
+	// TODO: Optimize with static and dynamic list
 	// Init task ticks
 	for (i = 0; i < TasksNum; i++)
 	{
@@ -140,34 +140,32 @@ void TaskHandler_Scheduler(TaskTick_t elapsedTick)
 	// Check list
 	for (i = 0; i < TasksNum; i++)
 	{
-		// TODO: kintebb helyezni az isDisabled-et
 		// Need scheduling?
-		if (!TaskList[i].isPeriodisScheduleDisabled
-			&& TaskList[i].tick >= TaskList[i].taskScheduleRate
-			&& !TaskList[i].isDisabled)
+		if (!TaskList[i].isDisabled)
 		{
-			// Schedule - periodical
-			TaskHandler_RunTask(i, ScheduleSource_PeriodicSchedule);
-		}
-		else if (TaskList[i].isRunOnce
-			&& TaskList[i].tick >= TaskList[i].taskScheduleRate
-			&& !TaskList[i].isDisabled)
-		{
-			// Schedule - once
-			TaskHandler_RunTask(i, ScheduleSource_RunOnce);
-		}
-		else if (TaskList[i].isTimeOutTask
-			&& TaskList[i].tick >= TaskList[i].taskScheduleRate
-			&& !TaskList[i].isDisabled)
-		{
-			// TimeOut task
-			TaskHandler_RunTask(i, ScheduleSource_TimeOut);
-		}
-		else if (TaskList[i].isRequestScheduling
-			&& !TaskList[i].isDisabled)
-		{
-			// Schedule - event triggered
-			TaskHandler_RunTask(i, ScheduleSource_EventTriggered);
+			if (!TaskList[i].isPeriodisScheduleDisabled
+				&& TaskList[i].tick >= TaskList[i].taskScheduleRate)
+			{
+				// Schedule - periodical
+				TaskHandler_RunTask(i, ScheduleSource_PeriodicSchedule);
+			}
+			else if (TaskList[i].isRunOnce
+				&& TaskList[i].tick >= TaskList[i].taskScheduleRate)
+			{
+				// Schedule - once
+				TaskHandler_RunTask(i, ScheduleSource_RunOnce);
+			}
+			else if (TaskList[i].isTimeOutTask
+				&& TaskList[i].tick >= TaskList[i].taskScheduleRate)
+			{
+				// TimeOut task
+				TaskHandler_RunTask(i, ScheduleSource_TimeOut);
+			}
+			else if (TaskList[i].isRequestScheduling)
+			{
+				// Schedule - event triggered
+				TaskHandler_RunTask(i, ScheduleSource_EventTriggered);
+			}
 		}
 	}
 }

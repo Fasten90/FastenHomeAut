@@ -14,6 +14,7 @@
 #include "include.h"
 #include "String.h"
 #include "HomeAutMessage.h"
+#include "DebugUart.h"
 
 #ifdef MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
 #include "unittest.h"
@@ -28,11 +29,11 @@
 
 // Constant global variables
 
-/// HomeAut Header
+///< HomeAut Header
 const char HOMEAUTMESSAGE_DefaultHeader[] = "HomeAut";
 
 
-/// HomeAut Function parity list
+///< HomeAut Function parity list
 const FunctionTypeParity FunctionTypeParity_List[] =
 {
 	{
@@ -64,7 +65,7 @@ const FunctionTypeParity FunctionTypeParity_List[] =
 		.function = Function_Config
 	},
 
-	// XXX: HERE ADD NEW DateType
+	// XXX: Add here new FunctionType
 
 	{
 		.name = NULL,
@@ -73,7 +74,7 @@ const FunctionTypeParity FunctionTypeParity_List[] =
 };
 
 
-/// HomeAut DataType parity list
+///< HomeAut DataType parity list
 const DataTypeParity DataTypeParity_List[] =
 {
 	// 6 char length
@@ -187,17 +188,16 @@ const DataTypeParity DataTypeParity_List[] =
 		.type = Command_Remote
 	},
 
-	// XXX: HERE ADD NEW DateType
+	// XXX: Add here new DataType
 
 	{
 		.name = NULL,
 		.type = DataType_End
 	}
-
 };
 
 
-/// HomeAut message information
+///< HomeAut message information
 HomeAut_InformationType HomeAutMessage_MessageInformation;
 
 
@@ -346,7 +346,6 @@ bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
 
 	
 	return isOk;
-
 }		
 
 
@@ -470,7 +469,7 @@ bool HomeAutMessage_CreateAndSendHomeAutMessage(
 		// Send message
 #ifdef CONFIG_USE_FREERTOS
 		return ESP8266_SendMessageToQueue(message);
-#else
+#elif defined(CONFIG_MODULE_ESP8266_ENABLE)
 		if (ESP8266_TcpConnectionStatus == ESP8266_TcpConnectionStatus_Connected)
 		{
 			return ESP8266_SendTcpMessage((const char *)&message);	// direct sending
@@ -479,12 +478,136 @@ bool HomeAutMessage_CreateAndSendHomeAutMessage(
 		{
 			return false;
 		}
+#elif defined(CONFIG_MODULE_DEBUGUSART_ENABLE)
+		DebugUart_SendMessage(message);
+		return true;
+#else
+#warning "HomeAutMessage module cannot send message to anything"
 #endif
 	}	
 	else
 	{
 		return false;
 	}
+}
+
+
+
+/**
+ * \brief	Send HomeAutMessage immediately on communication port
+ */
+void HomeAutMessage_SendMessage(uint8_t myAddress,
+		HomeAut_FunctionType functionType, HomeAut_DataType dataType, float data)
+{
+	//myAddress	// ok
+	char function = 0;
+	char type = 0;
+
+	switch (functionType)
+	{
+		case Function_Alarm:
+			function = 'a';
+			break;
+		case Function_Command:
+			function = 'c';
+			break;
+		case Function_Config:
+			function = 'c';
+			break;
+		case Function_Login:
+			function = 'l';
+			break;
+		case Function_Mode:
+			function = 'm';
+			break;
+		case Function_State:
+			function = 's';
+			break;
+
+		case Function_End:
+		case Function_Invalid:
+		default:
+			function = '-';
+			break;
+	}
+
+	switch (dataType)
+	{
+		case State_Temperature:
+			type = 't';
+			break;
+		case State_Brightness:
+			type = 'b';
+			break;
+		case State_Sound:
+			type = 's';
+			break;
+		case State_Battery:
+			type = 'v';		// Status ~Voltage
+			break;
+		case State_Input:
+			type = 'i';
+			break;
+		case State_Output:
+			type = 'o';
+			break;
+		case Alarm_PressedButton:
+			type = 'b';
+			break;
+		case Alarm_Moving:
+			type = 'm';
+			break;
+		case Alarm_SoundImpacted:
+			type = 's';
+			break;
+		case Alarm_DoorOpened:
+			type = 'd';
+			break;
+
+		case DataType_Unknown:
+		case DataType_End:
+		case Login_ImLoginImNodeSmall:
+		case Login_ImLoginImNodeMedium:
+		case Login_ImLoginImCenterPanel:
+		case Login_ImLoginImDiscovery:
+		case Login_Welcome:
+		case Login_Sync:
+		case State_Button:
+		case State_Vin:
+		case State_Accelerometer:
+		case Alarm_Accelerometer:
+		case Alarm_LowBattery:
+		case Alarm_OffCharge:
+		case Alarm_OnCharge:
+		case Alarm_TooHot:
+		case Alarm_TooCold:
+		case Alarm_TooBright:
+		case Alarm_TooDark:
+		case Alarm_InputAllState:
+		case Alarm_InputFalling:
+		case Alarm_InputRise:
+		case Alarm_InternalTemperature_TooCold:
+		case Alarm_InternalTemperature_TooHot:
+		case Command_SetOutput:
+		case Command_AllOutput:
+		case Command_ResetOutput:
+		case Command_SetLed:
+		case Command_AllLed:
+		case Command_ResetLed:
+		case Command_Remote:
+		case Mode_RemoteControl:
+		case Mode_Spectator:
+		case Mode_Sleep:
+		case Config_TODO:
+		case Config_AnythingLimit:
+		default:
+			type = '-';
+			break;
+	}
+
+
+	// Sending:
+	uprintf("#%d_%c%c_%0.2f\r\n", myAddress, function, type, data);
 }
 
 

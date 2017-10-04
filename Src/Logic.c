@@ -715,7 +715,7 @@ DisplayClock_ChangeState_t Logic_GetSystemTimeState(void)
 #ifdef CONFIG_FUNCTION_ESP8266_WRITE_IP_TO_DISPLAY
 void Logic_WriteIpToDisplay(void)
 {
-	// TODO:
+	// TODO: Write IP address to Display
 #warning "Implement this!"
 }
 #endif
@@ -916,7 +916,9 @@ static void Logic_Display_MainMenu(void)
 static void Logic_Display_PrintMainMenuList(void)
 {
 	// Print menu
+#if defined(CONFIG_FUNCTION_GAME_SNAKE) || defined(CONFIG_FUNCTION_DISPLAY_INPUT) || defined(CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN)
 	uint8_t i = 2;
+#endif
 
 	// TODO: Do with smaller text
 

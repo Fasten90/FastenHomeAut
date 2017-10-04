@@ -111,10 +111,13 @@
 #define USART_ESCAPE_BACKGROUND_START	"\x1B" "[4"
 #define USART_ESCAPE_BACKGROUND_END		"m"
 
+
+
 /**
- * Color enum for Escape sequence
- * Intensity 	0 	1 	2 	3 	4 	5 	6 	7
- * Normal 	Black 	Red 	Green 	Yellow 	Blue 	Magenta 	Cyan 	White
+ * \brief	Color enum for Escape sequence
+ *			Intensity 	0 	1 	2 	3 	4 	5 	6 	7
+ *			Normal 	Black 	Red 	Green 	Yellow 	Blue 	Magenta 	Cyan 	White
+ * \note	Do not modify! It is depending from escape sequence codes
  */
 typedef enum
 {
@@ -127,5 +130,7 @@ typedef enum
 	Color_Cyan,
 	Color_White
 } FormattedStringColors_t;
+
+
 
 #endif /* ESCAPESEQUENCE_H_ */

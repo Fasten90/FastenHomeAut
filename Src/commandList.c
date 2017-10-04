@@ -122,7 +122,7 @@
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
 	static CommandResult_t CommandFunction_EventLog(uint32_t argc, char** argv);
 #endif
-#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
+#ifdef CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
 	static CommandResult_t CommandFunction_raspberrypi(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_FLASH_ENABLE
@@ -404,10 +404,10 @@ const CommandStruct CommandList[] =
 		.example = NULL,
 	},
 #endif
-#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
+#ifdef CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
 	{
-		.name = "#raspi",
-		.description = "Raspberry Pi HomeAutMessage sending",
+		.name = "#homeaut",
+		.description = "HomeAutMessage sending",
 		.commandFunctionPointer = CommandFunction_raspberrypi,
 		.commandArgNum = CommandArgument_2,
 		.syntax = NULL,
@@ -1907,9 +1907,9 @@ static CommandResult_t CommandFunction_flashwrite(uint32_t argc, char** argv)
 
 
 
-#ifdef CONFIG_MODULE_RASPBERRYPI_ENABLE
+#ifdef CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
 /**
- * \brief	Raspberry Pi command
+ * \brief	HomeAutMessage command
  */
 static CommandResult_t CommandFunction_raspberrypi(uint32_t argc, char** argv)
 {

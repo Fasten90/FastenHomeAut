@@ -436,7 +436,7 @@ static void Terminal_ProcessReceivedCharacter(void)
 #endif
 				if ((receivedChar  == '\r') || (receivedChar == '\n') || (receivedChar == '\0'))
 				{
-					// TODO: Ha 2 sortörés karakter jött, csak "egyszer" írjunk ki promt-ot
+					// TODO: When received 2 new line character, should not print twice the promt
 					// Received Enter
 					Terminal_CommandReadable = true;
 					Terminal_CommandActual[Terminal_CommandActualLength] = '\0';
@@ -766,7 +766,7 @@ static void Terminal_CommandTabulator(void)
 
 			Terminal_CommandResendLine(false);
 
-			return;
+			break;
 		}
 	}
 }
@@ -809,8 +809,6 @@ static void Terminal_CommandResendLine(bool needRestoreCursor)
 		// Restore the position
 		CommandHandler_SendMessage(ESCAPE_RESTORECURSOR);
 	}
-
-	return;		// TODO minek?
 }
 #endif	// #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 
@@ -1097,7 +1095,6 @@ inline static void Terminal_SendGetPassword(void)
 inline static bool Terminal_CheckPassword(const char *string)
 {
 	return ((!StrCmp(string, Terminal_Password)) ? true : false);
-	}
 }
 
 #endif	// #ifdef CONFIG_TERMINAL_GET_PASSWORD_ENABLE

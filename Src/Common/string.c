@@ -959,10 +959,9 @@ uint8_t StrCmp(const char *str1, const char *str2)
 		str2++;
 	}
 
-	// TODO mi van kikommentezve?!
-	// Commented out, because first length are good
 	if (*str2)
 	{
+		// If 2. string has "more" character, the two string are not equal
 		return 1;		// last str2 char has value, not equal
 	}
 	else

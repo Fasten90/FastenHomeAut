@@ -919,7 +919,7 @@ bool ESP8266_FindServer ( void )
 	
 	ESP8266_WaitAnswer(5000);
 	
-	// TODO: WTF, what is this parameter
+	// TODO: Delete this parameter
 	if (!StrCmpFirst("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
 			(const char *)ESP8266_RxBuffer))
 	{
@@ -1656,6 +1656,7 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void)
 	{
 		// Wrong length
 		DebugPrint("Too long message!\r\n");
+		// TODO: Use length or delete!
 		length = ESP8266_TCP_MESSAGE_MAX_LENGTH - 1;
 	}
 
@@ -2445,7 +2446,8 @@ void ESP8266_StatusMachine(void)
 			else if (!StrCmpFirst("\r\nFAIL\r\n", (const char *)receiveBuffer))
 			{
 				// Error
-				// It is TCP connection error, not WiFi error TODO: It is true??? XXX
+				// It is TCP connection error, not WiFi error
+				// TODO: It is true???
 				ESP8266_LED_FAIL();
 				ESP8266_ErrorCnt++;
 				ESP8266StatusMachine = Esp8266Status_ConnectTcpServer;
@@ -2498,7 +2500,7 @@ void ESP8266_StatusMachine(void)
 				IdleCnt = 0;
 				DebugPrint("Send an idle message...\r\n");
 				ESP8266_RequestSendTcpMessage("version");
-				// TODO: XXX: Do not response message need to send?
+				// TODO: Do not response message need to send?
 			}
 			break;
 
@@ -2575,7 +2577,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			{
 				// Error
 				ESP8266_TcpSendBuffer_EnableFlag = true;
-				// TODO: Be careful, it can be buffer overflow !!! XXX
+				// TODO: Be careful, it can be buffer overflow !!!
 				DebugPrint("Cannot send, not received \"> \"...\r\n"
 						"Received message: \"%s\"\r\n", receiveBuffer);
 				DebugPrint("Cannot send TCP message (not received \"> \")\r\n");

@@ -197,7 +197,10 @@ bool HomeAutMessage_CreateAndSendHomeAutMessage(
 	HomeAut_FunctionType function,
 	HomeAut_DataType dataType,
 	uint32_t data);
-	
+
+void HomeAutMessage_SendMessage(uint8_t myAddress,
+		HomeAut_FunctionType functionType, HomeAut_DataType dataType, float data);
+
 void HomeAutMessage_UnitTest(void);
 
 

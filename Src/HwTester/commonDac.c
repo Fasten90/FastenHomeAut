@@ -74,7 +74,7 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac)
  */
 void CommonDAC_Init(void)
 {
-	HAL_DAC_MspInit(&DacHandle);	// TODO: there is no call for this?
+	HAL_DAC_MspInit(&DacHandle);	// TODO: there is no need call for this?
 
 	/*##-1- Configure the DAC peripheral */
 	DacHandle.Instance = DACx;

@@ -158,7 +158,7 @@ void Snake_Step(SnakeStep_t step)
 			Snake_AddNewCoord(step);
 
 			PRINT("Collision!\r\n");
-			// TODO: Finish game!
+			// Finish game!
 			Snake_FinishLose();
 		}
 		Display_Activate();
