@@ -1008,6 +1008,31 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	Snake_Init();
 	 */
 
+
+	// The 2 solution are equal in code size
+	/*
+	uint32_t test = 0;
+	test |= 1 << 1;
+	test |= 1 << 2;
+	*/
+
+	/*
+	typedef struct
+	{
+		uint32_t bit1 : 1;
+		uint32_t bit2 : 1;
+		uint32_t bit3 : 1;
+	} BitTest_t;
+
+	BitTest_t test = { 0 };
+	test.bit2 = 1;
+	test.bit3 = 1;
+
+	uprintf("Data: %x", test);
+	*/
+
+
+
 	/**
 	 * 		End of Test codes
 	 */
