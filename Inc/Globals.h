@@ -36,5 +36,10 @@ void DelayMs(uint32_t ms);
 void Error_Handler(void);
 
 
+#ifdef USE_FULL_ASSERT
+void assert_failed(uint8_t* file, uint32_t line);
+#endif
+
+
 
 #endif /* GLOBALS_H_ */

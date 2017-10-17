@@ -30,7 +30,7 @@
 #include "Motor.h"
 #include "ESP8266.h"
 #include "Display.h"
-#include "CommonAdc.h"
+#include "CommonADC.h"
 #include "ADC.h"
 #include "EventHandler.h"
 #include "HomeAutMessage.h"

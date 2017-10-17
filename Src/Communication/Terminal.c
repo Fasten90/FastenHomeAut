@@ -1099,4 +1099,49 @@ inline static bool Terminal_CheckPassword(const char *string)
 
 #endif	// #ifdef CONFIG_TERMINAL_GET_PASSWORD_ENABLE
 
+
+
+/**
+ * \brief	loading event
+ */
+void Terminal_TestLoading(void)
+{
+	uint8_t i;
+
+	for (i = 0; i <= 100; i++)
+	{
+		DelayMs(500);
+		Terminal_SendLoadingPercent(i);
+	}
+}
+
+
+
+/**
+ * \brief	Send a loading line
+ */
+void Terminal_SendLoadingPercent(uint8_t percent)
+{
+	char c;
+
+	// Clear line
+	CommandHandler_SendMessage(ESCAPE_DELETELINE);
+	CommandHandler_SendMessage(ESCAPE_CURSOR_TO_LINESTART);
+
+	// Send "/ 0-100%" - loading line
+	switch(percent%4)
+	{
+		case 0:		c = '|'; 	break;
+		case 1:		c = '/';	break;
+		case 2: 	c = '-';	break;
+		case 3: 	c = '\\';	break;
+		default: 	c = '?';	break;
+	}
+
+	// Send example: "/ 10%"
+	CommandHandler_Printf("%c %3d%%", c, percent);
+}
+
+
+
 #endif	// #ifdef CONFIG_MODULE_TERMINAL_ENABLE

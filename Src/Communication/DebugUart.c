@@ -147,6 +147,7 @@ uint8_t DebugUart_SendMessage(const char *message)
  */
 bool DebugUart_SendNewLine(void)
 {
+	// TODO: Wrong, bool or length? SendMessage() return with length
 	return DebugUart_SendMessage("\r\n");
 }
 
@@ -177,6 +178,7 @@ bool DebugUart_SendChar(char c)
 	buf[0] = c;
 	buf[1] = '\0';
 
+	// TODO: Do not blocking!
 	if (DebugUart_WaitForSend(100))
 	{
 		// Successful take USART semaphore

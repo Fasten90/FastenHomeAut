@@ -23,7 +23,7 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-/// DAC Channel number
+///< DAC Channel number
 typedef enum
 {
 	Channel_Unknown,

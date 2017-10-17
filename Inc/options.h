@@ -205,7 +205,7 @@
 
 	// Enabled modules
 	#define CONFIG_MODULE_DEBUGUSART_ENABLE
-	//#define CONFIG_MODULE_TERMINAL_ENABLE
+	#define CONFIG_MODULE_TERMINAL_ENABLE
 	//#define CONFIG_MODULE_FORMATTEDMESSAGE_ENABLE
 
 	#define CONFIG_MODULE_TASKHANDLER_ENABLE
@@ -252,7 +252,7 @@
 
 
 /*------------------------------------------------------------------------------
- *								Debug - UnitTest settings
+ *								Debug settings
  *----------------------------------------------------------------------------*/
 
 
@@ -273,7 +273,8 @@
 //#define CONFIG_DEBUG_GO_COMMAND_ENABLE
 //#define CONFIG_MODULE_EVENTLOG_ENABLE
 
-#define CONFIG_DEBUG_SW_WATCHDOG_ENABLE
+// SW Watchdog - check Task scheduling
+//#define CONFIG_DEBUG_SW_WATCHDOG_ENABLE
 
 ///< SelfTests
 //#define CONFIG_DEBUG_SELFTEST
@@ -288,6 +289,11 @@
 #define CONFIG_MODULE_DEBUG_ENABLE
 #define CONFIG_MODULE_FORMATTEDMESSAGE_ENABLE
 
+
+
+/*------------------------------------------------------------------------------
+ *								Unit tests
+ *----------------------------------------------------------------------------*/
 
 ///< Unit tests
 #define CONFIG_MODULE_UNITTEST_ENABLE
@@ -313,10 +319,6 @@
 	#endif
 #endif
 
-
-/*------------------------------------------------------------------------------
- *								Module settings
- *----------------------------------------------------------------------------*/
 
 
 /*------------------------------------------------------------------------------

@@ -19,8 +19,7 @@
 #include "CommandHandler.h"
 #include "Globals.h"
 #include "DebugUart.h"
-#include "CommonAdc.h"
-
+#include "CommonADC.h"
 
 
 /*------------------------------------------------------------------------------

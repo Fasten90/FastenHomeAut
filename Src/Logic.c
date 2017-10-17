@@ -109,7 +109,6 @@ static void Logic_StepLetterNextValue(int8_t step);
 
 #ifdef CONFIG_FUNCTION_GAME_SNAKE
 static void Logic_Display_Snake(void);
-static void SnakeMenu_Init(void);
 static void Logic_Display_PrintSnakeMenuList(void);
 #endif
 
@@ -143,7 +142,7 @@ void Logic_Display_Init(void)
 			if (!Logic_Snake_DisplaySnakeMenu)
 				Snake_Init();
 			else
-				SnakeMenu_Init();
+				Logic_Display_PrintSnakeMenuList();
 			break;
 		#endif
 
@@ -612,31 +611,35 @@ static void Logic_StepLetterNextValue(int8_t step)
 		StrCpyMax(str, DisplayInput_ActualRealString, DisplayInput_StringLimit);
 		StrTrim(str);
 		CommandHandler_PrepareFindExecuteCommand(CommProt_DebugUart, str);
+		uprintf("Typed command: %s", str);
+		// Now, automatically exit to main menu
+		Logic_Display_ChangeState(Menu_Main);
 	}
-	else if (step < 0 && selectedLetter > 0 && (int8_t)selectedLetter-step > 0)
+	else
 	{
-		// Can go "down"
-		// += (- value) => -=
-		selectedLetter += step;
-	}
-	else if (step < 0)
-	{
-		// "Underflow"
-		selectedLetter = Display_Characters_size - 1;
-	}
-	else if (step > 0 && (uint8_t)(selectedLetter+step) < sizeof(Display_Characters)/sizeof(Display_Characters[0]))
-	{
-		// Can go "up"
-		selectedLetter += step;
-	}
-	else if (step > 0)
-	{
-		// "Overflow"
-		selectedLetter = 0;
-	}
+		// Not "OK" button
+		if (step < 0 && selectedLetter > 0 && (int8_t)selectedLetter-step > 0)
+		{
+			// Can go "down"
+			// += (- value) => -=
+			selectedLetter += step;
+		}
+		else if (step < 0)
+		{
+			// "Underflow"
+			selectedLetter = Display_Characters_size - 1;
+		}
+		else if (step > 0 && (uint8_t)(selectedLetter+step) < sizeof(Display_Characters)/sizeof(Display_Characters[0]))
+		{
+			// Can go "up"
+			selectedLetter += step;
+		}
+		else if (step > 0)
+		{
+			// "Overflow"
+			selectedLetter = 0;
+		}
 
-	if (DisplayInput_LetterPosition != DisplayInput_LetterPosition_MaxLimit)
-	{
 		// If change letter
 		// Save actual letter
 		DisplayInput_ActualString[DisplayInput_LetterPosition] = selectedLetter;
@@ -987,6 +990,7 @@ static void Logic_Display_Input(ScheduleSource_t source)
 			// Vibrate (not show char)
 			if (DisplayInput_LetterPosition == DisplayInput_LetterPosition_MaxLimit)
 			{
+				// TODO: Button printing
 				// OK
 				Display_PrintFont12x8('O', DisplayInput_LetterPosition_MaxLimit, 2, NO_FORMAT);
 				Display_PrintFont12x8('K', DisplayInput_LetterPosition_MaxLimit + 1, 2, NO_FORMAT);
@@ -1051,13 +1055,6 @@ static void Logic_Display_Snake(void)
 	Snake_Step(SnakeStep);
 
 	TaskHandler_SetTaskOnceRun(Task_Display, 500);
-}
-
-
-
-static void SnakeMenu_Init(void)
-{
-	Logic_Display_PrintSnakeMenuList();
 }
 
 

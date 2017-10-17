@@ -114,6 +114,9 @@ void Terminal_SendCls(void);
 
 void Terminal_CheckCommand(void);
 
+void Terminal_TestLoading(void);
+void Terminal_SendLoadingPercent(uint8_t percent);
+
 
 
 #endif /* TERMINAL_H_ */

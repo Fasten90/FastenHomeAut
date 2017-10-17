@@ -81,7 +81,7 @@ void SendBackgroundColor(FormattedStringColors_t backgroundColor)
 void SendErrorMessage(const char *message)
 {
 	// TODO: Will be MACRO()?
-	SendColouredMessageWithBackgroundColor(message,Color_Black,Color_Red);
+	SendColouredMessageWithBackgroundColor(message, Color_Black, Color_Red);
 }
 
 

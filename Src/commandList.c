@@ -42,9 +42,9 @@
 #include "TaskList.h"
 #include "IO.h"
 #include "LinkedList.h"
-#include "CommonAdc.h"
+#include "CommonADC.h"
 #include "ADC.h"
-#include "CommonDac.h"
+#include "CommonDAC.h"
 #include "Debug.h"
 #include "DebugList.h"
 #include "Logic.h"
@@ -898,34 +898,6 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 
 
 	/*
-	uint8_t i;
-	char c;
-
-	for (i = 0; i <= 100; i++)
-	{
-		DelayMs(500);
-
-		// Clear line
-		CommandHandler_SendMessage(ESCAPE_DELETELINE);
-		CommandHandler_SendMessage(ESCAPE_CURSOR_TO_LINESTART);
-
-		// Send "/ 0-100%" - loading line
-		switch(i%4)
-		{
-			case 0:		c = '|'; 	break;
-			case 1:		c = '/';	break;
-			case 2: 	c = '-';	break;
-			case 3: 	c = '\\';	break;
-			default: 	c = '?';	break;
-		}
-
-		CommandHandler_Printf("%c %3d%%", c, i);
-	}
-	*/
-
-
-
-	/*
 	// Print DateTime test
 
 	DateTime_t actualDateTime = { { 17, 5, 7 }, { 21, 38, 0 } };
@@ -1030,6 +1002,12 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 
 	uprintf("Data: %x", test);
 	*/
+
+
+	Terminal_TestLoading();
+
+	// -\_("))_/-
+	uprintf("-\\_(\"))_/-");
 
 
 

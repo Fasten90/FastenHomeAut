@@ -485,8 +485,6 @@ void CommandHandler_Printf(const char *format, ...)
 #endif
 
 	CommandHandler_SendMessage(txBuffer);
-
-	return;
 }
 
 

@@ -1317,12 +1317,11 @@ uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint
 
 /**
  * \brief	Instead of sprintf()
+ *			Used '%' parameters
+ *			%d, %u, %x, %X, %w, %h, %b, %c, %s, %f
  */
 uint8_t string_printf(char *str, const char *format, va_list ap)
 {
-	// Used '%' parameters
-	// %d, %u, %x, %X, %w, %h, %b, %c, %s, %f
-
 	// TODO: Use "new" typedefs
 
 	char	*p;			// step on fmt
@@ -1528,7 +1527,7 @@ uint8_t usprintf(char *str, const char *format, ...)
 
 	va_list ap;									// argument pointer
 	va_start(ap, format); 						// ap on arg
-	length = string_printf(str,format,ap);		// Separate and process
+	length = string_printf(str, format, ap);	// Separate and process
 	va_end(ap);						 			// Cleaning after end
 
 	return length;

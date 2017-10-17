@@ -14,8 +14,7 @@
 #include "options.h"
 #include "include.h"
 #include "board.h"
-#include "CommonDac.h"
-
+#include "CommonDAC.h"
 
 #ifdef CONFIG_MODULE_COMMON_DAC_ENABLE
 
@@ -64,7 +63,6 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac)
 	GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(DACx_CHANNEL2_GPIO_PORT, &GPIO_InitStruct);
-
 }
 
 
@@ -125,7 +123,6 @@ void CommonDAC_Init(void)
 		/* Start Error */
 		Error_Handler();
 	}
-
 }
 
 
