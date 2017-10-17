@@ -1111,7 +1111,8 @@ void Terminal_TestLoading(void)
 	for (i = 0; i <= 100; i++)
 	{
 		DelayMs(500);
-		Terminal_SendLoadingPercent(i);
+		//Terminal_SendLoadingPercent(i);
+		Terminal_SendLoadingPercent2(i);
 	}
 }
 
@@ -1129,7 +1130,7 @@ void Terminal_SendLoadingPercent(uint8_t percent)
 	CommandHandler_SendMessage(ESCAPE_CURSOR_TO_LINESTART);
 
 	// Send "/ 0-100%" - loading line
-	switch(percent%4)
+	switch (percent%4)
 	{
 		case 0:		c = '|'; 	break;
 		case 1:		c = '/';	break;
@@ -1140,6 +1141,31 @@ void Terminal_SendLoadingPercent(uint8_t percent)
 
 	// Send example: "/ 10%"
 	CommandHandler_Printf("%c %3d%%", c, percent);
+}
+
+
+
+/**
+ * \brief	Send a loading line
+ */
+void Terminal_SendLoadingPercent2(uint8_t percent)
+{
+	if (percent > 100)
+		percent = 100;
+
+	// Clear line
+	CommandHandler_SendMessage(ESCAPE_DELETELINE);
+	CommandHandler_SendMessage(ESCAPE_CURSOR_TO_LINESTART);
+
+	// Send "/ 0-100%" - loading line
+
+	// Send example: [----       ] 25%
+	uint8_t fill = percent / 10;
+	uint8_t empty = 10-fill;
+	char formatString[20];
+	// Need: "%5c%5c %3d%%"
+	usprintf(formatString, "[%%%dc%%%dc] %%3d%%%%", fill, empty);
+	CommandHandler_Printf(formatString, '-', ' ', percent);
 }
 
 

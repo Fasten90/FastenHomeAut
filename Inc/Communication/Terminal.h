@@ -116,6 +116,7 @@ void Terminal_CheckCommand(void);
 
 void Terminal_TestLoading(void);
 void Terminal_SendLoadingPercent(uint8_t percent);
+void Terminal_SendLoadingPercent2(uint8_t percent);
 
 
 

@@ -1006,8 +1006,9 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 
 	Terminal_TestLoading();
 
+
 	// -\_("))_/-
-	uprintf("-\\_(\"))_/-");
+	//uprintf("-\\_(\"))_/-");
 
 
 

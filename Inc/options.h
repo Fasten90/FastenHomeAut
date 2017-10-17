@@ -296,7 +296,7 @@
  *----------------------------------------------------------------------------*/
 
 ///< Unit tests
-#define CONFIG_MODULE_UNITTEST_ENABLE
+//#define CONFIG_MODULE_UNITTEST_ENABLE
 #ifdef CONFIG_MODULE_UNITTEST_ENABLE
 	//#define MODULE_STRING_UNITTEST_ENABLE
 	//#define MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
