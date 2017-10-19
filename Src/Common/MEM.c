@@ -1,7 +1,12 @@
 /*
  *		MEM.c
- *		Target:			STM32Fx
+ *		Created on:		2016-08-31
+ *		Author: 		Vizi Gábor
+ *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		MEM functions
+ *		Target:			STM32Fx
+ *		Version:		v1
+ *		Last modified:	2017-07-15
  */
 
 
@@ -20,9 +25,13 @@
 #endif
 
 #if CONFIG_MEM_CHECK_POINTER_RANGE == 1
-	#define MEM_CHECK_POINTER_RANGE(_pnt, _size)		if (!mem_CheckPointer(_pnt, _size)) Error_Handler()
-#else
-	#define MEM_CHECK_POINTER_RANGE(_pnt, _size)		(void)_pnt; (void)_size
+	#define MEM_IN_FLASH(_pnt, _size)					((uint32_t)_pnt >= MEM_FLASH_START && ((uint32_t)_pnt + _size) < MEM_FLASH_END)
+	#define MEM_IN_RAM(_pnt, _size)						((uint32_t)_pnt >= MEM_RAM_START && ((uint32_t)_pnt + _size) < MEM_RAM_END)
+	#define MEM_HAS_NOT_OVERLAP(_pnt1, _pnt2, _size)	((_pnt1 < _pnt2) ? ((_pnt1 + _size) < _pnt2) : ((_pnt2 + _size) < _pnt1))
+
+	#define MEM_IN_FLASH_OR_RAM(_pnt, _size)			(MEM_IN_FLASH(_pnt, _size) || MEM_IN_RAM(_pnt, _size))
+
+	#define MEM_ERROR_HANDLER()							Error_Handler()
 #endif
 
 
@@ -49,8 +58,9 @@ void * memcpy(void * destination, const void * source, size_t size)
 	{
 		return NULL;
 	}
-	MEM_CHECK_POINTER_RANGE((void *)destination, size);
-	MEM_CHECK_POINTER_RANGE((void *)source, size);
+	if (!MEM_IN_FLASH_OR_RAM(source, size)) MEM_ERROR_HANDLER();
+	if (!MEM_IN_RAM(destination, size)) MEM_ERROR_HANDLER();
+	if (!MEM_HAS_NOT_OVERLAP(source, destination, size)) MEM_ERROR_HANDLER();
 #endif
 
 	for (i = 0; i < size; i++)
@@ -79,7 +89,7 @@ void * memset(void * ptr, int value, size_t size)
 	{
 		return NULL;
 	}
-	MEM_CHECK_POINTER_RANGE(ptr, size);
+	if (!MEM_IN_RAM(ptr, size)) MEM_ERROR_HANDLER();
 #endif
 
 	for (i = 0; i < size; i++)
@@ -109,8 +119,9 @@ void * memmove(void * destination, const void * source, size_t size)
 	{
 		return NULL;
 	}
-	MEM_CHECK_POINTER_RANGE((void *)destination, size);
-	MEM_CHECK_POINTER_RANGE((void *)source, size);
+	if (!MEM_IN_RAM(source, size)) MEM_ERROR_HANDLER();
+	if (!MEM_IN_RAM(destination, size)) MEM_ERROR_HANDLER();
+	if (!MEM_HAS_NOT_OVERLAP(source, destination, size)) MEM_ERROR_HANDLER();
 #endif
 
 	for (i = 0; i < size; i++)
@@ -131,6 +142,7 @@ void * memmove(void * destination, const void * source, size_t size)
  */
 void * meminit(void * ptr, size_t num)
 {
+	// Note: Not need check pointer, because memset() should check that
 	return memset(ptr, 0, num);
 }
 
@@ -156,8 +168,8 @@ int memcmp(const void * ptr1, const void * ptr2, size_t size)
 	{
 		return -1;
 	}
-	MEM_CHECK_POINTER_RANGE((void *)ptr1, size);
-	MEM_CHECK_POINTER_RANGE((void *)ptr2, size);
+	if (!MEM_IN_FLASH_OR_RAM(ptr1, size)) MEM_ERROR_HANDLER();
+	if (!MEM_IN_FLASH_OR_RAM(ptr2, size)) MEM_ERROR_HANDLER();
 #endif
 
 	for (i = 0; i < size; i++)
@@ -255,7 +267,7 @@ bool mem_CheckPointer(void * pnt, size_t size)
 /**
  * \brief	MEM module Unit Test
  */
-void MEM_UnitTest(void)
+void mem_UnitTest(void)
 {
 	UnitTest_Start("MEM", __FILE__);
 

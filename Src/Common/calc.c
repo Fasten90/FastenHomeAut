@@ -105,6 +105,9 @@ uint8_t DigitNum(uint32_t num, uint8_t radix)
 
 
 
+/**
+ * \brief	Increment a unsigned integer (32bit)
+ */
 inline uint32_t Increment(uint32_t * i)
 {
 	if (*i < UINT32_MAX)
@@ -117,6 +120,9 @@ inline uint32_t Increment(uint32_t * i)
 
 
 
+/**
+ * \brief	Decrement a unsigned integer (32bit)
+ */
 inline uint32_t Decrement(uint32_t * i)
 {
 	if (*i > 0)

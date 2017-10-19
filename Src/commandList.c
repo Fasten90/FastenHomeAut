@@ -720,7 +720,7 @@ static CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
 #endif
 
 #ifdef MODULE_MEM_UNITTEST_ENABLE
-	MEM_UnitTest();
+	mem_UnitTest();
 #endif
 
 #ifdef MODULE_LINKEDLIST_UNITTEST_ENABLE

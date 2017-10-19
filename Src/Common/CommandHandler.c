@@ -27,6 +27,8 @@
 
 
 
+#ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
+
 /*------------------------------------------------------------------------------
  *									Configs
  *----------------------------------------------------------------------------*/
@@ -565,3 +567,5 @@ void CommandHandler_UnitTest(void)
 }
 
 #endif
+
+#endif	// #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE

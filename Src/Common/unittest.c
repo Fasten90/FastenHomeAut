@@ -82,7 +82,8 @@ void UnitTest_CheckResult(bool isValid, const char *conString, const char *error
 				UnitTest_FileName, line,
 				conString,
 				errorString);
-		// TODO: Use SendErrorMessage()
+
+		DEBUG_BREAKPOINT();
 	}
 }
 
