@@ -37,6 +37,7 @@
 #define DATETIME_DATE_YEAR_MIN_VALUE			(DATETIME_DATE_YEAR_MIN_FULL_VALUE - 2000)
 
 
+
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
@@ -44,7 +45,7 @@
 ///< Date structure
 typedef struct
 {
-	uint8_t year;		///< Year - from 2000 (example: 2017 --> value 17
+	uint8_t year;		///< Year - from 2000 (example: 2017 --> value 17)
 	uint8_t month;		///< Month:	1-12
 	uint8_t day;		///< Day:	1-31
 } Date_t;
@@ -62,8 +63,8 @@ typedef struct
 ///< DateTime structure
 typedef struct
 {
-	Date_t date;		///< Date
-	Time_t time;		///< Time
+	Date_t date;		///< Date (Year, Month, Day)
+	Time_t time;		///< Time (Hour, Minute, Second)
 } DateTime_t;
 
 
@@ -90,14 +91,14 @@ typedef struct
 ///< DateTime compare results (two DateTime compared)
 typedef enum
 {
-	DateTimeCompare_Unknown,
-	DateTimeCompare_FirstOldSecondNew,
-	DateTimeCompare_FirstNewSecondOld,
-	DateTimeCompare_Equal,
-	DateTimeCompare_InvalidFirst,
-	DateTimeCompare_InvalidSecond,
-	DateTimeCompare_Invalid,
-	DateTimeCompare_Error_Parameter
+	DateTimeCompare_Unknown,				///< Unknown
+	DateTimeCompare_FirstOldSecondNew,		///< First DateTime is older than second DateTime
+	DateTimeCompare_FirstNewSecondOld,		///< First DateTime is newer then second DateTime
+	DateTimeCompare_Equal,					///< The two DateTime are equal
+	DateTimeCompare_InvalidFirst,			///< First DateTime is invalid
+	DateTimeCompare_InvalidSecond,			///< Second DateTime is invalid
+	DateTimeCompare_Invalid,				///< Invalid...
+	DateTimeCompare_Error_Parameter			///< Parameter is wrong
 } DateTimeCompare_t;
 
 

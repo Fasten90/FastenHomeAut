@@ -571,6 +571,7 @@ void DateTime_Step(DateTime_t *dateTime)
 
 
 
+// TODO: inline
 #ifdef NO_OPTIMIZED_DATETIME
 /**
  * \brief	Get DateTime

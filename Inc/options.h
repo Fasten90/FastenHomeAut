@@ -235,6 +235,11 @@
 #endif
 
 
+#if defined(CONFIG_MODULE_TASKHANDLER_ENABLE) && defined(CONFIG_USE_FREERTOS)
+#warning "TaskHandler and FreeRTOS are enabled, but they exclude each other"
+#endif
+
+
 #ifdef CONFIG_USE_FREERTOS
 
 // FreeRTOS task defines
@@ -296,7 +301,7 @@
  *----------------------------------------------------------------------------*/
 
 ///< Unit tests
-//#define CONFIG_MODULE_UNITTEST_ENABLE
+#define CONFIG_MODULE_UNITTEST_ENABLE
 #ifdef CONFIG_MODULE_UNITTEST_ENABLE
 	//#define MODULE_STRING_UNITTEST_ENABLE
 	//#define MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
@@ -341,12 +346,11 @@
 
 	#define CONFIG_TERMINAL_PROMT_ENABLE
 
-	// Escape sequences
-	// comment out, if you dont need escape sequence (cursors, history, cls, ...)
+	// Escape sequences (cursors, history, cls, ...)
 	#define CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 
 	#ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
-		// If you want use monitor program's history
+		// If you want use terminal program's history
 		// Turn off, if has small memory, now it need 1.5k RAM
 		//#define CONFIG_TERMINAL_HISTORY_ENABLE
 	#endif
