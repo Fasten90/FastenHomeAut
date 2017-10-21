@@ -37,6 +37,18 @@
 #endif
 
 
+#ifdef CONFIG_FUNCTION_REMOTECONTROLLER
+	#if defined(CONFIG_MODULE_ESP8266_ENABLE)
+	#define SEND_MESSAGE_TO_CAR(_msg)		ESP8266_RequestSendTcpMessage(_msg)
+	#elif defined(CONFIG_MODULE_BLUETOOTH_ENABLE)
+	#include "Bluetooth_HC05.h"
+	#define SEND_MESSAGE_TO_CAR(_msg)		Bluetooth_SendMessage(_msg)
+	#else
+	#define SEND_MESSAGE_TO_CAR(_msg)		DebugUart_SendMessage(_msg)
+	#endif
+#endif
+
+
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
@@ -46,6 +58,7 @@ bool Logic_BatteryIsCharging = false;
 #endif
 
 
+#ifdef CONFIG_DISPLAY_MENU_ENABLE
 static volatile bool Logic_Display_ChangedState = false;
 static volatile DisplayMenu_t Logic_Display_ActualState = Menu_Main;
 static volatile DisplayMenu_t Logic_Display_SelectedState = Menu_Main;
@@ -54,6 +67,7 @@ static volatile DisplayMenu_t Logic_Display_SelectedState = Menu_Main;
 static volatile DisplaySnakeMenu_t Logic_Display_SnakeMenu_ActualState = SnakeMenu_NewGame;
 
 bool Logic_Snake_DisplaySnakeMenu = false;
+#endif
 
 
 
@@ -120,6 +134,10 @@ static void Logic_Display_Input(ScheduleSource_t source);
 
 #ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
 static void Logic_Display_CarAnimation(void);
+#endif
+
+#ifdef CONFIG_FUNCTION_REMOTECONTROLLER
+static void Logic_RemoteController_Button(ButtonType_t button, ButtonPressType_t type);
 #endif
 
 
@@ -228,169 +246,9 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 	}
 #endif
 
-#if defined(CONFIG_FUNCTION_REMOTECONTROLLER)
-	static Car_BackForward_t Car_BackForwardState = Car_BackForward_Stop;
-	static Car_Turning_t Car_TurningState = Car_Turning_Straight;
-
-	static int8_t Car_BackForward_ActualValue = 0;
-	static int8_t Car_Turning_ActualValue = 0;
-
-	static int8_t Car_BackForward_PreviousValue = 0;
-	static int8_t Car_Tuning_PreviousValue = 0;
-
-	static const int8_t Car_BackFordward_StopValue = 0;
-	static const int8_t Car_Turning_StraightValue = 0;
-
-	static const int8_t Car_BackForward_IncrementValue = 5;
-	static const int8_t Car_Turning_IncrementValue = 5;
-
-	static const int8_t Car_BackForward_FordwardStandardValue = 30;
-	static const int8_t Car_BackForward_BackStandardValue = -30;
-
-	static const int8_t Car_BackFordward_ForwardMaxValue = 60;
-	static const int8_t Car_Turning_MaxValue = 30;
-	static const int8_t Car_BackFordward_ForwardMinValue = -60;
-	static const int8_t Car_Turning_MinValue = -30;
-
-
-	// Check buttons
-	if (button == PressedButton_Right)
-	{
-		// Right
-
-		if (Car_TurningState == Car_Turning_Right)
-		{
-			// Larger right
-			Car_Turning_ActualValue += Car_Turning_IncrementValue;
-			// Check limit
-			if (Car_Turning_ActualValue > Car_Turning_MaxValue)
-			{
-				Car_Turning_ActualValue = Car_Turning_MaxValue;
-			}
-		}
-		else if (Car_TurningState == Car_Turning_Straight)
-		{
-			// Start right turning
-			Car_Turning_ActualValue = Car_Turning_StraightValue + Car_Turning_IncrementValue;
-			Car_TurningState = Car_Turning_Right;
-		}
-		else
-		{
-			// Straight
-			Car_Turning_ActualValue = Car_Turning_StraightValue;
-			Car_TurningState = Car_Turning_Straight;
-		}
-	}
-	else if (button == PressedButton_Left)
-	{
-		// Left
-
-		if (Car_TurningState == Car_Turning_Left)
-		{
-			// Larger left
-			Car_Turning_ActualValue -= Car_Turning_IncrementValue;
-			// Check limit
-			if (Car_Turning_ActualValue < Car_Turning_MinValue)
-			{
-				Car_Turning_ActualValue = Car_Turning_MinValue;
-			}
-		}
-		else if (Car_TurningState == Car_Turning_Straight)
-		{
-			// Start left turning
-			Car_Turning_ActualValue = Car_Turning_StraightValue - Car_Turning_IncrementValue;
-			Car_TurningState = Car_Turning_Left;
-		}
-		else
-		{
-			// Straight
-			Car_Turning_ActualValue = Car_Turning_StraightValue;
-			Car_TurningState = Car_Turning_Straight;
-		}
-	}
-	else if (button == PressedButton_Up)
-	{
-		// Up
-
-		if (Car_BackForwardState == Car_BackForward_Fordward)
-		{
-			// Larger speed
-			Car_BackForward_ActualValue += Car_BackForward_IncrementValue;
-			// Check limit
-			if (Car_BackForward_ActualValue > Car_BackFordward_ForwardMaxValue)
-			{
-				Car_BackForward_ActualValue = Car_BackFordward_ForwardMaxValue;
-			}
-		}
-		else if (Car_BackForwardState == Car_BackForward_Stop)
-		{
-			// Start go
-			Car_BackForward_ActualValue = Car_BackForward_FordwardStandardValue;
-			Car_BackForwardState = Car_BackForward_Fordward;
-		}
-		else
-		{
-			// Stop
-			Car_BackForward_ActualValue = Car_BackFordward_StopValue;
-			Car_BackForwardState = Car_BackForward_Stop;
-		}
-	}
-	else if (button == PressedButton_Down)
-	{
-		// Down
-		if (Car_BackForwardState == Car_BackForward_Back)
-		{
-			// Larger speed
-			Car_BackForward_ActualValue -= Car_BackForward_IncrementValue;
-			// Check limit
-			if (Car_BackForward_ActualValue < Car_BackFordward_ForwardMinValue)
-			{
-				Car_BackForward_ActualValue = Car_BackFordward_ForwardMinValue;
-			}
-		}
-		else if (Car_BackForwardState == Car_BackForward_Stop)
-		{
-			// Start go
-			Car_BackForward_ActualValue = Car_BackForward_BackStandardValue;
-			Car_BackForwardState = Car_BackForward_Back;
-		}
-		else
-		{
-			// Stop
-			Car_BackForward_ActualValue = Car_BackFordward_StopValue;
-			Car_BackForwardState = Car_BackForward_Stop;
-		}
-	}
-
-
-	// Check, need send command?
-	if (Car_BackForward_PreviousValue != Car_BackForward_ActualValue)
-	{
-		// Changed
-		DebugUart_Printf("Changed BackFordward value: previous: %d, now: %d\r\n",
-				Car_BackForward_PreviousValue, Car_BackForward_ActualValue);
-		Car_BackForward_PreviousValue = Car_BackForward_ActualValue;
-
-		// Send message on WiFi
-		char msg[30];
-		usprintf(msg, "motor dc %d", Car_BackForward_ActualValue);
-		ESP8266_RequestSendTcpMessage(msg);
-	}
-
-	if (Car_Tuning_PreviousValue != Car_Turning_ActualValue)
-	{
-		// Changed
-		DebugUart_Printf("Changed Turning value: previous: %d, now: %d\r\n",
-				Car_Tuning_PreviousValue, Car_Turning_ActualValue);
-		Car_Tuning_PreviousValue = Car_Turning_ActualValue;
-
-		// Send message on WiFi
-		char msg[30];
-		usprintf(msg, "motor servo %d", Car_Turning_ActualValue);
-		ESP8266_RequestSendTcpMessage(msg);
-	}
-
-#endif	// CONFIG_FUNCTION_REMOTECONTROLLER
+#ifdef CONFIG_FUNCTION_REMOTECONTROLLER
+	Logic_RemoteController_Button(button, type);
+#endif
 
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
 	if (Logic_Display_ActualState == Menu_Main)
@@ -574,6 +432,205 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 
 }
 #endif
+
+
+#if defined(CONFIG_FUNCTION_REMOTECONTROLLER)
+static Car_DcForward_t Car_BackForwardState = Car_DcForward_Stop;
+static Car_Turning_t Car_TurningState = Car_Turning_Straight;
+
+static int8_t Car_DcForward_ActualValue = 0;
+static int8_t Car_Turning_ActualValue = 0;
+
+static int8_t Car_DcForward_PreviousValue = 0;
+static int8_t Car_Tuning_PreviousValue = 0;
+
+static const int8_t Car_DcForward_StopValue = 0;
+static const int8_t Car_Turning_StraightValue = 0;
+
+static const int8_t Car_DcForward_IncrementValue = 5;
+static const int8_t Car_Turning_IncrementValue = 5;
+
+static const int8_t Car_DcForward_FordwardStandardValue = 30;
+static const int8_t Car_DcForward_BackStandardValue = -30;
+
+static const int8_t Car_DcForward_ForwardMaxValue = 60;
+static const int8_t Car_Turning_MaxValue = 30;
+static const int8_t Car_DcForward_ForwardMinValue = -60;
+static const int8_t Car_Turning_MinValue = -30;
+
+
+static void Logic_RemoteController_Button(ButtonType_t button, ButtonPressType_t type)
+{
+	(void)type;
+
+	// Check buttons
+	if (button == PressedButton_Right)
+	{
+		// Right
+
+		if (Car_TurningState == Car_Turning_Right)
+		{
+			// Larger right
+			Car_Turning_ActualValue += Car_Turning_IncrementValue;
+			// Check limit
+			if (Car_Turning_ActualValue > Car_Turning_MaxValue)
+			{
+				Car_Turning_ActualValue = Car_Turning_MaxValue;
+			}
+		}
+		else if (Car_TurningState == Car_Turning_Straight)
+		{
+			// Start right turning
+			Car_Turning_ActualValue = Car_Turning_StraightValue + Car_Turning_IncrementValue;
+			Car_TurningState = Car_Turning_Right;
+		}
+		else
+		{
+			// Straight
+			Car_Turning_ActualValue = Car_Turning_StraightValue;
+			Car_TurningState = Car_Turning_Straight;
+		}
+	}
+	else if (button == PressedButton_Left)
+	{
+		// Left
+
+		if (Car_TurningState == Car_Turning_Left)
+		{
+			// Larger left
+			Car_Turning_ActualValue -= Car_Turning_IncrementValue;
+			// Check limit
+			if (Car_Turning_ActualValue < Car_Turning_MinValue)
+			{
+				Car_Turning_ActualValue = Car_Turning_MinValue;
+			}
+		}
+		else if (Car_TurningState == Car_Turning_Straight)
+		{
+			// Start left turning
+			Car_Turning_ActualValue = Car_Turning_StraightValue - Car_Turning_IncrementValue;
+			Car_TurningState = Car_Turning_Left;
+		}
+		else
+		{
+			// Straight
+			Car_Turning_ActualValue = Car_Turning_StraightValue;
+			Car_TurningState = Car_Turning_Straight;
+		}
+	}
+	else if (button == PressedButton_Up)
+	{
+		// Up
+
+		if (Car_BackForwardState == Car_DcForward_Fordward)
+		{
+			// Larger speed
+			Car_DcForward_ActualValue += Car_DcForward_IncrementValue;
+			// Check limit
+			if (Car_DcForward_ActualValue > Car_DcForward_ForwardMaxValue)
+			{
+				Car_DcForward_ActualValue = Car_DcForward_ForwardMaxValue;
+			}
+		}
+		else if (Car_BackForwardState == Car_DcForward_Stop)
+		{
+			// Start go
+			Car_DcForward_ActualValue = Car_DcForward_FordwardStandardValue;
+			Car_BackForwardState = Car_DcForward_Fordward;
+		}
+		else
+		{
+			// Stop
+			Car_DcForward_ActualValue = Car_DcForward_StopValue;
+			Car_BackForwardState = Car_DcForward_Stop;
+		}
+	}
+	else if (button == PressedButton_Down)
+	{
+		// Down
+		if (Car_BackForwardState == Car_DcForward_Back)
+		{
+			// Larger speed
+			Car_DcForward_ActualValue -= Car_DcForward_IncrementValue;
+			// Check limit
+			if (Car_DcForward_ActualValue < Car_DcForward_ForwardMinValue)
+			{
+				Car_DcForward_ActualValue = Car_DcForward_ForwardMinValue;
+			}
+		}
+		else if (Car_BackForwardState == Car_DcForward_Stop)
+		{
+			// Start go
+			Car_DcForward_ActualValue = Car_DcForward_BackStandardValue;
+			Car_BackForwardState = Car_DcForward_Back;
+		}
+		else
+		{
+			// Stop
+			Car_DcForward_ActualValue = Car_DcForward_StopValue;
+			Car_BackForwardState = Car_DcForward_Stop;
+		}
+	}
+
+
+	bool isChanged = false;
+	// Check, need send command?
+	if (Car_DcForward_PreviousValue != Car_DcForward_ActualValue)
+	{
+		// Changed
+		DebugUart_Printf("Changed BackFordward value: previous: %d, now: %d\r\n",
+				Car_DcForward_PreviousValue, Car_DcForward_ActualValue);
+		Car_DcForward_PreviousValue = Car_DcForward_ActualValue;
+
+		isChanged = true;
+	}
+
+	if (Car_Tuning_PreviousValue != Car_Turning_ActualValue)
+	{
+		// Changed
+		DebugUart_Printf("Changed Turning value: previous: %d, now: %d\r\n",
+				Car_Tuning_PreviousValue, Car_Turning_ActualValue);
+		Car_Tuning_PreviousValue = Car_Turning_ActualValue;
+
+		isChanged = true;
+	}
+
+	if (isChanged)
+		Logic_RemoteController_SendMessage();
+}
+
+
+
+void Logic_RemoteController_SendMessage(void)
+{
+	if (Bluetooth_GetSendEnable())
+	{
+		// Sending immediately
+
+		// Send message
+		/*char msg[30];
+		usprintf(msg, "motor dc %d\r\n", Car_DcForward_ActualValue);
+		SEND_MESSAGE_TO_CAR(msg);
+
+		// Send message on WiFi
+		char msg[30];
+		usprintf(msg, "motor servo %d\r\n", Car_Turning_ActualValue);
+		SEND_MESSAGE_TO_CAR(msg);
+		*/
+		char msg[40];
+		usprintf(msg, "motor %d %d\r\n", Car_DcForward_ActualValue, Car_Turning_ActualValue);
+		SEND_MESSAGE_TO_CAR(msg);
+
+		// For periodical message
+		TaskHandler_SetTaskPeriodicTime(Task_RemoteController, 300);
+	}
+	else
+	{
+		// Check after some ms...
+		TaskHandler_SetTaskPeriodicTime(Task_RemoteController, 20);
+	}
+}
+#endif	// CONFIG_FUNCTION_REMOTECONTROLLER
 
 
 
@@ -916,7 +973,6 @@ static void Logic_Display_MainMenu(void)
 	// Display main menu list
 	Logic_Display_PrintMainMenuList();
 	Display_Activate();
-
 }
 
 

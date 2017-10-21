@@ -45,10 +45,10 @@
 #if defined(CONFIG_FUNCTION_REMOTECONTROLLER)
 typedef enum
 {
-	Car_BackForward_Stop,
-	Car_BackForward_Fordward,
-	Car_BackForward_Back
-} Car_BackForward_t;
+	Car_DcForward_Stop,
+	Car_DcForward_Fordward,
+	Car_DcForward_Back
+} Car_DcForward_t;
 
 
 typedef enum
@@ -135,6 +135,8 @@ void Logic_DisplayHandler(ScheduleSource_t source);
 void Logic_Display_ChangeState(DisplayMenu_t nextState);
 bool Logic_Display_GetClockIsNeedRefresh(void);
 void Logic_Display_Snake_ChangeToMenu(void);
+
+void Logic_RemoteController_SendMessage(void);
 
 
 

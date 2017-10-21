@@ -205,7 +205,7 @@
 
 	// Enabled modules
 	#define CONFIG_MODULE_DEBUGUSART_ENABLE
-	#define CONFIG_MODULE_TERMINAL_ENABLE
+	//#define CONFIG_MODULE_TERMINAL_ENABLE
 	//#define CONFIG_MODULE_FORMATTEDMESSAGE_ENABLE
 
 	#define CONFIG_MODULE_TASKHANDLER_ENABLE
@@ -225,8 +225,8 @@
 
 	//#define CONFIG_MODULE_MOTOR_ENABLE
 
-	#define CONFIG_MODULE_IO_ENABLE
-	#define CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE
+	//#define CONFIG_MODULE_IO_ENABLE
+	//#define CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE
 
 	//#define CONFIG_MODULE_LINKEDLIST_ENABLE
 
@@ -278,16 +278,11 @@
 //#define CONFIG_DEBUG_GO_COMMAND_ENABLE
 //#define CONFIG_MODULE_EVENTLOG_ENABLE
 
-// SW Watchdog - check Task scheduling
+///< SW Watchdog - check Task scheduling
 //#define CONFIG_DEBUG_SW_WATCHDOG_ENABLE
 
 ///< SelfTests
 //#define CONFIG_DEBUG_SELFTEST
-
-
-///< Debug modes - Print debug message
-//#define CONFIG_TASKHANDLER_DEBUG_ENABLE
-#define CONFIG_BUTTON_DEBUG_ENABLE
 
 
 ///< Debug - Formatted text (colored texts)
@@ -301,7 +296,7 @@
  *----------------------------------------------------------------------------*/
 
 ///< Unit tests
-#define CONFIG_MODULE_UNITTEST_ENABLE
+//#define CONFIG_MODULE_UNITTEST_ENABLE
 #ifdef CONFIG_MODULE_UNITTEST_ENABLE
 	//#define MODULE_STRING_UNITTEST_ENABLE
 	//#define MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
@@ -472,6 +467,7 @@
 
 // Button settings
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
+	#define CONFIG_BUTTON_DEBUG_ENABLE
 	#define CONFIG_MODULE_BUTTON_LONG_PRESS
 	#define CONFIG_BUTTON_LONG_PRESS_TIME_TICK_LIMIT			(400)
 	#define CONFIG_BUTTON_CONTINUOUS_PRESS_TIME_TICK_LIMIT		(1000)
@@ -480,6 +476,10 @@
 
 // TaskHandler settings
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
+
+	///< Debug modes - Print debug message
+	//#define CONFIG_TASKHANDLER_DEBUG_ENABLE
+
 	// Create CPU usage statistics:
 	#define CONFIG_MODULE_TASKHANDLER_STATISTICS
 	//#define CONFIG_MODULE_TASK_SOFTWARE_WATCHDOG_ENABLE
@@ -502,26 +502,46 @@
 
 
 ///< Remote controller (for car) function
-//#define CONFIG_FUNCTION_REMOTECONTROLLER
+//#define CONFIG_FUNCTION_REMOTECONTROLLER_CAR
+#ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
+	#ifndef CONFIG_MODULE_MOTOR_ENABLE
+		#define CONFIG_MODULE_MOTOR_ENABLE
+	#endif
+// TODO: Add bluetooth module
+#endif
+
+
+///< Remote controller (for controller) function
+#define CONFIG_FUNCTION_REMOTECONTROLLER
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER
 	#ifndef CONFIG_MODULE_BUTTON_ENABLE
 		#define CONFIG_MODULE_BUTTON_ENABLE
 	#endif
-	#ifndef CONFIG_MODULE_ESP8266_ENABLE
+	#define CONFIG_MODULE_BLUETOOTH_ENABLE
+	/*#ifndef CONFIG_MODULE_ESP8266_ENABLE
 		#define CONFIG_MODULE_ESP8266_ENABLE
 	#endif
 	#define CONFIG_FUNCTION_ESP8266_WRITE_IP_TO_DISPLAY
+	*/
+#endif
+
+
+#if defined(CONFIG_FUNCTION_REMOTECONTROLLER_CAR) && defined(CONFIG_FUNCTION_REMOTECONTROLLER)
+#error "RemoteController - controller and car is too defined. Do not use them together!"
 #endif
 
 
 ///< Display: Show screen
 //#define CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
+// TODO: What we want to displaying
 
 
 ///< Display: Show clock
 //#define CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
-//#define CONFIG_DISPAY_CLOCK_LARGE
-#define CONFIG_DISPLAY_CLOCK_SMALL
+#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
+	//#define CONFIG_DISPAY_CLOCK_LARGE
+	#define CONFIG_DISPLAY_CLOCK_SMALL
+#endif
 
 
 ///< Display: Clock change function
@@ -557,11 +577,21 @@
 	#ifndef CONFIG_MODULE_ADC_ENABLE
 		#define CONFIG_MODULE_ADC_ENABLE
 	#endif
+	#ifndef CONFIG_MODULE_IO_ENABLE
+		#define CONFIG_MODULE_IO_ENABLE
+	#endif
+	#ifndef CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE
+		#define CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE
+	#endif
 #endif
 
 
 ///< Snake game
 //#define CONFIG_FUNCTION_GAME_SNAKE
+
+
+///< Display: menu
+//#define CONFIG_DISPLAY_MENU_ENABLE
 
 
 

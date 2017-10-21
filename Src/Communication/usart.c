@@ -17,12 +17,15 @@
 
 #include "include.h"
 #include "board.h"
-#ifdef CONFIG_MODULE_ESP8266_ENABLE
-#include "ESP8266.h"
-#endif
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 #include "DebugUart.h"
 #include "Terminal.h"
+#endif
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+#include "ESP8266.h"
+#endif
+#ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
+#include "Bluetooth_HC05.h"
 #endif
 #include "USART.h"
 
@@ -84,6 +87,13 @@ void USART_Init(UART_HandleTypeDef *UartHandle)
 		UartHandle->Init.BaudRate = ESP8266_USART_BAUDRATE;
 	}
 #endif
+#ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
+	if (UartHandle == &Bluetooth_UartHandle)
+	{
+		UartHandle->Instance      = BLUETOOTH_USARTx;
+		UartHandle->Init.BaudRate = BLUETOOTH_USART_BAUDRATE;
+	}
+#endif
 	
 	UartHandle->Init.WordLength   = UART_WORDLENGTH_8B;
 	UartHandle->Init.StopBits     = UART_STOPBITS_1;
@@ -105,6 +115,12 @@ void USART_Init(UART_HandleTypeDef *UartHandle)
 		if (UartHandle == &ESP8266_UartHandle)
 		{
 			__HAL_UART_CLEAR_FLAG(&ESP8266_UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
+		}
+#endif
+#ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
+		if (UartHandle == &Bluetooth_UartHandle)
+		{
+			__HAL_UART_CLEAR_FLAG(&Bluetooth_UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
 		}
 #endif
 	}
@@ -193,6 +209,41 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 		
 	}
 #endif	// #ifdef CONFIG_MODULE_ESP8266_ENABLE
+#ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
+	if (huart == &Bluetooth_UartHandle)
+	{
+		// ##-1- Enable peripherals and GPIO Clocks
+
+		// Enable GPIO TX/RX clock
+		// Enable USARTx clock
+		BLUETOOTH_USART_CLK_ENABLES();
+
+
+		// ##-2- Configure peripheral GPIO
+		// UART TX GPIO pin configuration
+		GPIO_InitStruct.Pin       = BLUETOOTH_USART_TX_GPIO_PIN;
+		GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
+		GPIO_InitStruct.Pull      = GPIO_NOPULL;
+		GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_HIGH;
+		GPIO_InitStruct.Alternate = BLUETOOTH_USART_AF;
+
+		HAL_GPIO_Init(BLUETOOTH_USART_TX_GPIO_PORT, &GPIO_InitStruct);
+
+		// UART RX GPIO pin configuration
+		GPIO_InitStruct.Pin = BLUETOOTH_USART_RX_GPIO_PIN;
+		//GPIO_InitStruct.Alternate = BLUETOOTH_USART_AF;
+
+		HAL_GPIO_Init(BLUETOOTH_USART_RX_GPIO_PORT, &GPIO_InitStruct);
+
+
+		// ##-3- Configure the NVIC for UART
+		// NVIC for USARTx
+
+		HAL_NVIC_SetPriority(BLUETOOTH_USARTx_IRQn, BLUETOOTH_USART_PREEMT_PRIORITY, BLUETOOTH_USART_SUB_PRIORITY);
+		HAL_NVIC_EnableIRQ(BLUETOOTH_USARTx_IRQn);
+
+	}
+#endif	// #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
 }
 
 
@@ -215,13 +266,22 @@ void ESP8266_USARTx_IRQHandler(void)
 
 
 
+#ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
+void BLUETOOTH_USARTx_IRQHandler(void)
+{
+	HAL_UART_IRQHandler(&Bluetooth_UartHandle);
+}
+#endif
+
+
+
 /**
  * \brief	HAL driver function - Uart Tx (transmission complete) callback function
  * 			Set send successful flags
  */
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 {
-#if !defined(CONFIG_MODULE_DEBUGUSART_ENABLE)
+#if !defined(CONFIG_MODULE_DEBUGUSART_ENABLE) && !defined(CONFIG_MODULE_ESP8266_ENABLE) && !defined(CONFIG_MODULE_BLUETOOTH_ENABLE)
 	// Suppress warning
 	(void)UartHandle;
 #endif
@@ -242,6 +302,13 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 	if (UartHandle == &ESP8266_UartHandle)
 	{
 		ESP8266_SendEnable_flag = true;
+	}
+#endif
+
+#ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
+	if (UartHandle == &Bluetooth_UartHandle)
+	{
+		Bluetooth_SendEnable_flag = true;
 	}
 #endif
 }
@@ -386,8 +453,16 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 #endif
 	}	
 #endif
+#ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
+	else if (huart == &Bluetooth_UartHandle)
+	{
+		// TODO: Not handled...
+		Bluetooth_SendEnable_flag = true;
+		UART_ResetStatus(&Bluetooth_UartHandle);
+	}
+#endif
 
-#if defined(CONFIG_MODULE_DEBUGUSART_ENABLE) || defined(CONFIG_MODULE_ESP8266_ENABLE)
+#if defined(CONFIG_MODULE_DEBUGUSART_ENABLE) || defined(CONFIG_MODULE_ESP8266_ENABLE) || defined(CONFIG_MODULE_BLUETOOTH_ENABLE)
 	else
 	{
 		Error_Handler();

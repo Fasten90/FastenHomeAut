@@ -1004,7 +1004,7 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	*/
 
 
-	Terminal_TestLoading();
+	//Terminal_TestLoading();
 
 
 	// -\_("))_/-
@@ -1548,38 +1548,20 @@ static CommandResult_t CommandFunction_Motor(uint32_t argc, char** argv)
 {
 	(void)argc;
 	CommandResult_t result = CommandResult_Unknown;
+	int32_t convertValue;
 
 
 	if (!StrCmp("dc", argv[1]))
 	{
 		// Set DC motor
-		int32_t convertValue;
 		if (StringToSignedDecimalNum(argv[2], &convertValue))
 		{
-			/*
-			if (convertValue <= 100 && convertValue > 0)
-			{
-				uint8_t percent = (uint8_t)convertValue;
-				Motor_DcMotorChangePercent(percent);
-				Motor_DcMotorSeDirection(MotorDir_Forward);
-				result = CommandResult_Ok_SendSuccessful;
-			}
-			else if (convertValue == 0)
-			{
-				Motor_DcMotorChangePercent(0);
-				Motor_DcMotorSeDirection(MotorDir_Stop);
-				result = CommandResult_Ok_SendSuccessful;
-			}
-			else if (convertValue < 0 && convertValue > -100)
-			{
-				uint8_t percent = (uint8_t)(convertValue * (-1));
-				Motor_DcMotorChangePercent(percent);
-				Motor_DcMotorSeDirection(MotorDir_Backward);
-				result = CommandResult_Ok_SendSuccessful;
-			}
-			*/
 			if (convertValue <= 100 && convertValue > -100)
 			{
+				#ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
+				LED_SetLed(LED_Green, LED_Set_On);
+				//LED_SetLed(LED_Green, LED_Set_Off);
+				#endif
 				int8_t percent = (uint8_t)convertValue;
 				Motor_StateMachine_SetDc(percent);
 				TaskHandler_ClearTimeoutTask(Task_MotorTimeout);
@@ -1598,12 +1580,14 @@ static CommandResult_t CommandFunction_Motor(uint32_t argc, char** argv)
 	else if (!StrCmp("servo", argv[1]))
 	{
 		// Set servo motor
-		int32_t convertValue;
 		if (StringToSignedDecimalNum(argv[2], &convertValue))
 		{
 			if (convertValue <= 90 && convertValue >= -90)
 			{
-
+				#ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
+				LED_SetLed(LED_Green, LED_Set_On);
+				//LED_SetLed(LED_Green, LED_Set_Off);
+				#endif
 				int8_t angle = (int8_t)convertValue;
 				/*
 				Motor_ServoChangeAngle(angle);
@@ -1646,7 +1630,65 @@ static CommandResult_t CommandFunction_Motor(uint32_t argc, char** argv)
 	}
 	else
 	{
-		result = CommandResult_Error_WrongArgument1;
+		// "motor <dc value> <turning value>"
+		// TODO: Merge with commands at above
+		bool isOk = false;
+
+		// 1. argument: DC
+		if (StringToSignedDecimalNum(argv[1], &convertValue))
+		{
+			if (convertValue <= 100 && convertValue > -100)
+			{
+				#ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
+				LED_SetLed(LED_Green, LED_Set_On);
+				//LED_SetLed(LED_Green, LED_Set_Off);
+				#endif
+				int8_t percent = (uint8_t)convertValue;
+				Motor_StateMachine_SetDc(percent);
+				TaskHandler_ClearTimeoutTask(Task_MotorTimeout);
+				result = CommandResult_Ok_SendSuccessful;
+
+				isOk = true;
+			}
+			else
+			{
+				result = CommandResult_Error_WrongArgument2;
+			}
+		}
+		else
+		{
+			result = CommandResult_Error_WrongArgument2;
+		}
+
+		// 2. argument: servo
+		if (isOk)
+		{
+			if (StringToSignedDecimalNum(argv[2], &convertValue))
+			{
+				if (convertValue <= 90 && convertValue >= -90)
+				{
+					#ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
+					LED_SetLed(LED_Green, LED_Set_On);
+					//LED_SetLed(LED_Green, LED_Set_Off);
+					#endif
+					int8_t angle = (int8_t)convertValue;
+					Motor_StateMachine_SetAngle(angle);
+					TaskHandler_ClearTimeoutTask(Task_MotorTimeout);
+
+					result = CommandResult_Ok_SendSuccessful;
+				}
+				else
+				{
+					result = CommandResult_Error_WrongArgument2;
+				}
+			}
+			else
+			{
+				result = CommandResult_Error_WrongArgument2;
+			}
+		}
+		// else: isOk = false --> not need handle
+
 	}
 
 	return result;

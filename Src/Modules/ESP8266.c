@@ -312,8 +312,16 @@ void ESP8266_Init(void)
 
 	//DelayMs(100);
 
-	return;
-	
+#ifdef CONFIG_USE_FREERTOS
+	// ESP8266 FreeRTOS queues
+	ESP8266_USART_Rx_Semaphore = xSemaphoreCreateBinary();
+	ESP8266_SendMessage_Queue = xQueueCreate(
+			ESP8266_SENDMESSAGE_QUEUE_LENGTH,
+			ESP8266_MESSAGE_QUEUE_ITEM_SIZE);
+	ESP8266_ReceivedMessage_Queue = xQueueCreate(
+			ESP8266_RECEIVEMESSAGE_QUEUE_LENGTH,
+			ESP8266_MESSAGE_QUEUE_ITEM_SIZE);
+#endif
 }
 
 

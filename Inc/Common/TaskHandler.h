@@ -27,6 +27,7 @@
  *----------------------------------------------------------------------------*/
 
 // TaskResult defines
+// TODO: Do enum for this
 #define TASK_RESULT_OK			(true)
 #define TASK_RESULT_FAILED		(false)
 

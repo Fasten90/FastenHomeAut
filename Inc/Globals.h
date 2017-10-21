@@ -34,7 +34,7 @@ extern char Global_DeviceName[];
 
 void DelayMs(uint32_t ms);
 void Error_Handler(void);
-
+void Assert_Function(char *file, uint32_t line, char *exp);
 
 #ifdef USE_FULL_ASSERT
 void assert_failed(uint8_t* file, uint32_t line);

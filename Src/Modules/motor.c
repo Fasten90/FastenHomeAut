@@ -17,6 +17,8 @@
 
 #include "options.h"
 #include "include.h"
+#include "board.h"
+#include "MEM.h"
 #include "Motor.h"
 
 
@@ -37,8 +39,17 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-TIM_HandleTypeDef    TimPWMDcMotor_Handle;	// Dc motor
+TIM_HandleTypeDef    TimPWMDcMotor_Handle;	// DC motor
+
+// \note	If we have these two pwm on one timer, need to Handle, with equal content. Cannot merge.
+
+#define MOTOR_MOTORS_PWM_ON_ONE_TIMER
+
+/*#ifdef MOTOR_MOTORS_PWM_ON_ONE_TIMER
+#define TimPWMServo_Handle TimPWMDcMotor_Handle
+#else*/
 TIM_HandleTypeDef    TimPWMServo_Handle;	// Servo motor
+//#endif
 
 
 
@@ -49,9 +60,10 @@ TIM_HandleTypeDef    TimPWMServo_Handle;	// Servo motor
 static MotorState_t ActualState = { 0 };
 static MotorState_t ControlState = { 0 };
 
-bool MotorTestSlide_Enabled = false;
+bool MotorTestSlide_Enabled = true;
 static uint8_t MotorTestSlide_AngleDir = 0;
 static uint8_t MotorTestSlide_DcDir = 0;
+
 
 
 /*------------------------------------------------------------------------------
@@ -74,10 +86,18 @@ static void Motor_DcMotorGpioInit(void);
  */
 void Motor_Init(void)
 {
+	// Init GPIOs
 	Motor_DcMotorGpioInit();
 
+	// Init DC motor
 	Motor_DcMotorTimerInit(0);
-#if !defined(MOTOR_MOTORS_PWM_ON_ONE_TIMER)
+
+#if defined(MOTOR_MOTORS_PWM_ON_ONE_TIMER)
+	memcpy(&TimPWMServo_Handle, &TimPWMDcMotor_Handle, sizeof(TimPWMServo_Handle));
+	// Set Servo PWM value, because DC and Servo on one Timer
+	Motor_ServoChangeAngle(0);
+#else
+	// Init servo motor
 	Motor_ServoTimerInit(0);
 #endif
 }
@@ -110,7 +130,6 @@ static void Motor_DcMotorGpioInit(void)
 
 	// Stop direction
 	Motor_DcMotorSeDirection(MotorDir_Stop);
-
 }
 
 
@@ -156,12 +175,6 @@ void Motor_DcMotorTimerInit(uint8_t percent)
 
 	// Set DcMotor PWM value
 	Motor_DcMotorChangePercent(percent);
-
-#ifdef MOTOR_MOTORS_PWM_ON_ONE_TIMER
-	TimPWMServo_Handle = TimPWMDcMotor_Handle;
-	// Set Servo PWM value
-	Motor_ServoChangeAngle(0);
-#endif
 }
 
 
@@ -171,7 +184,6 @@ void Motor_DcMotorTimerInit(uint8_t percent)
  */
 void Motor_DcMotorChangePercent(uint8_t percent)
 {
-
 	/* Timer Output Compare Configuration Structure declaration */
 	TIM_OC_InitTypeDef sConfig;
 
@@ -209,7 +221,6 @@ void Motor_DcMotorChangePercent(uint8_t percent)
 		/* PWM Generation Error */
 		Error_Handler();
 	}
-
 }
 
 
@@ -238,17 +249,16 @@ void Motor_DcMotorSeDirection(MotorDir_t dir)
 			HAL_GPIO_WritePin(MOTOR_DCMOTOR_DIR2_GPIO_PORT, MOTOR_DCMOTOR_DIR2_GPIO_PIN, RESET);
 			break;
 	}
-
 }
 
 
 
+#ifndef MOTOR_MOTORS_PWM_ON_ONE_TIMER
 /**
  * \brief	Init for Servo motor
  */
 void Motor_ServoTimerInit(int8_t angle)
 {
-
 	/* Counter Prescaler value */
 	uint32_t PrescalerValue = 0;
 	uint32_t Period = 0;
@@ -282,6 +292,7 @@ void Motor_ServoTimerInit(int8_t angle)
 	// Set PWM value
 	Motor_ServoChangeAngle(angle);
 }
+#endif
 
 
 
@@ -436,6 +447,7 @@ void Motor_StateMachine(void)
 			}
 		}
 
+		/*
 		// Slide motor
 		if (MotorTestSlide_DcDir)
 		{
@@ -470,6 +482,7 @@ void Motor_StateMachine(void)
 			// 0
 			ControlState.dir = MotorDir_Stop;
 		}
+		*/
 	}
 	// End of slide
 
@@ -478,7 +491,7 @@ void Motor_StateMachine(void)
 	if (ActualState.dir != ControlState.dir)
 	{
 		// Handle change direction
-		// TODO: Too fast stop
+		// TODO: Too fast stop, do slowe?
 		Motor_DcMotorChangePercent(0);
 		ActualState.dir = ControlState.dir;
 		Motor_DcMotorSeDirection(ActualState.dir);

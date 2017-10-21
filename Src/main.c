@@ -1,7 +1,8 @@
 /**
  *	FastenAut project
- *	written by Vizi Gábor
- *	e-mail:	vizi.gabor90@gmail.com
+ *	Written by Vizi Gábor
+ *	E-mail:	vizi.gabor90@gmail.com
+ *	Webpage: http://www.fasten.e5tv.hu/
  */
 
 
@@ -30,21 +31,13 @@
 #include "CommonDAC.h"
 #include "ADC.h"
 #include "Globals.h"
+#include "Bluetooth_HC05.h"
 
 
 
 /*------------------------------------------------------------------------------
  *  Local variables
  *----------------------------------------------------------------------------*/
-
-#if defined(CONFIG_MODULE_DEBUGUSART_ENABLE) && defined(CONFIG_USE_FREERTOS)
-extern xSemaphoreHandle DEBUG_USART_Rx_Semaphore;
-extern xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
-#endif
-
-#if defined(CONFIG_MODULE_ESP8266_ENABLE) && defined(CONFIG_USE_FREERTOS)
-extern xQueueHandle ESP8266_SendMessage_Queue;
-#endif
 
 
 
@@ -53,8 +46,6 @@ extern xQueueHandle ESP8266_SendMessage_Queue;
  *----------------------------------------------------------------------------*/
 
 void SystemClock_Config(void);
-void Error_Handler(void);
-void Assert_Function(char *file, uint32_t line, char *exp);
 
 
 
@@ -153,25 +144,12 @@ int main(void)
 
 
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-	// Debug UART
-	USART_Init(&Debug_UartHandle);
-#ifdef CONFIG_USE_FREERTOS
-	DEBUG_USART_Rx_Semaphore = NULL;
-	DEBUG_USART_Tx_Semaphore = NULL;
-	
-	DEBUG_USART_Rx_Semaphore = xSemaphoreCreateBinary();
-	DEBUG_USART_Tx_Semaphore = xSemaphoreCreateBinary();	
-	
-	if (DEBUG_USART_Rx_Semaphore == NULL || DEBUG_USART_Tx_Semaphore == NULL)
-	{
-		Error_Handler();
-	}
-#endif	//#ifdef CONFIG_USE_FREERTOS
-#ifndef CONFIG_MODULE_TERMINAL_ENABLE
 	DebugUart_Init();
-	// Start receive
-	DebugUart_StartReceive();
 #endif
+
+
+#ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
+	Bluetooth_HC05_Init();
 #endif
 
 
@@ -206,15 +184,6 @@ int main(void)
 	ESP8266_Init();
 
 #ifdef CONFIG_USE_FREERTOS
-	// ESP8266 FreeRTOS queues
-	ESP8266_USART_Rx_Semaphore = xSemaphoreCreateBinary();
-	ESP8266_SendMessage_Queue = xQueueCreate(
-			ESP8266_SENDMESSAGE_QUEUE_LENGTH,
-			ESP8266_MESSAGE_QUEUE_ITEM_SIZE);
-	ESP8266_ReceivedMessage_Queue = xQueueCreate(
-			ESP8266_RECEIVEMESSAGE_QUEUE_LENGTH,
-			ESP8266_MESSAGE_QUEUE_ITEM_SIZE);
-
 	// ESP8266 Task initialization
 	TaskHandle_t ESP8266_TaskHandle = NULL;
 	if (xTaskCreate((pdTASK_CODE)ESP8266_Task, "ESP8266Task", ESP8266_TASK_STACK_SIZE, 0,
@@ -249,7 +218,7 @@ int main(void)
 #endif
 
 
-#if defined(CONFIG_MODULE_TASKHANDLER_ENABLE)
+#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 	// Task handler
 	TaskHandler_Init();
 

@@ -18,6 +18,7 @@
 #include "options.h"
 #include <stdarg.h>		// for "..." parameters in printf function
 #include "String.h"
+#include "USART.h"
 #include "Globals.h"
 #include "CircularBuffer.h"
 #include "Communication.h"
@@ -52,8 +53,8 @@ const bool DebugUart_CommandReceiveEnable = true;
 
 
 #if defined(CONFIG_USE_FREERTOS)
-xSemaphoreHandle DEBUG_USART_Rx_Semaphore;
-xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
+xSemaphoreHandle DEBUG_USART_Rx_Semaphore = NULL;
+xSemaphoreHandle DEBUG_USART_Tx_Semaphore = NULL;
 #endif
 
 
@@ -83,6 +84,22 @@ static bool DebugUart_WaitForSend(uint16_t timeoutMilliSecond);
 void DebugUart_Init(void)
 {
 	CircularBuffer_Init(&DebugUart_RxBuffStruct);
+
+	// UART
+	USART_Init(&Debug_UartHandle);
+
+#ifdef CONFIG_USE_FREERTOS
+	DEBUG_USART_Rx_Semaphore = xSemaphoreCreateBinary();
+	DEBUG_USART_Tx_Semaphore = xSemaphoreCreateBinary();
+
+	if (DEBUG_USART_Rx_Semaphore == NULL || DEBUG_USART_Tx_Semaphore == NULL)
+	{
+		Error_Handler();
+	}
+#endif	//#ifdef CONFIG_USE_FREERTOS
+
+	// Start receive
+	DebugUart_StartReceive();
 }
 
 

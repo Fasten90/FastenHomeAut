@@ -60,6 +60,9 @@ static TaskResult_t TaskEsp8266(ScheduleSource_t source);
 static TaskResult_t Task_Motor(ScheduleSource_t source);
 static TaskResult_t Task_MotorConnStop(ScheduleSource_t source);
 #endif
+#ifdef CONFIG_FUNCTION_REMOTECONTROLLER
+static TaskResult_t Task_RemoteControllerSending(ScheduleSource_t source);
+#endif
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 static TaskResult_t Task_ProcessDebugUartCommandReceived(ScheduleSource_t source);
 #endif
@@ -128,6 +131,13 @@ Task_t TaskList[] =
 		.taskFunction = Task_MotorConnStop,
 		.taskScheduleRate = 500,
 		.isTimeOutTask = true
+	},
+#endif
+#ifdef CONFIG_FUNCTION_REMOTECONTROLLER
+	{
+		.taskName = "RemoteController",
+		.taskFunction = Task_RemoteControllerSending,
+		.taskScheduleRate = 300,
 	},
 #endif
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
@@ -248,7 +258,7 @@ const TaskID_t TasksNum = (sizeof(TaskList)/sizeof(TaskList[0]));
 
 #ifdef CONFIG_MODULE_LED_ENABLE
 /**
- * \brief
+ * \brief	LED blinking task
  */
 static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 {
@@ -372,6 +382,10 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 	}
 
 #endif
+#ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
+	// Turn off LEDs
+	LED_SetLed(LED_Green, LED_Set_Off);
+#endif
 
 	return TASK_RESULT_OK;
 }
@@ -425,6 +439,19 @@ static TaskResult_t Task_MotorConnStop(ScheduleSource_t source)
 	(void)source;
 
 	Motor_ControlStop();
+
+	return TASK_RESULT_OK;
+}
+#endif
+
+
+
+#ifdef CONFIG_FUNCTION_REMOTECONTROLLER
+static TaskResult_t Task_RemoteControllerSending(ScheduleSource_t source)
+{
+	(void)source;
+
+	Logic_RemoteController_SendMessage();
 
 	return TASK_RESULT_OK;
 }

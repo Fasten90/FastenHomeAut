@@ -47,6 +47,9 @@ typedef enum
 	Task_MotorControl,
 	Task_MotorTimeout,
 #endif
+#ifdef CONFIG_FUNCTION_REMOTECONTROLLER
+	Task_RemoteController,
+#endif
 #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
 	Task_ProcessDebugUartReceivedCommand,
 #endif
