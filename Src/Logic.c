@@ -94,8 +94,10 @@ static uint16_t Display_CarAnimation_RefreshPeriod_Actual = 300;
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
+#ifdef CONFIG_MODULE_DISPLAY_ENABLE
 static void Logic_Display_MainMenu(void);
 static void Logic_Display_PrintMainMenuList(void);
+#endif
 
 #ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
 static void Logic_SystemTimeStepConfig(void);
@@ -390,6 +392,7 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 
 #endif	// CONFIG_FUNCTION_REMOTECONTROLLER
 
+#ifdef CONFIG_MODULE_DISPLAY_ENABLE
 	if (Logic_Display_ActualState == Menu_Main)
 	{
 		switch (button)
@@ -417,6 +420,7 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 
 		TaskHandler_RequestTaskScheduling(Task_Display);
 	}
+#endif	// #ifdef CONFIG_MODULE_DISPLAY_ENABLE
 
 #ifdef CONFIG_FUNCTION_DISPLAY_INPUT
 	// Check buttons
@@ -775,6 +779,7 @@ void Logic_CheckCharger(void)
 
 
 
+#ifdef CONFIG_MODULE_DISPLAY_ENABLE
 void Logic_DisplayHandler(ScheduleSource_t source)
 {
 	if (Logic_Display_ChangedState)
@@ -1040,7 +1045,7 @@ static void Logic_Display_Input(ScheduleSource_t source)
 		}
 	}
 }
-#endif
+#endif	// #ifdef CONFIG_FUNCTION_DISPLAY_INPUT
 
 
 
@@ -1078,7 +1083,7 @@ inline void Logic_Display_Snake_ChangeToMenu(void)
 {
 	Logic_Snake_DisplaySnakeMenu = true;
 }
-#endif
+#endif	// #ifdef CONFIG_FUNCTION_GAME_SNAKE
 
 
 
@@ -1107,3 +1112,4 @@ bool Logic_Display_GetClockIsNeedRefresh(void)
 {
 	return (Logic_Display_ActualState == Menu_Main ? true : false);
 }
+#endif	// #ifdef CONFIG_MODULE_DISPLAY_ENABLE

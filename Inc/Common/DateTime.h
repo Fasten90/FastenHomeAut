@@ -131,27 +131,17 @@ int32_t DateTime_CalculateDifferentOf2DateTime(DateTime_t *dateTime1, DateTime_t
 void DateTime_Steps(DateTime_t *dateTime, uint32_t stepSeconds);
 void DateTime_Step(DateTime_t *dateTime);
 
-#ifdef NO_OPTIMIZED_DATETIME
+
 void DateTime_GetDateTime(DateTime_t *dateTime);
 void DateTime_SetDate(Date_t *date);
 void DateTime_SetTime(Time_t *time);
-#else
 
-#ifdef CONFIG_MODULE_RTC_ENABLE
-	#define DateTime_GetDateTime(dateTime)		RTC_GetDateTime(&dateTime)
-	#define DateTime_SetDate(date)				RTC_SetDate(date)
-	#define DateTime_SetTime(time)				RTC_SetTime(time)
-#else
-	#define DateTime_GetDateTime(_dateTime)		memcpy(_dateTime, &DateTime_SystemTime, sizeof(DateTime_t))
-	#define DateTime_SetDate(_date)				memcpy(&DateTime_SystemTime.date, _date, sizeof(Date_t))
-	#define DateTime_SetTime(_time)				memcpy(&DateTime_SystemTime.time, _time, sizeof(Time_t))
-#endif
-
-#endif
 
 #ifdef MODULE_DATETIME_UNITTEST_ENABLE
 void DateTime_UnitTest(void);
 #endif
+
+
 
 
 

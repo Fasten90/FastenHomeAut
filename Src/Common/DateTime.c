@@ -571,18 +571,18 @@ void DateTime_Step(DateTime_t *dateTime)
 
 
 
-// TODO: inline
-#ifdef NO_OPTIMIZED_DATETIME
 /**
  * \brief	Get DateTime
  */
-void DateTime_GetDateTime(DateTime_t *dateTime)
+inline __attribute__((always_inline)) void DateTime_GetDateTime(DateTime_t *dateTime)
 {
-	#ifdef CONFIG_MODULE_RTC_ENABLE
+#if defined(CONFIG_MODULE_RTC_ENABLE)
 	RTC_GetDateTime(&dateTime);
-	#elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
+#elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
 	memcpy(&dateTime, &DateTime_SystemTime, sizeof(DateTime_t));
-	#endif
+#else
+	(void)dateTime;
+#endif
 }
 
 
@@ -590,13 +590,15 @@ void DateTime_GetDateTime(DateTime_t *dateTime)
 /**
  * \brief	Set date
  */
-void DateTime_SetDate(Date_t *date)
+inline __attribute__((always_inline)) void DateTime_SetDate(Date_t *date)
 {
-	#ifdef CONFIG_MODULE_RTC_ENABLE
+#if defined(CONFIG_MODULE_RTC_ENABLE)
 	RTC_SetDate(&date);
-	#elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
+#elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
 	memcpy(&DateTime_SystemTime.date, date, sizeof(Date_t));
-	#endif
+#else
+	(void)date;
+#endif
 }
 
 
@@ -604,15 +606,16 @@ void DateTime_SetDate(Date_t *date)
 /**
  * \brief	Set time
  */
-void DateTime_SetTime(Time_t *time)
+inline __attribute__((always_inline)) void DateTime_SetTime(Time_t *time)
 {
-	#ifdef CONFIG_MODULE_RTC_ENABLE
+#if defined(CONFIG_MODULE_RTC_ENABLE)
 	RTC_SetTime(&time);
-	#elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
+#elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
 	memcpy(&DateTime_SystemTime.time, &time, sizeof(Time_t));
-	#endif
-}
+#else
+	(void)time;
 #endif
+}
 
 
 

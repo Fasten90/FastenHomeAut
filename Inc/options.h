@@ -217,7 +217,7 @@
 
 	//#define CONFIG_MODULE_COMMON_IO_ENABLE
 
-	#define CONFIG_MODULE_DISPLAY_ENABLE
+	//#define CONFIG_MODULE_DISPLAY_ENABLE
 
 	#define CONFIG_MODULE_BUTTON_ENABLE
 
@@ -271,7 +271,7 @@
 //#define CONFIG_MODULE_TEST_ENABLE
 
 ///< Simulation mode: Enable "simulate" command
-#define CONFIG_MODULE_SIMULATION_ENABLE
+//#define CONFIG_MODULE_SIMULATION_ENABLE
 
 //#define CONFIG_SWO_ENABLE
 //#define CONFIG_DEBUG_RAMREAD_WRITE_COMMAND_ENABLE
@@ -467,7 +467,6 @@
 	// Tests
 	#define CONFIG_MODULE_DISPLAY_TEST
 	#define CONFIG_MODULE_DISPLAY_TEST_WITH_TERMINAL
-
 #endif
 
 
@@ -502,7 +501,7 @@
  *----------------------------------------------------------------------------*/
 
 
-// Remote controller (for car) function
+///< Remote controller (for car) function
 //#define CONFIG_FUNCTION_REMOTECONTROLLER
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER
 	#ifndef CONFIG_MODULE_BUTTON_ENABLE
@@ -515,19 +514,17 @@
 #endif
 
 
-#define CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
+///< Display: Show screen
+//#define CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
 
 
+///< Display: Show clock
 //#define CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
-
-
-// Display: Show clock
-#define CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
 //#define CONFIG_DISPAY_CLOCK_LARGE
 #define CONFIG_DISPLAY_CLOCK_SMALL
 
 
-// Display: Clock change function
+///< Display: Clock change function
 //#define CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
 #ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
 	#ifndef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
@@ -539,8 +536,8 @@
 #endif
 
 
-// Display: Input function
-#define CONFIG_FUNCTION_DISPLAY_INPUT
+///< Display: Input function
+//#define CONFIG_FUNCTION_DISPLAY_INPUT
 #ifdef CONFIG_FUNCTION_DISPLAY_INPUT
 	#ifndef CONFIG_MODULE_DISPLAY_ENABLE
 		#define CONFIG_MODULE_DISPLAY_ENABLE
@@ -551,8 +548,8 @@
 #endif
 
 
-/// Charger function
-#define CONFIG_FUNCTION_CHARGER
+///< Charger function
+//#define CONFIG_FUNCTION_CHARGER
 #ifdef CONFIG_FUNCTION_CHARGER
 	#ifndef CONFIG_MODULE_DISPLAY_ENABLE
 		#define CONFIG_MODULE_DISPLAY_ENABLE
@@ -563,8 +560,8 @@
 #endif
 
 
-/// Snake game
-#define CONFIG_FUNCTION_GAME_SNAKE
+///< Snake game
+//#define CONFIG_FUNCTION_GAME_SNAKE
 
 
 
