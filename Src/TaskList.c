@@ -63,7 +63,7 @@ static TaskResult_t Task_MotorConnStop(ScheduleSource_t source);
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER
 static TaskResult_t Task_RemoteControllerSending(ScheduleSource_t source);
 #endif
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 static TaskResult_t Task_ProcessDebugUartCommandReceived(ScheduleSource_t source);
 #endif
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
@@ -140,7 +140,7 @@ Task_t TaskList[] =
 		.taskScheduleRate = 300,
 	},
 #endif
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 	{
 		.taskName = "DbgUartCommandRecv",
 		.taskFunction = Task_ProcessDebugUartCommandReceived,
@@ -459,7 +459,7 @@ static TaskResult_t Task_RemoteControllerSending(ScheduleSource_t source)
 
 
 
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 static TaskResult_t Task_ProcessDebugUartCommandReceived(ScheduleSource_t source)
 {
 	(void)source;

@@ -31,7 +31,7 @@
 #define DEBUGUART_TX_BUFFER_SIZE				256UL
 // Size of Reception buffer
 #define DEBUGUART_RX_BUFFER_SIZE				256UL
-#define DEBUGUART_RXBUFFER_WAIT_LENGTH		1
+#define DEBUGUART_RX_BUFFER_WAIT_LENGTH			1
 
 
 // Variadic macro
@@ -58,6 +58,11 @@ extern CircularBufferInfo_t DebugUart_RxBuffStruct;
 
 extern bool DebugUart_SendEnable_flag;
 
+#if defined(CONFIG_USE_FREERTOS)
+extern xSemaphoreHandle DebugUart_Rx_Semaphore;
+extern xSemaphoreHandle DebugUart_Tx_Semaphore;
+#endif
+
 
 
 /*------------------------------------------------------------------------------
@@ -70,7 +75,7 @@ bool DebugUart_SendChar(char c);
 uint8_t DebugUart_SendMessage(const char *message);
 bool DebugUart_SendNewLine(void);
 bool DebugUart_SendLine(const char *message);
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 uint8_t uprintf(const char *format, ...);
 #else
 // Not realized

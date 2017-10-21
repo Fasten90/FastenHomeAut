@@ -61,7 +61,7 @@ uint8_t COMMUNICATION_SendMessage(CommProtocol_t protocol, const char *message)
 
 	switch (protocol)
 	{
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 		case CommProt_Unknown:
 			// Unknown, send on debug
 			length = DebugUart_SendMessage(message);
@@ -109,7 +109,7 @@ uint8_t COMMUNICATION_SendChar(CommProtocol_t protocol, char c)
 {
 	switch (protocol)
 	{
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 		case CommProt_Unknown:
 			// Unknown, send on debug
 			DebugUart_SendChar(c);

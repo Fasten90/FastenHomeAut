@@ -34,6 +34,7 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
+///< Available LEDs (on board)
 typedef enum
 {
 	LED_Unknown,
@@ -44,10 +45,11 @@ typedef enum
 	LED_Red,
 #endif
 
+	// Do not use:
 	LED_Count
 } LED_Pin_t;
 
-
+///< LED operation
 typedef enum
 {
 	LED_Set_DontCare,
@@ -55,6 +57,7 @@ typedef enum
 	LED_Set_Off,
 	LED_Set_Toggle,
 	LED_Get_Status,
+
 	// Do not use:
 	LED_Type_Count
 } LED_SetType_t;

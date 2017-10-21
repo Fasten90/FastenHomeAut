@@ -26,7 +26,7 @@
 #include "DebugUart.h"
 
 
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 
 /*------------------------------------------------------------------------------
  *  Global variables
@@ -53,8 +53,8 @@ const bool DebugUart_CommandReceiveEnable = true;
 
 
 #if defined(CONFIG_USE_FREERTOS)
-xSemaphoreHandle DEBUG_USART_Rx_Semaphore = NULL;
-xSemaphoreHandle DEBUG_USART_Tx_Semaphore = NULL;
+xSemaphoreHandle DebugUart_Rx_Semaphore = NULL;
+xSemaphoreHandle DebugUart_Tx_Semaphore = NULL;
 #endif
 
 
@@ -89,10 +89,10 @@ void DebugUart_Init(void)
 	USART_Init(&Debug_UartHandle);
 
 #ifdef CONFIG_USE_FREERTOS
-	DEBUG_USART_Rx_Semaphore = xSemaphoreCreateBinary();
-	DEBUG_USART_Tx_Semaphore = xSemaphoreCreateBinary();
+	DebugUart_Rx_Semaphore = xSemaphoreCreateBinary();
+	DebugUart_Tx_Semaphore = xSemaphoreCreateBinary();
 
-	if (DEBUG_USART_Rx_Semaphore == NULL || DEBUG_USART_Tx_Semaphore == NULL)
+	if (DebugUart_Rx_Semaphore == NULL || DebugUart_Tx_Semaphore == NULL)
 	{
 		Error_Handler();
 	}
@@ -137,7 +137,7 @@ uint8_t DebugUart_SendMessage(const char *message)
 			// NOTE: !!IMPORTANT!! Not sent message
 			//Error_Handler();
 #ifdef CONFIG_USE_FREERTOS
-			xSemaphoreGive(DEBUG_USART_Tx_Semaphore);
+			xSemaphoreGive(DebugUart_Tx_Semaphore);
 #endif
 			DebugUart_SendEnable_flag = true;	// Failed to send, now we can send message
 
@@ -208,7 +208,7 @@ bool DebugUart_SendChar(char c)
 			// NOTE: !! IMPORTANT!! Not sent message
 			//Error_Handler();
 #ifdef CONFIG_USE_FREERTOS
-			xSemaphoreGive(DEBUG_USART_Tx_Semaphore);
+			xSemaphoreGive(DebugUart_Tx_Semaphore);
 #endif
 			DebugUart_SendEnable_flag = true;
 
@@ -243,7 +243,7 @@ void DebugUart_StartReceive(void)
 
 #ifdef CONFIG_USE_FREERTOS
 	// Wait for semaphore
-	xSemaphoreTake(DEBUG_USART_Rx_Semaphore, (portTickType) 1000);
+	xSemaphoreTake(DebugUart_Rx_Semaphore, (portTickType) 1000);
 #endif
 }
 
@@ -255,7 +255,7 @@ void DebugUart_StartReceive(void)
 static bool DebugUart_WaitForSend(uint16_t timeoutMilliSecond)
 {
 #ifdef CONFIG_USE_FREERTOS
-	if (xSemaphoreTake(DEBUG_USART_Tx_Semaphore, (portTickType)timeoutMilliSecond) == pdPASS)
+	if (xSemaphoreTake(DebugUart_Tx_Semaphore, (portTickType)timeoutMilliSecond) == pdPASS)
 	{
 		return true;
 	}
@@ -356,4 +356,4 @@ uint8_t uprintf(const char *format, ...)
 
 
 
-#endif	// #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#endif	// #ifdef CONFIG_MODULE_DEBUGUART_ENABLE

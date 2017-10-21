@@ -23,10 +23,7 @@
 #include "Globals.h"
 
 
-
 #ifdef CONFIG_MODULE_LED_ENABLE
-
-
 
 /*------------------------------------------------------------------------------
  *  Global variables
@@ -51,12 +48,13 @@ const char * const LED_NameList[] =
 ///< LED types
 const char * const LED_TypeNameList[] =
 {
-	// NOTE: Synchronize with LED_SetType_t
 	"-",
 	"on",
 	"off",
 	"toggle",
 	"status"
+
+	// NOTE: Synchronize with LED_SetType_t
 };
 
 

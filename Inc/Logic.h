@@ -30,7 +30,7 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#if defined(CONFIG_BUTTON_DEBUG_ENABLE) && defined(CONFIG_MODULE_DEBUGUSART_ENABLE)
+#if defined(CONFIG_BUTTON_DEBUG_ENABLE) && defined(CONFIG_MODULE_DEBUGUART_ENABLE)
 #define BUTTON_DEBUG_PRINT(msg)		DebugUart_SendLine(msg)
 #else
 #define BUTTON_DEBUG_PRINT(msg)

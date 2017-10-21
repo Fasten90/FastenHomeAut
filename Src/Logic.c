@@ -915,7 +915,7 @@ static void Logic_Display_MainMenu(void)
 	#endif
 
 	#ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
-	// Display refresh
+	// Display refresh by clock
 
 	// Display vibrate function: if we are in setting mode, hour or minute will vibrate
 	static bool Display_VibrateStateHide = false;
@@ -1126,9 +1126,9 @@ static void Logic_Display_PrintSnakeMenuList(void)
 	format.Format_Inverse = 1;
 
 	Display_PrintString("New game", 3, Font_12x8,
-			Logic_Display_SnakeMenu_ActualState == SnakeMenu_NewGame ? format : NO_FORMAT);
+			(Logic_Display_SnakeMenu_ActualState == SnakeMenu_NewGame) ? format : NO_FORMAT);
 	Display_PrintString("Exit", 4, Font_12x8,
-			Logic_Display_SnakeMenu_ActualState == SnakeMenu_Exit ? format : NO_FORMAT);
+			(Logic_Display_SnakeMenu_ActualState == SnakeMenu_Exit) ? format : NO_FORMAT);
 
 	Display_Activate();
 }

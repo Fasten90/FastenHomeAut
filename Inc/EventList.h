@@ -74,7 +74,7 @@ typedef enum
 	Event_TaskFinished,
 	Event_TaskCleared,
 #endif
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 	Event_DebugUartReceive,
 #endif
 #ifdef CONFIG_MODULE_BUTTON_ENABLE

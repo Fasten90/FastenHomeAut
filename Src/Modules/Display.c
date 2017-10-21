@@ -409,7 +409,7 @@ void Display_LoadCarImage(void)
 {
 	Display_Clear();
 
-	SSD1306_drawImage(8, 8, 120, 48, (uint8_t *)Display_CarImage);
+	SSD1306_drawImage(8, 8, 120, 48, (uint8_t *)Display_Image_Car);
 
 	Display_Activate();
 }

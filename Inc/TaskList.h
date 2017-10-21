@@ -50,7 +50,7 @@ typedef enum
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER
 	Task_RemoteController,
 #endif
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 	Task_ProcessDebugUartReceivedCommand,
 #endif
 #ifdef CONFIG_MODULE_BUTTON_ENABLE

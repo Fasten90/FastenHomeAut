@@ -55,7 +55,7 @@ const Event_t EventList[] =
 		.isNeedLog = true,
 	},
 #endif
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 	{
 		.name = "DebugUartReceive",
 		.isNeedLog = true,

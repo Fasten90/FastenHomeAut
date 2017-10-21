@@ -92,8 +92,6 @@ void CommandHandler_Init(void)
 
 		// example, description, syntax are optional parameters
 	}
-
-	return;
 }
 
 
@@ -127,7 +125,7 @@ bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source, char *comma
 		isSuccessful = false;
 	}
 
-#if defined(CONFIG_COMMANDHANDLER_NOTIFY_NOT_DEBUG_COMMAND) && defined(CONFIG_MODULE_DEBUGUSART_ENABLE)
+#if defined(CONFIG_COMMANDHANDLER_NOTIFY_NOT_DEBUG_COMMAND) && defined(CONFIG_MODULE_DEBUGUART_ENABLE)
 	if (source != CommProt_DebugUart)
 	{
 		uprintf("Received command: \"%s\", from %s\r\n",command, COMMUNICATION_GetProtocolName(source));

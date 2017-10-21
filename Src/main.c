@@ -143,7 +143,7 @@ int main(void)
 #endif
 
 
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 	DebugUart_Init();
 #endif
 
@@ -154,27 +154,27 @@ int main(void)
 
 
 #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
-	// Command Handler + Terminal initialize
+	// CommandHandler initialization
 	CommandHandler_Init();
 #endif
+
+
 #ifdef CONFIG_MODULE_TERMINAL_ENABLE
+	// Terminal init
 	Terminal_Init();
-#endif
 
-
-#ifdef CONFIG_MODULE_TERMINAL_ENABLE
 #if defined(CONFIG_USE_FREERTOS)
 	// Terminal Task (FreeRTOS)
-	TaskHandle_t MONITOR_TaskHandle = NULL;
-	//xTaskCreate( vTaskCode, "NAME", STACK_SIZE, &ucParameterToPass, tskIDLE_PRIORITY, &xHandle );
-	if (xTaskCreate( (pdTASK_CODE)CommandHandler_CheckCommand, "MonitorTask", MONITOR_TASK_STACK_SIZE, 0,
-				MONITOR_TASK_PRIORITY, &MONITOR_TaskHandle ) != pdPASS)
+	TaskHandle_t Terminal_TaskHandle = NULL;
+	//xTaskCreate(vTaskCode, "NAME", STACK_SIZE, &ucParameterToPass, tskIDLE_PRIORITY, &xHandle);
+	if (xTaskCreate( (pdTASK_CODE)Terminal_CheckCommand, "TerminalTask", TERMINAL_TASK_STACK_SIZE, 0,
+			TERMINAL_TASK_PRIORITY, &Terminal_TaskHandle) != pdPASS)
 	{
 		Error_Handler();
 	}
 #elif !defined(CONFIG_MODULE_TASKHANDLER_ENABLE)
 	// Terminal infinite loop, if not used TaskHandler
-	CommandHandler_CheckCommand();
+	Terminal_CheckCommand();
 #endif
 #endif	// #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
 
@@ -198,8 +198,8 @@ int main(void)
 #if defined(CONFIG_MODULE_SYSMANAGER_ENABLE) && defined(CONFIG_USE_FREERTOS)
 	// SysManager
 	TaskHandle_t SYSMANAGER_TaskHandle = NULL;
-	if ( xTaskCreate( (pdTASK_CODE)SYSMANAGER_Task, "SysManagerTask", SYSMANAGER_TASK_STACK_SIZE, 0,
-					SYSMANAGER_TASK_PRIORITY, &SYSMANAGER_TaskHandle ) != pdPASS)
+	if (xTaskCreate((pdTASK_CODE)SYSMANAGER_Task, "SysManagerTask", SYSMANAGER_TASK_STACK_SIZE, 0,
+					SYSMANAGER_TASK_PRIORITY, &SYSMANAGER_TaskHandle) != pdPASS)
 	{
 		Error_Handler();
 	}
@@ -227,6 +227,7 @@ int main(void)
 	uint32_t elapsedTick = 0;
 
 	// Run TaskHandler - Infinite loop
+	// \note	Be careful, after this while loop is not reached
 	while (1)
 	{
 		// Calculate elapsed tick

@@ -17,7 +17,7 @@
 
 #include "include.h"
 #include "board.h"
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 #include "DebugUart.h"
 #include "Terminal.h"
 #endif
@@ -73,7 +73,7 @@ void USART_Init(UART_HandleTypeDef *UartHandle)
 	  - Parity = None
 	  - BaudRate = 9600 baud
 	  - Hardware flow control disabled (RTS and CTS signals) */
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 	if (UartHandle == &Debug_UartHandle)
 	{
 		UartHandle->Instance      = DEBUG_USARTx;
@@ -104,7 +104,7 @@ void USART_Init(UART_HandleTypeDef *UartHandle)
 
 	if (HAL_UART_Init(UartHandle) == HAL_OK)
 	{	
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 		if (UartHandle == &Debug_UartHandle)
 		{
 			DebugUart_SendEnable_flag = true;
@@ -137,11 +137,11 @@ void USART_Init(UART_HandleTypeDef *UartHandle)
  */
 void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 {
-#if defined(CONFIG_MODULE_DEBUGUSART_ENABLE) || defined(CONFIG_MODULE_ESP8266_ENABLE)
+#if defined(CONFIG_MODULE_DEBUGUART_ENABLE) || defined(CONFIG_MODULE_ESP8266_ENABLE)
 	GPIO_InitTypeDef  GPIO_InitStruct;
 #endif
 
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 	if (huart == &Debug_UartHandle)
 	{
 		// ##-1- Enable peripherals and GPIO Clocks
@@ -173,7 +173,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 		HAL_NVIC_SetPriority(DEBUG_USARTx_IRQn, DEBUG_USART_PREEMT_PRIORITY, DEBUG_USART_SUB_PRIORITY);
 		HAL_NVIC_EnableIRQ(DEBUG_USARTx_IRQn);
 	}
-#endif	// #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#endif	// #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 	if (huart == &ESP8266_UartHandle)
 	{
@@ -248,7 +248,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 
 
 
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 void DEBUG_USARTx_IRQHandler(void)
 {
 	HAL_UART_IRQHandler(&Debug_UartHandle);
@@ -281,18 +281,18 @@ void BLUETOOTH_USARTx_IRQHandler(void)
  */
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 {
-#if !defined(CONFIG_MODULE_DEBUGUSART_ENABLE) && !defined(CONFIG_MODULE_ESP8266_ENABLE) && !defined(CONFIG_MODULE_BLUETOOTH_ENABLE)
+#if !defined(CONFIG_MODULE_DEBUGUART_ENABLE) && !defined(CONFIG_MODULE_ESP8266_ENABLE) && !defined(CONFIG_MODULE_BLUETOOTH_ENABLE)
 	// Suppress warning
 	(void)UartHandle;
 #endif
 	
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 	// Successful sending
 	if (UartHandle == &Debug_UartHandle)
 	{
 		// Set transmission flag: transfer complete
 		#ifdef CONFIG_USE_FREERTOS
-		xSemaphoreGiveFromISR(DEBUG_USART_Tx_Semaphore,(BaseType_t *)NULL);
+		xSemaphoreGiveFromISR(DebugUart_Tx_Semaphore, (BaseType_t *)NULL);
 		#endif
 		DebugUart_SendEnable_flag = true;
 	}
@@ -329,8 +329,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 	taskDISABLE_INTERRUPTS();
 	#endif
 
-	#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
-	if ( (UartHandle == &Debug_UartHandle) && (DebugUart_CommandReceiveEnable == true) )
+	#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
+	if ((UartHandle == &Debug_UartHandle) && (DebugUart_CommandReceiveEnable == true))
 	{
 		#ifdef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
 		// Receive to next index
@@ -347,13 +347,13 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 
 		#ifdef CONFIG_USE_FREERTOS
 		// Transmission end semaphore / flag: Give semaphore
-		xSemaphoreGiveFromISR(DEBUG_USART_Rx_Semaphore, 0);
+		xSemaphoreGiveFromISR(DebugUart_Rx_Semaphore, 0);
 		#endif
 		#else
 		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)DebugUart_RxBuffer, DEBUGUART_RX_BUFFER_SIZE);
 		#endif
 	}
-	#endif	// #ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+	#endif	// #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 	
 
 	#ifdef CONFIG_MODULE_ESP8266_ENABLE
@@ -401,7 +401,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
 
-#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 	if (huart == &Debug_UartHandle)
 	{
 
@@ -422,16 +422,16 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 		HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t *)"$", 1);
 		
 		#ifdef CONFIG_USE_FREERTOS
-		//xSemaphoreGiveFromISR(DEBUG_USART_Rx_Semaphore,0);
-		if (DEBUG_USART_Tx_Semaphore != NULL)
+		//xSemaphoreGiveFromISR(DebugUart_Rx_Semaphore,0);
+		if (DebugUart_Tx_Semaphore != NULL)
 		{
-			xSemaphoreGiveFromISR(DEBUG_USART_Tx_Semaphore, 0);
+			xSemaphoreGiveFromISR(DebugUart_Tx_Semaphore, 0);
 		}
 		#endif
 	}
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-	#ifdef CONFIG_MODULE_DEBUGUSART_ENABLE
+	#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 	else
 	#endif
 	if (huart == &ESP8266_UartHandle)
@@ -462,7 +462,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 	}
 #endif
 
-#if defined(CONFIG_MODULE_DEBUGUSART_ENABLE) || defined(CONFIG_MODULE_ESP8266_ENABLE) || defined(CONFIG_MODULE_BLUETOOTH_ENABLE)
+#if defined(CONFIG_MODULE_DEBUGUART_ENABLE) || defined(CONFIG_MODULE_ESP8266_ENABLE) || defined(CONFIG_MODULE_BLUETOOTH_ENABLE)
 	else
 	{
 		Error_Handler();

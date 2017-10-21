@@ -478,7 +478,7 @@ bool HomeAutMessage_CreateAndSendHomeAutMessage(
 		{
 			return false;
 		}
-#elif defined(CONFIG_MODULE_DEBUGUSART_ENABLE)
+#elif defined(CONFIG_MODULE_DEBUGUART_ENABLE)
 		DebugUart_SendMessage(message);
 		return true;
 #else
