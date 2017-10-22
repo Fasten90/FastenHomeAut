@@ -414,11 +414,8 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 		// Reinitialize USART
 		//USART_Init(&Debug_UartHandle);
 
-#ifdef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
-		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&DebugUart_RxBuffer[USART_RxBufferWriteCounter], DEBUGUART_RXBUFFER_WAIT_LENGTH);
-#else
-		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)DebugUart_RxBuffer, DEBUGUART_RX_BUFFER_SIZE);
-#endif
+		DebugUart_StartReceive();
+
 		HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t *)"$", 1);
 		
 		#ifdef CONFIG_USE_FREERTOS

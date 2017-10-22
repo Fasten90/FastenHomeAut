@@ -82,10 +82,9 @@ uint8_t uprintf(const char *format, ...);
 #define uprintf(...)		(0)
 #endif
 
-void DebugUart_FindLastMessage(void);
-void DebugUart_ClearReceive(bool isFullClear, uint8_t stepLength);
 void DebugUart_ProcessReceivedCharacters(void);
 
+void DebugUart_SendMessageBlocked(const char * str);
 
 
 #endif /* DEBUGUART_H_ */

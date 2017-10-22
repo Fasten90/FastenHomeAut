@@ -356,4 +356,16 @@ uint8_t uprintf(const char *format, ...)
 
 
 
+/**
+ * \brief	Send message with blocking mode
+ * 			Use only extreme situation!
+ */
+inline void DebugUart_SendMessageBlocked(const char * str)
+{
+	uint8_t length = StringLength(str);
+	HAL_UART_Transmit(&Debug_UartHandle, (uint8_t *)str, length, 1000);
+}
+
+
+
 #endif	// #ifdef CONFIG_MODULE_DEBUGUART_ENABLE

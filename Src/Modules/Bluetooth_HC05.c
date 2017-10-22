@@ -21,6 +21,7 @@
 #include "Bluetooth_HC05.h"
 
 
+#ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
 
 /*------------------------------------------------------------------------------
  *  Global variables
@@ -61,6 +62,10 @@ void Bluetooth_HC05_Init(void)
 
 
 
+/**
+ * \brief	Send message on Bluetooth
+ * \note	Be careful, it is blocking (wait the "free" flag)
+ */
 void Bluetooth_SendMessage(const char * msg)
 {
 	while (!Bluetooth_SendEnable_flag);
@@ -74,9 +79,14 @@ void Bluetooth_SendMessage(const char * msg)
 
 
 
+/**
+ * \brief	Get Sending is enabled?
+ */
 inline bool Bluetooth_GetSendEnable(void)
 {
 	return Bluetooth_SendEnable_flag;
 }
 
 
+
+#endif	// #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE

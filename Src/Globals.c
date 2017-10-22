@@ -15,6 +15,7 @@
 #include "include.h"
 #include "version.h"
 #include "LED.h"
+#include "String.h"
 #include "DebugUart.h"
 #include "globals.h"
 
@@ -25,7 +26,7 @@
  *----------------------------------------------------------------------------*/
 
 const char Global_BoardName[]	= BOARD_NAME;
-const char Global_Version[]		= VERSION_DEFINE;
+const char Global_Version[]		= VERSION_STRING;
 const char Global_BoardMCU[]	= BOARD_MCU;
 char Global_DeviceName[20] 		= BOARD_NAME;
 
@@ -55,29 +56,32 @@ inline void DelayMs(uint32_t ms)
  */
 void Error_Handler(void)
 {
-	// Turn off LEDs
-	LED_BLUE_OFF();
-	LED_GREEN_OFF();
-	LED_RED_ON();
-
-	// Stop debugger
-	DEBUG_BREAKPOINT();
-
+	// Error LED
+	LED_SetLed(LED_Red, LED_Set_On);
+	LED_SetLed(LED_Green, LED_Set_Off);
+	LED_SetLed(LED_Blue, LED_Set_Off);
 
 #ifdef CONFIG_USE_FREERTOS
 	// End task scheduling
 	vTaskEndScheduler();
 #endif
 
+#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
+	DebugUart_SendMessageBlocked("ErrorHandler...!!!\r\n");
+#endif
+
+	// Stop debugger
+	DEBUG_BREAKPOINT();
+
 	// Reset...
-	NVIC_SystemReset();
 	// TODO: It is not the best solution, The user will not detect the reset
+	NVIC_SystemReset();
 
 	// Infinite loop, do not disable interrupts ...
 	uint8_t cnt = 8;
 	while(cnt--)
 	{
-		LED_RED_TOGGLE();
+		LED_SetLed(LED_Red, LED_Set_Toggle);
 		DelayMs(125);
 	}
 }
@@ -105,11 +109,18 @@ void assert_failed(uint8_t* file, uint32_t line)
  */
 void Assert_Function(char *file, uint32_t line, char *exp)
 {
-	uprintf("File: %s, %d. line: %s\r\n", file, line, exp);
-	DelayMs(100);
+	// Error LED
 	LED_SetLed(LED_Red, LED_Set_On);
-	LED_SetLed(LED_Green, LED_Set_On);
-	LED_SetLed(LED_Blue, LED_Set_On);
+	LED_SetLed(LED_Green, LED_Set_Off);
+	LED_SetLed(LED_Blue, LED_Set_Off);
+
+	// Send error message
+	char errorMsg[255];
+	usprintf(errorMsg, "File: %s, %d. line: %s\r\n", file, line, exp);
+	DebugUart_SendMessageBlocked(errorMsg);
+	DelayMs(100);
+
 	DEBUG_BREAKPOINT();
+	Error_Handler();
 }
 
