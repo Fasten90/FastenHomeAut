@@ -402,6 +402,7 @@ void Display_ChargeLoading(uint8_t percent)
 
 
 
+#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
 /**
  * \brief	Load "Car" image to screen
  */
@@ -448,47 +449,69 @@ void Display_ChangeCarImage(void)
 
 	Display_Activate();
 }
+#endif
 
 
 
-#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
+#if defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK) && defined(CONFIG_DISPLAY_CLOCK_LARGE)
 /**
- * \brief	Display time (HH:MM)
+ * \brief	Display time (HH:MM) (large)
  */
-void Display_ShowClock(Time_t *time)
+void Display_ShowLargeClock(Time_t *time)
 {
-#ifdef CONFIG_DISPAY_CLOCK_LARGE
+
 	// Show clock: large version
 	// Set hour
 	Display_PrintFont32x20(time->hour/10, 0,
 			DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
-			DISPLAY_FONT32X20_CLOCK_START_POSITION_Y);
+			DISPLAY_FONT32X20_CLOCK_START_POSITION_Y,
+			Display_NoFormat);
 
 	Display_PrintFont32x20(time->hour%10, 1,
 			DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
-			DISPLAY_FONT32X20_CLOCK_START_POSITION_Y);
+			DISPLAY_FONT32X20_CLOCK_START_POSITION_Y,
+			Display_NoFormat);
 
 	// ':'
 	Display_PrintFont32x20(':', 2,
 			DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
-			DISPLAY_FONT32X20_CLOCK_START_POSITION_Y);
+			DISPLAY_FONT32X20_CLOCK_START_POSITION_Y,
+			Display_NoFormat);
 
 	// Set minute
 	Display_PrintFont32x20(time->minute/10, 3,
 			DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
-			DISPLAY_FONT32X20_CLOCK_START_POSITION_Y);
+			DISPLAY_FONT32X20_CLOCK_START_POSITION_Y,
+			Display_NoFormat);
 
 	Display_PrintFont32x20(time->minute%10, 4,
 			DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
-			DISPLAY_FONT32X20_CLOCK_START_POSITION_Y);
-#elif defined(CONFIG_DISPLAY_CLOCK_SMALL)
+			DISPLAY_FONT32X20_CLOCK_START_POSITION_Y,
+			Display_NoFormat);
+
+#ifndef CONFIG_FUNCTION_DISPLAY_MENU
+	// Refresh display
+	Display_Activate();
+#endif
+}
+#endif
+
+
+
+#if defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK) &&  defined(CONFIG_DISPLAY_CLOCK_SMALL)
+/**
+ * \brief	Display time (HH:MM:SS) (small)
+ */
+void Display_ShowSmallClock(Time_t *time)
+{
 	char clock[10];
 	usprintf(clock, "%02d:%02d:%02d", time->hour, time->minute, time->second);
 	Display_PrintString(clock, 0, Font_12x8, NO_FORMAT);
-#endif
 
+#ifndef CONFIG_FUNCTION_DISPLAY_MENU
 	// Refresh display
 	Display_Activate();
+#endif
 }
 #endif
 
@@ -613,7 +636,7 @@ void Display_TestClock(void)
 
 	for (i = 0; i < 24*60; i++)
 	{
-		Display_ShowClock(&dateTime.time);
+		Display_ShowLargeClock(&dateTime.time);
 		DelayMs(300);
 		// Step 1 minute
 		DateTime_Steps(&dateTime, 60);

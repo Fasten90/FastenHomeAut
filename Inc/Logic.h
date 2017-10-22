@@ -81,8 +81,12 @@ typedef enum
 #ifdef CONFIG_FUNCTION_GAME_SNAKE
 	Menu_Snake,
 #endif
+#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
 	Menu_Input,
+#endif
+#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
 	Menu_Car,
+#endif
 
 	// Count
 	Menu_Count

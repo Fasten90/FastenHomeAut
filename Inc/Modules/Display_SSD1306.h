@@ -139,9 +139,7 @@
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-
 void Display_SSD1306_Init(void);
-
 
 void SSD1306_clearDisplay(void);
 void SSD1306_invertDisplay(uint8_t i);

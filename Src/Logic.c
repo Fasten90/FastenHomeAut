@@ -58,7 +58,7 @@ bool Logic_BatteryIsCharging = false;
 #endif
 
 
-#ifdef CONFIG_DISPLAY_MENU_ENABLE
+#ifdef CONFIG_FUNCTION_DISPLAY_MENU
 static volatile bool Logic_Display_ChangedState = false;
 static volatile DisplayMenu_t Logic_Display_ActualState = Menu_Main;
 static volatile DisplayMenu_t Logic_Display_SelectedState = Menu_Main;
@@ -85,7 +85,7 @@ uint8_t DisplayInput_LetterPosition = 0;
 // TODO: Refactor
 #define DisplayInput_LetterPosition_MinLimit	0
 
-#define DisplayInput_StringLimit	(DisplayInput_LetterPosition_MaxLimit + 1)
+#define DisplayInput_StringLimit				(DisplayInput_LetterPosition_MaxLimit + 1)
 
 char DisplayInput_ActualRealString[DisplayInput_StringLimit] = { 0 };
 static uint8_t DisplayInput_ActualString[DisplayInput_LetterPosition_MaxLimit] = { 0 };
@@ -102,6 +102,7 @@ static uint16_t Display_CarAnimation_RefreshPeriod_MinLimit = 100;
 static uint16_t Display_CarAnimation_RefreshPeriod_MaxLimit = 1000;
 static uint16_t Display_CarAnimation_RefreshPeriod_Actual = 300;
 #endif
+
 
 
 /*------------------------------------------------------------------------------
@@ -146,7 +147,7 @@ static void Logic_RemoteController_Button(ButtonType_t button, ButtonPressType_t
  *  Functions
  *----------------------------------------------------------------------------*/
 
-#ifdef CONFIG_MODULE_DISPLAY_ENABLE
+#ifdef CONFIG_FUNCTION_DISPLAY_MENU
 void Logic_Display_Init(void)
 {
 	Display_Clear();
@@ -839,6 +840,10 @@ void Logic_CheckCharger(void)
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
 void Logic_DisplayHandler(ScheduleSource_t source)
 {
+#ifndef CONFIG_FUNCTION_DISPLAY_INPUT
+	UNUSED(source);
+#endif
+
 	if (Logic_Display_ChangedState)
 	{
 		Logic_Display_ChangedState = false;
@@ -964,9 +969,9 @@ static void Logic_Display_MainMenu(void)
 			TaskHandler_DisableTask(Task_Display);
 			break;
 	}
-	#elif defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK)
-	// Only show clock
-	Display_ShowClock(&DateTime_SystemTime.time);
+	#elif defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK) && defined(CONFIG_DISPLAY_CLOCK_SMALL)
+	// Only show clock (small - on menu)
+	Display_ShowSmallClock(&DateTime_SystemTime.time);
 	TaskHandler_DisableTask(Task_Display);
 	#endif
 

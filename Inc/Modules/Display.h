@@ -94,7 +94,8 @@ void Display_LoadCarImage(void);
 void Display_ChangeCarImage(void);
 
 #ifdef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
-void Display_ShowClock(Time_t *time);
+void Display_ShowLargeClock(Time_t *time);
+void Display_ShowSmallClock(Time_t *time);
 #endif
 #ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
 void Display_ShowClockHalf(Time_t *time, DisplayClock_ChangeState_t displayState);

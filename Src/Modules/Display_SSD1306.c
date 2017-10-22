@@ -246,11 +246,11 @@ static void SSD1306_HardwareInit(void)
 
 
 
+/**
+ * \brief	Send command on SPI
+ */
 static void SSD1306_command(uint8_t c)
 {
-
-	// SPI
-
 	HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
 
 	HAL_GPIO_WritePin(DISPLAY_SSD1306_DATACOMMAND_GPIO_PORT,
@@ -261,7 +261,6 @@ static void SSD1306_command(uint8_t c)
 	SSD1306_fastSPIwrite(c);
 
 	HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
-
 }
 
 
@@ -478,6 +477,8 @@ void SSD1306_dim(bool dim)
 
 void SSD1306_display(void)
 {
+	// TODO: Check Display_TransferInProgress
+
 	SSD1306_command(SSD1306_COLUMNADDR);
 	SSD1306_command(0);   // Column start address (0 = reset)
 	SSD1306_command(SSD1306_LCDWIDTH - 1); // Column end address (127 = reset)
@@ -516,7 +517,6 @@ void SSD1306_display(void)
 	EventHandler_GenerateEvent(Event_Display_SpiEvent, 1, Task_Display);
 
 	//HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
-
 }
 
 
