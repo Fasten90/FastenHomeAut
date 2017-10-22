@@ -152,6 +152,10 @@ static void Logic_Display_LargeClock(void);
  *----------------------------------------------------------------------------*/
 
 #ifdef CONFIG_FUNCTION_DISPLAY_MENU
+/**
+ * \brief	"New submenu" initialization
+ * \note	Do not call often, only at menu changing
+ */
 void Logic_Display_Init(void)
 {
 	Display_Clear();
@@ -159,6 +163,9 @@ void Logic_Display_Init(void)
 	switch (Logic_Display_ActualState)
 	{
 		case Menu_Main:
+#ifdef CONFIG_DISPLAY_CLOCK_SMALL
+			Display_ShowSmallClock(&DateTime_SystemTime.time);
+#endif
 			Logic_Display_PrintMainMenuList();
 			break;
 
@@ -998,11 +1005,15 @@ static void Logic_Display_MainMenu(void)
 	}
 	#elif defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK) && defined(CONFIG_DISPLAY_CLOCK_SMALL)
 	// Only show clock (small - on menu)
-	Display_ShowSmallClock(&DateTime_SystemTime.time);
-	TaskHandler_DisableTask(Task_Display);
+	if (Logic_Display_SelectedState == Menu_Main)
+	{
+		Display_ShowSmallClock(&DateTime_SystemTime.time);
+		TaskHandler_DisableTask(Task_Display);
+	}
 	#endif
 
 	// Display main menu list
+	// TODO: Run at ~40ms
 	Logic_Display_PrintMainMenuList();
 	Display_Activate();
 }
@@ -1011,34 +1022,35 @@ static void Logic_Display_MainMenu(void)
 
 static void Logic_Display_PrintMainMenuList(void)
 {
+	// TODO: This function run at 40ms
 	// Print menu
-#if defined(CONFIG_FUNCTION_GAME_SNAKE) || defined(CONFIG_FUNCTION_DISPLAY_INPUT) || defined(CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN)
+#if defined(CONFIG_FUNCTION_GAME_SNAKE) || defined(CONFIG_FUNCTION_DISPLAY_INPUT) || defined(CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN) || defined(CONFIG_DISPLAY_CLOCK_LARGE)
 	uint8_t i = 2;
 #endif
 
 	// TODO: Do with smaller text
 
-	FontFormat_t format = { 0 };
-	format.Format_Inverse = 1;
+	FontFormat_t selectedFormat = { 0 };
+	selectedFormat.Format_Inverse = 1;
 
 #ifdef CONFIG_FUNCTION_GAME_SNAKE
 	Display_PrintString("Snake", i, Font_12x8,
-			Logic_Display_SelectedState == Menu_Snake ? format : NO_FORMAT);
+			Logic_Display_SelectedState == Menu_Snake ? selectedFormat : NO_FORMAT);
 	i++;
 #endif
 #ifdef CONFIG_FUNCTION_DISPLAY_INPUT
 	Display_PrintString("Input", i, Font_12x8,
-			Logic_Display_SelectedState == Menu_Input ? format : NO_FORMAT);
+			Logic_Display_SelectedState == Menu_Input ? selectedFormat : NO_FORMAT);
 	i++;
 #endif
 #ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
 	Display_PrintString("Car animation", i, Font_12x8,
-			Logic_Display_SelectedState == Menu_Car ? format : NO_FORMAT);
+			Logic_Display_SelectedState == Menu_Car ? selectedFormat : NO_FORMAT);
 	i++;
 #endif
 #ifdef CONFIG_DISPLAY_CLOCK_LARGE
 	Display_PrintString("Clock", i, Font_12x8,
-			Logic_Display_SelectedState == Menu_LargeClock ? format : NO_FORMAT);
+			Logic_Display_SelectedState == Menu_LargeClock ? selectedFormat : NO_FORMAT);
 	i++;
 #endif
 }

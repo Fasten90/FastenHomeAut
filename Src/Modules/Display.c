@@ -285,7 +285,7 @@ void Display_PrintFont32x20(uint8_t chr, uint8_t index, uint8_t startposx, uint8
 /**
  * \brief	Clear display - make empty screen
  */
-void Display_Clear(void)
+inline void Display_Clear(void)
 {
 	SSD1306_clearDisplay();
 }
@@ -295,7 +295,7 @@ void Display_Clear(void)
 /**
  * \brief	Refresh Display
  */
-void Display_Activate(void)
+inline void Display_Activate(void)
 {
 	SSD1306_display();
 /*
@@ -347,7 +347,6 @@ void Display_LoadingInit(uint8_t x, uint8_t y, uint8_t width, uint8_t height)
 	SSD1306_drawFastHLine(x, y+height, width, WHITE);
 
 	// 0 percent
-
 }
 
 

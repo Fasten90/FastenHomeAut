@@ -141,7 +141,7 @@ void Display_SSD1306_Init(void)
 	/*##-1- Configure the SPI peripheral #######################################*/
 	/* Set the SPI parameters */
 	SpiHandle.Instance = DISPLAY_SSD1306_SPIx;
-	SpiHandle.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
+	SpiHandle.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
 	SpiHandle.Init.Direction = SPI_DIRECTION_2LINES;
 	SpiHandle.Init.CLKPhase = SPI_PHASE_1EDGE;
 	SpiHandle.Init.CLKPolarity = SPI_POLARITY_LOW;
@@ -282,6 +282,7 @@ void SSD1306_drawPixel(int16_t x, int16_t y, uint16_t color)
 	if ((x < 0) || (x >= SSD1306_LCDWIDTH) || (y < 0) || (y >= SSD1306_LCDHEIGHT))
 		return;
 
+#ifdef SSD1306_ROTATION_ENABLE
 	// check rotation, move pixel around if necessary
 	uint8_t rotation = 0;	// TODO:
 	switch (rotation)
@@ -301,6 +302,7 @@ void SSD1306_drawPixel(int16_t x, int16_t y, uint16_t color)
 		default:
 			break;
 	}
+#endif
 
 	// x is which column
 	switch (color)
@@ -509,12 +511,15 @@ void SSD1306_display(void)
 		SSD1306_fastSPIwrite(buffer[i]);
 	}
 	*/
+
+	// TODO: This Sending need 20ms, optimize!!
 	HAL_SPI_Transmit_IT(&SpiHandle, buffer, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8));
 	Display_TransferInProgress = true;
 
 	// Save event
 	EventHandler_GenerateEvent(Event_Display_SpiEvent, 1, Task_Display);
 
+	// CS pin set in IT function
 	//HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
 }
 
@@ -532,6 +537,7 @@ void SSD1306_clearDisplay(void)
 
 void SSD1306_drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color)
 {
+#ifdef SSD1306_ROTATION_ENABLE
 	bool bSwap = false;
 	uint8_t rotation = 0;	// TODO:
 	switch (rotation)
@@ -570,6 +576,9 @@ void SSD1306_drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color)
 	{
 		SSD1306_drawFastHLineInternal(x, y, w, color);
 	}
+#else
+	SSD1306_drawFastHLineInternal(x, y, w, color);
+#endif
 }
 
 
@@ -641,7 +650,9 @@ void SSD1306_drawFastHLineInternal(int16_t x, int16_t y, int16_t w,
 
 void SSD1306_drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color)
 {
+#ifdef SSD1306_ROTATION_ENABLE
 	bool bSwap = false;
+
 	uint8_t rotation = 0;	// TODO:
 	switch (rotation)
 	{
@@ -678,6 +689,9 @@ void SSD1306_drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color)
 	{
 		SSD1306_drawFastVLineInternal(x, y, h, color);
 	}
+#else
+	SSD1306_drawFastVLineInternal(x, y, h, color);
+#endif
 }
 
 
