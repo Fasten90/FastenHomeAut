@@ -87,6 +87,9 @@ typedef enum
 #ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
 	Menu_Car,
 #endif
+#ifdef CONFIG_DISPLAY_CLOCK_LARGE
+	Menu_LargeClock,
+#endif
 
 	// Count
 	Menu_Count

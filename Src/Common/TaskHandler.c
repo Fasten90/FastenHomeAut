@@ -378,7 +378,7 @@ void TaskHandler_PrintStatistics(void)
 			);
 
 	CommandHandler_Printf("+%11c+%5c+-%20c-+\r\n", '-', '-', '-');
-	CommandHandler_Printf("+%11s|%5s| %20s |\r\n", "<StartTick>", "<Run>", "<TaskName>");
+	CommandHandler_Printf("|%11s|%5s| %20s |\r\n", "<StartTick>", "<Run>", "<TaskName>");
 	CommandHandler_Printf("+%11c+%5c+-%20c-+\r\n", '-', '-', '-');
 
 	// Print all table

@@ -624,10 +624,11 @@ static TaskResult_t Task_SystemTimeSecondStep(ScheduleSource_t source)
 
 	#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
 	// Display refresh
-		#if defined(CONFIG_DISPAY_CLOCK_LARGE)
+		#if defined(CONFIG_DISPLAY_CLOCK_LARGE)
 		if (DateTime_SystemTime.time.second == 0)
 			TaskHandler_RequestTaskScheduling(Task_Display);
-		#elif defined(CONFIG_DISPLAY_CLOCK_SMALL)
+		#endif
+		#if defined(CONFIG_DISPLAY_CLOCK_SMALL)
 		if (Logic_Display_GetClockIsNeedRefresh())
 			TaskHandler_RequestTaskScheduling(Task_Display);
 		#endif

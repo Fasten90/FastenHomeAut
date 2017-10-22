@@ -141,6 +141,10 @@ static void Logic_Display_CarAnimation(void);
 static void Logic_RemoteController_Button(ButtonType_t button, ButtonPressType_t type);
 #endif
 
+#if defined(CONFIG_MODULE_DISPLAY_ENABLE) && defined(CONFIG_DISPLAY_CLOCK_LARGE)
+static void Logic_Display_LargeClock(void);
+#endif
+
 
 
 /*------------------------------------------------------------------------------
@@ -184,6 +188,12 @@ void Logic_Display_Init(void)
 			// TODO: Create button?
 			Display_PrintFont12x8('O', DisplayInput_LetterPosition_MaxLimit, 2, NO_FORMAT);
 			Display_PrintFont12x8('K', DisplayInput_LetterPosition_MaxLimit + 1, 2, NO_FORMAT);
+			break;
+		#endif
+
+		#ifdef CONFIG_DISPLAY_CLOCK_LARGE
+		case Menu_LargeClock:
+			Logic_Display_LargeClock();
 			break;
 		#endif
 
@@ -251,7 +261,7 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 	Logic_RemoteController_Button(button, type);
 #endif
 
-#ifdef CONFIG_MODULE_DISPLAY_ENABLE
+#ifdef CONFIG_FUNCTION_DISPLAY_MENU
 	if (Logic_Display_ActualState == Menu_Main)
 	{
 		switch (button)
@@ -278,8 +288,9 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 		}
 
 		TaskHandler_RequestTaskScheduling(Task_Display);
+		return;
 	}
-#endif	// #ifdef CONFIG_MODULE_DISPLAY_ENABLE
+#endif	// #ifdef CONFIG_FUNCTION_DISPLAY_MENU
 
 #ifdef CONFIG_FUNCTION_DISPLAY_INPUT
 	// Check buttons
@@ -390,6 +401,7 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 		}
 	}
 #endif
+
 #ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
 	// Check buttons
 	if (Logic_Display_ActualState == Menu_Car)
@@ -428,6 +440,16 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 					break;
 			}
 		}
+	}
+#endif
+
+#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
+	// Check buttons
+	if (Logic_Display_ActualState == Menu_LargeClock)
+	{
+		// Go to Main menu
+		Logic_Display_ChangeState(Menu_Main);
+		// TODO: Handle button change functions?
 	}
 #endif
 
@@ -874,6 +896,11 @@ void Logic_DisplayHandler(ScheduleSource_t source)
 			Logic_Display_CarAnimation();
 			break;
 #endif
+#if defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK) && defined(CONFIG_DISPLAY_CLOCK_LARGE)
+		case Menu_LargeClock:
+			Logic_Display_LargeClock();
+			break;
+#endif
 		case Menu_Count:
 		default:
 			Logic_Display_MainMenu();
@@ -1009,6 +1036,11 @@ static void Logic_Display_PrintMainMenuList(void)
 			Logic_Display_SelectedState == Menu_Car ? format : NO_FORMAT);
 	i++;
 #endif
+#ifdef CONFIG_DISPLAY_CLOCK_LARGE
+	Display_PrintString("Clock", i, Font_12x8,
+			Logic_Display_SelectedState == Menu_LargeClock ? format : NO_FORMAT);
+	i++;
+#endif
 }
 
 
@@ -1110,6 +1142,15 @@ static void Logic_Display_Input(ScheduleSource_t source)
 
 
 
+#if defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK) && defined(CONFIG_DISPLAY_CLOCK_LARGE)
+static void Logic_Display_LargeClock(void)
+{
+	Display_ShowLargeClock(&DateTime_SystemTime.time);
+	Display_Activate();
+}
+#endif
+
+
 #ifdef CONFIG_FUNCTION_GAME_SNAKE
 static void Logic_Display_Snake(void)
 {
@@ -1173,4 +1214,7 @@ bool Logic_Display_GetClockIsNeedRefresh(void)
 {
 	return (Logic_Display_ActualState == Menu_Main ? true : false);
 }
+
+
+
 #endif	// #ifdef CONFIG_MODULE_DISPLAY_ENABLE

@@ -77,7 +77,6 @@ static void SSD1306_fastSPIwrite(uint8_t d);
  */
 void Display_SSD1306_Init(void)
 {
-
 	GPIO_InitTypeDef GPIO_InitStruct;
 
 	/*##-1- Enable peripherals and GPIO Clocks #################################*/
