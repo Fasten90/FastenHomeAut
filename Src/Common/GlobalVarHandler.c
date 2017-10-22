@@ -1360,7 +1360,7 @@ void GlobalVarHandler_ListAllVariableParameters(void)
 {
 	VarID_t i;
 
-	// TODO: Enumokat is kiírni, ha van?
+	// TODO: Print enums, if have? It can be long...
 
 	// Send header
 	GlobalVarHandler_ListAllVariable_SendHeader();

@@ -27,8 +27,8 @@
 
 // MOTOR - Status machine values
 
-#define MOTOR_STATE_MACHINE_SPEED_CHANGE_LIMIT		(2)
-#define MOTOR_SERVO_CHANGE_LIMIT					(2)
+#define MOTOR_STATE_MACHINE_SPEED_CHANGE_LIMIT		(5)
+#define MOTOR_SERVO_CHANGE_LIMIT					(5)
 
 #define MOTOR_SLIDE_DCMOTOR_LIMIT_MAX				(50)
 #define MOTOR_SLIDE_DCMOTOR_LIMIT_MIN				(0)
@@ -60,7 +60,7 @@ TIM_HandleTypeDef    TimPWMServo_Handle;	// Servo motor
 static MotorState_t ActualState = { 0 };
 static MotorState_t ControlState = { 0 };
 
-bool MotorTestSlide_Enabled = true;
+bool MotorTestSlide_Enabled = false;
 static uint8_t MotorTestSlide_AngleDir = 0;
 static uint8_t MotorTestSlide_DcDir = 0;
 
@@ -417,6 +417,7 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 
 /**
  * \brief	Motor state machine
+ * \note	Call this "task" periodical and often!
  */
 void Motor_StateMachine(void)
 {
@@ -447,7 +448,6 @@ void Motor_StateMachine(void)
 			}
 		}
 
-		/*
 		// Slide motor
 		if (MotorTestSlide_DcDir)
 		{
@@ -482,7 +482,6 @@ void Motor_StateMachine(void)
 			// 0
 			ControlState.dir = MotorDir_Stop;
 		}
-		*/
 	}
 	// End of slide
 

@@ -471,11 +471,11 @@ static void Logic_RemoteController_Button(ButtonType_t button, ButtonPressType_t
 		if (Car_TurningState == Car_Turning_Right)
 		{
 			// Larger right
-			Car_Turning_ActualValue += Car_Turning_IncrementValue;
+			Car_Turning_ActualValue -= Car_Turning_IncrementValue;
 			// Check limit
-			if (Car_Turning_ActualValue > Car_Turning_MaxValue)
+			if (Car_Turning_ActualValue < Car_Turning_MinValue)
 			{
-				Car_Turning_ActualValue = Car_Turning_MaxValue;
+				Car_Turning_ActualValue = Car_Turning_MinValue;
 			}
 		}
 		else if (Car_TurningState == Car_Turning_Straight)
@@ -498,17 +498,17 @@ static void Logic_RemoteController_Button(ButtonType_t button, ButtonPressType_t
 		if (Car_TurningState == Car_Turning_Left)
 		{
 			// Larger left
-			Car_Turning_ActualValue -= Car_Turning_IncrementValue;
+			Car_Turning_ActualValue += Car_Turning_IncrementValue;
 			// Check limit
-			if (Car_Turning_ActualValue < Car_Turning_MinValue)
+			if (Car_Turning_ActualValue > Car_Turning_MaxValue)
 			{
-				Car_Turning_ActualValue = Car_Turning_MinValue;
+				Car_Turning_ActualValue = Car_Turning_MaxValue;
 			}
 		}
 		else if (Car_TurningState == Car_Turning_Straight)
 		{
 			// Start left turning
-			Car_Turning_ActualValue = Car_Turning_StraightValue - Car_Turning_IncrementValue;
+			Car_Turning_ActualValue = Car_Turning_StraightValue + Car_Turning_IncrementValue;
 			Car_TurningState = Car_Turning_Left;
 		}
 		else

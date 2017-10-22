@@ -756,8 +756,7 @@ static void Terminal_CommandTabulator(void)
 		{
 			// It is equal
 			// We write the first equal
-			// TODO: Lekezelni az esetleges több Tabulátort?
-			// Biztos jó, hogy az első egyezőt kiírjuk?
+			// TODO: Handle more tabulator?
 			StrCpy((char *)Terminal_CommandActual, CommandList[i].name);
 
 			Terminal_CommandActualLength = StringLength(CommandList[i].name);

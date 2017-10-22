@@ -1715,6 +1715,7 @@ BUTTON_LEFT			GPIOA15
 		__GPIOA_CLK_ENABLE();		\
 		__GPIOB_CLK_ENABLE()		\
 
+// NOTE: Button GPIO IRQ in Button.c!!
 
 #endif	// CONFIG_MODULE_BUTTON_ENABLE
 

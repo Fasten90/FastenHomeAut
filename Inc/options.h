@@ -232,7 +232,7 @@
 
 	//#define CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
 
-	#define CONFIG_USE_FREERTOS
+	//#define CONFIG_USE_FREERTOS
 
 #endif
 
@@ -443,10 +443,11 @@
 #endif
 
 
-// EventLog settings
+// EventHandler + EventLog settings
 #define CONFIG_MODULE_EVENTHANDLER_ENABLE
-//#define CONFIG_EVENTHANDLER_REQUIRED_TASK_MODE
-// TODO: Put these define to good position
+#ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
+	//#define CONFIG_EVENTHANDLER_REQUIRED_TASK_MODE
+#endif
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
 
 	//#define CONFIG_EVENTLOG_TASKHANDLER_LOG_ENABLE

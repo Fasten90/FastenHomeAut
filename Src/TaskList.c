@@ -124,7 +124,7 @@ Task_t TaskList[] =
 	{
 		.taskName = "MotorTask",
 		.taskFunction = Task_Motor,
-		.taskScheduleRate = 100
+		.taskScheduleRate = 50
 	},
 	{
 		.taskName = "MotorConnStopTimeout",

@@ -195,7 +195,7 @@ void CircularBuffer_FindLastMessage(CircularBufferInfo_t *circBuff)
 			uprintf("Error: CircularBuffer full, clear it: %s\r\n", circBuff->name);
 			// Reinit buffer (counter, buffer content)
 			CircularBuffer_Init(circBuff);
-			// TODO:...
+			// TODO: Error handling, if buffer overflowing?
 			break;
 		}
 	}

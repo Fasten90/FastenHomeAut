@@ -223,7 +223,7 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 
 	// Clear tick
 	TaskList[taskID].isRequestScheduling = false;
-	// TODO: tick nullázás vagy kivonás?
+	// TODO: Tick clearing or subtraction?
 	TaskList[taskID].tick = 0;
 
 #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
