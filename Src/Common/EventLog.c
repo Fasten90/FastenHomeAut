@@ -48,7 +48,9 @@ static EventLogCnt_t LogCounter = 0;
  *----------------------------------------------------------------------------*/
 
 static void EventLog_PrintLog(char *str, EventLogCnt_t cnt, EventLogRecord_t *logRecord);
+#ifdef CONFIG_EVETNLOG_PRINT_IMMEDIATELY
 static void EventLog_DebugPrintLog(EventLogRecord_t * eventRecord);
+#endif
 
 
 
@@ -96,7 +98,7 @@ void EventLog_LogEvent(EventName_t eventName, EventData_t eventData, TaskID_t ta
 	EventLogs[LogCounter].dateTime = DateTime_SystemTime;
 #endif
 
-#ifdef CONFIG_MODULE_DEBUG_ENABLE
+#ifdef CONFIG_EVETNLOG_PRINT_IMMEDIATELY
 	if (eventName != Event_LogEventStated)
 		EventLog_DebugPrintLog(&EventLogs[LogCounter]);
 #endif
@@ -106,7 +108,7 @@ void EventLog_LogEvent(EventName_t eventName, EventData_t eventData, TaskID_t ta
 
 
 
-#ifdef CONFIG_MODULE_DEBUG_ENABLE
+#ifdef CONFIG_EVETNLOG_PRINT_IMMEDIATELY
 /**
  * \brief	Debug print
  */

@@ -80,12 +80,6 @@ int main(void)
 #ifdef CONFIG_MODULE_LED_ENABLE
 	// LED
 	LED_Init();
-
-#ifndef CONFIG_MODULE_TASKHANDLER_ENABLE
-	LED_BLUE_ON();
-	LED_GREEN_ON();
-	LED_RED_OFF();
-#endif
 #endif
 
 
@@ -165,12 +159,7 @@ int main(void)
 #ifdef CONFIG_MODULE_TERMINAL_ENABLE
 	// Terminal init
 	Terminal_Init();
-
-#if !defined(CONFIG_MODULE_TASKHANDLER_ENABLE) && !defined(CONFIG_USE_FREERTOS)
-	// Terminal infinite loop, if not used TaskHandler and FreeRTOS
-	Terminal_CheckCommand();
 #endif
-#endif	// #ifdef CONFIG_MODULE_TERMINAL_ENABLE
 
 
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
@@ -188,6 +177,12 @@ int main(void)
 #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
 	// Watchdog
 	Watchdog_Init();
+#endif
+
+
+#if defined(CONFIG_MODULE_TERMINAL_ENABLE) && !defined(CONFIG_MODULE_TASKHANDLER_ENABLE) && !defined(CONFIG_USE_FREERTOS)
+	// Terminal infinite loop, if not used TaskHandler and FreeRTOS
+	Terminal_CheckCommand();
 #endif
 
 

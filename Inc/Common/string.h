@@ -48,6 +48,9 @@
 #define printf(...)						uprintf(__VA_ARGS__)
 
 
+#define sprintf(...)					usprintf(__VA_ARGS__)
+
+
 // char * strstr ( const char *, const char * )
 #define strstr(_str1, _str2)			STRING_FindString(_str1, _str2)
 

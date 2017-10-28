@@ -83,8 +83,8 @@ typedef struct
 	bool isDisabled;							///< Task is disabled/enabled - Init/Runtime
 
 #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
-	uint32_t taskRunCount;						///< How many times ran [count]
-	bool isDisableLogToStatistics;				///< Disable log to statistics
+	uint32_t taskRunCount;						///< How many times ran [count] - RunTime
+	bool isDisableLogToStatistics;				///< Disable log to statistics - Init
 #endif
 } Task_t;
 

@@ -233,15 +233,21 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 	TaskList[taskID].taskRunCount++;
 
 	uint32_t runTime = HAL_GetTick() - startTime;
-	TaskHandler_StatisticsRanTaskTicks[TaskHandler_StatisticsIndex].startTick = startTime;
-	TaskHandler_StatisticsRanTaskTicks[TaskHandler_StatisticsIndex].runTime = runTime;
-	TaskHandler_StatisticsRanTaskTicks[TaskHandler_StatisticsIndex].taskId = taskID;
 
-	TaskHandler_StatisticsIndex++;
-
-	if (TaskHandler_StatisticsIndex >= TASKHANDLER_STATISTICS_LIMIT)
+	if (!TaskList[taskID].isDisableLogToStatistics)
 	{
-		TaskHandler_StatisticsIndex = 0;
+		// Need log to statistics
+		// TODO: Put to statistics function
+		TaskHandler_StatisticsRanTaskTicks[TaskHandler_StatisticsIndex].startTick = startTime;
+		TaskHandler_StatisticsRanTaskTicks[TaskHandler_StatisticsIndex].runTime = runTime;
+		TaskHandler_StatisticsRanTaskTicks[TaskHandler_StatisticsIndex].taskId = taskID;
+
+		TaskHandler_StatisticsIndex++;
+
+		if (TaskHandler_StatisticsIndex >= TASKHANDLER_STATISTICS_LIMIT)
+		{
+			TaskHandler_StatisticsIndex = 0;
+		}
 	}
 #endif
 

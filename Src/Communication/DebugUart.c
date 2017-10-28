@@ -265,7 +265,7 @@ static bool DebugUart_WaitForSend(uint16_t timeoutMilliSecond)
 	}
 #else
 	// Wait for flag or timeout
-	while ((DebugUart_SendEnable_flag != true) || (timeoutMilliSecond == 0))
+	while ((DebugUart_SendEnable_flag != true) && (timeoutMilliSecond != 0))
 	{
 		timeoutMilliSecond--;
 		DelayMs(1);
@@ -274,7 +274,7 @@ static bool DebugUart_WaitForSend(uint16_t timeoutMilliSecond)
 	// TODO: Not a good idea...
 	//DebugUart_SendEnable_flag = true;
 
-	return true;
+	return DebugUart_SendEnable_flag;
 #endif
 }
 

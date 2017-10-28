@@ -103,9 +103,15 @@ void LED_Init(void)
 	HAL_GPIO_Init(BOARD_LED_RED_PORT, &GPIO_InitStructure);
 #endif
 
+#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 	LED_RED_OFF();
-	LED_BLUE_OFF();
 	LED_GREEN_OFF();
+	LED_BLUE_OFF();
+#else
+	LED_RED_OFF();
+	LED_GREEN_ON();
+	LED_BLUE_ON();
+#endif
 }
 
 

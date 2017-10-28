@@ -36,11 +36,13 @@ DebugRecord_t DebugTasks[] =
 		.color = Color_Blue,
 	},
 #endif
+#ifdef CONFIG_FUNCTION_GAME_SNAKE
 	{
-		.name = "New",
+		.name = "Snake",
 		.isEnabled = true,
-		.color = Color_Red
-	}
+		.color = Color_Green,
+	},
+#endif
 
 	/*
 	 * XXX: Add here new Debug task struct
