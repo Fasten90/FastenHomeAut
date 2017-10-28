@@ -135,6 +135,127 @@ inline uint32_t Decrement(uint32_t * i)
 
 
 
+/**
+ * \brief	Calculate largest 1 bit index (in 32 bit number)
+ * \retval	>= 0 - bit index
+ * \retval	-1		if there is no set bit (==0
+ */
+int8_t GetLargestBitIndex(uint32_t value)
+{
+	int8_t bitIndex = 31;
+
+	if (value == 0)
+	{
+		return -1;
+	}
+
+	while (!(value & ((uint32_t)0x01 << bitIndex)) && (bitIndex > 0))
+	{
+		bitIndex--;
+	}
+
+	return bitIndex;
+}
+
+
+
+/**
+ * \brief	Calculate smallest 1 bit index (in 32 bit number)
+ * \retval	>= 0 - bit index
+ * \retval	-1		if there is no set bit (==0
+ */
+int8_t GetSmallestBitIndex(uint32_t value)
+{
+	int8_t bitIndex = 0;
+
+	if (value == 0)
+	{
+		return -1;
+	}
+
+	while (!(value & ((uint32_t)0x01 << bitIndex)) && (bitIndex < 31))
+	{
+		bitIndex++;
+	}
+
+	return bitIndex;
+}
+
+
+
+/**
+ * \brief	'1' bits count
+ */
+uint8_t popcount(uint32_t value)
+{
+	uint8_t onebits = 0;
+	uint8_t i;
+
+	if (value == 0)
+	{
+		// 0 value has zero 1 bits
+		return 0;
+	}
+
+	for (i = 0; i < 32; i++)
+	{
+		if (value & (0x01 << i))
+		{
+			onebits++;
+		}
+	}
+
+	return onebits;
+}
+
+
+
+/**
+ * \brief	Clear i. bit
+ */
+void ClearBit(uint32_t * value, uint8_t index)
+{
+	if ((value == NULL) || (index > 31))
+	{
+		return;
+	}
+
+	*value &= ~(0x01 << index);
+}
+
+
+
+/**
+ * \brief	Set i. bit
+ */
+void SetBit(uint32_t * value, uint8_t index)
+{
+	if ((value == NULL) || (index > 31))
+	{
+		return;
+	}
+
+	*value |= (0x01 << index);
+}
+
+
+
+/**
+ * \brief	Get i. bit
+ */
+uint8_t GetBit(uint32_t value, uint8_t index)
+{
+	if ((value == 0) || (index > 31))
+	{
+		// 0 or wrong index
+		return 0;
+	}
+
+	return ((value & (0x01 << index)) ? (0x01) : (0x00));
+}
+
+
+
 #ifdef MODULE_CALC_UNITTEST_ENABLE
 /**
  * \brief	Calc UnitTest
@@ -208,6 +329,85 @@ void Calc_UnitTest(void)
 	num = 0;
 	UNITTEST_ASSERT(Decrement(&num)==0, "Decrement error");
 	UNITTEST_ASSERT(num==0, "Decrement error");
+
+
+	/*		GetLargestBitIndex()	*/
+	UNITTEST_ASSERT(GetLargestBitIndex(0xFFFFFFFF) == 31, "GetLargestBitIndex error");
+	UNITTEST_ASSERT(GetLargestBitIndex(0x80000000) == 31, "GetLargestBitIndex error");
+	UNITTEST_ASSERT(GetLargestBitIndex(0x00000008) == 3,  "GetLargestBitIndex error");
+	UNITTEST_ASSERT(GetLargestBitIndex(0x00000001) == 0,  "GetLargestBitIndex error");
+	UNITTEST_ASSERT(GetLargestBitIndex(0x00000000) == -1, "GetLargestBitIndex error");
+
+
+	/*		GetSmallestBitIndex()	*/
+	UNITTEST_ASSERT(GetSmallestBitIndex(0xFFFFFFFF) == 0,  "GetSmallestBitIndex error");
+	UNITTEST_ASSERT(GetSmallestBitIndex(0x80000000) == 31, "GetSmallestBitIndex error");
+	UNITTEST_ASSERT(GetSmallestBitIndex(0x00000008) == 3,  "GetSmallestBitIndex error");
+	UNITTEST_ASSERT(GetSmallestBitIndex(0x00000001) == 0,  "GetSmallestBitIndex error");
+	UNITTEST_ASSERT(GetSmallestBitIndex(0x00000000) == -1, "GetSmallestBitIndex error");
+
+
+	/*		popcount()	*/
+	UNITTEST_ASSERT(popcount(0xFFFFFFFF) == 32, "popcount error");
+	UNITTEST_ASSERT(popcount(0xF000000F) == 8,  "popcount error");
+	UNITTEST_ASSERT(popcount(0x0000000F) == 4,  "popcount error");
+	UNITTEST_ASSERT(popcount(0x00000001) == 1,  "popcount error");
+	UNITTEST_ASSERT(popcount(0x00000000) == 0,  "popcount error");
+
+
+	/*		ClearBit()	*/
+	uint32_t value;
+
+	value = 0x00;
+	ClearBit(&value, 0);
+	UNITTEST_ASSERT(value == 0x00000000, "ClearBit error");
+
+	value = 0xFFFFFFFF;
+	ClearBit(&value, 0);
+	UNITTEST_ASSERT(value == 0xFFFFFFFE, "ClearBit error");
+
+	value = 0xFFFFFFFF;
+	ClearBit(&value, 31);
+	UNITTEST_ASSERT(value == 0x7FFFFFFF, "ClearBit error");
+
+	value = 0xFFFFFFFF;
+	ClearBit(&value, 32);
+	UNITTEST_ASSERT(value == 0xFFFFFFFF, "ClearBit error");
+
+	// Do nothing
+	ClearBit(NULL, 0);
+
+
+	/*		SetBit()	*/
+
+	value = 0x00;
+	SetBit(&value, 0);
+	UNITTEST_ASSERT(value == 0x00000001, "SetBit error");
+
+	value = 0xFFFFFFFF;
+	SetBit(&value, 0);
+	UNITTEST_ASSERT(value == 0xFFFFFFFF, "SetBit error");
+
+	value = 0x7FFFFFFF;
+	SetBit(&value, 31);
+	UNITTEST_ASSERT(value == 0xFFFFFFFF, "SetBit error");
+
+	value = 0xFFFFFFFF;
+	SetBit(&value, 32);
+	UNITTEST_ASSERT(value == 0xFFFFFFFF, "SetBit error");
+
+	// Do nothing
+	SetBit(NULL, 0);
+
+
+	/*		GetBit()	*/
+	UNITTEST_ASSERT(GetBit(0xFFFFFFFF, 0) == 1, "GetBit error");
+	UNITTEST_ASSERT(GetBit(0xFFFFFFFF, 1) == 1, "GetBit error");
+	UNITTEST_ASSERT(GetBit(0xFFFFFFFF, 31) == 1, "GetBit error");
+	UNITTEST_ASSERT(GetBit(0x00000000, 0) == 0, "GetBit error");
+	UNITTEST_ASSERT(GetBit(0x00000000, 1) == 0, "GetBit error");
+	UNITTEST_ASSERT(GetBit(0x00000000, 31) == 0, "GetBit error");
+	UNITTEST_ASSERT(GetBit(0x00000000, 32) == 0, "GetBit error");
 
 
 	// Finish

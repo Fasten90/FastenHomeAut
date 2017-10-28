@@ -43,6 +43,12 @@ uint8_t DigitNum(uint32_t num, uint8_t radix);
 uint32_t Increment(uint32_t * i);
 uint32_t Decrement(uint32_t * i);
 
+int8_t GetLargestBitIndex(uint32_t value);
+int8_t GetSmallestBitIndex(uint32_t value);
+uint8_t popcount(uint32_t value);
+void ClearBit(uint32_t * value, uint8_t index);
+void SetBit(uint32_t * value, uint8_t index);
+uint8_t GetBit(uint32_t value, uint8_t index);
 
 void Calc_UnitTest(void);
 

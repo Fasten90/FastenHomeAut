@@ -17,6 +17,7 @@
 
 #include <stdarg.h>		// for "..." parameters in printf function
 #include "include.h"
+#include "Calc.h"
 #include "String.h"
 
 #ifdef MODULE_STRING_UNITTEST_ENABLE
@@ -295,13 +296,14 @@ uint8_t ByteToHexaString(uint8_t byte, char *str)
 uint8_t DecimalToBinaryString(uint32_t value, char *str, uint8_t maxLength)
 {
 	uint8_t i;
-	uint8_t bitIndex = 31;
+	int8_t bitIndex;
 
 	// Search first '1' bit:
-	// TODO: Use math function
-	while (!(value & ((uint32_t)0x01 << bitIndex)) && (bitIndex > 0))
+	bitIndex = GetLargestBitIndex(value);
+	if (bitIndex < 0)
 	{
-		bitIndex--;
+		// Print one '0'
+		bitIndex = 0;
 	}
 
 	// When reach this, bitIndex found the first '1'bit
