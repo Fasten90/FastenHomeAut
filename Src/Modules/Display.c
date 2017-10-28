@@ -60,8 +60,6 @@ const FontFormat_t Display_NoFormat = { 0 };
  *  Local variables
  *----------------------------------------------------------------------------*/
 
-bool Display_CarAnimationDisable_flag = false;
-
 
 
 /*------------------------------------------------------------------------------

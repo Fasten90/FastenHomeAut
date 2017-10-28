@@ -70,7 +70,6 @@ typedef struct
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-extern bool Display_CarAnimationDisable_flag;
 const FontFormat_t Display_NoFormat;
 
 

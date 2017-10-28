@@ -126,7 +126,7 @@ bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source, char *comma
 		isSuccessful = false;
 	}
 
-#if defined(CONFIG_COMMANDHANDLER_NOTIFY_NOT_DEBUG_COMMAND) && defined(CONFIG_MODULE_DEBUGUART_ENABLE)
+#if defined(CONFIG_COMMANDHANDLER_NOTIFY_COMMAND_RECEIVED_FROM_NOT_DEBUGPORT) && defined(CONFIG_MODULE_DEBUGUART_ENABLE)
 	if (source != CommProt_DebugUart)
 	{
 		uprintf("Received command: \"%s\", from %s\r\n",command, COMMUNICATION_GetProtocolName(source));

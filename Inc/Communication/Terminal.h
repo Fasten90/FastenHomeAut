@@ -19,6 +19,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "include.h"
+#include "version.h"
 
 
 
@@ -40,9 +41,9 @@
 		"(c) Copyright, Vizi Gabor\r\n"				\
 		"\r\n"										\
 		"Try \"help\" command for help!\r\n"		\
-		"Version: "VERSION_DEFINE"\r\n" 			\
-		"Compile date: "DATE_VERSION", "TIME_VERSION"\r\n" \
-		"Used panel: "BOARD_NAME"\r\n")
+		"Version: " VERSION_STRING "\r\n" 			\
+		"Compile date: " DATE_VERSION ", " TIME_VERSION "\r\n" \
+		"Used panel: " BOARD_NAME "\r\n")
 
 
 #ifdef CONFIG_TERMINAL_PROMT_ENABLE

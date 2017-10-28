@@ -606,10 +606,11 @@ void SSD1306_display(void)
 
 	Display_TransferInProgress = true;
 
-	// TODO: This Sending need 20ms, optimize!! (HAL_SPI_Transmit_IT)
+	
 #ifdef CONFIG_DISPLAY_SPI_USE_DMA
 	HAL_SPI_Transmit_DMA(&SpiHandle, buffer, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8));
 #else
+	// TODO: This Sending need 20ms, optimize!! (HAL_SPI_Transmit_IT)
 	HAL_SPI_Transmit_IT(&SpiHandle, buffer, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8));
 #endif
 

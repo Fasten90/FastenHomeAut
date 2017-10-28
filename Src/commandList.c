@@ -2197,8 +2197,7 @@ static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv)
 	#ifdef CONFIG_DISPLAY_FONT8X5_ENABLE
 	else if (!StrCmp("test1", argv[1]))
 	{
-		// Test code
-		Display_CarAnimationDisable_flag = true;
+		// Test font - 8x5
 		Display_Test8x5Font();
 		result = CommandResult_Ok_SendSuccessful;
 	}
@@ -2206,8 +2205,7 @@ static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv)
 	#ifdef CONFIG_DISPLAY_FONT12X8_ENABLE
 	else if (!StrCmp("test2", argv[1]))
 	{
-		// Test code
-		Display_CarAnimationDisable_flag = true;
+		// Test font - 12x8
 		Display_Test12x8Font();
 		result = CommandResult_Ok_SendSuccessful;
 	}
@@ -2215,12 +2213,8 @@ static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv)
 	#ifdef CONFIG_DISPLAY_FONT32X20_ENABLE
 	else if  (!StrCmp("test3", argv[1]))
 	{
-		// Test code
-		Display_CarAnimationDisable_flag = true;
-
 		// Test font - 32x20
 		Display_Test32x20Font();
-
 		result = CommandResult_Ok_SendSuccessful;
 	}
 	#endif
