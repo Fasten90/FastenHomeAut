@@ -43,6 +43,13 @@ DebugRecord_t DebugTasks[] =
 		.color = Color_Green,
 	},
 #endif
+#ifdef CONFIG_BUTTON_DEBUG_ENABLE
+	{
+		.name = "Button",
+		.isEnabled = true,
+		.color = Color_Cyan,
+	},
+#endif
 
 	/*
 	 * XXX: Add here new Debug task struct

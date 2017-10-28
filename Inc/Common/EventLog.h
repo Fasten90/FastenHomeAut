@@ -36,7 +36,8 @@
 #define CONFIG_EVENTLOG_LOG_SIZE		(100)
 #endif
 
-#define EVENTLOG_BUFFER_USE_CIRCULAR	0
+#define EVENTLOG_BUFFER_USE_CIRCULAR	1
+
 
 
 /*------------------------------------------------------------------------------

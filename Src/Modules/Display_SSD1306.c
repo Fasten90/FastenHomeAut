@@ -56,6 +56,9 @@ static bool Display_TransferInProgress = false;
 ///< Actual image (screen buffer)
 static uint8_t buffer[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] = { 0 };
 
+#ifdef CONFIG_DISPLAY_SPI_USE_DMA
+static DMA_HandleTypeDef hdma_tx;
+#endif
 
 
 /*------------------------------------------------------------------------------
@@ -101,12 +104,6 @@ void Display_SSD1306_Init(void)
 
 	HAL_GPIO_Init(DISPLAY_SSD1306_SPIx_MOSI_GPIO_PORT, &GPIO_InitStruct);
 
-	/*##-3- Configure the NVIC for SPI #########################################*/
-	/* NVIC for SPI */
-	HAL_NVIC_SetPriority(DISPLAY_SSD1306_SPIx_IRQn,
-			DISPLAY_SPI_IRQ_PREEMT_PRIORITY, DISPLAY_SPI_IRQ_SUB_PRIORITY);
-	HAL_NVIC_EnableIRQ(DISPLAY_SSD1306_SPIx_IRQn);
-
 
 	// Initialize other GPIO pins
 	DISPLAY_SSD1306_PINS_CLK_ENABLE();
@@ -150,9 +147,45 @@ void Display_SSD1306_Init(void)
 	SpiHandle.Init.DataSize = SPI_DATASIZE_8BIT;
 	SpiHandle.Init.FirstBit = SPI_FIRSTBIT_MSB;
 	SpiHandle.Init.NSS = SPI_NSS_SOFT;
+	SpiHandle.Init.NSSPMode = SPI_NSS_PULSE_DISABLE;
 	SpiHandle.Init.TIMode = SPI_TIMODE_DISABLE;
 
 	SpiHandle.Init.Mode = SPI_MODE_MASTER;
+
+
+#ifdef CONFIG_DISPLAY_SPI_USE_DMA
+    /* Enable DMA clock */
+    DMAx_CLK_ENABLE();
+
+    /*##-3- Configure the DMA ##################################################*/
+    /* Configure the DMA handler for Transmission process */
+    hdma_tx.Instance                 = SPIx_TX_DMA_STREAM;
+    hdma_tx.Init.Direction           = DMA_MEMORY_TO_PERIPH;
+    hdma_tx.Init.PeriphInc           = DMA_PINC_DISABLE;
+    hdma_tx.Init.MemInc              = DMA_MINC_ENABLE;
+    hdma_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+    hdma_tx.Init.MemDataAlignment    = DMA_MDATAALIGN_HALFWORD;
+    hdma_tx.Init.Mode                = DMA_NORMAL;
+    hdma_tx.Init.Priority            = DMA_PRIORITY_LOW;
+
+    HAL_DMA_Init(&hdma_tx);
+
+    /* Associate the initialized DMA handle to the the SPI handle */
+    __HAL_LINKDMA(&SpiHandle, hdmatx, hdma_tx);
+
+
+    /*##-4- Configure the NVIC for DMA #########################################*/
+    /* NVIC configuration for DMA transfer complete interrupt (SPI3_TX) */
+    HAL_NVIC_SetPriority(SPIx_DMA_TX_IRQn, 1, 1);
+    HAL_NVIC_EnableIRQ(SPIx_DMA_TX_IRQn);
+#endif
+
+	/*##-3- Configure the NVIC for SPI #########################################*/
+	/* NVIC for SPI */
+	HAL_NVIC_SetPriority(DISPLAY_SSD1306_SPIx_IRQn,
+			DISPLAY_SPI_IRQ_PREEMT_PRIORITY, DISPLAY_SPI_IRQ_SUB_PRIORITY);
+	HAL_NVIC_EnableIRQ(DISPLAY_SSD1306_SPIx_IRQn);
+
 
 	if (HAL_SPI_Init(&SpiHandle) != HAL_OK)
 	{
@@ -162,6 +195,44 @@ void Display_SSD1306_Init(void)
 
 	SSD1306_HardwareInit();
 }
+
+
+// #ifdef CONFIG_DISPLAY_SPI_USE_DMA
+#if 0
+void HAL_SPI_MspInit(SPI_HandleTypeDef *hspi)
+{
+GPIO_InitTypeDef  GPIO_InitStruct;
+
+  if (hspi->Instance == DISPLAY_SSD1306_SPIx)
+  {
+
+    /* Enable DMA clock */
+    DMAx_CLK_ENABLE();
+
+    /*##-3- Configure the DMA ##################################################*/
+    /* Configure the DMA handler for Transmission process */
+    hdma_tx.Instance                 = SPIx_TX_DMA_STREAM;
+    hdma_tx.Init.Direction           = DMA_MEMORY_TO_PERIPH;
+    hdma_tx.Init.PeriphInc           = DMA_PINC_DISABLE;
+    hdma_tx.Init.MemInc              = DMA_MINC_ENABLE;
+    hdma_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+    hdma_tx.Init.MemDataAlignment    = DMA_MDATAALIGN_HALFWORD;
+    hdma_tx.Init.Mode                = DMA_NORMAL;
+    hdma_tx.Init.Priority            = DMA_PRIORITY_LOW;
+
+    HAL_DMA_Init(&hdma_tx);
+
+    /* Associate the initialized DMA handle to the the SPI handle */
+    __HAL_LINKDMA(&SpiHandle, hdmatx, hdma_tx);
+
+
+    /*##-4- Configure the NVIC for DMA #########################################*/
+    /* NVIC configuration for DMA transfer complete interrupt (SPI3_TX) */
+    HAL_NVIC_SetPriority(SPIx_DMA_TX_IRQn, 1, 1);
+    HAL_NVIC_EnableIRQ(SPIx_DMA_TX_IRQn);
+  }
+}
+#endif
 
 
 
@@ -323,6 +394,17 @@ void SSD1306_drawPixel(int16_t x, int16_t y, uint16_t color)
 
 
 
+#if 0
+#warning "Not tested"
+void SSD1306_drawFixVerticalLine(int16_t x, int16_t y, uint8_t row)
+{
+	// TODO: Check parameters
+	buffer[x + (y / 8) * SSD1306_LCDWIDTH] = row;
+}
+#endif
+
+
+
 /**
  * \brief	Draw image (put pixel to buffer image)
  */
@@ -479,6 +561,10 @@ void SSD1306_dim(bool dim)
 void SSD1306_display(void)
 {
 	// TODO: Check Display_TransferInProgress
+#ifdef CONFIG_EVENTLOG_DISPLAY_LOG_ENABLE
+	// Save event
+	EventHandler_GenerateEvent(Event_Display_SpiEvent, 3, Task_Display);
+#endif
 
 	SSD1306_command(SSD1306_COLUMNADDR);
 	SSD1306_command(0);   // Column start address (0 = reset)
@@ -494,6 +580,11 @@ void SSD1306_display(void)
 #endif
 #if SSD1306_LCDHEIGHT == 16
 	SSD1306_command(1); // Page end address
+#endif
+
+#ifdef CONFIG_EVENTLOG_DISPLAY_LOG_ENABLE
+	// Save event
+	//EventHandler_GenerateEvent(Event_Display_SpiEvent, 1, Task_Display);
 #endif
 
 	// SPI
@@ -513,12 +604,19 @@ void SSD1306_display(void)
 	}
 	*/
 
-	// TODO: This Sending need 20ms, optimize!!
-	HAL_SPI_Transmit_IT(&SpiHandle, buffer, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8));
 	Display_TransferInProgress = true;
 
+	// TODO: This Sending need 20ms, optimize!! (HAL_SPI_Transmit_IT)
+#ifdef CONFIG_DISPLAY_SPI_USE_DMA
+	HAL_SPI_Transmit_DMA(&SpiHandle, buffer, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8));
+#else
+	HAL_SPI_Transmit_IT(&SpiHandle, buffer, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8));
+#endif
+
+#ifdef CONFIG_EVENTLOG_DISPLAY_LOG_ENABLE
 	// Save event
-	EventHandler_GenerateEvent(Event_Display_SpiEvent, 1, Task_Display);
+	EventHandler_GenerateEvent(Event_Display_SpiEvent, 4, Task_Display);
+#endif
 
 	// CS pin set in IT function
 	//HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
@@ -870,10 +968,15 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 	(void)hspi;
 
 	HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
-	Display_TransferInProgress = false;
 
-	// Save event
-	EventHandler_GenerateEvent(Event_Display_SpiEvent, 2, Task_Display);
+	if (Display_TransferInProgress)
+	{
+		Display_TransferInProgress = false;
+#ifdef CONFIG_EVENTLOG_DISPLAY_LOG_ENABLE
+		// Save event
+		EventHandler_GenerateEvent(Event_Display_SpiEvent, 5, Task_Display);
+#endif
+	}
 }
 
 
@@ -893,9 +996,25 @@ void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi)
 	HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
 	Display_TransferInProgress = false;
 
+#ifdef CONFIG_EVENTLOG_DISPLAY_LOG_ENABLE
 	// Save event
-	EventHandler_GenerateEvent(Event_Display_SpiEvent, 3, Task_Display);
+	EventHandler_GenerateEvent(Event_Display_SpiEvent, 4, Task_Display);
+#endif
 }
+
+
+
+#if defined(CONFIG_DISPLAY_SPI_USE_DMA)
+/**
+  * @brief  This function handles DMA interrupt request.
+  * @param  None
+  * @retval None
+  */
+void SPIx_DMA_TX_IRQHandler(void)
+{
+	HAL_DMA_IRQHandler(SpiHandle.hdmatx);
+}
+#endif
 
 
 

@@ -44,6 +44,9 @@ typedef enum
 #ifdef CONFIG_FUNCTION_GAME_SNAKE
 	Debug_GameSnake,
 #endif
+#ifdef CONFIG_BUTTON_DEBUG_ENABLE
+	Debug_Button,
+#endif
 
 	/*
 	 * XXX: Add here new Debug task enums

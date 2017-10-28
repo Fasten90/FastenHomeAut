@@ -22,6 +22,7 @@
 
 #ifdef CONFIG_BUTTON_DEBUG_ENABLE
 #include "DebugUart.h"
+#include "Debug.h"
 #endif
 
 
@@ -31,9 +32,9 @@
  *----------------------------------------------------------------------------*/
 
 #if defined(CONFIG_BUTTON_DEBUG_ENABLE) && defined(CONFIG_MODULE_DEBUGUART_ENABLE)
-#define BUTTON_DEBUG_PRINT(msg)		DebugUart_SendLine(msg)
+#define BUTTON_DEBUG_PRINT(...)		Debug_Print(Debug_Button, __VA_ARGS__)
 #else
-#define BUTTON_DEBUG_PRINT(msg)
+#define BUTTON_DEBUG_PRINT(...)
 #endif
 
 

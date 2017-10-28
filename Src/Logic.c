@@ -27,6 +27,8 @@
 #include "CommandHandler.h"
 #include "Communication.h"
 #include "Calc.h"
+#include "EventHandler.h"
+#include "EventList.h"
 
 #ifdef CONFIG_FUNCTION_CHARGER
 #include "ADC.h"
@@ -254,12 +256,12 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 	const char * buttonName = BUTTON_GetButtonName(button);
 	const char * typeName = BUTTON_GetPressTypeName(type);
 
-	uprintf("Button: %s pressed %s\r\n", buttonName, typeName);
+	BUTTON_DEBUG_PRINT("%s pressed %s", buttonName, typeName);
 
 #elif BUTTON_NUM == 1
 	(void)button;
 	(void)type;
-	BUTTON_DEBUG_PRINT("Button pressed");
+	BUTTON_DEBUG_PRINT("Pressed");
 #endif
 
 #if defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK) && (BUTTON_NUM == 1)
@@ -269,12 +271,12 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 	{
 		if (type == ButtonPress_Long)
 		{
-			BUTTON_DEBUG_PRINT("Button pressed a long time");
+			BUTTON_DEBUG_PRINT("Pressed a long time");
 			Logic_SystemTimeStepConfig();
 		}
 		else if (type == ButtonPress_Short)
 		{
-			BUTTON_DEBUG_PRINT("Button pressed a short time");
+			BUTTON_DEBUG_PRINT("Pressed a short time");
 			Logic_SystemTimeStepValue();
 		}
 	}
@@ -1035,17 +1037,31 @@ static void Logic_Display_MainMenu(void)
 			break;
 	}
 	#elif defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK) && defined(CONFIG_DISPLAY_CLOCK_SMALL)
+
+	EventHandler_GenerateEvent(Event_Display_SpiEvent, 0, Task_Display);
+
 	// Only show clock (small - on menu)
 	if (Logic_Display_ActualState == Menu_Main)
 	{
+		// TODO: Optimize... This function run around 20ms
 		Display_ShowSmallClock(&DateTime_SystemTime.time);
 		TaskHandler_DisableTask(Task_Display);
 	}
 	#endif
 
-	// Display main menu list
-	// TODO: Run at ~40ms
-	Logic_Display_PrintMainMenuList();
+	EventHandler_GenerateEvent(Event_Display_SpiEvent, 1, Task_Display);
+
+	static DisplayMenu_t oldSelectedMenu = Menu_Main;
+	if (Logic_Display_SelectedState != oldSelectedMenu)
+	{
+		oldSelectedMenu = Logic_Display_SelectedState;
+		// Display main menu list
+		// TODO: Optimize... Run at ~40ms
+		Logic_Display_PrintMainMenuList();
+	}
+
+	EventHandler_GenerateEvent(Event_Display_SpiEvent, 2, Task_Display);
+
 	Display_Activate();
 }
 
@@ -1060,6 +1076,7 @@ static void Logic_Display_PrintMainMenuList(void)
 
 	// Print menu
 	// TODO: Do with smaller text
+	// TODO: If 4 menu are printed, it will be overflow!!!!
 	uint8_t i;
 	const uint8_t lineOffset = 2;
 	for (i = 0; i < NUM_OF(Logic_MenuList); i++)

@@ -1504,6 +1504,19 @@ _GPIO2			PB15
 #define DISPLAY_SSD1306_DATACOMMAND_GPIO_PIN			GPIO_PIN_13
 #define DISPLAY_SSD1306_DATACOMMAND_GPIO_PORT			GPIOB
 
+#ifdef CONFIG_DISPLAY_SPI_USE_DMA
+
+#define DMAx_CLK_ENABLE()								__HAL_RCC_DMA1_CLK_ENABLE()
+
+/* Definition for SPIx's DMA */
+#define SPIx_TX_DMA_STREAM								DMA1_Channel3
+
+/* Definition for SPIx's NVIC */
+#define SPIx_DMA_TX_IRQn								DMA1_Channel2_3_IRQn
+
+#define SPIx_DMA_TX_IRQHandler							DMA1_Channel2_3_IRQHandler
+#endif
+
 #endif	// CONFIG_MODULE_DISPLAY_ENABLE
 
 
