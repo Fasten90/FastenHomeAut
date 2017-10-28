@@ -39,17 +39,16 @@
 ///< Command results
 typedef enum
 {
-	CommandResult_Unknown = 0,
-	CommandResult_Ok,
-	CommandResult_Ok_SendSuccessful,
-	CommandResult_Error_WrongArgument1,
-	CommandResult_Error_WrongArgument2,
-	CommandResult_Error_TooFewArgument,
-	CommandResult_Error_WrongArgumentNum,
-	CommandResult_Error_TooManyArgument,
-	CommandResult_Error_CommandArgNumIsWrong,
-	CommandResult_Error_CommandNotFound,
-	CommandResult_Error_Unknown
+	CommandResult_Unknown = 0,								///< Unknown result (do not use!)
+	CommandResult_Ok,										///< Successful - but not sending successful message (e.g. write answer from command)
+	CommandResult_Ok_SendSuccessful,						///< Successful - CommandHandler send "successful" message
+	CommandResult_Error_WrongArgument1,						///< First argument is wrong (type or range)
+	CommandResult_Error_WrongArgument2,						///< Second argument is wrong (type or range)
+	CommandResult_Error_TooFewArgument,						///< Fewer argument than needed
+	CommandResult_Error_WrongArgumentNum,					///< Not good argument number
+	CommandResult_Error_TooManyArgument,					///< More argument than needed
+	CommandResult_Error_CommandNotFound,					///< Command not found
+	CommandResult_Error_Unknown								///< Unknown error (in command processing)
 } CommandResult_t;
 
 

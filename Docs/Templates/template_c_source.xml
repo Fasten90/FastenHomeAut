@@ -5,7 +5,7 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
-#include "include.h"
+#include "options.h"
 #include "${file_base}.h"
 
 
@@ -34,12 +34,13 @@
 
 
 /**
- * \brief
+ * \brief  ${file_base} initialization
  */
 void ${file_base}_Init(void)
 {
 
 }
+
 
 
 </template></templates>

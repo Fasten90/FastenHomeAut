@@ -26,12 +26,6 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-// TaskResult defines
-// TODO: Do enum for this
-#define TASK_RESULT_OK			(true)
-#define TASK_RESULT_FAILED		(false)
-
-
 #ifdef CONFIG_DEBUG_SW_WATCHDOG_ENABLE
 	#define TASKHANDLER_SW_WATCHDOG()		TaskHandler_SwWatchdog()
 #else
@@ -47,9 +41,16 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-typedef bool TaskResult_t;
 typedef uint8_t TaskID_t;
 typedef uint32_t TaskTick_t;
+
+
+///< TaskResult for Task finish result
+typedef enum
+{
+	TaskResult_Fail,							///< Failed run (task)
+	TaskResult_Ok								///< Successful run
+} TaskResult_t;
 
 
 ///< Schedule source (Why executed the task by TaskHandler)
@@ -74,6 +75,7 @@ typedef struct
 	const TaskFunctionPointer taskFunction;		///< Task function - Init
 	TaskTick_t tick;							///< Task tick [ms] - RunTime
 	TaskTick_t taskScheduleRate;				///< Task scheduling rate [ms] - Init/Runtime
+
 	bool isRequestScheduling;					///< Task scheduling request (true, if request) - Runtime
 	bool isPeriodisScheduleDisabled;			///< Task schedule (periodic) disabled - Init/Runtime
 	bool isRunOnce;								///< Task scheduling once - Init/Runtime

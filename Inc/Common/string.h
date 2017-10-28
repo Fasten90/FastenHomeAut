@@ -29,7 +29,7 @@
  *----------------------------------------------------------------------------*/
 
 // size_t strlen ( const char * str );
-#define strlen(str)					StringLength(str)
+#define strlen(_str)					StringLength(str_)
 
 
 // int strncmp ( const char * str1, const char * str2, size_t num );
@@ -37,19 +37,19 @@
 // uint8_t StrCmpWithLength(const char * ch1, const char *ch2, uint8_t length)
 // return: 0 equal, 1 not equal
 // TODO: Be careful, return values are not equal
-#define strncmp(str1, str2, num)	StrCmpWithLength(str1, str2, num)
+#define strncmp(_str1, _str2, _num)		StrCmpWithLength(_str1, _str2, _num)
 
 
 // char * strncpy ( char * destination, const char * source, size_t num );
 // uint8_t StrCpyMax(char *dest, const char *str, uint8_t maxLength)
-#define strncpy(dest, src, num)		StrCpyMax(dest, src, num)
+#define strncpy(_dest, _src, _num)		StrCpyMax(_dest, _src, _num)
 
 
-#define printf(...)					uprintf(__VA_ARGS__)
+#define printf(...)						uprintf(__VA_ARGS__)
 
 
 // char * strstr ( const char *, const char * )
-#define strstr(str1, str2)			STRING_FindString(str1, str2)
+#define strstr(_str1, _str2)			STRING_FindString(_str1, _str2)
 
 
 

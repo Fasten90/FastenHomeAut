@@ -89,6 +89,7 @@ void CommandHandler_Init(void)
 
 		// Need command argument number
 		ASSERT(CommandList[i].commandArgNum != 0);
+		ASSERT(CommandList[i].commandArgNum <= COMMANDHANDLER_COMMAND_ARG_MAX_NUM_BITS);
 
 		// example, description, syntax are optional parameters
 	}
@@ -242,10 +243,6 @@ static void CommandHandler_CheckResultAndRespond(CommandResult_t result)
 			pMessage = "Wrong argument num";
 			break;
 
-		case CommandResult_Error_CommandArgNumIsWrong:
-			pMessage = "Command set is wrong";
-			break;
-
 		case CommandResult_Error_Unknown:
 			pMessage = "Unknown error";
 			break;
@@ -381,10 +378,7 @@ static CommandResult_t CommandHandler_CheckArgumentNumIsGood(uint8_t receivedArg
 	{
 		return CommandResult_Error_TooManyArgument;
 	}
-	if (commandArgNum > COMMANDHANDLER_COMMAND_ARG_MAX_NUM_BITS)
-	{
-		return CommandResult_Error_CommandArgNumIsWrong;
-	}
+	// commandArgNum not should to check, because checked in Init()
 
 	if (commandArgNum & (1 << (receivedArgNum-1)))
 	{

@@ -387,7 +387,7 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 	LED_SetLed(LED_Green, LED_Set_Off);
 #endif
 
-	return TASK_RESULT_OK;
+	return TaskResult_Ok;
 }
 #endif	// #ifdef CONFIG_MODULE_LED_ENABLE
 
@@ -403,7 +403,7 @@ static TaskResult_t TaskWatchdogClear(ScheduleSource_t source)
 
 	Watchdog_Clear();
 
-	return TASK_RESULT_OK;
+	return TaskResult_Ok;
 }
 #endif
 
@@ -416,7 +416,7 @@ static TaskResult_t TaskEsp8266(ScheduleSource_t source)
 
 	ESP8266_StatusMachine();
 
-	return TASK_RESULT_OK;
+	return TaskResult_Ok;
 }
 #endif
 
@@ -429,7 +429,7 @@ static TaskResult_t Task_Motor(ScheduleSource_t source)
 
 	Motor_StateMachine();
 
-	return TASK_RESULT_OK;
+	return TaskResult_Ok;
 }
 
 
@@ -440,7 +440,7 @@ static TaskResult_t Task_MotorConnStop(ScheduleSource_t source)
 
 	Motor_ControlStop();
 
-	return TASK_RESULT_OK;
+	return TaskResult_Ok;
 }
 #endif
 
@@ -453,7 +453,7 @@ static TaskResult_t Task_RemoteControllerSending(ScheduleSource_t source)
 
 	Logic_RemoteController_SendMessage();
 
-	return TASK_RESULT_OK;
+	return TaskResult_Ok;
 }
 #endif
 
@@ -470,7 +470,7 @@ static TaskResult_t Task_ProcessDebugUartCommandReceived(ScheduleSource_t source
 	DebugUart_ProcessReceivedCharacters();
 #endif
 
-	return TASK_RESULT_OK;
+	return TaskResult_Ok;
 }
 #endif
 
@@ -592,7 +592,7 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 	HomeAutMessage_SendMessage(1, Function_Alarm, Alarm_PressedButton, 17);
 #endif
 
-	return TASK_RESULT_OK;
+	return TaskResult_Ok;
 }
 #endif
 
@@ -605,7 +605,7 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 
 	Logic_DisplayHandler(source);
 
-	return TASK_RESULT_OK;
+	return TaskResult_Ok;
 }
 #endif
 
@@ -639,7 +639,7 @@ static TaskResult_t Task_SystemTimeSecondStep(ScheduleSource_t source)
 	TaskHandler_ClearTimeoutTask(Task_SwWDT);
 	#endif
 
-	return TASK_RESULT_OK;
+	return TaskResult_Ok;
 }
 #endif
 
@@ -654,7 +654,7 @@ static TaskResult_t Task_SoftwareWatchDog(ScheduleSource_t source)
 	// If This task is running, the system is lagging
 	DebugUart_SendLine("Software WatchdDog Timeout! System is lagging!\r\n");
 
-	return TASK_RESULT_OK;
+	return TaskResult_Ok;
 }
 #endif
 
@@ -669,7 +669,7 @@ static TaskResult_t Task_GlobalVarTrace(ScheduleSource_t source)
 	// Trace GlobalVars
 	GlobalVarHandler_RunTrace();
 
-	return TASK_RESULT_OK;
+	return TaskResult_Ok;
 }
 #endif
 
@@ -685,7 +685,7 @@ static TaskResult_t Task_InputOutput(ScheduleSource_t source)
 
 	ADC_ConvertAllMeasuredValues();
 
-	return TASK_RESULT_OK;
+	return TaskResult_Ok;
 }
 #endif
 
@@ -710,7 +710,7 @@ static TaskResult_t Task_CommonAdcFunction(ScheduleSource_t source)
 		TaskHandler_DisableTask(Task_CommonAdc);
 	}
 
-	return TASK_RESULT_OK;
+	return TaskResult_Ok;
 }
 #endif
 
@@ -732,7 +732,7 @@ static TaskResult_t Task_SelfTestFunction(ScheduleSource_t source)
 	}
 	#endif
 
-	return TASK_RESULT_OK;
+	return TaskResult_Ok;
 }
 #endif
 

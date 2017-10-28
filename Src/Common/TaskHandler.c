@@ -192,7 +192,7 @@ static void TaskHandler_IncrementTicks(TaskTick_t elapsedTick)
  */
 static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 {
-	bool result = TASK_RESULT_FAILED;
+	TaskResult_t result = TaskResult_Fail;
 
 	// Clear once run
 	if (TaskList[taskID].isRunOnce)
@@ -213,7 +213,7 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 	TaskList[taskID].taskFunction(source);
 
 #ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
-	uprintf("- %s task run %s\r\n", TaskList[taskID].taskName, (result) ? ("successful") : ("failed"));
+	uprintf("- %s task run %s\r\n", TaskList[taskID].taskName, (result == TaskResult_Ok) ? ("successful") : ("failed"));
 #else
 	(void)result;
 #endif
