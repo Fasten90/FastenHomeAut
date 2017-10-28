@@ -49,25 +49,22 @@
 #endif
 
 
+
+/*------------------------------------------------------------------------------
+ *  Macros
+ *----------------------------------------------------------------------------*/
+
+#define DisplayInput_LetterPosition_MaxLimit		(11)
+
+#define DisplayInput_LetterPosition_MinLimit		(0)
+
+#define DisplayInput_StringLimit					(DisplayInput_LetterPosition_MaxLimit + 1)
+
+
+
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
-
-#ifdef CONFIG_FUNCTION_CHARGER
-bool Logic_BatteryIsCharging = false;
-#endif
-
-
-#ifdef CONFIG_FUNCTION_DISPLAY_MENU
-static volatile bool Logic_Display_ChangedState = false;
-static volatile DisplayMenu_t Logic_Display_ActualState = Menu_Main;
-static volatile DisplayMenu_t Logic_Display_SelectedState = Menu_Main;
-
-
-static volatile DisplaySnakeMenu_t Logic_Display_SnakeMenu_ActualState = SnakeMenu_NewGame;
-
-bool Logic_Snake_DisplaySnakeMenu = false;
-#endif
 
 
 
@@ -79,28 +76,59 @@ bool Logic_Snake_DisplaySnakeMenu = false;
 static DisplayClock_ChangeState_t Logic_SystemTimeConfigState = 0;
 #endif
 
+
 #ifdef CONFIG_FUNCTION_DISPLAY_INPUT
-uint8_t DisplayInput_LetterPosition = 0;
+static uint8_t DisplayInput_LetterPosition = 0;
 
-// TODO: Refactor
-#define DisplayInput_LetterPosition_MinLimit	0
-
-#define DisplayInput_StringLimit				(DisplayInput_LetterPosition_MaxLimit + 1)
-
-char DisplayInput_ActualRealString[DisplayInput_StringLimit] = { 0 };
+static char DisplayInput_ActualRealString[DisplayInput_StringLimit] = { 0 };
 static uint8_t DisplayInput_ActualString[DisplayInput_LetterPosition_MaxLimit] = { 0 };
 
-static char const Display_Characters[] = { ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+static const char const Display_Characters[] = { ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
 	't', 'u', 'v', 'w', 'x', 'y', 'z' };
 
-static uint8_t const Display_Characters_size = sizeof(Display_Characters)/sizeof(Display_Characters[0]);
+static const uint8_t Display_Characters_size = sizeof(Display_Characters)/sizeof(Display_Characters[0]);
 #endif
 
+
 #ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
-static uint16_t Display_CarAnimation_RefreshPeriod_MinLimit = 100;
-static uint16_t Display_CarAnimation_RefreshPeriod_MaxLimit = 1000;
-static uint16_t Display_CarAnimation_RefreshPeriod_Actual = 300;
+static const uint16_t Display_CarAnimation_RefreshPeriod_MinLimit = 100;
+static const uint16_t Display_CarAnimation_RefreshPeriod_MaxLimit = 1000;
+static cinst uint16_t Display_CarAnimation_RefreshPeriod_Actual = 300;
+#endif
+
+
+#ifdef CONFIG_FUNCTION_CHARGER
+static bool Logic_BatteryIsCharging = false;
+#endif
+
+
+#ifdef CONFIG_FUNCTION_DISPLAY_MENU
+static volatile bool Logic_Display_ChangedState = false;
+static volatile DisplayMenu_t Logic_Display_ActualState = Menu_Main;
+static volatile DisplayMenu_t Logic_Display_SelectedState = Menu_Main;
+
+static volatile DisplaySnakeMenu_t Logic_Display_SnakeMenu_ActualState = SnakeMenu_NewGame;
+
+static bool Logic_Snake_DisplaySnakeMenu = false;
+
+static const char * const Logic_MenuList[] =
+{
+	#ifdef CONFIG_FUNCTION_GAME_SNAKE
+	"Snake",
+	#endif
+	#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
+	"Input",
+	#endif
+	#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
+	"Car animation",
+	#endif
+	#ifdef CONFIG_DISPLAY_CLOCK_LARGE
+	"Clock",
+	#endif
+
+	// XXX: Synchronize with DisplayMenu_t
+};
 #endif
 
 
@@ -109,7 +137,7 @@ static uint16_t Display_CarAnimation_RefreshPeriod_Actual = 300;
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
-#ifdef CONFIG_MODULE_DISPLAY_ENABLE
+#ifdef CONFIG_FUNCTION_DISPLAY_MENU
 static void Logic_Display_MainMenu(void);
 static void Logic_Display_PrintMainMenuList(void);
 #endif
@@ -919,6 +947,9 @@ void Logic_DisplayHandler(ScheduleSource_t source)
 
 static void Logic_Display_MainMenu(void)
 {
+	// Check Menu list size
+	BUILD_BUG_ON(NUM_OF(Logic_MenuList) != (Menu_Count - 1));
+
 	// Main menu
 	#ifdef CONFIG_FUNCTION_CHARGER
 	// Loading image
@@ -1005,7 +1036,7 @@ static void Logic_Display_MainMenu(void)
 	}
 	#elif defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK) && defined(CONFIG_DISPLAY_CLOCK_SMALL)
 	// Only show clock (small - on menu)
-	if (Logic_Display_SelectedState == Menu_Main)
+	if (Logic_Display_ActualState == Menu_Main)
 	{
 		Display_ShowSmallClock(&DateTime_SystemTime.time);
 		TaskHandler_DisableTask(Task_Display);
@@ -1022,37 +1053,23 @@ static void Logic_Display_MainMenu(void)
 
 static void Logic_Display_PrintMainMenuList(void)
 {
-	// TODO: This function run at 40ms
-	// Print menu
-#if defined(CONFIG_FUNCTION_GAME_SNAKE) || defined(CONFIG_FUNCTION_DISPLAY_INPUT) || defined(CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN) || defined(CONFIG_DISPLAY_CLOCK_LARGE)
-	uint8_t i = 2;
-#endif
-
-	// TODO: Do with smaller text
-
 	FontFormat_t selectedFormat = { 0 };
 	selectedFormat.Format_Inverse = 1;
 
-#ifdef CONFIG_FUNCTION_GAME_SNAKE
-	Display_PrintString("Snake", i, Font_12x8,
-			Logic_Display_SelectedState == Menu_Snake ? selectedFormat : NO_FORMAT);
-	i++;
-#endif
-#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
-	Display_PrintString("Input", i, Font_12x8,
-			Logic_Display_SelectedState == Menu_Input ? selectedFormat : NO_FORMAT);
-	i++;
-#endif
-#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
-	Display_PrintString("Car animation", i, Font_12x8,
-			Logic_Display_SelectedState == Menu_Car ? selectedFormat : NO_FORMAT);
-	i++;
-#endif
-#ifdef CONFIG_DISPLAY_CLOCK_LARGE
-	Display_PrintString("Clock", i, Font_12x8,
-			Logic_Display_SelectedState == Menu_LargeClock ? selectedFormat : NO_FORMAT);
-	i++;
-#endif
+	// TODO: This function run at 40ms
+
+	// Print menu
+	// TODO: Do with smaller text
+	uint8_t i;
+	const uint8_t lineOffset = 2;
+	for (i = 0; i < NUM_OF(Logic_MenuList); i++)
+	{
+		Display_PrintString(
+				Logic_MenuList[i],		// Menu "name" string
+				i + lineOffset,			// <x.> line
+				Font_12x8,				// Font
+				Logic_Display_SelectedState == i+1 ? selectedFormat : NO_FORMAT);	// i + 1, because enum started with "Main"
+	}
 }
 
 

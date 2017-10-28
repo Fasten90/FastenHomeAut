@@ -176,8 +176,17 @@ void Terminal_Init(void)
 #ifdef CONFIG_USE_FREERTOS
 	DelayMs(10);
 
-	xSemaphoreGive(DEBUG_USART_Tx_Semaphore);
 	// Enable sendings
+	xSemaphoreGive(DEBUG_USART_Tx_Semaphore);
+
+	// Terminal Task (FreeRTOS)
+	TaskHandle_t Terminal_TaskHandle = NULL;
+	//xTaskCreate(vTaskCode, "NAME", STACK_SIZE, &ucParameterToPass, tskIDLE_PRIORITY, &xHandle);
+	if (xTaskCreate( (pdTASK_CODE)Terminal_CheckCommand, "TerminalTask", TERMINAL_TASK_STACK_SIZE, 0,
+			TERMINAL_TASK_PRIORITY, &Terminal_TaskHandle) != pdPASS)
+	{
+		Error_Handler();
+	}
 #endif
 
 

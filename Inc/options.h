@@ -301,7 +301,7 @@
  *----------------------------------------------------------------------------*/
 
 ///< Unit tests
-#define CONFIG_MODULE_UNITTEST_ENABLE
+//#define CONFIG_MODULE_UNITTEST_ENABLE
 #ifdef CONFIG_MODULE_UNITTEST_ENABLE
 	#define MODULE_STRING_UNITTEST_ENABLE
 	//#define MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
@@ -330,6 +330,8 @@
  *								Terminal settings
  *----------------------------------------------------------------------------*/
 
+
+//#define CONFIG_MODULE_TERMINAL_ENABLE
 #ifdef CONFIG_MODULE_TERMINAL_ENABLE
 
 	//#define CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
@@ -495,6 +497,7 @@
 
 	///< Create CPU usage statistics:
 	#define CONFIG_MODULE_TASKHANDLER_STATISTICS
+	#define TASKHANDLER_STATISTICS_LIMIT		(100)
 
 	///< Software Watchdog (task)
 	//#define CONFIG_MODULE_TASK_SOFTWARE_WATCHDOG_ENABLE

@@ -219,7 +219,7 @@ static bool ESP8266_ConnectToServerInBlockingMode(void);
 static bool ESP8266_SendTcpMessageBlockingMode(const char *message);
 #else
 static bool ESP8266_SendTcpMessageNonBlockingMode_Start(const char *message);
-static bool ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void);
+static uint8_t ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void);
 #endif
 
 static bool ESP8266_WaitForSend(uint16_t timeoutMilliSecond);
@@ -321,6 +321,14 @@ void ESP8266_Init(void)
 	ESP8266_ReceivedMessage_Queue = xQueueCreate(
 			ESP8266_RECEIVEMESSAGE_QUEUE_LENGTH,
 			ESP8266_MESSAGE_QUEUE_ITEM_SIZE);
+
+	// ESP8266 Task initialization
+	TaskHandle_t ESP8266_TaskHandle = NULL;
+	if (xTaskCreate((pdTASK_CODE)ESP8266_Task, "ESP8266Task", ESP8266_TASK_STACK_SIZE, 0,
+					ESP8266_TASK_PRIORITY, &ESP8266_TaskHandle) != pdPASS)
+	{
+		Error_Handler();
+	}
 #endif
 }
 
@@ -1654,7 +1662,7 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_Start(const char *message)
  * \brief	Send TCP message which are in ESP8266_TcpTransmitBuffer
  * \note	Recommend received "> " before this function
  */
-static bool ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void)
+static uint8_t ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void)
 {
 
 	// Check length
@@ -1681,7 +1689,7 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void)
 
 	DebugPrint("Send TCP message: \"%s\"\r\n", ESP8266_TcpTransmitBuffer);
 
-	return true;
+	return length;
 }
 
 

@@ -22,10 +22,13 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
+
 #ifdef CONFIG_MODULE_SYSMANAGER_ENABLE
+
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
+
 typedef struct {
 	uint8_t myIp;
 	uint8_t serverIp;
@@ -65,6 +68,7 @@ typedef struct {
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
+
 HomeAutDeviceDataType HomeAutDevices[HOMEAUTMESSAGE_DEVICE_CONNECT_MAX_NUM];
 DeviceStatusStruct DeviceStatus;
 
@@ -76,9 +80,11 @@ uint8_t SysManager_DebugEnableFlag = 1;
 char SysManager_HomeAutMessage_Buffer[ESP8266_MESSAGE_QUEUE_ITEM_SIZE];
 	
 
+
 /*------------------------------------------------------------------------------
  *  Local variables
  *----------------------------------------------------------------------------*/
+
 
 
 /*------------------------------------------------------------------------------
@@ -86,27 +92,30 @@ char SysManager_HomeAutMessage_Buffer[ESP8266_MESSAGE_QUEUE_ITEM_SIZE];
  *----------------------------------------------------------------------------*/
 
 
+
 /*------------------------------------------------------------------------------
  *  Local functions
  *----------------------------------------------------------------------------*/
-ReturnType SysManager_GetMyNetworkState ( void );
-static void DebugPrint ( char *debugString );
 
-ReturnType SysManager_CheckMyState ( void );
-ReturnType SysManager_Sync ( void );
-ReturnType SysManager_CheckReceivedMessage ( void );
+ReturnType SysManager_GetMyNetworkState(void);
+static void DebugPrint (char *debugString);
 
-ReturnType SysManager_Server_CheckButton ( void );
+ReturnType SysManager_CheckMyState(void);
+ReturnType SysManager_Sync(void);
+ReturnType SysManager_CheckReceivedMessage(void);
 
-ReturnType SYSMANAGER_GetMyNetworkState ( void );
+ReturnType SysManager_Server_CheckButton(void);
 
-ReturnType SysManager_CheckButtonStatus ( void );
-ReturnType SysManager_CheckAdcValues ( void );
-ReturnType SysManager_CheckIOs ( void );
-ReturnType SysManager_CheckTemperature ( void );
+ReturnType SYSMANAGER_GetMyNetworkState(void);
 
-ReturnType SysManager_ProcessHomeAutMessage ( void );
-ReturnType SysManager_SendStates ( void );
+ReturnType SysManager_CheckButtonStatus(void);
+ReturnType SysManager_CheckAdcValues(void);
+ReturnType SysManager_CheckIOs(void);
+ReturnType SysManager_CheckTemperature(void);
+
+ReturnType SysManager_ProcessHomeAutMessage(void);
+ReturnType SysManager_SendStates(void);
+
 
 
 /*------------------------------------------------------------------------------
@@ -115,8 +124,26 @@ ReturnType SysManager_SendStates ( void );
 
 
 /**
-\brief	SysManager Task
-*/
+ * \brief	Initialize SysManager
+ */
+void SysManager_init(void)
+{
+#if defined(CONFIG_USE_FREERTOS)
+	// SysManager
+	TaskHandle_t SYSMANAGER_TaskHandle = NULL;
+	if (xTaskCreate((pdTASK_CODE)SYSMANAGER_Task, "SysManagerTask", SYSMANAGER_TASK_STACK_SIZE, 0,
+					SYSMANAGER_TASK_PRIORITY, &SYSMANAGER_TaskHandle) != pdPASS)
+	{
+		Error_Handler();
+	}
+#endif
+}
+
+
+
+/**
+ * \brief	SysManager Task
+ */
 void SYSMANAGER_Task(void)
 {
 	
@@ -127,11 +154,11 @@ void SYSMANAGER_Task(void)
 	DeviceStatus.serverIp = ESP8266_SERVER_IP_ADDRESS_SHORT;
 	
 	// Server mode
-	#ifdef CONFIG_USE_PANEL_CENTERPANEL
+#ifdef CONFIG_USE_PANEL_CENTERPANEL
 	DeviceStatus.ImTheServer = 1;
-	#else
+#else
 	DeviceStatus.ImTheServer = 0;
-	#endif
+#endif
 
 	// Voltage
 	DeviceStatus.AlarmLowBatteryLimit = 6.5;
@@ -170,7 +197,7 @@ void SYSMANAGER_Task(void)
 		#endif
 		
 		// Check my IP (I connected?)
-		if ( SysManager_GetMyNetworkState() == Return_Ok )
+		if (SysManager_GetMyNetworkState() == Return_Ok)
 		{
 			DeviceStatus.IConnected = 1;
 		}
@@ -227,16 +254,16 @@ void SYSMANAGER_Task(void)
 
 
 /**
-\brief	Get wifi state & IP address
-*/
-ReturnType SysManager_GetMyNetworkState ( void )
+ * \brief	Get wifi state & IP address
+ */
+ReturnType SysManager_GetMyNetworkState(void)
 {
 
 	// Has connected / Started
-	//#if ( CONFIG_ESP8266_IS_TCP_SERVER == 1 )
+	//#if (CONFIG_ESP8266_IS_TCP_SERVER == 1)
 	#ifdef CONFIG_USE_PANEL_CENTERPANEL
 	// Server
-	if ( ESP8266_ConnectionStatus == ESP8266_ConnectionStatus_SuccessfulServerStarted )
+	if (ESP8266_ConnectionStatus == ESP8266_ConnectionStatus_SuccessfulServerStarted)
 	{
 		// HomeAutDevices[0] = I am
 		
@@ -252,7 +279,7 @@ ReturnType SysManager_GetMyNetworkState ( void )
 	#else
 	
 	// Client	
-	if ( ESP8266_ConnectionStatus == ESP8266_ConnectionStatus_SuccessfulConnected )
+	if (ESP8266_ConnectionStatus == ESP8266_ConnectionStatus_SuccessfulConnected)
 	{
 		// HomeAutDevices[0] = I am
 		
@@ -278,9 +305,9 @@ ReturnType SysManager_GetMyNetworkState ( void )
 
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
 /**
-\brief	Get device's status
-*/
-ReturnType SysManager_CheckMyState ( void )
+ * \brief	Get device's status
+ */
+ReturnType SysManager_CheckMyState(void)
 {
 					
 	// Read ADC
@@ -310,13 +337,12 @@ ReturnType SysManager_CheckMyState ( void )
 
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
 /**
-\brief	Check button status
-*/
-ReturnType SysManager_CheckButtonStatus ( void )
+ * \brief	Check button status
+ */
+ReturnType SysManager_CheckButtonStatus(void)
 {
-	
 	// Pressed any button?
-	if ( BUTTON_Clicked & ( 1 << PressedButton_Pressed ) )
+	if (BUTTON_Clicked & (1 << PressedButton_Pressed))
 	{
 		// If pressed any button ...
 		
@@ -331,19 +357,18 @@ ReturnType SysManager_CheckButtonStatus ( void )
 	}
 	
 	return Return_False;
-	
 }
 #endif
 
 
 #ifdef CONFIG_USE_PANEL_CENTERPANEL
 /**
-\brief	Check button status
-*/
-ReturnType SysManager_Server_CheckButton ( void )
+ * \brief	Check button status
+ */
+ReturnType SysManager_Server_CheckButton(void)
 {
 	// Pressed any button?
-	if ( BUTTON_Clicked & ( 1 << PressedButton_Pressed ) )
+	if (BUTTON_Clicked & (1 << PressedButton_Pressed))
 	{			
 		uint8_t myIp = DeviceStatus.myIp;
 		uint8_t targetIP = 255;
@@ -363,9 +388,9 @@ ReturnType SysManager_Server_CheckButton ( void )
 
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
 /**
-\brief	Check the ADC values
-*/
-ReturnType SysManager_CheckAdcValues ( void )
+ * \brief	Check the ADC values
+ */
+ReturnType SysManager_CheckAdcValues(void)
 {
 	
 	// Read ADC voltages
@@ -375,8 +400,8 @@ ReturnType SysManager_CheckAdcValues ( void )
 	// my Battery Voltage
 	DeviceStatus.myBatteryVoltage = ADC_ConvertedValue_VSource;
 	
-	if ( DeviceStatus.myBatteryVoltage < DeviceStatus.AlarmLowBatteryLimit &&
-		!DeviceStatus.AlarmLowBatteryIsSended )
+	if (DeviceStatus.myBatteryVoltage < DeviceStatus.AlarmLowBatteryLimit &&
+		!DeviceStatus.AlarmLowBatteryIsSended)
 	{
 		// Create message ...
 		DeviceStatus.AlarmLowBatteryIsSended = 1;
@@ -394,8 +419,8 @@ ReturnType SysManager_CheckAdcValues ( void )
 	// my Temperature
 	DeviceStatus.myTemperature = ADC_ConvertedValue_InternalTemperature;
 	
-	if ( DeviceStatus.myTemperature < DeviceStatus.AlarmTooColdLimit &&
-		!DeviceStatus.AlarmTooHotOrColdIsSended )
+	if (DeviceStatus.myTemperature < DeviceStatus.AlarmTooColdLimit &&
+		!DeviceStatus.AlarmTooHotOrColdIsSended)
 	{
 		// Create message ...
 		DeviceStatus.AlarmTooHotOrColdIsSended = 1;
@@ -408,8 +433,8 @@ ReturnType SysManager_CheckAdcValues ( void )
 		
 		DebugPrint("Too Cold Alarm message has been sended.\r\n");
 	}
-	else if ( DeviceStatus.myTemperature > DeviceStatus.AlarmTooHotLimit &&
-		!DeviceStatus.AlarmTooHotOrColdIsSended )
+	else if (DeviceStatus.myTemperature > DeviceStatus.AlarmTooHotLimit &&
+		!DeviceStatus.AlarmTooHotOrColdIsSended)
 	{
 		// Create message ...
 		DeviceStatus.AlarmTooHotOrColdIsSended = 1;
@@ -426,8 +451,8 @@ ReturnType SysManager_CheckAdcValues ( void )
 	// Lighting
 	DeviceStatus.Lighting = ADC_ConvertedValue_SensorLight;
 	
-	if ( ( DeviceStatus.Lighting < DeviceStatus.AlarmLightingTooBrightLimit ) &&
-		( DeviceStatus.AlarmLightingDarkOrBrightIsSended != 1 ) )
+	if ((DeviceStatus.Lighting < DeviceStatus.AlarmLightingTooBrightLimit) &&
+		(DeviceStatus.AlarmLightingDarkOrBrightIsSended != 1))
 	{
 		// Create message ...
 		DeviceStatus.AlarmLightingDarkOrBrightIsSended = 1;
@@ -440,8 +465,8 @@ ReturnType SysManager_CheckAdcValues ( void )
 		
 		DebugPrint("Too Bright Alarm message has been sended.\r\n");
 	}
-	else if ( ( DeviceStatus.Lighting > DeviceStatus.AlarmLightingTooDarkLimit ) &&
-		( DeviceStatus.AlarmLightingDarkOrBrightIsSended != 2 ) )
+	else if (( DeviceStatus.Lighting > DeviceStatus.AlarmLightingTooDarkLimit) &&
+		( DeviceStatus.AlarmLightingDarkOrBrightIsSended != 2))
 	{
 		// Create message ...
 		DeviceStatus.AlarmLightingDarkOrBrightIsSended = 2;
@@ -464,11 +489,11 @@ ReturnType SysManager_CheckAdcValues ( void )
 
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
 /**
-\brief	Check IOs
-*/
-ReturnType SysManager_CheckIOs ( void )
+ * \brief	Check IOs
+ */
+ReturnType SysManager_CheckIOs(void)
 {
-	if ( GLOBAL_IO_Sensor_Motion_Move )
+	if (GLOBAL_IO_Sensor_Motion_Move)
 	{
 		GLOBAL_IO_Sensor_Motion_Move = 0;
 		
@@ -481,7 +506,7 @@ ReturnType SysManager_CheckIOs ( void )
 		
 		DebugPrint("Moving Alarm message has been sended.\r\n");
 	}
-	if ( GLOBAL_IO_Sensor_Sound_Impact_Sound)
+	if (GLOBAL_IO_Sensor_Sound_Impact_Sound)
 	{
 		GLOBAL_IO_Sensor_Sound_Impact_Sound = 0;
 		// IMPORTANT: Azért nem kell nagyon nullázni, mert IT, így csak felfutáskor állítódik egybe, ezt a változót
@@ -505,15 +530,15 @@ ReturnType SysManager_CheckIOs ( void )
 
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
 /**
-\brief	Check the temperature
-*/
-ReturnType SysManager_CheckTemperature ( void )
+ * \brief	Check the temperature
+ */
+ReturnType SysManager_CheckTemperature(void)
 {
 	
 	TEMPERATURE_GetTemperature();
 	DeviceStatus.extTemperature = GLOBAL_TemperatureValue_LM75;
 	
-	if ( DeviceStatus.extTemperature > DeviceStatus.ExternalTemperatureAlarmTooHotLimit
+	if (DeviceStatus.extTemperature > DeviceStatus.ExternalTemperatureAlarmTooHotLimit
 		&& !DeviceStatus.ExternalTemperatureAlarmTooHotOrColdIsSended)
 	{
 		// Too hot
@@ -523,7 +548,7 @@ ReturnType SysManager_CheckTemperature ( void )
 			Function_Alarm, Alarm_TooHot,
 			DeviceStatus.extTemperature * 100, 1);	
 	}
-	else if ( DeviceStatus.extTemperature < DeviceStatus.ExternalTemperatureAlarmTooColdLimit
+	else if (DeviceStatus.extTemperature < DeviceStatus.ExternalTemperatureAlarmTooColdLimit
 		&& !DeviceStatus.ExternalTemperatureAlarmTooHotOrColdIsSended)
 	{
 		// Too cold
@@ -533,8 +558,8 @@ ReturnType SysManager_CheckTemperature ( void )
 			Function_Alarm, Alarm_TooCold,
 			DeviceStatus.extTemperature * 100, 1);
 	}
-	else if ( DeviceStatus.extTemperature < DeviceStatus.ExternalTemperatureAlarmTooHotLimit
-			&& DeviceStatus.extTemperature > DeviceStatus.ExternalTemperatureAlarmTooColdLimit )
+	else if (DeviceStatus.extTemperature < DeviceStatus.ExternalTemperatureAlarmTooHotLimit
+			&& DeviceStatus.extTemperature > DeviceStatus.ExternalTemperatureAlarmTooColdLimit)
 	{
 		// Temperature is ok
 		DeviceStatus.ExternalTemperatureAlarmTooHotOrColdIsSended = 0;
@@ -551,13 +576,13 @@ ReturnType SysManager_CheckTemperature ( void )
 
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
 /**
-\brief	Send sync message x seconds and send state y seconds
-*/
-ReturnType SysManager_Sync ( void )
+ * \brief	Send sync message x seconds and send state y seconds
+ */
+ReturnType SysManager_Sync(void)
 {
 	
 	// Need Sync message? (every 30 sec / half minute)
-	if ( ( DeviceStatus.ActualSec % 30 ) == 0)
+	if ((DeviceStatus.ActualSec % 30) == 0)
 	{
 		uint8_t myIp = DeviceStatus.myIp;
 		uint8_t serverIp = DeviceStatus.serverIp;
@@ -567,7 +592,7 @@ ReturnType SysManager_Sync ( void )
 	//DeviceStatus.LastMessageSendedSec // TODO:
 	
 	// Need Sync message? (every 180 sec / 3 minute)
-	if ( ( DeviceStatus.ActualSec % 180 ) == 0)
+	if ((DeviceStatus.ActualSec % 180) == 0)
 	{
 		SysManager_SendStates();
 		DebugPrint("State messages has been sended\r\n");
@@ -579,16 +604,16 @@ ReturnType SysManager_Sync ( void )
 
 
 /**
-\brief	Check received messages
-*/
-ReturnType SysManager_CheckReceivedMessage ( void )
+ * \brief	Check received messages
+ */
+ReturnType SysManager_CheckReceivedMessage(void)
 {
 	// Check received message and Process if need
 #ifdef CONFIG_USE_FREERTOS
-	if ( xQueueReceive(ESP8266_ReceivedMessage_Queue,SysManager_HomeAutMessage_Buffer,0) == pdPASS )
+	if (xQueueReceive(ESP8266_ReceivedMessage_Queue,SysManager_HomeAutMessage_Buffer,0) == pdPASS)
 	{
 		// Read & Parse
-		if ( HomeAutMessage_CheckAndProcessMessage(SysManager_HomeAutMessage_Buffer) == Return_Ok )
+		if (HomeAutMessage_CheckAndProcessMessage(SysManager_HomeAutMessage_Buffer) == Return_Ok)
 		{
 			// Successful parsed
 			// Process
@@ -607,15 +632,15 @@ ReturnType SysManager_CheckReceivedMessage ( void )
 
 
 /**
-\brief	Processing the received HomeAutMessage (on server, received message from client)
-*/
-ReturnType SysManager_ProcessHomeAutMessage ( void )
+ * \brief	Processing the received HomeAutMessage (on server, received message from client)
+ */
+ReturnType SysManager_ProcessHomeAutMessage(void)
 {
 
 	//DebugPrint("SYSMANAGER_ReceivedAnValidHomeAutMessageAndNeedProcess = 1\r\n");
 	
 	// Is Valid message?
-	if ( HomeAutMessage_MessageInformation.isValid == 1)
+	if (HomeAutMessage_MessageInformation.isValid == 1)
 	{
 		//DebugPrint("HomeAutMessage_MessageInformation.isValid == 1\r\n");
 		#ifdef CONFIG_USE_PANEL_CENTERPANEL
@@ -798,7 +823,7 @@ ReturnType SysManager_ProcessHomeAutMessage ( void )
 			&&
 			HomeAutMessage_MessageInformation.DataType == Command_SetOutput)
 		{
-			if ( HomeAutMessage_MessageInformation.Data )
+			if (HomeAutMessage_MessageInformation.Data)
 			{
 				RELAY_1_ON();
 				DebugPrint("CenterPanel sended Command Output: relay 1 on\r\n");
@@ -831,9 +856,9 @@ ReturnType SysManager_ProcessHomeAutMessage ( void )
 
 
 /**
-\brief	Print on debug serial port
-*/
-static void DebugPrint( char *debugString )
+ * \brief	Print on debug serial port
+ */
+static void DebugPrint(char *debugString)
 {
 	if (SysManager_DebugEnableFlag == 1)
 	{
@@ -845,29 +870,29 @@ static void DebugPrint( char *debugString )
 
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
 /**
-\brief		Send device's status: Battery voltage, brightness, temperature
-*/
-ReturnType SysManager_SendStates ( void )
+ * \brief		Send device's status: Battery voltage, brightness, temperature
+ */
+ReturnType SysManager_SendStates(void)
 {
 	uint8_t myIp = DeviceStatus.myIp;
 	uint8_t serverIp = DeviceStatus.serverIp;
 	
 	// Battery
-	uint32_t battery = (uint32_t) ( DeviceStatus.myBatteryVoltage * 100);
+	uint32_t battery = (uint32_t)(DeviceStatus.myBatteryVoltage * 100);
 	HomeAutMessage_CreateAndSendHomeAutMessage(myIp,serverIp,Function_State,State_Battery,battery,1);
 	
 	vTaskDelay(1000);
 	DeviceStatus.ActualSec++;	// TODO: Sec++ átrakás máshova
 	
 	// Light
-	uint32_t light = (uint32_t) ( DeviceStatus.Lighting * 100);
+	uint32_t light = (uint32_t)(DeviceStatus.Lighting * 100);
 	HomeAutMessage_CreateAndSendHomeAutMessage(myIp,serverIp,Function_State,State_Brightness,light,1);
 
 	vTaskDelay(1000);
 	DeviceStatus.ActualSec++;	// TODO: Sec++ átrakás máshova
 	
 	// Temperature
-	int32_t temp = (uint32_t) ( DeviceStatus.extTemperature * 100);	
+	int32_t temp = (uint32_t)(DeviceStatus.extTemperature * 100);
 	HomeAutMessage_CreateAndSendHomeAutMessage(myIp,serverIp,Function_State,State_Temperature,temp,1);
 	
 	vTaskDelay(1000);

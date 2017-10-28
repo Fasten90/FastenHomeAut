@@ -100,9 +100,13 @@ Task_t TaskList[] =
 		.taskName = "LedTask",
 		.taskFunction = Task_LedBlink,
 	#ifdef LED_OLD_STYLE
-		.taskScheduleRate = 200
+		.taskScheduleRate = 200,
 	#else
-		.taskScheduleRate = 2
+		.taskScheduleRate = 2,
+	#endif
+	#ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
+		// Do not log LED task, not important and run short
+		.isDisableLogToStatistics = true,
 	#endif
 	},
 #endif
@@ -124,13 +128,13 @@ Task_t TaskList[] =
 	{
 		.taskName = "MotorTask",
 		.taskFunction = Task_Motor,
-		.taskScheduleRate = 50
+		.taskScheduleRate = 50,
 	},
 	{
 		.taskName = "MotorConnStopTimeout",
 		.taskFunction = Task_MotorConnStop,
 		.taskScheduleRate = 500,
-		.isTimeOutTask = true
+		.isTimeOutTask = true,
 	},
 #endif
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER
@@ -145,7 +149,7 @@ Task_t TaskList[] =
 		.taskName = "DbgUartCommandRecv",
 		.taskFunction = Task_ProcessDebugUartCommandReceived,
 		//.isPeriodisScheduleDisabled = true,
-		.taskScheduleRate = 50
+		.taskScheduleRate = 50,
 	},
 #endif
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
@@ -153,21 +157,21 @@ Task_t TaskList[] =
 		.taskName = "ButtonPressed",
 		.taskFunction = Task_ProcessButtonPressed,
 		.isPeriodisScheduleDisabled = true,
-		.taskScheduleRate = 10
+		.taskScheduleRate = 10,
 	},
 #endif
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
 	{
 		.taskName = "DisplayRefresh",
 		.taskFunction = Task_DisplayChangeImage,
-		.taskScheduleRate = 300
+		.taskScheduleRate = 300,
 	},
 #endif
 #ifdef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
 	{
 		.taskName = "SystemTime",
 		.taskFunction = Task_SystemTimeSecondStep,
-		.taskScheduleRate = 1000
+		.taskScheduleRate = 1000,
 	},
 #endif
 #ifdef CONFIG_MODULE_TASK_SOFTWARE_WATCHDOG_ENABLE
@@ -175,7 +179,7 @@ Task_t TaskList[] =
 		.taskName = "SwWatchDog",
 		.taskFunction = Task_SoftwareWatchDog,
 		.taskScheduleRate = 1000,
-		.isTimeOutTask = true
+		.isTimeOutTask = true,
 	},
 #endif
 #ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE

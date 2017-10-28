@@ -506,6 +506,7 @@ void SSD1306_display(void)
 	HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, RESET);
 
 	/*
+	// Blocking mode
 	for (uint16_t i = 0; i < (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8); i++)
 	{
 		SSD1306_fastSPIwrite(buffer[i]);

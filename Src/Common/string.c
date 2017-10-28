@@ -298,7 +298,8 @@ uint8_t DecimalToBinaryString(uint32_t value, char *str, uint8_t maxLength)
 	uint8_t bitIndex = 31;
 
 	// Search first '1' bit:
-	while (!(value & (1 << bitIndex)) && (bitIndex > 0))
+	// TODO: Use math function
+	while (!(value & ((uint32_t)0x01 << bitIndex)) && (bitIndex > 0))
 	{
 		bitIndex--;
 	}

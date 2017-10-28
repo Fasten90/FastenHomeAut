@@ -84,6 +84,7 @@ typedef struct
 
 #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
 	uint32_t taskRunCount;						///< How many times ran [count]
+	bool isDisableLogToStatistics;				///< Disable log to statistics
 #endif
 } Task_t;
 

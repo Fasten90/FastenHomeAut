@@ -13,39 +13,35 @@
 #define INCLUDE_H_
 
 
-#include "options.h"
-
-
-
-// Include standard types
-#include "GenericTypeDefs.h"
-
-
-/// For board defines (pins, ports)
-#include "board.h"
-
-
-
 /*------------------------------------------------------------------------------
  *									Includes
  *----------------------------------------------------------------------------*/
 
-/// Includes microcontroller family libraries
-#ifdef CONFIG_MICROCONTROLLER_STM32F4xx
-	// STM32F4 Discovery
+///< Include settings
+#include "options.h"
+
+///< Include standard types
+#include "GenericTypeDefs.h"
+
+///< For board defines (pins, ports)
+#include "board.h"
+
+
+///< Includes microcontroller family libraries
+#if defined(CONFIG_MICROCONTROLLER_STM32F4xx)
+	// STM32F4 (E.g. F4Discovery)
 	#include "stm32f4xx_hal.h"
 	#include "stm32_hal_legacy.h"	// for defines
-#endif
-
-
-#ifdef CONFIG_MICROCONTROLLER_STM32F0xx
-	// STM32F4 Discovery
+#elif defined(CONFIG_MICROCONTROLLER_STM32F0xx)
+	// STM32F0
 	#include "stm32f0xx_hal.h"
 	#include "stm32_hal_legacy.h"	// for defines
+#else
+#warning "Missed microcontroller family define / include"
 #endif
 
 
-/// FreeRTOS includes
+///< FreeRTOS includes
 #ifdef CONFIG_USE_FREERTOS
 #include "FreeRTOSConfig.h"
 #include "FreeRTOS.h"
@@ -67,19 +63,21 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 
 
-// Macro for list's element size/num
+///< Macro for list's element size/num
 #define NUM_OF(x) (sizeof(x)/sizeof(x[0]))
 
 
-// Macro for checking
+///< Macro for checking
 // Error, if condition is true
 // Ok, if condition is false
+// \note:	Only use on a function
 #define BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
 
 
 // #define assert_param(expr) ((void)0)	// incompatible redefinition ...
 
 
+///< Breakpoint
 #ifdef CONFIG_DEBUG_MODE
 #define DEBUG_BREAKPOINT()		__asm("BKPT #0\n")		// ASM: Break debugger
 #else
@@ -87,12 +85,17 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #endif
 
 
+///< Stringification
 #define STR(a)					#a
 
 
+///< Unused argument
 #define UNUSED_ARGUMENT(param)	((void)param)
 
 
+///< Assert function
+// \note	If true, it is ok
+//			If false, "error"
 #define ASSERT(__e)				((__e) ? (void)0 : Assert_Function(__FILE__, __LINE__, #__e))
 
 

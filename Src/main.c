@@ -144,11 +144,14 @@ int main(void)
 
 
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
+	// DebugUart initializing
+	// \note	Be careful, Terminal need to initializing after this
 	DebugUart_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
+	// Bluetooth module initializing
 	Bluetooth_HC05_Init();
 #endif
 
@@ -163,48 +166,18 @@ int main(void)
 	// Terminal init
 	Terminal_Init();
 
-#if defined(CONFIG_USE_FREERTOS)
-	// Terminal Task (FreeRTOS)
-	TaskHandle_t Terminal_TaskHandle = NULL;
-	//xTaskCreate(vTaskCode, "NAME", STACK_SIZE, &ucParameterToPass, tskIDLE_PRIORITY, &xHandle);
-	if (xTaskCreate( (pdTASK_CODE)Terminal_CheckCommand, "TerminalTask", TERMINAL_TASK_STACK_SIZE, 0,
-			TERMINAL_TASK_PRIORITY, &Terminal_TaskHandle) != pdPASS)
-	{
-		Error_Handler();
-	}
-#elif !defined(CONFIG_MODULE_TASKHANDLER_ENABLE)
-	// Terminal infinite loop, if not used TaskHandler
+#if !defined(CONFIG_MODULE_TASKHANDLER_ENABLE) && !defined(CONFIG_USE_FREERTOS)
+	// Terminal infinite loop, if not used TaskHandler and FreeRTOS
 	Terminal_CheckCommand();
 #endif
-#endif	// #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
+#endif	// #ifdef CONFIG_MODULE_TERMINAL_ENABLE
 
 
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 	// ESP8266
 	ESP8266_Init();
+#endif
 
-#ifdef CONFIG_USE_FREERTOS
-	// ESP8266 Task initialization
-	TaskHandle_t ESP8266_TaskHandle = NULL;
-	if (xTaskCreate((pdTASK_CODE)ESP8266_Task, "ESP8266Task", ESP8266_TASK_STACK_SIZE, 0,
-					ESP8266_TASK_PRIORITY, &ESP8266_TaskHandle) != pdPASS)
-	{
-		Error_Handler();
-	}
-#endif
-#endif
-	
-	
-#if defined(CONFIG_MODULE_SYSMANAGER_ENABLE) && defined(CONFIG_USE_FREERTOS)
-	// SysManager
-	TaskHandle_t SYSMANAGER_TaskHandle = NULL;
-	if (xTaskCreate((pdTASK_CODE)SYSMANAGER_Task, "SysManagerTask", SYSMANAGER_TASK_STACK_SIZE, 0,
-					SYSMANAGER_TASK_PRIORITY, &SYSMANAGER_TaskHandle) != pdPASS)
-	{
-		Error_Handler();
-	}
-#endif
-	
 
 #ifdef CONFIG_MODULE_RTC_ENABLE
 	// RTC
@@ -247,7 +220,7 @@ int main(void)
 #endif
 
 
-	// !! Never reach this code
+	// !! Never reach this code !!
 	Error_Handler();
 
 }	// End of main

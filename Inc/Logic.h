@@ -91,6 +91,8 @@ typedef enum
 	Menu_LargeClock,
 #endif
 
+	// XXX: Syncronize with Logic_MenuList
+
 	// Count
 	Menu_Count
 } DisplayMenu_t;
@@ -108,18 +110,6 @@ typedef enum
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
-
-#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
-#define DisplayInput_LetterPosition_MaxLimit	11
-
-extern uint8_t DisplayInput_LetterPosition;
-extern char DisplayInput_ActualRealString[];
-#endif
-
-
-#ifdef CONFIG_FUNCTION_CHARGER
-extern bool Logic_BatteryIsCharging;
-#endif
 
 
 

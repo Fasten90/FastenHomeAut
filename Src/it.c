@@ -28,15 +28,17 @@
 #include "CommonADC.h"
 #endif
 
-// TODO: Delete these, if not need
-#ifdef CONFIG_USE_PANEL_HOMEAUTNODESMALL
+///< Includes microcontroller family libraries
+#if defined(CONFIG_MICROCONTROLLER_STM32F4xx)
+	#include "stm32f4xx_hal.h"
+	#include "stm32f4xx.h"
+	#include "stm32f4xx_it.h"
+#elif defined(CONFIG_MICROCONTROLLER_STM32F0xx)
 	#include "stm32f0xx_hal.h"
 	#include "stm32f0xx.h"
 	#include "stm32f0xx_it.h"
-#endif
-#ifdef CONFIG_USE_PANEL_HOMEAUTNODEMEDIUM
-	#include "stm32l1xx_hal.h"
-	#include "stm32l1xx_it.h"
+#else
+#warning "Missed microcontroller family define / include"
 #endif
 
 

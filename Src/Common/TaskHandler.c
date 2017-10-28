@@ -33,7 +33,6 @@
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 
 
-
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
@@ -45,7 +44,6 @@
  *----------------------------------------------------------------------------*/
 
 #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
-#define TASKHANDLER_STATISTICS_LIMIT		(100)
 
 typedef struct
 {
@@ -179,6 +177,9 @@ static void TaskHandler_IncrementTicks(TaskTick_t elapsedTick)
 {
 	TaskID_t i;
 
+	if (elapsedTick == 0)
+		return;
+
 	for (i = 0; i < TasksNum; i++)
 	{
 		TaskList[i].tick += elapsedTick;
@@ -199,6 +200,9 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 	{
 		TaskList[taskID].isDisabled = true;
 	}
+
+	// Clear request
+	TaskList[taskID].isRequestScheduling = false;
 
 #ifdef CONFIG_DEBUG_SW_WATCHDOG_ENABLE
 	TaskHandler_ActualTask = (const char *)TaskList[taskID].taskName;
@@ -222,17 +226,12 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 #endif
 
 	// Clear tick
-	TaskList[taskID].isRequestScheduling = false;
 	// TODO: Tick clearing or subtraction?
 	TaskList[taskID].tick = 0;
 
 #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
 	TaskList[taskID].taskRunCount++;
 
-#ifdef CONFIG_MODULE_LED_ENABLE
-	if (taskID == Task_Led)
-		return;
-#endif
 	uint32_t runTime = HAL_GetTick() - startTime;
 	TaskHandler_StatisticsRanTaskTicks[TaskHandler_StatisticsIndex].startTick = startTime;
 	TaskHandler_StatisticsRanTaskTicks[TaskHandler_StatisticsIndex].runTime = runTime;
