@@ -949,6 +949,19 @@ uint8_t StringLength(const char *str)
  */
 uint8_t StrCmp(const char *str1, const char *str2)
 {
+	// Check parameters
+	if (str1 == NULL && str2 == NULL)
+	{
+		// Equal, because both of string are NULL
+		return 0;
+	}
+	else if (str1 == NULL || str2 == NULL)
+	{
+		// One of parameter is NULL... not equal
+		return 1;
+	}
+
+	// Check characters
 	while (*str1)
 	{
 		if (*str1 !=  *str2)
@@ -1188,6 +1201,7 @@ uint8_t StrAppend(char *dest, const char *str)
 
 /**
  * \brief	Trim string (cut space and others at end)
+ * \note	Be careful, only call with changeable string!
  */
 void StrTrim(char *str)
 {
@@ -1218,18 +1232,57 @@ void StrTrim(char *str)
 
 
 /**
+ * \brief	Find character in string
+ * \param	*str	scanned string
+ * 			*findCharacter	which character should find
+ * \return	'findCharacter' position in 'str' (pointer)
+ * 			NULL	if not found
+ */
+char * STRING_FindCharacter(const char *str, const char findCharacter)
+{
+	uint8_t i;
+	uint8_t length = StringLength(str);
+
+	// Check parameter
+	if (str == NULL || length == 0)
+	{
+		return NULL;
+	}
+
+	// Search first equal character
+	for (i = 0; i < length; i++)
+	{
+		if (str[i] == findCharacter)
+		{
+			// Equal
+			return (char *)&str[i];
+		}
+	}
+
+	return NULL;
+}
+
+
+
+/**
  * \brief	Find small string in big string
  * 			like strstr()
  * \param	*str	scanned string
  * 			*fincString	which find
- * \return	'findString' position in 'str'
- * 			-1	if not found
+ * \return	'findString' position in 'str' (pointer)
+ * 			NULL	if not found
  */
-int16_t STRING_FindString(const char *str, const char *findString)
+char * STRING_FindString(const char *str, const char *findString)
 {
 	uint8_t i;
 	uint8_t length = StringLength(str);
 	uint8_t findStringLength = StringLength(findString);
+
+	// Check parameters
+	if ((str == NULL) || (findString == NULL) || (length == 0) || (findStringLength == 0))
+	{
+		return NULL;
+	}
 
 	// Search first equal character
 	for (i = 0; i < length; i++)
@@ -1239,12 +1292,12 @@ int16_t STRING_FindString(const char *str, const char *findString)
 			// First character is equal
 			if (!StrCmpWithLength(findString, &str[i], findStringLength))
 			{
-				return i;
+				return (char *)&str[i];
 			}
 		}
 	}
 
-	return -1;
+	return NULL;
 }
 
 
@@ -1252,7 +1305,8 @@ int16_t STRING_FindString(const char *str, const char *findString)
 /**
  * \brief	Separators
  * 			like strtok()
- * 			NOTE: Be careful, pointers to original (source) string
+ * \note	Be careful, pointers to original (source) string
+ * 			source string need to be changeable!
  */
 uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint8_t parameterMaxCount)
 {
@@ -1407,12 +1461,14 @@ uint8_t string_printf(char *str, const char *format, va_list ap)
 			switch (*p)
 			{
 				case 'd':
+					// signed (int)
 					ival = va_arg(ap, int);	// Decimal = signed int (~int32_t)
 					string += SignedDecimalToStringFill(ival, string,
 							paramNum2, fillCharacter);
 					break;
 
 				case 'u':
+					// unsigned (int)
 					uival = va_arg(ap, int);// Uint = Unsigned int (~uint32_t)
 					string += UnsignedDecimalToStringFill(uival, string,
 							paramNum2, fillCharacter);
@@ -1421,7 +1477,7 @@ uint8_t string_printf(char *str, const char *format, va_list ap)
 					// TODO: Create 'x' and 'X' to different
 				case 'x':
 				case 'X':
-					// Hex - parameterized byte num
+					// %x - Hex - parameterized byte num
 					uival = va_arg(ap, unsigned int);
 					if (paramHasLength)
 					{
@@ -1432,8 +1488,7 @@ uint8_t string_printf(char *str, const char *format, va_list ap)
 						string += DecimalToHexaString(uival, string, 8);
 					}
 					break;
-#if 0
-					// TODO: Delete w, h, b if not need
+#if STRING_HEXADECIMAL_FORMATS
 				case 'w':
 					// Hex // 32 bits	// 8 hex	// 4 byte
 					uival = va_arg(ap, unsigned int);
@@ -1451,15 +1506,16 @@ uint8_t string_printf(char *str, const char *format, va_list ap)
 					ival = va_arg(ap, int);
 					string += DecimalToHexaString(ival, string, 2);
 					break;
-#endif
+#else
 				case 'b':
 					// Binary print (from uint32_t)
 					uival = va_arg(ap,  unsigned int);
 					string += DecimalToBinaryString(uival, string, 33);
 					break;
-
+#endif
 				case 'c':
-					cval = va_arg(ap, int);					// Char
+					// %c - char
+					cval = va_arg(ap, int);						// Char
 					if (paramHasLength)
 					{
 						// Copy more character
@@ -1475,7 +1531,8 @@ uint8_t string_printf(char *str, const char *format, va_list ap)
 					break;
 
 				case 'f':
-					flval = va_arg(ap, double);				// Double / Float
+					// %f - float
+					flval = va_arg(ap, double);					// Double / Float
 					if (paramHasLength)
 					{
 						string += FloatToString(flval, string, paramNum1, paramNum2);
@@ -1487,7 +1544,8 @@ uint8_t string_printf(char *str, const char *format, va_list ap)
 					break;
 
 				case 's':
-					sval = va_arg(ap, char*);
+					// %s - string
+					sval = va_arg(ap, char*);					// String
 					if (paramHasLength)
 					{
 						// String copy with length
@@ -1544,11 +1602,12 @@ void STRING_UnitTest(void)
 	char buffer[30];
 	uint8_t value8;
 	bool result;
-	int16_t ivalue16;
 	uint32_t value32;
 	int32_t ivalue32;
 	float fvalue;
 	char *splitted[10];
+	char *pString;
+
 
 	// Start of unittest
 	UnitTest_Start("String", __FILE__);
@@ -1813,11 +1872,49 @@ void STRING_UnitTest(void)
 	UNITTEST_ASSERT(!StrCmp("End without space.", buffer), "StrTrim error");
 
 
+	// STRING_FindCharacter
+	StrCpy(buffer, "longtexttofinding");
+	// Valid finding
+	pString = STRING_FindCharacter(buffer, 't');
+	UNITTEST_ASSERT(pString == buffer+4, "FindCharacter wrong find error");
+	pString = STRING_FindCharacter(buffer, 'l');
+	UNITTEST_ASSERT(pString == buffer, "FindCharacter wrong find error");
+	// Invalid finding
+	pString = STRING_FindCharacter(buffer, 'z');
+	UNITTEST_ASSERT(pString == NULL, "FindCharacter not find error error");
+	// 0 length string
+	pString = STRING_FindCharacter("", 'z');
+	UNITTEST_ASSERT(pString == NULL, "FindCharacter 0 length error");
+	// Null pointer
+	pString = STRING_FindCharacter(NULL, 'z');
+	UNITTEST_ASSERT(pString == NULL, "FindCharacter null pointererror");
+	// Unchangeable string
+	UNITTEST_ASSERT(!StrCmp(buffer, "longtexttofinding"), "FindCharacter changed original string");
+
+
 	// STRING_FindString()
-	ivalue16 = STRING_FindString("longtexttofinding","text");
-	UNITTEST_ASSERT(ivalue16 == 4, "FindString error");
-	ivalue16 = STRING_FindString("longtexttofinding","wrongtext");
-	UNITTEST_ASSERT(ivalue16 == -1, "FindString error");
+	StrCpy(buffer, "longtexttofinding");
+	// Valid finding
+	pString = STRING_FindString(buffer, "text");
+	UNITTEST_ASSERT(pString == buffer+4, "FindString error");
+	// There is no
+	pString = STRING_FindString(buffer, "wrongtext");
+	UNITTEST_ASSERT(pString == NULL, "FindString error");
+	// Overflow
+	pString = STRING_FindString(buffer, "findingoverflow");
+	UNITTEST_ASSERT(pString == NULL, "FindString overflow error");
+	// 0 length string
+	pString = STRING_FindString("", "findingoverflow");
+	UNITTEST_ASSERT(pString == NULL, "FindString 0 length error");
+	pString = STRING_FindString("longtexttofinding", "");
+	UNITTEST_ASSERT(pString == NULL, "FindString 0 length error");
+	// Test with NULL pointer
+	pString = STRING_FindString("longtexttofinding", NULL);
+	UNITTEST_ASSERT(pString == NULL, "FindString null pointer error");
+	pString = STRING_FindString(NULL, "findingoverflow");
+	UNITTEST_ASSERT(pString == NULL, "FindString null pointer error");
+	// Unchangeable string
+	UNITTEST_ASSERT(!StrCmp(buffer, "longtexttofinding"), "FindString changed original string");
 
 
 	// STRING_Splitter()

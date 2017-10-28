@@ -36,7 +36,9 @@
 ///< Task's enums for Task schedule requiring
 typedef enum
 {
+#ifdef CONFIG_MODULE_LED_ENABLE
 	Task_Led,
+#endif
 #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
 	Task_WdtClr,
 #endif

@@ -229,6 +229,10 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
 	TaskList[taskID].taskRunCount++;
 
+#ifdef CONFIG_MODULE_LED_ENABLE
+	if (taskID == Task_Led)
+		return;
+#endif
 	uint32_t runTime = HAL_GetTick() - startTime;
 	TaskHandler_StatisticsRanTaskTicks[TaskHandler_StatisticsIndex].startTick = startTime;
 	TaskHandler_StatisticsRanTaskTicks[TaskHandler_StatisticsIndex].runTime = runTime;

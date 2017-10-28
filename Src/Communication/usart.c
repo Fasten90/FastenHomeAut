@@ -324,7 +324,6 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
   */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 {
-
 	#ifdef CONFIG_USE_FREERTOS
 	taskDISABLE_INTERRUPTS();
 	#endif
@@ -400,11 +399,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
  */
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
-
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 	if (huart == &Debug_UartHandle)
 	{
-
 		// TODO: sometime receive ORE error.
 
 		UART_ResetStatus(&Debug_UartHandle);
@@ -433,7 +430,6 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 	#endif
 	if (huart == &ESP8266_UartHandle)
 	{
-
 		// TODO: Sad, but sometime receive errors
 		UART_ResetStatus(&ESP8266_UartHandle);
 
@@ -465,8 +461,6 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 		Error_Handler();
 	}
 #endif
-	
-	return;
 }
 
 
@@ -477,10 +471,9 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
  */
 void UART_ResetStatus(UART_HandleTypeDef *huart)
 {
-
 	// Delete previous receive:
 	__HAL_UART_FLUSH_DRREGISTER(huart);
-	__HAL_UART_CLEAR_FLAG(huart, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
+	__HAL_UART_CLEAR_IT(huart, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
 
 	huart->ErrorCode = HAL_UART_ERROR_NONE;
 	huart->gState = HAL_UART_STATE_READY;
@@ -489,5 +482,4 @@ void UART_ResetStatus(UART_HandleTypeDef *huart)
 	huart->TxXferSize = 0;
 	huart->RxXferCount = 0;
 	huart->RxXferSize = 0;
-
 }

@@ -399,27 +399,27 @@ static bool ESP8266_WaitForSend(uint16_t timeoutMilliSecond)
 static bool ESP8266_ConvertIpString(char *message)
 {
 	bool isOk = false;
-	int16_t pos1;
+	char * pos1;
 #if CONFIG_ESP8266_IS_WIFI_HOST == 1
-	int16_t pos2;
+	char * pos2;
 #endif
 
 	// String come like "192.168.4.1\r\n192.168.1.34\r\n\r\nOK\r\n"
 	pos1 = STRING_FindString(message, "\r\n");
-	if (pos1 >= 0)
+	if (pos1 != NULL)
 	{
 #if CONFIG_ESP8266_IS_WIFI_HOST == 1
-		message[pos1] = '\0';
+		*pos1 = '\0';
 		pos1 += 2;	// Skip "\r\n"
-		pos2 = STRING_FindString(&message[pos1], "\r\n");
-		if (pos2 >= 0)
+		pos2 = STRING_FindString(pos1, "\r\n");
+		if (pos2 != NULL 0)
 		{
-			message[pos1+pos2] = '\0';
+			*pos2 = '\0';
 			isOk = true;
 		}
 		// else: there is no ending "\r\n"
 #else
-		message[pos1] = '\0';
+		*pos1 = '\0';
 		isOk = true;
 #endif
 	}
@@ -2649,7 +2649,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			// Has got finish "\r\n"?
 			if (STRING_FindString(
 					(const char *)&receiveBuffer[sizeof("\r\n+IPD,")],
-					"\r\n") >= 0)
+					"\r\n") != NULL)
 			{
 				// Received good message, with finish "\r\n"
 
@@ -2658,24 +2658,25 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 				// Check next parameter:
 				uint8_t length = sizeof("\r\n+IPD,0,") - 1;
 				// TODO: Use better function
-				int16_t commIndex = STRING_FindString((const char *)&receiveBuffer[length], ":");
-				if (commIndex > -1)
+				char * commIndex = STRING_FindString((const char *)&receiveBuffer[length], ":");
+				if (commIndex != NULL)
 				{
 					// Has ':'
 					// TODO: scanf
 					uint32_t messageLength;
-					receiveBuffer[length + commIndex] = '\0';
+					*commIndex = '\0';
 					if (StringToUnsignedDecimalNum((const char *)&receiveBuffer[length], &messageLength))
 					{
+#warning "Modified these codes because STRING_FindString was changed. Should correct these!"
 						if (messageLength <= ESP8266_TCP_MESSAGE_MAX_LENGTH)
 						{
 							// Set position after ':'
-							length += commIndex + 1;
+							commIndex += 1;
 
 							// We have message source:
 							// Save to global variable
 							StrCpyFixLength(ESP8266_ReceivedTcpMessage,
-									(const char *)&receiveBuffer[length],
+									(const char *)commIndex,
 									messageLength);
 							ESP8266_ReceivedTcpMessage[messageLength] = '\0';
 

@@ -211,7 +211,7 @@
 	#define CONFIG_MODULE_TASKHANDLER_ENABLE
 
 	#define CONFIG_MODULE_COMMANDHANDLER_ENABLE
-	#define CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
+	//#define CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
 
 	#define CONFIG_MODULE_LED_ENABLE
 
@@ -237,24 +237,27 @@
 #endif
 
 
+#if defined(CONFIG_MODULE_DEBUGUSART_ENABLE) && !defined(CONFIG_MODULE_COMMANDHANDLER_ENABLE)
+#warning "DebugUart cannot used without CommandHandler, because received UART messages will unprocessed"
+#endif
+
+
 #if defined(CONFIG_MODULE_TASKHANDLER_ENABLE) && defined(CONFIG_USE_FREERTOS)
 #warning "TaskHandler and FreeRTOS are enabled, but they exclude each other"
 #endif
 
 
 #ifdef CONFIG_USE_FREERTOS
+	// FreeRTOS task defines
 
-// FreeRTOS task defines
+	#define TERMINAL_TASK_STACK_SIZE		(configMINIMAL_STACK_SIZE * 10)
+	#define TERMINAL_TASK_PRIORITY			(tskIDLE_PRIORITY + 3UL)
 
-#define TERMINAL_TASK_STACK_SIZE		(configMINIMAL_STACK_SIZE * 10)
-#define TERMINAL_TASK_PRIORITY			(tskIDLE_PRIORITY + 3UL)
+	#define ESP8266_TASK_STACK_SIZE			(configMINIMAL_STACK_SIZE * 3
+	#define ESP8266_TASK_PRIORITY			(tskIDLE_PRIORITY + 3UL)
 
-#define ESP8266_TASK_STACK_SIZE			(configMINIMAL_STACK_SIZE * 3
-#define ESP8266_TASK_PRIORITY			(tskIDLE_PRIORITY + 3UL)
-
-#define SYSMANAGER_TASK_STACK_SIZE		(configMINIMAL_STACK_SIZE * 2)
-#define SYSMANAGER_TASK_PRIORITY		(tskIDLE_PRIORITY + 3UL)
-
+	#define SYSMANAGER_TASK_STACK_SIZE		(configMINIMAL_STACK_SIZE * 2)
+	#define SYSMANAGER_TASK_PRIORITY		(tskIDLE_PRIORITY + 3UL)
 #endif
 
 
@@ -298,9 +301,9 @@
  *----------------------------------------------------------------------------*/
 
 ///< Unit tests
-//#define CONFIG_MODULE_UNITTEST_ENABLE
+#define CONFIG_MODULE_UNITTEST_ENABLE
 #ifdef CONFIG_MODULE_UNITTEST_ENABLE
-	//#define MODULE_STRING_UNITTEST_ENABLE
+	#define MODULE_STRING_UNITTEST_ENABLE
 	//#define MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
 	//#define MODULE_DATETIME_UNITTEST_ENABLE
 	//#define MODULE_COMMANDHANDLER_UNITTEST_ENABLE
@@ -311,7 +314,7 @@
 	//#define MODULE_EVENTLOG_UNITTEST_ENABLE
 	//#define MODULE_EVENTHANDLER_UNITTEST_ENABLE
 	//#define MODULE_CALC_UNITTEST_ENABLE
-	#define MODULE_MEM_UNITTEST_ENABLE
+	//#define MODULE_MEM_UNITTEST_ENABLE
 	//#define MODULE_LINKEDLIST_UNITTEST_ENABLE
 	//#define MODULE_CONVERTTABLE_UNITTEST_ENABLE
 	//#define MODULE_SECUREDDATATYPES_UNITTEST_ENABLE
@@ -336,10 +339,8 @@
 	#define CONFIG_TERMINAL_USE_ZOC
 	//#define CONFIG_TERMINAL_USE_PUTTY
 
-
 	///< Wait password and until not received good password, commands are not evaluated
 	//#define CONFIG_TERMINAL_GET_PASSWORD_ENABLE
-
 
 	#define CONFIG_TERMINAL_PROMT_ENABLE
 
@@ -351,7 +352,6 @@
 		// Turn off, if has small memory, now it need 1.5k RAM
 		//#define CONFIG_TERMINAL_HISTORY_ENABLE
 	#endif
-
 #endif	// #ifdef CONFIG_MODULE_TERMINAL_ENABLE
 
 
@@ -361,19 +361,24 @@
  *----------------------------------------------------------------------------*/
 
 
-// CommandHandler settings
+///< CommandHandler settings
+#define CONFIG_MODULE_COMMANDHANDLER_ENABLE
 #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
 	#define CONFIG_COMMANDHANDLER_NOTIFY_NOT_DEBUG_COMMAND
 #endif
 
 
-// GlobalVarHandler settings
-#define CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
-//#define CONFIG_GLOBALVARHANDLER_TRACE_RAM_BUFFER
-#define CONFIG_GLOBALVARHANDLER_CHECK_ENABLE
+///< GlobalVarHandler settings
+//#define CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
+#ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
+	#define CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
+	//#define CONFIG_GLOBALVARHANDLER_TRACE_RAM_BUFFER
+	#define CONFIG_GLOBALVARHANDLER_CHECK_ENABLE
+#endif
 
 
-// ESP8266 settings
+///< ESP8266 settings
+//#define CONFIG_MODULE_ESP8266_ENABLE
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 
 	// ESP8266 Debug mode:
@@ -443,20 +448,23 @@
 #endif
 
 
-// EventHandler + EventLog settings
+///< EventHandler settings
 #define CONFIG_MODULE_EVENTHANDLER_ENABLE
 #ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
 	//#define CONFIG_EVENTHANDLER_REQUIRED_TASK_MODE
 #endif
-#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
 
+
+///< EventLog settings
+//#define CONFIG_MODULE_EVENTLOG_ENABLE
+#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
 	//#define CONFIG_EVENTLOG_TASKHANDLER_LOG_ENABLE
 	#define CONFIG_EVENTLOG_DISPLAY_LOG_ENABLE
-
 #endif
 
 
-// Display settings
+///< Display settings
+//#define CONFIG_MODULE_DISPLAY_ENABLE
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
 	#define CONFIG_DISPLAY_FONT8X5_ENABLE
 	#define CONFIG_DISPLAY_FONT12X8_ENABLE
@@ -468,7 +476,8 @@
 #endif
 
 
-// Button settings
+///< Button settings
+//#define CONFIG_MODULE_BUTTON_ENABLE
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
 	#define CONFIG_BUTTON_DEBUG_ENABLE
 	#define CONFIG_MODULE_BUTTON_LONG_PRESS
@@ -477,22 +486,26 @@
 #endif
 
 
-// TaskHandler settings
+///< TaskHandler settings
+//#define CONFIG_MODULE_TASKHANDLER_ENABLE
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 
 	///< Debug modes - Print debug message
 	//#define CONFIG_TASKHANDLER_DEBUG_ENABLE
 
-	// Create CPU usage statistics:
+	///< Create CPU usage statistics:
 	#define CONFIG_MODULE_TASKHANDLER_STATISTICS
+
+	///< Software Watchdog (task)
 	//#define CONFIG_MODULE_TASK_SOFTWARE_WATCHDOG_ENABLE
 
-	// System time
+	///< System time task
 	#define CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
 #endif
 
 
 // LED settings
+//#define CONFIG_MODULE_LED_ENABLE
 #ifdef CONFIG_MODULE_LED_ENABLE
 	//#define LED_OLD_STYLE
 	#define LED_PWM_STYLE

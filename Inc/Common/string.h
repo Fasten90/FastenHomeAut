@@ -49,7 +49,6 @@
 
 
 // char * strstr ( const char *, const char * )
-// TODO: Be careful, return value types not equal (uint vs. char *)
 #define strstr(str1, str2)			STRING_FindString(str1, str2)
 
 
@@ -126,7 +125,8 @@ uint8_t StrAppend(char *dest, const char *src);
 
 // Find & Separators
 void StrTrim(char *str);
-int16_t STRING_FindString(const char *str, const char *findString);
+char * STRING_FindCharacter(const char *str, const char findCharacter);
+char * STRING_FindString(const char *str, const char *findString);
 uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint8_t parameterMaxCount);
 
 // Send functions
