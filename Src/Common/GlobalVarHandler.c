@@ -125,7 +125,7 @@ static void GlobalVarHandler_SetTrace(VarID_t commandID, const char * param);
  */
 void GlobalVarHandler_CheckCommandStructAreValid(void)
 {
-	//#error "Syncronize 'Type_Count' with 'GlobalVarTypesNames'"
+	//#error "Synhcronize 'Type_Count' with 'GlobalVarTypesNames'"
 	BUILD_BUG_ON(NUM_OF(GlobalVarTypesNames) != Type_Count);
 
 	VarID_t i;
@@ -252,8 +252,8 @@ void GlobalVarHandler_ProcessCommand(const char *commandName, const char *param,
 
 /**
  * \brief	Search global var name
- * \return	0..., if found, it is commandID
- * 			-1, if no founded
+ * \retval	true, if found, it is commandID
+ * 			false, if not found
  */
 static bool GlobalVarHandler_SearchVariableName(const char *commandName, VarID_t *commandID)
 {
@@ -1023,10 +1023,9 @@ static ProcessResult_t GlobalVarHandler_SetString(VarID_t commandID, const char 
 	{
 		// Correct length
 		char *string = (char *)GlobalVarList[commandID].varPointer;
+
 		// Copy parameter
 		StrCpyMax(string, param, stringLength);
-
-		StrCpyMax(string, param, stringLength);			// Copy parameter
 
 		result = Process_Ok_SetSuccessful_SendOk;
 	}

@@ -1011,15 +1011,6 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	//uprintf("-\\_(\"))_/-");
 
 
-	/*
-	uprintf("\xB0" "\xB1" "\xB2");
-	uint8_t i;
-	for (i = 128; i < 255; i++)
-	{
-		uprintf("%c ", i);
-	}*/
-
-
 
 	/**
 	 * 		End of Test codes

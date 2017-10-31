@@ -61,6 +61,11 @@ typedef enum
 } EventType_t;
 
 
+#ifndef CONFIG_MODULE_TASKHANDLER_ENABLE
+typedef uint8_t TaskID_t;
+#endif
+
+
 
 /*------------------------------------------------------------------------------
  *  Global variables
