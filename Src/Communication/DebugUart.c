@@ -25,6 +25,11 @@
 #include "CommandHandler.h"
 #include "DebugUart.h"
 
+#ifdef CONFIG_USE_FREERTOS
+#include "FreeRTOS.h"
+#include "semphr.h"
+#endif
+
 
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 
@@ -85,8 +90,8 @@ void DebugUart_Init(void)
 {
 	CircularBuffer_Init(&DebugUart_RxBuffStruct);
 
-	// UART
-	USART_Init(&Debug_UartHandle);
+	// Init UART
+	UART_Init(&Debug_UartHandle);
 
 #ifdef CONFIG_USE_FREERTOS
 	DebugUart_Rx_Semaphore = xSemaphoreCreateBinary();

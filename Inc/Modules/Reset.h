@@ -50,7 +50,7 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-///< Reset reason (Why reseted
+///< Reset reason (Why reseted)
 typedef enum
 {
 	ResetReason_Unknown = 0x00,	///< Unknown

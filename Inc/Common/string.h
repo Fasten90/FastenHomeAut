@@ -29,7 +29,7 @@
  *----------------------------------------------------------------------------*/
 
 // size_t strlen ( const char * str );
-#define strlen(_str)					StringLength(str_)
+#define strlen(_str)					StringLength(_str)
 
 
 // int strncmp ( const char * str1, const char * str2, size_t num );
@@ -40,9 +40,15 @@
 #define strncmp(_str1, _str2, _num)		StrCmpWithLength(_str1, _str2, _num)
 
 
+#define strcmp(_str1, _str2)			StrCmp(_str1, _str2)
+
+
 // char * strncpy ( char * destination, const char * source, size_t num );
 // uint8_t StrCpyMax(char *dest, const char *str, uint8_t maxLength)
 #define strncpy(_dest, _src, _num)		StrCpyMax(_dest, _src, _num)
+
+
+#define strcpy(_dest, _src)				StrCpy(_dest, _src)
 
 
 #define printf(...)						uprintf(__VA_ARGS__)

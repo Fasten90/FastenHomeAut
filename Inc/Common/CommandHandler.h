@@ -89,12 +89,6 @@ typedef struct
 extern volatile CommProtocol_t CommandHandler_CommandSource;
 
 
-#ifdef CONFIG_USE_FREERTOS
-extern xSemaphoreHandle DEBUG_USART_Rx_Semaphore;
-extern xSemaphoreHandle DEBUG_USART_Tx_Semaphore;
-#endif
-
-
 
 /*------------------------------------------------------------------------------
  *  Global function declarations

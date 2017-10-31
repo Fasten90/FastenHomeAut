@@ -19,7 +19,7 @@
 #include "GlobalVarHandler.h"
 #include "GlobalVariables.h"
 #include "CommandHandler.h"
-#include <Calc.h>
+#include "Calc.h"
 
 #ifdef MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
 	#include "UnitTest.h"
@@ -76,11 +76,11 @@ uint32_t GlobarVarHandler_TemporaryValue = 0;
 #ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
 static uint32_t GlobalVarHandler_TraceVarEnabled = 0;
 
-#	ifdef CONFIG_GLOBALVARHANDLER_TRACE_RAM_BUFFER
-#		define GLOBALVARHANDLER_TRACE_BUFFER_SIZE 		(100U)
+	#ifdef CONFIG_GLOBALVARHANDLER_TRACE_RAM_BUFFER
+		#define GLOBALVARHANDLER_TRACE_BUFFER_SIZE 		(100U)
 static GlobalVar_TraceLogRecord_t GlobalVarHandler_TraceRamBuffer[GLOBALVARHANDLER_TRACE_BUFFER_SIZE] = { 0 };
 static uint8_t GlobalVarHandler_TraceRam_BufferCnt = 0;
-#	endif
+	#endif
 #endif
 
 

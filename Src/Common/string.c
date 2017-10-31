@@ -111,7 +111,8 @@ uint8_t UnsignedDecimalToString(uint32_t value, char *str)
 	}
 
 	// Last digit
-	str[length++] = (value+ '0');
+	str[length] = (value + '0');
+	length++;
 
 	// End character
 	str[length] = '\0';
@@ -722,6 +723,7 @@ bool StringHexToNum(const char *str, uint32_t *hexValue)
 uint8_t DecimalCharToNum(char c)
 {
 	uint8_t value = 0;
+
 	if ((c >= '0') && (c <= '9'))
 	{
 		value = (c - '0');
@@ -1144,7 +1146,7 @@ uint8_t StrCpyMax(char *dest, const char *str, uint8_t maxLength)
 	if (length >= maxLength)
 	{
 		// Too long, only can copy "length-1" characters + '\0'
-		length = maxLength-1;
+		length = maxLength - 1;
 	}
 
 	// Copy characters

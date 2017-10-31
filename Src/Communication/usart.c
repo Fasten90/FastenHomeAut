@@ -58,7 +58,7 @@
 /**
  * \brief	Initialize USART peripheral
  */
-void USART_Init(UART_HandleTypeDef *UartHandle)
+void UART_Init(UART_HandleTypeDef *UartHandle)
 {
 	
 	// HW init, Port init, etc...

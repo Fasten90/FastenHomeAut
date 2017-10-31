@@ -44,7 +44,7 @@
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void USART_Init(UART_HandleTypeDef *UartHandle);
+void UART_Init(UART_HandleTypeDef *UartHandle);
 void UART_ResetStatus(UART_HandleTypeDef *huart);
 
 

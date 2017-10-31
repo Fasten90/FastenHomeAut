@@ -19,10 +19,14 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
-// bool typedef
+// bool type
 #include <stdbool.h>
-#include "include.h"
 
+// uint32_t type
+#include <stdint.h>
+
+// size_t, NULL
+#include <stddef.h>
 
 
 

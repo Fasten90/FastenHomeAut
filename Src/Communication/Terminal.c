@@ -450,7 +450,8 @@ static void Terminal_ProcessReceivedCharacter(void)
 					Terminal_CommandReadable = true;
 					Terminal_CommandActual[Terminal_CommandActualLength] = '\0';
 					Terminal_CommandReceivedEvent = true;
-					return;
+
+					return;		// TODO: Not need, because after if-else if the code will exit
 				}
 				else if (receivedChar == TERMINAL_KEY_BACKSPACE)
 				{
@@ -680,7 +681,6 @@ void Terminal_CommandBackspace(void)
 
 				// Delete & Resend
 				Terminal_CommandResendLine(true);
-
 			}
 			else
 			{

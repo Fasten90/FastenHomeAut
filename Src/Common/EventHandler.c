@@ -62,6 +62,7 @@ void EventHandler_Init(void)
 	// Check EventList size
 	BUILD_BUG_ON(Event_Count != EventsNum);
 
+#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 	// Check required task ID-s
 	uint8_t i;
 	for (i = 0; i < TasksNum; i++)
@@ -71,6 +72,7 @@ void EventHandler_Init(void)
 			ASSERT(EventList[i].requiredTaskRunId < TasksNum);
 		}
 	}
+#endif
 
 	memset(Events, 0, sizeof(Events));			// Fill with default value
 
@@ -101,11 +103,13 @@ void EventHandler_GenerateEvent(EventName_t eventName, EventData_t eventData, Ta
 	Events[eventName].eventRaised = 0xFFFFFFFF;								// Fill all bits
 #endif
 
+#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 	// Check, need require a task run?
 	if (EventList[eventName].isHasRequiredTask)
 	{
 		TaskHandler_RequestTaskScheduling(EventList[eventName].requiredTaskRunId);
 	}
+#endif
 
 	// Log event, if need
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
