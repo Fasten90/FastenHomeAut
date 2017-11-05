@@ -15,7 +15,11 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
-#include "include.h"
+#include "options.h"
+#include "GenericTypeDefs.h"
+
+#ifdef CONFIG_FUNCTION_GAME_SNAKE
+
 #include "Display.h"
 #include "Display_SSD1306.h"
 #include "DebugList.h"
@@ -25,8 +29,10 @@
 #include "Snake.h"
 
 
-#ifdef CONFIG_FUNCTION_GAME_SNAKE
 
+/*------------------------------------------------------------------------------
+ *  Type definitions
+ *----------------------------------------------------------------------------*/
 
 typedef struct
 {
@@ -52,8 +58,7 @@ typedef struct
 #define PRINT(...)				Debug_Print(Debug_GameSnake, __VA_ARGS__)
 
 
-uint8_t Snake_Matrix[SNAKE_SIZE_X][SNAKE_SIZE_Y];
-
+uint8_t Snake_Matrix[SNAKE_SIZE_X][SNAKE_SIZE_Y] = { 0 };
 
 SnakeCoord_t Snake_StartPoint = { .x = 0, .y = 0 };
 SnakeStep_t Snake_LastStep = Step_Unknown;
@@ -98,7 +103,7 @@ static void Snake_DrawPoints(uint16_t x, uint16_t y);
 
 
 /**
- * \brief
+ * \brief	Initialize Snake game (start position, etc.)
  */
 void Snake_Init(void)
 {

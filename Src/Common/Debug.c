@@ -23,8 +23,9 @@
 #include "FormattedMessage.h"
 #include "String.h"
 #include "DebugUart.h"
-#include "DebugList.h"
 #include "Debug.h"
+#include "DebugList.h"
+
 
 
 /*------------------------------------------------------------------------------
@@ -63,7 +64,8 @@ extern DebugRecord_t DebugTasks[];
 void Debug_Print(Debug_t debugTask, const char *format, ...)
 {
 	// Check DebugTasks list size
-	BUILD_BUG_ON(DebugTaskListNum == (Debug_Count-1));
+	// TODO: This checker is not work
+	BUILD_BUG_ON(DebugTaskListNum != (Debug_Count-1));
 
 	if (debugTask >= Debug_Count)
 		return;

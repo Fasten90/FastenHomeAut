@@ -9,17 +9,18 @@
  *		Last modified:	2017-01-16
  */
 
-#include "CommandList.h"
-#include <stdint.h>
-#include <stdarg.h>
-#include "String.h"
 
+#include <stdarg.h>
+#include "GenericTypeDefs.h"
+#include "String.h"
+#include "CommandList.h"
 #include "DebugUart.h"
 #include "EscapeSequence.h"
 #include "GlobalVarHandler.h"
 #include "CommandHandler.h"
 #include "TaskList.h"
 #include "EventHandler.h"
+#include "Communication.h"
 
 #ifdef MODULE_COMMANDHANDLER_UNITTEST_ENABLE
 #include "UnitTest.h"

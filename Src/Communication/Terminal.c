@@ -27,6 +27,7 @@
 #include "DebugUart.h"
 #include "Reset.h"
 #include "Terminal.h"
+#include "Communication.h"
 
 
 

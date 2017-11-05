@@ -201,7 +201,7 @@ uint8_t popcount(uint32_t value)
 
 	for (i = 0; i < 32; i++)
 	{
-		if (value & (0x01 << i))
+		if (value & ((uint32_t)0x01 << i))
 		{
 			onebits++;
 		}
@@ -222,7 +222,7 @@ void ClearBit(uint32_t * value, uint8_t index)
 		return;
 	}
 
-	*value &= ~(0x01 << index);
+	*value &= ~((uint32_t)0x01 << index);
 }
 
 
@@ -237,7 +237,7 @@ void SetBit(uint32_t * value, uint8_t index)
 		return;
 	}
 
-	*value |= (0x01 << index);
+	*value |= ((uint32_t)0x01 << index);
 }
 
 
@@ -253,7 +253,7 @@ uint8_t GetBit(uint32_t value, uint8_t index)
 		return 0;
 	}
 
-	return ((value & (0x01 << index)) ? (0x01) : (0x00));
+	return ((value & ((uint32_t)0x01 << index)) ? (0x01) : (0x00));
 }
 
 

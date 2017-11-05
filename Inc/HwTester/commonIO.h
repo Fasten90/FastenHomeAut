@@ -13,6 +13,9 @@
 #define COMMONIO_H_
 
 
+#include "GenericTypeDefs.h"
+
+
 
 /*------------------------------------------------------------------------------
  *  Type definitions
