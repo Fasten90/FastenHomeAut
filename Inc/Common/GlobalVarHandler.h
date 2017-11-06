@@ -94,11 +94,11 @@ typedef enum
 
 
 ///< Get function pointer
-typedef uint32_t ( *GetFunctionPointer )( void );
+typedef uint32_t (*GetFunctionPointer)(void);
 ///< Set function pointer
-typedef bool ( *SetFunctionPointer )( uint32_t param );
+typedef bool (*SetFunctionPointer)(uint32_t param);
 ///< General function pointer
-typedef void ( *GeneralFunctionPointer )( void );
+typedef void (*GeneralFunctionPointer)(void);
 
 
 ///< GlobalVarCommand structure for set-get global variables
@@ -117,7 +117,7 @@ typedef struct
 	const uint32_t maxValue;				///< Max value
 	const uint32_t minValue;				///< Min value
 
-	const CommProtocol_t sourceEnable;		///< Enabled sources (for set-get)
+	const CommProtocolBit_t sourceEnable;		///< Enabled sources (for set-get)
 
 	// TODO: Optimize these: isHex (bool), isReadOnly (bool), isFunction (bool)
 	const bool isHex;						///< Set-get in hexadecimal?

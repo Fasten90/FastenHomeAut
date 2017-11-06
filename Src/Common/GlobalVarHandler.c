@@ -84,6 +84,7 @@ static uint8_t GlobalVarHandler_TraceRam_BufferCnt = 0;
 #endif
 
 
+
 /*------------------------------------------------------------------------------
  *  Function declarations
  *----------------------------------------------------------------------------*/
@@ -194,7 +195,7 @@ void GlobalVarHandler_ProcessCommand(const char *commandName, const char *param,
 	if (GlobalVarHandler_SearchVariableName(commandName, &commandID))
 	{
 		// Found, Check the source
-		if ((source & GlobalVarList[commandID].sourceEnable) || (GlobalVarList[commandID].sourceEnable == CommProt_Unknown))
+		if ((source & GlobalVarList[commandID].sourceEnable) || (GlobalVarList[commandID].sourceEnable == CommProtBit_Unknown))
 		{
 			// Source is enabled
 			if (setGetType == SetGet_Get)
@@ -536,7 +537,6 @@ static void GlobalVarHandler_GetEnumerator(GlobalVarCommand_t * command)
 	{
 		// TODO: Add new result type?
 		CommandHandler_SendMessage("ERROR - There is not set \"enumList\" pointer");
-
 		return;
 	}
 
@@ -553,8 +553,6 @@ static void GlobalVarHandler_GetEnumerator(GlobalVarCommand_t * command)
 	// Print enum string
 	enumString = (char *)command->enumList[enumValue];	// string pointer
 	CommandHandler_SendMessage(enumString);
-
-	return;
 }
 
 
@@ -921,11 +919,13 @@ static ProcessResult_t GlobalVarHandler_SetFloat(VarID_t commandID, const char *
 			float *floatPointer = (float *)GlobalVarList[commandID].varPointer;
 			*floatPointer = floatValue;
 		}
-		/*else
+		else
 		{
 			// Wrong value (too high or too less)
 			// Do nothing
-		}*/
+			// TODO: Need process type like this:
+			//result = Process_InvalidValue
+		}
 	}
 	else
 	{
@@ -957,8 +957,8 @@ static ProcessResult_t GlobalVarHandler_SetBits(VarID_t commandID, const char *p
 
 	if (isOk)
 	{
-		// Check length
-		if (StringLength(param) > maxLength + 2)
+		// Check length: max = 0bxxx --> xxx from max-minValue, '0b' length is 2
+		if (StringLength(param) > (size_t)(maxLength + 2))
 		{
 			result = Process_FailParamTooLongBinary;
 			isOk = false;
@@ -1104,7 +1104,7 @@ static ProcessResult_t GlobalVarHandler_SetEnumerator(VarID_t commandID, const c
 				GlobalVarList[commandID].name);
 		for (i = 0; i < GlobalVarList[commandID].maxValue; i++)
 		{
-			CommandHandler_Printf("- %s\r\n",GlobalVarList[commandID].enumList[i]);
+			CommandHandler_Printf("- %s\r\n", GlobalVarList[commandID].enumList[i]);
 		}
 	}
 

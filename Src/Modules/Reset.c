@@ -70,6 +70,8 @@ uint32_t Reset_GetResetReason(void)
 		if (__HAL_RCC_GET_FLAG(RCC_FLAG_BORRST + i))
 #elif defined(CONFIG_MICROCONTROLLER_STM32F0xx)
 		if (__HAL_RCC_GET_FLAG(RCC_FLAG_OBLRST + i))
+#elif defined(CONFIG_MICROCONTROLLER_PC)
+		if (0)
 #else
 #error "Unknown Microcontroller family"
 #endif

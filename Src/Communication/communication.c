@@ -36,14 +36,19 @@ static const char * const ProtocolNameList[] =
 {
 	"Unknown",
 	"DebugUart",
+#ifdef CONFIG_SWO_ENABLE
 	"SWO"
+#endif
 #ifdef CONFIG_PROTOCOL_BUFFER_ENABLE
 	"Buffer",
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 	"ESP8266Wifi",
 #endif
-	""
+
+	/*
+	 * XXX: Do not forget Synchronize with CommProtocol_t
+	 */
 };
 
 
@@ -51,6 +56,8 @@ static const char * const ProtocolNameList[] =
 /*------------------------------------------------------------------------------
  *  Functions
  *----------------------------------------------------------------------------*/
+
+// TODO: Check Communication lists... (NUM_OF(list) != CommProt_Disable)
 
 /**
  * \brief	Send message (string) on selected communication protocol
@@ -66,7 +73,6 @@ uint8_t COMMUNICATION_SendMessage(CommProtocol_t protocol, const char *message)
 			// Unknown, send on debug
 			length = DebugUart_SendMessage(message);
 			break;
-
 		case CommProt_DebugUart:
 			// Send on Usart
 			length = DebugUart_SendMessage(message);
@@ -90,7 +96,7 @@ uint8_t COMMUNICATION_SendMessage(CommProtocol_t protocol, const char *message)
 			length = ESP8266_RequestSendTcpMessage(message);
 			break;
 #endif
-		case CommProt_Disable:
+		case CommProt_Count:
 		default:
 			// Error, do not use
 			length = 0;
@@ -114,7 +120,6 @@ uint8_t COMMUNICATION_SendChar(CommProtocol_t protocol, char c)
 			// Unknown, send on debug
 			DebugUart_SendChar(c);
 			break;
-
 		case CommProt_DebugUart:
 			DebugUart_SendChar(c);
 			break;
@@ -134,7 +139,7 @@ uint8_t COMMUNICATION_SendChar(CommProtocol_t protocol, char c)
 			DebugUart_SendChar(c);
 			break;
 #endif
-		case CommProt_Disable:
+		case CommProt_Count:
 		default:
 			break;
 	}
@@ -180,20 +185,14 @@ uint8_t COMMUNICATION_Printf(CommProtocol_t protocol, const char *format, ...)
  */
 const char * COMMUNICATION_GetProtocolName(CommProtocol_t protocol)
 {
-	uint8_t i;
-	const char * pnt = NULL;
+	const char * str = NULL;
 
-	// Search smallest bit
-	for (i=0; i < CommProt_Disable; i++)
+	if (protocol < CommProt_Count)
 	{
-		if (protocol & (1 << i))
-		{
-			pnt = ProtocolNameList[i];
-			break;
-		}
+		str = ProtocolNameList[protocol];
 	}
 
-	return pnt;
+	return str;
 }
 
 

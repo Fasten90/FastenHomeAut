@@ -9,8 +9,8 @@
  *		Last modified:	2017-03-04
  */
 
-#ifndef COMMON_CIRCULARBUFFER_H_
-#define COMMON_CIRCULARBUFFER_H_
+#ifndef CIRCULARBUFFER_H_
+#define CIRCULARBUFFER_H_
 
 
 
@@ -64,4 +64,4 @@ void CircularBuffer_UnitTest(void);
 
 
 
-#endif /* COMMON_CIRCULARBUFFER_H_ */
+#endif /* CIRCULARBUFFER_H_ */

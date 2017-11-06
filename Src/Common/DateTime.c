@@ -405,22 +405,14 @@ static uint32_t DateTime_CalculateDateTimeSecond(DateTime_t *dateTime)
 			second += DateTime_GetDaysOfMonth(dateTime->date.year, i) * 24 * 60 * 60;
 		}
 
-		// Days
-		second += (dateTime->date.day -1) * 24 * 60 * 60;
-
-		// Hours
-		second += dateTime->time.hour * 60 * 60;
-
-		// Minutes
-		second += dateTime->time.minute * 60;
-
-		// Seconds
-		second += dateTime->time.second;
+		second += (dateTime->date.day -1) * 24 * 60 * 60;	// Days
+		second += dateTime->time.hour * 60 * 60;			// Hours
+		second += dateTime->time.minute * 60;				// Minutes
+		second += dateTime->time.second;					// Seconds
 	}
 	else
 	{
-		// Wrong
-		second = 0;
+		second = 0;											// Wrong
 	}
 
 	return second;

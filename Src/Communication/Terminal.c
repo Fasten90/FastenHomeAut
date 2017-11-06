@@ -178,7 +178,7 @@ void Terminal_Init(void)
 	DelayMs(10);
 
 	// Enable sendings
-	xSemaphoreGive(DEBUG_USART_Tx_Semaphore);
+	xSemaphoreGive(DebugUart_Tx_Semaphore);
 
 	// Terminal Task (FreeRTOS)
 	TaskHandle_t Terminal_TaskHandle = NULL;
@@ -203,7 +203,6 @@ void Terminal_Init(void)
 	// Welcome message
 	Terminal_SendWelcome();
 #endif
-
 }
 
 
@@ -229,8 +228,8 @@ void Terminal_CheckCommand(void)
 		if (DebugUart_CommandReceiveEnable)
 		{
 #ifdef CONFIG_USE_FREERTOS
-			// Wait semaphore
-			if (xSemaphoreTake(DEBUG_USART_Rx_Semaphore,1000) == pdTRUE)
+			// Wait for semaphore
+			if (xSemaphoreTake(DebugUart_Rx_Semaphore, 1000) == pdTRUE)
 			{
 				Terminal_ProcessReceivedCharacter();
 			}
@@ -264,7 +263,7 @@ void Terminal_CheckCommand(void)
 
 					Terminal_CommandReceivedNotLastChar = false;
 
-					CommandHandler_SendMessage(ESCAPE_CURSORRIGHT);		// Step right
+					Terminal_SendMessage(ESCAPE_CURSORRIGHT);		// Step right
 					Terminal_CommandResendLine(true);					// Not Last char (it is inner character) - Refresh the line
 				}
 				else if (Terminal_CommandEscapeSequenceReceived)
@@ -569,7 +568,7 @@ static bool Terminal_CommandEscapeCharValidation(void)
 				if (Terminal_CommandCursorPosition < Terminal_CommandActualLength)
 				{
 					// Cursor within command
-					CommandHandler_SendMessage(ESCAPE_CURSORRIGHT);
+					Terminal_SendMessage(ESCAPE_CURSORRIGHT);
 					Terminal_CommandCursorPosition++;
 
 					return true;
@@ -585,7 +584,7 @@ static bool Terminal_CommandEscapeCharValidation(void)
 			{
 				if (Terminal_CommandCursorPosition > 0)				// if not at start
 				{
-					CommandHandler_SendMessage(ESCAPE_CURSORLEFT);
+					Terminal_SendMessage(ESCAPE_CURSORLEFT);
 					Terminal_CommandCursorPosition--;
 
 					return true;
@@ -797,26 +796,26 @@ static void Terminal_CommandResendLine(bool needRestoreCursor)
 	// - (opc) Restore cursor
 
 	// Delete line
-	CommandHandler_SendMessage(ESCAPE_DELETELINE);
+	Terminal_SendMessage(ESCAPE_DELETELINE);
 
 	if (needRestoreCursor)
 	{
 		// Save cursor
-		CommandHandler_SendMessage(ESCAPE_SAVECURSOR);
+		Terminal_SendMessage(ESCAPE_SAVECURSOR);
 	}
 
 	// Cursor to line start
-	CommandHandler_SendMessage(ESCAPE_CURSOR_TO_LINESTART);
-	CommandHandler_SendMessage(ESCAPE_CURSORLEFTLOTOF);
+	Terminal_SendMessage(ESCAPE_CURSOR_TO_LINESTART);
+	Terminal_SendMessage(ESCAPE_CURSORLEFTLOTOF);
 
 	// Write new CommandActual
 	TERMINAL_SEND_PROMT();
-	CommandHandler_SendMessage((const char *)Terminal_CommandActual);
+	Terminal_SendMessage((const char *)Terminal_CommandActual);
 
 	if (needRestoreCursor)
 	{
 		// Restore the position
-		CommandHandler_SendMessage(ESCAPE_RESTORECURSOR);
+		Terminal_SendMessage(ESCAPE_RESTORECURSOR);
 	}
 }
 #endif	// #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
@@ -982,14 +981,14 @@ void Terminal_SendWelcome(void)
 	TERMINAL_SEND_WELCOME();				// Welcome message
 	// One long string are optimized
 #ifdef TERMINAL_COMPILER_SIZE_LARGER_1
-	CommandHandler_SendMessage("Version: ");
-	CommandHandler_SendLine(VERSION_DEFINE);
-	CommandHandler_SendMessage("Compile date: ");
-	CommandHandler_SendMessage(DATE_VERSION);
-	CommandHandler_SendMessage(", ");
-	CommandHandler_SendLine(TIME_VERSION);
-	CommandHandler_SendMessage("Used panel: ");
-	CommandHandler_SendLine(BOARD_NAME);
+	Terminal_SendMessage("Version: ");
+	Terminal_SendLine(VERSION_DEFINE);
+	Terminal_SendMessage("Compile date: ");
+	Terminal_SendMessage(DATE_VERSION);
+	Terminal_SendMessage(", ");
+	Terminal_SendLine(TIME_VERSION);
+	Terminal_SendMessage("Used panel: ");
+	Terminal_SendLine(BOARD_NAME);
 #endif
 #ifdef TERMINAL_COMPILER_SIZE_LARGER_2
 	CommandHandler_Printf("Version: %s\r\n", VERSION_DEFINE);
@@ -1010,8 +1009,8 @@ void Terminal_SendWelcome(void)
  */
 void Terminal_SendCls(void)
 {
-	CommandHandler_SendMessage(ESCAPE_ERASE_CLS);
-	CommandHandler_SendMessage(ESCAPE_CURSOR_TOPLEFT);
+	Terminal_SendMessage(ESCAPE_ERASE_CLS);
+	Terminal_SendMessage(ESCAPE_CURSOR_TOPLEFT);
 }
 
 
@@ -1052,7 +1051,7 @@ static void Terminal_GetPassword(void)
 		{
 			// Send '*' if pressed character
 			while (receivedMessageLength--)
-				CommandHandler_SendChar('*');
+				Terminal_SendMessage("*");	// Optimized version (old: SendChar())
 		}
 		else
 		{
@@ -1065,18 +1064,18 @@ static void Terminal_GetPassword(void)
 		{
 			// Pressed enter, check password
 			StrTrim(receiveBuffer);
-			CommandHandler_SendLine("");
+			Terminal_SendLine("");
 			if (Terminal_CheckPassword((const char*)receiveBuffer))
 			{
 				// Successful password
-				CommandHandler_SendLine("Successful password!");
+				Terminal_SendLine("Successful password!");
 				Terminal_PasswordIsOk = true;
 				Terminal_SendWelcome();
 			}
 			else
 			{
 				// Failed password
-				CommandHandler_SendLine("Wrong password!");
+				Terminal_SendLine("Wrong password!");
 			}
 
 			// TODO: Create Get&Clear function
@@ -1093,7 +1092,7 @@ static void Terminal_GetPassword(void)
  */
 inline static void Terminal_SendGetPassword(void)
 {
-	CommandHandler_SendMessage("\r\nPassword: ");
+	Terminal_SendMessage("\r\nPassword: ");
 }
 
 
@@ -1175,6 +1174,20 @@ void Terminal_SendLoadingPercent2(uint8_t percent)
 	// Need: "%5c%5c %3d%%"
 	usprintf(formatString, "[%%%dc%%%dc] %%3d%%%%", fill, empty);
 	CommandHandler_Printf(formatString, '-', ' ', percent);
+}
+
+
+
+void Terminal_SendMessage(const char * message)
+{
+	DebugUart_SendMessage(message);
+}
+
+
+
+void Terminal_SendLine(const char * message)
+{
+	DebugUart_SendLine(message);
 }
 
 

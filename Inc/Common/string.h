@@ -18,9 +18,10 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
-#include <stdbool.h>	// For bool
 #include <stdarg.h>		// For "..." parameters in uprintf function
+#include "GenericTypeDefs.h"
 #include "include.h"
+#include "MEM.h"
 
 
 
@@ -51,14 +52,20 @@
 #define strcpy(_dest, _src)				StrCpy(_dest, _src)
 
 
-#define printf(...)						uprintf(__VA_ARGS__)
+#define strcat(dest_, src_)				StrAppend(dest_, src_)
+
+
+// char * strstr ( const char *, const char * )
+#define strstr(_str1, _str2)			STRING_FindString(_str1, _str2)
 
 
 #define sprintf(...)					usprintf(__VA_ARGS__)
 
 
-// char * strstr ( const char *, const char * )
-#define strstr(_str1, _str2)			STRING_FindString(_str1, _str2)
+#define snprintf(...)					usnprintf(__VA_ARGS__)
+
+
+#define printf(...)						uprintf(__VA_ARGS__)
 
 
 
@@ -80,7 +87,9 @@
 
 // Decimal --> String converters
 uint8_t SignedDecimalToString(int32_t value, char *str);
+size_t SignedDecimalToStringSafe(int32_t value, char * str, size_t maxLength);
 uint8_t UnsignedDecimalToString(uint32_t value, char *str);
+size_t UnsignedDecimalToStringSafe(uint32_t value, char *str, size_t maxLength);
 uint8_t UnsignedDecimalLength(uint32_t value);
 uint8_t UnsignedDecimalToStringFill(uint32_t value, char *str, uint8_t fillLength, char fillCharacter);
 uint8_t SignedDecimalToStringFill(int32_t value, char *str, uint8_t fillLength, char fillCharacter);
@@ -118,19 +127,19 @@ bool StringToUnsignedDecimalNum(const char *str, uint32_t *value);
 bool StringToSignedDecimalNum(const char *str, int32_t *value);
 
 // String --> Float converter
-bool StringToFloat(const char *str, float *Num);
+bool StringToFloat(const char *str, float *num);
 
 // Standard string functions:
-uint8_t StringLength(const char *str);
+size_t StringLength(const char *str);
 uint8_t StrCmp(const char * str1, const char *str2);
 uint8_t StrCmpFirst(const char *str1, const char *str2);
-uint8_t StrCmpWithLength(const char * str1, const char *str2, uint8_t length);
-uint8_t StrCpy(char *dest, const char *src);
-uint8_t StrCpyFixLength(char *dest, const char *src, uint8_t length);
-uint8_t StrCpyFixLengthWithFillCharacter(char *dest, const char *str, uint8_t length, char fillChar);
-uint8_t StrCpyMax(char *dest, const char *str, uint8_t maxLength);
-uint8_t StrCpyCharacter(char *dest, char c, uint8_t num);
-uint8_t StrAppend(char *dest, const char *src);
+uint8_t StrCmpWithLength(const char * str1, const char *str2, size_t length);
+size_t StrCpy(char *dest, const char *src);
+size_t StrCpyFixLength(char *dest, const char *src, size_t length);
+size_t StrCpyFixLengthWithFillCharacter(char *dest, const char *str, size_t length, char fillChar);
+size_t StrCpyMax(char *dest, const char *str, size_t maxLength);
+size_t StrCpyCharacter(char *dest, char c, size_t num);
+size_t StrAppend(char *dest, const char *src);
 
 // Find & Separators
 void StrTrim(char *str);
@@ -138,10 +147,12 @@ char * STRING_FindCharacter(const char *str, const char findCharacter);
 char * STRING_FindString(const char *str, const char *findString);
 uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint8_t parameterMaxCount);
 
-// Send functions
-// !! IMPORTANT !! Send formatted string on USART !!
-uint8_t string_printf(char *str, const char *format, va_list ap);
+// String format functions
+size_t string_printf(char *str, const char *format, va_list ap);
+size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list ap);
+
 uint8_t usprintf(char *str, const char *format, ...);
+size_t usnprintf(char * str, size_t maxLen, const char * format, ...);
 
 // Unit test
 void STRING_UnitTest(void);

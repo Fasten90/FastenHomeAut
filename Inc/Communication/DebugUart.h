@@ -27,11 +27,11 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-// Size of Transmission buffer
-#define DEBUGUART_TX_BUFFER_SIZE				256UL
-// Size of Reception buffer
-#define DEBUGUART_RX_BUFFER_SIZE				256UL
-#define DEBUGUART_RX_BUFFER_WAIT_LENGTH			1
+///< Size of Transmission buffer
+#define DEBUGUART_TX_BUFFER_SIZE				(256UL)
+///< Size of Reception buffer
+#define DEBUGUART_RX_BUFFER_SIZE				(256UL)
+#define DEBUGUART_RX_BUFFER_WAIT_LENGTH			(1)
 
 
 // Variadic macro
@@ -84,7 +84,7 @@ uint8_t uprintf(const char *format, ...);
 
 void DebugUart_ProcessReceivedCharacters(void);
 
-void DebugUart_SendMessageBlocked(const char * str);
+uint8_t DebugUart_SendMessageBlocked(const char * str);
 
 
 #endif /* DEBUGUART_H_ */

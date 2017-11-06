@@ -63,7 +63,7 @@ typedef enum
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-extern uint8_t DebugTaskListNum;
+extern const uint8_t DebugTaskListNum;
 
 
 

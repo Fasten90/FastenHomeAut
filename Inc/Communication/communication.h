@@ -18,6 +18,7 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
+#include "options.h"
 #include "include.h"
 
 
@@ -37,22 +38,47 @@
 
 typedef enum
 {
-	CommProt_Unknown	= 0,
-	CommProt_DebugUart  = (1 << 0),
+	CommProt_Unknown,
+	CommProt_DebugUart,
 #ifdef CONFIG_SWO_ENABLE
-	CommProt_SWO		= (1 << 1),
+	CommProt_SWO,
 #endif
 #ifdef CONFIG_PROTOCOL_BUFFER_ENABLE
-	CommProt_Buffer		= (1 << 2),
+	CommProt_Buffer,
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-	CommProt_ESP8266Wifi = (1 << 3),
+	CommProt_ESP8266Wifi,
 #endif
 
-	// XXX: Add here new Protocol, and correct the CommProt_Disable (largest bit be set)
-	CommProt_Disable	= (1 << 4)
+	/*
+	 * XXX: Add here new Protocol, and correct the CommProt_Disable (largest bit be set)
+	 * \note	Do not forget Synchronize with ProtocolNameList
+	 */
+	CommProt_Count
 } CommProtocol_t;
 
+typedef enum
+{
+	CommProtBit_Unknown		= 0,
+	CommProtBit_DebugUart	= (1 << CommProt_DebugUart),
+#ifdef CONFIG_SWO_ENABLE
+	CommProtBit_SWO			= (1 << CommProt_SWO),
+#endif
+#ifdef CONFIG_PROTOCOL_BUFFER_ENABLE
+	CommProtBit_Buffer		= (1 << CommProt_Buffer),
+#endif
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+	CommProtBit_ESP8266Wifi = (1 << CommProt_ESP8266Wifi),
+#endif
+
+	/*
+	 * XXX: Add here new Protocol, and correct the CommProt_Disable (largest bit be set)
+	 * \note	Do not forget Synchronize with CommProtocol_t
+	 */
+	ComProtBit_All			= ((1 << CommProt_Count) - 1),
+	CommProtBit_Disable		= (1 << CommProt_Count)
+
+} CommProtocolBit_t;
 
 
 

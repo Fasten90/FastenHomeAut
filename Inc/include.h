@@ -17,7 +17,7 @@
  *									Includes
  *----------------------------------------------------------------------------*/
 
-///< Include settings
+///< Options
 #include "options.h"
 
 ///< Include standard types
@@ -31,11 +31,14 @@
 #if defined(CONFIG_MICROCONTROLLER_STM32F4xx)
 	// STM32F4 (E.g. F4Discovery)
 	#include "stm32f4xx_hal.h"
-	#include "stm32_hal_legacy.h"	// for defines
+	#include "stm32_hal_legacy.h"
 #elif defined(CONFIG_MICROCONTROLLER_STM32F0xx)
 	// STM32F0
 	#include "stm32f0xx_hal.h"
-	#include "stm32_hal_legacy.h"	// for defines
+	#include "stm32_hal_legacy.h"
+#elif defined(CONFIG_MICROCONTROLLER_PC)
+	// PC
+	#include "windows_hal.h"
 #else
 #warning "Missed microcontroller family define / include"
 #endif
@@ -79,7 +82,11 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 ///< Breakpoint
 #ifdef CONFIG_DEBUG_MODE
+    #ifndef CONFIG_MICROCONTROLLER_PC
 #define DEBUG_BREAKPOINT()		__asm("BKPT #0\n")		// ASM: Break debugger
+    #else
+#define DEBUG_BREAKPOINT()		DebugBreak()
+    #endif
 #else
 #define DEBUG_BREAKPOINT()
 #endif

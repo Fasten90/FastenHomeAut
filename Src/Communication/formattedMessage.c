@@ -101,4 +101,6 @@ void FormattedMessage_Test(void)
 	SendErrorMessage("FATAL ERROR EXAMPLE\r\n");
 }
 
+
+
 #endif

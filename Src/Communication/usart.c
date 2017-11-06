@@ -108,7 +108,7 @@ void UART_Init(UART_HandleTypeDef *UartHandle)
 		if (UartHandle == &Debug_UartHandle)
 		{
 			DebugUart_SendEnable_flag = true;
-			__HAL_UART_CLEAR_FLAG(&Debug_UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
+			__HAL_UART_CLEAR_IT(&Debug_UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
 		}
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
@@ -120,7 +120,7 @@ void UART_Init(UART_HandleTypeDef *UartHandle)
 #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
 		if (UartHandle == &Bluetooth_UartHandle)
 		{
-			__HAL_UART_CLEAR_FLAG(&Bluetooth_UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
+			__HAL_UART_CLEAR_IT(&Bluetooth_UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
 		}
 #endif
 	}
@@ -409,7 +409,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 		DebugUart_SendEnable_flag = true;
 
 		// Reinitialize USART
-		//USART_Init(&Debug_UartHandle);
+		//UART_Init(&Debug_UartHandle);
 
 		DebugUart_StartReceive();
 

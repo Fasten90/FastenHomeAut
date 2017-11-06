@@ -9,8 +9,8 @@
  *		Last modified:	2017-02-06
  */
 
-#ifndef MODULES_WATCHDOG_H_
-#define MODULES_WATCHDOG_H_
+#ifndef WATCHDOG_H_
+#define WATCHDOG_H_
 
 
 
@@ -56,4 +56,4 @@ void Watchdog_Clear(void);
 #endif	// #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
 
 
-#endif /* MODULES_WATCHDOG_H_ */
+#endif /* WATCHDOG_H_ */

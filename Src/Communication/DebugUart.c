@@ -15,15 +15,16 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
-#include "options.h"
 #include <stdarg.h>		// for "..." parameters in printf function
+
+#include "options.h"
+#include "Communication.h"
 #include "String.h"
-#include "USART.h"
 #include "Globals.h"
 #include "CircularBuffer.h"
-#include "Communication.h"
 #include "CommandHandler.h"
 #include "DebugUart.h"
+#include "USART.h"
 
 #ifdef CONFIG_USE_FREERTOS
 #include "FreeRTOS.h"
@@ -365,10 +366,11 @@ uint8_t uprintf(const char *format, ...)
  * \brief	Send message with blocking mode
  * 			Use only extreme situation!
  */
-inline void DebugUart_SendMessageBlocked(const char * str)
+inline size_t DebugUart_SendMessageBlocked(const char * str)
 {
-	uint8_t length = StringLength(str);
+	size_t length = StringLength(str);
 	HAL_UART_Transmit(&Debug_UartHandle, (uint8_t *)str, length, 1000);
+	return length;
 }
 
 

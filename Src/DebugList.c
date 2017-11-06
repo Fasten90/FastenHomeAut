@@ -58,7 +58,7 @@ DebugRecord_t DebugTasks[] =
 };
 
 
-uint8_t DebugTaskListNum = NUM_OF(DebugTasks);
+uint8_t const DebugTaskListNum = NUM_OF(DebugTasks);
 
 
 

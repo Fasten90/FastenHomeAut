@@ -16,8 +16,9 @@
  *----------------------------------------------------------------------------*/
 
 #include <stdarg.h>		// for "..." parameters in printf function
-#include "include.h"
+#include "GenericTypeDefs.h"
 #include "Calc.h"
+#include "MEM.h"
 #include "String.h"
 
 #ifdef MODULE_STRING_UNITTEST_ENABLE
@@ -29,6 +30,12 @@
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
+
+#ifdef CONFIG_DEBUG_MODE
+#define STRING_ASSERT(_e)			ASSERT(_e)
+#else
+#define STRING_ASSERT(_e)
+#endif
 
 
 
@@ -77,7 +84,40 @@ uint8_t SignedDecimalToString(int32_t value, char *str)
 	}
 
 	// Return with length
-	return (length + UnsignedDecimalToString (value,&str[length]));
+	return (length + UnsignedDecimalToString (value, &str[length]));
+}
+
+
+
+size_t SignedDecimalToStringSafe(int32_t value, char * str, size_t maxLength)
+{
+	size_t length = 0;
+
+	// Check pointer
+	if (str == NULL)
+	{
+		return 0;
+	}
+
+	if (value < 0)	// if negative decimal num
+	{
+		if (maxLength > 0)
+		{
+			str[length] = '-';
+			length++;
+			value = (uint32_t) (value * (-1));	// Sign +
+		}
+		else
+		{
+			// Cannot print
+			return 0;
+		}
+	}
+
+	// Add number
+	length += UnsignedDecimalToStringSafe(value, &str[length], (maxLength - length));
+
+	return length;
 }
 
 
@@ -103,19 +143,48 @@ uint8_t UnsignedDecimalToString(uint32_t value, char *str)
 			isStarted = true;
 		}
 
-		// Value - first digit
-		value %= decade;
-
-		// /10
-		decade /= 10;
+		value %= decade;			// Value - first digit
+		decade /= 10;				// /10
 	}
 
-	// Last digit
-	str[length] = (value + '0');
+	str[length] = (value + '0');	// Last digit
 	length++;
+	str[length] = '\0';				// End character
 
-	// End character
-	str[length] = '\0';
+	return length;
+}
+
+
+
+size_t UnsignedDecimalToStringSafe(uint32_t value, char *str, size_t maxLength)
+{
+	size_t length = 0;
+	bool isStarted = false;
+
+	// Largest num: 1xxxxxx...
+	uint32_t decade = 1000000000;
+
+	while ((decade > 1) && ((length+1) < maxLength))
+	{
+		if ((value >= decade) || (isStarted == true))
+		{
+			// Put first digit
+			str[length] = ((value/decade) + '0');
+			length++;
+			isStarted = true;
+		}
+
+		value %= decade;			// Value - first digit
+		decade /= 10;				// /10
+	}
+
+	if ((length+1) < maxLength)
+	{
+		str[length] = (value + '0');	// Last digit
+		length++;
+	}
+
+	str[length] = '\0';				// End character
 
 	return length;
 }
@@ -191,7 +260,7 @@ uint8_t SignedDecimalToStringFill(int32_t value, char *str, uint8_t fillLength, 
 	if (value >= 0)
 	{
 		// Sign +
-		length = UnsignedDecimalToStringFill((uint32_t)value,str,fillLength,fillCharacter);
+		length = UnsignedDecimalToStringFill((uint32_t)value, str, fillLength, fillCharacter);
 	}
 	else
 	{
@@ -427,6 +496,7 @@ uint8_t FloatToString(float value, char *str, uint8_t integerLength, uint8_t fra
 
 /**
  * \brief	Look the string is hexa or not
+ * \str		Null terminated string
  * \return	How many hexa characters are...
  */
 uint8_t StringIsHexadecimalString(const char *str)
@@ -440,7 +510,7 @@ uint8_t StringIsHexadecimalString(const char *str)
 		return 0;
 	}
 	
-	for (i=0; str[i] != '\0'; i++)
+	for (i = 0; str[i] != '\0'; i++)
 	{
 		// Number all? 0-9, A-F, a-f
 		if (IsHexChar(str[i]))
@@ -468,7 +538,7 @@ uint8_t StringIsUnsignedDecimalString(const char *str)
 	uint8_t count = 0;
 	uint8_t i;
 
-	for (i=0; str[i]; i++)
+	for (i = 0; str[i]; i++)
 	{
 		if (IsDecimalChar(str[i]))
 		{
@@ -673,14 +743,14 @@ bool StringHexToNum(const char *str, uint32_t *hexValue)
 	uint8_t calculatedByte = 0;
 
 	// Check length
-	if ( StringIsHexadecimalString(str) == 0)
+	if (StringIsHexadecimalString(str) == 0)
 	{
 		// Wrong string or wrong octetlength
 		return false;
 	}
 
 	// Create hexValue
-	for (i=0; str[i] != '\0'; i++)
+	for (i = 0; str[i] != '\0'; i++)
 	{
 		// shift <<4 + add next hex
 		if (IsHexChar(str[i]))
@@ -745,31 +815,27 @@ bool StringToUnsignedDecimalNum(const char *str, uint32_t *value)
 	uint8_t i;
 	uint8_t decimal;
 
-	if (str == NULL)
+	if ((str == NULL) || (value == NULL))
 	{
 		return false;
 	}
 
-	for (i=0; str[i] != '\0'; i++)
+	for (i = 0; str[i] != '\0'; i++)
 	{
 		if (IsDecimalChar(str[i]))
 		{
 			decimal = DecimalCharToNum(str[i]);
-			// Shift left 1* =  *10
-			calculatedValue *= 10;
-			// Add new value
-			calculatedValue += decimal;
+			calculatedValue *= 10;			// Shift left 1* =  *10
+			calculatedValue += decimal;		// Add new value
 		}
 		else
 		{
-			// Wrong character
-			return false;
+			return false;					// Wrong character
 		}
 
-		if (i>10)
+		if (i > 10)
 		{
-			// To long num
-			return false;
+			return false;					// To long num
 		}
 	}
 
@@ -791,6 +857,9 @@ bool StringToSignedDecimalNum(const char *str, int32_t *value)
 	bool isNegative = false;
 	uint8_t length = 0;
 
+	if ((str == NULL) || (value == NULL))
+		return false;
+
 	if (str[0] == '-')
 	{
 		// It is negative
@@ -810,7 +879,7 @@ bool StringToSignedDecimalNum(const char *str, int32_t *value)
 		length = 0;
 	}
 
-	if (StringToUnsignedDecimalNum(&str[length],&convertValue))
+	if (StringToUnsignedDecimalNum(&str[length], &convertValue))
 	{
 		if (isNegative)
 		{
@@ -837,7 +906,7 @@ bool StringToSignedDecimalNum(const char *str, int32_t *value)
  * \return	true, if successful
  * 			false, if has error
  */
-bool StringToFloat(const char *str, float *Num)
+bool StringToFloat(const char *str, float *num)
 {
 	bool isNegative = false;
 	uint8_t stringLength;
@@ -847,6 +916,9 @@ bool StringToFloat(const char *str, float *Num)
 	uint32_t integer;
 	float fractionPart;
 	char numString[10] = { 0 };
+
+	if ((str == NULL) || (num == NULL))
+		return false;
 
 	stringLength = StringLength(str);
 
@@ -871,9 +943,9 @@ bool StringToFloat(const char *str, float *Num)
 	// Integer
 
 	// Find '.'
-	for (i=0; str[length+i] != '.'; i++)
+	for (i = 0; str[length+i] != '.'; i++)
 	{
-		numString[i] = str[length+i];
+		numString[i] = str[length + i];
 		if (i >= stringLength)
 		{
 			// Error, overflow
@@ -886,17 +958,17 @@ bool StringToFloat(const char *str, float *Num)
 
 
 	// Convert integer
-	if (!StringToUnsignedDecimalNum(numString,&integer))
+	if (!StringToUnsignedDecimalNum(numString, &integer))
 	{
 		// Error with convert integer part
 		return false;
 	}
 
 	// Integer (before .)
-	*Num = integer;
+	*num = integer;
 
 	// Convert fraction
-	if (!StringToUnsignedDecimalNum(&str[pointCnt+1],&integer))
+	if (!StringToUnsignedDecimalNum(&str[pointCnt + 1], &integer))
 	{
 		// Error with convert fraction part
 		return false;
@@ -904,7 +976,7 @@ bool StringToFloat(const char *str, float *Num)
 
 	fractionPart = integer;
 	// We converted after point part, ".567", but we need to shift right
-	for (i=0; i < (stringLength-pointCnt-1); i++ )
+	for (i = 0; i < (stringLength - pointCnt - 1); i++ )
 	{
 		// >> point
 		// Example: 567 == > 56.7
@@ -913,11 +985,11 @@ bool StringToFloat(const char *str, float *Num)
 	// Ready fraction
 
 	// Add Integer and Fraction
-	*Num += fractionPart;
+	*num += fractionPart;
 
 	if (isNegative)
 	{
-		*Num = (-1) * (*Num);
+		*num = (-1) * (*num);
 	}
 
 	return true;
@@ -930,9 +1002,9 @@ bool StringToFloat(const char *str, float *Num)
  * \return	length
  * 			0, if null string
  */
-uint8_t StringLength(const char *str)
+size_t StringLength(const char *str)
 {
-	uint8_t length = 0;
+	size_t length = 0;
 
 	if (str == NULL)
 	{
@@ -940,10 +1012,9 @@ uint8_t StringLength(const char *str)
 	}
 
 	// Added max length checking
-	while ((length < 255) && (str[length] !='\0')) length++;	// Length = string length
+	while ((length < SIZE_MAX) && (str[length] !='\0')) length++;	// Length = string length
 	return length;
 }
-
 
 
 
@@ -955,36 +1026,33 @@ uint8_t StringLength(const char *str)
 uint8_t StrCmp(const char *str1, const char *str2)
 {
 	// Check parameters
-	if (str1 == NULL && str2 == NULL)
+	if ((str1 == NULL) && (str2 == NULL))
 	{
 		// Equal, because both of string are NULL
 		return 0;
 	}
-	else if (str1 == NULL || str2 == NULL)
+	else if ((str1 == NULL) || (str2 == NULL))
 	{
 		// One of parameter is NULL... not equal
 		return 1;
 	}
 
 	// Check characters
-	while (*str1)
+	while ((*str1 == *str2) && *str1 && *str2)
 	{
-		if (*str1 !=  *str2)
-		{
-			return 1;	// not equal
-		}
+		// TODO: Max length checking!
 		str1++;
 		str2++;
 	}
 
-	if (*str2)
+	if (*str1 == *str2)
 	{
-		// If 2. string has "more" character, the two string are not equal
-		return 1;		// last str2 char has value, not equal
+		return 0;		// last character is equal
 	}
 	else
 	{
-		return 0;		// last str2 char is '\0'
+		// If string last character is not equal
+		return 1;
 	}
 }
 
@@ -1000,6 +1068,7 @@ uint8_t StrCmpFirst(const char *str1, const char *str2)
 {
 	while (*str1)
 	{
+		// TODO: Length checking!
 		if (*str1 !=  *str2)
 		{
 			return 1;	// not equal
@@ -1019,19 +1088,20 @@ uint8_t StrCmpFirst(const char *str1, const char *str2)
  * \return	1, if not equal
  * 			0, if equal
  */
-uint8_t StrCmpWithLength(const char * ch1, const char *ch2, uint8_t length)
+uint8_t StrCmpWithLength(const char * ch1, const char *ch2, size_t length)
 {
+	size_t i;
+
 	// Check pointers + length
-	if ( ch1 == NULL || ch2 == NULL || length == 0 )
+	if ((ch1 == NULL) || (ch2 == NULL) || (length == 0))
 	{
 		return 1;
 	}
 
 	// Compare characters
-	uint8_t i;
-	for ( i = 0; i < length; i++ )
+	for (i = 0; i < length; i++)
 	{
-		if ( *ch1 !=  *ch2 )
+		if (*ch1 !=  *ch2)
 		{
 			return 1;	// not equal
 		}
@@ -1048,13 +1118,13 @@ uint8_t StrCmpWithLength(const char * ch1, const char *ch2, uint8_t length)
  * \brief	Copy string to *dest pointer
  * \return	copied string length
  */
-uint8_t StrCpy(char *dest, const char *str)
+size_t StrCpy(char *dest, const char *str)
 {
-	uint8_t i;
-	uint8_t length;
+	size_t i;
+	size_t length;
 
 	// Check parameter
-	if (dest == NULL)
+	if ((dest == NULL) || (str == NULL))
 	{
 		return 0;
 	}
@@ -1068,8 +1138,7 @@ uint8_t StrCpy(char *dest, const char *str)
 	}
 	dest[length] = '\0';
 
-	// Return length
-	return length;
+	return length;					// Return length
 }
 
 
@@ -1078,12 +1147,12 @@ uint8_t StrCpy(char *dest, const char *str)
  * \brief	Copy fix length string
  * \return	String length (=parameter)
  */
-uint8_t StrCpyFixLength(char *dest, const char *str, uint8_t length)
+size_t StrCpyFixLength(char *dest, const char *str, size_t length)
 {
-	uint8_t i;
+	size_t i;
 
 	// Copy characters
-	for ( i = 0; i < length; i++ )
+	for (i = 0; i < length; i++)
 	{
 		dest[i] = str[i];
 	}
@@ -1097,13 +1166,15 @@ uint8_t StrCpyFixLength(char *dest, const char *str, uint8_t length)
  * \brief	Copy fix length string
  * \return	String length (=parameter)
  */
-uint8_t StrCpyFixLengthWithFillCharacter(char *dest, const char *str, uint8_t length, char fillChar)
+size_t StrCpyFixLengthWithFillCharacter(char *dest, const char *str, size_t length, char fillChar)
 {
-	uint8_t i = 0;
+	size_t i = 0;
 
+	// Check parameters (Not need check str, because str is NULL, we should copy 'fillChar' with 'length' num to 'dest')
 	if (dest == NULL)
 		return 0;
 
+	// If str is NULL, copy fillChar(s) to *dest
 	if (str != NULL)
 	{
 		// Copy characters
@@ -1131,13 +1202,13 @@ uint8_t StrCpyFixLengthWithFillCharacter(char *dest, const char *str, uint8_t le
  * \brief	Copy ended string with max length
  * \return	String length
  */
-uint8_t StrCpyMax(char *dest, const char *str, uint8_t maxLength)
+size_t StrCpyMax(char *dest, const char *str, size_t maxLength)
 {
-	uint8_t length = 0;
+	size_t length = 0;
 	length = StringLength(str);
 
 	// Check parameters
-	if (dest == NULL || str == NULL || maxLength == 0)
+	if (str == NULL || dest == NULL || maxLength == 0 || length == 0)
 	{
 		return 0;
 	}
@@ -1145,15 +1216,11 @@ uint8_t StrCpyMax(char *dest, const char *str, uint8_t maxLength)
 	// Check long
 	if (length >= maxLength)
 	{
-		// Too long, only can copy "length-1" characters + '\0'
-		length = maxLength - 1;
+		length = maxLength - 1;					// Too long, only can copy "length-1" characters + '\0'
 	}
 
-	// Copy characters
-	StrCpyFixLength(dest, str, length);
-
-	// Put end
-	dest[length] = '\0';
+	StrCpyFixLength(dest, str, length);			// Copy characters
+	dest[length] = '\0';						// Put end
 
 	return length;
 }
@@ -1164,9 +1231,9 @@ uint8_t StrCpyMax(char *dest, const char *str, uint8_t maxLength)
  * \brief	Copy character x count
  * \return	String length
  */
-uint8_t StrCpyCharacter(char *dest, char c, uint8_t num)
+size_t StrCpyCharacter(char *dest, char c, size_t num)
 {
-	uint8_t i;
+	size_t i;
 
 	// Check parameters
 	if (dest == NULL || num == 0)
@@ -1180,8 +1247,7 @@ uint8_t StrCpyCharacter(char *dest, char c, uint8_t num)
 		dest[i] = c;
 	}
 
-	// Put end
-	dest[i] = '\0';
+	dest[i] = '\0';				// Put end
 
 	return i;
 }
@@ -1191,16 +1257,31 @@ uint8_t StrCpyCharacter(char *dest, char c, uint8_t num)
 /**
  * \brief	Append string to dest's end
  * \length	New string's length (original + copied)
+ * \note	dest buffer can be overflowed, because there is no overflow checking!
  */
-uint8_t StrAppend(char *dest, const char *str)
+size_t StrAppend(char *dest, const char *str)
 {
-	uint8_t length = 0;
+	size_t length = 0;
+
+	if (dest == NULL)
+	{
+		return length;
+	}
 
 	length = StringLength(dest);
-	length += StrCpy(&dest[length],str);
+
+	if (str != NULL)
+	{
+		// TODO: Length check?
+		length += StrCpy(&dest[length], str);
+	}
 
 	return length;
 }
+
+
+
+// TODO: StrAppen - Safe length
 
 
 
@@ -1216,20 +1297,18 @@ void StrTrim(char *str)
 		return;
 	}
 
-	uint8_t length = StringLength(str) - 1;
-	uint8_t i;
+	size_t length = StringLength(str) - 1;
+	size_t i;
 
 	for (i = length; i > 0; i--)
 	{
 		if (str[i] == ' ' || str[i] == '\t' || str[i] == '\r' || str[i] == '\n')
 		{
-			// Replace ' ' to \0
-			str[i] = '\0';
+			str[i] = '\0';		// Replace ' ' to \0
 		}
 		else
 		{
-			// Not space, good character, end
-			return;
+			break;				// Not space, good character, end
 		}
 	}
 }
@@ -1245,11 +1324,11 @@ void StrTrim(char *str)
  */
 char * STRING_FindCharacter(const char *str, const char findCharacter)
 {
-	uint8_t i;
-	uint8_t length = StringLength(str);
+	size_t i;
+	size_t length = StringLength(str);
 
 	// Check parameter
-	if (str == NULL || length == 0)
+	if ((str == NULL) || (length == 0))
 	{
 		return NULL;
 	}
@@ -1279,9 +1358,9 @@ char * STRING_FindCharacter(const char *str, const char findCharacter)
  */
 char * STRING_FindString(const char *str, const char *findString)
 {
-	uint8_t i;
-	uint8_t length = StringLength(str);
-	uint8_t findStringLength = StringLength(findString);
+	size_t i;
+	size_t length = StringLength(str);
+	size_t findStringLength = StringLength(findString);
 
 	// Check parameters
 	if ((str == NULL) || (findString == NULL) || (length == 0) || (findStringLength == 0))
@@ -1315,19 +1394,17 @@ char * STRING_FindString(const char *str, const char *findString)
  */
 uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint8_t parameterMaxCount)
 {
-	uint8_t i;
-	uint8_t j;
+	size_t i;
+	size_t j;
 	uint8_t parameters = 0;
 
 	// Check parameters
 	if (source == NULL || separated == NULL || parameterMaxCount == 0)
 	{
-		// Fail parameters
-		return 0;
+		return 0;			// Fail parameters
 	}
 
-	// Make empty
-	separated[0] = NULL;
+	separated[0] = NULL;	// Make empty
 
 	// Split
 	j = 0;
@@ -1379,7 +1456,7 @@ uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint
  *			Used '%' parameters
  *			%d, %u, %x, %X, %w, %h, %b, %c, %s, %f
  */
-uint8_t string_printf(char *str, const char *format, va_list ap)
+size_t string_printf(char *str, const char *format, va_list ap)
 {
 	// TODO: Use "new" typedefs
 
@@ -1564,6 +1641,12 @@ uint8_t string_printf(char *str, const char *format, va_list ap)
 					}
 					break;
 
+				case 'p':
+					// %p - pointer - print address in hexadecimal
+					uival = va_arg(ap, unsigned int);
+					string += DecimalToHexaString(uival, string, 8);
+					break;
+
 				default:
 					*string = *p;					// Other, for example: '%'
 					string++;
@@ -1576,7 +1659,269 @@ uint8_t string_printf(char *str, const char *format, va_list ap)
 	// string's end
 	*string = '\0';
 
+	// Return with length
 	return (string-str);
+}
+
+
+
+
+/**
+ * \brief	Instead of snprintf()
+ *			Used '%' parameters
+ *			%d, %u, %x, %X, %w, %h, %b, %c, %s, %f
+ */
+size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list ap)
+{
+	// TODO: Use "new" typedefs
+
+	char	*p;			// step on format string
+	char	*sval;		// string
+	int		ival;		// int
+	unsigned int uival;	// uint
+	float	flval;		// float
+	char 	cval;		// character
+
+	size_t length = 0;
+	size_t remainLength = maxLen - 1;
+
+	bool paramHasLength;
+	uint8_t paramNum1;
+	uint8_t paramNum2;
+	char fillCharacter;
+
+	for (p = (char *)format; *p; p++)				// p to EOS
+	{
+		if ((*p != '%') && (remainLength > 0))	// copy, if not '%'
+		{
+			str[length] = *p;						// copy to string
+			length++;
+			remainLength--;
+		}
+		else
+		{
+			// '%' character
+			p++;
+			paramNum1 = 0;	// for standard %08x
+			paramNum2 = 0;
+			paramHasLength = false;
+			fillCharacter = ' ';
+
+			// Check %...x (parameter after %, before x, u, f, s)
+			// Next character is num?
+			if (IsDecimalChar(*p))
+			{
+				// It is num (1. param)
+				// Replace, if has two parameter
+				paramNum2 = DecimalCharToNum(*p);
+				fillCharacter = *p;
+				paramHasLength = true;
+				p++;
+
+				if (IsDecimalChar(*p))
+				{
+					// xy
+					// It is num (2. param)
+					paramNum1 = paramNum2;
+					paramNum2 = DecimalCharToNum(*p);
+					p++;
+				}
+				else if (*p == '.')
+				{
+					// x.
+					p++;
+					if (IsDecimalChar(*p))
+					{
+						// x.y
+						paramNum1 = paramNum2;
+						paramNum2 = DecimalCharToNum(*p);
+						p++;
+					}
+					else
+					{
+						// x.?
+						// x = paramNum1
+						// ?=0 now, for correct float printing
+						// Do not step p pointer, because this character can be f, x, etc.
+						paramNum1 = paramNum2;
+						paramNum2 = 0;
+					}
+				}
+				else
+				{
+					// x		==>		x = fill character, y = length
+					// If only has one parameter
+					fillCharacter = ' ';	// Blank character
+				}
+			}
+
+			// Process next character (after '%', or etc)
+			switch (*p)
+			{
+				case 'd':
+				{
+					// signed (int)
+					ival = va_arg(ap, int);	// Decimal = signed int (~int32_t)
+					uint8_t decLen = SignedDecimalToStringSafe(ival, &str[length], remainLength+1);
+					length += decLen;
+					remainLength -= decLen;
+					(void)fillCharacter;
+					// TODO: with Fill function
+					/*
+					if (paramNum2 <= remainLength)
+					{
+						uint8_t decLen = SignedDecimalToStringFill(ival, string,
+								paramNum2, fillCharacter);
+						length += decLen;
+						remainLength -= decLen;
+					}
+					else
+					{
+					}
+					*/
+				}
+					break;
+
+				case 'u':
+				{
+					// unsigned (int)
+					uival = va_arg(ap, int);// Uint = Unsigned int (~uint32_t)
+					uint8_t decLen = UnsignedDecimalToStringSafe(uival, &str[length], remainLength+1);
+					length += decLen;
+					remainLength -= decLen;
+					(void)fillCharacter;
+					// TODO: with Fill function
+					/*
+					string += UnsignedDecimalToStringFill(uival, string,
+							paramNum2, fillCharacter);
+					*/
+				}
+					break;
+
+					// TODO: Create 'x' and 'X' to different
+				case 'x':
+				case 'X':
+					// %x - Hex - parameterized byte num
+					uival = va_arg(ap, unsigned int);
+					DEBUG_BREAKPOINT();
+					// TODO: Not implemented function (for length safe)
+					/*
+					if (paramHasLength)
+					{
+						string += DecimalToHexaString(uival, string, paramNum2);
+					}
+					else
+					{
+						string += DecimalToHexaString(uival, string, 8);
+					}*/
+					break;
+#if STRING_HEXADECIMAL_FORMATS
+				case 'w':
+					// Hex // 32 bits	// 8 hex	// 4 byte
+					uival = va_arg(ap, unsigned int);
+					string += DecimalToHexaString(uival, string, 8);
+					break;
+
+				case 'h':
+					// Hex // 16 bits	// 4 hex	// 2 byte
+					ival = va_arg(ap, int);
+					string += DecimalToHexaString(ival, string, 4);
+					break;
+
+				case 'b':
+					// Hex	// 8 bits	// 2 hex	// 1 byte
+					ival = va_arg(ap, int);
+					string += DecimalToHexaString(ival, string, 2);
+					break;
+#else
+				case 'b':
+					// Binary print (from uint32_t)
+					uival = va_arg(ap,  unsigned int);
+					DEBUG_BREAKPOINT();
+					// TODO: Not implemented function (for length safe)
+					/*string += DecimalToBinaryString(uival, string, 33);*/
+					break;
+#endif
+				case 'c':
+					// %c - char
+					cval = va_arg(ap, int);						// Char
+					if (paramHasLength)
+					{
+						// Copy more character
+						uint8_t cNum = paramNum1 * 10 + paramNum2;
+						if (cNum > remainLength)
+							cNum = remainLength;
+						length += StrCpyCharacter(&str[length], cval, cNum);
+						remainLength -= cNum;
+					}
+					else
+					{
+						// Default: copy one character
+						if (remainLength > 0)
+						{
+							str[length] = cval;							// Copy to string
+							length++;
+							remainLength--;
+							str[length] = '\0';
+						}
+					}
+					break;
+
+				case 'f':
+					// %f - float
+					flval = va_arg(ap, double);					// Double / Float
+					DEBUG_BREAKPOINT();
+					(void)flval;
+					// TODO: Not implemented function (for length safe)
+					/*if (paramHasLength)
+					{
+						string += FloatToString(flval, string, paramNum1, paramNum2);
+					}
+					else
+					{
+						string += FloatToString(flval, string, 0, 6);
+					}*/
+					break;
+
+				case 's':
+					// %s - string
+					sval = va_arg(ap, char*);					// String
+					if (paramHasLength)
+					{
+						// String copy with length
+						uint8_t stringLength = paramNum1*10 + paramNum2;
+						if (stringLength > remainLength)
+							stringLength = remainLength;
+						stringLength = StrCpyFixLengthWithFillCharacter(&str[length], sval, stringLength, ' ');
+						length += stringLength;
+						remainLength -= stringLength;
+					}
+					else
+					{
+						// Standard string copy
+						uint8_t stringLength = StrCpyMax(&str[length], sval, remainLength);
+						length += stringLength;
+						remainLength -= stringLength;
+					}
+					break;
+
+				default:
+					if (remainLength > 0)
+					{
+						str[length] = *p;					// Other, for example: '%'
+						length++;
+					}
+					break;
+			}
+		}	// End of '%'
+
+	}	// End of for loop
+
+	// string's end
+	str[length] = '\0';
+
+	// Return with length
+	return length;
 }
 
 
@@ -1594,6 +1939,25 @@ uint8_t usprintf(char *str, const char *format, ...)
 	va_end(ap);						 			// Cleaning after end
 
 	return length;
+}
+
+
+
+size_t usnprintf(char * str, size_t maxLen, const char * format, ...)
+{
+	size_t resultLength = 0;
+
+	if ((str == NULL) || (format == NULL))
+		return 0;
+
+	STRING_ASSERT(MEM_IN_RAM(str, maxLen));
+
+	va_list ap;									// argument pointer
+	va_start(ap, format); 						// ap on arg
+	resultLength = string_printf_safe(str, maxLen, format, ap);	// Separate and process
+	va_end(ap);						 			// Cleaning after end
+
+	return resultLength;
 }
 
 
@@ -1943,6 +2307,14 @@ void STRING_UnitTest(void)
 	value8 = STRING_Splitter(buffer, ' ', splitted, 10);
 	UNITTEST_ASSERT(value8 == 0, "STRING_Splitter error");
 	UNITTEST_ASSERT(splitted[0] == NULL, "STRING_Splitter error");
+
+
+	// TODO:  Test safe (length) functions
+
+	// usnprintf
+	usnprintf(buffer, 30, "%d %u 1234 %c %s", 1, 2, 'a', "str");
+	UNITTEST_ASSERT(!StrCmp(buffer, "1 2 1234 a str"), "usnprintf error");
+	// TODO: Add other test, if usnprintf improved
 
 
 	// End of unittest

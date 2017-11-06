@@ -28,6 +28,17 @@
 #define CONFIG_MEM_STACK_GUARD_VALUE	(0xEF)
 
 
+#if CONFIG_MEM_CHECK_POINTER_RANGE == 1
+	#define MEM_IN_FLASH(_pnt, _size)					((uint32_t)_pnt >= MEM_FLASH_START && ((uint32_t)_pnt + _size) < MEM_FLASH_END)
+	#define MEM_IN_RAM(_pnt, _size)						((uint32_t)_pnt >= MEM_RAM_START && ((uint32_t)_pnt + _size) < MEM_RAM_END)
+	#define MEM_HAS_NOT_OVERLAP(_pnt1, _pnt2, _size)	(((uint32_t)_pnt1 < (uint32_t)_pnt2) ? (((uint32_t)_pnt1 + _size) <= (uint32_t)_pnt2) : (((uint32_t)_pnt2 + _size) <= (uint32_t)_pnt1))
+
+	#define MEM_IN_FLASH_OR_RAM(_pnt, _size)			(MEM_IN_FLASH(_pnt, _size) || MEM_IN_RAM(_pnt, _size))
+
+	#define MEM_ERROR_HANDLER()							Error_Handler()
+#endif
+
+
 
 /*------------------------------------------------------------------------------
  *  Global function declarations

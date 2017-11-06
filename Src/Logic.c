@@ -15,6 +15,7 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
+#include "options.h"
 #include "ESP8266.h"
 #include "DateTime.h"
 #include "Button.h"
@@ -896,7 +897,7 @@ void Logic_CheckCharger(void)
 
 
 
-#ifdef CONFIG_MODULE_DISPLAY_ENABLE
+#ifdef CONFIG_FUNCTION_DISPLAY_MENU
 void Logic_DisplayHandler(ScheduleSource_t source)
 {
 #ifndef CONFIG_FUNCTION_DISPLAY_INPUT

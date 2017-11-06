@@ -106,7 +106,9 @@ bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source, char *comma
 {
 	bool isSuccessful = false;
 
+#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 	EventHandler_GenerateEvent(Event_CommandHandler_ProcessCommand, 0, Task_ProcessDebugUartReceivedCommand);
+#endif
 
 	// Save command (to buffer)
 	StrCpyMax(CommandHandler_ProcessedCommandActual, command, COMMANDHANDLER_MAX_COMMAND_LENGTH);
@@ -173,7 +175,7 @@ static uint8_t CommandHandler_CommandParser(void)
 static bool CommandHandler_SearchCommand(void)
 {
 	CommandID_t i;
-	bool CommandValid = false;
+	bool commandValid = false;
 	CommandResult_t result = CommandResult_Error_CommandNotFound;
 
 	// Search the command
@@ -185,11 +187,13 @@ static bool CommandHandler_SearchCommand(void)
 			// Found the command
 			result = CommandHandler_RunCommand(i);
 
+#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 			// Event
 			EventHandler_GenerateEvent(Event_CommandHandler_ProcessCommand, i, Task_ProcessDebugUartReceivedCommand);
+#endif
 
 			// Valid Command
-			CommandValid = true;
+			commandValid = true;
 			break;
 		}
 	}
@@ -198,7 +202,7 @@ static bool CommandHandler_SearchCommand(void)
 	CommandHandler_CheckResultAndRespond(result);
 
 	// Return with validation
-	return CommandValid;
+	return commandValid;
 }
 
 

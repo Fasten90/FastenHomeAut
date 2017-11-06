@@ -46,9 +46,9 @@
 
 typedef struct
 {
-	uint32_t startTick;
-	uint32_t runTime;
-	TaskID_t taskId;
+	uint32_t startTick;             ///< Start time of Task running
+	uint32_t runTime;               ///< Run time of task
+	TaskID_t taskId;                ///< Task ID (which task)
 } TaskHandlerStat_t;
 
 static TaskHandlerStat_t TaskHandler_StatisticsRanTaskTicks[TASKHANDLER_STATISTICS_LIMIT] = { 0 };
@@ -124,6 +124,7 @@ void TaskHandler_Scheduler(TaskTick_t elapsedTick)
 	TaskID_t i;
 
 	// Time optimizing...
+	// TODO: Check "required" tasks!
 	if (elapsedTick == 0)
 	{
 		return;
@@ -287,7 +288,7 @@ void TaskHandler_SetTaskOnceRun(TaskID_t taskID, TaskTick_t taskTick)
 /**
  * \brief	Disable task
  */
-void TaskHandler_DisableTask(TaskName_t taskID)
+void TaskHandler_DisableTask(TaskID_t taskID)
 {
 	if (taskID < Task_Count)
 	{
