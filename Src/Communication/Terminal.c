@@ -952,17 +952,7 @@ static void Terminal_HistoryLoad(uint8_t direction)
  */
 static void Terminal_ConvertSmallLetter(void)
 {
-	uint8_t i;
-
-	for (i = 0; Terminal_CommandActual[i] != '\0'; i++)
-	{
-		if ((Terminal_CommandActual[i] >= 'A') && (Terminal_CommandActual[i] <= 'Z'))
-		{
-			// Need to change to small letter
-			// length between Big Letter and small letter
-			Terminal_CommandActual[i] = Terminal_CommandActual[i] - ('A' - 'a');
-		}
-	}
+	StringLower(Terminal_CommandActual);
 }
 
 

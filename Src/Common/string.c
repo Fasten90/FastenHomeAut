@@ -37,6 +37,8 @@
 #define STRING_ASSERT(_e)
 #endif
 
+#define STRING_SIZE_MAX				(1024U)
+
 
 
 /*------------------------------------------------------------------------------
@@ -996,6 +998,35 @@ bool StringToFloat(const char *str, float *num)
 }
 
 
+/**
+ * \brief	Convert char to lowercase
+ */
+void ToLower(char * c)
+{
+	if ((*c >= 'A') && (*c <= 'Z'))
+	{
+		// Need to change to small letter
+		// length between Big Letter and small letter
+		*c = *c - ('A' - 'a');
+	}
+}
+
+
+
+/**
+ * \brief	Convert char to UpperCase
+ */
+void ToUpper(char * c)
+{
+	if ((*c >= 'a') && (*c <= 'z'))
+	{
+		// Need to change to small letter
+		// length between Big Letter and small letter
+		*c = *c + ('A' - 'a');
+	}
+}
+
+
 
 /**
  * \brief	Calculate string length
@@ -1012,7 +1043,7 @@ size_t StringLength(const char *str)
 	}
 
 	// Added max length checking
-	while ((length < SIZE_MAX) && (str[length] !='\0')) length++;	// Length = string length
+	while ((length < STRING_SIZE_MAX) && (str[length] !='\0')) length++;	// Length = string length
 	return length;
 }
 
@@ -1025,6 +1056,8 @@ size_t StringLength(const char *str)
  */
 uint8_t StrCmp(const char *str1, const char *str2)
 {
+	size_t i = 0;
+
 	// Check parameters
 	if ((str1 == NULL) && (str2 == NULL))
 	{
@@ -1038,11 +1071,11 @@ uint8_t StrCmp(const char *str1, const char *str2)
 	}
 
 	// Check characters
-	while ((*str1 == *str2) && *str1 && *str2)
+	while ((*str1 == *str2) && *str1 && *str2 && (i < STRING_SIZE_MAX))
 	{
-		// TODO: Max length checking!
 		str1++;
 		str2++;
+		i++;
 	}
 
 	if (*str1 == *str2)
@@ -1066,10 +1099,11 @@ uint8_t StrCmp(const char *str1, const char *str2)
  */
 uint8_t StrCmpFirst(const char *str1, const char *str2)
 {
+	size_t i = 0;;
+
 	while (*str1)
 	{
-		// TODO: Length checking!
-		if (*str1 !=  *str2)
+		if ((*str1 !=  *str2) || (i >= STRING_SIZE_MAX))
 		{
 			return 1;	// not equal
 		}
@@ -1156,6 +1190,9 @@ size_t StrCpyFixLength(char *dest, const char *str, size_t length)
 	{
 		dest[i] = str[i];
 	}
+
+	// TODO: put '\0'? It is correct?
+	dest[i] = '\0';
 
 	return length;
 }
@@ -1272,7 +1309,6 @@ size_t StrAppend(char *dest, const char *str)
 
 	if (str != NULL)
 	{
-		// TODO: Length check?
 		length += StrCpy(&dest[length], str);
 	}
 
@@ -1281,7 +1317,35 @@ size_t StrAppend(char *dest, const char *str)
 
 
 
-// TODO: StrAppen - Safe length
+/**
+ * \brief	Append string to dest's end
+ * \length	New string's length (original + copied)
+ * \note	dest buffer can be overflowed, because there is no overflow checking!
+ */
+size_t StrAppendSafe(char *dest, const char *str, size_t destLength)
+{
+	size_t length = 0;
+
+	if (dest == NULL)
+	{
+		return length;
+	}
+
+	length = StringLength(dest);
+
+	if ((str != NULL) && (destLength > length))
+	{
+		size_t copyLength = StringLength(str);
+		if (destLength <= (length + copyLength))
+		{
+			// How many characters can we copy?
+			copyLength = destLength - length - 1;	// Last character should be '\0'
+		}
+		length += StrCpyFixLength(&dest[length], str, copyLength);
+	}
+
+	return length;
+}
 
 
 
@@ -1310,6 +1374,47 @@ void StrTrim(char *str)
 		{
 			break;				// Not space, good character, end
 		}
+	}
+}
+
+
+
+/**
+ * \brief	Convert string to lowercase
+ * \str		'\0' terminated string
+ */
+void StringLower(char * str)
+{
+	size_t i;
+
+	if (str == NULL)
+	{
+		return;
+	}
+
+	for (i = 0; str[i] != '\0'; i++)
+	{
+		ToLower(&str[i]);
+	}
+}
+
+
+
+/**
+ * \brief	Convert string to UPPERCASE
+ */
+void StringUpper(char * str)
+{
+	size_t i;
+
+	if (str == NULL)
+	{
+		return;
+	}
+
+	for (i = 0; str[i] != '\0'; i++)
+	{
+		ToUpper(&str[i]);
 	}
 }
 
@@ -1455,6 +1560,7 @@ uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint
  * \brief	Instead of sprintf()
  *			Used '%' parameters
  *			%d, %u, %x, %X, %w, %h, %b, %c, %s, %f
+ * \note	!! Be careful: 'str' can be overflow!!
  */
 size_t string_printf(char *str, const char *format, va_list ap)
 {
@@ -1468,7 +1574,6 @@ size_t string_printf(char *str, const char *format, va_list ap)
 	char 	cval;		// character
 
 	char *string = str;
-	// TODO: Length checking !!! This function can be overflow
 
 	bool paramHasLength;
 	uint8_t paramNum1;
@@ -2315,6 +2420,35 @@ void STRING_UnitTest(void)
 	usnprintf(buffer, 30, "%d %u 1234 %c %s", 1, 2, 'a', "str");
 	UNITTEST_ASSERT(!StrCmp(buffer, "1 2 1234 a str"), "usnprintf error");
 	// TODO: Add other test, if usnprintf improved
+
+
+	// Test StrAppendSafe
+	buffer[0] = '\0';
+	StrAppendSafe(buffer, "First string, ", 30);
+	StrAppendSafe(buffer, "Second string", 30);
+	UNITTEST_ASSERT(!StrCmp(buffer, "First string, Second string"), "StrAppendSafe error");
+
+	// Check overflow
+	buffer[0] = '\0';
+	buffer[19] = 0xAA;
+	buffer[20] = 0xBB;
+	StrAppendSafe(buffer, "1234567890", 20);
+	StrAppendSafe(buffer, "1234567890", 20);
+	UNITTEST_ASSERT(!StrCmp(buffer, "1234567890123456789"), "StrAppendSafe error");
+	UNITTEST_ASSERT((buffer[19] == '\0'), "StrAppendSafe overflow error");
+	UNITTEST_ASSERT((buffer[20] == 0xBB), "StrAppendSafe overflow error");
+
+
+	// StringLower()
+	StrCpy(buffer, "123ABCabc$");
+	StringLower(buffer);
+	UNITTEST_ASSERT(!StrCmp(buffer, "123abcabc$"), "StringLower error");
+
+
+	// StringUpper()
+	StrCpy(buffer, "123ABCabc$");
+	StringUpper(buffer);
+	UNITTEST_ASSERT(!StrCmp(buffer, "123ABCABC$"), "StringUpper error");
 
 
 	// End of unittest

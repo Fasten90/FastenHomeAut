@@ -55,10 +55,12 @@ typedef struct
 
 void CircularBuffer_Init(CircularBufferInfo_t *circBuff);
 uint16_t CircularBuffer_GetCharacters(CircularBufferInfo_t *circBuff, char * message, bool putEnd);
+uint16_t CircularBuffer_Clear(CircularBufferInfo_t *circBuff, uint16_t length);
 void CircularBuffer_ClearLast(CircularBufferInfo_t *circBuff);
 void CircularBuffer_FullClear(CircularBufferInfo_t *circBuff);
 void CircularBuffer_FindLastMessage(CircularBufferInfo_t *circBuff);
 bool CircularBuffer_HasNewMessage(CircularBufferInfo_t *circBuff);
+uint16_t CircularBuffer_PutString(CircularBufferInfo_t *circBuff, char *str, uint16_t needCopyLength);
 
 void CircularBuffer_UnitTest(void);
 

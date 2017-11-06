@@ -52,7 +52,14 @@
 #define strcpy(_dest, _src)				StrCpy(_dest, _src)
 
 
-#define strcat(dest_, src_)				StrAppend(dest_, src_)
+#define strcat(_dest_, _src)			StrAppend(_dest, _src)
+
+
+#define strncat(_dest, _src, _num)		StrAppend(_dest, _src, _num)
+
+
+// Location of character in string
+#define strchr(_str, _char)				STRING_FindCharacter(_str, _char)
 
 
 // char * strstr ( const char *, const char * )
@@ -129,6 +136,9 @@ bool StringToSignedDecimalNum(const char *str, int32_t *value);
 // String --> Float converter
 bool StringToFloat(const char *str, float *num);
 
+void ToLower(char * c);
+void ToUpper(char * c);
+
 // Standard string functions:
 size_t StringLength(const char *str);
 uint8_t StrCmp(const char * str1, const char *str2);
@@ -140,9 +150,14 @@ size_t StrCpyFixLengthWithFillCharacter(char *dest, const char *str, size_t leng
 size_t StrCpyMax(char *dest, const char *str, size_t maxLength);
 size_t StrCpyCharacter(char *dest, char c, size_t num);
 size_t StrAppend(char *dest, const char *src);
+size_t StrAppendSafe(char *dest, const char *str, size_t destLength);
+
+// String modify
+void StrTrim(char *str);
+void StringLower(char * str);
+void StringUpper(char * str);
 
 // Find & Separators
-void StrTrim(char *str);
 char * STRING_FindCharacter(const char *str, const char findCharacter);
 char * STRING_FindString(const char *str, const char *findString);
 uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint8_t parameterMaxCount);

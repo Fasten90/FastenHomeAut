@@ -84,7 +84,7 @@ uint8_t uprintf(const char *format, ...);
 
 void DebugUart_ProcessReceivedCharacters(void);
 
-uint8_t DebugUart_SendMessageBlocked(const char * str);
+size_t DebugUart_SendMessageBlocked(const char * str);
 
 
 #endif /* DEBUGUART_H_ */
