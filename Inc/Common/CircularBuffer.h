@@ -38,7 +38,7 @@ typedef struct
 	const uint16_t size;			///< Size
 	volatile uint16_t writeCnt;		///< Write counter
 	volatile uint16_t readCnt;		///< Read counter
-	const char * name;				///< Buffer name
+	const char * const name;		///< Buffer name
 } CircularBufferInfo_t;
 
 

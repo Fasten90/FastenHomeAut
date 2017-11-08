@@ -51,7 +51,6 @@
 							</tool>
 							<tool command="arm-atollic-eabi-gcc -c " commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX} ${OUTPUT} ${INPUTS}" id="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447" name="C Compiler" superClass="com.atollic.truestudio.exe.debug.toolchain.gcc">
 								<option id="com.atollic.truestudio.gcc.directories.select.330946435" name="Include path" superClass="com.atollic.truestudio.gcc.directories.select" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="../Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F0xx_HAL_Driver/Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F0xx_HAL_Driver/Inc/Legacy"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32F0xx/Include"/>
@@ -61,6 +60,7 @@
 									<listOptionValue builtIn="false" value="../Inc/HwTester"/>
 									<listOptionValue builtIn="false" value="../Inc/Modules"/>
 									<listOptionValue builtIn="false" value="../Inc/Game"/>
+									<listOptionValue builtIn="false" value="../Inc"/>
 								</option>
 								<option id="com.atollic.truestudio.gcc.symbols.defined.1670122205" name="Defined symbols" superClass="com.atollic.truestudio.gcc.symbols.defined" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__weak=__attribute__((weak))"/>
@@ -169,6 +169,9 @@
 							<inputType id="com.atollic.truestudio.as.input.1397159877" name="Input" superClass="com.atollic.truestudio.as.input"/>
 						</tool>
 					</fileInfo>
+					<fileInfo id="com.atollic.truestudio.exe.debug.1518366166.1712638631" name="core_cm3.h" rcbsApplicability="disable" resourcePath="Drivers/CMSIS/Include/core_cm3.h" toolsToInvoke=""/>
+					<fileInfo id="com.atollic.truestudio.exe.debug.1518366166.2028159574" name="core_cm4.h" rcbsApplicability="disable" resourcePath="Drivers/CMSIS/Include/core_cm4.h" toolsToInvoke=""/>
+					<fileInfo id="com.atollic.truestudio.exe.debug.1518366166.1918821751" name="core_cm7.h" rcbsApplicability="disable" resourcePath="Drivers/CMSIS/Include/core_cm7.h" toolsToInvoke=""/>
 					<folderInfo id="com.atollic.truestudio.exe.debug.1518366166.544965544" name="/" resourcePath="Drivers/STM32F4xx_HAL_Driver">
 						<toolChain id="com.atollic.truestudio.exe.debug.toolchain.135206392" name="Atollic ARM Tools" superClass="com.atollic.truestudio.exe.debug.toolchain" unusedChildren="">
 							<option id="com.atollic.truestudio.toolchain_options.mcu.1783777808.2115123415" name="Microcontroller" superClass="com.atollic.truestudio.toolchain_options.mcu.1783777808"/>
@@ -233,7 +236,7 @@
 					</folderInfo>
 					<fileInfo id="com.atollic.truestudio.exe.debug.1518366166.434568852" name="template.h" rcbsApplicability="disable" resourcePath="Inc/template.h" toolsToInvoke=""/>
 					<sourceEntries>
-						<entry excluding="CMSIS/Device/ST/STM32F0xx/Source/gcc/startup_stm32f030x6.s|CMSIS/Device/ST/STM32F0xx/Source/gcc/startup_stm32f030xc.s|CMSIS/Device/ST/STM32F4xx|STM32F4xx_HAL_Driver|CMSIS/Device/ST/STM32F0xx/Include/stm32f030xc.h|CMSIS/Device/ST/STM32F0xx/Include/stm32f030x6.h" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
+						<entry excluding="Windows|CMSIS/Include/core_cm4.h|CMSIS/Include/core_cm7.h|CMSIS/Include/core_cm3.h|CMSIS/Device/ST/STM32F0xx/Source/gcc/startup_stm32f030x6.s|CMSIS/Device/ST/STM32F0xx/Source/gcc/startup_stm32f030xc.s|CMSIS/Device/ST/STM32F4xx|STM32F4xx_HAL_Driver|CMSIS/Device/ST/STM32F0xx/Include/stm32f030xc.h|CMSIS/Device/ST/STM32F0xx/Include/stm32f030x6.h" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 						<entry excluding="stm32f4xx_it.h|stm32f4xx_hal_conf.h|FreeRTOSConfig.h|template.h|Old" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Inc"/>
 						<entry excluding="stm32f4xx_it.c|stm32f4xx_hal_msp.c|template.c|main_importF4.c|syscalls.c|Old" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Src"/>
 					</sourceEntries>
@@ -377,7 +380,7 @@
 						</tool>
 					</fileInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
+						<entry excluding="Windows" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Inc"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Src"/>
 					</sourceEntries>

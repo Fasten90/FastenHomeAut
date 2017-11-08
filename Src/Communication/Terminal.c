@@ -952,7 +952,7 @@ static void Terminal_HistoryLoad(uint8_t direction)
  */
 static void Terminal_ConvertSmallLetter(void)
 {
-	StringLower(Terminal_CommandActual);
+	StringLower((char *)Terminal_CommandActual);
 }
 
 
