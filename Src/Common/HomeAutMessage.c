@@ -483,6 +483,7 @@ bool HomeAutMessage_CreateAndSendHomeAutMessage(
 		return true;
 #else
 #warning "HomeAutMessage module cannot send message to anything"
+		return true;
 #endif
 	}	
 	else
@@ -642,7 +643,7 @@ void HomeAutMessage_UnitTest(void)
 			&& (testInformation.SourceAddress.IP[0] == 192)
 			&& (testInformation.TargetAddress.IP[0] == 192)
 			// TODO: DateTime vizsgálat kultúráltan
-			&& (testInformation.DateTime.year == 17)
+			&& (testInformation.DateTime.date.year == 17)
 			&& (testInformation.Function == Function_Command)
 			&& (testInformation.DataType == Command_Remote)
 			&& (testInformation.Data == 0x01234567)),

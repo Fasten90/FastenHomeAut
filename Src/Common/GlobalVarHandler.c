@@ -169,7 +169,7 @@ void GlobalVarHandler_CheckCommandStructAreValid(void)
 		if (GlobalVarList[i].type == Type_Bits)
 		{
 			ASSERT(GlobalVarList[i].maxValue <= 31);
-			ASSERT(GlobalVarList[i].minValue > 31);
+			ASSERT(GlobalVarList[i].minValue < 31);
 			ASSERT(GlobalVarList[i].minValue <= GlobalVarList[i].maxValue);
 		}
 	}
@@ -1601,7 +1601,6 @@ void GlobalVarHandler_PrintTraceBuffer(void)
  */
 void GlobalVarHandler_UnitTest(void)
 {
-	bool isOk;
 
 // TODO: Put at header or merge with WriteResult function...
 #define GLOBALVARHANDLER_MSG_SET_SUCCESSFUL			("Set successful")
@@ -1624,8 +1623,8 @@ void GlobalVarHandler_UnitTest(void)
 	#define CONFIG_GLOBALVARHANDLER_CHECK_ENABLE
 	#warning "Need enable GlobalVarChecker"
 #endif
-	isOk = GlobalVarHandler_CheckCommandStructAreValid();
-	UNITTEST_ASSERT(isOk, "GlobalVarHandler structs are wrong");
+	GlobalVarHandler_CheckCommandStructAreValid();
+	//UNITTEST_ASSERT(isOk, "GlobalVarHandler structs are wrong");
 
 
 	// Test "testuint8" variable

@@ -90,7 +90,7 @@ const GlobalVarCommand_t GlobalVarList[] =
 			.name = "testcannotaccess",
 			.varPointer = &testCannotAccess,
 			.type = Type_Bool,
-			.sourceEnable = CommProt_Disable
+			.sourceEnable = CommProtBit_Disable
 		},
 		{
 			.name = "testfloat",

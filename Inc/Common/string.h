@@ -72,7 +72,9 @@
 #define snprintf(...)					usnprintf(__VA_ARGS__)
 
 
+#ifndef CONFIG_MICROCONTROLLER_PC
 #define printf(...)						uprintf(__VA_ARGS__)
+#endif
 
 
 

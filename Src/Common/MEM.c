@@ -49,9 +49,9 @@ void * memcpy(void * destination, const void * source, size_t size)
 	{
 		return NULL;
 	}
-	if (!MEM_IN_FLASH_OR_RAM(source, size)) MEM_ERROR_HANDLER();
-	if (!MEM_IN_RAM(destination, size)) MEM_ERROR_HANDLER();
-	if (!MEM_HAS_NOT_OVERLAP(source, destination, size)) MEM_ERROR_HANDLER();
+	MEM_ASSERT(MEM_IN_FLASH_OR_RAM(source, size));
+	MEM_ASSERT(MEM_IN_RAM(destination, size));
+	MEM_ASSERT(MEM_HAS_NOT_OVERLAP(source, destination, size));
 #endif
 
 	for (i = 0; i < size; i++)
@@ -80,7 +80,7 @@ void * memset(void * ptr, int value, size_t size)
 	{
 		return NULL;
 	}
-	if (!MEM_IN_RAM(ptr, size)) MEM_ERROR_HANDLER();
+	MEM_ASSERT(MEM_IN_RAM(ptr, size));
 #endif
 
 	for (i = 0; i < size; i++)
@@ -110,9 +110,9 @@ void * memmove(void * destination, const void * source, size_t size)
 	{
 		return NULL;
 	}
-	if (!MEM_IN_RAM(source, size)) MEM_ERROR_HANDLER();
-	if (!MEM_IN_RAM(destination, size)) MEM_ERROR_HANDLER();
-	if (!MEM_HAS_NOT_OVERLAP(source, destination, size)) MEM_ERROR_HANDLER();
+	MEM_ASSERT(MEM_IN_RAM(source, size));
+	MEM_ASSERT(MEM_IN_RAM(destination, size));
+	MEM_ASSERT(MEM_HAS_NOT_OVERLAP(source, destination, size));
 #endif
 
 	for (i = 0; i < size; i++)
@@ -159,8 +159,8 @@ int memcmp(const void * ptr1, const void * ptr2, size_t size)
 	{
 		return -1;
 	}
-	if (!MEM_IN_FLASH_OR_RAM(ptr1, size)) MEM_ERROR_HANDLER();
-	if (!MEM_IN_FLASH_OR_RAM(ptr2, size)) MEM_ERROR_HANDLER();
+	MEM_ASSERT(MEM_IN_FLASH_OR_RAM(ptr1, size));
+	MEM_ASSERT(MEM_IN_FLASH_OR_RAM(ptr2, size));
 #endif
 
 	for (i = 0; i < size; i++)
@@ -198,6 +198,8 @@ void mem_StackFillWithGuardValues(void)
  */
 void mem_CheckStackGuardValues(void)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 	uint16_t i = 0;
 	uint16_t guardGoodCnt = 0;
 	bool guardWasFound = false;
@@ -220,6 +222,7 @@ void mem_CheckStackGuardValues(void)
 			guardWasFound = false;
 		}
 	}
+#pragma GCC diagnostic pop
 
 	uprintf("MEM used: %d / %d, it is %d%%\r\n",
 			guardGoodCnt,

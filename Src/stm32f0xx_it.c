@@ -31,8 +31,15 @@
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
+#include "options.h"
+
+#ifndef CONFIG_MICROCONTROLLER_PC
 #include "stm32f0xx_hal.h"
 #include "stm32f0xx.h"
+#else
+#include "windows_hal.h"
+#endif
+
 #include "stm32f0xx_it.h"
 
 #include "Globals.h"

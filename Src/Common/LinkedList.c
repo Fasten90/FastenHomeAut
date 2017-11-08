@@ -238,7 +238,10 @@ void LinkedList_UnitTest(void)
 
 	UnitTest_Start("LinkedList", __FILE__);
 
-	LinkedList_Init();
+
+	ListItem root = { 0 };
+
+	LinkedList_Init(&root, 10);
 
 
 	LinkedList_AddFirstItem(1);

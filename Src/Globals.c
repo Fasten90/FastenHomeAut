@@ -19,6 +19,10 @@
 #include "DebugUart.h"
 #include "globals.h"
 
+#ifdef CONFIG_MICROCONTROLLER_PC
+#include "windows_hal.h"
+#endif
+
 
 
 /*------------------------------------------------------------------------------

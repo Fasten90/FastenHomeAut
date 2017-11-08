@@ -57,9 +57,9 @@
 #elif defined(CONFIG_MICROCONTROLLER_PC)
 // Do not use...
 #define MEM_FLASH_START		(0x00000000)
-#define MEM_FLASH_END		(0x00000000 + 128*1024)
+#define MEM_FLASH_END		(0xFFFFFFFF)
 #define MEM_RAM_START		(0x00000000)
-#define MEM_RAM_END			(0x00000000 + 64*1024)
+#define MEM_RAM_END			(0xFFFFFFFF)
 #else
 #warning "ERROR! memory FLASH - RAM values are missed"
 #endif

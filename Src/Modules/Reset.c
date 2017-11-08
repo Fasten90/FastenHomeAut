@@ -16,6 +16,9 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
+
+#ifdef CONFIG_MODULE_RESETREASON_ENABLE
+
 #include "include.h"
 #include "String.h"
 #include "DebugUart.h"
@@ -187,4 +190,4 @@ void Reset_PrintResetReasons(void)
 	uprintf("Reset reason: %s", str);
 }
 
-
+#endif

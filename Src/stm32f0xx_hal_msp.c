@@ -32,7 +32,13 @@
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
+#include "options.h"
+#ifndef CONFIG_MICROCONTROLLER_PC
 #include "stm32f0xx_hal.h"
+#else
+#include "stm32f030xc.h"
+#endif
+
 
 /* USER CODE BEGIN 0 */
 

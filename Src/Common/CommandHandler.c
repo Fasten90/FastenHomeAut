@@ -480,7 +480,7 @@ void CommandHandler_Printf(const char *format, ...)
 	va_end(ap);						 			// Cleaning after end
 
 #ifdef CONFIG_DEBUG_MODE
-	if (txBuffer[COMMANDHANDLER_MAX_MESSAGE_LENGTH-1] != 0xEF) DEBUG_BREAKPOINT();
+	if (txBuffer[COMMANDHANDLER_MAX_MESSAGE_LENGTH-1] != (char)0xEF) DEBUG_BREAKPOINT();
 #endif
 
 	CommandHandler_SendMessage(txBuffer);

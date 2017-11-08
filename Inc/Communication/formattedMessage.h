@@ -38,6 +38,8 @@
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
+#ifdef CONFIG_MODULE_FORMATTEDMESSAGE_ENABLE
+
 void SendColouredMessageWithBackgroundColor(const char* message,  FormattedStringColors_t textColor, FormattedStringColors_t backgroundColor);
 void SendColouredMessage(const char* message, FormattedStringColors_t textColor);
 void SendTextColor(FormattedStringColors_t textColor);
@@ -46,6 +48,12 @@ void SendErrorMessage(const char *message);
 
 void FormattedMessage_Test(void);
 
+#else
+
+#define SendBackgroundColor(_backgroundcolor)
+#define SendTextColor(_textcolor)
+
+#endif
 
 
 #endif /* FORMATTEDMESSAGE_H_ */

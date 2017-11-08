@@ -83,9 +83,10 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 ///< Breakpoint
 #ifdef CONFIG_DEBUG_MODE
     #ifndef CONFIG_MICROCONTROLLER_PC
-#define DEBUG_BREAKPOINT()		__asm("BKPT #0\n")		// ASM: Break debugger
+	#define DEBUG_BREAKPOINT()		__asm("BKPT #0\n")		// ASM: Break debugger
     #else
-#define DEBUG_BREAKPOINT()		DebugBreak()
+	#include "Windows.h"
+	#define DEBUG_BREAKPOINT()		DebugBreak()
     #endif
 #else
 #define DEBUG_BREAKPOINT()

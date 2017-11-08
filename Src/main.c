@@ -11,6 +11,7 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
+#include "options.h"
 #include "include.h"
 #include "Button.h"
 #include "LED.h"
@@ -32,6 +33,10 @@
 #include "ADC.h"
 #include "Globals.h"
 #include "Bluetooth_HC05.h"
+
+#ifdef CONFIG_MICROCONTROLLER_PC
+#include "windows_hal.h"
+#endif
 
 
 
@@ -66,6 +71,11 @@ int main(void)
 	/* Configure the system clock */
 	SystemClock_Config();
 
+#ifdef CONFIG_MICROCONTROLLER_PC
+	#ifdef CONFIG_MODULE_UNITTEST_ENABLE
+	CommandHandler_PrepareFindExecuteCommand(CommProt_DebugUart, "unittest");
+	#endif
+#endif
 
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
 	// EventLog
@@ -285,6 +295,18 @@ void SystemClock_Config(void)
 
 }
 #endif	// #ifdef CONFIG_USE_PANEL_NODEMEDIUM
+
+
+
+#ifdef CONFIG_MICROCONTROLLER_PC
+/**
+ * System Clock Configuration
+ */
+void SystemClock_Config(void)
+{
+	return;
+}
+#endif
 
 
 

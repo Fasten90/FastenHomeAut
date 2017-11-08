@@ -2048,6 +2048,9 @@ uint8_t usprintf(char *str, const char *format, ...)
 
 
 
+/**
+ * \brief	Function like snprintf(); Print to string
+ */
 size_t usnprintf(char * str, size_t maxLen, const char * format, ...)
 {
 	size_t resultLength = 0;
@@ -2436,7 +2439,7 @@ void STRING_UnitTest(void)
 	StrAppendSafe(buffer, "1234567890", 20);
 	UNITTEST_ASSERT(!StrCmp(buffer, "1234567890123456789"), "StrAppendSafe error");
 	UNITTEST_ASSERT((buffer[19] == '\0'), "StrAppendSafe overflow error");
-	UNITTEST_ASSERT((buffer[20] == 0xBB), "StrAppendSafe overflow error");
+	UNITTEST_ASSERT((buffer[20] == (char)0xBB), "StrAppendSafe overflow error");
 
 
 	// StringLower()

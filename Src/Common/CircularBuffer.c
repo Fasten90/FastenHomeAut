@@ -425,7 +425,7 @@ void CircularBuffer_UnitTest(void)
 	UNITTEST_ASSERT(length == 12, "PutString() error");
 	UNITTEST_ASSERT(!StrCmpWithLength(&buffer256[250], "012345", 6), "PutString() error");
 	UNITTEST_ASSERT(!StrCmpWithLength(&buffer256[0], "6789xx", 6), "PutString() error");
-	UNITTEST_ASSERT(buffer256[256] == 0xEF, "PutString() error");
+	UNITTEST_ASSERT(buffer256[256] == (char)0xEF, "PutString() error");
 	UNITTEST_ASSERT(circBufferInfo.writeCnt == 6, "PutString() error");
 	UNITTEST_ASSERT(circBufferInfo.readCnt == 10, "PutString() error");
 
@@ -498,7 +498,7 @@ void CircularBuffer_UnitTest(void)
 		UNITTEST_ASSERT((buffer256[i] == '\0'), "ERROR in Clear()");
 	}
 	// Check overflow
-	UNITTEST_ASSERT(buffer256[256] == 0xEF, "ERROR: Clear() is overflowed()");
+	UNITTEST_ASSERT(buffer256[256] == (char)0xEF, "ERROR: Clear() is overflowed()");
 
 
 	circBufferInfo.readCnt = 256;
@@ -515,8 +515,8 @@ void CircularBuffer_UnitTest(void)
 	circBufferInfo.readCnt = 256;
 	circBufferInfo.writeCnt = 200;
 	CircularBuffer_Clear(&circBufferInfo, 10);
-	UNITTEST_ASSERT(buffer256[255] == 0, "ERROR: Clear() is not work with too large writeCnt");
-	UNITTEST_ASSERT(buffer256[256] == 0xEF, "ERROR: Clear() is overflowed()");
+	UNITTEST_ASSERT(buffer256[255] == '\0', "ERROR: Clear() is not work with too large writeCnt");
+	UNITTEST_ASSERT(buffer256[256] == (char)0xEF, "ERROR: Clear() is overflowed()");
 
 
 	// TODO: Test: CircularBuffer_PutString

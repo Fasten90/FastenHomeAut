@@ -58,6 +58,8 @@ extern CircularBufferInfo_t DebugUart_RxBuffStruct;
 
 extern bool DebugUart_SendEnable_flag;
 
+extern const bool DebugUart_CommandReceiveEnable;
+
 #if defined(CONFIG_USE_FREERTOS)
 extern xSemaphoreHandle DebugUart_Rx_Semaphore;
 extern xSemaphoreHandle DebugUart_Tx_Semaphore;
@@ -69,22 +71,37 @@ extern xSemaphoreHandle DebugUart_Tx_Semaphore;
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
+#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
+
 void DebugUart_Init(void);
 void DebugUart_StartReceive(void);
 bool DebugUart_SendChar(char c);
 uint8_t DebugUart_SendMessage(const char *message);
 bool DebugUart_SendNewLine(void);
 bool DebugUart_SendLine(const char *message);
-#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
+
 uint8_t uprintf(const char *format, ...);
-#else
-// Not realized
-#define uprintf(...)		(0)
-#endif
 
 void DebugUart_ProcessReceivedCharacters(void);
 
 size_t DebugUart_SendMessageBlocked(const char * str);
+
+#else
+
+// Not used DEBUGUART
+#ifndef CONFIG_MICROCONTROLLER_PC
+#define DebugUart_SendLine(_msg)				(void)_msg
+#define DebugUart_SendMessageBlocked(_msg)		(void)_msg
+
+#define uprintf(...)							(0)
+#else
+#include <stdio.h>
+#define uprintf(...)							printf(__VA_ARGS__)
+#define DebugUart_SendLine(_msg)				puts(_msg)
+#define DebugUart_SendMessageBlocked(_msg)		puts(_msg)
+#endif
+
+#endif
 
 
 #endif /* DEBUGUART_H_ */
