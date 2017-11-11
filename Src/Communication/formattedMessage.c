@@ -1,7 +1,7 @@
 /*
  *		FormattedMessage.c
  *		Created on:		2016-09-10
- *		Author: 		Vizi Gábor
+ *		Author: 		Vizi GÃ¡bor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		Formatted (colored / backgroundcolor) message
  *		Target:			STM32Fx

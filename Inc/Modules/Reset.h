@@ -1,7 +1,7 @@
 /*
  *		Reset.h
  *		Created on:		2017-02-27
- *		Author:			Vizi Gábor
+ *		Author:			Vizi GÃ¡bor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		Reset module
  *		Target:			STM32Fx

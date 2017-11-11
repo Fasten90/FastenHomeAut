@@ -1,7 +1,7 @@
 /*
  *		Debug.h
  *		Created on:		2017-08-17
- *		Author:			Vizi Gábor
+ *		Author:			Vizi GÃ¡bor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		Debug prints (with colorized messages and enabling)
  *		Target:			STM32Fx

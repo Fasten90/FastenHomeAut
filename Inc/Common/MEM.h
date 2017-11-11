@@ -1,7 +1,7 @@
 /*
  *		MEM.h
  *		Created on:		2016-08-31
- *		Author: 		Vizi Gábor
+ *		Author: 		Vizi GÃ¡bor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		MEM functions
  *		Target:			STM32Fx
