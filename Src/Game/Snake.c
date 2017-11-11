@@ -422,12 +422,11 @@ static uint32_t Snake_CalculateFreePoints(void)
 
 static uint32_t Snake_GenerateRandomPosition(uint32_t max)
 {
-	uint32_t tick = HAL_GetTick();
-	uint32_t random = 0;
+	uint32_t randomValue = 0;
 
-	random = tick % max;
+	randomValue = random() % max;
 
-	return random;
+	return randomValue;
 }
 
 

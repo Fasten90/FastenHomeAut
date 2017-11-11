@@ -30,6 +30,14 @@
 #define pow(_base, _exp)	power(_base, _exp)
 
 
+#define rand()				(random())
+
+
+#ifndef RAND_MAX
+#define RAND_MAX			(0x7FFF)
+#endif
+
+
 
 /*------------------------------------------------------------------------------
  *  Global function declarations
@@ -49,6 +57,8 @@ uint8_t popcount(uint32_t value);
 void ClearBit(uint32_t * value, uint8_t index);
 void SetBit(uint32_t * value, uint8_t index);
 uint8_t GetBit(uint32_t value, uint8_t index);
+
+uint16_t random(void);
 
 void Calc_UnitTest(void);
 

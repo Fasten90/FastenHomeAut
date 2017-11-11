@@ -258,6 +258,17 @@ uint8_t GetBit(uint32_t value, uint8_t index)
 
 
 
+/**
+ * \brief	Random generator
+ */
+uint16_t random(void)
+{
+	uint16_t randomValue = HAL_GetTick() % RAND_MAX;
+	return randomValue;
+}
+
+
+
 #ifdef MODULE_CALC_UNITTEST_ENABLE
 /**
  * \brief	Calc UnitTest
@@ -410,6 +421,9 @@ void Calc_UnitTest(void)
 	UNITTEST_ASSERT(GetBit(0x00000000, 1) == 0, "GetBit error");
 	UNITTEST_ASSERT(GetBit(0x00000000, 31) == 0, "GetBit error");
 	UNITTEST_ASSERT(GetBit(0x00000000, 32) == 0, "GetBit error");
+
+
+	// TODO: Test random();
 
 
 	// Finish
