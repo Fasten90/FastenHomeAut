@@ -44,7 +44,7 @@ static const char CmdH_DelimiterChar = ' ';
  *								Global variables
  *----------------------------------------------------------------------------*/
 
-volatile CommProtocol_t CmdH_CommandSource = CommProt_Unknown;
+static CommProtocol_t CmdH_CommandSource = CommProt_Unknown;
 static char * CmdH_ResponseBuffer = NULL;			///< pointer to a buffer where the command handler can respond
 static size_t CmdH_ResponseBufferLength = 0;		///< maximal length of CmdH_ResponseBuffer (to avoid buffer overwriting)
 
@@ -523,6 +523,18 @@ void CmdH_Printf(const char *format, ...)
 
 	CmdH_ResponseBuffer += length;
 	CmdH_ResponseBufferLength -= length;
+}
+
+
+
+/**
+ * \brief Set response buffer
+ */
+void CmdH_SetResponse(CommProtocol_t commandSource, char * respBuffer, size_t respLength)
+{
+	CmdH_CommandSource = commandSource;
+	CmdH_ResponseBuffer = respBuffer;
+	CmdH_ResponseBufferLength = respLength;
 }
 
 

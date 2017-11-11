@@ -258,6 +258,8 @@
 	#define CONFIG_MODULE_LINKEDLIST_ENABLE
 
 	#define CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
+
+	#define CONFIG_MODULE_UNITTEST_ENABLE
 #endif
 
 
@@ -357,7 +359,7 @@
  *----------------------------------------------------------------------------*/
 
 
-#define CONFIG_MODULE_TERMINAL_ENABLE
+//#define CONFIG_MODULE_TERMINAL_ENABLE
 #ifdef CONFIG_MODULE_TERMINAL_ENABLE
 
 	//#define CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER

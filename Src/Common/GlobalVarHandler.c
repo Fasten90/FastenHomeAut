@@ -120,6 +120,9 @@ static GlobVarH_ProcessResult_t GlobVarH_SetEnumerator(GlobVarH_ID_t globVarID, 
 static void GlobVarH_SetTrace(GlobVarH_ID_t commandID, const char * param);
 #endif
 
+#ifdef MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
+static void GlobVarH_UT_Clear(void);
+#endif
 
 
 /*------------------------------------------------------------------------------
@@ -491,8 +494,6 @@ static void GlobVarH_GetInteger(GlobVarH_VarRecord_t * varRecord)
 		}
 
 	}
-
-	return;
 }
 
 
@@ -1590,6 +1591,17 @@ void GlobVarH_PrintTraceBuffer(void)
 
 #ifdef MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
 /**
+ * \brief	Clear Global Var UnitTest buffer
+ */
+static void GlobVarH_UT_Clear(void)
+{
+	COMMUNICATION_ClearProtocolBuffer();
+	CmdH_SetResponse(CommProt_Buffer, Communication_Buffer, COMMUNICATION_PROTOCOL_BUFFER_SIZE);
+}
+
+
+
+/**
  * \brief	GlobalVarHandler unit test
  */
 void GlobVarH_UnitTest(void)
@@ -1610,7 +1622,7 @@ void GlobVarH_UnitTest(void)
 	UnitTest_Start("GlobalVarHandler", __FILE__);
 
 	// Initialize
-	CmdH_CommandSource = CommProt_Buffer;
+	CmdH_SetResponse(CommProt_Buffer, Communication_Buffer, COMMUNICATION_PROTOCOL_BUFFER_SIZE);
 
 
 	// Check GlobalVarHandler structures
@@ -1623,30 +1635,29 @@ void GlobVarH_UnitTest(void)
 
 
 	// Test "testuint8" variable
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testuint8", "8", GlobVarH_SetGet_Set, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testuint8 set error");
 
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testuint8", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testuint8 get error");
 	UNITTEST_ASSERT(!StrCmp("8 cm", Communication_Buffer), "testuint8 get error");
 
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testuint8", "255", GlobVarH_SetGet_Set, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testuint8 set error");
 
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testuint8", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testuint8 get error");
 	UNITTEST_ASSERT(!StrCmp("255 cm", Communication_Buffer), "testuint8 get error");
 
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testuint8", "256", GlobVarH_SetGet_Set, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_InvalidValue_TooMuch, "testuint8 get error");
-	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_FAILED_TOO_MUCH, Communication_Buffer), "testuint8 value validation error");
 
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testuint8", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testuint8 get error");
 	UNITTEST_ASSERT(!StrCmp("255 cm", Communication_Buffer), "testuint8 set-get error");
@@ -1654,34 +1665,34 @@ void GlobVarH_UnitTest(void)
 
 	// test "testbool" variable
 	// Set valid value: 1/true
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testbool", "true", GlobVarH_SetGet_Set, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testbool set error");
 
 	// Get
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testbool", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testbool get error");
 	UNITTEST_ASSERT(!StrCmp("1 / TRUE", Communication_Buffer), "testbool get error");
 
 	// Set valid value: 0/false
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testbool", "0", GlobVarH_SetGet_Set, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testbool get error");
 
 	// Get
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testbool", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testbool get error");
 	UNITTEST_ASSERT(!StrCmp("0 / FALSE", Communication_Buffer), "testbool get error");
 
 	// Set invalid value
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testbool", "2", GlobVarH_SetGet_Set, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_InvalidValue_NotBool, "testbool get error");
 
 	// Check unchange
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testbool", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testbool get error");
 	UNITTEST_ASSERT(!StrCmp("0 / FALSE", Communication_Buffer), "testbool set-get error");
@@ -1689,45 +1700,45 @@ void GlobVarH_UnitTest(void)
 
 	// Test "testint16" variable
 	// Set valid value: 8
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testint16", "8", GlobVarH_SetGet_Set, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testint16 get error");
 
 	// Get
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testint16", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testint16 get error");
 	UNITTEST_ASSERT(!StrCmp("8", Communication_Buffer), "testint16 get error");
 
 	// Set valid value: 255
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testint16", "255", GlobVarH_SetGet_Set, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testint16 get error");
 
 	// Get
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testint16", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testint16 get error");
 	UNITTEST_ASSERT(!StrCmp("255", Communication_Buffer), "testint16 get error");
 
 	// Set valid value: -255
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testint16", "-255", GlobVarH_SetGet_Set, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testint16 get error");
 
 	// Get
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testint16", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testint16 get error");
 	UNITTEST_ASSERT(!StrCmp("-255", Communication_Buffer), "testint16 get error");
 
 	// Set invalid value:
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testint16", "65536", GlobVarH_SetGet_Set, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_InvalidValue_TooMuch, "testint16 value validation error");
 
 	// Check unchange
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testint16", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testint16 get error");
 	UNITTEST_ASSERT(!StrCmp("-255", Communication_Buffer), "testint16 set-get error");
@@ -1735,45 +1746,45 @@ void GlobVarH_UnitTest(void)
 
 	// Test "testint32" variable
 	// Set valid value: 8
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testint32", "8", GlobVarH_SetGet_Set, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testint32 set error");
 
 	// Get
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testint32", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testint32 get error");
 	UNITTEST_ASSERT(!StrCmp("8", Communication_Buffer), "testint32 get error");
 
 	// Set valid value: 65535
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testint32", "65535", GlobVarH_SetGet_Set, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testint32 set error");
 
 	// Get
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testint32", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testint32 get error");
 	UNITTEST_ASSERT(!StrCmp("65535", Communication_Buffer), "testint32 get error");
 
 	// Set valid value: -255
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testint32", "-255", GlobVarH_SetGet_Set, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testint32 set error");
 
 	// Get
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testint32", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testint32 get error");
 	UNITTEST_ASSERT(!StrCmp("-255", Communication_Buffer), "testint32 get error");
 
 	// Set invalid value:
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testint32", "12.34", GlobVarH_SetGet_Set, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_FailParamIsNotNumber, "testint32 value validation error");
 
 	// Check unchange
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testint32", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testint32 set-get error");
 	UNITTEST_ASSERT(!StrCmp("-255", Communication_Buffer), "testint32 set-get error");
@@ -1781,64 +1792,64 @@ void GlobVarH_UnitTest(void)
 
 	// Test "testuint32" variable
 	// Set valid value: 8
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testuint32", "0x08", GlobVarH_SetGet_Set, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testuint32 set error");
 
 	// Get
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testuint32", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testuint32 get error");
 	UNITTEST_ASSERT(!StrCmp("0x00000008", Communication_Buffer), "testuint32 get error");
 
 	// Set valid value: 65535
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testuint32", "0x65535", GlobVarH_SetGet_Set, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testuint32 set error");
 
 	// Get
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testuint32", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testuint32 get error");
 	UNITTEST_ASSERT(!StrCmp("0x00065535", Communication_Buffer), "testuint32 get error");
 
 	// Set invalid value: -255
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testuint32", "-255", GlobVarH_SetGet_Set, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_FailParamIsNotHexStart, "testuint32 set error");
 
 	// Get
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testuint32", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testuint32 get error");
 	UNITTEST_ASSERT(!StrCmp("0x00065535", Communication_Buffer), "testuint32 get error");
 
 	// Set invalid value:
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testuint32", "12.34", GlobVarH_SetGet_Set, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_FailParamIsNotHexStart, "testuint32 value validation error");
 
 	// Check unchange
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testuint32", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testuint32 get error");
 	UNITTEST_ASSERT(!StrCmp("0x00065535", Communication_Buffer), "testuint32 set-get error");
 
 
 	// Test "cannotaccess" variable
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testcannotaccess", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_SourceNotEnabled, "Variable source error");
 
 
 	// Test "testfloat" variable (float)
 	// Set float value:
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testfloat", "12.34", GlobVarH_SetGet_Set, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "Float value setting error");
 
 	// Check value/range
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testfloat", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	float testNumber = 0.0f;
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "Float type error");
@@ -1850,61 +1861,61 @@ void GlobVarH_UnitTest(void)
 
 	// Test "testenum" (enum)
 	// Set enum
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testenum", "1", GlobVarH_SetGet_Set, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "enum value set error");
 
 	// Get enum
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testenum", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "enum value get error");
 	UNITTEST_ASSERT(!StrCmp("1 exampleenumstring1", Communication_Buffer), "enum value get error");
 
 	// Set enum - fail
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testenum", "4", GlobVarH_SetGet_Set, CommProt_Buffer);
-	UNITTEST_ASSERT(result == GlobVarH_Process_InvalidValue_NotEnumString, "enum value set error");
+	UNITTEST_ASSERT(result == GlobVarH_Process_InvalidValue_TooMuch, "enum value set error");
 
 	// Get enum
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testenum", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "enum value get error");
 	UNITTEST_ASSERT(!StrCmp("1 exampleenumstring1", Communication_Buffer), "enum value get error");
 
 	// TODO: Extend enum tests
+	// E.g. GlobVarH_Process_InvalidValue_NotEnumString
 
 
 	// Test "testbit" (bits)
 	// Set bit
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testbit", "0b0", GlobVarH_SetGet_Set, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testbit value set error");
 
 	// Get bit
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testbit", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testbit value get error");
 	UNITTEST_ASSERT(!StrCmp("0b0", Communication_Buffer), "testbit value get error");
 
 	// Set bit
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testbit", "0b111", GlobVarH_SetGet_Set, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testbit value set error");
-	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_SUCCESSFUL, Communication_Buffer), "testbit value set error");
 
 	// Get bit
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testbit", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testbit value get error");
 	UNITTEST_ASSERT(!StrCmp("0b111", Communication_Buffer), "testbit value get error");
 
 	// Set bit - fail
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testbit", "A", GlobVarH_SetGet_Set, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_FailParamIsNotBinary, "testbit value set error");
 
 	// Get bit
-	COMMUNICATION_ClearProtocolBuffer();
+	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand("testbit", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testbit value get error");
 	UNITTEST_ASSERT(!StrCmp("0b111", Communication_Buffer), "testbit value get error");
@@ -1913,7 +1924,7 @@ void GlobVarH_UnitTest(void)
 
 
 	// End of UnitTest
-	CmdH_CommandSource = CommProt_Unknown;
+	//CmdH_CommandSource = CommProt_Unknown;
 
 	UnitTest_End();
 }

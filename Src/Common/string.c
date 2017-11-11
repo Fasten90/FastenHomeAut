@@ -1896,17 +1896,24 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
 				case 'X':
 					// %x - Hex - parameterized byte num
 					uival = va_arg(ap, unsigned int);
-					DEBUG_BREAKPOINT();
 					// TODO: Not implemented function (for length safe)
-					/*
 					if (paramHasLength)
 					{
-						string += DecimalToHexaString(uival, string, paramNum2);
+						if (paramNum2 > remainLength)
+						{
+							paramNum2 = remainLength;
+						}
 					}
 					else
 					{
-						string += DecimalToHexaString(uival, string, 8);
-					}*/
+						if (remainLength < 8)
+						{
+							paramNum2 = remainLength;
+						}
+					}
+					uint8_t hexLen = DecimalToHexaString(uival, &str[length], 8);
+					length += hexLen;
+					remainLength -= hexLen;
 					break;
 #if defined(STRING_HEXADECIMAL_FORMATS)
 				case 'w':
@@ -1930,9 +1937,11 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
 				case 'b':
 					// Binary print (from uint32_t)
 					uival = va_arg(ap,  unsigned int);
-					DEBUG_BREAKPOINT();
 					// TODO: Not implemented function (for length safe)
-					/*string += DecimalToBinaryString(uival, string, 33);*/
+					//DEBUG_BREAKPOINT();
+					uint8_t binLength = DecimalToBinaryString(uival, &str[length], 33);
+					length += binLength;
+					remainLength -= binLength;
 					break;
 #endif
 				case 'c':
@@ -1963,17 +1972,20 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
 				case 'f':
 					// %f - float
 					flval = va_arg(ap, double);					// Double / Float
-					DEBUG_BREAKPOINT();
 					(void)flval;
 					// TODO: Not implemented function (for length safe)
-					/*if (paramHasLength)
+					//DEBUG_BREAKPOINT();
+					uint8_t floatLength;
+					if (paramHasLength)
 					{
-						string += FloatToString(flval, string, paramNum1, paramNum2);
+						floatLength = FloatToString(flval, &str[length], paramNum1, paramNum2);
 					}
 					else
 					{
-						string += FloatToString(flval, string, 0, 6);
-					}*/
+						floatLength = FloatToString(flval, &str[length], 0, 6);
+					}
+					length += floatLength;
+					remainLength -= floatLength;
 					break;
 
 				case 's':

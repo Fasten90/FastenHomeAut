@@ -93,8 +93,6 @@ typedef struct
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-extern volatile CommProtocol_t CmdH_CommandSource;
-
 
 
 /*------------------------------------------------------------------------------
@@ -113,6 +111,8 @@ void CmdH_SearchCommandAndPrintHelp(const char *command);
 
 CmdH_Result_t CmdH_ExecuteCommand(CommProtocol_t source, char * command, char * response, size_t length);
 void CmdH_PrintResult(CmdH_Result_t result);
+
+void CmdH_SetResponse(CommProtocol_t commandSource, char * respBuffer, size_t respLength);
 
 void CmdH_UnitTest(void);
 

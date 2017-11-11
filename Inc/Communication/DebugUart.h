@@ -94,16 +94,26 @@ size_t DebugUart_SendMessageBlocked(const char * str);
 #else
 
 // Not used DEBUGUART
+
 #ifndef CONFIG_MICROCONTROLLER_PC
+
+#define uprintf(...)							(0)
+#define DebugUart_SendChar(_c)					(putc)_c
+#define DebugUart_SendMessage(_msg)				(void)_msg
 #define DebugUart_SendLine(_msg)				(void)_msg
 #define DebugUart_SendMessageBlocked(_msg)		(void)_msg
 
-#define uprintf(...)							(0)
 #else
+
 #include <stdio.h>
 #define uprintf(...)							printf(__VA_ARGS__)
+#define DebugUart_SendChar(_c)					putchar(_c)
+#define DebugUart_SendMessage(_msg)				puts(_msg)
 #define DebugUart_SendLine(_msg)				puts(_msg)
 #define DebugUart_SendMessageBlocked(_msg)		puts(_msg)
+
+#define DebugUart_StartReceive()
+
 #endif
 
 #endif
