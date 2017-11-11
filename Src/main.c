@@ -77,6 +77,7 @@ int main(void)
 	#endif
 #endif
 
+
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
 	// EventLog
 	EventLog_Init();

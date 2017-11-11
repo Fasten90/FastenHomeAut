@@ -625,6 +625,8 @@ static TaskResult_t Task_SystemTimeSecondStep(ScheduleSource_t source)
 	// Step SystemTime +1 second
 	DateTime_Step(&DateTime_SystemTime);
 
+	//uprintf(".");
+
 
 	#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
 	// Display refresh

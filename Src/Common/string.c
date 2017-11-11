@@ -2034,9 +2034,14 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
 /**
  * \brief	Function like sprintf(); Print to string
  */
-uint8_t usprintf(char *str, const char *format, ...)
+size_t usprintf(char *str, const char *format, ...)
 {
-	uint8_t length = 0;
+	size_t length = 0;
+
+	if ((str == NULL) || (format == NULL))
+		return 0;
+
+	STRING_ASSERT(MEM_IN_RAM(str, 0));
 
 	va_list ap;									// argument pointer
 	va_start(ap, format); 						// ap on arg
