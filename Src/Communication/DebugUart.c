@@ -318,10 +318,16 @@ void DebugUart_ProcessReceivedCharacters(void)
 
 			if (newLinePos != NULL)
 			{
+				char responseBuffer[DEBUGUART_RESPONSE_BUFFER];
+
 				*newLinePos = '\0';
+
 				// Search command and run
 				CommandHandler_PrepareFindExecuteCommand(
-					CommProt_DebugUart, (char *)receiveBuffer);
+					CommProt_DebugUart, (char *)receiveBuffer,
+					responseBuffer, DEBUGUART_RESPONSE_BUFFER);
+
+				DebugUart_SendMessage(responseBuffer);
 
 				// TODO: Create Get&Clear function
 				CircularBuffer_ClearLast(&DebugUart_RxBuffStruct);

@@ -4,7 +4,7 @@
  *		Author:			Vizi G�bor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		Debug uart functions
- *		Target:			STM32Fx
+  *		Target:			STM32Fx
  *		Version:		v1
  *		Last modified:	2017-03-15
  */
@@ -18,8 +18,14 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
+#include "options.h"
 #include "GenericTypeDefs.h"
 #include "CircularBuffer.h"
+
+#ifdef CONFIG_USE_FREERTOS
+#include "FreeRTOS.h"
+#include "semphr.h"
+#endif
 
 
 
@@ -32,6 +38,8 @@
 ///< Size of Reception buffer
 #define DEBUGUART_RX_BUFFER_SIZE				(256UL)
 #define DEBUGUART_RX_BUFFER_WAIT_LENGTH			(1)
+
+#define DEBUGUART_RESPONSE_BUFFER				(256U)
 
 
 // Variadic macro
@@ -102,6 +110,7 @@ size_t DebugUart_SendMessageBlocked(const char * str);
 #endif
 
 #endif
+
 
 
 #endif /* DEBUGUART_H_ */

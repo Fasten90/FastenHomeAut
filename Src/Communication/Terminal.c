@@ -30,6 +30,10 @@
 #include "Communication.h"
 
 
+// TODO: Think a good buffer size
+#define TERMINAL_RESPONSE_BUFFER	(256U)
+
+
 
 /*------------------------------------------------------------------------------
  *  Global variables
@@ -229,19 +233,16 @@ void Terminal_CheckCommand(void)
 		{
 #ifdef CONFIG_USE_FREERTOS
 			// Wait for semaphore
-			if (xSemaphoreTake(DebugUart_Rx_Semaphore, 1000) == pdTRUE)
+			if (xSemaphoreTake(DEBUG_USART_Rx_Semaphore, 1000) == pdTRUE)
 			{
 				Terminal_ProcessReceivedCharacter();
 			}
 #else
-			// If not used FreeRTOS / EventHandler, always check characters
-			Terminal_ProcessReceivedCharacter();
-			#endif
-
+			Terminal_ProcessReceivedCharacter();			// If not used FreeRTOS / EventHandler, always check characters
+#endif
 			if (Terminal_CommandReceivedEvent)
 			{
-				// Clear event
-				Terminal_CommandReceivedEvent = false;
+				Terminal_CommandReceivedEvent = false;		// Clear event
 
 				// Only one event will receive
 				if (Terminal_CommandReceivedBackspace)
@@ -285,20 +286,23 @@ void Terminal_CheckCommand(void)
 					Terminal_CommandReadable = false;
 					if (Terminal_CommandActualLength > 0)
 					{
+						char responseBuffer[TERMINAL_RESPONSE_BUFFER];
+
 						// There are some char in the line
 						// has an command
 						Terminal_ConvertSmallLetter();
 
 						TERMINAL_SEND_NEW_LINE();
 
-						#ifdef CONFIG_TERMINAL_HISTORY_ENABLE
-						// Save command to History
-						Terminal_HistorySave();
-						#endif
+#ifdef CONFIG_TERMINAL_HISTORY_ENABLE
+						Terminal_HistorySave();				// Save command to History
+#endif
 
 						// Search command and run
-						CommandHandler_PrepareFindExecuteCommand(
-								CommProt_DebugUart, (char *)Terminal_CommandActual);
+						CommandHandler_PrepareFindExecuteCommand(CommProt_DebugUart, (char *)Terminal_CommandActual,
+								responseBuffer, TERMINAL_RESPONSE_BUFFER);
+
+						Terminal_SendMessage(responseBuffer);
 
 						// Init new command
 						TERMINAL_SEND_NEW_LINE();
@@ -306,8 +310,7 @@ void Terminal_CheckCommand(void)
 					}
 					else
 					{
-						// There is no char in the line
-						TERMINAL_SEND_PROMT_NEW_LINE();
+						TERMINAL_SEND_PROMT_NEW_LINE();		// There is no char in the line
 					}
 					Terminal_CommandActualLength = 0;
 					Terminal_CommandSentLength = 0;
@@ -325,8 +328,7 @@ void Terminal_CheckCommand(void)
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 		else
 		{
-			// We must return, if DebugUart is disabled, and TaskHandler used
-			return;
+			return;		// We must return, if DebugUart is disabled, and TaskHandler used
 		}
 #endif
 	}
@@ -361,8 +363,7 @@ static void Terminal_ProcessReceivedCharacter(void)
 	}
 	else
 	{
-		// Not received new characters
-		return;
+		return;		// Not received new characters
 	}
 #endif
 
@@ -575,8 +576,7 @@ static bool Terminal_CommandEscapeCharValidation(void)
 				}
 				else
 				{
-					// Cursor at end, do nothing
-					return true;
+					return true;									// Cursor at end, do nothing
 				}
 			}
 			// 'D' Left cursor - Step left
@@ -591,8 +591,7 @@ static bool Terminal_CommandEscapeCharValidation(void)
 				}
 				else
 				{
-					// not do anything
-					return true;
+					return true;									// not do anything
 				}
 			}
 		}
@@ -676,11 +675,8 @@ void Terminal_CommandBackspace(void)
 				}
 				Terminal_CommandActual[i] = '\0';
 
-				// Send backspace = step left
-				TERMINAL_SEND_KEY_BACKSPACE();
-
-				// Delete & Resend
-				Terminal_CommandResendLine(true);
+				TERMINAL_SEND_KEY_BACKSPACE();			// Send backspace = step left
+				Terminal_CommandResendLine(true);		// Delete & Resend
 			}
 			else
 			{
@@ -733,8 +729,7 @@ static void Terminal_CommandDelete(void)
 				}
 				Terminal_CommandActual[i] = '\0';
 
-				// Resend line with original cursor position
-				Terminal_CommandResendLine(true);
+				Terminal_CommandResendLine(true);									// Resend line with original cursor position
 			}
 			else
 			{
@@ -795,13 +790,11 @@ static void Terminal_CommandResendLine(bool needRestoreCursor)
 	// - Send new command
 	// - (opc) Restore cursor
 
-	// Delete line
-	Terminal_SendMessage(ESCAPE_DELETELINE);
+	Terminal_SendMessage(ESCAPE_DELETELINE);					// Delete line
 
 	if (needRestoreCursor)
 	{
-		// Save cursor
-		Terminal_SendMessage(ESCAPE_SAVECURSOR);
+		Terminal_SendMessage(ESCAPE_SAVECURSOR);				// Save cursor
 	}
 
 	// Cursor to line start
@@ -814,9 +807,9 @@ static void Terminal_CommandResendLine(bool needRestoreCursor)
 
 	if (needRestoreCursor)
 	{
-		// Restore the position
-		Terminal_SendMessage(ESCAPE_RESTORECURSOR);
+		Terminal_SendMessage(ESCAPE_RESTORECURSOR);			// Restore the position
 	}
+
 }
 #endif	// #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 
@@ -863,9 +856,7 @@ static void Terminal_HistorySave(void)
 	Terminal_HistoryLoadCnt = Terminal_HistorySaveCnt;
 
 	// Save command
-	StrCpyMax(Terminal_HistoryList[Terminal_HistorySaveCnt],
-			(char *)Terminal_CommandActual,
-			TERMINAL_MAX_COMMAND_LENGTH);
+	StrCpyMax(Terminal_HistoryList[Terminal_HistorySaveCnt], (char *)Terminal_CommandActual, TERMINAL_MAX_COMMAND_LENGTH);
 }
 #endif
 
@@ -892,8 +883,7 @@ static bool Terminal_HistoryFindInList(void)
 		}
 	}
 
-	// There is no equal command
-	return false;
+	return false;		// There is no equal command
 }
 #endif
 

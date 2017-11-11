@@ -1,9 +1,9 @@
 /*
  *		CommandHandler.h
  *		Created on:		2013-10-08.
- *		Author: 		Vizi GÃ¡bor
+ *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Command Handler: communication with UART, execute commands
+  *		Function:		Command Handler: communication with UART, execute commands
  *		Target:			STM32Fx
  *		Version:		v4
  *		Last modified:	2017-01-16
@@ -18,6 +18,10 @@
 #include "board.h"
 #include "version.h"
 
+#ifdef CONFIG_USE_FREERTOS
+#include "FreeRTOS.h"
+#include "semphr.h"
+#endif
 
 
 /*------------------------------------------------------------------------------
@@ -66,6 +70,7 @@ typedef enum
 	CommandArgument_0 = (1 << 0),
 	CommandArgument_1 = (1 << 1),
 	CommandArgument_2 = (1 << 2)
+	// Set one by one bit
 } CommandArgNum_t;
 
 
@@ -106,7 +111,7 @@ void CommandHandler_Printf(const char *format, ...);
 void CommandHandler_PrintAllCommands(void);
 void CommandHandler_SearchCommandAndPrintHelp(const char *command);
 
-bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source, char *command);
+bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source, char *command, char * response, size_t length);
 
 void CommandHandler_UnitTest(void);
 

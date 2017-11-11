@@ -1,7 +1,7 @@
 /*
  *		Terminal.h
  *		Created on:		2017-02-02
- *		Author:			Vizi GÃ¡bor
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		Terminal
  *		Target:			STM32Fx
