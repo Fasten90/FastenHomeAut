@@ -18,8 +18,8 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-extern const GlobalVarCommand_t GlobalVarList[];
-extern const VarID_t GlobalVar_MaxCommandNum;
+extern const GlobVarH_VarRecord_t GlobalVarList[];
+extern const GlobVarH_ID_t GlobalVar_MaxCommandNum;
 
 
 

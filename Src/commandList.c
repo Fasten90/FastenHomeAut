@@ -49,6 +49,7 @@
 #include "DebugList.h"
 #include "Logic.h"
 #include "ConvertTable.h"
+#include "SecuredDataTypes.h"
 
 #include "CommandList.h"
 
@@ -70,93 +71,93 @@
  *		Global function declarations - Commands
  *----------------------------------------------------------------------------*/
 
-	static CommandResult_t CommandFunction_cls(uint32_t argc, char** argv);
-	static CommandResult_t CommandFunction_help(uint32_t argc, char** argv);
-	static CommandResult_t CommandFunction_version(uint32_t argc, char** argv);
-	static CommandResult_t CommandFunction_welcome(uint32_t argc, char** argv);
-	static CommandResult_t CommandFunction_reset(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_cls(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_help(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_version(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_welcome(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_reset(uint32_t argc, char** argv);
 #ifdef CONFIG_MODULE_UNITTEST_ENABLE
-	static CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_unittest(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_TEST_ENABLE
-	static CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_moduletest(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_TEST_MODE
-	static CommandResult_t CommandFunction_test(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_LED_ENABLE
-	static CommandResult_t CommandFunction_led(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_led(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
-	static CommandResult_t CommandFunction_set(uint32_t argc, char** argv);
-	static CommandResult_t CommandFunction_get(uint32_t argc, char** argv);
-	static CommandResult_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** argv);
-	static CommandResult_t CommandFunction_GlobalVariableList(uint32_t argc, char** argv);
-	static CommandResult_t CommandFunction_GlobalVariableValueList(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_set(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_get(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_GlobalVariableList(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_GlobalVariableValueList(uint32_t argc, char** argv);
 #ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
-	static CommandResult_t CommandFunction_GlobalVariableTrace(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_GlobalVariableTrace(uint32_t argc, char** argv);
 #endif
 #endif
 #ifdef CONFIG_MODULE_COMMON_DAC_ENABLE
-	static CommandResult_t CommandFunction_dac(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_dac(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_COMMON_IO_ENABLE
-	static CommandResult_t CommandFunction_io(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_io(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
-	static CommandResult_t CommandFunction_adc(uint32_t argc, char** argv);
-	static CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_adc(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_adcread(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_COMMON_PWM_ENABLE
-	static CommandResult_t CommandFunction_PWM(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_PWM(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
-	static CommandResult_t CommandFunction_Motor(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-	static CommandResult_t CommandFunction_ESP8266(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_ESP8266(uint32_t argc, char** argv);
 #endif
 #if defined(CONFIG_MODULE_RTC_ENABLE) || defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
-	static CommandResult_t CommandFunction_Time(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_Time(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
-	static CommandResult_t CommandFunction_EventLog(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_EventLog(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
-	static CommandResult_t CommandFunction_raspberrypi(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_raspberrypi(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_FLASH_ENABLE
-	static CommandResult_t CommandFunction_flashdel(uint32_t argc, char** argv);
-	static CommandResult_t CommandFunction_flashread(uint32_t argc, char** argv);
-	static CommandResult_t CommandFunction_flashwrite(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_flashdel(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_flashread(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_flashwrite(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_ADC_ENABLE
-	static CommandResult_t CommandFunction_adc(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_adc(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_DEBUG_RAMREAD_WRITE_COMMAND_ENABLE
-	static CommandResult_t CommandFunction_mr(uint32_t argc, char** argv);
-	static CommandResult_t CommandFunction_mw(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_mr(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_mw(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_DEBUG_GO_COMMAND_ENABLE
-	static CommandResult_t CommandFunction_go(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_go(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
-	static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_Display(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_IO_ENABLE
-	static CommandResult_t CommandFunction_IoStates(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_IoStates(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_SIMULATION_ENABLE
-	static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
-	static CommandResult_t CommandFunction_TaskHandler(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_TaskHandler(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_DEBUG_ENABLE
-	static CommandResult_t CommandFunction_Debug(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_Debug(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
-	static CommandResult_t CommandFunction_Button(uint32_t argc, char** argv);
+	static CmdH_Result_t CommandFunction_Button(uint32_t argc, char** argv);
 #endif
 
 
@@ -168,7 +169,7 @@
 
 
 ///< Commands list
-const CommandStruct CommandList[] =
+const CmdH_Command_t CmdH_CommandList[] =
 {
 	/*
 	 * Help:
@@ -559,7 +560,7 @@ const CommandStruct CommandList[] =
 };
 
 
-const CommandID_t CommandHandler_CommandNum = NUM_OF(CommandList);
+const CmdH_CommandID_t CmdH_CommandNum = NUM_OF(CmdH_CommandList);
 
 
 
@@ -571,7 +572,7 @@ const CommandID_t CommandHandler_CommandNum = NUM_OF(CommandList);
 /**
  * \brief	CLS: Clear screen
  */
-static CommandResult_t CommandFunction_cls(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_cls(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -589,13 +590,13 @@ static CommandResult_t CommandFunction_cls(uint32_t argc, char** argv)
 /**
  * \brief	Get version
  */
-static CommandResult_t CommandFunction_version(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_version(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
 	(void)argv;
 
-	CommandHandler_SendLine(Global_Version);
+	CmdH_SendLine(Global_Version);
 
 	return CommandResult_Ok;
 }
@@ -605,7 +606,7 @@ static CommandResult_t CommandFunction_version(uint32_t argc, char** argv)
 /**
  * \brief	Send Welcome message
  */
-static CommandResult_t CommandFunction_welcome(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_welcome(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -625,18 +626,18 @@ static CommandResult_t CommandFunction_welcome(uint32_t argc, char** argv)
  * 			Use: 'help', or 'help <CommandName>'
  * 			List commands or write the command's description
  */
-static CommandResult_t CommandFunction_help(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_help(uint32_t argc, char** argv)
 {
 
 	if (argc == 1)
 	{
 		// if Arg2 is empty, listing all commands
-		CommandHandler_PrintAllCommands();
+		CmdH_PrintAllCommands();
 	}
 	else if (argc == 2)
 	{
 		// Has Arg2, find the command & print help
-		CommandHandler_SearchCommandAndPrintHelp(argv[1]);
+		CmdH_SearchCommandAndPrintHelp(argv[1]);
 	}
 
 	return CommandResult_Ok;
@@ -647,7 +648,7 @@ static CommandResult_t CommandFunction_help(uint32_t argc, char** argv)
 /**
  * \brief	Reset command
  */
-static CommandResult_t CommandFunction_reset(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_reset(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -655,7 +656,7 @@ static CommandResult_t CommandFunction_reset(uint32_t argc, char** argv)
 
 	uint16_t i;
 
-	CommandHandler_SendLine("Reset...");
+	CmdH_SendLine("Reset...");
 
 	// Wait
 	for (i = 0; i < 1000; i++);
@@ -675,13 +676,13 @@ static CommandResult_t CommandFunction_reset(uint32_t argc, char** argv)
 /**
  * \brief	Run module's unit tests
  */
-static CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_unittest(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
 	(void)argv;
 
-	CommandHandler_SendLine("Start unittest");
+	CmdH_SendLine("Start unittest");
 
 #ifdef MODULE_STRING_UNITTEST_ENABLE
 	STRING_UnitTest();
@@ -696,11 +697,11 @@ static CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
 #endif
 
 #ifdef MODULE_COMMANDHANDLER_UNITTEST_ENABLE
-	CommandHandler_UnitTest();
+	CmdH_UnitTest();
 #endif
 
 #ifdef MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
-	GlobalVarHandler_UnitTest();
+	GlobVarH_UnitTest();
 #endif
 
 #ifdef MODULE_CIRCULARBUFFER_UNITTEST_ENABLE
@@ -720,7 +721,7 @@ static CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
 #endif
 
 #ifdef MODULE_MEM_UNITTEST_ENABLE
-	mem_UnitTest();
+	MEM_UnitTest();
 #endif
 
 #ifdef MODULE_LINKEDLIST_UNITTEST_ENABLE
@@ -749,7 +750,7 @@ static CommandResult_t CommandFunction_unittest(uint32_t argc, char** argv)
 /**
  * \brief	Run module test
  */
-static CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_moduletest(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -760,7 +761,7 @@ static CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 	uint8_t i;
 
 	// LED test
-	CommandHandler_SendLine("LED test");
+	CmdH_SendLine("LED test");
 
 	// LEDs on
 	for (i = LED_NUM_MIN; i <= LED_NUM_MAX; i++)
@@ -784,28 +785,28 @@ static CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 	// Clear flag
 	BUTTON_Clicked = 0;
 
-	CommandHandler_SendLine("\r\nButton test: Please press button!");
+	CmdH_SendLine("\r\nButton test: Please press button!");
 
 	// TODO: Implement with Event...
 	while (!BUTTON_Clicked)
 	{
-		CommandHandler_SendChar('.');
+		CmdH_SendChar('.');
 		DelayMs(500);
 		Watchdog_Clear();
 	}
 
-	CommandHandler_SendLine("Button pressed");
+	CmdH_SendLine("Button pressed");
 #endif
 
 
 	// Beep in terminal
-	CommandHandler_SendLine("Beep test");
-	CommandHandler_SendChar(TERMINAL_KEY_BELL);
+	CmdH_SendLine("Beep test");
+	CmdH_SendChar(TERMINAL_KEY_BELL);
 
 
 	// Send formatted messages
 #ifdef CONFIG_MODULE_FORMATTEDMESSAGE_ENABLE
-	CommandHandler_SendLine("Formatted message test");
+	CmdH_SendLine("Formatted message test");
 	FormattedMessage_Test();
 #endif
 
@@ -820,14 +821,14 @@ static CommandResult_t CommandFunction_moduletest(uint32_t argc, char** argv)
 /**
  * \brief	Test function
  */
-static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 {
 
 	// Suppress warning
 	(void)argc;
 	(void)argv;
 
-	CommandHandler_SendLine("Test start");
+	CmdH_SendLine("Test start");
 
 	/*
 	 * 		Test codes
@@ -886,12 +887,12 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 		// Send actual DateTime
 		char message[80];
 		DateTime_PrintDateTimeToString(message, &actualDateTime);
-		CommandHandler_SendMessage(ESCAPE_DELETELINE);
+		CmdH_SendMessage(ESCAPE_DELETELINE);
 		// Cursor to line start
-		CommandHandler_SendMessage(ESCAPE_CURSOR_TO_LINESTART);
-		//CommandHandler_SendMessage(ESCAPE_CURSORLEFTLOTOF);
+		CmdH_SendMessage(ESCAPE_CURSOR_TO_LINESTART);
+		//CmdH_SendMessage(ESCAPE_CURSORLEFTLOTOF);
 
-		CommandHandler_SendMessage(message);
+		CmdH_SendMessage(message);
 	}
 	*/
 
@@ -1017,7 +1018,7 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
 	 */
 
 
-	CommandHandler_SendLine("\r\n"
+	CmdH_SendLine("\r\n"
 							"Test end");
 
 	return CommandResult_Ok;
@@ -1036,12 +1037,12 @@ static CommandResult_t CommandFunction_test(uint32_t argc, char** argv)
  *				led <num> status
  *				led status
  */
-static CommandResult_t CommandFunction_led(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_led(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
 
-	CommandResult_t result;
+	CmdH_Result_t result;
 
 	// Convert arg2, decimal
 	bool isFirstParamNum = false;
@@ -1075,7 +1076,7 @@ static CommandResult_t CommandFunction_led(uint32_t argc, char** argv)
 		// Print LEDs statuses
 		char str[25];
 		LED_GetLedStates(str);
-		CommandHandler_SendLine(str);
+		CmdH_SendLine(str);
 		result = CommandResult_Ok;
 	}
 	else if (isFirstParamNum == true)
@@ -1104,7 +1105,7 @@ static CommandResult_t CommandFunction_led(uint32_t argc, char** argv)
 			{
 				// Set LED
 				status = LED_SetLed(Arg2Num,setType);
-				CommandHandler_Printf("LED %d. status: %d\r\n", Arg2Num, status);
+				CmdH_Printf("LED %d. status: %d\r\n", Arg2Num, status);
 				result = CommandResult_Ok;
 			}
 		}
@@ -1126,16 +1127,15 @@ static CommandResult_t CommandFunction_led(uint32_t argc, char** argv)
  * \brief	Get globalvar value
  * 			Use: 'get <globalvarname>'
  */
-static CommandResult_t CommandFunction_get(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_get(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
 
 	// Process
-	GlobalVarHandler_ProcessCommand(
+	GlobVarH_ProcessVariableCommand(
 			argv[1], argv[2],
-			SetGet_Get, CommandHandler_CommandSource);
-
+			GlobVarH_SetGet_Get, CommProt_DebugUart);
 
 	return CommandResult_Ok;
 }
@@ -1146,16 +1146,15 @@ static CommandResult_t CommandFunction_get(uint32_t argc, char** argv)
  * \brief	set global variable
  * 			Use: 'set <globalvariablename> <value>'
  */
-static CommandResult_t CommandFunction_set(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_set(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
 
 	// Process
-	GlobalVarHandler_ProcessCommand(
+	GlobVarH_ProcessVariableCommand(
 			argv[1], argv[2],
-			SetGet_Set, CommandHandler_CommandSource);
-
+			GlobVarH_SetGet_Set, CommProt_DebugUart);
 
 	return CommandResult_Ok;
 }
@@ -1166,16 +1165,15 @@ static CommandResult_t CommandFunction_set(uint32_t argc, char** argv)
  * \brief	Global variable help
  * 			Use: '? <globalvar>'
  */
-static CommandResult_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
 
 	// Process
-	GlobalVarHandler_ProcessCommand(
+	GlobVarH_ProcessVariableCommand(
 			argv[1], argv[2],
-			SetGet_Help, CommandHandler_CommandSource);
-
+			GlobVarH_SetGet_Help, CommProt_DebugUart);
 
 	return CommandResult_Ok;
 }
@@ -1185,13 +1183,13 @@ static CommandResult_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** 
 /**
  * \brief	List global variables
  */
-static CommandResult_t CommandFunction_GlobalVariableList(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_GlobalVariableList(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
 	(void)argv;
 
-	GlobalVarHandler_ListAllVariableParameters();
+	GlobVarH_ListAllVariableParameters();
 
 	return CommandResult_Ok;
 }
@@ -1201,14 +1199,14 @@ static CommandResult_t CommandFunction_GlobalVariableList(uint32_t argc, char** 
 /**
  * \brief	Print all global variable values
  */
-static CommandResult_t CommandFunction_GlobalVariableValueList(uint32_t argc,
+static CmdH_Result_t CommandFunction_GlobalVariableValueList(uint32_t argc,
 		char** argv)
 {
 	// Suppress warning
 	(void)argc;
 	(void)argv;
 
-	GlobalVarHandler_PrintAllVariableValues();
+	GlobVarH_PrintAllVariableValues();
 
 	return CommandResult_Ok;
 }
@@ -1219,10 +1217,10 @@ static CommandResult_t CommandFunction_GlobalVariableValueList(uint32_t argc,
 /**
  * \brief	Enable/Disable trace
  */
-static CommandResult_t CommandFunction_GlobalVariableTrace(uint32_t argc,
+static CmdH_Result_t CommandFunction_GlobalVariableTrace(uint32_t argc,
 		char** argv)
 {
-	CommandResult_t result = CommandResult_Unknown;
+	CmdH_Result_t result = CommandResult_Unknown;
 
 	// Suppress warning
 	(void)argc;
@@ -1234,14 +1232,14 @@ static CommandResult_t CommandFunction_GlobalVariableTrace(uint32_t argc,
 		// Good ID
 		if (!StrCmp("enable", argv[2]))
 		{
-			GlobalVarHandler_EnableTrace(id, true);
-			CommandHandler_Printf("Enabled trace: %d\r\n", id);
+			GlobVarH_EnableTrace(id, true);
+			CmdH_Printf("Enabled trace: %d\r\n", id);
 			result = CommandResult_Ok;
 		}
 		else
 		{
-			GlobalVarHandler_EnableTrace(id, false);
-			CommandHandler_Printf("Disabled trace: %d\r\n", id);
+			GlobVarH_EnableTrace(id, false);
+			CmdH_Printf("Disabled trace: %d\r\n", id);
 			result = CommandResult_Ok;
 		}
 	}
@@ -1264,7 +1262,7 @@ static CommandResult_t CommandFunction_GlobalVariableTrace(uint32_t argc,
 	{
 		// trace <varname> enable/disable
 		// First parameter is not "id", maybe "name", try process
-		GlobalVarHandler_ProcessCommand(argv[1], argv[2], SetGet_Trace, CommandHandler_CommandSource);
+		GlobVarH_ProcessVariableCommand(argv[1], argv[2], GlobVarH_SetGet_Trace, CommProt_DebugUart);
 		result = CommandResult_Ok_SendSuccessful;
 	}
 
@@ -1272,7 +1270,7 @@ static CommandResult_t CommandFunction_GlobalVariableTrace(uint32_t argc,
 }
 #endif
 
-#endif	// #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
+#endif	// #ifdef CONFIG_MODULE_GlobVarHENABLE
 
 
 
@@ -1281,7 +1279,7 @@ static CommandResult_t CommandFunction_GlobalVariableTrace(uint32_t argc,
  * \brief	DAC function
  *			Use: 'dac <channel> <voltage>'
  */
-static CommandResult_t CommandFunction_dac(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_dac(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -1323,7 +1321,7 @@ static CommandResult_t CommandFunction_dac(uint32_t argc, char** argv)
  * 			"ioout <port><pin> <set/reset>"
  * 			"ioin <port><pin>
  */
-static CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_io(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -1390,7 +1388,7 @@ static CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
 			}
 			// Set output
 			bool status = CommonIO_SetOutput(port,pin,output);
-			CommandHandler_Printf("Output status: %d\r\n", status);
+			CmdH_Printf("Output status: %d\r\n", status);
 			return CommandResult_Ok;
 		}
 		else
@@ -1406,7 +1404,7 @@ static CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
 		if (StringToUnsignedDecimalNum(&argv[1][1], &pin))
 		{
 			bool status = CommonIO_ReadPin(port, pin);
-			CommandHandler_Printf("Input status: %d\r\n", status);
+			CmdH_Printf("Input status: %d\r\n", status);
 			return CommandResult_Ok;
 		}
 		else
@@ -1426,7 +1424,7 @@ static CommandResult_t CommandFunction_io(uint32_t argc, char** argv)
  * \brief	Common ADC function
  * 			Read ADC values
  */
-static CommandResult_t CommandFunction_adc(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_adc(uint32_t argc, char** argv)
 {
 	// Suppress warning
 	(void)argc;
@@ -1438,7 +1436,7 @@ static CommandResult_t CommandFunction_adc(uint32_t argc, char** argv)
 
 	for (i = 0; i < ADC_CHANNEL_NUM; i++)
 	{
-		CommandHandler_Printf("ADC: %d. value: %2.2f\r\n", i, ADC_ConvertedValues[i]);
+		CmdH_Printf("ADC: %d. value: %2.2f\r\n", i, ADC_ConvertedValues[i]);
 	}
 
 	return CommandResult_Ok;
@@ -1452,12 +1450,12 @@ static CommandResult_t CommandFunction_adc(uint32_t argc, char** argv)
  * \brief	Common ADC function
  * 			Read ADC values
  */
-static CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_adcread(uint32_t argc, char** argv)
 {
 
 	uint32_t convertValue;
 	uint16_t milliSec = 0;
-	CommandResult_t result;
+	CmdH_Result_t result;
 
 	// Check 1. argument
 	if (StringToUnsignedDecimalNum(argv[1], &convertValue))
@@ -1510,14 +1508,14 @@ static CommandResult_t CommandFunction_adcread(uint32_t argc, char** argv)
 
 
 #ifdef CONFIG_MODULE_COMMON_PWM_ENABLE
-static CommandResult_t CommandFunction_PWM(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_PWM(uint32_t argc, char** argv)
 {
 	// Suppress unused args
 	(void)argc;
 
 	uint8_t percent;
 	uint32_t convertValue;
-	CommandResult_t result;
+	CmdH_Result_t result;
 
 	if (StringToUnsignedDecimalNum(argv[1], &convertValue))
 	{
@@ -1544,10 +1542,10 @@ static CommandResult_t CommandFunction_PWM(uint32_t argc, char** argv)
 
 
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
-static CommandResult_t CommandFunction_Motor(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 {
 	(void)argc;
-	CommandResult_t result = CommandResult_Unknown;
+	CmdH_Result_t result = CommandResult_Unknown;
 	int32_t convertValue;
 
 
@@ -1698,7 +1696,7 @@ static CommandResult_t CommandFunction_Motor(uint32_t argc, char** argv)
 
 
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-static CommandResult_t CommandFunction_ESP8266(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_ESP8266(uint32_t argc, char** argv)
 {
 	(void)argc;
 	bool result = CommandResult_Unknown;
@@ -1741,7 +1739,7 @@ static CommandResult_t CommandFunction_ESP8266(uint32_t argc, char** argv)
 		// Print ESP8266 IP addresses
 		char ipBuffer[80];
 		ESP8266_PrintIpAddress(ipBuffer);
-		CommandHandler_SendLine(ipBuffer);
+		CmdH_SendLine(ipBuffer);
 		result = CommandResult_Ok;
 	}
 	else
@@ -1757,9 +1755,9 @@ static CommandResult_t CommandFunction_ESP8266(uint32_t argc, char** argv)
 
 
 #if defined(CONFIG_MODULE_RTC_ENABLE) || defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
-static CommandResult_t CommandFunction_Time(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_Time(uint32_t argc, char** argv)
 {
-	CommandResult_t result = CommandResult_Unknown;
+	CmdH_Result_t result = CommandResult_Unknown;
 
 	if (!StrCmp("setdate", argv[1]) && argc == 3)
 	{
@@ -1797,7 +1795,7 @@ static CommandResult_t CommandFunction_Time(uint32_t argc, char** argv)
 		DateTime_t dateTime;
 		DateTime_GetDateTime(&dateTime);
 		DateTime_PrintDateTimeToString(datetimestring, &dateTime);
-		CommandHandler_Printf("Date and Time: %s\r\n", datetimestring);
+		CmdH_Printf("Date and Time: %s\r\n", datetimestring);
 
 		result = CommandResult_Ok;
 	}
@@ -1813,7 +1811,7 @@ static CommandResult_t CommandFunction_Time(uint32_t argc, char** argv)
 
 
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
-static CommandResult_t CommandFunction_EventLog(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_EventLog(uint32_t argc, char** argv)
 {
 	(void)argc;
 	(void)argv;
@@ -1831,7 +1829,7 @@ static CommandResult_t CommandFunction_EventLog(uint32_t argc, char** argv)
 /**
  * \brief	Read ADC values
  */
-static CommandResult_t CommandFunction_adc(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_adc(uint32_t argc, char** argv)
 {
 	(void)argc;
 	(void)argv;
@@ -1850,7 +1848,7 @@ static CommandResult_t CommandFunction_adc(uint32_t argc, char** argv)
  * \brief	Flash erase
  * 			Use: 'flashdel <address> <block/sector>'
  */
-static CommandResult_t CommandFunction_flashdel(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_flashdel(uint32_t argc, char** argv)
 {
 	uint32_t Arg2Num;
 
@@ -1874,7 +1872,7 @@ static CommandResult_t CommandFunction_flashdel(uint32_t argc, char** argv)
 		return RETURN_FALSE;
 	}
 
-	CommandHandler_Printf("address erased: 0x%h\r\n",
+	CmdH_Printf("address erased: 0x%h\r\n",
 			Arg2Num
 			);
 
@@ -1887,7 +1885,7 @@ static CommandResult_t CommandFunction_flashdel(uint32_t argc, char** argv)
  * \brief	Flash read
  * 			Use: 'flashread <address>'
  */
-static CommandResult_t CommandFunction_flashread(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_flashread(uint32_t argc, char** argv)
 {
 
 	uint32_t Arg2Num;
@@ -1903,7 +1901,7 @@ static CommandResult_t CommandFunction_flashread(uint32_t argc, char** argv)
 	FLASH_Read(Arg2Num,Buffer, 1, 5000);
 
 
-	CommandHandler_Printf("address: 0x%w\r\n"
+	CmdH_Printf("address: 0x%w\r\n"
 			"data:    0x%b\r\n",
 			Arg2Num,
 			Buffer[0]
@@ -1918,7 +1916,7 @@ static CommandResult_t CommandFunction_flashread(uint32_t argc, char** argv)
  * \brief	Flash write
  * 			Use: 'flashwrite <address> <data>'
  */
-static CommandResult_t CommandFunction_flashwrite(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_flashwrite(uint32_t argc, char** argv)
 {
 	uint32_t Arg2Num;
 
@@ -1942,7 +1940,7 @@ static CommandResult_t CommandFunction_flashwrite(uint32_t argc, char** argv)
 	FLASH_Write(Arg2Num, Buffer, 1, 5000);
 
 
-	CommandHandler_Printf("address: 0x%w\r\n"
+	CmdH_Printf("address: 0x%w\r\n"
 			"data:    0x%b\r\n",
 			Arg2Num,
 			Arg3Num);
@@ -1957,7 +1955,7 @@ static CommandResult_t CommandFunction_flashwrite(uint32_t argc, char** argv)
 /**
  * \brief	HomeAutMessage command
  */
-static CommandResult_t CommandFunction_raspberrypi(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_raspberrypi(uint32_t argc, char** argv)
 {
 	(void)argc;
 
@@ -2010,7 +2008,7 @@ static CommandResult_t CommandFunction_raspberrypi(uint32_t argc, char** argv)
  * size: dec
  * read <size> byte-s from <source> address
  */
-static CommandResult_t CommandFunction_mr(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_mr(uint32_t argc, char** argv)
 {
 	(void)argc;
 
@@ -2038,7 +2036,7 @@ static CommandResult_t CommandFunction_mr(uint32_t argc, char** argv)
 
 	// TODO: Checking the correct address
 
-	CommandHandler_Printf("Source: 0x%X\r\n"
+	CmdH_Printf("Source: 0x%X\r\n"
 							"Size: %d\r\n",
 							source, size);
 
@@ -2047,9 +2045,9 @@ static CommandResult_t CommandFunction_mr(uint32_t argc, char** argv)
 		if (!(i % 4))
 		{
 			// 0., 4., ...
-			CommandHandler_Printf("\r\n 0x%X:", (uint32_t)&source[i]);
+			CmdH_Printf("\r\n 0x%X:", (uint32_t)&source[i]);
 		}
-		CommandHandler_Printf(" %02X", source[i]);
+		CmdH_Printf(" %02X", source[i]);
 	}
 
 	return CommandResult_Ok;
@@ -2064,7 +2062,7 @@ static CommandResult_t CommandFunction_mr(uint32_t argc, char** argv)
  * data: hex
  * mwb, mwh, mww commands
  */
-static CommandResult_t CommandFunction_mw(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_mw(uint32_t argc, char** argv)
 {
 	(void)argc;
 
@@ -2089,19 +2087,19 @@ static CommandResult_t CommandFunction_mw(uint32_t argc, char** argv)
 	{
 		destination1 = (uint8_t *)Arg2Num;
 		*destination1 = (uint8_t)Arg3Num;
-		CommandHandler_Printf("Write: %02X to: %X", Arg3Num, Arg2Num);
+		CmdH_Printf("Write: %02X to: %X", Arg3Num, Arg2Num);
 	}
 	else if (!StrCmp("mwh", argv[0]))
 	{
 		destination2 = (uint16_t *)Arg2Num;
 		*destination2 = (uint16_t)Arg3Num;
-		CommandHandler_Printf("Write: %04X to: %X", Arg3Num, Arg2Num);
+		CmdH_Printf("Write: %04X to: %X", Arg3Num, Arg2Num);
 	}
 	else if (!StrCmp("mww", argv[0]))
 	{
 		destination3 = (uint32_t *)Arg2Num;
 		*destination3 = (uint32_t)Arg3Num;
-		CommandHandler_Printf("Write: %08X to: %X", Arg3Num, Arg2Num);
+		CmdH_Printf("Write: %08X to: %X", Arg3Num, Arg2Num);
 	}
 	else
 	{
@@ -2120,7 +2118,7 @@ static CommandResult_t CommandFunction_mw(uint32_t argc, char** argv)
  * go <destination>
  * jump <destination> address
  */
-static CommandResult_t CommandFunction_go(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_go(uint32_t argc, char** argv)
 {
 	(void)argc;
 
@@ -2136,7 +2134,7 @@ static CommandResult_t CommandFunction_go(uint32_t argc, char** argv)
 	}
 
 	destination = Arg2Num;
-	CommandHandler_Printf("Go destination: 0x%X\r\n", destination);
+	CmdH_Printf("Go destination: 0x%X\r\n", destination);
 
 	fpntr = (int (*)(void))destination;		// casting
 	fpntr();
@@ -2156,11 +2154,11 @@ static CommandResult_t CommandFunction_go(uint32_t argc, char** argv)
 /**
  * \brief	Display module
  */
-static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_Display(uint32_t argc, char** argv)
 {
 	(void)argc;
 
-	CommandResult_t result = CommandResult_Unknown;
+	CmdH_Result_t result = CommandResult_Unknown;
 
 	if (!StrCmp("write", argv[1]))
 	{
@@ -2242,7 +2240,7 @@ static CommandResult_t CommandFunction_Display(uint32_t argc, char** argv)
 /**
  * \brief	Get IO states
  */
-static CommandResult_t CommandFunction_IoStates(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_IoStates(uint32_t argc, char** argv)
 {
 	(void)argc;
 	(void)argv;
@@ -2252,20 +2250,20 @@ static CommandResult_t CommandFunction_IoStates(uint32_t argc, char** argv)
 #endif
 
 #if IO_INPUTS_NUM > 0
-	CommandHandler_SendLine("Input states:");
+	CmdH_SendLine("Input states:");
 	for (i = 0; i < Input_Count; i++)
 	{
-		CommandHandler_Printf(" %20s %s\r\n",
+		CmdH_Printf(" %20s %s\r\n",
 				IO_GetInputName(i),
 				IO_GetInputStateName(IO_GetInputState(i)));
 	}
 #endif
 
 #if IO_OUTPUTS_NUM > 0
-	CommandHandler_SendLine("Output states:");
+	CmdH_SendLine("Output states:");
 	for (i = 0; i < Output_Count; i++)
 	{
-		CommandHandler_Printf(" %20s %s\r\n",
+		CmdH_Printf(" %20s %s\r\n",
 				IO_GetOutputName(i),
 				IO_GetOutputStateName(IO_GetOutputState(i)));
 	}
@@ -2281,10 +2279,10 @@ static CommandResult_t CommandFunction_IoStates(uint32_t argc, char** argv)
 /**
  * \brief	Simulation
  */
-static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 {
 	(void)argc;
-	CommandResult_t result = CommandResult_Unknown;
+	CmdH_Result_t result = CommandResult_Unknown;
 	static bool Simulation_IsEnabled = false;
 
 	if (!Simulation_IsEnabled)
@@ -2297,7 +2295,7 @@ static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
 		else
 		{
 			// Error
-			CommandHandler_SendLine("Simulation is not enabled!");
+			CmdH_SendLine("Simulation is not enabled!");
 			result = CommandResult_Ok;	// Not ok, but do not send other error message
 		}
 	}
@@ -2490,10 +2488,10 @@ static CommandResult_t CommandFunction_Simulation(uint32_t argc, char** argv)
 /**
  * \brief	TaksHandler functions
  */
-static CommandResult_t CommandFunction_TaskHandler(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_TaskHandler(uint32_t argc, char** argv)
 {
 	(void)argc;
-	CommandResult_t result = CommandResult_Unknown;
+	CmdH_Result_t result = CommandResult_Unknown;
 
 	#ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
 	if (!StrCmp("statistics", argv[1]))
@@ -2523,14 +2521,14 @@ static CommandResult_t CommandFunction_TaskHandler(uint32_t argc, char** argv)
 
 
 #ifdef CONFIG_MODULE_DEBUG_ENABLE
-static CommandResult_t CommandFunction_Debug(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_Debug(uint32_t argc, char** argv)
 {
 	(void)argc;
 
 	uint32_t value;
 	bool enable = false;
 	bool isOk = false;
-	CommandResult_t result;
+	CmdH_Result_t result;
 
 	if (!StrCmp("enable", argv[2]))
 	{
@@ -2588,7 +2586,7 @@ static CommandResult_t CommandFunction_Debug(uint32_t argc, char** argv)
 
 
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
-static CommandResult_t CommandFunction_Button(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_Button(uint32_t argc, char** argv)
 {
 	UNUSED(argc);
 	UNUSED(argv);
@@ -2602,13 +2600,13 @@ static CommandResult_t CommandFunction_Button(uint32_t argc, char** argv)
 		bool buttonState = BUTTON_GetButtonState(i);
 		const char * buttonName = BUTTON_GetButtonName(i);
 
-		CommandHandler_Printf("Button: %s is %s\r\n", buttonName, buttonState ? "pressed" : "released");
+		CmdH_Printf("Button: %s is %s\r\n", buttonName, buttonState ? "pressed" : "released");
 	}
 #else
 	// Print one button state
 	bool buttonState = BUTTON_GetButtonState(0);
 	const char * buttonName = BUTTON_GetButtonName(0);
-	CommandHandler_Printf("Button: %s is %s\r\n", buttonName, buttonState ? "pressed" : "released");
+	CmdH_Printf("Button: %s is %s\r\n", buttonName, buttonState ? "pressed" : "released");
 #endif
 
 	return CommandResult_Ok;

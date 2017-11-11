@@ -1,7 +1,7 @@
 /*
  *		FormattedMessage.c
  *		Created on:		2016-09-10
- *		Author: 		Vizi GÃ¡bor
+ *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		Formatted (colored / backgroundcolor) message
  *		Target:			STM32Fx
@@ -22,14 +22,9 @@
  */
 void SendColouredMessageWithBackgroundColor(const char* message, FormattedStringColors_t textColor, FormattedStringColors_t backgroundColor)
 {
-	// Send background color
-	SendBackgroundColor(backgroundColor);
-
-	// Send colored message
-	SendColouredMessage(message, textColor);
-
-	// Send background color = white
-	SendBackgroundColor(Color_White);
+	SendBackgroundColor(backgroundColor);		// Send background color
+	SendColouredMessage(message, textColor);	// Send colored message
+	SendBackgroundColor(Color_White);			// Send background color = white
 }
 
 
@@ -39,14 +34,9 @@ void SendColouredMessageWithBackgroundColor(const char* message, FormattedString
  */
 void SendColouredMessage(const char* message, FormattedStringColors_t textColor)
 {
-	// Send color escape
-	SendTextColor(textColor);
-
-	// Send message
-	DebugUart_SendMessage(message);
-
-	// Send color "end
-	SendTextColor(Color_Black);
+	SendTextColor(textColor);					// Send color escape
+	DebugUart_SendMessage(message);				// Send message
+	SendTextColor(Color_Black);					// Send message
 }
 
 
@@ -56,6 +46,7 @@ void SendColouredMessage(const char* message, FormattedStringColors_t textColor)
  */
 void SendTextColor(FormattedStringColors_t textColor)
 {
+	// TODO: Send with CommandHandler_Send... functions
 	DebugUart_SendMessage(USART_ESCAPE_TEXT_START);
 	DebugUart_SendChar('0' + textColor);
 	DebugUart_SendMessage(USART_ESCAPE_TEXT_END);
@@ -68,6 +59,7 @@ void SendTextColor(FormattedStringColors_t textColor)
  */
 void SendBackgroundColor(FormattedStringColors_t backgroundColor)
 {
+	// TODO: Send with CommandHandler_Send... functions
 	DebugUart_SendMessage(USART_ESCAPE_BACKGROUND_START);
 	DebugUart_SendChar('0' + backgroundColor);
 	DebugUart_SendMessage(USART_ESCAPE_BACKGROUND_END);
@@ -80,7 +72,6 @@ void SendBackgroundColor(FormattedStringColors_t backgroundColor)
  */
 void SendErrorMessage(const char *message)
 {
-	// TODO: Will be MACRO()?
 	SendColouredMessageWithBackgroundColor(message, Color_Black, Color_Red);
 }
 

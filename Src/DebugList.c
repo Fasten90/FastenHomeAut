@@ -36,9 +36,23 @@ DebugRecord_t DebugTasks[] =
 		.color = Color_Blue,
 	},
 #endif
+#ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
+	{
+		.name = "CommandHandler",
+		.isEnabled = true,
+		.color = Color_Blue,
+	},
+#endif
 #ifdef CONFIG_FUNCTION_GAME_SNAKE
 	{
 		.name = "Snake",
+		.isEnabled = true,
+		.color = Color_Green,
+	},
+#endif
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+	{
+		.name = "ESP8266",
 		.isEnabled = true,
 		.color = Color_Green,
 	},

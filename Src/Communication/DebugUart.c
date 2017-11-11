@@ -323,7 +323,7 @@ void DebugUart_ProcessReceivedCharacters(void)
 				*newLinePos = '\0';
 
 				// Search command and run
-				CommandHandler_PrepareFindExecuteCommand(
+				CmdH_ExecuteCommand(
 					CommProt_DebugUart, (char *)receiveBuffer,
 					responseBuffer, DEBUGUART_RESPONSE_BUFFER);
 

@@ -299,8 +299,11 @@ void Terminal_CheckCommand(void)
 #endif
 
 						// Search command and run
-						CommandHandler_PrepareFindExecuteCommand(CommProt_DebugUart, (char *)Terminal_CommandActual,
+						CmdH_Result_t result = CmdH_ExecuteCommand(
+								CommProt_DebugUart, (char *)Terminal_CommandActual,
 								responseBuffer, TERMINAL_RESPONSE_BUFFER);
+
+						CmdH_PrintResult(result);		// Write result
 
 						Terminal_SendMessage(responseBuffer);
 
@@ -434,7 +437,7 @@ static void Terminal_ProcessReceivedCharacter(void)
 		{
 			// No escape sequence
 			// An character received
-			if (receivedChar  == TERMINAL_KEY_ESCAPE)
+			if (receivedChar  == TERMINAL_KEY_ESCAPESEQUENCE_1)
 			{
 				// receive an Escape sequence
 				Terminal_CommandEscapeSequenceInProgress = true;
@@ -541,9 +544,9 @@ static void Terminal_ProcessReceivedCharacter(void)
  */
 static bool Terminal_CommandEscapeCharValidation(void)
 {
-	if (Terminal_CommandActualEscape[0] == TERMINAL_KEY_ESCAPE)	// ESC
+	if (Terminal_CommandActualEscape[0] == TERMINAL_KEY_ESCAPESEQUENCE_1)		// ESC
 	{
-		if (Terminal_CommandActualEscape[1] == '[' )			// '[', escape sequence 2. letter
+		if (Terminal_CommandActualEscape[1] == TERMINAL_KEY_ESCAPESEQUENCE_2)	// '[', escape sequence 2. letter
 		{
 			// This is an escape sequence
 			// 'A' Up cursor = previous History command
@@ -629,19 +632,16 @@ void Terminal_CommandBackspace(void)
 			Terminal_CommandActualLength--;
 
 			// Delete last character on terminal
-#ifdef CONFIG_TERMINAL_USE_ZOC
+#if defined(CONFIG_TERMINAL_USE_ZOC)
+			// ZOC
 			TERMINAL_SEND_KEY_BACKSPACE();
 			TERMINAL_SEND_KEY_DEL();
 			TERMINAL_SEND_KEY_BACKSPACE();
-#endif
-
-#ifdef CONFIG_TERMINAL_USE_PUTTY
-
-			// v1
+#elif defined(CONFIG_TERMINAL_USE_PUTTY)
+			// Putty:
 			TERMINAL_SEND_KEY_DEL();
-#endif
-
-#ifdef CONFIG_TERMINAL_USE_HYPERTERMINAL
+#elif defined(CONFIG_TERMINAL_USE_HYPERTERMINAL)
+			// HyperTerminal
 			TERMINAL_SEND_KEY_BACKSPACE();
 
 			// Delete & Resend
@@ -754,16 +754,16 @@ static void Terminal_CommandTabulator(void)
 	// Find same command
 	uint8_t i;
 
-	for (i = 0; i < CommandHandler_CommandNum; i++)
+	for (i = 0; i < CmdH_CommandNum; i++)
 	{
-		if (!StrCmpWithLength(CommandList[i].name, (const char *)Terminal_CommandActual, Terminal_CommandActualLength))
+		if (!StrCmpWithLength(CmdH_CommandList[i].name, (const char *)Terminal_CommandActual, Terminal_CommandActualLength))
 		{
 			// It is equal
 			// We write the first equal
 			// TODO: Handle more tabulator?
-			StrCpy((char *)Terminal_CommandActual, CommandList[i].name);
+			StrCpy((char *)Terminal_CommandActual, CmdH_CommandList[i].name);
 
-			Terminal_CommandActualLength = StringLength(CommandList[i].name);
+			Terminal_CommandActualLength = StringLength(CmdH_CommandList[i].name);
 
 			Terminal_CommandCursorPosition = Terminal_CommandActualLength;
 
@@ -809,7 +809,6 @@ static void Terminal_CommandResendLine(bool needRestoreCursor)
 	{
 		Terminal_SendMessage(ESCAPE_RESTORECURSOR);			// Restore the position
 	}
-
 }
 #endif	// #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 
@@ -971,9 +970,9 @@ void Terminal_SendWelcome(void)
 	Terminal_SendLine(BOARD_NAME);
 #endif
 #ifdef TERMINAL_COMPILER_SIZE_LARGER_2
-	CommandHandler_Printf("Version: %s\r\n", VERSION_DEFINE);
-	CommandHandler_Printf("Compile date: %s, %s\r\n", DATE_VERSION, TIME_VERSION);
-	CommandHandler_Printf("Used panel: %s\r\n", BOARD_NAME);
+	CmdH_Printf("Version: %s\r\n", VERSION_DEFINE);
+	CmdH_Printf("Compile date: %s, %s\r\n", DATE_VERSION, TIME_VERSION);
+	CmdH_Printf("Used panel: %s\r\n", BOARD_NAME);
 #endif
 
 	Reset_PrintResetReasons();
@@ -1114,8 +1113,8 @@ void Terminal_SendLoadingPercent(uint8_t percent)
 	char c;
 
 	// Clear line
-	CommandHandler_SendMessage(ESCAPE_DELETELINE);
-	CommandHandler_SendMessage(ESCAPE_CURSOR_TO_LINESTART);
+	CmdH_SendMessage(ESCAPE_DELETELINE);
+	CmdH_SendMessage(ESCAPE_CURSOR_TO_LINESTART);
 
 	// Send "/ 0-100%" - loading line
 	switch (percent%4)
@@ -1128,7 +1127,7 @@ void Terminal_SendLoadingPercent(uint8_t percent)
 	}
 
 	// Send example: "/ 10%"
-	CommandHandler_Printf("%c %3d%%", c, percent);
+	CmdH_Printf("%c %3d%%", c, percent);
 }
 
 
@@ -1142,8 +1141,8 @@ void Terminal_SendLoadingPercent2(uint8_t percent)
 		percent = 100;
 
 	// Clear line
-	CommandHandler_SendMessage(ESCAPE_DELETELINE);
-	CommandHandler_SendMessage(ESCAPE_CURSOR_TO_LINESTART);
+	CmdH_SendMessage(ESCAPE_DELETELINE);
+	CmdH_SendMessage(ESCAPE_CURSOR_TO_LINESTART);
 
 	// Send "/ 0-100%" - loading line
 
@@ -1153,7 +1152,7 @@ void Terminal_SendLoadingPercent2(uint8_t percent)
 	char formatString[20];
 	// Need: "%5c%5c %3d%%"
 	usprintf(formatString, "[%%%dc%%%dc] %%3d%%%%", fill, empty);
-	CommandHandler_Printf(formatString, '-', ' ', percent);
+	CmdH_Printf(formatString, '-', ' ', percent);
 }
 
 
@@ -1170,6 +1169,13 @@ void Terminal_SendLine(const char * message)
 	DebugUart_SendLine(message);
 }
 
+
+#else
+
+// Terminal module is not used
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic pop
 
 
 #endif	// #ifdef CONFIG_MODULE_TERMINAL_ENABLE

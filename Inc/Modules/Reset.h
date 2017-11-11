@@ -1,7 +1,7 @@
 /*
  *		Reset.h
  *		Created on:		2017-02-27
- *		Author:			Vizi GÃ¡bor
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		Reset module
  *		Target:			STM32Fx
@@ -53,16 +53,16 @@
 ///< Reset reason (Why reseted)
 typedef enum
 {
-	ResetReason_Unknown = 0x00,	///< Unknown
-	ResetReason_BORRST = 0x01,	///< POR/PDR or BOR reset.
-	ResetReason_PINRST = 0x02,	///< Pin reset.
-	ResetReason_PORRST = 0x04,	///< POR/PDR reset.
-	ResetReason_SFTRST = 0x08,	///< Software reset.
-	ResetReason_IWDGRST = 0x10,	///< Independent Watchdog reset.
-	ResetReason_WWDGRST = 0x20,	///< Window Watchdog reset.
-	ResetReason_LPWRRST = 0x40,	///< Low Power reset.
-	ResetReason_Count = 0x80,	///< Max value of reset reason
-	ResetReason_Mask = 0xFF		///< Reset reason mask
+	ResetReason_Unknown	= 0x00,	///< Unknown
+	ResetReason_BORRST	= 0x01,	///< POR/PDR or BOR reset.
+	ResetReason_PINRST	= 0x02,	///< Pin reset.
+	ResetReason_PORRST	= 0x04,	///< POR/PDR reset.
+	ResetReason_SFTRST	= 0x08,	///< Software reset.
+	ResetReason_IWDGRST	= 0x10,	///< Independent Watchdog reset.
+	ResetReason_WWDGRST	= 0x20,	///< Window Watchdog reset.
+	ResetReason_LPWRRST	= 0x40,	///< Low Power reset.
+	ResetReason_Count	= 0x80,	///< Max value of reset reason
+	ResetReason_Mask	= 0xFF	///< Reset reason mask
 } ResetReason_t;
 
 

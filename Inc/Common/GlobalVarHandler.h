@@ -20,10 +20,16 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define GLOBALVARHANDLER_UNIT_ENABLE
-#define GLOBALVARHANDLER_DESCRIPTION_ENABLE
+// Set default values for module options:
+#if !defined(GLOBVARH_UNIT_ENABLE)
+	#define GLOBVARH_UNIT_ENABLE				1		///< optional unit field to a global variable
+#endif
 
-#define GLOBALVARHANDLER_NAME_MAX_LENGTH		(20)
+#if !defined(GLOBVARH_DESCRIPTION_ENABLE)
+	#define GLOBVARH_DESCRIPTION_ENABLE			1		///< optional description field to a global variable
+#endif
+
+#define GLOBVARH_NAME_MAX_LENGTH				(20U)	///< maximal length of a variable
 
 
 
@@ -31,116 +37,109 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-typedef uint8_t VarID_t;
-
+typedef uint8_t GlobVarH_ID_t;							///< type alias for counting the rows in the variable array. \sa GlobalVarList
 
 ///< GlobalVariable type
-/// \note	This enum has an "name list" (GlobalVarTypesNames), Must be in the same order with it!
+/// \note	This enum has a "name list" (GlobalVarTypesNames), must be in the same order with it!
+/// \sa	GlobalVarTypesNames
 typedef enum
 {
-	Type_Unknown = 0,
-	Type_Bool,
-	Type_Uint8,
-	Type_Int8,
-	Type_Uint16,
-	Type_Int16,
-	Type_Uint32,
-	Type_Int32,
-	Type_Float,
-	Type_Bits,
-	Type_String,
-	Type_Enumerator,
-	Type_Count
-} VarType_t;
-
-
+	GlobVarH_Type_Unknown = 0,
+	GlobVarH_Type_Bool,
+	GlobVarH_Type_Uint8,
+	GlobVarH_Type_Int8,
+	GlobVarH_Type_Uint16,
+	GlobVarH_Type_Int16,
+	GlobVarH_Type_Uint32,
+	GlobVarH_Type_Int32,
+	GlobVarH_Type_Float,
+	GlobVarH_Type_Bits,
+	GlobVarH_Type_String,
+	GlobVarH_Type_Enumerator,
+	GlobVarH_Type_Count
+} GlobVarH_Type_t;
 
 ///< Process result enumerator
 typedef enum
 {
-	Process_Unknown = 0,
-	Process_GlobalVariableNameNotFind,
-	Process_SourceNotEnabled,
-	Process_IsReadOnly,
-	Process_FailType,
-	Process_FailParam,
-	Process_FailParamTooLongString,
-	Process_FailParamIsNotNumber,
-	Process_FailParamIsNotHexNumber,
-	Process_FailParamIsNotHexStart,
-	Process_FailParamIsNotBinary,
-	Process_FailParamTooLongBinary,
-	Process_InvalidValue_TooMuch,
-	Process_InvalidValue_TooSmall,
-	Process_InvalidValue_NotBool,
-	Process_InvalidValue_NotEnumString,
-	Process_Settings_EmptyEnumList,
-	Process_Ok_Answered,
-	Process_Ok_SetSuccessful_SendOk
-} ProcessResult_t;
+	GlobVarH_Process_Unknown = 0,
+	GlobVarH_Process_GlobalVariableNameNotFind,
+	GlobVarH_Process_SourceNotEnabled,
+	GlobVarH_Process_IsReadOnly,
+	GlobVarH_Process_FailType,
+	GlobVarH_Process_FailParam,
+	GlobVarH_Process_FailParamTooLongString,
+	GlobVarH_Process_FailParamIsNotNumber,
+	GlobVarH_Process_FailParamIsNotHexNumber,
+	GlobVarH_Process_FailParamIsNotHexStart,
+	GlobVarH_Process_FailParamIsNotBinary,
+	GlobVarH_Process_FailParamTooLongBinary,
+	GlobVarH_Process_InvalidValue_TooMuch,
+	GlobVarH_Process_InvalidValue_TooSmall,
+	GlobVarH_Process_InvalidValue_NotBool,
+	GlobVarH_Process_InvalidValue_NotEnumString,
+	GlobVarH_Process_Settings_EmptyEnumList,
+	GlobVarH_Process_Ok_Answered,
+	GlobVarH_Process_Ok_SetSuccessful_SendOk
+} GlobVarH_ProcessResult_t;
 
-
-///< GlobalVariable Set-Get type enumerator
+///< GlobalVariable Set-Get type enumerator: what to do with the variable (get/set/help)
 typedef enum
 {
-	SetGet_Unknown = 0,
-	SetGet_Get,
-	SetGet_Set,
-	SetGet_Help,
+	GlobVarH_SetGet_Unknown = 0,
+	GlobVarH_SetGet_Get,
+	GlobVarH_SetGet_Set,
+	GlobVarH_SetGet_Help,
 #ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
-	SetGet_Trace
+	GlobVarH_SetGet_Trace
 #endif
-} SetGetType_t;
+} GlobVarH_SetGetType_t;
 
+typedef uint32_t (*GetFunctionPointer)(void);			///< Get function pointer
+typedef bool (*SetFunctionPointer)(uint32_t param);		///< Set function pointer
+typedef void (*GeneralFunctionPointer)(void);			///< General function pointer
 
-///< Get function pointer
-typedef uint32_t (*GetFunctionPointer)(void);
-///< Set function pointer
-typedef bool (*SetFunctionPointer)(uint32_t param);
-///< General function pointer
-typedef void (*GeneralFunctionPointer)(void);
-
-
-///< GlobalVarCommand structure for set-get global variables
+///< structure for set-get global variables
 typedef struct
 {
 	const char * const name;				///< Name of global variable [string]
-	const VarType_t type;					///< Type of global variable
+	const GlobVarH_Type_t type;				///< Type of global variable
 
 	void * const varPointer;				///< Pointer of variable
 	const bool isReadOnly;					///< Is read only?
 
-	const bool isFunction;					///< It is function?
-	const GeneralFunctionPointer getFunctionPointer;	///< Function
-	const GeneralFunctionPointer setFunctionPointer;	///< Function
+	// TODO felesleges változó: elég az vizsgálni, hogy a köv. 2 pointer !=NULL
+	const bool isFunction;					///< Is it function?
+	// NOTE: callback functions can not be used for string variable!
+	const GeneralFunctionPointer getFunctionPointer;	///< callback function for getting the value of the variable
+	const GeneralFunctionPointer setFunctionPointer;	///< callback function for setting the value of the variable
 
 	const uint32_t maxValue;				///< Max value
 	const uint32_t minValue;				///< Min value
 
-	const CommProtocolBit_t sourceEnable;	///< Enabled sources (for set-get)
+	const CommProtocolBit_t sourceEnable;	///< Enabled sources (for set-get)	// TODO: fordítási opció legyen
 
 	// TODO: Optimize these: isHex (bool), isReadOnly (bool), isFunction (bool)
-	const bool isHex;						///< Set-get in hexadecimal?
+	const bool isHex;						///< Set-get in hexadecimal format? The variable is interpretable in hex format!
 
 	const char * const * enumList;			///< Enum list, if it is enumerator
 
-#ifdef GLOBALVARHANDLER_UNIT_ENABLE
+#if GLOBVARH_UNIT_ENABLE == 1
 	const char * const unit;				///< units [string], example: [cm]
 #endif
-#ifdef GLOBALVARHANDLER_DESCRIPTION_ENABLE
+#if GLOBVARH_DESCRIPTION_ENABLE == 1
 	const char * const description;			///< descriptions of global variable [string]
 #endif
 
-} GlobalVarCommand_t;
-
+} GlobVarH_VarRecord_t;
 
 ///< Trace log record
 typedef struct
 {
-	uint32_t tick;							///< Trace - tick
-	uint32_t data;							///< Trace - data (value)
-	uint32_t varID;							///< Trace - GlobalVar ID
-} GlobalVar_TraceLogRecord_t;
+	uint32_t tick;							///< Trace - current tick
+	uint32_t data;							///< Trace - data (value), must not exceed 32 bits!
+	uint32_t varID;							///< Trace - GlobalVar ID to be traced
+} GlobVarH_TraceLogRecord_t;
 
 
 
@@ -148,7 +147,7 @@ typedef struct
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-extern uint32_t GlobarVarHandler_TemporaryValue;
+extern uint32_t GlobVarH_TemporaryValue;
 
 
 
@@ -156,17 +155,18 @@ extern uint32_t GlobarVarHandler_TemporaryValue;
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void GlobalVarHandler_CheckCommandStructAreValid(void);
-void GlobalVarHandler_ProcessCommand(const char *commandName, const char *param, SetGetType_t setGetType, CommProtocol_t source);
+void GlobVarH_CheckGlobalVarArray(void);
+GlobVarH_ProcessResult_t GlobVarH_ProcessVariableCommand(const char *varName, const char *param, GlobVarH_SetGetType_t setGetType, CommProtocol_t source);
+void GlobVarH_WriteResults(GlobVarH_ProcessResult_t result);
 
-void GlobalVarHandler_ListAllVariableParameters(void);
-void GlobalVarHandler_PrintAllVariableValues(void);
+void GlobVarH_ListAllVariableParameters(void);
+void GlobVarH_PrintAllVariableValues(void);
 
-void GlobalVarHandler_EnableTrace(VarID_t id, bool isEnable);
-void GlobalVarHandler_RunTrace(void);
-void GlobalVarHandler_PrintTraceBuffer(void);
+void GlobVarH_EnableTrace(GlobVarH_ID_t id, bool isEnable);
+void GlobVarH_RunTrace(void);
+void GlobVarH_PrintTraceBuffer(void);
 
-void GlobalVarHandler_UnitTest(void);
+void GlobVarH_UnitTest(void);
 
 
 

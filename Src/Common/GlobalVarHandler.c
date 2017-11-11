@@ -39,21 +39,21 @@
 
 
 /*
-Type_Unknown = 0,
-Type_Bool,
-Type_Uint8,
-Type_Int8,
-Type_Uint16,
-Type_Int16,
-Type_Uint32,
-Type_Int32,
-Type_Float,
-Type_String,
-Type_Enumerator
+GlobVarH_Type_Unknown = 0,
+GlobVarH_Type_Bool,
+GlobVarH_Type_Uint8,
+GlobVarH_Type_Int8,
+GlobVarH_Type_Uint16,
+GlobVarH_Type_Int16,
+GlobVarH_Type_Uint32,
+GlobVarH_Type_Int32,
+GlobVarH_Type_Float,
+GlobVarH_Type_String,
+GlobVarH_Type_Enumerator
 */
-static const char * const GlobalVarTypesNames[] =
+static const char * const GlobVarH_TypesNames[] =
 {
-	// NOTE: Important!! Must be in the same order with VarType_t
+	// NOTE: Important!! Must be in the same order with GlobVarH_Type_t
 	"unknown",
 	"bool",
 	"uint8_t",
@@ -70,16 +70,24 @@ static const char * const GlobalVarTypesNames[] =
 
 
 // TODO: Put guard value around this value?
-uint32_t GlobarVarHandler_TemporaryValue = 0;
+uint32_t GlobVarH_TemporaryValue = 0;							///< used when the global variable has its own getter function
 
 
 #ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
-static uint32_t GlobalVarHandler_TraceVarEnabled = 0;
+/**<
+ * Used as bit field to enable/disable variable tracing.
+ * e.g.: bit 1. corresponds to the 1st item in GlobalVarList[] -> NOTE 32th variable can not be traced!
+ */
+static uint32_t GlobVarH_TraceVarEnabled = 0;
 
 	#ifdef CONFIG_GLOBALVARHANDLER_TRACE_RAM_BUFFER
-		#define GLOBALVARHANDLER_TRACE_BUFFER_SIZE 		(100U)
-static GlobalVar_TraceLogRecord_t GlobalVarHandler_TraceRamBuffer[GLOBALVARHANDLER_TRACE_BUFFER_SIZE] = { 0 };
-static uint8_t GlobalVarHandler_TraceRam_BufferCnt = 0;
+		#define GLOBALVARHANDLER_TRACE_BUFFER_SIZE 		(100U)	///< size of GlobVarH_TraceRamBuffer[]
+/**<
+ * Array to store the traced values. Used as ring buffer: when the buffer is full, value storage starts from item 0 again, old values
+ * will be overwritten.
+ */
+static GlobVarH_TraceLogRecord_t GlobVarH_TraceRamBuffer[GLOBALVARHANDLER_TRACE_BUFFER_SIZE] = { 0 };
+static uint8_t GlobVarH_TraceRam_BufferCnt = 0;					///< current position in GlobVarH_TraceRamBuffer[]
 	#endif
 #endif
 
@@ -89,27 +97,27 @@ static uint8_t GlobalVarHandler_TraceRam_BufferCnt = 0;
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
-static bool GlobalVarHandler_SearchVariableName(const char *commandName, VarID_t *commandID);
-static ProcessResult_t GlobalVarHandler_SetVariable(const VarID_t commandID, const char *param);
-static void GlobalVarHandler_WriteResults(ProcessResult_t result);
-static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t num);
-static void GlobalVarHandler_PrintVariableDescriptions (VarID_t commandID);
+static bool GlobVarH_SearchVariableName(const char *commandName, GlobVarH_ID_t *globVarID);
+static GlobVarH_ProcessResult_t GlobVarH_SetVariable(const GlobVarH_ID_t globVarID, const char *param);
+static GlobVarH_ProcessResult_t GlobVarH_CheckValue(GlobVarH_ID_t globVarID, uint32_t num);
+static void GlobVarH_PrintVariableDescriptions (GlobVarH_ID_t globVarID);
 
-static ProcessResult_t GlobalVarHandler_GetVariable(GlobalVarCommand_t * command);
-static void GlobalVarHandler_GetInteger(GlobalVarCommand_t * command);
-static void GlobalVarHandler_GetBits(GlobalVarCommand_t * command);
-static void GlobalVarHandler_GetEnumerator(GlobalVarCommand_t * command);
-static void GlobalVarHandler_GetFunctionValue(GlobalVarCommand_t * command);
+static GlobVarH_ProcessResult_t GlobVarH_GetVariable(GlobVarH_VarRecord_t * varRecord);
+static void GlobVarH_GetInteger(GlobVarH_VarRecord_t * varRecord);
+static void GlobVarH_GetBits(GlobVarH_VarRecord_t * varRecord);
+static void GlobVarH_GetEnumerator(GlobVarH_VarRecord_t * varRecord);
+static void GlobVarH_GetFunctionValue(GlobVarH_VarRecord_t * varRecord);
 
-static ProcessResult_t GlobalVarHandler_SetBool(VarID_t commandID, const char *param);
-static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char *param);
-static ProcessResult_t GlobalVarHandler_SetFloat(VarID_t commandID, const char *param);
-static ProcessResult_t GlobalVarHandler_SetBits(VarID_t commandID, const char *param);
-static ProcessResult_t GlobalVarHandler_SetString(VarID_t commandID, const char *param);
-static ProcessResult_t GlobalVarHandler_SetEnumerator(VarID_t commandID, const char *param);
+
+static GlobVarH_ProcessResult_t GlobVarH_SetBool(GlobVarH_ID_t globVarID, const char *param);
+static GlobVarH_ProcessResult_t GlobVarH_SetInteger(GlobVarH_ID_t globVarID, const char *param);
+static GlobVarH_ProcessResult_t GlobVarH_SetFloat(GlobVarH_ID_t globVarID, const char *param);
+static GlobVarH_ProcessResult_t GlobVarH_SetBits(GlobVarH_ID_t globVarID, const char *param);
+static GlobVarH_ProcessResult_t GlobVarH_SetString(GlobVarH_ID_t globVarID, const char *param);
+static GlobVarH_ProcessResult_t GlobVarH_SetEnumerator(GlobVarH_ID_t globVarID, const char *param);
 
 #ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
-static void GlobalVarHandler_SetTrace(VarID_t commandID, const char * param);
+static void GlobVarH_SetTrace(GlobVarH_ID_t commandID, const char * param);
 #endif
 
 
@@ -121,34 +129,29 @@ static void GlobalVarHandler_SetTrace(VarID_t commandID, const char * param);
 
 #ifdef CONFIG_GLOBALVARHANDLER_CHECK_ENABLE
 /**
- * \brief	Check the GlobalVarList[], are set valid?
- * \retval	true	 ok
+ * \brief	Check the GlobalVarList[], are settings valid?
  */
-void GlobalVarHandler_CheckCommandStructAreValid(void)
+void GlobVarH_CheckGlobalVarArray(void)
 {
-	//#error "Synhcronize 'Type_Count' with 'GlobalVarTypesNames'"
-	BUILD_BUG_ON(NUM_OF(GlobalVarTypesNames) != Type_Count);
+	//#error "Synhcronize 'GlobVarH_Type_Count' with 'GlobalVarTypesNames'"
+	BUILD_BUG_ON(NUM_OF(GlobVarH_TypesNames) != GlobVarH_Type_Count);
 
-	VarID_t i;
+	GlobVarH_ID_t i;
 
 	for (i = 0; i < GlobalVar_MaxCommandNum; i++)
 	{
 		// TODO: Put some comments for reason / checks
 
 		ASSERT(GlobalVarList[i].varPointer != NULL);
-
-		ASSERT(GlobalVarList[i].type != Type_Unknown);
-
+		ASSERT(GlobalVarList[i].type != GlobVarH_Type_Unknown);
 		ASSERT(GlobalVarList[i].name != NULL);
-
-		ASSERT(StringLength(GlobalVarList[i].name) < GLOBALVARHANDLER_NAME_MAX_LENGTH);
-
+		ASSERT(StringLength(GlobalVarList[i].name) < GLOBVARH_NAME_MAX_LENGTH);
 
 		if (GlobalVarList[i].isFunction)
 		{
-			ASSERT(GlobalVarList[i].type != Type_String);
-
+			ASSERT(GlobalVarList[i].type != GlobVarH_Type_String);		// callback functions can not be used for string variable!
 			ASSERT(GlobalVarList[i].getFunctionPointer != NULL);
+			ASSERT(GlobalVarList[i].varPointer == &GlobVarH_TemporaryValue);
 
 			if (!GlobalVarList[i].isReadOnly)
 			{
@@ -156,17 +159,17 @@ void GlobalVarHandler_CheckCommandStructAreValid(void)
 			}
 		}
 
-		if (GlobalVarList[i].type == Type_Enumerator)
+		if (GlobalVarList[i].type == GlobVarH_Type_Enumerator)
 		{
 			ASSERT(GlobalVarList[i].enumList != NULL);
 		}
 
-		if (GlobalVarList[i].type == Type_String && !GlobalVarList[i].isReadOnly)
+		if (GlobalVarList[i].type == GlobVarH_Type_String && !GlobalVarList[i].isReadOnly)
 		{
 			ASSERT(GlobalVarList[i].maxValue != 0);
 		}
 
-		if (GlobalVarList[i].type == Type_Bits)
+		if (GlobalVarList[i].type == GlobVarH_Type_Bits)
 		{
 			ASSERT(GlobalVarList[i].maxValue <= 31);
 			ASSERT(GlobalVarList[i].minValue < 31);
@@ -180,85 +183,83 @@ void GlobalVarHandler_CheckCommandStructAreValid(void)
 
 /**
  * \brief	Process received command
- * \param	*commandName		received command name (string)
+ * \param	*varName			name of the variable to be looked for (string)
  * \param	*param				received parameters after command
  * \param	setGetType			Set or get command
  * \param	source				Command source (e.g. USART)
+ * \return	result				Command process result
  */
-void GlobalVarHandler_ProcessCommand(const char *commandName, const char *param, SetGetType_t setGetType, CommProtocol_t source)
+GlobVarH_ProcessResult_t GlobVarH_ProcessVariableCommand(const char *varName, const char *param, GlobVarH_SetGetType_t setGetType, CommProtocol_t source)
 {
-	 ProcessResult_t result = Process_Unknown;
+	 GlobVarH_ProcessResult_t result = GlobVarH_Process_Unknown;
 
 	// Search command
-	VarID_t commandID = 0;
+	GlobVarH_ID_t globVarID = 0;
 
-	if (GlobalVarHandler_SearchVariableName(commandName, &commandID))
+	if (GlobVarH_SearchVariableName(varName, &globVarID))
 	{
 		// Found, Check the source
-		if ((source & GlobalVarList[commandID].sourceEnable) || (GlobalVarList[commandID].sourceEnable == CommProtBit_Unknown))
+		if (((1 << source) & GlobalVarList[globVarID].sourceEnable) ||
+				(GlobalVarList[globVarID].sourceEnable == CommProtBit_Unknown))		// TODO: to access a variable is always enabled!
 		{
 			// Source is enabled
-			if (setGetType == SetGet_Get)
+			if (setGetType == GlobVarH_SetGet_Get)
 			{
 				// Get
-				result = GlobalVarHandler_GetVariable((GlobalVarCommand_t *)&GlobalVarList[commandID]);
+				result = GlobVarH_GetVariable((GlobVarH_VarRecord_t *)&GlobalVarList[globVarID]);
 			}
-			else if (setGetType == SetGet_Set)
+			else if (setGetType == GlobVarH_SetGet_Set)
 			{
 				// Can set? (not const?)
-				if (!GlobalVarList[commandID].isReadOnly)
+				if (!GlobalVarList[globVarID].isReadOnly)
 				{
-					// It not const, can set
-					result = GlobalVarHandler_SetVariable(commandID, param);
+					result = GlobVarH_SetVariable(globVarID, param);	// It not const, can set
 				}
 				else
 				{
-					// Cannot set, it is read only
-					result = Process_IsReadOnly;
+					result = GlobVarH_Process_IsReadOnly;			// Cannot set, it is read only
 				}
 			}
-			else if (setGetType == SetGet_Help)
+			else if (setGetType == GlobVarH_SetGet_Help)
 			{
-				GlobalVarHandler_PrintVariableDescriptions(commandID);
-				result = Process_Ok_Answered;
+				GlobVarH_PrintVariableDescriptions(globVarID);
+				result = GlobVarH_Process_Ok_Answered;
 			}
 #ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
-			else if (setGetType == SetGet_Trace)
+			else if (setGetType == GlobVarH_SetGet_Trace)
 			{
-				GlobalVarHandler_SetTrace(commandID, param);
-				result = Process_Ok_Answered;
+				GlobVarH_SetTrace(globVarID, param);
+				result = GlobVarH_Process_Ok_Answered;
 			}
 #endif
 			else
 			{
-				result = Process_Unknown;
+				result = GlobVarH_Process_Unknown;
 			}
 		}
 		else
 		{
-			// Source not enabled
-			result = Process_SourceNotEnabled;
+			result = GlobVarH_Process_SourceNotEnabled;				// Source not enabled
 		}
 	}
 	else
 	{
-		// Not found
-		result = Process_GlobalVariableNameNotFind;
+		result = GlobVarH_Process_GlobalVariableNameNotFind;			// Not found
 	}
 
-	GlobalVarHandler_WriteResults(result);
+	return result;
 }
 
 
 
 /**
- * \brief	Search global var name
+ * \brief	Search global var name in GlobalVarList
  * \retval	true, if found, it is commandID
  * 			false, if not found
  */
-static bool GlobalVarHandler_SearchVariableName(const char *commandName, VarID_t *commandID)
+static bool GlobVarH_SearchVariableName(const char *commandName, GlobVarH_ID_t *globVarID)
 {
-	VarID_t i;
+	GlobVarH_ID_t i;
 
 	// Search
 	for (i = 0; i < GlobalVar_MaxCommandNum; i++)
@@ -266,7 +267,7 @@ static bool GlobalVarHandler_SearchVariableName(const char *commandName, VarID_t
 		if (!StrCmp(GlobalVarList[i].name, commandName))
 		{
 		// Found
-		*commandID = i;
+		*globVarID = i;
 
 		return true;
 		}
@@ -279,126 +280,126 @@ static bool GlobalVarHandler_SearchVariableName(const char *commandName, VarID_t
 
 
 /**
- * \brief	Get command
+ * \brief	Get value of a global variable. Response is written to buffer pointed by CmdH_ResponseBuffer.
  */
-static ProcessResult_t GlobalVarHandler_GetVariable(GlobalVarCommand_t * command)
+static GlobVarH_ProcessResult_t GlobVarH_GetVariable(GlobVarH_VarRecord_t * varRecord)
 {
 	// Check type
-	if (command->isFunction)
+	if (varRecord->isFunction)		// callback of the variable must be used for getting its value!
 	{
-		// Get function variable to *varPointer
-		GlobalVarHandler_GetFunctionValue(command);
+		// Get function variable to .*varPointer
+		// .varPointer struct member must point to GlobVarH_TemporaryValue if the variable has callback function for getting its value!
+		GlobVarH_GetFunctionValue(varRecord);
 	}
 
 	// Get Variable
-	switch (command->type)
+	switch (varRecord->type)
 	{
-		case Type_Bool:
+		case GlobVarH_Type_Bool:
 		{
-			bool *boolPointer = (bool *)command->varPointer;
+			bool *boolPointer = (bool *)varRecord->varPointer;
 			if (*boolPointer)
 			{
-				CommandHandler_SendMessage("1 / TRUE");
+				CmdH_SendMessage("1 / TRUE");
 			}
 			else
 			{
-				CommandHandler_SendMessage("0 / FALSE");
+				CmdH_SendMessage("0 / FALSE");
 			}
 		}
 			break;
 
-		case Type_Uint8:
-		case Type_Uint16:
-		case Type_Uint32:
-		case Type_Int8:
-		case Type_Int16:
-		case Type_Int32:
-			GlobalVarHandler_GetInteger(command);
+		case GlobVarH_Type_Uint8:
+		case GlobVarH_Type_Uint16:
+		case GlobVarH_Type_Uint32:
+		case GlobVarH_Type_Int8:
+		case GlobVarH_Type_Int16:
+		case GlobVarH_Type_Int32:
+			GlobVarH_GetInteger(varRecord);
 			break;
 
-		case Type_Float:
+		case GlobVarH_Type_Float:
 		{
-			float *floatPointer = (float *)command->varPointer;
+			float *floatPointer = (float *)varRecord->varPointer;
 			float value = *floatPointer;
-			CommandHandler_Printf("%0.2f", value);
+			CmdH_Printf("%0.2f", value);
 		}
 			break;
 
-		case Type_Bits:
-			GlobalVarHandler_GetBits(command);
+		case GlobVarH_Type_Bits:
+			GlobVarH_GetBits(varRecord);
 			break;
 
-		case Type_String:
+		case GlobVarH_Type_String:
 		{
-			const char *string = command->varPointer;
-			CommandHandler_SendMessage(string);
+			const char *string = varRecord->varPointer;
+			CmdH_SendMessage(string);
 		}
 			break;
 
-		case Type_Enumerator:
-			GlobalVarHandler_GetEnumerator(command);
+		case GlobVarH_Type_Enumerator:
+			GlobVarH_GetEnumerator(varRecord);
 			break;
 
 		// Wrong types
-		case Type_Unknown:
-		case Type_Count:
+		case GlobVarH_Type_Unknown:
+		case GlobVarH_Type_Count:
 		default:
-			return Process_FailParam;
+			return GlobVarH_Process_FailParam;
 			break;
 	}
 
-#ifdef GLOBALVARHANDLER_UNIT_ENABLE
+#ifdef GLOBVARH_UNIT_ENABLE
 	// Append unit, if need
-	if (command->unit)
+	if (varRecord->unit)
 	{
 		// Print unit
-		CommandHandler_Printf(" %s", command->unit);
+		CmdH_Printf(" %s", varRecord->unit);
 	}
 #endif
 
-	return Process_Ok_Answered;
+	return GlobVarH_Process_Ok_Answered;
 }
 
 
 
 /**
- * \brief	Get integer value
- * 			NOTE: Be careful, commandID not checked
+ * \brief	Get integer value. Response is written to buffer pointed by CmdH_ResponseBuffer.
  */
-static void GlobalVarHandler_GetInteger(GlobalVarCommand_t * command)
+static void GlobVarH_GetInteger(GlobVarH_VarRecord_t * varRecord)
 {
-	VarType_t type = command->type;
+	GlobVarH_Type_t type = varRecord->type;
 
-	if (command->isHex)
+	if (varRecord->isHex)
 	{
 		// Get in Hex format
 
 		uint8_t octetNum = 0;
 		switch (type)
 		{
-			case Type_Uint8:
+			case GlobVarH_Type_Uint8:
 				octetNum = 2;
 				break;
 
-			case Type_Uint16:
+			case GlobVarH_Type_Uint16:
 				octetNum = 4;
 				break;
 
-			case Type_Uint32:
+			case GlobVarH_Type_Uint32:
 				octetNum = 8;
 				break;
 
 			// Wrong types
-			case Type_Int8:
-			case Type_Int16:
-			case Type_Int32:
-			case Type_Bool:
-			case Type_Enumerator:
-			case Type_Float:
-			case Type_Bits:
-			case Type_String:
-			case Type_Unknown:
-			case Type_Count:
+			case GlobVarH_Type_Int8:
+			case GlobVarH_Type_Int16:
+			case GlobVarH_Type_Int32:
+			case GlobVarH_Type_Bool:
+			case GlobVarH_Type_Enumerator:
+			case GlobVarH_Type_Float:
+			case GlobVarH_Type_Bits:
+			case GlobVarH_Type_String:
+			case GlobVarH_Type_Unknown:
+			case GlobVarH_Type_Count:
 			default:
 				// Error...
 				// TODO: Error handling, if wrong types... (unexpected types)
@@ -409,13 +410,13 @@ static void GlobalVarHandler_GetInteger(GlobalVarCommand_t * command)
 		if (octetNum != 0)
 		{
 			// Octet num is ok
-			uint32_t *numPointer = (uint32_t *)command->varPointer;
+			uint32_t *numPointer = (uint32_t *)varRecord->varPointer;
 			uint32_t num = *numPointer;
 			char format[10];
 
 			usprintf(format, "0x%%%dX", octetNum);
 			// Example: "0x%2X"
-			CommandHandler_Printf(format, num);
+			CmdH_Printf(format, num);
 		}
 		else
 		{
@@ -428,62 +429,62 @@ static void GlobalVarHandler_GetInteger(GlobalVarCommand_t * command)
 		switch (type)
 		{
 			// TODO: Optimize these
-			case Type_Uint8:
+			case GlobVarH_Type_Uint8:
 			{
-				uint8_t *numPointer = (uint8_t *)command->varPointer;
+				uint8_t *numPointer = (uint8_t *)varRecord->varPointer;
 				uint8_t num = *numPointer;
-				CommandHandler_Printf("%u", num);
+				CmdH_Printf("%u", num);
 			}
 				break;
 
-			case Type_Uint16:
+			case GlobVarH_Type_Uint16:
 			{
-				uint16_t *numPointer = (uint16_t *)command->varPointer;
+				uint16_t *numPointer = (uint16_t *)varRecord->varPointer;
 				uint16_t num = *numPointer;
-				CommandHandler_Printf("%u", num);
+				CmdH_Printf("%u", num);
 			}
 				break;
 
-			case Type_Uint32:
+			case GlobVarH_Type_Uint32:
 			{
-				uint32_t *numPointer = (uint32_t *)command->varPointer;
+				uint32_t *numPointer = (uint32_t *)varRecord->varPointer;
 				uint32_t num = *numPointer;
-				CommandHandler_Printf("%u", num);
+				CmdH_Printf("%u", num);
 			}
 				break;
 
-			case Type_Int8:
+			case GlobVarH_Type_Int8:
 			{
-				int8_t *numPointer = (int8_t *)command->varPointer;
+				int8_t *numPointer = (int8_t *)varRecord->varPointer;
 				int8_t num = *numPointer;
-				CommandHandler_Printf("%d", num);
+				CmdH_Printf("%d", num);
 			}
 				break;
 
-			case Type_Int16:
+			case GlobVarH_Type_Int16:
 			{
-				int16_t *numPointer = (int16_t *)command->varPointer;
+				int16_t *numPointer = (int16_t *)varRecord->varPointer;
 				int16_t num = *numPointer;
-				CommandHandler_Printf("%d", num);
+				CmdH_Printf("%d", num);
 			}
 				break;
 
-			case Type_Int32:
+			case GlobVarH_Type_Int32:
 			{
-				int32_t *numPointer = (int32_t *)command->varPointer;
+				int32_t *numPointer = (int32_t *)varRecord->varPointer;
 				int32_t num = *numPointer;
-				CommandHandler_Printf("%d", num);
+				CmdH_Printf("%d", num);
 			}
 				break;
 
 			// Wrong types
-			case Type_Bool:
-			case Type_Enumerator:
-			case Type_Float:
-			case Type_Bits:
-			case Type_String:
-			case Type_Unknown:
-			case Type_Count:
+			case GlobVarH_Type_Bool:
+			case GlobVarH_Type_Enumerator:
+			case GlobVarH_Type_Float:
+			case GlobVarH_Type_Bits:
+			case GlobVarH_Type_String:
+			case GlobVarH_Type_Unknown:
+			case GlobVarH_Type_Count:
 			default:
 				// Wrong case
 				break;
@@ -497,23 +498,23 @@ static void GlobalVarHandler_GetInteger(GlobalVarCommand_t * command)
 
 
 /**
- * \brief	Get bits / get binary values
+ * \brief	Get bits / get binary values. Response is written to buffer pointed by CmdH_ResponseBuffer.
  */
-static void GlobalVarHandler_GetBits(GlobalVarCommand_t * command)
+static void GlobVarH_GetBits(GlobVarH_VarRecord_t * varRecord)
 {
-	uint32_t *numPointer = (uint32_t *)command->varPointer;
+	uint32_t *numPointer = (uint32_t *)varRecord->varPointer;
 	uint32_t num = *numPointer;
 
 	// xxxx11111yyyyyy
 	//     mask  shift
-	uint8_t shift = command->minValue;
-	uint8_t bitLength = command->maxValue - shift;
+	uint8_t shift = varRecord->minValue;
+	uint8_t bitLength = varRecord->maxValue - shift;
 	// TODO: Check minValue and maxValue
 
 	// Shift to right, and mask to make our important bits
 	num = (num >> shift) & (power(2, bitLength)-1);
 
-	CommandHandler_Printf("0b%b", num);
+	CmdH_Printf("0b%b", num);
 
 	return;
 }
@@ -521,55 +522,55 @@ static void GlobalVarHandler_GetBits(GlobalVarCommand_t * command)
 
 
 /**
- * \brief	Get enumerators
+ * \brief	Get enumerators. Response is written to buffer pointed by CmdH_ResponseBuffer.
  */
-static void GlobalVarHandler_GetEnumerator(GlobalVarCommand_t * command)
+static void GlobVarH_GetEnumerator(GlobVarH_VarRecord_t * varRecord)
 {
-	uint8_t *enumPointer = (uint8_t *)command->varPointer;
+	uint8_t *enumPointer = (uint8_t *)varRecord->varPointer;
 	uint8_t enumValue = *enumPointer;
 	char *enumString;
 
 	// Print enum value
-	CommandHandler_Printf("%d ", enumValue);
+	CmdH_Printf("%d ", enumValue);
 
 	// Check "enumList" pointer
-	if (command->enumList == NULL)
+	if (varRecord->enumList == NULL)
 	{
 		// TODO: Add new result type?
-		CommandHandler_SendMessage("ERROR - There is not set \"enumList\" pointer");
+		CmdH_SendMessage("ERROR - There is not set \"enumList\" pointer");
 		return;
 	}
 
 	// If has good enumList
 	// Check value (It is not too high?)
-	if (enumValue > command->maxValue)
+	if (enumValue > varRecord->maxValue)
 	{
 		// TODO: Add new result type?
-		CommandHandler_SendMessage("ERROR - Enum has too high value");
+		CmdH_SendMessage("ERROR - Enum has too high value");
 		return;
 	}
 
 	// Good value
 	// Print enum string
-	enumString = (char *)command->enumList[enumValue];	// string pointer
-	CommandHandler_SendMessage(enumString);
+	enumString = (char *)varRecord->enumList[enumValue];	// string pointer
+	CmdH_SendMessage(enumString);
 }
 
 
 
 /**
- * \brief	Get function value
+ * \brief	Get function value into the GlobVarH_TemporaryValue variable
  */
-static void GlobalVarHandler_GetFunctionValue(GlobalVarCommand_t * command)
+static void GlobVarH_GetFunctionValue(GlobVarH_VarRecord_t * varRecord)
 {
-	// Variable type checked at GlobalVarHandler_CheckCommandStructAreValid()
+	// Variable type checked at GlobVarH_CheckGlobalVarArray()
 
 	// Get Function pointer
-	GetFunctionPointer getFunction = (GetFunctionPointer)command->getFunctionPointer;
+	GetFunctionPointer getFunction = (GetFunctionPointer)varRecord->getFunctionPointer;
 	// TODO: Make to other integer and float and bool
 
-	GlobarVarHandler_TemporaryValue = 0;
-	GlobarVarHandler_TemporaryValue = getFunction();
+	GlobVarH_TemporaryValue = 0;
+	GlobVarH_TemporaryValue = getFunction();
 }
 
 
@@ -577,69 +578,69 @@ static void GlobalVarHandler_GetFunctionValue(GlobalVarCommand_t * command)
 /**
  * \brief	Set variable
  */
-static ProcessResult_t GlobalVarHandler_SetVariable(const VarID_t commandID, const char *param)
+static GlobVarH_ProcessResult_t GlobVarH_SetVariable(const GlobVarH_ID_t globVarID, const char *param)
 {
-	ProcessResult_t result = Process_Unknown;
+	GlobVarH_ProcessResult_t result = GlobVarH_Process_Unknown;
 
 	// Variable type
-	switch (GlobalVarList[commandID].type)
+	switch (GlobalVarList[globVarID].type)
 	{
-		case Type_Bool:
-			result = GlobalVarHandler_SetBool(commandID, param);
+		case GlobVarH_Type_Bool:
+			result = GlobVarH_SetBool(globVarID, param);
 			break;
 
-		case Type_Uint8:
-		case Type_Uint16:
-		case Type_Uint32:
-		case Type_Int8:
-		case Type_Int16:
-		case Type_Int32:
-			result = GlobalVarHandler_SetInteger(commandID, param);
+		case GlobVarH_Type_Uint8:
+		case GlobVarH_Type_Uint16:
+		case GlobVarH_Type_Uint32:
+		case GlobVarH_Type_Int8:
+		case GlobVarH_Type_Int16:
+		case GlobVarH_Type_Int32:
+			result = GlobVarH_SetInteger(globVarID, param);
 			break;
 
-		case Type_Float:
-			result = GlobalVarHandler_SetFloat(commandID, param);
+		case GlobVarH_Type_Float:
+			result = GlobVarH_SetFloat(globVarID, param);
 			break;
 
-		case Type_Bits:
-			result = GlobalVarHandler_SetBits(commandID, param);
+		case GlobVarH_Type_Bits:
+			result = GlobVarH_SetBits(globVarID, param);
 			break;
 
-		case Type_String:
-			result = GlobalVarHandler_SetString(commandID, param);
+		case GlobVarH_Type_String:
+			result = GlobVarH_SetString(globVarID, param);
 			break;
 
-		case Type_Enumerator:
-			result = GlobalVarHandler_SetEnumerator(commandID, param);
+		case GlobVarH_Type_Enumerator:
+			result = GlobVarH_SetEnumerator(globVarID, param);
 			break;
 
 		// Wrong types
-		case Type_Unknown:
-		case Type_Count:
+		case GlobVarH_Type_Unknown:
+		case GlobVarH_Type_Count:
 		default:
-			result = Process_FailType;
+			result = GlobVarH_Process_FailType;
 			break;
 	}
 
-	if (GlobalVarList[commandID].isFunction)
+	if (GlobalVarList[globVarID].isFunction)
 	{
 		// Function
 		// Set value
 
 		// Set Function pointer
-		SetFunctionPointer setFunction = (SetFunctionPointer)GlobalVarList[commandID].setFunctionPointer;
+		SetFunctionPointer setFunction = (SetFunctionPointer)GlobalVarList[globVarID].setFunctionPointer;
 
 		// Set value with parameter
-		if (setFunction(GlobarVarHandler_TemporaryValue))
+		if (setFunction(GlobVarH_TemporaryValue))
 		{
 			// Successful set
-			result = Process_Ok_SetSuccessful_SendOk;
+			result = GlobVarH_Process_Ok_SetSuccessful_SendOk;
 		}
 		else
 		{
 			// Failed set
 			// TODO: Process_FailSet
-			result = Process_Unknown;
+			result = GlobVarH_Process_Unknown;
 		}
 	}
 
@@ -652,7 +653,7 @@ static ProcessResult_t GlobalVarHandler_SetVariable(const VarID_t commandID, con
 /**
  * \brief	Set bool variable
  */
-static ProcessResult_t GlobalVarHandler_SetBool(VarID_t commandID, const char *param)
+static GlobVarH_ProcessResult_t GlobVarH_SetBool(GlobVarH_ID_t globVarID, const char *param)
 {
 	uint32_t num;
 	bool boolVal;
@@ -670,7 +671,7 @@ static ProcessResult_t GlobalVarHandler_SetBool(VarID_t commandID, const char *p
 		}
 		else
 		{
-			return Process_InvalidValue_NotBool;			// Wrong num (not 0, and not 1)
+			return GlobVarH_Process_InvalidValue_NotBool;			// Wrong num (not 0, and not 1)
 		}
 	}
 	else
@@ -716,14 +717,14 @@ static ProcessResult_t GlobalVarHandler_SetBool(VarID_t commandID, const char *p
 		else
 		{
 			// Not good "string"
-			return Process_InvalidValue_NotBool;
+			return GlobVarH_Process_InvalidValue_NotBool;
 		}
 	}
 	// If reach here, boolVal is contain a valid value
-	bool *bPointer = (bool *)GlobalVarList[commandID].varPointer;
+	bool *bPointer = (bool *)GlobalVarList[globVarID].varPointer;
 	*bPointer = boolVal;
 
-	return Process_Ok_SetSuccessful_SendOk;
+	return GlobVarH_Process_Ok_SetSuccessful_SendOk;
 }
 
 
@@ -731,65 +732,65 @@ static ProcessResult_t GlobalVarHandler_SetBool(VarID_t commandID, const char *p
 /**
  * \brief	Set integer global variable
  */
-static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char *param)
+static GlobVarH_ProcessResult_t GlobVarH_SetInteger(GlobVarH_ID_t globVarID, const char *param)
 {
-	VarType_t varType = GlobalVarList[commandID].type;
+	GlobVarH_Type_t varType = GlobalVarList[globVarID].type;
 	uint32_t num;
 
 	// If hex
-	if (GlobalVarList[commandID].isHex)
+	if (GlobalVarList[globVarID].isHex)
 	{
 		if (!(param[0] == '0' && param[1] == 'x'))
 		{
 			// Need set with "0x"
-			return Process_FailParamIsNotHexStart;
+			return GlobVarH_Process_FailParamIsNotHexStart;
 		}
 
 		// Convert HexString to Num
 		if (StringHexToNum(&param[2], &num))
 		{
 			// Is good num?
-			ProcessResult_t result = GlobalVarHandler_CheckValue(commandID, num);
-			if (result == Process_Ok_SetSuccessful_SendOk)
+			GlobVarH_ProcessResult_t result = GlobVarH_CheckValue(globVarID, num);
+			if (result == GlobVarH_Process_Ok_SetSuccessful_SendOk)
 			{
 				switch (varType)
 				{
-					case Type_Uint8:
+					case GlobVarH_Type_Uint8:
 					{
-						uint8_t *wPointer = (uint8_t *)GlobalVarList[commandID].varPointer;
+						uint8_t *wPointer = (uint8_t *)GlobalVarList[globVarID].varPointer;
 						*wPointer = num;
 					}
 						break;
-					case Type_Uint16:
+					case GlobVarH_Type_Uint16:
 					{
-						uint16_t *wPointer = (uint16_t *)GlobalVarList[commandID].varPointer;
+						uint16_t *wPointer = (uint16_t *)GlobalVarList[globVarID].varPointer;
 						*wPointer = num;
 					}
 						break;
-					case Type_Uint32:
+					case GlobVarH_Type_Uint32:
 					{
-						uint32_t *wPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
+						uint32_t *wPointer = (uint32_t *)GlobalVarList[globVarID].varPointer;
 						*wPointer = num;
 					}
 						break;
 
 					// Wrong types
-					case Type_Int8:
-					case Type_Int16:
-					case Type_Int32:
-					case Type_Bool:
-					case Type_Float:
-					case Type_Bits:
-					case Type_Enumerator:
-					case Type_String:
-					case Type_Unknown:
-					case Type_Count:
+					case GlobVarH_Type_Int8:
+					case GlobVarH_Type_Int16:
+					case GlobVarH_Type_Int32:
+					case GlobVarH_Type_Bool:
+					case GlobVarH_Type_Float:
+					case GlobVarH_Type_Bits:
+					case GlobVarH_Type_Enumerator:
+					case GlobVarH_Type_String:
+					case GlobVarH_Type_Unknown:
+					case GlobVarH_Type_Count:
 					default:
-						return Process_Unknown;
+						return GlobVarH_Process_Unknown;
 						break;
 				}
 
-				return Process_Ok_SetSuccessful_SendOk;
+				return GlobVarH_Process_Ok_SetSuccessful_SendOk;
 			}
 			else
 			{
@@ -798,41 +799,41 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 		}
 		else
 		{
-			return Process_FailParamIsNotHexNumber;	// Wrong hex converting
+			return GlobVarH_Process_FailParamIsNotHexNumber;	// Wrong hex converting
 		}
 	} // End of "isHex"
 	else
 	{
 	// If it is not hex
 	// It is unsigned integers?
-		if (varType == Type_Uint8 || varType == Type_Uint16 || varType == Type_Uint32)
+		if (varType == GlobVarH_Type_Uint8 || varType == GlobVarH_Type_Uint16 || varType == GlobVarH_Type_Uint32)
 		{
 			// Unsigned types
 			if (StringToUnsignedDecimalNum(param, &num))
 			{
-				ProcessResult_t result;
-				result = GlobalVarHandler_CheckValue(commandID, num);
+				GlobVarH_ProcessResult_t result;
+				result = GlobVarH_CheckValue(globVarID, num);
 
-				if (result == Process_Ok_SetSuccessful_SendOk)
+				if (result == GlobVarH_Process_Ok_SetSuccessful_SendOk)
 				{
 					// Good
-					if (varType == Type_Uint8)
+					if (varType == GlobVarH_Type_Uint8)
 					{
-						uint8_t *numPointer = (uint8_t *)GlobalVarList[commandID].varPointer;
+						uint8_t *numPointer = (uint8_t *)GlobalVarList[globVarID].varPointer;
 						*numPointer = num;
 					}
-					else if (varType == Type_Uint16)
+					else if (varType == GlobVarH_Type_Uint16)
 					{
-						uint16_t *numPointer = (uint16_t *)GlobalVarList[commandID].varPointer;
+						uint16_t *numPointer = (uint16_t *)GlobalVarList[globVarID].varPointer;
 						*numPointer = num;
 					}
-					else if (varType == Type_Uint32)
+					else if (varType == GlobVarH_Type_Uint32)
 					{
-						uint32_t *numPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
+						uint32_t *numPointer = (uint32_t *)GlobalVarList[globVarID].varPointer;
 						*numPointer = num;
 					}
 
-					return Process_Ok_SetSuccessful_SendOk;		//else - not reaching
+					return GlobVarH_Process_Ok_SetSuccessful_SendOk;		//else - not reaching
 				}
 				else
 				{
@@ -840,16 +841,16 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 				}
 
 				// NOTE: Do not return from here
-				//return Process_Ok_SetSuccessful_SendOk;
+				//return GlobVarH_Process_Ok_SetSuccessful_SendOk;
 			}
 			else
 			{
-				return Process_FailParamIsNotNumber;
+				return GlobVarH_Process_FailParamIsNotNumber;
 			}
 		}
 
 		// It is signed integers?
-		if (varType == Type_Int8 || varType == Type_Int16 || varType == Type_Int32)
+		if (varType == GlobVarH_Type_Int8 || varType == GlobVarH_Type_Int16 || varType == GlobVarH_Type_Int32)
 		{
 			// Signed types
 
@@ -857,29 +858,29 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 
 			if (StringToSignedDecimalNum(param, &num))
 			{
-				ProcessResult_t result;
-				result = GlobalVarHandler_CheckValue(commandID, num);
+				GlobVarH_ProcessResult_t result;
+				result = GlobVarH_CheckValue(globVarID, num);
 
-				if (result == Process_Ok_SetSuccessful_SendOk)
+				if (result == GlobVarH_Process_Ok_SetSuccessful_SendOk)
 				{
 					// Good
-					if (varType == Type_Int8)
+					if (varType == GlobVarH_Type_Int8)
 					{
-						uint8_t *numPointer = (uint8_t *)GlobalVarList[commandID].varPointer;
+						uint8_t *numPointer = (uint8_t *)GlobalVarList[globVarID].varPointer;
 						*numPointer = num;
 					}
-					else if (varType == Type_Int16)
+					else if (varType == GlobVarH_Type_Int16)
 					{
-						uint16_t *numPointer = (uint16_t *)GlobalVarList[commandID].varPointer;
+						uint16_t *numPointer = (uint16_t *)GlobalVarList[globVarID].varPointer;
 						*numPointer = num;
 					}
-					else if (varType == Type_Int32)
+					else if (varType == GlobVarH_Type_Int32)
 					{
-						uint32_t *numPointer = (uint32_t *)GlobalVarList[commandID].varPointer;
+						uint32_t *numPointer = (uint32_t *)GlobalVarList[globVarID].varPointer;
 						*numPointer = num;
 					}
 					//else - not reaching
-					return Process_Ok_SetSuccessful_SendOk;
+					return GlobVarH_Process_Ok_SetSuccessful_SendOk;
 				}
 				else
 				{
@@ -887,16 +888,16 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 				}
 
 				// NOTE: Do not return from here
-				//return Process_Ok_SetSuccessful_SendOk;
+				//return GlobVarH_Process_Ok_SetSuccessful_SendOk;
 			}
 			else
 			{
-				return Process_FailParamIsNotNumber;
+				return GlobVarH_Process_FailParamIsNotNumber;
 			}
 		}
 	}
 
-	return Process_Unknown;
+	return GlobVarH_Process_Unknown;
 }
 
 
@@ -904,19 +905,19 @@ static ProcessResult_t GlobalVarHandler_SetInteger(VarID_t commandID, const char
 /**
  * \brief	Set float type GlobalVar
  */
-static ProcessResult_t GlobalVarHandler_SetFloat(VarID_t commandID, const char *param)
+static GlobVarH_ProcessResult_t GlobVarH_SetFloat(GlobVarH_ID_t globVarID, const char *param)
 {
-	ProcessResult_t result = Process_Unknown;
+	GlobVarH_ProcessResult_t result = GlobVarH_Process_Unknown;
 
 	float floatValue = 0.0f;
 	if (StringToFloat(param, &floatValue))
 	{
 		// Successful convert
-		result = GlobalVarHandler_CheckValue(commandID,(uint32_t)(int32_t)floatValue);
-		if (result == Process_Ok_SetSuccessful_SendOk)
+		result = GlobVarH_CheckValue(globVarID,(uint32_t)(int32_t)floatValue);
+		if (result == GlobVarH_Process_Ok_SetSuccessful_SendOk)
 		{
 			// Value is OK
-			float *floatPointer = (float *)GlobalVarList[commandID].varPointer;
+			float *floatPointer = (float *)GlobalVarList[globVarID].varPointer;
 			*floatPointer = floatValue;
 		}
 		else
@@ -929,7 +930,7 @@ static ProcessResult_t GlobalVarHandler_SetFloat(VarID_t commandID, const char *
 	}
 	else
 	{
-		result = Process_FailParamIsNotNumber;
+		result = GlobVarH_Process_FailParamIsNotNumber;
 	}
 
 	return result;
@@ -940,18 +941,18 @@ static ProcessResult_t GlobalVarHandler_SetFloat(VarID_t commandID, const char *
 /**
  * \brief	Set bits type GlobalVar
  */
-static ProcessResult_t GlobalVarHandler_SetBits(VarID_t commandID, const char *param)
+static GlobVarH_ProcessResult_t GlobVarH_SetBits(GlobVarH_ID_t globVarID, const char *param)
 {
 	uint32_t num = 0;
 	bool isOk = true;
-	ProcessResult_t result = Process_Unknown;
-	uint8_t maxLength = GlobalVarList[commandID].maxValue - GlobalVarList[commandID].minValue + 1;
+	GlobVarH_ProcessResult_t result = GlobVarH_Process_Unknown;
+	uint8_t maxLength = GlobalVarList[globVarID].maxValue - GlobalVarList[globVarID].minValue + 1;
 
 	// Check prefix, need '0b'
 	if ((StringLength(param) <= 2) || (param[0] != '0') || (param[1] != 'b'))
 	{
 		// Too short or there is no prefix
-		result = Process_FailParamIsNotBinary;
+		result = GlobVarH_Process_FailParamIsNotBinary;
 		isOk = false;
 	}
 
@@ -960,7 +961,7 @@ static ProcessResult_t GlobalVarHandler_SetBits(VarID_t commandID, const char *p
 		// Check length: max = 0bxxx --> xxx from max-minValue, '0b' length is 2
 		if (StringLength(param) > (size_t)(maxLength + 2))
 		{
-			result = Process_FailParamTooLongBinary;
+			result = GlobVarH_Process_FailParamTooLongBinary;
 			isOk = false;
 		}
 	}
@@ -970,33 +971,27 @@ static ProcessResult_t GlobalVarHandler_SetBits(VarID_t commandID, const char *p
 		// Convert binary string to num
 		if (StringBinaryToNum(&param[2], &num))
 		{
-			// Convert is ok, make correct value
-			num <<= GlobalVarList[commandID].minValue;
+			num <<= GlobalVarList[globVarID].minValue;					// Convert is ok, make correct value
+			result = GlobVarH_CheckValue(globVarID, num);		// Check num value
 
-			// Check num value
-			result = GlobalVarHandler_CheckValue(commandID, num);
-
-			if (result == Process_Ok_SetSuccessful_SendOk)
+			if (result == GlobVarH_Process_Ok_SetSuccessful_SendOk)
 			{
 				// Value is ok
-				uint32_t *valueNeedSet = (uint32_t *)GlobalVarList[commandID].varPointer;
+				uint32_t *valueNeedSet = (uint32_t *)GlobalVarList[globVarID].varPointer;
 				// Clear bits
 				uint8_t i;
-				for (i = (uint8_t)GlobalVarList[commandID].minValue;
-					 i < (uint8_t)GlobalVarList[commandID].maxValue;
+				for (i = (uint8_t)GlobalVarList[globVarID].minValue;
+					 i < (uint8_t)GlobalVarList[globVarID].maxValue;
 					 i++)
 				{
-					// Clear bit
-					*valueNeedSet &= (uint32_t)~(1 << i);
+					*valueNeedSet &= (uint32_t)~(1 << i);	// Clear bit
 				}
-				// Set new value
-				*valueNeedSet |= num;
+				*valueNeedSet |= num;						// Set new value
 			}
 		}
 		else
 		{
-			// Convert failed
-			result = Process_FailParamIsNotBinary;
+			result = GlobVarH_Process_FailParamIsNotBinary;			// Convert failed
 		}
 	}
 
@@ -1008,26 +1003,24 @@ static ProcessResult_t GlobalVarHandler_SetBits(VarID_t commandID, const char *p
 /**
  * \brief	Set string type GlobalVar
  */
-static ProcessResult_t GlobalVarHandler_SetString(VarID_t commandID, const char *param)
+static GlobVarH_ProcessResult_t GlobVarH_SetString(GlobVarH_ID_t globVarID, const char *param)
 {
-	ProcessResult_t result = Process_Unknown;
+	GlobVarH_ProcessResult_t result = GlobVarH_Process_Unknown;
 
 	// Check length
 	uint8_t stringLength = StringLength(param);
-	if (stringLength >= GlobalVarList[commandID].maxValue)
+	if (stringLength >= GlobalVarList[globVarID].maxValue)
 	{
-		// Too long
-		result = Process_FailParamTooLongString;
+		result = GlobVarH_Process_FailParamTooLongString;		// Too long
 	}
 	else
 	{
 		// Correct length
-		char *string = (char *)GlobalVarList[commandID].varPointer;
+		char *string = (char *)GlobalVarList[globVarID].varPointer;
 
-		// Copy parameter
-		StrCpyMax(string, param, stringLength);
+		StrCpyMax(string, param, stringLength);			// Copy parameter
 
-		result = Process_Ok_SetSuccessful_SendOk;
+		result = GlobVarH_Process_Ok_SetSuccessful_SendOk;
 	}
 
 	return result;
@@ -1038,17 +1031,17 @@ static ProcessResult_t GlobalVarHandler_SetString(VarID_t commandID, const char 
 /**
  * \brief	Set enumerator
  */
-static ProcessResult_t GlobalVarHandler_SetEnumerator(VarID_t commandID, const char *param)
+static GlobVarH_ProcessResult_t GlobVarH_SetEnumerator(GlobVarH_ID_t globVarID, const char *param)
 {
-	ProcessResult_t result = Process_Unknown;
+	GlobVarH_ProcessResult_t result = GlobVarH_Process_Unknown;
 	uint32_t enumValue = 0;
-	uint8_t *enumPointer = (uint8_t *)GlobalVarList[commandID].varPointer;
+	uint8_t *enumPointer = (uint8_t *)GlobalVarList[globVarID].varPointer;
 	uint8_t i;
 
 	// Check enumList pointer
-	if (GlobalVarList[commandID].enumList == NULL)
+	if (GlobalVarList[globVarID].enumList == NULL)
 	{
-		result = Process_Settings_EmptyEnumList;
+		result = GlobVarH_Process_Settings_EmptyEnumList;
 	}
 	else
 	{
@@ -1058,15 +1051,15 @@ static ProcessResult_t GlobalVarHandler_SetEnumerator(VarID_t commandID, const c
 			// It is number
 			if (StringToUnsignedDecimalNum(param, &enumValue))
 			{
-				if (GlobalVarHandler_CheckValue(commandID,enumValue) == Process_Ok_SetSuccessful_SendOk)
+				if (GlobVarH_CheckValue(globVarID,enumValue) == GlobVarH_Process_Ok_SetSuccessful_SendOk)
 				{
 					// It is Ok
 					*enumPointer = (uint8_t)enumValue;
-					result = Process_Ok_SetSuccessful_SendOk;
+					result = GlobVarH_Process_Ok_SetSuccessful_SendOk;
 				}
 				else
 				{
-					result = Process_InvalidValue_TooMuch;
+					result = GlobVarH_Process_InvalidValue_TooMuch;
 				}
 			}
 		}
@@ -1075,36 +1068,36 @@ static ProcessResult_t GlobalVarHandler_SetEnumerator(VarID_t commandID, const c
 			// Not number, check string
 			bool isGoodEnum = false;
 
-			for (i = 0; i < GlobalVarList[commandID].maxValue; i++)
+			for (i = 0; i < GlobalVarList[globVarID].maxValue; i++)
 			{
 				// It is equal string?
-				if (StrCmp(param, GlobalVarList[commandID].enumList[i]) == 0)
+				if (StrCmp(param, GlobalVarList[globVarID].enumList[i]) == 0)
 				{
 					// Equal
 					// Set value
 					*enumPointer = i;
 					isGoodEnum = true;
-					result = Process_Ok_SetSuccessful_SendOk;
+					result = GlobVarH_Process_Ok_SetSuccessful_SendOk;
 					break;
 				}
 			}
 
 			if (!isGoodEnum)	// Not found, it is invalid string
 			{
-				result = Process_InvalidValue_NotEnumString;
+				result = GlobVarH_Process_InvalidValue_NotEnumString;
 			}
 		}
 	}
 
-	if (result != Process_Ok_SetSuccessful_SendOk && result != Process_Settings_EmptyEnumList)
+	if (result != GlobVarH_Process_Ok_SetSuccessful_SendOk && result != GlobVarH_Process_Settings_EmptyEnumList)
 	{
 		// TODO: Put to in a new function
 		// Wrong, send enumerator strings
-		CommandHandler_Printf("Invalid enum value, \"%s\" command has this enumerator strings:\r\n",
-				GlobalVarList[commandID].name);
-		for (i = 0; i < GlobalVarList[commandID].maxValue; i++)
+		CmdH_Printf("Invalid enum value, \"%s\" command has this enumerator strings:\r\n",
+				GlobalVarList[globVarID].name);
+		for (i = 0; i < GlobalVarList[globVarID].maxValue; i++)
 		{
-			CommandHandler_Printf("- %s\r\n", GlobalVarList[commandID].enumList[i]);
+			CmdH_Printf("- %s\r\n", GlobalVarList[globVarID].enumList[i]);
 		}
 	}
 
@@ -1117,127 +1110,127 @@ static ProcessResult_t GlobalVarHandler_SetEnumerator(VarID_t commandID, const c
  * \brief	Check values
  * 			- Check type value (integer)
  * 			- Check min-max
- * \return	Process_Ok_SetSuccessful_SendOk, if ok
+ * \return	GlobVarH_Process_Ok_SetSuccessful_SendOk, if ok
  */
-static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t num)
+static GlobVarH_ProcessResult_t GlobVarH_CheckValue(GlobVarH_ID_t globVarID, uint32_t num)
 {
-	ProcessResult_t result = Process_Ok_SetSuccessful_SendOk;
+	GlobVarH_ProcessResult_t result = GlobVarH_Process_Ok_SetSuccessful_SendOk;
 
 	// First, check the type value
-	switch (GlobalVarList[commandID].type)
+	switch (GlobalVarList[globVarID].type)
 	{
-		case Type_Bool:
+		case GlobVarH_Type_Bool:
 			if (num > BOOL_MAX)
 			{
-				result = Process_InvalidValue_TooMuch;
+				result = GlobVarH_Process_InvalidValue_TooMuch;
 			}
 			break;
 
-		case Type_Uint8:
+		case GlobVarH_Type_Uint8:
 			if (num > UINT8_MAX)
 			{
-				result = Process_InvalidValue_TooMuch;
+				result = GlobVarH_Process_InvalidValue_TooMuch;
 			}
 			break;
 
-		case Type_Uint16:
+		case GlobVarH_Type_Uint16:
 			if (num > UINT16_MAX)
 			{
-				result = Process_InvalidValue_TooMuch;
+				result = GlobVarH_Process_InvalidValue_TooMuch;
 			}
 			break;
 
-		case Type_Uint32:
+		case GlobVarH_Type_Uint32:
 			// TODO: Always good, do better code
 			if (num > UINT32_MAX)
 			{
-				result = Process_InvalidValue_TooMuch;
+				result = GlobVarH_Process_InvalidValue_TooMuch;
 			}
 			break;
 
-		case Type_Int8:
+		case GlobVarH_Type_Int8:
 			if ((int32_t)num > INT8_MAX)
 			{
-				result = Process_InvalidValue_TooMuch;
+				result = GlobVarH_Process_InvalidValue_TooMuch;
 			}
 			else if ((int32_t)num < INT8_MIN)
 			{
-				result = Process_InvalidValue_TooSmall;
+				result = GlobVarH_Process_InvalidValue_TooSmall;
 			}
 			break;
 
-		case Type_Int16:
+		case GlobVarH_Type_Int16:
 			if ((int32_t)num > INT16_MAX)
 			{
-				result = Process_InvalidValue_TooMuch;
+				result = GlobVarH_Process_InvalidValue_TooMuch;
 			}
 			else if ((int32_t)num < INT16_MIN)
 			{
-				result = Process_InvalidValue_TooSmall;
+				result = GlobVarH_Process_InvalidValue_TooSmall;
 			}
 			break;
 
-		case Type_Int32:
+		case GlobVarH_Type_Int32:
 			// TODO: Always good, do better code
 			if ((int32_t)num > INT32_MAX)
 			{
-				result = Process_InvalidValue_TooMuch;
+				result = GlobVarH_Process_InvalidValue_TooMuch;
 			}
 			if ((int32_t)num < INT32_MIN)
 			{
-				result = Process_InvalidValue_TooSmall;
+				result = GlobVarH_Process_InvalidValue_TooSmall;
 			}
 			break;
 
-		case Type_Float:
+		case GlobVarH_Type_Float:
 			// TODO: How to check float type value?
 			break;
 
-		case Type_Bits:
-			if (num > (uint32_t)(power(2,GlobalVarList[commandID].maxValue+1)-1))
+		case GlobVarH_Type_Bits:
+			if (num > (uint32_t)(power(2,GlobalVarList[globVarID].maxValue+1)-1))
 			{
-				result = Process_InvalidValue_TooMuch;
+				result = GlobVarH_Process_InvalidValue_TooMuch;
 			}
 			break;
 
-		case Type_String:
-			if (num >= GlobalVarList[commandID].maxValue)
+		case GlobVarH_Type_String:
+			if (num >= GlobalVarList[globVarID].maxValue)
 			{
-				result = Process_FailParamTooLongString;
+				result = GlobVarH_Process_FailParamTooLongString;
 			}
 			break;
 
-		case Type_Enumerator:
-			if (num >= GlobalVarList[commandID].maxValue)
+		case GlobVarH_Type_Enumerator:
+			if (num >= GlobalVarList[globVarID].maxValue)
 			{
-				result = Process_InvalidValue_TooMuch;
+				result = GlobVarH_Process_InvalidValue_TooMuch;
 			}
 			break;
 
 		// Wrong types
-		case Type_Unknown:
-		case Type_Count:
+		case GlobVarH_Type_Unknown:
+		case GlobVarH_Type_Count:
 		default:
-			result = Process_FailType;
+			result = GlobVarH_Process_FailType;
 			break;
 	}
 
-	if (result == Process_Ok_SetSuccessful_SendOk)
+	if (result == GlobVarH_Process_Ok_SetSuccessful_SendOk)
 	{
 		// Check maxValue
 		// maxValue is set?
-		if (GlobalVarList[commandID].maxValue != GlobalVarList[commandID].minValue && GlobalVarList[commandID].type != Type_Bits)
+		if (GlobalVarList[globVarID].maxValue != GlobalVarList[globVarID].minValue && GlobalVarList[globVarID].type != GlobVarH_Type_Bits)
 		{
 			// There is setted maxValue, because max not equal than min
 			// Check, it is too large or too small?
 
-			if (num > GlobalVarList[commandID].maxValue)
+			if (num > GlobalVarList[globVarID].maxValue)
 			{
-				result = Process_InvalidValue_TooMuch;			// Too large
+				result = GlobVarH_Process_InvalidValue_TooMuch;			// Too large
 			}
-			else if (num < GlobalVarList[commandID].minValue)
+			else if (num < GlobalVarList[globVarID].minValue)
 			{
-				result = Process_InvalidValue_TooSmall;			// Too small
+				result = GlobVarH_Process_InvalidValue_TooSmall;			// Too small
 			}
 		}
 	}
@@ -1250,85 +1243,85 @@ static ProcessResult_t GlobalVarHandler_CheckValue(VarID_t commandID, uint32_t n
 /**
  * \brief	Write process result
  */
-static void GlobalVarHandler_WriteResults(ProcessResult_t result)
+void GlobVarH_WriteResults(GlobVarH_ProcessResult_t result)
 {
 	const char *pMessage = NULL;
 
 	switch (result)
 	{
-		case Process_Ok_Answered:
+		case GlobVarH_Process_Ok_Answered:
 			// Do nothing
 			break;
 
-		case Process_Ok_SetSuccessful_SendOk:
+		case GlobVarH_Process_Ok_SetSuccessful_SendOk:
 			pMessage = "Set successful";
 			break;
 
-		case Process_GlobalVariableNameNotFind:
+		case GlobVarH_Process_GlobalVariableNameNotFind:
 			pMessage = "Global variable not find";
 			break;
 
-		case Process_FailParam:
+		case GlobVarH_Process_FailParam:
 			pMessage = "Fail parameter";
 			break;
 
-		case Process_FailType:
+		case GlobVarH_Process_FailType:
 			pMessage = "Fail type";
 			break;
 
-		case Process_FailParamIsNotNumber:
+		case GlobVarH_Process_FailParamIsNotNumber:
 			pMessage = "Not number";
 			break;
 
-		case Process_FailParamIsNotHexNumber:
+		case GlobVarH_Process_FailParamIsNotHexNumber:
 			pMessage = "Not hex number";
 			break;
 
-		case Process_FailParamIsNotHexStart:
+		case GlobVarH_Process_FailParamIsNotHexStart:
 			pMessage = "Not hex, missed \"0x\"";
 			break;
 
-		case Process_FailParamIsNotBinary:
+		case GlobVarH_Process_FailParamIsNotBinary:
 			pMessage = "Not binary number. Syntax: \"0b1010\"";
 			break;
 
-		case Process_FailParamTooLongBinary:
+		case GlobVarH_Process_FailParamTooLongBinary:
 			pMessage = "Too long binary value";
 			break;
 
-		case Process_InvalidValue_TooSmall:
+		case GlobVarH_Process_InvalidValue_TooSmall:
 			pMessage = "Invalid value, too small";
 			break;
 
-		case Process_InvalidValue_TooMuch:
+		case GlobVarH_Process_InvalidValue_TooMuch:
 			pMessage = "Invalid value, too much";
 			break;
 
-		case Process_InvalidValue_NotBool:
+		case GlobVarH_Process_InvalidValue_NotBool:
 			pMessage = "Invalid value, not bool";
 			break;
 
-		case Process_InvalidValue_NotEnumString:
+		case GlobVarH_Process_InvalidValue_NotEnumString:
 			pMessage = "Invalid enum string";
 			break;
 
-		case Process_Settings_EmptyEnumList:
+		case GlobVarH_Process_Settings_EmptyEnumList:
 			pMessage = "EnumList settings error";
 			break;
 
-		case Process_IsReadOnly:
+		case GlobVarH_Process_IsReadOnly:
 			pMessage = "Cannot set, it is constant";
 			break;
 
-		case Process_SourceNotEnabled:
+		case GlobVarH_Process_SourceNotEnabled:
 			pMessage = "Cannot process this command from this source";
 			break;
 
-		case Process_FailParamTooLongString:
+		case GlobVarH_Process_FailParamTooLongString:
 			pMessage = "Too long string";
 			break;
 
-		case Process_Unknown:
+		case GlobVarH_Process_Unknown:
 			pMessage = "Unknown error";
 			break;
 
@@ -1337,7 +1330,7 @@ static void GlobalVarHandler_WriteResults(ProcessResult_t result)
 			break;
 	}
 
-	CommandHandler_SendMessage(pMessage);
+	CmdH_SendMessage(pMessage);
 }
 
 
@@ -1347,7 +1340,7 @@ static void GlobalVarHandler_WriteResults(ProcessResult_t result)
  */
 static void GlobalVarHandler_ListAllVariable_SendHeader(void)
 {
-	CommandHandler_Printf("+-%2c-+-%20c-+-%10c-+-%5c-+-%5c-+-%4c-+-%20c-+\r\n", '-', '-', '-', '-', '-', '-', '-');
+	CmdH_Printf("+-%2c-+-%20c-+-%10c-+-%5c-+-%5c-+-%4c-+-%20c-+\r\n", '-', '-', '-', '-', '-', '-', '-');
 }
 
 
@@ -1355,15 +1348,15 @@ static void GlobalVarHandler_ListAllVariable_SendHeader(void)
 /**
  * \brief	List all variables
  */
-void GlobalVarHandler_ListAllVariableParameters(void)
+void GlobVarH_ListAllVariableParameters(void)
 {
-	VarID_t i;
+	GlobVarH_ID_t i;
 
-	// TODO: Print enums, if have? It can be long...
+	// TODO: Enumokat is kiírni, ha van?
 
 	// Send header
 	GlobalVarHandler_ListAllVariable_SendHeader();
-	CommandHandler_Printf("| %2s | %20s | %10s | %5s | %5s | %4s | %20s |\r\n",
+	CmdH_Printf("| %2s | %20s | %10s | %5s | %5s | %4s | %20s |\r\n",
 			"ID", "Name", "Type", "Min", "Max", "Unit", "Description");
 	GlobalVarHandler_ListAllVariable_SendHeader();
 
@@ -1371,11 +1364,11 @@ void GlobalVarHandler_ListAllVariableParameters(void)
 	for (i = 0; i < GlobalVar_MaxCommandNum; i++)
 	{
 		// Print one command / line:
-		CommandHandler_Printf(
+		CmdH_Printf(
 				"| %2d | %20s | %10s | %5d | %5d | %4s | %20s |\r\n",
 				i,
 				GlobalVarList[i].name,
-				GlobalVarTypesNames[GlobalVarList[i].type],
+				GlobVarH_TypesNames[GlobalVarList[i].type],
 				GlobalVarList[i].minValue,
 				GlobalVarList[i].maxValue,
 				GlobalVarList[i].unit,
@@ -1392,11 +1385,11 @@ void GlobalVarHandler_ListAllVariableParameters(void)
 /**
  * \brief	Print all variable values
  */
-void GlobalVarHandler_PrintAllVariableValues(void)
+void GlobVarH_PrintAllVariableValues(void)
 {
-	VarID_t i;
+	GlobVarH_ID_t i;
 
-	CommandHandler_Printf("Global variables:\r\n"
+	CmdH_Printf("Global variables:\r\n"
 			" %20s %20s\r\n",
 			"<Name>",
 			"<Value>");
@@ -1405,13 +1398,13 @@ void GlobalVarHandler_PrintAllVariableValues(void)
 	for (i = 0; i < GlobalVar_MaxCommandNum; i++)
 	{
 		// Print a variable name and value
-		//CommandHandler_Printf(" %20s %20s\r\n", GlobalVarList[i].name);
-		CommandHandler_Printf(" %20s ", GlobalVarList[i].name);
-		GlobalVarHandler_GetVariable((GlobalVarCommand_t *)&GlobalVarList[i]);
-		CommandHandler_SendLine(NULL);
+		//CmdH_Printf(" %20s %20s\r\n", GlobalVarList[i].name);
+		CmdH_Printf(" %20s ", GlobalVarList[i].name);
+		GlobVarH_GetVariable((GlobVarH_VarRecord_t *)&GlobalVarList[i]);
+		CmdH_SendLine(NULL);
 	}
 
-	CommandHandler_SendLine("End of global variables");
+	CmdH_SendLine("End of global variables");
 }
 
 
@@ -1419,19 +1412,19 @@ void GlobalVarHandler_PrintAllVariableValues(void)
 /**
  * \brief	Print global variable descriptions
  */
-static void GlobalVarHandler_PrintVariableDescriptions(VarID_t commandID)
+static void GlobVarH_PrintVariableDescriptions(GlobVarH_ID_t globVarID)
 {
-	CommandHandler_Printf(
+	CmdH_Printf(
 			"Command help: %s\r\n"
 			"type: %s\r\n"
 			"min:  %d\r\n"
 			"max:  %d\r\n"
 			"desc: %s\r\n",
-			GlobalVarList[commandID].name,
-			GlobalVarTypesNames[GlobalVarList[commandID].type],
-			GlobalVarList[commandID].minValue,
-			GlobalVarList[commandID].maxValue,
-			GlobalVarList[commandID].description
+			GlobalVarList[globVarID].name,
+			GlobVarH_TypesNames[GlobalVarList[globVarID].type],
+			GlobalVarList[globVarID].minValue,
+			GlobalVarList[globVarID].maxValue,
+			GlobalVarList[globVarID].description
 			);
 }
 
@@ -1441,16 +1434,16 @@ static void GlobalVarHandler_PrintVariableDescriptions(VarID_t commandID)
 /**
  * \brief	Set trace with string parameter
  */
-static void GlobalVarHandler_SetTrace(VarID_t commandID, const char * param)
+static void GlobVarH_SetTrace(GlobVarH_ID_t commandID, const char * param)
 {
 	if (!StrCmp("enable", param))
 	{
-		GlobalVarHandler_EnableTrace(commandID, true);
+		GlobVarH_EnableTrace(commandID, true);
 	}
 	else
 	{
 		// TODO: Check "disable" or not?
-		GlobalVarHandler_EnableTrace(commandID, false);
+		GlobVarH_EnableTrace(commandID, false);
 	}
 }
 
@@ -1459,17 +1452,17 @@ static void GlobalVarHandler_SetTrace(VarID_t commandID, const char * param)
 /**
  * \brief	Enable / Disable trace
  */
-void GlobalVarHandler_EnableTrace(VarID_t id, bool isEnable)
+void GlobVarH_EnableTrace(GlobVarH_ID_t id, bool isEnable)
 {
 	if (id < GlobalVar_MaxCommandNum)
 	{
 		if (isEnable)
 		{
-			GlobalVarHandler_TraceVarEnabled |= (1 << id);
+			GlobVarH_TraceVarEnabled |= (1 << id);
 		}
 		else
 		{
-			GlobalVarHandler_TraceVarEnabled &= ~(1 << id);
+			GlobVarH_TraceVarEnabled &= ~(1 << id);
 		}
 	}
 }
@@ -1479,16 +1472,16 @@ void GlobalVarHandler_EnableTrace(VarID_t id, bool isEnable)
 /**
  * \brief	Trace GlobalVar
  */
-void GlobalVarHandler_RunTrace(void)
+void GlobVarH_RunTrace(void)
 {
 	// TODO: Only use for max 32bits (4byte) variable
-	if (GlobalVarHandler_TraceVarEnabled)
+	if (GlobVarH_TraceVarEnabled)
 	{
-		VarID_t i;
+		GlobVarH_ID_t i;
 		for (i = 0; i < GlobalVar_MaxCommandNum; i++)
 		{
 			// Step on GlobalVar list
-			if (GlobalVarHandler_TraceVarEnabled & (1 << i))
+			if (GlobVarH_TraceVarEnabled & (1 << i))
 			{
 				// Need trace
 #ifdef CONFIG_GLOBALVARHANDLER_TRACE_RAM_BUFFER
@@ -1503,32 +1496,32 @@ void GlobalVarHandler_RunTrace(void)
 				*/
 				if (GlobalVarList[i].isFunction)
 				{
-					GlobalVarHandler_GetFunctionValue((GlobalVarCommand_t *)&GlobalVarList[i]);				// Get with function
+					GlobVarH_GetFunctionValue((GlobVarH_VarRecord_t *)&GlobalVarList[i]);				// Get with function
 				}
 				else
 				{
-					GlobarVarHandler_TemporaryValue = (uint32_t)*(uint32_t *)GlobalVarList[i].varPointer;	// Get variable
+					GlobVarH_TemporaryValue = (uint32_t)*(uint32_t *)GlobalVarList[i].varPointer;	// Get variable
 				}
 
 				// Save value and trace data
-				GlobalVarHandler_TraceRamBuffer[GlobalVarHandler_TraceRam_BufferCnt].tick = HAL_GetTick();
-				GlobalVarHandler_TraceRamBuffer[GlobalVarHandler_TraceRam_BufferCnt].data = GlobarVarHandler_TemporaryValue;
-				GlobalVarHandler_TraceRamBuffer[GlobalVarHandler_TraceRam_BufferCnt].varID = i;
+				GlobVarH_TraceRamBuffer[GlobVarH_TraceRam_BufferCnt].tick = HAL_GetTick();
+				GlobVarH_TraceRamBuffer[GlobVarH_TraceRam_BufferCnt].data = GlobVarH_TemporaryValue;
+				GlobVarH_TraceRamBuffer[GlobVarH_TraceRam_BufferCnt].varID = i;
 
-				GlobalVarHandler_TraceRam_BufferCnt++;
+				GlobVarH_TraceRam_BufferCnt++;
 
 				// Check buffer is full?
-				if (GlobalVarHandler_TraceRam_BufferCnt >= GLOBALVARHANDLER_TRACE_BUFFER_SIZE)
+				if (GlobVarH_TraceRam_BufferCnt >= GLOBALVARHANDLER_TRACE_BUFFER_SIZE)
 				{
-					GlobalVarHandler_TraceRam_BufferCnt = 0;
+					GlobVarH_TraceRam_BufferCnt = 0;
 					// TODO: Can we print, when buffer is full?
-					GlobalVarHandler_PrintTraceBuffer();
+					GlobVarH_PrintTraceBuffer();
 				}
 #else
 				// Trace (print) to debug port
-				CommandHandler_Printf("Trace: %d - ", HAL_GetTick());
-				GlobalVarHandler_GetVariable((GlobalVarCommand_t *)&GlobalVarList[i]);
-				CommandHandler_SendLine("");
+				CmdH_Printf("Trace: %d - ", HAL_GetTick());
+				GlobVarH_GetVariable((GlobVarH_VarRecord_t *)&GlobalVarList[i]);
+				CmdH_SendLine("");
 #endif
 			}
 		}
@@ -1541,24 +1534,24 @@ void GlobalVarHandler_RunTrace(void)
 /**
  * \brief	Print Trace buffer content
  */
-void GlobalVarHandler_PrintTraceBuffer(void)
+void GlobVarH_PrintTraceBuffer(void)
 {
 	uint8_t i;
 	for (i = 0; i < GLOBALVARHANDLER_TRACE_BUFFER_SIZE; i++)
 	{
 		// Trace record has: tick, data, varID
 
-		VarID_t index = GlobalVarHandler_TraceRamBuffer[i].varID;
+		GlobVarH_ID_t index = GlobVarH_TraceRamBuffer[i].varID;
 
 		// Create a GlobalVar struct, which has been printed out
-		GlobalVarCommand_t command =
+		GlobVarH_VarRecord_t command =
 		{
-			// XXX: Sync with GlobalVarCommand_t !!!
+			// XXX: Sync with GlobVarH_VarRecord_t !!!
 			.name = GlobalVarList[index].name,
 			.type = GlobalVarList[index].type,
 
 			// Extreme !!
-			.varPointer = (void *)&GlobalVarHandler_TraceRamBuffer[i].data,
+			.varPointer = (void *)&GlobVarH_TraceRamBuffer[i].data,
 			.isReadOnly = GlobalVarList[index].isReadOnly,
 
 			// Extreme !!
@@ -1576,17 +1569,17 @@ void GlobalVarHandler_PrintTraceBuffer(void)
 
 			.enumList = GlobalVarList[index].enumList,
 
-	#ifdef GLOBALVARHANDLER_UNIT_ENABLE
+	#ifdef GLOBVARH_UNIT_ENABLE
 			.unit = GlobalVarList[index].unit,
 	#endif
-	#ifdef GLOBALVARHANDLER_DESCRIPTION_ENABLE
+	#ifdef GLOBVARH_DESCRIPTION_ENABLE
 			.description = GlobalVarList[index].description,
 	#endif
 		};
 
-		CommandHandler_Printf("%3d.\t%8u\t", i, GlobalVarHandler_TraceRamBuffer[i].tick);
-		GlobalVarHandler_GetVariable(&command);
-		CommandHandler_SendLine("");
+		CmdH_Printf("%3d.\t%8u\t", i, GlobVarH_TraceRamBuffer[i].tick);
+		GlobVarH_GetVariable(&command);
+		CmdH_SendLine("");
 	}
 }
 #endif
@@ -1599,23 +1592,25 @@ void GlobalVarHandler_PrintTraceBuffer(void)
 /**
  * \brief	GlobalVarHandler unit test
  */
-void GlobalVarHandler_UnitTest(void)
+void GlobVarH_UnitTest(void)
 {
-
 // TODO: Put at header or merge with WriteResult function...
-#define GLOBALVARHANDLER_MSG_SET_SUCCESSFUL			("Set successful")
-#define GLOBALVARHANDLER_MSG_SET_FAILED_TOO_MUCH	("Invalid value, too much")
-#define GLOBALVARHANDLER_MSG_SET_FAILED_NOT_BOOL	("Invalid value, not bool")
-#define GLOBALVARHANDLER_MSG_SET_FAILED_NOT_NUMBER	("Not number")
+#define GLOBALVARHANDLER_MSG_SET_SUCCESSFUL				("Set successful")
+#define GLOBALVARHANDLER_MSG_SET_FAILED_TOO_MUCH		("Invalid value, too much")
+#define GLOBALVARHANDLER_MSG_SET_FAILED_NOT_BOOL		("Invalid value, not bool")
+#define GLOBALVARHANDLER_MSG_SET_FAILED_NOT_NUMBER		("Not number")
 #define GLOBALVARHANDLER_MSG_SET_FAILED_WRONG_SOURCE	("Cannot process this command from this source")
-#define GLOBALVARHANDLER_MSG_SET_FAILED_NOT_HEX		("Not hex, missed \"0x\"")
-#define GLOBALVARHANDLER_MSG_SET_FAILED_NOT_BINARY	("Not binary number. Syntax: \"0b1010\"")
-#define GLOBALVARHANDLER_MSG_SET_FAILED_WRONG_ENUM	("Invalid enum value")
+#define GLOBALVARHANDLER_MSG_SET_FAILED_NOT_HEX			("Not hex, missed \"0x\"")
+#define GLOBALVARHANDLER_MSG_SET_FAILED_NOT_BINARY		("Not binary number. Syntax: \"0b1010\"")
+#define GLOBALVARHANDLER_MSG_SET_FAILED_WRONG_ENUM		("Invalid enum value")
+
+	GlobVarH_ProcessResult_t result;
 
 	// Start GlobalVarHandler UnitTest
 	UnitTest_Start("GlobalVarHandler", __FILE__);
+
 	// Initialize
-	CommandHandler_CommandSource = CommProt_Buffer;
+	CmdH_CommandSource = CommProt_Buffer;
 
 
 	// Check GlobalVarHandler structures
@@ -1623,273 +1618,302 @@ void GlobalVarHandler_UnitTest(void)
 	#define CONFIG_GLOBALVARHANDLER_CHECK_ENABLE
 	#warning "Need enable GlobalVarChecker"
 #endif
-	GlobalVarHandler_CheckCommandStructAreValid();
+	GlobVarH_CheckGlobalVarArray();
 	//UNITTEST_ASSERT(isOk, "GlobalVarHandler structs are wrong");
 
 
 	// Test "testuint8" variable
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testuint8", "8", SetGet_Set, CommProt_Buffer);
-	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_SUCCESSFUL, Communication_Buffer), "testuint8 set error");
+	result = GlobVarH_ProcessVariableCommand("testuint8", "8", GlobVarH_SetGet_Set, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testuint8 set error");
 
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testuint8", "", SetGet_Get, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testuint8", "", GlobVarH_SetGet_Get, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testuint8 get error");
 	UNITTEST_ASSERT(!StrCmp("8 cm", Communication_Buffer), "testuint8 get error");
 
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testuint8", "255", SetGet_Set, CommProt_Buffer);
-	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_SUCCESSFUL, Communication_Buffer), "testuint8 set error");
+	result = GlobVarH_ProcessVariableCommand("testuint8", "255", GlobVarH_SetGet_Set, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testuint8 set error");
 
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testuint8", "", SetGet_Get, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testuint8", "", GlobVarH_SetGet_Get, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testuint8 get error");
 	UNITTEST_ASSERT(!StrCmp("255 cm", Communication_Buffer), "testuint8 get error");
 
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testuint8", "256", SetGet_Set, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testuint8", "256", GlobVarH_SetGet_Set, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_InvalidValue_TooMuch, "testuint8 get error");
 	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_FAILED_TOO_MUCH, Communication_Buffer), "testuint8 value validation error");
 
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testuint8", "", SetGet_Get, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testuint8", "", GlobVarH_SetGet_Get, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testuint8 get error");
 	UNITTEST_ASSERT(!StrCmp("255 cm", Communication_Buffer), "testuint8 set-get error");
 
 
 	// test "testbool" variable
 	// Set valid value: 1/true
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testbool", "true", SetGet_Set, CommProt_Buffer);
-	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_SUCCESSFUL, Communication_Buffer), "testbool set error");
+	result = GlobVarH_ProcessVariableCommand("testbool", "true", GlobVarH_SetGet_Set, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testbool set error");
 
 	// Get
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testbool", "", SetGet_Get, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testbool", "", GlobVarH_SetGet_Get, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testbool get error");
 	UNITTEST_ASSERT(!StrCmp("1 / TRUE", Communication_Buffer), "testbool get error");
 
 	// Set valid value: 0/false
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testbool", "0", SetGet_Set, CommProt_Buffer);
-	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_SUCCESSFUL, Communication_Buffer), "testbool set error");
+	result = GlobVarH_ProcessVariableCommand("testbool", "0", GlobVarH_SetGet_Set, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testbool get error");
 
 	// Get
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testbool", "", SetGet_Get, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testbool", "", GlobVarH_SetGet_Get, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testbool get error");
 	UNITTEST_ASSERT(!StrCmp("0 / FALSE", Communication_Buffer), "testbool get error");
 
 	// Set invalid value
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testbool", "2", SetGet_Set, CommProt_Buffer);
-	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_FAILED_NOT_BOOL, Communication_Buffer), "testbool value validation error");
+	result = GlobVarH_ProcessVariableCommand("testbool", "2", GlobVarH_SetGet_Set, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_InvalidValue_NotBool, "testbool get error");
 
 	// Check unchange
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testbool", "", SetGet_Get, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testbool", "", GlobVarH_SetGet_Get, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testbool get error");
 	UNITTEST_ASSERT(!StrCmp("0 / FALSE", Communication_Buffer), "testbool set-get error");
 
 
 	// Test "testint16" variable
 	// Set valid value: 8
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testint16", "8", SetGet_Set, CommProt_Buffer);
-	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_SUCCESSFUL, Communication_Buffer), "testint16 set error");
+	result = GlobVarH_ProcessVariableCommand("testint16", "8", GlobVarH_SetGet_Set, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testint16 get error");
 
 	// Get
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testint16", "", SetGet_Get, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testint16", "", GlobVarH_SetGet_Get, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testint16 get error");
 	UNITTEST_ASSERT(!StrCmp("8", Communication_Buffer), "testint16 get error");
 
 	// Set valid value: 255
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testint16", "255", SetGet_Set, CommProt_Buffer);
-	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_SUCCESSFUL, Communication_Buffer), "testint16 set error");
+	result = GlobVarH_ProcessVariableCommand("testint16", "255", GlobVarH_SetGet_Set, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testint16 get error");
 
 	// Get
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testint16", "", SetGet_Get, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testint16", "", GlobVarH_SetGet_Get, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testint16 get error");
 	UNITTEST_ASSERT(!StrCmp("255", Communication_Buffer), "testint16 get error");
 
 	// Set valid value: -255
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testint16", "-255", SetGet_Set, CommProt_Buffer);
-	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_SUCCESSFUL, Communication_Buffer), "testint16 set error");
+	result = GlobVarH_ProcessVariableCommand("testint16", "-255", GlobVarH_SetGet_Set, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testint16 get error");
 
 	// Get
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testint16", "", SetGet_Get, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testint16", "", GlobVarH_SetGet_Get, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testint16 get error");
 	UNITTEST_ASSERT(!StrCmp("-255", Communication_Buffer), "testint16 get error");
 
 	// Set invalid value:
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testint16", "65536", SetGet_Set, CommProt_Buffer);
-	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_FAILED_TOO_MUCH, Communication_Buffer), "testint16 value validation error");
+	result = GlobVarH_ProcessVariableCommand("testint16", "65536", GlobVarH_SetGet_Set, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_InvalidValue_TooMuch, "testint16 value validation error");
 
 	// Check unchange
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testint16", "", SetGet_Get, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testint16", "", GlobVarH_SetGet_Get, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testint16 get error");
 	UNITTEST_ASSERT(!StrCmp("-255", Communication_Buffer), "testint16 set-get error");
 
 
 	// Test "testint32" variable
 	// Set valid value: 8
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testint32", "8", SetGet_Set, CommProt_Buffer);
-	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_SUCCESSFUL, Communication_Buffer), "testint32 set error");
+	result = GlobVarH_ProcessVariableCommand("testint32", "8", GlobVarH_SetGet_Set, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testint32 set error");
 
 	// Get
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testint32", "", SetGet_Get, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testint32", "", GlobVarH_SetGet_Get, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testint32 get error");
 	UNITTEST_ASSERT(!StrCmp("8", Communication_Buffer), "testint32 get error");
 
 	// Set valid value: 65535
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testint32", "65535", SetGet_Set, CommProt_Buffer);
-	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_SUCCESSFUL, Communication_Buffer), "testint32 set error");
+	result = GlobVarH_ProcessVariableCommand("testint32", "65535", GlobVarH_SetGet_Set, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testint32 set error");
 
 	// Get
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testint32", "", SetGet_Get, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testint32", "", GlobVarH_SetGet_Get, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testint32 get error");
 	UNITTEST_ASSERT(!StrCmp("65535", Communication_Buffer), "testint32 get error");
 
 	// Set valid value: -255
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testint32", "-255", SetGet_Set, CommProt_Buffer);
-	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_SUCCESSFUL, Communication_Buffer), "testint32 set error");
+	result = GlobVarH_ProcessVariableCommand("testint32", "-255", GlobVarH_SetGet_Set, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testint32 set error");
 
 	// Get
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testint32", "", SetGet_Get, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testint32", "", GlobVarH_SetGet_Get, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testint32 get error");
 	UNITTEST_ASSERT(!StrCmp("-255", Communication_Buffer), "testint32 get error");
 
 	// Set invalid value:
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testint32", "12.34", SetGet_Set, CommProt_Buffer);
-	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_FAILED_NOT_NUMBER, Communication_Buffer), "testint32 value validation error");
+	result = GlobVarH_ProcessVariableCommand("testint32", "12.34", GlobVarH_SetGet_Set, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_FailParamIsNotNumber, "testint32 value validation error");
 
 	// Check unchange
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testint32", "", SetGet_Get, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testint32", "", GlobVarH_SetGet_Get, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testint32 set-get error");
 	UNITTEST_ASSERT(!StrCmp("-255", Communication_Buffer), "testint32 set-get error");
 
 
 	// Test "testuint32" variable
 	// Set valid value: 8
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testuint32", "0x08", SetGet_Set, CommProt_Buffer);
-	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_SUCCESSFUL, Communication_Buffer), "testuint32 set error");
+	result = GlobVarH_ProcessVariableCommand("testuint32", "0x08", GlobVarH_SetGet_Set, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testuint32 set error");
 
 	// Get
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testuint32", "", SetGet_Get, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testuint32", "", GlobVarH_SetGet_Get, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testuint32 get error");
 	UNITTEST_ASSERT(!StrCmp("0x00000008", Communication_Buffer), "testuint32 get error");
 
 	// Set valid value: 65535
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testuint32", "0x65535", SetGet_Set, CommProt_Buffer);
-	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_SUCCESSFUL, Communication_Buffer), "testuint32 set error");
+	result = GlobVarH_ProcessVariableCommand("testuint32", "0x65535", GlobVarH_SetGet_Set, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testuint32 set error");
 
 	// Get
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testuint32", "", SetGet_Get, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testuint32", "", GlobVarH_SetGet_Get, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testuint32 get error");
 	UNITTEST_ASSERT(!StrCmp("0x00065535", Communication_Buffer), "testuint32 get error");
 
-	// Set valid value: -255
+	// Set invalid value: -255
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testuint32", "-255", SetGet_Set, CommProt_Buffer);
-	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_FAILED_NOT_HEX, Communication_Buffer), "testuint32 set error");
+	result = GlobVarH_ProcessVariableCommand("testuint32", "-255", GlobVarH_SetGet_Set, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_FailParamIsNotHexStart, "testuint32 set error");
 
 	// Get
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testuint32", "", SetGet_Get, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testuint32", "", GlobVarH_SetGet_Get, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testuint32 get error");
 	UNITTEST_ASSERT(!StrCmp("0x00065535", Communication_Buffer), "testuint32 get error");
 
 	// Set invalid value:
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testuint32", "12.34", SetGet_Set, CommProt_Buffer);
-	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_FAILED_NOT_HEX, Communication_Buffer), "testuint32 value validation error");
+	result = GlobVarH_ProcessVariableCommand("testuint32", "12.34", GlobVarH_SetGet_Set, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_FailParamIsNotHexStart, "testuint32 value validation error");
 
 	// Check unchange
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testuint32", "", SetGet_Get, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testuint32", "", GlobVarH_SetGet_Get, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testuint32 get error");
 	UNITTEST_ASSERT(!StrCmp("0x00065535", Communication_Buffer), "testuint32 set-get error");
 
 
 	// Test "cannotaccess" variable
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testcannotaccess", "", SetGet_Get, CommProt_Buffer);
-	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_FAILED_WRONG_SOURCE, Communication_Buffer), "Variable source setting error");
+	result = GlobVarH_ProcessVariableCommand("testcannotaccess", "", GlobVarH_SetGet_Get, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_SourceNotEnabled, "Variable source error");
 
 
 	// Test "testfloat" variable (float)
 	// Set float value:
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testfloat", "12.34", SetGet_Set, CommProt_Buffer);
-	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_SUCCESSFUL, Communication_Buffer), "Float value setting error");
+	result = GlobVarH_ProcessVariableCommand("testfloat", "12.34", GlobVarH_SetGet_Set, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "Float value setting error");
 
 	// Check value/range
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testfloat", "", SetGet_Get, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testfloat", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	float testNumber = 0.0f;
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "Float type error");
 	UNITTEST_ASSERT(StringToFloat(Communication_Buffer, &testNumber), "float type error");
 	UNITTEST_ASSERT(((testNumber>12.33)&&(testNumber<12.35)), "float set-get error");
+
+	// TODO: Extend with invalid float and etc.
 
 
 	// Test "testenum" (enum)
 	// Set enum
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testenum", "1", SetGet_Set, CommProt_Buffer);
-	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_SUCCESSFUL, Communication_Buffer), "enum value set error");
+	result = GlobVarH_ProcessVariableCommand("testenum", "1", GlobVarH_SetGet_Set, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "enum value set error");
 
 	// Get enum
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testenum", "", SetGet_Get, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testenum", "", GlobVarH_SetGet_Get, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "enum value get error");
 	UNITTEST_ASSERT(!StrCmp("1 exampleenumstring1", Communication_Buffer), "enum value get error");
 
 	// Set enum - fail
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testenum", "4", SetGet_Set, CommProt_Buffer);
-	UNITTEST_ASSERT(!StrCmpWithLength(GLOBALVARHANDLER_MSG_SET_FAILED_WRONG_ENUM, Communication_Buffer, strlen(GLOBALVARHANDLER_MSG_SET_FAILED_WRONG_ENUM)),
-			"enum value set error");
+	result = GlobVarH_ProcessVariableCommand("testenum", "4", GlobVarH_SetGet_Set, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_InvalidValue_NotEnumString, "enum value set error");
 
 	// Get enum
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testenum", "", SetGet_Get, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testenum", "", GlobVarH_SetGet_Get, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "enum value get error");
 	UNITTEST_ASSERT(!StrCmp("1 exampleenumstring1", Communication_Buffer), "enum value get error");
-	// TODO: Extend...
+
+	// TODO: Extend enum tests
 
 
 	// Test "testbit" (bits)
 	// Set bit
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testbit", "0b0", SetGet_Set, CommProt_Buffer);
-	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_SUCCESSFUL, Communication_Buffer), "testbit value set error");
+	result = GlobVarH_ProcessVariableCommand("testbit", "0b0", GlobVarH_SetGet_Set, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testbit value set error");
 
 	// Get bit
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testbit", "", SetGet_Get, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testbit", "", GlobVarH_SetGet_Get, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testbit value get error");
 	UNITTEST_ASSERT(!StrCmp("0b0", Communication_Buffer), "testbit value get error");
 
 	// Set bit
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testbit", "0b111", SetGet_Set, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testbit", "0b111", GlobVarH_SetGet_Set, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_SetSuccessful_SendOk, "testbit value set error");
 	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_SUCCESSFUL, Communication_Buffer), "testbit value set error");
 
 	// Get bit
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testbit", "", SetGet_Get, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testbit", "", GlobVarH_SetGet_Get, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testbit value get error");
 	UNITTEST_ASSERT(!StrCmp("0b111", Communication_Buffer), "testbit value get error");
 
 	// Set bit - fail
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testbit", "A", SetGet_Set, CommProt_Buffer);
-	UNITTEST_ASSERT(!StrCmp(GLOBALVARHANDLER_MSG_SET_FAILED_NOT_BINARY, Communication_Buffer), "testbit value set error");
+	result = GlobVarH_ProcessVariableCommand("testbit", "A", GlobVarH_SetGet_Set, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_FailParamIsNotBinary, "testbit value set error");
 
 	// Get bit
 	COMMUNICATION_ClearProtocolBuffer();
-	GlobalVarHandler_ProcessCommand("testbit", "", SetGet_Get, CommProt_Buffer);
+	result = GlobVarH_ProcessVariableCommand("testbit", "", GlobVarH_SetGet_Get, CommProt_Buffer);
+	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testbit value get error");
 	UNITTEST_ASSERT(!StrCmp("0b111", Communication_Buffer), "testbit value get error");
-	// TODO: Extend...
+
+	// TODO: Extend bit tests
 
 
 	// End of UnitTest
-	CommandHandler_CommandSource = CommProt_Unknown;
+	CmdH_CommandSource = CommProt_Unknown;
 
 	UnitTest_End();
 }

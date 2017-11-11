@@ -1,7 +1,7 @@
 /*
  *		MEM.h
  *		Created on:		2016-08-31
- *		Author: 		Vizi GÃ¡bor
+ *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		MEM functions
  *		Target:			STM32Fx
@@ -19,7 +19,13 @@
  *----------------------------------------------------------------------------*/
 
 #include "GenericTypeDefs.h"
+#include "board.h"
 
+
+
+/*------------------------------------------------------------------------------
+ *	Macros
+ *----------------------------------------------------------------------------*/
 
 #define	CONFIG_MEM_CHECK_POINTERS		1
 #define CONFIG_MEM_CHECK_POINTER_RANGE	1
@@ -59,7 +65,7 @@ void mem_CheckStackGuardValues(void);
 
 bool mem_CheckPointer(void * pnt, size_t size);
 
-void mem_UnitTest(void);
+void MEM_UnitTest(void);
 
 
 

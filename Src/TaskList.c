@@ -673,7 +673,7 @@ static TaskResult_t Task_GlobalVarTrace(ScheduleSource_t source)
 	(void)source;
 
 	// Trace GlobalVars
-	GlobalVarHandler_RunTrace();
+	GlobVarH_RunTrace();
 
 	return TaskResult_Ok;
 }

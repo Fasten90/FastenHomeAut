@@ -1,7 +1,7 @@
 /*
  *		String.c
  *		Created on:		2016-01-01
- *		Author: 		Vizi GÃ¡bor
+ *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		String manipulation functions
  *		Target:			STM32Fx
@@ -278,8 +278,7 @@ uint8_t SignedDecimalToStringFill(int32_t value, char *str, uint8_t fillLength, 
 			length = UnsignedDecimalLength(value);
 			if (length > fillLength)
 			{
-				// Not need fill
-				length = SignedDecimalToString(-value, str);
+				length = SignedDecimalToString(-value, str);			// Not need fill
 			}
 			else
 			{
@@ -399,8 +398,7 @@ uint8_t DecimalToBinaryString(uint32_t value, char *str, uint8_t maxLength)
 		bitIndex--;
 	}
 
-	// Put end character
-	str[i] = '\0';
+	str[i] = '\0';		// Put end character
 
 	return i;
 }
@@ -658,8 +656,7 @@ bool StringBinaryToNum(const char *str, uint32_t *num)
 		}
 		else
 		{
-			// Wrong character here
-			return false;
+			return false;		// Wrong character here
 		}
 
 		// Shift left
@@ -747,8 +744,7 @@ bool StringHexToNum(const char *str, uint32_t *hexValue)
 	// Check length
 	if (StringIsHexadecimalString(str) == 0)
 	{
-		// Wrong string or wrong octetlength
-		return false;
+		return false;									// Wrong string or wrong octetlength
 	}
 
 	// Create hexValue
@@ -759,15 +755,12 @@ bool StringHexToNum(const char *str, uint32_t *hexValue)
 		{
 			if (HexCharToHex(str[i], &calculatedByte))
 			{
-				// Shift one byte left original value
-				calculatedValue <<= 4;
-				// Add new value
-				calculatedValue += calculatedByte;
+				calculatedValue <<= 4;					// Shift one byte left original value
+				calculatedValue += calculatedByte;		// Add new value
 			}
 			else
 			{
-				// Failed (hex character)
-				return false;
+				return false;							// Failed (hex character)
 			}
 		}
 		else
@@ -776,8 +769,7 @@ bool StringHexToNum(const char *str, uint32_t *hexValue)
 		}
 		if (i >= 8)
 		{
-			// Has an "uint32_t"
-			break;
+			break;										// Has an "uint32_t"
 		}
 	}
 
@@ -950,8 +942,7 @@ bool StringToFloat(const char *str, float *num)
 		numString[i] = str[length + i];
 		if (i >= stringLength)
 		{
-			// Error, overflow
-			return false;
+			return false;		// Error, overflow
 		}
 	}
 
@@ -962,8 +953,7 @@ bool StringToFloat(const char *str, float *num)
 	// Convert integer
 	if (!StringToUnsignedDecimalNum(numString, &integer))
 	{
-		// Error with convert integer part
-		return false;
+		return false;			// Error with convert integer part
 	}
 
 	// Integer (before .)
@@ -972,8 +962,7 @@ bool StringToFloat(const char *str, float *num)
 	// Convert fraction
 	if (!StringToUnsignedDecimalNum(&str[pointCnt + 1], &integer))
 	{
-		// Error with convert fraction part
-		return false;
+		return false;			// Error with convert fraction part
 	}
 
 	fractionPart = integer;
@@ -986,8 +975,7 @@ bool StringToFloat(const char *str, float *num)
 	}
 	// Ready fraction
 
-	// Add Integer and Fraction
-	*num += fractionPart;
+	*num += fractionPart;		// Add Integer and Fraction
 
 	if (isNegative)
 	{
@@ -1099,7 +1087,7 @@ uint8_t StrCmp(const char *str1, const char *str2)
  */
 uint8_t StrCmpFirst(const char *str1, const char *str2)
 {
-	size_t i = 0;;
+	size_t i = 0;
 
 	while (*str1)
 	{
@@ -1109,10 +1097,10 @@ uint8_t StrCmpFirst(const char *str1, const char *str2)
 		}
 		str1++;
 		str2++;
+		i++;
 	}
 
-	// Good, equal
-	return 0;
+	return 0;			// Good, equal
 }
 
 
@@ -1675,7 +1663,7 @@ size_t string_printf(char *str, const char *format, va_list ap)
 						string += DecimalToHexaString(uival, string, 8);
 					}
 					break;
-#if STRING_HEXADECIMAL_FORMATS
+#if defined(STRING_HEXADECIMAL_FORMATS)
 				case 'w':
 					// Hex // 32 bits	// 8 hex	// 4 byte
 					uival = va_arg(ap, unsigned int);
@@ -1920,7 +1908,7 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
 						string += DecimalToHexaString(uival, string, 8);
 					}*/
 					break;
-#if STRING_HEXADECIMAL_FORMATS
+#if defined(STRING_HEXADECIMAL_FORMATS)
 				case 'w':
 					// Hex // 32 bits	// 8 hex	// 4 byte
 					uival = va_arg(ap, unsigned int);

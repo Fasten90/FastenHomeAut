@@ -39,9 +39,9 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-extern const CommandStruct CommandList[];
+extern const CmdH_Command_t CmdH_CommandList[] ;
 
-extern const CommandID_t CommandHandler_CommandNum;
+extern const CmdH_CommandID_t CmdH_CommandNum;
 
 
 

@@ -1,7 +1,7 @@
 /*
  *		MEM.c
  *		Created on:		2016-08-31
- *		Author: 		Vizi GÃ¡bor
+ *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		MEM functions
  *		Target:			STM32Fx
@@ -15,8 +15,7 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
-#include <stdlib.h>	// For size_t
-#include <stdint.h>	// For uintx_t
+#include "GenericTypeDefs.h"
 #include "DebugUart.h"
 #include "board.h"
 #include "MEM.h"
@@ -261,7 +260,7 @@ bool mem_CheckPointer(void * pnt, size_t size)
 /**
  * \brief	MEM module Unit Test
  */
-void mem_UnitTest(void)
+void MEM_UnitTest(void)
 {
 	UnitTest_Start("MEM", __FILE__);
 

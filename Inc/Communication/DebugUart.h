@@ -33,10 +33,8 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-///< Size of Transmission buffer
-#define DEBUGUART_TX_BUFFER_SIZE				(256UL)
-///< Size of Reception buffer
-#define DEBUGUART_RX_BUFFER_SIZE				(256UL)
+#define DEBUGUART_TX_BUFFER_SIZE				(256UL)	// Size of Transmission buffer
+#define DEBUGUART_RX_BUFFER_SIZE				(256UL)		// Size of Reception buffer
 #define DEBUGUART_RX_BUFFER_WAIT_LENGTH			(1)
 
 #define DEBUGUART_RESPONSE_BUFFER				(256U)
@@ -65,7 +63,6 @@ extern volatile char DebugUart_TxBuffer[DEBUGUART_TX_BUFFER_SIZE];
 extern CircularBufferInfo_t DebugUart_RxBuffStruct;
 
 extern bool DebugUart_SendEnable_flag;
-
 extern const bool DebugUart_CommandReceiveEnable;
 
 #if defined(CONFIG_USE_FREERTOS)

@@ -29,10 +29,9 @@
  *----------------------------------------------------------------------------*/
 
 //	Config defines
-#define COMMANDHANDLER_MAX_MESSAGE_LENGTH			(255U)
-#define COMMANDHANDLER_MAX_COMMAND_LENGTH			(255U)
-#define COMMANDHANDLER_COMMAND_ARG_MAX_COUNT		(3)
-#define COMMANDHANDLER_COMMAND_ARG_MAX_NUM_BITS		(0x07)	// 0b111 <-- warning: "binary constants are a GCC extension
+#define CMDH_COMMAND_MAX_LENGTH				(255U)
+#define CMDH_COMMAND_ARG_MAX_COUNT			(3)
+#define CMDH_COMMAND_ARG_MAX_NUM_BITS		(0x07)	// 0b1111 <-- warning: "binary constants are a GCC extension
 
 
 
@@ -52,38 +51,41 @@ typedef enum
 	CommandResult_Error_WrongArgumentNum,					///< Not good argument number
 	CommandResult_Error_TooManyArgument,					///< More argument than needed
 	CommandResult_Error_CommandNotFound,					///< Command not found
+	CommandResult_Error_CallCmdHandlerWithInvalidArgument,	///< Called Command Handler with invalid argument
 	CommandResult_Error_Unknown								///< Unknown error (in command processing)
-} CommandResult_t;
+} CmdH_Result_t;
 
 
 ///< Command Function pointer
-typedef CommandResult_t ( *CommandHandlerFunctionPointer )( uint32_t argc, char** CommandHandler_CommandArguments );
+typedef CmdH_Result_t (*CmdH_FunctionPointer_t)(uint32_t argc, char** args);
 
 
-///< CommandID
-typedef uint8_t CommandID_t;
+///< Command ID
+typedef uint8_t CmdH_CommandID_t;
 
 
-///< CommandArgNum type
+///< Command Argument number
 typedef enum
 {
 	CommandArgument_0 = (1 << 0),
 	CommandArgument_1 = (1 << 1),
-	CommandArgument_2 = (1 << 2)
+	CommandArgument_2 = (1 << 2),
+	CommandArgument_3 = (1 << 3)
+
 	// Set one by one bit
-} CommandArgNum_t;
+} CmdH_CommandArgNum_t;
 
 
 ///< Command structure
 typedef struct
 {
 	const char *name;											///< Name of command (which need type) [string]
-	const CommandHandlerFunctionPointer commandFunctionPointer;	///< Function pointer (which called)
+	const CmdH_FunctionPointer_t commandFunctionPointer;		///< Function pointer (which called)
 	const char *description;									///< Command description (for help)
 	const char *syntax;											///< Command syntax
 	const char *example;										///< Example of parameters
-	const CommandArgNum_t commandArgNum;						///< Required command argument num
-} CommandStruct;
+	const CmdH_CommandArgNum_t commandArgNum;					///< Required command argument num
+} CmdH_Command_t;
 
 
 
@@ -91,7 +93,7 @@ typedef struct
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-extern volatile CommProtocol_t CommandHandler_CommandSource;
+extern volatile CommProtocol_t CmdH_CommandSource;
 
 
 
@@ -99,21 +101,20 @@ extern volatile CommProtocol_t CommandHandler_CommandSource;
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void CommandHandler_Init(void);
+void CmdH_Init(void);
 
-void CommandHandler_PrintCommandHelp(CommandID_t commandID);
+void CmdH_SendMessage(const char *message);
+void CmdH_SendLine(const char *message);
+void CmdH_SendChar(char c);
+void CmdH_Printf(const char *format, ...);
 
-void CommandHandler_SendMessage(const char *message);
-void CommandHandler_SendLine(const char *message);
-void CommandHandler_SendChar(char c);
-void CommandHandler_Printf(const char *format, ...);
+void CmdH_PrintAllCommands(void);
+void CmdH_SearchCommandAndPrintHelp(const char *command);
 
-void CommandHandler_PrintAllCommands(void);
-void CommandHandler_SearchCommandAndPrintHelp(const char *command);
+CmdH_Result_t CmdH_ExecuteCommand(CommProtocol_t source, char * command, char * response, size_t length);
+void CmdH_PrintResult(CmdH_Result_t result);
 
-bool CommandHandler_PrepareFindExecuteCommand(CommProtocol_t source, char *command, char * response, size_t length);
-
-void CommandHandler_UnitTest(void);
+void CmdH_UnitTest(void);
 
 
 

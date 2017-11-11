@@ -1,7 +1,7 @@
 /*
  *		Debug.c
  *		Created on:		2017-08-17
- *		Author:			Vizi GÃ¡bor
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		Debug print
  *		Target:			STM32Fx
@@ -23,8 +23,8 @@
 #include "FormattedMessage.h"
 #include "String.h"
 #include "DebugUart.h"
-#include "Debug.h"
 #include "DebugList.h"
+#include "Debug.h"
 
 
 
@@ -136,7 +136,7 @@ bool Debug_SetDebugTaskWithName(char *name, bool enable)
 	uint8_t i;
 	bool result = false;
 
-	for (i = 0; i < DebugTaskListNum; i++)
+	for (i = 0; i < Debug_Count; i++)
 	{
 		if (!StrCmp(name, DebugTasks[i].name))
 		{

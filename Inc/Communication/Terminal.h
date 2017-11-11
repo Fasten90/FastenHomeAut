@@ -1,7 +1,7 @@
 /*
  *		Terminal.h
  *		Created on:		2017-02-02
- *		Author:			Vizi Gábor
+ *		Author:			Vizi Gï¿½bor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		Terminal
  *		Target:			STM32Fx
@@ -61,32 +61,24 @@
 ///	Defines for characters
 
 #if defined(CONFIG_TERMINAL_USE_ZOC) || defined(CONFIG_TERMINAL_USE_PUTTY)
-	#define TERMINAL_KEY_DELETE				(0x08)
-	#define TERMINAL_KEY_BACKSPACE			(0x7F)
+	#define TERMINAL_KEY_DELETE				('\x08')
+	#define TERMINAL_KEY_BACKSPACE			('\x7F')
 #else
-	#define TERMINAL_KEY_DELETE				(0x7F)
-	#define TERMINAL_KEY_BACKSPACE			(0x08)
+	#define TERMINAL_KEY_DELETE				('\x7F')
+	#define TERMINAL_KEY_BACKSPACE			('\x08')
 #endif
 
-
-#define TERMINAL_KEY_ENTER					('\r')
-#define TERMINAL_KEY_SPACE					(' ')
-#define TERMINAL_KEY_ESCAPE					('\x1B')
 #define TERMINAL_KEY_BELL					('\a')
 
-
-#define TERMINAL_ESCAPESEQUENCE_1			('\x1B')
-#define TERMINAL_ESCAPESEQUENCE_2			('[')
-
-
-//	BUTTONS
+#define TERMINAL_KEY_ESCAPESEQUENCE_1		('\x1B')
+#define TERMINAL_KEY_ESCAPESEQUENCE_2		('[')
 
 
 // 8 = BS = Backspace
-#define TERMINAL_SEND_KEY_BACKSPACE()		CommandHandler_SendChar(8)
+#define TERMINAL_SEND_KEY_BACKSPACE()		Terminal_SendMessage("\x08")
 
 // 127 = DEL = Delete
-#define TERMINAL_SEND_KEY_DEL()		 		CommandHandler_SendChar(127)
+#define TERMINAL_SEND_KEY_DEL()		 		Terminal_SendMessage("\x7F'")
 
 
 
@@ -113,6 +105,7 @@ void Terminal_SendWelcome(void);
 void Terminal_SendCls(void);
 
 void Terminal_CheckCommand(void);
+
 void Terminal_SendMessage(const char * message);
 void Terminal_SendLine(const char * message);
 

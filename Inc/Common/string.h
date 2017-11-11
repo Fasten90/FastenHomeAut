@@ -1,7 +1,7 @@
 /*
  *		String.h
  *		Created on:		2016-01-01
- *		Author: 		Vizi GÃ¡bor
+ *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		String manipulation functions
  *		Target:			STM32Fx
@@ -33,6 +33,9 @@
 #define strlen(_str)					StringLength(_str)
 
 
+#define strcmp(_str1, _str2)			StrCmp(_str1, _str2)
+
+
 // int strncmp ( const char * str1, const char * str2, size_t num );
 // return: 0 equal, >0 and <0 is not equal
 // uint8_t StrCmpWithLength(const char * ch1, const char *ch2, uint8_t length)
@@ -41,15 +44,12 @@
 #define strncmp(_str1, _str2, _num)		StrCmpWithLength(_str1, _str2, _num)
 
 
-#define strcmp(_str1, _str2)			StrCmp(_str1, _str2)
+#define strcpy(_dest, _src)				StrCpy(_dest, _src)
 
 
 // char * strncpy ( char * destination, const char * source, size_t num );
 // uint8_t StrCpyMax(char *dest, const char *str, uint8_t maxLength)
 #define strncpy(_dest, _src, _num)		StrCpyMax(_dest, _src, _num)
-
-
-#define strcpy(_dest, _src)				StrCpy(_dest, _src)
 
 
 #define strcat(_dest_, _src)			StrAppend(_dest, _src)

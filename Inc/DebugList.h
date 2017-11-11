@@ -35,14 +35,18 @@
 ///< Debug
 typedef enum
 {
-#ifdef CONFIG_MODULE_ESP8266_ENABLE
-	Debug_ESP8266,
-#endif
+
 #ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
 	Debug_EventHandler,
 #endif
+#ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
+	Debug_CommandHandler,
+#endif
 #ifdef CONFIG_FUNCTION_GAME_SNAKE
 	Debug_GameSnake,
+#endif
+#ifdef CONFIG_MODULE_ESP8266_ENABLE
+	Debug_ESP8266,
 #endif
 #ifdef CONFIG_BUTTON_DEBUG_ENABLE
 	Debug_Button,

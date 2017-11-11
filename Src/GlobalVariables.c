@@ -55,59 +55,59 @@ const char * const testEnumExampleList[] =
 
 
 ///< Global variables list
-const GlobalVarCommand_t GlobalVarList[] =
+const GlobVarH_VarRecord_t GlobalVarList[] =
 {
 #ifdef MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
 		{
 			.name = "testbool",
 			.varPointer = &testBool,
-			.type = Type_Bool
+			.type = GlobVarH_Type_Bool
 		},
 		{
 			.name = "testuint8",
 			.varPointer = &testUint8,
-			.type = Type_Uint8,
+			.type = GlobVarH_Type_Uint8,
 			.unit = "cm",
 			.description = "test uint8 variable"
 		},
 		{
 			.name = "testint16",
 			.varPointer = &testInt16,
-			.type = Type_Int16,
+			.type = GlobVarH_Type_Int16,
 		},
 		{
 			.name = "testint32",
 			.varPointer = &testInt32,
-			.type = Type_Int32,
+			.type = GlobVarH_Type_Int32,
 		},
 		{
 			.name = "testuint32",
 			.varPointer = &testUint32,
-			.type = Type_Uint32,
+			.type = GlobVarH_Type_Uint32,
 			.isHex = true,
 		},
 		{
 			.name = "testcannotaccess",
 			.varPointer = &testCannotAccess,
-			.type = Type_Bool,
+			.type = GlobVarH_Type_Bool,
 			.sourceEnable = CommProtBit_Disable
 		},
 		{
 			.name = "testfloat",
 			.varPointer = &testFloat,
-			.type = Type_Float,
+			.type = GlobVarH_Type_Float,
 		},
 		{
 			.name = "testenum",
 			.varPointer = &testEnumValue,
-			.type = Type_Enumerator,
+			.type = GlobVarH_Type_Enumerator,
 			.maxValue = 4,
 			.enumList = testEnumExampleList
 		},
 		{
 			.name = "testbit",
 			.varPointer = &testBits,
-			.type = Type_Bits,
+			.type = GlobVarH_Type_Bits,
 			.maxValue = 15,
 			.minValue = 8
 		},
@@ -115,33 +115,33 @@ const GlobalVarCommand_t GlobalVarList[] =
 		{
 			.name = "version",
 			.varPointer = (void * const)&Global_Version,
-			.type = Type_String,
+			.type = GlobVarH_Type_String,
 			.isReadOnly = true
 		},
 		{
 			.name = "devicename",
 			.varPointer = Global_DeviceName,
-			.type = Type_String,
+			.type = GlobVarH_Type_String,
 			.maxValue = 20,
 			.description = "Device name"
 		},
 		{
 			.name = "boardname",
 			.varPointer = (void * const)Global_BoardName,
-			.type = Type_String,
+			.type = GlobVarH_Type_String,
 			.isReadOnly = true
 		},
 		{
 			.name = "boardmcu",
 			.varPointer = (void * const)Global_BoardMCU,
-			.type = Type_String,
+			.type = GlobVarH_Type_String,
 			.isReadOnly = true
 		},
 		{
 			.name = "tick",
-			.varPointer = (void * const)&GlobarVarHandler_TemporaryValue,	// It is need for function pointer
+			.varPointer = (void * const)&GlobVarH_TemporaryValue,	// It is need for function pointer
 			.getFunctionPointer = (GeneralFunctionPointer)HAL_GetTick,
-			.type = Type_Uint32,
+			.type = GlobVarH_Type_Uint32,
 			.isReadOnly = true,
 			.isFunction = true,
 			.description = "Tick counter"
@@ -150,7 +150,7 @@ const GlobalVarCommand_t GlobalVarList[] =
 		{
 			.name = "vsource",
 			.varPointer = (void * const)&ADC_ConvertedValues[0],
-			.type = Type_Float,
+			.type = GlobVarH_Type_Float,
 			.isReadOnly = true,
 			.unit = "V",
 			.description = "Vsource"
@@ -161,7 +161,7 @@ const GlobalVarCommand_t GlobalVarList[] =
 		// XXX: Add new global variable here
 		/*
 			const char * const name;				///< Name of global variable [string]
-			const VarType_t type;					///< Type of global variable
+			const VarGlobVarH_Type_t type;					///< Type of global variable
 
 			void * const varPointer;				///< Pointer of variable
 			const bool isReadOnly;					///< Is read only?
@@ -187,7 +187,7 @@ const GlobalVarCommand_t GlobalVarList[] =
 
 
 ///< GlobalVarList length
-const VarID_t GlobalVar_MaxCommandNum = sizeof(GlobalVarList)/sizeof(GlobalVarList[0]);
+const GlobVarH_ID_t GlobalVar_MaxCommandNum = sizeof(GlobalVarList)/sizeof(GlobalVarList[0]);
 
 
 

@@ -278,12 +278,13 @@
 	#define TERMINAL_TASK_STACK_SIZE		(configMINIMAL_STACK_SIZE * 10)
 	#define TERMINAL_TASK_PRIORITY			(tskIDLE_PRIORITY + 3UL)
 
-	#define ESP8266_TASK_STACK_SIZE			(configMINIMAL_STACK_SIZE * 3
+	#define ESP8266_TASK_STACK_SIZE			(configMINIMAL_STACK_SIZE * 3)
 	#define ESP8266_TASK_PRIORITY			(tskIDLE_PRIORITY + 3UL)
 
 	#define SYSMANAGER_TASK_STACK_SIZE		(configMINIMAL_STACK_SIZE * 2)
 	#define SYSMANAGER_TASK_PRIORITY		(tskIDLE_PRIORITY + 3UL)
 #endif
+
 
 
 /*------------------------------------------------------------------------------
@@ -356,7 +357,7 @@
  *----------------------------------------------------------------------------*/
 
 
-//#define CONFIG_MODULE_TERMINAL_ENABLE
+#define CONFIG_MODULE_TERMINAL_ENABLE
 #ifdef CONFIG_MODULE_TERMINAL_ENABLE
 
 	//#define CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER

@@ -73,7 +73,9 @@ int main(void)
 
 #ifdef CONFIG_MICROCONTROLLER_PC
 	#ifdef CONFIG_MODULE_UNITTEST_ENABLE
-	CommandHandler_PrepareFindExecuteCommand(CommProt_DebugUart, "unittest");
+	char responseBuffer[2048];
+	CmdH_ExecuteCommand(CommProt_DebugUart, "unittest", responseBuffer, 2048);
+	printf(responseBuffer);
 	#endif
 #endif
 
@@ -163,7 +165,7 @@ int main(void)
 
 #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
 	// CommandHandler initialization
-	CommandHandler_Init();
+	CmdH_Init();
 #endif
 
 
