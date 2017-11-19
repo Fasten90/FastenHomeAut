@@ -1547,7 +1547,17 @@ uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint
 /**
  * \brief	Instead of sprintf()
  *			Used '%' parameters
- *			%d, %u, %x, %X, %w, %h, %b, %c, %s, %f
+ *			%d, %u, %x, %X, %b, %c, %s, %f
+ *			In other settings: %w, %h, %b (hexadecimals)
+ *			Other processed settings:
+ *			%8d --> 8 length decimal number, filled with space
+ *			%8u --> 8 length unsigned decimal number, filled with space
+ *			%8x --> 8 length hexa string
+ *			%b  --> print binary string (E.g. ("%b", 5) --> "101"
+ *			%8c --> print character 8 times
+ *			%8s --> print string (with max length)
+ *			%.2f  --> print float in this format: "123.00"
+ *
  * \note	!! Be careful: 'str' can be overflow!!
  */
 size_t string_printf(char *str, const char *format, va_list ap)
@@ -2138,6 +2148,8 @@ void STRING_UnitTest(void)
 	// "123.33999"
 	usprintf(buffer,"%5.5f",123.34);
 	UNITTEST_ASSERT(!StrCmp(buffer, "  123.33999"), "Float error");
+
+	// TODO: "%.2f?
 
 
 	// Integer print tests
