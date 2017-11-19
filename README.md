@@ -5,9 +5,9 @@ FastenHomeAut project
 ### What is this repository for? ###
 
 - Quick summary
-  + FastenHomeAut is an embedded C project for STM32 (or other ARM).
-  + There are TaskHandler, CommandHandler and GlobalVarHandler module for developing or other applications.
-  + Furthermore: HW tester functions: (CommonIO, CommonADC, CommonDAC for IO and analog operations
+  - FastenHomeAut is an embedded C project for STM32 (or other ARM).
+  - There are TaskHandler, CommandHandler and GlobalVarHandler module for developing or other applications.
+  - Furthermore: HW tester functions: (CommonIO, CommonADC, CommonDAC for IO and analog operations
 
 
 ### How do I get set up? ###
