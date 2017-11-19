@@ -57,6 +57,10 @@ extern DebugRecord_t DebugTasks[];
 
 
 
+// TODO: Add Debug_FixString ~ (without format?)
+
+
+
 /**
  * \brief	Debug print
  * 			The parameterized debug task is has color and task name, which printed out
@@ -67,7 +71,7 @@ void Debug_Print(Debug_t debugTask, const char *format, ...)
 	// TODO: This checker is not work
 	BUILD_BUG_ON(DebugTaskListNum != (Debug_Count-1));
 
-	if (debugTask >= Debug_Count)
+	if (debugTask >= Debug_Count || format == NULL)
 		return;
 
 	if (DebugTasks[debugTask].isEnabled)

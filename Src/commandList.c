@@ -134,11 +134,11 @@
 #ifdef CONFIG_MODULE_ADC_ENABLE
 	static CmdH_Result_t CommandFunction_adc(uint32_t argc, char** argv);
 #endif
-#ifdef CONFIG_DEBUG_RAMREAD_WRITE_COMMAND_ENABLE
+#ifdef CONFIG_COMMANDLIST_RAMREAD_WRITE_COMMAND_ENABLE
 	static CmdH_Result_t CommandFunction_mr(uint32_t argc, char** argv);
 	static CmdH_Result_t CommandFunction_mw(uint32_t argc, char** argv);
 #endif
-#ifdef CONFIG_DEBUG_GO_COMMAND_ENABLE
+#ifdef CONFIG_COMMANDLIST_GO_COMMAND_ENABLE
 	static CmdH_Result_t CommandFunction_go(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
@@ -446,7 +446,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.commandArgNum = CommandArgument_2,
 	},
 #endif
-#ifdef CONFIG_DEBUG_RAMREAD_WRITE_COMMAND_ENABLE
+#ifdef CONFIG_COMMANDLIST_RAMREAD_WRITE_COMMAND_ENABLE
 	{
 		.name = "mr",
 		.commandFunctionPointer = CommandFunction_mr,
@@ -476,7 +476,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.commandArgNum = CommandArgument_2,
 	},
 #endif
-#ifdef CONFIG_DEBUG_GO_COMMAND_ENABLE
+#ifdef CONFIG_COMMANDLIST_GO_COMMAND_ENABLE
 	{
 		.name = "go",
 		.commandFunctionPointer = CommandFunction_go,
@@ -1010,6 +1010,45 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 
 	// -\_("))_/-
 	//uprintf("-\\_(\"))_/-");
+
+
+
+	// Which use more space?
+	//
+	/*
+	// 1,
+	DebugUart_SendMessage("message: ");
+	DebugUart_SendMessage("1");
+	//	text	   data	    bss	    dec	    hex	filename
+	//	48116	    232	   4784	  53132
+	//
+	 * */
+
+
+	// 2.
+	//DebugUart_Printf("message: %s", "1");
+	//Print size information
+	//	text	   data	    bss	    dec	    hex	filename
+	//	48112	    232	   4784	  53128	   cf88	C:\Engineer\Projects\AtollicWorkspace\FastenNodeF0\Debug\FastenNodeF0.elf
+
+
+
+	// Test: 2.
+	// 0.
+	// 48076
+
+	// 1.
+	//DebugUart_SendMessage("message");
+	// 48096 text
+
+	// 2. format string (it will be slower)
+	//DebugUart_Printf("message");
+	// 48096
+
+	// 1. and 2. solution are equal in code size
+
+
+
 
 
 
@@ -2000,7 +2039,7 @@ static CmdH_Result_t CommandFunction_raspberrypi(uint32_t argc, char** argv)
 
 
 
-#ifdef CONFIG_DEBUG_RAMREAD_WRITE_COMMAND_ENABLE
+#ifdef CONFIG_COMMANDLIST_RAMREAD_WRITE_COMMAND_ENABLE
 /*
  * \brief	Function: mr (memory read)
  * mr <source> <size>
@@ -2112,7 +2151,7 @@ static CmdH_Result_t CommandFunction_mw(uint32_t argc, char** argv)
 
 
 
-#ifdef CONFIG_DEBUG_GO_COMMAND_ENABLE
+#ifdef CONFIG_COMMANDLIST_GO_COMMAND_ENABLE
 /**
  * \brief	Function: go (jump to an address)
  * go <destination>
