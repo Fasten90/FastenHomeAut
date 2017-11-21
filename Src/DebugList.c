@@ -72,9 +72,6 @@ DebugRecord_t DebugTasks[] =
 };
 
 
-uint8_t const DebugTaskListNum = NUM_OF(DebugTasks);
-
-
 
 /*------------------------------------------------------------------------------
  *  Local variables
@@ -91,5 +88,11 @@ uint8_t const DebugTaskListNum = NUM_OF(DebugTasks);
 /*------------------------------------------------------------------------------
  *  Functions
  *----------------------------------------------------------------------------*/
+
+void DebugList_Init(void)
+{
+	// Run-time error checking: size of the DebugTasks struct must be equal to members is Debug_t enumeration.
+	ASSERT(NUM_OF(DebugTasks) == Debug_Count);
+}
 
 

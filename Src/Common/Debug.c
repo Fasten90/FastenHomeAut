@@ -53,9 +53,6 @@ extern DebugRecord_t DebugTasks[];
  *----------------------------------------------------------------------------*/
 
 
-// TODO: Add DebugList checker
-
-
 
 // TODO: Add Debug_FixString ~ (without format?)
 
