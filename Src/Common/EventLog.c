@@ -24,6 +24,7 @@
 #include "EventLog.h"
 #include "TaskList.h"
 #include "Debug.h"
+#include "CommandHandler.h"
 
 #ifdef MODULE_EVENTLOG_UNITTEST_ENABLE
 	#include "UnitTest.h"
@@ -156,7 +157,6 @@ static void EventLog_PrintLog(char *str, EventLogCnt_t cnt, EventLogRecord_t *lo
 void EventLog_PrintAllLogRecords(void)
 {
 	// TODO: Get communication protocol from parameter
-	CommProtocol_t comm = CommProt_DebugUart;
 
 	EventLogCnt_t i;
 	char str[120];
@@ -165,10 +165,10 @@ void EventLog_PrintAllLogRecords(void)
 	const char * const fixheader = "+-----+----------------------+-----------+----------------------+------------+------------+----------------------+\r\n";
 	const char * const headertxt = "|  Id |       DateTime       |    Tick   |      EventName       |   Data     | EventType  |       Taskname       |\r\n";
 
-	COMMUNICATION_SendMessage(comm, "\r\n");
-	COMMUNICATION_SendMessage(comm, fixheader);
-	COMMUNICATION_SendMessage(comm, headertxt);
-	COMMUNICATION_SendMessage(comm, fixheader);
+	CmdH_SendMessage("\r\n");
+	CmdH_SendMessage(fixheader);
+	CmdH_SendMessage(headertxt);
+	CmdH_SendMessage(fixheader);
 
 
 	// Send i. log record
@@ -177,7 +177,7 @@ void EventLog_PrintAllLogRecords(void)
 		if (EventLogs[i].eventName)
 		{
 			EventLog_PrintLog(str, i, &EventLogs[i]);
-			COMMUNICATION_SendMessage(comm, str);
+			CmdH_SendMessage(str);
 		}
 		else
 		{
@@ -187,9 +187,9 @@ void EventLog_PrintAllLogRecords(void)
 	}
 
 	// Send end of log
-	COMMUNICATION_SendMessage(comm, fixheader);
-	COMMUNICATION_SendMessage(comm, headertxt);
-	COMMUNICATION_SendMessage(comm, fixheader);
+	CmdH_SendMessage(fixheader);
+	CmdH_SendMessage(headertxt);
+	CmdH_SendMessage(fixheader);
 }
 
 

@@ -198,7 +198,7 @@ GlobVarH_ProcessResult_t GlobVarH_ProcessVariableCommand(const GlobVarH_VarListI
 {
 	 GlobVarH_ProcessResult_t result = GlobVarH_Process_Unknown;
 
-	 if (varName == NULL || param == NULL)
+	 if (varName == NULL)
 		 return GlobVarH_Process_FailParam;
 
 	// Search command

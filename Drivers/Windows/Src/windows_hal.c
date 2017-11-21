@@ -220,10 +220,10 @@ DWORD WINAPI STDINReceiveThread(void* data)
 
 			CmdH_Result_t res = CmdH_ExecuteCommand(0, str, respBuffer, 2048);
 
+			CmdH_PrintResult(res);
+
 			printf("CommandHandler answered:\r\n"
 					"%s", respBuffer);
-
-			CmdH_PrintResult(res);
 		}
 		else
 		{

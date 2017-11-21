@@ -1174,9 +1174,11 @@ static CmdH_Result_t CommandFunction_get(uint32_t argc, char** argv)
 	(void)argc;
 
 	// Process
-	GlobVarH_ProcessVariableCommand(
+	GlobVarH_ProcessResult_t result = GlobVarH_ProcessVariableCommand(
 			&GlobVarH_Variables, argv[1], argv[2],
 			GlobVarH_SetGet_Get, CommProt_DebugUart);
+
+	GlobVarH_WriteResults(result);
 
 	return CmdH_Result_Ok;
 }
@@ -1193,9 +1195,11 @@ static CmdH_Result_t CommandFunction_set(uint32_t argc, char** argv)
 	(void)argc;
 
 	// Process
-	GlobVarH_ProcessVariableCommand(
+	GlobVarH_ProcessResult_t result = GlobVarH_ProcessVariableCommand(
 			&GlobVarH_Variables, argv[1], argv[2],
 			GlobVarH_SetGet_Set, CommProt_DebugUart);
+
+	GlobVarH_WriteResults(result);
 
 	return CmdH_Result_Ok;
 }
@@ -1212,9 +1216,11 @@ static CmdH_Result_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** ar
 	(void)argc;
 
 	// Process
-	GlobVarH_ProcessVariableCommand(
+	GlobVarH_ProcessResult_t result = GlobVarH_ProcessVariableCommand(
 			&GlobVarH_Variables, argv[1], argv[2],
 			GlobVarH_SetGet_Help, CommProt_DebugUart);
+
+	GlobVarH_WriteResults(result);
 
 	return CmdH_Result_Ok;
 }
@@ -1303,7 +1309,11 @@ static CmdH_Result_t CommandFunction_GlobalVariableTrace(uint32_t argc,
 	{
 		// trace <varname> enable/disable
 		// First parameter is not "id", maybe "name", try process
-		GlobVarH_ProcessVariableCommand(&GlobVarH_Variables, argv[1], argv[2], GlobVarH_SetGet_Trace, CommProt_DebugUart);
+		GlobVarH_ProcessResult_t varResult = GlobVarH_ProcessVariableCommand(
+				&GlobVarH_Variables, argv[1], argv[2], GlobVarH_SetGet_Trace, CommProt_DebugUart);
+
+		GlobVarH_WriteResults(varResult);
+
 		result = CmdH_Result_Ok_SendSuccessful;
 	}
 
@@ -2409,7 +2419,8 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 		else if (!StrCmp("SWO", argv[1]))
 		{
 			// Test SWO
-			COMMUNICATION_SendMessage(CommProt_SWO, "Test message on SWO\n");
+			//COMMUNICATION_SendMessage(CommProt_SWO, "Test message on SWO\n");
+			SWO_SendMessage("Test message on SWO\n");
 		}
 #endif
 #ifdef CONFIG_MODULE_IO_ENABLE
