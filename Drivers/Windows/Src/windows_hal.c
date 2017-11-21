@@ -23,6 +23,10 @@
 #include <time.h>
 #include <winbase.h>
 
+// for STDIN thread
+#include "CommandHandler.h"
+
+
 
 /*------------------------------------------------------------------------------
  *  Global variables
@@ -42,6 +46,8 @@
 /*------------------------------------------------------------------------------
  *  Function declarations
  *----------------------------------------------------------------------------*/
+
+DWORD WINAPI STDINReceiveThread(void* data);
 
 
 
@@ -67,6 +73,7 @@
 @endverbatim
   * @{
   */
+
 
 
 /**
@@ -108,7 +115,8 @@ uint32_t HAL_GetTick(void)
   */
 void HAL_IncTick(void)
 {
-  //uwTick++;
+	//uwTick++;
+	// TODO: Not need increment, because we get tick from windows, and the Delay works with that
 }
 
 
@@ -126,12 +134,14 @@ void HAL_IncTick(void)
   */
 void HAL_Delay(__IO uint32_t Delay)
 {
-  uint32_t tickstart = 0U;
-  tickstart = HAL_GetTick();
-  while((HAL_GetTick() - tickstart) < Delay)
-  {
-  }
+	uint32_t tickstart = 0U;
+	tickstart = HAL_GetTick();
+	while((HAL_GetTick() - tickstart) < Delay)
+	{
+	}
 }
+
+
 
 /**
   * @brief Suspend Tick increment.
@@ -145,9 +155,11 @@ void HAL_Delay(__IO uint32_t Delay)
   */
 void HAL_SuspendTick(void)
 {
-  /* Disable SysTick Interrupt */
-  //CLEAR_BIT(SysTick->CTRL,SysTick_CTRL_TICKINT_Msk);
+	/* Disable SysTick Interrupt */
+	//CLEAR_BIT(SysTick->CTRL,SysTick_CTRL_TICKINT_Msk);
 }
+
+
 
 /**
   * @brief Resume Tick increment.
@@ -161,13 +173,61 @@ void HAL_SuspendTick(void)
   */
 void HAL_ResumeTick(void)
 {
-  /* Enable SysTick Interrupt */
-  //SET_BIT(SysTick->CTRL,SysTick_CTRL_TICKINT_Msk);
+	/* Enable SysTick Interrupt */
+	//SET_BIT(SysTick->CTRL,SysTick_CTRL_TICKINT_Msk);
 }
+
 
 
 // TODO: Need to put hal_uart.c ...
 HAL_StatusTypeDef HAL_UART_Init(UART_HandleTypeDef *huart)
 {
+
+	HANDLE thread = CreateThread(NULL, 0, STDINReceiveThread, NULL, 0, NULL);
+
+	if (!thread)
+	{
+		printf("Error with thread!");
+	}
+
 	return HAL_OK;
+}
+
+
+
+// TODO: Implement more beautiful solution
+/**
+ * \brief "STDIN --> UART" Receive thread
+ */
+DWORD WINAPI STDINReceiveThread(void* data)
+{
+	// Do stuff.  This will be the first function called on the new thread.
+	// When this function returns, the thread goes away.  See MSDN for more details.
+	while (1)
+	{
+		// Not safe!
+		char str[50] = { 0 };
+		char respBuffer[2048];
+		char * command = NULL;
+
+		printf("Type message: ");
+
+		command = gets(str);
+
+		if (command != NULL && strlen(str) > 0)
+		{
+			printf("Received from stdin: \"%s\"\r\n", str);
+
+			CmdH_Result_t res = CmdH_ExecuteCommand(0, str, respBuffer, 2048);
+
+			printf("CommandHandler answered:\r\n"
+					"%s", respBuffer);
+
+			CmdH_PrintResult(res);
+		}
+		else
+		{
+			printf("Null message received!\r\n");
+		}
+	}
 }

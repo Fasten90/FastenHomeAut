@@ -209,6 +209,10 @@ int main(void)
 	CmdH_ExecuteCommand(CommProt_DebugUart, "unittest", responseBuffer, 2048);
 	printf(responseBuffer);
 	#endif
+
+	// STDIN
+	UART_HandleTypeDef Debug_UartHandle;
+	UART_Init(&Debug_UartHandle);
 #endif
 
 

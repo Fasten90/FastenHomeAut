@@ -1,7 +1,7 @@
 /*
  *		String.c
  *		Created on:		2016-01-01
- *		Author: 		Vizi Gábor
+ *		Author: 		Vizi GÃ¡bor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		String manipulation functions
  *		Target:			STM32Fx
