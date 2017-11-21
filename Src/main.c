@@ -163,6 +163,8 @@
 #include "ADC.h"
 #include "Globals.h"
 #include "Bluetooth_HC05.h"
+#include "GlobalVarHandler.h"
+#include "GlobalVariables.h"
 
 #ifdef CONFIG_MICROCONTROLLER_PC
 #include "windows_hal.h"
@@ -296,6 +298,11 @@ int main(void)
 #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
 	// CommandHandler initialization
 	CmdH_Init();
+#endif
+
+
+#ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
+	GlobVarH_CheckGlobalVarArray(&GlobVarH_Variables);
 #endif
 
 

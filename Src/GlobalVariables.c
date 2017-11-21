@@ -29,89 +29,10 @@
  *----------------------------------------------------------------------------*/
 
 
-#ifdef MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
-// UnitTest variables
-uint8_t testUint8 = 0;
-int16_t testInt16 = 0;
-uint32_t testUint32 = 0;
-int32_t testInt32 = 0;
-bool testBool = false;
-bool testCannotAccess = false;
-float testFloat = 0.0f;
-uint8_t testEnumValue = 0;
-uint32_t testBits = 0;
-
-
-///< enumExample string list
-const char * const testEnumExampleList[] =
-{
-	"exampleenumstring0",
-	"exampleenumstring1",
-	"exampleenumstring2",
-	"exampleenumstring3",
-	NULL
-};
-#endif
-
 
 ///< Global variables list
-const GlobVarH_VarRecord_t GlobalVarList[] =
+const GlobVarH_VarRecord_t GlobVarH_VarList[] =
 {
-#ifdef MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
-		{
-			.name = "testbool",
-			.varPointer = &testBool,
-			.type = GlobVarH_Type_Bool
-		},
-		{
-			.name = "testuint8",
-			.varPointer = &testUint8,
-			.type = GlobVarH_Type_Uint8,
-			.unit = "cm",
-			.description = "test uint8 variable"
-		},
-		{
-			.name = "testint16",
-			.varPointer = &testInt16,
-			.type = GlobVarH_Type_Int16,
-		},
-		{
-			.name = "testint32",
-			.varPointer = &testInt32,
-			.type = GlobVarH_Type_Int32,
-		},
-		{
-			.name = "testuint32",
-			.varPointer = &testUint32,
-			.type = GlobVarH_Type_Uint32,
-			.isHex = true,
-		},
-		{
-			.name = "testcannotaccess",
-			.varPointer = &testCannotAccess,
-			.type = GlobVarH_Type_Bool,
-			.sourceEnable = CommProtBit_Disable
-		},
-		{
-			.name = "testfloat",
-			.varPointer = &testFloat,
-			.type = GlobVarH_Type_Float,
-		},
-		{
-			.name = "testenum",
-			.varPointer = &testEnumValue,
-			.type = GlobVarH_Type_Enumerator,
-			.maxValue = 4,
-			.enumList = testEnumExampleList
-		},
-		{
-			.name = "testbit",
-			.varPointer = &testBits,
-			.type = GlobVarH_Type_Bits,
-			.maxValue = 15,
-			.minValue = 8
-		},
-#endif	// #ifdef MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
 		{
 			.name = "version",
 			.varPointer = (void * const)&Global_Version,
@@ -143,7 +64,6 @@ const GlobVarH_VarRecord_t GlobalVarList[] =
 			.getFunctionPointer = (GeneralFunctionPointer)HAL_GetTick,
 			.type = GlobVarH_Type_Uint32,
 			.isReadOnly = true,
-			.isFunction = true,
 			.description = "Tick counter"
 		},
 #ifdef CONFIG_MODULE_ADC_ENABLE
@@ -161,7 +81,7 @@ const GlobVarH_VarRecord_t GlobalVarList[] =
 		// XXX: Add new global variable here
 		/*
 			const char * const name;				///< Name of global variable [string]
-			const VarGlobVarH_Type_t type;					///< Type of global variable
+			const GlobVarH_Type_t type;				///< Type of global variable
 
 			void * const varPointer;				///< Pointer of variable
 			const bool isReadOnly;					///< Is read only?
@@ -186,8 +106,16 @@ const GlobVarH_VarRecord_t GlobalVarList[] =
 };
 
 
-///< GlobalVarList length
-const GlobVarH_ID_t GlobalVar_MaxCommandNum = sizeof(GlobalVarList)/sizeof(GlobalVarList[0]);
+///< GlobVarH_VarList length
+const GlobVarH_ID_t GlobVarH_MaxCommandNum = NUM_OF(GlobVarH_VarList);
+
+
+GlobVarH_VarListInfo_t GlobVarH_Variables =
+{
+	.items = &GlobVarH_VarList[0],
+	.num = NUM_OF(GlobVarH_VarList),
+	.traceVarEnabled = 0,
+};
 
 
 

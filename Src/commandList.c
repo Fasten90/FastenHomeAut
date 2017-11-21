@@ -21,6 +21,7 @@
 #include "FormattedMessage.h"
 #include "CommandHandler.h"
 #include "GlobalVarHandler.h"
+#include "GlobalVariables.h"
 #include "Globals.h"
 #include "Terminal.h"
 #include "Button.h"
@@ -175,14 +176,14 @@ const CmdH_Command_t CmdH_CommandList[] =
 	 * Help:
 	 * 	.name = "StringOfCommand",
 	 * 	.commandFunctionPointer = function name,
-	 * 	.commandArgNum = CommandArgument_0 | CommandArgument_1 | CommandArgument_2,
+	 * 	.commandArgNum = CmdH_CommandArgNum_0 | CmdH_CommandArgNum_1 | CmdH_CommandArgNum_2,
 	 * 	.description = "Command description",
 	 * 	.syntax = "<required parameter> (optional parameter)"
 	 */
 	{
 		.name = "help",
 		.commandFunctionPointer = CommandFunction_help,
-		.commandArgNum = CommandArgument_0 | CommandArgument_1,
+		.commandArgNum = CmdH_CommandArgNum_0 | CmdH_CommandArgNum_1,
 		.description = "Commands's list, or print a command's description",
 		.syntax = "(command)",
 		.example = "version"
@@ -190,28 +191,28 @@ const CmdH_Command_t CmdH_CommandList[] =
 	{
 		.name = "version",
 		.commandFunctionPointer = CommandFunction_version,
-		.commandArgNum = CommandArgument_0,
+		.commandArgNum = CmdH_CommandArgNum_0,
 		.description = "Get version",
 		.syntax = NULL,
 	},
 	{
 		.name = "welcome",
 		.commandFunctionPointer = CommandFunction_welcome,
-		.commandArgNum = CommandArgument_0,
+		.commandArgNum = CmdH_CommandArgNum_0,
 		.description = "Send welcome message",
 		.syntax = NULL,
 	},
 	{
 		.name = "reset",
 		.commandFunctionPointer = CommandFunction_reset,
-		.commandArgNum = CommandArgument_0,
+		.commandArgNum = CmdH_CommandArgNum_0,
 		.description = "Software reset",
 		.syntax = NULL,
 	},
 	{
 		.name = "cls",
 		.commandFunctionPointer = CommandFunction_cls,
-		.commandArgNum = CommandArgument_0,
+		.commandArgNum = CmdH_CommandArgNum_0,
 		.description = "Clear Screen",
 		.syntax = NULL,
 	},
@@ -219,7 +220,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 	{
 		.name = "test",
 		.commandFunctionPointer = CommandFunction_test,
-		.commandArgNum = CommandArgument_0,
+		.commandArgNum = CmdH_CommandArgNum_0,
 		.description = NULL,
 		.syntax = NULL,
 	},
@@ -228,7 +229,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 	{
 		.name = "moduletest",
 		.commandFunctionPointer = CommandFunction_moduletest,
-		.commandArgNum = CommandArgument_0,
+		.commandArgNum = CmdH_CommandArgNum_0,
 		.description = "Run module test",
 	},
 #endif
@@ -236,7 +237,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 	{
 		.name = "unittest",
 		.commandFunctionPointer = CommandFunction_unittest,
-		.commandArgNum = CommandArgument_0 | CommandArgument_1,
+		.commandArgNum = CmdH_CommandArgNum_0 | CmdH_CommandArgNum_1,
 		.description = "Run unit tests",
 		.syntax = "(modul)",
 	},
@@ -246,14 +247,14 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.name = "get",
 		.commandFunctionPointer = CommandFunction_get,
 		.description = "get global variable value",
-		.commandArgNum = CommandArgument_1,
+		.commandArgNum = CmdH_CommandArgNum_1,
 		.syntax = "<varName>",
 		.example = "devicename",
 	},
 	{
 		.name = "set",
 		.commandFunctionPointer = CommandFunction_set,
-		.commandArgNum = CommandArgument_2,
+		.commandArgNum = CmdH_CommandArgNum_2,
 		.description = "set global variable value",
 		.syntax = "<varName> <value>",
 		.example = "devicename MyDeviceName",
@@ -262,27 +263,27 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.name = "?",
 		.commandFunctionPointer = CommandFunction_GlobalVariableHelp,
 		.description = "help global variable",
-		.commandArgNum = CommandArgument_1,
+		.commandArgNum = CmdH_CommandArgNum_1,
 		.syntax = "<varName>",
 		.example = "devicename",
 	},
 	{
 		.name = "list",
 		.commandFunctionPointer = CommandFunction_GlobalVariableList,
-		.commandArgNum = CommandArgument_0,
+		.commandArgNum = CmdH_CommandArgNum_0,
 		.description = "List global variable",
 	},
 	{
 		.name = "listvalues",
 		.commandFunctionPointer = CommandFunction_GlobalVariableValueList,
-		.commandArgNum = CommandArgument_0,
+		.commandArgNum = CmdH_CommandArgNum_0,
 		.description = "List global variable's values",
 	},
 #ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
 	{
 		.name = "trace",
 		.commandFunctionPointer = CommandFunction_GlobalVariableTrace,
-		.commandArgNum = CommandArgument_2,
+		.commandArgNum = CmdH_CommandArgNum_2,
 		.description = "Trace global variable's values",
 		.syntax = "<varname> <enable/disable>; period <period:ms>",
 		.example = "tick enable"
@@ -293,7 +294,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 	{
 		.name = "led",
 		.commandFunctionPointer = CommandFunction_led,
-		.commandArgNum = CommandArgument_1 | CommandArgument_2,
+		.commandArgNum = CmdH_CommandArgNum_1 | CmdH_CommandArgNum_2,
 		.description = "Control LED",
 		.syntax = "<num> <on/off/toggle/status>",
 		.example = "1 on",
@@ -303,7 +304,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 	{
 		.name = "ioinit",
 		.commandFunctionPointer = CommandFunction_io,
-		.commandArgNum = CommandArgument_2,
+		.commandArgNum = CmdH_CommandArgNum_2,
 		.description = "Init IO pins",
 		.syntax = "<port><pin> <input/output>",
 		.example = "a1 input",
@@ -311,7 +312,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 	{
 		.name = "ioout",
 		.commandFunctionPointer = CommandFunction_io,
-		.commandArgNum = CommandArgument_2,
+		.commandArgNum = CmdH_CommandArgNum_2,
 		.description = "Set output",
 		.syntax = "<port><pin> <set/reset>",
 		.example = "a2 set",
@@ -319,7 +320,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 	{
 		.name = "ioin",
 		.commandFunctionPointer = CommandFunction_io,
-		.commandArgNum = CommandArgument_1,
+		.commandArgNum = CmdH_CommandArgNum_1,
 		.description = "Get input",
 		.syntax = "<port><pin>",
 		.example = "a1",
@@ -329,7 +330,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 	{
 		.name = "dac",
 		.commandFunctionPointer = CommandFunction_dac,
-		.commandArgNum = CommandArgument_2,
+		.commandArgNum = CmdH_CommandArgNum_2,
 		.description = "Digital -> Analog",
 		.syntax = "<num> <voltage>",
 		.example = "1 3.0"
@@ -340,14 +341,14 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.name = "adc",
 		.commandFunctionPointer = CommandFunction_adc,
 		.description = "Analog -> Digital",
-		.commandArgNum = CommandArgument_0,
+		.commandArgNum = CmdH_CommandArgNum_0,
 	},
 	{
 		.name = "adcread",
 		.commandFunctionPointer = CommandFunction_adcread,
 		.description = "ADC read continuous",
 		.syntax = "<milliSec> (num)",
-		.commandArgNum = CommandArgument_1 | CommandArgument_2,
+		.commandArgNum = CmdH_CommandArgNum_1 | CmdH_CommandArgNum_2,
 		.example = "1000 1",
 	},
 #endif
@@ -355,7 +356,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 	{
 		.name = "pwm",
 		.commandFunctionPointer = CommandFunction_PWM,
-		.commandArgNum = CommandArgument_1,
+		.commandArgNum = CmdH_CommandArgNum_1,
 		.description = "PWM",
 		.syntax = "<PWM percent>",
 		.example = "20",
@@ -367,7 +368,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.commandFunctionPointer = CommandFunction_Motor,
 		.description = "Motor handling",
 		.syntax = "...",
-		.commandArgNum = CommandArgument_1 | CommandArgument_2,
+		.commandArgNum = CmdH_CommandArgNum_1 | CmdH_CommandArgNum_2,
 	},
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
@@ -376,7 +377,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.commandFunctionPointer = CommandFunction_ESP8266,
 		.description = "Use ESP8266 module",
 		.syntax = "<send> <message>",
-		.commandArgNum = CommandArgument_1 | CommandArgument_2,
+		.commandArgNum = CmdH_CommandArgNum_1 | CmdH_CommandArgNum_2,
 		.example = "send ThisMessage",
 	},
 #endif
@@ -391,7 +392,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 	#endif
 		.commandFunctionPointer = CommandFunction_Time,
 		.syntax = "<setdate/settime> <date: 20yy-mm-dd / time: hh:mm:ss>",
-		.commandArgNum = CommandArgument_1 | CommandArgument_2,
+		.commandArgNum = CmdH_CommandArgNum_1 | CmdH_CommandArgNum_2,
 		.example = "setdate 2017-02-08",
 	},
 #endif
@@ -401,7 +402,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.commandFunctionPointer = CommandFunction_EventLog,
 		.description = "List EventLog",
 		.syntax = NULL,
-		.commandArgNum = CommandArgument_0,
+		.commandArgNum = CmdH_CommandArgNum_0,
 		.example = NULL,
 	},
 #endif
@@ -410,7 +411,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.name = "#homeaut",
 		.description = "HomeAutMessage sending",
 		.commandFunctionPointer = CommandFunction_raspberrypi,
-		.commandArgNum = CommandArgument_2,
+		.commandArgNum = CmdH_CommandArgNum_2,
 		.syntax = NULL,
 	},
 #endif
@@ -420,7 +421,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.commandFunctionPointer = CommandFunction_adc,
 		.description = "...",
 		.syntax = NULL,
-		.commandArgNum = CommandArgument_0,
+		.commandArgNum = CmdH_CommandArgNum_0,
 	},
 #endif
 #ifdef CONFIG_MODULE_FLASH_ENABLE
@@ -429,21 +430,21 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.commandFunctionPointer = CommandFunction_flashdel,
 		.description = "Delete flash",
 		.syntax = "<address> <block/sector>",
-		.commandArgNum = CommandArgument_2,
+		.commandArgNum = CmdH_CommandArgNum_2,
 	},
 	{
 		.name = "flashread",
 		.commandFunctionPointer = CommandFunction_flashread,
 		.description = "Read from flash",
 		.syntax = "<address>",
-		.commandArgNum = CommandArgument_1,
+		.commandArgNum = CmdH_CommandArgNum_1,
 	},
 	{
 		.name = "flashwrite",
 		.commandFunctionPointer = CommandFunction_flashwrite,
 		.description = "Write flash",
 		.syntax = "<address> <byte>",
-		.commandArgNum = CommandArgument_2,
+		.commandArgNum = CmdH_CommandArgNum_2,
 	},
 #endif
 #ifdef CONFIG_COMMANDLIST_RAMREAD_WRITE_COMMAND_ENABLE
@@ -452,28 +453,28 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.commandFunctionPointer = CommandFunction_mr,
 		.description = "Memory read",
 		.syntax = "<address> <size>",
-		.commandArgNum = CommandArgument_2,
+		.commandArgNum = CmdH_CommandArgNum_2,
 	},
 	{
 		.name = "mwb",
 		.commandFunctionPointer = CommandFunction_mw,
 		.description = "Memory write",
 		.syntax = "<address> <byte>",
-		.commandArgNum = CommandArgument_2,
+		.commandArgNum = CmdH_CommandArgNum_2,
 	},
 	{
 		.name = "mwh",
 		.commandFunctionPointer = CommandFunction_mw,
 		.description = "Memory write",
 		.syntax = "<address> <byte>",
-		.commandArgNum = CommandArgument_2,
+		.commandArgNum = CmdH_CommandArgNum_2,
 	},
 	{
 		.name = "mww",
 		.commandFunctionPointer = CommandFunction_mw,
 		.description = "Memory write",
 		.syntax = "<address> <byte>",
-		.commandArgNum = CommandArgument_2,
+		.commandArgNum = CmdH_CommandArgNum_2,
 	},
 #endif
 #ifdef CONFIG_COMMANDLIST_GO_COMMAND_ENABLE
@@ -482,7 +483,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.commandFunctionPointer = CommandFunction_go,
 		.description = "Jump to address",
 		.syntax = "<address>",
-		.commandArgNum = CommandArgument_1,
+		.commandArgNum = CmdH_CommandArgNum_1,
 	},
 #endif
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
@@ -492,7 +493,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.description = "Use display",
 		.syntax = "<write/clear> (line,msg)",
 		.example = "write 1,message",
-		.commandArgNum = CommandArgument_1 | CommandArgument_2,
+		.commandArgNum = CmdH_CommandArgNum_1 | CmdH_CommandArgNum_2,
 	},
 #endif
 #ifdef CONFIG_MODULE_IO_ENABLE
@@ -502,7 +503,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.description = "Get input-output states",
 		.syntax = "",
 		.example = "",
-		.commandArgNum = CommandArgument_0,
+		.commandArgNum = CmdH_CommandArgNum_0,
 	},
 #endif
 #ifdef CONFIG_MODULE_SIMULATION_ENABLE
@@ -512,7 +513,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.description = "simulate event, errors, etc.",
 		.syntax = "",
 		.example = "",
-		.commandArgNum = CommandArgument_1 | CommandArgument_2,
+		.commandArgNum = CmdH_CommandArgNum_1 | CmdH_CommandArgNum_2,
 	},
 #endif
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
@@ -522,7 +523,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.description = "taskhandler functions",
 		.syntax = "<statistics/runcounts>",
 		.example = "",
-		.commandArgNum = CommandArgument_1,
+		.commandArgNum = CmdH_CommandArgNum_1,
 	},
 #endif
 #ifdef CONFIG_MODULE_DEBUG_ENABLE
@@ -532,7 +533,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.description = "Debug enable/disable",
 		.syntax = "<taskname/taskid> <enable/disable>",
 		.example = "",
-		.commandArgNum = CommandArgument_2,
+		.commandArgNum = CmdH_CommandArgNum_2,
 	},
 #endif
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
@@ -542,7 +543,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.description = "Button state",
 		.syntax = "",
 		.example = "",
-		.commandArgNum = CommandArgument_0,
+		.commandArgNum = CmdH_CommandArgNum_0,
 	},
 #endif
 
@@ -552,7 +553,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 	 * Help:
 	 * 	.name = "StringOfCommand",
 	 * 	.commandFunctionPointer = function name,
-	 * 	.commandArgNum = CommandArgument_0 | CommandArgument_1 | CommandArgument_2,
+	 * 	.commandArgNum = CmdH_CommandArgNum_0 | CmdH_CommandArgNum_1 | CmdH_CommandArgNum_2,
 	 * 	.description = "Command description",
 	 * 	.syntax = "<required parameter> (optional parameter)"
 	 */
@@ -582,7 +583,7 @@ static CmdH_Result_t CommandFunction_cls(uint32_t argc, char** argv)
 	Terminal_SendCls();
 #endif
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 
 
@@ -598,7 +599,7 @@ static CmdH_Result_t CommandFunction_version(uint32_t argc, char** argv)
 
 	CmdH_SendLine(Global_Version);
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 
 
@@ -616,7 +617,7 @@ static CmdH_Result_t CommandFunction_welcome(uint32_t argc, char** argv)
 	Terminal_SendWelcome();
 #endif
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 
 
@@ -640,7 +641,7 @@ static CmdH_Result_t CommandFunction_help(uint32_t argc, char** argv)
 		CmdH_SearchCommandAndPrintHelp(argv[1]);
 	}
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 
 
@@ -667,7 +668,7 @@ static CmdH_Result_t CommandFunction_reset(uint32_t argc, char** argv)
 	// Wait
 	for (i = 0; i < 1000; i++);
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 
 
@@ -740,7 +741,7 @@ static CmdH_Result_t CommandFunction_unittest(uint32_t argc, char** argv)
 	SecuredDataTypes_UnitTest();
 #endif
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 #endif	// #ifdef CONFIG_MODULE_UNITTEST_ENABLE
 
@@ -810,7 +811,7 @@ static CmdH_Result_t CommandFunction_moduletest(uint32_t argc, char** argv)
 	FormattedMessage_Test();
 #endif
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 #endif	// #ifdef CONFIG_MODULE_TEST_ENABLE
 
@@ -1061,7 +1062,7 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 	CmdH_SendLine("\r\n"
 				  "Test end");
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 #endif	// #ifdef CONFIG_TEST_MODE
 
@@ -1117,7 +1118,7 @@ static CmdH_Result_t CommandFunction_led(uint32_t argc, char** argv)
 		char str[25];
 		LED_GetLedStates(str);
 		CmdH_SendLine(str);
-		result = CommandResult_Ok;
+		result = CmdH_Result_Ok;
 	}
 	else if (isFirstParamNum == true)
 	{
@@ -1127,7 +1128,7 @@ static CmdH_Result_t CommandFunction_led(uint32_t argc, char** argv)
 		if (Arg2Num > LED_NUM_MAX || Arg2Num < LED_NUM_MIN)
 		{
 			// First argument is wrong number
-			result = CommandResult_Error_WrongArgument1;
+			result = CmdH_Result_Error_WrongArgument1;
 		}
 		else
 		{
@@ -1139,21 +1140,21 @@ static CmdH_Result_t CommandFunction_led(uint32_t argc, char** argv)
 			if (setType == LED_Set_DontCare)
 			{
 				// Error, do nothing
-				result = CommandResult_Error_WrongArgument2;
+				result = CmdH_Result_Error_WrongArgument2;
 			}
 			else
 			{
 				// Set LED
 				status = LED_SetLed(Arg2Num,setType);
 				CmdH_Printf("LED %d. status: %d\r\n", Arg2Num, status);
-				result = CommandResult_Ok;
+				result = CmdH_Result_Ok;
 			}
 		}
 	}
 	else
 	{
 		// First param is not status and not LED num
-		result = CommandResult_Error_WrongArgument1;
+		result = CmdH_Result_Error_WrongArgument1;
 	}
 
 	return result;
@@ -1174,10 +1175,10 @@ static CmdH_Result_t CommandFunction_get(uint32_t argc, char** argv)
 
 	// Process
 	GlobVarH_ProcessVariableCommand(
-			argv[1], argv[2],
+			&GlobVarH_Variables, argv[1], argv[2],
 			GlobVarH_SetGet_Get, CommProt_DebugUart);
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 
 
@@ -1193,10 +1194,10 @@ static CmdH_Result_t CommandFunction_set(uint32_t argc, char** argv)
 
 	// Process
 	GlobVarH_ProcessVariableCommand(
-			argv[1], argv[2],
+			&GlobVarH_Variables, argv[1], argv[2],
 			GlobVarH_SetGet_Set, CommProt_DebugUart);
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 
 
@@ -1212,10 +1213,10 @@ static CmdH_Result_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** ar
 
 	// Process
 	GlobVarH_ProcessVariableCommand(
-			argv[1], argv[2],
+			&GlobVarH_Variables, argv[1], argv[2],
 			GlobVarH_SetGet_Help, CommProt_DebugUart);
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 
 
@@ -1231,7 +1232,7 @@ static CmdH_Result_t CommandFunction_GlobalVariableList(uint32_t argc, char** ar
 
 	GlobVarH_ListAllVariableParameters();
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 
 
@@ -1248,7 +1249,7 @@ static CmdH_Result_t CommandFunction_GlobalVariableValueList(uint32_t argc,
 
 	GlobVarH_PrintAllVariableValues();
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 
 
@@ -1260,7 +1261,7 @@ static CmdH_Result_t CommandFunction_GlobalVariableValueList(uint32_t argc,
 static CmdH_Result_t CommandFunction_GlobalVariableTrace(uint32_t argc,
 		char** argv)
 {
-	CmdH_Result_t result = CommandResult_Unknown;
+	CmdH_Result_t result = CmdH_Result_Unknown;
 
 	// Suppress warning
 	(void)argc;
@@ -1274,13 +1275,13 @@ static CmdH_Result_t CommandFunction_GlobalVariableTrace(uint32_t argc,
 		{
 			GlobVarH_EnableTrace(id, true);
 			CmdH_Printf("Enabled trace: %d\r\n", id);
-			result = CommandResult_Ok;
+			result = CmdH_Result_Ok;
 		}
 		else
 		{
 			GlobVarH_EnableTrace(id, false);
 			CmdH_Printf("Disabled trace: %d\r\n", id);
-			result = CommandResult_Ok;
+			result = CmdH_Result_Ok;
 		}
 	}
 	else if(!StrCmp("period", argv[1]))
@@ -1291,19 +1292,19 @@ static CmdH_Result_t CommandFunction_GlobalVariableTrace(uint32_t argc,
 		{
 			// Parameter is good, set Trace task periodic time
 			TaskHandler_SetTaskPeriodicTime(Task_Trace, time);
-			result = CommandResult_Ok_SendSuccessful;
+			result = CmdH_Result_Ok_SendSuccessful;
 		}
 		else
 		{
-			result = CommandResult_Error_WrongArgument2;
+			result = CmdH_Result_Error_WrongArgument2;
 		}
 	}
 	else
 	{
 		// trace <varname> enable/disable
 		// First parameter is not "id", maybe "name", try process
-		GlobVarH_ProcessVariableCommand(argv[1], argv[2], GlobVarH_SetGet_Trace, CommProt_DebugUart);
-		result = CommandResult_Ok_SendSuccessful;
+		GlobVarH_ProcessVariableCommand(&GlobVarH_Variables, argv[1], argv[2], GlobVarH_SetGet_Trace, CommProt_DebugUart);
+		result = CmdH_Result_Ok_SendSuccessful;
 	}
 
 	return result;
@@ -1330,23 +1331,23 @@ static CmdH_Result_t CommandFunction_dac(uint32_t argc, char** argv)
 	// Check 1. argument (channel num)
 	if (!StringToUnsignedDecimalNum(argv[1], &channelNum))
 	{
-		return CommandResult_Error_WrongArgument1;
+		return CmdH_Result_Error_WrongArgument1;
 	}
 
 	// Check 2. argument (voltage)
 	if (!StringToFloat(argv[2], &voltage))
 	{
-		return CommandResult_Error_WrongArgument2;
+		return CmdH_Result_Error_WrongArgument2;
 	}
 
 	// Set DAC value
 	if (CommonDAC_SetValue(channelNum, voltage))
 	{
-		return CommandResult_Ok_SendSuccessful;
+		return CmdH_Result_Ok_SendSuccessful;
 	}
 	else
 	{
-		return CommandResult_Error_WrongArgumentNum;
+		return CmdH_Result_Error_WrongArgumentNum;
 	}
 }
 #endif
@@ -1385,21 +1386,21 @@ static CmdH_Result_t CommandFunction_io(uint32_t argc, char** argv)
 			}
 			else
 			{
-				return CommandResult_Error_WrongArgument2;
+				return CmdH_Result_Error_WrongArgument2;
 			}
 
 			if (CommonIO_Init(port, (uint8_t)pin, io))
 			{
-				return CommandResult_Ok;
+				return CmdH_Result_Ok;
 			}
 			else
 			{
-				return CommandResult_Error_Unknown;
+				return CmdH_Result_Error_Unknown;
 			}
 		}
 		else
 		{
-			return CommandResult_Error_WrongArgument1;
+			return CmdH_Result_Error_WrongArgument1;
 		}
 	}
 	else if (!StrCmp("ioout", argv[0]))
@@ -1429,11 +1430,11 @@ static CmdH_Result_t CommandFunction_io(uint32_t argc, char** argv)
 			// Set output
 			bool status = CommonIO_SetOutput(port,pin,output);
 			CmdH_Printf("Output status: %d\r\n", status);
-			return CommandResult_Ok;
+			return CmdH_Result_Ok;
 		}
 		else
 		{
-			return CommandResult_Error_Unknown;
+			return CmdH_Result_Error_Unknown;
 		}
 	}
 	else if (!StrCmp("ioin", argv[0]))
@@ -1445,15 +1446,15 @@ static CmdH_Result_t CommandFunction_io(uint32_t argc, char** argv)
 		{
 			bool status = CommonIO_ReadPin(port, pin);
 			CmdH_Printf("Input status: %d\r\n", status);
-			return CommandResult_Ok;
+			return CmdH_Result_Ok;
 		}
 		else
 		{
-			return CommandResult_Error_WrongArgument1;
+			return CmdH_Result_Error_WrongArgument1;
 		}
 	}
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 #endif
 
@@ -1479,7 +1480,7 @@ static CmdH_Result_t CommandFunction_adc(uint32_t argc, char** argv)
 		CmdH_Printf("ADC: %d. value: %2.2f\r\n", i, ADC_ConvertedValues[i]);
 	}
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 #endif
 
@@ -1507,12 +1508,12 @@ static CmdH_Result_t CommandFunction_adcread(uint32_t argc, char** argv)
 	{
 		// Stop
 		TaskHandler_DisableTask(Task_CommonAdc);
-		result = CommandResult_Ok_SendSuccessful;
+		result = CmdH_Result_Ok_SendSuccessful;
 	}
 	else
 	{
 		// First argument is wrong
-		result = CommandResult_Error_WrongArgument1;
+		result = CmdH_Result_Error_WrongArgument1;
 	}
 
 	// Check 2. argument
@@ -1526,18 +1527,18 @@ static CmdH_Result_t CommandFunction_adcread(uint32_t argc, char** argv)
 				TaskHandler_RequestTaskScheduling(Task_CommonAdc);
 				TaskHandler_SetTaskPeriodicTime(Task_CommonAdc, milliSec);
 				CommonADC_SetPrintNum(convertValue);
-				result = CommandResult_Ok_SendSuccessful;
+				result = CmdH_Result_Ok_SendSuccessful;
 			}
 			else
 			{
 				// Wrong ADC num
-				result = CommandResult_Error_WrongArgument2;
+				result = CmdH_Result_Error_WrongArgument2;
 			}
 		}
 		else
 		{
 			// Second argument is wrong
-			result = CommandResult_Error_WrongArgument2;
+			result = CmdH_Result_Error_WrongArgument2;
 		}
 	}
 
@@ -1563,16 +1564,16 @@ static CmdH_Result_t CommandFunction_PWM(uint32_t argc, char** argv)
 		{
 			percent = (uint8_t)convertValue;
 			CommonPWM_ChangePercent(percent);
-			result = CommandResult_Ok;
+			result = CmdH_Result_Ok;
 		}
 		else
 		{
-			result = CommandResult_Error_WrongArgument1;
+			result = CmdH_Result_Error_WrongArgument1;
 		}
 	}
 	else
 	{
-		result = CommandResult_Error_WrongArgument1;
+		result = CmdH_Result_Error_WrongArgument1;
 	}
 
 	return result;
@@ -1585,7 +1586,7 @@ static CmdH_Result_t CommandFunction_PWM(uint32_t argc, char** argv)
 static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 {
 	(void)argc;
-	CmdH_Result_t result = CommandResult_Unknown;
+	CmdH_Result_t result = CmdH_Result_Unknown;
 	int32_t convertValue;
 
 
@@ -1603,16 +1604,16 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 				int8_t percent = (uint8_t)convertValue;
 				Motor_StateMachine_SetDc(percent);
 				TaskHandler_ClearTimeoutTask(Task_MotorTimeout);
-				result = CommandResult_Ok_SendSuccessful;
+				result = CmdH_Result_Ok_SendSuccessful;
 			}
 			else
 			{
-				result = CommandResult_Error_WrongArgument2;
+				result = CmdH_Result_Error_WrongArgument2;
 			}
 		}
 		else
 		{
-			result = CommandResult_Error_WrongArgument2;
+			result = CmdH_Result_Error_WrongArgument2;
 		}
 	}
 	else if (!StrCmp("servo", argv[1]))
@@ -1633,16 +1634,16 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 				Motor_StateMachine_SetAngle(angle);
 				TaskHandler_ClearTimeoutTask(Task_MotorTimeout);
 
-				result = CommandResult_Ok_SendSuccessful;
+				result = CmdH_Result_Ok_SendSuccessful;
 			}
 			else
 			{
-				result = CommandResult_Error_WrongArgument2;
+				result = CmdH_Result_Error_WrongArgument2;
 			}
 		}
 		else
 		{
-			result = CommandResult_Error_WrongArgument2;
+			result = CmdH_Result_Error_WrongArgument2;
 		}
 	}
 	else if (!StrCmp("slide", argv[1]))
@@ -1651,19 +1652,19 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 		if (!StrCmp("on", argv[2]))
 		{
 			MotorTestSlide_Enabled = true;
-			result = CommandResult_Ok_SendSuccessful;
+			result = CmdH_Result_Ok_SendSuccessful;
 		}
 		else if (!StrCmp("off", argv[2]))
 		{
 			MotorTestSlide_Enabled = false;
 			Motor_ControlStop();
-			result = CommandResult_Ok_SendSuccessful;
+			result = CmdH_Result_Ok_SendSuccessful;
 		}
 		else
 		{
 			MotorTestSlide_Enabled = false;
 			Motor_ControlStop();
-			result = CommandResult_Error_WrongArgument2;
+			result = CmdH_Result_Error_WrongArgument2;
 		}
 	}
 	else
@@ -1684,18 +1685,18 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 				int8_t percent = (uint8_t)convertValue;
 				Motor_StateMachine_SetDc(percent);
 				TaskHandler_ClearTimeoutTask(Task_MotorTimeout);
-				result = CommandResult_Ok_SendSuccessful;
+				result = CmdH_Result_Ok_SendSuccessful;
 
 				isOk = true;
 			}
 			else
 			{
-				result = CommandResult_Error_WrongArgument2;
+				result = CmdH_Result_Error_WrongArgument2;
 			}
 		}
 		else
 		{
-			result = CommandResult_Error_WrongArgument2;
+			result = CmdH_Result_Error_WrongArgument2;
 		}
 
 		// 2. argument: servo
@@ -1713,16 +1714,16 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 					Motor_StateMachine_SetAngle(angle);
 					TaskHandler_ClearTimeoutTask(Task_MotorTimeout);
 
-					result = CommandResult_Ok_SendSuccessful;
+					result = CmdH_Result_Ok_SendSuccessful;
 				}
 				else
 				{
-					result = CommandResult_Error_WrongArgument2;
+					result = CmdH_Result_Error_WrongArgument2;
 				}
 			}
 			else
 			{
-				result = CommandResult_Error_WrongArgument2;
+				result = CmdH_Result_Error_WrongArgument2;
 			}
 		}
 		// else: isOk = false --> not need handle
@@ -1739,19 +1740,19 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 static CmdH_Result_t CommandFunction_ESP8266(uint32_t argc, char** argv)
 {
 	(void)argc;
-	bool result = CommandResult_Unknown;
+	bool result = CmdH_Result_Unknown;
 
 	if (!StrCmp("sendonwifi", argv[1]))
 	{
 		// Send message to ESP8266 sending queue, which will send on ESP8266 TCP connection
 		ESP8266_RequestSendTcpMessage(argv[2]);
-		result = CommandResult_Ok_SendSuccessful;
+		result = CmdH_Result_Ok_SendSuccessful;
 	}
 	else if (!StrCmp("sendtomodule", argv[1]))
 	{
 		// Send forward to ESP8266 module last parameter
 		ESP8266_SendString(argv[2]);
-		result = CommandResult_Ok_SendSuccessful;
+		result = CmdH_Result_Ok_SendSuccessful;
 	}
 	else if (!StrCmp("debug", argv[1]))
 	{
@@ -1760,18 +1761,18 @@ static CmdH_Result_t CommandFunction_ESP8266(uint32_t argc, char** argv)
 		{
 			// On
 			ESP8266_DebugEnableFlag = true;
-			result = CommandResult_Ok_SendSuccessful;
+			result = CmdH_Result_Ok_SendSuccessful;
 		}
 		else if (!StrCmp("off", argv[2]))
 		{
 			// Off
 			ESP8266_DebugEnableFlag = false;
-			result = CommandResult_Ok_SendSuccessful;
+			result = CmdH_Result_Ok_SendSuccessful;
 		}
 		else
 		{
 			// Wrong command
-			result = CommandResult_Error_WrongArgument2;
+			result = CmdH_Result_Error_WrongArgument2;
 		}
 	}
 	else if (!StrCmp("ip", argv[1]))
@@ -1780,12 +1781,12 @@ static CmdH_Result_t CommandFunction_ESP8266(uint32_t argc, char** argv)
 		char ipBuffer[80];
 		ESP8266_PrintIpAddress(ipBuffer);
 		CmdH_SendLine(ipBuffer);
-		result = CommandResult_Ok;
+		result = CmdH_Result_Ok;
 	}
 	else
 	{
 		// Wrong 1. parameter
-		result = CommandResult_Error_WrongArgument1;
+		result = CmdH_Result_Error_WrongArgument1;
 	}
 
 	return result;
@@ -1797,7 +1798,7 @@ static CmdH_Result_t CommandFunction_ESP8266(uint32_t argc, char** argv)
 #if defined(CONFIG_MODULE_RTC_ENABLE) || defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
 static CmdH_Result_t CommandFunction_Time(uint32_t argc, char** argv)
 {
-	CmdH_Result_t result = CommandResult_Unknown;
+	CmdH_Result_t result = CmdH_Result_Unknown;
 
 	if (!StrCmp("setdate", argv[1]) && argc == 3)
 	{
@@ -1807,11 +1808,11 @@ static CmdH_Result_t CommandFunction_Time(uint32_t argc, char** argv)
 		{
 			// Successful convert, set
 			DateTime_SetDate(&date);
-			result = CommandResult_Ok_SendSuccessful;
+			result = CmdH_Result_Ok_SendSuccessful;
 		}
 		else
 		{
-			result = CommandResult_Error_WrongArgument2;
+			result = CmdH_Result_Error_WrongArgument2;
 		}
 	}
 	else if (!StrCmp("settime", argv[1]) && argc == 3)
@@ -1822,11 +1823,11 @@ static CmdH_Result_t CommandFunction_Time(uint32_t argc, char** argv)
 		{
 			// Successful convert, set
 			DateTime_SetTime(&time);
-			result = CommandResult_Ok_SendSuccessful;
+			result = CmdH_Result_Ok_SendSuccessful;
 		}
 		else
 		{
-			result = CommandResult_Error_WrongArgument2;
+			result = CmdH_Result_Error_WrongArgument2;
 		}
 	}
 	else if (!StrCmp("status", argv[1]))
@@ -1837,11 +1838,11 @@ static CmdH_Result_t CommandFunction_Time(uint32_t argc, char** argv)
 		DateTime_PrintDateTimeToString(datetimestring, &dateTime);
 		CmdH_Printf("Date and Time: %s\r\n", datetimestring);
 
-		result = CommandResult_Ok;
+		result = CmdH_Result_Ok;
 	}
 	else
 	{
-		result = CommandResult_Error_WrongArgument1;
+		result = CmdH_Result_Error_WrongArgument1;
 	}
 
 	return result;
@@ -1859,7 +1860,7 @@ static CmdH_Result_t CommandFunction_EventLog(uint32_t argc, char** argv)
 	// List all event logs
 	EventLog_PrintAllLogRecords();
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 #endif
 
@@ -1877,7 +1878,7 @@ static CmdH_Result_t CommandFunction_adc(uint32_t argc, char** argv)
 	// Print ADC values
 	ADC_PrintAllValues();
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 #endif
 
@@ -1895,7 +1896,7 @@ static CmdH_Result_t CommandFunction_flashdel(uint32_t argc, char** argv)
 	// Convert arg2 hex
 	if (!StringHexToNum(argv[1], &Arg2Num))
 	{
-		return CommandResult_Error_WrongArgument1;
+		return CmdH_Result_Error_WrongArgument1;
 	}
 
 
@@ -1916,7 +1917,7 @@ static CmdH_Result_t CommandFunction_flashdel(uint32_t argc, char** argv)
 			Arg2Num
 			);
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 
 
@@ -1933,7 +1934,7 @@ static CmdH_Result_t CommandFunction_flashread(uint32_t argc, char** argv)
 	// Convert arg2 hex
 	if (!StringHexToNum(argv[1], &Arg2Num))
 	{
-		return CommandResult_Error_WrongArgument1;
+		return CmdH_Result_Error_WrongArgument1;
 	}
 
 
@@ -1947,7 +1948,7 @@ static CmdH_Result_t CommandFunction_flashread(uint32_t argc, char** argv)
 			Buffer[0]
 			);
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 
 
@@ -1963,13 +1964,13 @@ static CmdH_Result_t CommandFunction_flashwrite(uint32_t argc, char** argv)
 	// Convert arg2 hex
 	if (!StringHexToNum(argv[1], &Arg2Num))
 	{
-		return CommandResult_Error_WrongArgument1;
+		return CmdH_Result_Error_WrongArgument1;
 	}
 
 	// Convert arg3, decimal
 	if (!StringToUnsignedDecimalNum(argv[2], &Arg3Num))
 	{
-		return CommandResult_Error_WrongArgument2;
+		return CmdH_Result_Error_WrongArgument2;
 	}
 
 
@@ -1985,7 +1986,7 @@ static CmdH_Result_t CommandFunction_flashwrite(uint32_t argc, char** argv)
 			Arg2Num,
 			Arg3Num);
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 #endif	// #ifdef CONFIG_MODULE_FLASH_ENABLE
 
@@ -2014,7 +2015,7 @@ static CmdH_Result_t CommandFunction_raspberrypi(uint32_t argc, char** argv)
 		uint32_t value;
 		if (!StringToUnsignedDecimalNum(argv[2], &value))
 		{
-			return CommandResult_Error_WrongArgument2;
+			return CmdH_Result_Error_WrongArgument2;
 		}
 
 		if (value > 0)
@@ -2028,12 +2029,12 @@ static CmdH_Result_t CommandFunction_raspberrypi(uint32_t argc, char** argv)
 			LED_GREEN_OFF();
 		}
 
-		return CommandResult_Ok;
+		return CmdH_Result_Ok;
 	}
 	else
 	{
 		// Wrong command - not "setout"
-		return CommandResult_Error_WrongArgument1;
+		return CmdH_Result_Error_WrongArgument1;
 	}
 }
 #endif
@@ -2061,12 +2062,12 @@ static CmdH_Result_t CommandFunction_mr(uint32_t argc, char** argv)
 	// Convert arg2, source to hex
 	if (!StringHexToNum(argv[1], &Arg2Num))
 	{
-		return CommandResult_Error_WrongArgument1;
+		return CmdH_Result_Error_WrongArgument1;
 	}
 	// Convert arg3, size to dec
 	if (!StringToUnsignedDecimalNum(argv[2], &Arg3Num))
 	{
-		return CommandResult_Error_WrongArgument2;
+		return CmdH_Result_Error_WrongArgument2;
 	}
 
 	// casting for valid numbers
@@ -2090,7 +2091,7 @@ static CmdH_Result_t CommandFunction_mr(uint32_t argc, char** argv)
 		CmdH_Printf(" %02X", source[i]);
 	}
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 
 
@@ -2115,12 +2116,12 @@ static CmdH_Result_t CommandFunction_mw(uint32_t argc, char** argv)
 	// Convert hex
 	if (!StringHexToNum(argv[1], &Arg2Num))
 	{
-		return CommandResult_Error_WrongArgument1;
+		return CmdH_Result_Error_WrongArgument1;
 	}
 	// Convert hex
 	if (!StringHexToNum(argv[2], &Arg3Num))
 	{
-		return CommandResult_Error_WrongArgument2;
+		return CmdH_Result_Error_WrongArgument2;
 	}
 
 	if (!StrCmp("mwb", argv[0]))
@@ -2143,10 +2144,10 @@ static CmdH_Result_t CommandFunction_mw(uint32_t argc, char** argv)
 	}
 	else
 	{
-		return CommandResult_Error_Unknown;
+		return CmdH_Result_Error_Unknown;
 	}
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 #endif
 
@@ -2170,7 +2171,7 @@ static CmdH_Result_t CommandFunction_go(uint32_t argc, char** argv)
 	// Convert hex
 	if (!StringHexToNum(argv[1], &Arg2Num))
 	{
-		return CommandResult_Error_WrongArgument1;
+		return CmdH_Result_Error_WrongArgument1;
 	}
 
 	destination = Arg2Num;
@@ -2184,7 +2185,7 @@ static CmdH_Result_t CommandFunction_go(uint32_t argc, char** argv)
 	// We can use the "jump" ASM instruction, but not a good idea
 	// Programming manual page 92, B instruction
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 #endif
 
@@ -2198,7 +2199,7 @@ static CmdH_Result_t CommandFunction_Display(uint32_t argc, char** argv)
 {
 	(void)argc;
 
-	CmdH_Result_t result = CommandResult_Unknown;
+	CmdH_Result_t result = CmdH_Result_Unknown;
 
 	if (!StrCmp("write", argv[1]))
 	{
@@ -2212,16 +2213,16 @@ static CmdH_Result_t CommandFunction_Display(uint32_t argc, char** argv)
 				// Print line
 				Display_PrintString(separated[1], line, Font_8x5, NO_FORMAT);
 				Display_Activate();
-				result = CommandResult_Ok_SendSuccessful;
+				result = CmdH_Result_Ok_SendSuccessful;
 			}
 			else
 			{
-				result = CommandResult_Error_WrongArgument2;
+				result = CmdH_Result_Error_WrongArgument2;
 			}
 		}
 		else
 		{
-			result = CommandResult_Error_WrongArgument2;
+			result = CmdH_Result_Error_WrongArgument2;
 		}
 	}
 	else if (!StrCmp("clear", argv[1]))
@@ -2229,7 +2230,7 @@ static CmdH_Result_t CommandFunction_Display(uint32_t argc, char** argv)
 		// Clear
 		Display_Clear();
 		Display_Activate();
-		result = CommandResult_Ok_SendSuccessful;
+		result = CmdH_Result_Ok_SendSuccessful;
 	}
 #ifdef CONFIG_MODULE_DISPLAY_TEST
 	#ifdef CONFIG_DISPLAY_FONT8X5_ENABLE
@@ -2237,7 +2238,7 @@ static CmdH_Result_t CommandFunction_Display(uint32_t argc, char** argv)
 	{
 		// Test font - 8x5
 		Display_Test8x5Font();
-		result = CommandResult_Ok_SendSuccessful;
+		result = CmdH_Result_Ok_SendSuccessful;
 	}
 	#endif
 	#ifdef CONFIG_DISPLAY_FONT12X8_ENABLE
@@ -2245,7 +2246,7 @@ static CmdH_Result_t CommandFunction_Display(uint32_t argc, char** argv)
 	{
 		// Test font - 12x8
 		Display_Test12x8Font();
-		result = CommandResult_Ok_SendSuccessful;
+		result = CmdH_Result_Ok_SendSuccessful;
 	}
 	#endif
 	#ifdef CONFIG_DISPLAY_FONT32X20_ENABLE
@@ -2253,7 +2254,7 @@ static CmdH_Result_t CommandFunction_Display(uint32_t argc, char** argv)
 	{
 		// Test font - 32x20
 		Display_Test32x20Font();
-		result = CommandResult_Ok_SendSuccessful;
+		result = CmdH_Result_Ok_SendSuccessful;
 	}
 	#endif
 #endif	// #ifdef CONFIG_MODULE_DISPLAY_TEST
@@ -2262,12 +2263,12 @@ static CmdH_Result_t CommandFunction_Display(uint32_t argc, char** argv)
 	{
 		// Debugprint Display
 		Display_SendOnTerminal();
-		result = CommandResult_Ok_SendSuccessful;
+		result = CmdH_Result_Ok_SendSuccessful;
 	}
 #endif
 	else
 	{
-		result = CommandResult_Error_WrongArgument1;
+		result = CmdH_Result_Error_WrongArgument1;
 	}
 
 	return result;
@@ -2309,7 +2310,7 @@ static CmdH_Result_t CommandFunction_IoStates(uint32_t argc, char** argv)
 	}
 #endif
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 #endif
 
@@ -2322,7 +2323,7 @@ static CmdH_Result_t CommandFunction_IoStates(uint32_t argc, char** argv)
 static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 {
 	(void)argc;
-	CmdH_Result_t result = CommandResult_Unknown;
+	CmdH_Result_t result = CmdH_Result_Unknown;
 	static bool Simulation_IsEnabled = false;
 
 	if (!Simulation_IsEnabled)
@@ -2330,13 +2331,13 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 		if (!StrCmp("enable", argv[1]) && argc == 2)
 		{
 			Simulation_IsEnabled = true;
-			result = CommandResult_Ok_SendSuccessful;
+			result = CmdH_Result_Ok_SendSuccessful;
 		}
 		else
 		{
 			// Error
 			CmdH_SendLine("Simulation is not enabled!");
-			result = CommandResult_Ok;	// Not ok, but do not send other error message
+			result = CmdH_Result_Ok;	// Not ok, but do not send other error message
 		}
 	}
 	else
@@ -2347,7 +2348,7 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 			// @note	Be careful!!!!
 			// Infinite loop test for WatchDog test
 			while(1);
-			result = CommandResult_Ok_SendSuccessful;
+			result = CmdH_Result_Ok_SendSuccessful;
 		}
 		else if (!StrCmp("genfault", argv[1]))
 		{
@@ -2369,7 +2370,7 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 
 				uprintf("Buffer: %s\r\n", buffer);
 
-				result = CommandResult_Ok_SendSuccessful;
+				result = CmdH_Result_Ok_SendSuccessful;
 			}
 			else if (!StrCmp("zerodivide", argv[2]))
 			{
@@ -2386,7 +2387,7 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 
 				uprintf("ZeroDivide result: %d\r\n", c);
 
-				result = CommandResult_Ok_SendSuccessful;
+				result = CmdH_Result_Ok_SendSuccessful;
 			}
 			else if (!StrCmp("failpointer", argv[2]))
 			{
@@ -2397,11 +2398,11 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 
 				uprintf("WrongPointer value: %d\r\n", *wrongPointer);
 
-				result = CommandResult_Ok_SendSuccessful;
+				result = CmdH_Result_Ok_SendSuccessful;
 			}
 			else
 			{
-				result = CommandResult_Error_WrongArgument2;
+				result = CmdH_Result_Error_WrongArgument2;
 			}
 		}
 #ifdef CONFIG_SWO_ENABLE
@@ -2418,11 +2419,11 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 			if (StringToUnsignedDecimalNum(argv[2], &pin))
 			{
 				IO_SetInputState((Input_t)pin, InputState_Active);
-				result = CommandResult_Ok_SendSuccessful;
+				result = CmdH_Result_Ok_SendSuccessful;
 			}
 			else
 			{
-				result = CommandResult_Error_WrongArgument2;
+				result = CmdH_Result_Error_WrongArgument2;
 			}
 		}
 	#if IO_OUTPUTS_NUM > 0
@@ -2432,11 +2433,11 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 			if (StringToUnsignedDecimalNum(argv[2], &pin))
 			{
 				IO_SetOutputState((Output_t)pin, OutputState_Active);
-				result = CommandResult_Ok_SendSuccessful;
+				result = CmdH_Result_Ok_SendSuccessful;
 			}
 			else
 			{
-				result = CommandResult_Error_WrongArgument2;
+				result = CmdH_Result_Error_WrongArgument2;
 			}
 		}
 	#endif
@@ -2460,13 +2461,13 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 					isOk = false;
 
 				if (isOk)
-					result = CommandResult_Ok_SendSuccessful;
+					result = CmdH_Result_Ok_SendSuccessful;
 				else
-					result = CommandResult_Error_WrongArgument2;
+					result = CmdH_Result_Error_WrongArgument2;
 			}
 			else
 			{
-				result = CommandResult_Error_TooFewArgument;
+				result = CmdH_Result_Error_TooFewArgument;
 			}
 		}
 #endif
@@ -2481,11 +2482,11 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 				if (StringToUnsignedDecimalNum(argv[2], &value))
 				{
 					EventHandler_GenerateEvent(value, 0, Task_ProcessDebugUartReceivedCommand);
-					result = CommandResult_Ok_SendSuccessful;
+					result = CmdH_Result_Ok_SendSuccessful;
 				}
 				else
 				{
-					result = CommandResult_Error_WrongArgument2;
+					result = CmdH_Result_Error_WrongArgument2;
 				}
 			}
 			else
@@ -2506,15 +2507,15 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 				}
 
 				if (isOk)
-					result = CommandResult_Ok_SendSuccessful;
+					result = CmdH_Result_Ok_SendSuccessful;
 				else
-					result = CommandResult_Error_WrongArgument2;
+					result = CmdH_Result_Error_WrongArgument2;
 			}
 		}
 #endif
 		else
 		{
-			result = CommandResult_Error_WrongArgument1;
+			result = CmdH_Result_Error_WrongArgument1;
 		}
 	}
 
@@ -2531,7 +2532,7 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 static CmdH_Result_t CommandFunction_TaskHandler(uint32_t argc, char** argv)
 {
 	(void)argc;
-	CmdH_Result_t result = CommandResult_Unknown;
+	CmdH_Result_t result = CmdH_Result_Unknown;
 
 	#ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
 	if (!StrCmp("statistics", argv[1]))
@@ -2539,19 +2540,19 @@ static CmdH_Result_t CommandFunction_TaskHandler(uint32_t argc, char** argv)
 		// TaskHandler statistics
 		TaskHandler_PrintStatistics();
 
-		result = CommandResult_Ok;
+		result = CmdH_Result_Ok;
 	}
 	else if (!StrCmp("runcounts", argv[1]))
 	{
 		// TaskHandler - Run counts
 		TaskHandler_PrintTaskRunCounts();
 
-		result = CommandResult_Ok;
+		result = CmdH_Result_Ok;
 	}
 	#endif
 	else
 	{
-		result = CommandResult_Error_WrongArgument1;
+		result = CmdH_Result_Error_WrongArgument1;
 	}
 
 	return result;
@@ -2586,7 +2587,7 @@ static CmdH_Result_t CommandFunction_Debug(uint32_t argc, char** argv)
 	{
 		// Wrong 2. parameter
 		isOk = false;
-		result = CommandResult_Error_WrongArgument2;
+		result = CmdH_Result_Error_WrongArgument2;
 	}
 
 	if (isOk)
@@ -2598,11 +2599,11 @@ static CmdH_Result_t CommandFunction_Debug(uint32_t argc, char** argv)
 			if (Debug_EnableDisable((Debug_t)value, enable))
 			{
 				// Successful
-				result = CommandResult_Ok_SendSuccessful;
+				result = CmdH_Result_Ok_SendSuccessful;
 			}
 			else
 			{
-				result = CommandResult_Error_WrongArgument1;
+				result = CmdH_Result_Error_WrongArgument1;
 			}
 		}
 		else
@@ -2610,11 +2611,11 @@ static CmdH_Result_t CommandFunction_Debug(uint32_t argc, char** argv)
 			// Find in "list"
 			if (Debug_SetDebugTaskWithName(argv[1], enable))
 			{
-				result = CommandResult_Ok_SendSuccessful;
+				result = CmdH_Result_Ok_SendSuccessful;
 			}
 			else
 			{
-				result = CommandResult_Error_WrongArgument1;
+				result = CmdH_Result_Error_WrongArgument1;
 			}
 		}
 	}
@@ -2649,7 +2650,7 @@ static CmdH_Result_t CommandFunction_Button(uint32_t argc, char** argv)
 	CmdH_Printf("Button: %s is %s\r\n", buttonName, buttonState ? "pressed" : "released");
 #endif
 
-	return CommandResult_Ok;
+	return CmdH_Result_Ok;
 }
 #endif
 
