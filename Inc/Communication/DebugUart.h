@@ -1,7 +1,7 @@
 /*
  *		DebugUart.h
  *		Created on:		2017-03-15
- *		Author:			Vizi G�bor
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		Debug uart functions
   *		Target:			STM32Fx
@@ -35,7 +35,7 @@
 
 #define DEBUGUART_TX_BUFFER_SIZE				(256UL)	// Size of Transmission buffer
 #define DEBUGUART_RX_BUFFER_SIZE				(256UL)		// Size of Reception buffer
-#define DEBUGUART_RX_BUFFER_WAIT_LENGTH			(1)
+#define DEBUGUART_RXBUFFER_WAIT_LENGTH			(1)
 
 #define DEBUGUART_RESPONSE_BUFFER				(256U)
 

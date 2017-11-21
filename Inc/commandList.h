@@ -39,7 +39,7 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-extern const CmdH_Command_t CmdH_CommandList[] ;
+extern const CmdH_Command_t CmdH_CommandList[];
 
 extern const CmdH_CommandID_t CmdH_CommandNum;
 

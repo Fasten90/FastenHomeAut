@@ -16,13 +16,14 @@
 #include "Communication.h"
 
 
+
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
 // Set default values for module options:
 #if !defined(GLOBVARH_UNIT_ENABLE)
-	#define GLOBVARH_UNIT_ENABLE				1		///< optional unit field to a global variable
+	#define GLOBVARH_UNIT_ENABLE				0		///< optional unit field to a global variable
 #endif
 
 #if !defined(GLOBVARH_DESCRIPTION_ENABLE)
@@ -37,7 +38,7 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-typedef uint8_t GlobVarH_ID_t;							///< type alias for counting the rows in the variable array. \sa GlobalVarList
+typedef int8_t GlobVarH_ID_t;							///< type alias for counting the rows in the variable array. \sa GlobalVarList
 
 ///< GlobalVariable type
 /// \note	This enum has a "name list" (GlobalVarTypesNames), must be in the same order with it!
@@ -108,8 +109,6 @@ typedef struct
 	void * const varPointer;				///< Pointer of variable
 	const bool isReadOnly;					///< Is read only?
 
-	// TODO felesleges változó: elég az vizsgálni, hogy a köv. 2 pointer !=NULL
-	const bool isFunction;					///< Is it function?
 	// NOTE: callback functions can not be used for string variable!
 	const GeneralFunctionPointer getFunctionPointer;	///< callback function for getting the value of the variable
 	const GeneralFunctionPointer setFunctionPointer;	///< callback function for setting the value of the variable
@@ -119,7 +118,7 @@ typedef struct
 
 	const CommProtocolBit_t sourceEnable;	///< Enabled sources (for set-get)	// TODO: fordítási opció legyen
 
-	// TODO: Optimize these: isHex (bool), isReadOnly (bool), isFunction (bool)
+	// TODO: Optimize these: isHex (bool), isReadOnly (bool)
 	const bool isHex;						///< Set-get in hexadecimal format? The variable is interpretable in hex format!
 
 	const char * const * enumList;			///< Enum list, if it is enumerator
@@ -141,8 +140,15 @@ typedef struct
 	uint32_t varID;							///< Trace - GlobalVar ID to be traced
 } GlobVarH_TraceLogRecord_t;
 
-
-
+typedef struct
+{
+	const GlobVarH_VarRecord_t *items;		///< pointer to a 1st item of a variable list (GlobVarH_TraceLogRecord_t[])
+	const uint8_t num;						///< number of items in the list
+	uint32_t traceVarEnabled;				/**<
+											 * Used as bit field to enable/disable variable tracing.
+											 * e.g.: bit 1. corresponds to the 1st item in GlobVarH_VarList[] -> NOTE 32th variable can not be traced!
+											 */
+} GlobVarH_VarListInfo_t;
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
@@ -155,8 +161,8 @@ extern uint32_t GlobVarH_TemporaryValue;
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void GlobVarH_CheckGlobalVarArray(void);
-GlobVarH_ProcessResult_t GlobVarH_ProcessVariableCommand(const char *varName, const char *param, GlobVarH_SetGetType_t setGetType, CommProtocol_t source);
+void GlobVarH_CheckGlobalVarArray(const GlobVarH_VarListInfo_t *varList);
+GlobVarH_ProcessResult_t GlobVarH_ProcessVariableCommand(const GlobVarH_VarListInfo_t *varList, const char *varName, const char *param, GlobVarH_SetGetType_t setGetType, CommProtocol_t source);
 void GlobVarH_WriteResults(GlobVarH_ProcessResult_t result);
 
 void GlobVarH_ListAllVariableParameters(void);

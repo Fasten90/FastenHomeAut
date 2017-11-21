@@ -35,7 +35,7 @@
 
 // Optimized version:
 #define TERMINAL_SEND_WELCOME()						\
-		Terminal_SendMessage(					\
+		Terminal_SendMessage(						\
 		"\r\n"										\
 		"Welcome in CommandHandler!\r\n"			\
 		"(c) Copyright, Vizi Gabor\r\n"				\

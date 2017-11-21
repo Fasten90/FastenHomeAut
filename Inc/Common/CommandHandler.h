@@ -33,6 +33,9 @@
 #define CMDH_COMMAND_ARG_MAX_COUNT			(3)
 #define CMDH_COMMAND_ARG_MAX_NUM_BITS		(0x07)	// 0b1111 <-- warning: "binary constants are a GCC extension
 
+// False define for CommandHandler task (Used by EventLog)
+#define Task_CommandHandlerProcessEvent		(0)
+
 
 
 /*------------------------------------------------------------------------------
@@ -42,17 +45,18 @@
 ///< Command results
 typedef enum
 {
-	CommandResult_Unknown = 0,								///< Unknown result (do not use!)
-	CommandResult_Ok,										///< Successful - but not sending successful message (e.g. write answer from command)
-	CommandResult_Ok_SendSuccessful,						///< Successful - CommandHandler send "successful" message
-	CommandResult_Error_WrongArgument1,						///< First argument is wrong (type or range)
-	CommandResult_Error_WrongArgument2,						///< Second argument is wrong (type or range)
-	CommandResult_Error_TooFewArgument,						///< Fewer argument than needed
-	CommandResult_Error_WrongArgumentNum,					///< Not good argument number
-	CommandResult_Error_TooManyArgument,					///< More argument than needed
-	CommandResult_Error_CommandNotFound,					///< Command not found
-	CommandResult_Error_CallCmdHandlerWithInvalidArgument,	///< Called Command Handler with invalid argument
-	CommandResult_Error_Unknown								///< Unknown error (in command processing)
+	CmdH_Result_Unknown = 0,								///< Unknown result (do not use!)
+	CmdH_Result_Ok,											///< Successful - but not sending successful message (e.g. write answer from command)
+	CmdH_Result_Ok_SendSuccessful,							///< Successful - CommandHandler send "successful" message
+	CmdH_Result_Error_WrongArgument1,						///< First argument is wrong (type or range)
+	CmdH_Result_Error_WrongArgument2,						///< Second argument is wrong (type or range)
+	CmdH_Result_Error_WrongArgument3,						///< Third argument is wrong (type or range)
+	CmdH_Result_Error_TooFewArgument,						///< Fewer argument than needed
+	CmdH_Result_Error_WrongArgumentNum,						///< Not good argument number
+	CmdH_Result_Error_TooManyArgument,						///< More argument than needed
+	CmdH_Result_Error_CommandNotFound,						///< Command not found
+	CmdH_Result_Error_CallCmdHandlerWithInvalidArgument,	///< Called Command Handler with invalid argument
+	CmdH_Result_Error_Unknown								///< Unknown error (in command processing)
 } CmdH_Result_t;
 
 
@@ -67,10 +71,10 @@ typedef uint8_t CmdH_CommandID_t;
 ///< Command Argument number
 typedef enum
 {
-	CommandArgument_0 = (1 << 0),
-	CommandArgument_1 = (1 << 1),
-	CommandArgument_2 = (1 << 2),
-	CommandArgument_3 = (1 << 3)
+	CmdH_CommandArgNum_0 = (1 << 0),
+	CmdH_CommandArgNum_1 = (1 << 1),
+	CmdH_CommandArgNum_2 = (1 << 2),
+	CmdH_CommandArgNum_3 = (1 << 3)
 
 	// Set one by one bit
 } CmdH_CommandArgNum_t;
@@ -85,6 +89,8 @@ typedef struct
 	const char *syntax;											///< Command syntax
 	const char *example;										///< Example of parameters
 	const CmdH_CommandArgNum_t commandArgNum;					///< Required command argument num
+
+	// TODO: Add enabled communication source
 } CmdH_Command_t;
 
 
@@ -110,6 +116,8 @@ void CmdH_PrintAllCommands(void);
 void CmdH_SearchCommandAndPrintHelp(const char *command);
 
 CmdH_Result_t CmdH_ExecuteCommand(CommProtocol_t source, char * command, char * response, size_t length);
+CmdH_Result_t CmdH_ExecuteCommandWithParams(CommProtocol_t source, char *command, char * param, char * response, size_t length);
+
 void CmdH_PrintResult(CmdH_Result_t result);
 
 void CmdH_SetResponse(CommProtocol_t commandSource, char * respBuffer, size_t respLength);
