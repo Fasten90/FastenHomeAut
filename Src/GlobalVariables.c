@@ -37,26 +37,26 @@ const GlobVarH_VarRecord_t GlobVarH_VarList[] =
 			.name = "version",
 			.varPointer = (void * const)&Global_Version,
 			.type = GlobVarH_Type_String,
-			.isReadOnly = true
+			.isReadOnly = true,
 		},
 		{
 			.name = "devicename",
 			.varPointer = Global_DeviceName,
 			.type = GlobVarH_Type_String,
 			.maxValue = 20,
-			.description = "Device name"
+			.description = "Device name",
 		},
 		{
 			.name = "boardname",
 			.varPointer = (void * const)Global_BoardName,
 			.type = GlobVarH_Type_String,
-			.isReadOnly = true
+			.isReadOnly = true,
 		},
 		{
 			.name = "boardmcu",
 			.varPointer = (void * const)Global_BoardMCU,
 			.type = GlobVarH_Type_String,
-			.isReadOnly = true
+			.isReadOnly = true,
 		},
 		{
 			.name = "tick",
@@ -64,7 +64,9 @@ const GlobVarH_VarRecord_t GlobVarH_VarList[] =
 			.getFunctionPointer = (GeneralFunctionPointer)HAL_GetTick,
 			.type = GlobVarH_Type_Uint32,
 			.isReadOnly = true,
-			.description = "Tick counter"
+#if GLOBVARH_DESCRIPTION_ENABLE == 1
+			.description = "Tick counter",
+#endif
 		},
 #ifdef CONFIG_MODULE_ADC_ENABLE
 		{
@@ -72,8 +74,12 @@ const GlobVarH_VarRecord_t GlobVarH_VarList[] =
 			.varPointer = (void * const)&ADC_ConvertedValues[0],
 			.type = GlobVarH_Type_Float,
 			.isReadOnly = true,
+#if GLOBVARH_UNIT_ENABLE == 1
 			.unit = "V",
-			.description = "Vsource"
+#endif
+#if GLOBVARH_DESCRIPTION_ENABLE == 1
+			.description = "Vsource",
+#endif
 		}
 #endif
 

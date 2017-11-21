@@ -365,7 +365,7 @@ static GlobVarH_ProcessResult_t GlobVarH_GetVariable(const GlobVarH_VarRecord_t 
 			break;
 	}
 
-#ifdef GLOBVARH_UNIT_ENABLE
+#if GLOBVARH_UNIT_ENABLE == 1
 	// Append unit, if need
 	if (varRecord->unit)
 	{
@@ -1382,8 +1382,16 @@ void GlobVarH_ListAllVariableParameters(void)
 				GlobVarH_TypesNames[GlobVarH_VarList[i].type],
 				GlobVarH_VarList[i].minValue,
 				GlobVarH_VarList[i].maxValue,
+#if GLOBVARH_UNIT_ENABLE == 1
 				GlobVarH_VarList[i].unit,
+#else
+				"-",
+#endif
+#if GLOBVARH_DESCRIPTION_ENABLE == 1
 				GlobVarH_VarList[i].description
+#else
+				"-"
+#endif
 				);
 	}
 
@@ -1579,10 +1587,10 @@ void GlobVarH_PrintTraceBuffer(void)
 
 			.enumList = GlobVarH_VarList[index].enumList,
 
-	#ifdef GLOBVARH_UNIT_ENABLE
+	#if GLOBVARH_UNIT_ENABLE == 1
 			.unit = GlobVarH_VarList[index].unit,
 	#endif
-	#ifdef GLOBVARH_DESCRIPTION_ENABLE
+	#if GLOBVARH_DESCRIPTION_ENABLE == 1
 			.description = GlobVarH_VarList[index].description,
 	#endif
 		};
@@ -1633,7 +1641,9 @@ const GlobVarH_VarRecord_t GlobVarH_UT_VarList[] =
 			.name = "testuint8",
 			.varPointer = &testUint8,
 			.type = GlobVarH_Type_Uint8,
+#if GLOBVARH_UNIT_ENABLE == 1
 			.unit = "cm",
+#endif
 			.description = "test uint8 variable"
 		},
 		{
@@ -1740,7 +1750,11 @@ void GlobVarH_UnitTest(void)
 	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand(&utVarList, "testuint8", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testuint8 get error");
+#if GLOBVARH_UNIT_ENABLE == 1
 	UNITTEST_ASSERT(!StrCmp("8 cm", Communication_Buffer), "testuint8 get error");
+#else
+	UNITTEST_ASSERT(!StrCmp("8", Communication_Buffer), "testuint8 get error");
+#endif
 
 	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand(&utVarList, "testuint8", "255", GlobVarH_SetGet_Set, CommProt_Buffer);
@@ -1749,7 +1763,11 @@ void GlobVarH_UnitTest(void)
 	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand(&utVarList, "testuint8", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testuint8 get error");
+#if GLOBVARH_UNIT_ENABLE == 1
 	UNITTEST_ASSERT(!StrCmp("255 cm", Communication_Buffer), "testuint8 get error");
+#else
+	UNITTEST_ASSERT(!StrCmp("255", Communication_Buffer), "testuint8 get error");
+#endif
 
 	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand(&utVarList, "testuint8", "256", GlobVarH_SetGet_Set, CommProt_Buffer);
@@ -1758,8 +1776,11 @@ void GlobVarH_UnitTest(void)
 	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand(&utVarList, "testuint8", "", GlobVarH_SetGet_Get, CommProt_Buffer);
 	UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testuint8 get error");
+#if GLOBVARH_UNIT_ENABLE == 1
 	UNITTEST_ASSERT(!StrCmp("255 cm", Communication_Buffer), "testuint8 set-get error");
-
+#else
+	UNITTEST_ASSERT(!StrCmp("255", Communication_Buffer), "testuint8 set-get error");
+#endif
 
 	// test "testbool" variable
 	// Set valid value: 1/true
