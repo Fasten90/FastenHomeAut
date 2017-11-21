@@ -1,7 +1,7 @@
 /*
  *		String.c
  *		Created on:		2016-01-01
- *		Author: 		Vizi GÃ¡bor
+ *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		String manipulation functions
  *		Target:			STM32Fx
@@ -158,14 +158,21 @@ uint8_t UnsignedDecimalToString(uint32_t value, char *str)
 
 
 
+/**
+ * \brief	uint32_t to string (with length)
+ */
 size_t UnsignedDecimalToStringSafe(uint32_t value, char *str, size_t maxLength)
 {
 	size_t length = 0;
 	bool isStarted = false;
 
+	if (str == NULL || maxLength == 0)
+		return 0;
+
 	// Largest num: 1xxxxxx...
 	uint32_t decade = 1000000000;
 
+	/// TODO: Implement without "isStarted"
 	while ((decade > 1) && ((length+1) < maxLength))
 	{
 		if ((value >= decade) || (isStarted == true))
@@ -180,6 +187,7 @@ size_t UnsignedDecimalToStringSafe(uint32_t value, char *str, size_t maxLength)
 		decade /= 10;				// /10
 	}
 
+	// TODO: Merge this "last digit" with above code
 	if ((length+1) < maxLength)
 	{
 		str[length] = (value + '0');	// Last digit
@@ -224,7 +232,6 @@ uint8_t UnsignedDecimalLength(uint32_t value)
 uint8_t UnsignedDecimalToStringFill(uint32_t value, char *str, uint8_t fillLength, char fillCharacter)
 {
 	uint8_t length = 0;
-	uint8_t i;
 
 	length = UnsignedDecimalLength(value);
 
@@ -236,8 +243,10 @@ uint8_t UnsignedDecimalToStringFill(uint32_t value, char *str, uint8_t fillLengt
 	}
 	else
 	{
+		uint8_t i;
+
 		// Need fill
-		for (i=0; i < (fillLength - length); i++)
+		for (i = 0; i < (fillLength - length); i++)
 		{
 			str[i] = fillCharacter;
 		}
@@ -313,6 +322,7 @@ uint8_t SignedDecimalToStringFill(int32_t value, char *str, uint8_t fillLength, 
  */
 char HexToHexChar(uint8_t value)
 {
+	// TODO: Rename hex --> to nibble
 	char hexChar;
 
 	if (value <= 9)
@@ -336,7 +346,7 @@ char HexToHexChar(uint8_t value)
 
 
 /**
- * \brief	Convert a byte to hexadecimal string
+ * \brief	Convert a byte/octet to hexadecimal string
  * \return	Length
  */
 uint8_t ByteToHexaString(uint8_t byte, char *str)
@@ -346,11 +356,11 @@ uint8_t ByteToHexaString(uint8_t byte, char *str)
 
 	// First hex
 	hex = (byte >> 4);
-	str[length++] = HexToHexChar (hex);
+	str[length++] = HexToHexChar(hex);
 
 	// Second hex
 	hex = (byte & 0x0F);
-	str[length++] = HexToHexChar (hex);
+	str[length++] = HexToHexChar(hex);
 
 	// Put end char
 	str[length] = '\0';
@@ -423,7 +433,7 @@ uint8_t DecimalToHexaString(uint32_t value, char *str, uint8_t length)
 	for (i = 0; i < length; i++)
 	{
 		// Convert next byte
-		octet = (uint8_t)(0x0F&(value >> ((length-i-1)*4)));
+		octet = (uint8_t)(0x0F & (value >> ((length-i-1)*4)));
 		str[i] = HexToHexChar (octet);
 	}
 
@@ -443,7 +453,6 @@ uint8_t FloatToString(float value, char *str, uint8_t integerLength, uint8_t fra
 	uint8_t num;
 	uint8_t length = 0;
 	uint32_t calcValue;
-
 
 	// Sign
 	if (value < 0)
@@ -467,6 +476,8 @@ uint8_t FloatToString(float value, char *str, uint8_t integerLength, uint8_t fra
 		// float : 4.567
 		// fractionLength: 4
 		// string: 4.5670
+
+		// TODO: Make with multiplex (e.g. 0.567 -> * 1000 = 567 --> UnsignedDecimalToString...
 
 		// 4.567 --> 0.567 --> 5670
 		// Only fraction
@@ -497,10 +508,11 @@ uint8_t FloatToString(float value, char *str, uint8_t integerLength, uint8_t fra
 /**
  * \brief	Look the string is hexa or not
  * \str		Null terminated string
- * \return	How many hexa characters are...
+ * \return	How many hexa characters are in the string
  */
 uint8_t StringIsHexadecimalString(const char *str)
 {
+	// TODO: uint8_t length to size_t?
 	uint8_t length = 0;
 	uint8_t i;
 
@@ -535,14 +547,14 @@ uint8_t StringIsHexadecimalString(const char *str)
  */
 uint8_t StringIsUnsignedDecimalString(const char *str)
 {
-	uint8_t count = 0;
+	uint8_t length = 0;
 	uint8_t i;
 
-	for (i = 0; str[i]; i++)
+	for (i = 0; str[i] != '\0'; i++)
 	{
 		if (IsDecimalChar(str[i]))
 		{
-			count++;
+			length++;
 		}
 		else
 		{
@@ -551,7 +563,7 @@ uint8_t StringIsUnsignedDecimalString(const char *str)
 		}
 	}
 
-	return count;
+	return length;
 }
 
 
@@ -576,7 +588,9 @@ uint8_t StringIsSignedDecimalString(const char *str)
 	}
 
 	// Check after sign
-	return (length + StringIsUnsignedDecimalString (&str[length]));
+	length += StringIsUnsignedDecimalString (&str[length]);
+
+	return length;
 }
 
 
@@ -628,7 +642,7 @@ bool IsDecimalChar (const char c)
 
 
 /**
- * \brief	Binary string to uint32_t
+ * \brief	'Binary string' to 'uint32_t'
  *			Example: "01110" -> 14
  */
 bool StringBinaryToNum(const char *str, uint32_t *num)
@@ -714,7 +728,7 @@ bool HexCharToHex(const char c, uint8_t *hexValue)
  * \return	true, if successful
  * 			false, if has error
  */
-bool StringByteToNum(const char *str, uint8_t *byte)
+bool StringHexByteToNum(const char *str, uint8_t *byte)
 {
 	uint8_t calculatedByte1 = 0;
 	uint8_t calculatedByte2 = 0;
@@ -1031,7 +1045,11 @@ size_t StringLength(const char *str)
 	}
 
 	// Added max length checking
-	while ((length < STRING_SIZE_MAX) && (str[length] !='\0')) length++;	// Length = string length
+	while ((length < STRING_SIZE_MAX) && (str[length] != '\0'))
+	{
+		length++;	// Length = string length
+	}
+
 	return length;
 }
 
@@ -1089,9 +1107,15 @@ uint8_t StrCmpFirst(const char *str1, const char *str2)
 {
 	size_t i = 0;
 
+	if ((str1 == NULL) || (str2 == NULL))
+	{
+		// One of parameter is NULL... not equal
+		return 1;
+	}
+
 	while (*str1)
 	{
-		if ((*str1 !=  *str2) || (i >= STRING_SIZE_MAX))
+		if ((*str1 != *str2) || (i >= STRING_SIZE_MAX))
 		{
 			return 1;	// not equal
 		}
@@ -1110,12 +1134,12 @@ uint8_t StrCmpFirst(const char *str1, const char *str2)
  * \return	1, if not equal
  * 			0, if equal
  */
-uint8_t StrCmpWithLength(const char * ch1, const char *ch2, size_t length)
+uint8_t StrCmpWithLength(const char * str1, const char *str2, size_t length)
 {
 	size_t i;
 
 	// Check pointers + length
-	if ((ch1 == NULL) || (ch2 == NULL) || (length == 0))
+	if ((str1 == NULL) || (str2 == NULL) || (length == 0))
 	{
 		return 1;
 	}
@@ -1123,12 +1147,12 @@ uint8_t StrCmpWithLength(const char * ch1, const char *ch2, size_t length)
 	// Compare characters
 	for (i = 0; i < length; i++)
 	{
-		if (*ch1 !=  *ch2)
+		if (*str1 != *str2)
 		{
 			return 1;	// not equal
 		}
-		ch1++;
-		ch2++;		
+		str1++;
+		str2++;		
 	}
 	
 	return 0;		// equal	
@@ -1172,6 +1196,11 @@ size_t StrCpy(char *dest, const char *str)
 size_t StrCpyFixLength(char *dest, const char *str, size_t length)
 {
 	size_t i;
+
+	if ((dest == NULL) || (str == NULL) || (length == 0))
+	{
+		return 0;
+	}
 
 	// Copy characters
 	for (i = 0; i < length; i++)
@@ -1308,12 +1337,12 @@ size_t StrAppend(char *dest, const char *str)
 /**
  * \brief	Append string to dest's end
  * \length	New string's length (original + copied)
- * \note	dest buffer can be overflowed, because there is no overflow checking!
  */
 size_t StrAppendSafe(char *dest, const char *str, size_t destLength)
 {
 	size_t length = 0;
 
+	// Check parameters (str not need check)
 	if (dest == NULL)
 	{
 		return length;
@@ -1352,6 +1381,7 @@ void StrTrim(char *str)
 	size_t length = StringLength(str) - 1;
 	size_t i;
 
+	// Start from end of string
 	for (i = length; i > 0; i--)
 	{
 		if (str[i] == ' ' || str[i] == '\t' || str[i] == '\r' || str[i] == '\n')
@@ -1370,6 +1400,7 @@ void StrTrim(char *str)
 /**
  * \brief	Convert string to lowercase
  * \str		'\0' terminated string
+ * \note	Be careful, only call with changeable string!
  */
 void StringLower(char * str)
 {
@@ -1390,6 +1421,8 @@ void StringLower(char * str)
 
 /**
  * \brief	Convert string to UPPERCASE
+ * \str		'\0' terminated string
+ * \note	Be careful, only call with changeable string!
  */
 void StringUpper(char * str)
 {
@@ -1418,6 +1451,7 @@ void StringUpper(char * str)
 char * STRING_FindCharacter(const char *str, const char findCharacter)
 {
 	size_t i;
+	// TODO: Without StringLength
 	size_t length = StringLength(str);
 
 	// Check parameter
@@ -1520,7 +1554,7 @@ uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint
 			j = 0;
 			if (parameters >= parameterMaxCount)
 			{
-				// Ok, end
+				// maximal tokens found
 				break;
 			}
 			else
@@ -1564,7 +1598,8 @@ size_t string_printf(char *str, const char *format, va_list ap)
 {
 	// TODO: Use "new" typedefs
 
-	char	*p;			// step on fmt
+	// Type variables
+	char	*p;			// step on format string
 	char	*sval;		// string
 	int		ival;		// int
 	unsigned int uival;	// uint
@@ -1573,10 +1608,15 @@ size_t string_printf(char *str, const char *format, va_list ap)
 
 	char *string = str;
 
+	// Process variables
 	bool paramHasLength;
 	uint8_t paramNum1;
 	uint8_t paramNum2;
 	char fillCharacter;
+
+	// Check parameters
+	if (str == NULL || format == NULL)
+		return 0;
 
 	for (p = (char *)format; *p; p++)				// p to EOS
 	{
@@ -1768,6 +1808,7 @@ size_t string_printf(char *str, const char *format, va_list ap)
 
 
 
+
 /**
  * \brief	Instead of snprintf()
  *			Used '%' parameters
@@ -1777,6 +1818,7 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
 {
 	// TODO: Use "new" typedefs
 
+	// Type variables
 	char	*p;			// step on format string
 	char	*sval;		// string
 	int		ival;		// int
@@ -1784,13 +1826,19 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
 	float	flval;		// float
 	char 	cval;		// character
 
+	// String variables
 	size_t length = 0;
 	size_t remainLength = maxLen - 1;
 
+	// Process variables
 	bool paramHasLength;
 	uint8_t paramNum1;
 	uint8_t paramNum2;
 	char fillCharacter;
+
+	// Check parameters
+	if (str == NULL || format == NULL)
+		return 0;
 
 	for (p = (char *)format; *p; p++)				// p to EOS
 	{
@@ -2275,18 +2323,18 @@ void STRING_UnitTest(void)
 	// Byte
 
 	// Good bytes
-	result = StringByteToNum("00", &value8);
+	result = StringHexByteToNum("00", &value8);
 	UNITTEST_ASSERT(result, "StringByteToNum error");
 	UNITTEST_ASSERT((value8 == 0x00), "StringByteToNum error");
-	result = StringByteToNum("15", &value8);
+	result = StringHexByteToNum("15", &value8);
 	UNITTEST_ASSERT(result, "StringByteToNum error");
 	UNITTEST_ASSERT((value8 == 0x15), "StringByteToNum error");
-	result = StringByteToNum("FF", &value8);
+	result = StringHexByteToNum("FF", &value8);
 	UNITTEST_ASSERT(result, "StringByteToNum error");
 	UNITTEST_ASSERT((value8 == 0xFF), "StringByteToNum error");
 
 	// Wrong byte
-	result = StringByteToNum("FG", &value8);
+	result = StringHexByteToNum("FG", &value8);
 	UNITTEST_ASSERT(!result, "StringByteToNum error");
 
 
