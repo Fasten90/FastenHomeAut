@@ -1768,7 +1768,6 @@ size_t string_printf(char *str, const char *format, va_list ap)
 
 
 
-
 /**
  * \brief	Instead of snprintf()
  *			Used '%' parameters

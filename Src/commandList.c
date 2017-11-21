@@ -838,11 +838,12 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 	// Test variadic macros
 	// Warning: "ISO C does not permit named variadic macros [-Wvariadic-macros]
 	// in Atollic TrueSTUDIO, 7.1.1
-/*
- * Example:
- * #define eprintf(...) fprintf (stderr, __VA_ARGS__)
- * #define eprintf(args...) fprintf (stderr, args)
- */
+
+	/*
+	 * Example:
+	 * #define eprintf(...) fprintf (stderr, __VA_ARGS__)
+	 * #define eprintf(args...) fprintf (stderr, args)
+	 */
 
 	//#define eprintf(args...) uprintf(args)
 	/*
@@ -968,7 +969,7 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 	*/
 
 	/*
-#include "Calc.h"
+	#include "Calc.h"
 	uint32_t a = 0;
 	Increment(&a);
 	uprintf("Incremented value: %d", a);
@@ -977,7 +978,7 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 
 	/*
 	// Snake
-#include "Snake.h"
+	#include "Snake.h"
 	Snake_Init();
 	 */
 
@@ -1058,7 +1059,7 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 
 
 	CmdH_SendLine("\r\n"
-							"Test end");
+				  "Test end");
 
 	return CommandResult_Ok;
 }
