@@ -1,7 +1,7 @@
 /*
  *		CircularBuffer.c
  *		Created on:		2017-03-04
- *		Author:			Vizi GÃ¡bor
+ *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		Circular buffer handler
  *		Target:			STM32Fx
@@ -32,9 +32,15 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
+#ifdef MODULE_CIRCULARBUFFER_UNITTEST_ENABLE
+	#define CIRCULARBUFFER_ERROR()
+#else
+	#define CIRCULARBUFFER_ERROR()						DEBUG_BREAKPOINT()
+#endif
+
 #define CIRCULARBUFFER_CHECK_CIRCBUFFER(cbuff)			if (cbuff == NULL) return 0;
-#define CIRCULARBUFFER_CHECK_WRITE_COUNTER(cbuff)		if (cbuff->writeCnt >= cbuff->size) cbuff->writeCnt = cbuff->size - 1;
-#define CIRCULARBUFFER_CHECK_READ_COUNTER(cbuff)		if (cbuff->readCnt >= cbuff->size) cbuff->readCnt = cbuff->size - 1;
+#define CIRCULARBUFFER_CHECK_WRITE_COUNTER(cbuff)		if (cbuff->writeCnt >= cbuff->size) { cbuff->writeCnt = cbuff->size - 1; CIRCULARBUFFER_ERROR(); }
+#define CIRCULARBUFFER_CHECK_READ_COUNTER(cbuff)		if (cbuff->readCnt >= cbuff->size) { cbuff->readCnt = cbuff->size - 1; CIRCULARBUFFER_ERROR(); }
 
 
 
@@ -154,15 +160,15 @@ uint16_t CircularBuffer_Clear(CircularBufferInfo_t *circBuff, uint16_t length)
 	if (circBuff->readCnt < circBuff->writeCnt)
 	{
 		// No overflow
-		uint16_t counterLength = circBuff->writeCnt - circBuff->readCnt;
-		if (length > counterLength)
+		uint16_t maxLength = circBuff->writeCnt - circBuff->readCnt;
+		if (length > maxLength)
 		{
-			length = counterLength;
+			length = maxLength;
 		}
 
 		for (i = 0; i < length; i++)
 		{
-			circBuff->buffer[i] = '\0';
+			circBuff->buffer[circBuff->readCnt+i] = '\0';
 		}
 
 		circBuff->readCnt += length;
@@ -172,13 +178,17 @@ uint16_t CircularBuffer_Clear(CircularBufferInfo_t *circBuff, uint16_t length)
 		// "Overflow"
 		uint16_t firstClear = circBuff->size - circBuff->readCnt;
 		uint16_t secondClear;
+
 		if (firstClear > length)
 		{
+			// Buffer is not full
 			firstClear = length;
 			secondClear = 0;
 		}
 		else
 		{
+			// firstClear < length
+			// -> Overread
 			secondClear = length - firstClear;
 		}
 
@@ -200,8 +210,9 @@ uint16_t CircularBuffer_Clear(CircularBufferInfo_t *circBuff, uint16_t length)
 			circBuff->buffer[i] = '\0';
 		}
 
-		if (firstClear > length)
+		if (firstClear <= length)
 		{
+			// "Overread"
 			circBuff->readCnt = secondClear;
 		}
 		else
@@ -501,6 +512,7 @@ void CircularBuffer_UnitTest(void)
 	UNITTEST_ASSERT(buffer256[256] == (char)0xEF, "ERROR: Clear() is overflowed()");
 
 
+	// Test wrong counter
 	circBufferInfo.readCnt = 256;
 	circBufferInfo.writeCnt = 256;
 	CircularBuffer_Clear(&circBufferInfo, 10);
