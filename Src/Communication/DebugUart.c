@@ -319,6 +319,7 @@ void DebugUart_ProcessReceivedCharacters(void)
 			if (newLinePos != NULL)
 			{
 				char responseBuffer[DEBUGUART_RESPONSE_BUFFER];
+				responseBuffer[0] = '\0';
 
 				*newLinePos = '\0';
 

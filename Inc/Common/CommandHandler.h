@@ -33,6 +33,8 @@
 #define CMDH_COMMAND_ARG_MAX_COUNT			(3)
 #define CMDH_COMMAND_ARG_MAX_NUM_BITS		(0x07)	// 0b1111 <-- warning: "binary constants are a GCC extension
 
+#define CMDH_COMMAND_DELIMITER_CHAR			((char)' ')
+
 // False define for CommandHandler task (Used by EventLog)
 #define Task_CommandHandlerProcessEvent		(0)
 

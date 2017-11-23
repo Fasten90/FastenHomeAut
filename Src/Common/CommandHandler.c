@@ -32,12 +32,6 @@
 
 #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
 
-/*------------------------------------------------------------------------------
- *									Configs
- *----------------------------------------------------------------------------*/
-
-static const char CmdH_DelimiterChar = ' ';
-
 
 
 /*------------------------------------------------------------------------------
@@ -219,7 +213,7 @@ static uint8_t CmdH_CommandParser(char *command, char **dst)
 {
 	uint8_t commandArgCount;
 
-	commandArgCount = STRING_Splitter(command, CmdH_DelimiterChar, dst, CMDH_COMMAND_ARG_MAX_COUNT);
+	commandArgCount = STRING_Splitter(command, CMDH_COMMAND_DELIMITER_CHAR, dst, CMDH_COMMAND_ARG_MAX_COUNT);
 	// NOTE: Now, ArgCount never will be larger than CMDH_COMMAND_ARG_MAX_COUNT
 
 	return commandArgCount;
