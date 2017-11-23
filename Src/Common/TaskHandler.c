@@ -333,6 +333,16 @@ void TaskHandler_ClearTimeoutTask(TaskID_t taskID)
 
 #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
 /**
+ * \brief	Print TaskHandler statistics border
+ */
+static void TaskHandler_PrintStatisticsBorder(void)
+{
+	CmdH_Printf("+%11c+%5c+-%20c-+\r\n", '-', '-', '-');
+}
+
+
+
+/**
  * \brief	Calculate and print TaskHandler statistics
  */
 void TaskHandler_PrintStatistics(void)
@@ -385,9 +395,9 @@ void TaskHandler_PrintStatistics(void)
 			cpuPercent
 			);
 
-	CmdH_Printf("+%11c+%5c+-%20c-+\r\n", '-', '-', '-');
+	TaskHandler_PrintStatisticsBorder();
 	CmdH_Printf("|%11s|%5s| %20s |\r\n", "<StartTick>", "<Run>", "<TaskName>");
-	CmdH_Printf("+%11c+%5c+-%20c-+\r\n", '-', '-', '-');
+	TaskHandler_PrintStatisticsBorder();
 
 	// Print all table
 	for (i = 0; i < TASKHANDLER_STATISTICS_LIMIT; i++)
@@ -402,7 +412,17 @@ void TaskHandler_PrintStatistics(void)
 		}
 	}
 
-	CmdH_Printf("+%11c+%5c+-%20c-+\r\n", '-', '-', '-');
+	TaskHandler_PrintStatisticsBorder();
+}
+
+
+
+/**
+ * \brief	Print TaskHandler RunTimes statistics border
+ */
+static void TaskHandler_PrintTaskRunCountsBorder(void)
+{
+	CmdH_Printf("+-%20c-+-%9c-+\r\n", '-', '-');
 }
 
 
@@ -414,18 +434,18 @@ void TaskHandler_PrintTaskRunCounts(void)
 {
 	TaskID_t i;
 
-	CmdH_Printf("+-%20c-+-%9c-+\r\n", '-', '-');
+	TaskHandler_PrintTaskRunCountsBorder();
 	CmdH_Printf("| %20s | %9s |\r\n", "<TaskName>", "<RunCnt>");
-	CmdH_Printf("+-%20c-+-%9c-+\r\n", '-', '-');
+	TaskHandler_PrintTaskRunCountsBorder();
 
 	for (i = 0; i < Task_Count; i++)
 	{
 		CmdH_Printf("| %20s | %9u |\r\n", TaskList[i].taskName, TaskList[i].taskRunCount);
 	}
 
-	CmdH_Printf("+-%20c-+-%9c-+\r\n", '-', '-');
+	TaskHandler_PrintTaskRunCountsBorder();
 }
-#endif
+#endif	// #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
 
 
 
