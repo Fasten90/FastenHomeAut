@@ -1491,10 +1491,10 @@ const char * STRING_FindCharacters(const char *str, const char *findCharacters)
 	}
 
 	// Search in string
-	for (i = 0; i < str[i] && i < STRING_SIZE_MAX; i++)
+	for (i = 0; i < STRING_SIZE_MAX && str[i] != '\0'; i++)
 	{
 		// Check with finding characters
-		for (j = 0; findCharacters[j] != '\0' && j < 255; j++)
+		for (j = 0; j < 255 && findCharacters[j] != '\0'; j++)
 		{
 			if (str[i] == findCharacters[j])
 			{
@@ -1527,27 +1527,29 @@ const char * STRING_FindString(const char *str, const char *findString)
 	size_t i;
 	size_t length = StringLength(str);
 	size_t findStringLength = StringLength(findString);
+	const char * findPos = NULL;
 
 	// Check parameters
-	if ((str == NULL) || (findString == NULL) || (length == 0) || (findStringLength == 0))
+	if ((str == NULL) || (findString == NULL) || (length == 0) || (findStringLength == 0) || findStringLength > length)
 	{
 		return NULL;
 	}
 
 	// Search first equal character
-	for (i = 0; i < length; i++)
+	for (i = 0; i < (length - findStringLength); i++)
 	{
 		if (findString[0] == str[i])
 		{
 			// First character is equal
 			if (!StrCmpWithLength(findString, &str[i], findStringLength))
 			{
-				return (char *)&str[i];
+				findPos = (char *)&str[i];
+				break;
 			}
 		}
 	}
 
-	return NULL;
+	return findPos;
 }
 
 
@@ -2184,7 +2186,6 @@ void STRING_UnitTest(void)
 	int32_t ivalue32;
 	float fvalue;
 	char *splitted[10];
-	char *pString;
 	const char * cpString;
 
 
@@ -2476,19 +2477,19 @@ void STRING_UnitTest(void)
 	// STRING_FindCharacters()
 	StrCpy(buffer, "longtexttofinding");
 	// Valid finding
-	pString = STRING_FindCharacters(buffer, "text");
-	UNITTEST_ASSERT(pString == buffer+4, "FindCharacter wrong find error");
-	pString = STRING_FindCharacters(buffer, "long");
-	UNITTEST_ASSERT(pString == buffer, "FindCharacter wrong find error");
+	cpString = STRING_FindCharacters(buffer, "text");
+	UNITTEST_ASSERT(cpString == buffer+4, "FindCharacter wrong find error");
+	cpString = STRING_FindCharacters(buffer, "long");
+	UNITTEST_ASSERT(cpString == buffer, "FindCharacter wrong find error");
 	// Invalid finding
-	pString = STRING_FindCharacters(buffer, "z");
-	UNITTEST_ASSERT(pString == NULL, "FindCharacter not find error error");
+	cpString = STRING_FindCharacters(buffer, "z");
+	UNITTEST_ASSERT(cpString == NULL, "FindCharacter not find error error");
 	// 0 length string
-	pString = STRING_FindCharacters("", "z");
-	UNITTEST_ASSERT(pString == NULL, "FindCharacter 0 length error");
+	cpString = STRING_FindCharacters("", "z");
+	UNITTEST_ASSERT(cpString == NULL, "FindCharacter 0 length error");
 	// Null pointer
-	pString = STRING_FindCharacters(NULL, "z");
-	UNITTEST_ASSERT(pString == NULL, "FindCharacter null pointererror");
+	cpString = STRING_FindCharacters(NULL, "z");
+	UNITTEST_ASSERT(cpString == NULL, "FindCharacter null pointererror");
 	// Unchangeable string
 	UNITTEST_ASSERT(!StrCmp(buffer, "longtexttofinding"), "FindCharacter changed original string");
 
@@ -2496,24 +2497,24 @@ void STRING_UnitTest(void)
 	// STRING_FindString()
 	StrCpy(buffer, "longtexttofinding");
 	// Valid finding
-	pString = STRING_FindString(buffer, "text");
-	UNITTEST_ASSERT(pString == buffer+4, "FindString error");
+	cpString = STRING_FindString(buffer, "text");
+	UNITTEST_ASSERT(cpString == buffer+4, "FindString error");
 	// There is no
-	pString = STRING_FindString(buffer, "wrongtext");
-	UNITTEST_ASSERT(pString == NULL, "FindString error");
+	cpString = STRING_FindString(buffer, "wrongtext");
+	UNITTEST_ASSERT(cpString == NULL, "FindString error");
 	// Overflow
-	pString = STRING_FindString(buffer, "findingoverflow");
-	UNITTEST_ASSERT(pString == NULL, "FindString overflow error");
+	cpString = STRING_FindString(buffer, "findingoverflow");
+	UNITTEST_ASSERT(cpString == NULL, "FindString overflow error");
 	// 0 length string
-	pString = STRING_FindString("", "findingoverflow");
-	UNITTEST_ASSERT(pString == NULL, "FindString 0 length error");
-	pString = STRING_FindString("longtexttofinding", "");
-	UNITTEST_ASSERT(pString == NULL, "FindString 0 length error");
+	cpString = STRING_FindString("", "findingoverflow");
+	UNITTEST_ASSERT(cpString == NULL, "FindString 0 length error");
+	cpString = STRING_FindString("longtexttofinding", "");
+	UNITTEST_ASSERT(cpString == NULL, "FindString 0 length error");
 	// Test with NULL pointer
-	pString = STRING_FindString("longtexttofinding", NULL);
-	UNITTEST_ASSERT(pString == NULL, "FindString null pointer error");
-	pString = STRING_FindString(NULL, "findingoverflow");
-	UNITTEST_ASSERT(pString == NULL, "FindString null pointer error");
+	cpString = STRING_FindString("longtexttofinding", NULL);
+	UNITTEST_ASSERT(cpString == NULL, "FindString null pointer error");
+	cpString = STRING_FindString(NULL, "findingoverflow");
+	UNITTEST_ASSERT(cpString == NULL, "FindString null pointer error");
 	// Unchangeable string
 	UNITTEST_ASSERT(!StrCmp(buffer, "longtexttofinding"), "FindString changed original string");
 
