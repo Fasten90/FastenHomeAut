@@ -43,8 +43,17 @@
 #ifndef CONFIG_MODULE_COMMUNICATION_ENABLE
 typedef uint8_t CommProtocol_t;
 typedef uint8_t CommProtocolBit_t;
+#ifndef CommProt_Buffer
+	#define CommProt_Buffer							(0)
+#endif
 #ifndef CommProtBit_Unknown
 	#define CommProtBit_Unknown						(0)
+#endif
+#ifndef CommProtBit_Buffer
+	#define CommProtBit_Buffer						(1 << 0)
+#endif
+#ifndef CommProtBit_Disable
+	#define CommProtBit_Disable						(1 << 2)
 #endif
 #endif
 
