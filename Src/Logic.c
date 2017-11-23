@@ -732,7 +732,8 @@ static void Logic_StepLetterNextValue(int8_t step)
 		char str[DisplayInput_StringLimit];
 		StrCpyMax(str, DisplayInput_ActualRealString, DisplayInput_StringLimit);
 		StrTrim(str);
-		CommandHandler_PrepareFindExecuteCommand(CommProt_DebugUart, str);
+		char respBuffer[50];
+		CmdH_ExecuteCommand(CommProt_DebugUart, str, respBuffer, 50);
 		uprintf("Typed command: %s", str);
 		// Now, automatically exit to main menu
 		Logic_Display_ChangeState(Menu_Main);

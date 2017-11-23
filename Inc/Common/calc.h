@@ -26,8 +26,12 @@
 #define ABS(x)				(((x) < 0) ? -(x) : (x))	/* UNSAFE */
 
 
+#ifndef SET_BIT
 #define SET_BIT(val, bitIndex) val |= (1 << bitIndex)
+#endif
+#ifndef CLEAR_BIT
 #define CLEAR_BIT(val, bitIndex) val &= ~(1 << bitIndex)
+#endif
 #define TOGGLE_BIT(val, bitIndex) val ^= (1 << bitIndex)
 #define BIT_IS_SET(val, bitIndex) (val & (1 << bitIndex))
 
