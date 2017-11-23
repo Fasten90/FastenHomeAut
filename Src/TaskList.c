@@ -233,7 +233,7 @@ Task_t TaskList[] =
 
 
 ///< Tasks num
-const TaskID_t TasksNum = (sizeof(TaskList)/sizeof(TaskList[0]));
+const TaskID_t TasksNum = NUM_OF(TaskList);
 
 
 
@@ -257,6 +257,16 @@ const TaskID_t TasksNum = (sizeof(TaskList)/sizeof(TaskList[0]));
 // XXX: Function form:
 //typedef TaskResult_t (*TaskFunctionPointer)(ScheduleSource_t source);
 // static TaskResult_t Task_Name(ScheduleSource_t source);
+
+
+/**
+ * \brief	TaskList init - check
+ */
+void TaskList_Init(void)
+{
+	// Check TaskList size and enums
+	BUILD_BUG_ON(NUM_OF(TaskList) != Task_Count);
+}
 
 
 

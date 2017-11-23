@@ -85,10 +85,6 @@ void TaskHandler_Init(void)
 {
 	TaskID_t i;
 
-	// Check TaskList size and enums
-	// TODO: This checking is not work!
-	BUILD_BUG_ON(TasksNum != Task_Count);
-
 	// Check TaskList contain
 	for (i = 0; i < TasksNum; i++)
 	{

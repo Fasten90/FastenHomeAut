@@ -73,8 +73,6 @@ typedef enum
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void DebugList_Init(void);
-
 
 
 #endif /* DEBUGLIST_H_ */
