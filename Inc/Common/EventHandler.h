@@ -40,6 +40,9 @@
 typedef uint32_t	EventData_t;
 typedef uint8_t		EventId_t;
 
+// EventLog - subscription bits - for TaskHandler
+typedef uint32_t	EventLogSubscription_t;
+
 
 ///< Event - dynamic struct
 typedef struct
@@ -66,10 +69,33 @@ typedef uint8_t TaskID_t;
 #endif
 
 
+///< Event - static struct
+typedef struct
+{
+	const char * name;						///< Event name (string)
+	bool isNeedLog;							///< Need log?
+#ifdef CONFIG_EVENTHANDLER_REQUIRED_TASK_MODE
+	EventLogSubscription_t subscription;	///< Subscriptions (bits)
+#endif
+#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
+	bool isHasRequiredTask;					///< Need require task scheduling? (Valid with below variable)
+	TaskID_t requiredTaskRunId;				///< Task, which need execute, when event raised
+#endif
+
+	// \note: Please Do not change this structure!
+} Event_t;
+
+
 
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
+
+///< EventList - in EventList.c !!
+extern const Event_t EventList[];
+
+///< EventList length - in EventList.c !!
+extern const EventId_t EventsNum;
 
 
 

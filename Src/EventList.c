@@ -15,7 +15,8 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
-#include "include.h"
+#include "options.h"
+#include "EventHandler.h"
 #include "EventList.h"
 
 
@@ -115,5 +116,14 @@ const EventId_t EventsNum = NUM_OF(EventList);
 /*------------------------------------------------------------------------------
  *  Functions
  *----------------------------------------------------------------------------*/
+
+/**
+ * \brief	Initialize EventList - check
+ */
+void EventList_init(void)
+{
+	// Check EventList size
+	BUILD_BUG_ON(Event_Count != NUM_OF(EventList));
+}
 
 

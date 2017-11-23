@@ -19,6 +19,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
+//#include "EventHandler.h"
 
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 #include "TaskHandler.h"
@@ -35,33 +36,6 @@
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
-
-// \note: Please Do not change these typedefs!
-typedef uint8_t		EventId_t;
-
-typedef uint32_t	EventLogSubscription_t;
-
-#if TasksNum > 31
-#error "EventHandler will crash if you use more Subscription than Tasks's num (TasksNum)"
-#endif
-
-
-///< Event - static struct
-typedef struct
-{
-	const char * name;						///< Event name (string)
-	bool isNeedLog;							///< Need log?
-#ifdef CONFIG_EVENTHANDLER_REQUIRED_TASK_MODE
-	EventLogSubscription_t subscription;	///< Subscriptions (bits)
-#endif
-#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
-	bool isHasRequiredTask;					///< Need require task scheduling? (Valid with below variable)
-	TaskID_t requiredTaskRunId;				///< Task, which need execute, when event raised
-#endif
-
-	// \note: Please Do not change this structure!
-} Event_t;
-
 
 ///< Event name list
 typedef enum
@@ -103,10 +77,6 @@ typedef enum
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
-
-extern const Event_t EventList[];
-
-extern const EventId_t EventsNum;
 
 
 
