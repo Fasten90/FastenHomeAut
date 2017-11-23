@@ -1448,7 +1448,7 @@ void StringUpper(char * str)
  * \return	'findCharacter' position in 'str' (pointer)
  * 			NULL	if not found
  */
-char * STRING_FindCharacter(const char *str, const char findCharacter)
+const char * STRING_FindCharacter(const char *str, const char findCharacter)
 {
 	size_t i;
 	// TODO: Without StringLength
@@ -1476,6 +1476,45 @@ char * STRING_FindCharacter(const char *str, const char findCharacter)
 
 
 /**
+ * \brief	Find characters in string
+ */
+const char * STRING_FindCharacters(const char *str, const char *findCharacters)
+{
+	size_t i;
+	uint8_t j;
+	const char * findPos = NULL;
+
+	// Check parameter
+	if ((str == NULL) || (findCharacters == NULL))
+	{
+		return NULL;
+	}
+
+	// Search in string
+	for (i = 0; i < str[i] && i < STRING_SIZE_MAX; i++)
+	{
+		// Check with finding characters
+		for (j = 0; findCharacters[j] != '\0' && j < 255; j++)
+		{
+			if (str[i] == findCharacters[j])
+			{
+				// Equal
+				findPos = &str[i];
+				break;
+			}
+		}
+
+		if (findPos != NULL)
+			break;
+	}
+
+	return findPos;
+}
+
+
+
+
+/**
  * \brief	Find small string in big string
  * 			like strstr()
  * \param	*str	scanned string
@@ -1483,7 +1522,7 @@ char * STRING_FindCharacter(const char *str, const char findCharacter)
  * \return	'findString' position in 'str' (pointer)
  * 			NULL	if not found
  */
-char * STRING_FindString(const char *str, const char *findString)
+const char * STRING_FindString(const char *str, const char *findString)
 {
 	size_t i;
 	size_t length = StringLength(str);
@@ -2413,10 +2452,10 @@ void STRING_UnitTest(void)
 	UNITTEST_ASSERT(!StrCmp("End without space.", buffer), "StrTrim error");
 
 
-	// STRING_FindCharacter
+	// STRING_FindCharacter()
 	StrCpy(buffer, "longtexttofinding");
 	// Valid finding
-	pString = STRING_FindCharacter(buffer, 't');
+	pString = STRING_FindCharacter((const char *)buffer, 't');
 	UNITTEST_ASSERT(pString == buffer+4, "FindCharacter wrong find error");
 	pString = STRING_FindCharacter(buffer, 'l');
 	UNITTEST_ASSERT(pString == buffer, "FindCharacter wrong find error");
@@ -2428,6 +2467,26 @@ void STRING_UnitTest(void)
 	UNITTEST_ASSERT(pString == NULL, "FindCharacter 0 length error");
 	// Null pointer
 	pString = STRING_FindCharacter(NULL, 'z');
+	UNITTEST_ASSERT(pString == NULL, "FindCharacter null pointererror");
+	// Unchangeable string
+	UNITTEST_ASSERT(!StrCmp(buffer, "longtexttofinding"), "FindCharacter changed original string");
+
+
+	// STRING_FindCharacters()
+	StrCpy(buffer, "longtexttofinding");
+	// Valid finding
+	pString = STRING_FindCharacters(buffer, "text");
+	UNITTEST_ASSERT(pString == buffer+4, "FindCharacter wrong find error");
+	pString = STRING_FindCharacters(buffer, "long");
+	UNITTEST_ASSERT(pString == buffer, "FindCharacter wrong find error");
+	// Invalid finding
+	pString = STRING_FindCharacters(buffer, "z");
+	UNITTEST_ASSERT(pString == NULL, "FindCharacter not find error error");
+	// 0 length string
+	pString = STRING_FindCharacters("", "z");
+	UNITTEST_ASSERT(pString == NULL, "FindCharacter 0 length error");
+	// Null pointer
+	pString = STRING_FindCharacters(NULL, "z");
 	UNITTEST_ASSERT(pString == NULL, "FindCharacter null pointererror");
 	// Unchangeable string
 	UNITTEST_ASSERT(!StrCmp(buffer, "longtexttofinding"), "FindCharacter changed original string");

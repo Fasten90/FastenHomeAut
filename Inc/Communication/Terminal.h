@@ -81,6 +81,10 @@
 #define TERMINAL_SEND_KEY_DEL()		 		Terminal_SendMessage("\x7F'")
 
 
+// -\_("))_/-
+#define TERMINAL_STRING_DONTKNOW			("-\_(\"))_/-")
+
+
 
 /*------------------------------------------------------------------------------
  *  Type definitions

@@ -65,6 +65,10 @@
 // char * strstr ( const char *, const char * )
 #define strstr(_str1, _str2)			STRING_FindString(_str1, _str2)
 
+// Find characters in string
+// char * strpbrk ( const char *, const char * );
+#define strpbrk(_str, _characters)		STRING_FindCharacters(_str, _characters)
+
 
 #define sprintf(...)					usprintf(__VA_ARGS__)
 
@@ -160,8 +164,9 @@ void StringLower(char * str);
 void StringUpper(char * str);
 
 // Find & Separators
-char * STRING_FindCharacter(const char *str, const char findCharacter);
-char * STRING_FindString(const char *str, const char *findString);
+const char * STRING_FindCharacter(const char *str, const char findCharacter);
+const char * STRING_FindCharacters(const char *str, const char *findCharacters);
+const char * STRING_FindString(const char *str, const char *findString);
 uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint8_t parameterMaxCount);
 
 // String format functions
