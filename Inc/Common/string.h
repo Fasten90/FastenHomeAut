@@ -29,6 +29,10 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
+
+#define STRING_SPRINTF_EXTENDED_ENABLE
+
+
 // size_t strlen ( const char * str );
 #define strlen(_str)					StringLength(_str)
 

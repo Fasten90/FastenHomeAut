@@ -1139,7 +1139,7 @@ uint8_t StrCmpWithLength(const char * str1, const char *str2, size_t length)
 	size_t i;
 
 	// Check pointers + length
-	if ((str1 == NULL) || (str2 == NULL) || (length == 0))
+	if ((str1 == NULL) || (str2 == NULL) || (length == 0) || (length > STRING_SIZE_MAX))
 	{
 		return 1;
 	}
@@ -1619,6 +1619,143 @@ uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint
 
 
 
+#ifndef STRING_SPRINTF_EXTENDED_ENABLE
+/**
+ * \brief	Instead of sprintf()
+ *			Used '%' parameters
+ *			%d, %u, %x, %X, %b, %c, %s, %f
+ *			In other settings: %w, %h, %b (hexadecimals)
+ *
+ * \note	!! Be careful: 'str' can be overflow!!
+ */
+size_t string_printf(char *str, const char *format, va_list ap)
+{
+	// TODO: Use "new" typedefs
+
+	// Type variables
+	char	*p;			// step on format string
+	char	*sval;		// string
+	int		ival;		// int
+	unsigned int uival;	// uint
+	float	flval;		// float
+	char 	cval;		// character
+
+	char *string = str;
+
+	// Check parameters
+	if (str == NULL || format == NULL)
+		return 0;
+
+	for (p = (char *)format; *p; p++)				// p to EOS
+	{
+		if (*p != '%')								// copy, if not '%'
+		{
+			*string = *p;							// copy to string
+			string++;
+		}
+		else
+		{
+			// '%' character
+			p++;
+
+			// Process next character (after '%', or etc)
+			switch (*p)
+			{
+				case 'd':
+					// signed (int)
+					ival = va_arg(ap, int);	// Decimal = signed int (~int32_t)
+					string += SignedDecimalToString(ival, string);
+					break;
+
+				case 'u':
+					// unsigned (int)
+					uival = va_arg(ap, int);// Uint = Unsigned int (~uint32_t)
+					string += UnsignedDecimalToString(uival, string);
+					break;
+
+					// TODO: Create 'x' and 'X' to different
+				case 'x':
+				case 'X':
+					// %x - Hex - parameterized byte num
+					uival = va_arg(ap, unsigned int);
+					string += DecimalToHexaString(uival, string, 8);
+					break;
+
+#if defined(STRING_HEXADECIMAL_FORMATS)
+				case 'w':
+					// Hex // 32 bits	// 8 hex	// 4 byte
+					uival = va_arg(ap, unsigned int);
+					string += DecimalToHexaString(uival, string, 8);
+					break;
+
+				case 'h':
+					// Hex // 16 bits	// 4 hex	// 2 byte
+					ival = va_arg(ap, int);
+					string += DecimalToHexaString(ival, string, 4);
+					break;
+
+				case 'b':
+					// Hex	// 8 bits	// 2 hex	// 1 byte
+					ival = va_arg(ap, int);
+					string += DecimalToHexaString(ival, string, 2);
+					break;
+#else
+				case 'b':
+					// Binary print (from uint32_t)
+					uival = va_arg(ap,  unsigned int);
+					string += DecimalToBinaryString(uival, string, 33);
+					break;
+#endif
+				case 'c':
+					// %c - char
+					cval = va_arg(ap, int);						// Char
+					// Default: copy one character
+					*string = cval;							// Copy to string
+					string++;
+					*string = '\0';
+					break;
+
+				case 'f':
+					// %f - float
+					flval = va_arg(ap, double);					// Double / Float
+					string += FloatToString(flval, string, 0, 6);
+					break;
+
+				case 's':
+					// %s - string
+					sval = va_arg(ap, char*);					// String
+					// Standard string copy
+					string += StrCpy(string, sval);
+					break;
+
+				case 'p':
+					// %p - pointer - print address in hexadecimal
+					uival = va_arg(ap, unsigned int);
+					string += DecimalToHexaString(uival, string, 8);
+					break;
+
+				default:
+					*string = *p;					// Other, for example: '%'
+					string++;
+					break;
+			}
+		}	// End of '%'
+
+	}	// End of for loop
+
+	// string's end
+	*string = '\0';
+
+	// Return with length
+	return (string-str);
+}
+
+
+
+#else	// #ifdef STRING_SPRINTF_EXTENDED_ENABLE
+
+
+
 /**
  * \brief	Instead of sprintf()
  *			Used '%' parameters
@@ -1846,7 +1983,7 @@ size_t string_printf(char *str, const char *format, va_list ap)
 	// Return with length
 	return (string-str);
 }
-
+#endif	// #ifdef STRING_SPRINTF_EXTENDED_ENABLE
 
 
 
@@ -2210,6 +2347,8 @@ void STRING_UnitTest(void)
 	UNITTEST_ASSERT(StrCmpFirst("example1", "example2"), "StrCmp error");
 	UNITTEST_ASSERT(StrCmpFirst("example1", "example"), "StrCmp error");
 
+
+	// TODO: Use STRING_SPRINTF_EXTENDED_ENABLE define
 
 	// Float print tests
 
