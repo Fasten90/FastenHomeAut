@@ -33,8 +33,8 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define DEBUGUART_TX_BUFFER_SIZE				(256UL)	// Size of Transmission buffer
-#define DEBUGUART_RX_BUFFER_SIZE				(256UL)		// Size of Reception buffer
+#define DEBUGUART_TX_BUFFER_SIZE				(256UL)		///< Size of Transmission buffer
+#define DEBUGUART_RX_BUFFER_SIZE				(256UL)		///< Size of Reception buffer
 #define DEBUGUART_RXBUFFER_WAIT_LENGTH			(1)
 
 #define DEBUGUART_RESPONSE_BUFFER				(256U)

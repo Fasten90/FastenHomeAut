@@ -19,7 +19,6 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
-//#include "EventHandler.h"
 
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 #include "TaskHandler.h"
@@ -71,12 +70,6 @@ typedef enum
 	Event_Count
 
 } EventName_t;
-
-
-
-/*------------------------------------------------------------------------------
- *  Global variables
- *----------------------------------------------------------------------------*/
 
 
 

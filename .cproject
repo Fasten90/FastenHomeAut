@@ -41,10 +41,8 @@
 								<option id="com.atollic.truestudio.common_options.target.fpucore.1297069055" name="FPU" superClass="com.atollic.truestudio.common_options.target.fpucore" useByScannerDiscovery="false" value="com.atollic.truestudio.common_options.target.fpucore.None" valueType="enumerated"/>
 								<option id="com.atollic.truestudio.as.symbols.defined.2105983641" name="Defined symbols" superClass="com.atollic.truestudio.as.symbols.defined" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="CONFIG_USE_COMPILER_GCC"/>
-									<listOptionValue builtIn="false" value="CONFIG_USE_PANEL_HOMEAUTNODESMALL=1"/>
 									<listOptionValue builtIn="false" value="CONFIG_USE_PANEL_FASTENNODE=1"/>
 									<listOptionValue builtIn="false" value="STM32F030x8"/>
-									<listOptionValue builtIn="false" value="CONFIG_USE_PANEL_STM32F4DISCOVERY=1"/>
 								</option>
 								<option id="com.atollic.truestudio.common_options.target.interwork.247925497" name="Mix ARM/Thumb" superClass="com.atollic.truestudio.common_options.target.interwork" useByScannerDiscovery="false"/>
 								<inputType id="com.atollic.truestudio.as.input.374932590" name="Input" superClass="com.atollic.truestudio.as.input"/>
