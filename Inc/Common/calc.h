@@ -26,6 +26,12 @@
 #define ABS(x)				(((x) < 0) ? -(x) : (x))	/* UNSAFE */
 
 
+#define SET_BIT(val, bitIndex) val |= (1 << bitIndex)
+#define CLEAR_BIT(val, bitIndex) val &= ~(1 << bitIndex)
+#define TOGGLE_BIT(val, bitIndex) val ^= (1 << bitIndex)
+#define BIT_IS_SET(val, bitIndex) (val & (1 << bitIndex))
+
+
 // float       pow( float base, float exp );
 #define pow(_base, _exp)	power(_base, _exp)
 
@@ -42,6 +48,8 @@
 /*------------------------------------------------------------------------------
  *  Global function declarations
  *----------------------------------------------------------------------------*/
+
+// TODO: Rename these functions?
 
 uint32_t power(uint32_t a, uint8_t b);
 uint32_t power_secured(uint32_t a, uint8_t b);

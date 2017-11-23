@@ -15,7 +15,20 @@
  * - "CommandHandler" for command executing from anywhere
  * - "EventHandler" for easy event handling and task schedule requiring
  * - "GlobalVarHandler" for global variable get-set function (it help for debug)
- * - Display: 0.96 OLED
+ * - Hardware tester modules:
+ *   + CommonIO - Use IO (Input-Output) pins
+ *   + CommonADC - Use ADC (Analog-Digital Converter), read analog value (How many voltage it?)
+ *   + CommonDAC - Use DAC (Digital-Analog Converter), generate adjustable voltage
+ *   + CommonPWM - Use PWM (Pulse Width Modulation)
+ * - "ConvertTable" for integer - float conversions (e.g. analog <-> voltage, or analog <-> capacity)
+ * - "CircularBuffer" for communication
+ * - Display:
+ *   + Display module: 0.96 OLED
+ *   + Write texts (8x5, 12x8, 32x20 (only numbers))
+ *   + Functions:
+ *     - Show clock
+ *     - Snake game
+ *     - Show animation
  *
  *
  * Requirements

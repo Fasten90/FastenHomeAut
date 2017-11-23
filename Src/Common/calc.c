@@ -263,6 +263,7 @@ uint8_t GetBit(uint32_t value, uint8_t index)
  */
 uint16_t random(void)
 {
+	// \note	This random is dependent from tick. If you call fastly and often, the value will not change enough
 	uint16_t randomValue = HAL_GetTick() % RAND_MAX;
 	return randomValue;
 }
