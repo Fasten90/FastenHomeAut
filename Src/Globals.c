@@ -77,10 +77,6 @@ void Error_Handler(void)
 	// Stop debugger
 	DEBUG_BREAKPOINT();
 
-	// Reset...
-	// TODO: It is not the best solution, The user will not detect the reset
-	NVIC_SystemReset();
-
 	// Infinite loop, do not disable interrupts ...
 	uint8_t cnt = 8;
 	while(cnt--)
@@ -88,6 +84,11 @@ void Error_Handler(void)
 		LED_SetLed(LED_Red, LED_Set_Toggle);
 		DelayMs(125);
 	}
+
+	// Reset...
+	// TODO: It is not the best solution, The user will not detect the reset
+	NVIC_SystemReset();
+
 }
 
 

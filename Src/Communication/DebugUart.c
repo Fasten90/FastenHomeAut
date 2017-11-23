@@ -324,9 +324,11 @@ void DebugUart_ProcessReceivedCharacters(void)
 				*newLinePos = '\0';
 
 				// Search command and run
-				CmdH_ExecuteCommand(
+				CmdH_Result_t cmdResult = CmdH_ExecuteCommand(
 					CommProt_DebugUart, (char *)receiveBuffer,
 					responseBuffer, DEBUGUART_RESPONSE_BUFFER);
+
+				CmdH_PrintResult(cmdResult);
 
 				DebugUart_SendMessage(responseBuffer);
 
@@ -373,10 +375,14 @@ uint8_t uprintf(const char *format, ...)
  * \brief	Send message with blocking mode
  * 			Use only extreme situation!
  */
-inline size_t DebugUart_SendMessageBlocked(const char * str)
+size_t DebugUart_SendMessageBlocked(const char * str)
 {
 	size_t length = StringLength(str);
+
+	UART_ResetStatus(&Debug_UartHandle);
+
 	HAL_UART_Transmit(&Debug_UartHandle, (uint8_t *)str, length, 1000);
+
 	return length;
 }
 

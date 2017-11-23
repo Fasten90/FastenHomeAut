@@ -2355,7 +2355,7 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 		// Enabled simulation
 		if (!StrCmp("infloop", argv[1]))
 		{
-			// @note	Be careful!!!!
+			// \note	Be careful!!!!
 			// Infinite loop test for WatchDog test
 			while(1);
 			result = CmdH_Result_Ok_SendSuccessful;

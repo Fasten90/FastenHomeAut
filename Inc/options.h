@@ -295,7 +295,7 @@
  *----------------------------------------------------------------------------*/
 
 
-///< Debug
+///< Debug mode: enable breakpoint and other debug support function
 #define CONFIG_DEBUG_MODE
 
 ///< Test Mode: Enable "test" command...
