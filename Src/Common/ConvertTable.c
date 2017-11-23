@@ -16,6 +16,9 @@
  *----------------------------------------------------------------------------*/
 
 #include "include.h"
+
+#ifdef CONFIG_MODULE_CONVERTTABLE_ENABLE
+
 #include "ConvertTable.h"
 #include "UnitTest.h"
 
@@ -52,6 +55,7 @@ bool ConvertTable_Init(const ConverTable_t * table)
 	uint16_t i;
 	for (i = 1; i < table->size; i++)
 	{
+		// TODO: With ASSERT() ?
 		if (table->recordList[i].adcValue <= table->recordList[i-1].adcValue)
 			return false;
 		if (table->recordList[i].convertedValue <= table->recordList[i-1].convertedValue)
@@ -207,3 +211,5 @@ void ConvertTable_UnitTest(void)
 	UnitTest_End();
 }
 #endif	// #ifdef MODULE_CONVERTTABLE_UNITTEST_ENABLE
+
+#endif	// #ifdef CONFIG_MODULE_CONVERTTABLE_ENABLE
