@@ -1039,7 +1039,7 @@ static void Terminal_GetPassword(void)
 		}
 
 		// Check enter
-		if ((STRING_FindCharacter(receiveBuffer, '\r') != NULL) || (STRING_FindCharacter(receiveBuffer, '\n') != NULL))
+		if (STRING_FindCharacters(receiveBuffer, "\r\n") != NULL)
 		{
 			// Pressed enter, check password
 			StrTrim(receiveBuffer);

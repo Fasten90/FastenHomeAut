@@ -309,13 +309,7 @@ void DebugUart_ProcessReceivedCharacters(void)
 					receiveBuffer,
 					true);
 
-			// TODO: Do more beautiful solution
-			char * newLinePos = STRING_FindCharacter(receiveBuffer, '\r');
-			if (newLinePos == NULL)
-			{
-				newLinePos = STRING_FindCharacter(receiveBuffer, '\n');
-			}
-
+			char * newLinePos = (char *)STRING_FindCharacters((const char *)receiveBuffer, "\r\n");
 			if (newLinePos != NULL)
 			{
 				char responseBuffer[DEBUGUART_RESPONSE_BUFFER];
