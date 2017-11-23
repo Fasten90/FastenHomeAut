@@ -19,6 +19,9 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
+
+#ifdef CONFIG_MODULE_COMMUNICATION_ENABLE
+
 #include "include.h"
 
 
@@ -36,6 +39,7 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
+///< Protocol enums
 typedef enum
 {
 	CommProt_Unknown,
@@ -57,6 +61,7 @@ typedef enum
 	CommProt_Count
 } CommProtocol_t;
 
+///< Protocol enums - bit
 typedef enum
 {
 	CommProtBit_Unknown		= 0,
@@ -97,13 +102,15 @@ extern uint8_t Communication_BufferCnt;
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-uint8_t COMMUNICATION_SendMessage(CommProtocol_t protocol, const char *message);
-uint8_t COMMUNICATION_SendChar(CommProtocol_t protocol, char c);
-uint8_t COMMUNICATION_Printf(CommProtocol_t protocol, const char *format, ...);
+size_t COMMUNICATION_SendMessage(CommProtocol_t protocol, const char *message);
+size_t COMMUNICATION_SendChar(CommProtocol_t protocol, char c);
+size_t COMMUNICATION_Printf(CommProtocol_t protocol, const char *format, ...);
 
 const char * COMMUNICATION_GetProtocolName(CommProtocol_t protocol);
 
 void COMMUNICATION_ClearProtocolBuffer(void);
+
+#endif	// #ifdef CONFIG_MODULE_COMMUNICATION_ENABLE
 
 
 

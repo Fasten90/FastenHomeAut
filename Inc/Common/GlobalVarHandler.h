@@ -13,6 +13,8 @@
 #define GLOBALVARHANDLER_H_
 
 
+#include "options.h"
+#include "GenericTypeDefs.h"
 #include "Communication.h"
 
 
@@ -37,6 +39,14 @@
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
+
+#ifndef CONFIG_MODULE_COMMUNICATION_ENABLE
+typedef uint8_t CommProtocol_t;
+typedef uint8_t CommProtocolBit_t;
+#ifndef CommProtBit_Unknown
+	#define CommProtBit_Unknown						(0)
+#endif
+#endif
 
 typedef int8_t GlobVarH_ID_t;							///< type alias for counting the rows in the variable array. \sa GlobalVarList
 
@@ -100,7 +110,7 @@ typedef uint32_t (*GetFunctionPointer)(void);			///< Get function pointer
 typedef bool (*SetFunctionPointer)(uint32_t param);		///< Set function pointer
 typedef void (*GeneralFunctionPointer)(void);			///< General function pointer
 
-///< structure for set-get global variables
+///< Structure for set-get global variables
 typedef struct
 {
 	const char * const name;				///< Name of global variable [string]

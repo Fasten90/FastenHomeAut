@@ -42,6 +42,23 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
+#ifndef CONFIG_MODULE_COMMUNICATION_ENABLE
+typedef uint8_t CommProtocol_t;
+typedef uint8_t CommProtocolBit_t;
+
+#ifndef CommProt_DebugUart
+	#define CommProt_DebugUart		(0)
+#endif
+
+#ifndef CommProt_Count
+	#define CommProt_Count			(1)
+#endif
+
+#ifndef CommProt_Unknown
+	#define CommProt_Unknown		(0)
+#endif
+#endif
+
 ///< Command results
 typedef enum
 {

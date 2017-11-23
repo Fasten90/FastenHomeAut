@@ -149,7 +149,7 @@ CmdH_Result_t CmdH_ExecuteCommand(CommProtocol_t source, char *command, char * r
 			result = CmdH_Result_Error_WrongArgumentNum;	// 0 or too large argument num
 		}
 
-#if defined(CONFIG_COMMANDHANDLER_NOTIFY_COMMAND_RECEIVED_FROM_NOT_DEBUGPORT) && defined(CONFIG_MODULE_DEBUGUART_ENABLE)
+#if defined(CONFIG_COMMANDHANDLER_NOTIFY_COMMAND_RECEIVED_FROM_NOT_DEBUGPORT) && defined(CONFIG_MODULE_DEBUGUART_ENABLE) && defined(CONFIG_MODULE_COMMUNICATION_ENABLE)
 		if (source != CommProt_DebugUart)
 		{
 			uprintf("Received command: \"%s\", from %s\r\n", command, COMMUNICATION_GetProtocolName(source));
@@ -197,7 +197,7 @@ CmdH_Result_t CmdH_ExecuteCommandWithParams(CommProtocol_t source, char *command
 		result = (CmdH_CommandArgCount > CMDH_COMMAND_ARG_MAX_COUNT) ? CmdH_Result_Error_TooManyArgument : CmdH_Result_Error_WrongArgumentNum;
 	}
 
-#if defined(CONFIG_COMMANDHANDLER_NOTIFY_COMMAND_RECEIVED_FROM_NOT_DEBUGPORT) && defined(CONFIG_MODULE_DEBUGUART_ENABLE)
+#if defined(CONFIG_COMMANDHANDLER_NOTIFY_COMMAND_RECEIVED_FROM_NOT_DEBUGPORT) && defined(CONFIG_MODULE_DEBUGUART_ENABLE) && defined(CONFIG_MODULE_COMMUNICATION_ENABLE)
 	if (source != CommProt_DebugUart)
 	{
 		uprintf("Received command: \"%s\", from %s\r\n", command, COMMUNICATION_GetProtocolName(source));

@@ -13,6 +13,9 @@
 
 #include <stdarg.h>
 #include "options.h"
+
+#ifdef CONFIG_MODULE_COMMUNICATION_ENABLE
+
 #include "include.h"
 #include "String.h"
 #include "DebugUart.h"
@@ -57,14 +60,24 @@ static const char * const ProtocolNameList[] =
  *  Functions
  *----------------------------------------------------------------------------*/
 
-// TODO: Check Communication lists... (NUM_OF(list) != CommProt_Disable)
+
+/**
+ * \brief	Initialize Communication (check lists)
+ */
+void COMMUNICATION_Init()
+{
+	// Check Communication list size
+	ASSERT(NUM_OF(ProtocolNameList) == CommProt_Count);
+}
+
+
 
 /**
  * \brief	Send message (string) on selected communication protocol
  */
-uint8_t COMMUNICATION_SendMessage(CommProtocol_t protocol, const char *message)
+size_t COMMUNICATION_SendMessage(CommProtocol_t protocol, const char *message)
 {
-	uint8_t length = 0;
+	size_t length = 0;
 
 	switch (protocol)
 	{
@@ -111,7 +124,7 @@ uint8_t COMMUNICATION_SendMessage(CommProtocol_t protocol, const char *message)
 /**
  * \brief	Send character on selected communication protocol
  */
-uint8_t COMMUNICATION_SendChar(CommProtocol_t protocol, char c)
+size_t COMMUNICATION_SendChar(CommProtocol_t protocol, char c)
 {
 	switch (protocol)
 	{
@@ -153,9 +166,9 @@ uint8_t COMMUNICATION_SendChar(CommProtocol_t protocol, char c)
  * \brief	Send message on xy communication protocol
  * \param	protocol		what peripheral sending
  */
-uint8_t COMMUNICATION_Printf(CommProtocol_t protocol, const char *format, ...)
+size_t COMMUNICATION_Printf(CommProtocol_t protocol, const char *format, ...)
 {
-	uint8_t length = 0;
+	size_t length = 0;
 
 	// Working in at:
 	char txBuffer[COMMUNICATION_TXBUFFER_SIZE];
@@ -207,3 +220,5 @@ void COMMUNICATION_ClearProtocolBuffer(void)
 	Communication_BufferCnt = 0;
 }
 #endif	// #ifdef CONFIG_PROTOCOL_BUFFER_ENABLE
+
+#endif	// #ifdef CONFIG_MODULE_COMMUNICATION_ENABLE

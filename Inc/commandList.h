@@ -27,6 +27,12 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
+#ifndef CONFIG_MODULE_COMMUNICATION_ENABLE
+#ifndef CommProt_DebugUart
+	#define CommProt_DebugUart			(0)
+#endif
+#endif
+
 
 
 /*------------------------------------------------------------------------------
