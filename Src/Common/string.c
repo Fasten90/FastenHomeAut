@@ -1705,7 +1705,7 @@ void Str_FormatHeader(char * dest, const char * src, bool isHeader)
 			// Header
 			// E.g. original:	| %3u | %20s | %9u | %20s | 0x%X | %10s | %20s |
 			// E.g. new:		| %3s | %20s | %9s | %20s | 0x%s | %10s | %20s |
-			if (src[i] == 'u' || src[i] == 's' || src[i] == 'x' || src[i] == 'X')
+			if (src[i] == 'u' || src[i] == 's' || src[i] == 'x' || src[i] == 'X' || src[i] == 'd')
 			{
 				dest[i] = 's';
 			}
@@ -1728,7 +1728,7 @@ void Str_FormatHeader(char * dest, const char * src, bool isHeader)
 			// Border
 			// E.g. original:	| %3u | %20s | %9u | %20s | 0x%X | %10s | %20s |
 			// E.g. new:		+-%3c-+-%20c-+-%9c-+-%20c-+-0x%c-+-%10c-+-%20c-+
-			if (src[i] == 'u' || src[i] == 's' || src[i] == 'x' || src[i] == 'X')
+			if (src[i] == 'u' || src[i] == 's' || src[i] == 'x' || src[i] == 'X' || src[i] == 'd')
 			{
 				dest[i] = 'c';
 			}

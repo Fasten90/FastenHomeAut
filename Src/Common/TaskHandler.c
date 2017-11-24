@@ -332,12 +332,25 @@ void TaskHandler_ClearTimeoutTask(TaskID_t taskID)
 
 
 #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
+
+static const char * const TaskHandler_StatisticsFormat = "| %9d | %3d | %20s |";
+
 /**
  * \brief	Print TaskHandler statistics border
  */
 static void TaskHandler_PrintStatisticsBorder(void)
 {
-	CmdH_Printf("+%11c+%5c+-%20c-+\r\n", '-', '-', '-');
+	char str[120];
+	char header[49];
+
+	Str_PrintHeader(str, header, TaskHandler_StatisticsFormat, false);
+	DebugUart_SendLine(str);
+
+	Str_PrintHeader(str, header, TaskHandler_StatisticsFormat, true, "StartTick", "Run", "TaskName");
+	DebugUart_SendLine(str);
+
+	Str_PrintHeader(str, header, TaskHandler_StatisticsFormat, false);
+	DebugUart_SendLine(str);
 }
 
 
@@ -384,10 +397,13 @@ void TaskHandler_PrintStatistics(void)
 	// Calculate CPU usage
 	uint32_t actualTick = HAL_GetTick();
 	uint32_t allTime = actualTick - oldestTick;
-	uint8_t cpuPercent = runTimes / allTime;
+	uint8_t cpuPercent = 0;
 
-	CmdH_Printf("TaskHandler usage:\r\n"
-			" Logged time: %d\r\n"
+	if (allTime != 0)
+		cpuPercent = runTimes / allTime;
+
+	DebugUart_Printf("TaskHandler usage:\r\n"
+			" Logged time: %d [ms]\r\n"
 			" All tasks runtimes: %d [ms]\r\n"
 			" CPU Usage: %d%%\r\n",
 			actualTick - oldestTick,
@@ -395,8 +411,7 @@ void TaskHandler_PrintStatistics(void)
 			cpuPercent
 			);
 
-	TaskHandler_PrintStatisticsBorder();
-	CmdH_Printf("|%11s|%5s| %20s |\r\n", "<StartTick>", "<Run>", "<TaskName>");
+
 	TaskHandler_PrintStatisticsBorder();
 
 	// Print all table
@@ -405,10 +420,11 @@ void TaskHandler_PrintStatistics(void)
 		if (TaskHandler_StatisticsRanTaskTicks[i].startTick > 0)
 		{
 			// Print: "<StartTick> - <RunTime: ms> - <TaskName>"
-			CmdH_Printf("| %9d | %3d | %20s |\r\n",
+			DebugUart_Printf(TaskHandler_StatisticsFormat,
 					TaskHandler_StatisticsRanTaskTicks[i].startTick,
 					TaskHandler_StatisticsRanTaskTicks[i].runTime,
 					TaskList[TaskHandler_StatisticsRanTaskTicks[i].taskId].taskName);
+			DebugUart_SendLine(NULL);
 		}
 	}
 
@@ -435,7 +451,7 @@ void TaskHandler_PrintTaskRunCounts(void)
 	TaskID_t i;
 
 	TaskHandler_PrintTaskRunCountsBorder();
-	CmdH_Printf("| %20s | %9s |\r\n", "<TaskName>", "<RunCnt>");
+	CmdH_Printf("| %20s | %9s |\r\n", "TaskName", "RunCnt");
 	TaskHandler_PrintTaskRunCountsBorder();
 
 	for (i = 0; i < Task_Count; i++)
