@@ -39,6 +39,121 @@
 
 
 /*------------------------------------------------------------------------------
+ *								Logical functions
+ *----------------------------------------------------------------------------*/
+
+
+///< Remote controller (for car) function
+//#define CONFIG_FUNCTION_REMOTECONTROLLER_CAR
+#ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
+	#ifndef CONFIG_MODULE_MOTOR_ENABLE
+		#define CONFIG_MODULE_MOTOR_ENABLE
+	#endif
+// TODO: Add bluetooth module
+#endif
+
+
+///< Remote controller (for controller) function
+//#define CONFIG_FUNCTION_REMOTECONTROLLER
+#ifdef CONFIG_FUNCTION_REMOTECONTROLLER
+	#ifndef CONFIG_MODULE_BUTTON_ENABLE
+		#define CONFIG_MODULE_BUTTON_ENABLE
+	#endif
+	#define CONFIG_MODULE_BLUETOOTH_ENABLE
+	/*#ifndef CONFIG_MODULE_ESP8266_ENABLE
+		#define CONFIG_MODULE_ESP8266_ENABLE
+	#endif
+	#define CONFIG_FUNCTION_ESP8266_WRITE_IP_TO_DISPLAY
+	*/
+#endif
+
+
+#if defined(CONFIG_FUNCTION_REMOTECONTROLLER_CAR) && defined(CONFIG_FUNCTION_REMOTECONTROLLER)
+#error "RemoteController - controller and car is too defined. Do not use them together!"
+#endif
+
+
+///< Display: Menu
+//#define CONFIG_FUNCTION_DISPLAY_MENU
+#ifdef CONFIG_FUNCTION_DISPLAY_MENU
+	#ifndef CONFIG_MODULE_DISPLAY_ENABLE
+		#define CONFIG_MODULE_DISPLAY_ENABLE
+	#endif
+	#define CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
+	#define CONFIG_FUNCTION_GAME_SNAKE
+	#define CONFIG_FUNCTION_DISPLAY_INPUT
+#endif
+
+
+///< Display: Show screen
+//#define CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
+// TODO: What we want to displaying
+
+
+///< Display: Show clock
+//#define CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
+#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
+	#define CONFIG_DISPLAY_CLOCK_LARGE
+	#define CONFIG_DISPLAY_CLOCK_SMALL
+#endif
+
+
+///< Display: Clock change function
+//#define CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
+#ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
+	#ifndef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
+		#define CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
+	#endif
+	#ifndef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
+		#define CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
+	#endif
+#endif
+
+
+///< Display: Input function
+//#define CONFIG_FUNCTION_DISPLAY_INPUT
+#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
+	#ifndef CONFIG_MODULE_DISPLAY_ENABLE
+		#define CONFIG_MODULE_DISPLAY_ENABLE
+	#endif
+	#ifndef CONFIG_MODULE_BUTTON_ENABLE
+		#define CONFIG_MODULE_BUTTON_ENABLE
+	#endif
+#endif
+
+
+///< Charger function
+//#define CONFIG_FUNCTION_CHARGER
+#ifdef CONFIG_FUNCTION_CHARGER
+	#ifndef CONFIG_MODULE_DISPLAY_ENABLE
+		#define CONFIG_MODULE_DISPLAY_ENABLE
+	#endif
+	#ifndef CONFIG_MODULE_ADC_ENABLE
+		#define CONFIG_MODULE_ADC_ENABLE
+	#endif
+	#ifndef CONFIG_MODULE_IO_ENABLE
+		#define CONFIG_MODULE_IO_ENABLE
+	#endif
+	#ifndef CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE
+		#define CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE
+	#endif
+#endif
+
+
+///< Snake game
+//#define CONFIG_FUNCTION_GAME_SNAKE
+#ifdef CONFIG_FUNCTION_GAME_SNAKE
+	#ifndef CONFIG_DISPLAY_FONT8X5_ENABLE
+		#define CONFIG_DISPLAY_FONT8X5_ENABLE
+	#endif
+	#ifndef CONFIG_DISPLAY_FONT12X8_ENABLE
+		#define CONFIG_DISPLAY_FONT12X8_ENABLE
+	#endif
+#endif
+
+
+
+/*------------------------------------------------------------------------------
  *									Modules
  *----------------------------------------------------------------------------*/
 
@@ -221,7 +336,7 @@
 
 	//#define CONFIG_MODULE_DISPLAY_ENABLE
 
-	#define CONFIG_MODULE_BUTTON_ENABLE
+	//#define CONFIG_MODULE_BUTTON_ENABLE
 
 	//#define CONFIG_MODULE_ESP8266_ENABLE
 
@@ -241,6 +356,8 @@
 	//#define CONFIG_MODULE_COMMUNICATION_ENABLE
 
 	//#define CONFIG_MODULE_CONVERTTABLE_ENABLE
+
+	#define CONFIG_MODULE_HARDFAULTHANDLER_ENABLE
 #endif
 
 
@@ -307,7 +424,7 @@
 //#define CONFIG_MODULE_TEST_ENABLE
 
 ///< Simulation mode: Enable "simulate" command
-//#define CONFIG_MODULE_SIMULATION_ENABLE
+#define CONFIG_MODULE_SIMULATION_ENABLE
 
 ///< SWO: Serial Wire Output enable
 //#define CONFIG_SWO_ENABLE
@@ -320,7 +437,7 @@
 
 
 ///< Debug - Formatted text (colored texts)
-#define CONFIG_MODULE_DEBUG_ENABLE
+//#define CONFIG_MODULE_DEBUG_ENABLE
 //#define CONFIG_MODULE_FORMATTEDMESSAGE_ENABLE
 
 
@@ -333,7 +450,7 @@
 //#define CONFIG_MODULE_UNITTEST_ENABLE
 #ifdef CONFIG_MODULE_UNITTEST_ENABLE
 	#define MODULE_STRING_UNITTEST_ENABLE
-	#define MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
+	//#define MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
 	#define MODULE_DATETIME_UNITTEST_ENABLE
 	#define MODULE_COMMANDHANDLER_UNITTEST_ENABLE
 	#define MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
@@ -344,8 +461,8 @@
 	#define MODULE_EVENTHANDLER_UNITTEST_ENABLE
 	#define MODULE_CALC_UNITTEST_ENABLE
 	#define MODULE_MEM_UNITTEST_ENABLE
-	#define MODULE_LINKEDLIST_UNITTEST_ENABLE
-	#define MODULE_CONVERTTABLE_UNITTEST_ENABLE
+	//#define MODULE_LINKEDLIST_UNITTEST_ENABLE
+	//#define MODULE_CONVERTTABLE_UNITTEST_ENABLE
 	#define MODULE_SECUREDDATATYPES_UNITTEST_ENABLE
 
 	#if (defined(MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE) || defined(MODULE_COMMANDHANDLER_UNITTEST_ENABLE))&& !defined(CONFIG_PROTOCOL_BUFFER_ENABLE)
@@ -518,7 +635,7 @@
 
 
 ///< Button settings
-//#define CONFIG_MODULE_BUTTON_ENABLE
+#define CONFIG_MODULE_BUTTON_ENABLE
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
 	#define CONFIG_BUTTON_DEBUG_ENABLE
 	#define CONFIG_MODULE_BUTTON_LONG_PRESS
@@ -551,120 +668,6 @@
 #ifdef CONFIG_MODULE_LED_ENABLE
 	//#define LED_OLD_STYLE
 	#define LED_PWM_STYLE
-#endif
-
-
-/*------------------------------------------------------------------------------
- *								Logical functions
- *----------------------------------------------------------------------------*/
-
-
-///< Remote controller (for car) function
-//#define CONFIG_FUNCTION_REMOTECONTROLLER_CAR
-#ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
-	#ifndef CONFIG_MODULE_MOTOR_ENABLE
-		#define CONFIG_MODULE_MOTOR_ENABLE
-	#endif
-// TODO: Add bluetooth module
-#endif
-
-
-///< Remote controller (for controller) function
-//#define CONFIG_FUNCTION_REMOTECONTROLLER
-#ifdef CONFIG_FUNCTION_REMOTECONTROLLER
-	#ifndef CONFIG_MODULE_BUTTON_ENABLE
-		#define CONFIG_MODULE_BUTTON_ENABLE
-	#endif
-	#define CONFIG_MODULE_BLUETOOTH_ENABLE
-	/*#ifndef CONFIG_MODULE_ESP8266_ENABLE
-		#define CONFIG_MODULE_ESP8266_ENABLE
-	#endif
-	#define CONFIG_FUNCTION_ESP8266_WRITE_IP_TO_DISPLAY
-	*/
-#endif
-
-
-#if defined(CONFIG_FUNCTION_REMOTECONTROLLER_CAR) && defined(CONFIG_FUNCTION_REMOTECONTROLLER)
-#error "RemoteController - controller and car is too defined. Do not use them together!"
-#endif
-
-
-///< Display: Menu
-#define CONFIG_FUNCTION_DISPLAY_MENU
-#ifdef CONFIG_FUNCTION_DISPLAY_MENU
-	#ifndef CONFIG_MODULE_DISPLAY_ENABLE
-		#define CONFIG_MODULE_DISPLAY_ENABLE
-	#endif
-	#define CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
-	#define CONFIG_FUNCTION_GAME_SNAKE
-	#define CONFIG_FUNCTION_DISPLAY_INPUT
-#endif
-
-
-///< Display: Show screen
-//#define CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
-// TODO: What we want to displaying
-
-
-///< Display: Show clock
-//#define CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
-#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
-	#define CONFIG_DISPLAY_CLOCK_LARGE
-	#define CONFIG_DISPLAY_CLOCK_SMALL
-#endif
-
-
-///< Display: Clock change function
-//#define CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
-#ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
-	#ifndef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
-		#define CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
-	#endif
-	#ifndef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
-		#define CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
-	#endif
-#endif
-
-
-///< Display: Input function
-//#define CONFIG_FUNCTION_DISPLAY_INPUT
-#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
-	#ifndef CONFIG_MODULE_DISPLAY_ENABLE
-		#define CONFIG_MODULE_DISPLAY_ENABLE
-	#endif
-	#ifndef CONFIG_MODULE_BUTTON_ENABLE
-		#define CONFIG_MODULE_BUTTON_ENABLE
-	#endif
-#endif
-
-
-///< Charger function
-//#define CONFIG_FUNCTION_CHARGER
-#ifdef CONFIG_FUNCTION_CHARGER
-	#ifndef CONFIG_MODULE_DISPLAY_ENABLE
-		#define CONFIG_MODULE_DISPLAY_ENABLE
-	#endif
-	#ifndef CONFIG_MODULE_ADC_ENABLE
-		#define CONFIG_MODULE_ADC_ENABLE
-	#endif
-	#ifndef CONFIG_MODULE_IO_ENABLE
-		#define CONFIG_MODULE_IO_ENABLE
-	#endif
-	#ifndef CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE
-		#define CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE
-	#endif
-#endif
-
-
-///< Snake game
-//#define CONFIG_FUNCTION_GAME_SNAKE
-#ifdef CONFIG_FUNCTION_GAME_SNAKE
-	#ifndef CONFIG_DISPLAY_FONT8X5_ENABLE
-		#define CONFIG_DISPLAY_FONT8X5_ENABLE
-	#endif
-	#ifndef CONFIG_DISPLAY_FONT12X8_ENABLE
-		#define CONFIG_DISPLAY_FONT12X8_ENABLE
-	#endif
 #endif
 
 

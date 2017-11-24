@@ -626,7 +626,9 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 {
 	(void)source;
 
+	#ifdef CONFIG_FUNCTION_DISPLAY_MENU
 	Logic_DisplayHandler(source);
+	#endif
 
 	return TaskResult_Ok;
 }

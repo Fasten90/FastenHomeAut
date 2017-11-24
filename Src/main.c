@@ -295,7 +295,9 @@ int main(void)
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
 	// Display
 	Display_SSD1306_Init();
+	#ifdef CONFIG_FUNCTION_DISPLAY_MENU
 	Logic_Display_Init();
+	#endif
 #endif
 
 

@@ -44,6 +44,7 @@
 
 #include "Globals.h"
 #include "TaskHandler.h"
+#include "HardFaultHandler.h"
 
 
 /* External variables --------------------------------------------------------*/
@@ -64,7 +65,8 @@ void NMI_Handler(void)
 */
 void HardFault_Handler(void)
 {
-  Error_Handler();
+	HardFault_PrintHardFaultReason();
+	Error_Handler();
 }
 
 /**
