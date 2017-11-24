@@ -349,6 +349,9 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	}
 #endif
 
+#if !defined(CONFIG_MODULE_IO_ENABLE) || !defined(CONFIG_MODULE_BUTTON_ENABLE)
+	(void)GPIO_Pin;
+#endif
 }	// End of HAL_GPIO_EXTI_Callback()
 
 

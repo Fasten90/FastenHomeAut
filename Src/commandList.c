@@ -1051,6 +1051,17 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 
 
 
+	// Test dim
+	/*
+	static bool dimTest = false;
+	if (dimTest)
+		dimTest = false;
+	else
+		dimTest = true;
+
+	SSD1306_dim(dimTest);
+	*/
+
 
 
 

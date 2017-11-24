@@ -589,7 +589,16 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 
 #else
 	// Button long press not used
-	Logic_ButtonEventHandler(i, ButtonPress_Short);
+	uint8_t i;
+	for (i = 0; i < PressedButton_Count; i++)
+	{
+		// Save: this button is pressed
+		if (!(BUTTON_Clicked & (1 << i)))
+		{
+			BUTTON_Clicked &= ~(1 << i);
+			Logic_ButtonEventHandler(i, ButtonPress_Short);
+		}
+	}
 #endif
 
 	// Clear flag

@@ -1349,7 +1349,7 @@ void GlobVarH_WriteResults(GlobVarH_ProcessResult_t result)
 /*
  * \brief	Send header (for List all variables)
  */
-static void GlobalVarHandler_ListAllVariable_SendHeader(void)
+static void GlobVarH_ListAllVariable_SendHeader(void)
 {
 	CmdH_Printf("+-%2c-+-%20c-+-%10c-+-%5c-+-%5c-+-%4c-+-%20c-+\r\n", '-', '-', '-', '-', '-', '-', '-');
 }
@@ -1366,10 +1366,10 @@ void GlobVarH_ListAllVariableParameters(void)
 	// TODO: Enumokat is kiírni, ha van?
 
 	// Send header
-	GlobalVarHandler_ListAllVariable_SendHeader();
+	GlobVarH_ListAllVariable_SendHeader();
 	CmdH_Printf("| %2s | %20s | %10s | %5s | %5s | %4s | %20s |\r\n",
 			"ID", "Name", "Type", "Min", "Max", "Unit", "Description");
-	GlobalVarHandler_ListAllVariable_SendHeader();
+	GlobVarH_ListAllVariable_SendHeader();
 
 	// Rows (commands)
 	for (i = 0; i < GlobVarH_MaxCommandNum; i++)
@@ -1396,7 +1396,7 @@ void GlobVarH_ListAllVariableParameters(void)
 	}
 
 	// After commands (end)
-	GlobalVarHandler_ListAllVariable_SendHeader();
+	GlobVarH_ListAllVariable_SendHeader();
 }
 
 
