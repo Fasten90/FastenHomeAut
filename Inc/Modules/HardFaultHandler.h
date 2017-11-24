@@ -77,6 +77,7 @@ typedef union
 
 void HardFaultHandler_Init(void);
 void HardFault_PrintHardFaultReason(void);
+void prvGetRegistersFromStack(uint32_t *pulFaultStackAddress);
 
 
 

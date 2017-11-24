@@ -46,6 +46,9 @@
 #include "TaskHandler.h"
 #include "HardFaultHandler.h"
 
+#ifdef CONFIG_MODULE_HARDFAULTHANDLER_ENABLE
+extern void prvGetRegistersFromStack(uint32_t *pulFaultStackAddress);
+#endif
 
 /* External variables --------------------------------------------------------*/
 
@@ -65,7 +68,64 @@ void NMI_Handler(void)
 */
 void HardFault_Handler(void)
 {
-	HardFault_PrintHardFaultReason();
+#ifdef CONFIG_MODULE_HARDFAULTHANDLER_ENABLE
+
+#if 0
+	/* FreeRTOS style:
+	 * http://www.freertos.org/Debugging-Hard-Faults-On-Cortex-M-Microcontrollers.html
+	 * It works on Cortex-M3-4?
+	 */
+    __asm volatile
+    (
+        " tst lr, #4                                                \n"
+        " ite eq                                                    \n"
+        " mrseq r0, msp                                             \n"
+        " mrsne r0, psp                                             \n"
+        " ldr r1, [r0, #24]                                         \n"
+        " ldr r2, handler2_address_const                            \n"
+        " bx r2                                                     \n"
+        " handler2_address_const: .word prvGetRegistersFromStack    \n"
+    );
+#elif 0
+    // https://blog.feabhas.com/2013/02/developing-a-generic-hard-fault-handler-for-arm-cortex-m3cortex-m4/
+    // Not work
+    __asm volatile
+	(
+		" mrs r0, MSP \n"
+		" b prvGetRegistersFromStack \n"
+    );
+#elif 0
+    // Segger version
+    /*
+	 ;// This version is for Cortex M0
+	movs R0, #4
+	mov R1, LR
+	tst R0, R1 ;// Check EXC_RETURN in Link register bit 2.
+	bne Uses_PSP
+	mrs R0, MSP ;// Stacking was using MSP.
+	b Pass_StackPtr
+     */
+    __asm volatile
+	(
+    "movs R0, #4 \n"
+    "mov R1, LR \n"
+    "tst R0, R1 \n" // Check EXC_RETURN in Link register bit 2.
+    //"bne Uses_PSP \n"		// mrs R0, PSP ;// Stacking was using PSP.
+    "mrs R0, MSP \n" // Stacking was using MSP.
+    "b prvGetRegistersFromStack  \n"
+	);
+#elif 1
+    // Own version
+    __asm volatile
+	(
+		" mrs r0, MSP \n"
+		" ldr r1, handler \n"
+		" bx r1 \n"
+		" handler: .word prvGetRegistersFromStack \n"
+    );
+#endif
+#endif
+
 	Error_Handler();
 }
 
