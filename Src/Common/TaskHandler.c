@@ -381,7 +381,7 @@ void TaskHandler_PrintStatistics(void)
 			// Time ++
 			runTimes += TaskHandler_StatisticsRanTaskTicks[i].runTime;
 			if (!(lastTick == TaskHandler_StatisticsRanTaskTicks[i].startTick
-				&& TaskHandler_StatisticsRanTaskTicks[i].runTime == 0) )
+				&& TaskHandler_StatisticsRanTaskTicks[i].runTime == 0))
 				{
 				// Upper time
 				runTimes += 1;
@@ -433,12 +433,25 @@ void TaskHandler_PrintStatistics(void)
 
 
 
+static const char * const TaskHandler_RuntimesFormat = "| %20s | %9u |";
+
+
 /**
  * \brief	Print TaskHandler RunTimes statistics border
  */
 static void TaskHandler_PrintTaskRunCountsBorder(void)
 {
-	CmdH_Printf("+-%20c-+-%9c-+\r\n", '-', '-');
+	char str[120];
+	char header[49];
+
+	Str_PrintHeader(str, header, TaskHandler_RuntimesFormat, false);
+	DebugUart_SendLine(str);
+
+	Str_PrintHeader(str, header, TaskHandler_RuntimesFormat, true, "TaskName", "RunCnt");
+	DebugUart_SendLine(str);
+
+	Str_PrintHeader(str, header, TaskHandler_RuntimesFormat, false);
+	DebugUart_SendLine(str);
 }
 
 
@@ -451,12 +464,11 @@ void TaskHandler_PrintTaskRunCounts(void)
 	TaskID_t i;
 
 	TaskHandler_PrintTaskRunCountsBorder();
-	CmdH_Printf("| %20s | %9s |\r\n", "TaskName", "RunCnt");
-	TaskHandler_PrintTaskRunCountsBorder();
 
 	for (i = 0; i < Task_Count; i++)
 	{
-		CmdH_Printf("| %20s | %9u |\r\n", TaskList[i].taskName, TaskList[i].taskRunCount);
+		DebugUart_Printf(TaskHandler_RuntimesFormat, TaskList[i].taskName, TaskList[i].taskRunCount);
+		DebugUart_SendLine(NULL);
 	}
 
 	TaskHandler_PrintTaskRunCountsBorder();
