@@ -25,6 +25,7 @@
 #include "TaskList.h"
 #include "Debug.h"
 #include "CommandHandler.h"
+#include "DebugUart.h"
 
 #ifdef MODULE_EVENTLOG_UNITTEST_ENABLE
 	#include "UnitTest.h"
@@ -126,6 +127,9 @@ static void EventLog_DebugPrintLog(EventLogRecord_t * eventRecord)
 #endif
 
 
+static const char * const fixheader = "| %3u | %20s | %9u | %20s | %8X | %10s | %20s |";
+
+
 
 /**
  * \brief	Print log
@@ -138,7 +142,7 @@ static void EventLog_PrintLog(char *str, EventLogCnt_t cnt, EventLogRecord_t *lo
 	char timeStr[DATETIME_STRING_MAX_LENGTH];
 	DateTime_PrintDateTimeToString(timeStr, &logRecord->dateTime);
 
-	usprintf(str, "| %3u | %20s | %9u | %20s | 0x%X | %10s | %20s |\r\n",
+	usprintf(str, fixheader,
 			cnt,
 			timeStr,
 			logRecord->tick,
@@ -151,13 +155,34 @@ static void EventLog_PrintLog(char *str, EventLogCnt_t cnt, EventLogRecord_t *lo
 
 
 
+// TODO: Str_FormatBorderAndHeader(str, header, fixheader, ...);
+
+
+
+void EventLog_PrintBorder(void)
+{
+	char str[120];
+	char header[49];
+
+	Str_PrintHeader(str, header, fixheader, false);
+	DebugUart_SendLine(str);
+
+	Str_PrintHeader(str, header, fixheader, true, "Id", "DateTime", "Tick", "EventName", "Data", "EventType", "TaskName");
+	DebugUart_SendLine(str);
+
+	Str_PrintHeader(str, header, fixheader, false);
+	DebugUart_SendLine(str);
+}
+
+
+
 /**
  * \brief	Print all logs
  */
 void EventLog_PrintAllLogRecords(void)
 {
 	// TODO: Get communication protocol from parameter
-
+#if 0
 	EventLogCnt_t i;
 	char str[120];
 
@@ -190,6 +215,34 @@ void EventLog_PrintAllLogRecords(void)
 	CmdH_SendMessage(fixheader);
 	CmdH_SendMessage(headertxt);
 	CmdH_SendMessage(fixheader);
+#else
+
+	EventLogCnt_t i;
+	char str[120];
+
+
+	EventLog_PrintBorder();
+
+
+	// Send i. log record
+	for (i = 0; i < CONFIG_EVENTLOG_LOG_SIZE; i++)
+	{
+		if (EventLogs[i].eventName)
+		{
+			EventLog_PrintLog(str, i, &EventLogs[i]);
+			DebugUart_SendLine(str);
+		}
+		else
+		{
+			// There is no more "valid" log record
+			break;
+		}
+	}
+
+	// Send end of log
+	EventLog_PrintBorder();
+
+#endif
 }
 
 
