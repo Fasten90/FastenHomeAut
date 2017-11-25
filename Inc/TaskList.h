@@ -81,6 +81,9 @@ typedef enum
 #ifdef CONFIG_DEBUG_SELFTEST
 	Task_SelfTest,
 #endif
+#ifdef CONFIG_FUNCTION_PERIODICAL_SENDING
+	Task_PerodicalSending,
+#endif
 
 	// XXX: Add new Task enum here!
 	// \note: !! Be careful !! Sync with TaskList

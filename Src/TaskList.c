@@ -90,6 +90,9 @@ static TaskResult_t Task_CommonAdcFunction(ScheduleSource_t source);
 #ifdef CONFIG_DEBUG_SELFTEST
 static TaskResult_t Task_SelfTestFunction(ScheduleSource_t source);
 #endif
+#ifdef CONFIG_FUNCTION_PERIODICAL_SENDING
+static TaskResult_t Task_PeriodicalSendingFunction(ScheduleSource_t source);
+#endif
 
 
 ///< Tasks list
@@ -212,7 +215,14 @@ Task_t TaskList[] =
 		.isRunOnce = true,
 	},
 #endif
-
+#ifdef CONFIG_FUNCTION_PERIODICAL_SENDING
+	{
+		.taskName ="PeriodicalSending",
+		.taskFunction = Task_PeriodicalSendingFunction,
+		.taskScheduleRate = 1000,
+		.isDisabled = true,
+	},
+#endif
 
 	// XXX: Add here new tasks
 	// \note Be careful, taskList order need to be equal with TaskName_t
@@ -758,6 +768,19 @@ static TaskResult_t Task_SelfTestFunction(ScheduleSource_t source)
 		Error_Handler();
 	}
 	#endif
+
+	return TaskResult_Ok;
+}
+#endif
+
+
+
+#ifdef CONFIG_FUNCTION_PERIODICAL_SENDING
+static TaskResult_t Task_PeriodicalSendingFunction(ScheduleSource_t source)
+{
+	(void)source;
+
+	Logic_PeriodicalSending();
 
 	return TaskResult_Ok;
 }

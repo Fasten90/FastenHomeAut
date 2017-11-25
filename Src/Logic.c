@@ -16,6 +16,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
+#include "board.h"
 #include "ESP8266.h"
 #include "DateTime.h"
 #include "Button.h"
@@ -132,6 +133,11 @@ static const char * const Logic_MenuList[] =
 
 	// XXX: Synchronize with DisplayMenu_t
 };
+#endif
+
+
+#ifdef CONFIG_FUNCTION_PERIODICAL_SENDING
+static char PeriodicalSending_Message[50] = { 0 };
 #endif
 
 
@@ -1266,3 +1272,19 @@ bool Logic_Display_GetClockIsNeedRefresh(void)
 
 
 #endif	// #ifdef CONFIG_MODULE_DISPLAY_ENABLE
+
+
+
+#ifdef CONFIG_FUNCTION_PERIODICAL_SENDING
+void Logic_SetPeriodicalMessageSendg(char * msg)
+{
+	StrCpyMax(PeriodicalSending_Message, msg, 50);
+}
+
+
+
+void Logic_PeriodicalSending(void)
+{
+	DebugUart_SendLine(PeriodicalSending_Message);
+}
+#endif

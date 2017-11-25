@@ -72,95 +72,97 @@
  *		Global function declarations - Commands
  *----------------------------------------------------------------------------*/
 
-	static CmdH_Result_t CommandFunction_cls(uint32_t argc, char** argv);
-	static CmdH_Result_t CommandFunction_help(uint32_t argc, char** argv);
-	static CmdH_Result_t CommandFunction_version(uint32_t argc, char** argv);
-	static CmdH_Result_t CommandFunction_welcome(uint32_t argc, char** argv);
-	static CmdH_Result_t CommandFunction_reset(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_cls(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_help(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_version(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_welcome(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_reset(uint32_t argc, char** argv);
 #ifdef CONFIG_MODULE_UNITTEST_ENABLE
-	static CmdH_Result_t CommandFunction_unittest(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_unittest(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_TEST_ENABLE
-	static CmdH_Result_t CommandFunction_moduletest(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_moduletest(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_TEST_MODE
-	static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_LED_ENABLE
-	static CmdH_Result_t CommandFunction_led(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_led(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
-	static CmdH_Result_t CommandFunction_set(uint32_t argc, char** argv);
-	static CmdH_Result_t CommandFunction_get(uint32_t argc, char** argv);
-	static CmdH_Result_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** argv);
-	static CmdH_Result_t CommandFunction_GlobalVariableList(uint32_t argc, char** argv);
-	static CmdH_Result_t CommandFunction_GlobalVariableValueList(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_set(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_get(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_GlobalVariableList(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_GlobalVariableValueList(uint32_t argc, char** argv);
 #ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
-	static CmdH_Result_t CommandFunction_GlobalVariableTrace(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_GlobalVariableTrace(uint32_t argc, char** argv);
 #endif
 #endif
 #ifdef CONFIG_MODULE_COMMON_DAC_ENABLE
-	static CmdH_Result_t CommandFunction_dac(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_dac(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_COMMON_IO_ENABLE
-	static CmdH_Result_t CommandFunction_io(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_io(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
-	static CmdH_Result_t CommandFunction_adc(uint32_t argc, char** argv);
-	static CmdH_Result_t CommandFunction_adcread(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_adc(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_adcread(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_COMMON_PWM_ENABLE
-	static CmdH_Result_t CommandFunction_PWM(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_PWM(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
-	static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-	static CmdH_Result_t CommandFunction_ESP8266(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_ESP8266(uint32_t argc, char** argv);
 #endif
 #if defined(CONFIG_MODULE_RTC_ENABLE) || defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
-	static CmdH_Result_t CommandFunction_Time(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_Time(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
-	static CmdH_Result_t CommandFunction_EventLog(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_EventLog(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
-	static CmdH_Result_t CommandFunction_raspberrypi(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_raspberrypi(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_FLASH_ENABLE
-	static CmdH_Result_t CommandFunction_flashdel(uint32_t argc, char** argv);
-	static CmdH_Result_t CommandFunction_flashread(uint32_t argc, char** argv);
-	static CmdH_Result_t CommandFunction_flashwrite(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_flashdel(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_flashread(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_flashwrite(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_ADC_ENABLE
-	static CmdH_Result_t CommandFunction_adc(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_adc(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_COMMANDLIST_RAMREAD_WRITE_COMMAND_ENABLE
-	static CmdH_Result_t CommandFunction_mr(uint32_t argc, char** argv);
-	static CmdH_Result_t CommandFunction_mw(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_mr(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_mw(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_COMMANDLIST_GO_COMMAND_ENABLE
-	static CmdH_Result_t CommandFunction_go(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_go(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
-	static CmdH_Result_t CommandFunction_Display(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_Display(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_IO_ENABLE
-	static CmdH_Result_t CommandFunction_IoStates(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_IoStates(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_SIMULATION_ENABLE
-	static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
-	static CmdH_Result_t CommandFunction_TaskHandler(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_TaskHandler(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_DEBUG_ENABLE
-	static CmdH_Result_t CommandFunction_Debug(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_Debug(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
-	static CmdH_Result_t CommandFunction_Button(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_Button(uint32_t argc, char** argv);
 #endif
-
+#ifdef CONFIG_FUNCTION_PERIODICAL_SENDING
+static CmdH_Result_t CommandFunction_PeriodicalSending(uint32_t argc, char** argv);
+#endif
 
 
 /*------------------------------------------------------------------------------
@@ -546,6 +548,17 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.commandArgNum = CmdH_CommandArgNum_0,
 	},
 #endif
+#ifdef CONFIG_FUNCTION_PERIODICAL_SENDING
+	{
+		.name = "periodicalsending",
+		.commandFunctionPointer = CommandFunction_PeriodicalSending,
+		.description = "Periodical sending message",
+		.syntax = "<msg> (periodtime [ms])",
+		.example = "sendmessage 500",
+		.commandArgNum = CmdH_CommandArgNum_1 | CmdH_CommandArgNum_2,
+	},
+#endif
+
 
 	/*
 	 * XXX: Add new commands here
@@ -2675,6 +2688,41 @@ static CmdH_Result_t CommandFunction_Button(uint32_t argc, char** argv)
 	return CmdH_Result_Ok;
 }
 #endif
+
+
+
+#ifdef CONFIG_FUNCTION_PERIODICAL_SENDING
+static CmdH_Result_t CommandFunction_PeriodicalSending(uint32_t argc, char** argv)
+{
+	CmdH_Result_t result = CmdH_Result_Unknown;
+
+	// TODO: Or GlobalVarHandler? enable flag, period, message
+	Logic_SetPeriodicalMessageSendg(argv[1]);
+
+	if (argc == 3)
+	{
+		// Has period parameter
+		uint32_t value;
+		if (StringToUnsignedDecimalNum(argv[2], &value))
+		{
+			TaskHandler_SetTaskPeriodicTime(Task_PerodicalSending, value);
+			result = CmdH_Result_Ok_SendSuccessful;
+		}
+		else
+		{
+			result = CmdH_Result_Error_WrongArgument2;
+		}
+	}
+	else
+	{
+		TaskHandler_RequestTaskScheduling(Task_PerodicalSending);
+		result = CmdH_Result_Ok_SendSuccessful;
+	}
+
+	return result;
+}
+#endif
+
 
 
 /* END OF COMMAND FUNCTIONS */

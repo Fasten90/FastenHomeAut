@@ -152,6 +152,10 @@
 #endif
 
 
+///< Periodical sending UART message function
+#define CONFIG_FUNCTION_PERIODICAL_SENDING
+
+
 
 /*------------------------------------------------------------------------------
  *									Modules
@@ -446,6 +450,7 @@
  *								Unit tests
  *----------------------------------------------------------------------------*/
 
+
 ///< Unit tests
 //#define CONFIG_MODULE_UNITTEST_ENABLE
 #ifdef CONFIG_MODULE_UNITTEST_ENABLE
@@ -620,7 +625,7 @@
 
 
 ///< Display settings
-#define CONFIG_MODULE_DISPLAY_ENABLE
+//#define CONFIG_MODULE_DISPLAY_ENABLE
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
 	#define CONFIG_DISPLAY_FONT8X5_ENABLE
 	#define CONFIG_DISPLAY_FONT12X8_ENABLE
@@ -639,8 +644,8 @@
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
 	#define CONFIG_BUTTON_DEBUG_ENABLE
 	#define CONFIG_MODULE_BUTTON_LONG_PRESS
-	#define CONFIG_BUTTON_LONG_PRESS_TIME_TICK_LIMIT			(400)
-	#define CONFIG_BUTTON_CONTINUOUS_PRESS_TIME_TICK_LIMIT		(1000)
+	#define CONFIG_BUTTON_LONG_PRESS_TIME_TICK_LIMIT			(400U)
+	#define CONFIG_BUTTON_CONTINUOUS_PRESS_TIME_TICK_LIMIT		(1000U)
 #endif
 
 

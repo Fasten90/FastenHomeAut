@@ -136,6 +136,9 @@ void Logic_Display_Snake_ChangeToMenu(void);
 
 void Logic_RemoteController_SendMessage(void);
 
+void Logic_SetPeriodicalMessageSendg(char * msg);
+void Logic_PeriodicalSending(void);
+
 
 
 #endif /* LOGIC_H_ */
