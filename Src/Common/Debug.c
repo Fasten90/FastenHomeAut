@@ -152,4 +152,14 @@ bool Debug_SetDebugTaskWithName(char *name, bool enable)
 
 
 
+#else
+
+// Debug module is not used
+// Suppressed "ISO C forbids an empty translation unit [-Wpedantic]"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic pop
+
+
+
 #endif	// #ifdef CONFIG_MODULE_DEBUG_ENABLE

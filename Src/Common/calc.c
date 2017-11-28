@@ -260,6 +260,7 @@ uint8_t GetBit(uint32_t value, uint8_t index)
 
 /**
  * \brief	Random generator
+ * 			Generate random number from 0 to RAND_MAX
  */
 uint16_t random(void)
 {

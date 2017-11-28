@@ -78,6 +78,7 @@ void Error_Handler(void)
 	DEBUG_BREAKPOINT();
 
 	// Infinite loop, do not disable interrupts ...
+	// TODO: But... If there is no interrupt?
 	uint8_t cnt = 8;
 	while(cnt--)
 	{

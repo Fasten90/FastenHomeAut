@@ -388,7 +388,7 @@
 
 
 
-#if defined(CONFIG_MODULE_DEBUGUSART_ENABLE) && !defined(CONFIG_MODULE_COMMANDHANDLER_ENABLE)
+#if defined(CONFIG_MODULE_DEBUGUART_ENABLE) && !defined(CONFIG_MODULE_COMMANDHANDLER_ENABLE)
 #warning "DebugUart cannot used without CommandHandler, because received UART messages will unprocessed"
 #endif
 

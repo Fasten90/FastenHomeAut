@@ -269,6 +269,10 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 	(void)button;
 	(void)type;
 	BUTTON_DEBUG_PRINT("Pressed");
+#else
+(void)button;
+(void)type;
+#warning "BUTTON_NUM is not defined or has unimplemented value!"
 #endif
 
 #if defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK) && (BUTTON_NUM == 1)
