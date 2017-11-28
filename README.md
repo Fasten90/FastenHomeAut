@@ -1,6 +1,6 @@
 # README #
 
-FastenHomeAut project
+## FastenHomeAut project ##
 
 ### What is this repository for? ###
 
