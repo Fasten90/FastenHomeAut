@@ -466,10 +466,10 @@ void TaskHandler_SwWatchdog(void)
 		ms = 0;
 		if (TaskHandler_RunCnt == TaskHandler_LastRunCnt)
 		{
-			// TaskHandler cn is not changed... :(
+			// TaskHandler cnt is not changed... :(
 			char msg[60];
 
-			usprintf(msg, "TaskHandler frozened: %s\r\n",TaskHandler_ActualTask);
+			usprintf(msg, "TaskHandler frozen: %s\r\n", TaskHandler_ActualTask);
 			DebugUart_SendMessageBlocked(msg);
 
 			// Be careful: Error_Handler is use the SysTick handler...

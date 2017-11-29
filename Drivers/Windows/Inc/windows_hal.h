@@ -58,6 +58,7 @@
  *----------------------------------------------------------------------------*/
 
 /* Peripheral Control functions  ************************************************/
+void              HAL_Init(void);
 void              HAL_IncTick(void);
 void              HAL_Delay(__IO uint32_t Delay);
 uint32_t          HAL_GetTick(void);
@@ -67,7 +68,7 @@ void              HAL_ResumeTick(void);
 
 // For suppress warnings
 #define HAL_SYSTICK_IRQHandler()
-#define HAL_Init()
+
 //#define SystemClock_Config()
 
 

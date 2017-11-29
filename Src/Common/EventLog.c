@@ -68,7 +68,7 @@ void EventLog_Init(void)
 
 	LogCounter = 0;
 
-	EventHandler_GenerateEvent(Event_LogEventStated, 0, 0);
+	EventHandler_GenerateEvent(Event_LogEventStarted, 0, 0);
 }
 
 
@@ -197,49 +197,43 @@ void EventLog_PrintAllLogRecords(void)
 #ifdef MODULE_EVENTLOG_UNITTEST_ENABLE
 void EventLog_UnitTest(void)
 {
-	bool result;
-
 	// Start Unit test
 	UnitTest_Start("EventLog", __FILE__);
 
+
+	// Need wait 1 ms, for first eventlog create tick result (!=0)
+	DelayMs(1);
 
 	// Test EventLog initialize
 
 	EventLog_Init();
 
 	// Check, first record is "LogEventStarted" ?
-	result = true;
-	result &= (EventLogs[0].eventName == Event_LogEventStated);
-	result &= (EventLogs[0].eventType == EventType_Raised);
-	result &= (EventLogs[0].eventData == 0);
-	result &= (EventLogs[0].tick != 0);
-	UNITTEST_ASSERT(result, "EventLog_Init error");
+	UNITTEST_ASSERT(EventLogs[0].eventName == Event_LogEventStarted, "EventLog_Init error");
+	UNITTEST_ASSERT(EventLogs[0].eventType == EventType_Raised, "EventLog_Init error");
+	UNITTEST_ASSERT(EventLogs[0].eventData == 0, "EventLog_Init error");
+	UNITTEST_ASSERT(EventLogs[0].tick != 0, "EventLog_Init error");
 
 	// Check, second record is empty?
-	result = true;
-	result &= (EventLogs[1].eventName == 0);
-	result &= (EventLogs[1].eventType == 0);
-	result &= (EventLogs[1].eventData == 0);
-	result &= (EventLogs[1].tick == 0);
-	UNITTEST_ASSERT(result, "EventLog_Init error");
+	UNITTEST_ASSERT(EventLogs[1].eventName == 0, "EventLog_Init error");
+	UNITTEST_ASSERT(EventLogs[1].eventType == 0, "EventLog_Init error");
+	UNITTEST_ASSERT(EventLogs[1].eventData == 0, "EventLog_Init error");
+	UNITTEST_ASSERT(EventLogs[1].tick == 0, "EventLog_Init error");
 
 
 	// Test log event (record)
 
-	EventLog_LogEvent(Event_LogEventStated, 0x12345678, 0, EventType_Raised);
+	EventLog_LogEvent(Event_LogEventStarted, 0x12345678, 0, EventType_Raised);
 
 	// Check, second record is "LogEventStarted" ?
-	result = true;
-	result &= (EventLogs[1].eventName == Event_LogEventStated);
-	result &= (EventLogs[1].eventType == EventType_Raised);
-	result &= (EventLogs[1].eventData == 0x12345678);
-	result &= (EventLogs[1].tick != 0);
-	UNITTEST_ASSERT(result, "EventLog_LogEvent error");
+	UNITTEST_ASSERT(EventLogs[1].eventName == Event_LogEventStarted, "EventLog_Init error");
+	UNITTEST_ASSERT(EventLogs[1].eventType == EventType_Raised, "EventLog_Init error");
+	UNITTEST_ASSERT(EventLogs[1].eventData == 0x12345678, "EventLog_Init error");
+	UNITTEST_ASSERT(EventLogs[1].tick != 0, "EventLog_Init error");
 
 
 	// Finish unit test
 	UnitTest_End();
-
 }
 #endif
 

@@ -40,7 +40,7 @@
 typedef enum
 {
 	Event_Unknown,
-	Event_LogEventStated,
+	Event_LogEventStarted,
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 	Event_TaskRequired,
 	Event_TaskScheduled,

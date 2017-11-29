@@ -40,6 +40,7 @@
 
 ///< HAL_Init... Set startup time
 //static time_t StartupTime;
+static uint32_t uwTick = 0;
 
 
 
@@ -47,7 +48,12 @@
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
-DWORD WINAPI STDINReceiveThread(void* data);
+extern void SysTick_Handler(void);
+
+
+
+DWORD WINAPI Windows_StdinReceiveThread(void* data);
+DWORD WINAPI Windows_SysTickThread(void* data);
 
 
 
@@ -75,6 +81,25 @@ DWORD WINAPI STDINReceiveThread(void* data);
   */
 
 
+/**
+ * \brief	Initialize HAL function
+ * 			Windows version: Init SysTick "Thread"
+ */
+void HAL_Init(void)
+{
+	// Init Tick
+	uwTick = 0;
+
+	// Create Thread
+	HANDLE thread = CreateThread(NULL, 0, Windows_SysTickThread, NULL, 0, NULL);
+
+	if (!thread)
+	{
+		printf("Error with thread!");
+	}
+}
+
+
 
 /**
   * @brief  Provides a tick value in millisecond.
@@ -84,7 +109,9 @@ DWORD WINAPI STDINReceiveThread(void* data);
   */
 uint32_t HAL_GetTick(void)
 {
-	return (uint32_t)GetTickCount();
+	// Working Windows solution
+	//return (uint32_t)GetTickCount();
+	return (uint32_t)uwTick;
 
 	// If not work...
 	/*
@@ -98,8 +125,7 @@ uint32_t HAL_GetTick(void)
 	double diff = difftime(StartupTime, actualTime);	// Return with seconds
 	uint32_t tick = diff * 1000;
 	return tick;
-
-	 */
+	*/
 }
 
 
@@ -115,7 +141,7 @@ uint32_t HAL_GetTick(void)
   */
 void HAL_IncTick(void)
 {
-	//uwTick++;
+	uwTick++;
 	// TODO: Not need increment, because we get tick from windows, and the Delay works with that
 }
 
@@ -183,7 +209,7 @@ void HAL_ResumeTick(void)
 HAL_StatusTypeDef HAL_UART_Init(UART_HandleTypeDef *huart)
 {
 
-	HANDLE thread = CreateThread(NULL, 0, STDINReceiveThread, NULL, 0, NULL);
+	HANDLE thread = CreateThread(NULL, 0, Windows_StdinReceiveThread, NULL, 0, NULL);
 
 	if (!thread)
 	{
@@ -199,7 +225,7 @@ HAL_StatusTypeDef HAL_UART_Init(UART_HandleTypeDef *huart)
 /**
  * \brief "STDIN --> UART" Receive thread
  */
-DWORD WINAPI STDINReceiveThread(void* data)
+DWORD WINAPI Windows_StdinReceiveThread(void* data)
 {
 	// Do stuff.  This will be the first function called on the new thread.
 	// When this function returns, the thread goes away.  See MSDN for more details.
@@ -230,4 +256,38 @@ DWORD WINAPI STDINReceiveThread(void* data)
 			printf("Null message received!\r\n");
 		}
 	}
+
+	return 0;
 }
+
+
+
+/**
+ * \brief	Thread for SysTick (increment tick)
+ */
+DWORD WINAPI Windows_SysTickThread(void* data)
+{
+	/*
+	void SysTick_Handler(void)
+	{
+	  HAL_IncTick();
+	  HAL_SYSTICK_IRQHandler();
+	#ifdef CONFIG_USE_FREERTOS
+	  osSystickHandler();
+	#endif
+	  TASKHANDLER_SW_WATCHDOG();
+	}*/
+	/*
+	VOID WINAPI Sleep(
+	_In_ DWORD dwMilliseconds
+	);
+	*/
+	while(1)
+	{
+		Sleep(1);
+		SysTick_Handler();
+	}
+
+	return 0;
+}
+
