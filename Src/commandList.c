@@ -832,6 +832,14 @@ static CmdH_Result_t CommandFunction_moduletest(uint32_t argc, char** argv)
 
 #ifdef CONFIG_TEST_MODE
 
+//volatile uint32_t importantValue = 0;
+
+/*
+void SetImportantValue(uint32_t newValue)
+{
+	importantValue = newValue;
+}*/
+
 /**
  * \brief	Test function
  */
@@ -1076,6 +1084,18 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 	*/
 
 
+	// Test Get function
+	//importantValue = 5;
+	/*
+	 *    text	   data	    bss	    dec	    hex	filename
+	 *    48892	    252	   4592	  53736	   d1e8	C:\Engineer\Projects\AtollicWorkspace\FastenNodeF0\Debug\FastenNodeF0.elf
+	 */
+
+	//SetImportantValue(5);
+	/*
+	 * text	   data	    bss	    dec	    hex	filename
+	 * 48916	    252	   4592	  53760	   d200	C:\Engineer\Projects\AtollicWorkspace\FastenNodeF0\Debug\FastenNodeF0.elf
+	 */
 
 
 	/**
@@ -2516,7 +2536,7 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 				uint32_t value;
 				if (StringToUnsignedDecimalNum(argv[2], &value))
 				{
-					EventHandler_GenerateEvent(value, 0, Task_ProcessDebugUartReceivedCommand);
+					EventHandler_GenerateEvent(value, 0, 0);
 					result = CmdH_Result_Ok_SendSuccessful;
 				}
 				else
@@ -2535,7 +2555,7 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 					if (!StrCmp(EventList[i].name, argv[2]))
 					{
 						// Equal
-						EventHandler_GenerateEvent(i, 0, Task_ProcessDebugUartReceivedCommand);
+						EventHandler_GenerateEvent(i, 0, 0);
 						isOk = true;
 						break;
 					}

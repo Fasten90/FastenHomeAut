@@ -470,7 +470,7 @@ void TaskHandler_SwWatchdog(void)
 			char msg[60];
 
 			usprintf(msg, "TaskHandler frozened: %s\r\n",TaskHandler_ActualTask);
-			HAL_UART_Transmit(&Debug_UartHandle, (uint8_t *)msg, StringLength(msg), 10);
+			DebugUart_SendMessageBlocked(msg);
 
 			// Be careful: Error_Handler is use the SysTick handler...
 			Error_Handler();
