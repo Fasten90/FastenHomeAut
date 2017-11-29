@@ -42,6 +42,9 @@
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
+static uint32_t Reset_GetResetReason(void);
+static void Reset_GetResetReasonString(uint32_t resetReason, char *resetString);
+
 
 
 /*------------------------------------------------------------------------------
@@ -52,7 +55,7 @@
 /**
  * \brief Get reset reason
  */
-uint32_t Reset_GetResetReason(void)
+static uint32_t Reset_GetResetReason(void)
 {
 	uint32_t resetReason = 0;
 	uint8_t i;
@@ -96,7 +99,7 @@ uint32_t Reset_GetResetReason(void)
 /**
  * \brief	Get reset reason string
  */
-void Reset_GetResetReasonString(uint32_t resetReason, char *resetString)
+static void Reset_GetResetReasonString(uint32_t resetReason, char *resetString)
 {
 	ResetReason_t reset = resetReason & ResetReason_Mask;
 	uint8_t length = 0;
@@ -178,16 +181,18 @@ void Reset_ClearResetFlags(void)
 
 
 /**
- * \brief	Print reset reasons on debug port
+ * \brief	Print reset reasons to string
  */
-void Reset_PrintResetReasons(void)
+size_t Reset_PrintResetReasons(char * dst)
 {
 	char str[40];
 	uint32_t resetReason = Reset_GetResetReason();
 
 	Reset_GetResetReasonString(resetReason, str);
 
-	uprintf("Reset reason: %s", str);
+	return usprintf(dst, "Reset reason: %s", str);
 }
+
+
 
 #endif

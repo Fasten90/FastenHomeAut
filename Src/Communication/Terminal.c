@@ -954,7 +954,7 @@ void Terminal_SendWelcome(void)
 	DelayMs(1);
 
 #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
-	Terminal_SendCls();						// Clean screen
+	Terminal_SendCls();						// Clear screen
 #endif
 
 	TERMINAL_SEND_WELCOME();				// Welcome message
@@ -975,7 +975,11 @@ void Terminal_SendWelcome(void)
 	CmdH_Printf("Used panel: %s\r\n", BOARD_NAME);
 #endif
 
-	Reset_PrintResetReasons();
+#ifdef CONFIG_MODULE_RESETREASON_ENABLE
+	char rstReasonStr[100];
+	Reset_PrintResetReasons(rstReasonStr);
+	Terminal_SendLine(rstReasonStr);
+#endif
 
 	TERMINAL_SEND_NEW_LINE();
 	TERMINAL_SEND_PROMT_NEW_LINE();			// New promt

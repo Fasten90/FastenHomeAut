@@ -77,10 +77,8 @@ typedef enum
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-uint32_t Reset_GetResetReason(void);
-void Reset_GetResetReasonString(uint32_t resetReason, char *resetString);
 void Reset_ClearResetFlags(void);
-void Reset_PrintResetReasons(void);
+size_t Reset_PrintResetReasons(char * dst);
 
 
 
