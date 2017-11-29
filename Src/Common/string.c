@@ -131,26 +131,31 @@ size_t SignedDecimalToStringSafe(int32_t value, char * str, size_t maxLength)
 uint8_t UnsignedDecimalToString(uint32_t value, char *str)
 {
 	uint8_t length = 0;
-	bool isStarted = false;
+
+	// Check pointer
+	if (str == NULL)
+	{
+		return 0;
+	}
 
 	// Largest num: 1xxxxxx...
 	uint32_t decade = 1000000000;
 
-	while (decade > 1)
+	// Find first "largest" decimal digit
+	while (decade > value && decade > 1)
+		decade /= 10;
+
+	do
 	{
-		if ((value >= decade) || (isStarted == true))
-		{
-			// Put first digit
-			str[length++] = ((value/decade) + '0');
-			isStarted = true;
-		}
+		// Put next digit
+		str[length] = ((value/decade) + '0');
+		length++;
 
 		value %= decade;			// Value - first digit
 		decade /= 10;				// /10
 	}
+	while (decade >= 1);
 
-	str[length] = (value + '0');	// Last digit
-	length++;
 	str[length] = '\0';				// End character
 
 	return length;
