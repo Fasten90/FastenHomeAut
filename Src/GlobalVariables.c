@@ -116,6 +116,7 @@ const GlobVarH_VarRecord_t GlobVarH_VarList[] =
 const GlobVarH_ID_t GlobVarH_MaxCommandNum = NUM_OF(GlobVarH_VarList);
 
 
+///< Global variable info struct
 GlobVarH_VarListInfo_t GlobVarH_Variables =
 {
 	.items = &GlobVarH_VarList[0],

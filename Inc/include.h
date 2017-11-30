@@ -70,7 +70,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #define NUM_OF(x) (sizeof(x)/sizeof(x[0]))
 
 
-///< Macro for checking
+///< Macro for checking - compile time checking
 // Error, if condition is true
 // Ok, if condition is false
 // \note:	Only use on a function
@@ -83,7 +83,8 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 ///< Breakpoint
 #ifdef CONFIG_DEBUG_MODE
     #ifndef CONFIG_MICROCONTROLLER_PC
-	#define DEBUG_BREAKPOINT()		__asm("BKPT #0\n")		// ASM: Break debugger
+	// ASM: Breakpoint
+	#define DEBUG_BREAKPOINT()		__asm("BKPT #0\n")
     #else
 	#include "Windows.h"
 	#define DEBUG_BREAKPOINT()		DebugBreak()
@@ -101,10 +102,22 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #define UNUSED_ARGUMENT(param)	((void)param)
 
 
-///< Assert function
+///< Runtime Assert function
 // \note	If true, it is ok
 //			If false, "error"
-#define ASSERT(__e)				((__e) ? (void)0 : Assert_Function(__FILE__, __LINE__, #__e))
+#ifdef ASSERT_MODE_HARD
+	#define ASSERT(__e)				((__e) ? (void)0 : Assert_Function(__FILE__, __LINE__, #__e))
+#else
+	#ifdef CONFIG_DEBUG_MODE
+		// Assert --> Breakpoint
+		#define ASSERT(__e)			do { 						\
+										if (!(__e))				\
+											DEBUG_BREAKPOINT();	\
+									} while(0)
+	#else
+		#define ASSERT(__e)
+	#endif
+#endif
 
 
 extern void Error_Handler(void);

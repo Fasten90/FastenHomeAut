@@ -11,6 +11,7 @@
 
 
 #include <stdarg.h>
+#include "options.h"
 #include "GenericTypeDefs.h"
 #include "String.h"
 #include "CommandList.h"
@@ -21,9 +22,6 @@
 #include "TaskList.h"
 #include "EventHandler.h"
 #include "Debug.h"
-#if defined(CONFIG_MODULE_GLOBALVARHANDLER_ENABLE) && defined(CONFIG_GLOBALVARHANDLER_CHECK_ENABLE)
-#include "GlobalVariables.h"
-#endif
 
 #ifdef MODULE_COMMANDHANDLER_UNITTEST_ENABLE
 #include "UnitTest.h"

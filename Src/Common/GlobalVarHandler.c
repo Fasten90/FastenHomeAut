@@ -31,6 +31,15 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
+#ifdef CONFIG_DEBUG_MODE
+#define GLOBVARH_ASSERT(_exp)				ASSERT(_exp)
+#else
+#define GLOBVARH_ASSERT(_exp)				do { 					\
+												if (!(_exp))		\
+													return false;	\
+											} while(0)
+#endif
+
 
 
 /*------------------------------------------------------------------------------
@@ -97,6 +106,10 @@ static uint8_t GlobVarH_TraceRam_BufferCnt = 0;					///< current position in Glo
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
+#ifdef CONFIG_GLOBALVARHANDLER_CHECK_ENABLE
+static bool GlobVarH_CheckGlobalVarArray(const GlobVarH_VarListInfo_t *varList);
+#endif
+
 static GlobVarH_ID_t GlobVarH_SearchVariableName(const GlobVarH_VarListInfo_t *varList, const char *commandName, const GlobVarH_VarRecord_t **varRecord);
 static GlobVarH_ProcessResult_t GlobVarH_SetVariable(const GlobVarH_VarRecord_t *varRecord, const char *param);
 static GlobVarH_ProcessResult_t GlobVarH_CheckValue(const GlobVarH_VarRecord_t *varRecord, uint32_t num);
@@ -130,56 +143,69 @@ static void GlobVarH_UT_Clear(void);
  *----------------------------------------------------------------------------*/
 
 
+/**
+ * \brief	Initialize GlobVarH module + checks
+ */
+void GlobVarH_Init(void)
+{
+	//#error "Synhcronize 'GlobVarH_Type_Count' with 'GlobalVarTypesNames'"
+	BUILD_BUG_ON(NUM_OF(GlobVarH_TypesNames) != GlobVarH_Type_Count);
+
+#ifdef CONFIG_GLOBALVARHANDLER_CHECK_ENABLE
+	GlobVarH_CheckGlobalVarArray(&GlobVarH_Variables);
+#endif
+}
+
+
+
 #ifdef CONFIG_GLOBALVARHANDLER_CHECK_ENABLE
 /**
  * \brief	Check the GlobVarH_VarList[], are settings valid?
  */
-// TODO Return with bool
-void GlobVarH_CheckGlobalVarArray(const GlobVarH_VarListInfo_t *varList)
+static bool GlobVarH_CheckGlobalVarArray(const GlobVarH_VarListInfo_t *varList)
 {
-	//#error "Synhcronize 'GlobVarH_Type_Count' with 'GlobalVarTypesNames'"
-	BUILD_BUG_ON(NUM_OF(GlobVarH_TypesNames) != GlobVarH_Type_Count);		// TODO nem ide való!
-
 	GlobVarH_ID_t i;
 
 	for (i = 0; i < varList->num; i++)
 	{
 		// TODO: Put some comments for reason / checks
 
-		ASSERT(varList->items[i].varPointer != NULL);
-		ASSERT(varList->items[i].type != GlobVarH_Type_Unknown);
-		ASSERT(varList->items[i].name != NULL);
-		ASSERT(StringLength(varList->items[i].name) < GLOBVARH_NAME_MAX_LENGTH);
+		GLOBVARH_ASSERT(varList->items[i].varPointer != NULL);
+		GLOBVARH_ASSERT(varList->items[i].type != GlobVarH_Type_Unknown);
+		GLOBVARH_ASSERT(varList->items[i].name != NULL);
+		GLOBVARH_ASSERT(StringLength(varList->items[i].name) < GLOBVARH_NAME_MAX_LENGTH);
 
 		if ((varList->items[i].getFunctionPointer != NULL) || (varList->items[i].setFunctionPointer != NULL))
 		{
-			ASSERT(varList->items[i].type != GlobVarH_Type_String);			// callback functions can not be used for string variable!
-			ASSERT(varList->items[i].getFunctionPointer != NULL);				// get function is required
-			ASSERT(varList->items[i].varPointer == &GlobVarH_TemporaryValue);
+			GLOBVARH_ASSERT(varList->items[i].type != GlobVarH_Type_String);			// callback functions can not be used for string variable!
+			GLOBVARH_ASSERT(varList->items[i].getFunctionPointer != NULL);				// get function is required
+			GLOBVARH_ASSERT(varList->items[i].varPointer == &GlobVarH_TemporaryValue);
 
 			if (!varList->items[i].isReadOnly)
 			{
-				ASSERT(varList->items[i].setFunctionPointer != NULL);
+				GLOBVARH_ASSERT(varList->items[i].setFunctionPointer != NULL);
 			}
 		}
 
 		if (varList->items[i].type == GlobVarH_Type_Enumerator)
 		{
-			ASSERT(varList->items[i].enumList != NULL);
+			GLOBVARH_ASSERT(varList->items[i].enumList != NULL);
 		}
 
 		if (varList->items[i].type == GlobVarH_Type_String && !varList->items[i].isReadOnly)
 		{
-			ASSERT(varList->items[i].maxValue != 0);
+			GLOBVARH_ASSERT(varList->items[i].maxValue != 0);
 		}
 
 		if (varList->items[i].type == GlobVarH_Type_Bits)
 		{
-			ASSERT(varList->items[i].maxValue <= 31);
-			ASSERT(varList->items[i].minValue < 31);
-			ASSERT(varList->items[i].minValue <= varList->items[i].maxValue);
+			GLOBVARH_ASSERT(varList->items[i].maxValue <= 31);
+			GLOBVARH_ASSERT(varList->items[i].minValue < 31);
+			GLOBVARH_ASSERT(varList->items[i].minValue <= varList->items[i].maxValue);
 		}
 	}
+
+	return true;
 }
 #endif
 
@@ -1736,8 +1762,7 @@ void GlobVarH_UnitTest(void)
 	#define CONFIG_GLOBALVARHANDLER_CHECK_ENABLE
 	#warning "Need enable GlobalVarChecker"
 #endif
-	GlobVarH_CheckGlobalVarArray(&utVarList);
-	//UNITTEST_ASSERT(isOk, "GlobalVarHandler structs are wrong");
+	UNITTEST_ASSERT(GlobVarH_CheckGlobalVarArray(&utVarList), "GlobalVarHandler structs are wrong");
 
 
 	// Test GlobVarH_SearchVariableName(const char *commandName, GlobVarH_VarRecord_t *varRecord):
