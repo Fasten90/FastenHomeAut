@@ -66,12 +66,13 @@
 #define strchr(_str, _char)				STRING_FindCharacter(_str, _char)
 
 
-// char * strstr ( const char *, const char * )
-#define strstr(_str1, _str2)			STRING_FindString(_str1, _str2)
-
 // Find characters in string
 // char * strpbrk ( const char *, const char * );
 #define strpbrk(_str, _characters)		STRING_FindCharacters(_str, _characters)
+
+
+// char * strstr ( const char *, const char * )
+#define strstr(_str1, _str2)			STRING_FindString(_str1, _str2)
 
 
 #define sprintf(...)					usprintf(__VA_ARGS__)

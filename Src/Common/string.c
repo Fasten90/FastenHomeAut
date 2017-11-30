@@ -1518,7 +1518,6 @@ const char * STRING_FindCharacters(const char *str, const char *findCharacters)
 
 
 
-
 /**
  * \brief	Find small string in big string
  * 			like strstr()
