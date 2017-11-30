@@ -9,8 +9,8 @@
  *		Last modified:	2017-09-17
  */
 
-#ifndef COMMON_CONVERTTABLE_H_
-#define COMMON_CONVERTTABLE_H_
+#ifndef CONVERTTABLE_H_
+#define CONVERTTABLE_H_
 
 
 
@@ -33,6 +33,7 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
+///< Convert table record (ADC - converted value pair)
 typedef struct
 {
 	uint32_t adcValue;						///< ADC value
@@ -40,6 +41,7 @@ typedef struct
 } ConvertTableRecord_t;
 
 
+///< Convert table record list (records + num)
 typedef struct
 {
 	const ConvertTableRecord_t *recordList;	///< List (ADC-Converted value)
@@ -64,4 +66,4 @@ void ConvertTable_UnitTest(void);
 
 
 
-#endif /* COMMON_CONVERTTABLE_H_ */
+#endif /* CONVERTTABLE_H_ */

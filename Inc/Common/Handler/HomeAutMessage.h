@@ -52,8 +52,7 @@
  *----------------------------------------------------------------------------*/
 
 
-
-/// HomeAut function
+///< HomeAut function
 typedef enum
 {
 	Function_Invalid = 0,
@@ -67,8 +66,7 @@ typedef enum
 } HomeAut_FunctionType;
 
 
-
-/// Function name - string parity table
+///< Function name - string parity table
 typedef struct
 {
 	const char * const name;				///< Name of function
@@ -76,8 +74,7 @@ typedef struct
 } FunctionTypeParity;
 
 
-
-/// DataType enumeration for HomeAutMessage
+///< DataType enumeration for HomeAutMessage
 typedef enum
 {
 	DataType_Unknown = 0,
@@ -144,8 +141,7 @@ typedef enum
 } HomeAut_DataType;
 
 
-
-///  Data type - string table
+///<  Data type - string table
 typedef struct
 {
 	const char * const name;				///< Name of Data [string]
@@ -153,8 +149,7 @@ typedef struct
 } DataTypeParity;
 
 
-
-/// HomeAut message information type
+///< HomeAut message information type
 typedef struct
 {
 	Network_IP_t SourceAddress;				///< My (sender) address
@@ -172,10 +167,10 @@ typedef struct
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-/// Function enum - "FUNCTION" string
+///< Function enum - "FUNCTION" string
 extern const FunctionTypeParity FunctionTypeParity_List[];
 	
-/// DataType enum - "DATATYPE" string
+///< DataType enum - "DATATYPE" string
 extern const DataTypeParity DataTypeParity_List[];
 
 
@@ -203,6 +198,7 @@ void HomeAutMessage_SendMessage(uint8_t myAddress,
 		HomeAut_FunctionType functionType, HomeAut_DataType dataType, float data);
 
 void HomeAutMessage_UnitTest(void);
+
 
 
 #endif /* HOMEAUTMESSAGE_H_*/
