@@ -18,7 +18,7 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
-#include "FormattedMessage.h"
+#include "ColoredMessage.h"
 #include "DebugList.h"
 
 

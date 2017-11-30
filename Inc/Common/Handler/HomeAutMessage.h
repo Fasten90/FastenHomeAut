@@ -14,7 +14,7 @@
 
 
 #include "DateTime.h"
-#include "Network.h"
+#include "NetworkHelper.h"
 
 
 
@@ -44,6 +44,7 @@
 
 // 2017-01-10 19:38:00
 #define HOMEAUTMESSAGE_MESSAGE_DATETIME_LENGTH				( 19 )
+
 
 
 /*------------------------------------------------------------------------------

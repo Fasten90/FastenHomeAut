@@ -12,6 +12,9 @@
 #ifndef GLOBVARLIST_H_
 #define GLOBVARLIST_H_
 
+/**
+ * \Note		Be careful! If this file has compile error, please check: GlobalVarHandler.h module need included before this (GlobVarList.h)
+ */
 
 
 /*------------------------------------------------------------------------------

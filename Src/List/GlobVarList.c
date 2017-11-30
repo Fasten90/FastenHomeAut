@@ -15,8 +15,8 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
-#include "GlobVarList.h"
 #include "GlobalVarHandler.h"
+#include "GlobVarList.h"
 #include "Globals.h"
 #include "ADC.h"
 
