@@ -13,7 +13,7 @@
 #include <stdarg.h>
 #include "options.h"
 #include "GenericTypeDefs.h"
-#include "String.h"
+#include "StringHelper.h"
 #include "CommandList.h"
 #include "DebugUart.h"
 #include "EscapeSequence.h"

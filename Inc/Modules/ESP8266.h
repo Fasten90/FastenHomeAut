@@ -18,7 +18,7 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
-#include "Network.h"
+#include "NetworkHelper.h"
 #include "DebugUart.h"
 
 

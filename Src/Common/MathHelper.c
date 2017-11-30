@@ -13,7 +13,7 @@
 
 #include "options.h"
 #include "include.h"
-#include "Calc.h"
+#include "MathHelper.h"
 
 #ifdef MODULE_CALC_UNITTEST_ENABLE
 #include "UnitTest.h"

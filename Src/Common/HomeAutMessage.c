@@ -12,7 +12,7 @@
 
 #include "options.h"
 #include "include.h"
-#include "String.h"
+#include "StringHelper.h"
 #include "HomeAutMessage.h"
 #include "DebugUart.h"
 

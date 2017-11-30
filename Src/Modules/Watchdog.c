@@ -16,7 +16,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "include.h"
-#include "Watchdog.h"
+#include "WatchDog.h"
 
 
 

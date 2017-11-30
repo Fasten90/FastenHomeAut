@@ -15,7 +15,7 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
-#include "String.h"
+#include "StringHelper.h"
 #include "DateTime.h"
 
 #ifdef MODULE_DATETIME_UNITTEST_ENABLE

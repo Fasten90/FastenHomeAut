@@ -18,8 +18,7 @@
 #include "LED.h"
 #include "options.h"
 #include "board.h"
-
-#include "String.h"
+#include "StringHelper.h"
 #include "Globals.h"
 
 

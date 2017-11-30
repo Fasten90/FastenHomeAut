@@ -18,10 +18,10 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
+#include <MemHandler.h>
 #include <stdarg.h>		// For "..." parameters in uprintf function
 #include "GenericTypeDefs.h"
 #include "include.h"
-#include "MEM.h"
 
 
 

@@ -1,7 +1,7 @@
 /*
  *		CircularBuffer.c
  *		Created on:		2017-03-04
- *		Author:			Vizi Gábor
+ *		Author:			Vizi GÃ¡bor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		Circular buffer handler
  *		Target:			STM32Fx
@@ -18,7 +18,7 @@
 #include "options.h"
 #include "include.h"
 #include "CircularBuffer.h"
-#include "MEM.h"
+#include "MemHandler.h"
 #include "DebugUart.h"
 
 #ifdef MODULE_CIRCULARBUFFER_UNITTEST_ENABLE

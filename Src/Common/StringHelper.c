@@ -17,9 +17,9 @@
 
 #include <stdarg.h>		// for "..." parameters in printf function
 #include "GenericTypeDefs.h"
-#include "Calc.h"
-#include "MEM.h"
-#include "String.h"
+#include "MathHelper.h"
+#include "MemHandler.h"
+#include "StringHelper.h"
 
 #ifdef MODULE_STRING_UNITTEST_ENABLE
 	#include "unittest.h"

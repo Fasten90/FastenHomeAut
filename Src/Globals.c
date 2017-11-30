@@ -15,7 +15,7 @@
 #include "include.h"
 #include "version.h"
 #include "LED.h"
-#include "String.h"
+#include "StringHelper.h"
 #include "DebugUart.h"
 #include "globals.h"
 

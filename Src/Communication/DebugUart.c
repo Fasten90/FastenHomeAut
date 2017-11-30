@@ -19,7 +19,7 @@
 
 #include "options.h"
 #include "Communication.h"
-#include "String.h"
+#include "StringHelper.h"
 #include "Globals.h"
 #include "CircularBuffer.h"
 #include "CommandHandler.h"

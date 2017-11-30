@@ -16,9 +16,9 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
-#include "String.h"
 #include "DebugUart.h"
-#include "Network.h"
+#include "StringHelper.h"
+#include "NetworkHelper.h"
 
 
 

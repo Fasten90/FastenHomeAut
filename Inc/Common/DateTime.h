@@ -19,7 +19,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
-#include "MEM.h"
+#include "MemHandler.h"
 #include "GenericTypeDefs.h"
 
 

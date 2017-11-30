@@ -16,7 +16,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "include.h"
-#include "MEM.h"
+#include "MemHandler.h"
 #include "DebugUart.h"
 #include "UnitTest.h"
 #include "LinkedList.h"

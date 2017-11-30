@@ -9,8 +9,8 @@
  *		Last modified:	2017-07-10
  */
 
-#ifndef GLOBALVARIABLES_H_
-#define GLOBALVARIABLES_H_
+#ifndef GLOBVARLIST_H_
+#define GLOBVARLIST_H_
 
 
 
@@ -25,4 +25,4 @@ extern GlobVarH_VarListInfo_t GlobVarH_Variables;
 
 
 
-#endif /* GLOBALVARIABLES_H_ */
+#endif /* GLOBVARLIST_H_ */

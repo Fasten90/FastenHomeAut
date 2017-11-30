@@ -20,7 +20,7 @@
 #include "Display_SSD1306.h"
 #include "DisplayImages.h"
 #include "Globals.h"
-#include "String.h"
+#include "StringHelper.h"
 #include "Display.h"
 
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE

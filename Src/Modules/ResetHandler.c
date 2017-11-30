@@ -20,9 +20,9 @@
 #ifdef CONFIG_MODULE_RESETREASON_ENABLE
 
 #include "include.h"
-#include "String.h"
 #include "DebugUart.h"
-#include "Reset.h"
+#include "StringHelper.h"
+#include "ResetHandler.h"
 
 
 

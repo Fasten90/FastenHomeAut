@@ -15,10 +15,11 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
+
 #include "GenericTypeDefs.h"
 #include "DebugUart.h"
 #include "board.h"
-#include "MEM.h"
+#include "MemHandler.h"
 
 #ifdef MODULE_MEM_UNITTEST_ENABLE
 	#include "UnitTest.h"

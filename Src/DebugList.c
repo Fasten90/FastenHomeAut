@@ -16,8 +16,8 @@
  *----------------------------------------------------------------------------*/
 
 #include "include.h"
-#include "escapesequence.h"
-#include "FormattedMessage.h"
+#include "EscapeSequence.h"
+#include "ColoredMessage.h"
 #include "Debug.h"
 #include "DebugList.h"
 

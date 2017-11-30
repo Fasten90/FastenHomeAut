@@ -9,8 +9,8 @@
  *		Last modified:	2017-02-27
  */
 
-#ifndef MODULES_RESET_H_
-#define MODULES_RESET_H_
+#ifndef MODULES_RESETHANDLER_H_
+#define MODULES_RESETHANDLER_H_
 
 
 
@@ -82,4 +82,4 @@ size_t Reset_PrintResetReasons(char * dst);
 
 
 
-#endif /* MODULES_RESET_H_ */
+#endif /* MODULES_RESETHANDLER_H_ */

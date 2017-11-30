@@ -21,7 +21,7 @@
 #include "TaskHandler.h"
 #include "CommandHandler.h"
 #include "DebugUart.h"
-#include "String.h"
+#include "StringHelper.h"
 #include "EventHandler.h"
 
 #ifdef MODULE_TASKHANDLER_UNNITEST_ENABLE

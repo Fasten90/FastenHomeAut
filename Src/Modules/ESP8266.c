@@ -15,10 +15,10 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
+#include <stdarg.h>		// For va_list
 #include "options.h"
 #include "include.h"
-#include <stdarg.h>		// For va_list
-#include "String.h"
+#include "StringHelper.h"
 #include "CircularBuffer.h"
 #include "TaskList.h"
 #include "CommandHandler.h"

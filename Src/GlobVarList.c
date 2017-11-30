@@ -15,10 +15,10 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
+#include "GlobVarList.h"
 #include "GlobalVarHandler.h"
 #include "Globals.h"
 #include "ADC.h"
-#include "GlobalVariables.h"
 
 
 

@@ -14,12 +14,12 @@
 
 #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
 
-#include "String.h"
+#include "StringHelper.h"
 #include "DebugUart.h"
 #include "GlobalVarHandler.h"
-#include "GlobalVariables.h"
+#include "GlobVarList.h"
 #include "CommandHandler.h"
-#include "Calc.h"
+#include "MathHelper.h"
 
 #ifdef MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
 	#include "UnitTest.h"

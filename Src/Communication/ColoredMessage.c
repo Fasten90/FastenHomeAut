@@ -9,9 +9,10 @@
  *		Last modified:	2016-09-28
  */
 
+
 #include "DebugUart.h"
 #include "EscapeSequence.h"
-#include "FormattedMessage.h"
+#include "ColoredMessage.h"
 
 
 

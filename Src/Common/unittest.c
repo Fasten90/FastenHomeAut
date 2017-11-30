@@ -15,9 +15,9 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
-#include "String.h"
+#include "StringHelper.h"
 #include "DebugUart.h"
-#include "FormattedMessage.h"
+#include "ColoredMessage.h"
 #include "Terminal.h"
 #include "UnitTest.h"
 

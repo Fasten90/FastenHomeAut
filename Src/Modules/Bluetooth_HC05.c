@@ -16,7 +16,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
-#include "String.h"
+#include "StringHelper.h"
 #include "USART.h"
 #include "Bluetooth_HC05.h"
 

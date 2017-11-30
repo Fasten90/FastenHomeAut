@@ -21,7 +21,7 @@
 
 #include "HardFaultHandler.h"
 #include "GenericTypeDefs.h"
-#include "String.h"
+#include "StringHelper.h"
 #include "DebugUart.h"
 
 
