@@ -70,9 +70,7 @@ void Error_Handler(void)
 	vTaskEndScheduler();
 #endif
 
-#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 	DebugUart_SendMessageBlocked("ErrorHandler...!!!\r\n");
-#endif
 
 	// Stop debugger
 	DEBUG_BREAKPOINT();

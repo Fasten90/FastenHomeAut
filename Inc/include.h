@@ -95,11 +95,11 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 
 ///< Stringification
-#define STR(a)					#a
+#define STR(a)						#a
 
 
 ///< Unused argument
-#define UNUSED_ARGUMENT(param)	((void)param)
+#define UNUSED_ARGUMENT(param)		((void)param)
 
 
 ///< Runtime Assert function
