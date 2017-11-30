@@ -195,36 +195,30 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.commandFunctionPointer = CommandFunction_version,
 		.commandArgNum = CmdH_CommandArgNum_0,
 		.description = "Get version",
-		.syntax = NULL,
 	},
 	{
 		.name = "welcome",
 		.commandFunctionPointer = CommandFunction_welcome,
 		.commandArgNum = CmdH_CommandArgNum_0,
 		.description = "Send welcome message",
-		.syntax = NULL,
 	},
 	{
 		.name = "reset",
 		.commandFunctionPointer = CommandFunction_reset,
 		.commandArgNum = CmdH_CommandArgNum_0,
 		.description = "Software reset",
-		.syntax = NULL,
 	},
 	{
 		.name = "cls",
 		.commandFunctionPointer = CommandFunction_cls,
 		.commandArgNum = CmdH_CommandArgNum_0,
 		.description = "Clear Screen",
-		.syntax = NULL,
 	},
 #ifdef CONFIG_TEST_MODE
 	{
 		.name = "test",
 		.commandFunctionPointer = CommandFunction_test,
 		.commandArgNum = CmdH_CommandArgNum_0,
-		.description = NULL,
-		.syntax = NULL,
 	},
 #endif
 #ifdef CONFIG_MODULE_TEST_ENABLE
@@ -248,8 +242,8 @@ const CmdH_Command_t CmdH_CommandList[] =
 	{
 		.name = "get",
 		.commandFunctionPointer = CommandFunction_get,
-		.description = "get global variable value",
 		.commandArgNum = CmdH_CommandArgNum_1,
+		.description = "get global variable value",
 		.syntax = "<varName>",
 		.example = "devicename",
 	},
@@ -264,8 +258,8 @@ const CmdH_Command_t CmdH_CommandList[] =
 	{
 		.name = "?",
 		.commandFunctionPointer = CommandFunction_GlobalVariableHelp,
-		.description = "help global variable",
 		.commandArgNum = CmdH_CommandArgNum_1,
+		.description = "help global variable",
 		.syntax = "<varName>",
 		.example = "devicename",
 	},
@@ -288,7 +282,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.commandArgNum = CmdH_CommandArgNum_2,
 		.description = "Trace global variable's values",
 		.syntax = "<varname> <enable/disable>; period <period:ms>",
-		.example = "tick enable"
+		.example = "tick enable",
 	},
 #endif
 #endif	// #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
@@ -335,15 +329,15 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.commandArgNum = CmdH_CommandArgNum_2,
 		.description = "Digital -> Analog",
 		.syntax = "<num> <voltage>",
-		.example = "1 3.0"
+		.example = "1 3.0",
 	},
 #endif
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
 	{
 		.name = "adc",
 		.commandFunctionPointer = CommandFunction_adc,
-		.description = "Analog -> Digital",
 		.commandArgNum = CmdH_CommandArgNum_0,
+		.description = "Analog -> Digital",
 	},
 	{
 		.name = "adcread",
@@ -393,8 +387,8 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.description = "SystemTime",
 	#endif
 		.commandFunctionPointer = CommandFunction_Time,
-		.syntax = "<setdate/settime> <date: 20yy-mm-dd / time: hh:mm:ss>",
 		.commandArgNum = CmdH_CommandArgNum_1 | CmdH_CommandArgNum_2,
+		.syntax = "<setdate/settime> <date: 20yy-mm-dd / time: hh:mm:ss>",
 		.example = "setdate 2017-02-08",
 	},
 #endif
@@ -402,160 +396,149 @@ const CmdH_Command_t CmdH_CommandList[] =
 	{
 		.name = "eventlog",
 		.commandFunctionPointer = CommandFunction_EventLog,
-		.description = "List EventLog",
-		.syntax = NULL,
 		.commandArgNum = CmdH_CommandArgNum_0,
-		.example = NULL,
+		.description = "List EventLog",
 	},
 #endif
 #ifdef CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
 	{
 		.name = "#homeaut",
 		.description = "HomeAutMessage sending",
-		.commandFunctionPointer = CommandFunction_raspberrypi,
 		.commandArgNum = CmdH_CommandArgNum_2,
-		.syntax = NULL,
+		.commandFunctionPointer = CommandFunction_raspberrypi,
 	},
 #endif
 #ifdef CONFIG_MODULE_ADC_ENABLE
 	{
 		.name = "adc",
 		.commandFunctionPointer = CommandFunction_adc,
+		.commandArgNum = CmdH_CommandArgNum_0,
 		.description = "...",
 		.syntax = NULL,
-		.commandArgNum = CmdH_CommandArgNum_0,
 	},
 #endif
 #ifdef CONFIG_MODULE_FLASH_ENABLE
 	{
 		.name = "flashdel",
 		.commandFunctionPointer = CommandFunction_flashdel,
+		.commandArgNum = CmdH_CommandArgNum_2,
 		.description = "Delete flash",
 		.syntax = "<address> <block/sector>",
-		.commandArgNum = CmdH_CommandArgNum_2,
 	},
 	{
 		.name = "flashread",
 		.commandFunctionPointer = CommandFunction_flashread,
+		.commandArgNum = CmdH_CommandArgNum_1,
 		.description = "Read from flash",
 		.syntax = "<address>",
-		.commandArgNum = CmdH_CommandArgNum_1,
 	},
 	{
 		.name = "flashwrite",
 		.commandFunctionPointer = CommandFunction_flashwrite,
+		.commandArgNum = CmdH_CommandArgNum_2,
 		.description = "Write flash",
 		.syntax = "<address> <byte>",
-		.commandArgNum = CmdH_CommandArgNum_2,
 	},
 #endif
 #ifdef CONFIG_COMMANDLIST_RAMREAD_WRITE_COMMAND_ENABLE
 	{
 		.name = "mr",
 		.commandFunctionPointer = CommandFunction_mr,
+		.commandArgNum = CmdH_CommandArgNum_2,
 		.description = "Memory read",
 		.syntax = "<address> <size>",
-		.commandArgNum = CmdH_CommandArgNum_2,
 	},
 	{
 		.name = "mwb",
 		.commandFunctionPointer = CommandFunction_mw,
+		.commandArgNum = CmdH_CommandArgNum_2,
 		.description = "Memory write",
 		.syntax = "<address> <byte>",
-		.commandArgNum = CmdH_CommandArgNum_2,
 	},
 	{
 		.name = "mwh",
 		.commandFunctionPointer = CommandFunction_mw,
+		.commandArgNum = CmdH_CommandArgNum_2,
 		.description = "Memory write",
 		.syntax = "<address> <byte>",
-		.commandArgNum = CmdH_CommandArgNum_2,
 	},
 	{
 		.name = "mww",
 		.commandFunctionPointer = CommandFunction_mw,
+		.commandArgNum = CmdH_CommandArgNum_2,
 		.description = "Memory write",
 		.syntax = "<address> <byte>",
-		.commandArgNum = CmdH_CommandArgNum_2,
 	},
 #endif
 #ifdef CONFIG_COMMANDLIST_GO_COMMAND_ENABLE
 	{
 		.name = "go",
 		.commandFunctionPointer = CommandFunction_go,
+		.commandArgNum = CmdH_CommandArgNum_1,
 		.description = "Jump to address",
 		.syntax = "<address>",
-		.commandArgNum = CmdH_CommandArgNum_1,
 	},
 #endif
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
 	{
 		.name = "display",
 		.commandFunctionPointer = CommandFunction_Display,
+		.commandArgNum = CmdH_CommandArgNum_1 | CmdH_CommandArgNum_2,
 		.description = "Use display",
 		.syntax = "<write/clear> (line,msg)",
 		.example = "write 1,message",
-		.commandArgNum = CmdH_CommandArgNum_1 | CmdH_CommandArgNum_2,
 	},
 #endif
 #ifdef CONFIG_MODULE_IO_ENABLE
 	{
 		.name = "iostates",
 		.commandFunctionPointer = CommandFunction_IoStates,
-		.description = "Get input-output states",
-		.syntax = "",
-		.example = "",
 		.commandArgNum = CmdH_CommandArgNum_0,
+		.description = "Get input-output states",
 	},
 #endif
 #ifdef CONFIG_MODULE_SIMULATION_ENABLE
 	{
 		.name = "simulate",
 		.commandFunctionPointer = CommandFunction_Simulation,
-		.description = "simulate event, errors, etc.",
-		.syntax = "",
-		.example = "",
 		.commandArgNum = CmdH_CommandArgNum_1 | CmdH_CommandArgNum_2,
+		.description = "simulate event, errors, etc.",
 	},
 #endif
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 	{
 		.name = "taskhandler",
 		.commandFunctionPointer = CommandFunction_TaskHandler,
+		.commandArgNum = CmdH_CommandArgNum_1,
 		.description = "taskhandler functions",
 		.syntax = "<statistics/runcounts>",
-		.example = "",
-		.commandArgNum = CmdH_CommandArgNum_1,
 	},
 #endif
 #ifdef CONFIG_MODULE_DEBUG_ENABLE
 	{
 		.name = "debug",
 		.commandFunctionPointer = CommandFunction_Debug,
+		.commandArgNum = CmdH_CommandArgNum_2,
 		.description = "Debug enable/disable",
 		.syntax = "<taskname/taskid> <enable/disable>",
-		.example = "",
-		.commandArgNum = CmdH_CommandArgNum_2,
 	},
 #endif
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
 	{
 		.name = "button",
 		.commandFunctionPointer = CommandFunction_Button,
-		.description = "Button state",
-		.syntax = "",
-		.example = "",
 		.commandArgNum = CmdH_CommandArgNum_0,
+		.description = "Button state",
 	},
 #endif
 #ifdef CONFIG_FUNCTION_PERIODICAL_SENDING
 	{
 		.name = "periodicalsending",
 		.commandFunctionPointer = CommandFunction_PeriodicalSending,
+		.commandArgNum = CmdH_CommandArgNum_1 | CmdH_CommandArgNum_2,
 		.description = "Periodical sending message",
 		.syntax = "<msg> (periodtime [ms])",
 		.example = "sendmessage 500",
-		.commandArgNum = CmdH_CommandArgNum_1 | CmdH_CommandArgNum_2,
 	},
 #endif
 
