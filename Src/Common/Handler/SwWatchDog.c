@@ -49,6 +49,9 @@ static uint32_t SwWatchDog_Counter = 0;
  *----------------------------------------------------------------------------*/
 
 
+/**
+ * \brief	Software WatchDog - Increment counter / alive call
+ */
 void SwWatchDog_Inc(void)
 {
 	SwWatchDog_Counter++;
@@ -58,8 +61,8 @@ void SwWatchDog_Inc(void)
 
 /**
  *	\brief	Software WatchDog
- *	\note	Call this function from timer / SysTickHandler
- *			If main TaskHandler cnt is not increment, we know, the TaskHandler was frozen
+ *	\note	Call this function from timer / SysTickHandler every 1 ms
+ *			If main software not called SwWatchDog_Inc() (cnt is not increment), we know, the main sw (TaskHandler) was frozen
  */
 void SwWatchDog_CheckState(void)
 {
