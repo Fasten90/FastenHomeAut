@@ -164,7 +164,7 @@ size_t StrAppend(char *dest, const char *src);
 size_t StrAppendSafe(char *dest, const char *str, size_t destLength);
 
 // String modify
-void StrTrim(char *str);
+size_t StrTrim(char *str);
 void StringLower(char * str);
 void StringUpper(char * str);
 

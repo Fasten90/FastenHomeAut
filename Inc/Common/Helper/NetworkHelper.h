@@ -32,7 +32,7 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-///< IPv4 struct
+///< Ethernet - IPv4 struct
 typedef struct
 {
 	uint8_t IP[4];

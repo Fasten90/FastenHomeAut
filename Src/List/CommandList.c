@@ -729,7 +729,7 @@ static CmdH_Result_t CommandFunction_unittest(uint32_t argc, char** argv)
 	EventHandler_UnitTest();
 #endif
 
-#ifdef MODULE_CONVERTTABLE_UNITTEST_ENABLE
+#if defined(MODULE_CONVERTTABLE_UNITTEST_ENABLE) && defined(CONFIG_MODULE_CONVERTTABLE_ENABLE)
 	ConvertTable_UnitTest();
 #endif
 

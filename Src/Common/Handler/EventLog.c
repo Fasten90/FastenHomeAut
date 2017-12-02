@@ -28,6 +28,7 @@
 
 #ifdef MODULE_EVENTLOG_UNITTEST_ENABLE
 	#include "UnitTest.h"
+	#include "Globals.h"
 #endif
 
 

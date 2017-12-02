@@ -1375,12 +1375,12 @@ size_t StrAppendSafe(char *dest, const char *str, size_t destLength)
  * \brief	Trim string (cut space and others at end)
  * \note	Be careful, only call with changeable string!
  */
-void StrTrim(char *str)
+size_t StrTrim(char *str)
 {
 	// Check pointer
 	if (str == NULL)
 	{
-		return;
+		return 0;
 	}
 
 	size_t length = StringLength(str) - 1;
@@ -1395,9 +1395,12 @@ void StrTrim(char *str)
 		}
 		else
 		{
+			// 'i' value contain the new length
 			break;				// Not space, good character, end
 		}
 	}
+
+	return i;
 }
 
 
@@ -1590,7 +1593,7 @@ uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint
 			{
 				source[i] = '\0';
 			}
-			if (j==0)
+			if (j == 0)
 			{
 				// one length parameter // TODO: Do with more beautiful
 				separated[parameters] = &source[i];
@@ -2588,6 +2591,7 @@ void STRING_UnitTest(void)
 
 
 	// Test: Test StrTrim()
+	// TODO: Test return value!
 	StrCpy(buffer, "String with spaces end...    ");
 	StrTrim(buffer);
 	UNITTEST_ASSERT(!StrCmp("String with spaces end...", buffer), "StrTrim error");

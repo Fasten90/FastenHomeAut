@@ -22,8 +22,8 @@
 #include "DebugUart.h"
 
 #ifdef MODULE_CIRCULARBUFFER_UNITTEST_ENABLE
-#include "String.h"
-#include "UnitTest.h"
+	#include "StringHelper.h"
+	#include "UnitTest.h"
 #endif
 
 
