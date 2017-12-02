@@ -23,6 +23,7 @@
 #include "DebugUart.h"
 #include "StringHelper.h"
 #include "EventHandler.h"
+#include "SwWatchDog.h"
 
 #ifdef MODULE_TASKHANDLER_UNNITEST_ENABLE
 #include "UnitTest.h"
@@ -46,6 +47,7 @@
 
 #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
 
+///< TaskHandler statistics infos
 typedef struct
 {
 	uint32_t startTick;             ///< Start time of Task running
@@ -57,9 +59,9 @@ static TaskHandlerStat_t TaskHandler_StatisticsRanTaskTicks[TASKHANDLER_STATISTI
 static uint8_t TaskHandler_StatisticsIndex = 0;
 #endif
 
-#ifdef CONFIG_DEBUG_SW_WATCHDOG_ENABLE
+#ifdef CONFIG_TASKHANDLER_DEBUG_RUN_ENABLE
 static uint32_t TaskHandler_RunCnt = 0;
-static const char * TaskHandler_ActualTask = NULL;
+static const char * TaskHandler_ActualRunningTaskName = NULL;
 #endif
 
 
@@ -130,7 +132,7 @@ void TaskHandler_Scheduler(TaskTick_t elapsedTick)
 
 	TaskHandler_IncrementTicks(elapsedTick);
 
-#ifdef CONFIG_DEBUG_SW_WATCHDOG_ENABLE
+#ifdef CONFIG_TASKHANDLER_DEBUG_RUN_ENABLE
 	TaskHandler_RunCnt++;
 #endif
 
@@ -203,9 +205,12 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 	// Clear request
 	TaskList[taskID].isRequestScheduling = false;
 
-#ifdef CONFIG_DEBUG_SW_WATCHDOG_ENABLE
-	TaskHandler_ActualTask = (const char *)TaskList[taskID].taskName;
+#ifdef CONFIG_TASKHANDLER_DEBUG_RUN_ENABLE
+	TaskHandler_ActualRunningTaskName = (const char *)TaskList[taskID].taskName;
 #endif
+
+	// Software WatchDog: We are "alive"
+	SW_WATCHDOG_INC();
 
 #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
 	// Measure run time:
@@ -250,8 +255,8 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 	}
 #endif
 
-#ifdef CONFIG_DEBUG_SW_WATCHDOG_ENABLE
-	TaskHandler_ActualTask = NULL;
+#ifdef CONFIG_TASKHANDLER_DEBUG_RUN_ENABLE
+	TaskHandler_ActualRunningTaskName = NULL;
 #endif
 }
 
@@ -449,37 +454,17 @@ void TaskHandler_PrintTaskRunCounts(void)
 
 
 
-#ifdef CONFIG_DEBUG_SW_WATCHDOG_ENABLE
 /**
- *	\brief	TaskHandler - Software WatchDog
- *	\note	Call this function from timer / SysTickHandler
- *			If main TaskHandler cnt is not increment, we know, the TaskHandler frozened
+ * \brief	Get actual runnin task name
  */
-void TaskHandler_SwWatchdog(void)
+const char * TaskHandler_GetActualRunningTask(void)
 {
-	static uint32_t ms = 0;
-	static uint32_t TaskHandler_LastRunCnt = 0;
-
-	ms++;
-	if (ms >= TASKHANDLER_SW_WATCHDOG_PERIOD)
-	{
-		ms = 0;
-		if (TaskHandler_RunCnt == TaskHandler_LastRunCnt)
-		{
-			// TaskHandler cnt is not changed... :(
-			char msg[60];
-
-			usprintf(msg, "TaskHandler frozen: %s\r\n", TaskHandler_ActualTask);
-			DebugUart_SendMessageBlocked(msg);
-
-			// Be careful: Error_Handler is use the SysTick handler...
-			Error_Handler();
-		}
-
-		TaskHandler_LastRunCnt = TaskHandler_RunCnt;
-	}
-}
+#ifdef CONFIG_TASKHANDLER_DEBUG_RUN_ENABLE
+	return TaskHandler_ActualRunningTaskName;
+#else
+	return NULL;
 #endif
+}
 
 
 

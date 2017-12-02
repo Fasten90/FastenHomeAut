@@ -674,16 +674,23 @@
 
 	///< Debug modes - Print debug message
 	//#define CONFIG_TASKHANDLER_DEBUG_ENABLE
+	///< Other debug functions
+	#define CONFIG_TASKHANDLER_DEBUG_RUN_ENABLE
 
-	///< Create CPU usage statistics:
+
+	///< Statistics (CPU usage, runtimes...)
 	#define CONFIG_MODULE_TASKHANDLER_STATISTICS
-	#define TASKHANDLER_STATISTICS_LIMIT		(100)
+	#define TASKHANDLER_STATISTICS_LIMIT						(100)
+
+
+	//  TaskList:
 
 	///< Software Watchdog (task)
 	//#define CONFIG_MODULE_TASK_SOFTWARE_WATCHDOG_ENABLE
 
 	///< System time task
 	#define CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
+
 #endif
 
 

@@ -17,7 +17,8 @@
 #include "LED.h"
 #include "StringHelper.h"
 #include "DebugUart.h"
-#include "globals.h"
+#include "Globals.h"
+#include "TaskHandler.h"
 
 #ifdef CONFIG_MICROCONTROLLER_PC
 #include "windows_hal.h"
@@ -72,13 +73,20 @@ void Error_Handler(void)
 
 	DebugUart_SendMessageBlocked("ErrorHandler...!!!\r\n");
 
+#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
+	char msg[60];
+	usprintf(msg, "TaskHandler frozen: %s\r\n", TaskHandler_GetActualRunningTask());
+	DebugUart_SendMessageBlocked(msg);
+#endif
+
+
 	// Stop debugger
 	DEBUG_BREAKPOINT();
 
 	// Infinite loop, do not disable interrupts ...
 	// TODO: But... If there is no interrupt?
 	uint8_t cnt = 8;
-	while(cnt--)
+	while (cnt--)
 	{
 		LED_SetLed(LED_Red, LED_Set_Toggle);
 		DelayMs(125);
@@ -87,7 +95,6 @@ void Error_Handler(void)
 	// Reset...
 	// TODO: It is not the best solution, The user will not detect the reset
 	NVIC_SystemReset();
-
 }
 
 

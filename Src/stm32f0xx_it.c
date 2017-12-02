@@ -43,7 +43,7 @@
 #include "stm32f0xx_it.h"
 
 #include "Globals.h"
-#include "TaskHandler.h"
+#include "SwWatchDog.h"
 #include "HardFaultHandler.h"
 
 #ifdef CONFIG_MODULE_HARDFAULTHANDLER_ENABLE
@@ -150,12 +150,12 @@ void PendSV_Handler(void)
 */
 void SysTick_Handler(void)
 {
-  HAL_IncTick();
-  HAL_SYSTICK_IRQHandler();
+	HAL_IncTick();
+	HAL_SYSTICK_IRQHandler();
 #ifdef CONFIG_USE_FREERTOS
-  osSystickHandler();
+	osSystickHandler();
 #endif
-  TASKHANDLER_SW_WATCHDOG();
+	SW_WATCHDOG_CHECK();
 }
 
 /******************************************************************************/
