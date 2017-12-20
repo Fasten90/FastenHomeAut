@@ -19,13 +19,13 @@
 
 #ifdef CONFIG_MODULE_TERMINAL_ENABLE
 
-#include "String.h"
+#include "StringHelper.h"
 #include "Globals.h"
 #include "CommandList.h"
 #include "CommandHandler.h"
 #include "CircularBuffer.h"
 #include "DebugUart.h"
-#include "Reset.h"
+#include "ResetHandler.h"
 #include "Terminal.h"
 #include "Communication.h"
 

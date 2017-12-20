@@ -139,6 +139,7 @@ void prvGetRegistersFromStack(uint32_t *pulFaultStackAddress)
 
 	/* When the following line is hit, the variables contain the register values. */
 	char str[30];
+	// TODO: print to one large string
 	usprintf(str, "%s: 0x%X\r\n", "r0 ", r0);
 	DebugUart_SendMessageBlocked(str);
 	usprintf(str, "%s: 0x%X\r\n", "r1 ", r1);
