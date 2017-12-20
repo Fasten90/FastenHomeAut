@@ -1676,7 +1676,7 @@ static void GlobVarH_UT_Clear(void)
 {
 	memset(GlobVarH_TestBuffer, 0, GLOBVARH_TEST_BUFFER_SIZE);
 	GlobVarH_TestBufferCnt = 0;
-	CmdH_SetResponse(CommProt_Buffer, GlobVarH_TestBuffer, GLOBVARH_TEST_BUFFER_SIZE);
+	CmdH_SetResponse(GlobVarH_TestBuffer, GLOBVARH_TEST_BUFFER_SIZE);
 }
 
 
@@ -1701,7 +1701,7 @@ void GlobVarH_UnitTest(void)
 	UnitTest_Start("GlobalVarHandler", __FILE__);
 
 	// Initialize
-	CmdH_SetResponse(CommProt_Buffer, GlobVarH_TestBuffer, GLOBVARH_TEST_BUFFER_SIZE);
+	CmdH_SetResponse(GlobVarH_TestBuffer, GLOBVARH_TEST_BUFFER_SIZE);
 
 
 	// Check GlobalVarHandler structures

@@ -300,7 +300,7 @@ void Terminal_CheckCommand(void)
 
 						// Search command and run
 						CmdH_Result_t result = CmdH_ExecuteCommand(
-								CommProt_DebugUart, (char *)Terminal_CommandActual,
+								(char *)Terminal_CommandActual,
 								responseBuffer, TERMINAL_RESPONSE_BUFFER);
 
 						CmdH_PrintResult(result);		// Write result

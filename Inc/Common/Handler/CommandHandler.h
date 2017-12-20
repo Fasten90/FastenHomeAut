@@ -24,6 +24,7 @@
 #endif
 
 
+
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
@@ -134,12 +135,12 @@ void CmdH_Printf(const char *format, ...);
 void CmdH_PrintAllCommands(void);
 void CmdH_SearchCommandAndPrintHelp(const char *command);
 
-CmdH_Result_t CmdH_ExecuteCommand(CommProtocol_t source, char * command, char * response, size_t length);
-CmdH_Result_t CmdH_ExecuteCommandWithParams(CommProtocol_t source, char *command, char * param, char * response, size_t length);
+CmdH_Result_t CmdH_ExecuteCommand(char * command, char * response, size_t length);
+CmdH_Result_t CmdH_ExecuteCommandWithParams(char *command, char * param, char * response, size_t length);
 
 void CmdH_PrintResult(CmdH_Result_t result);
 
-void CmdH_SetResponse(CommProtocol_t commandSource, char * respBuffer, size_t respLength);
+void CmdH_SetResponse(char * respBuffer, size_t respLength);
 
 void CmdH_UnitTest(void);
 

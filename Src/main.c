@@ -218,7 +218,7 @@ int main(void)
 #ifdef CONFIG_MICROCONTROLLER_PC
 	#ifdef CONFIG_MODULE_UNITTEST_ENABLE
 	char responseBuffer[2048];
-	CmdH_ExecuteCommand(CommProt_DebugUart, "unittest", responseBuffer, 2048);
+	CmdH_ExecuteCommand("unittest", responseBuffer, 2048);
 	printf(responseBuffer);
 	#endif
 

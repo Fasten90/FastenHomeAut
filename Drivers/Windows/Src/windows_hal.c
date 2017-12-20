@@ -244,7 +244,7 @@ DWORD WINAPI Windows_StdinReceiveThread(void* data)
 		{
 			printf("Received from stdin: \"%s\"\r\n", str);
 
-			CmdH_Result_t res = CmdH_ExecuteCommand(0, str, respBuffer, 2048);
+			CmdH_Result_t res = CmdH_ExecuteCommand(str, respBuffer, 2048);
 
 			CmdH_PrintResult(res);
 

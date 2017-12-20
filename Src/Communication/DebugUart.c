@@ -319,7 +319,7 @@ void DebugUart_ProcessReceivedCharacters(void)
 
 				// Search command and run
 				CmdH_Result_t cmdResult = CmdH_ExecuteCommand(
-					CommProt_DebugUart, (char *)receiveBuffer,
+					(char *)receiveBuffer,
 					responseBuffer, DEBUGUART_RESPONSE_BUFFER);
 
 				CmdH_PrintResult(cmdResult);
