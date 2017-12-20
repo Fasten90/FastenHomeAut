@@ -1005,6 +1005,98 @@ bool StringToFloat(const char *str, float *num)
 }
 
 
+
+/**
+ * \brief	Convert String to bool value
+ */
+bool StringToBool(const char * str, bool * val)
+{
+	if (str == NULL || val == NULL)
+		return false;
+
+	bool isBool = false;
+	bool boolVal = false;
+	uint32_t num;
+
+	// Check it is decimal?
+	if (StringToUnsignedDecimalNum(str, &num))
+	{
+		if (num == 1)
+		{
+			boolVal = true;
+			isBool = true;
+		}
+		else if (num == 0)
+		{
+			boolVal = false;
+			isBool = true;
+		}
+		else
+		{
+			isBool = false;			// Wrong num (not 0, and not 1)
+		}
+	}
+	else
+	{
+		// Not number
+
+		// Check it is "true" / "false" ?
+		if (!StrCmp((const char*)str, "true"))
+		{
+			boolVal = true;
+			isBool = true;
+		}
+		else if (!StrCmp((const char*)str, "false"))
+		{
+			boolVal = false;
+			isBool = true;
+		}
+		// Check it is "on" / "off"?
+		else if (!StrCmp((const char*)str, "on"))
+		{
+			boolVal = true;
+			isBool = true;
+		}
+		else if (!StrCmp((const char*)str, "off"))
+		{
+			boolVal = false;
+			isBool = true;
+		}
+		// Check it is "enable" / "disable"
+		else if (!StrCmp((const char*)str, "enable"))
+		{
+			boolVal = true;
+			isBool = true;
+		}
+		else if (!StrCmp((const char*)str, "disable"))
+		{
+			boolVal = false;
+			isBool = true;
+		}
+		// Check it is "set" / "reset"
+		else if (!StrCmp((const char*)str, "set"))
+		{
+			boolVal = true;
+			isBool = true;
+		}
+		else if (!StrCmp((const char*)str, "reset"))
+		{
+			boolVal = false;
+			isBool = true;
+		}
+		else
+		{
+			// Not good "string"
+			isBool = false;;
+		}
+	}
+
+	*val = boolVal;
+	return isBool;
+}
+
+
+
 /**
  * \brief	Convert char to lowercase
  */
@@ -2575,6 +2667,9 @@ void STRING_UnitTest(void)
 
 	result = StringToFloat("-123a.3999", &fvalue);
 	UNITTEST_ASSERT(!result, "StringToFloat error");
+
+
+	// TODO: StringToBool test
 
 
 	/// String function testing

@@ -147,6 +147,9 @@ bool StringToSignedDecimalNum(const char *str, int32_t *value);
 // String --> Float converter
 bool StringToFloat(const char *str, float *num);
 
+// String --> Bool converter
+bool StringToBool(const char * str, bool * val);
+
 void ToLower(char * c);
 void ToUpper(char * c);
 

@@ -692,76 +692,23 @@ static GlobVarH_ProcessResult_t GlobVarH_SetVariable(const GlobVarH_VarRecord_t 
  */
 static GlobVarH_ProcessResult_t GlobVarH_SetBool(const GlobVarH_VarRecord_t *varRecord, const char *param)
 {
-	uint32_t num;
 	bool boolVal;
+	GlobVarH_ProcessResult_t result;
 
-	// Check it is decimal?
-	if (StringToUnsignedDecimalNum(param, &num))
+	if (StringToBool(param, &boolVal))
 	{
-		if (num == 1)
-		{
-			boolVal = true;
-		}
-		else if (num == 0)
-		{
-			boolVal = false;
-		}
-		else
-		{
-			return GlobVarH_Process_InvalidValue_NotBool;			// Wrong num (not 0, and not 1)
-		}
+		// If reach here, boolVal is contain a valid value
+		bool *bPointer = varRecord->varPointer;
+		*bPointer = boolVal;
+
+		result = GlobVarH_Process_Ok_SetSuccessful_SendOk;
 	}
 	else
 	{
-		// Not number
-
-		// Check it is "true" / "false" ?
-		if (!StrCmp((const char*)param, "true"))
-		{
-			boolVal = true;
-		}
-		else if (!StrCmp((const char*)param, "false"))
-		{
-			boolVal = false;
-		}
-		// Check it is "on" / "off"?
-		else if (!StrCmp((const char*)param, "on"))
-		{
-			boolVal = true;
-		}
-		else if (!StrCmp((const char*)param, "off"))
-		{
-			boolVal = false;
-		}
-		// Check it is "enable" / "disable"
-		else if (!StrCmp((const char*)param, "enable"))
-		{
-			boolVal = true;
-		}
-		else if (!StrCmp((const char*)param, "disable"))
-		{
-			boolVal = false;
-		}
-		// Check it is "set" / "reset"
-		else if (!StrCmp((const char*)param, "set"))
-		{
-			boolVal = true;
-		}
-		else if (!StrCmp((const char*)param, "reset"))
-		{
-			boolVal = false;
-		}
-		else
-		{
-			// Not good "string"
-			return GlobVarH_Process_InvalidValue_NotBool;
-		}
+		result = GlobVarH_Process_InvalidValue_NotBool;
 	}
-	// If reach here, boolVal is contain a valid value
-	bool *bPointer = varRecord->varPointer;
-	*bPointer = boolVal;
 
-	return GlobVarH_Process_Ok_SetSuccessful_SendOk;
+	return result;
 }
 
 
