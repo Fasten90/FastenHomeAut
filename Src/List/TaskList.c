@@ -34,6 +34,7 @@
 #include "ADC.h"
 #include "EventHandler.h"
 #include "HomeAutMessage.h"
+#include "SysTime.h"
 #ifdef CONFIG_FUNCTION_GAME_SNAKE
 #include "Snake.h"
 #endif
@@ -654,8 +655,9 @@ static TaskResult_t Task_SystemTimeSecondStep(ScheduleSource_t source)
 	(void)source;
 
 	// Step SystemTime +1 second
-	DateTime_Step(&DateTime_SystemTime);
+	SysTime_StepSecond();
 
+	// Test code
 	//uprintf(".");
 
 

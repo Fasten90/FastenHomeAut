@@ -51,6 +51,7 @@
 #include "Logic.h"
 #include "ConvertTable.h"
 #include "SecuredDataTypes.h"
+#include "SysTime.h"
 
 #include "CommandList.h"
 
@@ -388,7 +389,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 	#endif
 		.commandFunctionPointer = CommandFunction_Time,
 		.commandArgNum = CmdH_CommandArgNum_1 | CmdH_CommandArgNum_2,
-		.syntax = "<setdate/settime> <date: 20yy-mm-dd / time: hh:mm:ss>",
+		.syntax = "<setdate/settime/status> <date: 20yy-mm-dd / time: hh:mm:ss>",
 		.example = "setdate 2017-02-08",
 	},
 #endif
@@ -1844,7 +1845,7 @@ static CmdH_Result_t CommandFunction_Time(uint32_t argc, char** argv)
 		if (DateTime_ConvertDateStringToDate(argv[2], &date))
 		{
 			// Successful convert, set
-			DateTime_SetDate(&date);
+			SysTime_SetDate(&date);
 			result = CmdH_Result_Ok_SendSuccessful;
 		}
 		else
@@ -1859,7 +1860,7 @@ static CmdH_Result_t CommandFunction_Time(uint32_t argc, char** argv)
 		if (DateTime_ConvertTimeStringToTime(argv[2], &time))
 		{
 			// Successful convert, set
-			DateTime_SetTime(&time);
+			SysTime_SetTime(&time);
 			result = CmdH_Result_Ok_SendSuccessful;
 		}
 		else
@@ -1871,7 +1872,7 @@ static CmdH_Result_t CommandFunction_Time(uint32_t argc, char** argv)
 	{
 		char datetimestring[DATETIME_STRING_MAX_LENGTH];
 		DateTime_t dateTime;
-		DateTime_GetDateTime(&dateTime);
+		SysTime_GetDateTime(&dateTime);
 		DateTime_PrintDateTimeToString(datetimestring, &dateTime);
 		CmdH_Printf("Date and Time: %s\r\n", datetimestring);
 

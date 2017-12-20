@@ -25,6 +25,7 @@
 #include "TaskList.h"
 #include "Debug.h"
 #include "CommandHandler.h"
+#include "SysTime.h"
 
 #ifdef MODULE_EVENTLOG_UNITTEST_ENABLE
 	#include "UnitTest.h"
@@ -97,7 +98,9 @@ void EventLog_LogEvent(EventName_t eventName, EventData_t eventData, TaskID_t ta
 #if defined(CONFIG_MODULE_RTC_ENABLE)
 	RTC_GetDateTime(&EventLogs[LogCounter].dateTime);
 #elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
-	EventLogs[LogCounter].dateTime = DateTime_SystemTime;
+	DateTime_t dateTime;
+	SysTime_GetDateTime(&dateTime);
+	memcpy(&EventLogs[LogCounter].dateTime, &dateTime, sizeof(dateTime));
 #endif
 
 #ifdef CONFIG_EVETNLOG_PRINT_IMMEDIATELY

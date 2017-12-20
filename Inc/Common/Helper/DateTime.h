@@ -107,10 +107,6 @@ typedef enum
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-#ifdef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
-extern DateTime_t DateTime_SystemTime;
-#endif
-
 
 
 /*------------------------------------------------------------------------------
@@ -130,12 +126,6 @@ DateTimeCompare_t DateTime_CompareDateTime(DateTime_t *dateTime1, DateTime_t *da
 int32_t DateTime_CalculateDifferentOf2DateTime(DateTime_t *dateTime1, DateTime_t *dateTime2);
 void DateTime_Steps(DateTime_t *dateTime, uint32_t stepSeconds);
 void DateTime_Step(DateTime_t *dateTime);
-
-
-void DateTime_GetDateTime(DateTime_t *dateTime);
-void DateTime_SetDate(Date_t *date);
-void DateTime_SetTime(Time_t *time);
-
 
 #ifdef MODULE_DATETIME_UNITTEST_ENABLE
 void DateTime_UnitTest(void);

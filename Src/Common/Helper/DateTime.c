@@ -28,11 +28,6 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-#ifdef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
-///< System time (step by timer)
-DateTime_t DateTime_SystemTime = { 0 };
-#endif
-
 
 
 /*------------------------------------------------------------------------------
@@ -560,54 +555,6 @@ void DateTime_Step(DateTime_t *dateTime)
 			}
 		}
 	}
-}
-
-
-
-/**
- * \brief	Get DateTime
- */
-inline __attribute__((always_inline)) void DateTime_GetDateTime(DateTime_t *dateTime)
-{
-#if defined(CONFIG_MODULE_RTC_ENABLE)
-	RTC_GetDateTime(&dateTime);
-#elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
-	memcpy(&dateTime, &DateTime_SystemTime, sizeof(DateTime_t));
-#else
-	(void)dateTime;
-#endif
-}
-
-
-
-/**
- * \brief	Set date
- */
-inline __attribute__((always_inline)) void DateTime_SetDate(Date_t *date)
-{
-#if defined(CONFIG_MODULE_RTC_ENABLE)
-	RTC_SetDate(&date);
-#elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
-	memcpy(&DateTime_SystemTime.date, date, sizeof(Date_t));
-#else
-	(void)date;
-#endif
-}
-
-
-
-/**
- * \brief	Set time
- */
-inline __attribute__((always_inline)) void DateTime_SetTime(Time_t *time)
-{
-#if defined(CONFIG_MODULE_RTC_ENABLE)
-	RTC_SetTime(&time);
-#elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
-	memcpy(&DateTime_SystemTime.time, &time, sizeof(Time_t));
-#else
-	(void)time;
-#endif
 }
 
 
