@@ -429,15 +429,15 @@ static bool DateTime_CheckItIsLeapYear(uint8_t year)
 {
 	bool isLeapYear = false;
 
-	if (year%400 == 0)
+	if ((year % 400) == 0)
 	{
 		isLeapYear = true;
 	}
-	else if (year%100 == 0)
+	else if ((year % 100) == 0)
 	{
 		isLeapYear = false;
 	}
-	else if (year%4 == 0)
+	else if ((year % 4) == 0)
 	{
 		isLeapYear = true;
 	}
@@ -477,9 +477,10 @@ static uint8_t DateTime_GetDaysOfMonth(uint8_t year, uint8_t month)
 	if (valid)
 	{
 		// If parameters are good, get days
-
-		if ((month == 2) && ((year & 0x03) == 0))
+		//if ((month == 2) && ((year & 0x03) == 0))
+		if ((month == 2) && (!DateTime_CheckItIsLeapYear(year)))
 		{
+			// February
 			days = 29;
 		}
 		else
@@ -759,6 +760,9 @@ void DateTime_UnitTest(void)
 	DateTime_t test606 = { { 18, 1, 1 }, { 0, 0, 0 } };
 	DateTime_Steps(&test605, 1);
 	UNITTEST_ASSERT(!memcmp(&test605, &test606, sizeof(DateTime_t)), "DateTime_Steps error");
+
+
+	// TODO: Add more DateTime UnitTests
 
 
 	// Finish
