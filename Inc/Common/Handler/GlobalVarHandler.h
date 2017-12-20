@@ -34,6 +34,10 @@
 
 #define GLOBVARH_NAME_MAX_LENGTH				(20U)	///< maximal length of a variable
 
+#if !defined(GLOBVARH_SOURCE_ENABLE)
+	#define GLOBVARH_SOURCE_ENABLE				0		///< Source parameter enable
+#endif
+
 
 
 /*------------------------------------------------------------------------------
@@ -87,7 +91,9 @@ typedef enum
 {
 	GlobVarH_Process_Unknown = 0,
 	GlobVarH_Process_GlobalVariableNameNotFind,
+#if GLOBVARH_SOURCE_ENABLE == 1
 	GlobVarH_Process_SourceNotEnabled,
+#endif
 	GlobVarH_Process_IsReadOnly,
 	GlobVarH_Process_FailType,
 	GlobVarH_Process_FailParam,
@@ -141,20 +147,21 @@ typedef struct
 	const uint32_t maxValue;				///< Max value
 	const uint32_t minValue;				///< Min value
 
-	const CommProtocolBit_t sourceEnable;	///< Enabled sources (for set-get)	// TODO: compiler option
 
 	// TODO: Optimize these: isHex (bool), isReadOnly (bool)
 	const bool isHex;						///< Set-get in hexadecimal format? The variable is interpretable in hex format!
 
 	const char * const * enumList;			///< Enum list, if it is enumerator
 
+#if GLOBVARH_SOURCE_ENABLE == 1
+	const CommProtocolBit_t sourceEnable;	///< Enabled sources (for set-get)	// TODO: compiler option
+#endif
 #if GLOBVARH_UNIT_ENABLE == 1
 	const char * const unit;				///< units [string], example: [cm]
 #endif
 #if GLOBVARH_DESCRIPTION_ENABLE == 1
 	const char * const description;			///< descriptions of global variable [string]
 #endif
-
 } GlobVarH_VarRecord_t;
 
 

@@ -2603,11 +2603,6 @@ static CmdH_Result_t CommandFunction_TaskHandler(uint32_t argc, char** argv)
 #ifdef CONFIG_MODULE_DEBUG_ENABLE
 static CmdH_Result_t CommandFunction_Debug(uint32_t argc, char** argv)
 {
-	(void)argc;
-
-	uint32_t value;
-	bool enable = false;
-	bool isOk = false;
 	CmdH_Result_t result = CmdH_Result_Error_Unknown;
 
 	if (argc == 1)
@@ -2620,6 +2615,10 @@ static CmdH_Result_t CommandFunction_Debug(uint32_t argc, char** argv)
 	}
 	else if (argc == 3)
 	{
+		uint32_t value;
+		bool enable = false;
+		bool isOk = false;
+
 		if (!StrCmp("enable", argv[2]))
 		{
 			// Enable
@@ -2668,6 +2667,7 @@ static CmdH_Result_t CommandFunction_Debug(uint32_t argc, char** argv)
 				}
 			}
 		}
+		//else: Handled in "enable" / "disable" case
 	}
 
 	return result;

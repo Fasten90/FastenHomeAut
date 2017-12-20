@@ -232,10 +232,17 @@ GlobVarH_ProcessResult_t GlobVarH_ProcessVariableCommand(const GlobVarH_VarListI
 	GlobVarH_ID_t globVarID = GlobVarH_SearchVariableName(varList, varName, &varRecord);
 	if (globVarID >= 0)
 	{
-		// Found, Check the source
+		// Found
+#if GLOBVARH_SOURCE_ENABLE == 1
+		// Check the source
 		if (((1 << source) & varRecord->sourceEnable) ||
 				(varRecord->sourceEnable == CommProtBit_Unknown))			// TODO: to access a variable is always enabled!
 		{
+#else
+		// TODO: Delete this parameter from function parameter
+		(void)source;
+#endif
+
 			// Source is enabled
 			if (setGetType == GlobVarH_SetGet_Get)
 			{
@@ -277,11 +284,13 @@ GlobVarH_ProcessResult_t GlobVarH_ProcessVariableCommand(const GlobVarH_VarListI
 			{
 				result = GlobVarH_Process_Unknown;
 			}
+#if GLOBVARH_SOURCE_ENABLE == 1
 		}
 		else
 		{
 			result = GlobVarH_Process_SourceNotEnabled;				// Source not enabled
 		}
+#endif
 	}
 	else
 	{
@@ -295,8 +304,8 @@ GlobVarH_ProcessResult_t GlobVarH_ProcessVariableCommand(const GlobVarH_VarListI
 
 /**
  * \brief	Searching a global var name in GlobVarH_VarList
- * \retval	true if found (number of record is stored in varRecord)
- * 			false, if not found
+ * \retval	>= 0 if found (number of record is stored in varRecord)
+ * 			-1, if not found
  */
 static GlobVarH_ID_t GlobVarH_SearchVariableName(const GlobVarH_VarListInfo_t *varList, const char *varName, const GlobVarH_VarRecord_t **varRecord)
 {
@@ -1297,9 +1306,11 @@ void GlobVarH_WriteResults(GlobVarH_ProcessResult_t result)
 			pMessage = "Cannot set, it is constant";
 			break;
 
+#if GLOBVARH_SOURCE_ENABLE == 1
 		case GlobVarH_Process_SourceNotEnabled:
 			pMessage = "Cannot process this command from this source";
 			break;
+#endif
 
 		case GlobVarH_Process_FailParamTooLongString:
 			pMessage = "Too long string";
@@ -1635,12 +1646,14 @@ const GlobVarH_VarRecord_t GlobVarH_UT_VarList[] =
 			.type = GlobVarH_Type_Uint32,
 			.isHex = true,
 		},
+#if GLOBVARH_SOURCE_ENABLE == 1
 		{
 			.name = "testcannotaccess",
 			.varPointer = &testCannotAccess,
 			.type = GlobVarH_Type_Bool,
 			.sourceEnable = CommProtBit_Disable,
 		},
+#endif
 		{
 			.name = "testfloat",
 			.varPointer = &testFloat,
@@ -1936,10 +1949,12 @@ void GlobVarH_UnitTest(void)
 	UNITTEST_ASSERT(!StrCmp("0x00065535", GlobVarH_TestBuffer), "testuint32 set-get error");
 
 
+#if GLOBVARH_SOURCE_ENABLE == 1
 	// Test "cannotaccess" variable
 	GlobVarH_UT_Clear();
 	result = GlobVarH_ProcessVariableCommand(&utVarList, "testcannotaccess", "", GlobVarH_SetGet_Get, 1);
 	UNITTEST_ASSERT(result == GlobVarH_Process_SourceNotEnabled, "Variable source error");
+#endif
 
 
 	// Test "testfloat" variable (float)
