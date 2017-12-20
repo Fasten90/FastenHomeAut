@@ -519,7 +519,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 	{
 		.name = "debug",
 		.commandFunctionPointer = CommandFunction_Debug,
-		.commandArgNum = CmdH_CommandArgNum_2,
+		.commandArgNum = CmdH_CommandArgNum_0 | CmdH_CommandArgNum_2,
 		.description = "Debug enable/disable",
 		.syntax = "<taskname/taskid> <enable/disable>",
 	},
@@ -2608,53 +2608,64 @@ static CmdH_Result_t CommandFunction_Debug(uint32_t argc, char** argv)
 	uint32_t value;
 	bool enable = false;
 	bool isOk = false;
-	CmdH_Result_t result;
+	CmdH_Result_t result = CmdH_Result_Error_Unknown;
 
-	if (!StrCmp("enable", argv[2]))
+	if (argc == 1)
 	{
-		// Enable
-		enable = true;
-		isOk = true;
+		// Debug list
+		char list[300];
+		Debug_PrintDebugList(list);
+		CmdH_SendMessage(list);
+		result = CmdH_Result_Ok;
 	}
-	else if (!StrCmp("disable", argv[2]))
+	else if (argc == 3)
 	{
-		// Disable
-		enable = false;
-		isOk = true;
-	}
-	else
-	{
-		// Wrong 2. parameter
-		isOk = false;
-		result = CmdH_Result_Error_WrongArgument2;
-	}
-
-	if (isOk)
-	{
-		// Check 1. parameter
-		if (StringToUnsignedDecimalNum(argv[1], &value))
+		if (!StrCmp("enable", argv[2]))
 		{
-			// 1. parameter is number
-			if (Debug_EnableDisable((Debug_t)value, enable))
-			{
-				// Successful
-				result = CmdH_Result_Ok_SendSuccessful;
-			}
-			else
-			{
-				result = CmdH_Result_Error_WrongArgument1;
-			}
+			// Enable
+			enable = true;
+			isOk = true;
+		}
+		else if (!StrCmp("disable", argv[2]))
+		{
+			// Disable
+			enable = false;
+			isOk = true;
 		}
 		else
 		{
-			// Find in "list"
-			if (Debug_SetDebugTaskWithName(argv[1], enable))
+			// Wrong 2. parameter
+			isOk = false;
+			result = CmdH_Result_Error_WrongArgument2;
+		}
+
+		if (isOk)
+		{
+			// Check 1. parameter
+			if (StringToUnsignedDecimalNum(argv[1], &value))
 			{
-				result = CmdH_Result_Ok_SendSuccessful;
+				// 1. parameter is number
+				if (Debug_EnableDisable((Debug_t)value, enable))
+				{
+					// Successful
+					result = CmdH_Result_Ok_SendSuccessful;
+				}
+				else
+				{
+					result = CmdH_Result_Error_WrongArgument1;
+				}
 			}
 			else
 			{
-				result = CmdH_Result_Error_WrongArgument1;
+				// Find in "list"
+				if (Debug_SetDebugTaskWithName(argv[1], enable))
+				{
+					result = CmdH_Result_Ok_SendSuccessful;
+				}
+				else
+				{
+					result = CmdH_Result_Error_WrongArgument1;
+				}
 			}
 		}
 	}

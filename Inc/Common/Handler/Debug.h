@@ -57,6 +57,7 @@ typedef struct
 void Debug_Print(Debug_t debugTask, const char *format, ...);
 bool Debug_EnableDisable(Debug_t task, bool enable);
 bool Debug_SetDebugTaskWithName(char *name, bool enable);
+size_t Debug_PrintDebugList(char * str);
 #else
 // Empty macro for suppress warnings
 #define Debug_Print(...)

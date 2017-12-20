@@ -20,8 +20,8 @@
 #ifdef CONFIG_MODULE_DEBUG_ENABLE
 
 #include <stdarg.h>// for "va_list"
-#include "FormattedMessage.h"
-#include "String.h"
+#include "ColoredMessage.h"
+#include "StringHelper.h"
 #include "DebugUart.h"
 #include "DebugList.h"
 #include "Debug.h"
@@ -148,6 +148,28 @@ bool Debug_SetDebugTaskWithName(char *name, bool enable)
 	}
 
 	return result;
+}
+
+
+
+/**
+ * \brief	Print Debug list
+ */
+size_t Debug_PrintDebugList(char * str)
+{
+	uint8_t i;
+	size_t length = 0;
+
+	length += usprintf(&str[length], "DebugList:\r\n");
+
+	for (i = 0; i < Debug_Count; i++)
+	{
+		length += usprintf(&str[length], "%20s %c\r\n",
+				DebugTasks[i].name,
+				((DebugTasks[i].isEnabled) ? ('x') : (' ')));
+	}
+
+	return length;
 }
 
 
