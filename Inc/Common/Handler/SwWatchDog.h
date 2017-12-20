@@ -36,7 +36,7 @@
 #endif
 
 
-#define SW_WATCHDOG_PERIOD					(1000U)					// TaskHandler Sw Watchdog period time [ms]
+#define SW_WATCHDOG_PERIOD					(1050U)					// TaskHandler Sw Watchdog period time [ms]
 
 
 

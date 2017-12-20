@@ -53,7 +53,6 @@ static EventRun_t Events[Event_Count] = { 0 };
  *----------------------------------------------------------------------------*/
 
 
-
 /**
  * \brief	Initialize EventHandler
  */
@@ -80,8 +79,8 @@ void EventHandler_Init(void)
 	memset(Events, 0, sizeof(Events));
 
 	// Generate event
-	// TODO: Task ID?
-	EventHandler_GenerateEvent(Event_LogEventStarted, 0, 0);
+	// TODO: Task ID 0 is good idea? Now not need this event generating
+	//EventHandler_GenerateEvent(Event_LogEventStarted, 0, 0);
 }
 
 
@@ -260,11 +259,7 @@ void EventHandler_UnitTest(void)
 	UNITTEST_ASSERT(EventHandler_CheckEventState(0, 0) == false, "Event - generate and check is wrong");
 
 	// Get other event - it is not was set
-#ifdef CONFIG_EVENTHANDLER_REQUIRED_TASK_MODE
 	UNITTEST_ASSERT(EventHandler_CheckEventState(1, 1) == false, "Event - generate and check is wrong");
-#else
-	UNITTEST_ASSERT(EventHandler_CheckEventState(1, 1) == true, "Event - generate and check is wrong");
-#endif
 
 
 	// Test with other parameters
