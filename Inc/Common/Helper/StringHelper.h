@@ -158,12 +158,12 @@ size_t StringLength(const char *str);
 uint8_t StrCmp(const char * str1, const char *str2);
 uint8_t StrCmpFirst(const char *str1, const char *str2);
 uint8_t StrCmpWithLength(const char * str1, const char *str2, size_t length);
-size_t StrCpy(char *dest, const char *src);
-size_t StrCpyFixLength(char *dest, const char *src, size_t length);
+size_t StrCpy(char *dest, const char *str);
+size_t StrCpyFixLength(char *dest, const char *str, size_t length);
 size_t StrCpyFixLengthWithFillCharacter(char *dest, const char *str, size_t length, char fillChar);
 size_t StrCpyMax(char *dest, const char *str, size_t maxLength);
 size_t StrCpyCharacter(char *dest, char c, size_t num);
-size_t StrAppend(char *dest, const char *src);
+size_t StrAppend(char *dest, const char *str);
 size_t StrAppendSafe(char *dest, const char *str, size_t destLength);
 
 // String modify

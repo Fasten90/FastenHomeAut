@@ -1259,7 +1259,7 @@ uint8_t StrCmpWithLength(const char * str1, const char *str2, size_t length)
 
 /**
  * \brief	Copy string to *dest pointer
- * \return	copied string length
+ * \return	Copied string length
  */
 size_t StrCpy(char *dest, const char *str)
 {
