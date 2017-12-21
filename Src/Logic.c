@@ -40,6 +40,10 @@
 #include "Snake.h"
 #endif
 
+#if defined(CONFIG_DISPLAY_CLOCK_SMALL) || defined(CONFIG_DISPLAY_CLOCK_LARGE)
+#include "SysTime.h"
+#endif
+
 
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER
 	#if defined(CONFIG_MODULE_ESP8266_ENABLE)
@@ -114,7 +118,9 @@ static volatile DisplayMenu_t Logic_Display_SelectedState = Menu_Main;
 
 static volatile DisplaySnakeMenu_t Logic_Display_SnakeMenu_ActualState = SnakeMenu_NewGame;
 
+#ifdef CONFIG_FUNCTION_GAME_SNAKE
 static bool Logic_Snake_DisplaySnakeMenu = false;
+#endif
 
 static const char * const Logic_MenuList[] =
 {
@@ -201,7 +207,11 @@ void Logic_Display_Init(void)
 	{
 		case Menu_Main:
 #ifdef CONFIG_DISPLAY_CLOCK_SMALL
-			Display_ShowSmallClock(&DateTime_SystemTime.time);
+			{
+				DateTime_t dateTime;
+				SysTime_GetDateTime(&dateTime);
+				Display_ShowSmallClock(&dateTime.time);
+			}
 #endif
 			Logic_Display_PrintMainMenuList();
 			break;
@@ -1056,7 +1066,9 @@ static void Logic_Display_MainMenu(void)
 	if (Logic_Display_ActualState == Menu_Main)
 	{
 		// TODO: Optimize... This function run around 20ms
-		Display_ShowSmallClock(&DateTime_SystemTime.time);
+		DateTime_t dateTime;
+		SysTime_GetDateTime(&dateTime);
+		Display_ShowSmallClock(&dateTime.time);
 		TaskHandler_DisableTask(Task_Display);
 	}
 	#endif
@@ -1203,10 +1215,13 @@ static void Logic_Display_Input(ScheduleSource_t source)
 #if defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK) && defined(CONFIG_DISPLAY_CLOCK_LARGE)
 static void Logic_Display_LargeClock(void)
 {
-	Display_ShowLargeClock(&DateTime_SystemTime.time);
+	DateTime_t dateTime;
+	SysTime_GetDateTime(&dateTime);
+	Display_ShowLargeClock(&dateTime.time);
 	Display_Activate();
 }
 #endif
+
 
 
 #ifdef CONFIG_FUNCTION_GAME_SNAKE

@@ -27,7 +27,8 @@
 #include "String.h"
 #include "Logic.h"
 #include "Snake.h"
-#include "Calc.h"
+#include "MathHelper.h"
+#include "StringHelper.h"
 
 
 

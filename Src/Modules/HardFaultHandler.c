@@ -51,15 +51,6 @@ static const char * HardFault_GetReason(CortexM_HardFault_CCR_register_t reg);
  *----------------------------------------------------------------------------*/
 
 
-/**
- * \brief  HardFaultHandler initialization
- */
-void HardFaultHandler_Init(void)
-{
-
-}
-
-
 
 /**
  * \brief	Get HardFault reason
@@ -69,6 +60,7 @@ static const char * HardFault_GetReason(CortexM_HardFault_CCR_register_t reg)
 	const char * msg = NULL;
 
 #ifdef CONFIG_MICROCONTROLLER_STM32F0xx
+	// TODO: If more bits are set?
 	if (reg.regbits.StkAlign)
 	{
 		msg = "StackAlign";
@@ -111,6 +103,9 @@ void HardFault_PrintHardFaultReason(void)
 
 
 
+/**
+ * \brief	Get registers from stack - called from HardFault ISR
+ */
 void prvGetRegistersFromStack(uint32_t *pulFaultStackAddress)
 {
 	/* These are volatile to try and prevent the compiler/linker optimising them
@@ -159,10 +154,13 @@ void prvGetRegistersFromStack(uint32_t *pulFaultStackAddress)
 	DebugUart_SendMessageBlocked(str);
 
 
+	// Print HardFault registers
 	HardFault_PrintHardFaultReason();
 
+	// Go to Error state
 	Error_Handler();
 }
+
 
 
 #endif	// #ifdef CONFIG_MODULE_HARDFAULTHANDLER_ENABLE

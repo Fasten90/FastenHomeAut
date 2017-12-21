@@ -75,7 +75,7 @@ void EventLog_Init(void)
 
 	LogCounter = 0;
 
-	EventHandler_GenerateEvent(Event_LogEventStarted, 0, 0);
+	//EventHandler_GenerateEvent(Event_LogEventStarted, 0, 0);
 }
 
 

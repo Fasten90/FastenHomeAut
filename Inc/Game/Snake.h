@@ -59,6 +59,7 @@ typedef enum
 /*------------------------------------------------------------------------------
  *  Global function declarations
  *----------------------------------------------------------------------------*/
+
 void Snake_Init(void);
 void Snake_Step(SnakeStep_t step);
 void Snake_Draw(void);

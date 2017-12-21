@@ -40,6 +40,7 @@
 #define ssd1306_swap(a, b) { int16_t t = a; a = b; b = t; }
 
 
+
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
@@ -59,6 +60,7 @@ static uint8_t buffer[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] = { 0 };
 #ifdef CONFIG_DISPLAY_SPI_USE_DMA
 static DMA_HandleTypeDef hdma_tx;
 #endif
+
 
 
 /*------------------------------------------------------------------------------
