@@ -29,6 +29,10 @@
 #include "UnitTest.h"
 #endif
 
+#ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
+#include "Table.h"
+#endif
+
 
 
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
@@ -337,25 +341,12 @@ void TaskHandler_ClearTimeoutTask(TaskID_t taskID)
 
 
 #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
-
-static const char * const TaskHandler_StatisticsFormat = "| %9d | %3d | %20s |";
-
 /**
  * \brief	Print TaskHandler statistics border
  */
-static void TaskHandler_PrintStatisticsBorder(void)
+static void TaskHandler_PrintStatisticsTableHeader(const char * fixheader, char * str, char * header)
 {
-	char str[120];
-	char header[49];
-
-	Str_PrintHeader(str, header, TaskHandler_StatisticsFormat, false);
-	DebugUart_SendLine(str);
-
-	Str_PrintHeader(str, header, TaskHandler_StatisticsFormat, true, "StartTick", "Run", "TaskName");
-	DebugUart_SendLine(str);
-
-	Str_PrintHeader(str, header, TaskHandler_StatisticsFormat, false);
-	DebugUart_SendLine(str);
+	Table_PrintTableWithBorder(fixheader, str, header, "StartTick", "Run", "TaskName");
 }
 
 
@@ -417,7 +408,14 @@ void TaskHandler_PrintStatistics(void)
 			);
 
 
-	TaskHandler_PrintStatisticsBorder();
+	// Print Statistics table
+
+	const char const fixheader[] = "| %9d | %3d | %20s |";
+	char str[2 + 9 + 3 + 3 + 3 + 20 + 2];
+	char header[sizeof(fixheader)];
+
+
+	TaskHandler_PrintStatisticsTableHeader(fixheader, str, header);
 
 	// Print all table
 	for (i = 0; i < TASKHANDLER_STATISTICS_LIMIT; i++)
@@ -425,38 +423,25 @@ void TaskHandler_PrintStatistics(void)
 		if (TaskHandler_StatisticsRanTaskTicks[i].startTick > 0)
 		{
 			// Print: "<StartTick> - <RunTime: ms> - <TaskName>"
-			DebugUart_Printf(TaskHandler_StatisticsFormat,
+			usprintf(str, fixheader,
 					TaskHandler_StatisticsRanTaskTicks[i].startTick,
 					TaskHandler_StatisticsRanTaskTicks[i].runTime,
 					TaskList[TaskHandler_StatisticsRanTaskTicks[i].taskId].taskName);
-			DebugUart_SendLine(NULL);
+			DebugUart_SendLine(str);
 		}
 	}
 
-	TaskHandler_PrintStatisticsBorder();
+	TaskHandler_PrintStatisticsTableHeader(fixheader, str, header);
 }
 
-
-
-static const char * const TaskHandler_RuntimesFormat = "| %20s | %9u |";
 
 
 /**
  * \brief	Print TaskHandler RunTimes statistics border
  */
-static void TaskHandler_PrintTaskRunCountsBorder(void)
+static void TaskHandler_PrintTaskRunCountsTableHeader(const char * fixheader, char * str, char * header)
 {
-	char str[120];
-	char header[49];
-
-	Str_PrintHeader(str, header, TaskHandler_RuntimesFormat, false);
-	DebugUart_SendLine(str);
-
-	Str_PrintHeader(str, header, TaskHandler_RuntimesFormat, true, "TaskName", "RunCnt");
-	DebugUart_SendLine(str);
-
-	Str_PrintHeader(str, header, TaskHandler_RuntimesFormat, false);
-	DebugUart_SendLine(str);
+	Table_PrintTableWithBorder(fixheader, str, header, "TaskName", "RunCnt");
 }
 
 
@@ -467,16 +452,20 @@ static void TaskHandler_PrintTaskRunCountsBorder(void)
 void TaskHandler_PrintTaskRunCounts(void)
 {
 	TaskID_t i;
+	static const char const fixheader[] = "| %20s | %9u |";
+	char str[2 + 20 + 3 + 9 + 2];
+	char header[sizeof(fixheader)];
 
-	TaskHandler_PrintTaskRunCountsBorder();
+	TaskHandler_PrintTaskRunCountsTableHeader(fixheader, str, header);
 
 	for (i = 0; i < Task_Count; i++)
 	{
-		DebugUart_Printf(TaskHandler_RuntimesFormat, TaskList[i].taskName, TaskList[i].taskRunCount);
-		DebugUart_SendLine(NULL);
+		usprintf(str, fixheader,
+				TaskList[i].taskName, TaskList[i].taskRunCount);
+		DebugUart_SendLine(str);
 	}
 
-	TaskHandler_PrintTaskRunCountsBorder();
+	TaskHandler_PrintTaskRunCountsTableHeader(fixheader, str, header);
 }
 #endif	// #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
 

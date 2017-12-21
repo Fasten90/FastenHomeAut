@@ -177,11 +177,6 @@ const char * STRING_FindCharacters(const char *str, const char *findCharacters);
 const char * STRING_FindString(const char *str, const char *findString);
 uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint8_t parameterMaxCount);
 
-// Border format
-void Str_FormatBorder(char * dest, const char * src);
-void Str_FormatHeader(char * dest, const char * src, bool isHeader);
-void Str_PrintHeader(char * dest, char * smallHeader, const char * src, bool isHeader, ...);
-
 // String format functions
 size_t string_printf(char *str, const char *format, va_list ap);
 size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list ap);

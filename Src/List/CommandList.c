@@ -1896,7 +1896,7 @@ static CmdH_Result_t CommandFunction_EventLog(uint32_t argc, char** argv)
 	(void)argv;
 
 	// List all event logs
-	EventLog_PrintAllLogRecords();
+	EventLog_PrintLogTable();
 
 	return CmdH_Result_Ok;
 }
