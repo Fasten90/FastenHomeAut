@@ -25,6 +25,7 @@
 #include "DebugUart.h"
 #include "DebugList.h"
 #include "Debug.h"
+#include "Table.h"
 
 
 
@@ -153,23 +154,37 @@ bool Debug_SetDebugTaskWithName(char *name, bool enable)
 
 
 /**
+ * \brief	Print DebugList Table Header
+ */
+static void Debug_PrintDebugListTableHeader(const char * fixheader, char * str, char * header)
+{
+	Table_PrintTableWithBorder(fixheader, str, header, "DebugName", "en");
+}
+
+
+
+/**
  * \brief	Print Debug list
  */
-size_t Debug_PrintDebugList(char * str)
+void Debug_PrintDebugList(void)
 {
 	uint8_t i;
-	size_t length = 0;
+	static const char const fixheader[] = "| %20s | %3s |";
+	char str[2 + 20 + 3 + 3 + 2];
+	char header[sizeof(fixheader)];
 
-	length += usprintf(&str[length], "DebugList:\r\n");
+	Debug_PrintDebugListTableHeader(fixheader, str, header);
 
 	for (i = 0; i < Debug_Count; i++)
 	{
-		length += usprintf(&str[length], "%20s %c\r\n",
+		usprintf(str, fixheader,
 				DebugTasks[i].name,
-				((DebugTasks[i].isEnabled) ? ('x') : (' ')));
+				((DebugTasks[i].isEnabled) ? ("x") : (" ")));
+
+		DebugUart_SendLine(str);
 	}
 
-	return length;
+	Debug_PrintDebugListTableHeader(fixheader, str, header);
 }
 
 

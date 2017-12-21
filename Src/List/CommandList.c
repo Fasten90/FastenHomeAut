@@ -2608,9 +2608,7 @@ static CmdH_Result_t CommandFunction_Debug(uint32_t argc, char** argv)
 	if (argc == 1)
 	{
 		// Debug list
-		char list[300];
-		Debug_PrintDebugList(list);
-		CmdH_SendMessage(list);
+		Debug_PrintDebugList();
 		result = CmdH_Result_Ok;
 	}
 	else if (argc == 3)
