@@ -1718,6 +1718,162 @@ uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint
 
 
 
+/**
+ * \brief	Print %20c --> 20 times '-'
+ */
+void Str_FormatBorder(char * dest, const char * src)
+{
+	while (*src)
+	{
+		if (*src == '%')
+		{
+			// After '%', check the value
+			src++;
+			if (IsDecimalChar(*src))
+			{
+				uint8_t val1 = DecimalCharToNum(*src);
+				// Check next value
+				src++;
+				if (IsDecimalChar(*src))
+				{
+					uint8_t val2 = DecimalCharToNum(*src);
+					val1 = val1 * 10 + val2;
+					dest += StrCpyCharacter(dest, '-', val1);
+					src++;
+					if (*src == 'c')
+						src++;
+				}
+				else if (*src == 'c')
+				{
+					dest += StrCpyCharacter(dest, '-', val1);
+					src++;
+				}
+				else
+				{
+					// Error
+					DEBUG_BREAKPOINT();
+				}
+			}
+			else if (*src == 'c')
+			{
+				*dest = '-';
+				dest++;
+				src++;
+			}
+			else
+			{
+				// Not '%', not decimal, not 'c'
+				// Error
+				DEBUG_BREAKPOINT();
+			}
+		}
+		else if (*src == 'c')
+		{
+			// Alone 'c'
+			*dest = '-';
+			dest++;
+			src++;
+		}
+		else
+		{
+			// Not '%'. E.g. : '-', '+', ...
+			*dest = *src;
+			dest++;
+			src++;
+		}
+	}
+
+	*dest = '\0';
+}
+
+
+
+void Str_FormatHeader(char * dest, const char * src, bool isHeader)
+{
+	/*
+	 * original: | %3u | %20s | %9u | %20s | 0x%X | %10s | %20s |
+	 * Border: '|' --> '+', ' ' --> '-' , 'usx' --> 'c',  parameters --> '-'
+	 * Header: '|' --> '|', 'usx '--> 's', parameters: given, ...
+	 */
+
+	size_t i;
+	for (i = 0; src[i] != '\0'; i++)
+	{
+		if (isHeader)
+		{
+			// Header
+			// E.g. original:	| %3u | %20s | %9u | %20s | 0x%X | %10s | %20s |
+			// E.g. new:		| %3s | %20s | %9s | %20s | 0x%s | %10s | %20s |
+			if (src[i] == 'u' || src[i] == 's' || src[i] == 'x' || src[i] == 'X' || src[i] == 'd')
+			{
+				dest[i] = 's';
+			}
+			/*else if (src[i] == '|' || src[i] == '\r' || src[i] == '\n' || src[i] == ' ')
+			{
+				dest[i] = src[i];
+			}
+			else if (
+			{
+				dest[i] = src[i];
+			}*/
+			else
+			{
+				// Other, e.g.: ' ' (space), '%', '|', ...
+				dest[i] = src[i];
+			}
+		}
+		else
+		{
+			// Border
+			// E.g. original:	| %3u | %20s | %9u | %20s | 0x%X | %10s | %20s |
+			// E.g. new:		+-%3c-+-%20c-+-%9c-+-%20c-+-0x%c-+-%10c-+-%20c-+
+			if (src[i] == 'u' || src[i] == 's' || src[i] == 'x' || src[i] == 'X' || src[i] == 'd')
+			{
+				dest[i] = 'c';
+			}
+			else if (src[i] == '|')
+			{
+				dest[i] = '+';
+			}
+			else if (src[i] == ' ')
+			{
+				dest[i] = '-';
+			}
+			else
+			{
+				// E.g. '%', decimal, other...
+				dest[i] = src[i];
+			}
+		}
+	}
+
+	dest[i] = '\0';
+}
+
+
+
+void Str_PrintHeader(char * dest, char * smallHeader, const char * src, bool isHeader, ...)
+{
+	// 1. conversion
+	Str_FormatHeader(smallHeader, src, isHeader);
+
+	if (isHeader)
+	{
+		// Header
+		va_list ap;										// argument pointer
+		va_start(ap, isHeader); 						// ap on arg
+		string_printf(dest, smallHeader, ap);	// Separate and process
+		va_end(ap);						 				// Cleaning after end
+	}
+	else
+	{
+		// Border
+		Str_FormatBorder(dest, smallHeader);
+	}
+}
+
+
+
 #ifndef STRING_SPRINTF_EXTENDED_ENABLE
 /**
  * \brief	Instead of sprintf()
