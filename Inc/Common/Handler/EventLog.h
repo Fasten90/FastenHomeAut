@@ -33,10 +33,21 @@
  *----------------------------------------------------------------------------*/
 
 #ifndef CONFIG_EVENTLOG_LOG_SIZE
-#define CONFIG_EVENTLOG_LOG_SIZE		(100)
+	#define CONFIG_EVENTLOG_LOG_SIZE		(100)
 #endif
 
-#define EVENTLOG_BUFFER_USE_CIRCULAR	1
+///< Save log circular mode (1), or once full mode
+#ifndef EVENTLOG_BUFFER_USE_CIRCULAR
+	#define EVENTLOG_BUFFER_USE_CIRCULAR	(1)
+#endif
+
+///< Save DateTime (1), or not (0) (If turned off, it use less RAM)
+#ifndef EVENTLOG_SAVE_DATETIME
+	#define EVENTLOG_SAVE_DATETIME			(0)
+#endif
+
+///< Print event immediately
+// #define CONFIG_EVETNLOG_PRINT_IMMEDIATELY
 
 
 
@@ -60,7 +71,7 @@ typedef struct
 	EventType_t eventType;					///< Event type
 	TaskID_t taskSource;					///< Event source (Task)
 	uint32_t tick;							///< Event tick
-#if defined(CONFIG_MODULE_RTC_ENABLE) || defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
+#if (EVENTLOG_SAVE_DATETIME == 1) && (defined(CONFIG_MODULE_RTC_ENABLE) || defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE))
 	DateTime_t dateTime;					///< Event date time
 #endif
 } EventLogRecord_t;

@@ -95,12 +95,14 @@ void EventLog_LogEvent(EventName_t eventName, EventData_t eventData, TaskID_t ta
 	EventLogs[LogCounter].eventType = eventType;
 	EventLogs[LogCounter].taskSource = taskSource;
 	EventLogs[LogCounter].tick = HAL_GetTick();
-#if defined(CONFIG_MODULE_RTC_ENABLE)
+#if (EVENTLOG_SAVE_DATETIME == 1)
+	#if defined(CONFIG_MODULE_RTC_ENABLE)
 	RTC_GetDateTime(&EventLogs[LogCounter].dateTime);
-#elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
+	#elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
 	DateTime_t dateTime;
 	SysTime_GetDateTime(&dateTime);
 	memcpy(&EventLogs[LogCounter].dateTime, &dateTime, sizeof(dateTime));
+	#endif
 #endif
 
 #ifdef CONFIG_EVETNLOG_PRINT_IMMEDIATELY
@@ -139,6 +141,7 @@ static void EventLog_PrintLog(char *str, EventLogCnt_t cnt, EventLogRecord_t *lo
 	if (logRecord->eventName > Event_Count)
 		return;
 
+#if (EVENTLOG_SAVE_DATETIME == 1)
 	char timeStr[DATETIME_STRING_MAX_LENGTH];
 	DateTime_PrintDateTimeToString(timeStr, &logRecord->dateTime);
 
@@ -151,6 +154,16 @@ static void EventLog_PrintLog(char *str, EventLogCnt_t cnt, EventLogRecord_t *lo
 			EventHandler_GetEventTypeName(logRecord->eventType),
 			TaskList[logRecord->taskSource].taskName
 			);
+#else
+	usprintf(str, "| %3u | %9u | %20s | 0x%X | %10s | %20s |\r\n",
+			cnt,
+			logRecord->tick,
+			EventList[logRecord->eventName].name,
+			logRecord->eventData,
+			EventHandler_GetEventTypeName(logRecord->eventType),
+			TaskList[logRecord->taskSource].taskName
+			);
+#endif
 }
 
 
@@ -166,6 +179,7 @@ void EventLog_PrintAllLogRecords(void)
 	char str[120];
 
 	// Send header
+	// TODO: DateTime...
 	const char * const fixheader = "+-----+----------------------+-----------+----------------------+------------+------------+----------------------+\r\n";
 	const char * const headertxt = "|  Id |       DateTime       |    Tick   |      EventName       |   Data     | EventType  |       Taskname       |\r\n";
 
