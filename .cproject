@@ -211,7 +211,6 @@
 							<tool id="com.atollic.truestudio.exe.debug.toolchain.secoutput.560189446" name="Other" superClass="com.atollic.truestudio.exe.debug.toolchain.secoutput.839033486"/>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="com.atollic.truestudio.exe.debug.1518366166.833306688" name="CMakeLists.txt" rcbsApplicability="disable" resourcePath="Src/CMakeLists.txt" toolsToInvoke=""/>
 					<fileInfo id="com.atollic.truestudio.exe.debug.311825581.983937533" name="" rcbsApplicability="disable" resourcePath="nofile" toolsToInvoke="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447.1976695455">
 						<tool id="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447.1976695455" name="C Compiler" superClass="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447">
 							<inputType id="com.atollic.truestudio.gcc.input.1274347818" superClass="com.atollic.truestudio.gcc.input"/>
@@ -239,6 +238,24 @@
 						</toolChain>
 					</folderInfo>
 					<fileInfo id="com.atollic.truestudio.exe.debug.1518366166.434568852" name="template.h" rcbsApplicability="disable" resourcePath="Inc/template.h" toolsToInvoke=""/>
+					<folderInfo id="com.atollic.truestudio.exe.debug.1518366166.471972053" name="/" resourcePath="Inc/Common/Handler">
+						<toolChain id="com.atollic.truestudio.exe.debug.toolchain.582922242" name="Atollic ARM Tools" superClass="com.atollic.truestudio.exe.debug.toolchain" unusedChildren="">
+							<option id="com.atollic.truestudio.toolchain_options.mcu.1783777808.919660979" name="Microcontroller" superClass="com.atollic.truestudio.toolchain_options.mcu.1783777808"/>
+							<option id="com.atollic.truestudio.toolchain_options.vendor.1688648492.1336678311" name="Vendor name" superClass="com.atollic.truestudio.toolchain_options.vendor.1688648492"/>
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="com.atollic.truestudio.exe.debug.toolchain.platform" isAbstract="false" name="Debug platform" osList="all" superClass="com.atollic.truestudio.exe.debug.toolchain.platform"/>
+							<tool id="com.atollic.truestudio.exe.debug.toolchain.as.1032923804" name="Assembler" superClass="com.atollic.truestudio.exe.debug.toolchain.as.1545899283">
+								<inputType id="com.atollic.truestudio.as.input.300586969" name="Input" superClass="com.atollic.truestudio.as.input"/>
+							</tool>
+							<tool id="com.atollic.truestudio.exe.debug.toolchain.gcc.967935503" name="C Compiler" superClass="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447">
+								<inputType id="com.atollic.truestudio.gcc.input.644889090" superClass="com.atollic.truestudio.gcc.input"/>
+							</tool>
+							<tool id="com.atollic.truestudio.exe.debug.toolchain.ld.1578229007" name="C Linker" superClass="com.atollic.truestudio.exe.debug.toolchain.ld.1444973427"/>
+							<tool id="com.atollic.truestudio.exe.debug.toolchain.gpp.2016000173" name="C++ Compiler" superClass="com.atollic.truestudio.exe.debug.toolchain.gpp.981298185"/>
+							<tool id="com.atollic.truestudio.exe.debug.toolchain.ldcc.1138632645" name="C++ Linker" superClass="com.atollic.truestudio.exe.debug.toolchain.ldcc.428260"/>
+							<tool id="com.atollic.truestudio.ar.base.689448893" name="Archiver" superClass="com.atollic.truestudio.ar.base.1058766908"/>
+							<tool id="com.atollic.truestudio.exe.debug.toolchain.secoutput.163643360" name="Other" superClass="com.atollic.truestudio.exe.debug.toolchain.secoutput.839033486"/>
+						</toolChain>
+					</folderInfo>
 					<sourceEntries>
 						<entry excluding="Windows|CMSIS/Include/core_cm4.h|CMSIS/Include/core_cm7.h|CMSIS/Include/core_cm3.h|CMSIS/Device/ST/STM32F0xx/Source/gcc/startup_stm32f030x6.s|CMSIS/Device/ST/STM32F0xx/Source/gcc/startup_stm32f030xc.s|CMSIS/Device/ST/STM32F4xx|STM32F4xx_HAL_Driver|CMSIS/Device/ST/STM32F0xx/Include/stm32f030xc.h|CMSIS/Device/ST/STM32F0xx/Include/stm32f030x6.h" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 						<entry excluding="stm32f4xx_it.h|stm32f4xx_hal_conf.h|FreeRTOSConfig.h|template.h|Old" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Inc"/>
