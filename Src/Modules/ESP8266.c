@@ -1833,11 +1833,10 @@ void ESP8266_StatusMachine(void)
 	if (ESP8266_RxBuffer_WriteCnt != ESP8266_RxBuffer_ReadCnt)
 	{
 		// Need copy to receiveBuffer
-		receivedMessageLength = CircularBuffer_GetCharacters(
+		receivedMessageLength = CircularBuffer_GetString(
 				(char *)ESP8266_RxBuffer, receiveBuffer,
 				ESP8266_RX_BUFFER_LENGTH,
-				ESP8266_RxBuffer_WriteCnt, ESP8266_RxBuffer_ReadCnt,
-				true);
+				ESP8266_RxBuffer_WriteCnt, ESP8266_RxBuffer_ReadCnt);
 	}
 
 

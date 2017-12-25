@@ -35,6 +35,8 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
+// Source: https://www.eevblog.com/forum/microcontrollers/%27best%27-way-to-load-UART_Handler_t-data-to-ring-buffer-with-stm32hal/
+
 
 
 /*------------------------------------------------------------------------------
@@ -46,6 +48,14 @@
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
+
+
+
+/*------------------------------------------------------------------------------
+ *  Static function prototypes
+ *----------------------------------------------------------------------------*/
+
+static void UART_Handler(UART_Handler_t *handler);
 
 
 
@@ -62,8 +72,8 @@ void UART_Init(UART_HandleTypeDef *UartHandle)
 {
 	
 	// HW init, Port init, etc...
-	//HAL_UART_MspInit(UartHandle);
-	// TODO: It is called from HAL_UART_Init() function
+	//HAL_UART_MspInit(UartHandle);			// It is called from HAL_UART_Init() function
+
 
 	//##-1- Configure the UART peripheral
 	// Put the USART peripheral in the Asynchronous mode (UART Mode)
@@ -123,6 +133,8 @@ void UART_Init(UART_HandleTypeDef *UartHandle)
 			__HAL_UART_CLEAR_IT(&Bluetooth_UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
 		}
 #endif
+		//__HAL_UART_ENABLE_IT(UartHandle, UART_IT_RXNE);		/* receiver not empty */
+		__HAL_UART_DISABLE_IT(UartHandle, UART_IT_TXE);			/* transmit empty */
 	}
 	else	// != HAL_OK
 	{	
@@ -241,17 +253,17 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 
 		HAL_NVIC_SetPriority(BLUETOOTH_USARTx_IRQn, BLUETOOTH_USART_PREEMT_PRIORITY, BLUETOOTH_USART_SUB_PRIORITY);
 		HAL_NVIC_EnableIRQ(BLUETOOTH_USARTx_IRQn);
-
 	}
 #endif	// #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
 }
 
 
 
+// TODO: Put to DebugUart ?
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 void DEBUG_USARTx_IRQHandler(void)
 {
-	HAL_UART_IRQHandler(&Debug_UartHandle);
+	UART_Handler(&DebugUart);
 }
 #endif
 
@@ -260,6 +272,7 @@ void DEBUG_USARTx_IRQHandler(void)
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 void ESP8266_USARTx_IRQHandler(void)
 {
+	// TODO:
 	HAL_UART_IRQHandler(&ESP8266_UartHandle);
 }
 #endif
@@ -269,6 +282,7 @@ void ESP8266_USARTx_IRQHandler(void)
 #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
 void BLUETOOTH_USARTx_IRQHandler(void)
 {
+	// TODO:
 	HAL_UART_IRQHandler(&Bluetooth_UartHandle);
 }
 #endif
@@ -276,210 +290,80 @@ void BLUETOOTH_USARTx_IRQHandler(void)
 
 
 /**
- * \brief	HAL driver function - Uart Tx (transmission complete) callback function
- * 			Set send successful flags
+ * \brief	UART handler (Handle rx - tx)
  */
-void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
+static void UART_Handler(UART_Handler_t *handler)
 {
-#if !defined(CONFIG_MODULE_DEBUGUART_ENABLE) && !defined(CONFIG_MODULE_ESP8266_ENABLE) && !defined(CONFIG_MODULE_BLUETOOTH_ENABLE)
-	// Suppress warning
-	(void)UartHandle;
-#endif
-	
-#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
-	// Successful sending
-	if (UartHandle == &Debug_UartHandle)
-	{
-		// Set transmission flag: transfer complete
-		#ifdef CONFIG_USE_FREERTOS
-		xSemaphoreGiveFromISR(DebugUart_Tx_Semaphore, (BaseType_t *)NULL);
-		#endif
-		DebugUart_SendEnable_flag = true;
+	UART_HandleTypeDef *huart;
+	uint32_t tmp1, tmp2;
+	bool err;
+
+	err = false;
+	huart = handler->huart;
+
+	/* UART parity error interrupt occurred ------------------------------------*/
+	tmp1 = __HAL_UART_GET_FLAG(huart, UART_FLAG_PE);
+	tmp2 = __HAL_UART_GET_IT_SOURCE(huart, UART_IT_PE);
+	if ((tmp1 != RESET) && (tmp2 != RESET)) {
+		__HAL_UART_CLEAR_PEFLAG(huart);
+		err = true;
 	}
-#endif
 
-#ifdef CONFIG_MODULE_ESP8266_ENABLE
-	if (UartHandle == &ESP8266_UartHandle)
-	{
-		ESP8266_SendEnable_flag = true;
+	/* UART frame error interrupt occurred -------------------------------------*/
+	tmp1 = __HAL_UART_GET_FLAG(huart, UART_FLAG_FE);
+	tmp2 = __HAL_UART_GET_IT_SOURCE(huart, UART_IT_ERR);
+	if ((tmp1 != RESET) && (tmp2 != RESET)) {
+		__HAL_UART_CLEAR_FEFLAG(huart);
+		err = true;
 	}
-#endif
 
-#ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
-	if (UartHandle == &Bluetooth_UartHandle)
-	{
-		Bluetooth_SendEnable_flag = true;
+	/* UART noise error interrupt occurred -------------------------------------*/
+	tmp1 = __HAL_UART_GET_FLAG(huart, UART_FLAG_NE);
+	tmp2 = __HAL_UART_GET_IT_SOURCE(huart, UART_IT_ERR);
+	if ((tmp1 != RESET) && (tmp2 != RESET)) {
+		__HAL_UART_CLEAR_NEFLAG(huart);
+		err = true;
 	}
-#endif
-}
 
-
-
-/**
-  * @brief  Rx Transfer completed callback
-  * @param  UartHandle: UART handle
-  * @note   This example shows a simple way to report end of IT Rx transfer, and
-  *         you can add your own implementation.
-  * @retval None
-  */
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
-{
-	#ifdef CONFIG_USE_FREERTOS
-	taskDISABLE_INTERRUPTS();
-	#endif
-
-	#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
-	if ((UartHandle == &Debug_UartHandle) && (DebugUart_CommandReceiveEnable == true))
-	{
-		#ifdef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
-		// Receive to next index
-		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&DebugUart_RxBuffer[++USART_RxBufferWriteCounter], DEBUGUART_RXBUFFER_WAIT_LENGTH);
-
-		#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
-		// Set flag for TaskHandler
-		TaskHandler_RequestTaskScheduling(Task_ProcessDebugUartReceivedCommand);
-		#endif
-
-		#ifdef CONFIG_MODULE_EVENTLOG_ENABLE
-		EventLog_LogEvent(Event_DebugUartReceive, EventType_UserEvent, USART_RxBufferWriteCounter);
-		#endif
-
-		#ifdef CONFIG_USE_FREERTOS
-		// Transmission end semaphore / flag: Give semaphore
-		xSemaphoreGiveFromISR(DebugUart_Rx_Semaphore, 0);
-		#endif
-		#else
-		HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)DebugUart_RxBuffer, DEBUGUART_RX_BUFFER_SIZE);
-		#endif
+	/* UART Over-Run interrupt occurred ----------------------------------------*/
+	tmp1 = __HAL_UART_GET_FLAG(huart, UART_FLAG_ORE);
+	tmp2 = __HAL_UART_GET_IT_SOURCE(huart, UART_IT_ERR);
+	if ((tmp1 != RESET) && (tmp2 != RESET)) {
+		__HAL_UART_CLEAR_OREFLAG(huart);
+		err = true;
 	}
-	#endif	// #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
-	
 
-	#ifdef CONFIG_MODULE_ESP8266_ENABLE
-	if (UartHandle == &ESP8266_UartHandle)
-	{
-		// ESP8266 WiFi module
+	/* UART in mode Receiver ---------------------------------------------------*/
+	tmp1 = __HAL_UART_GET_FLAG(huart, UART_FLAG_RXNE);
+	tmp2 = __HAL_UART_GET_IT_SOURCE(huart, UART_IT_RXNE);
+	if((tmp1 != RESET) && (tmp2 != RESET)) {
+		uint16_t val;
 
-		// Received fix length message
-		#ifdef CONFIG_USE_FREERTOS
-		xSemaphoreGiveFromISR(ESP8266_USART_Rx_Semaphore, 0);
-		#endif
+		val = (uint16_t)(huart->Instance->RDR);
 
-		// Received variable length message
-		// Put to Buffer and receive next char
-
-		// Save received character and wait new char
-		#if ESP8266_RECEIVE_LENGTH > 1
-		HAL_UART_Receive_IT(&ESP8266_UartHandle,
-				(uint8_t *)&ESP8266_RxBuffer[0],
-				ESP8266_RECEIVE_LENGTH);
-		#else
-		HAL_UART_Receive_IT(&ESP8266_UartHandle,
-				(uint8_t *)&ESP8266_RxBuffer[++ESP8266_RxBuffer_WriteCnt],
-				1);
-		#endif
-	
-		#if !defined(CONFIG_USE_FREERTOS) && defined(ESP8266_USE_BLOCK_MODE)
-		// Not used FreeRTOS:
-		ESP8266_Uart_ReceivedCharFlag = 1;
-		#endif
-	}
-	#endif
-
-	#ifdef CONFIG_USE_FREERTOS
-	taskENABLE_INTERRUPTS();
-	#endif
-}
-
-
-
-/**
- * \brief	UART error function
- * 			If has error, the HAL driver call this function
- */
-void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
-{
-#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
-	if (huart == &Debug_UartHandle)
-	{
-		// TODO: sometime receive ORE error.
-
-		UART_ResetStatus(&Debug_UartHandle);
-
-		DebugUart_SendEnable_flag = true;
-
-		// Reinitialize USART
-		//UART_Init(&Debug_UartHandle);
-
-		DebugUart_StartReceive();
-
-		HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t *)"$", 1);
-		
-		#ifdef CONFIG_USE_FREERTOS
-		//xSemaphoreGiveFromISR(DebugUart_Rx_Semaphore,0);
-		if (DebugUart_Tx_Semaphore != NULL)
-		{
-			xSemaphoreGiveFromISR(DebugUart_Tx_Semaphore, 0);
+		/* don't put errored data into the FIFO */
+		if (!err) {
+			CircularBuffer_PutChar(handler->rx, val);
+			// TODO: TaskHandler_Request
 		}
-		#endif
 	}
-#endif
-#ifdef CONFIG_MODULE_ESP8266_ENABLE
-	#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
-	else
-	#endif
-	if (huart == &ESP8266_UartHandle)
-	{
-		// TODO: Sad, but sometime receive errors
-		UART_ResetStatus(&ESP8266_UartHandle);
 
-		ESP8266_SendEnable_flag = true;
+	/* UART in mode Transmitter ------------------------------------------------*/
+	tmp1 = __HAL_UART_GET_FLAG(huart, UART_FLAG_TXE);
+	tmp2 = __HAL_UART_GET_IT_SOURCE(huart, UART_IT_TXE);
+	if((tmp1 != RESET) && (tmp2 != RESET)) {
+		char val;
 
-#if ESP8266_RECEIVE_LENGTH > 1
-		HAL_UART_Receive_IT(&ESP8266_UartHandle,
-				(uint8_t *)&ESP8266_RxBuffer[0],
-				ESP8266_RECEIVE_LENGTH);
-#else
-		HAL_UART_Receive_IT(&ESP8266_UartHandle,
-						(uint8_t *)&ESP8266_RxBuffer[ESP8266_RxBuffer_WriteCnt],
-						1);
-#endif
-	}	
-#endif
-#ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
-	else if (huart == &Bluetooth_UartHandle)
-	{
-		// TODO: Not handled...
-		Bluetooth_SendEnable_flag = true;
-		UART_ResetStatus(&Bluetooth_UartHandle);
+		/*
+		* if there's data to send, send it.
+		* otherwise disable the transmit empty interrupt.
+		*/
+		if (CircularBuffer_GetChar(handler->tx, &val)) {
+			huart->Instance->TDR = val;
+		} else {
+			__HAL_UART_DISABLE_IT(huart, UART_IT_TXE);
+		}
 	}
-#endif
-
-#if defined(CONFIG_MODULE_DEBUGUART_ENABLE) || defined(CONFIG_MODULE_ESP8266_ENABLE) || defined(CONFIG_MODULE_BLUETOOTH_ENABLE)
-	else
-	{
-		Error_Handler();
-	}
-#endif
 }
 
 
-
-/**
- * \brief	Clear UART peripheral status
- * \note	Be careful for use, it will clear the receive-sending status
- */
-void UART_ResetStatus(UART_HandleTypeDef *huart)
-{
-	// Delete previous receive:
-	__HAL_UART_FLUSH_DRREGISTER(huart);
-	__HAL_UART_CLEAR_IT(huart, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
-
-	huart->ErrorCode = HAL_UART_ERROR_NONE;
-	huart->gState = HAL_UART_STATE_READY;
-
-	huart->TxXferCount = 0;
-	huart->TxXferSize = 0;
-	huart->RxXferCount = 0;
-	huart->RxXferSize = 0;
-}

@@ -60,6 +60,8 @@
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
+static bool CircularBuffer_IsFull(CircularBufferInfo_t *circBuff);
+
 
 
 /*------------------------------------------------------------------------------
@@ -76,6 +78,7 @@ void CircularBuffer_Init(CircularBufferInfo_t *circBuff)
 	ASSERT(circBuff->buffer != NULL);
 	ASSERT(circBuff->size > 0);
 	ASSERT(circBuff->name != NULL);
+	// TODO: Check: buffer is in RAM?
 
 	CircularBuffer_FullClear(circBuff);
 
@@ -96,54 +99,83 @@ void CircularBuffer_FullClear(CircularBufferInfo_t *circBuff)
 
 
 /**
+ * \brief	Get character
+ */
+bool CircularBuffer_GetChar(CircularBufferInfo_t *circBuff, char * c)
+{
+	if (circBuff == NULL || c == NULL)
+		return false;
+
+	bool isOk = false;
+
+	if (CircularBuffer_IsNotEmpty(circBuff))
+	{
+		*c = circBuff->buffer[circBuff->readCnt];
+
+		circBuff->readCnt++;
+		isOk = true;
+
+		if (circBuff->readCnt >= circBuff->size)
+		{
+			circBuff->readCnt = 0;
+		}
+	}
+
+	return isOk;
+}
+
+
+
+/**
  * \brief	Get characters from ReadCnt to WriteCnt
  * \note	Counter not modified --> Need "drop" characters
  */
-uint16_t CircularBuffer_GetCharacters(CircularBufferInfo_t *circBuff, char * message, bool putEnd)
+uint16_t CircularBuffer_GetString(CircularBufferInfo_t *circBuff, char *message, uint16_t maxLen)
 {
 	uint16_t i = 0;
+
+	// TODO: Check parameters
+	if (circBuff == NULL || message == NULL || maxLen <= 1)
+		return 0;
+
+	// TODO: With GetChar() ?
 
 	if (circBuff->readCnt < circBuff->writeCnt)
 	{
 		// No overflow
-		for (i = 0; i < circBuff->writeCnt-circBuff->readCnt; i++)
+		for (i = 0; i < (circBuff->writeCnt-circBuff->readCnt) && (i < (maxLen - 1)); i++)
 		{
 			message[i] = circBuff->buffer[circBuff->readCnt+i];
 		}
-		// Put end
-		if (putEnd)
-		{
-			message[i] =  '\0';
-		}
+
+		message[i] =  '\0';
 	}
 	else if (circBuff->readCnt > circBuff->writeCnt)
 	{
 		// Buffer to end
-		for (i = 0; i < circBuff->size-circBuff->readCnt; i++)
+		for (i = 0; (i < circBuff->size-circBuff->readCnt) && (i < (maxLen - 1)); i++)
 		{
 			message[i] = circBuff->buffer[circBuff->readCnt+i];
 		}
 
 		uint16_t oldCnt = i;
 		// Begin of buffer
-		for (i = 0; i < circBuff->writeCnt; i++)
+		for (i = 0; (i < circBuff->writeCnt) && ((oldCnt + i) < (maxLen - 1)); i++)
 		{
 			message[oldCnt+i] = circBuff->buffer[i];
 		}
 		// Put end
 		i += oldCnt;
-		if (putEnd)
-		{
-			message[i] =  '\0';
-		}
+
+		message[i] =  '\0';
 	}
-	// else if (circBuff->readCnt == circBuff->writeCnt) - Do nothing
+	// else if (circBuff->readCnt == circBuff->writeCnt) - Do nothing, because buffer is empty
 
 	return i;
 }
 
 
-
+// TODO: Delete or change
 /**
  * \brief	Clear buffer from readCnt (length count)
  * \note	Not cleared all character from readCnt to writeCnt
@@ -229,12 +261,14 @@ uint16_t CircularBuffer_Clear(CircularBufferInfo_t *circBuff, uint16_t length)
 }
 
 
+
+// TODO: Delete or change
 /**
  * \brief	Clear buffer from readCnt to writeCnt
  */
 void CircularBuffer_ClearLast(CircularBufferInfo_t *circBuff)
 {
-	uint16_t length = 0;;
+	uint16_t length = 0;
 
 	if (circBuff->readCnt < circBuff->writeCnt)
 	{
@@ -251,44 +285,11 @@ void CircularBuffer_ClearLast(CircularBufferInfo_t *circBuff)
 
 
 /**
- * \brief	Find last character in the Circular buffer
- * \note	Recommend if haven't "PutCharacter" function
- */
-void CircularBuffer_FindLastMessage(CircularBufferInfo_t *circBuff)
-{
-	// TODO: Not a good solve...
-	uint16_t i = 0;
-
-	while (circBuff->buffer[circBuff->writeCnt])
-	{
-		++circBuff->writeCnt;
-		++i;
-
-		if (circBuff->writeCnt >= circBuff->size)
-		{
-			circBuff->writeCnt = 0;
-		}
-
-		if (i > circBuff->size)
-		{
-			// Buffer "overflow" error
-			uprintf("Error: CircularBuffer full, clear it: %s\r\n", circBuff->name);
-			// Reinit buffer (counter, buffer content)
-			CircularBuffer_Init(circBuff);
-			// TODO: Error handling, if buffer overflowing?
-			break;
-		}
-	}
-}
-
-
-
-/**
  * \brief	Return with there is a new character in the buffer?
  * \retval	true	Has new character
  * \retval	false	Hasn't new character
  */
-bool CircularBuffer_HasNewMessage(CircularBufferInfo_t *circBuff)
+bool CircularBuffer_IsNotEmpty(CircularBufferInfo_t *circBuff)
 {
 	return (circBuff->readCnt != circBuff->writeCnt);
 }
@@ -296,67 +297,78 @@ bool CircularBuffer_HasNewMessage(CircularBufferInfo_t *circBuff)
 
 
 /**
- * \brief	Put string to CircularBuffer
+ * \brief	Buffer is full?
  */
-uint16_t CircularBuffer_PutString(CircularBufferInfo_t *circBuff, char *str, uint16_t needCopyLength)
+static bool CircularBuffer_IsFull(CircularBufferInfo_t *circBuff)
 {
-	uint16_t i;
+	bool isFull = false;
 
-	if (needCopyLength == 0)
-		return 0;
-	if (circBuff->writeCnt == circBuff->readCnt)		// Cannot put to CircularBuffer
-		return 0;
-
-	if (((circBuff->writeCnt + needCopyLength) < circBuff->size)
-			&& (circBuff->writeCnt > circBuff->readCnt))
+	if (circBuff->readCnt > 0)
 	{
-		// Normal situation (Not need handle overflow)
-		for (i = 0; i < needCopyLength; i++)
+		if (circBuff->writeCnt == circBuff->readCnt - 1)
 		{
-			circBuff->buffer[i + circBuff->writeCnt] = str[i];
+			isFull = true;
 		}
-
-		circBuff->writeCnt += needCopyLength;
-	}
-	else if (((circBuff->writeCnt + needCopyLength) < circBuff->size)
-			&& (circBuff->writeCnt < circBuff->readCnt))
-	{
-		// Normal situation (but read counter after writeCounter)
-		needCopyLength = circBuff->readCnt - circBuff->writeCnt;
-
-		for (i = 0; i < needCopyLength; i++)
-		{
-			circBuff->buffer[i + circBuff->writeCnt] = str[i];
-		}
-
-		circBuff->writeCnt += needCopyLength;
 	}
 	else
 	{
-		// Overflow:
-		uint16_t firstCopy = circBuff->size - circBuff->writeCnt;
-		uint16_t secondCopy = needCopyLength - firstCopy;
-		if (secondCopy >= circBuff->readCnt)
+		// readCnt = 0
+		if (circBuff->writeCnt == (circBuff->size - 1))
 		{
-			secondCopy = circBuff->readCnt - 1;
-			needCopyLength = firstCopy + secondCopy;
+			isFull = true;
 		}
-
-		for (i = 0; i < firstCopy; i++)
-		{
-			circBuff->buffer[i + circBuff->writeCnt] = str[i];
-		}
-
-		// Second copy from begin of CircularBuffer
-		for (i = 0; i < secondCopy; i++)
-		{
-			circBuff->buffer[i] = str[i + firstCopy];
-		}
-
-		circBuff->writeCnt = secondCopy;
 	}
 
-	return needCopyLength;
+	return isFull;
+}
+
+
+
+/**
+ * \brief	Put character to Circular buffer
+ */
+bool CircularBuffer_PutChar(CircularBufferInfo_t *circBuff, char c)
+{
+	// TODO: Pointer checking
+	if (circBuff == NULL)
+		return false;
+
+	bool isOk = false;
+
+	// Put to actual position
+	if (!CircularBuffer_IsFull(circBuff))
+	{
+		circBuff->buffer[circBuff->writeCnt] = c;
+		circBuff->writeCnt++;
+		isOk = true;
+
+		if (circBuff->writeCnt >= circBuff->size)
+		{
+			circBuff->writeCnt = 0;
+		}
+	}
+
+	return isOk;
+}
+
+
+
+/**
+ * \brief	Put string to CircularBuffer
+ */
+uint16_t CircularBuffer_PutString(CircularBufferInfo_t *circBuff, const char *str, uint16_t needCopyLength)
+{
+	uint16_t i = 0;
+
+	if (circBuff == NULL || str == NULL || needCopyLength == 0)
+		return 0;
+
+	while (CircularBuffer_PutChar(circBuff, str[i]) && (i < needCopyLength))
+	{
+		i++;
+	}
+
+	return i;
 }
 
 
@@ -408,13 +420,13 @@ void CircularBuffer_UnitTest(void)
 	 * Test PutString()
 	 */
 	circBufferInfo.writeCnt = 0;
-	circBufferInfo.readCnt = 10;
+	circBufferInfo.readCnt = 11;
 	// Print too long string (free space: 10)
 	length = CircularBuffer_PutString(&circBufferInfo, "0123456789xx", 12);
 	UNITTEST_ASSERT(length == 10, "PutString() error");
 	UNITTEST_ASSERT(!StrCmp(buffer256, "0123456789"), "PutString() error");
 	UNITTEST_ASSERT(circBufferInfo.writeCnt == 10, "PutString() error");
-	UNITTEST_ASSERT(circBufferInfo.readCnt == 10, "PutString() error");
+	UNITTEST_ASSERT(circBufferInfo.readCnt == 11, "PutString() error");
 
 
 	circBufferInfo.writeCnt = 10;
@@ -423,7 +435,7 @@ void CircularBuffer_UnitTest(void)
 	length = CircularBuffer_PutString(&circBufferInfo, "0123456789xx", 12);
 	UNITTEST_ASSERT(length == 12, "PutString() error");
 	UNITTEST_ASSERT(!StrCmp(&buffer256[10], "0123456789xx"), "PutString() error");
-	UNITTEST_ASSERT(circBufferInfo.writeCnt == 22, "PutString() error");
+	UNITTEST_ASSERT(circBufferInfo.writeCnt == 23, "PutString() error");
 	UNITTEST_ASSERT(circBufferInfo.readCnt == 0, "PutString() error");
 
 
@@ -437,7 +449,7 @@ void CircularBuffer_UnitTest(void)
 	UNITTEST_ASSERT(!StrCmpWithLength(&buffer256[250], "012345", 6), "PutString() error");
 	UNITTEST_ASSERT(!StrCmpWithLength(&buffer256[0], "6789xx", 6), "PutString() error");
 	UNITTEST_ASSERT(buffer256[256] == (char)0xEF, "PutString() error");
-	UNITTEST_ASSERT(circBufferInfo.writeCnt == 6, "PutString() error");
+	UNITTEST_ASSERT(circBufferInfo.writeCnt == 7, "PutString() error");
 	UNITTEST_ASSERT(circBufferInfo.readCnt == 10, "PutString() error");
 
 
@@ -450,7 +462,7 @@ void CircularBuffer_UnitTest(void)
 	circBufferInfo.readCnt = 0;
 
 	// Test: Get characters
-	length = CircularBuffer_GetCharacters(&circBufferInfo, emptyBuffer, true);
+	length = CircularBuffer_GetString(&circBufferInfo, emptyBuffer, 20);
 	UNITTEST_ASSERT(length == 10, "ERROR in GetCharacters()");
 	UNITTEST_ASSERT(!StrCmp(emptyBuffer, "0123456789"), "ERROR in GetCharacters()");
 	UNITTEST_ASSERT(circBufferInfo.writeCnt == 10, "PutString() error");
@@ -489,7 +501,7 @@ void CircularBuffer_UnitTest(void)
 	buffer256[256] = 0xEF;	// "After buffer"
 
 	// Test: Get characters
-	length = CircularBuffer_GetCharacters(&circBufferInfo, emptyBuffer, true);
+	length = CircularBuffer_GetString(&circBufferInfo, emptyBuffer, 20);
 	UNITTEST_ASSERT(length == 256-251+5, "ERROR in Clear()");
 	UNITTEST_ASSERT(!StrCmp(emptyBuffer, "1234567890"), "ERROR in GetCharacters()");
 
@@ -532,6 +544,9 @@ void CircularBuffer_UnitTest(void)
 
 
 	// TODO: Test: CircularBuffer_PutString
+
+
+	// TODO: Test GetChar()
 
 
 	// Finish unittest

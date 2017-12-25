@@ -20,6 +20,7 @@
 
 #include "options.h"
 #include "GenericTypeDefs.h"
+#include "USART.h"
 #include "CircularBuffer.h"
 
 #ifdef CONFIG_USE_FREERTOS
@@ -55,11 +56,13 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
+extern UART_Handler_t DebugUart;
 extern UART_HandleTypeDef Debug_UartHandle;
 
 extern volatile char DebugUart_RxBuffer[DEBUGUART_RX_BUFFER_SIZE];
 extern volatile char DebugUart_TxBuffer[DEBUGUART_TX_BUFFER_SIZE];
 
+extern CircularBufferInfo_t DebugUart_TxBuffStruct;
 extern CircularBufferInfo_t DebugUart_RxBuffStruct;
 
 extern bool DebugUart_SendEnable_flag;
@@ -81,11 +84,11 @@ extern xSemaphoreHandle DebugUart_Tx_Semaphore;
 void DebugUart_Init(void);
 void DebugUart_StartReceive(void);
 bool DebugUart_SendChar(char c);
-uint8_t DebugUart_SendMessage(const char *message);
+size_t DebugUart_SendMessage(const char *message);
 bool DebugUart_SendNewLine(void);
 bool DebugUart_SendLine(const char *message);
 
-uint8_t uprintf(const char *format, ...);
+size_t uprintf(const char *format, ...);
 
 void DebugUart_ProcessReceivedCharacters(void);
 

@@ -38,16 +38,30 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-UART_HandleTypeDef Debug_UartHandle;
-
 volatile char DebugUart_RxBuffer[DEBUGUART_RX_BUFFER_SIZE] = { 0 };
 volatile char DebugUart_TxBuffer[DEBUGUART_TX_BUFFER_SIZE] = { 0 };
+
+CircularBufferInfo_t DebugUart_TxBuffStruct =
+{
+	.buffer = (char *)DebugUart_TxBuffer,
+	.name = "DebugUart_TxBuffer",
+	.size = DEBUGUART_TX_BUFFER_SIZE
+};
 
 CircularBufferInfo_t DebugUart_RxBuffStruct =
 {
 	.buffer = (char *)DebugUart_RxBuffer,
 	.name = "DebugUart_RxBuffer",
 	.size = DEBUGUART_RX_BUFFER_SIZE
+};
+
+UART_HandleTypeDef Debug_UartHandle;
+
+UART_Handler_t DebugUart =
+{
+	.huart = &Debug_UartHandle,
+	.tx = &DebugUart_TxBuffStruct,
+	.rx = &DebugUart_RxBuffStruct
 };
 
 
@@ -75,8 +89,6 @@ xSemaphoreHandle DebugUart_Tx_Semaphore = NULL;
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
-static bool DebugUart_WaitForSend(uint16_t timeoutMilliSecond);
-
 
 
 /*------------------------------------------------------------------------------
@@ -90,6 +102,7 @@ static bool DebugUart_WaitForSend(uint16_t timeoutMilliSecond);
 void DebugUart_Init(void)
 {
 	CircularBuffer_Init(&DebugUart_RxBuffStruct);
+	CircularBuffer_Init(&DebugUart_TxBuffStruct);
 
 	// Init UART
 	UART_Init(&Debug_UartHandle);
@@ -111,11 +124,22 @@ void DebugUart_Init(void)
 
 
 /**
+ * \brief	Send enable
+ */
+static void DebugUart_SendEnable(void)
+{
+	__HAL_UART_ENABLE_IT(DebugUart.huart, UART_IT_TXE);
+}
+
+
+
+/**
  * \brief	Send string on USART
  */
-uint8_t DebugUart_SendMessage(const char *message)
+size_t DebugUart_SendMessage(const char *message)
 {
-	uint16_t length = 0;
+	size_t length = 0;
+	size_t putLength;
 
 	length = StringLength(message);
 
@@ -124,43 +148,13 @@ uint8_t DebugUart_SendMessage(const char *message)
 		return 0;
 	}
 
-	if (length > DEBUGUART_TX_BUFFER_SIZE)
-	{
-		length = DEBUGUART_TX_BUFFER_SIZE - 1;
-	}
+	// TODO: Need check return length?
+	putLength = CircularBuffer_PutString(&DebugUart_TxBuffStruct, message, length);
 
-	if (DebugUart_WaitForSend(1000))
-	{
-		// Take semaphore, can sending
+	if (putLength > 0)
+		DebugUart_SendEnable();
 
-		DebugUart_SendEnable_flag = false;
-
-		StrCpyMax((char *)DebugUart_TxBuffer, message, DEBUGUART_TX_BUFFER_SIZE-1);
-
-		// ComIT
-		if (HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t *)DebugUart_TxBuffer, length) != HAL_OK)
-		{
-			// NOTE: !!IMPORTANT!! Not sent message
-			//Error_Handler();
-#ifdef CONFIG_USE_FREERTOS
-			xSemaphoreGive(DebugUart_Tx_Semaphore);
-#endif
-			DebugUart_SendEnable_flag = true;	// Failed to send, now we can send message
-
-			return 0;
-		}
-		else
-		{
-			// Successful sending with IT
-			// Semaphore give by IT routine
-			return length;
-		}
-	}
-	else
-	{
-		// Cannot take semaphore, now USART is busy
-		return 0;
-	}
+	return putLength;
 }
 
 
@@ -196,41 +190,15 @@ bool DebugUart_SendLine(const char *message)
  */
 bool DebugUart_SendChar(char c)
 {
-	char buf[2];
+	bool isOk = false;
 
-	buf[0] = c;
-	buf[1] = '\0';
-
-	// TODO: Do not blocking!
-	if (DebugUart_WaitForSend(100))
+	if (CircularBuffer_PutChar(&DebugUart_TxBuffStruct, c))
 	{
-		// Successful take USART semaphore
-		DebugUart_SendEnable_flag = false;
-
-		StrCpy((char *)DebugUart_TxBuffer, buf);
-
-		if (HAL_UART_Transmit_IT(&Debug_UartHandle, (uint8_t *)DebugUart_TxBuffer, 1) != HAL_OK)
-		{
-			// NOTE: !! IMPORTANT!! Not sent message
-			//Error_Handler();
-#ifdef CONFIG_USE_FREERTOS
-			xSemaphoreGive(DebugUart_Tx_Semaphore);
-#endif
-			DebugUart_SendEnable_flag = true;
-
-			return false;
-		}
-		else
-		{
-			// Successful sending on USART
-			// Semaphore will give from ISR
-			return true;
-		}
+		isOk = true;
+		DebugUart_SendEnable();
 	}
-	else
-	{
-		return false;	// Failed to take semaphore
-	}
+
+	return isOk;
 }
 
 
@@ -241,11 +209,7 @@ bool DebugUart_SendChar(char c)
 void DebugUart_StartReceive(void)
 {
 	// USART - Receive Message
-#ifdef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
-	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)&DebugUart_RxBuffer[DebugUart_RxBufferWriteCnt], DEBUGUART_RXBUFFER_WAIT_LENGTH);
-#else
-	HAL_UART_Receive_IT(&Debug_UartHandle, (uint8_t *)DebugUart_RxBuffer, DEBUGUART_RX_BUFFER_SIZE);
-#endif
+	__HAL_UART_ENABLE_IT(DebugUart.huart, UART_IT_RXNE);		/* receiver not empty */
 
 #ifdef CONFIG_USE_FREERTOS
 	// Wait for semaphore
@@ -255,59 +219,22 @@ void DebugUart_StartReceive(void)
 
 
 
-/**
- * \brief	Wait for USART sending
- */
-static bool DebugUart_WaitForSend(uint16_t timeoutMilliSecond)
-{
-#ifdef CONFIG_USE_FREERTOS
-	if (xSemaphoreTake(DebugUart_Tx_Semaphore, (portTickType)timeoutMilliSecond) == pdPASS)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-#else
-	// Wait for flag or timeout
-	while ((DebugUart_SendEnable_flag != true) && (timeoutMilliSecond != 0))
-	{
-		timeoutMilliSecond--;
-		DelayMs(1);
-	}
-
-	// TODO: Not a good idea...
-	//DebugUart_SendEnable_flag = true;
-
-	return DebugUart_SendEnable_flag;
-#endif
-}
-
-
-
 #if !defined(CONFIG_MODULE_TERMINAL_ENABLE)
 /**
- * \brief	Process received characters
+ * \brief	Process received characters (if Terminal is not enabled)
  */
 void DebugUart_ProcessReceivedCharacters(void)
 {
 	if (DebugUart_CommandReceiveEnable)
 	{
-		// Find new received characters
-		CircularBuffer_FindLastMessage(&DebugUart_RxBuffStruct);
-
 		// If WriteCnt not equal with ReadCnt, we have received message
 		char receiveBuffer[DEBUGUART_RX_BUFFER_SIZE+1];
 
 		// Received new character?
-		if (CircularBuffer_HasNewMessage(&DebugUart_RxBuffStruct))
+		if (CircularBuffer_IsNotEmpty(&DebugUart_RxBuffStruct))
 		{
 			// Need copy to receiveBuffer
-			CircularBuffer_GetCharacters(
-					&DebugUart_RxBuffStruct,
-					receiveBuffer,
-					true);
+			CircularBuffer_GetString(&DebugUart_RxBuffStruct, receiveBuffer, DEBUGUART_RX_BUFFER_SIZE);
 
 			char * newLinePos = (char *)STRING_FindCharacters((const char *)receiveBuffer, "\r\n");
 			if (newLinePos != NULL)
@@ -342,7 +269,7 @@ void DebugUart_ProcessReceivedCharacters(void)
  * \brief	Function like printf(); Print on debug serial port
  * 			Copy character to buffer and after that, sending.
  */
-uint8_t uprintf(const char *format, ...)
+size_t uprintf(const char *format, ...)
 {
 	// Working in at:
 	char txBuffer[DEBUGUART_TX_BUFFER_SIZE];
@@ -367,13 +294,14 @@ uint8_t uprintf(const char *format, ...)
 
 /**
  * \brief	Send message with blocking mode
- * 			Use only extreme situation!
+ * 			Use only extreme / important situation!
  */
 size_t DebugUart_SendMessageBlocked(const char * str)
 {
 	size_t length = StringLength(str);
 
-	UART_ResetStatus(&Debug_UartHandle);
+	// TODO: Clear statuses?
+	//UART_ResetStatus(&Debug_UartHandle);
 
 	HAL_UART_Transmit(&Debug_UartHandle, (uint8_t *)str, length, 1000);
 

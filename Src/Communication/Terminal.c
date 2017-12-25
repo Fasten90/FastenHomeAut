@@ -359,7 +359,7 @@ static void Terminal_ProcessReceivedCharacter(void)
 	if (CircularBuffer_HasNewMessage(&DebugUart_RxBuffStruct))
 	{
 		// Need copy to receiveBuffer
-		receivedMessageLength = CircularBuffer_GetCharacters(&DebugUart_RxBuffStruct, receiveBuffer, true);
+		receivedMessageLength = CircularBuffer_GetString(&DebugUart_RxBuffStruct, receiveBuffer);
 
 		// TODO: Create Get&Clear function
 		CircularBuffer_ClearLast(&DebugUart_RxBuffStruct);
@@ -1017,10 +1017,9 @@ static void Terminal_GetPassword(void)
 		if (CircularBuffer_HasNewMessage(&DebugUart_RxBuffStruct))
 		{
 			// Need copy to receiveBuffer
-			receivedMessageLength = CircularBuffer_GetCharacters(
+			receivedMessageLength = CircularBuffer_GetString(
 					&DebugUart_RxBuffStruct,
-					receiveBuffer,
-					true);
+					receiveBuffer);
 		}
 		else
 		{

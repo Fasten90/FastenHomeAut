@@ -18,7 +18,8 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
-#include "include.h"
+#include "options.h"
+#include "CircularBuffer.h"
 
 
 
@@ -31,6 +32,13 @@
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
+
+typedef struct
+{
+	UART_HandleTypeDef * huart;			/* pointer to the HAL_UART struct */
+	CircularBufferInfo_t *tx;
+	CircularBufferInfo_t *rx;			/* transmit (out of STM32) and receive (in to STM32) FIFOs */
+} UART_Handler_t;
 
 
 
