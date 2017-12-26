@@ -195,6 +195,7 @@ size_t DebugUart_SendLine(const char *message)
 {
 	size_t length = 0;
 
+	// TODO: if (message != NULL) ?
 	length += DebugUart_SendMessage(message);
 	length += DebugUart_SendMessage("\r\n");
 
@@ -255,37 +256,41 @@ size_t uprintf(const char *format, ...)
  */
 void DebugUart_ProcessReceivedCharacters(void)
 {
-	// If WriteCnt not equal with ReadCnt, we have received message
-	char receiveBuffer[DEBUGUART_RX_BUFFER_SIZE+1];
+	char recvBuf[DEBUGUART_RX_BUFFER_SIZE+1];
 
 	// Received new character?
 	if (CircularBuffer_IsNotEmpty(&DebugUart_RxBuffStruct))
 	{
 		// Need copy to receiveBuffer
-		CircularBuffer_GetString(&DebugUart_RxBuffStruct, receiveBuffer, DEBUGUART_RX_BUFFER_SIZE);
+		CircularBuffer_GetString(&DebugUart_RxBuffStruct, recvBuf, DEBUGUART_RX_BUFFER_SIZE);
 
-		char * newLinePos = (char *)STRING_FindCharacters((const char *)receiveBuffer, "\r\n");
+		// Received newline character? (End of command)
+		char * newLinePos = (char *)STRING_FindCharacters((const char *)recvBuf, "\r\n");
 		if (newLinePos != NULL)
 		{
-			char responseBuffer[DEBUGUART_RESPONSE_BUFFER];
-			responseBuffer[0] = '\0';
+			// Has newline, process the received command
+			char respBuf[DEBUGUART_RESPONSE_BUFFER];
+			respBuf[0] = '\0';
 
 			*newLinePos = '\0';
 
 			// Search command and run
-			CmdH_Result_t cmdResult = CmdH_ExecuteCommand(
-				(char *)receiveBuffer,
-				responseBuffer, DEBUGUART_RESPONSE_BUFFER);
+			CmdH_Result_t cmdResult = CmdH_ExecuteCommand(recvBuf, respBuf, DEBUGUART_RESPONSE_BUFFER);
 
 			CmdH_PrintResult(cmdResult);
 
-			DebugUart_SendMessage(responseBuffer);
+			DebugUart_SendMessage(respBuf);
 
-			// TODO: Create Get&Clear function
-			CircularBuffer_ClearLast(&DebugUart_RxBuffStruct);
+			// Drop processed characters
+			size_t processedLength = (newLinePos - recvBuf) + 1;
+			if (newLinePos != &recvBuf[DEBUGUART_RX_BUFFER_SIZE])
+			{
+				// Check next character is not '\n' or '\r'?
+				if ((*(newLinePos+1) == '\r') || (*(newLinePos+1) == '\n'))
+					processedLength++;
+			}
+			CircularBuffer_DropCharacters(&DebugUart_RxBuffStruct, processedLength);
 		}
-
-		// TODO: Do not get all messages, which received. Only which are processed...
 	}
 }
 #endif

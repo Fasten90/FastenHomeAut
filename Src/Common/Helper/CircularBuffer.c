@@ -93,7 +93,64 @@ void CircularBuffer_Init(CircularBufferInfo_t *circBuff)
 
 
 /**
- * \brief	Get character
+ * \brief	Return with there is a new character in the buffer?
+ * \retval	true	Has new character
+ * \retval	false	Hasn't new character
+ */
+bool CircularBuffer_IsNotEmpty(CircularBufferInfo_t *circBuff)
+{
+	return (circBuff->readCnt != circBuff->writeCnt);
+}
+
+
+
+/**
+ * \brief	Buffer is full?
+ * \retval	true	full
+ * \retval	false	not full (has empty space)
+ */
+static bool CircularBuffer_IsFull(CircularBufferInfo_t *circBuff)
+{
+	bool isFull = false;
+
+	if (circBuff->readCnt > 0)
+	{
+		if (circBuff->writeCnt == circBuff->readCnt - 1)
+		{
+			isFull = true;
+		}
+	}
+	else
+	{
+		// readCnt = 0
+		if (circBuff->writeCnt == (circBuff->size - 1))
+		{
+			isFull = true;
+		}
+	}
+
+	return isFull;
+}
+
+
+
+/**
+ * \brief	Clear buffer (set Circular buffer to empty)
+ */
+void CircularBuffer_Clear(CircularBufferInfo_t *circBuff)
+{
+	circBuff->readCnt = circBuff->writeCnt;
+
+#if (CIRCULARBUFFER_DROP_WITH_CLEAR == 1)
+	// Clear buffer
+	memset(circBuff->buffer, 0, circBuff->size);
+#endif
+}
+
+
+
+/**
+ * \brief	Get character and step position (get & drop)
  */
 bool CircularBuffer_GetChar(CircularBufferInfo_t *circBuff, char * c)
 {
@@ -121,7 +178,7 @@ bool CircularBuffer_GetChar(CircularBufferInfo_t *circBuff, char * c)
 
 
 /**
- * \brief	Get characters from ReadCnt to WriteCnt
+ * \brief	Get characters (from ReadCnt to WriteCnt)
  * \note	Counter not modified --> Need "drop" characters
  */
 uint16_t CircularBuffer_GetString(CircularBufferInfo_t *circBuff, char *message, uint16_t maxLen)
@@ -131,6 +188,12 @@ uint16_t CircularBuffer_GetString(CircularBufferInfo_t *circBuff, char *message,
 	// TODO: Check parameters
 	if (circBuff == NULL || message == NULL || maxLen <= 1)
 		return 0;
+
+	// Check actual Counters
+	CIRCULARBUFFER_CHECK_CIRCBUFFER(circBuff);
+	CIRCULARBUFFER_CHECK_WRITE_COUNTER(circBuff);
+	CIRCULARBUFFER_CHECK_READ_COUNTER(circBuff);
+	// TODO: Check message is in RAM?
 
 	// TODO: With GetChar() ?
 
@@ -169,19 +232,16 @@ uint16_t CircularBuffer_GetString(CircularBufferInfo_t *circBuff, char *message,
 }
 
 
-// TODO: Delete or change
+
 /**
  * \brief	Clear buffer from readCnt (length count)
  * \note	Not cleared all character from readCnt to writeCnt
  */
-uint16_t CircularBuffer_Clear(CircularBufferInfo_t *circBuff, uint16_t length)
+uint16_t CircularBuffer_DropCharacters(CircularBufferInfo_t *circBuff, uint16_t length)
 {
+#if (CIRCULARBUFFER_DROP_WITH_CLEAR == 1)
 	uint16_t i;
-
-	// Check, Counter
-	CIRCULARBUFFER_CHECK_CIRCBUFFER(circBuff);
-	CIRCULARBUFFER_CHECK_WRITE_COUNTER(circBuff);
-	CIRCULARBUFFER_CHECK_READ_COUNTER(circBuff);
+#endif
 
 	if (circBuff->readCnt < circBuff->writeCnt)
 	{
@@ -192,10 +252,12 @@ uint16_t CircularBuffer_Clear(CircularBufferInfo_t *circBuff, uint16_t length)
 			length = maxLength;
 		}
 
+#if (CIRCULARBUFFER_DROP_WITH_CLEAR == 1)
 		for (i = 0; i < length; i++)
 		{
 			circBuff->buffer[circBuff->readCnt+i] = '\0';
 		}
+#endif
 
 		circBuff->readCnt += length;
 	}
@@ -224,6 +286,7 @@ uint16_t CircularBuffer_Clear(CircularBufferInfo_t *circBuff, uint16_t length)
 			length -= secondClear - circBuff->writeCnt;
 		}
 
+#if (CIRCULARBUFFER_DROP_WITH_CLEAR == 1)
 		// Clear Buffer to end
 		for (i = 0; i < firstClear; i++)
 		{
@@ -235,6 +298,7 @@ uint16_t CircularBuffer_Clear(CircularBufferInfo_t *circBuff, uint16_t length)
 		{
 			circBuff->buffer[i] = '\0';
 		}
+#endif
 
 		if (firstClear <= length)
 		{
@@ -252,68 +316,6 @@ uint16_t CircularBuffer_Clear(CircularBufferInfo_t *circBuff, uint16_t length)
 	}
 
 	return length;
-}
-
-
-
-// TODO: Delete or change
-/**
- * \brief	Clear buffer from readCnt to writeCnt
- */
-void CircularBuffer_ClearLast(CircularBufferInfo_t *circBuff)
-{
-	uint16_t length = 0;
-
-	if (circBuff->readCnt < circBuff->writeCnt)
-	{
-		length = circBuff->writeCnt - circBuff->readCnt;
-	}
-	else if (circBuff->writeCnt < circBuff->readCnt)
-	{
-		length = (circBuff->size - circBuff->readCnt) + circBuff->writeCnt;
-	}
-
-	CircularBuffer_Clear(circBuff, length);
-}
-
-
-
-/**
- * \brief	Return with there is a new character in the buffer?
- * \retval	true	Has new character
- * \retval	false	Hasn't new character
- */
-bool CircularBuffer_IsNotEmpty(CircularBufferInfo_t *circBuff)
-{
-	return (circBuff->readCnt != circBuff->writeCnt);
-}
-
-
-
-/**
- * \brief	Buffer is full?
- */
-static bool CircularBuffer_IsFull(CircularBufferInfo_t *circBuff)
-{
-	bool isFull = false;
-
-	if (circBuff->readCnt > 0)
-	{
-		if (circBuff->writeCnt == circBuff->readCnt - 1)
-		{
-			isFull = true;
-		}
-	}
-	else
-	{
-		// readCnt = 0
-		if (circBuff->writeCnt == (circBuff->size - 1))
-		{
-			isFull = true;
-		}
-	}
-
-	return isFull;
 }
 
 
@@ -492,7 +494,7 @@ void CircularBuffer_UnitTest(void)
 	UNITTEST_ASSERT(circBufferInfo.readCnt == 0, "PutString() error");
 
 	// Test: ClearBuffer
-	CircularBuffer_Clear(&circBufferInfo, 10);
+	CircularBuffer_DropCharacters(&circBufferInfo, 10);
 	// Check, buffer is cleared?
 	for (i = 0; i < 10; i++)
 	{
@@ -529,7 +531,7 @@ void CircularBuffer_UnitTest(void)
 	UNITTEST_ASSERT(!StrCmp(emptyBuffer, "1234567890"), "ERROR in GetCharacters()");
 
 	// Test: ClearBuffer
-	length = CircularBuffer_Clear(&circBufferInfo, 10);
+	length = CircularBuffer_DropCharacters(&circBufferInfo, 10);
 	UNITTEST_ASSERT(length == 256-251+5, "ERROR in Clear()");
 
 	// Check, buffer is cleared?
@@ -550,7 +552,7 @@ void CircularBuffer_UnitTest(void)
 	// Test wrong counter
 	circBufferInfo.readCnt = 256;
 	circBufferInfo.writeCnt = 256;
-	CircularBuffer_Clear(&circBufferInfo, 10);
+	CircularBuffer_DropCharacters(&circBufferInfo, 10);
 	UNITTEST_ASSERT(circBufferInfo.writeCnt == 255, "ERROR: writeCnt wrong");
 	UNITTEST_ASSERT(circBufferInfo.readCnt == 255, "ERROR: readCnt wrong");
 
@@ -561,7 +563,7 @@ void CircularBuffer_UnitTest(void)
 	buffer256[256] = 0xEF;	// "After buffer"
 	circBufferInfo.readCnt = 256;
 	circBufferInfo.writeCnt = 200;
-	CircularBuffer_Clear(&circBufferInfo, 10);
+	CircularBuffer_DropCharacters(&circBufferInfo, 10);
 	UNITTEST_ASSERT(buffer256[255] == '\0', "ERROR: Clear() is not work with too large writeCnt");
 	UNITTEST_ASSERT(buffer256[256] == (char)0xEF, "ERROR: Clear() is overflowed()");
 

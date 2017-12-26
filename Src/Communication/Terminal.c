@@ -338,8 +338,6 @@ void Terminal_CheckCommand(void)
  */
 static void Terminal_ProcessReceivedCharacter(void)
 {
-#ifndef CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER
-
 	// Find new received characters
 	CircularBuffer_FindLastMessage(&DebugUart_RxBuffStruct);
 
@@ -354,13 +352,12 @@ static void Terminal_ProcessReceivedCharacter(void)
 		receivedMessageLength = CircularBuffer_GetString(&DebugUart_RxBuffStruct, receiveBuffer);
 
 		// TODO: Create Get&Clear function
-		CircularBuffer_ClearLast(&DebugUart_RxBuffStruct);
+		CircularBuffer_Clear(&DebugUart_RxBuffStruct);
 	}
 	else
 	{
 		return;		// Not received new characters
 	}
-#endif
 
 
 	// Process characters
@@ -1053,7 +1050,7 @@ static void Terminal_GetPassword(void)
 			}
 
 			// TODO: Create Get&Clear function
-			CircularBuffer_ClearLast(&DebugUart_RxBuffStruct);
+			CircularBuffer_Clear(&DebugUart_RxBuffStruct);
 			PasswordLength = 0;
 		}
 	}
