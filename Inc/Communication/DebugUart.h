@@ -20,7 +20,7 @@
 
 #include "options.h"
 #include "GenericTypeDefs.h"
-#include "USART.h"
+#include "UART.h"
 #include "CircularBuffer.h"
 
 #ifdef CONFIG_USE_FREERTOS

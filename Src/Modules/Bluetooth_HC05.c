@@ -17,7 +17,7 @@
 
 #include "options.h"
 #include "StringHelper.h"
-#include "USART.h"
+#include "UART.h"
 #include "Bluetooth_HC05.h"
 
 

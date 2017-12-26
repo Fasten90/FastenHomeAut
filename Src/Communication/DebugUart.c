@@ -24,7 +24,7 @@
 #include "CircularBuffer.h"
 #include "CommandHandler.h"
 #include "DebugUart.h"
-#include "USART.h"
+#include "UART.h"
 
 #ifdef CONFIG_USE_FREERTOS
 #include "FreeRTOS.h"

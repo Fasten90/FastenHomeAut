@@ -24,7 +24,7 @@
 #include "CommandHandler.h"
 #include "DateTime.h"
 #include "Globals.h"
-#include "USART.h"
+#include "UART.h"
 
 #include "ESP8266.h"
 

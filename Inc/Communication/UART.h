@@ -9,8 +9,8 @@
  *		Last modified:	2016-09-28
  */
 
-#ifndef USART_H_
-#define USART_H_
+#ifndef UART_H_
+#define UART_H_
 
 
 
@@ -60,4 +60,4 @@ void UART_ReceiveEnable(UART_Handler_t * handler);
 
 
 
-#endif /* USART_H_ */
+#endif /* UART_H_ */

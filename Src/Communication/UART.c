@@ -28,7 +28,7 @@
 #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
 #include "Bluetooth_HC05.h"
 #endif
-#include "USART.h"
+#include "UART.h"
 
 
 

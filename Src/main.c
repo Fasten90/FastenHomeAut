@@ -161,7 +161,7 @@
 #include "CommandHandler.h"
 #include "Display_SSD1306.h"
 #include "TaskHandler.h"
-#include "USART.h"
+#include "UART.h"
 #include "DebugUart.h"
 #include "Terminal.h"
 #include "EventLog.h"
