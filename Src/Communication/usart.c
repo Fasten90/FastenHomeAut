@@ -7,6 +7,7 @@
  *		Target:			STM32Fx
  *		Version:		v4
  *		Last modified:	2016-09-28
+ *		Source:			https://www.eevblog.com/forum/microcontrollers/%27best%27-way-to-load-UART_Handler_t-data-to-ring-buffer-with-stm32hal/
  */
 
 
@@ -34,8 +35,6 @@
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
-
-// Source: https://www.eevblog.com/forum/microcontrollers/%27best%27-way-to-load-UART_Handler_t-data-to-ring-buffer-with-stm32hal/
 
 
 
@@ -148,7 +147,7 @@ void UART_Init(UART_HandleTypeDef *UartHandle)
  */
 void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 {
-#if defined(CONFIG_MODULE_DEBUGUART_ENABLE) || defined(CONFIG_MODULE_ESP8266_ENABLE)
+#if defined(CONFIG_MODULE_DEBUGUART_ENABLE) || defined(CONFIG_MODULE_ESP8266_ENABLE) || defined(CONFIG_MODULE_BLUETOOTH_ENABLE)
 	GPIO_InitTypeDef  GPIO_InitStruct;
 #endif
 
@@ -303,7 +302,8 @@ static void UART_Handler(UART_Handler_t *handler)
 	/* UART parity error interrupt occurred ------------------------------------*/
 	tmp1 = __HAL_UART_GET_FLAG(huart, UART_FLAG_PE);
 	tmp2 = __HAL_UART_GET_IT_SOURCE(huart, UART_IT_PE);
-	if ((tmp1 != RESET) && (tmp2 != RESET)) {
+	if ((tmp1 != RESET) && (tmp2 != RESET))
+	{
 		__HAL_UART_CLEAR_PEFLAG(huart);
 		err = true;
 	}
@@ -311,7 +311,8 @@ static void UART_Handler(UART_Handler_t *handler)
 	/* UART frame error interrupt occurred -------------------------------------*/
 	tmp1 = __HAL_UART_GET_FLAG(huart, UART_FLAG_FE);
 	tmp2 = __HAL_UART_GET_IT_SOURCE(huart, UART_IT_ERR);
-	if ((tmp1 != RESET) && (tmp2 != RESET)) {
+	if ((tmp1 != RESET) && (tmp2 != RESET))
+	{
 		__HAL_UART_CLEAR_FEFLAG(huart);
 		err = true;
 	}
@@ -319,7 +320,8 @@ static void UART_Handler(UART_Handler_t *handler)
 	/* UART noise error interrupt occurred -------------------------------------*/
 	tmp1 = __HAL_UART_GET_FLAG(huart, UART_FLAG_NE);
 	tmp2 = __HAL_UART_GET_IT_SOURCE(huart, UART_IT_ERR);
-	if ((tmp1 != RESET) && (tmp2 != RESET)) {
+	if ((tmp1 != RESET) && (tmp2 != RESET))
+	{
 		__HAL_UART_CLEAR_NEFLAG(huart);
 		err = true;
 	}
@@ -327,7 +329,8 @@ static void UART_Handler(UART_Handler_t *handler)
 	/* UART Over-Run interrupt occurred ----------------------------------------*/
 	tmp1 = __HAL_UART_GET_FLAG(huart, UART_FLAG_ORE);
 	tmp2 = __HAL_UART_GET_IT_SOURCE(huart, UART_IT_ERR);
-	if ((tmp1 != RESET) && (tmp2 != RESET)) {
+	if ((tmp1 != RESET) && (tmp2 != RESET))
+	{
 		__HAL_UART_CLEAR_OREFLAG(huart);
 		err = true;
 	}
@@ -335,13 +338,15 @@ static void UART_Handler(UART_Handler_t *handler)
 	/* UART in mode Receiver ---------------------------------------------------*/
 	tmp1 = __HAL_UART_GET_FLAG(huart, UART_FLAG_RXNE);
 	tmp2 = __HAL_UART_GET_IT_SOURCE(huart, UART_IT_RXNE);
-	if((tmp1 != RESET) && (tmp2 != RESET)) {
+	if ((tmp1 != RESET) && (tmp2 != RESET))
+	{
 		uint16_t val;
 
 		val = (uint16_t)(huart->Instance->RDR);
 
 		/* don't put errored data into the FIFO */
-		if (!err) {
+		if (!err)
+		{
 			// TODO: Check rxEnable flag
 			CircularBuffer_PutChar(handler->rx, val);
 			// TODO: TaskHandler_Request or CallBack, which use semaphore and TaskHandler request?
@@ -351,7 +356,8 @@ static void UART_Handler(UART_Handler_t *handler)
 	/* UART in mode Transmitter ------------------------------------------------*/
 	tmp1 = __HAL_UART_GET_FLAG(huart, UART_FLAG_TXE);
 	tmp2 = __HAL_UART_GET_IT_SOURCE(huart, UART_IT_TXE);
-	if((tmp1 != RESET) && (tmp2 != RESET)) {
+	if ((tmp1 != RESET) && (tmp2 != RESET))
+	{
 		char val;
 
 		/*
@@ -359,9 +365,12 @@ static void UART_Handler(UART_Handler_t *handler)
 		* otherwise disable the transmit empty interrupt.
 		*/
 		// TODO: Check txEnable flag
-		if (CircularBuffer_GetChar(handler->tx, &val)) {
+		if (CircularBuffer_GetChar(handler->tx, &val))
+		{
 			huart->Instance->TDR = val;
-		} else {
+		}
+		else
+		{
 			__HAL_UART_DISABLE_IT(huart, UART_IT_TXE);
 		}
 	}
