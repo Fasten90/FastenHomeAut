@@ -417,6 +417,7 @@ static uint32_t DateTime_CalculateDateTimeSecond(DateTime_t *dateTime)
 
 /**
  * \brief	Check parameter year is Leap year?
+ * \param	year	year after 2000 (e.g.: 2017 --> 17)
  * \retval	true	If leap year
  * \retval	false	If not leap year
  */
@@ -500,6 +501,7 @@ void DateTime_Steps(DateTime_t *dateTime, uint32_t stepSeconds)
 {
 	uint32_t i;
 
+	// TODO: define the limit
 	if (stepSeconds < 10000)
 	{
 		for (i = 0; i < stepSeconds; i++)

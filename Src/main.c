@@ -233,6 +233,8 @@ int main(void)
 	// EventLog
 	EventLog_Init();
 #endif
+
+
 #ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
 	// EventHandler
 	EventHandler_Init();
@@ -359,6 +361,7 @@ int main(void)
 	// Task handler
 	TaskHandler_Init();
 
+	// TODO: Put these codes to TaskHandler?
 	uint32_t actualTick = 0;
 	uint32_t oldTick = HAL_GetTick();
 	uint32_t elapsedTick = 0;

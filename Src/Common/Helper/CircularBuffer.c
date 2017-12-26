@@ -33,6 +33,7 @@
  *----------------------------------------------------------------------------*/
 
 #ifdef MODULE_CIRCULARBUFFER_UNITTEST_ENABLE
+	#define CIRCBUFF_BUFFER_SIZE						(256U)
 	#define CIRCULARBUFFER_ERROR()
 #else
 	#define CIRCULARBUFFER_ERROR()						DEBUG_BREAKPOINT()
@@ -80,20 +81,10 @@ void CircularBuffer_Init(CircularBufferInfo_t *circBuff)
 	ASSERT(circBuff->name != NULL);
 	// TODO: Check: buffer is in RAM?
 
-	CircularBuffer_FullClear(circBuff);
+	memset(circBuff->buffer, 0, circBuff->size);
 
 	circBuff->readCnt = 0;
 	circBuff->writeCnt = 0;
-}
-
-
-
-/**
- * \brief	Clear entire buffer
- */
-void CircularBuffer_FullClear(CircularBufferInfo_t *circBuff)
-{
-	memset(circBuff->buffer, 0, circBuff->size);
 }
 
 
@@ -379,8 +370,6 @@ uint16_t CircularBuffer_PutString(CircularBufferInfo_t *circBuff, const char *st
  */
 void CircularBuffer_UnitTest(void)
 {
-#define CIRCBUFF_BUFFER_SIZE	(256U)
-
 	char buffer256[CIRCBUFF_BUFFER_SIZE + 1];	// size + 1 "overflow" checker byte
 
 	CircularBufferInfo_t circBufferInfo =

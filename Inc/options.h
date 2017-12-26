@@ -390,6 +390,10 @@
 #endif
 
 
+#if defined(CONFIG_MODULE_COMMON_ADC_ENABLE) && defined(CONFIG_MODULE_ADC_ENABLE)
+#warning "ADC and CommonADC will exclude each other"
+#endif
+
 
 #if defined(CONFIG_MODULE_DEBUGUART_ENABLE) && !defined(CONFIG_MODULE_COMMANDHANDLER_ENABLE)
 #warning "DebugUart cannot used without CommandHandler, because received UART messages will unprocessed"
@@ -440,7 +444,7 @@
 //#define CONFIG_SWO_ENABLE
 
 ///< SW Watchdog - check Task scheduling
-#define CONFIG_DEBUG_SW_WATCHDOG_ENABLE
+//#define CONFIG_DEBUG_SW_WATCHDOG_ENABLE
 
 ///< SelfTests
 //#define CONFIG_DEBUG_SELFTEST
@@ -464,7 +468,7 @@
 	//#define MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
 	//#define MODULE_DATETIME_UNITTEST_ENABLE
 	//#define MODULE_COMMANDHANDLER_UNITTEST_ENABLE
-	#define MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
+	//#define MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
 	//#define CONFIG_PROTOCOL_BUFFER_ENABLE
 	//#define MODULE_CIRCULARBUFFER_UNITTEST_ENABLE
 	//#define MODULE_TASKHANDLER_UNNITEST_ENABLE
@@ -564,7 +568,7 @@
 	// ESP8266 Debug mode:
 	// 1 - on
 	// 0 - off
-	#define ESP8266_DEBUG_MODE			(1)
+	#define ESP8266_DEBUG_MODE					(1)
 
 
 	// ESP8266 - Connection type
@@ -576,12 +580,12 @@
 	// Module will be WiFi network "server"
 	// 1 - WifiHost
 	// 0 - Not WifiHost (client)
-	#define CONFIG_ESP8266_IS_WIFI_HOST		0
+	#define CONFIG_ESP8266_IS_WIFI_HOST			0
 
 	// Module TCP state
 	// 1 - ESP8266 will be TCP server,
 	// 0 - will be TCP client
-	#define CONFIG_ESP8266_IS_TCP_SERVER	0
+	#define CONFIG_ESP8266_IS_TCP_SERVER		0
 
 
 	//#define CONFIG_ESP8266_TCP_SERVER_ON_ESP8266
