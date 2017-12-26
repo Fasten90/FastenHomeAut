@@ -26,6 +26,9 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
+///< Statistics for CircularBuffer	(1 = Enable, 0 = disabled)
+#define CIRCULARBUFFER_STATISTICS_ENABLE			(0)
+
 
 
 /*------------------------------------------------------------------------------
@@ -39,6 +42,10 @@ typedef struct
 	volatile uint16_t writeCnt;		///< Write counter
 	volatile uint16_t readCnt;		///< Read counter
 	const char * const name;		///< Buffer name
+#if (CIRCULARBUFFER_STATISTICS_ENABLE == 1)
+	volatile uint32_t statSuccesfulPutCharCnt;
+	volatile uint32_t statDroppedCharCnt;
+#endif
 } CircularBufferInfo_t;
 
 
@@ -62,6 +69,8 @@ void CircularBuffer_FindLastMessage(CircularBufferInfo_t *circBuff);
 bool CircularBuffer_IsNotEmpty(CircularBufferInfo_t *circBuff);
 bool CircularBuffer_PutChar(CircularBufferInfo_t *circBuff, char c);
 uint16_t CircularBuffer_PutString(CircularBufferInfo_t *circBuff, const char *str, uint16_t needCopyLength);
+
+size_t CircularBuffer_PrintStatistics(char *str, size_t len, CircularBufferInfo_t *circBuff);
 
 void CircularBuffer_UnitTest(void);
 

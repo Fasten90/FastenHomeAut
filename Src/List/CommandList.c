@@ -164,6 +164,9 @@ static CmdH_Result_t CommandFunction_Button(uint32_t argc, char** argv);
 #ifdef CONFIG_FUNCTION_PERIODICAL_SENDING
 static CmdH_Result_t CommandFunction_PeriodicalSending(uint32_t argc, char** argv);
 #endif
+#if (CIRCULARBUFFER_STATISTICS_ENABLE == 1)
+static CmdH_Result_t CommandFunction_CircBuffStat(uint32_t argc, char** argv);
+#endif
 
 
 /*------------------------------------------------------------------------------
@@ -542,7 +545,14 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.example = "sendmessage 500",
 	},
 #endif
-
+#if (CIRCULARBUFFER_STATISTICS_ENABLE == 1)
+	{
+		.name = "circbuffstat",
+		.commandFunctionPointer = CommandFunction_CircBuffStat,
+		.commandArgNum = CmdH_CommandArgNum_0,
+		.description = "Circular Buffer statistics",
+	},
+#endif
 
 	/*
 	 * XXX: Add new commands here
@@ -2737,5 +2747,25 @@ static CmdH_Result_t CommandFunction_PeriodicalSending(uint32_t argc, char** arg
 #endif
 
 
+
+#if (CIRCULARBUFFER_STATISTICS_ENABLE == 1)
+static CmdH_Result_t CommandFunction_CircBuffStat(uint32_t argc, char** argv)
+{
+	UNUSED(argc);
+	UNUSED(argv);
+
+	char resp[200];
+
+	CircularBuffer_PrintStatistics(resp, 200, &DebugUart_TxBuffStruct);
+	DebugUart_SendMessage(resp);
+
+	DelayMs(10);
+
+	CircularBuffer_PrintStatistics(resp, 200, &DebugUart_RxBuffStruct);
+	DebugUart_SendMessage(resp);
+
+	return CmdH_Result_Ok;
+}
+#endif
 
 /* END OF COMMAND FUNCTIONS */

@@ -19,7 +19,10 @@
 #include "include.h"
 #include "CircularBuffer.h"
 #include "MemHandler.h"
-#include "DebugUart.h"
+
+#if (CIRCULARBUFFER_STATISTICS_ENABLE == 1)
+#include "StringHelper.h"
+#endif
 
 #ifdef MODULE_CIRCULARBUFFER_UNITTEST_ENABLE
 	#include "StringHelper.h"
@@ -333,11 +336,22 @@ bool CircularBuffer_PutChar(CircularBufferInfo_t *circBuff, char c)
 		circBuff->writeCnt++;
 		isOk = true;
 
+#if (CIRCULARBUFFER_STATISTICS_ENABLE == 1)
+		circBuff->statSuccesfulPutCharCnt++;
+#endif
+
 		if (circBuff->writeCnt >= circBuff->size)
 		{
 			circBuff->writeCnt = 0;
 		}
 	}
+#if (CIRCULARBUFFER_STATISTICS_ENABLE == 1)
+	else
+	{
+		// Failed put char
+		circBuff->statDroppedCharCnt++;
+	}
+#endif
 
 	return isOk;
 }
@@ -361,6 +375,26 @@ uint16_t CircularBuffer_PutString(CircularBufferInfo_t *circBuff, const char *st
 
 	return i;
 }
+
+
+
+#if (CIRCULARBUFFER_STATISTICS_ENABLE == 1)
+/**
+ * \brief	Print CircularBuffer info and statistics to string
+ */
+size_t CircularBuffer_PrintStatistics(char *str, size_t len, CircularBufferInfo_t *circBuff)
+{
+	return usnprintf(str, len, "CircBuff: %s\r\n"
+			"Size: %u\r\n"
+			"Put characters num: %u\r\n"
+			"Dropped characters num: %u\r\n",
+			circBuff->name,
+			circBuff->size,
+			circBuff->statSuccesfulPutCharCnt,
+			circBuff->statDroppedCharCnt
+			);
+}
+#endif
 
 
 
