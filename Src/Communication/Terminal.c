@@ -351,8 +351,7 @@ static void Terminal_ProcessReceivedCharacter(void)
 		// Need copy to receiveBuffer
 		receivedMessageLength = CircularBuffer_GetString(&DebugUart_RxBuffStruct, receiveBuffer);
 
-		// TODO: Create Get&Clear function
-		CircularBuffer_Clear(&DebugUart_RxBuffStruct);
+		CircularBuffer_DropCharacters(&DebugUart_RxBuffStruct, receivedMessageLength);
 	}
 	else
 	{

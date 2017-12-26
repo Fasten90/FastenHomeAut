@@ -181,7 +181,7 @@ void Debug_PrintDebugList(void)
 				DebugTasks[i].name,
 				((DebugTasks[i].isEnabled) ? ("x") : (" ")));
 
-		DebugUart_SendLine(str);
+		Table_SendLine(str);
 	}
 
 	Debug_PrintDebugListTableHeader(fixheader, str, header);

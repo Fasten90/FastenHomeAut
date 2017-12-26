@@ -153,7 +153,7 @@
 
 
 ///< Periodical sending UART message function
-#define CONFIG_FUNCTION_PERIODICAL_SENDING
+//#define CONFIG_FUNCTION_PERIODICAL_SENDING
 
 
 
@@ -681,7 +681,6 @@
 	//#define CONFIG_TASKHANDLER_DEBUG_ENABLE
 	///< Other debug functions
 	#define CONFIG_TASKHANDLER_DEBUG_RUN_ENABLE
-
 
 	///< Statistics (CPU usage, runtimes...)
 	#define CONFIG_MODULE_TASKHANDLER_STATISTICS

@@ -427,7 +427,7 @@ void TaskHandler_PrintStatistics(void)
 					TaskHandler_StatisticsRanTaskTicks[i].startTick,
 					TaskHandler_StatisticsRanTaskTicks[i].runTime,
 					TaskList[TaskHandler_StatisticsRanTaskTicks[i].taskId].taskName);
-			DebugUart_SendLine(str);
+			Table_SendLine(str);
 		}
 	}
 
@@ -462,7 +462,7 @@ void TaskHandler_PrintTaskRunCounts(void)
 	{
 		usprintf(str, fixheader,
 				TaskList[i].taskName, TaskList[i].taskRunCount);
-		DebugUart_SendLine(str);
+		Table_SendLine(str);
 	}
 
 	TaskHandler_PrintTaskRunCountsTableHeader(fixheader, str, header);

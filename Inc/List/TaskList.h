@@ -27,7 +27,11 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
+#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
+#define Task_CommandHandlerProcessEvent		(Task_ProcessDebugUartReceivedCommand)
+#else
 #define Task_CommandHandlerProcessEvent		(0)
+#endif
 
 
 

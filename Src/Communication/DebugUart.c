@@ -165,12 +165,12 @@ bool DebugUart_SendChar(char c)
 /**
  * \brief	Send string on USART
  */
-size_t DebugUart_SendMessage(const char *message)
+size_t DebugUart_SendMessage(const char *msg)
 {
 	size_t length = 0;
 	size_t putLength;
 
-	length = StringLength(message);
+	length = StringLength(msg);
 
 	if (length == 0)
 	{
@@ -178,7 +178,7 @@ size_t DebugUart_SendMessage(const char *message)
 	}
 
 	// TODO: Need check return length?
-	putLength = CircularBuffer_PutString(&DebugUart_TxBuffStruct, message, length);
+	putLength = CircularBuffer_PutString(&DebugUart_TxBuffStruct, msg, length);
 
 	if (putLength > 0)
 		DebugUart_SendEnable();
@@ -191,12 +191,12 @@ size_t DebugUart_SendMessage(const char *message)
 /**
  * \brief Send message with newline
  */
-size_t DebugUart_SendLine(const char *message)
+size_t DebugUart_SendLine(const char *msg)
 {
 	size_t length = 0;
 
-	// TODO: if (message != NULL) ?
-	length += DebugUart_SendMessage(message);
+	// TODO: if (msg != NULL) ?
+	length += DebugUart_SendMessage(msg);
 	length += DebugUart_SendMessage("\r\n");
 
 	return length;
@@ -208,15 +208,32 @@ size_t DebugUart_SendLine(const char *message)
  * \brief	Send message with blocking mode
  * 			Use only extreme / important situation!
  */
-size_t DebugUart_SendMessageBlocked(const char * str)
+size_t DebugUart_SendMessageBlocked(const char * msg)
 {
-	size_t length = StringLength(str);
+	size_t length = StringLength(msg);
 
 	// TODO: Clear statuses?
 	//UART_ResetStatus(&DebugUart_Handle);
 	//HAL_UART_AbortTransmit_IT()
 
-	HAL_UART_Transmit(&DebugUart_Handle, (uint8_t *)str, length, 1000);
+	HAL_UART_Transmit(&DebugUart_Handle, (uint8_t *)msg, length, 1000);
+
+	return length;
+}
+
+
+
+/**
+ * \brief	Send line (blocking mode)
+ * \note	Use only important / large message
+ */
+size_t DebugUart_SendLineBlocked(const char * msg)
+{
+	size_t length = 0;
+
+	// TODO: if (msg != NULL) ?
+	length += DebugUart_SendMessageBlocked(msg);
+	length += DebugUart_SendMessageBlocked("\r\n");
 
 	return length;
 }

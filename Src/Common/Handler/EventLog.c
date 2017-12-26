@@ -192,7 +192,7 @@ void EventLog_PrintLogTable(void)
 			TaskList[EventLogs[i].taskSource].taskName
 			);
 
-			DebugUart_SendLine(str);
+			Table_SendLine(str);
 		}
 		else
 		{

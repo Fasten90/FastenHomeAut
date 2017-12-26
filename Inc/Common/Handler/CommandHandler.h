@@ -37,7 +37,9 @@
 #define CMDH_COMMAND_DELIMITER_CHAR			((char)' ')
 
 // False define for CommandHandler task (Used by EventLog)
-#define Task_CommandHandlerProcessEvent		(0)
+#ifndef Task_CommandHandlerProcessEvent
+#define Task_CommandHandlerProcessEvent		(Task_ProcessDebugUartReceivedCommand)
+#endif
 
 
 

@@ -125,14 +125,14 @@ static void Table_FormatBorder(char * dest, const char * src)
 
 
 
+/**
+ * \brief	Convert original data format line to border or header
+ * 			Original: | %3u | %20s | %9u | %20s | 0x%X | %10s | %20s |
+ * 			Border: '|' --> '+', ' ' --> '-' , 'usx' --> 'c',  parameters --> '-'
+ *			Header: '|' --> '|', 'usx '--> 's', parameters: given, ...
+ */
 static void Table_FormatHeader(char * dest, const char * src, bool isHeader)
 {
-	/*
-	 * original: | %3u | %20s | %9u | %20s | 0x%X | %10s | %20s |
-	 * Border: '|' --> '+', ' ' --> '-' , 'usx' --> 'c',  parameters --> '-'
-	 * Header: '|' --> '|', 'usx '--> 's', parameters: given, ...
-	 */
-
 	size_t i;
 	for (i = 0; src[i] != '\0'; i++)
 	{
@@ -214,6 +214,9 @@ static void Table_PrintHeader(char * dest, char * smallHeader, const char * src,
 
 
 
+/**
+ * \brief	Print table
+ */
 void Table_PrintTableWithBorder(const char * fixheader, char * str, char * header, ...)
 {
 	// 1. line: border
@@ -221,7 +224,7 @@ void Table_PrintTableWithBorder(const char * fixheader, char * str, char * heade
 	Table_FormatHeader(header, fixheader, false);
 	Table_FormatBorder(str, header);
 
-	DebugUart_SendLine(str);
+	Table_SendLine(str);
 
 
 	// 2. line: Header (with columns)
@@ -232,7 +235,7 @@ void Table_PrintTableWithBorder(const char * fixheader, char * str, char * heade
 	string_printf(str, header, ap);					// Separate and process
 	va_end(ap);
 
-	DebugUart_SendLine(str);
+	Table_SendLine(str);
 
 
 	// 3. line: border
@@ -240,7 +243,7 @@ void Table_PrintTableWithBorder(const char * fixheader, char * str, char * heade
 	Table_FormatHeader(header, fixheader, false);
 	Table_FormatBorder(str, header);
 
-	DebugUart_SendLine(str);
+	Table_SendLine(str);
 }
 
 

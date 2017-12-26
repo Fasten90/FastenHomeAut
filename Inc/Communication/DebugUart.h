@@ -59,9 +59,6 @@
 extern UART_Handler_t DebugUart;
 extern UART_HandleTypeDef DebugUart_Handle;
 
-extern volatile char DebugUart_RxBuffer[DEBUGUART_RX_BUFFER_SIZE];
-extern volatile char DebugUart_TxBuffer[DEBUGUART_TX_BUFFER_SIZE];
-
 extern CircularBufferInfo_t DebugUart_TxBuffStruct;
 extern CircularBufferInfo_t DebugUart_RxBuffStruct;
 
@@ -82,9 +79,10 @@ void DebugUart_Init(void);
 void DebugUart_ReceiveEnable(void);
 
 bool DebugUart_SendChar(char c);
-size_t DebugUart_SendMessage(const char *message);
-size_t DebugUart_SendLine(const char *message);
-size_t DebugUart_SendMessageBlocked(const char * str);
+size_t DebugUart_SendMessage(const char * msg);
+size_t DebugUart_SendLine(const char * msg);
+size_t DebugUart_SendMessageBlocked(const char * msg);
+size_t DebugUart_SendLineBlocked(const char * msg);
 size_t uprintf(const char *format, ...);
 
 void DebugUart_ProcessReceivedCharacters(void);

@@ -2123,7 +2123,7 @@ static CmdH_Result_t CommandFunction_mr(uint32_t argc, char** argv)
 	size = (int16_t)Arg3Num;
 	// <size> max 256
 
-	// TODO: Checking the correct address
+	// \Note:	Address not checked
 
 	CmdH_Printf("Source: 0x%X\r\n"
 							"Size: %d\r\n",
@@ -2767,5 +2767,7 @@ static CmdH_Result_t CommandFunction_CircBuffStat(uint32_t argc, char** argv)
 	return CmdH_Result_Ok;
 }
 #endif
+
+
 
 /* END OF COMMAND FUNCTIONS */

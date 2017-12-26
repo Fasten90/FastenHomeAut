@@ -18,11 +18,22 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
+#include "options.h"
+#include "DebugUart.h"
+
 
 
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
+
+#define TABLE_SEND_BLOCKED			(1)
+
+#if (TABLE_SEND_BLOCKED == 1)
+#define Table_SendLine(_str)				DebugUart_SendLineBlocked(_str)
+#else
+#define Table_SendLine(_str)				DebugUart_SendLine(_str)
+#endif
 
 
 
