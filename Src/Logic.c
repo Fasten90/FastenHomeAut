@@ -1096,11 +1096,12 @@ static void Logic_Display_PrintMainMenuList(void)
 	FontFormat_t selectedFormat = { 0 };
 	selectedFormat.Format_Inverse = 1;
 
-	// TODO: This function run at 40ms
+	// TODO: RunTime warning! This function run at 40ms! Optimize!
 
 	// Print menu
 	// TODO: Do with smaller text
 	// TODO: If 4 menu are printed, it will be overflow!!!!
+	// TODO: Make a dynamic menu showing (display only 3, center is selected)
 	uint8_t i;
 	const uint8_t lineOffset = 2;
 	for (i = 0; i < NUM_OF(Logic_MenuList); i++)

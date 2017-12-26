@@ -67,17 +67,19 @@ void Debug_Print(Debug_t debugTask, const char *format, ...)
 {
 	// Check DebugTasks list size
 
-	if (debugTask >= Debug_Count || format == NULL)
+	if ((debugTask >= Debug_Count) || (format == NULL))
 		return;
 
 	if (DebugTasks[debugTask].isEnabled)
 	{
-		// Taskname:
+		// Text color
 		SendTextColor(DebugTasks[debugTask].color);
 		if (DebugTasks[debugTask].background)
 		{
 			SendBackgroundColor(DebugTasks[debugTask].background);
 		}
+
+		// TaskName
 		uprintf("%s: ", DebugTasks[debugTask].name);
 
 		// Send debug message:
@@ -116,7 +118,7 @@ void Debug_Print(Debug_t debugTask, const char *format, ...)
 /**
  * \brief	Enable-Disable debug print
  */
-bool Debug_EnableDisable(Debug_t task, bool enable)
+bool Debug_SetEnable(Debug_t task, bool enable)
 {
 	if (task >= Debug_Count)
 		return false;

@@ -38,7 +38,7 @@
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-#ifdef CONFIG_MODULE_FORMATTEDMESSAGE_ENABLE
+#ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
 
 void SendColouredMessageWithBackgroundColor(const char* message,  FormattedStringColors_t textColor, FormattedStringColors_t backgroundColor);
 void SendColouredMessage(const char* message, FormattedStringColors_t textColor);

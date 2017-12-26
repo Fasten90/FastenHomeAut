@@ -813,7 +813,7 @@ static CmdH_Result_t CommandFunction_moduletest(uint32_t argc, char** argv)
 
 
 	// Send formatted messages
-#ifdef CONFIG_MODULE_FORMATTEDMESSAGE_ENABLE
+#ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
 	CmdH_SendLine("Formatted message test");
 	FormattedMessage_Test();
 #endif
@@ -969,9 +969,9 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 
 	Debug_Print(Debug_New, "Number: %d,%d,%d", 0, 1, 2);
 
-	Debug_EnableDisable(Debug_ESP8266, false);
+	Debug_SetEnable(Debug_ESP8266, false);
 
-	Debug_EnableDisable(Debug_New, true);
+	Debug_SetEnable(Debug_New, true);
 
 	Debug_Print(Debug_ESP8266, "Formatted %s", "text");
 
@@ -2652,7 +2652,7 @@ static CmdH_Result_t CommandFunction_Debug(uint32_t argc, char** argv)
 			if (StringToUnsignedDecimalNum(argv[1], &value))
 			{
 				// 1. parameter is number
-				if (Debug_EnableDisable((Debug_t)value, enable))
+				if (Debug_SetEnable((Debug_t)value, enable))
 				{
 					// Successful
 					result = CmdH_Result_Ok_SendSuccessful;

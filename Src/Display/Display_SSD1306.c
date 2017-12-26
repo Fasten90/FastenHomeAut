@@ -435,9 +435,9 @@ void SSD1306_drawImage(uint8_t setx, uint8_t sety, uint8_t sizex, uint8_t sizey,
  * \brief	Invert display
  * TODO: Delete?
  */
-void SSD1306_invertDisplay(uint8_t i)
+void SSD1306_invertDisplay(bool invert)
 {
-	if (i)
+	if (invert)
 	{
 		SSD1306_command(SSD1306_INVERTDISPLAY);
 	}

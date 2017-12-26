@@ -639,10 +639,10 @@ void HomeAutMessage_UnitTest(void)
 	// Check results (processed values)
 	UNITTEST_ASSERT(
 			((testInformation.isValid == true)
-			// TODO: SourceAddress & TargetAddress vizsgálat kiegészítése
+			// TODO: Extend SourceAddress & TargetAddress checks
 			&& (testInformation.SourceAddress.IP[0] == 192)
 			&& (testInformation.TargetAddress.IP[0] == 192)
-			// TODO: DateTime vizsgálat kultúráltan
+			// TODO: Check DateTime with more culture
 			&& (testInformation.DateTime.date.year == 17)
 			&& (testInformation.Function == Function_Command)
 			&& (testInformation.DataType == Command_Remote)

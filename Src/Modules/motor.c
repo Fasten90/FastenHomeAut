@@ -490,7 +490,7 @@ void Motor_StateMachine(void)
 	if (ActualState.dir != ControlState.dir)
 	{
 		// Handle change direction
-		// TODO: Too fast stop, do slowe?
+		// TODO: Too fast stop, do slower?
 		Motor_DcMotorChangePercent(0);
 		ActualState.dir = ControlState.dir;
 		Motor_DcMotorSeDirection(ActualState.dir);

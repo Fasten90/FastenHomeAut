@@ -35,7 +35,6 @@
 ///< Debug
 typedef enum
 {
-
 #ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
 	Debug_EventHandler,
 #endif

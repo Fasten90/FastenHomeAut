@@ -112,7 +112,7 @@ typedef struct
 	const char *example;										///< Example of parameters
 	const CmdH_CommandArgNum_t commandArgNum;					///< Required command argument num
 
-	// TODO: Add enabled communication source
+	// TODO: Add optional enabled communication source
 } CmdH_Command_t;
 
 

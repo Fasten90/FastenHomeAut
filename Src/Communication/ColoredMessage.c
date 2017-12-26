@@ -16,7 +16,7 @@
 
 
 
-#ifdef CONFIG_MODULE_FORMATTEDMESSAGE_ENABLE
+#ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
 
 /**
  * \brief	Send message on debug with textcolor & backgroundcolor

@@ -270,7 +270,7 @@ void DEBUG_USARTx_IRQHandler(void)
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 void ESP8266_USARTx_IRQHandler(void)
 {
-	// TODO:
+	// TODO: Realize ESP8266 Irq
 	HAL_UART_IRQHandler(&ESP8266_UartHandle);
 }
 #endif
@@ -280,7 +280,7 @@ void ESP8266_USARTx_IRQHandler(void)
 #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
 void BLUETOOTH_USARTx_IRQHandler(void)
 {
-	// TODO:
+	// TODO: Realize Bluetooth Irq
 	HAL_UART_IRQHandler(&Bluetooth_UartHandle);
 }
 #endif

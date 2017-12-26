@@ -144,7 +144,7 @@
 void Display_SSD1306_Init(void);
 
 void SSD1306_clearDisplay(void);
-void SSD1306_invertDisplay(uint8_t i);
+void SSD1306_invertDisplay(bool invert);
 void SSD1306_display(void);
 
 void SSD1306_startscrollright(uint8_t start, uint8_t stop);

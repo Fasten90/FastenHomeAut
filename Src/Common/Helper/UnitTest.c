@@ -105,7 +105,7 @@ void UnitTest_End(void)
 
 	if (UnitTest_InvalidCnt)
 	{
-#ifdef CONFIG_MODULE_FORMATTEDMESSAGE_ENABLE
+#ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
 		SendErrorMessage("UnitTest run failed\r\n");
 		DebugUart_SendChar(TERMINAL_KEY_BELL);
 #else
@@ -114,7 +114,7 @@ void UnitTest_End(void)
 	}
 	else
 	{
-#ifdef CONFIG_MODULE_FORMATTEDMESSAGE_ENABLE
+#ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
 		SendColouredMessage("UnitTest run successfully\r\n", Color_Green);
 #else
 		uprintf("UnitTest run successfully\r\n");

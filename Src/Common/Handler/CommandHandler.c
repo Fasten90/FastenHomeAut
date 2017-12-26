@@ -164,7 +164,7 @@ CmdH_Result_t CmdH_ExecuteCommandWithParams(char *command, char * param, char * 
 
 	EventHandler_GenerateEvent(Event_CommandHandler_ProcessCommand, 0, Task_CommandHandlerProcessEvent);	// Log event
 
-	// Separate command and its parameteres:
+	// Separate command and its parameters:
 	CmdH_CommandArguments[0] = command;
 	CmdH_CommandArgCount = CmdH_CommandParser(param, &CmdH_CommandArguments[1]) + 1;						// +1: command is 1 word
 
@@ -403,7 +403,7 @@ static void CmdH_PrintCommandHelp(CmdH_CommandID_t commandID)
 			CmdH_CommandList[commandID].name, CmdH_CommandList[commandID].syntax,
 			CmdH_CommandList[commandID].name, CmdH_CommandList[commandID].example);
 
-	// TODO: Kiírni a szükséges paraméter számot
+	// TODO: Print required parameter num
 }
 
 
