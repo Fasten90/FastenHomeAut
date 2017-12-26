@@ -38,17 +38,17 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-volatile char DebugUart_RxBuffer[DEBUGUART_RX_BUFFER_SIZE] = { 0 };
-volatile char DebugUart_TxBuffer[DEBUGUART_TX_BUFFER_SIZE] = { 0 };
+static volatile char DebugUart_RxBuffer[DEBUGUART_RX_BUFFER_SIZE] = { 0 };
+static volatile char DebugUart_TxBuffer[DEBUGUART_TX_BUFFER_SIZE] = { 0 };
 
-CircularBufferInfo_t DebugUart_TxBuffStruct =
+static CircularBufferInfo_t DebugUart_TxBuffStruct =
 {
 	.buffer = (char *)DebugUart_TxBuffer,
 	.name = "DebugUart_TxBuffer",
 	.size = DEBUGUART_TX_BUFFER_SIZE
 };
 
-CircularBufferInfo_t DebugUart_RxBuffStruct =
+static CircularBufferInfo_t DebugUart_RxBuffStruct =
 {
 	.buffer = (char *)DebugUart_RxBuffer,
 	.name = "DebugUart_RxBuffer",
@@ -177,7 +177,6 @@ size_t DebugUart_SendMessage(const char *msg)
 		return 0;
 	}
 
-	// TODO: Need check return length?
 	putLength = CircularBuffer_PutString(&DebugUart_TxBuffStruct, msg, length);
 
 	if (putLength > 0)
@@ -273,13 +272,13 @@ size_t uprintf(const char *format, ...)
  */
 void DebugUart_ProcessReceivedCharacters(void)
 {
-	char recvBuf[DEBUGUART_RX_BUFFER_SIZE+1];
+	char recvBuf[DEBUGUART_PROCESS_BUFFER];
 
 	// Received new character?
 	if (CircularBuffer_IsNotEmpty(&DebugUart_RxBuffStruct))
 	{
-		// Need copy to receiveBuffer
-		CircularBuffer_GetString(&DebugUart_RxBuffStruct, recvBuf, DEBUGUART_RX_BUFFER_SIZE);
+		// Copy received message to buffer
+		CircularBuffer_GetString(&DebugUart_RxBuffStruct, recvBuf, DEBUGUART_PROCESS_BUFFER);
 
 		// Received newline character? (End of command)
 		char * newLinePos = (char *)STRING_FindCharacters((const char *)recvBuf, "\r\n");
@@ -300,7 +299,7 @@ void DebugUart_ProcessReceivedCharacters(void)
 
 			// Drop processed characters
 			size_t processedLength = (newLinePos - recvBuf) + 1;
-			if (newLinePos != &recvBuf[DEBUGUART_RX_BUFFER_SIZE])
+			if (newLinePos != &recvBuf[DEBUGUART_PROCESS_BUFFER-1])
 			{
 				// Check next character is not '\n' or '\r'?
 				if ((*(newLinePos+1) == '\r') || (*(newLinePos+1) == '\n'))

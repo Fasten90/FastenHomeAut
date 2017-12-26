@@ -36,9 +36,9 @@
 
 #define DEBUGUART_TX_BUFFER_SIZE				(256UL)		///< Size of Transmission buffer
 #define DEBUGUART_RX_BUFFER_SIZE				(256UL)		///< Size of Reception buffer
-#define DEBUGUART_RXBUFFER_WAIT_LENGTH			(1)
 
 #define DEBUGUART_RESPONSE_BUFFER				(256U)
+#define DEBUGUART_PROCESS_BUFFER				(256U)
 
 
 // Variadic macro
@@ -58,9 +58,6 @@
 
 extern UART_Handler_t DebugUart;
 extern UART_HandleTypeDef DebugUart_Handle;
-
-extern CircularBufferInfo_t DebugUart_TxBuffStruct;
-extern CircularBufferInfo_t DebugUart_RxBuffStruct;
 
 #if defined(CONFIG_USE_FREERTOS)
 extern xSemaphoreHandle DebugUart_Rx_Semaphore;

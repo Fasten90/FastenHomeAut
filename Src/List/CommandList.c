@@ -2756,12 +2756,12 @@ static CmdH_Result_t CommandFunction_CircBuffStat(uint32_t argc, char** argv)
 
 	char resp[200];
 
-	CircularBuffer_PrintStatistics(resp, 200, &DebugUart_TxBuffStruct);
+	CircularBuffer_PrintStatistics(resp, 200, DebugUart.tx);
 	DebugUart_SendMessage(resp);
 
 	DelayMs(10);
 
-	CircularBuffer_PrintStatistics(resp, 200, &DebugUart_RxBuffStruct);
+	CircularBuffer_PrintStatistics(resp, 200, DebugUart.rx);
 	DebugUart_SendMessage(resp);
 
 	return CmdH_Result_Ok;
