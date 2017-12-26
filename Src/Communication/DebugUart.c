@@ -55,21 +55,17 @@ CircularBufferInfo_t DebugUart_RxBuffStruct =
 	.size = DEBUGUART_RX_BUFFER_SIZE
 };
 
-UART_HandleTypeDef Debug_UartHandle;
+UART_HandleTypeDef DebugUart_Handle;
 
 UART_Handler_t DebugUart =
 {
-	.huart = &Debug_UartHandle,
+	.huart = &DebugUart_Handle,
 	.tx = &DebugUart_TxBuffStruct,
-	.rx = &DebugUart_RxBuffStruct
+	.rx = &DebugUart_RxBuffStruct,
+	.txIsEnabled = true,
+	.rxIsEnalbed = true
 };
 
-
-///< Sending enable flag
-bool DebugUart_SendEnable_flag = false;
-
-///< Enable command receiving
-const bool DebugUart_CommandReceiveEnable = true;
 
 
 #if defined(CONFIG_USE_FREERTOS)
@@ -105,7 +101,7 @@ void DebugUart_Init(void)
 	CircularBuffer_Init(&DebugUart_TxBuffStruct);
 
 	// Init UART
-	UART_Init(&Debug_UartHandle);
+	UART_Init(&DebugUart_Handle);
 
 #ifdef CONFIG_USE_FREERTOS
 	DebugUart_Rx_Semaphore = xSemaphoreCreateBinary();
@@ -118,7 +114,7 @@ void DebugUart_Init(void)
 #endif	//#ifdef CONFIG_USE_FREERTOS
 
 	// Start receive
-	DebugUart_StartReceive();
+	DebugUart_ReceiveEnable();
 }
 
 
@@ -126,9 +122,42 @@ void DebugUart_Init(void)
 /**
  * \brief	Send enable
  */
-static void DebugUart_SendEnable(void)
+static inline void DebugUart_SendEnable(void)
 {
-	__HAL_UART_ENABLE_IT(DebugUart.huart, UART_IT_TXE);
+	UART_SendEnable(&DebugUart);
+}
+
+
+
+/**
+ * \brief	Receive enable
+ */
+void DebugUart_ReceiveEnable(void)
+{
+	UART_ReceiveEnable(&DebugUart);
+
+#ifdef CONFIG_USE_FREERTOS
+	// Wait for semaphore
+	xSemaphoreTake(DebugUart_Rx_Semaphore, (portTickType) 1000);
+#endif
+}
+
+
+
+/**
+ * \brief	Send a char on USART
+ */
+bool DebugUart_SendChar(char c)
+{
+	bool isOk = false;
+
+	if (CircularBuffer_PutChar(&DebugUart_TxBuffStruct, c))
+	{
+		isOk = true;
+		DebugUart_SendEnable();
+	}
+
+	return isOk;
 }
 
 
@@ -160,108 +189,36 @@ size_t DebugUart_SendMessage(const char *message)
 
 
 /**
- * \brief Send newline
- */
-bool DebugUart_SendNewLine(void)
-{
-	// TODO: Wrong, bool or length? SendMessage() return with length
-	return DebugUart_SendMessage("\r\n");
-}
-
-
-
-/**
  * \brief Send message with newline
  */
-bool DebugUart_SendLine(const char *message)
+size_t DebugUart_SendLine(const char *message)
 {
-	bool isSuccessful = true;
+	size_t length = 0;
 
-	isSuccessful &= DebugUart_SendMessage(message);
-	isSuccessful &= DebugUart_SendNewLine();
+	length += DebugUart_SendMessage(message);
+	length += DebugUart_SendMessage("\r\n");
 
-	return isSuccessful;
+	return length;
 }
 
 
 
 /**
- * \brief	Send a char on USART
+ * \brief	Send message with blocking mode
+ * 			Use only extreme / important situation!
  */
-bool DebugUart_SendChar(char c)
+size_t DebugUart_SendMessageBlocked(const char * str)
 {
-	bool isOk = false;
+	size_t length = StringLength(str);
 
-	if (CircularBuffer_PutChar(&DebugUart_TxBuffStruct, c))
-	{
-		isOk = true;
-		DebugUart_SendEnable();
-	}
+	// TODO: Clear statuses?
+	//UART_ResetStatus(&DebugUart_Handle);
+	//HAL_UART_AbortTransmit_IT()
 
-	return isOk;
+	HAL_UART_Transmit(&DebugUart_Handle, (uint8_t *)str, length, 1000);
+
+	return length;
 }
-
-
-
-/**
- * \brief	Receive message with IT
- */
-void DebugUart_StartReceive(void)
-{
-	// USART - Receive Message
-	__HAL_UART_ENABLE_IT(DebugUart.huart, UART_IT_RXNE);		/* receiver not empty */
-
-#ifdef CONFIG_USE_FREERTOS
-	// Wait for semaphore
-	xSemaphoreTake(DebugUart_Rx_Semaphore, (portTickType) 1000);
-#endif
-}
-
-
-
-#if !defined(CONFIG_MODULE_TERMINAL_ENABLE)
-/**
- * \brief	Process received characters (if Terminal is not enabled)
- */
-void DebugUart_ProcessReceivedCharacters(void)
-{
-	if (DebugUart_CommandReceiveEnable)
-	{
-		// If WriteCnt not equal with ReadCnt, we have received message
-		char receiveBuffer[DEBUGUART_RX_BUFFER_SIZE+1];
-
-		// Received new character?
-		if (CircularBuffer_IsNotEmpty(&DebugUart_RxBuffStruct))
-		{
-			// Need copy to receiveBuffer
-			CircularBuffer_GetString(&DebugUart_RxBuffStruct, receiveBuffer, DEBUGUART_RX_BUFFER_SIZE);
-
-			char * newLinePos = (char *)STRING_FindCharacters((const char *)receiveBuffer, "\r\n");
-			if (newLinePos != NULL)
-			{
-				char responseBuffer[DEBUGUART_RESPONSE_BUFFER];
-				responseBuffer[0] = '\0';
-
-				*newLinePos = '\0';
-
-				// Search command and run
-				CmdH_Result_t cmdResult = CmdH_ExecuteCommand(
-					(char *)receiveBuffer,
-					responseBuffer, DEBUGUART_RESPONSE_BUFFER);
-
-				CmdH_PrintResult(cmdResult);
-
-				DebugUart_SendMessage(responseBuffer);
-
-				// TODO: Create Get&Clear function
-				CircularBuffer_ClearLast(&DebugUart_RxBuffStruct);
-			}
-
-			// TODO: Do not get all messages, which received. Only which are processed...
-		}
-	}
-}
-#endif
 
 
 
@@ -292,21 +249,46 @@ size_t uprintf(const char *format, ...)
 
 
 
+#if !defined(CONFIG_MODULE_TERMINAL_ENABLE)
 /**
- * \brief	Send message with blocking mode
- * 			Use only extreme / important situation!
+ * \brief	Process received characters (if Terminal is not enabled)
  */
-size_t DebugUart_SendMessageBlocked(const char * str)
+void DebugUart_ProcessReceivedCharacters(void)
 {
-	size_t length = StringLength(str);
+	// If WriteCnt not equal with ReadCnt, we have received message
+	char receiveBuffer[DEBUGUART_RX_BUFFER_SIZE+1];
 
-	// TODO: Clear statuses?
-	//UART_ResetStatus(&Debug_UartHandle);
+	// Received new character?
+	if (CircularBuffer_IsNotEmpty(&DebugUart_RxBuffStruct))
+	{
+		// Need copy to receiveBuffer
+		CircularBuffer_GetString(&DebugUart_RxBuffStruct, receiveBuffer, DEBUGUART_RX_BUFFER_SIZE);
 
-	HAL_UART_Transmit(&Debug_UartHandle, (uint8_t *)str, length, 1000);
+		char * newLinePos = (char *)STRING_FindCharacters((const char *)receiveBuffer, "\r\n");
+		if (newLinePos != NULL)
+		{
+			char responseBuffer[DEBUGUART_RESPONSE_BUFFER];
+			responseBuffer[0] = '\0';
 
-	return length;
+			*newLinePos = '\0';
+
+			// Search command and run
+			CmdH_Result_t cmdResult = CmdH_ExecuteCommand(
+				(char *)receiveBuffer,
+				responseBuffer, DEBUGUART_RESPONSE_BUFFER);
+
+			CmdH_PrintResult(cmdResult);
+
+			DebugUart_SendMessage(responseBuffer);
+
+			// TODO: Create Get&Clear function
+			CircularBuffer_ClearLast(&DebugUart_RxBuffStruct);
+		}
+
+		// TODO: Do not get all messages, which received. Only which are processed...
+	}
 }
+#endif
 
 
 

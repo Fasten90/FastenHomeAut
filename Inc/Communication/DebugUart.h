@@ -57,16 +57,13 @@
  *----------------------------------------------------------------------------*/
 
 extern UART_Handler_t DebugUart;
-extern UART_HandleTypeDef Debug_UartHandle;
+extern UART_HandleTypeDef DebugUart_Handle;
 
 extern volatile char DebugUart_RxBuffer[DEBUGUART_RX_BUFFER_SIZE];
 extern volatile char DebugUart_TxBuffer[DEBUGUART_TX_BUFFER_SIZE];
 
 extern CircularBufferInfo_t DebugUart_TxBuffStruct;
 extern CircularBufferInfo_t DebugUart_RxBuffStruct;
-
-extern bool DebugUart_SendEnable_flag;
-extern const bool DebugUart_CommandReceiveEnable;
 
 #if defined(CONFIG_USE_FREERTOS)
 extern xSemaphoreHandle DebugUart_Rx_Semaphore;
@@ -82,17 +79,16 @@ extern xSemaphoreHandle DebugUart_Tx_Semaphore;
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 
 void DebugUart_Init(void);
-void DebugUart_StartReceive(void);
+void DebugUart_ReceiveEnable(void);
+
 bool DebugUart_SendChar(char c);
 size_t DebugUart_SendMessage(const char *message);
-bool DebugUart_SendNewLine(void);
-bool DebugUart_SendLine(const char *message);
-
+size_t DebugUart_SendLine(const char *message);
+size_t DebugUart_SendMessageBlocked(const char * str);
 size_t uprintf(const char *format, ...);
 
 void DebugUart_ProcessReceivedCharacters(void);
 
-size_t DebugUart_SendMessageBlocked(const char * str);
 
 #else
 

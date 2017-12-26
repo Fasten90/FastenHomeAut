@@ -40,10 +40,11 @@
  *----------------------------------------------------------------------------*/
 
 ///< Receive buffer
-volatile char Terminal_CommandActual[TERMINAL_MAX_COMMAND_LENGTH] = { 0 };
+static volatile char Terminal_CommandActual[TERMINAL_MAX_COMMAND_LENGTH] = { 0 };
 
 #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
-volatile char Terminal_CommandActualEscape[4] = { 0 };
+///< Escape receive buffer
+static volatile char Terminal_CommandActualEscape[4] = { 0 };
 #endif
 
 
@@ -229,109 +230,100 @@ void Terminal_CheckCommand(void)
 #endif
 
 		// Always checking the Command
-		if (DebugUart_CommandReceiveEnable)
-		{
 #ifdef CONFIG_USE_FREERTOS
-			// Wait for semaphore
-			if (xSemaphoreTake(DEBUG_USART_Rx_Semaphore, 1000) == pdTRUE)
-			{
-				Terminal_ProcessReceivedCharacter();
-			}
+		// Wait for semaphore
+		if (xSemaphoreTake(DEBUG_USART_Rx_Semaphore, 1000) == pdTRUE)
+		{
+			Terminal_ProcessReceivedCharacter();
+		}
 #else
-			Terminal_ProcessReceivedCharacter();			// If not used FreeRTOS / EventHandler, always check characters
+		Terminal_ProcessReceivedCharacter();			// If not used FreeRTOS / EventHandler, always check characters
 #endif
-			if (Terminal_CommandReceivedEvent)
+		if (Terminal_CommandReceivedEvent)
+		{
+			Terminal_CommandReceivedEvent = false;		// Clear event
+
+			// Only one event will receive
+			if (Terminal_CommandReceivedBackspace)
 			{
-				Terminal_CommandReceivedEvent = false;		// Clear event
-
-				// Only one event will receive
-				if (Terminal_CommandReceivedBackspace)
-				{
-					// Backspace
-					Terminal_CommandReceivedBackspace = false;
-					Terminal_CommandBackspace();
-				}
+				// Backspace
+				Terminal_CommandReceivedBackspace = false;
+				Terminal_CommandBackspace();
+			}
 #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
-				else if (Terminal_CommandReceivedDelete)
-				{
-					// Delete
-					Terminal_CommandReceivedDelete = false;
-					Terminal_CommandDelete();
-				}
-				else if (Terminal_CommandReceivedNotLastChar)
-				{
-					// Received inner character
+			else if (Terminal_CommandReceivedDelete)
+			{
+				// Delete
+				Terminal_CommandReceivedDelete = false;
+				Terminal_CommandDelete();
+			}
+			else if (Terminal_CommandReceivedNotLastChar)
+			{
+				// Received inner character
 
-					Terminal_CommandReceivedNotLastChar = false;
+				Terminal_CommandReceivedNotLastChar = false;
 
-					Terminal_SendMessage(ESCAPE_CURSORRIGHT);		// Step right
-					Terminal_CommandResendLine(true);					// Not Last char (it is inner character) - Refresh the line
-				}
-				else if (Terminal_CommandEscapeSequenceReceived)
-				{
-					// Escape sequence
-					Terminal_CommandEscapeSequenceReceived = false;
-					Terminal_CommandEscapeCharValidation();
-				}
-				else if (Terminal_CommandReceivedTabulator)
-				{
-					// Received tabulator
-					Terminal_CommandReceivedTabulator = false;
-					Terminal_CommandTabulator();
-				}
+				Terminal_SendMessage(ESCAPE_CURSORRIGHT);		// Step right
+				Terminal_CommandResendLine(true);					// Not Last char (it is inner character) - Refresh the line
+			}
+			else if (Terminal_CommandEscapeSequenceReceived)
+			{
+				// Escape sequence
+				Terminal_CommandEscapeSequenceReceived = false;
+				Terminal_CommandEscapeCharValidation();
+			}
+			else if (Terminal_CommandReceivedTabulator)
+			{
+				// Received tabulator
+				Terminal_CommandReceivedTabulator = false;
+				Terminal_CommandTabulator();
+			}
 #endif
-				else if (Terminal_CommandReadable)
+			else if (Terminal_CommandReadable)
+			{
+				// Pressed Enter, EndCommand();
+				Terminal_CommandReadable = false;
+				if (Terminal_CommandActualLength > 0)
 				{
-					// Pressed Enter, EndCommand();
-					Terminal_CommandReadable = false;
-					if (Terminal_CommandActualLength > 0)
-					{
-						char responseBuffer[TERMINAL_RESPONSE_BUFFER];
+					char responseBuffer[TERMINAL_RESPONSE_BUFFER];
 
-						// There are some char in the line
-						// has an command
-						Terminal_ConvertSmallLetter();
+					// There are some char in the line
+					// has an command
+					Terminal_ConvertSmallLetter();
 
-						TERMINAL_SEND_NEW_LINE();
+					TERMINAL_SEND_NEW_LINE();
 
 #ifdef CONFIG_TERMINAL_HISTORY_ENABLE
-						Terminal_HistorySave();				// Save command to History
+					Terminal_HistorySave();				// Save command to History
 #endif
 
-						// Search command and run
-						CmdH_Result_t result = CmdH_ExecuteCommand(
-								(char *)Terminal_CommandActual,
-								responseBuffer, TERMINAL_RESPONSE_BUFFER);
+					// Search command and run
+					CmdH_Result_t result = CmdH_ExecuteCommand(
+							(char *)Terminal_CommandActual,
+							responseBuffer, TERMINAL_RESPONSE_BUFFER);
 
-						CmdH_PrintResult(result);		// Write result
+					CmdH_PrintResult(result);		// Write result
 
-						Terminal_SendMessage(responseBuffer);
+					Terminal_SendMessage(responseBuffer);
 
-						// Init new command
-						TERMINAL_SEND_NEW_LINE();
-						TERMINAL_SEND_PROMT_NEW_LINE();
-					}
-					else
-					{
-						TERMINAL_SEND_PROMT_NEW_LINE();		// There is no char in the line
-					}
-					Terminal_CommandActualLength = 0;
-					Terminal_CommandSentLength = 0;
-					Terminal_CommandCursorPosition = 0;
+					// Init new command
+					TERMINAL_SEND_NEW_LINE();
+					TERMINAL_SEND_PROMT_NEW_LINE();
 				}
-			}	// CommandHandler_CommandReceivedEvent
-#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
-			// If we has EventHandler, go out from infinite loop
-			else
-			{
-				return;
+				else
+				{
+					TERMINAL_SEND_PROMT_NEW_LINE();		// There is no char in the line
+				}
+				Terminal_CommandActualLength = 0;
+				Terminal_CommandSentLength = 0;
+				Terminal_CommandCursorPosition = 0;
 			}
-#endif
-		}
+		}	// CommandHandler_CommandReceivedEvent
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
+		// If we has EventHandler, go out from infinite loop
 		else
 		{
-			return;		// We must return, if DebugUart is disabled, and TaskHandler used
+			return;
 		}
 #endif
 	}

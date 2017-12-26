@@ -84,7 +84,7 @@ void UART_Init(UART_HandleTypeDef *UartHandle)
 	  - BaudRate = 9600 baud
 	  - Hardware flow control disabled (RTS and CTS signals) */
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
-	if (UartHandle == &Debug_UartHandle)
+	if (UartHandle == &DebugUart_Handle)
 	{
 		UartHandle->Instance      = DEBUG_USARTx;
 		UartHandle->Init.BaudRate = DEBUG_USART_BAUDRATE;
@@ -115,10 +115,9 @@ void UART_Init(UART_HandleTypeDef *UartHandle)
 	if (HAL_UART_Init(UartHandle) == HAL_OK)
 	{	
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
-		if (UartHandle == &Debug_UartHandle)
+		if (UartHandle == &DebugUart_Handle)
 		{
-			DebugUart_SendEnable_flag = true;
-			__HAL_UART_CLEAR_IT(&Debug_UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
+			__HAL_UART_CLEAR_IT(&DebugUart_Handle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
 		}
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
@@ -154,7 +153,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 #endif
 
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
-	if (huart == &Debug_UartHandle)
+	if (huart == &DebugUart_Handle)
 	{
 		// ##-1- Enable peripherals and GPIO Clocks
 
@@ -343,8 +342,9 @@ static void UART_Handler(UART_Handler_t *handler)
 
 		/* don't put errored data into the FIFO */
 		if (!err) {
+			// TODO: Check rxEnable flag
 			CircularBuffer_PutChar(handler->rx, val);
-			// TODO: TaskHandler_Request
+			// TODO: TaskHandler_Request or CallBack, which use semaphore and TaskHandler request?
 		}
 	}
 
@@ -358,6 +358,7 @@ static void UART_Handler(UART_Handler_t *handler)
 		* if there's data to send, send it.
 		* otherwise disable the transmit empty interrupt.
 		*/
+		// TODO: Check txEnable flag
 		if (CircularBuffer_GetChar(handler->tx, &val)) {
 			huart->Instance->TDR = val;
 		} else {
@@ -367,3 +368,21 @@ static void UART_Handler(UART_Handler_t *handler)
 }
 
 
+
+/**
+ * \brief	Send enable (IT)
+ */
+void UART_SendEnable(UART_Handler_t * handler)
+{
+	__HAL_UART_ENABLE_IT(handler->huart, UART_IT_TXE);
+}
+
+
+
+/**
+ * \brief	Receive enable (IT)
+ */
+void UART_ReceiveEnable(UART_Handler_t * handler)
+{
+	__HAL_UART_ENABLE_IT(handler->huart, UART_IT_RXNE);		/* receiver not empty */
+}

@@ -38,6 +38,8 @@ typedef struct
 	UART_HandleTypeDef * huart;			/* pointer to the HAL_UART struct */
 	CircularBufferInfo_t *tx;
 	CircularBufferInfo_t *rx;			/* transmit (out of STM32) and receive (in to STM32) FIFOs */
+	bool txIsEnabled;
+	bool rxIsEnalbed;
 } UART_Handler_t;
 
 
@@ -53,7 +55,8 @@ typedef struct
  *----------------------------------------------------------------------------*/
 
 void UART_Init(UART_HandleTypeDef *UartHandle);
-void UART_ResetStatus(UART_HandleTypeDef *huart);
+void UART_SendEnable(UART_Handler_t * handler);
+void UART_ReceiveEnable(UART_Handler_t * handler);
 
 
 
