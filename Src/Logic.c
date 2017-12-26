@@ -1069,6 +1069,8 @@ static void Logic_Display_MainMenu(void)
 		DateTime_t dateTime;
 		SysTime_GetDateTime(&dateTime);
 		Display_ShowSmallClock(&dateTime.time);
+
+		// Disable Display task, because when clock will update, it require Display task scheduling
 		TaskHandler_DisableTask(Task_Display);
 	}
 	#endif
@@ -1125,6 +1127,7 @@ static void Logic_Display_Input(ScheduleSource_t source)
 	if ((DisplayInput_OldLetterPosition != DisplayInput_LetterPosition)
 		&& (DisplayInput_OldLetterPosition == DisplayInput_LetterPosition_MaxLimit))
 	{
+		// TODO: Button printing
 		// OK
 		Display_PrintFont12x8('O', DisplayInput_LetterPosition_MaxLimit, 2, NO_FORMAT);
 		Display_PrintFont12x8('K', DisplayInput_LetterPosition_MaxLimit + 1, 2, NO_FORMAT);
@@ -1189,6 +1192,7 @@ static void Logic_Display_Input(ScheduleSource_t source)
 			// Normal (show char)
 			if (DisplayInput_LetterPosition == DisplayInput_LetterPosition_MaxLimit)
 			{
+				// TODO: Button printing
 				// OK
 				FontFormat_t format = { 0 };
 				format.Format_Inverse = 1;
