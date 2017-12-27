@@ -38,6 +38,9 @@
 #ifdef CONFIG_FUNCTION_GAME_SNAKE
 #include "Snake.h"
 #endif
+#ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
+#include "Bluetooth_HC05.h"
+#endif
 
 #include "TaskList.h"
 
@@ -94,7 +97,9 @@ static TaskResult_t Task_SelfTestFunction(ScheduleSource_t source);
 #ifdef CONFIG_FUNCTION_PERIODICAL_SENDING
 static TaskResult_t Task_PeriodicalSendingFunction(ScheduleSource_t source);
 #endif
-
+#ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
+static TaskResult_t Task_BluetoothProcessFunction(ScheduleSource_t source);
+#endif
 
 ///< Tasks list
 Task_t TaskList[] =
@@ -222,6 +227,14 @@ Task_t TaskList[] =
 		.taskFunction = Task_PeriodicalSendingFunction,
 		.taskScheduleRate = 1000,
 		.isDisabled = true,
+	},
+#endif
+#ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
+	{
+		.taskName ="BluetoothProcess",
+		.taskFunction = Task_BluetoothProcessFunction,
+		.taskScheduleRate = 100,
+		.isDisabled = false,
 	},
 #endif
 
@@ -464,6 +477,12 @@ static TaskResult_t Task_MotorConnStop(ScheduleSource_t source)
 	(void)source;
 
 	Motor_ControlStop();
+
+#ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
+	// TODO: LED blink 1 ms
+	LED_SetLed(LED_Red, LED_Set_On);
+	LED_SetLed(LED_Red, LED_Set_Off);
+#endif
 
 	return TaskResult_Ok;
 }
@@ -790,6 +809,18 @@ static TaskResult_t Task_PeriodicalSendingFunction(ScheduleSource_t source)
 }
 #endif
 
+
+
+#ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
+static TaskResult_t Task_BluetoothProcessFunction(ScheduleSource_t source)
+{
+	(void)source;
+
+	Bluetooth_ProcessReceivedCharacters();
+
+	return TaskResult_Ok;
+}
+#endif
 
 
 #endif //#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE

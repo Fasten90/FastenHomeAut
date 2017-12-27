@@ -510,7 +510,6 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 		// TODO: Handle button change functions?
 	}
 #endif
-
 }
 #endif
 
@@ -678,6 +677,8 @@ static void Logic_RemoteController_Button(ButtonType_t button, ButtonPressType_t
 
 	if (isChanged)
 		Logic_RemoteController_SendMessage();
+	else
+		DebugUart_SendLine("Remote car state not changed");
 }
 
 

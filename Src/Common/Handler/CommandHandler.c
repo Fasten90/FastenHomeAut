@@ -135,6 +135,7 @@ CmdH_Result_t CmdH_ExecuteCommand(char *command, char * response, size_t length)
 			result = CmdH_Result_Error_WrongArgumentNum;	// 0 or too large argument num
 		}
 
+#warning: "Source parameter deleted. Fix this"
 #if defined(CONFIG_COMMANDHANDLER_NOTIFY_COMMAND_RECEIVED_FROM_NOT_DEBUGPORT) && defined(CONFIG_MODULE_DEBUGUART_ENABLE) && defined(CONFIG_MODULE_COMMUNICATION_ENABLE)
 		if (source != CommProt_DebugUart)
 		{
@@ -181,6 +182,7 @@ CmdH_Result_t CmdH_ExecuteCommandWithParams(char *command, char * param, char * 
 		result = (CmdH_CommandArgCount > CMDH_COMMAND_ARG_MAX_COUNT) ? CmdH_Result_Error_TooManyArgument : CmdH_Result_Error_WrongArgumentNum;
 	}
 
+#warning: "Source parameter deleted. Fix this"
 #if defined(CONFIG_COMMANDHANDLER_NOTIFY_COMMAND_RECEIVED_FROM_NOT_DEBUGPORT) && defined(CONFIG_MODULE_DEBUGUART_ENABLE) && defined(CONFIG_MODULE_COMMUNICATION_ENABLE)
 	if (source != CommProt_DebugUart)
 	{

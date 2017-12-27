@@ -72,12 +72,14 @@ void Debug_Print(Debug_t debugTask, const char *format, ...)
 
 	if (DebugTasks[debugTask].isEnabled)
 	{
+#ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
 		// Text color
 		SendTextColor(DebugTasks[debugTask].color);
 		if (DebugTasks[debugTask].background)
 		{
 			SendBackgroundColor(DebugTasks[debugTask].background);
 		}
+#endif
 
 		// TaskName
 		uprintf("%s: ", DebugTasks[debugTask].name);
@@ -104,12 +106,14 @@ void Debug_Print(Debug_t debugTask, const char *format, ...)
 
 		DebugUart_SendLine(txBuffer);				// Send on Usart
 
+#ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
 		// Set default color
 		SendTextColor(Color_Black);
 		if (DebugTasks[debugTask].background)
 		{
 			SendBackgroundColor(Color_White);
 		}
+#endif
 	}
 }
 

@@ -16,19 +16,48 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
-#include "StringHelper.h"
-#include "UART.h"
-#include "Bluetooth_HC05.h"
-
 
 #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
+
+#include "StringHelper.h"
+#include "UART.h"
+#include "CommandHandler.h"
+#include "Bluetooth_HC05.h"
+#include "DebugUart.h"
+
+
 
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
 
+static volatile char Bluetooth_TxBuffer[BLUETOOTH_TX_BUFFER_SIZE] = { 0 };
+static volatile char Bluetooth_RxBuffer[BLUETOOTH_RX_BUFFER_SIZE] = { 0 };
+
+static CircularBufferInfo_t Bluetooth_TxBuffStruct =
+{
+	.buffer = (char *)Bluetooth_TxBuffer,
+	.name = "Bluetooth_TxBuffer",
+	.size = BLUETOOTH_TX_BUFFER_SIZE
+};
+
+static CircularBufferInfo_t Bluetooth_RxBuffStruct =
+{
+	.buffer = (char *)Bluetooth_RxBuffer,
+	.name = "Bluetooth_RxBuffer",
+	.size = BLUETOOTH_RX_BUFFER_SIZE
+};
+
 UART_HandleTypeDef Bluetooth_UartHandle;
-bool Bluetooth_SendEnable_flag = 0;
+
+UART_Handler_t Bluetooth =
+{
+	.huart = &Bluetooth_UartHandle,
+	.tx = &Bluetooth_TxBuffStruct,
+	.rx = &Bluetooth_RxBuffStruct,
+	.txIsEnabled = true,
+	.rxIsEnalbed = true
+};
 
 
 
@@ -36,13 +65,13 @@ bool Bluetooth_SendEnable_flag = 0;
  *  Local variables
  *----------------------------------------------------------------------------*/
 
-static char Bluetooth_TxBuffer[BLUETOOTH_TX_BUFFER_SIZE];
-
 
 
 /*------------------------------------------------------------------------------
  *  Function declarations
  *----------------------------------------------------------------------------*/
+
+static inline void Bluetooth_SendEnable(void);
 
 
 
@@ -56,35 +85,106 @@ static char Bluetooth_TxBuffer[BLUETOOTH_TX_BUFFER_SIZE];
  */
 void Bluetooth_HC05_Init(void)
 {
-	USART_Init(&Bluetooth_UartHandle);
-	Bluetooth_SendEnable_flag = true;
+	CircularBuffer_Init(&Bluetooth_RxBuffStruct);
+	CircularBuffer_Init(&Bluetooth_TxBuffStruct);
+
+	UART_Init(&Bluetooth_UartHandle);
+
+	//Bluetooth_SendEnable();
+	Bluetooth_ReceiveEnable();
 }
 
 
 
 /**
- * \brief	Send message on Bluetooth
- * \note	Be careful, it is blocking (wait the "free" flag)
+ * \brief	Send enable
  */
-void Bluetooth_SendMessage(const char * msg)
+static inline void Bluetooth_SendEnable(void)
 {
-	while (!Bluetooth_SendEnable_flag);
-
-	uint8_t length = StringLength(msg);
-	StrCpy(Bluetooth_TxBuffer, msg);
-
-	Bluetooth_SendEnable_flag = false;
-	HAL_UART_Transmit_IT(&Bluetooth_UartHandle, (uint8_t *)Bluetooth_TxBuffer, length);
+	UART_SendEnable(&Bluetooth);
 }
 
 
 
 /**
- * \brief	Get Sending is enabled?
+ * \brief	Receive enable
  */
-inline bool Bluetooth_GetSendEnable(void)
+void Bluetooth_ReceiveEnable(void)
 {
-	return Bluetooth_SendEnable_flag;
+	UART_ReceiveEnable(&Bluetooth);
+}
+
+
+
+/**
+ * \brief	Send string on Bluetooth
+ */
+size_t Bluetooth_SendMessage(const char *msg)
+{
+	size_t length = 0;
+	size_t putLength;
+
+	length = StringLength(msg);
+
+	if (length == 0)
+	{
+		return 0;
+	}
+
+	putLength = CircularBuffer_PutString(&Bluetooth_TxBuffStruct, msg, length);
+
+	if (putLength > 0)
+		Bluetooth_SendEnable();
+
+	return putLength;
+}
+
+
+
+/**
+ * \brief	Process received characters (if Terminal is not enabled)
+ */
+void Bluetooth_ProcessReceivedCharacters(void)
+{
+	char recvBuf[BLUETOOTH_PROCESS_BUFFER_SIZE];
+
+	// Received new character?
+	if (CircularBuffer_IsNotEmpty(&Bluetooth_RxBuffStruct))
+	{
+		// Copy received message to buffer
+		CircularBuffer_GetString(&Bluetooth_RxBuffStruct, recvBuf, BLUETOOTH_PROCESS_BUFFER_SIZE);
+
+		// Received newline character? (End of command)
+		char * newLinePos = (char *)STRING_FindCharacters((const char *)recvBuf, "\r\n");
+		if (newLinePos != NULL)
+		{
+			// Has newline, process the received command
+			char respBuf[BLUETOOTH_RESPONSE_BUFFER_SIZE];
+			respBuf[0] = '\0';
+
+			*newLinePos = '\0';
+
+			// Search command and run
+			CmdH_Result_t cmdResult = CmdH_ExecuteCommand(recvBuf, respBuf, BLUETOOTH_RESPONSE_BUFFER_SIZE);
+
+			CmdH_PrintResult(cmdResult);
+
+			Bluetooth_SendMessage(respBuf);
+
+			// Send on DebugUart (these are different from DebugUart Process() function)
+			uprintf("Received Bluetooth command: \"%s\"\r\n", recvBuf);
+
+			// Drop processed characters
+			size_t processedLength = (newLinePos - recvBuf) + 1;
+			if (newLinePos != &recvBuf[BLUETOOTH_RESPONSE_BUFFER_SIZE-1])
+			{
+				// Check next character is not '\n' or '\r'?
+				if ((*(newLinePos+1) == '\r') || (*(newLinePos+1) == '\n'))
+					processedLength++;
+			}
+			CircularBuffer_DropCharacters(&Bluetooth_RxBuffStruct, processedLength);
+		}
+	}
 }
 
 

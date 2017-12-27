@@ -88,6 +88,9 @@ typedef enum
 #ifdef CONFIG_FUNCTION_PERIODICAL_SENDING
 	Task_PerodicalSending,
 #endif
+#ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
+	Task_BluetoothProcess,
+#endif
 
 	// XXX: Add new Task enum here!
 	// \note: !! Be careful !! Sync with TaskList

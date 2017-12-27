@@ -27,7 +27,11 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define BLUETOOTH_TX_BUFFER_SIZE		(100)
+#define BLUETOOTH_RX_BUFFER_SIZE			(100)
+#define BLUETOOTH_TX_BUFFER_SIZE			(100)
+
+#define BLUETOOTH_PROCESS_BUFFER_SIZE		(100)
+#define BLUETOOTH_RESPONSE_BUFFER_SIZE		(100)
 
 
 
@@ -42,7 +46,7 @@
  *----------------------------------------------------------------------------*/
 
 extern UART_HandleTypeDef Bluetooth_UartHandle;
-extern bool Bluetooth_SendEnable_flag;
+extern UART_Handler_t Bluetooth;
 
 
 
@@ -51,9 +55,9 @@ extern bool Bluetooth_SendEnable_flag;
  *----------------------------------------------------------------------------*/
 
 void Bluetooth_HC05_Init(void);
-void Bluetooth_SendMessage(const char * msg);
-
-bool Bluetooth_GetSendEnable(void);
+void Bluetooth_ReceiveEnable(void);
+size_t Bluetooth_SendMessage(const char *msg);
+void Bluetooth_ProcessReceivedCharacters(void);
 
 
 
