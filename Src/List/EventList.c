@@ -71,7 +71,7 @@ const Event_t EventList[] =
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 	{
-		.name = "Esp8266ReceivedMessage",
+		.name = "Esp8266RecvMsg",
 		.isNeedLog = true,
 	},
 	{
@@ -81,7 +81,7 @@ const Event_t EventList[] =
 #endif
 #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
 	{
-		.name = "CommandProcessCommand",
+		.name = "CmdProcess",
 		.isNeedLog = true,
 	},
 #endif
