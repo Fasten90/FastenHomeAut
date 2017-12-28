@@ -51,7 +51,7 @@
  *----------------------------------------------------------------------------*/
 
 
-#ifdef CONFIG_MODULE_LED_ENABLE
+#ifdef CONFIG_MODULE_LED_TASK_ENABLE
 static TaskResult_t Task_LedBlink(ScheduleSource_t source);
 #endif
 #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
@@ -104,11 +104,11 @@ static TaskResult_t Task_BluetoothProcessFunction(ScheduleSource_t source);
 ///< Tasks list
 Task_t TaskList[] =
 {
-#ifdef CONFIG_MODULE_LED_ENABLE
+#ifdef CONFIG_MODULE_LED_TASK_ENABLE
 	{
 		.taskName = "LedTask",
 		.taskFunction = Task_LedBlink,
-	#ifdef LED_OLD_STYLE
+	#ifdef LED_TASK_OLD_STYLE
 		.taskScheduleRate = 200,
 	#else
 		.taskScheduleRate = 2,
@@ -304,7 +304,7 @@ void TaskList_Init(void)
 
 
 
-#ifdef CONFIG_MODULE_LED_ENABLE
+#ifdef CONFIG_MODULE_LED_TASK_ENABLE
 /**
  * \brief	LED blinking task
  */
@@ -340,7 +340,7 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 	{
 		Task_LedCnt = 0;
 	}
-#elif defined(LED_OLD_STYLE)
+#elif defined(LED_TASK_OLD_STYLE)
 	static uint8_t Task_LedCnt = 0;
 
 	LED_SetLed(LED_Green, LED_Set_Toggle);
@@ -360,7 +360,9 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 	{
 		Task_LedCnt = 0;
 	}
-#elif defined(LED_PWM_STYLE)
+#elif defined(LED_TASK_PWM_STYLE)
+
+	// Blue LED blinking like PWM
 
 	// 50 Hz --> 20ms
 
