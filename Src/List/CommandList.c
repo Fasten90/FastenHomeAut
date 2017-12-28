@@ -52,7 +52,7 @@
 #include "ConvertTable.h"
 #include "SecuredDataTypes.h"
 #include "SysTime.h"
-
+#include "CommonUART.h"
 #include "CommandList.h"
 
 
@@ -167,6 +167,10 @@ static CmdH_Result_t CommandFunction_PeriodicalSending(uint32_t argc, char** arg
 #if (CIRCULARBUFFER_STATISTICS_ENABLE == 1)
 static CmdH_Result_t CommandFunction_CircBuffStat(uint32_t argc, char** argv);
 #endif
+#ifdef CONFIG_MODULE_COMMON_UART_ENABLE
+static CmdH_Result_t CommandFunction_CommonUART(uint32_t argc, char** argv);
+#endif
+
 
 
 /*------------------------------------------------------------------------------
@@ -551,6 +555,14 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.commandFunctionPointer = CommandFunction_CircBuffStat,
 		.commandArgNum = CmdH_CommandArgNum_0,
 		.description = "Circular Buffer statistics",
+	},
+#endif
+#ifdef CONFIG_MODULE_COMMON_UART_ENABLE
+	{
+		.name = "commonuart",
+		.commandFunctionPointer = CommandFunction_CommonUART,
+		.commandArgNum = CmdH_CommandArgNum_1,
+		.description = "Common UART",
 	},
 #endif
 
@@ -2765,6 +2777,19 @@ static CmdH_Result_t CommandFunction_CircBuffStat(uint32_t argc, char** argv)
 	DebugUart_SendMessage(resp);
 
 	return CmdH_Result_Ok;
+}
+#endif
+
+
+
+#ifdef CONFIG_MODULE_COMMON_UART_ENABLE
+static CmdH_Result_t CommandFunction_CommonUART(uint32_t argc, char** argv)
+{
+	UNUSED(argc);
+
+	CommonUART_SendMessage(argv[1]);
+
+	return CmdH_Result_Ok_SendSuccessful;
 }
 #endif
 

@@ -100,6 +100,9 @@ static TaskResult_t Task_PeriodicalSendingFunction(ScheduleSource_t source);
 #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
 static TaskResult_t Task_BluetoothProcessFunction(ScheduleSource_t source);
 #endif
+#ifdef CONFIG_MODULE_COMMON_UART_ENABLE
+static TaskResult_t Task_CommonUARTfunction(ScheduleSource_t source);
+#endif
 
 ///< Tasks list
 Task_t TaskList[] =
@@ -220,7 +223,7 @@ Task_t TaskList[] =
 #endif
 #ifdef CONFIG_DEBUG_SELFTEST
 	{
-		.taskName ="SelfTest",
+		.taskName = "SelfTest",
 		.taskFunction = Task_SelfTestFunction,
 		.taskScheduleRate = 1000,
 		.isRunOnce = true,
@@ -228,7 +231,7 @@ Task_t TaskList[] =
 #endif
 #ifdef CONFIG_FUNCTION_PERIODICAL_SENDING
 	{
-		.taskName ="PeriodicalSending",
+		.taskName = "PeriodicalSending",
 		.taskFunction = Task_PeriodicalSendingFunction,
 		.taskScheduleRate = 1000,
 		.isDisabled = true,
@@ -236,7 +239,7 @@ Task_t TaskList[] =
 #endif
 #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
 	{
-		.taskName ="BluetoothProcess",
+		.taskName = "BluetoothProcess",
 		.taskFunction = Task_BluetoothProcessFunction,
 #ifdef CONFIG_MODULE_UART_REQUIRE_TASKSCHEDULE_ENABLE
 		.isPeriodisScheduleDisabled = true,
@@ -245,6 +248,19 @@ Task_t TaskList[] =
 		// UART handler not required task scheduling. Need check by periodically
 		.taskScheduleRate = 50,
 #endif
+	},
+#endif
+#ifdef CONFIG_MODULE_COMMON_UART_ENABLE
+	{
+		.taskName = "CommonUART",
+		.taskFunction = Task_CommonUARTfunction,
+	#ifdef CONFIG_MODULE_UART_REQUIRE_TASKSCHEDULE_ENABLE
+		.isPeriodisScheduleDisabled = false,
+		.taskScheduleRate = 1000,
+	#else
+		// UART handler not required task scheduling. Need check by periodically
+		.taskScheduleRate = 50,
+	#endif
 	},
 #endif
 
@@ -833,6 +849,19 @@ static TaskResult_t Task_BluetoothProcessFunction(ScheduleSource_t source)
 	return TaskResult_Ok;
 }
 #endif
+
+
+#ifdef CONFIG_MODULE_COMMON_UART_ENABLE
+static TaskResult_t Task_CommonUARTfunction(ScheduleSource_t source)
+{
+	(void)source;
+
+	CommonUART_ProcessReceivedCharacters();
+
+	return TaskResult_Ok;
+}
+#endif
+
 
 
 #endif //#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE

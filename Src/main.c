@@ -173,6 +173,7 @@
 #include "CommonIO.h"
 #include "CommonADC.h"
 #include "CommonDAC.h"
+#include "CommonUART.h"
 #include "ADC.h"
 #include "Globals.h"
 #include "Bluetooth_HC05.h"
@@ -259,6 +260,11 @@ int main(void)
 #ifdef CONFIG_MODULE_IO_ENABLE
 	// IO
 	IO_Init();
+#endif
+
+
+#ifdef CONFIG_MODULE_COMMON_UART_ENABLE
+	CommonUART_Init();
 #endif
 
 

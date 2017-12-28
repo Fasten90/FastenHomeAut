@@ -31,6 +31,9 @@
 #ifdef CONFIG_MODULE_UART_REQUIRE_TASKSCHEDULE_ENABLE
 #include "TaskList.h"
 #endif
+#ifdef CONFIG_MODULE_COMMON_UART_ENABLE
+#include "CommonUART.h"
+#endif
 #include "UART.h"
 
 
@@ -106,6 +109,13 @@ void UART_Init(UART_HandleTypeDef *UartHandle)
 		UartHandle->Init.BaudRate = BLUETOOTH_USART_BAUDRATE;
 	}
 #endif
+#ifdef CONFIG_MODULE_COMMON_UART_ENABLE
+	if (UartHandle == &CommonUART_UartHandle)
+	{
+		UartHandle->Instance      = COMMONUART_USARTx;
+		UartHandle->Init.BaudRate = COMMONUART_USART_BAUDRATE;
+	}
+#endif
 	
 	UartHandle->Init.WordLength   = UART_WORDLENGTH_8B;
 	UartHandle->Init.StopBits     = UART_STOPBITS_1;
@@ -116,24 +126,9 @@ void UART_Init(UART_HandleTypeDef *UartHandle)
 
 	if (HAL_UART_Init(UartHandle) == HAL_OK)
 	{	
-#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
-		if (UartHandle == &DebugUart_Handle)
-		{
-			__HAL_UART_CLEAR_IT(&DebugUart_Handle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
-		}
-#endif
-#ifdef CONFIG_MODULE_ESP8266_ENABLE
-		if (UartHandle == &ESP8266_UartHandle)
-		{
-			__HAL_UART_CLEAR_FLAG(&ESP8266_UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
-		}
-#endif
-#ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
-		if (UartHandle == &Bluetooth_UartHandle)
-		{
-			__HAL_UART_CLEAR_IT(&Bluetooth_UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
-		}
-#endif
+
+		__HAL_UART_CLEAR_IT(UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
+
 		//__HAL_UART_ENABLE_IT(UartHandle, UART_IT_RXNE);		/* receiver not empty */
 		__HAL_UART_DISABLE_IT(UartHandle, UART_IT_TXE);			/* transmit empty */
 	}
@@ -256,6 +251,40 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 		HAL_NVIC_EnableIRQ(BLUETOOTH_USARTx_IRQn);
 	}
 #endif	// #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
+#ifdef CONFIG_MODULE_COMMON_UART_ENABLE
+	if (huart == &CommonUART_UartHandle)
+	{
+		// ##-1- Enable peripherals and GPIO Clocks
+
+		// Enable GPIO TX/RX clock
+		// Enable USARTx clock
+		COMMONUART_USART_CLK_ENABLES();
+
+
+		// ##-2- Configure peripheral GPIO
+		// UART TX GPIO pin configuration
+		GPIO_InitStruct.Pin       = COMMONUART_USART_TX_GPIO_PIN;
+		GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
+		GPIO_InitStruct.Pull      = GPIO_NOPULL;
+		GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_HIGH;
+		GPIO_InitStruct.Alternate = COMMONUART_USART_AF;
+
+		HAL_GPIO_Init(COMMONUART_USART_TX_GPIO_PORT, &GPIO_InitStruct);
+
+		// UART RX GPIO pin configuration
+		GPIO_InitStruct.Pin = COMMONUART_USART_RX_GPIO_PIN;
+		//GPIO_InitStruct.Alternate = COMMONUART_USART_AF;
+
+		HAL_GPIO_Init(COMMONUART_USART_RX_GPIO_PORT, &GPIO_InitStruct);
+
+
+		// ##-3- Configure the NVIC for UART
+		// NVIC for USARTx
+
+		HAL_NVIC_SetPriority(COMMONUART_USARTx_IRQn, COMMONUART_USART_PREEMT_PRIORITY, COMMONUART_USART_SUB_PRIORITY);
+		HAL_NVIC_EnableIRQ(COMMONUART_USARTx_IRQn);
+	}
+#endif	// #ifdef CONFIG_MODULE_COMMONUART_ENABLE
 }
 
 
@@ -284,6 +313,15 @@ void ESP8266_USARTx_IRQHandler(void)
 void BLUETOOTH_USARTx_IRQHandler(void)
 {
 	UART_Handler(&Bluetooth);
+}
+#endif
+
+
+
+#ifdef CONFIG_MODULE_COMMON_UART_ENABLE
+void COMMONUART_USARTx_IRQHandler(void)
+{
+	UART_Handler(&CommonUART);
 }
 #endif
 

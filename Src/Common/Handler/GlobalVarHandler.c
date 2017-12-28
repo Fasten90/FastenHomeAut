@@ -2046,5 +2046,11 @@ void GlobVarH_UnitTest(void)
 #endif	// #ifdef MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
 
 
+#else
+
+// GlobalVarHandler module is not used
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic pop
 
 #endif	// #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE

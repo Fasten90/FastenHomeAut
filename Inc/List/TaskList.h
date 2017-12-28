@@ -85,6 +85,9 @@ typedef enum
 #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
 	Task_BluetoothProcess,
 #endif
+#ifdef CONFIG_MODULE_COMMON_UART_ENABLE
+	Task_CommonUART,
+#endif
 
 	// XXX: Add new Task enum here!
 	// \note: !! Be careful !! Sync with TaskList
