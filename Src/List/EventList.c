@@ -16,6 +16,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
+#include "include.h"
 #include "EventHandler.h"
 #include "EventList.h"
 

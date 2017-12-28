@@ -56,7 +56,10 @@ UART_Handler_t Bluetooth =
 	.tx = &Bluetooth_TxBuffStruct,
 	.rx = &Bluetooth_RxBuffStruct,
 	.txIsEnabled = true,
-	.rxIsEnalbed = true
+	.rxIsEnalbed = true,
+#ifdef CONFIG_MODULE_UART_REQUIRE_TASKSCHEDULE_ENABLE
+	.requiredTask = Task_BluetoothProcess,
+#endif
 };
 
 

@@ -30,7 +30,9 @@
 #include "FreeRTOS.h"
 #include "semphr.h"
 #endif
-
+#ifdef CONFIG_MODULE_UART_REQUIRE_TASKSCHEDULE_ENABLE
+#include "TaskList.h"
+#endif
 
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 
@@ -63,7 +65,10 @@ UART_Handler_t DebugUart =
 	.tx = &DebugUart_TxBuffStruct,
 	.rx = &DebugUart_RxBuffStruct,
 	.txIsEnabled = true,
-	.rxIsEnalbed = true
+	.rxIsEnalbed = true,
+#ifdef CONFIG_MODULE_UART_REQUIRE_TASKSCHEDULE_ENABLE
+	.requiredTask = Task_DebugUartProcess,
+#endif
 };
 
 

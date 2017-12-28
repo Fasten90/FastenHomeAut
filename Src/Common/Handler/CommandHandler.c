@@ -86,7 +86,7 @@ void CmdH_Init(void)
  * \brief	Prepare (Separate) the command and Find and Run it...
  * \note	Be careful! Only one call enabled, because this module use global variables
  */
-CmdH_Result_t CmdH_ExecuteCommand(char *command, char * response, size_t length)
+CmdH_Result_t CmdH_ExecuteCommand(char *command, char *response, size_t length)
 {
 	CmdH_Result_t result = CmdH_Result_Unknown;
 
@@ -116,7 +116,10 @@ CmdH_Result_t CmdH_ExecuteCommand(char *command, char * response, size_t length)
 	if (result != CmdH_Result_Error_CallCmdHandlerWithInvalidArgument)
 	{
 		// Log event
-		EventHandler_GenerateEvent(Event_CommandHandler_ProcessCommand, 0, Task_CommandHandlerProcessEvent);
+#ifdef CONFIG_EVENTLOG_CMDHANDLER_ENABLE
+		TaskID_t taskID = TaskHandler_GetActualRunningTaskID();
+		EventHandler_GenerateEvent(Event_CommandHandler_ProcessCommand, 0, taskID);
+#endif
 
 		// Separate command
 		CmdH_CommandArgCount = CmdH_CommandParser(command, CmdH_CommandArguments);
@@ -128,18 +131,23 @@ CmdH_Result_t CmdH_ExecuteCommand(char *command, char * response, size_t length)
 			CmdH_ResponseBuffer = response;
 			CmdH_ResponseBufferLength = length;
 
-			result = CmdH_SearchCommand();		// Find and execute the command
+			result = CmdH_SearchCommand();					// Search and execute the command
 		}
 		else
 		{
 			result = CmdH_Result_Error_WrongArgumentNum;	// 0 or too large argument num
 		}
 
-#warning: "Source parameter deleted. Fix this"
 #if defined(CONFIG_COMMANDHANDLER_NOTIFY_COMMAND_RECEIVED_FROM_NOT_DEBUGPORT) && defined(CONFIG_MODULE_DEBUGUART_ENABLE) && defined(CONFIG_MODULE_COMMUNICATION_ENABLE)
+#warning: "Source parameter deleted. Fix this"
 		if (source != CommProt_DebugUart)
 		{
 			uprintf("Received command: \"%s\", from %s\r\n", command, COMMUNICATION_GetProtocolName(source));
+		}
+#elif defined(CONFIG_COMMANDHANDLER_NOTIFY_COMMAND_RECEIVED_FROM_NOT_DEBUGPORT) && defined(CONFIG_MODULE_DEBUGUART_ENABLE) && defined(CONFIG_TASKHANDLER_DEBUG_RUN_ENABLE) && defined(CONFIG_COMMUNICATION_HAS_MORE_COMM_PORT)
+		if (taskID != Task_DebugUartProcess)
+		{
+			uprintf("Received command: \"%s\", from %s\r\n", command, TaskHandler_GetActualRunningTaskName());
 		}
 #endif
 	}
@@ -155,7 +163,7 @@ CmdH_Result_t CmdH_ExecuteCommand(char *command, char * response, size_t length)
  * \param	Parameter list
  * \note	Be careful! Only one call enabled, because this module use global variables
  */
-CmdH_Result_t CmdH_ExecuteCommandWithParams(char *command, char * param, char * response, size_t length)
+CmdH_Result_t CmdH_ExecuteCommandWithParams(char *command, char *param, char *response, size_t length)
 {
 	ASSERT(command != NULL);
 	ASSERT(param != NULL);
@@ -163,7 +171,9 @@ CmdH_Result_t CmdH_ExecuteCommandWithParams(char *command, char * param, char * 
 
 	CmdH_Result_t result = CmdH_Result_Unknown;
 
-	EventHandler_GenerateEvent(Event_CommandHandler_ProcessCommand, 0, Task_CommandHandlerProcessEvent);	// Log event
+#ifdef CONFIG_EVENTLOG_CMDHANDLER_ENABLE
+	EventHandler_GenerateEvent(Event_CommandHandler_ProcessCommand, 0, TaskHandler_GetActualRunningTaskID());	// Log event
+#endif
 
 	// Separate command and its parameters:
 	CmdH_CommandArguments[0] = command;
@@ -182,11 +192,16 @@ CmdH_Result_t CmdH_ExecuteCommandWithParams(char *command, char * param, char * 
 		result = (CmdH_CommandArgCount > CMDH_COMMAND_ARG_MAX_COUNT) ? CmdH_Result_Error_TooManyArgument : CmdH_Result_Error_WrongArgumentNum;
 	}
 
-#warning: "Source parameter deleted. Fix this"
 #if defined(CONFIG_COMMANDHANDLER_NOTIFY_COMMAND_RECEIVED_FROM_NOT_DEBUGPORT) && defined(CONFIG_MODULE_DEBUGUART_ENABLE) && defined(CONFIG_MODULE_COMMUNICATION_ENABLE)
+#warning: "Source parameter deleted. Fix this"
 	if (source != CommProt_DebugUart)
 	{
 		uprintf("Received command: \"%s\", from %s\r\n", command, COMMUNICATION_GetProtocolName(source));
+	}
+#elif defined(CONFIG_COMMANDHANDLER_NOTIFY_COMMAND_RECEIVED_FROM_NOT_DEBUGPORT) && defined(CONFIG_MODULE_DEBUGUART_ENABLE) && defined(CONFIG_TASKHANDLER_DEBUG_RUN_ENABLE) && defined(CONFIG_COMMUNICATION_HAS_MORE_COMM_PORT)
+	if (TaskHandler_GetActualRunningTaskID() != Task_DebugUartProcess)
+	{
+		uprintf("Received command: \"%s\", from %s\r\n", command, TaskHandler_GetActualRunningTaskName());
 	}
 #endif
 
@@ -227,8 +242,15 @@ static CmdH_Result_t CmdH_SearchCommand(void)
 
 		if (!StrCmp(CmdH_CommandArguments[0], CmdH_CommandList[i].name))
 		{
-			result = CmdH_RunCommand(i);		// Found the command
-			EventHandler_GenerateEvent(Event_CommandHandler_ProcessCommand, i, Task_CommandHandlerProcessEvent);	// Event
+#ifdef CONFIG_EVENTLOG_CMDHANDLER_ENABLE
+			EventHandler_GenerateEvent(Event_CommandHandler_ProcessCommand, i, TaskHandler_GetActualRunningTaskID());	// Event
+#endif
+
+			result = CmdH_RunCommand(i);		// Found the command, execute it
+
+#ifdef CONFIG_EVENTLOG_CMDHANDLER_ENABLE
+			EventHandler_GenerateEvent(Event_CommandHandler_ProcessCommand, i, TaskHandler_GetActualRunningTaskID());	// Event
+#endif
 			break;
 		}
 	}
@@ -548,7 +570,7 @@ void CmdH_Printf(const char *format, ...)
 /**
  * \brief Set response buffer
  */
-void CmdH_SetResponse(char * respBuffer, size_t respLength)
+void CmdH_SetResponse(char *respBuffer, size_t respLength)
 {
 	CmdH_ResponseBuffer = respBuffer;
 	CmdH_ResponseBufferLength = respLength;

@@ -28,6 +28,9 @@
 #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
 #include "Bluetooth_HC05.h"
 #endif
+#ifdef CONFIG_MODULE_UART_REQUIRE_TASKSCHEDULE_ENABLE
+#include "TaskList.h"
+#endif
 #include "UART.h"
 
 
@@ -349,6 +352,9 @@ static void UART_Handler(UART_Handler_t *handler)
 			// TODO: Check rxEnable flag
 			CircularBuffer_PutChar(handler->rx, val);
 			// TODO: TaskHandler_Request or CallBack, which use semaphore and TaskHandler request?
+#ifdef CONFIG_MODULE_UART_REQUIRE_TASKSCHEDULE_ENABLE
+			TaskHandler_RequestTaskScheduling(handler->requiredTask);
+#endif
 		}
 	}
 

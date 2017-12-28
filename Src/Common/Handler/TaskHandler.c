@@ -66,6 +66,7 @@ static uint8_t TaskHandler_StatisticsIndex = 0;
 #ifdef CONFIG_TASKHANDLER_DEBUG_RUN_ENABLE
 static uint32_t TaskHandler_RunCnt = 0;
 static const char * TaskHandler_ActualRunningTaskName = NULL;
+static TaskID_t TaskHandler_ActualRunningTaskID = 0;
 #endif
 
 
@@ -211,6 +212,7 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 
 #ifdef CONFIG_TASKHANDLER_DEBUG_RUN_ENABLE
 	TaskHandler_ActualRunningTaskName = (const char *)TaskList[taskID].taskName;
+	TaskHandler_ActualRunningTaskID = taskID;
 #endif
 
 	// Software WatchDog: We are "alive"
@@ -261,6 +263,7 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 
 #ifdef CONFIG_TASKHANDLER_DEBUG_RUN_ENABLE
 	TaskHandler_ActualRunningTaskName = NULL;
+	TaskHandler_ActualRunningTaskID = 0;
 #endif
 }
 
@@ -471,17 +474,25 @@ void TaskHandler_PrintTaskRunCounts(void)
 
 
 
-/**
- * \brief	Get actual runnin task name
- */
-const char * TaskHandler_GetActualRunningTask(void)
-{
 #ifdef CONFIG_TASKHANDLER_DEBUG_RUN_ENABLE
+/**
+ * \brief	Get actual running task name
+ */
+const char * TaskHandler_GetActualRunningTaskName(void)
+{
 	return TaskHandler_ActualRunningTaskName;
-#else
-	return NULL;
-#endif
 }
+
+
+
+/**
+ * \brief	Get actual running task ID
+ */
+TaskID_t TaskHandler_GetActualRunningTaskID(void)
+{
+	return TaskHandler_ActualRunningTaskID;
+}
+#endif
 
 
 

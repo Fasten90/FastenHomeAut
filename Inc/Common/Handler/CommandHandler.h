@@ -36,11 +36,6 @@
 
 #define CMDH_COMMAND_DELIMITER_CHAR			((char)' ')
 
-// False define for CommandHandler task (Used by EventLog)
-#ifndef Task_CommandHandlerProcessEvent
-#define Task_CommandHandlerProcessEvent		(Task_ProcessDebugUartReceivedCommand)
-#endif
-
 
 
 /*------------------------------------------------------------------------------
@@ -129,20 +124,20 @@ typedef struct
 
 void CmdH_Init(void);
 
-void CmdH_SendMessage(const char *message);
-void CmdH_SendLine(const char *message);
-void CmdH_SendChar(char c);
-void CmdH_Printf(const char *format, ...);
+CmdH_Result_t CmdH_ExecuteCommand(char *command, char *response, size_t length);
+CmdH_Result_t CmdH_ExecuteCommandWithParams(char *command, char *param, char *response, size_t length);
 
 void CmdH_PrintAllCommands(void);
 void CmdH_SearchCommandAndPrintHelp(const char *command);
 
-CmdH_Result_t CmdH_ExecuteCommand(char * command, char * response, size_t length);
-CmdH_Result_t CmdH_ExecuteCommandWithParams(char *command, char * param, char * response, size_t length);
-
 void CmdH_PrintResult(CmdH_Result_t result);
 
-void CmdH_SetResponse(char * respBuffer, size_t respLength);
+void CmdH_SetResponse(char *respBuffer, size_t respLength);
+
+void CmdH_SendMessage(const char *message);
+void CmdH_SendLine(const char *message);
+void CmdH_SendChar(char c);
+void CmdH_Printf(const char *format, ...);
 
 void CmdH_UnitTest(void);
 

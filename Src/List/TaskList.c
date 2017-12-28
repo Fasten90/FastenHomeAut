@@ -157,8 +157,13 @@ Task_t TaskList[] =
 	{
 		.taskName = "DbgUartCommandRecv",
 		.taskFunction = Task_ProcessDebugUartCommandReceived,
-		//.isPeriodisScheduleDisabled = true,
+#ifdef CONFIG_MODULE_UART_REQUIRE_TASKSCHEDULE_ENABLE
+		.isPeriodisScheduleDisabled = true,
+		.taskScheduleRate = 1000,
+#else
+		// UART handler not required task scheduling. Need check by periodically
 		.taskScheduleRate = 50,
+#endif
 	},
 #endif
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
@@ -233,8 +238,13 @@ Task_t TaskList[] =
 	{
 		.taskName ="BluetoothProcess",
 		.taskFunction = Task_BluetoothProcessFunction,
-		.taskScheduleRate = 100,
-		.isDisabled = false,
+#ifdef CONFIG_MODULE_UART_REQUIRE_TASKSCHEDULE_ENABLE
+		.isPeriodisScheduleDisabled = true,
+		.taskScheduleRate = 1000,
+#else
+		// UART handler not required task scheduling. Need check by periodically
+		.taskScheduleRate = 50,
+#endif
 	},
 #endif
 

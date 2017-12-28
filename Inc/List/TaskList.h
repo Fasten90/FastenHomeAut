@@ -27,12 +27,6 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
-#define Task_CommandHandlerProcessEvent		(Task_ProcessDebugUartReceivedCommand)
-#else
-#define Task_CommandHandlerProcessEvent		(0)
-#endif
-
 
 
 /*------------------------------------------------------------------------------
@@ -59,7 +53,7 @@ typedef enum
 	Task_RemoteController,
 #endif
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
-	Task_ProcessDebugUartReceivedCommand,
+	Task_DebugUartProcess,
 #endif
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
 	Task_ButtonPressed,

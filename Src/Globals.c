@@ -74,9 +74,13 @@ void Error_Handler(void)
 	DebugUart_SendMessageBlocked("ErrorHandler...!!!\r\n");
 
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
+	#ifdef CONFIG_TASKHANDLER_DEBUG_RUN_ENABLE
 	char msg[60];
-	usprintf(msg, "TaskHandler frozen: %s\r\n", TaskHandler_GetActualRunningTask());
+	usprintf(msg, "TaskHandler frozen: %s\r\n", TaskHandler_GetActualRunningTaskName());
 	DebugUart_SendMessageBlocked(msg);
+	#else
+	DebugUart_SendMessageBlocked("TaskHandler frozen!\r\n");
+	#endif
 #endif
 
 

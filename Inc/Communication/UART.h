@@ -20,6 +20,9 @@
 
 #include "options.h"
 #include "CircularBuffer.h"
+#ifdef CONFIG_MODULE_UART_REQUIRE_TASKSCHEDULE_ENABLE
+#include "TaskHandler.h"
+#endif
 
 
 
@@ -40,6 +43,9 @@ typedef struct
 	CircularBufferInfo_t *rx;			/* transmit (out of STM32) and receive (in to STM32) FIFOs */
 	bool txIsEnabled;
 	bool rxIsEnalbed;
+#ifdef CONFIG_MODULE_UART_REQUIRE_TASKSCHEDULE_ENABLE
+	TaskID_t requiredTask;
+#endif
 } UART_Handler_t;
 
 

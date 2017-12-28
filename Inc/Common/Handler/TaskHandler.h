@@ -18,7 +18,8 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
-#include "include.h"
+#include "options.h"
+#include "GenericTypeDefs.h"
 
 
 
@@ -103,7 +104,12 @@ void TaskHandler_ClearTimeoutTask(TaskID_t taskID);
 void TaskHandler_PrintStatistics(void);
 void TaskHandler_PrintTaskRunCounts(void);
 
-const char * TaskHandler_GetActualRunningTask(void);
+#ifdef CONFIG_TASKHANDLER_DEBUG_RUN_ENABLE
+const char * TaskHandler_GetActualRunningTaskName(void);
+TaskID_t TaskHandler_GetActualRunningTaskID(void);
+#else
+#define TaskHandler_GetActualRunningTaskID()		(0)
+#endif
 
 void TaskHandler_UnitTest(void);
 
