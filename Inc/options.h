@@ -86,7 +86,10 @@
 	// Display: Input
 	#define CONFIG_FUNCTION_DISPLAY_INPUT
 	// Display: Show screen
-	//#define CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
+	#define CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
+
+	// Display: Scrolling menu (Use only for longer then 3 menu)
+	#define CONFIG_FUNCTION_DISPLAY_MENU_SCROLLING
 #endif
 
 

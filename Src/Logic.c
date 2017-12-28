@@ -68,6 +68,8 @@
 
 #define DisplayInput_StringLimit					(DisplayInput_LetterPosition_MaxLimit + 1)
 
+#define DisplayMenu_ShowMenuLimit					(3)
+
 
 
 /*------------------------------------------------------------------------------
@@ -102,7 +104,7 @@ static const uint8_t Display_Characters_size = sizeof(Display_Characters)/sizeof
 #ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
 static const uint16_t Display_CarAnimation_RefreshPeriod_MinLimit = 100;
 static const uint16_t Display_CarAnimation_RefreshPeriod_MaxLimit = 1000;
-static cinst uint16_t Display_CarAnimation_RefreshPeriod_Actual = 300;
+static uint16_t Display_CarAnimation_RefreshPeriod_Actual = 300;		// Do not set const, user can change the refresh period time
 #endif
 
 
@@ -117,6 +119,8 @@ static volatile DisplayMenu_t Logic_Display_ActualState = Menu_Main;
 static volatile DisplayMenu_t Logic_Display_SelectedState = Menu_Main;
 
 static volatile DisplaySnakeMenu_t Logic_Display_SnakeMenu_ActualState = SnakeMenu_NewGame;
+
+static const uint8_t DisplayMenu_MenuListLineOffset = 2;
 
 #ifdef CONFIG_FUNCTION_GAME_SNAKE
 static bool Logic_Snake_DisplaySnakeMenu = false;
@@ -137,7 +141,7 @@ static const char * const Logic_MenuList[] =
 	"Clock",
 	#endif
 
-	// XXX: Synchronize with DisplayMenu_t
+	// XXX: Synchronize with DisplayMenu_t - but 0. (Menu_Main) is not need
 };
 #endif
 
@@ -1103,18 +1107,56 @@ static void Logic_Display_PrintMainMenuList(void)
 
 	// Print menu
 	// TODO: Do with smaller text
-	// TODO: If 4 menu are printed, it will be overflow!!!!
-	// TODO: Make a dynamic menu showing (display only 3, center is selected)
+
 	uint8_t i;
-	const uint8_t lineOffset = 2;
+
+#ifdef CONFIG_FUNCTION_DISPLAY_MENU_SCROLLING
+	// Scrolled menu (only for > DisplayMenu_ShowMenuLimit)
+	BUILD_BUG_ON(NUM_OF(Logic_MenuList) <= DisplayMenu_ShowMenuLimit);
+
+	uint8_t startLine = 0;
+	if (Logic_Display_SelectedState > 2)
+	{
+		if ((uint8_t)(Logic_Display_SelectedState + DisplayMenu_ShowMenuLimit - 2) >= NUM_OF(Logic_MenuList))
+		{
+			// Overflowed
+			startLine = NUM_OF(Logic_MenuList) - DisplayMenu_ShowMenuLimit;
+		}
+		else
+		{
+			startLine = Logic_Display_SelectedState - 1;
+		}
+	}
+
+	for (i = 0; i < DisplayMenu_ShowMenuLimit; i++)
+	{
+		// Clear
+		// TODO: Not a beautiful solution
+		Display_PrintString("             ",
+				DisplayMenu_MenuListLineOffset + i,			// <x.> line
+				Font_12x8,
+				NO_FORMAT);
+
+		// Print menu name
+		Display_PrintString(
+				Logic_MenuList[startLine + i],				// Menu "name" string
+				DisplayMenu_MenuListLineOffset + i,			// <x.> line
+				Font_12x8,				// Font
+				Logic_Display_SelectedState == startLine+i+1 ? selectedFormat : NO_FORMAT);	// i + 1, because enum started with "Main"
+	}
+#else
+	// Only max DisplayMenu_ShowMenuLimit menu item can displayed
+	BUILD_BUG_ON(NUM_OF(Logic_MenuList) > DisplayMenu_ShowMenuLimit);
+
 	for (i = 0; i < NUM_OF(Logic_MenuList); i++)
 	{
 		Display_PrintString(
 				Logic_MenuList[i],		// Menu "name" string
-				i + lineOffset,			// <x.> line
+				i + DisplayMenu_MenuListLineOffset,			// <x.> line
 				Font_12x8,				// Font
 				Logic_Display_SelectedState == i+1 ? selectedFormat : NO_FORMAT);	// i + 1, because enum started with "Main"
 	}
+#endif
 }
 
 

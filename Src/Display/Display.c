@@ -425,17 +425,17 @@ void Display_ChangeCarImage(void)
 	if ((CarActualStateCnt % 3) == 0)
 	{
 		// 1.
-		img = (uint8_t *)Image_CarWheel_1_16x16;
+		img = (uint8_t *)Display_Image_CarWheel_1_16x16;
 	}
 	else if ((CarActualStateCnt % 3) == 1)
 	{
 		// 2.
-		img = (uint8_t *)Image_CarWheel_2_16x16;
+		img = (uint8_t *)Display_Image_CarWheel_2_16x16;
 	}
 	else
 	{
 		// 3.
-		img = (uint8_t *)Image_CarWheel_3_16x16;
+		img = (uint8_t *)Display_Image_CarWheel_3_16x16;
 	}
 
 	// Draw 2 wheel
