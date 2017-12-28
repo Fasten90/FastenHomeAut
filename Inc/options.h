@@ -44,7 +44,7 @@
 
 
 ///< Remote controller (for car) function
-#define CONFIG_FUNCTION_REMOTECONTROLLER_CAR
+//#define CONFIG_FUNCTION_REMOTECONTROLLER_CAR
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
 	#ifndef CONFIG_MODULE_MOTOR_ENABLE
 		#define CONFIG_MODULE_MOTOR_ENABLE
@@ -74,14 +74,18 @@
 
 
 ///< Display: Menu
-//#define CONFIG_FUNCTION_DISPLAY_MENU
+#define CONFIG_FUNCTION_DISPLAY_MENU
 #ifdef CONFIG_FUNCTION_DISPLAY_MENU
 	#ifndef CONFIG_MODULE_DISPLAY_ENABLE
 		#define CONFIG_MODULE_DISPLAY_ENABLE
 	#endif
+	// Display: clock
 	#define CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
+	// Display: Snake game
 	#define CONFIG_FUNCTION_GAME_SNAKE
+	// Display: Input
 	#define CONFIG_FUNCTION_DISPLAY_INPUT
+	// Display: Show screen
 	//#define CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
 #endif
 
@@ -96,6 +100,9 @@
 #ifdef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
 	#define CONFIG_DISPLAY_CLOCK_LARGE
 	#define CONFIG_DISPLAY_CLOCK_SMALL
+	#ifndef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
+		#define CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
+	#endif
 #endif
 
 
@@ -447,7 +454,7 @@
 ///< SWO: Serial Wire Output enable
 //#define CONFIG_SWO_ENABLE
 
-///< SW Watchdog - check Task scheduling
+///< SW Watchdog - check Task scheduling - called from SysTick (Debug function)
 //#define CONFIG_DEBUG_SW_WATCHDOG_ENABLE
 
 ///< SelfTests
@@ -693,7 +700,7 @@
 
 	//  TaskList:
 
-	///< Software Watchdog (task)
+	///< Software Watchdog (task) - Debug function
 	//#define CONFIG_MODULE_TASK_SOFTWARE_WATCHDOG_ENABLE
 
 	///< System time task

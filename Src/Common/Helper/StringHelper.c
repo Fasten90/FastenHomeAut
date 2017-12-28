@@ -1654,19 +1654,20 @@ const char * STRING_FindString(const char *str, const char *findString)
 
 
 /**
- * \brief	Separators
- * 			like strtok()
+ * \brief	Separate / split string to small strings by delimiter char
+ * 			like strtok() (but not match)
+ * 			E.g.: source: "192.168.0.1", delimiter: '.' --> separated[0] -> "192", sepparated[1] -> "168", ...
  * \note	Be careful, pointers to original (source) string
  * 			source string need to be changeable!
  */
-uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint8_t parameterMaxCount)
+uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint8_t paramLimit)
 {
 	size_t i;
 	size_t j;
 	uint8_t parameters = 0;
 
 	// Check parameters
-	if (source == NULL || separated == NULL || parameterMaxCount == 0)
+	if (source == NULL || separated == NULL || paramLimit == 0)
 	{
 		return 0;			// Fail parameters
 	}
@@ -1692,7 +1693,7 @@ uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint
 			}
 			parameters++;
 			j = 0;
-			if (parameters >= parameterMaxCount)
+			if (parameters >= paramLimit)
 			{
 				// maximal tokens found
 				break;

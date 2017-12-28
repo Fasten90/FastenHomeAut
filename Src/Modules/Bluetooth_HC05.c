@@ -187,6 +187,11 @@ void Bluetooth_ProcessReceivedCharacters(void)
 	}
 }
 
+#else
 
+// Bluetooth module is not used
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic pop
 
 #endif	// #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
