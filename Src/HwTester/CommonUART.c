@@ -185,28 +185,44 @@ void CommonUART_ProcessReceivedCharacters(void)
 		// Received newline character? (End of command)
 		char * newLinePos = (char *)STRING_FindCharacters((const char *)recvBuf, "\r\n\0");
 
+		// TODO: Beautify!
+
 		// Check message "time"
 		if (newLinePos == NULL)
 		{
 			uint32_t actualTime = HAL_GetTick();
 
-			// Note: Be careful: Recommend to set "check time" to task period time
-			if ((CommonUart_LastReceived + 1000) <= actualTime)
+			// if received one char after a long silent time, it will be printed with alone
+			if (StringLength(recvBuf) == 1)
 			{
-				// Received a long time...
-				newLinePos = recvBuf + StringLength(recvBuf);
+				// It is after a long time?
+				// TODO: Not the best solution... if not receive more char, it will not printed
+				CommonUart_LastReceived = actualTime;
 			}
+			else
+			{
+				// Note: Be careful: Recommend to set "check time" to task period time
+				if ((CommonUart_LastReceived + 1000) <= actualTime)
+				{
+					// Received a long time...
+					newLinePos = recvBuf + StringLength(recvBuf);
+				}
 
-			CommonUart_LastReceived = actualTime;
+				CommonUart_LastReceived = actualTime;
+			}
 		}
 
 		if (newLinePos != NULL)
 		{
 			// Has newline, process the received command
-			*newLinePos = '\0';
+			if (*newLinePos == '\r' || *newLinePos == '\n')
+				*newLinePos = '\0';
 
-			// Send on DebugUart (these are different from DebugUart Process() function)
-			uprintf("Received: \"%s\"\r\n", recvBuf);
+			if (StringLength(recvBuf) != 0)
+			{
+				// Send on DebugUart (these are different from DebugUart Process() function)
+				uprintf("Received: \"%s\"\r\n", recvBuf);
+			}
 
 			// Drop processed characters
 			size_t processedLength = (newLinePos - recvBuf) + 1;

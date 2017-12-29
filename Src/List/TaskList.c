@@ -41,6 +41,9 @@
 #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
 #include "Bluetooth_HC05.h"
 #endif
+#ifdef CONFIG_MODULE_COMMON_UART_ENABLE
+#include "CommonUART.h"
+#endif
 
 #include "TaskList.h"
 
