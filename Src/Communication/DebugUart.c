@@ -290,17 +290,20 @@ void DebugUart_ProcessReceivedCharacters(void)
 		if (newLinePos != NULL)
 		{
 			// Has newline, process the received command
-			char respBuf[DEBUGUART_RESPONSE_BUFFER];
-			respBuf[0] = '\0';
-
 			*newLinePos = '\0';
 
-			// Search command and run
-			CmdH_Result_t cmdResult = CmdH_ExecuteCommand(recvBuf, respBuf, DEBUGUART_RESPONSE_BUFFER);
+			if (StringLength(recvBuf) > 0)
+			{
+				char respBuf[DEBUGUART_RESPONSE_BUFFER];
+				respBuf[0] = '\0';
 
-			CmdH_PrintResult(cmdResult);
+				// Search command and run
+				CmdH_Result_t cmdResult = CmdH_ExecuteCommand(recvBuf, respBuf, DEBUGUART_RESPONSE_BUFFER);
 
-			DebugUart_SendMessage(respBuf);
+				CmdH_PrintResult(cmdResult);
+
+				DebugUart_SendMessage(respBuf);
+			}
 
 			// Drop processed characters
 			size_t processedLength = (newLinePos - recvBuf) + 1;
