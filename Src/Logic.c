@@ -757,9 +757,10 @@ static void Logic_StepLetterNextValue(int8_t step)
 		char str[DisplayInput_StringLimit];
 		StrCpyMax(str, DisplayInput_ActualRealString, DisplayInput_StringLimit);
 		StrTrim(str);
+		// TODO: Check 0 length command?
 		char respBuffer[50];
 		CmdH_ExecuteCommand(str, respBuffer, 50);
-		uprintf("Typed command: %s", str);
+		uprintf("Display input command: \"%s\"\r\n", str);
 		// Now, automatically exit to main menu
 		Logic_Display_ChangeState(Menu_Main);
 	}

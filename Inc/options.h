@@ -380,7 +380,7 @@
 
 	#define CONFIG_MODULE_HARDFAULTHANDLER_ENABLE
 
-	#define CONFIG_MODULE_WATCHDOG_ENABLE
+	//#define CONFIG_MODULE_WATCHDOG_ENABLE
 #endif
 
 
@@ -443,7 +443,7 @@
  *----------------------------------------------------------------------------*/
 
 ///< ASSERT functions for HAL (Or set in stm32f0xx_hal_conf.h file)
-#define USE_FULL_ASSERT
+//#define USE_FULL_ASSERT
 
 ///< Debug mode: enable breakpoint and other debug support function
 #define CONFIG_DEBUG_MODE

@@ -110,10 +110,10 @@ void Error_Handler(void)
  * \param line: assert_param error line source number
  * \retval None
  */
-void assert_failed(uint8_t* file, uint32_t line)
+void assert_failed(uint8_t *file, uint32_t line)
 {
 	// ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line)
-	Assert_Function(file, line, "assert_failed");
+	Assert_Function((char *)file, line, (char *)"assert_failed");
 }
 #endif
 
@@ -133,6 +133,7 @@ void Assert_Function(char *file, uint32_t line, char *exp)
 	char errorMsg[255];
 	usprintf(errorMsg, "File: %s, %d. line: %s\r\n", file, line, exp);
 	DebugUart_SendMessageBlocked(errorMsg);
+	// TODO: Need the wait? Message was sent blocked
 	DelayMs(100);
 
 	DEBUG_BREAKPOINT();
