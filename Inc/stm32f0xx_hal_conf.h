@@ -58,7 +58,7 @@
 /*#define HAL_TSC_MODULE_ENABLED   */
 /*#define HAL_DAC_MODULE_ENABLED   */
 /*#define HAL_I2S_MODULE_ENABLED   */
-/*#define HAL_IWDG_MODULE_ENABLED   */
+#define HAL_IWDG_MODULE_ENABLED
 /*#define HAL_LCD_MODULE_ENABLED   */
 /*#define HAL_LPTIM_MODULE_ENABLED   */
 /*#define HAL_RNG_MODULE_ENABLED   */
@@ -293,6 +293,7 @@
 #endif /* HAL_WWDG_MODULE_ENABLED */
 
 /* Exported macro ------------------------------------------------------------*/
+//#define USE_FULL_ASSERT
 #ifdef  USE_FULL_ASSERT
 /**
   * @brief  The assert_param macro is used for function's parameters check.

@@ -44,6 +44,9 @@
 #ifdef CONFIG_MODULE_COMMON_UART_ENABLE
 #include "CommonUART.h"
 #endif
+#ifdef CONFIG_MODULE_WATCHDOG_ENABLE
+#include "WatchDog.h"
+#endif
 
 #include "TaskList.h"
 

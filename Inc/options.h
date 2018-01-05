@@ -74,7 +74,7 @@
 
 
 ///< Display: Menu
-//#define CONFIG_FUNCTION_DISPLAY_MENU
+#define CONFIG_FUNCTION_DISPLAY_MENU
 #ifdef CONFIG_FUNCTION_DISPLAY_MENU
 	#ifndef CONFIG_MODULE_DISPLAY_ENABLE
 		#define CONFIG_MODULE_DISPLAY_ENABLE
@@ -352,7 +352,7 @@
 	#define CONFIG_MODULE_LED_ENABLE
 
 	//#define CONFIG_MODULE_COMMON_IO_ENABLE
-	#define CONFIG_MODULE_COMMON_UART_ENABLE
+	//#define CONFIG_MODULE_COMMON_UART_ENABLE
 
 	//#define CONFIG_MODULE_DISPLAY_ENABLE
 
@@ -370,15 +370,17 @@
 
 	//#define CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
 
-	//#define CONFIG_USE_FREERTOS
-
-	#define CONFIG_MODULE_RESETREASON_ENABLE
-
 	//#define CONFIG_MODULE_COMMUNICATION_ENABLE
 
 	//#define CONFIG_MODULE_CONVERTTABLE_ENABLE
 
+	//#define CONFIG_USE_FREERTOS
+
+	#define CONFIG_MODULE_RESETREASON_ENABLE
+
 	#define CONFIG_MODULE_HARDFAULTHANDLER_ENABLE
+
+	#define CONFIG_MODULE_WATCHDOG_ENABLE
 #endif
 
 
@@ -440,6 +442,8 @@
  *								Debug settings
  *----------------------------------------------------------------------------*/
 
+///< ASSERT functions for HAL (Or set in stm32f0xx_hal_conf.h file)
+#define USE_FULL_ASSERT
 
 ///< Debug mode: enable breakpoint and other debug support function
 #define CONFIG_DEBUG_MODE

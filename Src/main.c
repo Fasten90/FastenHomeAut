@@ -178,6 +178,7 @@
 #include "Globals.h"
 #include "Bluetooth_HC05.h"
 #include "GlobalVarHandler.h"
+#include "WatchDog.h"
 
 #ifdef CONFIG_MICROCONTROLLER_PC
 #include "windows_hal.h"

@@ -18,7 +18,7 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
-#include "include.h"
+#include "options.h"
 
 
 
@@ -26,7 +26,7 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#ifdef CONFIG_MODULE_WATCHDOG_ENABLE
+
 
 
 /*------------------------------------------------------------------------------
@@ -45,6 +45,7 @@
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
+#ifdef CONFIG_MODULE_WATCHDOG_ENABLE
 // Watchdog enabled: function implement in .c file
 void Watchdog_Init(void);
 void Watchdog_Clear(void);

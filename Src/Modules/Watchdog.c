@@ -39,7 +39,8 @@ void Watchdog_Init(void)
 {
 	// Configurate IWDG
 	IWDG_Handle.Init.Prescaler = IWDG_PRESCALER_32;
-	IWDG_Handle.Init.Reload = 0x0FFF;	// Max value
+	IWDG_Handle.Init.Reload = IWDG_RLR_RL;	// Max value
+	IWDG_Handle.Init.Window = IWDG_WINDOW_DISABLE;
 	IWDG_Handle.Instance = IWDG;
 
 	if (HAL_IWDG_Init(&IWDG_Handle) != HAL_OK)
