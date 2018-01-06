@@ -36,6 +36,8 @@
 
 #define BOOL_MAX	(1)
 
+
+// This defines are defined in "stdint.h" file
 /*
 #define UINT8_MAX	(0xFF)
 #define INT8_MAX	(0x7F)
@@ -69,6 +71,15 @@ typedef signed int					int32_t;
 typedef int8_t						char8_t;
 typedef float						float32_t;
 typedef bool						bool_t;
+
+
+///< New bool type
+typedef enum
+{
+    Bool_Uninitialized,
+    Bool_False,
+    Bool_True
+} BoolData_t;
 
 
 
