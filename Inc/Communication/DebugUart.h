@@ -105,6 +105,7 @@ void DebugUart_ProcessReceivedCharacters(void);
 #define DebugUart_SendMessage(_msg)				puts(_msg)
 #define DebugUart_SendLine(_msg)				puts(_msg)
 #define DebugUart_SendMessageBlocked(_msg)		puts(_msg)
+#define DebugUart_SendLineBlocked(_msg)			puts(_msg)
 
 #define DebugUart_StartReceive()
 
