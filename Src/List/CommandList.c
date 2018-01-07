@@ -54,6 +54,7 @@
 #include "SysTime.h"
 #include "CommonUART.h"
 #include "CommandList.h"
+#include "Queue.h"
 
 
 
@@ -758,6 +759,10 @@ static CmdH_Result_t CommandFunction_unittest(uint32_t argc, char** argv)
 
 #ifdef MODULE_SECUREDDATATYPES_UNITTEST_ENABLE
 	SecuredDataTypes_UnitTest();
+#endif
+
+#ifdef MODULE_QUEUE_UNITTEST_ENABLE
+	Queue_UnitTest();
 #endif
 
 	return CmdH_Result_Ok;
