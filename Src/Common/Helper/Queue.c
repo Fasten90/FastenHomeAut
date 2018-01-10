@@ -229,7 +229,6 @@ bool Queue_PutLastElement(QueueListInfo_t * queue, void * pData, size_t dataSize
 		// Put data to last QueueElement
 		QueueElement_t * pPrevOfLast = pElement->prevQueueData;
 
-#warning "StackAlign error"
 		// Copy data if need
 		void * pNewElementData = pData;
 		if (dataType == QueuedataType_Ram)
@@ -244,9 +243,10 @@ bool Queue_PutLastElement(QueueListInfo_t * queue, void * pData, size_t dataSize
 		//queue->elementNum++;	// Because element was overwrote, this code part is not true
 
 
-
 		// TODO: This is amateur solution for the searching empty space
-		void * pEndOfData = pElement + sizeof(QueueElement_t)  + ((dataType == QueuedataType_Ram) ? (dataSize) : (0));
+		void * pEndOfData = (void *)((uint32_t)pElement + sizeof(QueueElement_t)  + ((dataType == QueuedataType_Ram) ? (dataSize) : (0)));
+		// Make Stack aligned safe
+		pEndOfData = (void *)MEM_MAKE_ALIGNED_ADDRESS(pEndOfData);
 
 		// Create empty queue element, or this is the last element
 		// Make one "empty" queue element
@@ -335,7 +335,7 @@ void Queue_UnitTest(void)
 			"PutLastElement data not contained");
 	UNITTEST_ASSERT((testQueue.first->dataSize == 5),
 			"PutLastElement data size error");
-	UNITTEST_ASSERT((testQueue.end == (QueueElement_t *)(testBuffer + sizeof(QueueElement_t) + 5)),
+	UNITTEST_ASSERT((testQueue.end == (QueueElement_t *)(MEM_MAKE_ALIGNED_ADDRESS((testBuffer + sizeof(QueueElement_t) + 5)))),
 			"PutLastElement end pointer error");
 
 

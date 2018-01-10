@@ -50,6 +50,12 @@
 
 
 
+///< Make address to aligned address (upward rounding to word aligned)
+// TODO: It is architecture dependent
+#define MEM_MAKE_ALIGNED_ADDRESS(_address)				(((uint32_t)_address % 4) ? ((uint32_t)_address + (4 - ((uint32_t)_address % 4))) : ((uint32_t)_address))
+
+
+
 /*------------------------------------------------------------------------------
  *  Global function declarations
  *----------------------------------------------------------------------------*/
