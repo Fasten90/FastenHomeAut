@@ -3,11 +3,45 @@
  *		Created on:		2018-01-06
  *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Dynamic queue for giving/sending.
+ *						- It is useful for unknown message sending, if length range is large (e.g. message length: from 1 to 100)
+ *						- Header structure has a large size (~44 byte, if STATISTICS and GUARD configs are turned on),
+ *							therefore this module is not recommended to use if only send small packages
+ *							(small size array-array is better: ARRAY[MSG_MAX_LENGTH][MSG_MAX_COUNT])
  *		Target:			STM32Fx
  *		Version:		-
  *		Last modified:	2018-01-06
+ *
+ *
+ *
+ * ---------------------------------------
+ *			How does it work?
+ * ---------------------------------------
+ *
+ * Start:
+ * 1. state: one full empty queue
+ *
+ * p
+ * |
+ * ˇ
+ * +--------------+
+ * |              |
+ * +--------------+
+ *
+ * 2. state: insert a element
+ *
+ * pData   pEmpty
+ * |       |
+ * ˇ       ˇ
+ * +-------+------+
+ * |       |      |
+ * +-------+------+
+ *
  */
+
+
+// TODO: Végiggondolni: queue element struktúra buffer is legyen, és RAM buffer is külön? Inkább egy buffer
+// TODO: láncolt adat? Még nem érdemes megcsinálni. Előnye: const és ram adat is mehet egymás után
 
 
 
@@ -55,30 +89,6 @@ static void * Queue_SearchEmptySpace(QueueListInfo_t * queue, size_t dataSize);
 /*------------------------------------------------------------------------------
  *  Functions
  *----------------------------------------------------------------------------*/
-
-/*
- * 1. one full empty queue
- *
- * p
- * |
- * ˇ
- * +--------------+
- * |              |
- * +--------------+
- *
- * 2. insert a element
- *
- * pData   pEmpty
- * |       |
- * ˇ       ˇ
- * +-------+------+
- * |       |      |
- * +-------+------+
- *
- */
-
-// TODO: Végiggondolni: queue element struktúra buffer is legyen, és RAM buffer is külön? Inkább egy buffer
-// TODO: láncolt adat? Még nem érdemes megcsinálni. Előnye: const és ram adat is mehet egymás után
 
 
 
@@ -177,7 +187,6 @@ static void * Queue_SearchEmptySpace(QueueListInfo_t * queue, size_t dataSize)
 
 
 
-// TODO: Adding Queue pointer?
 bool Queue_GetFirstElement(QueueListInfo_t * queue, void * buffer, size_t * dataSize, size_t bufferSize, bool needDelete);
 bool Queue_GetFirstElement(QueueListInfo_t * queue, void * buffer, size_t * dataSize, size_t bufferSize, bool needDelete)
 {
