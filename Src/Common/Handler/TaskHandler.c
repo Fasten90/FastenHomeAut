@@ -114,7 +114,9 @@ void TaskHandler_Init(void)
 	for (i = 0; i < TasksNum; i++)
 	{
 		TaskList[i].tick = 0;
+#ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
 		TaskList[i].taskRunCount = 0;
+#endif
 	}
 }
 
@@ -224,7 +226,7 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 #endif
 
 	// Execute task
-	TaskList[taskID].taskFunction(source);
+	result = TaskList[taskID].taskFunction(source);
 
 #ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
 	uprintf("- %s task run %s\r\n", TaskList[taskID].taskName, (result == TaskResult_Ok) ? ("successful") : ("failed"));

@@ -2610,11 +2610,13 @@ static CmdH_Result_t CommandFunction_TaskHandler(uint32_t argc, char** argv)
 
 		result = CmdH_Result_Ok;
 	}
-	#endif
 	else
 	{
 		result = CmdH_Result_Error_WrongArgument1;
 	}
+	#else
+	(void)argv;
+	#endif
 
 	return result;
 }
