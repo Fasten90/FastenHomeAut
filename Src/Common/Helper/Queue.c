@@ -296,7 +296,7 @@ void Queue_Defragmentation(void);
 #ifdef MODULE_QUEUE_UNITTEST_ENABLE
 void Queue_UnitTest(void)
 {
-	#define TEST_BUFFER_SIZE		(100U)
+	#define TEST_BUFFER_SIZE		(200U)
 	uint8_t testBuffer[TEST_BUFFER_SIZE];
 	QueueListInfo_t testQueue =
 	{
@@ -331,12 +331,48 @@ void Queue_UnitTest(void)
 			"PutLastElement First-End pointer error");
 	UNITTEST_ASSERT((testQueue.first->dataPointer == (testBuffer + sizeof(QueueElement_t))),
 			"PutLastElement dataPointer error");
-	UNITTEST_ASSERT(!StrCmp((char *)(testQueue.first->dataPointer), "12345"),
+	UNITTEST_ASSERT(!StrCmpWithLength((char *)(testQueue.first->dataPointer), "12345", 5),
 			"PutLastElement data not contained");
 	UNITTEST_ASSERT((testQueue.first->dataSize == 5),
 			"PutLastElement data size error");
 	UNITTEST_ASSERT((testQueue.end == (QueueElement_t *)(MEM_MAKE_ALIGNED_ADDRESS((testBuffer + sizeof(QueueElement_t) + 5)))),
 			"PutLastElement end pointer error");
+
+
+	// Add an element
+	UNITTEST_ASSERT(Queue_PutLastElement(&testQueue, "4321", 4, QueuedataType_Ram),
+			"PutLastElement");
+
+	// Empty + new added queue element
+	UNITTEST_ASSERT((testQueue.elementNum == 3),
+			"PutLastElement ElementNum error");
+	UNITTEST_ASSERT((testQueue.first->nextQueueData->nextQueueData == testQueue.end),
+			"PutLastElement First->Next - End pointer error");
+	UNITTEST_ASSERT((testQueue.first->nextQueueData == testQueue.end->prevQueueData),
+			"PutLastElement First->Next - End pointer error");
+	/*UNITTEST_ASSERT((testQueue.first->dataPointer == (testBuffer + sizeof(QueueElement_t))),
+			"PutLastElement dataPointer error");*/
+	UNITTEST_ASSERT(!StrCmpWithLength((char *)(testQueue.first->nextQueueData->dataPointer), "4321", 4),
+			"PutLastElement data not contained");
+	UNITTEST_ASSERT((testQueue.first->nextQueueData->dataSize == 4),
+			"PutLastElement data size error");
+	/*UNITTEST_ASSERT((testQueue.end == (QueueElement_t *)(MEM_MAKE_ALIGNED_ADDRESS((testBuffer + sizeof(QueueElement_t) + 4)))),
+			"PutLastElement end pointer error");*/
+
+	// Empty block
+	UNITTEST_ASSERT((testQueue.end->isUsed == QUEUE_NOTUSED),
+				"PutLastElement end empty queue element error");
+
+
+	// TODO: Add test: Put Const data
+	// TODO: Add test: Get data
+
+
+	// Final checks
+	UNITTEST_ASSERT((testQueue.first->prevQueueData == NULL),
+			"PutLastElement First->prev not NULL error");
+	UNITTEST_ASSERT((testQueue.end->nextQueueData == NULL),
+			"PutLastElement End->next not NULL error");
 
 
 	UnitTest_End();
