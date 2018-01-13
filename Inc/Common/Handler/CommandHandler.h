@@ -42,6 +42,7 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
+// TODO: These are need?
 #ifndef CONFIG_MODULE_COMMUNICATION_ENABLE
 typedef uint8_t CommProtocol_t;
 typedef uint8_t CommProtocolBit_t;

@@ -83,7 +83,7 @@ uint32_t GlobVarH_TemporaryValue = 0;							///< used when the global variable h
 
 
 #ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
-/**<
+/**
  * Used as bit field to enable/disable variable tracing.
  * e.g.: bit 1. corresponds to the 1st item in GlobVarH_VarList[] -> NOTE 32th variable can not be traced!
  */
@@ -91,7 +91,7 @@ static uint32_t GlobVarH_TraceVarEnabled = 0;
 
 	#ifdef CONFIG_GLOBALVARHANDLER_TRACE_RAM_BUFFER
 		#define GLOBALVARHANDLER_TRACE_BUFFER_SIZE 		(100U)	///< size of GlobVarH_TraceRamBuffer[]
-/**<
+/**
  * Array to store the traced values. Used as ring buffer: when the buffer is full, value storage starts from item 0 again, old values
  * will be overwritten.
  */
@@ -685,7 +685,7 @@ static GlobVarH_ProcessResult_t GlobVarH_SetVariable(const GlobVarH_VarRecord_t 
 		else
 		{
 			// Failed set
-			// TODO: Process_FailSet
+			// TODO: Process_FailSet: Add new enum for this result?
 			result = GlobVarH_Process_Unknown;
 		}
 	}
@@ -1347,7 +1347,7 @@ void GlobVarH_ListAllVariableParameters(void)
 {
 	GlobVarH_ID_t i;
 
-	// TODO: Enumokat is kiírni, ha van?
+	// TODO: Print enums, if have? But We cannot print in one line (unknown length!)
 
 	// Send header
 	GlobVarH_ListAllVariable_SendHeader();
@@ -1445,6 +1445,7 @@ static void GlobVarH_SetTrace(GlobVarH_ID_t commandID, const char * param)
 	}
 	else
 	{
+		// \note: if the param does not equal to "enable" exactly, the tracing is disabled!
 		// TODO: Check "disable" or not?
 		GlobVarH_EnableTrace(commandID, false);
 	}

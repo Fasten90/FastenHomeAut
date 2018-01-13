@@ -149,7 +149,7 @@ void TaskHandler_Scheduler(TaskTick_t elapsedTick)
 		// Need scheduling?
 		if (!TaskList[i].isDisabled)
 		{
-			if (!TaskList[i].isPeriodisScheduleDisabled
+			if (!TaskList[i].isPeriodicScheduleDisabled
 				&& TaskList[i].tick >= TaskList[i].taskScheduleRate)
 			{
 				// Schedule - periodical

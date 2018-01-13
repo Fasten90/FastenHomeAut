@@ -85,6 +85,7 @@ void CmdH_Init(void)
 /**
  * \brief	Prepare (Separate) the command and Find and Run it...
  * \note	Be careful! Only one call enabled, because this module use global variables
+ * \note	This function will modify the input parameter (command)
  */
 CmdH_Result_t CmdH_ExecuteCommand(char *command, char *response, size_t length)
 {
@@ -107,7 +108,8 @@ CmdH_Result_t CmdH_ExecuteCommand(char *command, char *response, size_t length)
 		Debug_Print(Debug_CommandHandler, "Error! Received 0 length response buffer!");
 		result = CmdH_Result_Error_CallCmdHandlerWithInvalidArgument;
 	}
-	if (StringLength(command) == 0)
+	if (StrTrim(command) == 0)
+	//if (StringLength(command) == 0)
 	{
 		Debug_Print(Debug_CommandHandler, "Error! Received 0 length command!");
 		result = CmdH_Result_Error_CallCmdHandlerWithInvalidArgument;

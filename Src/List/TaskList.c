@@ -167,7 +167,7 @@ Task_t TaskList[] =
 		.taskName = "DbgUartCommandRecv",
 		.taskFunction = Task_ProcessDebugUartCommandReceived,
 #ifdef CONFIG_MODULE_UART_REQUIRE_TASKSCHEDULE_ENABLE
-		.isPeriodisScheduleDisabled = true,
+		.isPeriodicScheduleDisabled = true,
 		.taskScheduleRate = 1000,
 #else
 		// UART handler not required task scheduling. Need check by periodically
@@ -179,7 +179,7 @@ Task_t TaskList[] =
 	{
 		.taskName = "ButtonPressed",
 		.taskFunction = Task_ProcessButtonPressed,
-		.isPeriodisScheduleDisabled = true,
+		.isPeriodicScheduleDisabled = true,
 		.taskScheduleRate = 10,
 	},
 #endif

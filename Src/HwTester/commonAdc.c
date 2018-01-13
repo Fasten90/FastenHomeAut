@@ -279,7 +279,7 @@ void CommonADC_Test(void)
 		
 		DelayMs(10);
 
-		uprintf("#\r\n");
+		uprintf("\r\n");
 		for (i = 0; i < ADC_CHANNEL_NUM; i++)
 		{
 			uprintf("%d. value: %d\r\n", i, ADC_MeasuredValues[i]);
@@ -342,11 +342,11 @@ void CommonADC_PrintAdcValue(uint8_t adcChannel)
 	if (adcChannel < ADC_CHANNEL_NUM)
 	{
 		// Print
-		CommandHandler_Printf("ADC: %d. value: %2.2f\r\n", adcChannel, ADC_ConvertedValues[adcChannel]);
+		CmdH_Printf("ADC: %d. value: %2.2f\r\n", adcChannel, ADC_ConvertedValues[adcChannel]);
 	}
 	else
 	{
-		CommandHandler_Printf("ERROR! Wrong ADC channel: %d!", adcChannel);
+		CmdH_Printf("ERROR! Wrong ADC channel: %d!", adcChannel);
 	}
 }
 

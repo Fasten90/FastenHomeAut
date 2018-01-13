@@ -3,7 +3,7 @@
  *		Created on:		2016-12-14
  *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		SWO (Serial Wire Output)
+ *		Function:		SWO (Serial Wire Output: SWD Debug print)
  *		Target:			STM32Fx
  *		Version:		v1
  *		Last modified:	2016-12-14

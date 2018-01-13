@@ -72,6 +72,11 @@ bool DateTime_ConvertStringToDateTime(const char *string, DateTime_t *dateTime)
 	bool isOk = true;
 	char *separated[2];
 
+	if ((string == NULL) || (dateTime == NULL))
+	{
+		return false;
+	}
+
 	if (StringLength(string) != (DATETIME_STRING_MAX_LENGTH - 1))
 	{
 		// Wrong length
@@ -151,12 +156,18 @@ bool DateTime_ConvertStringToDateTime(const char *string, DateTime_t *dateTime)
 
 /**
  * \brief	Convert DateString to Date
+ * \note	Str must be modificable!
  */
 bool DateTime_ConvertDateStringToDate(char *str, Date_t *date)
 {
 	char *separated[3] = { 0 };
 	bool isOk = true;
 	Date_t convertDate;
+
+	if ((str == NULL) || (date == NULL))
+	{
+		return false;
+	}
 
 	// Separate
 	if (STRING_Splitter(str, '-', separated, 3) == 3)
@@ -282,6 +293,11 @@ bool DateTime_CheckDateTime(DateTime_t *dateTime)
 uint8_t DateTime_PrintDateTimeToString(char *message, DateTime_t *dateTime)
 {
 
+	if ((message == NULL) || (dateTime == NULL))
+	{
+		return 0;
+	}
+
 	return usprintf(message, "%04d-%02d-%02d %02d:%02d:%02d",
 			dateTime->date.year+2000,
 			dateTime->date.month,
@@ -369,7 +385,7 @@ int32_t DateTime_CalculateDifferentOf2DateTime(DateTime_t *dateTime1, DateTime_t
  * \brief	Calculate DateTime second
  * 			Result it is elapsed seconds from 2000.01.01, 00:00:00
  * 			If DateTime is smaller than 2000..., the result is 0
- * 	\return
+ * \return Elapsed time in seconds
  */
 static uint32_t DateTime_CalculateDateTimeSecond(DateTime_t *dateTime)
 {
@@ -386,7 +402,7 @@ static uint32_t DateTime_CalculateDateTimeSecond(DateTime_t *dateTime)
 			// One year second = days of year * hours of day * minutes of hour * seconds of minute
 			second += 365 * 24 * 60 * 60;
 			// Check, this year is leap year?
-			if (DateTime_CheckItIsLeapYear(dateTime->date.year))
+			if (DateTime_CheckItIsLeapYear(i))
 			{
 				// Add one day
 				second += 24 * 60 * 60;
@@ -476,7 +492,7 @@ static uint8_t DateTime_GetDaysOfMonth(uint8_t year, uint8_t month)
 		//if ((month == 2) && ((year & 0x03) == 0))
 		if ((month == 2) && (!DateTime_CheckItIsLeapYear(year)))
 		{
-			// February
+			// February and leap year
 			days = 29;
 		}
 		else

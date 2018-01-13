@@ -69,7 +69,7 @@ typedef struct
 	TaskTick_t taskScheduleRate;				///< Task scheduling rate [ms] - Init/Runtime
 
 	bool isRequestScheduling;					///< Task scheduling request (true, if request) - Runtime
-	bool isPeriodisScheduleDisabled;			///< Task schedule (periodic) disabled - Init/Runtime
+	bool isPeriodicScheduleDisabled;			///< Task schedule (periodic) disabled - Init/Runtime
 	bool isRunOnce;								///< Task scheduling once - Init/Runtime
 	bool isTimeOutTask;							///< Task is work in TimeOut mode - Init/Runtime
 	bool isDisabled;							///< Task is disabled/enabled - Init/Runtime

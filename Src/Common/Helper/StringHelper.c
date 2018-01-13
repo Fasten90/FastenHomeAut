@@ -183,6 +183,7 @@ size_t UnsignedDecimalToStringSafe(uint32_t value, char *str, size_t maxLength)
 		if ((value >= decade) || (isStarted == true))
 		{
 			// Put first digit
+			// Add the ascii code of '0' character to get the desired value's caracter code
 			str[length] = ((value/decade) + '0');
 			length++;
 			isStarted = true;
@@ -195,6 +196,7 @@ size_t UnsignedDecimalToStringSafe(uint32_t value, char *str, size_t maxLength)
 	// TODO: Merge this "last digit" with above code
 	if ((length+1) < maxLength)
 	{
+		// Add the ascii code of '0' character to get the desired value's caracter code
 		str[length] = (value + '0');	// Last digit
 		length++;
 	}
@@ -238,6 +240,11 @@ uint8_t UnsignedDecimalToStringFill(uint32_t value, char *str, uint8_t fillLengt
 {
 	uint8_t length = 0;
 
+	if (str == NULL)
+	{
+		return 0;
+	}
+
 	length = UnsignedDecimalLength(value);
 
 	if (length >= fillLength)
@@ -272,6 +279,11 @@ uint8_t SignedDecimalToStringFill(int32_t value, char *str, uint8_t fillLength, 
 {
 	uint8_t length = 0;
 	uint8_t i;
+
+	if (str == NULL)
+	{
+		return 0;
+	}
 
 	if (value >= 0)
 	{
@@ -359,6 +371,11 @@ uint8_t ByteToHexaString(uint8_t byte, char *str)
 	uint8_t length = 0;
 	uint8_t hex;
 
+	if (str == NULL)
+	{
+		return 0;
+	}
+
 	// First hex
 	hex = (byte >> 4);
 	str[length++] = HexToHexChar(hex);
@@ -383,6 +400,11 @@ uint8_t DecimalToBinaryString(uint32_t value, char *str, uint8_t maxLength)
 {
 	uint8_t i;
 	int8_t bitIndex;
+
+	if (str == NULL)
+	{
+		return 0;
+	}
 
 	// Search first '1' bit:
 	bitIndex = GetLargestBitIndex(value);
@@ -428,6 +450,11 @@ uint8_t DecimalToHexaString(uint32_t value, char *str, uint8_t length)
 {
 	uint8_t i;
 	uint8_t octet;
+
+	if (str == NULL)
+	{
+		return 0;
+	}
 
 	// Check parameters
 	if ((length > 8) || (length == 0))
@@ -555,6 +582,11 @@ uint8_t StringIsUnsignedDecimalString(const char *str)
 	uint8_t length = 0;
 	uint8_t i;
 
+	if (str == NULL)
+	{
+		return 0;
+	}
+
 	for (i = 0; str[i] != '\0'; i++)
 	{
 		if (IsDecimalChar(str[i]))
@@ -581,6 +613,11 @@ uint8_t StringIsUnsignedDecimalString(const char *str)
 uint8_t StringIsSignedDecimalString(const char *str)
 {
 	uint8_t length = 0;
+
+	if (str == NULL)
+	{
+		return 0;
+	}
 
 	// Sign
 	if (str[0] == '-' )
@@ -654,6 +691,11 @@ bool StringBinaryToNum(const char *str, uint32_t *num)
 {
 	uint32_t value = 0;
 	uint8_t i;
+
+	if ((str == NULL) || (num == NULL))
+	{
+		return false;
+	}
 
 	if (StringLength(str) > 32)
 	{
@@ -1210,14 +1252,12 @@ uint8_t StrCmpFirst(const char *str1, const char *str2)
 		return 1;
 	}
 
-	while (*str1)
+	while (str1[i])
 	{
-		if ((*str1 != *str2) || (i >= STRING_SIZE_MAX))
+		if ((str1[i] != str2[i]) || (i >= STRING_SIZE_MAX))
 		{
 			return 1;	// not equal
 		}
-		str1++;
-		str2++;
 		i++;
 	}
 
