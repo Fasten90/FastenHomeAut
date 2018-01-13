@@ -93,7 +93,7 @@ typedef struct
  *----------------------------------------------------------------------------*/
 
 void TaskHandler_Init(void);
-void TaskHandler_Scheduler(TaskTick_t elapsedTick);
+void TaskHandler_Scheduler(void);
 
 void TaskHandler_SetTaskPeriodicTime(TaskID_t taskID, TaskTick_t taskTick);
 void TaskHandler_SetTaskOnceRun(TaskID_t taskID, TaskTick_t taskTick);

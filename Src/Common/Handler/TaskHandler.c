@@ -64,7 +64,6 @@ static uint8_t TaskHandler_StatisticsIndex = 0;
 #endif
 
 #ifdef CONFIG_TASKHANDLER_DEBUG_RUN_ENABLE
-static uint32_t TaskHandler_RunCnt = 0;
 static const char * TaskHandler_ActualRunningTaskName = NULL;
 static TaskID_t TaskHandler_ActualRunningTaskID = 0;
 #endif
@@ -124,56 +123,69 @@ void TaskHandler_Init(void)
 
 /**
  *	\brief	Schedule tasks (and increment elapsed time)
- *	\note	Recommend call from main loop for scheduling
+ *	\note	Recommend call last from main
+ *	\note	Never return, Do not call anything after this function
  */
-void TaskHandler_Scheduler(TaskTick_t elapsedTick)
+void TaskHandler_Scheduler(void)
 {
-	TaskID_t i;
+	uint32_t actualTick = 0;
+	uint32_t oldTick = HAL_GetTick();
+	uint32_t elapsedTick = 0;
 
-	// Time optimizing...
-	// TODO: Check "required" tasks!
-	if (elapsedTick == 0)
+
+	// Run TaskHandler - Infinite loop
+	// \note	Be careful, after this while loop is not reached
+	while (1)
 	{
-		return;
-	}
+		// Calculate elapsed tick
+		actualTick = HAL_GetTick();
+		elapsedTick = actualTick - oldTick;
+		oldTick = actualTick;
 
-	TaskHandler_IncrementTicks(elapsedTick);
-
-#ifdef CONFIG_TASKHANDLER_DEBUG_RUN_ENABLE
-	TaskHandler_RunCnt++;
-#endif
-
-	// Check list
-	for (i = 0; i < TasksNum; i++)
-	{
-		// Need scheduling?
-		if (!TaskList[i].isDisabled)
+		// Time optimizing...
+		// TODO: Check "required" tasks!
+		if (elapsedTick != 0)
 		{
-			if (!TaskList[i].isPeriodicScheduleDisabled
-				&& TaskList[i].tick >= TaskList[i].taskScheduleRate)
+			TaskID_t i;
+
+			TaskHandler_IncrementTicks(elapsedTick);
+
+			// Check schedule list
+			for (i = 0; i < TasksNum; i++)
 			{
-				// Schedule - periodical
-				TaskHandler_RunTask(i, ScheduleSource_PeriodicSchedule);
-			}
-			else if (TaskList[i].isRunOnce
-				&& TaskList[i].tick >= TaskList[i].taskScheduleRate)
-			{
-				// Schedule - once
-				TaskHandler_RunTask(i, ScheduleSource_RunOnce);
-			}
-			else if (TaskList[i].isTimeOutTask
-				&& TaskList[i].tick >= TaskList[i].taskScheduleRate)
-			{
-				// TimeOut task
-				TaskHandler_RunTask(i, ScheduleSource_TimeOut);
-			}
-			else if (TaskList[i].isRequestScheduling)
-			{
-				// Schedule - event triggered
-				TaskHandler_RunTask(i, ScheduleSource_EventTriggered);
+				// Need scheduling?
+				if (!TaskList[i].isDisabled)
+				{
+					// TODO: only parameter give in if(), and after that, call TaskHandler_RunTask with parameter
+					if (!TaskList[i].isPeriodicScheduleDisabled
+						&& TaskList[i].tick >= TaskList[i].taskScheduleRate)
+					{
+						// Schedule - periodical
+						TaskHandler_RunTask(i, ScheduleSource_PeriodicSchedule);
+					}
+					else if (TaskList[i].isRunOnce
+						&& TaskList[i].tick >= TaskList[i].taskScheduleRate)
+					{
+						// Schedule - once
+						TaskHandler_RunTask(i, ScheduleSource_RunOnce);
+					}
+					else if (TaskList[i].isTimeOutTask
+						&& TaskList[i].tick >= TaskList[i].taskScheduleRate)
+					{
+						// TimeOut task
+						TaskHandler_RunTask(i, ScheduleSource_TimeOut);
+					}
+					else if (TaskList[i].isRequestScheduling)
+					{
+						// Schedule - event triggered
+						TaskHandler_RunTask(i, ScheduleSource_EventTriggered);
+					}
+				}
 			}
 		}
-	}
+	}	// End of while(1)
+
+	// Never reach this / Never return
 }
 
 

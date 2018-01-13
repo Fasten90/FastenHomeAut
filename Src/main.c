@@ -368,23 +368,11 @@ int main(void)
 	// Task handler
 	TaskHandler_Init();
 
-	// TODO: Put these codes to TaskHandler?
-	uint32_t actualTick = 0;
-	uint32_t oldTick = HAL_GetTick();
-	uint32_t elapsedTick = 0;
 
-	// Run TaskHandler - Infinite loop
-	// \note	Be careful, after this while loop is not reached
-	while (1)
-	{
-		// Calculate elapsed tick
-		actualTick = HAL_GetTick();
-		elapsedTick = actualTick - oldTick;
-		oldTick = actualTick;
+	// Run task scheduler
+	TaskHandler_Scheduler();
 
-		// Run task scheduler
-		TaskHandler_Scheduler(elapsedTick);
-	}
+	// TaskHandler never return here!!
 #endif
 
 
