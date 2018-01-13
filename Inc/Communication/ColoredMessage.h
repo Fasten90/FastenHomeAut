@@ -9,8 +9,8 @@
  *		Last modified:	2016-09-28
  */
 
-#ifndef FORMATTEDMESSAGE_H_
-#define FORMATTEDMESSAGE_H_
+#ifndef COLOREDMESSAGE_H_
+#define COLOREDMESSAGE_H_
 
 
 
@@ -56,4 +56,4 @@ void FormattedMessage_Test(void);
 #endif
 
 
-#endif /* FORMATTEDMESSAGE_H_ */
+#endif /* COLOREDMESSAGE_H_ */
