@@ -8,8 +8,8 @@
  *						- Header structure has a large size (~44 byte, if STATISTICS and GUARD configs are turned on),
  *							therefore this module is not recommended to use if only send small packages
  *							(small size array-array is better: ARRAY[MSG_MAX_LENGTH][MSG_MAX_COUNT])
-*						- Now it can be used for FIFO queue/list
-*						- Will extended to LIFO queue/list using, but now it is not available
+ *						- Now it can be used for FIFO queue/list
+ *						- Will extended to LIFO queue/list using, but now it is not available
  *		Target:			STM32Fx
  *		Version:		-
  *		Last modified:	2018-01-06
