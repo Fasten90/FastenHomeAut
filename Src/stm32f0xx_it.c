@@ -124,7 +124,7 @@ void HardFault_Handler(void)
 		" handler: .word prvGetRegistersFromStack \n"
     );
 #endif
-#endif
+#endif	/* CONFIG_MODULE_HARDFAULTHANDLER_ENABLE */
 
 	Error_Handler();
 }
