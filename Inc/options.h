@@ -74,7 +74,7 @@
 
 
 ///< Display: Menu
-#define CONFIG_FUNCTION_DISPLAY_MENU
+//#define CONFIG_FUNCTION_DISPLAY_MENU
 #ifdef CONFIG_FUNCTION_DISPLAY_MENU
 	#ifndef CONFIG_MODULE_DISPLAY_ENABLE
 		#define CONFIG_MODULE_DISPLAY_ENABLE
@@ -405,6 +405,13 @@
 	#define CONFIG_MODULE_CONVERTTABLE_ENABLE
 
 	#define CONFIG_MODULE_UNITTEST_ENABLE
+
+	#ifdef CONFIG_MODULE_DISPLAY_ENABLE
+		#error "In PC/Windows mode Display module is not supported"
+	#endif
+	#ifdef CONFIG_MODULE_BUTTON_ENABLE
+		#error "In PC/Windows mode Button module is not supported"
+	#endif
 #endif
 
 
