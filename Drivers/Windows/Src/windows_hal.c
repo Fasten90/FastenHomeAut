@@ -42,6 +42,10 @@
 //static time_t StartupTime;
 static uint32_t uwTick = 0;
 
+///< Thread handles
+HANDLE WindowsHal_SystickThreadHandle;
+HANDLE WindowsHal_UartConsoleThreadHandle;
+
 
 
 /*------------------------------------------------------------------------------
@@ -49,8 +53,6 @@ static uint32_t uwTick = 0;
  *----------------------------------------------------------------------------*/
 
 extern void SysTick_Handler(void);
-
-
 
 DWORD WINAPI Windows_StdinReceiveThread(void* data);
 DWORD WINAPI Windows_SysTickThread(void* data);
@@ -91,9 +93,9 @@ void HAL_Init(void)
 	uwTick = 0;
 
 	// Create Thread
-	HANDLE thread = CreateThread(NULL, 0, Windows_SysTickThread, NULL, 0, NULL);
+	WindowsHal_SystickThreadHandle = CreateThread(NULL, 0, Windows_SysTickThread, NULL, 0, NULL);
 
-	if (!thread)
+	if (!WindowsHal_SystickThreadHandle)
 	{
 		printf("Error with thread!");
 	}
@@ -164,6 +166,7 @@ void HAL_Delay(__IO uint32_t Delay)
 	tickstart = HAL_GetTick();
 	while((HAL_GetTick() - tickstart) < Delay)
 	{
+		// Wait
 	}
 }
 
@@ -209,9 +212,9 @@ void HAL_ResumeTick(void)
 HAL_StatusTypeDef HAL_UART_Init(UART_HandleTypeDef *huart)
 {
 
-	HANDLE thread = CreateThread(NULL, 0, Windows_StdinReceiveThread, NULL, 0, NULL);
+	WindowsHal_UartConsoleThreadHandle = CreateThread(NULL, 0, Windows_StdinReceiveThread, NULL, 0, NULL);
 
-	if (!thread)
+	if (!WindowsHal_UartConsoleThreadHandle)
 	{
 		printf("Error with thread!");
 	}

@@ -674,6 +674,7 @@ void CmdH_UnitTest(void)
 
 
 	//-----------------------------------------------------
+#if defined(CONFIG_MODULE_GLOBALVARHANDLER_ENABLE)
 	// test with 1 parameter:
 	StrCpy(cmdSrcBuffer, "get");			// command string must reside in RAM!
 	StrCpy(cmdParamBuffer, "SN");			// command string must reside in RAM!
@@ -691,6 +692,7 @@ void CmdH_UnitTest(void)
 	// Check separated / splitted command
 	UNITTEST_ASSERT(!StrCmp(CmdH_CommandArguments[0], "get"), "CmdH_PrepareFindExecuteCommand error");
 	UNITTEST_ASSERT(!StrCmp(CmdH_CommandArguments[1], "SN"), "CmdH_PrepareFindExecuteCommand error");
+#endif /* CONFIG_MODULE_GLOBALVARHANDLER_ENABLE */
 
 
 	//-----------------------------------------------------

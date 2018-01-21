@@ -720,7 +720,7 @@ static CmdH_Result_t CommandFunction_unittest(uint32_t argc, char** argv)
 	CmdH_UnitTest();
 #endif
 
-#ifdef MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
+#if defined(CONFIG_MODULE_GLOBALVARHANDLER_ENABLE) && defined(MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE)
 	GlobVarH_UnitTest();
 #endif
 
@@ -732,7 +732,7 @@ static CmdH_Result_t CommandFunction_unittest(uint32_t argc, char** argv)
 	TaskHandler_UnitTest();
 #endif
 
-#ifdef MODULE_EVENTLOG_UNITTEST_ENABLE
+#if defined(CONFIG_MODULE_EVENTLOG_ENABLE) && defined(MODULE_EVENTLOG_UNITTEST_ENABLE)
 	EventLog_UnitTest();
 #endif
 

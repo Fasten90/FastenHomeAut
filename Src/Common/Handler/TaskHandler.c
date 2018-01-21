@@ -538,8 +538,7 @@ void TaskHandler_UnitTest(void)
 
 
 	// Test Scheduler time elapsing
-
-	TaskHandler_Scheduler(1);
+	TaskHandler_IncrementTicks(1);
 
 	// Check all tick is incremented?
 	for (i = 0; i < TasksNum; i++)

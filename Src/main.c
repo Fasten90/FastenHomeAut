@@ -227,7 +227,7 @@ int main(void)
 
 	// STDIN
 	UART_HandleTypeDef Debug_UartHandle;
-	UART_Init(&Debug_UartHandle);
+	HAL_UART_Init(&Debug_UartHandle);
 #endif
 
 
