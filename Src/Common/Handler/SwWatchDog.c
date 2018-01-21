@@ -22,7 +22,7 @@
 #ifdef CONFIG_DEBUG_SW_WATCHDOG_ENABLE
 #include "GenericTypeDefs.h"
 #include "SwWatchDog.h"
-#include "Globals.h"
+#include "ErrorHandler.h"
 
 
 

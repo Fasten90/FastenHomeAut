@@ -175,7 +175,7 @@
 #include "CommonDAC.h"
 #include "CommonUART.h"
 #include "ADC.h"
-#include "Globals.h"
+#include "ErrorHandler.h"
 #include "Bluetooth_HC05.h"
 #include "GlobalVarHandler.h"
 #include "WatchDog.h"

@@ -22,7 +22,7 @@
 #include "CommandHandler.h"
 #include "GlobalVarHandler.h"
 #include "GlobVarList.h"
-#include "Globals.h"
+#include "ErrorHandler.h"
 #include "Terminal.h"
 #include "Button.h"
 #include "DateTime.h"
@@ -54,6 +54,7 @@
 #include "SysTime.h"
 #include "CommonUART.h"
 #include "CommandList.h"
+#include "BoardInfos.h"
 
 
 

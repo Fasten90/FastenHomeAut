@@ -1,5 +1,5 @@
 /*
- *		Globals.c
+ *		ErrorHandler.c
  *		Created on:		2016-09-15
  *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
@@ -11,14 +11,14 @@
 
 
 
+#include "ErrorHandler.h"
 #include "options.h"
 #include "compiler.h"
-#include "version.h"
 #include "LED.h"
 #include "StringHelper.h"
 #include "DebugUart.h"
-#include "Globals.h"
 #include "TaskHandler.h"
+#include "Timing.h"
 
 #ifdef CONFIG_PLATFORM_PC_WINDOWS
 #include "windows_hal.h"
@@ -30,30 +30,11 @@
  *								Global variables
  *----------------------------------------------------------------------------*/
 
-const char Global_BoardName[]	= BOARD_NAME;
-const char Global_Version[]		= VERSION_STRING;
-const char Global_BoardMCU[]	= BOARD_MCU;
-char Global_DeviceName[20] 		= BOARD_NAME;
-
 
 
 /*------------------------------------------------------------------------------
  *									Functions
  *----------------------------------------------------------------------------*/
-
-/**
- * \brief		Delay (ms)
- * \param[in]	ms	millisecond, which time delay
- */
-inline void DelayMs(uint32_t ms)
-{
-#ifdef CONFIG_USE_FREERTOS
-	vTaskDelay((TickType_t)(ms/portTICK_PERIOD_MS));
-#else
-	HAL_Delay(ms);
-#endif
-}
-
 
 
 /**

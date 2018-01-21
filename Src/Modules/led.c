@@ -19,7 +19,8 @@
 #include "options.h"
 #include "board.h"
 #include "StringHelper.h"
-#include "Globals.h"
+#include "ErrorHandler.h"
+#include "Timing.h"
 
 
 #ifdef CONFIG_MODULE_LED_ENABLE

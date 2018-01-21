@@ -127,6 +127,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 											DEBUG_BREAKPOINT();	\
 									} while(0)
 	#else
+		// Debug mode turned off (ASSERT() do nothing)
 		#define ASSERT(__e)
 	#endif
 #endif

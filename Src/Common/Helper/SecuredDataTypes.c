@@ -16,7 +16,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "compiler.h"
-#include "Globals.h"
+#include "ErrorHandler.h"
 #include "SecuredDataTypes.h"
 
 

@@ -19,7 +19,8 @@
 
 #include "Display_SSD1306.h"
 #include "DisplayImages.h"
-#include "Globals.h"
+#include "ErrorHandler.h"
+#include "Timing.h"
 #include "StringHelper.h"
 #include "Display.h"
 

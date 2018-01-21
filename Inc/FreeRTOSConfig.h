@@ -84,7 +84,7 @@
 
 /* USER CODE BEGIN Includes */   	      
 /* Section where include file can be added */
-#include "globals.h"
+#include "ErrorHandler.h"
 extern uint32_t SystemCoreClock;
 /* USER CODE END Includes */ 
 

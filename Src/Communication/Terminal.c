@@ -20,7 +20,7 @@
 #ifdef CONFIG_MODULE_TERMINAL_ENABLE
 
 #include "StringHelper.h"
-#include "Globals.h"
+#include "ErrorHandler.h"
 #include "CommandList.h"
 #include "CommandHandler.h"
 #include "CircularBuffer.h"

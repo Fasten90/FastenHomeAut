@@ -42,7 +42,7 @@
 
 #include "stm32f0xx_it.h"
 
-#include "Globals.h"
+#include "ErrorHandler.h"
 #include "SwWatchDog.h"
 #include "HardFaultHandler.h"
 

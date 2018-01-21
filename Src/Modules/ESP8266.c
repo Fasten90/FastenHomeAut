@@ -23,7 +23,7 @@
 #include "TaskList.h"
 #include "CommandHandler.h"
 #include "DateTime.h"
-#include "Globals.h"
+#include "ErrorHandler.h"
 #include "UART.h"
 
 #include "ESP8266.h"

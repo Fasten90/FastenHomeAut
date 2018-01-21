@@ -20,7 +20,7 @@
 #include "options.h"
 #include "Communication.h"
 #include "StringHelper.h"
-#include "Globals.h"
+#include "ErrorHandler.h"
 #include "CircularBuffer.h"
 #include "CommandHandler.h"
 #include "DebugUart.h"

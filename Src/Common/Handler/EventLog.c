@@ -33,7 +33,7 @@
 
 #ifdef MODULE_EVENTLOG_UNITTEST_ENABLE
 	#include "UnitTest.h"
-	#include "Globals.h"
+	#include "ErrorHandler.h"
 #endif
 
 

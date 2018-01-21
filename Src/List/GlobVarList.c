@@ -17,7 +17,7 @@
 
 #include "GlobalVarHandler.h"
 #include "GlobVarList.h"
-#include "Globals.h"
+#include "ErrorHandler.h"
 #include "ADC.h"
 
 

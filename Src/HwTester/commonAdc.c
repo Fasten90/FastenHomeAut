@@ -17,7 +17,7 @@
 
 #include "compiler.h"
 #include "CommandHandler.h"
-#include "Globals.h"
+#include "ErrorHandler.h"
 #include "DebugUart.h"
 #include "CommonADC.h"
 
