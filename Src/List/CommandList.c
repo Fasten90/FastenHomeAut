@@ -2417,7 +2417,7 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 			{
 				/*
 				 * Generate Fault to test FaultHandler()
-				 * \note	!! Be careful !! It is an error, the sw will crash (go to FaultHandler) !!
+				 * \note	!! Be careful !! It is an error, the SW will crash (go to FaultHandler) !!
 				 */
 
 				// Const write

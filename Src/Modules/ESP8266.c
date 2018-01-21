@@ -759,23 +759,19 @@ bool ESP8266_ConnectToWifiNetwork(void)
 		// "OK"
 		ESP8266_LED_OK();
 	}
-	else if (!StrCmpFirst("\r\nFAIL", (const char *)ESP8266_RxBuffer))
+	else if (!StrCmpFirst("\r\nFAIL", (const char *)ESP8266_RxBuffer)
+			|| (!StrCmpFirst("\r\nERRO", (const char *)ESP8266_RxBuffer)))
 	{
 		// "FAIL"
-		// AT+CWJAP=\"networkname\",\"password\"\r\r\n\r\nFAIL\r\n")
-		ESP8266_LED_FAIL();
-		return false;
-	}
-	else if (!StrCmpFirst("\r\nERRO", (const char *)ESP8266_RxBuffer))
-	{
 		// "ERROR"
-		// AT+CWJAP=\"networkname\",\"password\"\r\r\n\r\nERROR\r\n")
+		ESP8266_DEBUG_PRINT("Received FAIL/ERROR at connection");
 		ESP8266_LED_FAIL();
 		return false;
 	}
 	else
 	{
 		// Received unknown message
+		ESP8266_DEBUG_PRINT("Received unknown message at connection");
 		ESP8266_LED_FAIL();
 		return false;
 	}
@@ -1108,6 +1104,7 @@ static bool ESP8266_SendTcpMessageBlockingMode(const char *message)
 	}
 	else if (!StrCmpFirst("link is not\r\n", (const char *)&ESP8266_RxBuffer[1]))
 	{
+		ESP8266_DEBUG_PRINT("There is no link");
 		ESP8266_LED_FAIL();
 		return false;
 	}

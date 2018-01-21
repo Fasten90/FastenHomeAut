@@ -110,7 +110,7 @@ static uint8_t GlobVarH_TraceRam_BufferCnt = 0;					///< current position in Glo
 static bool GlobVarH_CheckGlobalVarArray(const GlobVarH_VarListInfo_t *varList);
 #endif
 
-static GlobVarH_ID_t GlobVarH_SearchVariableName(const GlobVarH_VarListInfo_t *varList, const char *commandName, const GlobVarH_VarRecord_t **varRecord);
+static GlobVarH_ID_t GlobVarH_SearchVariableName(const GlobVarH_VarListInfo_t *varList, const char *varName, const GlobVarH_VarRecord_t **varRecord);
 static GlobVarH_ProcessResult_t GlobVarH_SetVariable(const GlobVarH_VarRecord_t *varRecord, const char *param);
 static GlobVarH_ProcessResult_t GlobVarH_CheckValue(const GlobVarH_VarRecord_t *varRecord, uint32_t num);
 static void GlobVarH_PrintVariableDescriptions (const GlobVarH_VarRecord_t *varRecord);

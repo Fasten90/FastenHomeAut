@@ -162,8 +162,7 @@ void HAL_IncTick(void)
   */
 void HAL_Delay(__IO uint32_t Delay)
 {
-	uint32_t tickstart = 0U;
-	tickstart = HAL_GetTick();
+	uint32_t tickstart = HAL_GetTick();
 	while((HAL_GetTick() - tickstart) < Delay)
 	{
 		// Wait
@@ -237,7 +236,7 @@ DWORD WINAPI Windows_StdinReceiveThread(void* data)
 		// Not safe!
 		char str[50] = { 0 };
 		char respBuffer[2048];
-		char * command = NULL;
+		char * command;
 
 		printf("Type message: ");
 
