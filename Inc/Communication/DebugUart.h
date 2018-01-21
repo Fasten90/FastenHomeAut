@@ -89,7 +89,7 @@ void DebugUart_ProcessReceivedCharacters(void);
 
 // Not used DEBUGUART
 
-#ifndef CONFIG_MICROCONTROLLER_PC
+#ifndef CONFIG_PLATFORM_PC_WINDOWS
 
 #define uprintf(...)							(0)
 #define DebugUart_SendChar(_c)					(putc)_c

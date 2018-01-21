@@ -29,15 +29,15 @@
 #endif
 
 ///< Includes microcontroller family libraries
-#if defined(CONFIG_MICROCONTROLLER_STM32F4xx)
+#if defined(CONFIG_PLATFORM_MCU_STM32F4xx)
 	#include "stm32f4xx_hal.h"
 	#include "stm32f4xx.h"
 	#include "stm32f4xx_it.h"
-#elif defined(CONFIG_MICROCONTROLLER_STM32F0xx)
+#elif defined(CONFIG_PLATFORM_MCU_STM32F0xx)
 	#include "stm32f0xx_hal.h"
 	#include "stm32f0xx.h"
 	#include "stm32f0xx_it.h"
-#elif defined(CONFIG_MICROCONTROLLER_PC)
+#elif defined(CONFIG_PLATFORM_PC_WINDOWS)
 	#include "windows_hal.h"
 #else
 #warning "Missed microcontroller family define / include"

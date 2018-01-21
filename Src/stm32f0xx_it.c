@@ -33,7 +33,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "options.h"
 
-#ifndef CONFIG_MICROCONTROLLER_PC
+#ifndef CONFIG_PLATFORM_PC_WINDOWS
 #include "stm32f0xx_hal.h"
 #include "stm32f0xx.h"
 #else

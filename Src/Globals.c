@@ -20,7 +20,7 @@
 #include "Globals.h"
 #include "TaskHandler.h"
 
-#ifdef CONFIG_MICROCONTROLLER_PC
+#ifdef CONFIG_PLATFORM_PC_WINDOWS
 #include "windows_hal.h"
 #endif
 

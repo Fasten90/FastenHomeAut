@@ -59,7 +59,7 @@ static const char * HardFault_GetReason(CortexM_HardFault_CCR_register_t reg)
 {
 	const char * msg = NULL;
 
-#ifdef CONFIG_MICROCONTROLLER_STM32F0xx
+#ifdef CONFIG_PLATFORM_MCU_STM32F0xx
 	// TODO: If more bits are set?
 	if (reg.regbits.StkAlign)
 	{

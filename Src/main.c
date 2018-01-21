@@ -180,7 +180,7 @@
 #include "GlobalVarHandler.h"
 #include "WatchDog.h"
 
-#ifdef CONFIG_MICROCONTROLLER_PC
+#ifdef CONFIG_PLATFORM_PC_WINDOWS
 #include "windows_hal.h"
 #endif
 
@@ -218,7 +218,7 @@ int main(void)
 	/* Configure the system clock */
 	SystemClock_Config();
 
-#ifdef CONFIG_MICROCONTROLLER_PC
+#ifdef CONFIG_PLATFORM_PC_WINDOWS
 	#ifdef CONFIG_MODULE_UNITTEST_ENABLE
 	char responseBuffer[2048];
 	CmdH_ExecuteCommand("unittest", responseBuffer, 2048);
@@ -455,7 +455,7 @@ void SystemClock_Config(void)
 
 
 
-#ifdef CONFIG_MICROCONTROLLER_PC
+#ifdef CONFIG_PLATFORM_PC_WINDOWS
 /**
  * System Clock Configuration
  */

@@ -72,11 +72,11 @@ static uint32_t Reset_GetResetReason(void)
 		*	#define RCC_FLAG_WWDGRST                 ((uint8_t)0x7EU)
 		*	#define RCC_FLAG_LPWRRST                 ((uint8_t)0x7FU)
 		 */
-#ifdef CONFIG_MICROCONTROLLER_STM32F4xx
+#ifdef CONFIG_PLATFORM_MCU_STM32F4xx
 		if (__HAL_RCC_GET_FLAG(RCC_FLAG_BORRST + i))
-#elif defined(CONFIG_MICROCONTROLLER_STM32F0xx)
+#elif defined(CONFIG_PLATFORM_MCU_STM32F0xx)
 		if (__HAL_RCC_GET_FLAG(RCC_FLAG_OBLRST + i))
-#elif defined(CONFIG_MICROCONTROLLER_PC)
+#elif defined(CONFIG_PLATFORM_PC_WINDOWS)
 		if (0)
 #else
 #error "Unknown Microcontroller family"

@@ -60,7 +60,7 @@ typedef unsigned char				uint8_t;
 typedef signed char					int8_t;
 typedef short unsigned int			uint16_t;
 typedef short signed int			int16_t;
-#ifndef CONFIG_USE_COMPILER_GCC
+#ifndef __GNUC__
 typedef unsigned int				uint32_t;
 typedef signed int					int32_t;
 #endif

@@ -20,7 +20,7 @@
  *----------------------------------------------------------------------------*/
 
 
-#ifdef CONFIG_MICROCONTROLLER_STM32F0xx
+#ifdef CONFIG_PLATFORM_MCU_STM32F0xx
 	// STM32F0
 	#include "stm32f0xx_hal.h"
 	#include "stm32_hal_legacy.h"
@@ -48,7 +48,7 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-#ifdef CONFIG_MICROCONTROLLER_STM32F0xx
+#ifdef CONFIG_PLATFORM_MCU_STM32F0xx
 typedef union
 {
 	struct
