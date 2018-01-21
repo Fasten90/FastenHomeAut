@@ -15,8 +15,9 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
+#include "options.h"
 #include "compiler.h"
-#include "WatchDog.h"
+#include "Watchdog.h"
 
 
 
@@ -37,7 +38,7 @@ IWDG_HandleTypeDef IWDG_Handle;
  */
 void Watchdog_Init(void)
 {
-	// Configurate IWDG
+	// Configure IWDG
 	IWDG_Handle.Init.Prescaler = IWDG_PRESCALER_32;
 	IWDG_Handle.Init.Reload = IWDG_RLR_RL;	// Max value
 	IWDG_Handle.Init.Window = IWDG_WINDOW_DISABLE;
@@ -47,6 +48,10 @@ void Watchdog_Init(void)
 	{
 		Error_Handler();
 	}
+
+#ifdef CONFIG_DEBUG_MODE
+	__HAL_DBGMCU_FREEZE_IWDG();
+#endif
 }
 
 

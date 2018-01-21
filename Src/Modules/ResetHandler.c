@@ -3,7 +3,7 @@
  *		Created on:		2017-02-27
  *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Reset module
+ *		Function:		ResetHandler module
  *		Target:			STM32Fx
  *		Version:		v1
  *		Last modified:	2017-02-27

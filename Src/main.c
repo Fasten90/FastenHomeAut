@@ -178,7 +178,7 @@
 #include "ErrorHandler.h"
 #include "Bluetooth_HC05.h"
 #include "GlobalVarHandler.h"
-#include "WatchDog.h"
+#include "Watchdog.h"
 
 #ifdef CONFIG_PLATFORM_PC_WINDOWS
 #include "windows_hal.h"

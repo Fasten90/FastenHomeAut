@@ -29,7 +29,7 @@
 #include "Display.h"
 #include "Display_SSD1306.h"
 #include "LED.h"
-#include "WatchDog.h"
+#include "Watchdog.h"
 #include "MathHelper.h"
 #include "CircularBuffer.h"
 #include "ESP8266.h"
