@@ -15,7 +15,7 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
-#include "include.h"
+#include "compiler.h"
 #include "EscapeSequence.h"
 #include "ColoredMessage.h"
 #include "Debug.h"

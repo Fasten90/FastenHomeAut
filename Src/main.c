@@ -155,7 +155,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
-#include "include.h"
+#include "compiler.h"
 #include "Button.h"
 #include "LED.h"
 #include "CommandHandler.h"

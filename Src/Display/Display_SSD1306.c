@@ -25,7 +25,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
-#include "include.h"
+#include "compiler.h"
 #include "MemHandler.h"
 #include "Globals.h"
 #include "DebugUart.h"

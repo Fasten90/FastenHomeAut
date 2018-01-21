@@ -17,7 +17,7 @@
 
 #include <stdarg.h>		// For va_list
 #include "options.h"
-#include "include.h"
+#include "compiler.h"
 #include "StringHelper.h"
 #include "CircularBuffer.h"
 #include "TaskList.h"

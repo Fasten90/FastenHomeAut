@@ -15,7 +15,7 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
-#include "include.h"
+#include "compiler.h"
 #include "CommandHandler.h"
 #include "Globals.h"
 #include "DebugUart.h"

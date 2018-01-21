@@ -16,7 +16,7 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
-#include "include.h"
+#include "compiler.h"
 #include "board.h"
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 #include "DebugUart.h"

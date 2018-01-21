@@ -14,7 +14,7 @@
  *----------------------------------------------------------------------------*/
  
 #include "SysManager.h"
-#include "include.h"
+#include "compiler.h"
 
 #include "homeautmessage.h"
 

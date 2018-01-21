@@ -15,7 +15,7 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
-#include "include.h"
+#include "compiler.h"
 
 #include "StringHelper.h"
 #include "ColoredMessage.h"

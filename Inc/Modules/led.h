@@ -18,7 +18,7 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
-#include "include.h"
+#include "compiler.h"
 #include "options.h"
 #include "board.h"
 

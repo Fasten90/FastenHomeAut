@@ -19,7 +19,7 @@
 
 #ifdef CONFIG_MODULE_RESETREASON_ENABLE
 
-#include "include.h"
+#include "compiler.h"
 #include "DebugUart.h"
 #include "StringHelper.h"
 #include "ResetHandler.h"

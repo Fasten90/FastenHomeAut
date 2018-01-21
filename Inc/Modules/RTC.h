@@ -18,7 +18,7 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
-#include "include.h"
+#include "compiler.h"
 
 
 #ifdef CONFIG_MODULE_RTC_ENABLE

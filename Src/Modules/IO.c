@@ -17,7 +17,7 @@
 
 #include "options.h"
 #include "board.h"
-#include "include.h"
+#include "compiler.h"
 #include "IO.h"
 
 

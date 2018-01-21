@@ -19,7 +19,7 @@
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
-#include "include.h"
+#include "compiler.h"
 
 
 // This font contain only 11 "font character": 0-9 (numbers) + ':' character for hour displaying

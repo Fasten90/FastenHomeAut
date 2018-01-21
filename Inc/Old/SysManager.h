@@ -19,7 +19,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "homeautmessage.h"
-#include "include.h"
+#include "compiler.h"
 
 
 

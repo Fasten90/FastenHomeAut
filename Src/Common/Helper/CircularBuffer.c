@@ -16,7 +16,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
-#include "include.h"
+#include "compiler.h"
 #include "CircularBuffer.h"
 #include "MemHandler.h"
 

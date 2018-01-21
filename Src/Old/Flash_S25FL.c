@@ -14,7 +14,7 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 #include <Flash_S25FL.h>
-#include "include.h"
+#include "compiler.h"
 
 
 #ifdef CONFIG_MODULE_FLASH_ENABLE

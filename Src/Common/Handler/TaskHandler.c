@@ -16,7 +16,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
-#include "include.h"
+#include "compiler.h"
 #include "TaskList.h"
 #include "TaskHandler.h"
 #include "CommandHandler.h"

@@ -19,7 +19,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
-#include "include.h"
+#include "compiler.h"
 
 
 #ifdef CONFIG_MODULE_LEDPWM_ENABLE

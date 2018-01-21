@@ -15,7 +15,7 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
-#include "include.h"
+#include "compiler.h"
 
 #ifdef CONFIG_MODULE_CONVERTTABLE_ENABLE
 

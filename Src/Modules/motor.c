@@ -16,7 +16,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
-#include "include.h"
+#include "compiler.h"
 #include "board.h"
 #include "MemHandler.h"
 #include "Motor.h"

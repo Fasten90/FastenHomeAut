@@ -12,7 +12,7 @@
 
 
 #include "options.h"
-#include "include.h"
+#include "compiler.h"
 #include "MathHelper.h"
 
 #ifdef MODULE_CALC_UNITTEST_ENABLE

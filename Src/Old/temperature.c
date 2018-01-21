@@ -17,7 +17,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "temperature.h"
-#include "include.h"
+#include "compiler.h"
 
 #ifdef MODUL_TEMPERATURE_ENABLE
 

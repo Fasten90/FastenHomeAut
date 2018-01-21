@@ -22,7 +22,7 @@
 
 #ifdef CONFIG_MODULE_COMMUNICATION_ENABLE
 
-#include "include.h"
+#include "compiler.h"
 
 
 
