@@ -165,6 +165,7 @@ size_t StrCpyMax(char *dest, const char *str, size_t maxLength);
 size_t StrCpyCharacter(char *dest, char c, size_t num);
 size_t StrAppend(char *dest, const char *str);
 size_t StrAppendSafe(char *dest, const char *str, size_t destLength);
+size_t CharAppend(char *dest, const char c);
 
 // String modify
 size_t StrTrim(char *str);

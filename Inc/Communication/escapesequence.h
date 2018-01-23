@@ -102,7 +102,7 @@
 
 // Example:
 // "\x1B" "[30m" = Black text color
-
+// TODO: Refactor the names
 #define USART_ESCAPE_TEXT_START			"\x1B" "[3"
 #define USART_ESCAPE_TEXT_END			"m"
 
@@ -111,6 +111,8 @@
 #define USART_ESCAPE_BACKGROUND_START	"\x1B" "[4"
 #define USART_ESCAPE_BACKGROUND_END		"m"
 
+
+#define ESCAPE_SEQUENCE_STRING_MAX_LENGTH		( 5 + 1 )
 
 
 /**

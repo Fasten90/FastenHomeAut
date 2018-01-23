@@ -1312,6 +1312,7 @@ size_t StrCpy(char *dest, const char *str)
 		return 0;
 	}
 
+	// TODO: Optimize: without length calculating (length --> str[i] != '\0')
 	length = StringLength(str);
 
 	// Copy characters
@@ -1459,6 +1460,7 @@ size_t StrAppend(char *dest, const char *str)
 		return length;
 	}
 
+	// TODO: Optimize with search EOS here
 	length = StringLength(dest);
 
 	if (str != NULL)
@@ -1497,6 +1499,30 @@ size_t StrAppendSafe(char *dest, const char *str, size_t destLength)
 		}
 		length += StrCpyFixLength(&dest[length], str, copyLength);
 	}
+
+	return length;
+}
+
+
+
+/**
+ * \brief	Char append
+ */
+size_t CharAppend(char *dest, const char c)
+{
+	size_t length = 0;
+
+	if (dest == NULL)
+	{
+		return length;
+	}
+
+	// TODO: Optimize with search EOS here
+	length = StringLength(dest);
+
+	dest[length] = c;
+	length++;
+	dest[length] = '\0';
 
 	return length;
 }
@@ -2823,6 +2849,10 @@ void STRING_UnitTest(void)
 	value8 = STRING_Splitter(buffer, ' ', splitted, 10);
 	UNITTEST_ASSERT(value8 == 0, "STRING_Splitter error");
 	UNITTEST_ASSERT(splitted[0] == NULL, "STRING_Splitter error");
+
+
+	// TODO: Test StrAppend
+	// TODO: Test size_t CharAppend(char *dest, const char c)
 
 
 	// TODO:  Test safe (length) functions

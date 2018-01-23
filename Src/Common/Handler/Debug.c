@@ -74,11 +74,13 @@ void Debug_Print(Debug_t debugTask, const char *format, ...)
 	{
 #ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
 		// Text color
-		ColoredMessage_SendTextColor(DebugTasks[debugTask].color);
+		char colorMsg[ESCAPE_SEQUENCE_STRING_MAX_LENGTH * 2] = { 0 };
+		ColoredMessage_SendTextColor(colorMsg, DebugTasks[debugTask].color);
 		if (DebugTasks[debugTask].background)
 		{
-			ColoredMessage_SendBackgroundColor(DebugTasks[debugTask].background);
+			ColoredMessage_SendBackgroundColor(colorMsg, DebugTasks[debugTask].background);
 		}
+		DebugUart_SendMessage(colorMsg);
 #endif
 
 		// TaskName
@@ -108,11 +110,14 @@ void Debug_Print(Debug_t debugTask, const char *format, ...)
 
 #ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
 		// Set default color
-		ColoredMessage_SendTextColor(Color_Black);
+		colorMsg[0] = '\0';	// Clear colorMsg
+
+		ColoredMessage_SendTextColor(colorMsg, Color_Black);
 		if (DebugTasks[debugTask].background)
 		{
-			ColoredMessage_SendBackgroundColor(Color_White);
+			ColoredMessage_SendBackgroundColor(colorMsg, Color_White);
 		}
+		DebugUart_SendMessage(colorMsg);
 #endif
 	}
 }

@@ -24,23 +24,24 @@
 /**
  * \brief	Send message on debug with textcolor & backgroundcolor
  */
-void ColoredMessage_SendMsgWithBackgroundColor(const char* message, FormattedStringColors_t textColor, FormattedStringColors_t backgroundColor)
+void ColoredMessage_SendMsgWithBackgroundColor(char * str, const char *msg, FormattedStringColors_t textColor, FormattedStringColors_t backgroundColor)
 {
-	ColoredMessage_SendBackgroundColor(backgroundColor);		// Send background color
-	ColoredMessage_SendMsg(message, textColor);	// Send colored message
-	ColoredMessage_SendBackgroundColor(Color_White);			// Send background color = white
+	ColoredMessage_SendBackgroundColor(str, backgroundColor);								// Send background color
+	ColoredMessage_SendMsg(str, msg, textColor);											// Send colored message
+	ColoredMessage_SendBackgroundColor(str, COLOREDMESSAGE_STANDARD_BACKGROUND_COLOR);		// Restore background color
 }
 
 
 
 /**
  * \brief	Send message on debug with textcolor
+ * \note	After send message, the original text color will restored
  */
-void ColoredMessage_SendMsg(const char* message, FormattedStringColors_t textColor)
+void ColoredMessage_SendMsg(char *str, const char *msg, FormattedStringColors_t textColor)
 {
-	ColoredMessage_SendTextColor(textColor);					// Send color escape
-	DebugUart_SendMessage(message);				// Send message
-	ColoredMessage_SendTextColor(Color_Black);					// Send message
+	ColoredMessage_SendTextColor(str, textColor);								// Send text color
+	StrAppend(str, msg);														// Send message
+	ColoredMessage_SendTextColor(str, COLOREDMESSAGE_STANDARD_TEXT_COLOR);		// Restore text color
 }
 
 
@@ -48,12 +49,11 @@ void ColoredMessage_SendMsg(const char* message, FormattedStringColors_t textCol
 /**
  * \brief	Send textcolor escape sequence
  */
-void ColoredMessage_SendTextColor(FormattedStringColors_t textColor)
+void ColoredMessage_SendTextColor(char *str, FormattedStringColors_t textColor)
 {
-	// TODO: Send with CommandHandler_Send... functions
-	DebugUart_SendMessage(USART_ESCAPE_TEXT_START);
-	DebugUart_SendChar('0' + textColor);
-	DebugUart_SendMessage(USART_ESCAPE_TEXT_END);
+	StrAppend(str, USART_ESCAPE_TEXT_START);
+	CharAppend(str, '0' + textColor);
+	StrAppend(str, USART_ESCAPE_TEXT_END);
 }
 
 
@@ -61,12 +61,11 @@ void ColoredMessage_SendTextColor(FormattedStringColors_t textColor)
 /**
  * \brief	Send backgroundcolor escape sequence
  */
-void ColoredMessage_SendBackgroundColor(FormattedStringColors_t backgroundColor)
+void ColoredMessage_SendBackgroundColor(char *str, FormattedStringColors_t backgroundColor)
 {
-	// TODO: Send with CommandHandler_Send... functions
-	DebugUart_SendMessage(USART_ESCAPE_BACKGROUND_START);
-	DebugUart_SendChar('0' + backgroundColor);
-	DebugUart_SendMessage(USART_ESCAPE_BACKGROUND_END);
+	StrAppend(str, USART_ESCAPE_BACKGROUND_START);
+	CharAppend(str, '0' + backgroundColor);
+	StrAppend(str, USART_ESCAPE_BACKGROUND_END);
 }
 
 
@@ -74,9 +73,9 @@ void ColoredMessage_SendBackgroundColor(FormattedStringColors_t backgroundColor)
 /**
  * \brief	Send error message (black text, with red background)
  */
-void ColoredMessage_SendErrorMsg(const char *message)
+void ColoredMessage_SendErrorMsg(char *str, const char *msg)
 {
-	ColoredMessage_SendMsgWithBackgroundColor(message, Color_Black, Color_Red);
+	ColoredMessage_SendMsgWithBackgroundColor(str, msg, Color_Black, Color_Red);
 }
 
 
@@ -86,16 +85,20 @@ void ColoredMessage_SendErrorMsg(const char *message)
  */
 void ColoredMessage_Test(void)
 {
+	char text[255] = { 0 };
+
 	// Send colored messages
-	ColoredMessage_SendMsg("Red text\r\n", Color_Red);
-	ColoredMessage_SendMsg("Yellow text\r\n", Color_Yellow);
+	ColoredMessage_SendMsg(text, "Red text\r\n", Color_Red);
+	ColoredMessage_SendMsg(text, "Yellow text\r\n", Color_Yellow);
 
-	ColoredMessage_SendMsgWithBackgroundColor("Black text with Red background color\r\n", Color_Black, Color_Red);
-	ColoredMessage_SendMsgWithBackgroundColor("Black text with Yellow background color\r\n", Color_Black, Color_Yellow);
+	ColoredMessage_SendMsgWithBackgroundColor(text, "Black text with Red background color\r\n", Color_Black, Color_Red);
+	ColoredMessage_SendMsgWithBackgroundColor(text, "Black text with Yellow background color\r\n", Color_Black, Color_Yellow);
 
-	ColoredMessage_SendErrorMsg("FATAL ERROR EXAMPLE\r\n");
+	ColoredMessage_SendErrorMsg(text, "FATAL ERROR EXAMPLE\r\n");
+
+	DebugUart_SendMessage(text);
 }
 
 
 
-#endif
+#endif /* CONFIG_MODULE_COLOREDMESSAGE_ENABLE */

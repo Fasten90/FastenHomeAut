@@ -27,6 +27,9 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
+#define COLOREDMESSAGE_STANDARD_TEXT_COLOR					((FormattedStringColors_t)Color_Black)
+#define COLOREDMESSAGE_STANDARD_BACKGROUND_COLOR			((FormattedStringColors_t)Color_White)
+
 
 
 /*------------------------------------------------------------------------------
@@ -41,11 +44,11 @@
 
 #ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
 
-void ColoredMessage_SendMsgWithBackgroundColor(const char* message,  FormattedStringColors_t textColor, FormattedStringColors_t backgroundColor);
-void ColoredMessage_SendMsg(const char* message, FormattedStringColors_t textColor);
-void ColoredMessage_SendTextColor(FormattedStringColors_t textColor);
-void ColoredMessage_SendBackgroundColor(FormattedStringColors_t backgroundColor);
-void ColoredMessage_SendErrorMsg(const char *message);
+void ColoredMessage_SendMsgWithBackgroundColor(char *str, const char *msg,  FormattedStringColors_t textColor, FormattedStringColors_t backgroundColor);
+void ColoredMessage_SendMsg(char *str, const char *msg, FormattedStringColors_t textColor);
+void ColoredMessage_SendTextColor(char *str, FormattedStringColors_t textColor);
+void ColoredMessage_SendBackgroundColor(char *str, FormattedStringColors_t backgroundColor);
+void ColoredMessage_SendErrorMsg(char *str, const char *msg);
 
 void ColoredMessage_Test(void);
 
