@@ -24,7 +24,7 @@
 /**
  * \brief	Send message on debug with textcolor & backgroundcolor
  */
-void ColoredMessage_SendMsgWithBackgroundColor(char * str, const char *msg, FormattedStringColors_t textColor, FormattedStringColors_t backgroundColor)
+void ColoredMessage_SendMsgWithBackgroundColor(char * str, const char *msg, MsgColors_t textColor, MsgColors_t backgroundColor)
 {
 	ColoredMessage_SendBackgroundColor(str, backgroundColor);								// Send background color
 	ColoredMessage_SendMsg(str, msg, textColor);											// Send colored message
@@ -37,7 +37,7 @@ void ColoredMessage_SendMsgWithBackgroundColor(char * str, const char *msg, Form
  * \brief	Send message on debug with textcolor
  * \note	After send message, the original text color will restored
  */
-void ColoredMessage_SendMsg(char *str, const char *msg, FormattedStringColors_t textColor)
+void ColoredMessage_SendMsg(char *str, const char *msg, MsgColors_t textColor)
 {
 	ColoredMessage_SendTextColor(str, textColor);								// Send text color
 	StrAppend(str, msg);														// Send message
@@ -49,11 +49,11 @@ void ColoredMessage_SendMsg(char *str, const char *msg, FormattedStringColors_t 
 /**
  * \brief	Send textcolor escape sequence
  */
-void ColoredMessage_SendTextColor(char *str, FormattedStringColors_t textColor)
+void ColoredMessage_SendTextColor(char *str, MsgColors_t textColor)
 {
-	StrAppend(str, USART_ESCAPE_TEXT_START);
+	StrAppend(str, ESCAPE_TEXT_START);
 	CharAppend(str, '0' + textColor);
-	StrAppend(str, USART_ESCAPE_TEXT_END);
+	StrAppend(str, ESCAPE_TEXT_END);
 }
 
 
@@ -61,11 +61,11 @@ void ColoredMessage_SendTextColor(char *str, FormattedStringColors_t textColor)
 /**
  * \brief	Send backgroundcolor escape sequence
  */
-void ColoredMessage_SendBackgroundColor(char *str, FormattedStringColors_t backgroundColor)
+void ColoredMessage_SendBackgroundColor(char *str, MsgColors_t backgroundColor)
 {
-	StrAppend(str, USART_ESCAPE_BACKGROUND_START);
+	StrAppend(str, ESCAPE_BACKGROUND_START);
 	CharAppend(str, '0' + backgroundColor);
-	StrAppend(str, USART_ESCAPE_BACKGROUND_END);
+	StrAppend(str, ESCAPE_BACKGROUND_END);
 }
 
 

@@ -3,10 +3,13 @@
  *		Created on:		2016-11-29
  *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Escape sequences
+ *		Function:		ANSI Escape sequences
  *		Target:			STM32Fx
  *		Version:		v1
  *		Last modified:	2016-11-29
+ *
+ *		Read:
+ *		https://en.wikipedia.org/wiki/ANSI_escape_code
  */
 
 #ifndef ESCAPESEQUENCE_H_
@@ -102,14 +105,13 @@
 
 // Example:
 // "\x1B" "[30m" = Black text color
-// TODO: Refactor the names
-#define USART_ESCAPE_TEXT_START			"\x1B" "[3"
-#define USART_ESCAPE_TEXT_END			"m"
+#define ESCAPE_TEXT_START				("\x1B" "[3")
+#define ESCAPE_TEXT_END					("m")
 
 // Example:
 // "\x1B" "[47m" = White background color
-#define USART_ESCAPE_BACKGROUND_START	"\x1B" "[4"
-#define USART_ESCAPE_BACKGROUND_END		"m"
+#define ESCAPE_BACKGROUND_START			("\x1B" "[4")
+#define ESCAPE_BACKGROUND_END			("m")
 
 
 #define ESCAPE_SEQUENCE_STRING_MAX_LENGTH		( 5 + 1 )
@@ -131,7 +133,7 @@ typedef enum
 	Color_Magenta,
 	Color_Cyan,
 	Color_White
-} FormattedStringColors_t;
+} MsgColors_t;
 
 
 
