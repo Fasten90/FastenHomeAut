@@ -1,5 +1,5 @@
 /*
- *		FormattedMessage.h
+ *		ColoredMessage.h
  *		Created on:		2016-09-10
  *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
@@ -18,6 +18,7 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
+#include "options.h"
 #include "EscapeSequence.h"
 
 
@@ -40,13 +41,13 @@
 
 #ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
 
-void SendColouredMessageWithBackgroundColor(const char* message,  FormattedStringColors_t textColor, FormattedStringColors_t backgroundColor);
-void SendColouredMessage(const char* message, FormattedStringColors_t textColor);
-void SendTextColor(FormattedStringColors_t textColor);
-void SendBackgroundColor(FormattedStringColors_t backgroundColor);
-void SendErrorMessage(const char *message);
+void ColoredMessage_SendMsgWithBackgroundColor(const char* message,  FormattedStringColors_t textColor, FormattedStringColors_t backgroundColor);
+void ColoredMessage_SendMsg(const char* message, FormattedStringColors_t textColor);
+void ColoredMessage_SendTextColor(FormattedStringColors_t textColor);
+void ColoredMessage_SendBackgroundColor(FormattedStringColors_t backgroundColor);
+void ColoredMessage_SendErrorMsg(const char *message);
 
-void FormattedMessage_Test(void);
+void ColoredMessage_Test(void);
 
 #else
 

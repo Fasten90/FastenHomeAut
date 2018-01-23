@@ -21,6 +21,7 @@
 
 #include "StringHelper.h"
 #include "ErrorHandler.h"
+#include "Timing.h"
 #include "CommandList.h"
 #include "CommandHandler.h"
 #include "CircularBuffer.h"
@@ -197,7 +198,7 @@ void Terminal_Init(void)
 
 
 	// Start receive
-	DebugUart_StartReceive();
+	DebugUart_ReceiveEnable();
 
 	// End of initialization
 
@@ -338,20 +339,17 @@ void Terminal_CheckCommand(void)
  */
 static void Terminal_ProcessReceivedCharacter(void)
 {
-	// Find new received characters
-	CircularBuffer_FindLastMessage(&DebugUart_RxBuffStruct);
-
 	// If WriteCnt not equal with ReadCnt, we have received message
-	char receiveBuffer[DEBUGUART_RX_BUFFER_SIZE+1];
+	char receiveBuffer[DEBUGUART_RX_BUFFER_SIZE];
 	uint16_t receivedMessageLength = 0;
 
 	// Received new character?
-	if (CircularBuffer_HasNewMessage(&DebugUart_RxBuffStruct))
+	if (CircularBuffer_IsNotEmpty(DebugUart.rx))
 	{
 		// Need copy to receiveBuffer
-		receivedMessageLength = CircularBuffer_GetString(&DebugUart_RxBuffStruct, receiveBuffer);
+		receivedMessageLength = CircularBuffer_GetString(DebugUart.rx, receiveBuffer, DEBUGUART_RX_BUFFER_SIZE);
 
-		CircularBuffer_DropCharacters(&DebugUart_RxBuffStruct, receivedMessageLength);
+		CircularBuffer_DropCharacters(DebugUart.rx, receivedMessageLength);
 	}
 	else
 	{

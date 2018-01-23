@@ -74,10 +74,10 @@ void Debug_Print(Debug_t debugTask, const char *format, ...)
 	{
 #ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
 		// Text color
-		SendTextColor(DebugTasks[debugTask].color);
+		ColoredMessage_SendTextColor(DebugTasks[debugTask].color);
 		if (DebugTasks[debugTask].background)
 		{
-			SendBackgroundColor(DebugTasks[debugTask].background);
+			ColoredMessage_SendBackgroundColor(DebugTasks[debugTask].background);
 		}
 #endif
 
@@ -108,10 +108,10 @@ void Debug_Print(Debug_t debugTask, const char *format, ...)
 
 #ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
 		// Set default color
-		SendTextColor(Color_Black);
+		ColoredMessage_SendTextColor(Color_Black);
 		if (DebugTasks[debugTask].background)
 		{
-			SendBackgroundColor(Color_White);
+			ColoredMessage_SendBackgroundColor(Color_White);
 		}
 #endif
 	}
