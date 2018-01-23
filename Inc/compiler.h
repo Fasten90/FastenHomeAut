@@ -44,7 +44,7 @@
 #endif
 
 
-///< Check compiler
+///< Check the compiler define
 /*
  * __CC_ARM__
  * __ICARM__

@@ -69,7 +69,6 @@ static void UART_Handler(UART_Handler_t *handler);
  *----------------------------------------------------------------------------*/
 
 
-
 /**
  * \brief	Initialize USART peripheral
  */
@@ -438,3 +437,5 @@ void UART_ReceiveEnable(UART_Handler_t * handler)
 {
 	__HAL_UART_ENABLE_IT(handler->huart, UART_IT_RXNE);		/* receiver not empty */
 }
+
+
