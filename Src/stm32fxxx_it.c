@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    stm32f0xx_it.c
+  * @file    stm32fxxx_it.c
   * @brief   Interrupt Service Routines.
   ******************************************************************************
   *
@@ -30,17 +30,24 @@
   *
   ******************************************************************************
   */
+
 /* Includes ------------------------------------------------------------------*/
 #include "options.h"
 
-#ifndef CONFIG_PLATFORM_PC_WINDOWS
+#if defined(CONFIG_PLATFORM_MCU_STM32F0xx)
 #include "stm32f0xx_hal.h"
 #include "stm32f0xx.h"
-#else
+#include "stm32f0xx_it.h"
+#elif defined(CONFIG_PLATFORM_MCU_STM32F4xx)
+#include "stm32f4xx_hal.h"
+#include "stm32f4xx.h"
+#include "stm32f4xx_it.h"
+#elif defined(CONFIG_PLATFORM_PC_WINDOWS)
 #include "windows_hal.h"
 #endif
 
-#include "stm32f0xx_it.h"
+// TODO: This is need?
+//#include "cmsis_os.h"
 
 #include "ErrorHandler.h"
 #include "SwWatchDog.h"
@@ -53,19 +60,14 @@ extern void prvGetRegistersFromStack(uint32_t *pulFaultStackAddress);
 /* External variables --------------------------------------------------------*/
 
 /******************************************************************************/
-/*            Cortex-M0 Processor Interruption and Exception Handlers         */ 
+/*            Cortex-M0-3-4 Processor Interruption and Exception Handlers         */
 /******************************************************************************/
 
-/**
-* @brief This function handles Non maskable interrupt.
-*/
-void NMI_Handler(void)
-{
-}
+
 
 /**
-* @brief This function handles Hard fault interrupt.
-*/
+ * @brief	HardFault handler
+ */
 void HardFault_Handler(void)
 {
 #ifdef CONFIG_MODULE_HARDFAULTHANDLER_ENABLE
@@ -129,25 +131,38 @@ void HardFault_Handler(void)
 	Error_Handler();
 }
 
+
+
 /**
 * @brief This function handles System service call via SWI instruction.
 */
 void SVC_Handler(void)
 {
-
 }
 
+
+
 /**
-* @brief This function handles Pendable request for system service.
-*/
+ * @brief This function handles Pendable request for system service.
+ */
 void PendSV_Handler(void)
 {
-
 }
 
+
+
 /**
-* @brief This function handles System tick timer.
-*/
+ * @brief This function handles Non maskable interrupt.
+ */
+void NMI_Handler(void)
+{
+}
+
+
+
+/**
+ * @brief This function handles System tick timer.
+ */
 void SysTick_Handler(void)
 {
 	HAL_IncTick();
@@ -158,11 +173,13 @@ void SysTick_Handler(void)
 	SW_WATCHDOG_CHECK();
 }
 
+
+
 /******************************************************************************/
-/* STM32F0xx Peripheral Interrupt Handlers                                    */
+/* STM32Fxxx Peripheral Interrupt Handlers                                    */
 /* Add here the Interrupt Handlers for the used peripherals.                  */
 /* For the available peripheral interrupt handler names,                      */
-/* please refer to the startup file (startup_stm32f0xx.s).                    */
+/* please refer to the startup file (startup_stm32fxxx.s).                    */
 /******************************************************************************/
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
