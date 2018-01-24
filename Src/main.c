@@ -179,6 +179,9 @@
 #include "Bluetooth_HC05.h"
 #include "GlobalVarHandler.h"
 #include "Watchdog.h"
+#ifdef CONFIG_MODULE_SELFTEST_ENABLE
+#include "SelfTest_Flag.h"
+#endif
 
 #ifdef CONFIG_PLATFORM_PC_WINDOWS
 #include "windows_hal.h"
@@ -217,6 +220,10 @@ int main(void)
 
 	/* Configure the system clock */
 	SystemClock_Config();
+
+#ifdef CONFIG_MODULE_SELFTEST_ENABLE
+	SelfTest_Flag_Test();
+#endif
 
 #ifdef CONFIG_PLATFORM_PC_WINDOWS
 	#ifdef CONFIG_MODULE_UNITTEST_ENABLE

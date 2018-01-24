@@ -74,7 +74,7 @@
 
 
 ///< Display: Menu
-//#define CONFIG_FUNCTION_DISPLAY_MENU
+#define CONFIG_FUNCTION_DISPLAY_MENU
 #ifdef CONFIG_FUNCTION_DISPLAY_MENU
 	#ifndef CONFIG_MODULE_DISPLAY_ENABLE
 		#define CONFIG_MODULE_DISPLAY_ENABLE
@@ -459,7 +459,7 @@
 //#define ASSERT_MODE_HARD
 
 ///< Test Mode: Enable "test" command...
-//#define CONFIG_TEST_MODE
+#define CONFIG_TEST_MODE
 
 ///< Module test: Enable "moduletest" command ~hwtest
 //#define CONFIG_MODULE_TEST_ENABLE
@@ -475,6 +475,9 @@
 
 ///< SelfTests
 //#define CONFIG_DEBUG_SELFTEST
+
+///< MCU SelfTest
+#define CONFIG_MODULE_SELFTEST_ENABLE
 
 
 ///< Debug - Formatted text (colored texts)
