@@ -1104,6 +1104,106 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 	 * 48916	    252	   4592	  53760	   d200	C:\Engineer\Projects\AtollicWorkspace\FastenNodeF0\Debug\FastenNodeF0.elf
 	 */
 
+/*
+    core_m0.h
+        APSR_Type
+        cmsis_armcc.h
+            __STATIC_INLINE uint32_t __get_APSR(void)
+*/
+
+	/*		Flag Test		*/
+	//uint32_t reg = __get_APSR();
+	APSR_Type apsr;
+
+	/*
+	volatile uint8_t a = 5;
+	volatile uint8_t b = 4;
+	b++;
+	volatile uint8_t c = a-b;
+	*/
+
+
+	// Wrong:
+	/*
+	register volatile uint8_t a = 1;
+	a--;
+
+	apsr.w = __get_APSR();
+
+	if (apsr.b.Z == 1)
+	{
+		uprintf("Zero flag is 1\r\n");
+	}
+
+	uprintf("a value: %u\r\n", a);
+	*/
+
+
+	/* Signed adding overflow */
+
+	volatile int32_t add1 = 0x7FFFFFF0U;
+	volatile int32_t add2 = 0x000000FFU;
+	volatile uint32_t addres = add1 + add2;
+
+	apsr.w = __get_APSR();
+
+	if (apsr.b.V == 1)
+	{
+		uprintf("Overflow flag is 1\r\n");
+	}
+
+	uprintf("Addition value: %u\r\n", addres);
+
+
+	/* Unsigned adding overflow */
+
+	volatile uint32_t overflowval = 0xFFFFFFFFU;
+	overflowval++;
+
+	apsr.w = __get_APSR();
+
+	if (apsr.b.C == 1 && apsr.b.Z == 1)
+	{
+		uprintf("Carry and Zero flag is 1\r\n");
+	}
+
+	uprintf("overflowval value: %u\r\n", overflowval);
+
+
+	/* Too large multiplex */
+
+	volatile uint32_t mul1 = 0xF0000000U;
+	volatile uint32_t mul2 = 0xF0000000U;
+	volatile uint32_t mulres = mul1 * mul2;
+	/* not overflowed, but why? result is 0 */
+
+	apsr.w = __get_APSR();
+
+	if (apsr.b.Z == 1)
+	{
+		uprintf("Zero flag is 1\r\n");
+	}
+
+	uprintf("Multiplex value: %u\r\n", mulres);
+
+
+	/* Underflow subtraction */
+
+	volatile uint32_t sub1 = 2;
+	volatile uint32_t sub2 = 4;
+	volatile uint32_t subres = sub1 - sub2;
+
+	apsr.w = __get_APSR();
+
+	if (apsr.b.N == 1)
+	{
+		uprintf("Negative flag is 1\r\n");
+	}
+
+	uprintf("Subtraction value: %u\r\n", subres);
+
+
+
 
 	/**
 	 * 		End of Test codes
