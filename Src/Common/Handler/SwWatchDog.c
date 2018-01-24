@@ -95,5 +95,4 @@ void SwWatchDog_CheckState(void)
 #pragma GCC diagnostic ignored "-Wpedantic"
 #pragma GCC diagnostic pop
 
-
 #endif

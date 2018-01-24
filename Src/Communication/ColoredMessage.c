@@ -99,6 +99,11 @@ void ColoredMessage_Test(void)
 	DebugUart_SendMessage(text);
 }
 
+#else
 
+// ColoredMessage module is not used
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic pop
 
 #endif /* CONFIG_MODULE_COLOREDMESSAGE_ENABLE */
