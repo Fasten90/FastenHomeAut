@@ -1105,6 +1105,18 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 	 */
 
 
+	/*
+	volatile uint8_t myTestArray[100];
+	printf("Array start address: %u, end address: %u\r\n", &myTestArray[0], &myTestArray[99]);
+
+	volatile uint8_t myTestArray2[100];
+	printf("Array start address: %u, end address: %u\r\n", &myTestArray2[0], &myTestArray2[99]);
+	*/
+	/*
+	 * Array start address: 536878260, end address: 536878359
+	 * Array start address: 536878160, end address: 536878259
+	 */
+
 	/**
 	 * 		End of Test codes
 	 */
