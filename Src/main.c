@@ -181,6 +181,7 @@
 #include "Watchdog.h"
 #ifdef CONFIG_MODULE_SELFTEST_ENABLE
 #include "SelfTest_Flag.h"
+#include "SelfTest_Ram.h"
 #endif
 
 #ifdef CONFIG_PLATFORM_PC_WINDOWS
@@ -201,6 +202,10 @@
 
 void SystemClock_Config(void);
 
+#ifdef CONFIG_MODULE_SELFTEST_ENABLE
+void * SelfTest_StackStartAddress = NULL;
+bool SelfTest_FailedRamTest = false;
+#endif
 
 
 /*------------------------------------------------------------------------------
@@ -222,6 +227,18 @@ int main(void)
 	SystemClock_Config();
 
 #ifdef CONFIG_MODULE_SELFTEST_ENABLE
+	// Stack use
+	volatile uint8_t selfTestStackStartVariable = 0;
+	SelfTest_StackStartAddress = (void *)&selfTestStackStartVariable;
+
+	// RAM test
+	if (!SelfTest_Ram_Test())
+	{
+		// Failed RAM test
+		SelfTest_FailedRamTest = true;
+	}
+
+	// Flag test
 	SelfTest_Flag_Test();
 #endif
 
