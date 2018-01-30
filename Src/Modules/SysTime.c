@@ -34,9 +34,8 @@
  *  Local variables
  *----------------------------------------------------------------------------*/
 
-
 ///< System time (step by timer)
-DateTime_t DateTime_SystemTime = { 0 };
+static DateTime_t DateTime_SystemTime = { 0 };
 
 
 
@@ -49,8 +48,6 @@ DateTime_t DateTime_SystemTime = { 0 };
 /*------------------------------------------------------------------------------
  *  Functions
  *----------------------------------------------------------------------------*/
-
-
 
 
 /**
@@ -106,8 +103,10 @@ inline __attribute__((always_inline)) void SysTime_SetTime(Time_t *time)
  */
 void SysTime_StepSecond(void)
 {
+	// TODO: Disable INT?
+
 	// Step SystemTime +1 second
-	DateTime_Step(&DateTime_SystemTime);
+	DateTime_StepOneSecond(&DateTime_SystemTime);
 }
 
 

@@ -513,16 +513,15 @@ static uint8_t DateTime_GetDaysOfMonth(uint8_t year, uint8_t month)
 /**
  * \brief	Step DateTime with more seconds
  */
-void DateTime_Steps(DateTime_t *dateTime, uint32_t stepSeconds)
+void DateTime_StepMoreSecond(DateTime_t *dateTime, uint32_t stepSeconds)
 {
 	uint32_t i;
 
-	// TODO: define the limit
-	if (stepSeconds < 10000)
+	if (stepSeconds < DATETIME_STEPSECOND_MAX_LIMIT)
 	{
 		for (i = 0; i < stepSeconds; i++)
 		{
-			DateTime_Step(dateTime);
+			DateTime_StepOneSecond(dateTime);
 		}
 	}
 	// TODO: Else: do not steps, because too much seconds received
@@ -533,8 +532,10 @@ void DateTime_Steps(DateTime_t *dateTime, uint32_t stepSeconds)
 /**
  * \brief		DateTime Second++
  */
-void DateTime_Step(DateTime_t *dateTime)
+void DateTime_StepOneSecond(DateTime_t *dateTime)
 {
+	// TODO: Check pointer
+
 	++dateTime->time.second;
 
 	if (dateTime->time.second > 59)
@@ -573,6 +574,53 @@ void DateTime_Step(DateTime_t *dateTime)
 			}
 		}
 	}
+}
+
+
+
+/**
+ * \brief	Add one minute to actual DateTime
+ * \note	If minute is "59" the next value will "0" (and the hour is not stepped!)
+ */
+void DateTime_AddMinute(DateTime_t *dateTime)
+{
+	if (dateTime == NULL)
+		return;
+
+	if (dateTime->time.minute >= 59)
+	{
+		dateTime->time.minute = 0;
+	}
+	else
+	{
+		dateTime->time.minute++;
+	}
+}
+
+
+// TODO: Idea, if more minute / hour added: dateTime->time.minute = (dateTime->time.minute + 1) % 60;
+
+
+
+/**
+ * \brief	Add one hour to actual DateTime
+ * \note	If hour is "23" the next value will "0" (and the day is not stepped!)
+ */
+void DateTime_AddHour(DateTime_t *dateTime)
+{
+	if (dateTime == NULL)
+		return;
+
+	if (dateTime->time.hour >= 23)
+	{
+		dateTime->time.hour = 0;
+	}
+	else
+	{
+		dateTime->time.hour++;
+	}
+
+	//dateTime->time.hour = (dateTime->time.hour + 1) % 24;
 }
 
 
@@ -707,27 +755,31 @@ void DateTime_UnitTest(void)
 	UNITTEST_ASSERT(test506_diff == (365 * 24 * 60 * 60), "DateTime_CalculateDifferentOf2DateTime error");
 
 
-	/*			DateTime_Steps			*/
+	/*			DateTime_StepMoreSecond			*/
 	// Step 1 second
 	DateTime_t test601 = { { 17, 05, 07 }, { 20, 42, 00} };
 	DateTime_t test602 = { { 17, 05, 07 }, { 20, 42, 01} };
-	DateTime_Steps(&test601, 1);
+	DateTime_StepMoreSecond(&test601, 1);
 	UNITTEST_ASSERT(!memcmp(&test601, &test602, sizeof(DateTime_t)), "DateTime_Steps error");
 
 	// Step 60 second
 	DateTime_t test603 = { { 17, 05, 07 }, { 20, 42, 59} };
 	DateTime_t test604 = { { 17, 05, 07 }, { 20, 44, 01} };
-	DateTime_Steps(&test603, 62);
+	DateTime_StepMoreSecond(&test603, 62);
 	UNITTEST_ASSERT(!memcmp(&test603, &test604, sizeof(DateTime_t)), "DateTime_Steps error");
 
 	// Step from 2017.12.31 23:59:59 -> to 2018.01.01 00:00:00
 	DateTime_t test605 = { { 17, 12, 31 }, { 23, 59, 59 } };
 	DateTime_t test606 = { { 18, 1, 1 }, { 0, 0, 0 } };
-	DateTime_Steps(&test605, 1);
+	DateTime_StepMoreSecond(&test605, 1);
 	UNITTEST_ASSERT(!memcmp(&test605, &test606, sizeof(DateTime_t)), "DateTime_Steps error");
 
+	// TODO: Test too much step value
 
 	// TODO: Add more DateTime UnitTests
+
+	// TODO: Test DateTime_AddMinute()
+	// TODO: Test DateTime_AddHour()
 
 
 	// Finish

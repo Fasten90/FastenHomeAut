@@ -821,7 +821,7 @@ static void Logic_SystemTimeStepConfig(void)
 
 
 /**
- * \brief	SystemTime - increment selected value (hour, minute, or none)
+ * \brief	SystemTime - change (increment) selected value (hour, minute, or none)
  */
 static void Logic_SystemTimeStepValue(void)
 {
@@ -832,15 +832,25 @@ static void Logic_SystemTimeStepValue(void)
 			break;
 
 		case DisplayClock_Hour:
+		{
 			// Hour
-			DateTime_Steps(&DateTime_SystemTime, 60*60);
+			DateTime_t dateTime;
+			SysTime_GetDateTime(&dateTime);
+			DateTime_AddHour(&dateTime);
+			SysTime_SetTime(&dateTime.time);	// Only hour changed, date is not
 			TaskHandler_RequestTaskScheduling(Task_Display);
+		}
 			break;
 
 		case DisplayClock_Minute:
+		{
 			// Minute
-			DateTime_Steps(&DateTime_SystemTime, 60);
+			DateTime_t dateTime;
+			SysTime_GetDateTime(&dateTime);
+			DateTime_AddMinute(&dateTime);
+			SysTime_SetTime(&dateTime.time);	// Only hour changed, date is not
 			TaskHandler_RequestTaskScheduling(Task_Display);
+		}
 			break;
 
 		case DisplayClock_Count:
@@ -1020,6 +1030,7 @@ static void Logic_Display_MainMenu(void)
 	// Display vibrate function: if we are in setting mode, hour or minute will vibrate
 	static bool Display_VibrateStateHide = false;
 
+#warning: "Bufix these codes!"
 	if (source == ScheduleSource_EventTriggered)
 		Display_VibrateStateHide = false;
 

@@ -912,7 +912,7 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 		DelayMs(1000);
 
 		// Step 1 second
-		DateTime_Step(&actualDateTime);
+		DateTime_StepOneSecond(&actualDateTime);
 
 		// Send actual DateTime
 		char message[80];
@@ -939,7 +939,7 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 	{
 		// Step 1 second
 		DelayMs(1000);
-		DateTime_Step(&actualDateTime);
+		DateTime_StepOneSecond(&actualDateTime);
 
 		// Send actual DateTime
 		char message[80];

@@ -529,28 +529,33 @@ void Display_ShowClockHalf(Time_t *time, DisplayClock_ChangeState_t displayState
 		// Set hour
 		Display_PrintFont32x20(time->hour/10, 0,
 				DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
-				DISPLAY_FONT32X20_CLOCK_START_POSITION_Y);
+				DISPLAY_FONT32X20_CLOCK_START_POSITION_Y,
+				Display_NoFormat);
 
 		Display_PrintFont32x20(time->hour%10, 1,
 				DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
-				DISPLAY_FONT32X20_CLOCK_START_POSITION_Y);
+				DISPLAY_FONT32X20_CLOCK_START_POSITION_Y,
+				Display_NoFormat);
 	}
 
 	// ':'
 	Display_PrintFont32x20(':', 2,
 			DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
-			DISPLAY_FONT32X20_CLOCK_START_POSITION_Y);
+			DISPLAY_FONT32X20_CLOCK_START_POSITION_Y,
+			Display_NoFormat);
 
 	if (displayState == DisplayClock_Minute)
 	{
 		// Set minute
 		Display_PrintFont32x20(time->minute/10, 3,
 				DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
-				DISPLAY_FONT32X20_CLOCK_START_POSITION_Y);
+				DISPLAY_FONT32X20_CLOCK_START_POSITION_Y,
+				Display_NoFormat);
 
 		Display_PrintFont32x20(time->minute%10, 4,
 				DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
-				DISPLAY_FONT32X20_CLOCK_START_POSITION_Y);
+				DISPLAY_FONT32X20_CLOCK_START_POSITION_Y,
+				Display_NoFormat);
 	}
 
 	// Refresh display
@@ -637,7 +642,7 @@ void Display_TestClock(void)
 		Display_ShowLargeClock(&dateTime.time);
 		DelayMs(300);
 		// Step 1 minute
-		DateTime_Steps(&dateTime, 60);
+		DateTime_StepMoreSecond(&dateTime, 60);
 	}
 
 }

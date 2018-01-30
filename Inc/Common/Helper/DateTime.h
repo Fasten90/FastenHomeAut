@@ -28,6 +28,8 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
+#define  DATETIME_STEPSECOND_MAX_LIMIT			(1000U)
+
 // 2017-01-10 19:56:00\0
 #define DATETIME_STRING_MAX_LENGTH				(20)
 
@@ -124,8 +126,11 @@ bool DateTime_CheckDateTime(DateTime_t *dateTime);
 DateTimeCompare_t DateTime_CompareDateTime(DateTime_t *dateTime1, DateTime_t *dateTime2);
 
 int32_t DateTime_CalculateDifferentOf2DateTime(DateTime_t *dateTime1, DateTime_t *dateTime2);
-void DateTime_Steps(DateTime_t *dateTime, uint32_t stepSeconds);
-void DateTime_Step(DateTime_t *dateTime);
+void DateTime_StepMoreSecond(DateTime_t *dateTime, uint32_t stepSeconds);
+void DateTime_StepOneSecond(DateTime_t *dateTime);
+
+void DateTime_AddMinute(DateTime_t *dateTime);
+void DateTime_AddHour(DateTime_t *dateTime);
 
 #ifdef MODULE_DATETIME_UNITTEST_ENABLE
 void DateTime_UnitTest(void);
