@@ -7,7 +7,7 @@
  *		Target:			STM32Fx
  *		Version:		v4
  *		Last modified:	2016-09-28
- *		Source:			https://www.eevblog.com/forum/microcontrollers/%27best%27-way-to-load-UART_Handler_t-data-to-ring-buffer-with-stm32hal/
+ *		Source:			https://www.eevblog.com/forum/microcontrollers/'best'-way-to-load-uart-data-to-ring-buffer-with-stm32hal/
  */
 
 
@@ -368,8 +368,9 @@ static void UART_Handler(UART_Handler_t *handler)
 	/* UART Over-Run interrupt occurred ----------------------------------------*/
 	tmp1 = __HAL_UART_GET_FLAG(huart, UART_FLAG_ORE);
 	tmp2 = __HAL_UART_GET_IT_SOURCE(huart, UART_IT_ERR);
-	if ((tmp1 != RESET) && (tmp2 != RESET))
+	if ((tmp1 != RESET) || (tmp2 != RESET))
 	{
+		/* In original code, this two condition was "and-ed", but sometimes went to infinite IRQ loop... */
 		__HAL_UART_CLEAR_OREFLAG(huart);
 		err = true;
 	}
