@@ -107,15 +107,20 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 
 ///< Stringification
-#define STR(a)						#a
+#define STR(str)						#str
+#define STR2(str)						STR(str)
+
+///< Concatenation
+#define CONCATENATE(con1, con2)			con1##con2
+#define CONCATENATE2(con1, con2)		CONCATENATE(con1, con2)
 
 
 ///< Unused argument
-#define UNUSED_ARGUMENT(param)		((void)param)
+#define UNUSED_ARGUMENT(param)			((void)param)
 
 
 ///< Runtime Assert function
-// \note	If true, it is ok
+// \note	If true, it is OK
 //			If false, "error"
 #ifdef ASSERT_MODE_HARD
 	#define ASSERT(__e)				((__e) ? (void)0 : Assert_Function(__FILE__, __LINE__, #__e))
