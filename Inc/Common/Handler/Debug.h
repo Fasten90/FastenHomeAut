@@ -37,8 +37,8 @@ typedef struct
 {
 	const char * name;					///< Name (string)
 	bool isEnabled;						///< Need to debugprint?
-	MsgColors_t color;		///< Text color
-	MsgColors_t background;	///< Background color
+	MsgColors_t color;					///< Text color
+	MsgColors_t background;				///< Background color
 } DebugRecord_t;
 
 

@@ -76,7 +76,7 @@ void Debug_Print(Debug_t debugTask, const char *format, ...)
 		// Text color
 		char colorMsg[ESCAPE_SEQUENCE_STRING_MAX_LENGTH * 2] = { 0 };
 		ColoredMessage_SendTextColor(colorMsg, DebugTasks[debugTask].color);
-		if (DebugTasks[debugTask].background)
+		if (DebugTasks[debugTask].background)	// TODO: Not good idea. Now, we cannot use "black = 0" color in background
 		{
 			ColoredMessage_SendBackgroundColor(colorMsg, DebugTasks[debugTask].background);
 		}
@@ -115,7 +115,7 @@ void Debug_Print(Debug_t debugTask, const char *format, ...)
 		ColoredMessage_SendTextColor(colorMsg, Color_Black);
 		if (DebugTasks[debugTask].background)
 		{
-			ColoredMessage_SendBackgroundColor(colorMsg, Color_White);
+			ColoredMessage_SendBackgroundColor(colorMsg, Color_White);	// TODO: Not good idea. Now, we cannot use "black = 0" color in background
 		}
 		DebugUart_SendMessage(colorMsg);
 #endif

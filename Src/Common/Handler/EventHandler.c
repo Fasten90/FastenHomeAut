@@ -59,7 +59,7 @@ static EventRun_t Events[Event_Count] = { 0 };
 void EventHandler_Init(void)
 {
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
-	ASSERT(TasksNum <=31);
+	ASSERT(TasksNum <= 31);
 	// "EventHandler will crash if you use more Subscription than Tasks's num (TasksNum)"
 
 	// Check required task ID-s
