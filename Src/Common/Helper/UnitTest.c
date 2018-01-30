@@ -15,6 +15,7 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
+#include "options.h"
 #include "StringHelper.h"
 #include "DebugUart.h"
 #include "ColoredMessage.h"
@@ -74,6 +75,21 @@ void UnitTest_CheckResult(bool isValid, const char *conString, const char *error
 		// Invalid
 		UnitTest_InvalidCnt++;
 
+#if (UNITTEST_PAUSE_WHEN_ERROR == 1)
+		(void)conString;
+		(void)errorString;
+		(void)line;
+		DEBUG_BREAKPOINT();
+#else
+
+	#ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
+		char coloredMsg[ESCAPE_SEQUENCE_STRING_MAX_LENGTH * 2] = { 0 };
+		ColoredMessage_SendTextColor(coloredMsg, Color_Black);
+		ColoredMessage_SendBackgroundColor(coloredMsg, Color_Red);
+		DebugUart_SendMessage(coloredMsg);
+	#endif
+
+		// Failed condition + message will printed
 		uprintf("\r\n"
 				"Error in \"%s\" at %d. line.\r\n"
 				"Condition: \"%s\"\r\n"
@@ -82,8 +98,16 @@ void UnitTest_CheckResult(bool isValid, const char *conString, const char *error
 				UnitTest_FileName, line,
 				conString,
 				errorString);
-		// TODO: Use SendErrorMessage()
-		DEBUG_BREAKPOINT();
+
+	#ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
+		// Set default color
+		coloredMsg[0] = '\0';	// Clear colorMsg
+
+		ColoredMessage_SendTextColor(coloredMsg, COLOREDMESSAGE_STANDARD_TEXT_COLOR);
+		ColoredMessage_SendBackgroundColor(coloredMsg, COLOREDMESSAGE_STANDARD_BACKGROUND_COLOR);
+		DebugUart_SendMessage(coloredMsg);
+	#endif
+#endif
 	}
 }
 
@@ -103,10 +127,16 @@ void UnitTest_End(void)
 			UnitTest_ValidCnt,
 			UnitTest_InvalidCnt);
 
+#ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
+	char coloredMsg[ESCAPE_SEQUENCE_STRING_MAX_LENGTH * 2 + 40] = { 0 };
+#endif
+
 	if (UnitTest_InvalidCnt)
 	{
 #ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
-		SendErrorMessage("UnitTest run failed\r\n");
+		ColoredMessage_SendErrorMsg(coloredMsg, "UnitTest run failed\r\n");
+		DebugUart_SendMessage(coloredMsg);
+		// Send sound
 		DebugUart_SendChar(TERMINAL_KEY_BELL);
 #else
 		uprintf("UnitTest run failed\r\n");
@@ -115,7 +145,8 @@ void UnitTest_End(void)
 	else
 	{
 #ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
-		SendColouredMessage("UnitTest run successfully\r\n", Color_Green);
+		ColoredMessage_SendMsg(coloredMsg, "UnitTest run successfully\r\n", Color_Green);
+		DebugUart_SendMessage(coloredMsg);
 #else
 		uprintf("UnitTest run successfully\r\n");
 #endif

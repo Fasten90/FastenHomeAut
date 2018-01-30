@@ -20,6 +20,12 @@
  *  Macros
  *----------------------------------------------------------------------------*/
 
+/**
+ * (1)	SW will pause, when a UnitTest result be failed
+ * (0)	SW will continue the run (and printed the condition)
+ */
+#define UNITTEST_PAUSE_WHEN_ERROR					(0)
+
 // if con == true, is valid
 #define UNITTEST_ASSERT(con, errorstring)			UnitTest_CheckResult(con, #con, errorstring, __LINE__)
 
