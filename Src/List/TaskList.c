@@ -385,73 +385,11 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 #elif defined(LED_TASK_PWM_STYLE)
 
 	// Blue LED blinking like PWM
+	LED_PWMTask();
 
-	// 50 Hz --> 20ms
-
-	static uint8_t LED_PwmCnt = 0;
-	static uint8_t LED_PwmLimit = 0;
-	static const uint8_t LED_PwmMaxLimit = 10;
-	static bool LED_PwmLimitDir = false;
-	static uint8_t LED_100ms = 0;
-	static uint8_t LED_2ms = 0;
-	static const uint8_t LED_PWM_ChangeDir_100ms_limit = 10;
-
-	LED_2ms++;
-	if (LED_2ms >= 100/2)
-	{
-		// Run every 100. ms
-
-		LED_2ms = 0;
-		LED_100ms++;
-
-		// Change PWM percent
-
-		if (LED_PwmLimitDir)
-		{
-			LED_PwmLimit--;
-		}
-		else
-		{
-			LED_PwmLimit++;
-		}
-
-		// Change direction
-		if (LED_100ms >= LED_PWM_ChangeDir_100ms_limit)
-		{
-			// Run every 1000. msec = every sec
-			LED_100ms = 0;
-
-			// Change dir after 1 sec
-			if (LED_PwmLimit == 0)
-			{
-				LED_PwmLimitDir = false;
-			}
-			else
-			{
-				LED_PwmLimitDir = true;
-			}
-		}
-	}
-
-	// PWM limit: 0-10
-
-	// Check, need LED blinking?
-	if (LED_PwmCnt < LED_PwmLimit)
-	{
-		LED_SetLed(LED_Blue, LED_Set_On);
-		//LED_SetLed(LED_Blue, LED_Set_Toggle);
-	}
-	else
-	{
-		LED_SetLed(LED_Blue, LED_Set_Off);
-	}
-
-	// PWM counter
-	LED_PwmCnt++;
-	if (LED_PwmCnt >= LED_PwmMaxLimit)	// Max limit
-	{
-		LED_PwmCnt = 0;
-	}
+	#if defined(CONFIG_LED_BLINK_ENABLE)
+	LED_Handler();
+	#endif
 
 #endif
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR

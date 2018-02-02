@@ -52,10 +52,14 @@ typedef enum
 ///< LED operation
 typedef enum
 {
+	// TODO: Refactor
 	LED_Set_DontCare,
 	LED_Set_On,
 	LED_Set_Off,
 	LED_Set_Toggle,
+#if defined(CONFIG_LED_BLINK_ENABLE)
+	LED_Set_Blink,
+#endif
 	LED_Get_Status,
 
 	// Do not use:
@@ -86,6 +90,9 @@ uint8_t LED_GetLedStates(char *str);
 // Empty Led set definition
 #define LED_SetLed(_pin, _set)
 #endif
+
+void LED_PWMTask(void);
+void LED_Handler(void);
 
 
 

@@ -15,12 +15,13 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
-#include "LED.h"
 #include "options.h"
 #include "board.h"
 #include "StringHelper.h"
 #include "ErrorHandler.h"
 #include "Timing.h"
+#include "LED.h"
+
 
 
 #ifdef CONFIG_MODULE_LED_ENABLE
@@ -52,10 +53,18 @@ const char * const LED_TypeNameList[] =
 	"on",
 	"off",
 	"toggle",
+#if defined(CONFIG_LED_BLINK_ENABLE)
+	"blink",
+#endif
 	"status"
 
 	// NOTE: Synchronize with LED_SetType_t
 };
+
+
+#if defined(CONFIG_LED_BLINK_ENABLE)
+static LED_SetType_t LED_ActualState[LED_Count] = { 0 };
+#endif
 
 
 
@@ -153,6 +162,9 @@ static bool LED_SetGreenLed(LED_SetType_t ledSet)
 	switch (ledSet)
 	{
 		case LED_Set_On:
+#if defined(CONFIG_LED_BLINK_ENABLE)
+		case LED_Set_Blink:
+#endif
 			LED_GREEN_ON();
 			break;
 
@@ -187,6 +199,9 @@ static bool LED_SetBlueLed(LED_SetType_t ledSet)
 	switch (ledSet)
 	{
 		case LED_Set_On:
+#if defined(CONFIG_LED_BLINK_ENABLE)
+		case LED_Set_Blink:
+#endif
 			LED_BLUE_ON();
 			break;
 
@@ -220,6 +235,9 @@ static bool LED_SetRedLed(LED_SetType_t ledSet)
 	switch (ledSet)
 	{
 		case LED_Set_On:
+#if defined(CONFIG_LED_BLINK_ENABLE)
+		case LED_Set_Blink:
+#endif
 			LED_RED_ON();
 			break;
 
@@ -278,6 +296,12 @@ bool LED_SetLed(LED_Pin_t pin, LED_SetType_t ledSet)
 			state = false;
 			break;
 	}
+#if defined(CONFIG_LED_BLINK_ENABLE)
+	if ((pin < LED_Count) && (ledSet < LED_Type_Count) && (pin != LED_Unknown) && (ledSet != LED_Set_DontCare))
+	{
+		LED_ActualState[pin - 1] = ledSet;
+	}
+#endif
 
 	return state;
 }
@@ -390,6 +414,108 @@ uint8_t LED_GetLedStates(char *str)
 
 	return length;
 }
+
+
+
+#if defined(LED_TASK_PWM_STYLE)
+/**
+ * \brief	LED Task - PWM style
+ * \note	Call this function periodically - 2 ms times
+ */
+void LED_PWMTask(void)
+{
+
+	// Blue LED blinking like PWM
+
+	// 50 Hz --> 20ms
+
+	static uint8_t LED_PwmCnt = 0;
+	static uint8_t LED_PwmLimit = 0;
+	static const uint8_t LED_PwmMaxLimit = 10;
+	static bool LED_PwmLimitDir = false;
+	static uint8_t LED_100ms = 0;
+	static uint8_t LED_2ms = 0;
+	static const uint8_t LED_PWM_ChangeDir_100ms_limit = 10;
+
+	LED_2ms++;
+	if (LED_2ms >= 100/2)
+	{
+		// Run every 100. ms
+
+		LED_2ms = 0;
+		LED_100ms++;
+
+		// Change PWM percent
+
+		if (LED_PwmLimitDir)
+		{
+			LED_PwmLimit--;
+		}
+		else
+		{
+			LED_PwmLimit++;
+		}
+
+		// Change direction
+		if (LED_100ms >= LED_PWM_ChangeDir_100ms_limit)
+		{
+			// Run every 1000. msec = every sec
+			LED_100ms = 0;
+
+			// Change dir after 1 sec
+			if (LED_PwmLimit == 0)
+			{
+				LED_PwmLimitDir = false;
+			}
+			else
+			{
+				LED_PwmLimitDir = true;
+			}
+		}
+	}
+
+	// PWM limit: 0-10
+
+	// Check, need LED blinking?
+	if (LED_PwmCnt < LED_PwmLimit)
+	{
+		LED_SetLed(LED_Blue, LED_Set_On);
+		//LED_SetLed(LED_Blue, LED_Set_Toggle);
+	}
+	else
+	{
+		LED_SetLed(LED_Blue, LED_Set_Off);
+	}
+
+	// PWM counter
+	LED_PwmCnt++;
+	if (LED_PwmCnt >= LED_PwmMaxLimit)	// Max limit
+	{
+		LED_PwmCnt = 0;
+	}
+}
+#endif
+
+
+
+#if defined(CONFIG_LED_BLINK_ENABLE)
+/**
+ * \brief	Handle necessary LED operations (e.g. blink)
+ */
+void LED_Handler(void)
+{
+	// Now only have one task: check blink state and turn off the LED if need
+	uint8_t i;
+	for (i = 0; i < LED_Count; i++)
+	{
+		if (LED_ActualState[i] == LED_Set_Blink)
+		{
+			// Need corrects the LED index
+			LED_SetLed((i+1), LED_Set_Off);
+		}
+	}
+}
+#endif /* CONFIG_LED_BLINK_ENABLE */
 
 
 
