@@ -97,7 +97,7 @@ void Display_ShowLargeClock(Time_t *time);
 void Display_ShowSmallClock(Time_t *time);
 #endif
 #ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
-void Display_ShowClockHalf(Time_t *time, DisplayClock_ChangeState_t displayState);
+void Display_ShowLargeClockHalf(Time_t *time, DisplayClock_ChangeState_t displayState);
 #endif
 
 

@@ -157,7 +157,7 @@ static char PeriodicalSending_Message[50] = { 0 };
  *----------------------------------------------------------------------------*/
 
 #ifdef CONFIG_FUNCTION_DISPLAY_MENU
-static void Logic_Display_MainMenu(void);
+static void Logic_Display_MainMenu();
 static void Logic_Display_PrintMainMenuList(void);
 #endif
 
@@ -189,7 +189,7 @@ static void Logic_RemoteController_Button(ButtonType_t button, ButtonPressType_t
 #endif
 
 #if defined(CONFIG_MODULE_DISPLAY_ENABLE) && defined(CONFIG_DISPLAY_CLOCK_LARGE)
-static void Logic_Display_LargeClock(void);
+static void Logic_Display_LargeClock(ScheduleSource_t source);
 #endif
 
 
@@ -210,13 +210,13 @@ void Logic_Display_Init(void)
 	switch (Logic_Display_ActualState)
 	{
 		case Menu_Main:
-#ifdef CONFIG_DISPLAY_CLOCK_SMALL
+		#ifdef CONFIG_DISPLAY_CLOCK_SMALL
 			{
 				DateTime_t dateTime;
 				SysTime_GetDateTime(&dateTime);
 				Display_ShowSmallClock(&dateTime.time);
 			}
-#endif
+		#endif
 			Logic_Display_PrintMainMenuList();
 			break;
 
@@ -251,7 +251,7 @@ void Logic_Display_Init(void)
 
 		#ifdef CONFIG_DISPLAY_CLOCK_LARGE
 		case Menu_LargeClock:
-			Logic_Display_LargeClock();
+			Logic_Display_LargeClock(ScheduleSource_Unknown);
 			break;
 		#endif
 
@@ -287,36 +287,6 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 (void)button;
 (void)type;
 #warning "BUTTON_NUM is not defined or has unimplemented value!"
-#endif
-
-#if defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK) && (BUTTON_NUM == 1)
-	// One button mode
-	(void)type;
-	if (button == PressedButton_User)
-	{
-		if (type == ButtonPress_Long)
-		{
-			BUTTON_DEBUG_PRINT("Pressed a long time");
-			Logic_SystemTimeStepConfig();
-		}
-		else if (type == ButtonPress_Short)
-		{
-			BUTTON_DEBUG_PRINT("Pressed a short time");
-			Logic_SystemTimeStepValue();
-		}
-	}
-#elif defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK) && (BUTTON_NUM > 1)
-	// More button mode
-	(void)type;
-	// TODO: Up-Down / Right-Up difference...
-	if ((button == PressedButton_Right) || (button == PressedButton_Left))
-	{
-		Logic_SystemTimeStepConfig();
-	}
-	else if ((button == PressedButton_Up) || (button == PressedButton_Down))
-	{
-		Logic_SystemTimeStepValue();
-	}
 #endif
 
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER
@@ -509,11 +479,55 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 	// Check buttons
 	if (Logic_Display_ActualState == Menu_LargeClock)
 	{
+	#if !defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK)
+
 		// Go to Main menu
 		Logic_Display_ChangeState(Menu_Main);
 		// TODO: Handle button change functions?
+	#elif defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK) && (BUTTON_NUM == 1)
+		// One button mode
+		(void)type;
+
+		if (button == PressedButton_User)
+		{
+			// TODO: Add "exit"
+			if (type == ButtonPress_Long)
+			{
+				BUTTON_DEBUG_PRINT("Pressed a long time");
+				Logic_SystemTimeStepConfig();
+			}
+			else if (type == ButtonPress_Short)
+			{
+				BUTTON_DEBUG_PRINT("Pressed a short time");
+				Logic_SystemTimeStepValue();
+			}
+		}
+	#elif defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK) && (BUTTON_NUM > 1)
+		// More button mode
+		(void)type;
+		// TODO: Up-Down / Right-Up difference...
+		if ((button == PressedButton_Right) || (button == PressedButton_Left))
+		{
+			Logic_SystemTimeStepConfig();
+		}
+		else if ((button == PressedButton_Up) || (button == PressedButton_Down))
+		{
+			if (Logic_SystemTimeConfigState != DisplayClock_HourAndMinute)
+			{
+				// Not exit step, step values
+				Logic_SystemTimeStepValue();
+			}
+			else
+			{
+				// Exit step
+				// Go to Main menu
+				Logic_Display_ChangeState(Menu_Main);
+			}
+		}
+	#endif
 	}
-#endif
+#endif /* CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK */
+
 }
 #endif
 
@@ -973,7 +987,7 @@ void Logic_DisplayHandler(ScheduleSource_t source)
 #endif
 #if defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK) && defined(CONFIG_DISPLAY_CLOCK_LARGE)
 		case Menu_LargeClock:
-			Logic_Display_LargeClock();
+			Logic_Display_LargeClock(source);
 			break;
 #endif
 		case Menu_Count:
@@ -992,7 +1006,7 @@ static void Logic_Display_MainMenu(void)
 
 	// Main menu
 	#ifdef CONFIG_FUNCTION_CHARGER
-	// Loading image
+	// Loading image for Display battery charge state
 	static uint8_t loadPercent = 0;
 
 	if (Logic_BatteryIsCharging)
@@ -1024,59 +1038,8 @@ static void Logic_Display_MainMenu(void)
 	}
 	#endif
 
-	#ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
-	// Display refresh by clock
-
-	// Display vibrate function: if we are in setting mode, hour or minute will vibrate
-	static bool Display_VibrateStateHide = false;
-
-#warning: "Bufix these codes!"
-	if (source == ScheduleSource_EventTriggered)
-		Display_VibrateStateHide = false;
-
-
-	switch (Logic_GetSystemTimeState())
-	{
-		case DisplayClock_Hour:
-			// Hour setting
-			if (Display_VibrateStateHide)
-			{
-				Display_ShowClockHalf(&DateTime_SystemTime.time, DisplayClock_Minute);
-				Display_VibrateStateHide = false;
-			}
-			else
-			{
-				Display_ShowClock(&DateTime_SystemTime.time);
-				Display_VibrateStateHide = true;
-			}
-			TaskHandler_SetTaskOnceRun(Task_Display, 500);
-			break;
-
-		case DisplayClock_Minute:
-			// Minute settings
-			if (Display_VibrateStateHide)
-			{
-				Display_ShowClockHalf(&DateTime_SystemTime.time, DisplayClock_Hour);
-				Display_VibrateStateHide = false;
-			}
-			else
-			{
-				Display_ShowClock(&DateTime_SystemTime.time);
-				Display_VibrateStateHide = true;
-			}
-			TaskHandler_SetTaskOnceRun(Task_Display, 500);
-			break;
-
-		case DisplayClock_HourAndMinute:
-		case DisplayClock_Count:
-		default:
-			// Not in setting
-			Display_ShowClock(&DateTime_SystemTime.time);
-			TaskHandler_DisableTask(Task_Display);
-			break;
-	}
-	#elif defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK) && defined(CONFIG_DISPLAY_CLOCK_SMALL)
-
+	#if defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK) && defined(CONFIG_DISPLAY_CLOCK_SMALL)
+	// Display small clock on main menu
 	EventHandler_GenerateEvent(Event_Display_SpiEvent, 0, Task_Display);
 
 	// Only show clock (small - on menu)
@@ -1273,11 +1236,70 @@ static void Logic_Display_Input(ScheduleSource_t source)
 
 
 #if defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK) && defined(CONFIG_DISPLAY_CLOCK_LARGE)
-static void Logic_Display_LargeClock(void)
+static void Logic_Display_LargeClock(ScheduleSource_t source)
 {
+	#ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
+	// Display refresh by clock
+
+	// Display vibrate function: if we are in setting mode, hour or minute will vibrate
+	static bool Display_VibrateStateHide = false;
+
+	if (source == ScheduleSource_EventTriggered)
+		Display_VibrateStateHide = false;
+
+	// Get actual DateTime
+	DateTime_t dateTime;
+	SysTime_GetDateTime(&dateTime);
+
+	switch (Logic_GetSystemTimeState())
+	{
+		case DisplayClock_Hour:
+			// Hour setting
+			if (Display_VibrateStateHide)
+			{
+				Display_ShowLargeClockHalf(&dateTime.time, DisplayClock_Minute);
+				Display_VibrateStateHide = false;
+			}
+			else
+			{
+				Display_ShowLargeClock(&dateTime.time);
+				Display_VibrateStateHide = true;
+			}
+			TaskHandler_SetTaskOnceRun(Task_Display, 500);
+			break;
+
+		case DisplayClock_Minute:
+			// Minute settings
+			if (Display_VibrateStateHide)
+			{
+				Display_ShowLargeClockHalf(&dateTime.time, DisplayClock_Hour);
+				Display_VibrateStateHide = false;
+			}
+			else
+			{
+				Display_ShowLargeClock(&dateTime.time);
+				Display_VibrateStateHide = true;
+			}
+			TaskHandler_SetTaskOnceRun(Task_Display, 500);
+			break;
+
+		case DisplayClock_HourAndMinute:
+		case DisplayClock_Count:
+		default:
+			// Not in setting, display the hour and minute too
+			Display_ShowLargeClock(&dateTime.time);
+			TaskHandler_DisableTask(Task_Display);
+			break;
+	}
+	#else
+	// Only display a simple large clock (there is no vibration, not changeable)
+
 	DateTime_t dateTime;
 	SysTime_GetDateTime(&dateTime);
 	Display_ShowLargeClock(&dateTime.time);
+
+	#endif
+
 	Display_Activate();
 }
 #endif

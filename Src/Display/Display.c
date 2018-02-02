@@ -496,30 +496,11 @@ void Display_ShowLargeClock(Time_t *time)
 
 
 
-#if defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK) &&  defined(CONFIG_DISPLAY_CLOCK_SMALL)
-/**
- * \brief	Display time (HH:MM:SS) (small)
- */
-void Display_ShowSmallClock(Time_t *time)
-{
-	char clock[10];
-	usprintf(clock, "%02d:%02d:%02d", time->hour, time->minute, time->second);
-	Display_PrintString(clock, 0, Font_12x8, NO_FORMAT);
-
-#ifndef CONFIG_FUNCTION_DISPLAY_MENU
-	// Refresh display
-	Display_Activate();
-#endif
-}
-#endif
-
-
-
 #ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
 /**
  * \brief	Display time (HH:MM)
  */
-void Display_ShowClockHalf(Time_t *time, DisplayClock_ChangeState_t displayState)
+void Display_ShowLargeClockHalf(Time_t *time, DisplayClock_ChangeState_t displayState)
 {
 	// Clear
 	Display_Clear();
@@ -558,8 +539,29 @@ void Display_ShowClockHalf(Time_t *time, DisplayClock_ChangeState_t displayState
 				Display_NoFormat);
 	}
 
+#ifndef CONFIG_FUNCTION_DISPLAY_MENU
 	// Refresh display
 	Display_Activate();
+#endif
+}
+#endif
+
+
+
+#if defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK) &&  defined(CONFIG_DISPLAY_CLOCK_SMALL)
+/**
+ * \brief	Display time (HH:MM:SS) (small)
+ */
+void Display_ShowSmallClock(Time_t *time)
+{
+	char clock[10];
+	usprintf(clock, "%02d:%02d:%02d", time->hour, time->minute, time->second);
+	Display_PrintString(clock, 0, Font_12x8, NO_FORMAT);
+
+#ifndef CONFIG_FUNCTION_DISPLAY_MENU
+	// Refresh display
+	Display_Activate();
+#endif
 }
 #endif
 
