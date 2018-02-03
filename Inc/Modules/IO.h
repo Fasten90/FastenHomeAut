@@ -34,6 +34,9 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
+
+// TODO: Put to IO list
+///< IO Inputs
 typedef enum
 {
 #ifdef CONFIG_MODULE_IO_INPUT_MOTION_ENABLE
@@ -53,6 +56,7 @@ typedef enum
 } Input_t;
 
 
+///< IO Outputs
 typedef enum
 {
 #ifdef CONFIG_MODULE_IO_OUTPUT_EXAMPLE_ENABLE
@@ -66,6 +70,7 @@ typedef enum
 } Output_t;
 
 
+///< Input state
 typedef enum
 {
 	InputState_Unknown,
@@ -77,6 +82,7 @@ typedef enum
 } InputState_t;
 
 
+///< Output state
 typedef enum
 {
 	OutputState_Unknown,
