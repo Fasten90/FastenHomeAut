@@ -59,9 +59,9 @@ typedef enum
 ///< LED State
 typedef enum
 {
-	LED_State_Unknown,
-	LED_State_Off,
-	LED_State_On,
+	LED_Status_Unknown,
+	LED_Status_Off,
+	LED_Status_On,
 } LED_Status_t;
 
 
@@ -89,16 +89,20 @@ typedef struct
  *----------------------------------------------------------------------------*/
 
 #ifdef CONFIG_MODULE_LED_ENABLE
+
 void LED_Init(void);
 void LED_Test(void);
 LED_Status_t LED_SetLed(LED_Name_t ledName, LED_Cmd_t ledCmd);
 LED_Status_t LED_GetStatus(LED_Name_t ledName);
 LED_Name_t LED_GetNumFromName(const char *name);
 LED_Cmd_t LED_GetTypeFromString(const char *typeString);
-uint8_t LED_GetLedStates(char *str);
+size_t LED_GetLedStates(char *str);
+
 #else
+
 // Empty Led set definition
 #define LED_SetLed(_pin, _set)
+
 #endif
 
 void LED_PWMTask(void);

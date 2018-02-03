@@ -38,7 +38,7 @@ const LED_Record_t LED_List[] =
 	{
 		.GPIO_Port = BOARD_LED_GREEN_PORT,
 		.GPIO_Pin = BOARD_LED_GREEN_PIN,
-		.lowVoltageState = LED_State_On,
+		.lowVoltageState = LED_Status_On,
 		.name = "green"
 	},
 #endif
@@ -46,13 +46,13 @@ const LED_Record_t LED_List[] =
 	{
 		.GPIO_Port = BOARD_LED_BLUE_PORT,
 		.GPIO_Pin = BOARD_LED_BLUE_PIN,
-		.lowVoltageState = LED_State_On,
+		.lowVoltageState = LED_Status_On,
 		.name = "blue"
 	},
 	{
 		.GPIO_Port = BOARD_LED_RED_PORT,
 		.GPIO_Pin = BOARD_LED_RED_PIN,
-		.lowVoltageState = LED_State_On,
+		.lowVoltageState = LED_Status_On,
 		.name = "red"
 	},
 #endif

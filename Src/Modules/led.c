@@ -62,6 +62,10 @@ extern LED_Cmd_t LED_ActualState[];
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
+#ifdef CONFIG_DEBUG_MODE
+static void LED_CheckList(void);
+#endif
+
 
 
 /*------------------------------------------------------------------------------
@@ -77,7 +81,10 @@ void LED_Init(void)
 	// Check list
 	BUILD_ASSERT((NUM_OF(LED_Cmd_NameList)) == LED_Cmd_Count);
 
-	// TODO: Check list...
+#ifdef CONFIG_DEBUG_MODE
+	// Check list in runtime
+	LED_CheckList();
+#endif
 
 	GPIO_InitTypeDef GPIO_InitStructure;
 
@@ -109,6 +116,25 @@ void LED_Init(void)
 		LED_SetLed(i+1, LED_Cmd_SetOff);
 	}
 }
+
+
+
+#ifdef CONFIG_DEBUG_MODE
+/**
+ * \brief	Check LED list
+ */
+static void LED_CheckList(void)
+{
+	uint8_t i;
+
+	for (i = 0; i < (LED_Count -1); i++)
+	{
+		ASSERT(LED_List[i].GPIO_Port != NULL);
+		ASSERT((LED_List[i].lowVoltageState == LED_Status_Off) || (LED_List[i].lowVoltageState == LED_Status_On));
+		ASSERT(LED_List[i].name != NULL);
+	}
+}
+#endif /* CONFIG_DEBUG_MODE */
 
 
 
@@ -150,7 +176,7 @@ void LED_Test(void)
  */
 LED_Status_t LED_SetLed(LED_Name_t ledName, LED_Cmd_t ledCmd)
 {
-	LED_Status_t status = LED_State_Unknown;
+	LED_Status_t status = LED_Status_Unknown;
 
 	if ((ledName < LED_Count) && (ledCmd < LED_Cmd_Count) && (ledName != LED_Unknown) && (ledCmd != LED_Cmd_DontCare))
 	{
@@ -169,12 +195,12 @@ LED_Status_t LED_SetLed(LED_Name_t ledName, LED_Cmd_t ledCmd)
 			case LED_Cmd_SetBlink:
 	#endif
 				//LED_COLOR_ON();
-				HAL_GPIO_WritePin(port, pin, (lowVoltageState == LED_State_Off) ? (GPIO_PIN_SET) : (GPIO_PIN_RESET));
+				HAL_GPIO_WritePin(port, pin, (lowVoltageState == LED_Status_Off) ? (GPIO_PIN_SET) : (GPIO_PIN_RESET));
 				break;
 
 			case LED_Cmd_SetOff:
 				//LED_COLOR_OFF();
-				HAL_GPIO_WritePin(port, pin, (lowVoltageState == LED_State_Off) ? (GPIO_PIN_RESET) : (GPIO_PIN_SET));
+				HAL_GPIO_WritePin(port, pin, (lowVoltageState == LED_Status_Off) ? (GPIO_PIN_RESET) : (GPIO_PIN_SET));
 				break;
 
 			case LED_Cmd_SetToggle:
@@ -194,9 +220,9 @@ LED_Status_t LED_SetLed(LED_Name_t ledName, LED_Cmd_t ledCmd)
 		//return LED_GREEN_STATUS();
 		GPIO_PinState pinState = HAL_GPIO_ReadPin(port, pin);
 
-		status = (lowVoltageState == LED_State_Off)
-				? ((pinState == GPIO_PIN_RESET) ? LED_State_Off : LED_State_On)
-				: ((pinState == GPIO_PIN_RESET) ? LED_State_On : LED_State_Off);
+		status = (lowVoltageState == LED_Status_Off)
+				? ((pinState == GPIO_PIN_RESET) ? LED_Status_Off : LED_Status_On)
+				: ((pinState == GPIO_PIN_RESET) ? LED_Status_On : LED_Status_Off);
 	}
 
 	return status;
@@ -211,7 +237,7 @@ LED_Status_t LED_SetLed(LED_Name_t ledName, LED_Cmd_t ledCmd)
  */
 LED_Status_t LED_GetStatus(LED_Name_t ledName)
 {
-	LED_Status_t status = LED_State_Unknown;
+	LED_Status_t status = LED_Status_Unknown;
 
 	if ((ledName < LED_Count) && (ledName != LED_Unknown))
 	{
@@ -224,9 +250,9 @@ LED_Status_t LED_GetStatus(LED_Name_t ledName)
 		GPIO_PinState pinState = HAL_GPIO_ReadPin(port, pin);
 
 		// Set state
-		status = (lowVoltageState == LED_State_Off)
-				? ((pinState == GPIO_PIN_RESET) ? LED_State_Off : LED_State_On)
-				: ((pinState == GPIO_PIN_RESET) ? LED_State_On : LED_State_Off);
+		status = (lowVoltageState == LED_Status_Off)
+				? ((pinState == GPIO_PIN_RESET) ? LED_Status_Off : LED_Status_On)
+				: ((pinState == GPIO_PIN_RESET) ? LED_Status_On : LED_Status_Off);
 	}
 
 	return status;
@@ -284,19 +310,17 @@ LED_Cmd_t LED_GetTypeFromString(const char *typeString)
 /**
  * \brief	Get LED status to string
  */
-uint8_t LED_GetLedStates(char *str)
+size_t LED_GetLedStates(char *str)
 {
-	// TODO: It only handle fix count LEDs
-	uint8_t length = 0;
-#if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_HOMEAUTPANELS)
-	length = usprintf(str, "Led status: %d %d %d",
-			LED_GetStatus(1),
-			LED_GetStatus(2),
-			LED_GetStatus(3));
-#elif CONFIG_USE_PANEL_NUCLEOF401RE
-	length = usprintf(str, "Led status: %d",
-			LED_GREEN_STATUS());
-#endif
+	uint8_t i;
+	size_t length;
+	length = usprintf(str, "Led status: ");
+
+	for (i = 0; i < (LED_Count - 1); i++)
+	{
+		LED_Status_t ledStatus = LED_GetStatus(i+1);
+		length += StrAppend(str, (ledStatus == LED_Status_On) ? "on" : "off");
+	}
 
 	return length;
 }
