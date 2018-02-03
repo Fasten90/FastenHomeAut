@@ -344,17 +344,17 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 
 	static uint8_t Task_LedCnt = 0;
 	// Blue led toggle every time
-	LED_SetLed(LED_Blue, LED_Set_Toggle);
+	LED_SetLed(LED_Blue, LED_Cmd_SetToggle);
 
 	if (((Task_LedCnt % 2) == 0) && (ESP8266_ConnectionStatus == ESP8266_WifiConnectionStatus_SuccessfulServerStarted))
 	{
 		// *2 - fast, if has connection
-		LED_SetLed(LED_Green, LED_Set_Toggle);
+		LED_SetLed(LED_Green, LED_Cmd_SetToggle);
 	}
 	if (((Task_LedCnt % 5) == 0) && (ESP8266_ConnectionStatus != ESP8266_WifiConnectionStatus_SuccessfulServerStarted))
 	{
 		// *5 (slow - if there is no connection
-		LED_SetLed(LED_Green, LED_Set_Toggle);
+		LED_SetLed(LED_Green, LED_Cmd_SetToggle);
 	}
 
 	Task_LedCnt++;
@@ -365,16 +365,16 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 #elif defined(LED_TASK_OLD_STYLE)
 	static uint8_t Task_LedCnt = 0;
 
-	LED_SetLed(LED_Green, LED_Set_Toggle);
+	LED_SetLed(LED_Green, LED_Cmd_SetToggle);
 	if ((Task_LedCnt % 5) == 0)
 	{
 		// *5
-		LED_SetLed(LED_Blue, LED_Set_Toggle);
+		LED_SetLed(LED_Blue, LED_Cmd_SetToggle);
 	}
 	if ((Task_LedCnt % 25) == 0)
 	{
 		// * 5 * 5 (=*25)
-		LED_SetLed(LED_Red, LED_Set_Toggle);
+		LED_SetLed(LED_Red, LED_Cmd_SetToggle);
 	}
 
 	Task_LedCnt++;
@@ -394,7 +394,7 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 #endif
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
 	// Turn off LEDs
-	LED_SetLed(LED_Green, LED_Set_Off);
+	LED_SetLed(LED_Green, LED_Cmd_SetOff);
 #endif
 
 	return TaskResult_Ok;
@@ -452,8 +452,8 @@ static TaskResult_t Task_MotorConnStop(ScheduleSource_t source)
 
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
 	// TODO: LED blink 1 ms
-	LED_SetLed(LED_Red, LED_Set_On);
-	LED_SetLed(LED_Red, LED_Set_Off);
+	LED_SetLed(LED_Red, LED_Cmd_SetOn);
+	LED_SetLed(LED_Red, LED_Cmd_SetOff);
 #endif
 
 	return TaskResult_Ok;
@@ -500,8 +500,8 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 
 	// Toggle LED
 #ifdef CONFIG_MODULE_LED_ENABLE
-	LED_SetLed(LED_Green, LED_Set_Toggle);
-	LED_SetLed(LED_Green, LED_Set_Toggle);
+	LED_SetLed(LED_Green, LED_Cmd_SetToggle);
+	LED_SetLed(LED_Green, LED_Cmd_SetToggle);
 #endif
 
 

@@ -787,7 +787,7 @@ static CmdH_Result_t CommandFunction_moduletest(uint32_t argc, char** argv)
 	// LEDs on
 	for (i = LED_NUM_MIN; i <= LED_NUM_MAX; i++)
 	{
-		LED_SetLed(i, LED_Set_On);
+		LED_SetLed(i, LED_Cmd_SetOn);
 		DelayMs(500);
 	}
 
@@ -796,7 +796,7 @@ static CmdH_Result_t CommandFunction_moduletest(uint32_t argc, char** argv)
 	// LEDs off
 	for (i = LED_NUM_MIN; i <= LED_NUM_MAX; i++)
 	{
-		LED_SetLed(i, LED_Set_Off);
+		LED_SetLed(i, LED_Cmd_SetOff);
 		DelayMs(500);
 	}
 #endif	// #ifdef CONFIG_MODULE_LED_ENABLE
@@ -1197,10 +1197,10 @@ static CmdH_Result_t CommandFunction_led(uint32_t argc, char** argv)
 		{
 			// Good count
 			// Get type "set type"
-			LED_SetType_t setType = LED_GetTypeFromString(argv[2]);
+			LED_Cmd_t setType = LED_GetTypeFromString(argv[2]);
 			bool status = false;
 
-			if (setType == LED_Set_DontCare)
+			if (setType == LED_Cmd_DontCare)
 			{
 				// Error, do nothing
 				result = CmdH_Result_Error_WrongArgument2;
@@ -1671,8 +1671,8 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 			if (convertValue <= 100 && convertValue > -100)
 			{
 				#ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
-				LED_SetLed(LED_Green, LED_Set_On);
-				//LED_SetLed(LED_Green, LED_Set_Off);
+				LED_SetLed(LED_Green, LED_Cmd_SetOn);
+				//LED_SetLed(LED_Green, LED_Cmd_SetOff);
 				#endif
 				int8_t percent = (uint8_t)convertValue;
 				Motor_StateMachine_SetDc(percent);
@@ -1697,8 +1697,8 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 			if (convertValue <= 90 && convertValue >= -90)
 			{
 				#ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
-				LED_SetLed(LED_Green, LED_Set_On);
-				//LED_SetLed(LED_Green, LED_Set_Off);
+				LED_SetLed(LED_Green, LED_Cmd_SetOn);
+				//LED_SetLed(LED_Green, LED_Cmd_SetOff);
 				#endif
 				int8_t angle = (int8_t)convertValue;
 				/*
@@ -1752,8 +1752,8 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 			if (convertValue <= 100 && convertValue > -100)
 			{
 				#ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
-				LED_SetLed(LED_Green, LED_Set_On);
-				//LED_SetLed(LED_Green, LED_Set_Off);
+				LED_SetLed(LED_Green, LED_Cmd_SetOn);
+				//LED_SetLed(LED_Green, LED_Cmd_SetOff);
 				#endif
 				int8_t percent = (uint8_t)convertValue;
 				Motor_StateMachine_SetDc(percent);
@@ -1780,8 +1780,8 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 				if (convertValue <= 90 && convertValue >= -90)
 				{
 					#ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
-					LED_SetLed(LED_Green, LED_Set_On);
-					//LED_SetLed(LED_Green, LED_Set_Off);
+					LED_SetLed(LED_Green, LED_Cmd_SetOn);
+					//LED_SetLed(LED_Green, LED_Cmd_SetOff);
 					#endif
 					int8_t angle = (int8_t)convertValue;
 					Motor_StateMachine_SetAngle(angle);

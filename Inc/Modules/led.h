@@ -18,9 +18,10 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
-#include "compiler.h"
 #include "options.h"
+#include "compiler.h"
 #include "board.h"
+#include "LedList.h"
 
 
 
@@ -28,43 +29,52 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
+// Configs:
+//#define CONFIG_LED_BLINK_ENABLE
+
 
 
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-///< Available LEDs (on board)
+///< LED command
 typedef enum
 {
-	LED_Unknown,
+	LED_Cmd_DontCare,
 
-	LED_Green,
-#if LED_NUM_MAX > 1
-	LED_Blue,
-	LED_Red,
-#endif
-
-	// Do not use:
-	LED_Count
-} LED_Pin_t;
-
-///< LED operation
-typedef enum
-{
-	// TODO: Refactor
-	LED_Set_DontCare,
-	LED_Set_On,
-	LED_Set_Off,
-	LED_Set_Toggle,
+	LED_Cmd_SetOn,
+	LED_Cmd_SetOff,
+	LED_Cmd_SetToggle,
 #if defined(CONFIG_LED_BLINK_ENABLE)
-	LED_Set_Blink,
+	LED_Cmd_SetBlink,
 #endif
-	LED_Get_Status,
+	LED_Cmd_GetStatus,
 
 	// Do not use:
-	LED_Type_Count
-} LED_SetType_t;
+	LED_Cmd_Count
+} LED_Cmd_t;
+
+
+///< LED State
+typedef enum
+{
+	LED_State_Unknown,
+	LED_State_Off,
+	LED_State_On,
+} LED_Status_t;
+
+
+///< LED registration record struct
+typedef struct
+{
+	// GPIO registrations
+	const GPIO_TypeDef * const GPIO_Port;	///< GPIO port
+	const uint32_t GPIO_Pin;				///< GPIO Pin
+	const LED_Status_t lowVoltageState;		///< Low voltage state
+
+	const char * const name;				///< Name of LED
+} LED_Record_t;
 
 
 
@@ -81,10 +91,10 @@ typedef enum
 #ifdef CONFIG_MODULE_LED_ENABLE
 void LED_Init(void);
 void LED_Test(void);
-bool LED_SetLed(LED_Pin_t pin, LED_SetType_t ledSet);
-bool LED_GetStatus(LED_Pin_t pin);
-LED_Pin_t LED_GetNumFromName(const char *name);
-LED_SetType_t LED_GetTypeFromString(const char *typeString);
+LED_Status_t LED_SetLed(LED_Name_t ledName, LED_Cmd_t ledCmd);
+LED_Status_t LED_GetStatus(LED_Name_t ledName);
+LED_Name_t LED_GetNumFromName(const char *name);
+LED_Cmd_t LED_GetTypeFromString(const char *typeString);
 uint8_t LED_GetLedStates(char *str);
 #else
 // Empty Led set definition

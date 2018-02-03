@@ -21,6 +21,7 @@
 #include "ErrorHandler.h"
 #include "Timing.h"
 #include "LED.h"
+#include "LedList.h"
 
 
 
@@ -30,24 +31,9 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-///< LED names
-const char * const LED_NameList[] =
-{
-	// NOTE: Be careful, when change the order and num, synchronize with LED_NUM_MAX define
-#if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_HOMEAUTPANELS)
-	"green",
-	"blue",
-	"red",
-#elif CONFIG_USE_PANEL_NUCLEOF401RE
-	"green",
-#else
-#warning "Miss CONFIG_USE_PANEL_.. define in LED names"
-#endif
-};
 
-
-///< LED types
-const char * const LED_TypeNameList[] =
+///< LED command type names
+const char * const LED_Cmd_NameList[] =
 {
 	"-",
 	"on",
@@ -58,12 +44,16 @@ const char * const LED_TypeNameList[] =
 #endif
 	"status"
 
-	// NOTE: Synchronize with LED_SetType_t
+	// NOTE: Synchronize with LED_Cmd_t
 };
 
 
+///< LED List is required in LedList.c
+extern LED_Record_t LED_List[];
+
 #if defined(CONFIG_LED_BLINK_ENABLE)
-static LED_SetType_t LED_ActualState[LED_Count] = { 0 };
+///< LED Actual state is required in LedList.c
+extern LED_Cmd_t LED_ActualState[];
 #endif
 
 
@@ -71,10 +61,6 @@ static LED_SetType_t LED_ActualState[LED_Count] = { 0 };
 /*------------------------------------------------------------------------------
  *  Function declarations
  *----------------------------------------------------------------------------*/
-
-static bool LED_SetRedLed(LED_SetType_t ledSet);
-static bool LED_SetBlueLed(LED_SetType_t ledSet);
-static bool LED_SetGreenLed(LED_SetType_t ledSet);
 
 
 
@@ -88,39 +74,40 @@ static bool LED_SetGreenLed(LED_SetType_t ledSet);
  */
 void LED_Init(void)
 {
-	BUILD_ASSERT((sizeof(LED_TypeNameList)/sizeof(LED_TypeNameList[0])) == LED_Type_Count);
-	BUILD_ASSERT((sizeof(LED_NameList)/sizeof(LED_NameList[0])) == (LED_Count - 1));
+	// Check list
+	BUILD_ASSERT((NUM_OF(LED_Cmd_NameList)) == LED_Cmd_Count);
+
+	// TODO: Check list...
 
 	GPIO_InitTypeDef GPIO_InitStructure;
 
 	// GPIO Peripheral clock enable
 	LED_PORT_CLK_ENABLES();
 
-	// Configure pins
-	//GPIO_InitStructure.Alternate = GPIO_AF;
-	GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
-	GPIO_InitStructure.Pin = BOARD_LED_GREEN_PIN;
-	GPIO_InitStructure.Pull = GPIO_NOPULL;
-	GPIO_InitStructure.Speed = GPIO_SPEED_LOW;
-	HAL_GPIO_Init(BOARD_LED_GREEN_PORT, &GPIO_InitStructure);
+	uint8_t i;
+	for (i = 0; i < (LED_Count -1); i++)
+	{
+		GPIO_TypeDef * port = (GPIO_TypeDef *)LED_List[i].GPIO_Port;
+		uint32_t pin = LED_List[i].GPIO_Pin;
 
-#if LED_NUM_MAX > 1
-	GPIO_InitStructure.Pin = BOARD_LED_BLUE_PIN;
-	HAL_GPIO_Init(BOARD_LED_BLUE_PORT, &GPIO_InitStructure);
-	
-	GPIO_InitStructure.Pin = BOARD_LED_RED_PIN;
-	HAL_GPIO_Init(BOARD_LED_RED_PORT, &GPIO_InitStructure);
-#endif
+		// Configure pins
 
-#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
-	LED_RED_OFF();
-	LED_GREEN_OFF();
-	LED_BLUE_OFF();
-#else
-	LED_RED_OFF();
-	LED_GREEN_ON();
-	LED_BLUE_ON();
-#endif
+		// Common settings
+		//GPIO_InitStructure.Alternate = GPIO_AF;
+		GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
+		GPIO_InitStructure.Pull = GPIO_NOPULL;
+		GPIO_InitStructure.Speed = GPIO_SPEED_LOW;
+
+		// Different settings
+		GPIO_InitStructure.Pin = pin;
+		HAL_GPIO_Init(port, &GPIO_InitStructure);
+	}
+
+	// Turn off all LEDs
+	for (i = 0; i < (LED_Count -1); i++)
+	{
+		LED_SetLed(i+1, LED_Cmd_SetOff);
+	}
 }
 
 
@@ -133,131 +120,25 @@ void LED_Test(void)
 {
 	while(1)
 	{
-		// Set LEDs
-		LED_GREEN_ON();
-		LED_BLUE_ON();
-		LED_RED_ON();
+		// Turn on all LEDs
+		uint8_t i;
+		for (i = 0; i < (LED_Count -1); i++)
+		{
+			LED_SetLed(i+1, LED_Cmd_SetOn);
+		}
 
 		// Delay
 		DelayMs(200);
 
-		// Set LEDs
-		LED_GREEN_OFF();
-		LED_BLUE_OFF();
-		LED_RED_OFF();
+		// Turn off all LEDs
+		for (i = 0; i < (LED_Count -1); i++)
+		{
+			LED_SetLed(i+1, LED_Cmd_SetOff);
+		}
 
 		// Delay
 		DelayMs(200);
 	}
-}
-
-
-
-/**
- * \brief	Set green LED
- */
-static bool LED_SetGreenLed(LED_SetType_t ledSet)
-{
-
-	switch (ledSet)
-	{
-		case LED_Set_On:
-#if defined(CONFIG_LED_BLINK_ENABLE)
-		case LED_Set_Blink:
-#endif
-			LED_GREEN_ON();
-			break;
-
-		case LED_Set_Off:
-			LED_GREEN_OFF();
-			break;
-
-		case LED_Set_Toggle:
-			LED_GREEN_TOGGLE();
-			break;
-
-		case LED_Get_Status:
-		case LED_Set_DontCare:
-		case LED_Type_Count:
-		default:
-			// Do nothing
-			break;
-	}
-
-	// Return with LED status, so LED_Get_Status state is handled with this
-	return LED_GREEN_STATUS();
-}
-
-
-
-/**
- * \brief	Set blue LED
- */
-static bool LED_SetBlueLed(LED_SetType_t ledSet)
-{
-
-	switch (ledSet)
-	{
-		case LED_Set_On:
-#if defined(CONFIG_LED_BLINK_ENABLE)
-		case LED_Set_Blink:
-#endif
-			LED_BLUE_ON();
-			break;
-
-		case LED_Set_Off:
-			LED_BLUE_OFF();
-			break;
-
-		case LED_Set_Toggle:
-			LED_BLUE_TOGGLE();
-			break;
-
-		case LED_Get_Status:
-		case LED_Set_DontCare:
-		case LED_Type_Count:
-		default:
-			// Do nothing
-			break;
-	}
-
-	return LED_BLUE_STATUS();
-}
-
-
-
-/**
- * \brief	Set red LED
- */
-static bool LED_SetRedLed(LED_SetType_t ledSet)
-{
-
-	switch (ledSet)
-	{
-		case LED_Set_On:
-#if defined(CONFIG_LED_BLINK_ENABLE)
-		case LED_Set_Blink:
-#endif
-			LED_RED_ON();
-			break;
-
-		case LED_Set_Off:
-			LED_RED_OFF();
-			break;
-
-		case LED_Set_Toggle:
-			LED_RED_TOGGLE();
-			break;
-
-		case LED_Get_Status:
-		case LED_Set_DontCare:
-		case LED_Type_Count:
-		default:
-			// Do nothing
-			break;
-	}
-
-	return LED_RED_STATUS();
 }
 
 
@@ -267,43 +148,58 @@ static bool LED_SetRedLed(LED_SetType_t ledSet)
  * \param	num		LED number
  * \param	ledSet	Which type (on, off, toggle)
  */
-bool LED_SetLed(LED_Pin_t pin, LED_SetType_t ledSet)
+LED_Status_t LED_SetLed(LED_Name_t ledName, LED_Cmd_t ledCmd)
 {
-	bool state = false;
+	LED_Status_t status = LED_State_Unknown;
 
-	switch (pin)
+	if ((ledName < LED_Count) && (ledCmd < LED_Cmd_Count) && (ledName != LED_Unknown) && (ledCmd != LED_Cmd_DontCare))
 	{
-#if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_HOMEAUTPANELS)
-		case LED_Green:
-			state = LED_SetGreenLed(ledSet);
-			break;
-
-		case LED_Blue:
-			state = LED_SetBlueLed(ledSet);
-			break;
-
-		case LED_Red:
-			state = LED_SetRedLed(ledSet);
-			break;
-#elif CONFIG_USE_PANEL_NUCLEOF401RE
-		case LED_Green:
-			state = LED_SetGreenLed(ledSet);
-			break;
-#endif
-		case LED_Unknown:
-		case LED_Count:
-		default:
-			state = false;
-			break;
-	}
 #if defined(CONFIG_LED_BLINK_ENABLE)
-	if ((pin < LED_Count) && (ledSet < LED_Type_Count) && (pin != LED_Unknown) && (ledSet != LED_Set_DontCare))
-	{
-		LED_ActualState[pin - 1] = ledSet;
-	}
+		LED_ActualState[ledName - 1] = ledCmd;
 #endif
 
-	return state;
+		GPIO_TypeDef * port = (GPIO_TypeDef *)LED_List[ledName-1].GPIO_Port;
+		uint32_t pin = LED_List[ledName-1].GPIO_Pin;
+		LED_Status_t lowVoltageState = LED_List[ledName-1].lowVoltageState;
+
+		switch (ledCmd)
+		{
+			case LED_Cmd_SetOn:
+	#if defined(CONFIG_LED_BLINK_ENABLE)
+			case LED_Cmd_SetBlink:
+	#endif
+				//LED_COLOR_ON();
+				HAL_GPIO_WritePin(port, pin, (lowVoltageState == LED_State_Off) ? (GPIO_PIN_SET) : (GPIO_PIN_RESET));
+				break;
+
+			case LED_Cmd_SetOff:
+				//LED_COLOR_OFF();
+				HAL_GPIO_WritePin(port, pin, (lowVoltageState == LED_State_Off) ? (GPIO_PIN_RESET) : (GPIO_PIN_SET));
+				break;
+
+			case LED_Cmd_SetToggle:
+				//LED_COLOR_TOGGLE();
+				HAL_GPIO_TogglePin(port, pin);
+				break;
+
+			case LED_Cmd_GetStatus:
+			case LED_Cmd_DontCare:
+			case LED_Cmd_Count:
+			default:
+				// Do nothing
+				break;
+		}
+
+		// Return with LED status, so LED_Cmd_GetStatus state is handled with this
+		//return LED_GREEN_STATUS();
+		GPIO_PinState pinState = HAL_GPIO_ReadPin(port, pin);
+
+		status = (lowVoltageState == LED_State_Off)
+				? ((pinState == GPIO_PIN_RESET) ? LED_State_Off : LED_State_On)
+				: ((pinState == GPIO_PIN_RESET) ? LED_State_On : LED_State_Off);
+	}
+
+	return status;
 }
 
 
@@ -313,35 +209,24 @@ bool LED_SetLed(LED_Pin_t pin, LED_SetType_t ledSet)
  * \return	true, if high
  * 			false, if low
  */
-bool LED_GetStatus(LED_Pin_t pin)
+LED_Status_t LED_GetStatus(LED_Name_t ledName)
 {
-	bool status;
+	LED_Status_t status = LED_State_Unknown;
 
-	switch (pin)
+	if ((ledName < LED_Count) && (ledName != LED_Unknown))
 	{
-#if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_HOMEAUTPANELS)
-		case LED_Green:
-			status = LED_GREEN_STATUS();
-			break;
+		// Get LED datas
+		GPIO_TypeDef * port = (GPIO_TypeDef *)LED_List[ledName-1].GPIO_Port;
+		uint32_t pin = LED_List[ledName-1].GPIO_Pin;
+		LED_Status_t lowVoltageState = LED_List[ledName-1].lowVoltageState;
 
-		case LED_Blue:
-			status = LED_BLUE_STATUS();
-			break;
+		// Read pin
+		GPIO_PinState pinState = HAL_GPIO_ReadPin(port, pin);
 
-		case LED_Red:
-			status = LED_RED_STATUS();
-			break;
-
-#elif CONFIG_USE_PANEL_NUCLEOF401RE
-		case LED_Green:
-			status = LED_GREEN_STATUS();
-			break;
-#endif
-		case LED_Unknown:
-		case LED_Count:
-		default:
-			status = false;
-			break;
+		// Set state
+		status = (lowVoltageState == LED_State_Off)
+				? ((pinState == GPIO_PIN_RESET) ? LED_State_Off : LED_State_On)
+				: ((pinState == GPIO_PIN_RESET) ? LED_State_On : LED_State_Off);
 	}
 
 	return status;
@@ -352,15 +237,15 @@ bool LED_GetStatus(LED_Pin_t pin)
 /**
  * \brief	Get LED type from name
  */
-LED_Pin_t LED_GetNumFromName(const char *name)
+LED_Name_t LED_GetNumFromName(const char *name)
 {
 	uint8_t i;
-	LED_Pin_t ledNum = LED_Unknown;
+	LED_Name_t ledNum = LED_Unknown;
 
 	// Search LED name in the list
-	for (i = 0; i < LED_Count - 1; i++)
+	for (i = 0; i < (LED_Count -1) - 1; i++)
 	{
-		if (!StrCmp(LED_NameList[i], name))
+		if (!StrCmp(LED_List[i].name, name))
 		{
 			// LED num = index+1
 			ledNum = i + 1;
@@ -376,15 +261,15 @@ LED_Pin_t LED_GetNumFromName(const char *name)
 /**
  * \brief	Get type from string
  */
-LED_SetType_t LED_GetTypeFromString(const char *typeString)
+LED_Cmd_t LED_GetTypeFromString(const char *typeString)
 {
 	uint8_t i;
-	LED_SetType_t ledType = 0;
+	LED_Cmd_t ledType = 0;
 
 	// Search LED type string in the list
-	for (i = 0; i < LED_Type_Count; i++)
+	for (i = 0; i < LED_Cmd_Count; i++)
 	{
-		if (!StrCmp(LED_TypeNameList[i], typeString))
+		if (!StrCmp(LED_Cmd_NameList[i], typeString))
 		{
 			ledType = i;
 			break;
@@ -401,6 +286,7 @@ LED_SetType_t LED_GetTypeFromString(const char *typeString)
  */
 uint8_t LED_GetLedStates(char *str)
 {
+	// TODO: It only handle fix count LEDs
 	uint8_t length = 0;
 #if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_HOMEAUTPANELS)
 	length = usprintf(str, "Led status: %d %d %d",
@@ -479,12 +365,12 @@ void LED_PWMTask(void)
 	// Check, need LED blinking?
 	if (LED_PwmCnt < LED_PwmLimit)
 	{
-		LED_SetLed(LED_Blue, LED_Set_On);
-		//LED_SetLed(LED_Blue, LED_Set_Toggle);
+		LED_SetLed(LED_Blue, LED_Cmd_SetOn);
+		//LED_SetLed(LED_Blue, LED_Cmd_SetToggle);
 	}
 	else
 	{
-		LED_SetLed(LED_Blue, LED_Set_Off);
+		LED_SetLed(LED_Blue, LED_Cmd_SetOff);
 	}
 
 	// PWM counter
@@ -508,10 +394,10 @@ void LED_Handler(void)
 	uint8_t i;
 	for (i = 0; i < LED_Count; i++)
 	{
-		if (LED_ActualState[i] == LED_Set_Blink)
+		if (LED_ActualState[i] == LED_Cmd_SetBlink)
 		{
 			// Need corrects the LED index
-			LED_SetLed((i+1), LED_Set_Off);
+			LED_SetLed((i+1), LED_Cmd_SetOff);
 		}
 	}
 }
