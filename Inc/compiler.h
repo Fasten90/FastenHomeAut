@@ -1,16 +1,16 @@
 /*
- *		include.h
+ *		compiler.h
  *  	Created on: 	2013-11-19
  *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		include file for project
+ *		Function:		compiler defines/includes file for project
  *		Target:			STM32Fx
  *		Version:		v4
  *		Last modified:	2016-09-28
  */
 
-#ifndef INCLUDE_H_
-#define INCLUDE_H_
+#ifndef COMPILER_H_
+#define COMPILER_H_
 
 
 /*------------------------------------------------------------------------------
@@ -143,4 +143,4 @@ extern void Assert_Function(char *file, uint32_t line, char *exp);
 
 
 
-#endif /* INCLUDE_H_ */
+#endif /* COMPILER_H_ */
