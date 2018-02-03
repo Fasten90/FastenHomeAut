@@ -22,18 +22,29 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-DAC_HandleTypeDef    DacHandle;
+DAC_HandleTypeDef DacHandle;
+
+
+
+/*------------------------------------------------------------------------------
+ *  Local variables
+ *----------------------------------------------------------------------------*/
+
 static DAC_ChannelConfTypeDef sConfig;
+
+
+
+/*------------------------------------------------------------------------------
+ *  Function declarations
+ *----------------------------------------------------------------------------*/
+
+static uint32_t CommonDAC_VoltageToBinary(float voltage);
 
 
 
 /*------------------------------------------------------------------------------
  *  Functions
  *----------------------------------------------------------------------------*/
-
-static uint32_t CommonDAC_VoltageToBinary(float voltage);
-
-
 
 /**
  * \brief	HAL driver: DAC MSP initialization

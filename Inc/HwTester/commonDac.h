@@ -13,7 +13,11 @@
 #define COMMONDAC_H_
 
 
+/*------------------------------------------------------------------------------
+ *  Includes
+ *----------------------------------------------------------------------------*/
 
+#include "options.h"
 #include "compiler.h"
 
 
@@ -37,7 +41,7 @@ typedef enum
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-extern DAC_HandleTypeDef    DacHandle;
+extern DAC_HandleTypeDef DacHandle;
 
 
 
