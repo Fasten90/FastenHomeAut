@@ -205,6 +205,8 @@ bool DateTime_ConvertDateStringToDate(char *str, Date_t *date)
 
 /**
  * \brief	Convert DateString to Time
+ * \param[in]	str		String like "12:00:00"
+ * \param[out]	time	Converted time
  */
 bool DateTime_ConvertTimeStringToTime(char *str, Time_t *time)
 {
@@ -247,7 +249,7 @@ bool DateTime_ConvertTimeStringToTime(char *str, Time_t *time)
 
 
 /**
- * \brief	Check value it is ok (is in range?)
+ * \brief	Check value it is OK? (Is in range?)
  */
 bool DateTime_CheckValue(uint32_t originalValue, uint32_t minValue, uint32_t maxValue)
 {
@@ -265,7 +267,7 @@ bool DateTime_CheckValue(uint32_t originalValue, uint32_t minValue, uint32_t max
 
 /**
  * \brief	Check DateTime
- * \retval	true	if ok (valid)
+ * \retval	true	if OK (valid)
  * \retval	false	if invalid
  */
 bool DateTime_CheckDateTime(DateTime_t *dateTime)
@@ -365,7 +367,7 @@ int32_t DateTime_CalculateDifferentOf2DateTime(DateTime_t *dateTime1, DateTime_t
 
 	if (isOk)
 	{
-		// Ok
+		// OK
 		seconds1 = DateTime_CalculateDateTimeSecond(dateTime1);
 		seconds2 = DateTime_CalculateDateTimeSecond(dateTime2);
 		different = seconds1 - seconds2;
