@@ -93,6 +93,7 @@ bool SelfTest_Flag_Test(void)
 
 	volatile int32_t add1 = 0x7FFFFFF0U;
 	volatile int32_t add2 = 0x000000FFU;
+	// cppcheck-suppress integerOverflow
 	volatile uint32_t addres = add1 + add2;
 
 	apsr.w = __get_APSR();
