@@ -3,15 +3,14 @@
  *		Created on:		2018-01-21
  *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
+ *		Function:		Informations for device/board
  *		Target:			STM32Fx
  *		Version:		-
  *		Last modified:	2018-01-21
  */
 
-#ifndef INC_BOARDINFOS_H_
-#define INC_BOARDINFOS_H_
-
+#ifndef BOARDINFOS_H_
+#define BOARDINFOS_H_
 
 
 
@@ -50,4 +49,4 @@ extern char Global_DeviceName[];
 
 
 
-#endif /* INC_BOARDINFOS_H_ */
+#endif /* BOARDINFOS_H_ */

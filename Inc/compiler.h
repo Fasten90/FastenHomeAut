@@ -77,39 +77,8 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #endif	// #ifdef CONFIG_USE_FREERTOS
 
 
-
 ///< Macro for list's element size/num
 #define NUM_OF(x) (sizeof(x)/sizeof(x[0]))
-
-
-/**
- * Macro for checking - compile time checking
- *
- * OK		if condition is TRUE
- * Error	if condition is FALSE
- *
- * \note	Only can use on a function
- * \note	Be careful, it only works if sizes/datas available in compile-time.
- */
-#define BUILD_ASSERT(condition) ((void)sizeof(char[1 - 2*!(condition)]))
-/*
- * Original version:
- * #define BUILD_ASSERT(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
- */
-
-
-///< Breakpoint
-#ifdef CONFIG_DEBUG_MODE
-    #ifndef CONFIG_PLATFORM_PC_WINDOWS
-	// ASM: Breakpoint
-	#define DEBUG_BREAKPOINT()		__asm("BKPT #0\n")
-    #else
-	#include "Windows.h"
-	#define DEBUG_BREAKPOINT()		DebugBreak()
-    #endif
-#else
-#define DEBUG_BREAKPOINT()
-#endif
 
 
 ///< Stringification
@@ -146,6 +115,41 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 // #define assert_param(expr) ((void)0)	// incompatible redefinition ...
 
+
+/**
+ * Macro for checking - compile time checking
+ *
+ * OK		if condition is TRUE
+ * Error	if condition is FALSE
+ *
+ * \note	Only can use on a function
+ * \note	Be careful, it only works if sizes/datas available in compile-time.
+ */
+#define BUILD_ASSERT(condition) ((void)sizeof(char[1 - 2*!(condition)]))
+/*
+ * Original version:
+ * #define BUILD_ASSERT(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
+ */
+
+
+///< Breakpoint
+#ifdef CONFIG_DEBUG_MODE
+    #ifndef CONFIG_PLATFORM_PC_WINDOWS
+	// ASM: Breakpoint
+	#define DEBUG_BREAKPOINT()		__asm("BKPT #0\n")
+    #else
+	#include "Windows.h"
+	#define DEBUG_BREAKPOINT()		DebugBreak()
+    #endif
+#else
+#define DEBUG_BREAKPOINT()
+#endif
+
+
+
+/*------------------------------------------------------------------------------
+ *									Global functions
+ *----------------------------------------------------------------------------*/
 
 extern void Error_Handler(void);
 extern void Assert_Function(char *file, uint32_t line, char *exp);

@@ -95,7 +95,7 @@ void LED_Init(void)
 
 	// GPIO Peripheral clock enable
 	LED_PORT_CLK_ENABLES();
-	
+
 	// Configure pins
 	//GPIO_InitStructure.Alternate = GPIO_AF;
 	GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
@@ -103,7 +103,7 @@ void LED_Init(void)
 	GPIO_InitStructure.Pull = GPIO_NOPULL;
 	GPIO_InitStructure.Speed = GPIO_SPEED_LOW;
 	HAL_GPIO_Init(BOARD_LED_GREEN_PORT, &GPIO_InitStructure);
-	
+
 #if LED_NUM_MAX > 1
 	GPIO_InitStructure.Pin = BOARD_LED_BLUE_PIN;
 	HAL_GPIO_Init(BOARD_LED_BLUE_PORT, &GPIO_InitStructure);
