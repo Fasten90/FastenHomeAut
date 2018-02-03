@@ -149,7 +149,7 @@ static void GlobVarH_UT_Clear(void);
 void GlobVarH_Init(void)
 {
 	//#error "Synhcronize 'GlobVarH_Type_Count' with 'GlobalVarTypesNames'"
-	BUILD_BUG_ON(NUM_OF(GlobVarH_TypesNames) != GlobVarH_Type_Count);
+	BUILD_ASSERT(NUM_OF(GlobVarH_TypesNames) == GlobVarH_Type_Count);
 
 #ifdef CONFIG_GLOBALVARHANDLER_CHECK_ENABLE
 	GlobVarH_CheckGlobalVarArray(&GlobVarH_Variables);

@@ -124,7 +124,7 @@ const EventId_t EventsNum = NUM_OF(EventList);
 void EventList_init(void)
 {
 	// Check EventList size
-	BUILD_BUG_ON(Event_Count != NUM_OF(EventList));
+	BUILD_ASSERT(NUM_OF(EventList) == Event_Count);
 }
 
 

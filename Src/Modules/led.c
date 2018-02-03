@@ -88,8 +88,8 @@ static bool LED_SetGreenLed(LED_SetType_t ledSet);
  */
 void LED_Init(void)
 {
-	BUILD_BUG_ON((sizeof(LED_TypeNameList)/sizeof(LED_TypeNameList[0])) != LED_Type_Count);
-	BUILD_BUG_ON((sizeof(LED_NameList)/sizeof(LED_NameList[0])) != (LED_Count - 1));
+	BUILD_ASSERT((sizeof(LED_TypeNameList)/sizeof(LED_TypeNameList[0])) == LED_Type_Count);
+	BUILD_ASSERT((sizeof(LED_NameList)/sizeof(LED_NameList[0])) == (LED_Count - 1));
 
 	GPIO_InitTypeDef GPIO_InitStructure;
 

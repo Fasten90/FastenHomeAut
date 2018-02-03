@@ -21,6 +21,7 @@
 #include "IO.h"
 
 
+
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
@@ -125,15 +126,15 @@ void IO_Init(void)
 {
 #if IO_INPUTS_NUM > 0
 	// Size check
-	BUILD_BUG_ON((sizeof(IO_InputNames)/sizeof(IO_InputNames[0])) != Input_Count);
+	BUILD_ASSERT((sizeof(IO_InputNames)/sizeof(IO_InputNames[0])) == Input_Count);
 	//#error "IO_InputNames and Input_t aren't syncronized!"
-	BUILD_BUG_ON((sizeof(IO_InputStateNames)/sizeof(IO_InputStateNames[0])) != InputState_Count);
+	BUILD_ASSERT((sizeof(IO_InputStateNames)/sizeof(IO_InputStateNames[0])) == InputState_Count);
 #endif
 
 #if IO_OUTPUTS_NUM > 0
-	BUILD_BUG_ON((sizeof(IO_OutputNames)/sizeof(IO_OutputNames[0])) != Output_Count);
+	BUILD_ASSERT((sizeof(IO_OutputNames)/sizeof(IO_OutputNames[0])) == Output_Count);
 	//#error "IO_OutputNames and Output_t aren't syncronized!"
-	BUILD_BUG_ON((sizeof(IO_OutputStateNames)/sizeof(IO_OutputStateNames[0])) != OutputState_Count);
+	BUILD_ASSERT((sizeof(IO_OutputStateNames)/sizeof(IO_OutputStateNames[0])) == OutputState_Count);
 #endif
 
 

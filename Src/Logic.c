@@ -1002,7 +1002,7 @@ void Logic_DisplayHandler(ScheduleSource_t source)
 static void Logic_Display_MainMenu(void)
 {
 	// Check Menu list size
-	BUILD_BUG_ON(NUM_OF(Logic_MenuList) != (Menu_Count - 1));
+	BUILD_ASSERT(NUM_OF(Logic_MenuList) == (Menu_Count - 1));
 
 	// Main menu
 	#ifdef CONFIG_FUNCTION_CHARGER
@@ -1087,7 +1087,7 @@ static void Logic_Display_PrintMainMenuList(void)
 
 #ifdef CONFIG_FUNCTION_DISPLAY_MENU_SCROLLING
 	// Scrolled menu (only for > DisplayMenu_ShowMenuLimit)
-	BUILD_BUG_ON(NUM_OF(Logic_MenuList) <= DisplayMenu_ShowMenuLimit);
+	BUILD_ASSERT(NUM_OF(Logic_MenuList) > DisplayMenu_ShowMenuLimit);
 
 	uint8_t startLine = 0;
 	if (Logic_Display_SelectedState > 2)
@@ -1121,7 +1121,7 @@ static void Logic_Display_PrintMainMenuList(void)
 	}
 #else
 	// Only max DisplayMenu_ShowMenuLimit menu item can displayed
-	BUILD_BUG_ON(NUM_OF(Logic_MenuList) > DisplayMenu_ShowMenuLimit);
+	BUILD_ASSERT(NUM_OF(Logic_MenuList) <= DisplayMenu_ShowMenuLimit);
 
 	for (i = 0; i < NUM_OF(Logic_MenuList); i++)
 	{

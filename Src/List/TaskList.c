@@ -321,7 +321,7 @@ const TaskID_t TasksNum = NUM_OF(TaskList);
 void TaskList_Init(void)
 {
 	// Check TaskList size and enums
-	BUILD_BUG_ON(NUM_OF(TaskList) != Task_Count);
+	BUILD_ASSERT(NUM_OF(TaskList) == Task_Count);
 }
 
 

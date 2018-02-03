@@ -67,7 +67,7 @@ static const char * const ProtocolNameList[] =
 void COMMUNICATION_Init()
 {
 	// Check Communication list size
-	BUILD_BUG_ON(NUM_OF(ProtocolNameList) != CommProt_Count);
+	BUILD_ASSERT(NUM_OF(ProtocolNameList) == CommProt_Count);
 }
 
 

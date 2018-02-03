@@ -96,7 +96,7 @@ DebugRecord_t DebugTasks[] =
 void DebugList_Init(void)
 {
 	// Run-time error checking: size of the DebugTasks struct must be equal to members is Debug_t enumeration.
-	BUILD_BUG_ON(NUM_OF(DebugTasks) != Debug_Count);
+	BUILD_ASSERT(NUM_OF(DebugTasks) == Debug_Count);
 }
 
 
