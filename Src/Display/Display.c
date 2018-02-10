@@ -207,6 +207,7 @@ void Display_PrintFont8x5(uint8_t chr, uint8_t index, uint8_t line, FontFormat_t
  * \param	line	- line / row
  * \param	format	- format of text
  */
+//__attribute__( ( section(".data") ) )
 void Display_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line, FontFormat_t format)
 {
 	// 12x8 pixel font
