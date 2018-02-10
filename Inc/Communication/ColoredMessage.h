@@ -48,6 +48,7 @@ void ColoredMessage_SendMsgWithBackgroundColor(char *str, const char *msg,  MsgC
 void ColoredMessage_SendMsg(char *str, const char *msg, MsgColors_t textColor);
 void ColoredMessage_SendTextColor(char *str, MsgColors_t textColor);
 void ColoredMessage_SendBackgroundColor(char *str, MsgColors_t backgroundColor);
+void ColoredMessage_SendDefaultFormat(char *str);
 void ColoredMessage_SendErrorMsg(char *str, const char *msg);
 
 void ColoredMessage_Test(void);

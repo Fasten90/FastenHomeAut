@@ -10,6 +10,7 @@
  *
  *		Read:
  *		https://en.wikipedia.org/wiki/ANSI_escape_code
+ *		http://ascii-table.com/ansi-escape-sequences.php
  */
 
 #ifndef ESCAPESEQUENCE_H_
@@ -83,6 +84,9 @@
 #define ESCAPE_CURSOR_TOPLEFT			("\x1B" "[1;1H")
 
 
+#define ESCAPE_SEND_CLS					ESCAPE_ERASE_CLS ESCAPE_CURSOR_TOPLEFT
+
+
 /*------------------------------------------------------------------------------
  *							ESCAPE SEQUENCE  - COLORS
  *----------------------------------------------------------------------------*/
@@ -99,22 +103,33 @@
 
 #define ESCAPE_BACKGROUND_DEFAULT		("\x1B" "[49m")		// NOTE: Does not work in Hyperterminal
 
-#define ESCAPE_RESET					("\x1B" "[0m")		// NOTE: At Hyperterminal the background will be black
-
-#define ESCAPE_SEND_CLS					ESCAPE_ERASE_CLS ESCAPE_CURSOR_TOPLEFT
-
-// Example:
-// "\x1B" "[30m" = Black text color
-#define ESCAPE_TEXT_START				("\x1B" "[3")
-#define ESCAPE_TEXT_END					("m")
-
-// Example:
-// "\x1B" "[47m" = White background color
-#define ESCAPE_BACKGROUND_START			("\x1B" "[4")
-#define ESCAPE_BACKGROUND_END			("m")
+#define ESCAPE_FORMAT_RESET				("\x1B" "[0m")		// NOTE: At Hyperterminal the background will be black
 
 
-#define ESCAPE_SEQUENCE_STRING_MAX_LENGTH		( 5 + 1 )
+/* Example:
+ * "\x1B" = ESC
+ *
+ * "\x1B" "[30m" = Black text color
+ * "\x1B" "[47m" = White background color
+ * "\x1B" "[47;30m"
+ */
+#define ESCAPE_FORMAT_TEXTCOLOR_START			("\x1B" "[3")
+
+#define ESCAPE_FORMAT_BACKGROUNDCOLOR_START		("\x1B" "[4")
+
+#define ESCAPE_FORMAT_ONLY_START				("\x1B" "[")
+
+#define ESCAPE_FORMAT_ONLY_TEXTROUNDCOLOR		("3")
+
+#define ESCAPE_FORMAT_ONLY_BACKGROUNDCOLOR		("4")
+
+#define ESCAPE_FORMAT_SEPARATE					(";")
+
+#define ESCAPE_FORMAT_END						("m")
+
+#define ESCAPE_FORMAT_STANDARD_STRING_MAX_LENGTH	( sizeof("\x1B" "[30" "m") )
+#define ESCAPE_FORMAT_2PARAM_STRING_MAX_LENGTH		( sizeof("\x1B" "[30" ";" "47" "m") )
+#define ESCAPE_FORMAT_3PARAM_STRING_MAX_LENGTH		( sizeof("\x1B" "[30" ";" "47" ";" "1" "m") )
 
 
 /**
@@ -134,6 +149,20 @@ typedef enum
 	Color_Cyan,
 	Color_White
 } MsgColors_t;
+
+
+/**
+ * \brief	Text attributes for Escape sequence
+ */
+typedef enum
+{
+	Format_AllAttributesOff = 0,
+	Format_BoldOn,
+	Format_Underscore,
+	Format_Blink,
+	Format_ReverseVideoOn,
+	Format_ConcealedOn
+} MsgFormat_t;
 
 
 

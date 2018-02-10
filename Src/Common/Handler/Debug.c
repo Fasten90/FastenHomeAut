@@ -74,7 +74,7 @@ void Debug_Print(Debug_t debugTask, const char *format, ...)
 	{
 #ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
 		// Text color
-		char colorMsg[ESCAPE_SEQUENCE_STRING_MAX_LENGTH * 2] = { 0 };
+		char colorMsg[ESCAPE_FORMAT_STANDARD_STRING_MAX_LENGTH * 2] = { 0 };
 		ColoredMessage_SendTextColor(colorMsg, DebugTasks[debugTask].color);
 		if (DebugTasks[debugTask].background)	// TODO: Not good idea. Now, we cannot use "black = 0" color in background
 		{

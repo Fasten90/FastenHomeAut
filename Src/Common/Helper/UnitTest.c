@@ -83,7 +83,7 @@ void UnitTest_CheckResult(bool isValid, const char *conString, const char *error
 #else
 
 	#ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
-		char coloredMsg[ESCAPE_SEQUENCE_STRING_MAX_LENGTH * 2] = { 0 };
+		char coloredMsg[ESCAPE_FORMAT_STANDARD_STRING_MAX_LENGTH * 2] = { 0 };
 		ColoredMessage_SendTextColor(coloredMsg, Color_Black);
 		ColoredMessage_SendBackgroundColor(coloredMsg, Color_Red);
 		DebugUart_SendMessage(coloredMsg);
@@ -128,7 +128,7 @@ void UnitTest_End(void)
 			UnitTest_InvalidCnt);
 
 #ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
-	char coloredMsg[ESCAPE_SEQUENCE_STRING_MAX_LENGTH * 2 + 40] = { 0 };
+	char coloredMsg[ESCAPE_FORMAT_STANDARD_STRING_MAX_LENGTH * 2 + 40] = { 0 };
 #endif
 
 	if (UnitTest_InvalidCnt)
