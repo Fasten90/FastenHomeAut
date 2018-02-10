@@ -88,7 +88,7 @@ const Event_t EventList[] =
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
 	{
 		.name = "DisplaySpiEvent",
-		.isNeedLog = false,
+		.isNeedLog = true,
 	}
 #endif
 

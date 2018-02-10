@@ -227,6 +227,7 @@ int main(void)
 	/* Configure the system clock */
 	SystemClock_Config();
 
+
 #ifdef CONFIG_MODULE_SELFTEST_ENABLE
 	// Stack use
 	volatile uint8_t selfTestStackStartVariable = 0;
@@ -242,6 +243,7 @@ int main(void)
 	// Flag test
 	SelfTest_Flag_Test();
 #endif
+
 
 #ifdef CONFIG_PLATFORM_PC_WINDOWS
 	#ifdef CONFIG_MODULE_UNITTEST_ENABLE

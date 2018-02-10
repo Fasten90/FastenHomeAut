@@ -975,6 +975,7 @@ void Terminal_SendWelcome(void)
 
 /**
  * \brief	Send CLS (Clear Screen)
+ * \note	TODO: Move to other file, it is ~EscapeSequence code...
  */
 void Terminal_SendCls(void)
 {

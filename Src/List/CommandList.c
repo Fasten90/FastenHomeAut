@@ -761,6 +761,8 @@ static CmdH_Result_t CommandFunction_unittest(uint32_t argc, char** argv)
 	SecuredDataTypes_UnitTest();
 #endif
 
+	CmdH_SendLine("Unittest finished");
+
 	return CmdH_Result_Ok;
 }
 #endif	// #ifdef CONFIG_MODULE_UNITTEST_ENABLE
@@ -1116,6 +1118,10 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 	 * Array start address: 536878260, end address: 536878359
 	 * Array start address: 536878160, end address: 536878259
 	 */
+
+
+	//ColoredMessage_Test();
+
 
 	/**
 	 * 		End of Test codes
