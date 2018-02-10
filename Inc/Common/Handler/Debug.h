@@ -27,6 +27,9 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
+///< Enable background
+//#define CONFIG_DEBUG_BACKGROUND_ENABLE
+
 
 
 /*------------------------------------------------------------------------------
@@ -38,7 +41,9 @@ typedef struct
 	const char * name;					///< Name (string)
 	bool isEnabled;						///< Need to debugprint?
 	MsgColors_t color;					///< Text color
+#ifdef CONFIG_DEBUG_BACKGROUND_ENABLE
 	MsgColors_t background;				///< Background color
+#endif
 } DebugRecord_t;
 
 

@@ -76,10 +76,12 @@ void Debug_Print(Debug_t debugTask, const char *format, ...)
 		// Text color
 		char colorMsg[ESCAPE_FORMAT_STANDARD_STRING_MAX_LENGTH * 2] = { 0 };
 		ColoredMessage_SendTextColor(colorMsg, DebugTasks[debugTask].color);
+	#ifdef CONFIG_DEBUG_BACKGROUND_ENABLE
 		if (DebugTasks[debugTask].background)	// TODO: Not good idea. Now, we cannot use "black = 0" color in background
 		{
 			ColoredMessage_SendBackgroundColor(colorMsg, DebugTasks[debugTask].background);
 		}
+	#endif
 		DebugUart_SendMessage(colorMsg);
 #endif
 
@@ -111,12 +113,7 @@ void Debug_Print(Debug_t debugTask, const char *format, ...)
 #ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
 		// Set default color
 		colorMsg[0] = '\0';	// Clear colorMsg
-
-		ColoredMessage_SendTextColor(colorMsg, Color_Black);
-		if (DebugTasks[debugTask].background)
-		{
-			ColoredMessage_SendBackgroundColor(colorMsg, Color_White);	// TODO: Not good idea. Now, we cannot use "black = 0" color in background
-		}
+		ColoredMessage_SendDefaultFormat(colorMsg);
 		DebugUart_SendMessage(colorMsg);
 #endif
 	}
