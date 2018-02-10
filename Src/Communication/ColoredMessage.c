@@ -28,7 +28,7 @@ void ColoredMessage_SendMsgWithBackgroundColor(char *str, const char *msg, MsgCo
 {
 	ColoredMessage_SendBackgroundAndTextColor(str, backgroundColor, textColor);		// Send background + text color
 	StrAppend(str, msg);															// Send message
-	ColoredMessage_SendDefaultFormat(str);											// Restore format
+	ColoredMessage_SendDefaultFormat(str);											// Restore format (bg + text color)
 }
 
 
@@ -41,7 +41,7 @@ void ColoredMessage_SendMsg(char *str, const char *msg, MsgColors_t textColor)
 {
 	ColoredMessage_SendTextColor(str, textColor);								// Send text color
 	StrAppend(str, msg);														// Send message
-	ColoredMessage_SendDefaultFormat(str, COLOREDMESSAGE_STANDARD_TEXT_COLOR);	// Restore text color
+	ColoredMessage_SendDefaultFormat(str);										// Restore format (text color)
 }
 
 
@@ -71,7 +71,21 @@ void ColoredMessage_SendBackgroundColor(char *str, MsgColors_t backgroundColor)
 
 
 /**
- * \brief	Send BackgroundAndTextColor
+ * \brief	Send text format
+ */
+void ColoredMessage_SendTextFormat(char *str, MsgFormat_t textFormat)
+{
+	StrAppend(str, ESCAPE_FORMAT_ONLY_START);
+
+	CharAppend(str, '0' + textFormat);
+
+	StrAppend(str, ESCAPE_FORMAT_END);
+}
+
+
+
+/**
+ * \brief	Send BackgroundColor + TextColor
  */
 void ColoredMessage_SendBackgroundAndTextColor(char *str, MsgColors_t backgroundColor, MsgColors_t textColor)
 {
@@ -84,6 +98,30 @@ void ColoredMessage_SendBackgroundAndTextColor(char *str, MsgColors_t background
 
 	StrAppend(str, ESCAPE_FORMAT_ONLY_TEXTROUNDCOLOR);
 	CharAppend(str, '0' + textColor);
+
+	StrAppend(str, ESCAPE_FORMAT_END);
+}
+
+
+
+/**
+ * \brief	Send BackgroundColor + TextColor + TextFormat
+ */
+void ColoredMessage_SendBackgroundAndTextColorAndFormat(char *str, MsgColors_t backgroundColor, MsgColors_t textColor, MsgFormat_t textFormat)
+{
+	StrAppend(str, ESCAPE_FORMAT_ONLY_START);
+
+	StrAppend(str, ESCAPE_FORMAT_ONLY_BACKGROUNDCOLOR);
+	CharAppend(str, '0' + backgroundColor);
+
+	StrAppend(str, ESCAPE_FORMAT_SEPARATE);
+
+	StrAppend(str, ESCAPE_FORMAT_ONLY_TEXTROUNDCOLOR);
+	CharAppend(str, '0' + textColor);
+
+	StrAppend(str, ESCAPE_FORMAT_SEPARATE);
+
+	CharAppend(str, '0' + textFormat);
 
 	StrAppend(str, ESCAPE_FORMAT_END);
 }
@@ -115,18 +153,31 @@ void ColoredMessage_SendErrorMsg(char *str, const char *msg)
  */
 void ColoredMessage_Test(void)
 {
-	char text[255] = { 0 };
+	char str[255] = { 0 };
 
 	// Send colored messages
-	ColoredMessage_SendMsg(text, "Red text\r\n", Color_Red);
-	ColoredMessage_SendMsg(text, "Yellow text\r\n", Color_Yellow);
+	ColoredMessage_SendMsg(str, "Red text\r\n", Color_Red);
+	ColoredMessage_SendMsg(str, "Yellow text\r\n", Color_Yellow);
 
-	ColoredMessage_SendMsgWithBackgroundColor(text, "Black text with Red background color\r\n", Color_Black, Color_Red);
-	ColoredMessage_SendMsgWithBackgroundColor(text, "Black text with Yellow background color\r\n", Color_Black, Color_Yellow);
+	ColoredMessage_SendMsgWithBackgroundColor(str, "Black text with Red background color\r\n", Color_Black, Color_Red);
+	ColoredMessage_SendMsgWithBackgroundColor(str, "Black text with Yellow background color\r\n", Color_Black, Color_Yellow);
 
-	ColoredMessage_SendErrorMsg(text, "FATAL ERROR EXAMPLE\r\n");
+	ColoredMessage_SendErrorMsg(str, "FATAL ERROR EXAMPLE\r\n");
 
-	DebugUart_SendMessage(text);
+	ColoredMessage_SendTextFormat(str, Format_BoldOn);
+	StrAppend(str, "bold\r\n");
+	ColoredMessage_SendDefaultFormat(str);
+
+	ColoredMessage_SendTextFormat(str, Format_Underscore);
+	StrAppend(str, "underscore\r\n");
+	ColoredMessage_SendDefaultFormat(str);
+
+	ColoredMessage_SendBackgroundAndTextColorAndFormat(str, Color_Green, Color_Black, Format_BoldOn);
+	StrAppend(str, "Colored bold text\r\n");
+	ColoredMessage_SendDefaultFormat(str);
+
+
+	DebugUart_SendMessage(str);
 }
 
 #else
