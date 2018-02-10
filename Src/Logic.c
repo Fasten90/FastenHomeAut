@@ -1045,7 +1045,7 @@ static void Logic_Display_MainMenu(void)
 	// Only show clock (small - on menu)
 	if (Logic_Display_ActualState == Menu_Main)
 	{
-		// TODO: Optimize... This function run around 20ms
+		// TODO: Optimize... This function run around 20ms from 8MHz clock
 		DateTime_t dateTime;
 		SysTime_GetDateTime(&dateTime);
 		Display_ShowSmallClock(&dateTime.time);

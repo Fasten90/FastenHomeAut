@@ -34,6 +34,7 @@
 #define INVERSE 2
 
 
+
 #define SSD1306_I2C_ADDRESS   0x3C  // 011110+SA0+RW - 0x3C or 0x3D
 // Address for 128x32 is 0x3C
 // Address for 128x64 is 0x3D (default) or 0x3C (if SA0 is grounded)
@@ -129,6 +130,13 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
+typedef enum
+{
+	DisplayColor_Black,
+	DisplayColor_White,
+	DisplayColor_Inverse,
+} Display_Color_t;
+
 
 
 /*------------------------------------------------------------------------------
@@ -156,7 +164,7 @@ void SSD1306_stopscroll(void);
 
 void SSD1306_dim(bool dim);
 
-void SSD1306_drawPixel(int16_t x, int16_t y, uint16_t color);
+void SSD1306_drawPixel(uint8_t x, uint8_t y, Display_Color_t color);
 void SSD1306_drawFixVerticalLine(int16_t x, int16_t y, uint8_t row);
 void SSD1306_drawImage(uint8_t setx, uint8_t sety, uint8_t sizex, uint8_t sizey, uint8_t *img);
 

@@ -44,8 +44,8 @@
 #endif
 
 
-#define DISPLAY_FONT32X20_CLOCK_START_POSITION_X		( ( 128 - 5*20)/2 )
-#define DISPLAY_FONT32X20_CLOCK_START_POSITION_Y		( ( 64 - 1*32)/2 )
+#define DISPLAY_FONT32X20_CLOCK_START_POSITION_X		( ( 128 - ( 5*20 ) ) / 2 )
+#define DISPLAY_FONT32X20_CLOCK_START_POSITION_Y		( ( 64 - ( 1*32 ) ) / 2 )
 
 
 
@@ -160,24 +160,29 @@ void Display_PrintString(const char *str, uint8_t line, FontType_t font, FontFor
  * \param	chr		- which character (ASCII - 0-127)
  * \param	index	- column
  * \param	line	- line / row
+ * \param	format	- format of text
  */
+//__attribute__( ( section(".data") ) )
 void Display_PrintFont8x5(uint8_t chr, uint8_t index, uint8_t line, FontFormat_t format)
 {
 	// 8x5 pixel font
-	uint8_t i;
-	uint8_t j;
+	register const uint8_t indexStart = index * (FONT_8X5_WIDTH + 1);
+	register const uint8_t lineStart = (line * (FONT_8X5_HEIGHT + 1));
+	register uint8_t i;
+	register uint8_t j;
 
 	// TODO: Handle "underline"
 	// Step on columns
 	for (i = 0; i < FONT_8X5_WIDTH; i++)
 	{
 		// Step on rows from top to bottom
-		uint8_t x = index * (FONT_8X5_WIDTH + 1) + i;
+		register uint8_t storedChar = Font8x5[chr][i];
+		register uint8_t x = indexStart + i;
 		for (j = 0; j < FONT_8X5_HEIGHT; j++)
 		{
 			// Draw pixel to "screen"
-			uint8_t y = (line * (FONT_8X5_HEIGHT + 1)) + j;
-			if (Font8x5[chr][i] & (1 << (7-j)))
+			register uint8_t y = lineStart + j;
+			if (storedChar & (1 << (7-j)))
 			{
 				SSD1306_drawPixel(x, y,
 						format.Format_Inverse ? BLACK : WHITE);
@@ -200,23 +205,28 @@ void Display_PrintFont8x5(uint8_t chr, uint8_t index, uint8_t line, FontFormat_t
  * \param	chr		- which character (ASCII - 0-127)
  * \param	index	- column
  * \param	line	- line / row
+ * \param	format	- format of text
  */
 void Display_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line, FontFormat_t format)
 {
 	// 12x8 pixel font
-	uint8_t i;
-	uint8_t j;
+	register const uint8_t lineStart = line * (FONT_12X8_HEIGHT + 1);
+	register const uint8_t indexStart = index * (FONT_12X8_WIDTH + 1);
+	register uint8_t i;
 
 	// Step on rows from top to bottom
 	for (i = 0; i < FONT_12X8_HEIGHT; i++)
 	{
 		// Step on column from left to right
-		uint8_t y = (line * (FONT_12X8_HEIGHT + 1)) + i;
+		register uint8_t storedChar = Font12x8[chr][i];
+		register uint8_t y = lineStart + i;
+		register uint8_t j;
+
 		for (j = 0; j < FONT_12X8_WIDTH; j++)
 		{
 			// Draw pixel to "screen"
-			uint8_t x = index * (FONT_12X8_WIDTH + 1) + j;
-			if (Font12x8[chr][i] & (1 << (7-j)))
+			register uint8_t x = indexStart + j;
+			if (storedChar & (1 << (7-j)))
 			{
 				SSD1306_drawPixel(x, y,
 						format.Format_Inverse ? BLACK : WHITE);
@@ -236,6 +246,12 @@ void Display_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line, FontFormat_
 #ifdef CONFIG_DISPLAY_FONT32X20_ENABLE
 /**
  * \brief	Print 32x20 font
+ * \param	chr			- which character (ASCII - '0'-'9', ':')
+ * \param	index		- index of character
+ * \param	startposx	- line / row
+ * \param	startposy	- line / row
+ * \param	format		- format of text
+ * \note	Now it is only usable for Hour:Minute displaying
  */
 void Display_PrintFont32x20(uint8_t chr, uint8_t index, uint8_t startposx, uint8_t startposy, FontFormat_t format)
 {

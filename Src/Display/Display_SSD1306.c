@@ -351,9 +351,10 @@ static void SSD1306_fastSPIwrite(uint8_t d)
 /**
  * \brief	The most basic function, set a single pixel
  */
-void SSD1306_drawPixel(int16_t x, int16_t y, uint16_t color)
+// __attribute__( ( section(".data") ) )
+void SSD1306_drawPixel(uint8_t x, uint8_t y, Display_Color_t color)
 {
-	if ((x < 0) || (x >= SSD1306_LCDWIDTH) || (y < 0) || (y >= SSD1306_LCDHEIGHT))
+	if ((x >= SSD1306_LCDWIDTH) || (y >= SSD1306_LCDHEIGHT))
 		return;
 
 #ifdef SSD1306_ROTATION_ENABLE
