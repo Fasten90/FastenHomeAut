@@ -39,6 +39,17 @@
 
 
 /*------------------------------------------------------------------------------
+ *								Hardware
+ *----------------------------------------------------------------------------*/
+
+#ifdef CONFIG_USE_PANEL_FASTENNODE
+	#define CONFIG_HW_DISPLAY_ENABLE
+	#define CONFIG_HW_BUTTON_ENABLE
+#endif
+
+
+
+/*------------------------------------------------------------------------------
  *								Logical functions
  *----------------------------------------------------------------------------*/
 
@@ -73,97 +84,99 @@
 #endif
 
 
-///< Display: Menu
-#define CONFIG_FUNCTION_DISPLAY_MENU
-#ifdef CONFIG_FUNCTION_DISPLAY_MENU
-	#ifndef CONFIG_MODULE_DISPLAY_ENABLE
-		#define CONFIG_MODULE_DISPLAY_ENABLE
-	#endif
-	// Display: clock
-	#define CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
-	// Display: Snake game
-	#define CONFIG_FUNCTION_GAME_SNAKE
-	// Display: Input
-	#define CONFIG_FUNCTION_DISPLAY_INPUT
-	// Display: Show screen
-	#define CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
-
-	// Display: Scrolling menu (Use only for longer then 3 menu)
-	#define CONFIG_FUNCTION_DISPLAY_MENU_SCROLLING
-#endif
-
-
-///< Display: Show screen
-//#define CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
-// TODO: What we want to displaying
-
-
-///< Display: Show clock
-//#define CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
-#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
-	#define CONFIG_DISPLAY_CLOCK_LARGE
-	#define CONFIG_DISPLAY_CLOCK_SMALL
-	#ifndef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
-		#define CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
-	#endif
-#endif
-
-
-///< Display: Clock change function
-#define CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
-#ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
-	#ifndef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
+#ifdef CONFIG_HW_DISPLAY_ENABLE
+	///< Display: Menu
+	#define CONFIG_FUNCTION_DISPLAY_MENU
+	#ifdef CONFIG_FUNCTION_DISPLAY_MENU
+		#ifndef CONFIG_MODULE_DISPLAY_ENABLE
+			#define CONFIG_MODULE_DISPLAY_ENABLE
+		#endif
+		// Display: clock
 		#define CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
+		// Display: Snake game
+		#define CONFIG_FUNCTION_GAME_SNAKE
+		// Display: Input
+		#define CONFIG_FUNCTION_DISPLAY_INPUT
+		// Display: Show screen
+		#define CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
+
+		// Display: Scrolling menu (Use only for longer then 3 menu)
+		#define CONFIG_FUNCTION_DISPLAY_MENU_SCROLLING
 	#endif
-	#ifndef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
-		#define CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
-	#endif
-#endif
 
 
-///< Display: Input function
-//#define CONFIG_FUNCTION_DISPLAY_INPUT
-#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
-	#ifndef CONFIG_MODULE_DISPLAY_ENABLE
-		#define CONFIG_MODULE_DISPLAY_ENABLE
-	#endif
-	#ifndef CONFIG_MODULE_BUTTON_ENABLE
-		#define CONFIG_MODULE_BUTTON_ENABLE
-	#endif
-#endif
+	///< Display: Show screen
+	//#define CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
+	// TODO: What we want to displaying
 
 
-///< Charger function
-//#define CONFIG_FUNCTION_CHARGER
-#ifdef CONFIG_FUNCTION_CHARGER
-	#ifndef CONFIG_MODULE_DISPLAY_ENABLE
-		#define CONFIG_MODULE_DISPLAY_ENABLE
+	///< Display: Show clock
+	//#define CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
+	#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
+		#define CONFIG_DISPLAY_CLOCK_LARGE
+		#define CONFIG_DISPLAY_CLOCK_SMALL
+		#ifndef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
+			#define CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
+		#endif
 	#endif
-	#ifndef CONFIG_MODULE_ADC_ENABLE
-		#define CONFIG_MODULE_ADC_ENABLE
-	#endif
-	#ifndef CONFIG_MODULE_IO_ENABLE
-		#define CONFIG_MODULE_IO_ENABLE
-	#endif
-	#ifndef CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE
-		#define CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE
-	#endif
-#endif
 
 
-///< Snake game
-//#define CONFIG_FUNCTION_GAME_SNAKE
-#ifdef CONFIG_FUNCTION_GAME_SNAKE
-	#ifndef CONFIG_MODULE_DISPLAY_ENABLE
-		#define CONFIG_MODULE_DISPLAY_ENABLE
+	///< Display: Clock change function
+	#define CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
+	#ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
+		#ifndef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
+			#define CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
+		#endif
+		#ifndef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
+			#define CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
+		#endif
 	#endif
-	#ifndef CONFIG_DISPLAY_FONT8X5_ENABLE
-		#define CONFIG_DISPLAY_FONT8X5_ENABLE
+
+
+	///< Display: Input function
+	//#define CONFIG_FUNCTION_DISPLAY_INPUT
+	#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
+		#ifndef CONFIG_MODULE_DISPLAY_ENABLE
+			#define CONFIG_MODULE_DISPLAY_ENABLE
+		#endif
+		#ifndef CONFIG_MODULE_BUTTON_ENABLE
+			#define CONFIG_MODULE_BUTTON_ENABLE
+		#endif
 	#endif
-	#ifndef CONFIG_DISPLAY_FONT12X8_ENABLE
-		#define CONFIG_DISPLAY_FONT12X8_ENABLE
+
+
+	///< Charger function
+	//#define CONFIG_FUNCTION_CHARGER
+	#ifdef CONFIG_FUNCTION_CHARGER
+		#ifndef CONFIG_MODULE_DISPLAY_ENABLE
+			#define CONFIG_MODULE_DISPLAY_ENABLE
+		#endif
+		#ifndef CONFIG_MODULE_ADC_ENABLE
+			#define CONFIG_MODULE_ADC_ENABLE
+		#endif
+		#ifndef CONFIG_MODULE_IO_ENABLE
+			#define CONFIG_MODULE_IO_ENABLE
+		#endif
+		#ifndef CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE
+			#define CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE
+		#endif
 	#endif
-#endif
+
+
+	///< Snake game
+	//#define CONFIG_FUNCTION_GAME_SNAKE
+	#ifdef CONFIG_FUNCTION_GAME_SNAKE
+		#ifndef CONFIG_MODULE_DISPLAY_ENABLE
+			#define CONFIG_MODULE_DISPLAY_ENABLE
+		#endif
+		#ifndef CONFIG_DISPLAY_FONT8X5_ENABLE
+			#define CONFIG_DISPLAY_FONT8X5_ENABLE
+		#endif
+		#ifndef CONFIG_DISPLAY_FONT12X8_ENABLE
+			#define CONFIG_DISPLAY_FONT12X8_ENABLE
+		#endif
+	#endif
+#endif /* #ifdef CONFIG_HW_DISPLAY_ENABLE */
 
 
 ///< Periodical sending UART message function
@@ -477,7 +490,7 @@
 //#define CONFIG_DEBUG_SELFTEST
 
 ///< MCU SelfTest
-#define CONFIG_MODULE_SELFTEST_ENABLE
+//#define CONFIG_MODULE_SELFTEST_ENABLE
 
 
 ///< Debug - Formatted text (colored texts)
@@ -492,7 +505,7 @@
 
 
 ///< Unit tests
-#define CONFIG_MODULE_UNITTEST_ENABLE
+//#define CONFIG_MODULE_UNITTEST_ENABLE
 #if defined(CONFIG_MODULE_UNITTEST_ENABLE) && !defined(CONFIG_USE_PANEL_PC)
 	//#define MODULE_STRING_UNITTEST_ENABLE
 	//#define MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
@@ -670,12 +683,12 @@
 
 
 ///< EventLog settings
-//#define CONFIG_MODULE_EVENTLOG_ENABLE
+#define CONFIG_MODULE_EVENTLOG_ENABLE
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
 	//#define CONFIG_EVENTLOG_TASKHANDLER_LOG_ENABLE
-	//#define CONFIG_EVENTLOG_DISPLAY_LOG_ENABLE
+	#define CONFIG_EVENTLOG_DISPLAY_LOG_ENABLE
 	//#define CONFIG_EVENTLOG_PRINT_IMMEDIATELY
-	#define CONFIG_EVENTLOG_CMDHANDLER_ENABLE
+	//#define CONFIG_EVENTLOG_CMDHANDLER_ENABLE
 #endif
 
 
