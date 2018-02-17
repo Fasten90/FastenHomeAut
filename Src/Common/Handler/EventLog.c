@@ -34,6 +34,7 @@
 #ifdef MODULE_EVENTLOG_UNITTEST_ENABLE
 	#include "UnitTest.h"
 	#include "ErrorHandler.h"
+	#include "Timing.h"
 #endif
 
 
@@ -75,7 +76,9 @@ void EventLog_Init(void)
 
 	LogCounter = 0;
 
+#if ( EVENTLOG_SAVE_EVENT_AT_INIT == 1 )
 	//EventHandler_GenerateEvent(Event_LogEventStarted, 0, 0);
+#endif
 }
 
 
@@ -221,13 +224,14 @@ void EventLog_UnitTest(void)
 
 	EventLog_Init();
 
+#if ( EVENTLOG_SAVE_EVENT_AT_INIT == 1 )
 	// Check, first record is "LogEventStarted" ?
 	UNITTEST_ASSERT(EventLogs[0].eventName == Event_LogEventStarted, "EventLog_Init error");
 	UNITTEST_ASSERT(EventLogs[0].eventType == EventType_Raised, "EventLog_Init error");
 	UNITTEST_ASSERT(EventLogs[0].eventData == 0, "EventLog_Init error");
 	UNITTEST_ASSERT(EventLogs[0].tick != 0, "EventLog_Init error");
 
-	// Check, second record is empty?
+	// Check, second record is empty ?
 	UNITTEST_ASSERT(EventLogs[1].eventName == 0, "EventLog_Init error");
 	UNITTEST_ASSERT(EventLogs[1].eventType == 0, "EventLog_Init error");
 	UNITTEST_ASSERT(EventLogs[1].eventData == 0, "EventLog_Init error");
@@ -244,6 +248,38 @@ void EventLog_UnitTest(void)
 	UNITTEST_ASSERT(EventLogs[1].eventData == 0x12345678, "EventLog_Init error");
 	UNITTEST_ASSERT(EventLogs[1].tick != 0, "EventLog_Init error");
 
+#else
+
+	// Check, first record is empty ?
+	UNITTEST_ASSERT(EventLogs[0].eventName == 0, "EventLog_Init error");
+	UNITTEST_ASSERT(EventLogs[0].eventType == 0, "EventLog_Init error");
+	UNITTEST_ASSERT(EventLogs[0].eventData == 0, "EventLog_Init error");
+	UNITTEST_ASSERT(EventLogs[0].tick == 0, "EventLog_Init error");
+
+	// Check, second record is empty ?
+	UNITTEST_ASSERT(EventLogs[1].eventName == 0, "EventLog_Init error");
+	UNITTEST_ASSERT(EventLogs[1].eventType == 0, "EventLog_Init error");
+	UNITTEST_ASSERT(EventLogs[1].eventData == 0, "EventLog_Init error");
+	UNITTEST_ASSERT(EventLogs[1].tick == 0, "EventLog_Init error");
+
+
+	// Test log event (record)
+
+	EventLog_LogEvent(Event_LogEventStarted, 0x12345678, 0, EventType_Raised);
+
+	// Check, second record is "LogEventStarted" ?
+	UNITTEST_ASSERT(EventLogs[0].eventName == Event_LogEventStarted, "EventLog_Init error");
+	UNITTEST_ASSERT(EventLogs[0].eventType == EventType_Raised, "EventLog_Init error");
+	UNITTEST_ASSERT(EventLogs[0].eventData == 0x12345678, "EventLog_Init error");
+	UNITTEST_ASSERT(EventLogs[0].tick != 0, "EventLog_Init error");
+
+	// Check, second record is empty ?
+	UNITTEST_ASSERT(EventLogs[1].eventName == 0, "EventLog_Init error");
+	UNITTEST_ASSERT(EventLogs[1].eventType == 0, "EventLog_Init error");
+	UNITTEST_ASSERT(EventLogs[1].eventData == 0, "EventLog_Init error");
+	UNITTEST_ASSERT(EventLogs[1].tick == 0, "EventLog_Init error");
+
+#endif
 
 	// Finish unit test
 	UnitTest_End();

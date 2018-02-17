@@ -49,6 +49,9 @@
 ///< Print event immediately
 // #define CONFIG_EVETNLOG_PRINT_IMMEDIATELY
 
+///< Save event at EventLog initialization ( 1 - on, 0 - off )
+#define EVENTLOG_SAVE_EVENT_AT_INIT			( 0 )
+
 
 
 /*------------------------------------------------------------------------------
