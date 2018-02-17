@@ -16,6 +16,9 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
+
+#ifdef CONFIG_MODULE_LED_ENABLE
+
 #include "LED.h"
 #include "LedList.h"
 
@@ -97,3 +100,4 @@ void LedList_Init(void)
 
 
 
+#endif /* #ifdef CONFIG_MODULE_LED_ENABLE */

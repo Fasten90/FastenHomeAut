@@ -38,9 +38,10 @@
 typedef enum
 {
 	LED_Unknown,
-
+#if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_HOMEAUTPANELS) || defined(CONFIG_USE_PANEL_NUCLEOF401RE)
 	LED_Green,
-#if LED_NUM_MAX > 1
+#endif
+#if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_HOMEAUTPANELS)
 	LED_Blue,
 	LED_Red,
 #endif
