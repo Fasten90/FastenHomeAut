@@ -188,8 +188,6 @@
  *									Modules
  *----------------------------------------------------------------------------*/
 
-/// Enabled modules
-
 #ifdef CONFIG_USE_PANEL_HOMEAUTCENTERPANEL
 
 	#define CONFIG_PLATFORM_MCU_STM32F4xx

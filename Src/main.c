@@ -8,7 +8,7 @@
  *
  * This document created by [Doxygen](http://www.stack.nl/~dimitri/doxygen/index.html)
  *
- * FastenHomeAut is a simple demo and "Hardware tester" software, which written in C by Vizi Gábor.
+ * FastenHomeAut is a simple embedded project with "Hardware tester" and "CommandHandler" software, which written in C by Vizi Gábor.
  *
  * This project has these important software modules:
  * - "TaskHandler" for task scheduling (it is not RTOS!)
@@ -16,19 +16,21 @@
  * - "EventHandler" for easy event handling and task schedule requiring
  * - "GlobalVarHandler" for global variable get-set function (it help for debug)
  * - Hardware tester modules:
- *   + CommonIO - Use IO (Input-Output) pins
- *   + CommonADC - Use ADC (Analog-Digital Converter), read analog value (How many voltage it?)
- *   + CommonDAC - Use DAC (Digital-Analog Converter), generate adjustable voltage
- *   + CommonPWM - Use PWM (Pulse Width Modulation)
+ *   + CommonIO   - Use IO (Input-Output) pins
+ *   + CommonADC  - Use ADC (Analog-Digital Converter), read analog value (How many voltage it?)
+ *   + CommonDAC  - Use DAC (Digital-Analog Converter), generate adjustable voltage
+ *   + CommonPWM  - Use PWM (Pulse Width Modulation)
+ *   + CommonUART - Use UART (Universal Asynchronous Receiver-Transmitter), use other UART with Debug UART. (E.g. test an external UART device)
  * - "ConvertTable" for integer - float conversions (e.g. analog <-> voltage, or analog <-> capacity)
  * - "CircularBuffer" for communication
  * - Display:
  *   + Display module: 0.96 OLED
- *   + Write texts (8x5, 12x8, 32x20 (only numbers))
+ *   + Write texts (Fonts: 8x5, 12x8, 32x20 (this is only with numbers))
  *   + Functions:
  *     - Show clock
  *     - Snake game
- *     - Show animation
+ *     - Show animation: Car with rotary wheels
+ *     - Display input: you can type a command and execute it
  *
  *
  * Requirements
@@ -122,6 +124,15 @@
  *     - The tick value should print
  *   + Test: \code set <varname> <value> \encode
  *   + Test: \code trace <varname> "enable" \encode
+ *
+ *
+ * Target platforms:
+ * ------------------------
+ *
+ * - STM32xx
+ *   - STM32F030x (tested)
+ *   - STM32F4 (tested)
+ * - Win32 (tested)
  *
  *
  * How development?
