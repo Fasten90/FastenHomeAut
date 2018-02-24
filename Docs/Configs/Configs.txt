@@ -1,63 +1,94 @@
 Project configs:
 
-# Includes:
-Inc
-Inc/Common
-Inc/Communication
-Inc/HwTester
-Inc/Modules
+## Includes / Directores:
 
-Drivers/CMSIS/Include
-Drivers/CMSIS/Device/ST/STM32F4xx/Include
-Drivers/STM32F4xx_HAL_Driver/Inc
-Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
+# Drivers (e.g. F0)
+../FastenHomeAut/Drivers/STM32F0xx_HAL_Driver/Inc
+../FastenHomeAut/Drivers/STM32F0xx_HAL_Driver/Inc/Legacy
+../FastenHomeAut/Drivers/CMSIS/Device/ST/STM32F0xx/Include
+../FastenHomeAut/Drivers/CMSIS/Include
 
-If have FreeRTOS: (default: no)
+# Drivers (e.g. Win)
+../FastenHomeAut/Drivers/Windows/Inc
+
+# FastenHomeAut sources (always need)
+../FastenHomeAut/Inc/
+../FastenHomeAut/Inc/Common
+../FastenHomeAut/Inc/Communication
+../FastenHomeAut/Inc/HwTester
+../FastenHomeAut/Inc/Modules
+../FastenHomeAut/Inc/Game
+../FastenHomeAut/Inc/Common/Handler
+../FastenHomeAut/Inc/Common/Helper
+../FastenHomeAut/Inc/Display
+../FastenHomeAut/Inc/List
+../FastenHomeAut/Inc/SelfTest
+
+# Others includes
+# If have FreeRTOS: (default: no)
 Middlewares/Third_Party/FreeRTOS/Source/include
 Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
 
-If have Trace: (default: no)
+# If have Trace: (default: no)
 Middlewares/Third_Party/TraceRecorder/include
 
-If have STL: (default: no)
+# If have STL: (default: no)
 Middlewares/STM32_SelfTest_Library/inc
 
-If have ETH: (default: no)
+# If have ETH: (default: no)
 Middlewares/LwIP/src/include
 Middlewares/LwIP/system
 
 
-# Paths and Symbols:
+## Paths and Symbols:
 
-HAL defines:
-STM32F407xx or STM32F030x8
+# HAL defines (always need):
 USE_HAL_DRIVER
 
-Fasten lib defines:
-CONFIG_USE_PANEL_STM32F4DISCOVERY or CONFIG_USE_PANEL_FASTENNODE
-CONFIG_USE_COMPILER_GCC
+# Device dependent
+STM32F407xx
+STM32F030x8
+
+# Fasten lib defines (only one need!)
+CONFIG_USE_PANEL_FASTENNODE         1
+CONFIG_USE_PANEL_STM32F4DISCOVERY   1
+CONFIG_USE_PANEL_PC                 1
+
+
+# Not need, because normal situation it is defined by compiler (one need)
+__CC_ARM__
+__ICARM__
+__GNUC__
+__STDC__
 
 
 
-# Other
-Exclude all not need files
-	- e.g. STL library: 3 assembly files
-	
+## Other settings
 
-# Other settings
+# Excludes
+# Exclude all not need files
+- Drivers\STM32xx
+- CMSIS\.. not recommended files
+- e.g. STL library: 3 assembly files
+
+# If you use FreeRTOS, you need select your preferred heap and delete/exlude others:
+- heap_1 vs heap_4 files
+
+# If have CRC (STL):
+- Add CRC data to linker
+
+
+# C linker - general:
+- Do not use standard start files
++ Do not use default libraries (checked)
+    !! Be careful, ETH lib need it !!
+- No startup or default libs
++ No shared libraries (checked)
+
 - Set Warnings
 - Enable extra warning flags
 
 - Set Linker
-
-- Do not use default libraries (C Linker -> General)
-	!! Be careful, ETH lib need it
-
-If have FreeRTOS:
-heap_1 vs heap_4
-
-If have CRC (STL):
-	- Add CRC data to linker
 
 
 # Eclipse/Atollic TrueSTUDIO templates:
