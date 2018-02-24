@@ -1083,45 +1083,21 @@ bool StringToBool(const char * str, bool * val)
 		// Not number
 
 		// Check it is "true" / "false" ?
-		if (!StrCmp((const char*)str, "true"))
-		{
-			boolVal = true;
-			isBool = true;
-		}
-		else if (!StrCmp((const char*)str, "false"))
-		{
-			boolVal = false;
-			isBool = true;
-		}
 		// Check it is "on" / "off"?
-		else if (!StrCmp((const char*)str, "on"))
-		{
-			boolVal = true;
-			isBool = true;
-		}
-		else if (!StrCmp((const char*)str, "off"))
-		{
-			boolVal = false;
-			isBool = true;
-		}
 		// Check it is "enable" / "disable"
-		else if (!StrCmp((const char*)str, "enable"))
-		{
-			boolVal = true;
-			isBool = true;
-		}
-		else if (!StrCmp((const char*)str, "disable"))
-		{
-			boolVal = false;
-			isBool = true;
-		}
 		// Check it is "set" / "reset"
-		else if (!StrCmp((const char*)str, "set"))
+		if (!StrCmp((const char*)str, "true")
+			|| !StrCmp((const char*)str, "on")
+			|| !StrCmp((const char*)str, "enable")
+			|| !StrCmp((const char*)str, "set"))
 		{
 			boolVal = true;
 			isBool = true;
 		}
-		else if (!StrCmp((const char*)str, "reset"))
+		else if (!StrCmp((const char*)str, "false")
+				|| !StrCmp((const char*)str, "off")
+				|| !StrCmp((const char*)str, "disable")
+				|| !StrCmp((const char*)str, "reset"))
 		{
 			boolVal = false;
 			isBool = true;
