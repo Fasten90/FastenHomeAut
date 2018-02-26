@@ -19,6 +19,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
+#include "GenericTypeDefs.h"
 #include "EscapeSequence.h"
 
 
@@ -49,7 +50,7 @@ void ColoredMessage_SendMsg(char *str, const char *msg, MsgColors_t textColor);
 void ColoredMessage_SendTextColor(char *str, MsgColors_t textColor);
 void ColoredMessage_SendTextFormat(char *str, MsgFormat_t textFormat);
 void ColoredMessage_SendBackgroundColor(char *str, MsgColors_t backgroundColor);
-void ColoredMessage_SendBackgroundAndTextColor(char *str, MsgColors_t backgroundColor, MsgColors_t textColor);
+size_t ColoredMessage_SendBackgroundAndTextColor(char *str, MsgColors_t backgroundColor, MsgColors_t textColor);
 void ColoredMessage_SendBackgroundAndTextColorAndFormat(char *str, MsgColors_t backgroundColor, MsgColors_t textColor, MsgFormat_t textFormat);
 void ColoredMessage_SendDefaultFormat(char *str);
 void ColoredMessage_SendErrorMsg(char *str, const char *msg);

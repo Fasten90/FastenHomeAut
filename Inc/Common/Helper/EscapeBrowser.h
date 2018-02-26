@@ -1,0 +1,62 @@
+/*
+ *		EscapeBrowser.h
+ *		Created on:		2018-02-26
+ *		Author:			Vizi Gábor
+ *		E-mail:			vizi.gabor90@gmail.com
+ *		Function:		-
+ *		Target:			STM32Fx
+ *		Version:		-
+ *		Last modified:	2018-02-26
+ */
+
+#ifndef INC_COMMON_HELPER_ESCAPEBROWSER_H_
+#define INC_COMMON_HELPER_ESCAPEBROWSER_H_
+
+
+
+
+/*------------------------------------------------------------------------------
+ *  Includes
+ *----------------------------------------------------------------------------*/
+
+#include "GenericTypeDefs.h"
+#include "ColoredMessage.h"
+
+
+
+/*------------------------------------------------------------------------------
+ *  Macros & definitions
+ *----------------------------------------------------------------------------*/
+
+#define ESCAPEBROWSER_LIST_NUM_MAX			(20U)
+#define ESCAPEBROWSER_ELEMENT_LENGTH_MAX	(20U)
+
+#define ESCAPEBROWSER_ELEMENT_INACTIVE_BACKGROUND	((MsgColors_t)Color_White)
+#define ESCAPEBROWSER_ELEMENT_INACTIVE_TEXTCOLOR	((MsgColors_t)Color_Black)
+#define ESCAPEBROWSER_ELEMENT_ACTIVE_BACKGROUND		((MsgColors_t)Color_Blue)
+#define ESCAPEBROWSER_ELEMENT_ACTIVE_TEXTCOLOR		((MsgColors_t)Color_White)
+
+
+
+/*------------------------------------------------------------------------------
+ *  Type definitions
+ *----------------------------------------------------------------------------*/
+
+
+
+/*------------------------------------------------------------------------------
+ *  Global variables
+ *----------------------------------------------------------------------------*/
+
+
+
+/*------------------------------------------------------------------------------
+ *  Global function declarations
+ *----------------------------------------------------------------------------*/
+
+void EscapeBrowser_Init(void);
+size_t EscapeBrowser_PrintNewLineList(char *str, const char **list);
+
+
+
+#endif /* INC_COMMON_HELPER_ESCAPEBROWSER_H_ */

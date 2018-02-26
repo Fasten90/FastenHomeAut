@@ -87,7 +87,7 @@ void ColoredMessage_SendTextFormat(char *str, MsgFormat_t textFormat)
 /**
  * \brief	Send BackgroundColor + TextColor
  */
-void ColoredMessage_SendBackgroundAndTextColor(char *str, MsgColors_t backgroundColor, MsgColors_t textColor)
+size_t ColoredMessage_SendBackgroundAndTextColor(char *str, MsgColors_t backgroundColor, MsgColors_t textColor)
 {
 	StrAppend(str, ESCAPE_FORMAT_ONLY_START);
 
@@ -100,6 +100,8 @@ void ColoredMessage_SendBackgroundAndTextColor(char *str, MsgColors_t background
 	CharAppend(str, '0' + textColor);
 
 	StrAppend(str, ESCAPE_FORMAT_END);
+
+	return 8;
 }
 
 
