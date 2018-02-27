@@ -1134,10 +1134,12 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 	 */
 
 	/* Test EscapeBrowser */
+	/*
 	const char * const strList[] = { "1", "2", "3", NULL };
 	char strBuffer[300] = { 0 };
 	EscapeBrowser_PrintNewLineList(strBuffer, strList);
 	DebugUart_SendLineBlocked(strBuffer);
+	*/
 
 	/**
 	 * 		End of Test codes

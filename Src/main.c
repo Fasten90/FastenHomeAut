@@ -199,12 +199,19 @@
 #include "windows_hal.h"
 #endif
 
+#if defined(CONFIG_MODULE_ESCAPEBROWSER_ENABLE)
+#include "EscapeBrowser.h"
+#endif
 
 
 /*------------------------------------------------------------------------------
  *  Local variables
  *----------------------------------------------------------------------------*/
 
+#if defined(CONFIG_MODULE_ESCAPEBROWSER_ENABLE)
+	static const char * const strList[] = { "1", "2", "3", NULL };
+	static char strBuffer[300] = { 0 };
+#endif
 
 
 /*------------------------------------------------------------------------------
@@ -223,6 +230,20 @@ bool SelfTest_FailedRamTest = false;
 /*------------------------------------------------------------------------------
  *  Functions
  *----------------------------------------------------------------------------*/
+
+#if defined(CONFIG_MODULE_ESCAPEBROWSER_ENABLE)
+static const char * GetStrListElement(uint8_t i)
+{
+	const char *str = NULL;
+
+	if (i < NUM_OF(strList))
+	{
+		str =  strList[i];
+	}
+
+	return str;
+}
+#endif
 
 
 /**
@@ -399,6 +420,15 @@ int main(void)
 #if defined(CONFIG_MODULE_TERMINAL_ENABLE) && !defined(CONFIG_MODULE_TASKHANDLER_ENABLE) && !defined(CONFIG_USE_FREERTOS)
 	// Terminal infinite loop, if not used TaskHandler and FreeRTOS
 	Terminal_CheckCommand();
+#endif
+
+
+
+#if defined(CONFIG_MODULE_ESCAPEBROWSER_ENABLE)
+	EscapeBrowser_Init(&GetStrListElement);
+
+	EscapeBrowser_PrintNewLineList(strBuffer);
+	DebugUart_SendLineBlocked(strBuffer);
 #endif
 
 

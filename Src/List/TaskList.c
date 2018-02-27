@@ -480,8 +480,10 @@ static TaskResult_t Task_ProcessDebugUartCommandReceived(ScheduleSource_t source
 {
 	(void)source;
 
-#ifdef CONFIG_MODULE_TERMINAL_ENABLE
+#if defined(CONFIG_MODULE_TERMINAL_ENABLE)
 	Terminal_CheckCommand();
+#elif defined(CONFIG_MODULE_ESCAPEBROWSER_ENABLE)
+	EscapeBrowser_ProcessReceivedCharaters();
 #else
 	DebugUart_ProcessReceivedCharacters();
 #endif

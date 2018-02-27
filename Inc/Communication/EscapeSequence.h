@@ -54,6 +54,12 @@
 // Cursor step left
 #define ESCAPE_CURSORLEFT				("\x1B" "[D")
 
+// Cursor step up
+#define ESCAPE_CURSORUP					("\x1B" "[A")
+
+// Cursor step down
+#define ESCAPE_CURSORDOWN				("\x1B" "[B")
+
 
 // Cursor go left (loft of step)
 #define ESCAPE_CURSORLEFTLOTOF			("\x1B" "[100D")
