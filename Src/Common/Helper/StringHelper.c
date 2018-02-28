@@ -1333,6 +1333,7 @@ size_t StrCpyFixLength(char *dest, const char *str, size_t length)
 /**
  * \brief	Copy fix length string
  * \return	String length (=parameter)
+ * \note	EOS put on end of the string!
  */
 size_t StrCpyFixLengthWithFillCharacter(char *dest, const char *str, size_t length, char fillChar)
 {
@@ -1360,6 +1361,9 @@ size_t StrCpyFixLengthWithFillCharacter(char *dest, const char *str, size_t leng
 			dest[i] = fillChar;
 		}
 	}
+
+	// End of string
+	dest[i] = '\0';
 
 	return length;
 }

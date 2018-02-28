@@ -81,6 +81,8 @@ size_t EscapeBrowser_PrintNewLineList(char *str)
 	if ((str == NULL) || (EscapeBrowser_GetLine == NULL))
 		return 0;
 
+	length += StrCpy(&str[length], ESCAPE_ERASE_CLS);
+
 	/* Print top border */
 	length += EscapeBrowser_PrintBorder(&str[length]);
 	/* Step on the string list */
@@ -153,8 +155,6 @@ static size_t EscapeBrowser_PrintElement(char *str, const char *element, bool is
 #endif
 
 	length += StrCpyFixLengthWithFillCharacter(&str[length], element, ESCAPEBROWSER_ELEMENT_LENGTH_MAX, ' ');
-#warning "missed 0"
-	str[length] = '\0';
 
 #if (ESCAPEBROWSER_COLOR_INACTIVE_ELEMENT_ENABLE == 1)
 	/* Inactive is colored too */
@@ -290,7 +290,6 @@ static size_t EscapeBroser_HandlerString(char *dst, const char *str)
 				escapePos++;
 				switch (*escapePos)
 				{
-	#warning "Check the line validality (first - last)"
 					case 'A':
 						if (EscapeBrowser_DecActualLine())
 							EscapeBrowser_RefreshOnlyChangedLines(dst, false);
