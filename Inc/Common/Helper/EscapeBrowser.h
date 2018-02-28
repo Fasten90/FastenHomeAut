@@ -42,12 +42,15 @@
 #define ESCAPEBROWSER_PRINT_CHAR_BUFFER		(100U)
 
 
+#define ESCAPEBROWSER_ESCAPE_SEQUENCE_MIN_LENGTH	(3U)
+
+
 
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-typedef char *(*EscapeBrowser_GetLineFunction)(uint8_t);
+typedef const char *(*EscapeBrowser_GetLineFunction)(uint8_t);
 
 
 

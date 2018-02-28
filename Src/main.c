@@ -425,7 +425,7 @@ int main(void)
 
 
 #if defined(CONFIG_MODULE_ESCAPEBROWSER_ENABLE)
-	EscapeBrowser_Init(&GetStrListElement);
+	EscapeBrowser_Init(GetStrListElement);
 
 	EscapeBrowser_PrintNewLineList(strBuffer);
 	DebugUart_SendLineBlocked(strBuffer);

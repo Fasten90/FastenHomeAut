@@ -47,6 +47,9 @@
 #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
 #include "WatchDog.h"
 #endif
+#ifdef CONFIG_MODULE_ESCAPEBROWSER_ENABLE
+#include "EscapeBrowser.h"
+#endif
 
 #include "TaskList.h"
 

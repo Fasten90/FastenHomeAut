@@ -50,8 +50,8 @@ static EscapeBrowser_GetLineFunction EscapeBrowser_GetLine = NULL;
  *----------------------------------------------------------------------------*/
 
 static size_t EscapeBrowser_PrintBorder(char *str);
-static size_t EscapeBrowser_PrintElement(char *str, char *element, bool isSelected);
-static size_t EscapeBroser_HandlerString(char *dst, char *str);
+static size_t EscapeBrowser_PrintElement(char *str, const char *element, bool isSelected);
+static size_t EscapeBroser_HandlerString(char *dst, const char *str);
 static bool EscapeBrowser_IncActualLine(void);
 static bool EscapeBrowser_DecActualLine(void);
 static size_t EscapeBrowser_RefreshOnlyChangedLines(char *str, bool isUpTheOld);
@@ -125,7 +125,7 @@ static size_t EscapeBrowser_PrintBorder(char * str)
 
 
 
-static size_t EscapeBrowser_PrintElement(char *str, char *element, bool isSelected)
+static size_t EscapeBrowser_PrintElement(char *str, const char *element, bool isSelected)
 {
 	size_t length = 0;
 
@@ -250,63 +250,90 @@ void EscapeBrowser_ProcessReceivedCharaters(void)
 
 		/* Check the received string */
 		size_t receivedLength = StringLength(recvBuf);
+		size_t processedChar = 0;
 		if (receivedLength > 0)
 		{
-			char str[ESCAPEBROWSER_PRINT_CHAR_BUFFER];
-			EscapeBroser_HandlerString(str, recvBuf);
+			char str[ESCAPEBROWSER_PRINT_CHAR_BUFFER] = { 0 };
+			processedChar = EscapeBroser_HandlerString(str, recvBuf);
 			DebugUart_SendMessageBlocked(str);
 		}
 
 		/* TODO: Not a beautiful solution... */
-		CircularBuffer_DropCharacters(DebugUart.rx, receivedLength);
+		CircularBuffer_DropCharacters(DebugUart.rx, processedChar);
 	}
 }
 
 
 
-static size_t EscapeBroser_HandlerString(char *dst, char *str)
+static size_t EscapeBroser_HandlerString(char *dst, const char *str)
 {
-	size_t length = 0;
+	size_t processedChar = 0;
 
 	/* Has Escape sequence in progress? */
 	const char * escapePos = STRING_FindCharacter(str, TERMINAL_KEY_ESCAPESEQUENCE_1);
-#warning "Length checking"
+
 	if (escapePos !=  NULL)
 	{
 		/* Has escape sequence */
-		escapePos++;
-		if (*escapePos == '[')
+
+		/* Drop characters until escape sequence */
+		processedChar += (escapePos - str);
+
+		const size_t strLength = StringLength(escapePos);
+
+		if (strLength >= ESCAPEBROWSER_ESCAPE_SEQUENCE_MIN_LENGTH)
 		{
-			/* We hope, it is cursor: \e[A / B / C / D */
 			escapePos++;
-			switch (*escapePos)
+			if (*escapePos == '[')
 			{
-#warning "Check the line validality (first - last)"
-				case 'A':
-					if (EscapeBrowser_DecActualLine())
-						length += EscapeBrowser_RefreshOnlyChangedLines(dst, false);
-					break;
+				/* We hope, it is cursor: \e[A / B / C / D */
+				escapePos++;
+				switch (*escapePos)
+				{
+	#warning "Check the line validality (first - last)"
+					case 'A':
+						if (EscapeBrowser_DecActualLine())
+							EscapeBrowser_RefreshOnlyChangedLines(dst, false);
+						break;
 
-				case 'B':
-					if (EscapeBrowser_IncActualLine())
-						length += EscapeBrowser_RefreshOnlyChangedLines(dst, true);
-					break;
+					case 'B':
+						if (EscapeBrowser_IncActualLine())
+							EscapeBrowser_RefreshOnlyChangedLines(dst, true);
+						break;
 
-				case 'C':
-					DebugUart_SendLine("Pressed C");
-					break;
+					case 'C':
+						DebugUart_SendLine("Pressed C");
+						break;
 
-				case 'D':
-					DebugUart_SendLine("Pressed D");
-					break;
+					case 'D':
+						DebugUart_SendLine("Pressed D");
+						break;
 
-				default:
-					break;
+					default:
+						break;
+				}
+
+				processedChar += 3; /* "\e[x" */
+			}
+			else
+			{
+				/* Wrong char after escape */
+				processedChar += 2; /* "\r[" */
 			}
 		}
+		else
+		{
+			/* Too short escape string... Wait continue */
+			/* Do not add more */
+		}
+	}
+	else
+	{
+		/* There is no escape */
+		/* TODO: ... ? */
 	}
 
-	return length;
+	return processedChar;
 }
 
 

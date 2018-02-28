@@ -280,10 +280,10 @@ void DebugUart_ProcessReceivedCharacters(void)
 	char recvBuf[DEBUGUART_PROCESS_BUFFER];
 
 	// Received new character?
-	if (CircularBuffer_IsNotEmpty(&DebugUart.rx))
+	if (CircularBuffer_IsNotEmpty(DebugUart.rx))
 	{
 		// Copy received message to buffer
-		CircularBuffer_GetString(&DebugUart.rx, recvBuf, DEBUGUART_PROCESS_BUFFER);
+		CircularBuffer_GetString(DebugUart.rx, recvBuf, DEBUGUART_PROCESS_BUFFER);
 
 		// Received newline character? (End of command)
 		char * newLinePos = (char *)STRING_FindCharacters((const char *)recvBuf, "\r\n");
@@ -313,7 +313,7 @@ void DebugUart_ProcessReceivedCharacters(void)
 				if ((*(newLinePos+1) == '\r') || (*(newLinePos+1) == '\n'))
 					processedLength++;
 			}
-			CircularBuffer_DropCharacters(&DebugUart.rx, processedLength);
+			CircularBuffer_DropCharacters(DebugUart.rx, processedLength);
 		}
 	}
 }
