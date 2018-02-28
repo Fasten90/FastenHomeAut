@@ -55,6 +55,7 @@ static size_t EscapeBroser_HandlerString(char *dst, const char *str);
 static bool EscapeBrowser_IncActualLine(void);
 static bool EscapeBrowser_DecActualLine(void);
 static size_t EscapeBrowser_RefreshOnlyChangedLines(char *str, bool isUpTheOld);
+static size_t EscapeBrowser_PrintLogMessage(char *str, const char *msg);
 
 
 
@@ -81,7 +82,9 @@ size_t EscapeBrowser_PrintNewLineList(char *str)
 	if ((str == NULL) || (EscapeBrowser_GetLine == NULL))
 		return 0;
 
+	/* Clear screen */
 	length += StrCpy(&str[length], ESCAPE_ERASE_CLS);
+	length += StrCpy(&str[length], ESCAPE_CURSOR_TOPLEFT);
 
 	/* Print top border */
 	length += EscapeBrowser_PrintBorder(&str[length]);
@@ -235,6 +238,37 @@ static size_t EscapeBrowser_RefreshOnlyChangedLines(char *str, bool isUpTheOld)
 
 
 
+static size_t EscapeBrowser_PrintLogMessage(char *str, const char *msg)
+{
+	size_t length = 0;
+	uint8_t i;
+
+	/* Jump down */
+	for (i = 0; i < EscapeBrowser_LineNum - EscapeBrowser_ActualSelectedLine + 1; i++)
+	{
+		length += StrCpy(&str[length], ESCAPE_CURSORDOWN);
+	}
+
+	/* Clear log line */
+	length += StrCpy(&str[length], ESCAPE_DELETELINE);
+
+	/* Print */
+	length += StrCpy(&str[length], msg);
+
+	/* Jump up */
+	for (i = 0; i < EscapeBrowser_LineNum - EscapeBrowser_ActualSelectedLine + 1; i++)
+	{
+		length += StrCpy(&str[length], ESCAPE_CURSORUP);
+	}
+
+	/* Jump to left */
+	length += StrCpy(&str[length], ESCAPE_CURSORLEFTLOTOF);
+
+	return length;
+}
+
+
+
 void EscapeBrowser_ProcessReceivedCharaters(void)
 {
 	char recvBuf[ESCAPEBROWSER_PROCESS_CHAR_BUFFER];
@@ -297,11 +331,11 @@ static size_t EscapeBroser_HandlerString(char *dst, const char *str)
 						break;
 
 					case 'C':
-						DebugUart_SendLine("Right");
+						EscapeBrowser_PrintLogMessage(dst, "Right");
 						break;
 
 					case 'D':
-						DebugUart_SendLine("Left");
+						EscapeBrowser_PrintLogMessage(dst, "Left");
 						break;
 
 					default:
@@ -326,6 +360,28 @@ static size_t EscapeBroser_HandlerString(char *dst, const char *str)
 	{
 		/* There is no escape */
 		/* TODO: Handle normal message ? */
+		char logMsg[ESCAPEBROWSER_LOG_MESSAGE_MAX_LENGTH];
+
+		switch (*str)
+		{
+			case '\r':
+			case '\n':
+				/* Received enter */
+				usnprintf(logMsg, ESCAPEBROWSER_LOG_MESSAGE_MAX_LENGTH,
+						"Executed command: %20s",
+						EscapeBrowser_GetLine(EscapeBrowser_ActualSelectedLine));
+				break;
+
+			default:
+				usnprintf(logMsg, ESCAPEBROWSER_LOG_MESSAGE_MAX_LENGTH,
+						"Pressed character: \"%c\"",
+						*str);
+				break;
+		}
+
+		EscapeBrowser_PrintLogMessage(dst, logMsg);
+		/* TODO: Only one character processed! */
+		processedChar += 1;
 	}
 
 	return processedChar;
