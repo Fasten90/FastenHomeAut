@@ -158,14 +158,12 @@ static size_t EscapeBrowser_PrintElement(char *str, const char *element, bool is
 
 #if (ESCAPEBROWSER_COLOR_INACTIVE_ELEMENT_ENABLE == 1)
 	/* Inactive is colored too */
-	ColoredMessage_SendDefaultFormat(&str[length]);
-	length += 4;
+	length += ColoredMessage_SendDefaultFormat(&str[length]);
 #else
 	/* Inactive not colored */
 	if (isSelected)
 	{
-		ColoredMessage_SendDefaultFormat(&str[length]);
-		length += 4;
+		length += ColoredMessage_SendDefaultFormat(&str[length]);
 	}
 #endif
 
@@ -213,8 +211,7 @@ static size_t EscapeBrowser_RefreshOnlyChangedLines(char *str, bool isUpTheOld)
 	/* Not need jump/change line, we are stay here */
 
 	/* Reprint old cnt */
-	ColoredMessage_SendDefaultFormat(&str[length]);
-	length += 4;
+	length += ColoredMessage_SendDefaultFormat(&str[length]);
 
 	length += EscapeBrowser_PrintElement(&str[length],
 			EscapeBrowser_GetLine((isUpTheOld) ? (EscapeBrowser_ActualSelectedLine-1) : (EscapeBrowser_ActualSelectedLine+1)),
@@ -258,7 +255,6 @@ void EscapeBrowser_ProcessReceivedCharaters(void)
 			DebugUart_SendMessageBlocked(str);
 		}
 
-		/* TODO: Not a beautiful solution... */
 		CircularBuffer_DropCharacters(DebugUart.rx, processedChar);
 	}
 }
@@ -301,11 +297,11 @@ static size_t EscapeBroser_HandlerString(char *dst, const char *str)
 						break;
 
 					case 'C':
-						DebugUart_SendLine("Pressed C");
+						DebugUart_SendLine("Right");
 						break;
 
 					case 'D':
-						DebugUart_SendLine("Pressed D");
+						DebugUart_SendLine("Left");
 						break;
 
 					default:
@@ -329,7 +325,7 @@ static size_t EscapeBroser_HandlerString(char *dst, const char *str)
 	else
 	{
 		/* There is no escape */
-		/* TODO: ... ? */
+		/* TODO: Handle normal message ? */
 	}
 
 	return processedChar;

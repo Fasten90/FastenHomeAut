@@ -133,9 +133,10 @@ void ColoredMessage_SendBackgroundAndTextColorAndFormat(char *str, MsgColors_t b
 /**
  * \brief	Send default format: restore original background color, text color and text format (e.g. bold)
  */
-void ColoredMessage_SendDefaultFormat(char *str)
+size_t ColoredMessage_SendDefaultFormat(char *str)
 {
 	StrAppend(str, ESCAPE_FORMAT_RESET);
+	return 4;
 }
 
 
