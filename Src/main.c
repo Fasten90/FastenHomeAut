@@ -278,6 +278,8 @@ int main(void)
 
 
 #ifdef CONFIG_PLATFORM_PC_WINDOWS
+	// Windows functions - Run unittest immediately
+
 	#ifdef CONFIG_MODULE_UNITTEST_ENABLE
 	char responseBuffer[2048];
 	CmdH_ExecuteCommand("unittest", responseBuffer, 2048);
