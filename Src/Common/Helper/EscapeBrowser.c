@@ -370,6 +370,7 @@ static size_t EscapeBroser_HandlerString(char *dst, const char *str)
 				usnprintf(logMsg, ESCAPEBROWSER_LOG_MESSAGE_MAX_LENGTH,
 						"Executed command: %20s",
 						EscapeBrowser_GetLine(EscapeBrowser_ActualSelectedLine));
+				/* TODO: Execute the command */
 				break;
 
 			default:
