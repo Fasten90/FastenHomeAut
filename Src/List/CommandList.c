@@ -87,7 +87,7 @@ static CmdH_Result_t CommandFunction_moduletest(uint32_t argc, char** argv);
 #ifdef CONFIG_TEST_MODE
 static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv);
 #endif
-#ifdef CONFIG_MODULE_LED_ENABLE
+#ifdef CONFIG_MODULE_IO_ENABLE
 static CmdH_Result_t CommandFunction_led(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
@@ -294,7 +294,7 @@ const CmdH_Command_t CmdH_CommandList[] =
 	},
 #endif
 #endif	// #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
-#ifdef CONFIG_MODULE_LED_ENABLE
+#ifdef CONFIG_MODULE_IO_ENABLE
 	{
 		.name = "led",
 		.commandFunctionPointer = CommandFunction_led,
@@ -779,7 +779,7 @@ static CmdH_Result_t CommandFunction_moduletest(uint32_t argc, char** argv)
 	(void)argv;
 
 
-#ifdef CONFIG_MODULE_LED_ENABLE
+#ifdef CONFIG_MODULE_IO_ENABLE
 	uint8_t i;
 
 	// LED test
@@ -800,7 +800,7 @@ static CmdH_Result_t CommandFunction_moduletest(uint32_t argc, char** argv)
 		IO_Output_SetStatus(i, LED_Cmd_SetOff);
 		DelayMs(500);
 	}
-#endif	// #ifdef CONFIG_MODULE_LED_ENABLE
+#endif	// #ifdef CONFIG_MODULE_IO_ENABLE
 
 
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
@@ -1154,7 +1154,7 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 
 
 
-#ifdef CONFIG_MODULE_LED_ENABLE
+#ifdef CONFIG_MODULE_IO_ENABLE
 /**
  * \brief	Set LED (turn on, turn off, toggle, status)
  * 			Use:

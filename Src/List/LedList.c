@@ -17,7 +17,7 @@
 
 #include "options.h"
 
-#ifdef CONFIG_MODULE_LED_ENABLE
+#ifdef CONFIG_MODULE_IO_ENABLE
 
 #include "LED.h"
 #include "LedList.h"
@@ -100,4 +100,4 @@ void IO_List_Init(void)
 
 
 
-#endif /* #ifdef CONFIG_MODULE_LED_ENABLE */
+#endif /* #ifdef CONFIG_MODULE_IO_ENABLE */

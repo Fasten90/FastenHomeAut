@@ -402,7 +402,7 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 
 	return TaskResult_Ok;
 }
-#endif	// #ifdef CONFIG_MODULE_LED_ENABLE
+#endif	// #ifdef CONFIG_MODULE_IO_ENABLE
 
 
 
@@ -504,7 +504,7 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 	bool canSleep = true;
 
 	// Toggle LED
-#ifdef CONFIG_MODULE_LED_ENABLE
+#ifdef CONFIG_MODULE_IO_ENABLE
 	IO_Output_SetStatus(IO_LED_Green, IO_Output_Cmd_SetToggle);
 	IO_Output_SetStatus(IO_LED_Green, IO_Output_Cmd_SetToggle);
 #endif

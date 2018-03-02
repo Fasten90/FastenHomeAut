@@ -696,7 +696,7 @@ void CmdH_UnitTest(void)
 
 
 	//-----------------------------------------------------
-#ifdef CONFIG_MODULE_LED_ENABLE
+#ifdef CONFIG_MODULE_IO_ENABLE
 	// test with 2 parameters:
 	StrCpy(cmdSrcBuffer, "led");			// command string must reside in RAM!
 	StrCpy(cmdParamBuffer, "1 on");			// command string must reside in RAM!

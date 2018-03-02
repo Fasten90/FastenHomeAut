@@ -71,7 +71,7 @@
  *----------------------------------------------------------------------------*/
 
 
-#if defined(CONFIG_MODULE_LED_ENABLE) & defined(CONFIG_USE_PANEL_HOMEAUTCENTERPANEL)
+#if defined(CONFIG_MODULE_IO_ENABLE) & defined(CONFIG_USE_PANEL_HOMEAUTCENTERPANEL)
 
 // \note: In the schematic the blue and red LED are inversely
 // blue: PE5
@@ -115,7 +115,7 @@
 
 
 
-#if defined(CONFIG_MODULE_LED_ENABLE) & defined(CONFIG_USE_PANEL_STM32F4DISCOVERY)
+#if defined(CONFIG_MODULE_IO_ENABLE) & defined(CONFIG_USE_PANEL_STM32F4DISCOVERY)
 
 // blue: PE5
 // green: PE6
@@ -155,7 +155,7 @@
 
 
 
-#if defined(CONFIG_MODULE_LED_ENABLE) && defined(CONFIG_USE_PANEL_NUCLEOF401RE)
+#if defined(CONFIG_MODULE_IO_ENABLE) && defined(CONFIG_USE_PANEL_NUCLEOF401RE)
 
 // Green user LED: PA5
 
@@ -187,9 +187,9 @@
 #endif
 
 
-#if !defined(CONFIG_MODULE_LED_ENABLE)
+#if !defined(CONFIG_MODULE_IO_ENABLE)
 
-// if not defined CONFIG_MODULE_LED_ENABLE
+// if not defined CONFIG_MODULE_IO_ENABLE
 #define LED_GREEN_ON()
 #define LED_BLUE_ON()
 #define LED_RED_ON()
@@ -1387,7 +1387,7 @@ _GPIO2			PB15
 
 
 
-#ifdef CONFIG_MODULE_LED_ENABLE
+#ifdef CONFIG_MODULE_IO_ENABLE
 
 // LED_RED			PC13
 // LED_BLUE			PB8
@@ -1424,7 +1424,7 @@ _GPIO2			PB15
 #define LED_BLUE_STATUS()		HAL_GPIO_ReadPin(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN)
 #define LED_RED_STATUS()		HAL_GPIO_ReadPin(BOARD_LED_RED_PORT, BOARD_LED_RED_PIN)
 
-#endif	// CONFIG_MODULE_LED_ENABLE
+#endif	// CONFIG_MODULE_IO_ENABLE
 
 #endif	// CONFIG_USE_PANEL_HOMEAUTNODESMALL
 
@@ -1433,7 +1433,7 @@ _GPIO2			PB15
 #ifdef CONFIG_USE_PANEL_FASTENNODE
 
 
-#ifdef CONFIG_MODULE_LED_ENABLE
+#ifdef CONFIG_MODULE_IO_ENABLE
 
 // LED_GREEN		PC14
 // LED_BLUE			PC15
@@ -1469,7 +1469,7 @@ _GPIO2			PB15
 #define LED_BLUE_STATUS()		HAL_GPIO_ReadPin(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN)
 #define LED_RED_STATUS()		HAL_GPIO_ReadPin(BOARD_LED_RED_PORT, BOARD_LED_RED_PIN)
 
-#endif	// CONFIG_MODULE_LED_ENABLE
+#endif	// CONFIG_MODULE_IO_ENABLE
 
 
 

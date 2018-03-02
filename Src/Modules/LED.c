@@ -429,4 +429,4 @@ void IO_Output_Handler(void)
 
 
 
-#endif	// #ifdef CONFIG_MODULE_LED_ENABLE
+#endif	// #ifdef CONFIG_MODULE_IO_ENABLE
