@@ -190,6 +190,11 @@
 #include "Bluetooth_HC05.h"
 #include "GlobalVarHandler.h"
 #include "Watchdog.h"
+
+#ifdef CONFIG_MODULE_MEASUREMENTTIMER_ENABLE
+#include "MeasurementTimer.h"
+#endif
+
 #ifdef CONFIG_MODULE_SELFTEST_ENABLE
 #include "SelfTest_Flag.h"
 #include "SelfTest_Ram.h"
@@ -289,6 +294,12 @@ int main(void)
 	// STDIN
 	UART_HandleTypeDef Debug_UartHandle;
 	HAL_UART_Init(&Debug_UartHandle);
+#endif
+
+#ifdef CONFIG_MODULE_MEASUREMENTTIMER_ENABLE
+	// MeasurementTimer
+	MeasurementTimer_Init();
+	MeasurementTimer_StartMeasurement();
 #endif
 
 
@@ -424,6 +435,12 @@ int main(void)
 	Terminal_CheckCommand();
 #endif
 
+
+#ifdef CONFIG_MODULE_MEASUREMENTTIMER_ENABLE
+	// MeasurementTimer
+	uint32_t initTimeInUs = MeasurementTimer_GetTime();
+	uprintf("Init time: %u[us], %u[ms]", initTimeInUs, initTimeInUs/1000);
+#endif
 
 
 #if defined(CONFIG_MODULE_ESCAPEBROWSER_ENABLE)
