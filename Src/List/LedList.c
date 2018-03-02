@@ -29,7 +29,7 @@
  *----------------------------------------------------------------------------*/
 
 ///< LED List
-const LED_Record_t LED_List[] =
+const IO_Output_Record_t IO_Output_List[] =
 {
 		/*// GPIO registrations
 		GPIO_TypeDef * GPIO_Port;			///< GPIO port
@@ -41,7 +41,7 @@ const LED_Record_t LED_List[] =
 	{
 		.GPIO_Port = BOARD_LED_GREEN_PORT,
 		.GPIO_Pin = BOARD_LED_GREEN_PIN,
-		.lowVoltageState = LED_Status_On,
+		.lowVoltageState = IO_Status_On,
 		.name = "green"
 	},
 #endif
@@ -49,13 +49,13 @@ const LED_Record_t LED_List[] =
 	{
 		.GPIO_Port = BOARD_LED_BLUE_PORT,
 		.GPIO_Pin = BOARD_LED_BLUE_PIN,
-		.lowVoltageState = LED_Status_On,
+		.lowVoltageState = IO_Status_On,
 		.name = "blue"
 	},
 	{
 		.GPIO_Port = BOARD_LED_RED_PORT,
 		.GPIO_Pin = BOARD_LED_RED_PIN,
-		.lowVoltageState = LED_Status_On,
+		.lowVoltageState = IO_Status_On,
 		.name = "red"
 	},
 #endif
@@ -64,8 +64,8 @@ const LED_Record_t LED_List[] =
 };
 
 
-#if defined(CONFIG_LED_BLINK_ENABLE)
-LED_Cmd_t LED_ActualState[LED_Count] = { 0 };
+#if defined(CONFIG_IO_OUTPUT_BLINK_ENABLE)
+IO_Output_Cmd_t IO_Output_ActualState[IO_Output_Count] = { 0 };
 #endif
 
 
@@ -90,12 +90,12 @@ LED_Cmd_t LED_ActualState[LED_Count] = { 0 };
 /**
  * \brief  LedList initialization
  */
-void LedList_Init(void)
+void IO_List_Init(void)
 {
-	BUILD_ASSERT((NUM_OF(LED_List)) == (LED_Count - 1));
+	BUILD_ASSERT((NUM_OF(IO_Output_List)) == (IO_Output_Count - 1));
 
 	// Do not be empty
-	BUILD_ASSERT((NUM_OF(LED_List)) != 0);
+	BUILD_ASSERT((NUM_OF(IO_Output_List)) != 0);
 }
 
 

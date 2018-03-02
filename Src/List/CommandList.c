@@ -41,7 +41,6 @@
 #include "CommonIO.h"
 #include "MemHandler.h"
 #include "TaskList.h"
-#include "IO.h"
 #include "LinkedList.h"
 #include "CommonADC.h"
 #include "ADC.h"
@@ -789,7 +788,7 @@ static CmdH_Result_t CommandFunction_moduletest(uint32_t argc, char** argv)
 	// LEDs on
 	for (i = LED_NUM_MIN; i <= LED_NUM_MAX; i++)
 	{
-		LED_SetLed(i, LED_Cmd_SetOn);
+		IO_Output_SetStatus(i, LED_Cmd_SetOn);
 		DelayMs(500);
 	}
 
@@ -798,7 +797,7 @@ static CmdH_Result_t CommandFunction_moduletest(uint32_t argc, char** argv)
 	// LEDs off
 	for (i = LED_NUM_MIN; i <= LED_NUM_MAX; i++)
 	{
-		LED_SetLed(i, LED_Cmd_SetOff);
+		IO_Output_SetStatus(i, LED_Cmd_SetOff);
 		DelayMs(500);
 	}
 #endif	// #ifdef CONFIG_MODULE_LED_ENABLE
@@ -1189,7 +1188,7 @@ static CmdH_Result_t CommandFunction_led(uint32_t argc, char** argv)
 	else
 	{
 		// Not number, check it is color?
-		uint8_t ledNum = LED_GetNumFromName(argv[1]);
+		uint8_t ledNum = IO_GetOutputNumFromName(argv[1]);
 		if (ledNum != 0)
 		{
 			Arg2Num = ledNum;
@@ -1203,7 +1202,7 @@ static CmdH_Result_t CommandFunction_led(uint32_t argc, char** argv)
 		// "status"
 		// Print LEDs statuses
 		char str[25];
-		LED_GetLedStates(str);
+		IO_GetOutputStates(str);
 		CmdH_SendLine(str);
 		result = CmdH_Result_Ok;
 	}
@@ -1221,10 +1220,10 @@ static CmdH_Result_t CommandFunction_led(uint32_t argc, char** argv)
 		{
 			// Good count
 			// Get type "set type"
-			LED_Cmd_t setType = LED_GetTypeFromString(argv[2]);
+			IO_Output_Cmd_t setType = IO_GetOutputTypeFromString(argv[2]);
 			bool status = false;
 
-			if (setType == LED_Cmd_DontCare)
+			if (setType == IO_Output_Cmd_DontCare)
 			{
 				// Error, do nothing
 				result = CmdH_Result_Error_WrongArgument2;
@@ -1232,7 +1231,7 @@ static CmdH_Result_t CommandFunction_led(uint32_t argc, char** argv)
 			else
 			{
 				// Set LED
-				status = LED_SetLed(Arg2Num,setType);
+				status = IO_Output_SetStatus(Arg2Num,setType);
 				CmdH_Printf("LED %d. status: %d\r\n", Arg2Num, status);
 				result = CmdH_Result_Ok;
 			}
@@ -1695,8 +1694,8 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 			if (convertValue <= 100 && convertValue > -100)
 			{
 				#ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
-				LED_SetLed(LED_Green, LED_Cmd_SetOn);
-				//LED_SetLed(LED_Green, LED_Cmd_SetOff);
+				IO_Output_SetStatus(LED_Green, LED_Cmd_SetOn);
+				//IO_Output_SetStatus(LED_Green, LED_Cmd_SetOff);
 				#endif
 				int8_t percent = (uint8_t)convertValue;
 				Motor_StateMachine_SetDc(percent);
@@ -1721,8 +1720,8 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 			if (convertValue <= 90 && convertValue >= -90)
 			{
 				#ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
-				LED_SetLed(LED_Green, LED_Cmd_SetOn);
-				//LED_SetLed(LED_Green, LED_Cmd_SetOff);
+				IO_Output_SetStatus(LED_Green, LED_Cmd_SetOn);
+				//IO_Output_SetStatus(LED_Green, LED_Cmd_SetOff);
 				#endif
 				int8_t angle = (int8_t)convertValue;
 				/*
@@ -1776,8 +1775,8 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 			if (convertValue <= 100 && convertValue > -100)
 			{
 				#ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
-				LED_SetLed(LED_Green, LED_Cmd_SetOn);
-				//LED_SetLed(LED_Green, LED_Cmd_SetOff);
+				IO_Output_SetStatus(LED_Green, LED_Cmd_SetOn);
+				//IO_Output_SetStatus(LED_Green, LED_Cmd_SetOff);
 				#endif
 				int8_t percent = (uint8_t)convertValue;
 				Motor_StateMachine_SetDc(percent);
@@ -1804,8 +1803,8 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 				if (convertValue <= 90 && convertValue >= -90)
 				{
 					#ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
-					LED_SetLed(LED_Green, LED_Cmd_SetOn);
-					//LED_SetLed(LED_Green, LED_Cmd_SetOff);
+					IO_Output_SetStatus(LED_Green, LED_Cmd_SetOn);
+					//IO_Output_SetStatus(LED_Green, LED_Cmd_SetOff);
 					#endif
 					int8_t angle = (int8_t)convertValue;
 					Motor_StateMachine_SetAngle(angle);

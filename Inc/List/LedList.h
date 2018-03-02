@@ -37,18 +37,18 @@
 ///< Available LEDs (on board)
 typedef enum
 {
-	LED_Unknown,
+	IO_Output_Unknown,
 #if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_HOMEAUTPANELS) || defined(CONFIG_USE_PANEL_NUCLEOF401RE)
-	LED_Green,
+	IO_LED_Green,
 #endif
 #if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_HOMEAUTPANELS)
-	LED_Blue,
-	LED_Red,
+	IO_LED_Blue,
+	IO_LED_Red,
 #endif
 
 	// Do not use:
-	LED_Count
-} LED_Name_t;
+	IO_Output_Count
+} IO_Output_Name_t;
 
 
 
@@ -62,7 +62,7 @@ typedef enum
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void LedList_Init(void);
+void IO_List_Init(void);
 
 
 

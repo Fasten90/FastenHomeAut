@@ -43,9 +43,9 @@
 void Error_Handler(void)
 {
 	// Error LED
-	LED_SetLed(LED_Red, LED_Cmd_SetOn);
-	LED_SetLed(LED_Green, LED_Cmd_SetOff);
-	LED_SetLed(LED_Blue, LED_Cmd_SetOff);
+	IO_Output_SetStatus(IO_LED_Red, IO_Output_Cmd_SetOn);
+	IO_Output_SetStatus(IO_LED_Green, IO_Output_Cmd_SetOff);
+	IO_Output_SetStatus(IO_LED_Blue, IO_Output_Cmd_SetOff);
 
 #ifdef CONFIG_USE_FREERTOS
 	// End task scheduling
@@ -73,7 +73,7 @@ void Error_Handler(void)
 	uint8_t cnt = 8;
 	while (cnt--)
 	{
-		LED_SetLed(LED_Red, LED_Cmd_SetToggle);
+		IO_Output_SetStatus(IO_LED_Red, IO_Output_Cmd_SetToggle);
 		DelayMs(125);
 	}
 
@@ -106,9 +106,9 @@ void assert_failed(uint8_t *file, uint32_t line)
 void Assert_Function(char *file, uint32_t line, char *exp)
 {
 	// Error LED
-	LED_SetLed(LED_Red, LED_Cmd_SetOn);
-	LED_SetLed(LED_Green, LED_Cmd_SetOff);
-	LED_SetLed(LED_Blue, LED_Cmd_SetOff);
+	IO_Output_SetStatus(IO_LED_Red, IO_Output_Cmd_SetOn);
+	IO_Output_SetStatus(IO_LED_Green, IO_Output_Cmd_SetOff);
+	IO_Output_SetStatus(IO_LED_Blue, IO_Output_Cmd_SetOff);
 
 	// Send error message
 	char errorMsg[255];

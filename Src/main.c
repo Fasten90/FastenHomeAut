@@ -178,7 +178,6 @@
 #include "EventLog.h"
 #include "Motor.h"
 #include "ESP8266.h"
-#include "IO.h"
 #include "Display.h"
 #include "Logic.h"
 #include "CommonIO.h"
@@ -315,24 +314,15 @@ int main(void)
 #endif
 
 
-#ifdef CONFIG_MODULE_LED_ENABLE
+#ifdef CONFIG_MODULE_IO_ENABLE
 	// LED
-	LED_Init();
+	IO_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
 	// Button
 	BUTTON_Init();
-#endif
-
-
-	// Common IO not need initializing
-
-
-#ifdef CONFIG_MODULE_IO_ENABLE
-	// IO
-	IO_Init();
 #endif
 
 

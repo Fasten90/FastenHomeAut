@@ -347,17 +347,17 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 
 	static uint8_t Task_LedCnt = 0;
 	// Blue led toggle every time
-	LED_SetLed(LED_Blue, LED_Cmd_SetToggle);
+	IO_Output_SetStatus(LED_Blue, IO_Output_Cmd_SetToggle);
 
 	if (((Task_LedCnt % 2) == 0) && (ESP8266_ConnectionStatus == ESP8266_WifiConnectionStatus_SuccessfulServerStarted))
 	{
 		// *2 - fast, if has connection
-		LED_SetLed(LED_Green, LED_Cmd_SetToggle);
+		IO_Output_SetStatus(IO_LED_Green, IO_Output_Cmd_SetToggle);
 	}
 	if (((Task_LedCnt % 5) == 0) && (ESP8266_ConnectionStatus != ESP8266_WifiConnectionStatus_SuccessfulServerStarted))
 	{
 		// *5 (slow - if there is no connection
-		LED_SetLed(LED_Green, LED_Cmd_SetToggle);
+		IO_Output_SetStatus(IO_LED_Green, IO_Output_Cmd_SetToggle);
 	}
 
 	Task_LedCnt++;
@@ -368,16 +368,16 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 #elif defined(LED_TASK_OLD_STYLE)
 	static uint8_t Task_LedCnt = 0;
 
-	LED_SetLed(LED_Green, LED_Cmd_SetToggle);
+	IO_Output_SetStatus(IO_LED_Green, IO_Output_Cmd_SetToggle);
 	if ((Task_LedCnt % 5) == 0)
 	{
 		// *5
-		LED_SetLed(LED_Blue, LED_Cmd_SetToggle);
+		IO_Output_SetStatus(LED_Blue, IO_Output_Cmd_SetToggle);
 	}
 	if ((Task_LedCnt % 25) == 0)
 	{
 		// * 5 * 5 (=*25)
-		LED_SetLed(LED_Red, LED_Cmd_SetToggle);
+		IO_Output_SetStatus(LED_Red, IO_Output_Cmd_SetToggle);
 	}
 
 	Task_LedCnt++;
@@ -388,16 +388,16 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 #elif defined(LED_TASK_PWM_STYLE)
 
 	// Blue LED blinking like PWM
-	LED_PWMTask();
+	IO_LED_PWMTask();
 
-	#if defined(CONFIG_LED_BLINK_ENABLE)
-	LED_Handler();
+	#if defined(CONFIG_IO_OUTPUT_BLINK_ENABLE)
+	IO_Output_Handler();
 	#endif
 
 #endif
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
 	// Turn off LEDs
-	LED_SetLed(LED_Green, LED_Cmd_SetOff);
+	IO_Output_SetStatus(IO_LED_Green, LED_Cmd_SetOff);
 #endif
 
 	return TaskResult_Ok;
@@ -455,8 +455,8 @@ static TaskResult_t Task_MotorConnStop(ScheduleSource_t source)
 
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
 	// TODO: LED blink 1 ms
-	LED_SetLed(LED_Red, LED_Cmd_SetOn);
-	LED_SetLed(LED_Red, LED_Cmd_SetOff);
+	IO_Output_SetStatus(LED_Red, LED_Cmd_SetOn);
+	IO_Output_SetStatus(LED_Red, LED_Cmd_SetOff);
 #endif
 
 	return TaskResult_Ok;
@@ -505,8 +505,8 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 
 	// Toggle LED
 #ifdef CONFIG_MODULE_LED_ENABLE
-	LED_SetLed(LED_Green, LED_Cmd_SetToggle);
-	LED_SetLed(LED_Green, LED_Cmd_SetToggle);
+	IO_Output_SetStatus(IO_LED_Green, IO_Output_Cmd_SetToggle);
+	IO_Output_SetStatus(IO_LED_Green, IO_Output_Cmd_SetToggle);
 #endif
 
 
