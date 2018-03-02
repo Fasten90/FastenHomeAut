@@ -34,7 +34,7 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-///< Available LEDs (on board)
+///< Available IO - outputs (on board)
 typedef enum
 {
 	IO_Output_Unknown,
@@ -49,6 +49,25 @@ typedef enum
 	// Do not use:
 	IO_Output_Count
 } IO_Output_Name_t;
+
+
+///< Available IO - inputs (on board)
+typedef enum
+{
+	IO_Input_Unknown,
+#ifdef CONFIG_MODULE_IO_INPUT_MOTION_ENABLE
+	IO_Input_MotionMove,
+#endif
+#ifdef CONFIG_MODULE_IO_INPUT_SOUNDIMPACT_ENABLE
+	IO_Input_SoundImpact,
+#endif
+#ifdef CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE
+	IO_Input_BatteryCharger,
+#endif
+
+	// Do not use:
+	IO_Input_Count
+} IO_Input_Name_t;
 
 
 

@@ -49,12 +49,21 @@ const char * const IO_Output_Cmd_NameList[] =
 
 
 ///< IO Output List is required in IOList.c
-extern IO_Output_Record_t IO_Output_List[];
+extern const IO_Output_Record_t IO_Output_List[];
+extern const IO_Input_Record_t  IO_Input_List[];
 
 #if defined(CONFIG_IO_OUTPUT_BLINK_ENABLE)
 ///< IO Actual state is required in IOList.c
 extern IO_Output_Cmd_t IO_Output_ActualState[];
 #endif
+
+
+const char * const IO_Input_StateNames[] =
+{
+	"Unknown",
+	"Active",
+	"Inactive"
+};
 
 
 
@@ -427,6 +436,65 @@ void IO_Output_Handler(void)
 }
 #endif /* CONFIG_IO_OUTPUT_BLINK_ENABLE */
 
+
+/**************************************************
+ * 				IO - Input
+ **************************************************/
+
+
+/**
+ * \brief	Get Input State
+ */
+IO_Status_t IO_GetInputState(IO_Input_Name_t inputPin)
+{
+	IO_Status_t inputState = IO_Status_Unknown;
+
+	if (inputPin >= IO_Input_Count)
+	{
+		return IO_Status_Unknown;
+	}
+
+	GPIO_TypeDef * port = (GPIO_TypeDef *)IO_Input_List[inputPin-1].GPIO_Port;
+	uint32_t pin = IO_Input_List[inputPin-1].GPIO_Pin;
+	IO_Status_t lowVoltageState = IO_Input_List[inputPin-1].lowVoltageState;
+
+	uint32_t ioReadState = HAL_GPIO_ReadPin(port, pin);
+
+	if (ioReadState == GPIO_PIN_RESET)
+	{
+		inputState = (lowVoltageState == IO_Status_On) ? IO_Status_On : IO_Status_Off;
+	}
+	else
+	{
+		// GPIO_PIN_SET
+		inputState = (lowVoltageState == IO_Status_Off) ? IO_Status_On : IO_Status_Off;
+	}
+
+	// TODO: Store the read value
+	//inputState = IO_InputStates[inputpin];
+
+	return inputState;
+}
+
+
+
+/**
+ * \brief	Get input name
+ */
+const char * IO_GetInputName(IO_Input_Name_t inputPin)
+{
+	const char * str = NULL;
+
+	if (inputPin < IO_Input_Count)
+	{
+		// Value is ok
+		str = IO_Input_List[inputPin].name;
+	}
+
+	return str;
+}
+
+// TODO: SetInputState - from ISR e.g.
 
 
 #endif	// #ifdef CONFIG_MODULE_IO_ENABLE

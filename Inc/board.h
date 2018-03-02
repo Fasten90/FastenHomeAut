@@ -1440,7 +1440,6 @@ _GPIO2			PB15
 // LED_RED			PC13
 
 
-#define LED_NUM_MIN				(1)
 #define LED_NUM_MAX				(3)
 
 #define BOARD_LED_GREEN_PORT	GPIOC

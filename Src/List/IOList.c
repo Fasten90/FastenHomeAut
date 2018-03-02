@@ -28,7 +28,7 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-///< LED List
+///< IO List
 const IO_Output_Record_t IO_Output_List[] =
 {
 		/*// GPIO registrations
@@ -69,6 +69,37 @@ IO_Output_Cmd_t IO_Output_ActualState[IO_Output_Count] = { 0 };
 #endif
 
 
+#if IO_INPUTS_NUM > 0
+const IO_Input_Record_t IO_Input_List[] =
+{
+#ifdef CONFIG_MODULE_IO_INPUT_MOTION_ENABLE
+	{
+		.GPIO_Port = BOARD_LED_RED_PORT,
+		.GPIO_Pin = BOARD_LED_RED_PIN,
+		.lowVoltageState = IO_Status_On,
+		.name = "MotionMove"
+	},
+#endif
+#ifdef CONFIG_MODULE_IO_INPUT_SOUNDIMPACT_ENABLE
+	{
+		.GPIO_Port = BOARD_LED_RED_PORT,
+		.GPIO_Pin = BOARD_LED_RED_PIN,
+		.lowVoltageState = IO_Status_On,
+		.name = "SoundImpact"
+	},
+#endif
+#ifdef CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE
+	{
+		.GPIO_Port = BOARD_LED_RED_PORT,
+		.GPIO_Pin = BOARD_LED_RED_PIN,
+		.lowVoltageState = IO_Status_On,
+		.name = "BatteryCharger"
+	},
+#endif
+};
+#endif
+
+
 
 /*------------------------------------------------------------------------------
  *  Local variables
@@ -96,6 +127,12 @@ void IO_List_Init(void)
 
 	// Do not be empty
 	BUILD_ASSERT((NUM_OF(IO_Output_List)) != 0);
+
+#if IO_INPUTS_NUM > 0
+	BUILD_ASSERT((NUM_OF(IO_Input_List)) == (IO_Input_Count - 1));
+#endif
+
+	// TODO: Check list in runtime (lowVoltageType)
 }
 
 

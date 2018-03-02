@@ -65,7 +65,7 @@ typedef enum
 } IO_Status_t;
 
 
-///< LED registration record struct
+///< IO - Output registration record structure
 typedef struct
 {
 	// GPIO registrations
@@ -73,8 +73,20 @@ typedef struct
 	const uint32_t GPIO_Pin;				///< GPIO Pin
 	const IO_Status_t lowVoltageState;		///< Low voltage state
 
-	const char * const name;				///< Name of LED
+	const char * const name;				///< Name of IO
 } IO_Output_Record_t;
+
+
+///< IO - Input registration record structure
+typedef struct
+{
+	// GPIO registrations
+	const GPIO_TypeDef * const GPIO_Port;	///< GPIO port
+	const uint32_t GPIO_Pin;				///< GPIO Pin
+	const IO_Status_t lowVoltageState;		///< Low voltage state
+
+	const char * const name;				///< Name of Input
+} IO_Input_Record_t;
 
 
 
@@ -107,6 +119,10 @@ size_t IO_GetOutputStates(char *str);
 
 void IO_LED_PWMTask(void);
 void IO_Output_Handler(void);
+
+/* IO - Input */
+
+IO_Status_t IO_GetInputState(IO_Input_Name_t inputpin);
 
 
 
