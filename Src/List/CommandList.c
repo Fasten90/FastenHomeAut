@@ -2275,15 +2275,13 @@ static CmdH_Result_t CommandFunction_IoStates(uint32_t argc, char** argv)
 {
 	CmdH_Result_t result;
 
-#if IO_INPUTS_NUM > 0 || IO_OUTPUTS_NUM > 0
-	uint8_t i;
-#endif
-
 	if (argc == 1)
 	{
 #if IO_INPUTS_NUM > 0
+		uint8_t i;
+
 		CmdH_SendLine("Input states:");
-		for (i = 0; i < Input_Count; i++)
+		for (i = 0; i < IO_Input_Count; i++)
 		{
 			CmdH_Printf(" %20s %s\r\n",
 					IO_GetInputName(i),
@@ -2291,15 +2289,19 @@ static CmdH_Result_t CommandFunction_IoStates(uint32_t argc, char** argv)
 		}
 #endif
 
-#if IO_OUTPUTS_NUM > 0
+		// TODO: Delete, if not need
+		/*
 		CmdH_SendLine("Output states:");
-		for (i = 0; i < Output_Count; i++)
+		for (i = 0; i < IO_Output_Count; i++)
 		{
 			CmdH_Printf(" %20s %s\r\n",
 					IO_GetOutputName(i),
-					IO_GetOutputStateName(IO_GetOutputState(i)));
-		}
-#endif
+					IO_GetOutputStateName(IO_Output_GetStatus(i)));
+		}*/
+		char outStateString[IO_Output_Count * 30];
+		IO_Output_GetStates(outStateString);
+		CmdH_SendLine(outStateString);
+
 		result = CmdH_Result_Ok;
 	}
 	else if (argc > 1)
@@ -2331,7 +2333,7 @@ static CmdH_Result_t CommandFunction_IoStates(uint32_t argc, char** argv)
 		else
 		{
 			// Not number, check it is color?
-			uint8_t ledNum = IO_GetOutputNumFromName(argv[1]);
+			uint8_t ledNum = IO_Output_GetOutputNumFromName(argv[1]);
 			if (ledNum != 0)
 			{
 				Arg2Num = ledNum;
@@ -2345,7 +2347,7 @@ static CmdH_Result_t CommandFunction_IoStates(uint32_t argc, char** argv)
 			// "status"
 			// Print IOs statuses
 			char str[25];
-			IO_GetOutputStates(str);
+			IO_Output_GetStates(str);
 			CmdH_SendLine(str);
 			result = CmdH_Result_Ok;
 		}
@@ -2354,7 +2356,7 @@ static CmdH_Result_t CommandFunction_IoStates(uint32_t argc, char** argv)
 			// 1. param = num (IO num)
 
 			// Check parameters
-			if (Arg2Num > IO_OUTPUTS_NUM)
+			if (Arg2Num >= IO_Output_Count)
 			{
 				// First argument is wrong number
 				result = CmdH_Result_Error_WrongArgument1;
@@ -2363,7 +2365,7 @@ static CmdH_Result_t CommandFunction_IoStates(uint32_t argc, char** argv)
 			{
 				// Good count
 				// Get type "set type"
-				IO_Output_Cmd_t setType = IO_GetOutputTypeFromString(argv[2]);
+				IO_Output_Cmd_t setType = IO_Output_GetTypeFromString(argv[2]);
 				bool status = false;
 
 				if (setType == IO_Output_Cmd_DontCare)
@@ -2373,9 +2375,9 @@ static CmdH_Result_t CommandFunction_IoStates(uint32_t argc, char** argv)
 				}
 				else
 				{
-					// Set LED
+					// Set IO
 					status = IO_Output_SetStatus(Arg2Num,setType);
-					CmdH_Printf("IO %d. status: %d\r\n", Arg2Num, status);
+					CmdH_Printf("IO %d. status: %s\r\n", Arg2Num, IO_GetStatusName(status));
 					result = CmdH_Result_Ok;
 				}
 			}
@@ -2508,7 +2510,6 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 				result = CmdH_Result_Error_WrongArgument2;
 			}
 		}
-	#if IO_OUTPUTS_NUM > 0
 		else if (!StrCmp("output", argv[1]))
 		{
 			uint32_t pin;
@@ -2522,7 +2523,6 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 				result = CmdH_Result_Error_WrongArgument2;
 			}
 		}
-	#endif
 #endif
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
 		else if (!StrCmp("buttonpress", argv[1]))

@@ -31,18 +31,12 @@
 ///< IO List
 const IO_Output_Record_t IO_Output_List[] =
 {
-		/*// GPIO registrations
-		GPIO_TypeDef * GPIO_Port;			///< GPIO port
-		uint32_t GPIO_Pin;					///< GPIO Pin
-		LED_Status_t lowVoltageState;		///< Low voltage state
-
-		const char * const name;			///< Name of LED*/
 #if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_HOMEAUTPANELS) || defined(CONFIG_USE_PANEL_NUCLEOF401RE)
 	{
 		.GPIO_Port = BOARD_LED_GREEN_PORT,
 		.GPIO_Pin = BOARD_LED_GREEN_PIN,
 		.lowVoltageState = IO_Status_On,
-		.name = "green"
+		.name = "ledgreen"
 	},
 #endif
 #if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_HOMEAUTPANELS)
@@ -50,17 +44,26 @@ const IO_Output_Record_t IO_Output_List[] =
 		.GPIO_Port = BOARD_LED_BLUE_PORT,
 		.GPIO_Pin = BOARD_LED_BLUE_PIN,
 		.lowVoltageState = IO_Status_On,
-		.name = "blue"
+		.name = "ledblue"
 	},
 	{
 		.GPIO_Port = BOARD_LED_RED_PORT,
 		.GPIO_Pin = BOARD_LED_RED_PIN,
 		.lowVoltageState = IO_Status_On,
-		.name = "red"
+		.name = "ledred"
 	},
 #endif
 
+	/*
+	 * XXX: Add new IO ouput here
+	 * GPIO_TypeDef * GPIO_Port;			///< GPIO port
+	 * uint32_t GPIO_Pin;					///< GPIO Pin
+	 * LED_Status_t lowVoltageState;		///< Low voltage state
+	 * const char * const name;				///< Name of LED
+	 */
+
 	// NOTE: Be careful, when change the order and num, synchronize with LED_NUM_MAX define
+	// Note: Not recommend space or other separator character on the name
 };
 
 

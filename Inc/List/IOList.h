@@ -9,8 +9,8 @@
  *		Last modified:	2018-02-03
  */
 
-#ifndef LEDLIST_H_
-#define LEDLIST_H_
+#ifndef IOLIST_H_
+#define IOLIST_H_
 
 #include "options.h"
 #include "board.h"
@@ -85,4 +85,4 @@ void IO_List_Init(void);
 
 
 
-#endif /* LEDLIST_H_ */
+#endif /* IOLIST_H_ */

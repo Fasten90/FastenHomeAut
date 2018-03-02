@@ -1184,13 +1184,6 @@ SENSOR_OPENCLOSE	PC6
 #endif
 
 
-#if defined(CONFIG_MODULE_IO_OUTPUT_EXAMPLE_ENABLE)
-	#define IO_OUTPUTS_NUM		1
-#else
-	#define IO_OUTPUTS_NUM		0
-#endif
-
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //			ETC

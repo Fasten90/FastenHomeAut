@@ -38,7 +38,7 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-///< LED command
+///< IO Output command
 typedef enum
 {
 	IO_Output_Cmd_DontCare,
@@ -56,7 +56,7 @@ typedef enum
 } IO_Output_Cmd_t;
 
 
-///< LED State
+///< IO State
 typedef enum
 {
 	IO_Status_Unknown,
@@ -106,9 +106,10 @@ void IO_Init(void);
 void IO_Output_Test(void);
 IO_Status_t IO_Output_SetStatus(IO_Output_Name_t ioName, IO_Output_Cmd_t ioCmd);
 IO_Status_t IO_Output_GetStatus(IO_Output_Name_t ioName);
-IO_Output_Name_t IO_GetOutputNumFromName(const char *name);
-IO_Output_Cmd_t IO_GetOutputTypeFromString(const char *typeString);
-size_t IO_GetOutputStates(char *str);
+IO_Output_Name_t IO_Output_GetOutputNumFromName(const char *name);
+IO_Output_Cmd_t IO_Output_GetTypeFromString(const char *typeString);
+size_t IO_Output_GetStates(char *str);
+const char * IO_GetStatusName(IO_Status_t status);
 
 #else
 

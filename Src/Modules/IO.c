@@ -272,7 +272,7 @@ IO_Status_t IO_Output_GetStatus(IO_Output_Name_t ioName)
 /**
  * \brief	Get IO Output type from name
  */
-IO_Output_Name_t IO_GetOutputNumFromName(const char *name)
+IO_Output_Name_t IO_Output_GetOutputNumFromName(const char *name)
 {
 	uint8_t i;
 	IO_Output_Name_t outputNum = IO_Output_Unknown;
@@ -296,7 +296,7 @@ IO_Output_Name_t IO_GetOutputNumFromName(const char *name)
 /**
  * \brief	Get type from string
  */
-IO_Output_Cmd_t IO_GetOutputTypeFromString(const char *typeString)
+IO_Output_Cmd_t IO_Output_GetTypeFromString(const char *typeString)
 {
 	uint8_t i;
 	IO_Output_Cmd_t outputCmdType = 0;
@@ -316,19 +316,47 @@ IO_Output_Cmd_t IO_GetOutputTypeFromString(const char *typeString)
 
 
 
+const char * IO_GetStatusName(IO_Status_t status)
+{
+	const char *str = NULL;
+
+	switch (status)
+	{
+		case IO_Status_Unknown:
+			str = "Unknown";
+			break;
+
+		case IO_Status_Off:
+			str = "Off";
+			break;
+
+		case IO_Status_On:
+			str = "On";
+			break;
+
+		default:
+			str = "Error";
+			break;
+	}
+
+	return str;
+}
+
+
+
 /**
  * \brief	Get IO Output status to string
  */
-size_t IO_GetOutputStates(char *str)
+size_t IO_Output_GetStates(char *str)
 {
 	uint8_t i;
-	size_t length;
-	length = usprintf(str, "Output status: ");
+	size_t length = 0;
+	length += usprintf(str, "Output status:\r\n");
 
 	for (i = 0; i < (IO_Output_Count - 1); i++)
 	{
 		IO_Status_t ioStatus = IO_Output_GetStatus(i+1);
-		length += StrAppend(str, (ioStatus == IO_Status_On) ? "on" : "off");
+		length += usprintf(&str[length], "%20s - %s\r\n", IO_Output_List[i].name, IO_GetStatusName(ioStatus));
 	}
 
 	return length;
