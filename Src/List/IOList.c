@@ -1,5 +1,5 @@
 /*
- *		LedList.c
+ *		IOList.c
  *		Created on:		2018-02-03
  *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
@@ -19,8 +19,8 @@
 
 #ifdef CONFIG_MODULE_IO_ENABLE
 
-#include "LED.h"
-#include "LedList.h"
+#include "IO.h"
+#include "IOList.h"
 
 
 
@@ -88,7 +88,7 @@ IO_Output_Cmd_t IO_Output_ActualState[IO_Output_Count] = { 0 };
 
 
 /**
- * \brief  LedList initialization
+ * \brief  IOList initialization
  */
 void IO_List_Init(void)
 {

@@ -14,7 +14,7 @@
 #include "ErrorHandler.h"
 #include "options.h"
 #include "compiler.h"
-#include "LED.h"
+#include "IO.h"
 #include "StringHelper.h"
 #include "DebugUart.h"
 #include "TaskHandler.h"

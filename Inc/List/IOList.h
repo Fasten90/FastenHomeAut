@@ -1,5 +1,5 @@
 /*
- *		LedList.h
+ *		IOList.h
  *		Created on:		2018-02-03
  *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
@@ -14,7 +14,7 @@
 
 #include "options.h"
 #include "board.h"
-#include "LED.h"
+#include "IO.h"
 
 
 

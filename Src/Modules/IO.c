@@ -15,13 +15,13 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
+#include "IOList.h"
 #include "options.h"
 #include "board.h"
 #include "StringHelper.h"
 #include "ErrorHandler.h"
 #include "Timing.h"
-#include "LED.h"
-#include "LedList.h"
+#include "IO.h"
 
 
 
@@ -48,11 +48,11 @@ const char * const IO_Output_Cmd_NameList[] =
 };
 
 
-///< IO Output List is required in LedList.c
+///< IO Output List is required in IOList.c
 extern IO_Output_Record_t IO_Output_List[];
 
 #if defined(CONFIG_IO_OUTPUT_BLINK_ENABLE)
-///< IO Actual state is required in LedList.c
+///< IO Actual state is required in IOList.c
 extern IO_Output_Cmd_t IO_Output_ActualState[];
 #endif
 
