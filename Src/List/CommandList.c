@@ -87,9 +87,6 @@ static CmdH_Result_t CommandFunction_moduletest(uint32_t argc, char** argv);
 #ifdef CONFIG_TEST_MODE
 static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv);
 #endif
-#ifdef CONFIG_MODULE_IO_ENABLE
-static CmdH_Result_t CommandFunction_led(uint32_t argc, char** argv);
-#endif
 #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
 static CmdH_Result_t CommandFunction_set(uint32_t argc, char** argv);
 static CmdH_Result_t CommandFunction_get(uint32_t argc, char** argv);
@@ -294,16 +291,6 @@ const CmdH_Command_t CmdH_CommandList[] =
 	},
 #endif
 #endif	// #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
-#ifdef CONFIG_MODULE_IO_ENABLE
-	{
-		.name = "led",
-		.commandFunctionPointer = CommandFunction_led,
-		.commandArgNum = CmdH_CommandArgNum_1 | CmdH_CommandArgNum_2,
-		.description = "Control LED",
-		.syntax = "<num> <on/off/toggle/status>",
-		.example = "1 on",
-	},
-#endif
 #ifdef CONFIG_MODULE_COMMON_IO_ENABLE
 	{
 		.name = "ioinit",
@@ -501,8 +488,10 @@ const CmdH_Command_t CmdH_CommandList[] =
 	{
 		.name = "iostates",
 		.commandFunctionPointer = CommandFunction_IoStates,
-		.commandArgNum = CmdH_CommandArgNum_0,
+		.commandArgNum = CmdH_CommandArgNum_0 | CmdH_CommandArgNum_1 | CmdH_CommandArgNum_2,
 		.description = "Get input-output states",
+		.syntax = "<num> <on/off/toggle/status>",
+		.example = "1 on",
 	},
 #endif
 #ifdef CONFIG_MODULE_SIMULATION_ENABLE
@@ -1151,101 +1140,6 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 	return CmdH_Result_Ok;
 }
 #endif	// #ifdef CONFIG_TEST_MODE
-
-
-
-#ifdef CONFIG_MODULE_IO_ENABLE
-/**
- * \brief	Set LED (turn on, turn off, toggle, status)
- * 			Use:
- *				led <num> on
- *				led <num> off
- *				led <num> toggle
- *				led <num> status
- *				led status
- */
-static CmdH_Result_t CommandFunction_led(uint32_t argc, char** argv)
-{
-	// Suppress warning
-	(void)argc;
-
-	CmdH_Result_t result;
-
-	// Convert arg2, decimal
-	bool isFirstParamNum = false;
-	uint32_t Arg2Num;
-	bool isGetStatus = false;
-
-	// Check 1. argument
-	if (StringToUnsignedDecimalNum(argv[1], &Arg2Num))
-	{
-		isFirstParamNum = true;
-	}
-	else if (!StrCmp("status", argv[1]))
-	{
-		isGetStatus = true;
-	}
-	else
-	{
-		// Not number, check it is color?
-		uint8_t ledNum = IO_GetOutputNumFromName(argv[1]);
-		if (ledNum != 0)
-		{
-			Arg2Num = ledNum;
-			isFirstParamNum = true;
-		}
-	}
-
-	// Continue
-	if (isGetStatus)
-	{
-		// "status"
-		// Print LEDs statuses
-		char str[25];
-		IO_GetOutputStates(str);
-		CmdH_SendLine(str);
-		result = CmdH_Result_Ok;
-	}
-	else if (isFirstParamNum == true)
-	{
-		// 1. param = num (LED num)
-
-		// Check parameters
-		if (Arg2Num > LED_NUM_MAX || Arg2Num < LED_NUM_MIN)
-		{
-			// First argument is wrong number
-			result = CmdH_Result_Error_WrongArgument1;
-		}
-		else
-		{
-			// Good count
-			// Get type "set type"
-			IO_Output_Cmd_t setType = IO_GetOutputTypeFromString(argv[2]);
-			bool status = false;
-
-			if (setType == IO_Output_Cmd_DontCare)
-			{
-				// Error, do nothing
-				result = CmdH_Result_Error_WrongArgument2;
-			}
-			else
-			{
-				// Set LED
-				status = IO_Output_SetStatus(Arg2Num,setType);
-				CmdH_Printf("LED %d. status: %d\r\n", Arg2Num, status);
-				result = CmdH_Result_Ok;
-			}
-		}
-	}
-	else
-	{
-		// First param is not status and not LED num
-		result = CmdH_Result_Error_WrongArgument1;
-	}
-
-	return result;
-}
-#endif
 
 
 
@@ -2379,34 +2273,125 @@ static CmdH_Result_t CommandFunction_Display(uint32_t argc, char** argv)
  */
 static CmdH_Result_t CommandFunction_IoStates(uint32_t argc, char** argv)
 {
-	(void)argc;
-	(void)argv;
+	CmdH_Result_t result;
 
 #if IO_INPUTS_NUM > 0 || IO_OUTPUTS_NUM > 0
 	uint8_t i;
 #endif
 
-#if IO_INPUTS_NUM > 0
-	CmdH_SendLine("Input states:");
-	for (i = 0; i < Input_Count; i++)
+	if (argc == 1)
 	{
-		CmdH_Printf(" %20s %s\r\n",
-				IO_GetInputName(i),
-				IO_GetInputStateName(IO_GetInputState(i)));
-	}
+#if IO_INPUTS_NUM > 0
+		CmdH_SendLine("Input states:");
+		for (i = 0; i < Input_Count; i++)
+		{
+			CmdH_Printf(" %20s %s\r\n",
+					IO_GetInputName(i),
+					IO_GetInputStateName(IO_GetInputState(i)));
+		}
 #endif
 
 #if IO_OUTPUTS_NUM > 0
-	CmdH_SendLine("Output states:");
-	for (i = 0; i < Output_Count; i++)
-	{
-		CmdH_Printf(" %20s %s\r\n",
-				IO_GetOutputName(i),
-				IO_GetOutputStateName(IO_GetOutputState(i)));
-	}
+		CmdH_SendLine("Output states:");
+		for (i = 0; i < Output_Count; i++)
+		{
+			CmdH_Printf(" %20s %s\r\n",
+					IO_GetOutputName(i),
+					IO_GetOutputStateName(IO_GetOutputState(i)));
+		}
 #endif
+		result = CmdH_Result_Ok;
+	}
+	else if (argc > 1)
+	{
+		/**
+		 * \brief	Set LED (turn on, turn off, toggle, status)
+		 * 			Use:
+		 *				led <num> on
+		 *				led <num> off
+		 *				led <num> toggle
+		 *				led <num> status
+		 *				led status
+		 */
 
-	return CmdH_Result_Ok;
+		// Convert arg2, decimal
+		bool isFirstParamNum = false;
+		uint32_t Arg2Num;
+		bool isGetStatus = false;
+
+		// Check 1. argument
+		if (StringToUnsignedDecimalNum(argv[1], &Arg2Num))
+		{
+			isFirstParamNum = true;
+		}
+		else if (!StrCmp("status", argv[1]))
+		{
+			isGetStatus = true;
+		}
+		else
+		{
+			// Not number, check it is color?
+			uint8_t ledNum = IO_GetOutputNumFromName(argv[1]);
+			if (ledNum != 0)
+			{
+				Arg2Num = ledNum;
+				isFirstParamNum = true;
+			}
+		}
+
+		// Continue
+		if (isGetStatus)
+		{
+			// "status"
+			// Print IOs statuses
+			char str[25];
+			IO_GetOutputStates(str);
+			CmdH_SendLine(str);
+			result = CmdH_Result_Ok;
+		}
+		else if (isFirstParamNum == true)
+		{
+			// 1. param = num (IO num)
+
+			// Check parameters
+			if (Arg2Num > IO_OUTPUTS_NUM)
+			{
+				// First argument is wrong number
+				result = CmdH_Result_Error_WrongArgument1;
+			}
+			else
+			{
+				// Good count
+				// Get type "set type"
+				IO_Output_Cmd_t setType = IO_GetOutputTypeFromString(argv[2]);
+				bool status = false;
+
+				if (setType == IO_Output_Cmd_DontCare)
+				{
+					// Error, do nothing
+					result = CmdH_Result_Error_WrongArgument2;
+				}
+				else
+				{
+					// Set LED
+					status = IO_Output_SetStatus(Arg2Num,setType);
+					CmdH_Printf("IO %d. status: %d\r\n", Arg2Num, status);
+					result = CmdH_Result_Ok;
+				}
+			}
+		}
+		else
+		{
+			// First param is not status and not LED num
+			result = CmdH_Result_Error_WrongArgument1;
+		}
+	}
+	else
+	{
+		result = CmdH_Result_Error_Unknown;
+	}
+
+	return result;
 }
 #endif
 
