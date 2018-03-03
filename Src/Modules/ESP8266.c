@@ -2305,6 +2305,7 @@ void ESP8266_StatusMachine(void)
 			length += usprintf(&buffer[length], "\",%d\r\n", ESP8266_ServerPort);
 			ESP8266_SendString(buffer);
 #else
+			// Note: 0. id
 			ESP8266_SendString("AT+CIPSTART=0,\"TCP\",\""
 					CONFIG_ESP8266_TCP_SERVER_IP_STRING
 					"\","
@@ -2345,6 +2346,11 @@ void ESP8266_StatusMachine(void)
 				DebugPrint("Failed connect to TCP server (busy)... Wait...\r\n");
 				// TODO: Wait... ?
 				ESP8266_ClearReceive(false, sizeof("\r\nbusy p...\r\n")-1);
+
+#warning "Need close! Beautify!"
+				ESP8266_SendString("AT+CIPCLOSE=0\r\n");
+				DelayMs(50);
+				ESP8266_ClearReceive(true, 0);
 			}
 			else if (!StrCmpFirst("no ip\r\n", (const char *)receiveBuffer))
 			{
