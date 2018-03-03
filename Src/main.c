@@ -191,6 +191,7 @@
 #include "Bluetooth_HC05.h"
 #include "GlobalVarHandler.h"
 #include "Watchdog.h"
+#include "UnitTestList.h"
 
 #ifdef CONFIG_MODULE_MEASUREMENTTIMER_ENABLE
 #include "MeasurementTimer.h"
@@ -208,6 +209,7 @@
 #if defined(CONFIG_MODULE_ESCAPEBROWSER_ENABLE)
 #include "EscapeBrowser.h"
 #endif
+
 
 
 /*------------------------------------------------------------------------------
@@ -288,7 +290,7 @@ int main(void)
 
 	#ifdef CONFIG_MODULE_UNITTEST_ENABLE
 	char responseBuffer[2048];
-	CmdH_ExecuteCommand("unittest", responseBuffer, 2048);
+	UnitTestList_Run();
 	printf(responseBuffer);
 	#endif
 
