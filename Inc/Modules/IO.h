@@ -30,7 +30,10 @@
  *----------------------------------------------------------------------------*/
 
 // Configs:
+///< Enable Output blink
 #define CONFIG_IO_OUTPUT_BLINK_ENABLE
+#define IO_OUPUT_STATES_STRING_MAX_LENGTH		(20U + (30U * (IO_Output_Count - 1)))
+
 
 
 
@@ -107,8 +110,9 @@ void IO_Output_Test(void);
 IO_Status_t IO_Output_SetStatus(IO_Output_Name_t ioName, IO_Output_Cmd_t ioCmd);
 IO_Status_t IO_Output_GetStatus(IO_Output_Name_t ioName);
 IO_Output_Name_t IO_Output_GetOutputNumFromName(const char *name);
+const char * IO_Output_GetName(IO_Output_Name_t ioNum);
 IO_Output_Cmd_t IO_Output_GetTypeFromString(const char *typeString);
-size_t IO_Output_GetStates(char *str);
+size_t IO_Output_PrintStates(char *str);
 const char * IO_GetStatusName(IO_Status_t status);
 
 #else

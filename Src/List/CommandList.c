@@ -144,7 +144,7 @@ static CmdH_Result_t CommandFunction_go(uint32_t argc, char** argv);
 static CmdH_Result_t CommandFunction_Display(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_IO_ENABLE
-static CmdH_Result_t CommandFunction_IoStates(uint32_t argc, char** argv);
+static CmdH_Result_t CommandFunction_IO(uint32_t argc, char** argv);
 #endif
 #ifdef CONFIG_MODULE_SIMULATION_ENABLE
 static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv);
@@ -486,8 +486,8 @@ const CmdH_Command_t CmdH_CommandList[] =
 #endif
 #ifdef CONFIG_MODULE_IO_ENABLE
 	{
-		.name = "iostates",
-		.commandFunctionPointer = CommandFunction_IoStates,
+		.name = "io",
+		.commandFunctionPointer = CommandFunction_IO,
 		.commandArgNum = CmdH_CommandArgNum_0 | CmdH_CommandArgNum_1 | CmdH_CommandArgNum_2,
 		.description = "Get input-output states",
 		.syntax = "<num> <on/off/toggle/status>",
@@ -2271,7 +2271,7 @@ static CmdH_Result_t CommandFunction_Display(uint32_t argc, char** argv)
 /**
  * \brief	Get IO states
  */
-static CmdH_Result_t CommandFunction_IoStates(uint32_t argc, char** argv)
+static CmdH_Result_t CommandFunction_IO(uint32_t argc, char** argv)
 {
 	CmdH_Result_t result;
 
@@ -2298,8 +2298,8 @@ static CmdH_Result_t CommandFunction_IoStates(uint32_t argc, char** argv)
 					IO_GetOutputName(i),
 					IO_GetOutputStateName(IO_Output_GetStatus(i)));
 		}*/
-		char outStateString[IO_Output_Count * 30];
-		IO_Output_GetStates(outStateString);
+		char outStateString[IO_OUPUT_STATES_STRING_MAX_LENGTH];
+		IO_Output_PrintStates(outStateString);
 		CmdH_SendLine(outStateString);
 
 		result = CmdH_Result_Ok;
@@ -2346,9 +2346,11 @@ static CmdH_Result_t CommandFunction_IoStates(uint32_t argc, char** argv)
 		{
 			// "status"
 			// Print IOs statuses
-			char str[25];
-			IO_Output_GetStates(str);
-			CmdH_SendLine(str);
+			char outStateString[IO_OUPUT_STATES_STRING_MAX_LENGTH];
+			IO_Output_PrintStates(outStateString);
+			CmdH_SendLine(outStateString);
+
+			// TODO: Print input statuses
 			result = CmdH_Result_Ok;
 		}
 		else if (isFirstParamNum == true)
@@ -2366,6 +2368,7 @@ static CmdH_Result_t CommandFunction_IoStates(uint32_t argc, char** argv)
 				// Good count
 				// Get type "set type"
 				IO_Output_Cmd_t setType = IO_Output_GetTypeFromString(argv[2]);
+				IO_Output_Name_t ioNum = Arg2Num;
 				bool status = false;
 
 				if (setType == IO_Output_Cmd_DontCare)
@@ -2376,8 +2379,8 @@ static CmdH_Result_t CommandFunction_IoStates(uint32_t argc, char** argv)
 				else
 				{
 					// Set IO
-					status = IO_Output_SetStatus(Arg2Num,setType);
-					CmdH_Printf("IO %d. status: %s\r\n", Arg2Num, IO_GetStatusName(status));
+					status = IO_Output_SetStatus(ioNum, setType);
+					CmdH_Printf("IO %d. (name: %s) status: %s\r\n", ioNum, IO_Output_GetName(ioNum), IO_GetStatusName(status));
 					result = CmdH_Result_Ok;
 				}
 			}

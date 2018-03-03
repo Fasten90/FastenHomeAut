@@ -58,6 +58,7 @@ extern IO_Output_Cmd_t IO_Output_ActualState[];
 #endif
 
 
+///< IO input state names
 const char * const IO_Input_StateNames[] =
 {
 	"Unknown",
@@ -323,6 +324,19 @@ IO_Output_Name_t IO_Output_GetOutputNumFromName(const char *name)
 
 
 
+const char * IO_Output_GetName(IO_Output_Name_t ioNum)
+{
+	const char *name = NULL;
+	if ((ioNum != IO_Output_Unknown) && (ioNum < IO_Output_Count))
+	{
+		name = IO_Output_List[ioNum-1].name;
+	}
+
+	return name;
+}
+
+
+
 /**
  * \brief	Get type from string
  */
@@ -365,7 +379,7 @@ const char * IO_GetStatusName(IO_Status_t status)
 			break;
 
 		default:
-			str = "Error";
+			str = "Wrong";
 			break;
 	}
 
@@ -376,8 +390,9 @@ const char * IO_GetStatusName(IO_Status_t status)
 
 /**
  * \brief	Get IO Output status to string
+ * \note	Recommend str length: IO_OUPUT_STATES_STRING_MAX_LENGTH
  */
-size_t IO_Output_GetStates(char *str)
+size_t IO_Output_PrintStates(char *str)
 {
 	uint8_t i;
 	size_t length = 0;
@@ -495,6 +510,7 @@ void IO_Output_Handler(void)
 #endif /* CONFIG_IO_OUTPUT_BLINK_ENABLE */
 
 
+
 /**************************************************
  * 				IO - Input
  **************************************************/
@@ -507,8 +523,9 @@ IO_Status_t IO_GetInputState(IO_Input_Name_t inputPin)
 {
 	IO_Status_t inputState = IO_Status_Unknown;
 
-	if (inputPin >= IO_Input_Count)
+	if ((inputPin == IO_Input_Unknown) || (inputPin >= IO_Input_Count))
 	{
+		// Wrong value
 		return IO_Status_Unknown;
 	}
 
@@ -543,10 +560,10 @@ const char * IO_GetInputName(IO_Input_Name_t inputPin)
 {
 	const char * str = NULL;
 
-	if (inputPin < IO_Input_Count)
+	if ((inputPin != IO_Input_Unknown) && (inputPin < IO_Input_Count))
 	{
 		// Value is ok
-		str = IO_Input_List[inputPin].name;
+		str = IO_Input_List[inputPin-1].name;
 	}
 
 	return str;

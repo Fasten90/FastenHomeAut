@@ -390,4 +390,12 @@ static size_t EscapeBroser_HandlerString(char *dst, const char *str)
 
 
 
+#else
+
+// EscapeBrowser module is not used
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic pop
+
+
 #endif /* #ifdef CONFIG_MODULE_ESCAPEBROWSER_ENABLE */
