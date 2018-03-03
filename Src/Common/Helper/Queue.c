@@ -53,7 +53,7 @@
 
 #include "options.h"
 #include "GenericTypeDefs.h"
-#include "include.h"
+#include "compiler.h"
 #include "Queue.h"
 
 #if (QUEUE_STATISTICS_ENABLED == 1)
