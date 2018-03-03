@@ -131,11 +131,11 @@ void IO_List_Init(void)
 	// Do not be empty
 	BUILD_ASSERT((NUM_OF(IO_Output_List)) != 0);
 
-#if IO_INPUTS_NUM > 0
+#if (IO_INPUTS_NUM > 0)
 	BUILD_ASSERT((NUM_OF(IO_Input_List)) == (IO_Input_Count - 1));
 #endif
 
-	// TODO: Check list in runtime (lowVoltageType)
+	// Note: RunTime structure checks in the IO.c
 }
 
 

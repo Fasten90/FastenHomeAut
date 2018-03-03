@@ -124,6 +124,27 @@ void IO_Init(void)
 	{
 		IO_Output_SetStatus(i+1, IO_Output_Cmd_SetOff);
 	}
+
+#if (IO_INPUTS_NUM > 0)
+	// Inputs
+	for (i = 0; i < (IO_Input_Count -1); i++)
+	{
+		GPIO_TypeDef * port = (GPIO_TypeDef *)IO_Input_List[i].GPIO_Port;
+		uint32_t pin = IO_Input_List[i].GPIO_Pin;
+
+		// Configure pins
+
+		// Common settings
+		//GPIO_InitStructure.Alternate = GPIO_AF;
+		GPIO_InitStructure.Mode = GPIO_MODE_INPUT;
+		GPIO_InitStructure.Pull = GPIO_NOPULL;
+		GPIO_InitStructure.Speed = GPIO_SPEED_LOW;
+
+		// Different settings
+		GPIO_InitStructure.Pin = pin;
+		HAL_GPIO_Init(port, &GPIO_InitStructure);
+	}
+#endif
 }
 
 
@@ -142,6 +163,15 @@ static void IO_CheckList(void)
 		ASSERT((IO_Output_List[i].lowVoltageState == IO_Status_Off) || (IO_Output_List[i].lowVoltageState == IO_Status_On));
 		ASSERT(IO_Output_List[i].name != NULL);
 	}
+
+	#if (IO_INPUTS_NUM > 0)
+	for (i = 0; i < (IO_Input_Count -1); i++)
+	{
+		ASSERT(IO_Input_List[i].GPIO_Port != NULL);
+		ASSERT((IO_Input_List[i].lowVoltageState == IO_Status_Off) || (IO_Input_List[i].lowVoltageState == IO_Status_On));
+		ASSERT(IO_Input_List[i].name != NULL);
+	}
+	#endif
 }
 #endif /* CONFIG_DEBUG_MODE */
 
