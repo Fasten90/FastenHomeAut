@@ -15,7 +15,7 @@
 #include "compiler.h"
 #include "MathHelper.h"
 
-#ifdef MODULE_CALC_UNITTEST_ENABLE
+#ifdef MODULE_MATHHELPER_UNITTEST_ENABLE
 #include "UnitTest.h"
 #endif
 
@@ -271,11 +271,11 @@ uint16_t random(void)
 
 
 
-#ifdef MODULE_CALC_UNITTEST_ENABLE
+#ifdef MODULE_MATHHELPER_UNITTEST_ENABLE
 /**
- * \brief	Calc UnitTest
+ * \brief	MathHelper UnitTest
  */
-void Calc_UnitTest(void)
+void MathHelper_UnitTest(void)
 {
 	UnitTest_Start("Calc", __FILE__);
 

@@ -98,8 +98,8 @@ void UnitTestList_Run(void)
 	EventLog_UnitTest();
 #endif
 
-#ifdef MODULE_CALC_UNITTEST_ENABLE
-	Calc_UnitTest();
+#ifdef MODULE_MATHHELPER_UNITTEST_ENABLE
+	MathHelper_UnitTest();
 #endif
 
 #ifdef MODULE_MEM_UNITTEST_ENABLE

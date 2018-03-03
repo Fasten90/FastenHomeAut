@@ -9,8 +9,8 @@
  *		Last modified:	2017-06-02
  */
 
-#ifndef CALC_H_
-#define CALC_H_
+#ifndef MATHHELPER_H_
+#define MATHHELPER_H_
 
 
 #include "compiler.h"
@@ -73,8 +73,8 @@ uint8_t GetBit(uint32_t value, uint8_t index);
 
 uint16_t random(void);
 
-void Calc_UnitTest(void);
+void MathHelper_UnitTest(void);
 
 
 
-#endif /* CALC_H_ */
+#endif /* MATHHELPER_H_ */
