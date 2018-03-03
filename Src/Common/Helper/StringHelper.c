@@ -2460,7 +2460,7 @@ size_t usnprintf(char * str, size_t maxLen, const char * format, ...)
 /**
  * \brief	String module Unit Test
  */
-uint32_t STRING_UnitTest(void)
+uint32_t StringHelper_UnitTest(void)
 {
 	char buffer[30];
 	uint8_t value8;
@@ -2487,11 +2487,11 @@ uint32_t STRING_UnitTest(void)
 
 	// StrCmpFirst()
 	// Equal:
-	UNITTEST_ASSERT(!StrCmpFirst("example", "example"), "StrCmp error");
-	UNITTEST_ASSERT(!StrCmpFirst("example", "example1"), "StrCmp error");
+	UNITTEST_ASSERT(!StrCmpFirst("example", "example"), "StrCmpFirst error");
+	UNITTEST_ASSERT(!StrCmpFirst("example", "example1"), "StrCmpFirst error");
 	// Not equal:
-	UNITTEST_ASSERT(StrCmpFirst("example1", "example2"), "StrCmp error");
-	UNITTEST_ASSERT(StrCmpFirst("example1", "example"), "StrCmp error");
+	UNITTEST_ASSERT(StrCmpFirst("example1", "example2"), "StrCmpFirst error");
+	UNITTEST_ASSERT(StrCmpFirst("example1", "example"), "StrCmpFirst error");
 
 
 	// TODO: Use STRING_SPRINTF_EXTENDED_ENABLE define

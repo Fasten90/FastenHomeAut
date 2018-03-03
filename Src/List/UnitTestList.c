@@ -68,7 +68,7 @@ uint32_t UnitTestList_Run(void)
 	uint32_t result = 0;
 
 #ifdef MODULE_STRING_UNITTEST_ENABLE
-	result += STRING_UnitTest();
+	result += StringHelper_UnitTest();
 #endif
 
 #ifdef MODULE_DATETIME_UNITTEST_ENABLE
