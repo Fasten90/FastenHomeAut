@@ -35,12 +35,6 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#ifdef ESP8266_USE_BLOCK_MODE
-#define ESP8266_SEND_TCP_MESSAGE(msg)	ESP8266_SendTcpMessageBlockingMode(msg)
-#else
-#define ESP8266_SEND_TCP_MESSAGE(msg)	ESP8266_SendTcpMessageNonBlockingMode_Start(msg);
-#endif
-
 
 
 /*------------------------------------------------------------------------------
@@ -102,14 +96,44 @@ UART_HandleTypeDef ESP8266_UartHandle;
 volatile uint8_t ESP8266_Uart_ReceivedCharFlag;
 #endif
 
-volatile char ESP8266_RxBuffer[ESP8266_RX_BUFFER_LENGTH];
-char ESP8266_TxBuffer[ESP8266_TX_BUFFER_LENGTH];
+// Buffers
+static volatile char ESP8266_TxBuffer[ESP8266_TX_BUFFER_LENGTH] = { 0 };
+static volatile char ESP8266_RxBuffer[ESP8266_RX_BUFFER_LENGTH] = { 0 };
 
-// Receive Cnt
-volatile uint8_t ESP8266_RxBuffer_WriteCnt = 0;
-volatile uint8_t ESP8266_RxBuffer_ReadCnt = 0;
+static CircularBufferInfo_t ESP8266_TxBuffStruct =
+{
+	.buffer = (char *)ESP8266_TxBuffer,
+	.name = "ESP8266_TxBuffer",
+	.size = ESP8266_TX_BUFFER_LENGTH
+};
 
-volatile bool ESP8266_SendEnable_flag = false;
+static CircularBufferInfo_t ESP8266_RxBuffStruct =
+{
+	.buffer = (char *)ESP8266_RxBuffer,
+	.name = "ESP8266_RxBuffer",
+	.size = ESP8266_RX_BUFFER_LENGTH
+};
+
+///< UART + CircularBuffer handler structure
+UART_Handler_t Esp8266Uart =
+{
+	.huart = &ESP8266_UartHandle,
+	.tx = &ESP8266_TxBuffStruct,
+	.rx = &ESP8266_RxBuffStruct,
+	.txIsEnabled = true,
+	.rxIsEnalbed = true,
+#ifdef CONFIG_MODULE_UART_REQUIRE_TASKSCHEDULE_ENABLE
+	.requiredTask = Task_Esp8266,
+#endif
+};
+
+
+#ifdef CONFIG_USE_FREERTOS
+xSemaphoreHandle ESP8266_USART_Rx_Semaphore;
+xQueueHandle ESP8266_SendMessage_Queue;
+xQueueHandle ESP8266_ReceivedMessage_Queue;
+#endif
+
 
 // TCP message receive buffer
 char ESP8266_TcpTransmitBuffer[ESP8266_TCP_MESSAGE_MAX_LENGTH];
@@ -120,13 +144,12 @@ bool ESP8266_TcpSendBuffer_EnableFlag = true;
 bool ESP8266_TcpSendIsStarted_Flag = false;
 bool ESP8266_TcpSent_WaitSendOk_Flag = false;
 
+// Statuses
+static ESP8266_StatusMachine_t ESP8266StatusMachine = Esp8266Status_Unknown;
 
+ESP8266_WifiConnectionStatusType ESP8266_ConnectionStatus = ESP8266_WifiConnectionStatus_Unknown;
 
-ESP8266_WifiConnectionStatusType	ESP8266_ConnectionStatus
-			= ESP8266_WifiConnectionStatus_Unknown;
-
-ESP8266_TcpConnectionStatusType		ESP8266_TcpConnectionStatus
-			= ESP8266_TcpConnectionStatus_Unknown;
+ESP8266_TcpConnectionStatusType	ESP8266_TcpConnectionStatus = ESP8266_TcpConnectionStatus_Unknown;
 
 
 #if (CONFIG_ESP8266_IS_WIFI_HOST == 0) && (CONFIG_ESP8266_CONNECT_DYNAMIC == 1)
@@ -185,16 +208,6 @@ const DateTime_t EventDateTime =
 #endif
 
 
-#ifdef CONFIG_USE_FREERTOS
-xSemaphoreHandle ESP8266_USART_Rx_Semaphore;
-xQueueHandle ESP8266_SendMessage_Queue;	// LOG queue
-xQueueHandle ESP8266_ReceivedMessage_Queue;
-#endif
-
-
-static ESP8266_StatusMachine_t ESP8266StatusMachine = Esp8266Status_Unknown;
-
-
 
 /*------------------------------------------------------------------------------
  *  Function declarations
@@ -243,7 +256,6 @@ static void ESP8266_FirstStartReceive(void);
 /*------------------------------------------------------------------------------
  *  Functions
  *----------------------------------------------------------------------------*/
-
 
 
 /**
@@ -2670,7 +2682,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 					*commIndex = '\0';
 					if (StringToUnsignedDecimalNum((const char *)&receiveBuffer[length], &messageLength))
 					{
-#warning "Modified these codes because STRING_FindString was changed. Should correct these!"
+#warning "Modify these codes because STRING_FindString was changed. Should correct these!"
 						if (messageLength <= ESP8266_TCP_MESSAGE_MAX_LENGTH)
 						{
 							// Set position after ':'
@@ -2684,8 +2696,11 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 							ESP8266_ReceivedTcpMessage[messageLength] = '\0';
 
 							DebugPrint("Received TCP message: \"%s\"\r\n", ESP8266_ReceivedTcpMessage);
+#warning "Beautify!"
+							char responseBuffer[ESP8266_TCP_MESSAGE_MAX_LENGTH];
 
-							CommandHandler_PrepareFindExecuteCommand(CommProt_ESP8266Wifi, ESP8266_ReceivedTcpMessage);
+							// Execute the command
+							CmdH_ExecuteCommand(ESP8266_ReceivedTcpMessage, responseBuffer, ESP8266_TCP_MESSAGE_MAX_LENGTH);
 
 							ESP8266_ClearReceive(false, length + messageLength + sizeof("\r\nOK\r\n") - 1);
 							goodMsgRcv = true;

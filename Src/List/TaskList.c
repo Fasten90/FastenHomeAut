@@ -347,7 +347,7 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 
 	static uint8_t Task_LedCnt = 0;
 	// Blue led toggle every time
-	IO_Output_SetStatus(LED_Blue, IO_Output_Cmd_SetToggle);
+	IO_Output_SetStatus(IO_LED_Blue, IO_Output_Cmd_SetToggle);
 
 	if (((Task_LedCnt % 2) == 0) && (ESP8266_ConnectionStatus == ESP8266_WifiConnectionStatus_SuccessfulServerStarted))
 	{

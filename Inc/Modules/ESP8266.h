@@ -20,6 +20,7 @@
 
 #include "NetworkHelper.h"
 #include "DebugUart.h"
+#include "EventLog.h"
 #include "EventList.h"
 
 
@@ -32,6 +33,13 @@
 
 
 //#define ESP8266_USE_BLOCK_MODE
+
+
+#ifdef ESP8266_USE_BLOCK_MODE
+#define ESP8266_SEND_TCP_MESSAGE(msg)	ESP8266_SendTcpMessageBlockingMode(msg)
+#else
+#define ESP8266_SEND_TCP_MESSAGE(msg)	ESP8266_SendTcpMessageNonBlockingMode_Start(msg);
+#endif
 
 
 /*
@@ -62,7 +70,7 @@
 #define ESP8266_LOG_EVENT(val)					EventLog_LogEvent(Event_Esp8266UserEvent, \
 													val, \
 													Task_Esp8266, \
-													EventType_Raised, \
+													EventType_Raised \
 													)
 #else
 #define ESP8266_LOG_EVENT(val)
@@ -137,12 +145,13 @@
 	HAL_GPIO_WritePin(ESP8266_RST_GPIO_PORT, ESP8266_RST_GPIO_PIN, GPIO_PIN_SET)
 
 
+
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
 
-/// WiFi Connection status types
+///< WiFi Connection status types
 typedef enum
 {
 	ESP8266_WifiConnectionStatus_Unknown = 0,
@@ -156,7 +165,7 @@ typedef enum
 
 
 
-/// Server connection status types
+///< Server connection status types
 typedef enum
 {
 	ESP8266_TcpConnectionStatus_Unknown = 0,
@@ -172,14 +181,7 @@ typedef enum
  *----------------------------------------------------------------------------*/
 
 extern UART_HandleTypeDef ESP8266_UartHandle;
-
-extern volatile uint8_t ESP8266_Uart_ReceivedCharFlag;
-extern uint8_t ESP8266_Receive_Mode_FixLength;
-extern volatile uint8_t ESP8266_RxBuffer_WriteCnt;
-extern volatile uint8_t ESP8266_RxBuffer_ReadCnt;
-extern volatile char ESP8266_RxBuffer[];
-
-extern volatile bool ESP8266_SendEnable_flag;
+extern UART_Handler_t Esp8266Uart;
 
 #ifdef CONFIG_USE_FREERTOS
 extern xSemaphoreHandle ESP8266_USART_Rx_Semaphore;
