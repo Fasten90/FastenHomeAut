@@ -53,7 +53,7 @@ bool SelfTest_Flag_Test(void)
 {
 	APSR_Type apsr;
 	uint8_t successfulTest = 0;
-	const uint8_t testCount = 4;
+	const uint8_t testCount = 5;
 
 	/*
 	    core_m0.h
@@ -118,6 +118,11 @@ bool SelfTest_Flag_Test(void)
 	if (apsr.b.C == 1 && apsr.b.Z == 1)
 	{
 		//uprintf("Carry and Zero flag is 1\r\n");
+		successfulTest++;
+	}
+
+	if (overflowval == 0)
+	{
 		successfulTest++;
 	}
 

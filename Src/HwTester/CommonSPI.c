@@ -54,8 +54,6 @@
  */
 void CommonSPI_Init(void)
 {
-
-
 	GPIO_InitTypeDef  GPIO_InitStruct;
 
 	/*##-1- Enable peripherals and GPIO Clocks #################################*/

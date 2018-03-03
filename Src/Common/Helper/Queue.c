@@ -312,7 +312,7 @@ bool Queue_PutFirstElement(QueueListInfo_t * queue, void * pData, size_t dataSiz
 
 
 // TODO: Enum tpye for return? WrongParam, NoSpace, ...
-bool Queue_PutLastElement(QueueListInfo_t * queue, void * pData, size_t dataSize, QueueDataType_t dataTpye);
+bool Queue_PutLastElement(QueueListInfo_t * queue, void * pData, size_t dataSize, QueueDataType_t dataType);
 bool Queue_PutLastElement(QueueListInfo_t * queue, void * pData, size_t dataSize, QueueDataType_t dataType)
 {
 	// Check parameters

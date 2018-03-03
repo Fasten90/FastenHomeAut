@@ -361,6 +361,12 @@ int main(void)
 #endif
 
 
+#ifdef CONFIG_MODULE_COMMONSPI_ENABLE
+	// Common SPI
+	CommonSPI_Init();
+#endif
+
+
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
 	// Remote car motors
 	Motor_Init();
