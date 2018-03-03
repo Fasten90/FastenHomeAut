@@ -224,8 +224,8 @@ IO_Status_t IO_Output_SetStatus(IO_Output_Name_t ioName, IO_Output_Cmd_t ioCmd)
 		IO_Output_ActualState[ioName - 1] = ioCmd;
 #endif
 
-		const GPIO_TypeDef * port = (GPIO_TypeDef *)IO_Output_List[ioName-1].GPIO_Port;
-		const uint32_t pin = IO_Output_List[ioName-1].GPIO_Pin;
+		GPIO_TypeDef * port = (GPIO_TypeDef *)IO_Output_List[ioName-1].GPIO_Port;
+		uint32_t pin = IO_Output_List[ioName-1].GPIO_Pin;
 		const IO_Status_t lowVoltageState = IO_Output_List[ioName-1].lowVoltageState;
 
 		switch (ioCmd)
@@ -258,7 +258,7 @@ IO_Status_t IO_Output_SetStatus(IO_Output_Name_t ioName, IO_Output_Cmd_t ioCmd)
 
 		// Return with IO status, so IO_Output_Cmd_GetStatus state is handled with this
 		//return IO_OUT_STATUS();
-		GPIO_PinState pinState = HAL_GPIO_ReadPin(port, pin);
+		const GPIO_PinState pinState = HAL_GPIO_ReadPin(port, pin);
 
 		status = (lowVoltageState == IO_Status_Off)
 				? ((pinState == GPIO_PIN_RESET) ? IO_Status_Off : IO_Status_On)
@@ -324,6 +324,9 @@ IO_Output_Name_t IO_Output_GetOutputNumFromName(const char *name)
 
 
 
+/**
+ * \brief	Get IO output name
+ */
 const char * IO_Output_GetName(IO_Output_Name_t ioNum)
 {
 	const char *name = NULL;
@@ -360,6 +363,9 @@ IO_Output_Cmd_t IO_Output_GetTypeFromString(const char *typeString)
 
 
 
+/**
+ * \brief	Get IO Status name (Enum --> String)
+ */
 const char * IO_GetStatusName(IO_Status_t status)
 {
 	const char *str = NULL;
@@ -568,6 +574,7 @@ const char * IO_GetInputName(IO_Input_Name_t inputPin)
 
 	return str;
 }
+
 
 // TODO: SetInputState - from ISR e.g.
 
