@@ -55,6 +55,8 @@
 #include "CommandList.h"
 #include "BoardInfos.h"
 #include "Queue.h"
+#include "UnitTestList.h"
+
 
 
 /*------------------------------------------------------------------------------
@@ -693,66 +695,7 @@ static CmdH_Result_t CommandFunction_unittest(uint32_t argc, char** argv)
 
 	CmdH_SendLine("Start unittest");
 
-#ifdef MODULE_STRING_UNITTEST_ENABLE
-	STRING_UnitTest();
-#endif
-
-#ifdef MODULE_DATETIME_UNITTEST_ENABLE
-	DateTime_UnitTest();
-#endif
-
-#ifdef MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
-	HomeAutMessage_UnitTest();
-#endif
-
-#ifdef MODULE_COMMANDHANDLER_UNITTEST_ENABLE
-	CmdH_UnitTest();
-#endif
-
-#if defined(CONFIG_MODULE_GLOBALVARHANDLER_ENABLE) && defined(MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE)
-	GlobVarH_UnitTest();
-#endif
-
-#ifdef MODULE_CIRCULARBUFFER_UNITTEST_ENABLE
-	CircularBuffer_UnitTest();
-#endif
-
-#ifdef MODULE_TASKHANDLER_UNNITEST_ENABLE
-	TaskHandler_UnitTest();
-#endif
-
-#if defined(CONFIG_MODULE_EVENTLOG_ENABLE) && defined(MODULE_EVENTLOG_UNITTEST_ENABLE)
-	EventLog_UnitTest();
-#endif
-
-#ifdef MODULE_CALC_UNITTEST_ENABLE
-	Calc_UnitTest();
-#endif
-
-#ifdef MODULE_MEM_UNITTEST_ENABLE
-	MEM_UnitTest();
-#endif
-
-#ifdef MODULE_LINKEDLIST_UNITTEST_ENABLE
-	LinkedList_UnitTest();
-#endif
-
-#ifdef MODULE_EVENTHANDLER_UNITTEST_ENABLE
-	EventHandler_UnitTest();
-#endif
-
-#if defined(MODULE_CONVERTTABLE_UNITTEST_ENABLE) && defined(CONFIG_MODULE_CONVERTTABLE_ENABLE)
-	ConvertTable_UnitTest();
-#endif
-
-#ifdef MODULE_SECUREDDATATYPES_UNITTEST_ENABLE
-	SecuredDataTypes_UnitTest();
-#endif
-
-	#ifdef MODULE_QUEUE_UNITTEST_ENABLE
-	Queue_UnitTest();
-	#endif
-
+	UnitTestList_Run();
 
 	CmdH_SendLine("Unittest finished");
 
