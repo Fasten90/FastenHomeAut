@@ -501,8 +501,7 @@ static void DebugPrint(const char *format, ...)
 #endif
 
 		DebugUart_SendMessage("ESP8266: ");
-		DebugUart_SendMessage(TxBuffer);			// Send on DebugUart
-
+		DebugUart_SendMessage(txBuffer);			// Send on DebugUart
 	}
 }
 

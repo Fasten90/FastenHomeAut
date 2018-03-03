@@ -20,6 +20,7 @@
 
 #include "NetworkHelper.h"
 #include "DebugUart.h"
+#include "EventList.h"
 
 
 
@@ -27,7 +28,7 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define ESP8266_DEBUG_TXBUFFERSIZE		DEBUGUART_TXBUFFERSIZE
+#define ESP8266_DEBUG_TXBUFFERSIZE		(255U)
 
 
 //#define ESP8266_USE_BLOCK_MODE
@@ -59,9 +60,10 @@
 
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
 #define ESP8266_LOG_EVENT(val)					EventLog_LogEvent(Event_Esp8266UserEvent, \
-												EventType_UserEvent, \
-												val \
-												)
+													val, \
+													Task_Esp8266, \
+													EventType_Raised, \
+													)
 #else
 #define ESP8266_LOG_EVENT(val)
 #endif
