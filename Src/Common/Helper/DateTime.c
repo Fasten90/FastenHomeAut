@@ -43,7 +43,7 @@ static const uint8_t days_of_month[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31,
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
-bool DateTime_CheckValue(uint32_t originalValue, uint32_t minValue, uint32_t maxValue);
+static bool DateTime_CheckValue(uint32_t originalValue, uint32_t minValue, uint32_t maxValue);
 static uint8_t DateTime_GetDaysOfMonth(uint8_t year, uint8_t month);
 static uint32_t DateTime_CalculateDateTimeSecond(DateTime_t *dateTime);
 static bool DateTime_CheckItIsLeapYear(uint8_t year);
@@ -251,11 +251,11 @@ bool DateTime_ConvertTimeStringToTime(char *str, Time_t *time)
 /**
  * \brief	Check value it is OK? (Is in range?)
  */
-bool DateTime_CheckValue(uint32_t originalValue, uint32_t minValue, uint32_t maxValue)
+static bool DateTime_CheckValue(uint32_t originalValue, uint32_t minValue, uint32_t maxValue)
 {
 	bool isOk = false;
 
-	if (originalValue >= minValue && originalValue <= maxValue)
+	if ((originalValue >= minValue) && (originalValue <= maxValue))
 	{
 		isOk = true;
 	}
@@ -583,6 +583,7 @@ void DateTime_StepOneSecond(DateTime_t *dateTime)
 /**
  * \brief	Add one minute to actual DateTime
  * \note	If minute is "59" the next value will "0" (and the hour is not stepped!)
+ * 			Only can be use for "settings" not for periodically stepping
  */
 void DateTime_AddMinute(DateTime_t *dateTime)
 {
@@ -764,24 +765,77 @@ void DateTime_UnitTest(void)
 	DateTime_StepMoreSecond(&test601, 1);
 	UNITTEST_ASSERT(!memcmp(&test601, &test602, sizeof(DateTime_t)), "DateTime_Steps error");
 
-	// Step 60 second
-	DateTime_t test603 = { { 17, 05, 07 }, { 20, 42, 59} };
-	DateTime_t test604 = { { 17, 05, 07 }, { 20, 44, 01} };
-	DateTime_StepMoreSecond(&test603, 62);
-	UNITTEST_ASSERT(!memcmp(&test603, &test604, sizeof(DateTime_t)), "DateTime_Steps error");
-
 	// Step from 2017.12.31 23:59:59 -> to 2018.01.01 00:00:00
 	DateTime_t test605 = { { 17, 12, 31 }, { 23, 59, 59 } };
 	DateTime_t test606 = { { 18, 1, 1 }, { 0, 0, 0 } };
 	DateTime_StepMoreSecond(&test605, 1);
 	UNITTEST_ASSERT(!memcmp(&test605, &test606, sizeof(DateTime_t)), "DateTime_Steps error");
 
-	// TODO: Test too much step value
+	// Step 62 second
+	DateTime_t test603 = { { 17, 05, 07 }, { 20, 42, 59} };
+	DateTime_t test604 = { { 17, 05, 07 }, { 20, 44, 01} };
+	DateTime_StepMoreSecond(&test603, 62);
+	UNITTEST_ASSERT(!memcmp(&test603, &test604, sizeof(DateTime_t)), "DateTime_Steps error");
+
+	// Step 60 seconds
+	DateTime_t test700tst = { { 18, 1, 1 }, { 0, 0, 0 } };
+	DateTime_t test700res = { { 18, 1, 1 }, { 0, 1, 0 } };
+	DateTime_StepMoreSecond(&test700tst, 60);
+	UNITTEST_ASSERT(!memcmp(&test700tst, &test700res, sizeof(DateTime_t)), "DateTime_Steps error");
+
+	// Step 600 seconds
+	DateTime_t test701tst = { { 18, 1, 1 }, { 0, 0, 0 } };
+	DateTime_t test701res = { { 18, 1, 1 }, { 0, 10, 0 } };
+	DateTime_StepMoreSecond(&test701tst, 600);
+	UNITTEST_ASSERT(!memcmp(&test701tst, &test701res, sizeof(DateTime_t)), "DateTime_Steps error");
+
+	// Step too much: DATETIME_STEPSECOND_MAX_LIMIT
+	DateTime_t test702tst = { { 18, 1, 1 }, { 0, 0, 0 } };
+	DateTime_t test702res = { { 18, 1, 1 }, { 0, 0, 0 } };
+	DateTime_StepMoreSecond(&test702tst, DATETIME_STEPSECOND_MAX_LIMIT);
+	// Expected result: Do not modify
+	UNITTEST_ASSERT(!memcmp(&test702tst, &test702res, sizeof(DateTime_t)), "DateTime_Steps error");
+
+
+	/*			Test DateTime_AddMinute()			*/
+
+	// Add one minute in simple situation
+	DateTime_t test800tst = { { 18, 1, 1 }, { 0, 0, 0 } };
+	DateTime_t test800res = { { 18, 1, 1 }, { 0, 1, 0 } };
+	DateTime_AddMinute(&test800tst);
+	UNITTEST_ASSERT(!memcmp(&test800tst, &test800res, sizeof(DateTime_t)), "DateTime_AddMinute error");
+
+	// Add one minute at year's end
+	DateTime_t test801tst = { { 18, 12, 31 }, { 23, 59, 30 } };
+	DateTime_t test801res = { { 18, 12, 31 }, { 23,  0, 30 } };
+	DateTime_AddMinute(&test801tst);
+	UNITTEST_ASSERT(!memcmp(&test801tst, &test801res, sizeof(DateTime_t)), "DateTime_AddMinute error");
+
+	DateTime_t *test802tst = NULL;
+	DateTime_AddMinute(test802tst);
+	/* Cannot test the result */
+
+
+	/*			Test DateTime_AddHour()			*/
+
+	// Add one hour in simple situation
+	DateTime_t test900tst = { { 18, 1, 1 }, { 0, 0, 0 } };
+	DateTime_t test900res = { { 18, 1, 1 }, { 1, 0, 0 } };
+	DateTime_AddHour(&test900tst);
+	UNITTEST_ASSERT(!memcmp(&test900tst, &test900res, sizeof(DateTime_t)), "DateTime_AddHour error");
+
+	// Add one hour at year's end
+	DateTime_t test901tst = { { 18, 12, 31 }, { 23, 30, 0 } };
+	DateTime_t test901res = { { 18, 12, 31 }, {  0, 30, 0 } };
+	DateTime_AddHour(&test901tst);
+	UNITTEST_ASSERT(!memcmp(&test901tst, &test901res, sizeof(DateTime_t)), "DateTime_AddHour error");
+
+	DateTime_t *test902tst = NULL;
+	DateTime_AddHour(test902tst);
+	/* Cannot test the result */
+
 
 	// TODO: Add more DateTime UnitTests
-
-	// TODO: Test DateTime_AddMinute()
-	// TODO: Test DateTime_AddHour()
 
 
 	// Finish
