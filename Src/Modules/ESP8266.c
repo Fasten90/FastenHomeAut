@@ -2657,6 +2657,11 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 				DebugPrint("Received +IPD message without end:\r\n\"%s\"\r\n", (const char *)receiveBuffer);
 			}
 		}
+		else if (!StrCmpFirst("\r\n", (const char *)receiveBuffer))
+		{
+			// "\r\n"
+			ESP8266_ClearReceive(false, sizeof("\r\n") - 1);
+		}
 		else if (receivedMessageLength < 6)
 		{
 			// Received too small message
