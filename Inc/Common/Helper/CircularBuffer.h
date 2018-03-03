@@ -69,6 +69,7 @@ uint16_t CircularBuffer_GetString(CircularBufferInfo_t *circBuff, char *message,
 uint16_t CircularBuffer_DropCharacters(CircularBufferInfo_t *circBuff, uint16_t length);
 void CircularBuffer_Clear(CircularBufferInfo_t *circBuff);
 bool CircularBuffer_IsNotEmpty(CircularBufferInfo_t *circBuff);
+bool CircularBuffer_IsFull(CircularBufferInfo_t *circBuff);
 bool CircularBuffer_PutChar(CircularBufferInfo_t *circBuff, char c);
 uint16_t CircularBuffer_PutString(CircularBufferInfo_t *circBuff, const char *str, uint16_t needCopyLength);
 

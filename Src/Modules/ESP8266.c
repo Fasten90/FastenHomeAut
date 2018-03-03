@@ -25,6 +25,7 @@
 #include "DateTime.h"
 #include "ErrorHandler.h"
 #include "UART.h"
+#include "Timing.h"
 
 #include "ESP8266.h"
 
@@ -115,7 +116,7 @@ static CircularBufferInfo_t ESP8266_RxBuffStruct =
 };
 
 ///< UART + CircularBuffer handler structure
-UART_Handler_t Esp8266Uart =
+UART_Handler_t ESP8266_Uart =
 {
 	.huart = &ESP8266_UartHandle,
 	.tx = &ESP8266_TxBuffStruct,
@@ -235,21 +236,26 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_Start(const char *message);
 static uint8_t ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void);
 #endif
 
+#if NOT_USED
 static bool ESP8266_WaitForSend(uint16_t timeoutMilliSecond);
+#endif
 
 static bool ESP8266_ConvertIpString(char *message);
 
 static void DebugPrint(const char *format, ...);
 
-static void ESP8266_FindLastMessage(void);
 static void ESP8266_ClearReceive(bool isFullClear, uint8_t stepLength);
 
 static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t receivedMessageLength);
 
-static void ESP8266_FirstStartReceive(void);
+static void ESP8266_StartReceive(void);
+static void ESP8266_ClearFullReceiveBuffer(void);
 
-// TODO: Delete, if not need
-#define ESP8266_StartReceive()		(void)0
+// TODO: Change and beautify the list
+
+static void ESP8266_ReceiveEnable(void);
+static void ESP8266_ResetHardware(void);
+static inline void ESP8266_SendEnable(void);
 
 
 
@@ -319,10 +325,8 @@ void ESP8266_Init(void)
 	
 	// USART TX - RX	
 	// Init late USART, because we receive a lot of message at ESP8266 start
-	//USART_Init(&ESP8266_UartHandle);
-	
+	UART_Init(&ESP8266_UartHandle);
 
-	//DelayMs(100);
 
 #ifdef CONFIG_USE_FREERTOS
 	// ESP8266 FreeRTOS queues
@@ -342,6 +346,27 @@ void ESP8266_Init(void)
 		Error_Handler();
 	}
 #endif
+
+	ESP8266_ReceiveEnable();
+}
+
+
+
+/**
+ * \brief	Receive enable
+ */
+static void ESP8266_ReceiveEnable(void)
+{
+	UART_ReceiveEnable(&ESP8266_Uart);
+}
+
+
+/**
+ * \brief	Send enable
+ */
+static inline void ESP8266_SendEnable(void)
+{
+	UART_SendEnable(&ESP8266_Uart);
 }
 
 
@@ -349,7 +374,7 @@ void ESP8266_Init(void)
 /**
  * \brief	Reset ESP8266 module on RST pin
  */
-void ESP8266_ResetHardware(void)
+static void ESP8266_ResetHardware(void)
 {
 	ESP8266_RST_ACTIVE();
 	DelayMs(1);
@@ -361,55 +386,43 @@ void ESP8266_ResetHardware(void)
 /**
  * \brief	Send string to ESP8266
  */
-void ESP8266_SendString(const char *str)
+size_t ESP8266_SendString(const char *msg)
 {
-	uint8_t length = StringLength(str);
+	size_t length = 0;
+	size_t putLength;
 
-	if (length > ESP8266_TX_BUFFER_LENGTH)
+	length = StringLength(msg);
+
+	if (length == 0)
 	{
-		length = ESP8266_TX_BUFFER_LENGTH;
+		return 0;
 	}
 
-	if (ESP8266_WaitForSend(200))
-	{
-		// Copy if can send
-		StrCpyFixLength(ESP8266_TxBuffer, str, length);
+	putLength = CircularBuffer_PutString(ESP8266_Uart.tx, msg, length);
 
-		if (HAL_UART_Transmit_IT(&ESP8266_UartHandle, (uint8_t*)ESP8266_TxBuffer, length) == HAL_OK)
-		{
-			ESP8266_SendEnable_flag = false;
-		}
-		else
-		{
-			Error_Handler();
-		}
-	}
-	else
-	{
-		// Cannot send, because cannot take flag
-		DebugPrint("Cannot take sending flag");
-	}
+	if (putLength > 0)
+		ESP8266_SendEnable();
+
+	return putLength;
 }
 
 
-
+#if NOT_USED
 /**
  * \brief	Wait for USART sending
  */
 static bool ESP8266_WaitForSend(uint16_t timeoutMilliSecond)
 {
 	// Wait for flag or timeout
-	while ((ESP8266_SendEnable_flag != true) || (timeoutMilliSecond == 0))
+	while ((CircularBuffer_IsFull(ESP8266_Uart.tx)) && (timeoutMilliSecond != 0))
 	{
 		timeoutMilliSecond--;
 		DelayMs(1);
 	}
 
-	// TODO: Not a good idea...
-	//ESP8266_SendEnable_flag = true;
-
-	return ESP8266_SendEnable_flag;
+	return CircularBuffer_IsFull(ESP8266_Uart.tx);
 }
+#endif
 
 
 
@@ -419,19 +432,19 @@ static bool ESP8266_WaitForSend(uint16_t timeoutMilliSecond)
 static bool ESP8266_ConvertIpString(char *message)
 {
 	bool isOk = false;
-	char * pos1;
+
 #if CONFIG_ESP8266_IS_WIFI_HOST == 1
-	char * pos2;
+	char *pos2 = NULL;
 #endif
 
 	// String come like "192.168.4.1\r\n192.168.1.34\r\n\r\nOK\r\n"
-	pos1 = STRING_FindString(message, "\r\n");
+	char *pos1 = (char *)STRING_FindString((const char *)message, "\r\n");
 	if (pos1 != NULL)
 	{
 #if CONFIG_ESP8266_IS_WIFI_HOST == 1
 		*pos1 = '\0';
 		pos1 += 2;	// Skip "\r\n"
-		pos2 = STRING_FindString(pos1, "\r\n");
+		pos2 = (char *)STRING_FindString(pos1, "\r\n");
 		if (pos2 != NULL 0)
 		{
 			*pos2 = '\0';
@@ -1705,23 +1718,10 @@ static uint8_t ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void)
 /**
  * \brief	ESP8266 receive-sending full reinitialize
  */
-static void ESP8266_FirstStartReceive(void)
+static void ESP8266_StartReceive(void)
 {
 	// Clear buffer
 	ESP8266_ClearFullReceiveBuffer();
-
-	// BufferCnt = 0;
-	ESP8266_RxBuffer_WriteCnt = 0;
-	ESP8266_RxBuffer_ReadCnt = 0;
-
-	UART_ResetStatus(&ESP8266_UartHandle);
-
-	ESP8266_SendEnable_flag = true;
-
-	// Start receive (wait x character)
-	HAL_UART_Receive_IT(&ESP8266_UartHandle,
-			(uint8_t *)&ESP8266_RxBuffer[0],
-			ESP8266_RECEIVE_LENGTH);
 }
 
 
@@ -1729,55 +1729,9 @@ static void ESP8266_FirstStartReceive(void)
 /**
  * \brief	Reset ESP8266 received buffer
  */
-void ESP8266_ClearFullReceiveBuffer(void)
+static void ESP8266_ClearFullReceiveBuffer(void)
 {
-	uint16_t i;
-	for (i = 0; i < ESP8266_RX_BUFFER_LENGTH; i++)
-	{
-		ESP8266_RxBuffer[i] = '\0';
-	}
-}
-
-
-
-/**
- * \brief	Step Buffer WriteCnt to last character
- */
-static void ESP8266_FindLastMessage(void)
-{
-	ESP8266_RxBuffer_WriteCnt = ESP8266_RX_BUFFER_LENGTH - ESP8266_UartHandle.RxXferCount;
-	// TODO: Buffer Overflow
-
-
-
-	// TODO: Not a good solve...
-	//
-	/*
-	uint16_t i = 0;
-
-	// Find last character in the buffer
-	while (ESP8266_RxBuffer[ESP8266_RxBuffer_WriteCnt])
-	{
-		++ESP8266_RxBuffer_WriteCnt;
-		++i;
-
-		if ((i > ESP8266_RX_BUFFER_LENGTH) || (((ESP8266_RX_BUFFER_LENGTH - ESP8266_UartHandle.RxXferCount) - ESP8266_RxBuffer_WriteCnt) > 100))
-		{
-			// Buffer full - Error
-			DebugPrint("Error: Buffer full, clear it...\r\n");
-
-			ESP8266_ClearFullReceiveBuffer();
-			//ESP8266_RxBuffer_WriteCnt = 0;
-			//ESP8266_RxBuffer_ReadCnt = 0;
-			ESP8266_RxBuffer_WriteCnt = ESP8266_UartHandle.RxXferCount;
-			ESP8266_RxBuffer_ReadCnt = ESP8266_RxBuffer_WriteCnt;
-			//ESP8266_ClearReceive(true, 0);	// TODO: Not enough, clear all buffer
-			//ESP8266_RxBuffer_ReadCnt = ESP8266_RxBuffer_WriteCnt;
-			// TODO: Need restore writeCnt
-			break;
-		}
-	}//
-	*/
+	CircularBuffer_Clear(ESP8266_Uart.rx);
 }
 
 
@@ -1787,37 +1741,15 @@ static void ESP8266_FindLastMessage(void)
  */
 static void ESP8266_ClearReceive(bool isFullClear, uint8_t stepLength)
 {
-	ESP8266_FindLastMessage();
-
-	// Clear from ReadCnt to WriteCnt
 	if (isFullClear)
 	{
 		// Clear all buffer
-		CircularBuffer_Clear((char *)ESP8266_RxBuffer, ESP8266_RX_BUFFER_LENGTH,
-				ESP8266_RxBuffer_ReadCnt,
-				ESP8266_RxBuffer_WriteCnt);
-		ESP8266_RxBuffer_ReadCnt = ESP8266_RxBuffer_WriteCnt;
+		CircularBuffer_Clear(ESP8266_Uart.rx);
 	}
 	else
 	{
 		// Not full clear from readCnt to writeCnt
-		CircularBuffer_Clear((char *)ESP8266_RxBuffer, ESP8266_RX_BUFFER_LENGTH,
-				ESP8266_RxBuffer_ReadCnt,
-				(uint8_t)(ESP8266_RxBuffer_ReadCnt + stepLength));
-
-		// Increment ReadCnt
-		if (ESP8266_RxBuffer_ReadCnt <  ESP8266_RxBuffer_WriteCnt)
-		{
-			ESP8266_RxBuffer_ReadCnt += stepLength;
-			if (ESP8266_RxBuffer_ReadCnt > ESP8266_RxBuffer_WriteCnt)
-			{
-				ESP8266_RxBuffer_ReadCnt = ESP8266_RxBuffer_WriteCnt;
-			}
-		}
-		else if (ESP8266_RxBuffer_ReadCnt >  ESP8266_RxBuffer_WriteCnt)
-		{
-			ESP8266_RxBuffer_ReadCnt += stepLength;
-		}
+		CircularBuffer_DropCharacters(ESP8266_Uart.rx, stepLength);
 	}
 }
 
@@ -1826,26 +1758,19 @@ static void ESP8266_ClearReceive(bool isFullClear, uint8_t stepLength)
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 /**
  * \brief	ESP8266 state machine
- * \note	Call this task a lot of times (it is not az infinite loop)
+ * \note	Call this task a lot of times (it is not an infinite loop)
  */
 void ESP8266_StatusMachine(void)
 {
-	// TODO: Delete ESP8266_StartReceive();
-
-	ESP8266_FindLastMessage();
-
 	// If WriteCnt not equal with ReadCnt, we have received message
 	char receiveBuffer[ESP8266_RX_BUFFER_LENGTH+1] = { 0 };
 	uint16_t receivedMessageLength = 0;
 
-	if (ESP8266_RxBuffer_WriteCnt != ESP8266_RxBuffer_ReadCnt)
-	{
-		// Need copy to receiveBuffer
-		receivedMessageLength = CircularBuffer_GetString(
-				(char *)ESP8266_RxBuffer, receiveBuffer,
-				ESP8266_RX_BUFFER_LENGTH,
-				ESP8266_RxBuffer_WriteCnt, ESP8266_RxBuffer_ReadCnt);
-	}
+	// Need copy to receiveBuffer
+	receivedMessageLength = CircularBuffer_GetString(
+			ESP8266_Uart.rx,
+			receiveBuffer,
+			ESP8266_RX_BUFFER_LENGTH);
 
 
 #if ESP8266_DEBUG_MODE == 1
@@ -1884,8 +1809,8 @@ void ESP8266_StatusMachine(void)
 
 		case Esp8266Status_AfterInit:
 			// When we reach this state, we wait for ESP8266's startup
-			USART_Init(&ESP8266_UartHandle);
-			ESP8266_FirstStartReceive();
+			//UART_Init(&ESP8266_UartHandle); // TODO: Delete if not need
+			ESP8266_StartReceive();
 			ESP8266StatusMachine++;
 			//TaskHandler_EnableTask(Task_Esp8266);
 			TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 1000);
@@ -2556,8 +2481,9 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 	 * Unlink
 	 * +IPD: Received message
 	 */
-	if (ESP8266_RxBuffer_WriteCnt != ESP8266_RxBuffer_ReadCnt)
+	if (CircularBuffer_IsNotEmpty(ESP8266_Uart.rx))
 	{
+		/* There is some character in rx buffer */
 
 		bool goodMsgRcv = false;
 
@@ -2673,7 +2599,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 				// Check next parameter:
 				uint8_t length = sizeof("\r\n+IPD,0,") - 1;
 				// TODO: Use better function
-				char * commIndex = STRING_FindString((const char *)&receiveBuffer[length], ":");
+				char * commIndex = (char *)STRING_FindString((const char *)&receiveBuffer[length], ":");
 				if (commIndex != NULL)
 				{
 					// Has ':'

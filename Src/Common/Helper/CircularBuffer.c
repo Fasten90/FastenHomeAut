@@ -64,8 +64,6 @@
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
-static bool CircularBuffer_IsFull(CircularBufferInfo_t *circBuff);
-
 
 
 /*------------------------------------------------------------------------------
@@ -109,7 +107,7 @@ bool CircularBuffer_IsNotEmpty(CircularBufferInfo_t *circBuff)
  * \retval	true	full
  * \retval	false	not full (has empty space)
  */
-static bool CircularBuffer_IsFull(CircularBufferInfo_t *circBuff)
+bool CircularBuffer_IsFull(CircularBufferInfo_t *circBuff)
 {
 	bool isFull = false;
 

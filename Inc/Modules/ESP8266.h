@@ -181,7 +181,7 @@ typedef enum
  *----------------------------------------------------------------------------*/
 
 extern UART_HandleTypeDef ESP8266_UartHandle;
-extern UART_Handler_t Esp8266Uart;
+extern UART_Handler_t ESP8266_Uart;
 
 #ifdef CONFIG_USE_FREERTOS
 extern xSemaphoreHandle ESP8266_USART_Rx_Semaphore;
@@ -204,12 +204,9 @@ extern bool ESP8266_DebugEnableFlag;
 
 void ESP8266_Init(void);
 
-void ESP8266_SendString(const char *str);
-void ESP8266_ReceiveString(uint8_t length);
-void ESP8266_ClearFullReceiveBuffer(void);
-void ESP8266_Task(void);
+size_t ESP8266_SendString(const char *msg);
 
-void ESP8266_ResetHardware(void);
+void ESP8266_Task(void);
 
 #ifdef ESP8266_USE_BLOCK_MODE
 bool ESP8266_Config(void);
@@ -233,7 +230,6 @@ uint8_t ESP8266_RequestSendTcpMessage(const char * message);
 void ESP8266_StatusMachine(void);
 
 uint8_t ESP8266_PrintIpAddress(char * str);
-
 
 
 
