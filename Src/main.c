@@ -103,13 +103,13 @@
  *   + 1. = A4 pin
  *   + 2. = A5 pin
  *
- * LED functions:
- * - Command: \code led <1/2/3> <on/off/toggle/status> \endcode
- *   + Example: \code led 1 on \endcode
+ * IO - LED functions:
+ * - Command: \code io <1/2/3> <on/off/toggle/status> \endcode
+ *   + Example: \code io 1 on \endcode
  *     - 1. LED will set on
- *   + Example: \code led status \endcode
+ *   + Example: \code io status \endcode
  *     - LED statuses will printed out on Terminal
- *   + Example: \code led green off \endcode
+ *   + Example: \code io ledgreen off \endcode
  *     - Green LED will turn off
  *
  *
@@ -130,8 +130,10 @@
  * ------------------------
  *
  * - STM32xx
- *   - STM32F030x (tested)
- *   - STM32F4 (tested)
+ *   + STM32F030x (tested)
+ *     - Platform: FastenNode (own board)
+ *   + STM32F4 (tested)
+ *     - Platform: STM32F4Discovery
  * - Win32 (tested)
  *
  *

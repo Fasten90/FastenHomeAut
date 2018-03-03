@@ -127,7 +127,7 @@ CmdH_Result_t CmdH_ExecuteCommand(char *command, char *response, size_t length)
 		CmdH_CommandArgCount = CmdH_CommandParser(command, CmdH_CommandArguments);
 
 		// Check parse result
-		if (CmdH_CommandArgCount > 0 && CmdH_CommandArgCount <= CMDH_COMMAND_ARG_MAX_COUNT)
+		if ((CmdH_CommandArgCount > 0) && (CmdH_CommandArgCount <= CMDH_COMMAND_ARG_MAX_COUNT))
 		{
 			// Save important values
 			CmdH_ResponseBuffer = response;
@@ -181,7 +181,7 @@ CmdH_Result_t CmdH_ExecuteCommandWithParams(char *command, char *param, char *re
 	CmdH_CommandArguments[0] = command;
 	CmdH_CommandArgCount = CmdH_CommandParser(param, &CmdH_CommandArguments[1]) + 1;						// +1: command is 1 word
 
-	if (CmdH_CommandArgCount > 0 && CmdH_CommandArgCount <= CMDH_COMMAND_ARG_MAX_COUNT)						// Check parsing result
+	if ((CmdH_CommandArgCount > 0) && (CmdH_CommandArgCount <= CMDH_COMMAND_ARG_MAX_COUNT))					// Check parsing result
 	{
 		// Save important values
 		CmdH_ResponseBuffer = response;
@@ -257,7 +257,7 @@ static CmdH_Result_t CmdH_SearchCommand(void)
 		}
 	}
 
-	return result;										// Return with validation
+	return result;	// Return with validation
 }
 
 
