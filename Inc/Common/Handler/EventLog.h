@@ -95,7 +95,7 @@ void EventLog_Init(void);
 void EventLog_LogEvent(EventName_t eventName, EventData_t eventData, TaskID_t taskSource, EventType_t eventType);
 void EventLog_PrintLogTable(void);
 
-void EventLog_UnitTest(void);
+uint32_t EventLog_UnitTest(void);
 
 
 

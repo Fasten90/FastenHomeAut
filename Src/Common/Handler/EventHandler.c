@@ -223,7 +223,7 @@ const char * EventHandler_GetEventTypeName(EventType_t eventType)
 /**
  * \brief	EventHandler UnitTest
  */
-void EventHandler_UnitTest(void)
+uint32_t EventHandler_UnitTest(void)
 {
 	// Start Unit test
 	UnitTest_Start("EventHandler", __FILE__);
@@ -288,7 +288,7 @@ void EventHandler_UnitTest(void)
 
 
 	// Finish unit test
-	UnitTest_End();
+	return UnitTest_End();
 }
 
 #endif

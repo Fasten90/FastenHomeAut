@@ -233,7 +233,7 @@ static void LinkedList_PrintListItem(ListItem * item)
 
 
 #ifdef MODULE_LINKEDLIST_UNITTEST_ENABLE
-void LinkedList_UnitTest(void)
+uint32_t LinkedList_UnitTest(void)
 {
 
 	UnitTest_Start("LinkedList", __FILE__);
@@ -299,8 +299,7 @@ void LinkedList_UnitTest(void)
 
 
 	// Finish
-	UnitTest_End();
-
+	return UnitTest_End();
 }
 #endif	// #ifdef MODULE_LINKEDLIST_UNITTEST_ENABLE
 

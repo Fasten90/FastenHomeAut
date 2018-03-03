@@ -115,8 +115,9 @@ void UnitTest_CheckResult(bool isValid, const char *conString, const char *error
 
 /**
  * \brief Finish unit test
+ * \retval	0 if successfully run all tests
  */
-void UnitTest_End(void)
+uint32_t UnitTest_End(void)
 {
 	uprintf("\r\n"
 			"In \"%s\" file run unit test:\r\n"
@@ -151,6 +152,10 @@ void UnitTest_End(void)
 		uprintf("UnitTest run successfully\r\n");
 #endif
 	}
+
+	return UnitTest_InvalidCnt;
 }
+
+
 
 #endif	// #ifdef CONFIG_MODULE_UNITTEST_ENABLE

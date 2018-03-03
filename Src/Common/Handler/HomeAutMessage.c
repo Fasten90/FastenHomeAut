@@ -617,7 +617,7 @@ void HomeAutMessage_SendMessage(uint8_t myAddress,
 /**
  * \brief	Test an HomeAutMessage
  */
-void HomeAutMessage_UnitTest(void)
+uint32_t HomeAutMessage_UnitTest(void)
 {
 
 	UnitTest_Start("HomeAutMessage", __FILE__);
@@ -662,8 +662,7 @@ void HomeAutMessage_UnitTest(void)
 
 
 	// Finish
-	UnitTest_End();
-
+	return UnitTest_End();
 }
 #endif	// #ifdef MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
 

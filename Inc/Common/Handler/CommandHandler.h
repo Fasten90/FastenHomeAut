@@ -140,7 +140,7 @@ void CmdH_SendLine(const char *message);
 void CmdH_SendChar(char c);
 void CmdH_Printf(const char *format, ...);
 
-void CmdH_UnitTest(void);
+uint32_t CmdH_UnitTest(void);
 
 
 

@@ -71,7 +71,7 @@ void mem_CheckStackGuardValues(void);
 
 bool mem_CheckPointer(void * pnt, size_t size);
 
-void MEM_UnitTest(void);
+uint32_t MEM_UnitTest(void);
 
 
 

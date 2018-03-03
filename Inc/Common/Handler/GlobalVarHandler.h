@@ -210,7 +210,7 @@ void GlobVarH_EnableTrace(GlobVarH_ID_t id, bool isEnable);
 void GlobVarH_RunTrace(void);
 void GlobVarH_PrintTraceBuffer(void);
 
-void GlobVarH_UnitTest(void);
+uint32_t GlobVarH_UnitTest(void);
 
 
 

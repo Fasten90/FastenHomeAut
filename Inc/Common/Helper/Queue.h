@@ -104,7 +104,7 @@ typedef struct
  *----------------------------------------------------------------------------*/
 
 void Queue_Init(QueueListInfo_t * queue);
-void Queue_UnitTest(void);
+uint32_t Queue_UnitTest(void);
 
 
 

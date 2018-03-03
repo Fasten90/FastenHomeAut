@@ -186,7 +186,7 @@ size_t usprintf(char *str, const char *format, ...);
 size_t usnprintf(char * str, size_t maxLen, const char * format, ...);
 
 // Unit test
-void STRING_UnitTest(void);
+uint32_t STRING_UnitTest(void);
 
 
 

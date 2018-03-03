@@ -211,7 +211,7 @@ void EventLog_PrintLogTable(void)
 
 
 #ifdef MODULE_EVENTLOG_UNITTEST_ENABLE
-void EventLog_UnitTest(void)
+uint32_t EventLog_UnitTest(void)
 {
 	// Start Unit test
 	UnitTest_Start("EventLog", __FILE__);
@@ -282,7 +282,7 @@ void EventLog_UnitTest(void)
 #endif
 
 	// Finish unit test
-	UnitTest_End();
+	return UnitTest_End();
 }
 #endif
 

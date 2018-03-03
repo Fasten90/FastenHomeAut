@@ -511,7 +511,7 @@ TaskID_t TaskHandler_GetActualRunningTaskID(void)
 
 
 #ifdef MODULE_TASKHANDLER_UNNITEST_ENABLE
-void TaskHandler_UnitTest(void)
+uint32_t TaskHandler_UnitTest(void)
 {
 	uint8_t i;
 	bool result;
@@ -628,8 +628,7 @@ void TaskHandler_UnitTest(void)
 
 
 	// Finish
-	UnitTest_End();
-
+	return UnitTest_End();
 }
 #endif
 

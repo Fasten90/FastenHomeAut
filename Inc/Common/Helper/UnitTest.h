@@ -37,7 +37,7 @@
 
 void UnitTest_Start(const char *moduleName, const char *fileName);
 void UnitTest_CheckResult(bool isValid, const char *conString, const char *errorString, uint32_t line);
-void UnitTest_End(void);
+uint32_t UnitTest_End(void);
 
 
 

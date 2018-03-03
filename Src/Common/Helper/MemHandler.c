@@ -261,7 +261,7 @@ bool mem_CheckPointer(void * pnt, size_t size)
 /**
  * \brief	MEM module Unit Test
  */
-void MEM_UnitTest(void)
+uint32_t MEM_UnitTest(void)
 {
 	UnitTest_Start("MEM", __FILE__);
 
@@ -352,6 +352,6 @@ void MEM_UnitTest(void)
 
 
 	// Finish
-	UnitTest_End();
+	return UnitTest_End();
 }
 #endif	// #ifdef MODULE_MEM_UNITTEST_ENABLE

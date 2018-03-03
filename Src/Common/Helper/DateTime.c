@@ -635,7 +635,7 @@ void DateTime_AddHour(DateTime_t *dateTime)
 /**
  * \brief	String module Unit Test
  */
-void DateTime_UnitTest(void)
+uint32_t DateTime_UnitTest(void)
 {
 	// Test variables
 	DateTimeCompare_t comp;
@@ -839,7 +839,7 @@ void DateTime_UnitTest(void)
 
 
 	// Finish
-	UnitTest_End();
+	return UnitTest_End();
 }
 #endif
 

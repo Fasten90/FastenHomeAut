@@ -133,7 +133,7 @@ void DateTime_AddMinute(DateTime_t *dateTime);
 void DateTime_AddHour(DateTime_t *dateTime);
 
 #ifdef MODULE_DATETIME_UNITTEST_ENABLE
-void DateTime_UnitTest(void);
+uint32_t DateTime_UnitTest(void);
 #endif
 
 

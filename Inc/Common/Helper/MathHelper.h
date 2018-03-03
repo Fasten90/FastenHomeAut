@@ -73,7 +73,7 @@ uint8_t GetBit(uint32_t value, uint8_t index);
 
 uint16_t random(void);
 
-void MathHelper_UnitTest(void);
+uint32_t MathHelper_UnitTest(void);
 
 
 

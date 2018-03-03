@@ -409,7 +409,7 @@ size_t CircularBuffer_PrintStatistics(char *str, size_t len, CircularBufferInfo_
 /**
  * \brief	CircularBuffer UnitTest
  */
-void CircularBuffer_UnitTest(void)
+uint32_t CircularBuffer_UnitTest(void)
 {
 	char buffer256[CIRCBUFF_BUFFER_SIZE + 1];	// size + 1 "overflow" checker byte
 
@@ -596,6 +596,6 @@ void CircularBuffer_UnitTest(void)
 
 
 	// Finish unittest
-	UnitTest_End();
+	return UnitTest_End();
 }
 #endif

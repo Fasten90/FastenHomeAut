@@ -1698,7 +1698,7 @@ static void GlobVarH_UT_Clear(void)
 /**
  * \brief	GlobalVarHandler unit test
  */
-void GlobVarH_UnitTest(void)
+uint32_t GlobVarH_UnitTest(void)
 {
 	GlobVarH_ProcessResult_t result;
 	const GlobVarH_VarRecord_t *varRecord = NULL;
@@ -2042,7 +2042,7 @@ void GlobVarH_UnitTest(void)
 	// End of UnitTest
 	//CmdH_CommandSource = CommProt_Unknown;
 
-	UnitTest_End();
+	return UnitTest_End();
 }
 #endif	// #ifdef MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
 

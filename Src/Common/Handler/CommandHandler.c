@@ -584,7 +584,7 @@ void CmdH_SetResponse(char *respBuffer, size_t respLength)
 /**
  * \brief	CommandHandler unit test
  */
-void CmdH_UnitTest(void)
+uint32_t CmdH_UnitTest(void)
 {
 	// Start of unittest
 	UnitTest_Start("CommandHandler", __FILE__);
@@ -718,7 +718,7 @@ void CmdH_UnitTest(void)
 #endif
 
 	// End of unittest
-	UnitTest_End();
+	return UnitTest_End();
 }
 
 #endif

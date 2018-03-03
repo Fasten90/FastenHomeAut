@@ -109,7 +109,7 @@ bool EventHandler_CheckEventState(EventName_t eventName, TaskID_t taskSource);
 void EventHandler_ClearEvent(EventName_t eventName, TaskID_t taskSource);
 const char * EventHandler_GetEventTypeName(EventType_t eventType);
 
-void EventHandler_UnitTest(void);
+uint32_t EventHandler_UnitTest(void);
 
 #else
 

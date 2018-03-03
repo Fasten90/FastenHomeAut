@@ -58,7 +58,7 @@ typedef struct ListItem
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void LinkedList_UnitTest(void);
+uint32_t LinkedList_UnitTest(void);
 
 
 

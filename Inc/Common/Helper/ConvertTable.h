@@ -62,7 +62,7 @@ typedef struct
 
 bool ConvertTable_Init(const ConverTable_t * table);
 float ConvertTable_GetValue(const ConverTable_t * table, uint32_t value);
-void ConvertTable_UnitTest(void);
+uint32_t ConvertTable_UnitTest(void);
 
 
 

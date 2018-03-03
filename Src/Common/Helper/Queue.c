@@ -399,7 +399,7 @@ void Queue_Defragmentation(void);
 
 
 #ifdef MODULE_QUEUE_UNITTEST_ENABLE
-void Queue_UnitTest(void)
+uint32_t Queue_UnitTest(void)
 {
 	#define TEST_BUFFER_SIZE		(200U)
 	uint8_t testBuffer[TEST_BUFFER_SIZE];
@@ -532,7 +532,7 @@ void Queue_UnitTest(void)
 			"PutLastElement End->next not NULL error");
 
 
-	UnitTest_End();
+	return UnitTest_End();
 }
 #endif
 

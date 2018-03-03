@@ -63,69 +63,71 @@
 /**
  * \brief  UnitTest - Run
  */
-void UnitTestList_Run(void)
+uint32_t UnitTestList_Run(void)
 {
+	uint32_t result = 0;
 
 #ifdef MODULE_STRING_UNITTEST_ENABLE
-	STRING_UnitTest();
+	result += STRING_UnitTest();
 #endif
 
 #ifdef MODULE_DATETIME_UNITTEST_ENABLE
-	DateTime_UnitTest();
+	result += DateTime_UnitTest();
 #endif
 
 #ifdef MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
-	HomeAutMessage_UnitTest();
+	result += HomeAutMessage_UnitTest();
 #endif
 
 #ifdef MODULE_COMMANDHANDLER_UNITTEST_ENABLE
-	CmdH_UnitTest();
+	result += CmdH_UnitTest();
 #endif
 
 #if defined(CONFIG_MODULE_GLOBALVARHANDLER_ENABLE) && defined(MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE)
-	GlobVarH_UnitTest();
+	result += GlobVarH_UnitTest();
 #endif
 
 #ifdef MODULE_CIRCULARBUFFER_UNITTEST_ENABLE
-	CircularBuffer_UnitTest();
+	result += CircularBuffer_UnitTest();
 #endif
 
 #ifdef MODULE_TASKHANDLER_UNNITEST_ENABLE
-	TaskHandler_UnitTest();
+	result += TaskHandler_UnitTest();
 #endif
 
 #if defined(CONFIG_MODULE_EVENTLOG_ENABLE) && defined(MODULE_EVENTLOG_UNITTEST_ENABLE)
-	EventLog_UnitTest();
+	result += EventLog_UnitTest();
 #endif
 
 #ifdef MODULE_MATHHELPER_UNITTEST_ENABLE
-	MathHelper_UnitTest();
+	result += MathHelper_UnitTest();
 #endif
 
 #ifdef MODULE_MEM_UNITTEST_ENABLE
-	MEM_UnitTest();
+	result += MEM_UnitTest();
 #endif
 
 #ifdef MODULE_LINKEDLIST_UNITTEST_ENABLE
-	LinkedList_UnitTest();
+	result += LinkedList_UnitTest();
 #endif
 
 #ifdef MODULE_EVENTHANDLER_UNITTEST_ENABLE
-	EventHandler_UnitTest();
+	result += EventHandler_UnitTest();
 #endif
 
 #if defined(MODULE_CONVERTTABLE_UNITTEST_ENABLE) && defined(CONFIG_MODULE_CONVERTTABLE_ENABLE)
-	ConvertTable_UnitTest();
+	result += ConvertTable_UnitTest();
 #endif
 
 #ifdef MODULE_SECUREDDATATYPES_UNITTEST_ENABLE
-	SecuredDataTypes_UnitTest();
+	result += SecuredDataTypes_UnitTest();
 #endif
 
 #ifdef MODULE_QUEUE_UNITTEST_ENABLE
-	Queue_UnitTest();
+	result += Queue_UnitTest();
 #endif
 
+	return result;
 }
 
 

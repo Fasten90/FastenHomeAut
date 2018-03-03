@@ -275,7 +275,7 @@ uint16_t random(void)
 /**
  * \brief	MathHelper UnitTest
  */
-void MathHelper_UnitTest(void)
+uint32_t MathHelper_UnitTest(void)
 {
 	UnitTest_Start("Calc", __FILE__);
 
@@ -429,6 +429,6 @@ void MathHelper_UnitTest(void)
 
 
 	// Finish
-	UnitTest_End();
+	return UnitTest_End();
 }
 #endif

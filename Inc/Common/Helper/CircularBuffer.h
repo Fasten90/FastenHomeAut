@@ -76,7 +76,7 @@ uint16_t CircularBuffer_PutString(CircularBufferInfo_t *circBuff, const char *st
 size_t CircularBuffer_PrintStatistics(char *str, size_t len, CircularBufferInfo_t *circBuff);
 #endif
 
-void CircularBuffer_UnitTest(void);
+uint32_t CircularBuffer_UnitTest(void);
 
 
 

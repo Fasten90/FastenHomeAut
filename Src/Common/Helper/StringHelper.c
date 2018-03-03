@@ -2460,7 +2460,7 @@ size_t usnprintf(char * str, size_t maxLen, const char * format, ...)
 /**
  * \brief	String module Unit Test
  */
-void STRING_UnitTest(void)
+uint32_t STRING_UnitTest(void)
 {
 	char buffer[30];
 	uint8_t value8;
@@ -2873,7 +2873,7 @@ void STRING_UnitTest(void)
 
 
 	// End of unittest
-	UnitTest_End();
+	return UnitTest_End();
 }
 #endif	// #ifdef MODULE_STRING_UNITTEST_ENABLE
 

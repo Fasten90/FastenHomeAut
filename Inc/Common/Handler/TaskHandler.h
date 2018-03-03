@@ -111,7 +111,7 @@ TaskID_t TaskHandler_GetActualRunningTaskID(void);
 #define TaskHandler_GetActualRunningTaskID()		(0)
 #endif
 
-void TaskHandler_UnitTest(void);
+uint32_t TaskHandler_UnitTest(void);
 
 
 

@@ -142,7 +142,7 @@ void Set_SecuredUint32(SecuredUint32_t *data, uint32_t value)
 /**
  * \brief	Secured data types Unit test
  */
-void SecuredDataTypes_UnitTest(void)
+uint32_t SecuredDataTypes_UnitTest(void)
 {
 	SecuredBool_t secBool;
 	SecuredUint32_t secInt;
@@ -193,7 +193,7 @@ void SecuredDataTypes_UnitTest(void)
 	UNITTEST_ASSERT(Secured_ErrorCnt == 1, "ErrorCnt error!");
 
 
-	UnitTest_End();
+	return UnitTest_End();
 }
 #endif	// #ifdef MODULE_SECUREDDATATYPES_UNITTEST_ENABLE
 

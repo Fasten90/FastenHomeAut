@@ -43,7 +43,7 @@
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void UnitTestList_Run(void);
+uint32_t UnitTestList_Run(void);
 
 
 
