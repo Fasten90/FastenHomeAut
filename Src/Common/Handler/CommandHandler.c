@@ -118,8 +118,10 @@ CmdH_Result_t CmdH_ExecuteCommand(char *command, char *response, size_t length)
 	if (result != CmdH_Result_Error_CallCmdHandlerWithInvalidArgument)
 	{
 		// Log event
-#ifdef CONFIG_EVENTLOG_CMDHANDLER_ENABLE
+#if defined(CONFIG_EVENTLOG_CMDHANDLER_ENABLE) || defined(CONFIG_COMMANDHANDLER_NOTIFY_COMMAND_RECEIVED_FROM_NOT_DEBUGPORT)
 		TaskID_t taskID = TaskHandler_GetActualRunningTaskID();
+#endif
+#if defined(CONFIG_EVENTLOG_CMDHANDLER_ENABLE)
 		EventHandler_GenerateEvent(Event_CommandHandler_ProcessCommand, 0, taskID);
 #endif
 
@@ -151,6 +153,8 @@ CmdH_Result_t CmdH_ExecuteCommand(char *command, char *response, size_t length)
 		{
 			uprintf("Received command: \"%s\", from %s\r\n", command, TaskHandler_GetActualRunningTaskName());
 		}
+#else
+		(void)taskID;
 #endif
 	}
 
