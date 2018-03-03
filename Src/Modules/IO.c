@@ -224,9 +224,9 @@ IO_Status_t IO_Output_SetStatus(IO_Output_Name_t ioName, IO_Output_Cmd_t ioCmd)
 		IO_Output_ActualState[ioName - 1] = ioCmd;
 #endif
 
-		GPIO_TypeDef * port = (GPIO_TypeDef *)IO_Output_List[ioName-1].GPIO_Port;
-		uint32_t pin = IO_Output_List[ioName-1].GPIO_Pin;
-		IO_Status_t lowVoltageState = IO_Output_List[ioName-1].lowVoltageState;
+		const GPIO_TypeDef * port = (GPIO_TypeDef *)IO_Output_List[ioName-1].GPIO_Port;
+		const uint32_t pin = IO_Output_List[ioName-1].GPIO_Pin;
+		const IO_Status_t lowVoltageState = IO_Output_List[ioName-1].lowVoltageState;
 
 		switch (ioCmd)
 		{

@@ -2369,7 +2369,7 @@ static CmdH_Result_t CommandFunction_IO(uint32_t argc, char** argv)
 				// Get type "set type"
 				IO_Output_Cmd_t setType = IO_Output_GetTypeFromString(argv[2]);
 				IO_Output_Name_t ioNum = Arg2Num;
-				bool status = false;
+				IO_Status_t status = false;
 
 				if (setType == IO_Output_Cmd_DontCare)
 				{

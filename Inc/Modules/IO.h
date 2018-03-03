@@ -68,7 +68,7 @@ typedef enum
 } IO_Status_t;
 
 
-///< IO - Output registration record structure
+///< IO - Output - registration record structure
 typedef struct
 {
 	// GPIO registrations
@@ -80,7 +80,7 @@ typedef struct
 } IO_Output_Record_t;
 
 
-///< IO - Input registration record structure
+///< IO - Input - registration record structure
 typedef struct
 {
 	// GPIO registrations
