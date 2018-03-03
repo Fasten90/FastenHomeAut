@@ -370,7 +370,7 @@ uint16_t CircularBuffer_PutString(CircularBufferInfo_t *circBuff, const char *st
 {
 	uint16_t i = 0;
 
-	if (circBuff == NULL || str == NULL || needCopyLength == 0)
+	if ((circBuff == NULL) || (str == NULL) || (needCopyLength == 0))
 		return 0;
 
 	while ((i < needCopyLength) && CircularBuffer_PutChar(circBuff, str[i]))

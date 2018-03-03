@@ -124,7 +124,8 @@ UART_Handler_t ESP8266_Uart =
 	.txIsEnabled = true,
 	.rxIsEnalbed = true,
 #ifdef CONFIG_MODULE_UART_REQUIRE_TASKSCHEDULE_ENABLE
-	.requiredTask = Task_Esp8266,
+#warning "Test without Task_Esp8266"
+	.requiredTask = Task_Count,
 #endif
 };
 
@@ -269,6 +270,9 @@ static inline void ESP8266_SendEnable(void);
  */
 void ESP8266_Init(void)
 {
+	CircularBuffer_Init(ESP8266_Uart.tx);
+	CircularBuffer_Init(ESP8266_Uart.rx);
+
 	
 	//	GPIO Init
 
@@ -1773,15 +1777,11 @@ void ESP8266_StatusMachine(void)
 			ESP8266_RX_BUFFER_LENGTH);
 
 
-#if ESP8266_DEBUG_MODE == 1
+#if (ESP8266_DEBUG_MODE == 1)
 	// Print all received chars:
+	if (receivedMessageLength > 0)
 	{
-		static uint8_t RxPrintCnt = 0;
-		if (RxPrintCnt != ESP8266_UartHandle.RxXferCount)
-		{
-			DebugUart_Printf("ESP8266 Received: %s", receiveBuffer);
-			RxPrintCnt = ESP8266_UartHandle.RxXferCount;
-		}
+		DebugUart_Printf("ESP8266 Received: %s", receiveBuffer);
 	}
 #endif
 

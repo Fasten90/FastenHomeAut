@@ -16,6 +16,7 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
+#include "options.h"
 #include "compiler.h"
 #include "board.h"
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
@@ -213,7 +214,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 
 		HAL_NVIC_SetPriority(ESP8266_USARTx_IRQn, ESP8266_USART_PREEMT_PRIORITY, ESP8266_USART_SUB_PRIORITY);
 		HAL_NVIC_EnableIRQ(ESP8266_USARTx_IRQn);
-		
 	}
 #endif	// #ifdef CONFIG_MODULE_ESP8266_ENABLE
 #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
@@ -301,8 +301,7 @@ void DEBUG_USARTx_IRQHandler(void)
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 void ESP8266_USARTx_IRQHandler(void)
 {
-	// TODO: Realize ESP8266 Irq
-	HAL_UART_IRQHandler(&ESP8266_UartHandle);
+	UART_Handler(&ESP8266_Uart);
 }
 #endif
 
