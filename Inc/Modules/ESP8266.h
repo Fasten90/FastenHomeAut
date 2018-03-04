@@ -161,7 +161,6 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-
 ///< WiFi Connection status types
 typedef enum
 {
@@ -173,7 +172,6 @@ typedef enum
 	ESP8266_WifiConnectionStatus_Error
 	
 } ESP8266_WifiConnectionStatusType;
-
 
 
 ///< Server connection status types
@@ -194,13 +192,6 @@ typedef enum
 extern UART_HandleTypeDef ESP8266_UartHandle;
 extern UART_Handler_t ESP8266_Uart;
 
-#ifdef CONFIG_USE_FREERTOS
-extern xSemaphoreHandle ESP8266_USART_Rx_Semaphore;
-extern xQueueHandle ESP8266_SendMessage_Queue;
-extern xQueueHandle ESP8266_ReceivedMessage_Queue;
-#endif
-
-
 extern ESP8266_WifiConnectionStatusType	ESP8266_ConnectionStatus;
 extern ESP8266_TcpConnectionStatusType	ESP8266_TcpConnectionStatus;
 
@@ -211,31 +202,11 @@ extern ESP8266_TcpConnectionStatusType	ESP8266_TcpConnectionStatus;
  *----------------------------------------------------------------------------*/
 
 void ESP8266_Init(void);
+void ESP8266_StatusMachine(void);
 
 size_t ESP8266_SendString(const char *msg);
 
-void ESP8266_Task(void);
-
-#ifdef ESP8266_USE_BLOCK_MODE
-bool ESP8266_Config(void);
-bool ESP8266_ConnectToWifiNetwork(void);
-
-bool ESP8266_StartServer(void);
-bool ESP8266_FindServer(void);
-bool ESP8266_ConnectToServer(Network_IP_t *ip, Network_Port_t port);
-
-bool ESP8266_ReceiveFixTcpMessage(void);
-
-bool ESP8266_WaitClientConnect(void);
-
-bool ESP8266_CheckReceiveMessage(void);
-
-static void ESP8266_WaitAnswer(uint32_t timeout);
-#endif
-
 uint8_t ESP8266_RequestSendTcpMessage(const char * message);
-
-void ESP8266_StatusMachine(void);
 
 uint8_t ESP8266_PrintIpAddress(char * str);
 
