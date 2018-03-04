@@ -5,8 +5,8 @@
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		ESP8266 communication
  *		Target:			STM32Fx
- *		Version:		v5
- *		Last modified:	2017-03-05
+ *		Version:		v6
+ *		Last modified:	2018-03-04
  */
 
 
@@ -15,7 +15,6 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
-#include <stdarg.h>		// For va_list
 #include "options.h"
 #include "compiler.h"
 #include "StringHelper.h"
@@ -35,6 +34,8 @@
 /*------------------------------------------------------------------------------
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
+
+#define STRING_LENGTH(_str)			(sizeof(_str) - 1)
 
 
 
@@ -65,7 +66,7 @@ typedef enum
 	Esp8266Status_ConfigCipMux,
 	Esp8266Status_ConfigCipMuxCheckResponse,
 	Esp8266Status_WaitAfterSuccessfulConfig,
-#if CONFIG_ESP8266_IS_WIFI_HOST == 1
+#if (CONFIG_ESP8266_IS_WIFI_HOST == 1)
 	Esp8266Status_StartWifiHost,
 	Esp8266Status_StartWifiHostCheckResponse,
 #else
@@ -75,7 +76,7 @@ typedef enum
 #endif
 	Esp8266Status_PrintMyIpAddress,
 	Esp8266Status_IpAddressResponse,
-#if CONFIG_ESP8266_IS_TCP_SERVER == 1
+#if (CONFIG_ESP8266_IS_TCP_SERVER == 1)
 	Esp8266Status_StartTcpServer,
 	Esp8266Status_StartTcpServerCheckResponse,
 #else
@@ -541,7 +542,7 @@ static uint8_t ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void)
 	{
 		// Wrong length
 		ESP8266_DEBUG_PRINT("Too long message!");
-		// TODO: Use length or delete!
+		// TODO: Not theb est solution
 		length = ESP8266_TCP_MESSAGE_MAX_LENGTH - 1;
 	}
 
@@ -595,15 +596,14 @@ void ESP8266_StatusMachine(void)
 	{
 		case Esp8266Status_Unknown:
 			ESP8266StatusMachine++;
-			ESP8266_DEBUG_PRINT("Unknown");
+			ESP8266_DEBUG_PRINT("Error: Unknown state");
 			// break;	// Step to next
 
 		case Esp8266Status_Init:
-			//HAL_UART_DeInit(&ESP8266_UartHandle);
 			ESP8266_ResetHardware();
 			ESP8266StatusMachine++;
 			ESP8266_ConnectionStatus = ESP8266_WifiConnectionStatus_Unknown;
-			// Wait 10sec
+			// Wait more second for startup device
 			// Disable event
 			//TaskHandler_DisableTask(Task_Esp8266);
 			TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 5000);
@@ -612,7 +612,6 @@ void ESP8266_StatusMachine(void)
 
 		case Esp8266Status_AfterInit:
 			// When we reach this state, we wait for ESP8266's startup
-			//UART_Init(&ESP8266_UartHandle); // TODO: Delete if not need
 			ESP8266_StartReceive();
 			ESP8266StatusMachine++;
 			//TaskHandler_EnableTask(Task_Esp8266);
@@ -640,13 +639,12 @@ void ESP8266_StatusMachine(void)
 				ESP8266_LED_OK();
 				ESP8266StatusMachine++;
 				ESP8266_DEBUG_PRINT("Config ATE0 response Ok");
-				//break;	// Step to next
 			}
 			else
 			{
 				ESP8266_LED_FAIL();
 				ESP8266StatusMachine = Esp8266Status_Init;
-				ESP8266_DEBUG_PRINTF("Config ATE0 response failed, received message: \"%s\"\r\n",
+				ESP8266_DEBUG_PRINTF("Config ATE0 response failed, received message: \"%s\"",
 									 (const char *)receiveBuffer);
 			}
 			ESP8266_ClearReceive(true, 0);
@@ -670,13 +668,12 @@ void ESP8266_StatusMachine(void)
 				ESP8266_LED_OK();
 				ESP8266StatusMachine++;
 				ESP8266_DEBUG_PRINT("Config AT successful");
-				//break;	// Step to next
 			}
 			else
 			{
 				ESP8266_LED_FAIL();
 				ESP8266StatusMachine = Esp8266Status_Init;
-				ESP8266_DEBUG_PRINTF("Config AT failed, received message: \"%s\"\r\n",
+				ESP8266_DEBUG_PRINTF("Config AT failed, received message: \"%s\"",
 									 (const char *)receiveBuffer);
 			}
 			ESP8266_ClearReceive(true, 0);
@@ -710,7 +707,6 @@ void ESP8266_StatusMachine(void)
 				ESP8266_LED_OK();
 				ESP8266StatusMachine++;
 				ESP8266_DEBUG_PRINT("Config CWMODE successful");
-				//break;	// Step to next
 			}
 			else
 			{
@@ -748,7 +744,6 @@ void ESP8266_StatusMachine(void)
 				ESP8266_LED_OK();
 				ESP8266StatusMachine++;
 				ESP8266_DEBUG_PRINT("Config CWDHCP response ok");
-				//break;	// Step to next
 			}
 			else if (!StrCmpFirst("no change\r\n",(const char *)receiveBuffer))
 			{
@@ -756,7 +751,6 @@ void ESP8266_StatusMachine(void)
 				ESP8266_LED_OK();
 				ESP8266StatusMachine++;
 				ESP8266_DEBUG_PRINT("Config CWDHCP response ok");
-				//break;	// Step to next
 			}
 			else
 			{
@@ -828,7 +822,6 @@ void ESP8266_StatusMachine(void)
 				ESP8266_LED_OK();
 				ESP8266StatusMachine++;
 				ESP8266_DEBUG_PRINT("Config CIPMUX response ok");
-				//break;	// Step to next
 			}
 			else
 			{
@@ -850,11 +843,10 @@ void ESP8266_StatusMachine(void)
 #if CONFIG_ESP8266_IS_WIFI_HOST == 1
 		case Esp8266Status_StartWifiHost:
 			/*
-			 * AT+CWSAP="ESP8266HomeAutomation","AUT",1,0
+			 * Create Soft Access Point
+			 * AT+CWSAP="NetworkName","Password",1,0
 			 * 3. param = channel
 			 * 4. param = encryption
-			 * ESP8266HomeAutomation
-			 * AUT
 			 */
 			ESP8266_StartReceive();
 			ESP8266_SendString("AT+CWSAP=\"ESP8266HomeAutomation\",\"AUT\",1,0\r\n");
@@ -890,13 +882,14 @@ void ESP8266_StatusMachine(void)
 			 */
 			ESP8266_StartReceive();
 			ESP8266_ClearReceive(true, 0);
-			// AT+CWJAP="networkname","password"
 #if CONFIG_ESP8266_CONNECT_DYNAMIC == 1
+			// Dynamic value of WiFi network name and password
 			char str[50];
 			usprintf(str, "AT+CWJAP=\"%s\",\"%s\"\r\n",
 					ESP8266_WifiNetworkName, ESP8266_WifiNetworkPassword);
 			ESP8266_SendString(str);
 #else
+			// Fix WiFi network name and password
 			ESP8266_SendString("AT+CWJAP=\""
 					CONFIG_ESP8266_WIFI_NETWORK_NAME
 					"\",\""
@@ -916,7 +909,7 @@ void ESP8266_StatusMachine(void)
 				// Command OK, step to wait response
 				ESP8266StatusMachine += 2;	// TODO: Now, it skipped wait finish
 				ESP8266_DEBUG_PRINT("Wifi connect command OK");
-				ESP8266_ClearReceive(false, sizeof("\r\nOK\r\n")-1);
+				ESP8266_ClearReceive(false, STRING_LENGTH("\r\nOK\r\n"));
 			}
 			else if (!StrCmpFirst("\r\nbusy p...\r\n", (const char *)receiveBuffer))
 			{
@@ -924,7 +917,7 @@ void ESP8266_StatusMachine(void)
 				// I hope, connection in progress
 				ESP8266StatusMachine++;
 				ESP8266_DEBUG_PRINT("Wait... (busy)\r\n");
-				ESP8266_ClearReceive(false, sizeof("\r\nbusy p...\r\n")-1);
+				ESP8266_ClearReceive(false, STRING_LENGTH("\r\nbusy p...\r\n"));
 			}
 			else if (!StrCmpFirst("\r\nFAIL", (const char *)receiveBuffer)
 					|| !StrCmpFirst("\r\nERROR", (const char *)receiveBuffer))
@@ -975,7 +968,7 @@ void ESP8266_StatusMachine(void)
 				ESP8266_LED_OK();
 				ESP8266StatusMachine++;
 				ESP8266_DEBUG_PRINT("Wifi connect successful");
-				ESP8266_ClearReceive(false, sizeof("\r\nOK\r\n")-1);
+				ESP8266_ClearReceive(false, STRING_LENGTH("\r\nOK\r\n"));
 			}
 			else if (!StrCmpFirst("\r\nFAIL", (const char *)receiveBuffer)
 					|| !StrCmpFirst("\r\nERROR", (const char *)receiveBuffer))
@@ -1168,7 +1161,7 @@ void ESP8266_StatusMachine(void)
 				// Need Wait...
 				ESP8266StatusMachine++;
 				ESP8266_DEBUG_PRINT("OK... Wait finish...");
-				ESP8266_ClearReceive(false, sizeof("\r\nOK\r\n")-1);
+				ESP8266_ClearReceive(false, STRING_LENGTH("\r\nOK\r\n"));
 			}
 			else if (!StrCmpFirst("ALREADY CONNECT\r\n", (const char *)receiveBuffer)
 				||   !StrCmpFirst("ALREAY CONNECT\r\n", (const char *)receiveBuffer))
@@ -1186,7 +1179,7 @@ void ESP8266_StatusMachine(void)
 				ESP8266StatusMachine++;	// I hope, the command in progress
 				ESP8266_DEBUG_PRINT("Failed connect to TCP server (busy)... Wait...");
 				// TODO: Wait... ?
-				ESP8266_ClearReceive(false, sizeof("\r\nbusy p...\r\n")-1);
+				ESP8266_ClearReceive(false, STRING_LENGTH("\r\nbusy p...\r\n"));
 
 #warning "Need close! Beautify!"
 				ESP8266_SendString("AT+CIPCLOSE=0\r\n");
@@ -1349,14 +1342,14 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 				ESP8266_TcpSent_WaitSendOk_Flag = true;
 				TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 1000);
 				goodMsgRcv = true;
-				ESP8266_ClearReceive(false, sizeof("> ") - 1);
+				ESP8266_ClearReceive(false, STRING_LENGTH("> "));
 			}
 			else if (!StrCmpFirst("link is not\r\n", (const char *)receiveBuffer))
 			{
 				// Cannot send
 				ESP8266_TcpSendBuffer_EnableFlag = true;
 				ESP8266_DEBUG_PRINT("Cannot send (link is not)");
-				ESP8266_ClearReceive(false, sizeof("link is not\r\n") - 1);
+				ESP8266_ClearReceive(false, STRING_LENGTH("link is not\r\n"));
 				// Request TCP reconnect
 #if CONFIG_ESP8266_IS_TCP_SERVER == 0
 				ESP8266StatusMachine = Esp8266Status_ConnectTcpServer;
@@ -1390,7 +1383,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 				// OK, sending successful
 				ESP8266_DEBUG_PRINT("Sending successful");
 				goodMsgRcv = true;
-				ESP8266_ClearReceive(false, sizeof("\r\nSEND OK\r\n") - 1);
+				ESP8266_ClearReceive(false, STRING_LENGTH("\r\nSEND OK\r\n"));
 			}
 			else
 			{
@@ -1410,7 +1403,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			// TODO: Step to IP address printing (connected clients)
 			//ESP8266StatusMachine = Esp8266Status_XXX;
 			goodMsgRcv = true;
-			ESP8266_ClearReceive(false, sizeof("Link\r\n") - 1);
+			ESP8266_ClearReceive(false, STRING_LENGTH("Link\r\n"));
 			ESP8266_LOG_EVENT(EVENT_LINK);
 		}
 		else if (!StrCmpFirst("Unlink\r\n", (const char *)receiveBuffer))
@@ -1418,7 +1411,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			// "Unlink"
 			ESP8266_DEBUG_PRINT("Received \"Unlink\": a client disconnected");
 			goodMsgRcv = true;
-			ESP8266_ClearReceive(false, sizeof("Unlink\r\n") - 1);
+			ESP8266_ClearReceive(false, STRING_LENGTH("Unlink\r\n"));
 			ESP8266_LOG_EVENT(EVENT_UNLINK);
 		}
 #if CONFIG_ESP8266_IS_TCP_SERVER == 0
@@ -1428,7 +1421,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			ESP8266_DEBUG_PRINT("Received \"Unlink\": a TCP disconnected");
 			goodMsgRcv = true;
 			ESP8266StatusMachine = Esp8266Status_ConnectTcpServer;
-			ESP8266_ClearReceive(false, sizeof("Received \"Unlink\": a tcp disconnected\r\n") - 1);
+			ESP8266_ClearReceive(false, STRING_LENGTH("Received \"Unlink\": a tcp disconnected\r\n"));
 			ESP8266_LOG_EVENT(EVENT_UNLINK);
 		}
 #endif
@@ -1437,7 +1430,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			// Message form: "\r\n+IPD,1,4:msg3\r\nOK"
 			// Has got finish "\r\n"?
 			if (STRING_FindString(
-					(const char *)&receiveBuffer[sizeof("\r\n+IPD,")],
+					(const char *)&receiveBuffer[STRING_LENGTH("\r\n+IPD,") + 1],
 					"\r\n") != NULL)
 			{
 				// Received good message, with finish "\r\n"
@@ -1445,7 +1438,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 				// TODO: Channel (2 character is skipped:)
 				// "+IPD,1,4:msg3"
 				// Check next parameter:
-				uint8_t length = sizeof("\r\n+IPD,0,") - 1;
+				uint8_t length = STRING_LENGTH("\r\n+IPD,0,");
 				// TODO: Use better function
 				char * commIndex = (char *)STRING_FindString((const char *)&receiveBuffer[length], ":");
 				if (commIndex != NULL)
@@ -1476,7 +1469,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 							// Execute the command
 							CmdH_ExecuteCommand(ESP8266_ReceivedTcpMessage, responseBuffer, ESP8266_TCP_MESSAGE_MAX_LENGTH);
 
-							ESP8266_ClearReceive(false, length + messageLength + sizeof("\r\nOK\r\n") - 1);
+							ESP8266_ClearReceive(false, length + messageLength + STRING_LENGTH("\r\nOK\r\n"));
 							goodMsgRcv = true;
 							ESP8266_LOG_EVENT(EVENT_RECEIVED_GOOD_TCP_MESSAGE);
 						}
@@ -1508,7 +1501,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 		else if (!StrCmpFirst("\r\n", (const char *)receiveBuffer))
 		{
 			// "\r\n"
-			ESP8266_ClearReceive(false, sizeof("\r\n") - 1);
+			ESP8266_ClearReceive(false, STRING_LENGTH("\r\n"));
 		}
 		else if (receivedMessageLength < 6)
 		{
