@@ -138,13 +138,13 @@ xQueueHandle ESP8266_ReceivedMessage_Queue;
 
 
 // TCP message receive buffer
-char ESP8266_TcpTransmitBuffer[ESP8266_TCP_MESSAGE_MAX_LENGTH]  = { 0 };
-char ESP8266_ReceivedTcpMessage[ESP8266_TCP_MESSAGE_MAX_LENGTH] = { 0 };
+static char ESP8266_TcpTransmitBuffer[ESP8266_TCP_MESSAGE_MAX_LENGTH]  = { 0 };
+static char ESP8266_ReceivedTcpMessage[ESP8266_TCP_MESSAGE_MAX_LENGTH] = { 0 };
 
 // TCP Message sending flags
-bool ESP8266_TcpSendBuffer_EnableFlag = true;
-bool ESP8266_TcpSendIsStarted_Flag = false;
-bool ESP8266_TcpSent_WaitSendOk_Flag = false;
+static bool ESP8266_TcpSendBuffer_EnableFlag = true;
+static bool ESP8266_TcpSendIsStarted_Flag = false;
+static bool ESP8266_TcpSent_WaitSendOk_Flag = false;
 
 // Statuses
 static ESP8266_StatusMachine_t ESP8266StatusMachine = Esp8266Status_Unknown;
@@ -183,11 +183,7 @@ Network_IP_t ESP8266_ExWifiIpAddress = { 0 };
 
 
 ///< Error counter
-uint8_t ESP8266_ErrorCnt = 0;
-
-
-///< Debug enable
-bool ESP8266_DebugEnableFlag = 1;
+static uint8_t ESP8266_ErrorCnt = 0;
 
 
 #if defined(CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE) && !defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
@@ -826,11 +822,7 @@ bool ESP8266_ConnectToWifiNetwork(void)
 
 	
 	// Print my IP address
-	if (ESP8266_DebugEnableFlag)
-	{
-		Network_PrintIpOnDebug("ESP8266",
-				&ESP8266_MyIpAddress);
-	}
+	Network_PrintIpOnDebug("ESP8266", &ESP8266_MyIpAddress);
 	
 	
 	// TODO: Check this commented section
@@ -1265,21 +1257,15 @@ static void ESP8266_WaitMessageAndCheckSendingQueue(void)
 				// Sending
 				if (ESP8266_SendTcpMessageBlockingMode((char *)ESP8266_TcpTransmitBuffer))
 				{
-					if (ESP8266_DebugEnableFlag)
-					{
-						uprintf("Successful sent a message:\r\n"
-								"  %s\r\n",
-								(const char *)ESP8266_TcpTransmitBuffer);
-					}
+					ESP8266_DEBUG_PRINTF("Successful sent a message:\r\n"
+							"  %s\r\n",
+							(const char *)ESP8266_TcpTransmitBuffer);
 				}
 				else
 				{	
-					if (ESP8266_DebugEnableFlag)
-					{
-						uprintf("Failed sending message:\r\n"
-								"  %s\r\n",
-								(const char *)ESP8266_TcpTransmitBuffer);
-					}
+					ESP8266_DEBUG_PRINTF("Failed sending message:\r\n"
+							"  %s\r\n",
+							(const char *)ESP8266_TcpTransmitBuffer);
 				}
 
 				
@@ -1320,22 +1306,16 @@ static void ESP8266_LoopSending(void)
 			if (ESP8266_SendTcpMessageBlockingMode((char *)ESP8266_TcpTransmitBuffer))
 			{
 				// Successful sent
-				if (ESP8266_DebugEnableFlag)
-				{
-					uprintf("Successful sent a message:\r\n"
-							"  %s\r\n",
-							(const char *)ESP8266_TcpTransmitBuffer);
-				}
+				ESP8266_DEBUG_PRINTF("Successful sent a message:\r\n"
+						"  %s\r\n",
+						(const char *)ESP8266_TcpTransmitBuffer);
 			}
 			else
 			{
 				// Failed send
-				if (ESP8266_DebugEnableFlag)
-				{
-					uprintf("Failed sending message:\r\n"
-							"  %s\r\n",
-							(const char *)ESP8266_TcpTransmitBuffer);
-				}
+				ESP8266_DEBUG_PRINTF("Failed sending message:\r\n"
+						"  %s\r\n",
+						(const char *)ESP8266_TcpTransmitBuffer);
 			}
 		}
 	}

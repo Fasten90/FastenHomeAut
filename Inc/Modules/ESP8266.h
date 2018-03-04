@@ -205,9 +205,6 @@ extern ESP8266_WifiConnectionStatusType	ESP8266_ConnectionStatus;
 extern ESP8266_TcpConnectionStatusType	ESP8266_TcpConnectionStatus;
 
 
-extern bool ESP8266_DebugEnableFlag;
-
-
 
 /*------------------------------------------------------------------------------
  *  Global function declarations

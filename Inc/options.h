@@ -615,8 +615,12 @@
 	// ESP8266 Debug mode:
 	// 1 - on
 	// 0 - off
-	#define ESP8266_DEBUG_MODE					(1)
+	#define ESP8266_DEBUG_MODE						(1)
 
+	// Print all received message
+	// 1 - on
+	// 0 - off
+	#define ESP8266_DEBUG_PRINT_ALL_RECEIVED_MSG	(0)
 
 	// ESP8266 - Connection type
 	// 1 - Dynamic (Can change WiFi and TCP client/server
@@ -632,7 +636,7 @@
 	// Module TCP state
 	// 1 - ESP8266 will be TCP server,
 	// 0 - will be TCP client
-	#define CONFIG_ESP8266_IS_TCP_SERVER		0
+	#define CONFIG_ESP8266_IS_TCP_SERVER		1
 
 
 	//#define CONFIG_ESP8266_TCP_SERVER_ON_ESP8266

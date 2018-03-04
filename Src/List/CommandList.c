@@ -1692,27 +1692,6 @@ static CmdH_Result_t CommandFunction_ESP8266(uint32_t argc, char** argv)
 		ESP8266_SendString(argv[2]);
 		result = CmdH_Result_Ok_SendSuccessful;
 	}
-	else if (!StrCmp("debug", argv[1]))
-	{
-		// Check debug on/off
-		if (!StrCmp("on", argv[2]))
-		{
-			// On
-			ESP8266_DebugEnableFlag = true;
-			result = CmdH_Result_Ok_SendSuccessful;
-		}
-		else if (!StrCmp("off", argv[2]))
-		{
-			// Off
-			ESP8266_DebugEnableFlag = false;
-			result = CmdH_Result_Ok_SendSuccessful;
-		}
-		else
-		{
-			// Wrong command
-			result = CmdH_Result_Error_WrongArgument2;
-		}
-	}
 	else if (!StrCmp("ip", argv[1]))
 	{
 		// Print ESP8266 IP addresses
