@@ -76,6 +76,7 @@
 #define ESP8266_DEBUG_PRINTF(...)
 #endif
 
+
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
 #define ESP8266_LOG_EVENT(val)					EventLog_LogEvent(Event_Esp8266UserEvent, \
 													val, \
@@ -154,6 +155,9 @@
 // Reset end (high = inactive)
 #define ESP8266_RST_INACTIVE()	\
 	HAL_GPIO_WritePin(ESP8266_RST_GPIO_PORT, ESP8266_RST_GPIO_PIN, GPIO_PIN_SET)
+
+
+//#define ESP8266_PERIODICALLY_SEND_VERSION
 
 
 

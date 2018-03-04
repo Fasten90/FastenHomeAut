@@ -495,7 +495,7 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_Start(const char *message)
 	/*
 	 * Send data
 	 * AT+CIPSEND
-	 * 1)single connection(+CIPMUX=0) AT+CIPSEND=<length>;
+	 * 1) single connection(+CIPMUX=0) AT+CIPSEND=<length>;
 	 * 2) multiple connection (+CIPMUX=1) AT+CIPSEND= <id>,<length>
 	 *
 	 * AT+CIPSEND=4,18
@@ -1196,7 +1196,7 @@ void ESP8266_StatusMachine(void)
 			}
 			else
 			{
-				ESP8266_DEBUG_PRINT("Tcp connect command response not received, wait...");
+				ESP8266_DEBUG_PRINT("TCP connect command response not received, wait...");
 				ESP8266_ErrorCnt++;
 				if (ESP8266_ErrorCnt > 5)
 				{
@@ -1281,6 +1281,7 @@ void ESP8266_StatusMachine(void)
 		case Esp8266Status_Idle:
 			// Idle state (Check link, unlink, received message...)
 			ESP8266_CheckIdleStateMessage(receiveBuffer, receivedMessageLength);
+#ifdef ESP8266_PERIODICALLY_SEND_VERSION
 			static uint8_t IdleCnt = 0;
 			IdleCnt++;
 			if (IdleCnt > 30)
@@ -1288,9 +1289,8 @@ void ESP8266_StatusMachine(void)
 				IdleCnt = 0;
 				ESP8266_DEBUG_PRINT("Send an idle message...");
 				ESP8266_RequestSendTcpMessage("version");
-				// TODO: Do not response message need to send?
-#warning "Send other more important message"
 			}
+#endif
 			break;
 
 		default:
@@ -1368,9 +1368,8 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 				// Error
 				ESP8266_TcpSendBuffer_EnableFlag = true;
 				// TODO: Be careful, it can be buffer overflow !!!
-				ESP8266_DEBUG_PRINTF("Cannot send, not received \"> \"...\r\n"
+				ESP8266_DEBUG_PRINTF("Cannot send TCP message, not received \"> \"\r\n"
 						"Received message: \"%s\"", receiveBuffer);
-				ESP8266_DEBUG_PRINTF("Cannot send TCP message (not received \"> \")");
 				ESP8266_ClearReceive(true, 0);
 			}
 			// Clear send flag
@@ -1440,7 +1439,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 				// Check next parameter:
 				uint8_t length = STRING_LENGTH("\r\n+IPD,0,");
 				// TODO: Use better function
-				char * commIndex = (char *)STRING_FindString((const char *)&receiveBuffer[length], ":");
+				char * commIndex = (char *)STRING_FindCharacter((const char *)&receiveBuffer[length], ':');
 				if (commIndex != NULL)
 				{
 					// Has ':'
@@ -1523,7 +1522,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 		{
 			// If has a lot of error
 			ESP8266_ErrorCnt++;
-			if (ESP8266_ErrorCnt > 5 || receivedMessageLength > 50)
+			if ((ESP8266_ErrorCnt > 5) || (receivedMessageLength > 50))
 			{
 				ESP8266_DEBUG_PRINT("Has lot of errors, cleared buffer");
 				// ~Reset buffer
@@ -1539,17 +1538,19 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			ESP8266_ErrorCnt = 0;
 		}
 	}
-	/*
-	 * else
-	 * ESP8266_RxBuffer_WriteCnt == ESP8266_RxBuffer_ReadCnt
-	 * Do nothing...
-	 */
 	else if (ESP8266_TcpSendBuffer_EnableFlag == false)
 	{
 		// We has message on SendBuffer (we want to send a requested message)
 		// ReadCnt = WriteCnt, so we are not receiving
 		// TODO: Be careful, it is not truth
 		ESP8266_SEND_TCP_MESSAGE((char *)ESP8266_TcpTransmitBuffer);
+	}
+	else
+	{
+		/*
+		 * Not received character
+		 * Do nothing...
+		 */
 	}
 }
 
