@@ -26,6 +26,10 @@
 #include "UART.h"
 #include "Timing.h"
 
+#ifdef CONFIG_MODULE_WEBPAGE_ENABLE
+#include "WebpageHandler.h"
+#endif
+
 #include "ESP8266.h"
 
 
@@ -1386,7 +1390,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			}
 			else
 			{
-				// TODO: Other answe is possible?
+				// TODO: Other answer is possible?
 				// Error, not received "SEND OK"
 				ESP8266_DEBUG_PRINTF("Sending failed (not received \"SEND OK\"). Received: \"%s\"", receiveBuffer);
 				ESP8266_ClearReceive(true, 0);
@@ -1456,6 +1460,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 
 							// We have message source:
 							// Save to global variable
+#warning "ESP8266_ReceivedTcpMessage buffer is not need"
 							StrCpyFixLength(ESP8266_ReceivedTcpMessage,
 									(const char *)commIndex,
 									messageLength);
@@ -1463,10 +1468,28 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 
 							ESP8266_DEBUG_PRINTF("Received TCP message: \"%s\"", ESP8266_ReceivedTcpMessage);
 #warning "Beautify!"
-							char responseBuffer[ESP8266_TCP_MESSAGE_MAX_LENGTH];
+#ifdef CONFIG_MODULE_WEBPAGE_ENABLE
+							const char *getString = STRING_FindString(ESP8266_ReceivedTcpMessage, "GET /");
+							if (getString != NULL)
+							{
+								// Received "GET /...", it can be webpage request
+								WebpageHandler_GetRequrest(&ESP8266_ReceivedTcpMessage[STRING_LENGTH("GET /")]);
 
-							// Execute the command
-							CmdH_ExecuteCommand(ESP8266_ReceivedTcpMessage, responseBuffer, ESP8266_TCP_MESSAGE_MAX_LENGTH);
+								#warning "Send HTML webpage"
+							}
+							else
+							{
+#endif
+								// Received ~telnet command
+								char responseBuffer[ESP8266_TCP_MESSAGE_MAX_LENGTH];
+
+								// Execute the command
+								CmdH_ExecuteCommand(ESP8266_ReceivedTcpMessage, responseBuffer, ESP8266_TCP_MESSAGE_MAX_LENGTH);
+
+								ESP8266_RequestSendTcpMessage(responseBuffer);
+#ifdef CONFIG_MODULE_WEBPAGE_ENABLE
+							}
+#endif
 
 							ESP8266_ClearReceive(false, length + messageLength + STRING_LENGTH("\r\nOK\r\n"));
 							goodMsgRcv = true;

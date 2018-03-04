@@ -1,24 +1,23 @@
 /*
- *		DebugList.h
- *		Created on:		2017-09-08
+ *		WebpageHandler.h
+ *		Created on:		2018-03-04
  *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Debug "task" list
+ *		Function:		-
  *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-09-08
+ *		Version:		-
+ *		Last modified:	2018-03-04
  */
 
-#ifndef DEBUGLIST_H_
-#define DEBUGLIST_H_
+#ifndef INC_COMMUNICATION_WEBPAGEHANDLER_H_
+#define INC_COMMUNICATION_WEBPAGEHANDLER_H_
+
 
 
 
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
-
-#include "compiler.h"
 
 
 
@@ -32,37 +31,6 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-///< Debug
-typedef enum
-{
-#ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
-	Debug_EventHandler,
-#endif
-#ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
-	Debug_CommandHandler,
-#endif
-#ifdef CONFIG_FUNCTION_GAME_SNAKE
-	Debug_GameSnake,
-#endif
-#ifdef CONFIG_MODULE_ESP8266_ENABLE
-	Debug_ESP8266,
-#endif
-#ifdef CONFIG_BUTTON_DEBUG_ENABLE
-	Debug_Button,
-#endif
-#ifdef CONFIG_MODULE_WEBPAGE_ENABLE
-	Debug_WebPage,
-#endif
-
-	/*
-	 * XXX: Add here new Debug task enums
-	 * \note	Do not forget synchronize with DebugTasks
-	 */
-
-	// Do not use, it used for enum count
-	Debug_Count
-} Debug_t;
-
 
 
 /*------------------------------------------------------------------------------
@@ -75,6 +43,8 @@ typedef enum
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
+void WebpageHandler_Init(void);
 
 
-#endif /* DEBUGLIST_H_ */
+
+#endif /* INC_COMMUNICATION_WEBPAGEHANDLER_H_ */
