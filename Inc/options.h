@@ -627,17 +627,23 @@
 	// 0 - Static, fix connection type (only server or only client)
 	#define CONFIG_ESP8266_CONNECT_DYNAMIC		0
 
-
 	// Module will be WiFi network "server"
 	// 1 - WifiHost
 	// 0 - Not WifiHost (client)
 	#define CONFIG_ESP8266_IS_WIFI_HOST			0
+
+	// Fix IP
+	#define CONFIG_ESP8266_FIX_IP				0
+	#define CONFIG_ESP8266_FIX_IP_ADDRESS		"9.6.5.14"
+
 
 	// Module TCP state
 	// 1 - ESP8266 will be TCP server,
 	// 0 - will be TCP client
 	#define CONFIG_ESP8266_IS_TCP_SERVER		1
 
+	// DHCP Enable
+	//#define CONFIG_ESP8266_CWDHCP_ENABLE
 
 	//#define CONFIG_ESP8266_TCP_SERVER_ON_ESP8266
 	#define CONFIG_ESP8266_TCP_SERVER_ON_HOMENETWORK

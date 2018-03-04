@@ -58,6 +58,10 @@ typedef enum
 	Esp8266Status_ConfigCwDhcp,
 	Esp8266Status_ConfigCwDhcpCheckResponse,
 #endif
+#if (CONFIG_ESP8266_FIX_IP == 1)
+	Esp8266Status_ConfigFixIp,
+	Esp8266Status_ConfigFixIpCheckResponse,
+#endif
 	Esp8266Status_ConfigCipMux,
 	Esp8266Status_ConfigCipMuxCheckResponse,
 	Esp8266Status_WaitAfterSuccessfulConfig,
@@ -143,6 +147,15 @@ ESP8266_WifiConnectionStatusType ESP8266_ConnectionStatus = ESP8266_WifiConnecti
 ESP8266_TcpConnectionStatusType	ESP8266_TcpConnectionStatus = ESP8266_TcpConnectionStatus_Unknown;
 
 
+///< My IP address
+Network_IP_t ESP8266_MyWifiIpAddress = { 0 };
+Network_IP_t ESP8266_ExWifiIpAddress = { 0 };
+
+
+///< Error counter
+static uint8_t ESP8266_ErrorCnt = 0;
+
+
 #if (CONFIG_ESP8266_IS_WIFI_HOST == 0) && (CONFIG_ESP8266_CONNECT_DYNAMIC == 1)
 ///< Connection Wifi network name
 static const char ESP8266_WifiNetworkName[] = CONFIG_ESP8266_WIFI_NETWORK_NAME;
@@ -164,15 +177,6 @@ static const Network_IP_t ESP8266_ServerAddress = { .IP =
 
 static const Network_Port_t ESP8266_ServerPort = CONFIG_ESP8266_TCP_SERVER_PORT;
 #endif
-
-
-///< My IP address
-Network_IP_t ESP8266_MyWifiIpAddress = { 0 };
-Network_IP_t ESP8266_ExWifiIpAddress = { 0 };
-
-
-///< Error counter
-static uint8_t ESP8266_ErrorCnt = 0;
 
 
 #if defined(CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE) && !defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
@@ -422,118 +426,6 @@ uint8_t ESP8266_PrintIpAddress(char * str)
 
 	return length;
 }
-
-
-
-#ifdef ESP8266_USE_BLOCK_MODE
-/**
- * \brief	Connect to Wifi network
- */
-bool ESP8266_ConnectToWifiNetwork(void)
-
-	
-	////////////////////////////////////////////
-	// Save IP address to ESP8266_MyIpAddressString
-	// AT+CIFSR
-	// IP address
-	// Command:
-	// AT+CIFSR
-	// Response:	AT+CIFSR 192.168.0.106\r\nOK
-	////////////////////////////////////////////
-	
-	// TODO: Wait unknown length string (IP address length is not fix...
-	ESP8266_ReceiveString(StringLength("192.168.0.1\r\n192.168.1.34\r\n\r\nOK\r\n"));
-
-	ESP8266_SendString("AT+CIFSR\r\n");
-	
-	ESP8266_WaitAnswer(2000);
-	
-	// Check and convert IP address
-	if (ESP8266_ConvertIpString((char *)ESP8266_RxBuffer, &ESP8266_MyIpAddress))
-	{
-		ESP8266_DEBUG_PRINT("Successful convert IP address");
-	}
-	else
-	{
-		ESP8266_DEBUG_PRINT("Failed convert IP address");
-	}
-
-	
-	// Print my IP address
-	Network_PrintIpOnDebug("ESP8266", &ESP8266_MyIpAddress);
-	
-	
-	// TODO: Check this commented section
-	/*
-	#ifdef CONFIG_ESP8266_IS_TCP_SERVER
-	
-	// AT+CWDHCP - Enable/Disable DHCP
-	// Set 	AT+CWDHCP=mode,en 	OK
-	
-	// Parameter Description
-	// mode
-	// 0 : set ESP8266 softAP
-	// 1 : set ESP8266 station
-	// 2 : set both softAP and station
-	// en
-	// 0 : Enable DHCP
-	// 1 : Disable DHCP 
-
-	// AT+CWDHCP=1,0\r\n
-	// mode = 1, dhcp = 0 = disable
-	ESP8266_ReceiveString((unsigned char *)ESP8266_RxBuffer,StringLength((uint8_t *)"AT+CWDHCP=1,0\r\r\n\r\nOK\r\n"));
-	
-	ESP8266_SendString((uint8_t *)"AT+CWDHCP=1,0\r\n");
-	
-	ESP8266_WaitAnswer();
-	
-	if (!StrCmpFirst("AT+CWDHCP=1,0\r\r\n\r\nOK\r\n",(const char *)ESP8266_RxBuffer))
-	{
-		// Ok
-		LED_GREEN_ON();
-		LED_RED_OFF();
-	}
-	else
-	{
-		// Fail
-		LED_GREEN_OFF();
-		LED_RED_ON();
-	}	
-	
-	
-
-	// Set fix IP
-	///////////////////////////////
-	//	AT+CIPSTA	set IP address of STAtion
-	//	AT+CIPSTA=<ip>
-	///////////////////////////////
-	
-	ESP8266_ReceiveString((unsigned char *)ESP8266_RxBuffer,
-	StringLength((uint8_t *)"AT+CIPSTA=\"9.6.5.14\"\r\r\n\r\nOK\r\n"));
-	
-	ESP8266_SendString((uint8_t *)"AT+CIPSTA=\"9.6.5.14\"\r\n");
-	
-	ESP8266_WaitAnswer();
-	
-	if (!StrCmpFirst("AT+CIPSTA=\"9.6.5.14\"\r\r\n\r\nOK\r\n",(const char *)ESP8266_RxBuffer))
-	{
-		// Ok
-		ESP8266_LED_OK();
-	}
-	else
-	{
-		// Fail
-		ESP8266_LED_FAIL();
-	}
-	
-	#endif
-	*/
-	
-	
-	return true;
-}
-#endif	// #ifdef ESP8266_USE_BLOCK_MODE
-
 
 
 
@@ -877,6 +769,41 @@ void ESP8266_StatusMachine(void)
 			break;
 #endif	// #ifdef CONFIG_ESP8266_CWDHCP_ENABLE
 
+#if (CONFIG_ESP8266_FIX_IP == 1)
+#warning "Not tested function"
+		/*****************
+		 * Set fix IP
+		 *	AT+CIPSTA	set IP address of STAtion
+		 *	AT+CIPSTA=<ip>
+		 ******************/
+		case Esp8266Status_ConfigFixIp:
+			ESP8266_StartReceive();
+			ESP8266_SendString("AT+CIPSTA=\"" CONFIG_ESP8266_FIX_IP_ADDRESS "\"\r\n");
+			ESP8266StatusMachine++;
+			ESP8266_DEBUG_PRINT("Config Fix IP sent");
+			break;
+
+		case Esp8266Status_ConfigFixIpCheckResponse:
+			if (!StrCmpFirst("OK\r\n", (const char *)receiveBuffer)
+				|| !StrCmpFirst("no change\r\n",(const char *)receiveBuffer))
+			{
+				// "OK"
+				// "no change"
+				ESP8266_LED_OK();
+				ESP8266StatusMachine++;
+				ESP8266_DEBUG_PRINT("Config CWDHCP response ok");
+			}
+			else
+			{
+				// Other... it is wrong
+				ESP8266_LED_FAIL();
+				ESP8266StatusMachine--;
+				ESP8266_DEBUG_PRINT("Config CWDHCP response failed");
+			}
+			ESP8266_ClearReceive(true, 0);
+			break;
+#endif	// #if (CONFIG_ESP8266_FIX_IP == 1)
+
 		case Esp8266Status_ConfigCipMux:
 			/*
 			 * AT+CIPMUX = 	set multiple connections mode
@@ -897,7 +824,7 @@ void ESP8266_StatusMachine(void)
 				|| (!StrCmpFirst("link is builded\r\n", (const char *)receiveBuffer)))
 			{
 				// "OK"
-				// TODO: "link is builded\r\n" message is not correct, but it is good for me
+				// TODO: "link is builded\r\n" message is not correct, but it is good for us
 				ESP8266_LED_OK();
 				ESP8266StatusMachine++;
 				ESP8266_DEBUG_PRINT("Config CIPMUX response ok");
@@ -1090,8 +1017,11 @@ void ESP8266_StatusMachine(void)
 #endif	// End of "CONFIG_ESP8266_IS_WIFI_HOST == 0"
 
 		case Esp8266Status_PrintMyIpAddress:
-			/* Get IP
+			/* Get IP address
 			 * AT+CIFSR
+			 *
+			 * Response:
+			 * 192.168.0.106\r\nOK
 			 */
 			ESP8266_StartReceive();
 			ESP8266_SendString("AT+CIFSR\r\n");
