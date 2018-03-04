@@ -93,10 +93,6 @@ typedef enum
 
 UART_HandleTypeDef ESP8266_UartHandle;
 
-#ifdef ESP8266_USE_BLOCK_MODE
-volatile uint8_t ESP8266_Uart_ReceivedCharFlag;
-#endif
-
 // Buffers
 static volatile char ESP8266_TxBuffer[ESP8266_TX_BUFFER_LENGTH] = { 0 };
 static volatile char ESP8266_RxBuffer[ESP8266_RX_BUFFER_LENGTH] = { 0 };
@@ -215,11 +211,6 @@ const DateTime_t EventDateTime =
 static bool ESP8266_ReceiveUnknownTcpMessage(void);
 #endif
 
-
-#ifdef NOT_USED
-static bool ESP8266_CheckReceivedMessage(void);
-#endif
-
 #ifdef ESP8266_USE_BLOCK_MODE
 static void ESP8266_WaitMessageAndCheckSendingQueue(void);
 static void ESP8266_LoopSending(void);
@@ -233,10 +224,6 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_Start(const char *message);
 static uint8_t ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void);
 #endif
 
-#if NOT_USED
-static bool ESP8266_WaitForSend(uint16_t timeoutMilliSecond);
-#endif
-
 static bool ESP8266_ConvertIpString(char *message);
 
 static void ESP8266_ClearReceive(bool isFullClear, uint8_t stepLength);
@@ -245,11 +232,9 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 
 static void ESP8266_StartReceive(void);
 
-// TODO: Change and beautify the list
-
-static void ESP8266_ReceiveEnable(void);
-static void ESP8266_ResetHardware(void);
+static inline void ESP8266_ReceiveEnable(void);
 static inline void ESP8266_SendEnable(void);
+static void ESP8266_ResetHardware(void);
 
 
 
@@ -352,7 +337,7 @@ void ESP8266_Init(void)
 /**
  * \brief	Receive enable
  */
-static void ESP8266_ReceiveEnable(void)
+static inline void ESP8266_ReceiveEnable(void)
 {
 	UART_ReceiveEnable(&ESP8266_Uart);
 }
@@ -403,24 +388,6 @@ size_t ESP8266_SendString(const char *msg)
 
 	return putLength;
 }
-
-
-#if NOT_USED
-/**
- * \brief	Wait for USART sending
- */
-static bool ESP8266_WaitForSend(uint16_t timeoutMilliSecond)
-{
-	// Wait for flag or timeout
-	while ((CircularBuffer_IsFull(ESP8266_Uart.tx)) && (timeoutMilliSecond != 0))
-	{
-		timeoutMilliSecond--;
-		DelayMs(1);
-	}
-
-	return CircularBuffer_IsFull(ESP8266_Uart.tx);
-}
-#endif
 
 
 
@@ -1133,34 +1100,6 @@ static bool ESP8266_SendTcpMessageBlockingMode(const char *message)
 
 
 
-#if NOT_USED
-/**
- *\brief		Receive HomeAutMessage
- *				length: 10+40
- *				example: "+IPD,0,40:" + "|HomeAut|010|014|LOGIN__|NMEDIU00000000|"
- */
-bool ESP8266_ReceiveFixTcpMessage(void)
-{
-	ESP8266_StartReceive();
-	
-	// Old:
-	// +IPD,0,18:GET / HTTP/1.0
-	// +IPD,0,18:<message>
-	
-	// HomeAutMessage:
-	// "\r\n"											2
-	// "+IPD,0,40:"										10
-	// "|HomeAut|010|014|LOGIN__|NMEDIU00000000|"		x
-	// "\r\nOK\r\n"										6
-	// length: 2+10+40+6 = 58
-	ESP8266_ReceiveString(ESP8266_RECEIVEMESSAGE_MAX_LENGTH);
-		
-	return true;
-}
-#endif
-
-
-
 #ifdef CONFIG_USE_FREERTOS
 /**
  * \brief	Switch to unknown length Receive mode
@@ -1212,9 +1151,8 @@ static void ESP8266_WaitAnswer(uint32_t timeout)
 	#else
 	(void)timeout;
 	// TODO: ...
-	while (ESP8266_Uart_ReceivedCharFlag != 1);
+#warning ...
 	#endif
-	
 }
 #endif
 
@@ -1349,29 +1287,6 @@ bool ESP8266_SendMessageToQueue(char *message)
 
 
 
-/**
- *\brief		Wait for client connect
- */
-#if 0
-// TODO: delete
-bool ESP8266_WaitClientConnect( void)
-{
-	
-	ESP8266_StartReceive();
-	
-	// Link\r\n
-	// \r\n
-	ESP8266_ReceiveString(StringLength("Link\r\n") );
-		
-	// wait for message
-	ESP8266_WaitAnswer();
-	
-	return true;
-}
-#endif
-
-
-
 #if (CONFIG_ESP8266_IS_TCP_SERVER == 0)
 /**
  * \brief	Connect to server, with blocking
@@ -1432,130 +1347,33 @@ bool ESP8266_StartServerBlocking(void)
 
 
 
-#ifdef NOT_USED
 /**
- * \brief	Check received a new TCP message
+ * \brief	ESP8266 receive reinitialize
  */
-static bool ESP8266_CheckReceivedMessage(void)
-{
-
-	bool isValidMessage;
-
-
-	// Print received message:
-	ESP8266_DEBUG_PRINT("Received a message");
-
-
-	if (ESP8266_RxBuffer_WriteCnt >= ESP8266_RECEIVEMESSAGE_MIN_LENGTH)
-	{
-		// TODO: Modify separated good message......
-		ESP8266_DEBUG_PRINTF("Valid HomeAut message received:\r\n"
-					"%s",
-					(char *)ESP8266_RxBuffer
-					);
-
-#ifdef CONFIG_USE_FREERTOS
-		if (xQueueSend(ESP8266_ReceivedMessage_Queue,
-				(const void *)ESP8266_RxBuffer,
-				1000) != pdPASS)
-		{
-			// Successful sent to queue
-			isValidMessage = true;
-		}
-		else
-		{
-			// Failed sent to queue
-			ESP8266_DEBUG_PRINT("Message failed to sending queue");
-			isValidMessage = false;
-		}
-#endif
-	}
-	// Check for unconnect, or other messages...
-	else if (!StrCmpFirst("Link", (const char *)ESP8266_RxBuffer))
-	{
-		// Received: "Link"
-		isValidMessage = true;
-
-		#if (CONFIG_ESP8266_IS_TCP_SERVER == 1)
-		// TODO: Process connecting, add new IP to list
-		ESP8266_DEBUG_PRINT("A client connected");
-		#else
-		ESP8266_DEBUG_PRINT("Received \"Link\". This device is in client mode, dont understand it.");
-		#endif
-	}
-	else if (!StrCmpFirst("Unlink", (const char *)ESP8266_RxBuffer))
-	{
-		// Received: "Unlink"
-		isValidMessage = true;
-
-		// TODO: Process disconnecting, delete IP from list
-		#if (CONFIG_ESP8266_IS_TCP_SERVER == 1)
-		ESP8266_DEBUG_PRINT("A client disconnected");
-		#else
-		ESP8266_DEBUG_PRINT("Disconnected. Need to reconnect");
-		ESP8266_ConnectionStatus = ESP8266_WifiConnectionStatus_ClosedConnection;
-		#endif
-	}
-	else if (!StrCmpFirst("OK", (const char *)ESP8266_RxBuffer))
-	{
-		// Received: "OK"
-		// Note: This arrived after received an x length message (now, after 40 length homeautmessage)
-		isValidMessage = true;
-		ESP8266_DEBUG_PRINT("Received an OK");
-	}
-	else if (!StrCmpFirst("", (const char *)ESP8266_RxBuffer))
-	{
-		// Received: ""
-		// Note: This arrived after received an x length message (now, after 40 length homeautmessage) + "\r\n" after ""
-		isValidMessage = true;
-		ESP8266_DEBUG_PRINT("Received an empty string");
-	}
-	else
-	{
-		// Not valid message
-		isValidMessage = false;
-		ESP8266_DEBUG_PRINTF("Received not valid message: %s", (char *)&ESP8266_RxBuffer[0]);
-	}
-
-
-	// Received an correct message?
-	if (isValidMessage)
-	{
-		ESP8266_LED_OK();
-	}
-	else
-	{
-		ESP8266_LED_FAIL();
-	}
-
-	return isValidMessage;
-}
-#endif
-
-
-
-#ifdef NOT_USED
-// TODO: Delete, because this unfix message waiting is wrong idea
-/**
- * \brief	Wait/Receive string
- * \note	It wait fix length
- */
-void ESP8266_ReceiveString(uint8_t length)
+static void ESP8266_StartReceive(void)
 {
 	// Clear buffer
-	ESP8266_StartReceive();
-
-	// Clear flag
-#ifdef CONFIG_USE_FREERTOS
-	xSemaphoreTake(ESP8266_USART_Rx_Semaphore, 0);
-#else
-	ESP8266_Uart_ReceivedCharFlag = 0;
-#endif
-
-	// Receive
-	HAL_UART_Receive_IT(&ESP8266_UartHandle, (uint8_t *)ESP8266_RxBuffer, length);
+	CircularBuffer_Clear(ESP8266_Uart.rx);
 }
-#endif
+
+
+
+/**
+ * \brief	Clear receive buffer
+ */
+static void ESP8266_ClearReceive(bool isFullClear, uint8_t stepLength)
+{
+	if (isFullClear)
+	{
+		// Clear all buffer
+		CircularBuffer_Clear(ESP8266_Uart.rx);
+	}
+	else
+	{
+		// Not full clear from readCnt to writeCnt
+		CircularBuffer_DropCharacters(ESP8266_Uart.rx, stepLength);
+	}
+}
 
 
 
@@ -1659,36 +1477,6 @@ static uint8_t ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void)
 	ESP8266_DEBUG_PRINTF("Send TCP message: \"%s\"", ESP8266_TcpTransmitBuffer);
 
 	return length;
-}
-
-
-
-/**
- * \brief	ESP8266 receive reinitialize
- */
-static void ESP8266_StartReceive(void)
-{
-	// Clear buffer
-	CircularBuffer_Clear(ESP8266_Uart.rx);
-}
-
-
-
-/**
- * \brief	Clear receive buffer
- */
-static void ESP8266_ClearReceive(bool isFullClear, uint8_t stepLength)
-{
-	if (isFullClear)
-	{
-		// Clear all buffer
-		CircularBuffer_Clear(ESP8266_Uart.rx);
-	}
-	else
-	{
-		// Not full clear from readCnt to writeCnt
-		CircularBuffer_DropCharacters(ESP8266_Uart.rx, stepLength);
-	}
 }
 
 
