@@ -22,6 +22,8 @@
 #include "DebugUart.h"
 #include "EventLog.h"
 #include "EventList.h"
+#include "DebugList.h"
+#include "Debug.h"
 
 
 
@@ -51,17 +53,25 @@
 #endif
 
 
-#if ESP8266_DEBUG_MODE == 1
-#define ESP8266_DEBUG_PRINT(msg)					DebugUart_SendMessage("ESP8266: "); \
-													DebugUart_SendLine(msg)
+#if (ESP8266_DEBUG_MODE == 1)
+	#if defined(CONFIG_MODULE_DEBUG_ENABLE)
+	#define ESP8266_DEBUG_PRINT(msg)					Debug_Print(Debug_ESP8266, msg)
+	#else
+	#define ESP8266_DEBUG_PRINT(msg)					DebugUart_SendMessage("ESP8266: "); \
+														DebugUart_SendLine(msg)
+	#endif
 #else
 #define ESP8266_DEBUG_PRINT(msg)
 #endif
 
-#if ESP8266_DEBUG_MODE == 1
+#if (ESP8266_DEBUG_MODE == 1)
 // Variadic Macro
-#define ESP8266_DEBUG_PRINTF(...)					DebugUart_SendMessage("ESP8266: "); \
-													uprintf(__VA_ARGS__)
+	#if defined(CONFIG_MODULE_DEBUG_ENABLE)
+	#define ESP8266_DEBUG_PRINTF(...)					Debug_Printf(Debug_ESP8266, __VA_ARGS__)
+	#else
+	#define ESP8266_DEBUG_PRINTF(...)					DebugUart_SendMessage("ESP8266: "); \
+														uprintf(__VA_ARGS__)
+	#endif
 #else
 #define ESP8266_DEBUG_PRINTF(...)
 #endif
@@ -76,10 +86,11 @@
 #define ESP8266_LOG_EVENT(val)
 #endif
 
-#define	EVENT_LINK								1
-#define	EVENT_UNLINK							2
-#define	EVENT_RECEIVED_GOOD_TCP_MESSAGE			3
-#define EVENT_ERROR								4
+
+#define	EVENT_LINK								( 1 )
+#define	EVENT_UNLINK							( 2 )
+#define	EVENT_RECEIVED_GOOD_TCP_MESSAGE			( 3 )
+#define EVENT_ERROR								( 4 )
 
 
 /// Sending/Receiving content message max length

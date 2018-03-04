@@ -57,7 +57,7 @@ typedef struct
 #define SNAKE_SIZE_Y			((DISPLAY_HEIGHT-SNAKE_HEADER_HEIGHT)/SNAKE_POINT_PIXEL_SIZE)
 
 
-#define PRINT(...)				Debug_Print(Debug_GameSnake, __VA_ARGS__)
+#define PRINT(...)				Debug_Printf(Debug_GameSnake, __VA_ARGS__)
 
 
 uint8_t Snake_Matrix[SNAKE_SIZE_X][SNAKE_SIZE_Y] = { 0 };

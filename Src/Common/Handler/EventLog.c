@@ -129,7 +129,7 @@ void EventLog_LogEvent(EventName_t eventName, EventData_t eventData, TaskID_t ta
  */
 static void EventLog_DebugPrintLog(EventLogRecord_t * eventRecord)
 {
-	Debug_Print(Debug_EventHandler,
+	Debug_Printf(Debug_EventHandler,
 			"%s - Data: 0x%X, type: %s, task: %s, tick: %d",
 			EventList[eventRecord->eventName].name,
 			eventRecord->eventData,

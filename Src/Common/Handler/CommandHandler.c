@@ -95,23 +95,23 @@ CmdH_Result_t CmdH_ExecuteCommand(char *command, char *response, size_t length)
 	// TODO: With ASSERT() ?
 	if (response == NULL)
 	{
-		Debug_Print(Debug_CommandHandler, "Error! Wrong response buffer!");
+		Debug_Printf(Debug_CommandHandler, "Error! Wrong response buffer!");
 		result = CmdH_Result_Error_CallCmdHandlerWithInvalidArgument;
 	}
 	if (command == NULL)
 	{
-		Debug_Print(Debug_CommandHandler, "Error! Command string pointer is wrong!");
+		Debug_Printf(Debug_CommandHandler, "Error! Command string pointer is wrong!");
 		result = CmdH_Result_Error_CallCmdHandlerWithInvalidArgument;
 	}
 	if (length == 0)
 	{
-		Debug_Print(Debug_CommandHandler, "Error! Received 0 length response buffer!");
+		Debug_Printf(Debug_CommandHandler, "Error! Received 0 length response buffer!");
 		result = CmdH_Result_Error_CallCmdHandlerWithInvalidArgument;
 	}
 	if (StrTrim(command) == 0)
 	//if (StringLength(command) == 0)
 	{
-		Debug_Print(Debug_CommandHandler, "Error! Received 0 length command!");
+		Debug_Printf(Debug_CommandHandler, "Error! Received 0 length command!");
 		result = CmdH_Result_Error_CallCmdHandlerWithInvalidArgument;
 	}
 

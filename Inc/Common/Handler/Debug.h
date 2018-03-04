@@ -59,13 +59,15 @@ typedef struct
  *----------------------------------------------------------------------------*/
 
 #ifdef CONFIG_MODULE_DEBUG_ENABLE
-void Debug_Print(Debug_t debugTask, const char *format, ...);
+void Debug_Print(Debug_t debugTask, const char *msg);
+void Debug_Printf(Debug_t debugTask, const char *format, ...);
+
 bool Debug_SetEnable(Debug_t task, bool enable);
 bool Debug_SetDebugTaskWithName(char *name, bool enable);
 void Debug_PrintDebugList(void);
 #else
 // Empty macro for suppress warnings
-#define Debug_Print(...)
+#define Debug_Printf(...)
 #endif
 
 
