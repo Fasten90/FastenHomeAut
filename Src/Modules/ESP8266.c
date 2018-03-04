@@ -840,16 +840,20 @@ void ESP8266_StatusMachine(void)
 
 		// End of config
 
-#if CONFIG_ESP8266_IS_WIFI_HOST == 1
+#if (CONFIG_ESP8266_IS_WIFI_HOST == 1)
 		case Esp8266Status_StartWifiHost:
 			/*
 			 * Create Soft Access Point
-			 * AT+CWSAP="NetworkName","Password",1,0
+			 * AT+CWSAP="networkname","password",1,0
 			 * 3. param = channel
 			 * 4. param = encryption
 			 */
 			ESP8266_StartReceive();
-			ESP8266_SendString("AT+CWSAP=\"ESP8266HomeAutomation\",\"AUT\",1,0\r\n");
+			ESP8266_SendString("AT+CWSAP=\""
+								CONFIG_ESP8266_WIFI_NETWORK_NAME
+								""\",\""
+								CONFIG_ESP8266_WIFI_NETWORK_PASSWORD
+								"\",1,0\r\n");
 			ESP8266StatusMachine++;
 			ESP8266_DEBUG_PRINT("Wifi server create");
 			break;
@@ -860,7 +864,6 @@ void ESP8266_StatusMachine(void)
 				ESP8266_LED_OK();
 				ESP8266StatusMachine++;
 				ESP8266_DEBUG_PRINT("Wifi server create successful");
-				//break;	// Step to next
 			}
 			else
 			{
@@ -882,20 +885,20 @@ void ESP8266_StatusMachine(void)
 			 */
 			ESP8266_StartReceive();
 			ESP8266_ClearReceive(true, 0);
-#if CONFIG_ESP8266_CONNECT_DYNAMIC == 1
+	#if (CONFIG_ESP8266_CONNECT_DYNAMIC == 1)
 			// Dynamic value of WiFi network name and password
 			char str[50];
 			usprintf(str, "AT+CWJAP=\"%s\",\"%s\"\r\n",
 					ESP8266_WifiNetworkName, ESP8266_WifiNetworkPassword);
 			ESP8266_SendString(str);
-#else
+	#else
 			// Fix WiFi network name and password
 			ESP8266_SendString("AT+CWJAP=\""
 					CONFIG_ESP8266_WIFI_NETWORK_NAME
 					"\",\""
 					CONFIG_ESP8266_WIFI_NETWORK_PASSWORD
 					"\"\r\n");
-#endif
+	#endif
 			ESP8266StatusMachine++;
 			ESP8266_ErrorCnt = 0;
 			TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 1000);
@@ -922,7 +925,6 @@ void ESP8266_StatusMachine(void)
 			else if (!StrCmpFirst("\r\nFAIL", (const char *)receiveBuffer)
 					|| !StrCmpFirst("\r\nERROR", (const char *)receiveBuffer))
 			{
-				// TODO: This is need? Can we drop out?
 				// "FAIL"
 				// "ERROR"
 				ESP8266_LED_FAIL();
@@ -930,31 +932,26 @@ void ESP8266_StatusMachine(void)
 				ESP8266_DEBUG_PRINT("WiFi connect command failed");
 				ESP8266_ClearReceive(true, 0);
 			}
-			else if (!receivedMessageLength)
+			else if (receivedMessageLength == 0)
 			{
 				// Not received anything
 				ESP8266_DEBUG_PRINT("Wifi connection in progress, wait reponse...");
 				ESP8266_ErrorCnt++;
-				if (ESP8266_ErrorCnt > 10)
-				{
-					ESP8266_ErrorCnt = 0;
-					ESP8266StatusMachine = Esp8266Status_ConnectWifiNetwork;
-					ESP8266_DEBUG_PRINT("Restart connect to wifi network...");
-					ESP8266_ClearReceive(true, 0);
-				}
 			}
 			else
 			{
-				// Not received response?
+				// Received character, but not received response?
 				ESP8266_DEBUG_PRINTF("Wifi connection in progress, received unknown message (but not processed): \"%s\"\r\n", receiveBuffer);
 				ESP8266_ErrorCnt++;
-				if (ESP8266_ErrorCnt > 10)
-				{
-					ESP8266_ErrorCnt = 0;
-					ESP8266StatusMachine = Esp8266Status_ConnectWifiNetwork;
-					ESP8266_DEBUG_PRINT("Restart connect to wifi network...");
-					ESP8266_ClearReceive(true, 0);
-				}
+			}
+
+			// For try-safe (avoid the infinite connection trying loop)
+			if (ESP8266_ErrorCnt > 10)
+			{
+				ESP8266_ErrorCnt = 0;
+				ESP8266StatusMachine = Esp8266Status_ConnectWifiNetwork;
+				ESP8266_DEBUG_PRINT("Restart connect to wifi network...");
+				ESP8266_ClearReceive(true, 0);
 			}
 
 			break;
@@ -1070,15 +1067,18 @@ void ESP8266_StatusMachine(void)
 #if CONFIG_ESP8266_IS_TCP_SERVER == 1
 		case Esp8266Status_StartTcpServer:
 			/*
+			 * Set as server/listen()
 			 * AT+CIPSERVER
-			 * set as server/listen()
-			 * AT+CIPSERVER=1,2000
+			 *
+			 * Syntax: AT+CIPSERVER=<id>,<port>
+			 * E.g.:   AT+CIPSERVER=1,2000
+			 *
 			 * Response:
-			 * 	OK
-			 * 	Linked
+			 * 	 OK
+			 * 	 Linked
 			 */
 			ESP8266_StartReceive();
-			ESP8266_SendString("AT+CIPSERVER=1,2000\r\n");
+			ESP8266_SendString("AT+CIPSERVER=1," CONFIG_ESP8266_TCP_SERVER_PORT_STRING "\r\n");
 			ESP8266StatusMachine++;
 			ESP8266_DEBUG_PRINT("Start server");
 			break;
@@ -1259,7 +1259,7 @@ void ESP8266_StatusMachine(void)
 					ESP8266_ErrorCnt = 0;
 					ESP8266_DEBUG_PRINT("Error: Restart connecting...");
 					ESP8266_ClearReceive(true, 0);
-					// TODO: Csekkolni, hogy van-e hálózat?
+					// TODO: Check, there is network?
 				}
 			}
 
@@ -1287,9 +1287,9 @@ void ESP8266_StatusMachine(void)
 			{
 				IdleCnt = 0;
 				ESP8266_DEBUG_PRINT("Send an idle message...");
-#warning "Send other more important message"
 				ESP8266_RequestSendTcpMessage("version");
 				// TODO: Do not response message need to send?
+#warning "Send other more important message"
 			}
 			break;
 
@@ -1387,7 +1387,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			}
 			else
 			{
-				// TODO: Egyéb válasz is lehet?
+				// TODO: Other answe is possible?
 				// Error, not received "SEND OK"
 				ESP8266_DEBUG_PRINTF("Sending failed (not received \"SEND OK\"). Received: \"%s\"", receiveBuffer);
 				ESP8266_ClearReceive(true, 0);
