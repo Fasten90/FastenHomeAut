@@ -124,7 +124,7 @@ UART_Handler_t ESP8266_Uart =
 	.txIsEnabled = true,
 	.rxIsEnalbed = true,
 #ifdef CONFIG_MODULE_UART_REQUIRE_TASKSCHEDULE_ENABLE
-#warning "Test without Task_Esp8266"
+	// TODO: Do not use ESP8266 task scheduling from UART handler: Timeout used from Task...
 	.requiredTask = Task_Count,
 #endif
 };
@@ -138,8 +138,8 @@ xQueueHandle ESP8266_ReceivedMessage_Queue;
 
 
 // TCP message receive buffer
-char ESP8266_TcpTransmitBuffer[ESP8266_TCP_MESSAGE_MAX_LENGTH];
-char ESP8266_ReceivedTcpMessage[ESP8266_TCP_MESSAGE_MAX_LENGTH];
+char ESP8266_TcpTransmitBuffer[ESP8266_TCP_MESSAGE_MAX_LENGTH]  = { 0 };
+char ESP8266_ReceivedTcpMessage[ESP8266_TCP_MESSAGE_MAX_LENGTH] = { 0 };
 
 // TCP Message sending flags
 bool ESP8266_TcpSendBuffer_EnableFlag = true;
@@ -248,7 +248,6 @@ static void ESP8266_ClearReceive(bool isFullClear, uint8_t stepLength);
 static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t receivedMessageLength);
 
 static void ESP8266_StartReceive(void);
-static void ESP8266_ClearFullReceiveBuffer(void);
 
 // TODO: Change and beautify the list
 
@@ -268,12 +267,12 @@ static inline void ESP8266_SendEnable(void);
  */
 void ESP8266_Init(void)
 {
+	// Circular buffer initialization
 	CircularBuffer_Init(ESP8266_Uart.tx);
 	CircularBuffer_Init(ESP8266_Uart.rx);
 
 	
 	//	GPIO Init
-
 	GPIO_InitTypeDef  GPIO_InitStruct;
 
 	ESP8266_PINS_CLK_ENABLES();
@@ -361,6 +360,7 @@ static void ESP8266_ReceiveEnable(void)
 {
 	UART_ReceiveEnable(&ESP8266_Uart);
 }
+
 
 
 /**
@@ -1023,7 +1023,7 @@ bool ESP8266_StartServer ( void )
 	////////////////////////////////////////
 	
 	
-	ESP8266_ClearFullReceiveBuffer();
+	ESP8266_StartReceive();
 		
 	ESP8266_ReceiveString(StringLength("AT+CIPSERVER=1,2000\r\r\n\r\nOK\r\n"));
 	
@@ -1149,9 +1149,7 @@ static bool ESP8266_SendTcpMessageBlockingMode(const char *message)
  */
 bool ESP8266_ReceiveFixTcpMessage(void)
 {
-
-	
-	ESP8266_ClearFullReceiveBuffer();
+	ESP8266_StartReceive();
 	
 	// Old:
 	// +IPD,0,18:GET / HTTP/1.0
@@ -1181,7 +1179,7 @@ static bool ESP8266_ReceiveUnknownTcpMessage(void)
 	ESP8266_Receive_Mode_FixLength = 0;
 	
 	// Clear buffer
-	ESP8266_ClearFullReceiveBuffer();
+	ESP8266_StartReceive();
 	
 	// BufferCnt = 0;
 	ESP8266_RxBuffer_WriteCnt = 0;
@@ -1379,7 +1377,7 @@ bool ESP8266_SendMessageToQueue(char *message)
 bool ESP8266_WaitClientConnect( void)
 {
 	
-	ESP8266_ClearFullReceiveBuffer();
+	ESP8266_StartReceive();
 	
 	// Link\r\n
 	// \r\n
@@ -1565,7 +1563,7 @@ static bool ESP8266_CheckReceivedMessage(void)
 void ESP8266_ReceiveString(uint8_t length)
 {
 	// Clear buffer
-	ESP8266_ClearFullReceiveBuffer();
+	ESP8266_StartReceive();
 
 	// Clear flag
 #ifdef CONFIG_USE_FREERTOS
@@ -1686,21 +1684,11 @@ static uint8_t ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void)
 
 
 /**
- * \brief	ESP8266 receive-sending full reinitialize
+ * \brief	ESP8266 receive reinitialize
  */
 static void ESP8266_StartReceive(void)
 {
 	// Clear buffer
-	ESP8266_ClearFullReceiveBuffer();
-}
-
-
-
-/**
- * \brief	Reset ESP8266 received buffer
- */
-static void ESP8266_ClearFullReceiveBuffer(void)
-{
 	CircularBuffer_Clear(ESP8266_Uart.rx);
 }
 
@@ -1755,7 +1743,6 @@ void ESP8266_StatusMachine(void)
 	// Check ESP8266 status machine state
 	switch (ESP8266StatusMachine)
 	{
-
 		case Esp8266Status_Unknown:
 			ESP8266StatusMachine++;
 			ESP8266_DEBUG_PRINT("Unknown");
