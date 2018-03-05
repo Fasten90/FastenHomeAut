@@ -1,35 +1,22 @@
 /*
- *		WebpageHandler.h
- *		Created on:		2018-03-04
+ *		WebpageList.c
+ *		Created on:		2018-03-05
  *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		-
  *		Target:			STM32Fx
  *		Version:		-
- *		Last modified:	2018-03-04
+ *		Last modified:	2018-03-05
  */
 
-#ifndef INC_COMMUNICATION_WEBPAGEHANDLER_H_
-#define INC_COMMUNICATION_WEBPAGEHANDLER_H_
-
-
 
 
 /*------------------------------------------------------------------------------
- *  Includes
+ *  Header files
  *----------------------------------------------------------------------------*/
 
-
-
-/*------------------------------------------------------------------------------
- *  Macros & definitions
- *----------------------------------------------------------------------------*/
-
-
-
-/*------------------------------------------------------------------------------
- *  Type definitions
- *----------------------------------------------------------------------------*/
+#include "options.h"
+#include "WebpageList.h"
 
 
 
@@ -37,15 +24,43 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
+const char WebpageList_IndexHtml[] =
+"<html>" \
+"<head>" \
+"<title>" \
+"</title>" \
+"</head>" \
+"<body>" \
+"<p>Welcome message</p>" \
+"</body>" \
+"</html>";
+
 
 
 /*------------------------------------------------------------------------------
- *  Global function declarations
+ *  Local variables
  *----------------------------------------------------------------------------*/
 
-void WebpageHandler_Init(void);
-void WebpageHandler_GetRequrest(const char *request, char *resp);
+
+
+/*------------------------------------------------------------------------------
+ *  Function declarations
+ *----------------------------------------------------------------------------*/
 
 
 
-#endif /* INC_COMMUNICATION_WEBPAGEHANDLER_H_ */
+/*------------------------------------------------------------------------------
+ *  Functions
+ *----------------------------------------------------------------------------*/
+
+
+/**
+ * \brief  WebpageList initialization
+ */
+void WebpageList_Init(void)
+{
+// TODO:
+}
+
+
+

@@ -1,16 +1,16 @@
 /*
- *		WebpageHandler.h
- *		Created on:		2018-03-04
+ *		WebpageList.h
+ *		Created on:		2018-03-05
  *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		-
  *		Target:			STM32Fx
  *		Version:		-
- *		Last modified:	2018-03-04
+ *		Last modified:	2018-03-05
  */
 
-#ifndef INC_COMMUNICATION_WEBPAGEHANDLER_H_
-#define INC_COMMUNICATION_WEBPAGEHANDLER_H_
+#ifndef INC_LIST_WEBPAGELIST_H_
+#define INC_LIST_WEBPAGELIST_H_
 
 
 
@@ -43,9 +43,8 @@
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void WebpageHandler_Init(void);
-void WebpageHandler_GetRequrest(const char *request, char *resp);
+void WebpageList_Init(void);
 
 
 
-#endif /* INC_COMMUNICATION_WEBPAGEHANDLER_H_ */
+#endif /* INC_LIST_WEBPAGELIST_H_ */

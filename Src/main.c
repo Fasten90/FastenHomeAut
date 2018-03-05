@@ -240,6 +240,7 @@ bool SelfTest_FailedRamTest = false;
  *----------------------------------------------------------------------------*/
 
 #if defined(CONFIG_MODULE_ESCAPEBROWSER_ENABLE)
+// TODO: Put to other
 static const char * GetStrListElement(uint8_t i)
 {
 	const char *str = NULL;
@@ -252,6 +253,7 @@ static const char * GetStrListElement(uint8_t i)
 	return str;
 }
 #endif
+
 
 
 /**

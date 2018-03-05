@@ -137,7 +137,6 @@ UART_Handler_t ESP8266_Uart =
 
 // TCP message receive buffer
 static char ESP8266_TcpTransmitBuffer[ESP8266_TCP_MESSAGE_MAX_LENGTH]  = { 0 };
-static char ESP8266_ReceivedTcpMessage[ESP8266_TCP_MESSAGE_MAX_LENGTH] = { 0 };
 
 // TCP Message sending flags
 static bool ESP8266_TcpSendBuffer_EnableFlag = true;
@@ -219,7 +218,7 @@ static void ESP8266_StartReceive(void);
 static void ESP8266_ClearReceive(bool isFullClear, uint8_t stepLength);
 
 static bool ESP8266_SendTcpMessageNonBlockingMode_Start(const char *message);
-static uint8_t ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void);
+static size_t ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void);
 
 static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t receivedMessageLength);
 
@@ -417,9 +416,9 @@ static bool ESP8266_ConvertIpString(char *message)
 /**
  * \brief	Print ESP8266 IP addresses
  */
-uint8_t ESP8266_PrintIpAddress(char * str)
+size_t ESP8266_PrintIpAddress(char * str)
 {
-	uint8_t length = 0;
+	size_t length = 0;
 
 	length += StrCpy(&str[length], "MyWifi: ");
 	length += Network_PrintIp(&str[length], &ESP8266_MyWifiIpAddress);
@@ -467,9 +466,9 @@ static void ESP8266_ClearReceive(bool isFullClear, uint8_t stepLength)
 /**
  * \brief	Request send TCP message
  */
-uint8_t ESP8266_RequestSendTcpMessage(const char * message)
+size_t ESP8266_RequestSendTcpMessage(const char * message)
 {
-	uint8_t length = 0;
+	size_t length = 0;
 
 	// Copy to send buffer
 	if (ESP8266_TcpSendBuffer_EnableFlag)
@@ -509,7 +508,7 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_Start(const char *message)
 	 * 	SEND OK
 	 */
 
-	uint8_t length = StringLength(message);
+	size_t length = StringLength(message);
 	char buffer[25]; // For "AT+CIPSEND=0,40\r\n"
 
 	// Check length
@@ -536,19 +535,21 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_Start(const char *message)
  * \brief	Send TCP message which are in ESP8266_TcpTransmitBuffer
  * \note	Recommend received "> " before this function
  */
-static uint8_t ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void)
+static size_t ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void)
 {
 
 	// Check length
-	uint8_t length = StringLength((const char *)ESP8266_TcpTransmitBuffer);
+	size_t length = StringLength((const char *)ESP8266_TcpTransmitBuffer);
 
+	/*
+	// TODO: Not need check length, because
 	if (length >= ESP8266_TCP_MESSAGE_MAX_LENGTH)
 	{
 		// Wrong length
 		ESP8266_DEBUG_PRINT("Too long message!");
-		// TODO: Not theb est solution
+		// TODO: Not the best solution
 		length = ESP8266_TCP_MESSAGE_MAX_LENGTH - 1;
-	}
+	}*/
 
 	/*
 	 * Example:
@@ -565,6 +566,18 @@ static uint8_t ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void)
 
 	return length;
 }
+
+
+
+/*
+size_t ESP8266_SendTcpMessageBlocked(const char *msg)
+{
+	ESP8266_SendTcpMessageNonBlockingMode_Start(msg);
+
+	ESP8266_SendTcpMessageNonBlockingMode_SendMessage();
+
+	ESP8266_TcpSendIsStarted_Flag = false;
+}*/
 
 
 
@@ -1430,8 +1443,10 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 #endif
 		else if (!StrCmpFirst("\r\n+IPD,", (const char *)receiveBuffer))
 		{
+			// TODO: "+IPD" is good find
 			// Message form: "\r\n+IPD,1,4:msg3\r\nOK"
 			// Has got finish "\r\n"?
+			// TODO: not check it, only length
 			if (STRING_FindString(
 					(const char *)&receiveBuffer[STRING_LENGTH("\r\n+IPD,") + 1],
 					"\r\n") != NULL)
@@ -1453,38 +1468,36 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 					if (StringToUnsignedDecimalNum((const char *)&receiveBuffer[length], &messageLength))
 					{
 #warning "Modify these codes because STRING_FindString was changed. Should correct these!"
-						if (messageLength <= ESP8266_TCP_MESSAGE_MAX_LENGTH)
+						if (messageLength <= ESP8266_RX_TCP_MSG_MAX_LENGTH)
 						{
 							// Set position after ':'
 							commIndex += 1;
 
 							// We have message source:
-							// Save to global variable
-#warning "ESP8266_ReceivedTcpMessage buffer is not need"
-							StrCpyFixLength(ESP8266_ReceivedTcpMessage,
-									(const char *)commIndex,
-									messageLength);
-							ESP8266_ReceivedTcpMessage[messageLength] = '\0';
 
-							ESP8266_DEBUG_PRINTF("Received TCP message: \"%s\"", ESP8266_ReceivedTcpMessage);
+							ESP8266_DEBUG_PRINTF("Received TCP message: \"%s\"", commIndex);
 #warning "Beautify!"
 #ifdef CONFIG_MODULE_WEBPAGE_ENABLE
-							const char *getString = STRING_FindString(ESP8266_ReceivedTcpMessage, "GET /");
+							const char *getString = STRING_FindString(commIndex, "GET /");
 							if (getString != NULL)
 							{
-								// Received "GET /...", it can be webpage request
-								WebpageHandler_GetRequrest(&ESP8266_ReceivedTcpMessage[STRING_LENGTH("GET /")]);
+								char responseBuffer[ESP8266_TX_BUFFER_LENGTH - ESP8266_TCP_MESSAGEHEADER_LENGTH];
 
-								#warning "Send HTML webpage"
+								// Received "GET /...", it can be webpage request
+								WebpageHandler_GetRequrest((const char *)&getString[STRING_LENGTH("GET /")], responseBuffer);
+
+								// Send HTML webpage
+								ESP8266_RequestSendTcpMessage(responseBuffer);
 							}
 							else
 							{
 #endif
+								// TODO: Use the global buffer immediately?
 								// Received ~telnet command
 								char responseBuffer[ESP8266_TCP_MESSAGE_MAX_LENGTH];
 
 								// Execute the command
-								CmdH_ExecuteCommand(ESP8266_ReceivedTcpMessage, responseBuffer, ESP8266_TCP_MESSAGE_MAX_LENGTH);
+								CmdH_ExecuteCommand(commIndex, responseBuffer, ESP8266_TCP_MESSAGE_MAX_LENGTH);
 
 								ESP8266_RequestSendTcpMessage(responseBuffer);
 #ifdef CONFIG_MODULE_WEBPAGE_ENABLE
@@ -1528,14 +1541,27 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 		else if (receivedMessageLength < 6)
 		{
 			// Received too small message
-			ESP8266_DEBUG_PRINTF("Received too small message: \"%s\"", (const char *)receiveBuffer);
+			ESP8266_DEBUG_PRINTF("Received too small message, wait more: \"%s\"", (const char *)receiveBuffer);
 			//ESP8266_RxBuffer_ReadCnt - do not clear
 		}
 		else
 		{
 			// Received unknown message
-			ESP8266_DEBUG_PRINTF("Received unknown message: \"%s\"", (const char *)receiveBuffer);
+			ESP8266_DEBUG_PRINTF("Received unknown message, wait more: \"%s\"", (const char *)receiveBuffer);
 			//ESP8266_RxBuffer_ReadCnt - do not clear
+
+#warning "Beautify this, this code was at above!"
+			const char *getString = STRING_FindString(receiveBuffer, "GET /");
+			if (getString != NULL)
+			{
+				char responseBuffer[ESP8266_TX_BUFFER_LENGTH - ESP8266_TCP_MESSAGEHEADER_LENGTH];
+
+				// Received "GET /...", it can be webpage request
+				WebpageHandler_GetRequrest((const char *)&getString[STRING_LENGTH("GET /")], responseBuffer);
+
+				// Send HTML webpage
+				ESP8266_RequestSendTcpMessage(responseBuffer);
+			}
 		}
 
 

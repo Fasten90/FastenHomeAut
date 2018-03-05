@@ -63,8 +63,7 @@ extern DebugRecord_t DebugTasks[];
  */
 void Debug_Print(Debug_t debugTask, const char *msg)
 {
-	// Check DebugTasks list size
-
+	ASSERT(MEM_IN_FLASH_OR_RAM(msg, 0));
 	if ((debugTask >= Debug_Count) || (msg == NULL))
 		return;
 
@@ -107,6 +106,7 @@ void Debug_Print(Debug_t debugTask, const char *msg)
 void Debug_Printf(Debug_t debugTask, const char *format, ...)
 {
 	// Check DebugTasks list size
+	ASSERT(MEM_IN_FLASH_OR_RAM(format, 0));
 
 	if ((debugTask >= Debug_Count) || (format == NULL))
 		return;
@@ -139,7 +139,7 @@ void Debug_Printf(Debug_t debugTask, const char *format, ...)
 
 		va_list ap;									// argument pointer
 		va_start(ap, format); 						// ap on arg
-		string_printf(txBuffer, format, ap);		// Separate and process
+		string_printf_safe(txBuffer, DEBUGUART_TX_BUFFER_SIZE-1, format, ap);		// Separate and process
 		va_end(ap);						 			// Cleaning after end
 
 #ifdef CONFIG_DEBUG_MODE
