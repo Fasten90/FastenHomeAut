@@ -221,6 +221,9 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_Start(const char *message);
 static size_t ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void);
 
 static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t receivedMessageLength);
+#ifdef CONFIG_MODULE_WEBPAGE_ENABLE
+static bool ESP8266_SearchGetRequest(const char *recvMsg);
+#endif
 
 
 
@@ -569,15 +572,55 @@ static size_t ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void)
 
 
 
-/*
-size_t ESP8266_SendTcpMessageBlocked(const char *msg)
+#ifdef NOT_USED
+/**
+ * \brief	Start send TCP message with blocked
+ */
+bool ESP8266_StartSendTcpMessageBlocked(size_t length)
 {
-	ESP8266_SendTcpMessageNonBlockingMode_Start(msg);
+	/*
+	 * Send data
+	 * AT+CIPSEND
+	 * 1) single connection(+CIPMUX=0) AT+CIPSEND=<length>;
+	 * 2) multiple connection (+CIPMUX=1) AT+CIPSEND= <id>,<length>
+	 *
+	 * AT+CIPSEND=4,18
+	 * 18 byte to send: GET / HTTP/1.0\r\n\r\n
+	 *
+	 * Response:
+	 * 	SEND OK
+	 */
 
-	ESP8266_SendTcpMessageNonBlockingMode_SendMessage();
+	char buffer[25]; // For "AT+CIPSEND=0,40\r\n"
 
-	ESP8266_TcpSendIsStarted_Flag = false;
-}*/
+	// Send ~ "AT+CIPSEND=0,40\r\n"
+	usprintf(buffer, "AT+CIPSEND=0,%d\r\n", length);
+	ESP8266_SendString(buffer);
+
+	uint8_t timeout = 200;
+	bool sendIsEnable = false;
+	while (timeout > 0)
+	{
+		char recvMsg[5];
+		uint16_t recvLength = CircularBuffer_GetString(ESP8266_Uart.rx, recvMsg, 5);
+		if (recvLength > 0)
+		{
+			if (!StrCmpFirst("> ", (const char *)recvMsg))
+			{
+				sendIsEnable = true;
+				CircularBuffer_DropCharacters(ESP8266_Uart.rx, recvLength);
+				break;
+			}
+		}
+
+		// Wait
+		timeout--;
+		DelayMs(1);
+	}
+
+	return sendIsEnable;
+}
+#endif
 
 
 
@@ -1478,16 +1521,10 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 							ESP8266_DEBUG_PRINTF("Received TCP message: \"%s\"", commIndex);
 #warning "Beautify!"
 #ifdef CONFIG_MODULE_WEBPAGE_ENABLE
-							const char *getString = STRING_FindString(commIndex, "GET /");
-							if (getString != NULL)
+							if (ESP8266_SearchGetRequest(commIndex))
 							{
-								char responseBuffer[ESP8266_TX_BUFFER_LENGTH - ESP8266_TCP_MESSAGEHEADER_LENGTH];
-
-								// Received "GET /...", it can be webpage request
-								WebpageHandler_GetRequrest((const char *)&getString[STRING_LENGTH("GET /")], responseBuffer);
-
-								// Send HTML webpage
-								ESP8266_RequestSendTcpMessage(responseBuffer);
+								// Found, clear buffer
+								ESP8266_ClearReceive(true, 0);
 							}
 							else
 							{
@@ -1547,21 +1584,21 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 		else
 		{
 			// Received unknown message
-			ESP8266_DEBUG_PRINTF("Received unknown message, wait more: \"%s\"", (const char *)receiveBuffer);
+			//ESP8266_DEBUG_PRINTF("Received unknown message, wait more: \"%s\"", (const char *)receiveBuffer);
 			//ESP8266_RxBuffer_ReadCnt - do not clear
-
-#warning "Beautify this, this code was at above!"
-			const char *getString = STRING_FindString(receiveBuffer, "GET /");
-			if (getString != NULL)
+	#ifdef CONFIG_MODULE_WEBPAGE_ENABLE
+			if (ESP8266_SearchGetRequest(receiveBuffer))
 			{
-				char responseBuffer[ESP8266_TX_BUFFER_LENGTH - ESP8266_TCP_MESSAGEHEADER_LENGTH];
-
-				// Received "GET /...", it can be webpage request
-				WebpageHandler_GetRequrest((const char *)&getString[STRING_LENGTH("GET /")], responseBuffer);
-
-				// Send HTML webpage
-				ESP8266_RequestSendTcpMessage(responseBuffer);
+				// Found, clear buffer
+				ESP8266_ClearReceive(true, 0);
 			}
+			else
+			{
+	#endif
+				ESP8266_DEBUG_PRINTF("Received unknown message, wait more: \"%s\"", (const char *)receiveBuffer);
+	#ifdef CONFIG_MODULE_WEBPAGE_ENABLE
+			}
+	#endif
 		}
 
 
@@ -1602,6 +1639,30 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 		 */
 	}
 }
+
+
+
+#ifdef CONFIG_MODULE_WEBPAGE_ENABLE
+static bool ESP8266_SearchGetRequest(const char *recvMsg)
+{
+	bool isFound = false;
+	const char *getString = STRING_FindString(recvMsg, "GET /");
+	if (getString != NULL)
+	{
+		char responseBuffer[ESP8266_TX_BUFFER_LENGTH - ESP8266_TCP_MESSAGEHEADER_LENGTH];
+
+		// Received "GET /...", it can be webpage request
+		WebpageHandler_GetRequrest((const char *)&getString[STRING_LENGTH("GET /")], responseBuffer);
+
+		// Send HTML webpage
+		ESP8266_RequestSendTcpMessage(responseBuffer);
+
+		isFound = true;
+	}
+
+	return isFound;
+}
+#endif
 
 
 

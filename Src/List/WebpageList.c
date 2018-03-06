@@ -16,8 +16,11 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
+#include "compiler.h"
 #include "WebpageList.h"
 
+
+#ifdef CONFIG_MODULE_WEBPAGE_ENABLE
 
 
 /*------------------------------------------------------------------------------
@@ -31,9 +34,12 @@ const char WebpageList_IndexHtml[] =
 "</title>" \
 "</head>" \
 "<body>" \
-"<p>Welcome message</p>" \
+"<h1 align=\"center\">Welcome message</h2>" \
+"<a href=\"http://www.fasten.e5tv.hu\">Fasten webpage</a>" \
 "</body>" \
 "</html>";
+
+const size_t WebpageList_IndexHtml_length = sizeof(WebpageList_IndexHtml) - 1;
 
 
 
@@ -63,4 +69,4 @@ void WebpageList_Init(void)
 }
 
 
-
+#endif	/* #ifdef CONFIG_MODULE_WEBPAGE_ENABLE */

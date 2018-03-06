@@ -140,12 +140,9 @@
 #endif
 
 
-
-
 ///< Max messages num in queue
 #define ESP8266_RECEIVEMESSAGE_QUEUE_LENGTH		( 5 )
 #define ESP8266_SENDMESSAGE_QUEUE_LENGTH		( 5 )
-
 
 
 #define ESP8266_LED_OK()		LED_GREEN_ON();	\
@@ -217,9 +214,10 @@ void ESP8266_StatusMachine(void);
 size_t ESP8266_SendString(const char *msg);
 
 size_t ESP8266_RequestSendTcpMessage(const char *msg);
-size_t ESP8266_SendTcpMessageBlocked(const char *msg);
+bool ESP8266_StartSendTcpMessageBlocked(size_t length);
 
 size_t ESP8266_PrintIpAddress(char * str);
+
 
 
 

@@ -31,6 +31,7 @@
  *----------------------------------------------------------------------------*/
 
 extern const char WebpageList_IndexHtml[];
+extern size_t WebpageList_IndexHtml_length;
 
 
 
@@ -44,7 +45,10 @@ extern const char WebpageList_IndexHtml[];
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
-static void WebpageHandler_SendResponse(char *resp, const char *webpage);
+#if (WEBPAGEHANDLER_MSG_COPY == 1)
+static size_t WebpageHandler_SendResponse(char *resp, const char *webpage, const size_t webpageLength);
+static size_t WebpageHandler_SendHeader(char *resp, size_t webpageLength);
+#endif
 
 
 
@@ -73,35 +77,58 @@ void WebpageHandler_GetRequrest(const char *request, char *resp)
 	if (STRING_FindString(request, "index.html") != NULL)
 	{
 		/* Found index.html */
-		WebpageHandler_SendResponse(resp, WebpageList_IndexHtml);
+		WebpageHandler_SendResponse(resp, WebpageList_IndexHtml, WebpageList_IndexHtml_length);
 	}
-
-	Debug_Print(Debug_WebPage, "Received get request");
+	else
+	{
+		Debug_Print(Debug_WebPage, "Received wrong get request");
+	}
 }
 
 
 
-static void WebpageHandler_SendResponse(char *resp, const char *webpage)
+#if (WEBPAGEHANDLER_MSG_COPY == 1)
+static size_t WebpageHandler_SendResponse(char *resp, const char *webpage, const size_t webpageLength)
 {
 	size_t length = 0;
-	// TODO: Do it well
-#warning "Drop not necessary elements"
-	length += StrCpy(&resp[length],
+
+	length += WebpageHandler_SendHeader(&resp[length], webpageLength);
+	length += StrCpy(&resp[length], webpage);
+
+	Debug_Printf(Debug_WebPage, "Received webpage request, length: %d", length);
+
+	return length;
+}
+
+
+
+static size_t WebpageHandler_SendHeader(char *resp, size_t webpageLength)
+{
+	// TODO: Drop not necessary elements
+	return usprintf(resp,
 			"HTTP/1.1 200 OK\r\n"
-			"Date: Sun, 18 Oct 2009 08:56:53 GMT\r\n"
-			"Server: Apache/2.2.14 (Win32)\r\n"
+			//"Date: Sun, 18 Oct 2009 08:56:53 GMT\r\n"
+			//"Server: Apache/2.2.14 (Win32)\r\n"
 			//"Last-Modified: Sat, 20 Nov 2004 07:16:26 GMT\r\n"
 			//"ETag: \"10000000565a5-2c-3e94b66c2e680\"\r\n"
 			"Accept-Ranges: bytes\r\n"
-			"Content-Length: 74\r\n"
+			"Content-Length: %d\r\n"
 			"Connection: close\r\n"
 			"Content-Type: text/html\r\n"
-			"\r\n"
+			"\r\n",
 			//"X-Pad: avoid browser bug\r\n"
+			webpageLength
 	);
-	length += StrCpy(&resp[length], webpage);
+}
+#else /* #if (WEBPAGEHANDLER_MSG_COPY == 1) */
+
+
+static void WebpageHandler_SendResponse(char *resp, const char *webpage, const size_t webpageLength)
+{
 
 }
+
+#endif
 
 
 #endif	/* #ifdef CONFIG_MODULE_WEBPAGE_ENABLE */
