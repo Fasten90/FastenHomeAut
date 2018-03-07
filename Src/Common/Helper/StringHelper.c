@@ -1706,6 +1706,77 @@ const char * STRING_FindString(const char *str, const char *findString)
  * \note	Be careful, pointers to original (source) string
  * 			source string need to be changeable!
  */
+uint8_t STRING_Splitter(char *source, char *delimiters, char **separated, uint8_t paramLimit)
+{
+	size_t i;
+	size_t j;
+	uint8_t parameters = 0;
+
+	// Check parameters
+	if ((source == NULL) || (separated == NULL) || (paramLimit == 0) || (delimiters == NULL))
+	{
+		return 0;			// Fail parameters
+	}
+
+	separated[0] = NULL;	// Make empty
+
+	// Split
+	j = 0;
+	for (i = 0; source[i]; i++)
+	{
+		// There is delimiter?
+		uint8_t k;
+		for (k=0; delimiters[k] != '\0'; k++)
+		{
+			if ((source[i] == delimiters[k]) || (source[i+1] == '\0'))
+			{
+				// Found delimiter or end character
+				if (source[i] == delimiters[k])
+				{
+					source[i] = '\0';
+				}
+				if (j == 0)
+				{
+					// one length parameter // TODO: Do with more beautiful
+					separated[parameters] = &source[i];
+				}
+				parameters++;
+				j = 0;
+				if (parameters >= paramLimit)
+				{
+					// maximal tokens found
+					break;
+				}
+				else
+				{
+					separated[parameters] = NULL;
+				}
+			}
+			else
+			{
+				// Not ended, count
+				if (j == 0)
+				{
+					separated[parameters] = &source[i];		// New string found
+				}
+				j++;
+			}
+		}
+	}
+
+	return parameters;
+}
+
+
+
+#if 0
+/**
+ * \brief	Separate / split string to small strings by delimiter char
+ * 			like strtok() (but not match)
+ * 			E.g.: source: "192.168.0.1", delimiter: '.' --> separated[0] -> "192", sepparated[1] -> "168", ...
+ * \note	Be careful, pointers to original (source) string
+ * 			source string need to be changeable!
+ */
 uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint8_t paramLimit)
 {
 	size_t i;
@@ -1762,6 +1833,7 @@ uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint
 
 	return parameters;
 }
+#endif
 
 
 

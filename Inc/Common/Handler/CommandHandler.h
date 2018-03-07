@@ -34,7 +34,8 @@
 #define CMDH_COMMAND_ARG_MAX_COUNT			(3)
 #define CMDH_COMMAND_ARG_MAX_NUM_BITS		(0x0F)	// 0b1111 <-- warning: "binary constants are a GCC extension
 
-#define CMDH_COMMAND_DELIMITER_CHAR			((char)' ')
+//#define CMDH_COMMAND_DELIMITER_CHAR			((char)' ')
+#define CMDH_COMMAND_DELIMITER_CHAR			((const char *)" ")
 
 
 

@@ -87,7 +87,7 @@ bool Network_ConvertIpAddressStringToIP(char *message, Network_IP_t *address)
 
 	char *separated[4];
 
-	if (STRING_Splitter(message, '.',  separated, 4) == 4)
+	if (STRING_Splitter(message, ".",  separated, 4) == 4)
 	{
 		// Successful separated
 		// Convert IP string to number
