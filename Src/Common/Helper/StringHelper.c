@@ -1706,14 +1706,16 @@ const char * STRING_FindString(const char *str, const char *findString)
  * \note	Be careful, pointers to original (source) string
  * 			source string need to be changeable!
  */
-uint8_t STRING_Splitter(char *source, char *delimiters, char **separated, uint8_t paramLimit)
+uint8_t STRING_Splitter(char *source, const char *delimiters, char **separated, uint8_t paramLimit)
 {
 	size_t i;
 	size_t j;
 	uint8_t parameters = 0;
 
+	// TODO: Make more beautiful!
+
 	// Check parameters
-	if ((source == NULL) || (separated == NULL) || (paramLimit == 0) || (delimiters == NULL))
+	if ((source == NULL) || (separated == NULL) || (delimiters == NULL) || (paramLimit == 0))
 	{
 		return 0;			// Fail parameters
 	}
@@ -1726,7 +1728,8 @@ uint8_t STRING_Splitter(char *source, char *delimiters, char **separated, uint8_
 	{
 		// There is delimiter?
 		uint8_t k;
-		for (k=0; delimiters[k] != '\0'; k++)
+		bool isFound = false;
+		for (k = 0; delimiters[k] != '\0'; k++)
 		{
 			if ((source[i] == delimiters[k]) || (source[i+1] == '\0'))
 			{
@@ -1742,25 +1745,31 @@ uint8_t STRING_Splitter(char *source, char *delimiters, char **separated, uint8_
 				}
 				parameters++;
 				j = 0;
-				if (parameters >= paramLimit)
-				{
-					// maximal tokens found
-					break;
-				}
-				else
-				{
-					separated[parameters] = NULL;
-				}
+				isFound = true;
+				break;
+			}
+		}
+
+		if (isFound)
+		{
+			if (parameters >= paramLimit)
+			{
+				// maximal tokens found
+				break;
 			}
 			else
 			{
-				// Not ended, count
-				if (j == 0)
-				{
-					separated[parameters] = &source[i];		// New string found
-				}
-				j++;
+				separated[parameters] = NULL;
 			}
+		}
+		else
+		{
+			// Not ended, count
+			if (j == 0)
+			{
+				separated[parameters] = &source[i];		// New string found
+			}
+			j++;
 		}
 	}
 
