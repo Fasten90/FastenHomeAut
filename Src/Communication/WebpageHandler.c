@@ -82,11 +82,13 @@ void WebpageHandler_GetRequrest(const char *request, char *resp)
 	else if (STRING_FindString(request, "/favicon.ico") != NULL)
 	{
 		// TODO: Send favico?
-
+		StrCpy(resp, "Favico");
 	}
 	else
 	{
+		// TODO: 404 page
 		Debug_Print(Debug_WebPage, "Received wrong get request");
+		StrCpy(resp, "Empty webpage");
 	}
 }
 
