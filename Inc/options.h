@@ -95,14 +95,14 @@
 		#define CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
 		#define CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
 		// Display: Snake game
-		#define CONFIG_FUNCTION_GAME_SNAKE
+		//#define CONFIG_FUNCTION_GAME_SNAKE
 		// Display: Input
 		#define CONFIG_FUNCTION_DISPLAY_INPUT
 		// Display: Show screen
 		#define CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
 
 		// Display: Scrolling menu (Use only for longer then 3 menu)
-		#define CONFIG_FUNCTION_DISPLAY_MENU_SCROLLING
+		//#define CONFIG_FUNCTION_DISPLAY_MENU_SCROLLING
 	#endif
 
 
@@ -683,10 +683,16 @@
 		#endif
 	#endif
 
-	#define CONFIG_ESP8266_TCP_SERVER_PORT			(2000)
-	#define CONFIG_ESP8266_TCP_SERVER_PORT_STRING	"2000"
+	#define CONFIG_ESP8266_TCP_SERVER_PORT						(2000)
+	#define CONFIG_ESP8266_TCP_SERVER_PORT_STRING				"2000"
 
+	///< Webpage enable
 	#define CONFIG_MODULE_WEBPAGE_ENABLE
+	#ifdef CONFIG_MODULE_WEBPAGE_ENABLE
+		#define CONFIG_ESP8266_TCP_HTTP_PORT					(80)
+		#define CONFIG_ESP8266_TCP_HTTP_PORT_STRING				"80"
+	#endif
+
 #endif	// #ifdef CONFIG_MODULE_ESP8266_ENABLE
 
 

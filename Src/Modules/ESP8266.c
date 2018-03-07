@@ -83,6 +83,10 @@ typedef enum
 #if (CONFIG_ESP8266_IS_TCP_SERVER == 1)
 	Esp8266Status_StartTcpServer,
 	Esp8266Status_StartTcpServerCheckResponse,
+	#ifdef CONFIG_MODULE_WEBPAGE_ENABLE
+	Esp8266Status_StartTcpHttpServer,
+	Esp8266Status_StartTcpHttpServerCheckResponse,
+	#endif
 #else
 	Esp8266Status_ConnectTcpServer,
 	Esp8266Status_ConnectTcpServerCheckResponse,
@@ -221,6 +225,8 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_Start(const char *message);
 static size_t ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void);
 
 static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t receivedMessageLength);
+static bool ESP8266_ProcessReceivedTcpMessage(char *receiveBuffer);
+
 #ifdef CONFIG_MODULE_WEBPAGE_ENABLE
 static bool ESP8266_SearchGetRequest(const char *recvMsg);
 #endif
@@ -761,7 +767,8 @@ void ESP8266_StatusMachine(void)
 
 		case Esp8266Status_ConfigCwModeCheckResponse:
 			if ((!StrCmpFirst("OK\r\n", (const char *)receiveBuffer))
-				|| (!StrCmpFirst("no change\r\n", (const char *)receiveBuffer)))
+				|| (!StrCmpFirst("no change\r\n", (const char *)receiveBuffer))
+				|| (!StrCmpFirst("no chae\r\n", (const char *)receiveBuffer)))	// Note: ESP8266 fault ?
 			{
 				// "OK"
 				ESP8266_LED_OK();
@@ -1130,7 +1137,7 @@ void ESP8266_StatusMachine(void)
 			 * Set as server/listen()
 			 * AT+CIPSERVER
 			 *
-			 * Syntax: AT+CIPSERVER=<id>,<port>
+			 * Syntax: AT+CIPSERVER=<mode>,<port>
 			 * E.g.:   AT+CIPSERVER=1,2000
 			 *
 			 * Response:
@@ -1138,6 +1145,7 @@ void ESP8266_StatusMachine(void)
 			 * 	 Linked
 			 */
 			ESP8266_StartReceive();
+			// E.g. "AT+CIPSERVER=1,2000"
 			ESP8266_SendString("AT+CIPSERVER=1," CONFIG_ESP8266_TCP_SERVER_PORT_STRING "\r\n");
 			ESP8266StatusMachine++;
 			ESP8266_DEBUG_PRINT("Start server");
@@ -1171,6 +1179,58 @@ void ESP8266_StatusMachine(void)
 			}
 			ESP8266_ClearReceive(true, 0);
 			break;
+	#ifdef CONFIG_MODULE_WEBPAGE_ENABLE
+		case Esp8266Status_StartTcpHttpServer:
+			/*
+			 * Set as server/listen()
+			 * AT+CIPSERVER
+			 *
+			 * Syntax: AT+CIPSERVER=<mode>,<port>
+			 * E.g.:   AT+CIPSERVER=1,2000
+			 * mode:   0 - close
+			 *         1 - open
+			 *
+			 * Response:
+			 * 	 OK
+			 * 	 Linked
+			 */
+			ESP8266_StartReceive();
+			// E.g. "AT+CIPSERVER=1,2000"
+			ESP8266_SendString("AT+CIPSERVER=1," CONFIG_ESP8266_TCP_HTTP_PORT_STRING "\r\n");
+			ESP8266StatusMachine++;
+			ESP8266_DEBUG_PRINT("Start server");
+			break;
+
+		case Esp8266Status_StartTcpHttpServerCheckResponse:
+			// Check CIPSERVER response
+			if (!StrCmpFirst("\r\nOK\r\n", (const char *)receiveBuffer)
+				|| !StrCmpFirst("no change\r\n", (const char *)receiveBuffer))
+			{
+				// OK
+				ESP8266_LED_OK();
+				ESP8266StatusMachine++;
+				ESP8266_DEBUG_PRINT("Successful started server");
+				// Disable task, because next state is wait client
+				//TaskHandler_DisableTask(Task_Esp8266);
+				ESP8266_StartReceive();
+			}
+			else if (!StrCmpFirst("ERROR", (const char *)receiveBuffer))
+			{
+				// ERROR
+				ESP8266_LED_FAIL();
+				ESP8266StatusMachine = Esp8266Status_StartTcpHttpServer;
+				ESP8266_DEBUG_PRINT("Failed started server (ERROR)");
+			}
+			else
+			{
+				ESP8266_LED_FAIL();
+				ESP8266StatusMachine = Esp8266Status_StartTcpHttpServer;
+				ESP8266_DEBUG_PRINT("Failed started server");
+			}
+			ESP8266_ClearReceive(true, 0);
+			break;
+	#endif	// #ifdef CONFIG_MODULE_WEBPAGE_ENABLE
+
 #else	// End of #if CONFIG_ESP8266_IS_TCP_SERVER == 1
 //  #if CONFIG_ESP8266_IS_TCP_SERVER == 0
 
@@ -1194,13 +1254,13 @@ void ESP8266_StatusMachine(void)
 #if CONFIG_ESP8266_CONNECT_DYNAMIC == 1
 			char buffer[60];
 			uint8_t length = 0;
-			length += usprintf(buffer, "AT+CIPSTART=0,\"TCP\",\"");
+			length += usprintf(buffer, "AT+CIPSTART=" CONFIG_ESP8266_TCP_CLIENT_CONNECTION_ID ",\"TCP\",\"");
 			length += Network_PrintIp(&buffer[length], (Network_IP_t *)&ESP8266_ServerAddress);
 			length += usprintf(&buffer[length], "\",%d\r\n", ESP8266_ServerPort);
 			ESP8266_SendString(buffer);
 #else
 			// Note: 0. id
-			ESP8266_SendString("AT+CIPSTART=0,\"TCP\",\""
+			ESP8266_SendString("AT+CIPSTART=" CONFIG_ESP8266_TCP_CLIENT_CONNECTION_ID ",\"TCP\",\""
 					CONFIG_ESP8266_TCP_SERVER_IP_STRING
 					"\","
 					CONFIG_ESP8266_TCP_SERVER_PORT_STRING
@@ -1418,7 +1478,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 			else if (!StrCmpFirst("busy inet...\r\nERROR\r\n", (const char *)receiveBuffer))
 			{
 				// Error...
-				// TODO: What we need to do?
+				// TODO: What we need to do? Reconnection
 				ESP8266_TcpSendBuffer_EnableFlag = true;
 				ESP8266_DEBUG_PRINT("Cannot send TCP message (busy inet...)\"> \"...");
 				ESP8266_ClearReceive(true, 0);
@@ -1486,88 +1546,11 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 #endif
 		else if (!StrCmpFirst("\r\n+IPD,", (const char *)receiveBuffer))
 		{
-			// TODO: "+IPD" is good find
-			// Message form: "\r\n+IPD,1,4:msg3\r\nOK"
-			// Has got finish "\r\n"?
-			// TODO: not check it, only length
-			if (STRING_FindString(
-					(const char *)&receiveBuffer[STRING_LENGTH("\r\n+IPD,") + 1],
-					"\r\n") != NULL)
+			if (ESP8266_ProcessReceivedTcpMessage(receiveBuffer))
 			{
-				// Received good message, with finish "\r\n"
-
-				// TODO: Channel (2 character is skipped:)
-				// "+IPD,1,4:msg3"
-				// Check next parameter:
-				uint8_t length = STRING_LENGTH("\r\n+IPD,0,");
-				// TODO: Use better function
-				char * commIndex = (char *)STRING_FindCharacter((const char *)&receiveBuffer[length], ':');
-				if (commIndex != NULL)
-				{
-					// Has ':'
-					// TODO: scanf
-					uint32_t messageLength;
-					*commIndex = '\0';
-					if (StringToUnsignedDecimalNum((const char *)&receiveBuffer[length], &messageLength))
-					{
-#warning "Modify these codes because STRING_FindString was changed. Should correct these!"
-						if (messageLength <= ESP8266_RX_TCP_MSG_MAX_LENGTH)
-						{
-							// Set position after ':'
-							commIndex += 1;
-
-							// We have message source:
-
-							ESP8266_DEBUG_PRINTF("Received TCP message: \"%s\"", commIndex);
-#warning "Beautify!"
-#ifdef CONFIG_MODULE_WEBPAGE_ENABLE
-							if (ESP8266_SearchGetRequest(commIndex))
-							{
-								// Found, clear buffer
-								ESP8266_ClearReceive(true, 0);
-							}
-							else
-							{
-#endif
-								// TODO: Use the global buffer immediately?
-								// Received ~telnet command
-								char responseBuffer[ESP8266_TCP_MESSAGE_MAX_LENGTH];
-
-								// Execute the command
-								CmdH_ExecuteCommand(commIndex, responseBuffer, ESP8266_TCP_MESSAGE_MAX_LENGTH);
-
-								ESP8266_RequestSendTcpMessage(responseBuffer);
-#ifdef CONFIG_MODULE_WEBPAGE_ENABLE
-							}
-#endif
-
-							ESP8266_ClearReceive(false, length + messageLength + STRING_LENGTH("\r\nOK\r\n"));
-							goodMsgRcv = true;
-							ESP8266_LOG_EVENT(EVENT_RECEIVED_GOOD_TCP_MESSAGE);
-						}
-						else
-						{
-							// Received too large message
-							ESP8266_DEBUG_PRINTF("Received too large TCP message: \"%s\"", receiveBuffer);
-							ESP8266_ClearReceive(true, 0);
-						}
-					}
-					else
-					{
-						ESP8266_DEBUG_PRINT("Received +IPD message with wrong length parameter");
-						//ESP8266_RxBuffer_ReadCnt - do not clear
-					}
-				}
-				else
-				{
-					ESP8266_DEBUG_PRINT("Received +IPD message without ':'");
-					//ESP8266_RxBuffer_ReadCnt - do not clear
-				}
-			}
-			else
-			{
-				// +IPD hasn't got finish "\r\n"
-				ESP8266_DEBUG_PRINTF("Received +IPD message without end:\r\n\"%s\"", (const char *)receiveBuffer);
+				// Successful processed message
+				ESP8266_ClearReceive(true, 0);
+				goodMsgRcv = 0;
 			}
 		}
 		else if (!StrCmpFirst("\r\n", (const char *)receiveBuffer))
@@ -1584,21 +1567,12 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 		else
 		{
 			// Received unknown message
-			//ESP8266_DEBUG_PRINTF("Received unknown message, wait more: \"%s\"", (const char *)receiveBuffer);
+			ESP8266_DEBUG_PRINTF("Received unknown message, wait more: \"%s\"", (const char *)receiveBuffer);
+			// TODO: Delete these!
+			/*size_t processedLength = ESP8266_ProcessReceivedTcpMessage(receiveBuffer);
+			ESP8266_ClearReceive(false, processedLength);*/
+
 			//ESP8266_RxBuffer_ReadCnt - do not clear
-	#ifdef CONFIG_MODULE_WEBPAGE_ENABLE
-			if (ESP8266_SearchGetRequest(receiveBuffer))
-			{
-				// Found, clear buffer
-				ESP8266_ClearReceive(true, 0);
-			}
-			else
-			{
-	#endif
-				ESP8266_DEBUG_PRINTF("Received unknown message, wait more: \"%s\"", (const char *)receiveBuffer);
-	#ifdef CONFIG_MODULE_WEBPAGE_ENABLE
-			}
-	#endif
 		}
 
 
@@ -1638,6 +1612,118 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, uint8_t received
 		 * Do nothing...
 		 */
 	}
+}
+
+
+
+/**
+ * \brief	Process received TCP message
+ * 			Actual message start with: \r\n+IPD,
+ * \retval	Processed (Need drop chars)
+ */
+static bool ESP8266_ProcessReceivedTcpMessage(char *receiveBuffer)
+{
+	bool isOk = false;
+
+	// Message form: "\r\n+IPD,1,4:msg3\r\nOK"
+
+	receiveBuffer += STRING_LENGTH("\r\n+IPD,");
+	// Has got finish "\r\n"?
+	if (STRING_FindString((const char *)receiveBuffer, "\r\n") != NULL)
+	{
+		// Received good message, with finish "\r\n"
+
+		char *splittedTcpMsg[3] = { NULL };
+
+		if (STRING_Splitter(receiveBuffer, ",:\r\n", splittedTcpMsg, 3) == 3)
+		{
+			// Successful split
+
+			uint32_t id;
+			uint32_t messageLength;
+
+			// 0. splitted string is ID
+			if (StringToUnsignedDecimalNum((const char *)splittedTcpMsg[0], &id))
+			{
+				// ID converted successfully
+				if (StringToUnsignedDecimalNum((const char *)splittedTcpMsg[1], &messageLength))
+				{
+					// Message length converted successfully
+
+					if (messageLength <= ESP8266_RX_TCP_MSG_MAX_LENGTH)
+					{
+						// We have message source:
+						ESP8266_DEBUG_PRINTF("Received TCP message: \"%s\"", splittedTcpMsg[2]);
+
+						(void)id;
+
+						// TODO: We need answer in good <id> !
+#ifdef CONFIG_MODULE_WEBPAGE_ENABLE
+						if (ESP8266_SearchGetRequest(splittedTcpMsg[2]))
+						{
+							// Found, clear buffer
+							isOk = true;
+						}
+						else
+						{
+#endif
+							// TODO: Use the global buffer immediately?
+							// Received ~telnet command
+							char responseBuffer[ESP8266_TCP_MESSAGE_MAX_LENGTH];
+
+							// Execute the command
+							CmdH_ExecuteCommand(splittedTcpMsg[2], responseBuffer, ESP8266_TCP_MESSAGE_MAX_LENGTH);
+
+							ESP8266_RequestSendTcpMessage(responseBuffer);
+
+							isOk = true;
+#ifdef CONFIG_MODULE_WEBPAGE_ENABLE
+						}
+#endif
+
+						ESP8266_ClearReceive(false,
+								STRING_LENGTH("\r\n+IPD,")
+								+ StringLength(splittedTcpMsg[0])
+								+ 1
+								+ StringLength(splittedTcpMsg[1])
+								+ 1
+								+ StringLength(splittedTcpMsg[2])
+								+ 1
+								+ STRING_LENGTH("\r\nOK"));
+
+						ESP8266_LOG_EVENT(EVENT_RECEIVED_GOOD_TCP_MESSAGE);
+					}
+					else
+					{
+						// Received too large message
+						ESP8266_DEBUG_PRINTF("Received too large TCP message: \"%s\"", receiveBuffer);
+						ESP8266_ClearReceive(true, 0);
+					}
+				}
+				else
+				{
+					ESP8266_DEBUG_PRINT("Error: TCP message has wrong length parameter");
+				}
+			}
+			else
+			{
+				ESP8266_DEBUG_PRINT("Error: TCP message has wrong ID parameter");
+			}
+		}
+		else
+		{
+			// Failed split
+			ESP8266_DEBUG_PRINT("Received +IPD message split fail!");
+			//ESP8266_RxBuffer_ReadCnt - do not clear
+		}
+	}
+	else
+	{
+		// +IPD hasn't got finish "\r\n"
+		ESP8266_DEBUG_PRINTF("Received +IPD message without end:\r\n\"%s\"", (const char *)receiveBuffer);
+	}
+
+	return isOk;
 }
 
 
