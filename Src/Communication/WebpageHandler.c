@@ -79,6 +79,11 @@ void WebpageHandler_GetRequrest(const char *request, char *resp)
 		/* Found index.html */
 		WebpageHandler_SendResponse(resp, WebpageList_IndexHtml, WebpageList_IndexHtml_length);
 	}
+	else if (STRING_FindString(request, "/favicon.ico") != NULL)
+	{
+		// TODO: Send favico?
+
+	}
 	else
 	{
 		Debug_Print(Debug_WebPage, "Received wrong get request");
