@@ -33,6 +33,9 @@
 extern const char WebpageList_IndexHtml[];
 extern size_t WebpageList_IndexHtml_length;
 
+extern const char WebpageList_FaviconIco[];
+extern const size_t WebpageList_FaviconIco_length;
+
 
 
 /*------------------------------------------------------------------------------
@@ -72,17 +75,35 @@ void WebpageHandler_GetRequrest(const char *request, char *resp)
 	(void)request;
 
 	/* TODO: Step on the webpage list */
-
+	/* TODO: Make automatized this */
 	/* TODO: These are test codes, refactor and make securable! */
 	if (STRING_FindString(request, "index.html") != NULL)
 	{
 		/* Found index.html */
 		WebpageHandler_SendResponse(resp, WebpageList_IndexHtml, WebpageList_IndexHtml_length);
 	}
-	else if (STRING_FindString(request, "/favicon.ico") != NULL)
+	else if (STRING_FindString(request, "favicon.ico") != NULL)
 	{
-		// TODO: Send favico?
-		StrCpy(resp, "Favico");
+		// Send favico
+		//WebpageHandler_SendResponse(resp, WebpageList_FaviconIco, WebpageList_FaviconIco_length);
+		// TODO: Refactor
+		size_t length = usprintf(resp,
+				"HTTP/1.1 200 OK\r\n"
+				//"Date: Sun, 18 Oct 2009 08:56:53 GMT\r\n"
+				//"Server: Apache/2.2.14 (Win32)\r\n"
+				//"Last-Modified: Sat, 20 Nov 2004 07:16:26 GMT\r\n"
+				//"ETag: \"10000000565a5-2c-3e94b66c2e680\"\r\n"
+				"Accept-Ranges: bytes\r\n"
+				"Content-Length: %d\r\n"
+				"Connection: close\r\n"
+				"Content-Type: image/x-icon\r\n"
+				"\r\n",
+				//"X-Pad: avoid browser bug\r\n"
+				WebpageList_FaviconIco_length);
+
+		length += StrCpy(&resp[length], WebpageList_FaviconIco);
+
+		Debug_Print(Debug_WebPage, "Sent favicon");
 	}
 	else
 	{
