@@ -29,6 +29,8 @@ def convertBinDatasToHex(bindata):
     hexstring = "{ "
 
     bindatalength = len(bindata)
+    print("Binary data length: " + str(bindatalength))
+    
     for i in range(0, bindatalength):
         byte = bindata[i]
         hexstring += putByteToCode(byte)
@@ -38,8 +40,9 @@ def convertBinDatasToHex(bindata):
         if (i % 8) == 7:
             hexstring += "\n"
 
-    hexstring += " };\n"
-    hexstring += "/* End of binary file */"
+    hexstring += "\n"
+    hexstring += "};\n"
+    hexstring += "/* End of binary file */\n"
 
     return hexstring
 

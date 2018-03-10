@@ -52,13 +52,29 @@ def writeDatasToFile(convertedfiles, filepath):
     # TODO: Start elements:
     
     for convertelement in convertedfiles:
-        # write: "const char Webpage_<name>[] =
-        filecontain += "const char Webpage_"
+        # write "///< <name> file:"
+        filecontain += "///< "
         filecontain += convertelement["name"]
-        filecontain += "[] = "
+        filecontain += " file:\n"
+        
+        # write: "const char WebpageList_<name>[] =
+        filecontain += "const char WebpageList_"
+        filecontain += convertelement["name"]
+        filecontain += "[] =\n"
         
         # write: element (string or hexs)
         filecontain += convertelement["contain"]
+        
+        filecontain += "\n\n"
+        
+        # write length variable
+        # write: const size_t WebpageList_<name>_length = sizeof(WebpageList_<name>);
+        filecontain += "const size_t WebpageList_"
+        filecontain += convertelement["name"]
+        filecontain += "_length = sizeof(WebpageList_"
+        filecontain += convertelement["name"]
+        filecontain += ");\n"
+        
         filecontain += "\n\n"
         
     # TODO: Add end elements
