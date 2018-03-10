@@ -86,3 +86,6 @@ $RECYCLE.BIN/
 *.list
 *.map
 /DoxyDocs/
+
+# Python
+*.pyc
