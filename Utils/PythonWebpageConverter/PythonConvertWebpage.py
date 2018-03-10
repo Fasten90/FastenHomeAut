@@ -21,7 +21,9 @@ def ConvertWebpage(webpagedirectory="Webpage", destination="Dest", webpage_c_fil
     
     for dir_item in dirlist:
         webpagelement = {}
-        webpagelement["name"] = dir_item.split(".", 1)[0]
+        webpagelement["fullname"] = dir_item
+        webpagelement["shortname"] = dir_item.split(".", 1)[0]
+        webpagelement["type"] = ""
         filepath = webpagedirectory + "/" + dir_item
 
         if dir_item.endswith(".html"):
@@ -29,11 +31,13 @@ def ConvertWebpage(webpagedirectory="Webpage", destination="Dest", webpage_c_fil
             #htmlfile = open(dir_item, 'rt')
             print("HTML file name found for convert: " + dir_item)
             webpagelement["contain"] = PythonHtmlToCodeMinimalist.convertOriginalHtmlfileToMinimalistHtmlFile(filepath)
+            webpagelement["type"] = "text/html"
             convertedfiles.append(webpagelement)
         elif dir_item.endswith(".ico"):
             # Convert this ico file (binary9
             print("Binary file name found for convert: " + dir_item)
             webpagelement["contain"] = PythonBinaryToCodeHex.convertBinaryFileToHexFile(filepath)
+            webpagelement["type"] = "image/x-icon"
             convertedfiles.append(webpagelement)
             
 
@@ -46,52 +50,69 @@ def ConvertWebpage(webpagedirectory="Webpage", destination="Dest", webpage_c_fil
 
 
 def writeDatasToFile(convertedfiles, destfilepath, startfilepath, endfilepath):
-    
+
     filecontain = ""
-    
+
     # TODO: Start elements:
-    
+
     for convertelement in convertedfiles:
         # write "///< <name> file:"
         filecontain += "///< "
-        filecontain += convertelement["name"]
+        filecontain += convertelement["fullname"]
         filecontain += " file:\n"
-        
+
         # write: "const char WebpageList_<name>[] =
-        filecontain += "const char WebpageList_"
-        filecontain += convertelement["name"]
+        filecontain += "static const char WebpageList_"
+        filecontain += convertelement["shortname"]
         filecontain += "[] =\n"
-        
+
         # write: element (string or hexs)
         filecontain += convertelement["contain"]
-        
+
         filecontain += "\n\n"
-        
-        # write length variable
-        # write: const size_t WebpageList_<name>_length = sizeof(WebpageList_<name>);
-        filecontain += "const size_t WebpageList_"
-        filecontain += convertelement["name"]
-        filecontain += "_length = sizeof(WebpageList_"
-        filecontain += convertelement["name"]
-        filecontain += ");\n"
-        
-        filecontain += "\n\n"
-        
-    # TODO: Add end elements
-    
+
+
+    # "WebpageInformation_t WebpageList[] = { ... }"
+    filecontain += "///< Webpage List\n"
+    filecontain += "const WebpageInformation_t WebpageList[] =\n"
+    filecontain += "{\n"
+    for convertelement in convertedfiles:
+        # One webpage structure
+        #const char * webpageName;
+        #const char * webpageContain;
+        #const size_t webpageLength;
+        #const char * webpageType;
+        filecontain += "    {\n"
+        filecontain += "        .webpageName    = " + "\"" + convertelement["fullname"] + "\",\n"
+        filecontain += "        .webpageContain = " + "WebpageList_" + convertelement["shortname"] + ",\n"
+        filecontain += "        .webpageLength  = " + "sizeof(WebpageList_" + convertelement["shortname"] + "),\n"  
+        filecontain += "        .webpageType    = " + "\"" + convertelement["type"]  + "\"\n"
+        filecontain += "    },\n"
+
+    # End of Information
+    filecontain += "};\n"
+    filecontain += "\n\n"
+
+
+    # NUM_OF(WebpageList)
+    filecontain += "///< Webpage list count\n"
+    filecontain += "const uint8_t WebpageList_Count = NUM_OF(WebpageList);\n"
+    filecontain += "\n\n"
+
+
      # Read begin of destfile
     startfilepath = open(startfilepath, 'rt')
     startfilecontain = startfilepath.read()
     startfilepath.close() 
-       
+
     # Read end of destfile
     endfile = open(endfilepath, 'rt')
     endfilecontain = endfile.read()
     endfile.close() 
-    
+
     # Merge string
     filecontain = startfilecontain + filecontain + endfilecontain
-    
+
     # Write new file
     destfile = open(destfilepath, 'wt')
     destfile.write(filecontain)

@@ -17,6 +17,7 @@
 
 #include "options.h"
 #include "compiler.h"
+#include "WebpageHandler.h"
 #include "WebpageList.h"
 
 

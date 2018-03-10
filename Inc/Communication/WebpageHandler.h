@@ -38,6 +38,14 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
+typedef struct
+{
+	const char * webpageName;
+	const char * webpageContain;
+	const size_t webpageLength;
+	const char * webpageType;
+} WebpageInformation_t;
+
 
 
 /*------------------------------------------------------------------------------

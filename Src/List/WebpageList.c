@@ -17,6 +17,7 @@
 
 #include "options.h"
 #include "compiler.h"
+#include "WebpageHandler.h"
 #include "WebpageList.h"
 
 
@@ -27,8 +28,8 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-///< favico file:
-const char WebpageList_favico[] =
+///< favico.ico file:
+static const char WebpageList_favico[] =
 { 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x20, 0x20, 
 0x02, 0x00, 0x01, 0x00, 0x01, 0x00, 0x30, 0x01, 
 0x00, 0x00, 0x16, 0x00, 0x00, 0x00, 0x28, 0x00, 
@@ -74,11 +75,8 @@ const char WebpageList_favico[] =
 /* End of binary file */
 
 
-const size_t WebpageList_favico_length = sizeof(WebpageList_favico);
-
-
-///< index file:
-const char WebpageList_index[] =
+///< index.html file:
+static const char WebpageList_index[] =
 "<!DOCTYPE html>" \
 "<html>" \
 "<head>" \
@@ -97,7 +95,26 @@ const char WebpageList_index[] =
 /* End of HTML file string */
 
 
-const size_t WebpageList_index_length = sizeof(WebpageList_index);
+///< Webpage List
+const WebpageInformation_t WebpageList[] =
+{
+    {
+        .webpageName    = "favico.ico",
+        .webpageContain = WebpageList_favico,
+        .webpageLength  = sizeof(WebpageList_favico),
+        .webpageType    = "image/x-icon"
+    },
+    {
+        .webpageName    = "index.html",
+        .webpageContain = WebpageList_index,
+        .webpageLength  = sizeof(WebpageList_index),
+        .webpageType    = "text/html"
+    },
+};
+
+
+///< Webpage list count
+const uint8_t WebpageList_Count = NUM_OF(WebpageList);
 
 
 
