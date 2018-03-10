@@ -4,23 +4,24 @@ Original HTML file to minimalist HTML
 """
 
 
-def convertOriginalHtmlfileToMinimalistHtmlFile(originalhtmlfilename, newhtmlfilename):
+def convertOriginalHtmlfileToMinimalistHtmlFile(originalhtmlfilename, newhtmlfilename=None):
 
     print("Original HTML file name: " + originalhtmlfilename)
-    print("Code file name: " + newhtmlfilename)
 
-
+    # Original HTML file
     originalfile = open(originalhtmlfilename, 'rt')
-    newfile = open(newhtmlfilename + ".c", 'wt')
-
     data = originalfile.read()
-
     originalfile.close()
 
     newfilecontainstring = convertHtmlToMinimalist(data)
 
-    newfile.write(newfilecontainstring)
-    newfile.close()
+    if newhtmlfilename != None:
+        print("New HTML file name: " + newhtmlfilename)
+        newfile = open(newhtmlfilename + ".c", 'wt')
+        newfile.write(newfilecontainstring)
+        newfile.close()
+    else:
+        return newfilecontainstring
 
 
 def convertHtmlToMinimalist(originalhtml):

@@ -4,23 +4,24 @@ Binary file --> Code Hex text
 """
 
 
-def convertBinaryFileToHexFile(binaryfilename, codefilename):
+def convertBinaryFileToHexFile(binaryfilename, codefilename=None):
 
     print("Binary file name: " + binaryfilename)
-    print("Code file name: " + codefilename)
 
-
+    # Original binary file
     binaryfile = open(binaryfilename, 'rb')
-    codefile = open(codefilename + ".c", 'wt')
-
     data = binaryfile.read()
-
     binaryfile.close()
 
     codefilecontainstring = convertBinDatasToHex(data)
 
-    codefile.write(codefilecontainstring)
-    codefile.close()
+    if codefilename != None:
+        print("Code file name: " + codefilename)
+        codefile = open(codefilename + ".c", 'wt')
+        codefile.write(codefilecontainstring)
+        codefile.close()
+    else:
+        return codefilecontainstring
 
 
 def convertBinDatasToHex(bindata):
@@ -34,7 +35,7 @@ def convertBinDatasToHex(bindata):
         if i != bindatalength-1:
             # Put ','
             hexstring += ", "
-        if (i % 16) == 15:
+        if (i % 8) == 7:
             hexstring += "\n"
 
     hexstring += " };\n"
