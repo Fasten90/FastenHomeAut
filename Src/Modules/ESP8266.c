@@ -17,6 +17,7 @@
 
 #include "options.h"
 #include "compiler.h"
+#include "board.h"
 #include "StringHelper.h"
 #include "CircularBuffer.h"
 #include "TaskList.h"
@@ -669,6 +670,7 @@ void ESP8266_StatusMachine(void)
 		case Esp8266Status_Unknown:
 			ESP8266StatusMachine++;
 			ESP8266_DEBUG_PRINT("Error: Unknown state");
+			// TODO: Add warning suppression to here
 			// break;	// Step to next
 
 		case Esp8266Status_Init:
