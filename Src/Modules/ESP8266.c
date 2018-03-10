@@ -147,6 +147,8 @@ static bool ESP8266_TcpSendBuffer_EnableFlag = true;
 static bool ESP8266_TcpSendIsStarted_Flag = false;
 static bool ESP8266_TcpSent_WaitSendOk_Flag = false;
 
+static uint8_t ESP8266_TcpMessageId = 0;
+
 // Statuses
 static ESP8266_StatusMachine_t ESP8266StatusMachine = Esp8266Status_Unknown;
 
@@ -530,7 +532,9 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_Start(const char *message)
 
 
 	// Send ~ "AT+CIPSEND=0,40\r\n"
-	usprintf(buffer, "AT+CIPSEND=0,%d\r\n", length);
+	//usprintf(buffer, "AT+CIPSEND=0,%d\r\n", length);
+	usprintf(buffer, "AT+CIPSEND=%d,%d\r\n", ESP8266_TcpMessageId, length);
+
 	ESP8266_SendString(buffer);
 
 	ESP8266_TcpSendIsStarted_Flag = true;
@@ -1664,8 +1668,8 @@ static bool ESP8266_ProcessReceivedTcpMessage(char *receiveBuffer)
 							// We have message source:
 							ESP8266_DEBUG_PRINTF("Received TCP message: \"%s\"", splittedTcpMsg[2]);
 
-							// TODO: We need answer in good <id> !
-							(void)id;
+							// We need answer in good <id> !
+							ESP8266_TcpMessageId = id;
 
 			#ifdef CONFIG_MODULE_WEBPAGE_ENABLE
 							if (ESP8266_SearchGetRequest(splittedTcpMsg[2]))
@@ -1677,6 +1681,7 @@ static bool ESP8266_ProcessReceivedTcpMessage(char *receiveBuffer)
 							{
 			#endif
 								// TODO: Use the global buffer immediately?
+
 								// Received ~telnet command
 								char responseBuffer[ESP8266_TCP_MESSAGE_MAX_LENGTH];
 
