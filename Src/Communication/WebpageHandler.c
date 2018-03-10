@@ -30,11 +30,11 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-extern const char WebpageList_IndexHtml[];
-extern size_t WebpageList_IndexHtml_length;
+extern const char WebpageList_index[];
+extern size_t WebpageList_index_length;
 
-extern const char WebpageList_FaviconIco[];
-extern const size_t WebpageList_FaviconIco_length;
+extern const char WebpageList_favico[];
+extern const size_t WebpageList_favico_length;
 
 
 
@@ -80,7 +80,7 @@ void WebpageHandler_GetRequrest(const char *request, char *resp)
 	if (STRING_FindString(request, "index.html") != NULL)
 	{
 		/* Found index.html */
-		WebpageHandler_SendResponse(resp, WebpageList_IndexHtml, WebpageList_IndexHtml_length);
+		WebpageHandler_SendResponse(resp, WebpageList_index, WebpageList_index_length);
 	}
 	else if (STRING_FindString(request, "favicon.ico") != NULL)
 	{
@@ -99,9 +99,9 @@ void WebpageHandler_GetRequrest(const char *request, char *resp)
 				"Content-Type: image/x-icon\r\n"
 				"\r\n",
 				//"X-Pad: avoid browser bug\r\n"
-				WebpageList_FaviconIco_length);
+				WebpageList_favico_length);
 
-		length += StrCpy(&resp[length], WebpageList_FaviconIco);
+		length += StrCpy(&resp[length], WebpageList_favico);
 
 		Debug_Print(Debug_WebPage, "Sent favicon");
 	}

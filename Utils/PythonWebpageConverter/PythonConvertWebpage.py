@@ -9,7 +9,7 @@ import PythonBinaryToCodeHex
 import PythonHtmlToCodeMinimalist
 
 
-def ConvertWebpage(webpagedirectory="Webpage", destination="Dest", webpage_c_filename="WebpageList.c"):
+def ConvertWebpage(webpagedirectory="Webpage", destination="Dest", webpage_c_filename="WebpageList.c", startfilepath="WebpageList_Template_start.c", endfilepath="WebpageList_Template_end.c"):
     """ Convert entire webpage directory """
 
     convertedfiles = []
@@ -42,10 +42,10 @@ def ConvertWebpage(webpagedirectory="Webpage", destination="Dest", webpage_c_fil
     # Write html strings to code file
     newfilepath = destination + "/" + webpage_c_filename
 
-    newfilecontainstring = writeDatasToFile(convertedfiles, newfilepath)
+    newfilecontainstring = writeDatasToFile(convertedfiles, newfilepath, startfilepath, endfilepath)
 
 
-def writeDatasToFile(convertedfiles, filepath):
+def writeDatasToFile(convertedfiles, destfilepath, startfilepath, endfilepath):
     
     filecontain = ""
     
@@ -78,14 +78,30 @@ def writeDatasToFile(convertedfiles, filepath):
         filecontain += "\n\n"
         
     # TODO: Add end elements
-
-    file = open(filepath, 'wt')
-    file.write(filecontain)
-    file.close() 
+    
+     # Read begin of destfile
+    startfilepath = open(startfilepath, 'rt')
+    startfilecontain = startfilepath.read()
+    startfilepath.close() 
+       
+    # Read end of destfile
+    endfile = open(endfilepath, 'rt')
+    endfilecontain = endfile.read()
+    endfile.close() 
+    
+    # Merge string
+    filecontain = startfilecontain + filecontain + endfilecontain
+    
+    # Write new file
+    destfile = open(destfilepath, 'wt')
+    destfile.write(filecontain)
+    destfile.close() 
 
 
 if __name__ == "__main__":
     #ConvertWebpage(webpagedirectory = "../Webpage", destination = "../../src/List/", webpage_c_filename = "WebpageList.c")
     ConvertWebpage(webpagedirectory = "c:\\Engineer\\Projects\\AtollicWorkspace\\FastenHomeAut\\Utils/Webpage", \
                    destination = "c:\\Engineer\\Projects\\AtollicWorkspace\\FastenHomeAut/src/List/",
-                   webpage_c_filename = "WebpageList.c")
+                   webpage_c_filename = "WebpageList.c",
+                   startfilepath="c:\\Engineer\\Projects\\AtollicWorkspace\\FastenHomeAut\\Utils/PythonWebpageConverter/WebpageList_Template_start.c",
+                   endfilepath="c:\\Engineer\\Projects\\AtollicWorkspace\\FastenHomeAut\\Utils/PythonWebpageConverter/WebpageList_Template_end.c")
