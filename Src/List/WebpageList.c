@@ -28,8 +28,8 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-///< favico.ico file:
-static const char WebpageList_favico[] =
+///< favicon.ico file:
+static const char WebpageList_favicon[] =
 { 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x20, 0x20, 
 0x02, 0x00, 0x01, 0x00, 0x01, 0x00, 0x30, 0x01, 
 0x00, 0x00, 0x16, 0x00, 0x00, 0x00, 0x28, 0x00, 
@@ -100,9 +100,9 @@ static const char WebpageList_index[] =
 const WebpageInformation_t WebpageList[] =
 {
     {
-        .webpageName    = "favico.ico",
-        .webpageContain = WebpageList_favico,
-        .webpageLength  = sizeof(WebpageList_favico),
+        .webpageName    = "favicon.ico",
+        .webpageContain = WebpageList_favicon,
+        .webpageLength  = sizeof(WebpageList_favicon),
         .webpageType    = "image/x-icon"
     },
     {
