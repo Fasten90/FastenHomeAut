@@ -37,13 +37,6 @@
 //#define ESP8266_USE_BLOCK_MODE
 
 
-#ifdef ESP8266_USE_BLOCK_MODE
-#define ESP8266_SEND_TCP_MESSAGE(msg)	ESP8266_SendTcpMessageBlockingMode(msg)
-#else
-#define ESP8266_SEND_TCP_MESSAGE(msg)	ESP8266_SendTcpMessageNonBlockingMode_Start(msg);
-#endif
-
-
 /*
  * ESP8266 Debug mode:	1 on
  * 						0 off

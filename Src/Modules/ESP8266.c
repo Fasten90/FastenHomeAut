@@ -43,6 +43,13 @@
 #define STRING_LENGTH(_str)			(sizeof(_str) - 1)
 
 
+#ifdef ESP8266_USE_BLOCK_MODE
+#define ESP8266_SEND_TCP_MESSAGE(msg)	ESP8266_SendTcpMessageBlockingMode(msg)
+#else
+#define ESP8266_SEND_TCP_MESSAGE(msg)	ESP8266_SendTcpMessageNonBlockingMode_Start(msg);
+#endif
+
+
 
 /*------------------------------------------------------------------------------
  *  Type definitions
@@ -149,6 +156,7 @@ static bool ESP8266_TcpSendIsStarted_Flag = false;
 static bool ESP8266_TcpSent_WaitSendOk_Flag = false;
 
 static uint8_t ESP8266_TcpMessageId = 0;
+static bool ESP8266_TcpCloseAfterSent = false;
 
 // Statuses
 static ESP8266_StatusMachine_t ESP8266StatusMachine = Esp8266Status_Unknown;
@@ -226,6 +234,7 @@ static void ESP8266_ClearReceive(bool isFullClear, size_t stepLength);
 
 static bool ESP8266_SendTcpMessageNonBlockingMode_Start(const char *message);
 static size_t ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void);
+static void ESP8266_SendTcpClose(void);
 
 static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, size_t receivedMessageLength);
 static bool ESP8266_ProcessReceivedTcpMessage(char *receiveBuffer);
@@ -438,7 +447,6 @@ size_t ESP8266_PrintIpAddress(char * str)
 	length += StrCpy(&str[length], "\r\nExWifi: ");
 	length += Network_PrintIp(&str[length], &ESP8266_ExWifiIpAddress);
 #endif
-	length += StrCpy(&str[length], "\r\n");
 
 	return length;
 }
@@ -541,6 +549,8 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_Start(const char *message)
 	ESP8266_TcpSendIsStarted_Flag = true;
 
 	ESP8266_DEBUG_PRINT("Start send TCP message");
+	// Wait response immediately
+	TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 100);
 
 	return true;
 }
@@ -581,6 +591,24 @@ static size_t ESP8266_SendTcpMessageNonBlockingMode_SendMessage(void)
 	ESP8266_DEBUG_PRINTF("Send TCP message: \"%s\"", ESP8266_TcpTransmitBuffer);
 
 	return length;
+}
+
+
+
+/**
+ * \brief	Close TCP connection: last <id> connection
+ */
+static void ESP8266_SendTcpClose(void)
+{
+	/*
+	 * AT+CIPCLOSE
+	 * Close TCP connection
+	 * AT+CIPCLOSE=<id>
+	 * If enabled more connection
+	 */
+	char cmd[20];
+	usnprintf(cmd, 20, "AT+CIPCLOSE=%d\r\n", ESP8266_TcpMessageId);
+	ESP8266_SendString(cmd);
 }
 
 
@@ -1452,7 +1480,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, size_t receivedM
 	 */
 	if (CircularBuffer_IsNotEmpty(ESP8266_Uart.rx))
 	{
-		/* There is some character in rx buffer */
+		// There is some character in rx buffer
 
 		bool goodMsgRcv = false;
 
@@ -1460,6 +1488,7 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, size_t receivedM
 
 		if (ESP8266_TcpSendIsStarted_Flag)
 		{
+			// TCP message sending started, wait "> "
 			// Check, response is "> "
 			if (!StrCmpFirst("> ", (const char *)receiveBuffer))
 			{
@@ -1475,42 +1504,64 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, size_t receivedM
 			else if (!StrCmpFirst("link is not\r\n", (const char *)receiveBuffer))
 			{
 				// Cannot send
-				ESP8266_TcpSendBuffer_EnableFlag = true;
 				ESP8266_DEBUG_PRINT("Cannot send (link is not)");
+				ESP8266_TcpSendBuffer_EnableFlag = true;
 				ESP8266_ClearReceive(false, STRING_LENGTH("link is not\r\n"));
 				// Request TCP reconnect
 #if CONFIG_ESP8266_IS_TCP_SERVER == 0
 				ESP8266StatusMachine = Esp8266Status_ConnectTcpServer;
 #endif
 			}
+			else if (!StrCmpFirst("busy p...", (const char *)receiveBuffer))
+			{
+				// Error: We cannot send now
+				// TODO: What we need to do? Wait a moment?
+				//ESP8266_TcpSendBuffer_EnableFlag = true; // TODO: Do not clear, send later
+				ESP8266_DEBUG_PRINT("Cannot send TCP message (busy p...)");
+				ESP8266_ClearReceive(false, STRING_LENGTH("busy p..."));
+			}
+			else if (!StrCmpFirst("\r\nbusy p...", (const char *)receiveBuffer))
+			{
+				// TODO: Duplicated code
+				ESP8266_DEBUG_PRINT("Cannot send TCP message (busy p...)");
+				ESP8266_ClearReceive(false, STRING_LENGTH("\r\nbusy p..."));
+			}
 			else if (!StrCmpFirst("busy inet...\r\nERROR\r\n", (const char *)receiveBuffer))
 			{
 				// Error...
 				// TODO: What we need to do? Reconnection
-				ESP8266_TcpSendBuffer_EnableFlag = true;
-				ESP8266_DEBUG_PRINT("Cannot send TCP message (busy inet...)\"> \"...");
-				ESP8266_ClearReceive(true, 0);
+				//ESP8266_TcpSendBuffer_EnableFlag = true;	// TODO: Send later
+				ESP8266_DEBUG_PRINT("Cannot send TCP message (busy inet...)");
+				ESP8266_ClearReceive(false, STRING_LENGTH("busy inet...\r\nERROR\r\n"));
 			}
 			else
 			{
 				// Error
-				ESP8266_TcpSendBuffer_EnableFlag = true;
+				//ESP8266_TcpSendBuffer_EnableFlag = true;	// TODO: Send later
 				// TODO: Be careful, it can be buffer overflow !!!
 				ESP8266_DEBUG_PRINTF("Cannot send TCP message, not received \"> \"\r\n"
 						"Received message: \"%s\"", receiveBuffer);
-				ESP8266_ClearReceive(true, 0);
+				// TODO: Do not clear, because sometimes we receive any important message ...
+				//ESP8266_ClearReceive(true, 0);
 			}
 			// Clear send flag
 			ESP8266_TcpSendIsStarted_Flag = false;
 		}
 		else if (ESP8266_TcpSent_WaitSendOk_Flag)
 		{
+			// Finish of TCP message sending
 			if (!StrCmpFirst("\r\nSEND OK\r\n", (const char *)receiveBuffer))
 			{
 				// OK, sending successful
 				ESP8266_DEBUG_PRINT("Sending successful");
 				goodMsgRcv = true;
 				ESP8266_ClearReceive(false, STRING_LENGTH("\r\nSEND OK\r\n"));
+
+				if (ESP8266_TcpCloseAfterSent)
+				{
+					ESP8266_TcpCloseAfterSent = false;
+					ESP8266_SendTcpClose();
+				}
 			}
 			else
 			{
@@ -1552,20 +1603,33 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, size_t receivedM
 			ESP8266_LOG_EVENT(EVENT_UNLINK);
 		}
 #endif
-		else if (!StrCmpFirst("\r\n+IPD,", (const char *)receiveBuffer))
+		else if (!StrCmpFirst("\r\n+IPD,", (const char *)receiveBuffer))	// TODO: Change to "+IPD"... ?
 		{
+			ESP8266_DEBUG_PRINT("Received +IPD");
 			if (ESP8266_ProcessReceivedTcpMessage(receiveBuffer))
 			{
 				// Successful processed message
 				//ESP8266_ClearReceive(true, 0); // TODO: Do not clear! Cleared from Process() function
 				goodMsgRcv = true;
-				ESP8266_ErrorCnt = 0;
+				//ESP8266_ErrorCnt = 0;
 			}
+			// else: wrong TCP message. Not need debug print it, because ESP8266_ProcessReceivedTcpMessage() did that
+		}
+		else if (!StrCmpFirst("busy p...", (const char *)receiveBuffer))
+		{
+			// "busy p..."
+			ESP8266_ClearReceive(false, STRING_LENGTH("busy p..."));
 		}
 		else if (!StrCmpFirst("\r\n", (const char *)receiveBuffer))
 		{
 			// "\r\n"
 			ESP8266_ClearReceive(false, STRING_LENGTH("\r\n"));
+		}
+		else if (!StrCmpFirst("OK", (const char *)receiveBuffer))
+		{
+			// TODO: This is need for drop \r\nOK\r\n message. But why need? ESP8266_ProcessReceivedTcpMessage() handled wrongly?
+			// "\r\n"
+			ESP8266_ClearReceive(false, STRING_LENGTH("OK"));
 		}
 		else if (receivedMessageLength < 6)
 		{
@@ -1598,6 +1662,10 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, size_t receivedM
 				ESP8266_ClearReceive(true, 0);
 				ESP8266_ErrorCnt = 0;
 				ESP8266_LOG_EVENT(EVENT_ERROR);
+
+				// Clear sends...
+				ESP8266_TcpSendBuffer_EnableFlag = true;
+				ESP8266_TcpSendIsStarted_Flag = false;
 			}
 		}
 		else
@@ -1612,7 +1680,16 @@ static void ESP8266_CheckIdleStateMessage(char * receiveBuffer, size_t receivedM
 		// We has message on SendBuffer (we want to send a requested message)
 		// ReadCnt = WriteCnt, so we are not receiving
 		// TODO: Be careful, it is not truth
-		ESP8266_SEND_TCP_MESSAGE((char *)ESP8266_TcpTransmitBuffer);
+		// TODO: Check last received time?
+		if (ESP8266_TcpSendIsStarted_Flag == false)
+		{
+			// Not started to send message, we can send
+			ESP8266_SEND_TCP_MESSAGE((char *)ESP8266_TcpTransmitBuffer);
+		}
+		else
+		{
+			ESP8266_DEBUG_PRINT("Sending in process...");	// TODO: ...
+		}
 	}
 	else
 	{
@@ -1664,11 +1741,16 @@ static bool ESP8266_ProcessReceivedTcpMessage(char *receiveBuffer)
 
 					if (messageLength <= ESP8266_RX_TCP_MSG_MAX_LENGTH)
 					{
+						// Received correct length message (can be process it)
 						size_t recvMsgLength = StringLength(splittedTcpMsg[2]);
+
+						// For security
+						static uint8_t waitCount = 0;
+
 						if (messageLength < recvMsgLength)
 						{
 							// We have message source:
-							ESP8266_DEBUG_PRINTF("Received TCP message: \"%s\"", splittedTcpMsg[2]);
+							ESP8266_DEBUG_PRINTF("Received TCP message (id: %d, length: %d): \"%s\"", id, messageLength, splittedTcpMsg[2]);
 
 							// We need answer in good <id> !
 							ESP8266_TcpMessageId = id;
@@ -1676,16 +1758,16 @@ static bool ESP8266_ProcessReceivedTcpMessage(char *receiveBuffer)
 			#ifdef CONFIG_MODULE_WEBPAGE_ENABLE
 							if (ESP8266_SearchGetRequest(splittedTcpMsg[2]))
 							{
+								// Webpage request
 								// Found, clear buffer
 								isOk = true;
 							}
 							else
 							{
 			#endif
-								// TODO: Use the global buffer immediately?
-
 								// Received ~telnet command
 								char responseBuffer[ESP8266_TCP_MESSAGE_MAX_LENGTH];
+								// TODO: Use the global buffer immediately?
 
 								// Execute the command
 								CmdH_ExecuteCommand(splittedTcpMsg[2], responseBuffer, ESP8266_TCP_MESSAGE_MAX_LENGTH);
@@ -1709,12 +1791,23 @@ static bool ESP8266_ProcessReceivedTcpMessage(char *receiveBuffer)
 									+ 1); // This last is understand
 
 							ESP8266_LOG_EVENT(EVENT_RECEIVED_GOOD_TCP_MESSAGE);
+
+							waitCount = 0;
+							TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 100);
 						}
 						else
 						{
 							ESP8266_DEBUG_PRINT("Not received all message yet. Wait...");
 							isOk = true;
+							TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 100);
 							// Do not clear!
+
+							// Security
+							waitCount++;
+							if (waitCount >= 10)
+							{
+								isOk = false;
+							}
 						}
 					}
 					else
@@ -1766,6 +1859,10 @@ static bool ESP8266_SearchGetRequest(const char *recvMsg)
 
 		// Send HTML webpage
 		ESP8266_RequestSendTcpMessage(responseBuffer);
+
+		// Close TCP connection
+		//ESP8266_SendTcpClose(); // TODO: Only after sent...
+		ESP8266_TcpCloseAfterSent = true;
 
 		isFound = true;
 	}
