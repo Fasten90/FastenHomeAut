@@ -502,7 +502,7 @@ static void ESP8266_ClearReceive(bool isFullClear, size_t stepLength)
 /**
  * \brief	Request send TCP message
  */
-bool ESP8266_RequestSendTcpMessage(const char *msg, size_t msgLength)
+bool ESP8266_RequestSendTcpMessage(const char *msg, size_t msgLength)	// TODO: Add <id> parameter?
 {
 	bool sendOk = false;
 
@@ -819,8 +819,7 @@ void ESP8266_StatusMachine(void)
 
 		case Esp8266Status_ConfigCwModeCheckResponse:
 			if ((!StrCmpFirst("OK\r\n", (const char *)receiveBuffer))
-				|| (!StrCmpFirst("no change\r\n", (const char *)receiveBuffer))
-				|| (!StrCmpFirst("no chae\r\n", (const char *)receiveBuffer)))	// Note: ESP8266 fault ?
+				|| (!StrCmpFirst("no change\r\n", (const char *)receiveBuffer)))
 			{
 				// "OK"
 				ESP8266_LED_OK();
@@ -1616,6 +1615,14 @@ static void ESP8266_CheckIdleStateMessages(char * receiveBuffer, size_t received
 			ESP8266_DEBUG_PRINT("Received \"SEND OK\" in not send time.");
 			goodMsgRcv = true;
 			ESP8266_ClearReceive(false, STRING_LENGTH("SEND OK\r\n"));
+		}
+		else if (!StrCmpFirst("link is not", (const char *)receiveBuffer))
+		{
+			// "link is not"
+			// "link is not" can be receive, if we send CIPCLOSE when connection was closed (e.g.: received before az "Unlink")
+			ESP8266_DEBUG_PRINT("Received \"link is not\"");
+			goodMsgRcv = true;
+			ESP8266_ClearReceive(false, STRING_LENGTH("link is not"));
 		}
 #if CONFIG_ESP8266_IS_TCP_SERVER == 0
 		else if (!StrCmpFirst("\r\nERROR\r\nUnlink\r\n", (const char *)receiveBuffer))
