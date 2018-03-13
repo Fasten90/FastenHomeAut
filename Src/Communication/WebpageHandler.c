@@ -67,10 +67,15 @@ void WebpageHandler_Init(void)
 
 
 
-void WebpageHandler_GetRequrest(const char *request, char *resp)
+/**
+ * \brief	Check GET request
+ * \retval	response length
+ */
+size_t WebpageHandler_GetRequrest(const char *request, char *resp)
 {
 	uint8_t i;
 	bool isFound = false;
+	size_t respLength = 0;
 
 	/* Step through the list */
 	for (i = 0; i < WebpageList_Count; i++)
@@ -79,7 +84,7 @@ void WebpageHandler_GetRequrest(const char *request, char *resp)
 		if (STRING_FindString(request, WebpageList[i].webpageName) != NULL)
 		{
 			/* Found file name, e.g.: "index.html" */
-			WebpageHandler_SendResponse(resp, WebpageList[i].webpageContain, WebpageList[i].webpageLength, WebpageList[i].webpageType);
+			respLength = WebpageHandler_SendResponse(resp, WebpageList[i].webpageContain, WebpageList[i].webpageLength, WebpageList[i].webpageType);
 			/* Debug print */
 			Debug_Printf(Debug_WebPage, "Requested and sent %s webpage/file, length: %d", WebpageList[i].webpageName, WebpageList[i].webpageLength);
 			isFound = true;
@@ -92,8 +97,10 @@ void WebpageHandler_GetRequrest(const char *request, char *resp)
 	{
 		// TODO: 404 page
 		Debug_Print(Debug_WebPage, "Received wrong get request");
-		StrCpy(resp, "Empty webpage");
+		respLength = StrCpy(resp, "Empty webpage");
 	}
+
+	return respLength;
 }
 
 
@@ -104,7 +111,7 @@ static size_t WebpageHandler_SendResponse(char *resp, const char *webpage, const
 	size_t length = 0;
 
 	length += WebpageHandler_SendHeader(&resp[length], webpageLength, type);
-	length += StrCpy(&resp[length], webpage);
+	length += StrCpyFixLength(&resp[length], webpage, webpageLength);
 
 	return length;
 }

@@ -81,11 +81,11 @@
 #endif
 
 
+// TODO: Make enum
 #define	EVENT_LINK								( 1 )
 #define	EVENT_UNLINK							( 2 )
 #define	EVENT_RECEIVED_GOOD_TCP_MESSAGE			( 3 )
 #define EVENT_ERROR								( 4 )
-
 
 
 ///< Receive message header
@@ -126,7 +126,7 @@
 #define ESP8266_MESSAGE_QUEUE_ITEM_SIZE			( ESP8266_TCP_MESSAGE_MAX_LENGTH )
 #else
 // If not defined HOMEAUTMESSAGE...
-#define ESP8266_TCP_MESSAGE_MAX_LENGTH			( 300U )
+#define ESP8266_TCP_MESSAGE_MAX_LENGTH			( 300 )
 #define ESP8266_TCP_MESSAGE_MIN_LENGTH			( 5 )
 ///< ESP8266 queue item size
 #define ESP8266_MESSAGE_QUEUE_ITEM_SIZE			( ESP8266_TCP_MESSAGE_MAX_LENGTH )
@@ -206,11 +206,10 @@ void ESP8266_StatusMachine(void);
 
 size_t ESP8266_SendString(const char *msg);
 
-size_t ESP8266_RequestSendTcpMessage(const char *msg);
+bool ESP8266_RequestSendTcpMessage(const char *msg, size_t msgLength);
 bool ESP8266_StartSendTcpMessageBlocked(size_t length);
 
-size_t ESP8266_PrintIpAddress(char * str);
-
+size_t ESP8266_PrintIpAddress(char *str);
 
 
 

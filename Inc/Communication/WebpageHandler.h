@@ -59,7 +59,7 @@ typedef struct
  *----------------------------------------------------------------------------*/
 
 void WebpageHandler_Init(void);
-void WebpageHandler_GetRequrest(const char *request, char *resp);
+size_t WebpageHandler_GetRequrest(const char *request, char *resp);
 
 
 

@@ -139,8 +139,13 @@ void Debug_Printf(Debug_t debugTask, const char *format, ...)
 
 		va_list ap;									// argument pointer
 		va_start(ap, format); 						// ap on arg
-		string_printf_safe(txBuffer, DEBUGUART_TX_BUFFER_SIZE-1, format, ap);		// Separate and process
+		size_t sentChars = string_printf_safe(txBuffer, DEBUGUART_TX_BUFFER_SIZE-1, format, ap);		// Separate and process
 		va_end(ap);						 			// Cleaning after end
+
+		if (sentChars >= (DEBUGUART_TX_BUFFER_SIZE - 5))
+		{
+			StrCpy(&txBuffer[DEBUGUART_TX_BUFFER_SIZE-1-6], "[...]");
+		}
 
 #ifdef CONFIG_DEBUG_MODE
 		if (txBuffer[DEBUGUART_TX_BUFFER_SIZE-1] != 0xEF)
