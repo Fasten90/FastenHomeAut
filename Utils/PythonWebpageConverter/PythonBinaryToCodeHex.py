@@ -9,15 +9,16 @@ def convertBinaryFileToHexFile(binaryfilename, codefilename=None):
     print("Binary file name: " + binaryfilename)
 
     # Original binary file
-    binaryfile = open(binaryfilename, 'rb')
+    binaryfile = open(binaryfilename, "rb")
     data = binaryfile.read()
     binaryfile.close()
 
+    data = bytearray(data)
     codefilecontainstring = convertBinDatasToHex(data)
 
     if codefilename != None:
         print("Code file name: " + codefilename)
-        codefile = open(codefilename + ".c", 'wt')
+        codefile = open(codefilename + ".c", "wt")
         codefile.write(codefilecontainstring)
         codefile.close()
     else:
