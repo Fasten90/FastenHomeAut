@@ -81,13 +81,14 @@ static const char WebpageList_index[] =
 "<html>" \
 "<head>" \
 "<meta charset=\"ISO-8859-1\">" \
+"<link rel=\"icon\" href=\"favicon.ico\" type=\"image/x-icon\">" \
 "<title>" \
 "FastenHomeAut webpage" \
 "</title>" \
 "</head>" \
 "<body>" \
-"<h1 align=\"center\">FastenHomeAut</h2>" \
-"<a href=\"http://www.fasten.e5tv.hu\">Fasten webpage</a>" \
+"<h1 align=\"center\">FastenHomeAut</h1>" \
+"<a href=\"http://www.fasten.e5tv.hu\">Fasten webpage</a><br>" \
 "<a href=\"Information.html\">Information page</a>" \
 "</body>" \
 "</html>" \
