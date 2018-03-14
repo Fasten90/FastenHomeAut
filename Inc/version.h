@@ -18,7 +18,7 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define VERSION_STRING		"v0.1.4.7"
+#define VERSION_STRING		"v0.1.4.8"
 
 #define DATE_VERSION		__DATE__
 #define TIME_VERSION		__TIME__
