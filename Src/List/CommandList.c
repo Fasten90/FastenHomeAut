@@ -1683,13 +1683,17 @@ static CmdH_Result_t CommandFunction_ESP8266(uint32_t argc, char** argv)
 	if (!StrCmp("sendonwifi", argv[1]))
 	{
 		// Send message to ESP8266 sending queue, which will send on ESP8266 TCP connection
-		ESP8266_RequestSendTcpMessage(argv[2]);
+		size_t msgLength = StringLength(argv[2]);
+		ESP8266_RequestSendTcpMessage(argv[2], msgLength);
 		result = CmdH_Result_Ok_SendSuccessful;
 	}
 	else if (!StrCmp("sendtomodule", argv[1]))
 	{
 		// Send forward to ESP8266 module last parameter
-		ESP8266_SendString(argv[2]);
+		// Send: received string + \r\n
+		char sendString[50];
+		usnprintf(sendString, 50, "%s\r\n", argv[2]);
+		ESP8266_SendString(sendString);
 		result = CmdH_Result_Ok_SendSuccessful;
 	}
 	else if (!StrCmp("ip", argv[1]))

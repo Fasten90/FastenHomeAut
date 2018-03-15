@@ -108,6 +108,12 @@ CmdH_Result_t CmdH_ExecuteCommand(char *command, char *response, size_t length)
 		Debug_Printf(Debug_CommandHandler, "Error! Received 0 length response buffer!");
 		result = CmdH_Result_Error_CallCmdHandlerWithInvalidArgument;
 	}
+	// Put '\0' to newline position, for successful executing
+	char * firstNewLine = (char *)STRING_FindCharacters(command, "\r\n");
+	if (firstNewLine != NULL)
+	{
+		*firstNewLine = '\0';
+	}
 	if (StrTrim(command) == 0)
 	//if (StringLength(command) == 0)
 	{

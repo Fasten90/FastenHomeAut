@@ -176,7 +176,7 @@ void StringUpper(char * str);
 const char * STRING_FindCharacter(const char *str, const char findCharacter);
 const char * STRING_FindCharacters(const char *str, const char *findCharacters);
 const char * STRING_FindString(const char *str, const char *findString);
-uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint8_t paramLimit);
+uint8_t STRING_Splitter(char *source, const char *delimiters, char **separated, uint8_t paramLimit);
 
 // String format functions
 size_t string_printf(char *str, const char *format, va_list ap);

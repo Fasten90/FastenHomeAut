@@ -240,6 +240,7 @@ bool SelfTest_FailedRamTest = false;
  *----------------------------------------------------------------------------*/
 
 #if defined(CONFIG_MODULE_ESCAPEBROWSER_ENABLE)
+// TODO: Put to other
 static const char * GetStrListElement(uint8_t i)
 {
 	const char *str = NULL;
@@ -252,6 +253,7 @@ static const char * GetStrListElement(uint8_t i)
 	return str;
 }
 #endif
+
 
 
 /**
@@ -290,6 +292,8 @@ int main(void)
 
 	#ifdef CONFIG_MODULE_UNITTEST_ENABLE
 	char responseBuffer[2048];
+	CmdH_SetResponse(responseBuffer, 2048);
+	// TODO: Check UnitTestList_Run return value
 	UnitTestList_Run();
 	printf(responseBuffer);
 	#endif
@@ -298,6 +302,7 @@ int main(void)
 	UART_HandleTypeDef Debug_UartHandle;
 	HAL_UART_Init(&Debug_UartHandle);
 #endif
+
 
 #ifdef CONFIG_MODULE_MEASUREMENTTIMER_ENABLE
 	// MeasurementTimer

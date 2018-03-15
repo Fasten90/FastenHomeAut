@@ -1706,6 +1706,86 @@ const char * STRING_FindString(const char *str, const char *findString)
  * \note	Be careful, pointers to original (source) string
  * 			source string need to be changeable!
  */
+uint8_t STRING_Splitter(char *source, const char *delimiters, char **separated, uint8_t paramLimit)
+{
+	size_t i;
+	size_t j;
+	uint8_t parameters = 0;
+
+	// TODO: Make more beautiful!
+
+	// Check parameters
+	if ((source == NULL) || (separated == NULL) || (delimiters == NULL) || (paramLimit == 0))
+	{
+		return 0;			// Fail parameters
+	}
+
+	separated[0] = NULL;	// Make empty
+
+	// Split
+	j = 0;
+	for (i = 0; source[i]; i++)
+	{
+		// There is delimiter?
+		uint8_t k;
+		bool isFound = false;
+		for (k = 0; delimiters[k] != '\0'; k++)
+		{
+			if ((source[i] == delimiters[k]) || (source[i+1] == '\0'))
+			{
+				// Found delimiter or end character
+				if (source[i] == delimiters[k])
+				{
+					source[i] = '\0';
+				}
+				if (j == 0)
+				{
+					// one length parameter // TODO: Do with more beautiful
+					separated[parameters] = &source[i];
+				}
+				parameters++;
+				j = 0;
+				isFound = true;
+				break;
+			}
+		}
+
+		if (isFound)
+		{
+			if (parameters >= paramLimit)
+			{
+				// maximal tokens found
+				break;
+			}
+			else
+			{
+				separated[parameters] = NULL;
+			}
+		}
+		else
+		{
+			// Not ended, count
+			if (j == 0)
+			{
+				separated[parameters] = &source[i];		// New string found
+			}
+			j++;
+		}
+	}
+
+	return parameters;
+}
+
+
+
+#if 0
+/**
+ * \brief	Separate / split string to small strings by delimiter char
+ * 			like strtok() (but not match)
+ * 			E.g.: source: "192.168.0.1", delimiter: '.' --> separated[0] -> "192", sepparated[1] -> "168", ...
+ * \note	Be careful, pointers to original (source) string
+ * 			source string need to be changeable!
+ */
 uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint8_t paramLimit)
 {
 	size_t i;
@@ -1762,6 +1842,7 @@ uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint
 
 	return parameters;
 }
+#endif
 
 
 
@@ -2810,7 +2891,7 @@ uint32_t StringHelper_UnitTest(void)
 
 	// STRING_Splitter()
 	StrCpy(buffer, "need to separate this text");
-	value8 = STRING_Splitter(buffer, ' ', splitted, 10);
+	value8 = STRING_Splitter(buffer, " ", splitted, 10);
 	UNITTEST_ASSERT(value8 == 5, "STRING_Splitter error");
 	UNITTEST_ASSERT(!StrCmp(splitted[0],"need"), "STRING_Splitter error");
 	UNITTEST_ASSERT(!StrCmp(splitted[1],"to"), "STRING_Splitter error");
@@ -2820,15 +2901,18 @@ uint32_t StringHelper_UnitTest(void)
 	UNITTEST_ASSERT(splitted[5] == NULL, "STRING_Splitter error");
 
 	StrCpy(buffer, "text");
-	value8 = STRING_Splitter(buffer, ' ', splitted, 10);
+	value8 = STRING_Splitter(buffer, " ", splitted, 10);
 	UNITTEST_ASSERT(value8 == 1, "STRING_Splitter error");
 	UNITTEST_ASSERT(!StrCmp(splitted[0],"text"), "STRING_Splitter error");
 	UNITTEST_ASSERT(splitted[1] == NULL, "STRING_Splitter error");
 
 	StrCpy(buffer, "");
-	value8 = STRING_Splitter(buffer, ' ', splitted, 10);
+	value8 = STRING_Splitter(buffer, " ", splitted, 10);
 	UNITTEST_ASSERT(value8 == 0, "STRING_Splitter error");
 	UNITTEST_ASSERT(splitted[0] == NULL, "STRING_Splitter error");
+
+
+	// TODO: Add new tests for STRING_Splitter()
 
 
 	// TODO: Test StrAppend

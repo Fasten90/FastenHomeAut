@@ -37,13 +37,6 @@
 //#define ESP8266_USE_BLOCK_MODE
 
 
-#ifdef ESP8266_USE_BLOCK_MODE
-#define ESP8266_SEND_TCP_MESSAGE(msg)	ESP8266_SendTcpMessageBlockingMode(msg)
-#else
-#define ESP8266_SEND_TCP_MESSAGE(msg)	ESP8266_SendTcpMessageNonBlockingMode_Start(msg);
-#endif
-
-
 /*
  * ESP8266 Debug mode:	1 on
  * 						0 off
@@ -88,13 +81,44 @@
 #endif
 
 
+// TODO: Make enum
 #define	EVENT_LINK								( 1 )
 #define	EVENT_UNLINK							( 2 )
 #define	EVENT_RECEIVED_GOOD_TCP_MESSAGE			( 3 )
 #define EVENT_ERROR								( 4 )
 
 
-/// Sending/Receiving content message max length
+///< Receive message header
+// "\r\n"
+// "+IPD,0,20:"
+#define ESP8266_TCP_MESSAGEHEADER_LENGTH		( 12 )
+
+///< Receive message end
+// "\r\nOK\r\n"
+#define ESP8266_HOMEAUT_MESSAGEBOTTOM_LENGTH	( 6 )
+
+
+#define ESP8266_RECEIVEMESSAGE_MAX_LENGTH			\
+			( ESP8266_TCP_MESSAGEHEADER_LENGTH		\
+			+ ESP8266_TCP_MESSAGE_MAX_LENGTH		\
+			+ ESP8266_HOMEAUT_MESSAGEBOTTOM_LENGTH )
+
+#define ESP8266_RECEIVEMESSAGE_MIN_LENGTH			\
+			( ESP8266_TCP_MESSAGEHEADER_LENGTH		\
+			+ ESP8266_TCP_MESSAGE_MIN_LENGTH		\
+			+ ESP8266_HOMEAUT_MESSAGEBOTTOM_LENGTH )
+
+
+///< ESP8266 receive buffer length
+#define ESP8266_RX_BUFFER_LENGTH				( 512U )
+
+#define ESP8266_TX_BUFFER_LENGTH				( 512U )
+
+// TODO: Beautify!
+#define ESP8266_RX_TCP_MSG_MAX_LENGTH			( ESP8266_RX_BUFFER_LENGTH - ESP8266_TCP_MESSAGEHEADER_LENGTH )
+
+
+///< Sending/Receiving content message max length
 #ifdef HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH
 #define ESP8266_TCP_MESSAGE_MAX_LENGTH			( HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH )
 #define ESP8266_TCP_MESSAGE_MIN_LENGTH			( HOMEAUTMESSAGE_MESSAGE_MIN_LENGTH )
@@ -102,44 +126,16 @@
 #define ESP8266_MESSAGE_QUEUE_ITEM_SIZE			( ESP8266_TCP_MESSAGE_MAX_LENGTH )
 #else
 // If not defined HOMEAUTMESSAGE...
-#define ESP8266_TCP_MESSAGE_MAX_LENGTH			( 90 )
+#define ESP8266_TCP_MESSAGE_MAX_LENGTH			( 500 )
 #define ESP8266_TCP_MESSAGE_MIN_LENGTH			( 5 )
-/// ESP8266 queue item size
+///< ESP8266 queue item size
 #define ESP8266_MESSAGE_QUEUE_ITEM_SIZE			( ESP8266_TCP_MESSAGE_MAX_LENGTH )
 #endif
 
 
-/// Max messages num in queue
+///< Max messages num in queue
 #define ESP8266_RECEIVEMESSAGE_QUEUE_LENGTH		( 5 )
 #define ESP8266_SENDMESSAGE_QUEUE_LENGTH		( 5 )
-
-
-/// Receive message header
-// "\r\n"
-// "+IPD,0,20:"
-#define ESP8266_HOMEAUT_MESSAGEHEADER_LENGTH	( 12 )
-
-/// Receive message end
-// "\r\nOK\r\n"
-#define ESP8266_HOMEAUT_MESSAGEBOTTOM_LENGTH	( 6 )	
-
-
-#define ESP8266_RECEIVEMESSAGE_MAX_LENGTH			\
-			( ESP8266_HOMEAUT_MESSAGEHEADER_LENGTH	\
-			+ ESP8266_TCP_MESSAGE_MAX_LENGTH		\
-			+ ESP8266_HOMEAUT_MESSAGEBOTTOM_LENGTH )
-
-#define ESP8266_RECEIVEMESSAGE_MIN_LENGTH			\
-			( ESP8266_HOMEAUT_MESSAGEHEADER_LENGTH	\
-			+ ESP8266_TCP_MESSAGE_MIN_LENGTH		\
-			+ ESP8266_HOMEAUT_MESSAGEBOTTOM_LENGTH )
-
-/// ESP8266 receive buffer length
-#define ESP8266_RX_BUFFER_LENGTH				( 256UL )
-
-#define ESP8266_RECEIVE_LENGTH					( ESP8266_RX_BUFFER_LENGTH )
-
-#define ESP8266_TX_BUFFER_LENGTH				( 128U )
 
 
 #define ESP8266_LED_OK()		LED_GREEN_ON();	\
@@ -174,7 +170,7 @@ typedef enum
 	ESP8266_WifiConnectionStatus_SuccessfulServerStarted,
 	ESP8266_WifiConnectionStatus_ClosedConnection,
 	ESP8266_WifiConnectionStatus_Error
-	
+
 } ESP8266_WifiConnectionStatusType;
 
 
@@ -184,7 +180,7 @@ typedef enum
 	ESP8266_TcpConnectionStatus_Unknown = 0,
 	ESP8266_TcpConnectionStatus_Connected,
 	ESP8266_TcpConnectionStatus_Error
-	
+
 } ESP8266_TcpConnectionStatusType;
 
 
@@ -210,9 +206,10 @@ void ESP8266_StatusMachine(void);
 
 size_t ESP8266_SendString(const char *msg);
 
-uint8_t ESP8266_RequestSendTcpMessage(const char * message);
+bool ESP8266_RequestSendTcpMessage(const char *msg, size_t msgLength);
+bool ESP8266_StartSendTcpMessageBlocked(size_t length);
 
-uint8_t ESP8266_PrintIpAddress(char * str);
+size_t ESP8266_PrintIpAddress(char *str);
 
 
 

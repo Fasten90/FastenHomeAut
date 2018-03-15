@@ -18,6 +18,7 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
+#include "options.h"
 #include "compiler.h"
 #include "TaskHandler.h"
 

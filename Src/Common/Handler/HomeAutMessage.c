@@ -249,7 +249,7 @@ bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
 	// Split
 	if (isOk)
 	{
-		isOk = (STRING_Splitter(&message[1], HOMEAUTMESSAGE_SEPARATOR_CHARACTER,
+		isOk = (STRING_Splitter(&message[1], HOMEAUTMESSAGE_SEPARATOR_STRING,
 				split, HOMEAUTMESSAGE_SPLIT_NUM) == HOMEAUTMESSAGE_SPLIT_NUM);
 	}
 

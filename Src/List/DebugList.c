@@ -65,6 +65,13 @@ DebugRecord_t DebugTasks[] =
 		.color = Color_Cyan,
 	},
 #endif
+#ifdef CONFIG_MODULE_WEBPAGE_ENABLE
+	{
+		.name = "Webpage",
+		.isEnabled = true,
+		.color = Color_Green,
+	},
+#endif
 
 	/*
 	 * XXX: Add here new Debug task struct

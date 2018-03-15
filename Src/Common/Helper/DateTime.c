@@ -86,7 +86,7 @@ bool DateTime_ConvertStringToDateTime(const char *string, DateTime_t *dateTime)
 	StrCpy((char *)&dateTimeString, string);
 
 	// Split at space: "2017-01-18 20:10:00"
-	if (STRING_Splitter(dateTimeString, ' ', separated, 2) == 2)
+	if (STRING_Splitter(dateTimeString, " ", separated, 2) == 2)
 	{
 		// Convert date/time strings
 		isOk &= DateTime_ConvertDateStringToDate(separated[0], &convertedDateTime.date);
@@ -170,7 +170,7 @@ bool DateTime_ConvertDateStringToDate(char *str, Date_t *date)
 	}
 
 	// Separate
-	if (STRING_Splitter(str, '-', separated, 3) == 3)
+	if (STRING_Splitter(str, "-", separated, 3) == 3)
 	{
 		// Successful separate
 		uint32_t convertValue;
@@ -215,7 +215,7 @@ bool DateTime_ConvertTimeStringToTime(char *str, Time_t *time)
 	Time_t convertTime;
 
 	// Separate
-	if (STRING_Splitter(str, ':', separated, 3) == 3)
+	if (STRING_Splitter(str, ":", separated, 3) == 3)
 	{
 		// Successful separate
 		uint32_t convertValue;
