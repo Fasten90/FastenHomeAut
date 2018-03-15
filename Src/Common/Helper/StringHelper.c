@@ -2891,7 +2891,7 @@ uint32_t StringHelper_UnitTest(void)
 
 	// STRING_Splitter()
 	StrCpy(buffer, "need to separate this text");
-	value8 = STRING_Splitter(buffer, ' ', splitted, 10);
+	value8 = STRING_Splitter(buffer, " ", splitted, 10);
 	UNITTEST_ASSERT(value8 == 5, "STRING_Splitter error");
 	UNITTEST_ASSERT(!StrCmp(splitted[0],"need"), "STRING_Splitter error");
 	UNITTEST_ASSERT(!StrCmp(splitted[1],"to"), "STRING_Splitter error");
@@ -2901,15 +2901,18 @@ uint32_t StringHelper_UnitTest(void)
 	UNITTEST_ASSERT(splitted[5] == NULL, "STRING_Splitter error");
 
 	StrCpy(buffer, "text");
-	value8 = STRING_Splitter(buffer, ' ', splitted, 10);
+	value8 = STRING_Splitter(buffer, " ", splitted, 10);
 	UNITTEST_ASSERT(value8 == 1, "STRING_Splitter error");
 	UNITTEST_ASSERT(!StrCmp(splitted[0],"text"), "STRING_Splitter error");
 	UNITTEST_ASSERT(splitted[1] == NULL, "STRING_Splitter error");
 
 	StrCpy(buffer, "");
-	value8 = STRING_Splitter(buffer, ' ', splitted, 10);
+	value8 = STRING_Splitter(buffer, " ", splitted, 10);
 	UNITTEST_ASSERT(value8 == 0, "STRING_Splitter error");
 	UNITTEST_ASSERT(splitted[0] == NULL, "STRING_Splitter error");
+
+
+	// TODO: Add new tests for STRING_Splitter()
 
 
 	// TODO: Test StrAppend
