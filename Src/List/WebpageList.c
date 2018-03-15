@@ -28,6 +28,28 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
+///< 404.html file:
+static const char WebpageList_404[] =
+"<!DOCTYPE html>" \
+"<html>" \
+"<head>" \
+"<meta charset=\"ISO-8859-1\">" \
+"<link rel=\"icon\" href=\"favicon.ico\" type=\"image/x-icon\">" \
+"<title>" \
+"FastenHomeAut 404" \
+"</title>" \
+"</head>" \
+"<body>" \
+"<h1 align=\"center\">FastenHomeAut</h1>" \
+"<p>Page not found!</p>" \
+"<a href=\"index.html\">Main page</a>" \
+"</body>" \
+"</html>" \
+"" \
+;
+/* End of HTML file string */
+
+
 ///< favicon.ico file:
 static const char WebpageList_favicon[] =
 { 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x20, 0x20, 
@@ -101,6 +123,12 @@ static const char WebpageList_index[] =
 const WebpageInformation_t WebpageList[] =
 {
     {
+        .webpageName    = "404.html",
+        .webpageContain = WebpageList_404,
+        .webpageLength  = sizeof(WebpageList_404),
+        .webpageType    = "text/html"
+    },
+    {
         .webpageName    = "favicon.ico",
         .webpageContain = WebpageList_favicon,
         .webpageLength  = sizeof(WebpageList_favicon),
@@ -117,6 +145,10 @@ const WebpageInformation_t WebpageList[] =
 
 ///< Webpage list count
 const uint8_t WebpageList_Count = NUM_OF(WebpageList);
+
+
+///< Webpage 404 index (in the list)
+const uint8_t WebpageList_404PageIndex = 0;
 
 
 

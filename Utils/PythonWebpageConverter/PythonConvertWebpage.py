@@ -53,8 +53,7 @@ def writeDatasToFile(convertedfiles, destfilepath, startfilepath, endfilepath):
 
     filecontain = ""
 
-    # TODO: Start elements:
-
+    # Step on the file list and print
     for convertelement in convertedfiles:
         # write "///< <name> file:"
         filecontain += "///< "
@@ -70,7 +69,6 @@ def writeDatasToFile(convertedfiles, destfilepath, startfilepath, endfilepath):
         filecontain += convertelement["contain"]
 
         filecontain += "\n\n"
-
 
     # "WebpageInformation_t WebpageList[] = { ... }"
     filecontain += "///< Webpage List\n"
@@ -94,9 +92,25 @@ def writeDatasToFile(convertedfiles, destfilepath, startfilepath, endfilepath):
     filecontain += "\n\n"
 
 
-    # NUM_OF(WebpageList)
+    # Webpage list count: NUM_OF(WebpageList)
     filecontain += "///< Webpage list count\n"
     filecontain += "const uint8_t WebpageList_Count = NUM_OF(WebpageList);\n"
+    filecontain += "\n\n"
+    
+    
+    # Index of 404 page
+    # Step on the file list and search the name "404"
+    page404index = 0
+    i = 0
+    for convertelement in convertedfiles:
+        # write "///< <name> file:"
+        if convertelement["shortname"] == "404":
+            page404index = i
+            break 
+        i += 1
+
+    filecontain += "///< Webpage 404 index (in the list)\n"
+    filecontain += "const uint8_t WebpageList_404PageIndex = " + str(page404index) + ";\n"
     filecontain += "\n\n"
 
 

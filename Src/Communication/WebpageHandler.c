@@ -32,6 +32,7 @@
 
 extern const WebpageInformation_t WebpageList[];
 extern const uint8_t WebpageList_Count;
+extern const uint8_t WebpageList_404PageIndex;
 
 
 
@@ -95,9 +96,11 @@ size_t WebpageHandler_GetRequrest(const char *request, char *resp)
 	/* If not found... */
 	if (!isFound)
 	{
-		// TODO: 404 page
-		Debug_Print(Debug_WebPage, "Received wrong get request");
-		respLength = StrCpy(resp, "Empty webpage");
+		// 404 page
+		respLength = WebpageHandler_SendResponse(resp, WebpageList[WebpageList_404PageIndex].webpageContain,
+				WebpageList[WebpageList_404PageIndex].webpageLength, WebpageList[WebpageList_404PageIndex].webpageType);
+
+		Debug_Print(Debug_WebPage, "Received unknown webpage get request");
 	}
 
 	return respLength;
