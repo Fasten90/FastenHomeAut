@@ -88,10 +88,6 @@ typedef enum
 #if (CONFIG_ESP8266_IS_TCP_SERVER == 1)
 	Esp8266Status_StartTcpServer,
 	Esp8266Status_StartTcpServerCheckResponse,
-	#ifdef CONFIG_MODULE_WEBPAGE_ENABLE
-	Esp8266Status_StartTcpHttpServer,
-	Esp8266Status_StartTcpHttpServerCheckResponse,
-	#endif
 #else
 	Esp8266Status_ConnectTcpServer,
 	Esp8266Status_ConnectTcpServerCheckResponse,
@@ -1201,7 +1197,7 @@ void ESP8266_StatusMachine(void)
 			// E.g. "AT+CIPSERVER=1,2000"
 			ESP8266_SendString("AT+CIPSERVER=1," CONFIG_ESP8266_TCP_SERVER_PORT_STRING "\r\n");
 			ESP8266StatusMachine++;
-			ESP8266_DEBUG_PRINTF("Start server on port: %d", CONFIG_ESP8266_TCP_SERVER_PORT);
+			ESP8266_DEBUG_PRINTF("Start server on port: %d", CONFIG_ESP8266_TCP_SERVER_PORT );
 			break;
 
 		case Esp8266Status_StartTcpServerCheckResponse:
@@ -1232,57 +1228,6 @@ void ESP8266_StatusMachine(void)
 			}
 			ESP8266_ClearReceive(true, 0);
 			break;
-	#ifdef CONFIG_MODULE_WEBPAGE_ENABLE
-		case Esp8266Status_StartTcpHttpServer:
-			/*
-			 * Set as server/listen()
-			 * AT+CIPSERVER
-			 *
-			 * Syntax: AT+CIPSERVER=<mode>,<port>
-			 * E.g.:   AT+CIPSERVER=1,2000
-			 * mode:   0 - close
-			 *         1 - open
-			 *
-			 * Response:
-			 * 	 OK
-			 * 	 Linked
-			 */
-			ESP8266_StartReceive();
-			// E.g. "AT+CIPSERVER=1,2000"
-			ESP8266_SendString("AT+CIPSERVER=1," CONFIG_ESP8266_TCP_HTTP_PORT_STRING "\r\n");
-			ESP8266StatusMachine++;
-			ESP8266_DEBUG_PRINTF("Start server on port: %d", CONFIG_ESP8266_TCP_HTTP_PORT);
-			break;
-
-		case Esp8266Status_StartTcpHttpServerCheckResponse:
-			// Check CIPSERVER response
-			if (!StrCmpFirst("\r\nOK\r\n", (const char *)receiveBuffer)
-				|| !StrCmpFirst("no change\r\n", (const char *)receiveBuffer))
-			{
-				// OK
-				ESP8266_LED_OK();
-				ESP8266StatusMachine++;
-				ESP8266_DEBUG_PRINT("Successful started server");
-				// Disable task, because next state is wait client
-				//TaskHandler_DisableTask(Task_Esp8266);
-				ESP8266_StartReceive();
-			}
-			else if (!StrCmpFirst("ERROR", (const char *)receiveBuffer))
-			{
-				// ERROR
-				ESP8266_LED_FAIL();
-				ESP8266StatusMachine = Esp8266Status_StartTcpHttpServer;
-				ESP8266_DEBUG_PRINT("Failed started server (ERROR)");
-			}
-			else
-			{
-				ESP8266_LED_FAIL();
-				ESP8266StatusMachine = Esp8266Status_StartTcpHttpServer;
-				ESP8266_DEBUG_PRINT("Failed started server");
-			}
-			ESP8266_ClearReceive(true, 0);
-			break;
-	#endif	// #ifdef CONFIG_MODULE_WEBPAGE_ENABLE
 
 #else	// End of #if CONFIG_ESP8266_IS_TCP_SERVER == 1
 //  #if CONFIG_ESP8266_IS_TCP_SERVER == 0
