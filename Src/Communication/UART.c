@@ -55,6 +55,8 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
+static uint8_t UART_ErrorCounter = 0;
+
 
 
 /*------------------------------------------------------------------------------
@@ -298,6 +300,7 @@ void DEBUG_USARTx_IRQHandler(void)
 
 
 
+// TODO: Put to ESP8266?
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 void ESP8266_USARTx_IRQHandler(void)
 {
@@ -415,6 +418,11 @@ static void UART_Handler(UART_Handler_t *handler)
 		{
 			__HAL_UART_DISABLE_IT(huart, UART_IT_TXE);
 		}
+	}
+
+	if (err)
+	{
+		UART_ErrorCounter++;
 	}
 }
 
