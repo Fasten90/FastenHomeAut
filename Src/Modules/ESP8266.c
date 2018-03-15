@@ -1201,7 +1201,7 @@ void ESP8266_StatusMachine(void)
 			// E.g. "AT+CIPSERVER=1,2000"
 			ESP8266_SendString("AT+CIPSERVER=1," CONFIG_ESP8266_TCP_SERVER_PORT_STRING "\r\n");
 			ESP8266StatusMachine++;
-			ESP8266_DEBUG_PRINT("Start server");
+			ESP8266_DEBUG_PRINTF("Start server on port: %d", CONFIG_ESP8266_TCP_SERVER_PORT);
 			break;
 
 		case Esp8266Status_StartTcpServerCheckResponse:
@@ -1251,7 +1251,7 @@ void ESP8266_StatusMachine(void)
 			// E.g. "AT+CIPSERVER=1,2000"
 			ESP8266_SendString("AT+CIPSERVER=1," CONFIG_ESP8266_TCP_HTTP_PORT_STRING "\r\n");
 			ESP8266StatusMachine++;
-			ESP8266_DEBUG_PRINT("Start server");
+			ESP8266_DEBUG_PRINTF("Start server on port: %d", CONFIG_ESP8266_TCP_HTTP_PORT);
 			break;
 
 		case Esp8266Status_StartTcpHttpServerCheckResponse:
@@ -1668,11 +1668,12 @@ static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedM
 			// "\r\n"
 			ESP8266_ClearReceive(false, STRING_LENGTH("OK"));
 		}
-		else if (!STRING_FindString((const char *)receiveBuffer, "[Vendor:www.ai-thinker.com Version:"))
+		else if (STRING_FindString((const char *)receiveBuffer, "[Vendor:www.ai-thinker.com Version:") != NULL)
 		{
 			// TODO: It is only ESP8266 reset message
 			// Received reset message, restart the state machine
 			ESP8266StatusMachine = Esp8266Status_Reconfig;
+			ESP8266_DEBUG_PRINTF("Received reset message: %s", receiveBuffer);
 		}
 		else if (receivedMessageLength < 6)
 		{

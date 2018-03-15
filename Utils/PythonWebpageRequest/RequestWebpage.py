@@ -52,4 +52,4 @@ def RequestWebpageMassively(webpage_link, request_num=100, periodtime_sec=1, tim
 if __name__ == "__main__":
     #RequestWebpage("https://wwww.python.org/")
     #RequestWebpage("http://192.168.1.11:2000/index.html")
-    RequestWebpageMassively("http://192.168.1.11:2000/index.html", request_num=100, periodtime_sec=1.0)
+    RequestWebpageMassively("http://192.168.1.11/index.html", request_num=100, periodtime_sec=1.0)
