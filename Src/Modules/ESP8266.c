@@ -101,6 +101,8 @@ typedef enum
 	Esp8266Status_BeforeIdle,
 	Esp8266Status_Idle,
 
+	Esp8266Status_Reconfig,
+
 } ESP8266_StatusMachine_t;
 
 
@@ -236,7 +238,7 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_Start(size_t msgLength);
 static bool ESP8266_SendTcpMessageNonBlockingMode_SendMessage(const char *msg, size_t msgLength);
 static void ESP8266_SendTcpClose(void);
 
-static void ESP8266_CheckIdleStateMessages(char * receiveBuffer, size_t receivedMessageLength);
+static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedMessageLength);
 static bool ESP8266_ProcessReceivedTcpMessage(char *receiveBuffer);
 
 #ifdef CONFIG_MODULE_WEBPAGE_ENABLE
@@ -1464,6 +1466,11 @@ void ESP8266_StatusMachine(void)
 #endif
 			break;
 
+		case Esp8266Status_Reconfig:
+			ESP8266_DEBUG_PRINT("Required reconfig");
+			ESP8266StatusMachine = Esp8266Status_Init;
+			break;
+
 		default:
 			// Unknown state = Error --> Go to Init state
 			ESP8266StatusMachine = Esp8266Status_Init;
@@ -1485,7 +1492,7 @@ void ESP8266_StatusMachine(void)
  * 			- Unlink
  * 			- +IPD: Received message
  */
-static void ESP8266_CheckIdleStateMessages(char * receiveBuffer, size_t receivedMessageLength)
+static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedMessageLength)
 {
 	/*
 	 * Check message, which can be anything...
@@ -1493,13 +1500,11 @@ static void ESP8266_CheckIdleStateMessages(char * receiveBuffer, size_t received
 	 * Unlink
 	 * +IPD: Received message
 	 */
-	if (CircularBuffer_IsNotEmpty(ESP8266_Uart.rx))
+	if (receivedMessageLength != 0)
 	{
-		// There is some character in rx buffer
+		// Received some character
 
 		bool goodMsgRcv = false;
-
-		// Buffer changed
 
 		if (ESP8266_TcpSendIsStarted_Flag)
 		{
@@ -1575,7 +1580,7 @@ static void ESP8266_CheckIdleStateMessages(char * receiveBuffer, size_t received
 				if (ESP8266_TcpCloseAfterSent)
 				{
 					ESP8266_TcpCloseAfterSent = false;
-					ESP8266_SendTcpClose();
+					//ESP8266_SendTcpClose();	// TODO: It is need or not need?
 				}
 			}
 			else
@@ -1663,6 +1668,12 @@ static void ESP8266_CheckIdleStateMessages(char * receiveBuffer, size_t received
 			// "\r\n"
 			ESP8266_ClearReceive(false, STRING_LENGTH("OK"));
 		}
+		else if (!STRING_FindString((const char *)receiveBuffer, "[Vendor:www.ai-thinker.com Version:"))
+		{
+			// TODO: It is only ESP8266 reset message
+			// Received reset message, restart the state machine
+			ESP8266StatusMachine = Esp8266Status_Reconfig;
+		}
 		else if (receivedMessageLength < 6)
 		{
 			// Received too small message
@@ -1685,8 +1696,8 @@ static void ESP8266_CheckIdleStateMessages(char * receiveBuffer, size_t received
 		// If has lot of error, clear buffer
 		if (!goodMsgRcv)
 		{
-			// If has a lot of error
 			ESP8266_ErrorCnt++;
+			// If has a lot of error
 			if ((ESP8266_ErrorCnt > 5) || (receivedMessageLength > (ESP8266_RX_BUFFER_LENGTH - 10)))
 			{
 				ESP8266_DEBUG_PRINT("Has lot of errors, cleared buffer");
