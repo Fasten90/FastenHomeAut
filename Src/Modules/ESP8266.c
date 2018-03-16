@@ -47,6 +47,15 @@
 #define ESP8266_TCP_CONNECTION_MAX_ID	(5)
 
 
+/**
+ * Close TCP connection after HTTP get request
+ * TODO: Not works well
+ * 1 - on - close TCP connection
+ * 0 - off - do nothing
+ */
+#define ESP8266_TCP_CLOSE_AFTER_HTTP_GET		(0)
+
+
 
 /*------------------------------------------------------------------------------
  *  Type definitions
@@ -152,7 +161,9 @@ static bool ESP8266_TcpSendIsStarted_Flag    = false;
 static bool ESP8266_TcpSent_WaitSendOk_Flag  = false;
 
 static uint8_t ESP8266_TcpMessageId = 0;
+#if (ESP8266_TCP_CLOSE_AFTER_HTTP_GET == 1)
 static bool ESP8266_TcpCloseAfterSent = false;
+#endif
 
 // Statuses
 static ESP8266_StatusMachine_t ESP8266StatusMachine = Esp8266Status_Unknown;
@@ -232,7 +243,10 @@ static void ESP8266_ClearReceive(bool isFullClear, size_t stepLength);
 
 static bool ESP8266_SendTcpMessageNonBlockingMode_Start(size_t msgLength);
 static bool ESP8266_SendTcpMessageNonBlockingMode_SendMessage(const char *msg, size_t msgLength);
+
+#if (ESP8266_TCP_CLOSE_AFTER_HTTP_GET == 1)
 static void ESP8266_SendTcpClose(void);
+#endif
 
 static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedMessageLength);
 static bool ESP8266_ProcessReceivedTcpMessage(char *receiveBuffer);
@@ -609,6 +623,7 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_SendMessage(const char *msg, s
 
 
 
+#if (ESP8266_TCP_CLOSE_AFTER_HTTP_GET == 1)
 /**
  * \brief	Close TCP connection: last <id> connection
  */
@@ -624,6 +639,7 @@ static void ESP8266_SendTcpClose(void)
 	usnprintf(cmd, 20, "AT+CIPCLOSE=%d\r\n", ESP8266_TcpMessageId);
 	ESP8266_SendString(cmd);
 }
+#endif
 
 
 
@@ -1522,11 +1538,13 @@ static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedM
 				goodMsgRcv = true;
 				ESP8266_ClearReceive(false, STRING_LENGTH("\r\nSEND OK\r\n"));
 
+#if (ESP8266_TCP_CLOSE_AFTER_HTTP_GET == 1)
 				if (ESP8266_TcpCloseAfterSent)
 				{
 					ESP8266_TcpCloseAfterSent = false;
-					//ESP8266_SendTcpClose();	// TODO: It is need or not need?
+					ESP8266_SendTcpClose();	// TODO: It is need or not need?
 				}
+#endif
 			}
 			else
 			{
@@ -1851,9 +1869,11 @@ static bool ESP8266_SearchGetRequest(const char *recvMsg)
 		// Send HTML webpage
 		ESP8266_RequestSendTcpMessage(respBuffer, respLength);
 
+#if (ESP8266_TCP_CLOSE_AFTER_HTTP_GET == 1)
 		// Close TCP connection
-		//ESP8266_SendTcpClose(); // TODO: Only after sent...
+		// Note: Do not close TCP connection here! Only close after message was sent!
 		ESP8266_TcpCloseAfterSent = true;
+#endif
 
 		isFound = true;
 	}
