@@ -397,7 +397,7 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 #endif
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
 	// Turn off LEDs
-	IO_Output_SetStatus(IO_LED_Green, LED_Cmd_SetOff);
+	IO_Output_SetStatus(IO_LED_Green, IO_Output_Cmd_SetOff);
 #endif
 
 	return TaskResult_Ok;
@@ -455,8 +455,8 @@ static TaskResult_t Task_MotorConnStop(ScheduleSource_t source)
 
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
 	// TODO: LED blink 1 ms
-	IO_Output_SetStatus(LED_Red, LED_Cmd_SetOn);
-	IO_Output_SetStatus(LED_Red, LED_Cmd_SetOff);
+	IO_Output_SetStatus(IO_LED_Red, IO_Output_Cmd_SetOn);
+	IO_Output_SetStatus(IO_LED_Red, IO_Output_Cmd_SetOff);
 #endif
 
 	return TaskResult_Ok;

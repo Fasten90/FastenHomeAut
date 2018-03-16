@@ -1536,8 +1536,7 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 			if (convertValue <= 100 && convertValue > -100)
 			{
 				#ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
-				IO_Output_SetStatus(LED_Green, LED_Cmd_SetOn);
-				//IO_Output_SetStatus(LED_Green, LED_Cmd_SetOff);
+				IO_Output_SetStatus(IO_LED_Green, IO_Output_Cmd_SetOn);
 				#endif
 				int8_t percent = (uint8_t)convertValue;
 				Motor_StateMachine_SetDc(percent);
@@ -1562,8 +1561,7 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 			if (convertValue <= 90 && convertValue >= -90)
 			{
 				#ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
-				IO_Output_SetStatus(LED_Green, LED_Cmd_SetOn);
-				//IO_Output_SetStatus(LED_Green, LED_Cmd_SetOff);
+				IO_Output_SetStatus(IO_LED_Green, IO_Output_Cmd_SetOn);
 				#endif
 				int8_t angle = (int8_t)convertValue;
 				/*
@@ -1617,8 +1615,7 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 			if (convertValue <= 100 && convertValue > -100)
 			{
 				#ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
-				IO_Output_SetStatus(LED_Green, LED_Cmd_SetOn);
-				//IO_Output_SetStatus(LED_Green, LED_Cmd_SetOff);
+				IO_Output_SetStatus(IO_LED_Green, IO_Output_Cmd_SetOn);
 				#endif
 				int8_t percent = (uint8_t)convertValue;
 				Motor_StateMachine_SetDc(percent);
@@ -1645,8 +1642,7 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 				if (convertValue <= 90 && convertValue >= -90)
 				{
 					#ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
-					IO_Output_SetStatus(LED_Green, LED_Cmd_SetOn);
-					//IO_Output_SetStatus(LED_Green, LED_Cmd_SetOff);
+					IO_Output_SetStatus(IO_LED_Green, IO_Output_Cmd_SetOn);
 					#endif
 					int8_t angle = (int8_t)convertValue;
 					Motor_StateMachine_SetAngle(angle);
