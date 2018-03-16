@@ -55,12 +55,15 @@
 
 
 ///< Remote controller (for car) function
-//#define CONFIG_FUNCTION_REMOTECONTROLLER_CAR
+#define CONFIG_FUNCTION_REMOTECONTROLLER_CAR
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
 	#ifndef CONFIG_MODULE_MOTOR_ENABLE
 		#define CONFIG_MODULE_MOTOR_ENABLE
 	#endif
-	#define CONFIG_MODULE_BLUETOOTH_ENABLE
+
+	// Communication interface:
+	//#define CONFIG_MODULE_BLUETOOTH_ENABLE
+	#define CONFIG_MODULE_ESP8266_ENABLE
 #endif
 
 
@@ -366,9 +369,9 @@
 
 	//#define CONFIG_MODULE_DISPLAY_ENABLE
 
-	#define CONFIG_MODULE_BUTTON_ENABLE
+	//#define CONFIG_MODULE_BUTTON_ENABLE
 
-	#define CONFIG_MODULE_ESP8266_ENABLE
+	//#define CONFIG_MODULE_ESP8266_ENABLE
 	//#define CONFIG_MODULE_BLUETOOTH_ENABLE
 
 	//#define CONFIG_MODULE_MOTOR_ENABLE
@@ -625,17 +628,17 @@
 	// ESP8266 - Connection type
 	// 1 - Dynamic (Can change WiFi and TCP client/server
 	// 0 - Static, fix connection type (only server or only client)
-	#define CONFIG_ESP8266_CONNECT_DYNAMIC		0
+	#define CONFIG_ESP8266_CONNECT_DYNAMIC		(0)
 
 	// Module will be WiFi network "server"
 	// 1 - WifiHost
 	// 0 - Not WifiHost (client)
-	#define CONFIG_ESP8266_IS_WIFI_HOST			0
+	#define CONFIG_ESP8266_IS_WIFI_HOST			(0)
 
 	// Fix IP
 	// 1 - Fix IP
 	// 0 - Not fix IP
-	#define CONFIG_ESP8266_FIX_IP				0
+	#define CONFIG_ESP8266_FIX_IP				(0)
 	#if (CONFIG_ESP8266_FIX_IP == 1)
 		#define CONFIG_ESP8266_FIX_IP_ADDRESS		"9.6.5.14"
 	#endif
@@ -643,10 +646,34 @@
 	// Module TCP state
 	// 1 - ESP8266 will be TCP server,
 	// 0 - will be TCP client
-	#define CONFIG_ESP8266_IS_TCP_SERVER		1
+	#define CONFIG_ESP8266_IS_TCP_SERVER		(0)
+
 
 	// DHCP Enable
 	//#define CONFIG_ESP8266_CWDHCP_ENABLE
+
+	///< Enable webpage
+	//#define CONFIG_MODULE_WEBPAGE_ENABLE
+
+	///< Single-Multiple connection
+	// 1 - Multiple
+	// 0 - Single
+	#define CONFIG_ESP8266_MULTIPLE_CONNECTION					(0)
+
+	///< Transparent mode
+	#define CONFIG_ESP8266_TRANSPARENT_MODE_ENABLED				(1)
+
+	#if ((CONFIG_ESP8266_MULTIPLE_CONNECTION == 1) && (CONFIG_ESP8266_TRANSPARENT_MODE_ENABLED == 1))
+		#error "ESP8266: Cannot use Transparent mode in multiple connection!"
+	#endif
+
+
+	#if (CONFIG_ESP8266_MULTIPLE_CONNECTION == 1)
+		#define CONFIG_ESP8266_TCP_CLIENT_CONNECTION_ID_STRING		"0,"
+	#else
+		#define CONFIG_ESP8266_TCP_CLIENT_CONNECTION_ID_STRING		""
+	#endif
+
 
 	#if CONFIG_ESP8266_IS_WIFI_HOST == 1
 		// Create a WiFi Network
@@ -683,11 +710,8 @@
 		#endif
 	#endif
 
-	#define CONFIG_ESP8266_TCP_SERVER_PORT						(80)
-	#define CONFIG_ESP8266_TCP_SERVER_PORT_STRING				"80"
-
-	///< Enable webpage
-	#define CONFIG_MODULE_WEBPAGE_ENABLE
+	#define CONFIG_ESP8266_TCP_SERVER_PORT						(2000)
+	#define CONFIG_ESP8266_TCP_SERVER_PORT_STRING				"2000"
 
 #endif	// #ifdef CONFIG_MODULE_ESP8266_ENABLE
 

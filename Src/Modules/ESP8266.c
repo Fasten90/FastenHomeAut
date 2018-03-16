@@ -92,8 +92,10 @@ typedef enum
 	Esp8266Status_ConnectWifiNetworkCheckResponse,
 	Esp8266Status_ConnectWifiNetworkCheckFinish,
 #endif
+
 	Esp8266Status_PrintMyIpAddress,
 	Esp8266Status_IpAddressResponse,
+
 #if (CONFIG_ESP8266_IS_TCP_SERVER == 1)
 	Esp8266Status_StartTcpServer,
 	Esp8266Status_StartTcpServerCheckResponse,
@@ -101,6 +103,11 @@ typedef enum
 	Esp8266Status_ConnectTcpServer,
 	Esp8266Status_ConnectTcpServerCheckResponse,
 	Esp8266Status_ConnectTcpServerCheckFinish,
+#endif
+
+#if (CONFIG_ESP8266_TRANSPARENT_MODE_ENABLED == 1)
+	Esp8266Status_ConfigTransparentMode,
+	Esp8266Status_Config_TransparentModeCheckResponse,
 #endif
 
 	Esp8266Status_BeforeIdle,
@@ -160,7 +167,9 @@ static bool ESP8266_TcpSendBuffer_EnableFlag = true;
 static bool ESP8266_TcpSendIsStarted_Flag    = false;
 static bool ESP8266_TcpSent_WaitSendOk_Flag  = false;
 
+#if (CONFIG_ESP8266_MULTIPLE_CONNECTION == 1)
 static uint8_t ESP8266_TcpMessageId = 0;
+#endif
 #if (ESP8266_TCP_CLOSE_AFTER_HTTP_GET == 1)
 static bool ESP8266_TcpCloseAfterSent = false;
 #endif
@@ -241,7 +250,11 @@ static bool ESP8266_ConvertIpString(char *message);
 static void ESP8266_StartReceive(void);
 static void ESP8266_ClearReceive(bool isFullClear, size_t stepLength);
 
+#if (CONFIG_ESP8266_TRANSPARENT_MODE_ENABLED == 0)
 static bool ESP8266_SendTcpMessageNonBlockingMode_Start(size_t msgLength);
+#elif (CONFIG_ESP8266_TRANSPARENT_MODE_ENABLED == 1)
+static bool ESP8266_SendTcpMessageNonBlockingMode_Start(void);
+#endif
 static bool ESP8266_SendTcpMessageNonBlockingMode_SendMessage(const char *msg, size_t msgLength);
 
 #if (ESP8266_TCP_CLOSE_AFTER_HTTP_GET == 1)
@@ -249,7 +262,9 @@ static void ESP8266_SendTcpClose(void);
 #endif
 
 static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedMessageLength);
+#if (CONFIG_ESP8266_TRANSPARENT_MODE_ENABLED == 0)
 static bool ESP8266_ProcessReceivedTcpMessage(char *receiveBuffer);
+#endif
 
 #ifdef CONFIG_MODULE_WEBPAGE_ENABLE
 static bool ESP8266_SearchGetRequest(const char *recvMsg);
@@ -540,6 +555,7 @@ bool ESP8266_RequestSendTcpMessage(const char *msg, size_t msgLength)	// TODO: A
 
 
 
+#if (CONFIG_ESP8266_TRANSPARENT_MODE_ENABLED == 0)
 /**
  * \brief	Send message on TCP
  */
@@ -562,12 +578,14 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_Start(size_t msgLength)
 	if (ESP8266_TcpSendIsStarted_Flag == true)
 		return false;
 
+#if (CONFIG_ESP8266_MULTIPLE_CONNECTION == 1)
 	if (ESP8266_TcpMessageId >= ESP8266_TCP_CONNECTION_MAX_ID)
 	{
 		// Wrong <id>
 		ESP8266_DEBUG_PRINT("Wrong ID");
 		return false;
 	}
+#endif
 	if (msgLength > ESP8266_TCP_MESSAGE_MAX_LENGTH)
 	{
 		// Wrong length
@@ -578,9 +596,13 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_Start(size_t msgLength)
 	// Buffer for "AT+CIPSEND=0,40\r\n"
 	char cmdString[STRING_LENGTH("AT+CIPSEND=0," STR(ESP8266_TCP_MESSAGE_MAX_LENGTH) "\r\n") + 1];
 
+#if (CONFIG_ESP8266_MULTIPLE_CONNECTION == 1)
 	// Send ~ "AT+CIPSEND=0,40\r\n"
 	//usprintf(cmdString, "AT+CIPSEND=0,%d\r\n", length); // Fix <id>, not good idea
 	usprintf(cmdString, "AT+CIPSEND=%d,%d\r\n", ESP8266_TcpMessageId, msgLength);
+#else
+	usprintf(cmdString, "AT+CIPSEND=%d\r\n", msgLength);
+#endif
 
 	ESP8266_SendString(cmdString);
 
@@ -593,6 +615,31 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_Start(size_t msgLength)
 
 	return true;
 }
+#elif (CONFIG_ESP8266_TRANSPARENT_MODE_ENABLED == 1)
+/**
+ * \brief	Send message on TCP
+ */
+static bool ESP8266_SendTcpMessageNonBlockingMode_Start(void)
+{
+	/*
+	 * Send data (transparent mode)
+	 * AT+CIPSEND
+	 */
+
+	// Can we send, there is no sending in process?
+	if (ESP8266_TcpSendIsStarted_Flag == true)
+		return false;
+
+	ESP8266_SendString("AT+CIPSEND\r\n");
+
+	ESP8266_TcpSendIsStarted_Flag = true;
+
+	// Wait response immediately
+	TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 100);
+
+	return true;
+}
+#endif
 
 
 
@@ -833,6 +880,7 @@ void ESP8266_StatusMachine(void)
 
 		case Esp8266Status_ConfigCwModeCheckResponse:
 			if ((!StrCmpFirst("OK\r\n", (const char *)receiveBuffer))
+				|| (!StrCmpFirst("\r\nOK\r\n", (const char *)receiveBuffer))
 				|| (!StrCmpFirst("no change\r\n", (const char *)receiveBuffer)))
 			{
 				// "OK"
@@ -940,7 +988,11 @@ void ESP8266_StatusMachine(void)
 			 * Now: "AT+CIPMUX=1\r\n"
 			 */
 			ESP8266_StartReceive();
+	#if (CONFIG_ESP8266_MULTIPLE_CONNECTION == 1)
 			ESP8266_SendString("AT+CIPMUX=1\r\n");
+	#else
+			ESP8266_SendString("AT+CIPMUX=0\r\n");
+	#endif
 			ESP8266StatusMachine++;
 			ESP8266_DEBUG_PRINT("Config CIPMUX sent");
 			break;
@@ -1078,7 +1130,7 @@ void ESP8266_StatusMachine(void)
 			}
 
 			// For try-safe (avoid the infinite connection trying loop)
-			if (ESP8266_ErrorCnt > 10)
+			if (ESP8266_ErrorCnt > 20) // ~20 seconds
 			{
 				ESP8266_ErrorCnt = 0;
 				ESP8266StatusMachine = Esp8266Status_ConnectWifiNetwork;
@@ -1111,6 +1163,7 @@ void ESP8266_StatusMachine(void)
 			}
 			else if (!receivedMessageLength)
 			{
+				// Not received char
 				ESP8266_DEBUG_PRINT("Wifi connecting...");
 				ESP8266_ErrorCnt++;
 				if (ESP8266_ErrorCnt > 15)
@@ -1264,17 +1317,19 @@ void ESP8266_StatusMachine(void)
 			 */
 
 			ESP8266_StartReceive();
-			// Original string: "AT+CIPSTART=0,\"TCP\",\"192.168.1.62\",2000\r\n"
+			// E.g.: "AT+CIPSTART=0,\"TCP\",\"192.168.1.62\",2000\r\n"
 #if CONFIG_ESP8266_CONNECT_DYNAMIC == 1
 			char buffer[60];
 			uint8_t length = 0;
-			length += usprintf(buffer, "AT+CIPSTART=" CONFIG_ESP8266_TCP_CLIENT_CONNECTION_ID ",\"TCP\",\"");
+			length += usprintf(buffer, "AT+CIPSTART=" CONFIG_ESP8266_TCP_CLIENT_CONNECTION_ID_STRING ",\"TCP\",\"");
 			length += Network_PrintIp(&buffer[length], (Network_IP_t *)&ESP8266_ServerAddress);
 			length += usprintf(&buffer[length], "\",%d\r\n", ESP8266_ServerPort);
 			ESP8266_SendString(buffer);
 #else
 			// Note: 0. id
-			ESP8266_SendString("AT+CIPSTART=" CONFIG_ESP8266_TCP_CLIENT_CONNECTION_ID ",\"TCP\",\""
+			ESP8266_SendString("AT+CIPSTART="
+					CONFIG_ESP8266_TCP_CLIENT_CONNECTION_ID_STRING // ","
+					"\"TCP\",\""
 					CONFIG_ESP8266_TCP_SERVER_IP_STRING
 					"\","
 					CONFIG_ESP8266_TCP_SERVER_PORT_STRING
@@ -1330,6 +1385,8 @@ void ESP8266_StatusMachine(void)
 			}
 			else
 			{
+				// Error / not received response
+				// E.g. "Link typ ERROR"
 				ESP8266_DEBUG_PRINT("TCP connect command response not received, wait...");
 				ESP8266_ErrorCnt++;
 				if (ESP8266_ErrorCnt > 5)
@@ -1399,8 +1456,42 @@ void ESP8266_StatusMachine(void)
 
 			break;
 
-			// TODO: TCP connection checking
+			// TODO: TCP connection checking: Use "AT+CIPSTATUS\r\n" ?
 #endif	//#if CONFIG_ESP8266_IS_TCP_SERVER == 0
+
+#if (CONFIG_ESP8266_TRANSPARENT_MODE_ENABLED == 1)
+		case Esp8266Status_ConfigTransparentMode:
+			/*
+			 * Set transfer mode
+			 * AT+CIPMODE
+			 * Mode:
+			 * AT+CIPMODE=0		// Normal mode
+			 * AT+CIPMODE=1		// Transparent mode
+			 */
+			ESP8266_StartReceive();
+			ESP8266_SendString("AT+CIPMODE=1\r\n");
+			ESP8266StatusMachine++;
+			ESP8266_DEBUG_PRINT("Config CIPMODE sent");
+			break;
+
+		case Esp8266Status_Config_TransparentModeCheckResponse:
+			if (!StrCmpFirst("\r\nOK\r\n", (const char *)receiveBuffer))
+			{
+				// "OK"
+				ESP8266_LED_OK();
+				ESP8266StatusMachine++;
+				ESP8266_DEBUG_PRINT("Config CIPMODE response ok");
+			}
+			else
+			{
+				// Other... it is wrong
+				ESP8266_LED_FAIL();
+				ESP8266StatusMachine = Esp8266Status_Init;
+				ESP8266_DEBUG_PRINTF("Config CIPMODE response failed, received \"%s\"", receiveBuffer);
+			}
+			ESP8266_ClearReceive(true, 0);
+			break;
+#endif
 
 		case Esp8266Status_BeforeIdle:
 			ESP8266_StartReceive();
@@ -1447,6 +1538,7 @@ void ESP8266_StatusMachine(void)
 
 
 
+#if (CONFIG_ESP8266_TRANSPARENT_MODE_ENABLED == 0)
 /**
  * \brief	Check idle state messages
  * 			- Link
@@ -1706,9 +1798,85 @@ static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedM
 		 */
 	}
 }
+#elif (CONFIG_ESP8266_TRANSPARENT_MODE_ENABLED == 1)
+	// Transparent mode
+static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedMessageLength)
+{
+
+	if ((ESP8266_TcpSendIsStarted_Flag == false) && (ESP8266_TcpSent_WaitSendOk_Flag == false))
+	{
+		// Send (first time)
+		ESP8266_SendTcpMessageNonBlockingMode_Start();
+		// ESP8266_TcpSendIsStarted_Flag set true by ESP8266_SendTcpMessageNonBlockingMode_Start
+	}
+	else if ((ESP8266_TcpSendIsStarted_Flag == true) && (ESP8266_TcpSent_WaitSendOk_Flag == false))
+	{
+		// Wait "Send" response
+
+		// TCP message sending started, wait "> "
+		// Check, response is "> "
+		if (!StrCmpFirst(">", (const char *)receiveBuffer) || !StrCmpFirst("\r\n>", (const char *)receiveBuffer))
+		{
+			// Received "> ", we can send message
+			ESP8266_DEBUG_PRINT("Received \"> \"");
+			ESP8266_TcpSent_WaitSendOk_Flag = true;
+			TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 100);
+			ESP8266_ClearReceive(false, STRING_LENGTH("> "));
+		}
+		else
+		{
+			ESP8266_DEBUG_PRINT("Not received \"> \"");
+			// Resend
+			ESP8266_TcpSendIsStarted_Flag = false;
+		}
+	}
+	// Now: else if ((ESP8266_TcpSendIsStarted_Flag == true) && (ESP8266_TcpSent_WaitSendOk_Flag == true))
+	else if (receivedMessageLength != 0)
+	{
+		if (!StrCmpFirst("\r\nwrong syntax\r\n\r\nERROR\r\n", (const char *)receiveBuffer))
+		{
+			// Problem
+			ESP8266_DEBUG_PRINT("Wrong syntax error");
+
+			ESP8266_ClearReceive(true, 0);
+
+			ESP8266StatusMachine = Esp8266Status_Reconfig;
+		}
+		else
+		{
+			ESP8266_DEBUG_PRINTF("Received message: \"%s\", length: %d", receiveBuffer, receivedMessageLength);
+
+			// Received ~telnet command
+			char responseBuffer[ESP8266_TCP_MESSAGE_MAX_LENGTH];
+			// TODO: Use the global buffer immediately?
+
+			// Execute the command
+			CmdH_ExecuteCommand(receiveBuffer, responseBuffer, ESP8266_TCP_MESSAGE_MAX_LENGTH);
+
+			size_t respMsgLength = StringLength(responseBuffer);
+
+			ESP8266_RequestSendTcpMessage(responseBuffer, respMsgLength);
+
+			// TODO: Not a good idea, but ExecuteCommand() not receive with processlength
+			ESP8266_ClearReceive(true, 0);
+		}
+	}
+	else if (ESP8266_TcpSendBuffer_EnableFlag == false)
+	{
+		// We have a sending message?
+		if (ESP8266_SendTcpMessageNonBlockingMode_SendMessage(ESP8266_TcpTransmitBuffer, ESP8266_TcpTransmitMsg_length))
+		{
+			ESP8266_TcpSendBuffer_EnableFlag = true;
+		}
+	}
+	// else
+	// Handle: "wrong syntax", "+++" ...
+}
+#endif
 
 
 
+#if (CONFIG_ESP8266_TRANSPARENT_MODE_ENABLED == 0)
 /**
  * \brief	Process received TCP message
  * 			Actual message start with: \r\n+IPD,
@@ -1736,6 +1904,7 @@ static bool ESP8266_ProcessReceivedTcpMessage(char *receiveBuffer)
 			uint32_t messageLength;
 
 			// 0. splitted string is ID
+			// TODO: #if (CONFIG_ESP8266_MULTIPLE_CONNECTION == 1)
 			if (StringToUnsignedDecimalNum((const char *)splittedTcpMsg[0], &id))
 			{
 				// ID converted successfully
@@ -1759,8 +1928,10 @@ static bool ESP8266_ProcessReceivedTcpMessage(char *receiveBuffer)
 							// We have message source:
 							ESP8266_DEBUG_PRINTF("Received TCP message (id: %d, length: %d): \"%s\"", id, messageLength, splittedTcpMsg[2]);
 
+			#if (CONFIG_ESP8266_MULTIPLE_CONNECTION == 1)
 							// We need answer in good <id> !
 							ESP8266_TcpMessageId = id;
+			#endif
 
 			#ifdef CONFIG_MODULE_WEBPAGE_ENABLE
 							if (ESP8266_SearchGetRequest(splittedTcpMsg[2]))
@@ -1851,6 +2022,7 @@ static bool ESP8266_ProcessReceivedTcpMessage(char *receiveBuffer)
 
 	return isOk;
 }
+#endif /* #if (CONFIG_ESP8266_TRANSPARENT_MODE_ENABLED == 0) */
 
 
 
