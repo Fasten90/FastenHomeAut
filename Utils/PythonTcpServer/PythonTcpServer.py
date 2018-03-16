@@ -12,15 +12,19 @@ print ("Start TCP Server, IP: {0} Port: {1}".format(TCP_IP, TCP_PORT))
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((TCP_IP, TCP_PORT))
 
-while 1:
-	s.listen(1)
 
-	conn, addr = s.accept()
-	print ("Connection address:", addr)
+def tcp_server_thread():
 	while 1:
-		data = conn.recv(BUFFER_SIZE)
-		if not data: break
-		print ("Received data:", data)
-		#conn.send(data)  # echo
-	conn.close()
+		s.listen(1)
+	
+		conn, addr = s.accept()
+		print ("Connection address:", addr)
+		while 1:
+			data = conn.recv(BUFFER_SIZE)
+			if data:
+				print ("Received data: ", str(data))
+			else:
+				print ("Not received data")
+			#conn.send(data)  # echo
+		conn.close()
 
