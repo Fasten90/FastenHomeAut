@@ -64,7 +64,6 @@
 typedef enum
 {
 	// Do not change order, it will crash ESP8266 state machine!
-	Esp8266Status_Unknown,
 	Esp8266Status_Init,
 	Esp8266Status_AfterInit,
 	Esp8266Status_ConfigAte0,
@@ -175,7 +174,7 @@ static bool ESP8266_TcpCloseAfterSent = false;
 #endif
 
 // Statuses
-static ESP8266_StatusMachine_t ESP8266StatusMachine = Esp8266Status_Unknown;
+static ESP8266_StatusMachine_t ESP8266StatusMachine = Esp8266Status_Init;
 
 ESP8266_WifiConnectionStatusType ESP8266_ConnectionStatus = ESP8266_WifiConnectionStatus_Unknown;
 
@@ -772,12 +771,6 @@ void ESP8266_StatusMachine(void)
 	// Check ESP8266 status machine state
 	switch (ESP8266StatusMachine)
 	{
-		case Esp8266Status_Unknown:
-			ESP8266StatusMachine++;
-			ESP8266_DEBUG_PRINT("Error: Unknown state");
-			// TODO: Add warning suppression to here
-			// break;	// Step to next
-
 		case Esp8266Status_Init:
 			ESP8266_ResetHardware();
 			ESP8266StatusMachine++;
@@ -1103,7 +1096,7 @@ void ESP8266_StatusMachine(void)
 				// "busy p..."
 				// I hope, connection in progress
 				ESP8266StatusMachine++;
-				ESP8266_DEBUG_PRINT("Wait... (busy)\r\n");
+				ESP8266_DEBUG_PRINT("Wait... (busy p...)\r\n");
 				ESP8266_ClearReceive(false, STRING_LENGTH("\r\nbusy p...\r\n"));
 			}
 			else if (!StrCmpFirst("\r\nFAIL", (const char *)receiveBuffer)
@@ -1365,13 +1358,18 @@ void ESP8266_StatusMachine(void)
 			else if (!StrCmpFirst("\r\nbusy p...\r\n", (const char *)receiveBuffer))
 			{
 				// busy p...
-				ESP8266StatusMachine++;	// I hope, the command in progress
-				ESP8266_DEBUG_PRINT("Failed connect to TCP server (busy)... Wait...");
+				ESP8266StatusMachine--;	// TODO: Now, what? Old time I hope, the command in progress
+				ESP8266_DEBUG_PRINT("Failed connect to TCP server (busy p...) Wait...");
 				// TODO: Wait... ?
 				ESP8266_ClearReceive(false, STRING_LENGTH("\r\nbusy p...\r\n"));
 
 #warning "Need close! Beautify!"
+#if (CONFIG_ESP8266_MULTIPLE_CONNECTION == 1)
+				#warning "TODO: Close which <id>...?"
 				ESP8266_SendString("AT+CIPCLOSE=0\r\n");
+#else
+				ESP8266_SendString("AT+CIPCLOSE\r\n");
+#endif
 				DelayMs(50);
 				ESP8266_ClearReceive(true, 0);
 			}
@@ -1443,7 +1441,7 @@ void ESP8266_StatusMachine(void)
 					ESP8266_DEBUG_PRINTF("Unknown received message: \"%s\" at connection to TCP server", receiveBuffer);
 				else
 					ESP8266_DEBUG_PRINT("Not received message at connection to TCP server");
-				if (ESP8266_ErrorCnt > 10)
+				if (ESP8266_ErrorCnt > 20) // ~20 sec
 				{
 					// Has lot of errors
 					ESP8266StatusMachine = Esp8266Status_ConnectTcpServer;
@@ -1500,6 +1498,12 @@ void ESP8266_StatusMachine(void)
 			TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 100);
 			ESP8266StatusMachine++;
 			ESP8266_ConnectionStatus = ESP8266_WifiConnectionStatus_SuccessfulServerStarted;
+
+			// Reinit states
+			//ESP8266_TcpSendBuffer_EnableFlag = true;
+			ESP8266_TcpSendIsStarted_Flag = false;
+			ESP8266_TcpSent_WaitSendOk_Flag  = false;
+
 			ESP8266_DEBUG_PRINT("Idle");
 			break;
 
@@ -1535,6 +1539,62 @@ void ESP8266_StatusMachine(void)
 	return;
 }
 #endif
+
+
+
+/**
+ * \brief	Required new state
+ */
+void ESP8266_RequiredNewState(ESP8266_AdjustableState_t newState)
+{
+	// TODO: Maximal state?
+	// TODO: State name print?
+	const char *requiredStateName = NULL;
+
+	if (newState < ESP8266_AdjustableState_Count)
+	{
+		ESP8266_StatusMachine_t convertedState = Esp8266Status_Init;
+		bool isok = true;
+
+		switch (newState)
+		{
+			case ESP8266_AdjustableState_ReconnectWifi:
+				convertedState = Esp8266Status_ConnectWifiNetwork;
+				requiredStateName = "Wifi reconnect";
+				break;
+
+			case ESP8266_AdjustableState_ReconnectTCP:
+	#if (CONFIG_ESP8266_IS_TCP_SERVER == 1)
+				convertedState = Esp8266Status_StartTcpServer;
+				requiredStateName = "TCP server recrate";
+	#else
+				convertedState = Esp8266Status_ConnectTcpServer;
+				requiredStateName = "TCP reconnect";
+	#endif
+				break;
+
+			case ESP8266_AdjustableState_Count:
+			default:
+				// Wrong / unhandled state
+				isok = false;
+				break;
+		}
+
+		if (isok)
+		{
+			ESP8266StatusMachine = convertedState;
+			ESP8266_DEBUG_PRINTF("Required new state: %s", requiredStateName);
+		}
+		else
+		{
+			ESP8266_DEBUG_PRINT("ERROR! Required unhandled state!");
+		}
+	}
+	else
+	{
+		ESP8266_DEBUG_PRINT("ERROR! Wrong required state!");
+	}
+}
 
 
 
@@ -1818,7 +1878,8 @@ static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedM
 		if (!StrCmpFirst(">", (const char *)receiveBuffer) || !StrCmpFirst("\r\n>", (const char *)receiveBuffer))
 		{
 			// Received "> ", we can send message
-			ESP8266_DEBUG_PRINT("Received \"> \"");
+			ESP8266_DEBUG_PRINT("Received \">\"");
+			ESP8266_ClearReceive(false, 1);
 			ESP8266_TcpSent_WaitSendOk_Flag = true;
 			TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 100);
 			ESP8266_ClearReceive(false, STRING_LENGTH("> "));
@@ -1833,7 +1894,17 @@ static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedM
 	// Now: else if ((ESP8266_TcpSendIsStarted_Flag == true) && (ESP8266_TcpSent_WaitSendOk_Flag == true))
 	else if (receivedMessageLength != 0)
 	{
-		if (!StrCmpFirst("\r\nwrong syntax\r\n\r\nERROR\r\n", (const char *)receiveBuffer))
+		if (!StrCmpFirst("\r\nERROR\r\nUnlink\r\n", (const char *)receiveBuffer))
+		{
+			#warning TODO: Check "+++" or "Unlink" ...
+			ESP8266_DEBUG_PRINT("Unlinked, need reconnect");
+			ESP8266_TcpSendIsStarted_Flag = false;
+
+			ESP8266_ClearReceive(false, STRING_LENGTH("\r\nERROR\r\nUnlink\r\n"));
+
+			ESP8266StatusMachine = Esp8266Status_ConnectTcpServer;
+		}
+		else if (!StrCmpFirst("\r\nwrong syntax\r\n\r\nERROR\r\n", (const char *)receiveBuffer))
 		{
 			// Problem
 			ESP8266_DEBUG_PRINT("Wrong syntax error");
@@ -1858,7 +1929,7 @@ static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedM
 			ESP8266_RequestSendTcpMessage(responseBuffer, respMsgLength);
 
 			// TODO: Not a good idea, but ExecuteCommand() not receive with processlength
-			ESP8266_ClearReceive(true, 0);
+			ESP8266_ClearReceive(false, receivedMessageLength);
 		}
 	}
 	else if (ESP8266_TcpSendBuffer_EnableFlag == false)

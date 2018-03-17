@@ -184,6 +184,17 @@ typedef enum
 } ESP8266_TcpConnectionStatusType;
 
 
+///< Adjustable states
+typedef enum
+{
+	ESP8266_AdjustableState_ReconnectWifi,
+	ESP8266_AdjustableState_ReconnectTCP,
+
+	ESP8266_AdjustableState_Count,
+} ESP8266_AdjustableState_t;
+
+
+
 
 /*------------------------------------------------------------------------------
  *  Global variables
@@ -210,6 +221,8 @@ bool ESP8266_RequestSendTcpMessage(const char *msg, size_t msgLength);
 bool ESP8266_StartSendTcpMessageBlocked(size_t length);
 
 size_t ESP8266_PrintIpAddress(char *str);
+
+void ESP8266_RequiredNewState(ESP8266_AdjustableState_t newState);
 
 
 

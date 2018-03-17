@@ -1692,6 +1692,25 @@ static CmdH_Result_t CommandFunction_ESP8266(uint32_t argc, char** argv)
 		ESP8266_SendString(sendString);
 		result = CmdH_Result_Ok_SendSuccessful;
 	}
+	else if (!StrCmp("reconnect", argv[1]))
+	{
+		if (!StrCmp("wifi", argv[2]))
+		{
+			// WiFi Reconnect
+			ESP8266_RequiredNewState(ESP8266_AdjustableState_ReconnectWifi);
+			result = CmdH_Result_Ok_SendSuccessful;
+		}
+		else if (!StrCmp("tcp", argv[2]))
+		{
+			// TCP Reconnect
+			ESP8266_RequiredNewState(ESP8266_AdjustableState_ReconnectTCP);
+			result = CmdH_Result_Ok_SendSuccessful;
+		}
+		else
+		{
+			result = CmdH_Result_Error_WrongArgument2;
+		}
+	}
 	else if (!StrCmp("ip", argv[1]))
 	{
 		// Print ESP8266 IP addresses
