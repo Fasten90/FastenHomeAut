@@ -17,7 +17,7 @@ is_server = True
 get_parameter = False
 
 
-print("Start TCP " + "server" if is_server else "client")
+print("Start TCP/UDP script")
 
 
 # Get parameters
@@ -34,6 +34,10 @@ if get_parameter:
 else:
 	tcp_ip = TCP_IP_DEFAULT
 	tcp_port = TCP_PORT_DEFAULT
+
+
+# Print "TCP server starting..."
+print(("TCP" if is_tcp else "UDP" )+ " " + ("server" if is_server else "client") + " starting...")
 
 
 # Global variables
@@ -83,6 +87,7 @@ def tcp_receive_thread():
 	global connectOk
 	global needRun
 	global s
+	global conn
 	global is_tcp
 
 	while connectOk:
@@ -94,7 +99,7 @@ def tcp_receive_thread():
 			if not data:
 				print("Received closing byte, pls reconnect!")
 				break
-			print("\nReceived data: {}".format(str(data)))
+			print("Received data: {}".format(str(data)))
 		except Exception as excpt:
 			print("Error in receiving thread" + str(excpt))
 			connectOk = False
@@ -121,17 +126,17 @@ while needRun:
 		if is_server:
 			# Server
 			# Wait connect
-			print("Start wait client")
+			print("Start server, wait client to IP: {}:{}".format(tcp_ip, tcp_port))
 			s.bind((tcp_ip, tcp_port))
-			s.listen(1)
+			s.listen(5)  # Blocking
 			global conn
 			conn, addr = s.accept()
-			print ("Connected client address:", addr)
+			print ("Connected client address: {}".format(addr))
 		else:
 			# Client
 			if is_tcp:
-				print("Start TCP connect IP: {0} Port: {1}".format(tcp_ip, tcp_port))
-				s.connect((tcp_ip, tcp_port))
+				print("Start TCP connect IP: {}:{}".format(tcp_ip, tcp_port))
+				s.connect((tcp_ip, tcp_port)) # Blocking
 			print("Successful connect")
 
 		# Start threads, because ~connect is successful
