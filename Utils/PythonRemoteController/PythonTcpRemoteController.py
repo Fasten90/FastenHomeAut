@@ -52,23 +52,21 @@ tcp_send_thread_is_ok = None
 tcp_received_thread_is_ok = None
 
 
+# Motor control	
+speed_max = 50
+speed_min = -50
+turn_max = 30
+turn_min = -30
+turn = 0
+speed = 0
+send_msg = ""
 
 
-
-def tcp_send_thread():
+def keyboard_handle_thread():
 	global connectOk
-	global needRun
-	global s
-	global is_tcp
-	
-	speed_max = 50
-	speed_min = -50
-	turn_max = 30
-	turn_min = -30
-	turn = 0
-	speed = 0
-	send_msg = ""
-	
+	global speed
+	global send_msg
+
 	while connectOk:
 		# TODO: How to get cursor inputs?
 		#type = input() # Do nog give parameter to input, because it will re-printed on console
@@ -110,6 +108,17 @@ def tcp_send_thread():
 			if speed > speed_min:
 				speed -= 5
 
+
+def tcp_send_thread():
+	global connectOk
+	global needRun
+	global s
+	global is_tcp
+
+	# Wait
+	time.sleep(1)
+	
+	while connectOk:
 		# Create actual send message
 		# Message like: "motor 30 20" --> "motor <speed> <turn>"
 		send_msg = "motor {} {}".format(speed, turn)
@@ -129,6 +138,9 @@ def tcp_send_thread():
 			connectOk = False
 			tcp_send_thread_is_ok = False
 			return
+		
+		# Delay
+		time.sleep(0.2)
 	print("Exit Send thread")
 	
 
@@ -178,7 +190,7 @@ while needRun:
 			print("Start server, wait client to IP: {}:{}".format(tcp_ip, tcp_port))
 			s.bind((tcp_ip, tcp_port))
 			s.listen(5)  # Blocking
-			global conn
+			#global conn
 			conn, addr = s.accept()
 			print ("Connected client address: {}".format(addr))
 		else:
@@ -196,6 +208,8 @@ while needRun:
 		threadRecv.start()
 		threadSend = threading.Thread(name="Send thread", target=tcp_send_thread)
 		threadSend.start()
+		threadKeyHandler = threading.Thread(name="Send thread", target=keyboard_handle_thread)
+		threadKeyHandler.start()
 
 		while connectOk:
 			# If everything is ok
