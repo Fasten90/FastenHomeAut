@@ -91,10 +91,10 @@ typedef enum
 	Esp8266Status_ConnectWifiNetworkCheckResponse,
 	Esp8266Status_ConnectWifiNetworkCheckFinish,
 #endif
-
+#if (ESP8266_VERSION == 0)
 	Esp8266Status_PrintMyIpAddress,
 	Esp8266Status_IpAddressResponse,
-
+#endif
 #if (CONFIG_ESP8266_IS_TCP_SERVER == 1)
 	Esp8266Status_StartTcpServer,
 	Esp8266Status_StartTcpServerCheckResponse,
@@ -439,7 +439,7 @@ static bool ESP8266_ConvertIpString(char *message)
 		*pos1 = '\0';
 		pos1 += 2;	// Skip "\r\n"
 		pos2 = (char *)STRING_FindString(pos1, "\r\n");
-		if (pos2 != NULL 0)
+		if (pos2 != NULL)
 		{
 			*pos2 = '\0';
 			isOk = true;
@@ -461,7 +461,8 @@ static bool ESP8266_ConvertIpString(char *message)
 		// Process IP address string like "192.168.0.1" to Network_IP_t
 		isOk = Network_ConvertIpAddressStringToIP(message, &ESP8266_MyWifiIpAddress);
 #if (CONFIG_ESP8266_IS_WIFI_HOST == 1)
-		isOk &= Network_ConvertIpAddressStringToIP(&message[pos1], &ESP8266_ExWifiIpAddress);
+		pos2++;
+		isOk &= Network_ConvertIpAddressStringToIP(pos2, &ESP8266_ExWifiIpAddress);
 #endif
 		if (isOk)
 		{
@@ -1028,7 +1029,7 @@ void ESP8266_StatusMachine(void)
 			ESP8266_StartReceive();
 			ESP8266_SendString("AT+CWSAP=\""
 								CONFIG_ESP8266_WIFI_NETWORK_NAME
-								""\",\""
+								"\",\""
 								CONFIG_ESP8266_WIFI_NETWORK_PASSWORD
 								"\",1,0\r\n");
 			ESP8266StatusMachine++;
@@ -1183,7 +1184,7 @@ void ESP8266_StatusMachine(void)
 			break;
 
 #endif	// End of "CONFIG_ESP8266_IS_WIFI_HOST == 0"
-
+#if (ESP8266_VERSION == 0)
 		case Esp8266Status_PrintMyIpAddress:
 			/* Get IP address
 			 * AT+CIFSR
@@ -1211,8 +1212,12 @@ void ESP8266_StatusMachine(void)
 				}
 				else
 				{
-					// Wrong IP, reconnect to WiFi
+					// Wrong IP, reconnect to  / reinitialize WiFi
+	#if (CONFIG_ESP8266_IS_WIFI_HOST == 1)
+					ESP8266StatusMachine = Esp8266Status_StartWifiHost;
+	#else
 					ESP8266StatusMachine = Esp8266Status_ConnectWifiNetwork;
+	#endif
 				}
 
 				ESP8266_ClearReceive(true, 0);
@@ -1221,6 +1226,7 @@ void ESP8266_StatusMachine(void)
 			{
 				// Wrong / Not full response received
 				ESP8266_ErrorCnt++;
+				// If too low, retry
 				if (ESP8266_ErrorCnt > 3 && ESP8266_ErrorCnt < 10)
 				{
 					ESP8266StatusMachine = Esp8266Status_PrintMyIpAddress;
@@ -1241,7 +1247,10 @@ void ESP8266_StatusMachine(void)
 				}
 			}
 			break;
+#else /* #if (ESP8266_VERSION == 0) */
 
+#warning "ESP8266: New version has IPv6"
+#endif
 #if CONFIG_ESP8266_IS_TCP_SERVER == 1
 		case Esp8266Status_StartTcpServer:
 			/*
@@ -1250,6 +1259,10 @@ void ESP8266_StatusMachine(void)
 			 *
 			 * Syntax: AT+CIPSERVER=<mode>,<port>
 			 * E.g.:   AT+CIPSERVER=1,2000
+			 *
+			 * Mode:
+			 *   1 - open
+			 *   0 - closed
 			 *
 			 * Response:
 			 * 	 OK
@@ -1345,8 +1358,12 @@ void ESP8266_StatusMachine(void)
 				ESP8266_DEBUG_PRINT("OK... Wait finish...");
 				ESP8266_ClearReceive(false, STRING_LENGTH("\r\nOK\r\n"));
 			}
+#if (ESP8266_VERSION == 0)
 			else if (!StrCmpFirst("ALREADY CONNECT\r\n", (const char *)receiveBuffer)
 				||   !StrCmpFirst("ALREAY CONNECT\r\n", (const char *)receiveBuffer))
+#else
+			else if (!StrCmpFirst("ALREADY CONNECTED\r\n", (const char *)receiveBuffer))
+#endif
 			{
 				// OK
 				// Already connected
@@ -1376,7 +1393,11 @@ void ESP8266_StatusMachine(void)
 			else if (!StrCmpFirst("no ip\r\n", (const char *)receiveBuffer))
 			{
 				// Error, no IP
+	#if (CONFIG_ESP8266_IS_WIFI_HOST == 1)
+				ESP8266StatusMachine = Esp8266Status_StartWifiHost;
+	#else
 				ESP8266StatusMachine = Esp8266Status_ConnectWifiNetwork;
+	#endif
 				ESP8266_ErrorCnt = 0;
 				ESP8266_DEBUG_PRINT("Error: No IP...");
 				ESP8266_ClearReceive(true, 0);
@@ -1559,7 +1580,11 @@ void ESP8266_RequiredNewState(ESP8266_AdjustableState_t newState)
 		switch (newState)
 		{
 			case ESP8266_AdjustableState_ReconnectWifi:
+	#if (CONFIG_ESP8266_IS_WIFI_HOST == 1)
+				convertedState = Esp8266Status_StartWifiHost;
+	#else
 				convertedState = Esp8266Status_ConnectWifiNetwork;
+	#endif
 				requiredStateName = "Wifi reconnect";
 				break;
 

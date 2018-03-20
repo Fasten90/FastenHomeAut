@@ -3,7 +3,7 @@
  * 		Created on:		2016-09-28
  *		Author: 		Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		compiler options for project
+ *		Function:		Configs for project
  *		Target:			STM32Fx
  *		Version:		v4
  *		Last modified:	2016-09-28
@@ -615,6 +615,13 @@
 //#define CONFIG_MODULE_ESP8266_ENABLE
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 
+	// ESP8266 Version
+	// 0 - Original, old
+	//	 - 9600 baudrate
+	// 1 - upgraded
+	//	 - 115200 baudrate
+	#define ESP8266_VERSION							(0)
+
 	// ESP8266 Debug mode:
 	// 1 - on
 	// 0 - off
@@ -628,17 +635,17 @@
 	// ESP8266 - Connection type
 	// 1 - Dynamic (Can change WiFi and TCP client/server
 	// 0 - Static, fix connection type (only server or only client)
-	#define CONFIG_ESP8266_CONNECT_DYNAMIC		(0)
+	#define CONFIG_ESP8266_CONNECT_DYNAMIC			(0)
 
 	// Module will be WiFi network "server"
 	// 1 - WifiHost
 	// 0 - Not WifiHost (client)
-	#define CONFIG_ESP8266_IS_WIFI_HOST			(0)
+	#define CONFIG_ESP8266_IS_WIFI_HOST				(0)
 
 	// Fix IP
 	// 1 - Fix IP
 	// 0 - Not fix IP
-	#define CONFIG_ESP8266_FIX_IP				(0)
+	#define CONFIG_ESP8266_FIX_IP					(0)
 	#if (CONFIG_ESP8266_FIX_IP == 1)
 		#define CONFIG_ESP8266_FIX_IP_ADDRESS		"9.6.5.14"
 	#endif
@@ -646,7 +653,7 @@
 	// Module TCP state
 	// 1 - ESP8266 will be TCP server,
 	// 0 - will be TCP client
-	#define CONFIG_ESP8266_IS_TCP_SERVER		(0)
+	#define CONFIG_ESP8266_IS_TCP_SERVER			(0)
 
 
 	// DHCP Enable
@@ -675,15 +682,17 @@
 	#endif
 
 
-	#if CONFIG_ESP8266_IS_WIFI_HOST == 1
+	#if (CONFIG_ESP8266_IS_WIFI_HOST == 1)
 		// Create a WiFi Network
 		#define CONFIG_ESP8266_WIFI_NETWORK_NAME			"ESP8266HomeAutomation"
 		#define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD		"AUT"
 	#else
 		// Connect to other WiFi network
-		#define CONFIG_ESP8266_WIFI_NETWORK_NAME			"ARTN16"
+		#define CONFIG_ESP8266_WIFI_NETWORK_NAME			"FastenWifi"
+		#define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD		"FastenHome90"
+		//#define CONFIG_ESP8266_WIFI_NETWORK_NAME			"ARTN16"
 		//#define CONFIG_ESP8266_WIFI_NETWORK_NAME			"USR5461"
-		#define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD		"Easdg2011"
+		//#define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD		"Easdg2011"
 	#endif
 
 	#ifndef CONFIG_ESP8266_WIFI_NETWORK_PASSWORD
@@ -698,15 +707,22 @@
 			#define CONFIG_ESP8266_TCP_SERVER_IP_1	(192)
 			#define CONFIG_ESP8266_TCP_SERVER_IP_2	(168)
 			#define CONFIG_ESP8266_TCP_SERVER_IP_3	(4)
-			#define CONFIG_ESP8266_TCP_SERVER_IP_4	(1)
-			#define CONFIG_ESP8266_TCP_SERVER_IP_STRING		"192.168.4.1"
+			#define CONFIG_ESP8266_TCP_SERVER_IP_4	(2)
+			#define CONFIG_ESP8266_TCP_SERVER_IP_STRING		"192.168.4.2"
 		#elif (CONFIG_ESP8266_IS_WIFI_HOST == 0)
 			// TCP connection destination is on the other network
+			#define CONFIG_ESP8266_TCP_SERVER_IP_1	(192)
+			#define CONFIG_ESP8266_TCP_SERVER_IP_2	(168)
+			#define CONFIG_ESP8266_TCP_SERVER_IP_3	(0)
+			#define CONFIG_ESP8266_TCP_SERVER_IP_4	(199)
+			#define CONFIG_ESP8266_TCP_SERVER_IP_STRING		"192.168.0.199"
+			/*
 			#define CONFIG_ESP8266_TCP_SERVER_IP_1	(192)
 			#define CONFIG_ESP8266_TCP_SERVER_IP_2	(168)
 			#define CONFIG_ESP8266_TCP_SERVER_IP_3	(1)
 			#define CONFIG_ESP8266_TCP_SERVER_IP_4	(62)
 			#define CONFIG_ESP8266_TCP_SERVER_IP_STRING		"192.168.1.62"
+			*/
 		#endif
 	#endif
 
