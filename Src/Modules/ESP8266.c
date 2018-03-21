@@ -166,6 +166,8 @@ static bool ESP8266_TcpSendBuffer_EnableFlag = true;
 static bool ESP8266_TcpSendIsStarted_Flag    = false;
 static bool ESP8266_TcpSent_WaitSendOk_Flag  = false;
 
+static bool ESP8266_TcpLoginMessageIsSent_Flag = false;
+
 #if (CONFIG_ESP8266_MULTIPLE_CONNECTION == 1)
 static uint8_t ESP8266_TcpMessageId = 0;
 #endif
@@ -1915,8 +1917,15 @@ static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedM
 			// Resend
 			ESP8266_TcpSendIsStarted_Flag = false;
 		}
+
+		ESP8266_TcpLoginMessageIsSent_Flag = false;
 	}
 	// Now: else if ((ESP8266_TcpSendIsStarted_Flag == true) && (ESP8266_TcpSent_WaitSendOk_Flag == true))
+	else if (ESP8266_TcpLoginMessageIsSent_Flag == false)
+	{
+		ESP8266_RequestSendTcpMessage("login", STRING_LENGTH("login"));
+		ESP8266_TcpLoginMessageIsSent_Flag = true;
+	}
 	else if (receivedMessageLength != 0)
 	{
 		if (!StrCmpFirst("\r\nERROR\r\nUnlink\r\n", (const char *)receiveBuffer))
@@ -1947,14 +1956,37 @@ static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedM
 			// TODO: Use the global buffer immediately?
 
 			// Execute the command
-			CmdH_ExecuteCommand(receiveBuffer, responseBuffer, ESP8266_TCP_MESSAGE_MAX_LENGTH);
+			CmdH_Result_t cmdResult = CmdH_ExecuteCommand(receiveBuffer, responseBuffer, ESP8266_TCP_MESSAGE_MAX_LENGTH);
 
-			size_t respMsgLength = StringLength(responseBuffer);
+			if (cmdResult == CmdH_Result_Ok)
+			{
+				// Response in the buffer
+				size_t respMsgLength = StringLength(responseBuffer);
+				ESP8266_RequestSendTcpMessage(responseBuffer, respMsgLength);
 
-			ESP8266_RequestSendTcpMessage(responseBuffer, respMsgLength);
+				ESP8266_ClearReceive(false, receivedMessageLength);
+			}
+			else if (cmdResult == CmdH_Result_Ok_SendSuccessful)
+			{
+				// Print CommandHandler default response:
+				CmdH_PrintResult(cmdResult);
+
+				size_t respMsgLength = StringLength(responseBuffer);
+				ESP8266_RequestSendTcpMessage(responseBuffer, respMsgLength);
+
+				ESP8266_ClearReceive(false, receivedMessageLength);
+			}
+			else
+			{
+				// Wrong
+				// Do nothing, but if too lot of chars received, delete it!
+			}
 
 			// TODO: Not a good idea, but ExecuteCommand() not receive with processlength
-			ESP8266_ClearReceive(false, receivedMessageLength);
+			if (receivedMessageLength > 30)
+			{
+				ESP8266_ClearReceive(false, receivedMessageLength);
+			}
 		}
 	}
 	else if (ESP8266_TcpSendBuffer_EnableFlag == false)
