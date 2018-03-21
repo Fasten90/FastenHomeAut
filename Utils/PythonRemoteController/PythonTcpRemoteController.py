@@ -51,6 +51,7 @@ conn = None
 tcp_send_thread_is_ok = None
 tcp_received_thread_is_ok = None
 
+login_received = False
 
 # Motor control	
 speed_max = 50
@@ -64,8 +65,12 @@ send_msg = ""
 
 def keyboard_handle_thread():
 	global connectOk
+	
 	global speed
+	global turn
+	
 	global send_msg
+	global login_received
 
 	while connectOk:
 		# TODO: How to get cursor inputs?
@@ -74,10 +79,14 @@ def keyboard_handle_thread():
 		import msvcrt
 		type = msvcrt.getch()
 		key = ""
-		if type == "x":
+		if type == b'x':
 			print("Exit")
 			connectOk = False
 			needRun = False
+		elif type == b's':
+			login_received = True
+		elif type == b'e':
+			login_received = False
 		elif type == b'K': 
 			key = "left"
 		elif type == b'H': 
@@ -114,6 +123,7 @@ def tcp_send_thread():
 	global needRun
 	global s
 	global is_tcp
+	global login_received
 
 	# Wait
 	time.sleep(1)
@@ -121,23 +131,26 @@ def tcp_send_thread():
 	while connectOk:
 		# Create actual send message
 		# Message like: "motor 30 20" --> "motor <speed> <turn>"
-		send_msg = "motor {} {}".format(speed, turn)
-		print(send_msg)
-		send_msg = bytes(send_msg.encode("ASCII"))
-		
-		try:
-			if is_tcp:
-				if is_server:
-					conn.send(send_msg)
+		if login_received:
+			send_msg = "motor {} {}".format(speed, turn)
+			print(send_msg)
+			send_msg = bytes(send_msg.encode("ASCII"))
+			
+			try:
+				if is_tcp:
+					if is_server:
+						conn.send(send_msg)
+					else:
+						s.send(send_msg)
 				else:
-					s.send(send_msg)
-			else:
-				s.sendto(msg, (tcp_ip, tcp_port))
-		except Exception as excpt:
-			print("Error in sending thread: " + str(excpt))
-			connectOk = False
-			tcp_send_thread_is_ok = False
-			return
+					s.sendto(msg, (tcp_ip, tcp_port))
+			except Exception as excpt:
+				print("Error in sending thread: " + str(excpt))
+				connectOk = False
+				tcp_send_thread_is_ok = False
+				return
+		else:
+			print("Not send message (not received login msg)")
 		
 		# Delay
 		time.sleep(0.2)
@@ -150,6 +163,7 @@ def tcp_receive_thread():
 	global s
 	global conn
 	global is_tcp
+	global login_received
 
 	while connectOk:
 		try:
@@ -160,6 +174,8 @@ def tcp_receive_thread():
 			if not data:
 				print("Received closing byte, pls reconnect!")
 				break
+			elif data == "login":
+				login_received = True
 			print("Received data: {}".format(str(data)))
 		except Exception as excpt:
 			print("Error in receiving thread" + str(excpt))
@@ -182,6 +198,7 @@ while needRun:
 						socket.SOCK_DGRAM) # UDP
 	
 	connectOk = False
+	login_received = False
 	
 	try:
 		if is_server:
