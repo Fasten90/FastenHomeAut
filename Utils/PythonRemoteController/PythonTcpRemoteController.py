@@ -105,17 +105,25 @@ def keyboard_handle_thread():
 
 		# Motor control
 		if key == "left":
-			if turn > turn_min:
-				turn -= 5
+			if turn < 0:
+				turn += 20
+			elif turn < turn_max:
+				turn += 10
 		if key == "right":
-			if turn < turn_max:
-				turn += 5
+			if turn > 0:
+				turn -= 20
+			elif turn > turn_min:
+				turn -= 10
 		if key == "up":
-			if speed < speed_max:
-				speed += 5
+			if speed < 0:
+				speed += 20
+			elif speed < speed_max:
+				speed += 10
 		if key == "down":
-			if speed > speed_min:
-				speed -= 5
+			if speed > 0:
+				speed -= 20
+			elif speed > speed_min:
+				speed -= 10
 
 
 def tcp_send_thread():
@@ -132,7 +140,7 @@ def tcp_send_thread():
 		# Create actual send message
 		# Message like: "motor 30 20" --> "motor <speed> <turn>"
 		if login_received:
-			send_msg = "motor {} {}".format(speed, turn)
+			send_msg = "motor {} {}\r\n".format(speed, turn)
 			print(send_msg)
 			send_msg = bytes(send_msg.encode("ASCII"))
 			
@@ -153,7 +161,7 @@ def tcp_send_thread():
 			print("Not send message (not received login msg)")
 		
 		# Delay
-		time.sleep(0.2)
+		time.sleep(0.1)
 	print("Exit Send thread")
 	
 
@@ -174,7 +182,7 @@ def tcp_receive_thread():
 			if not data:
 				print("Received closing byte, pls reconnect!")
 				break
-			elif data == "login":
+			elif data == b'login':
 				login_received = True
 			print("Received data: {}".format(str(data)))
 		except Exception as excpt:
