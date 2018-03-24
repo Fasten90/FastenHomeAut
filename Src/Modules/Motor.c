@@ -27,8 +27,8 @@
 
 // MOTOR - Status machine values
 
-#define MOTOR_STATE_MACHINE_SPEED_CHANGE_LIMIT		(5)
-#define MOTOR_SERVO_CHANGE_LIMIT					(5)
+#define MOTOR_STATE_MACHINE_SPEED_CHANGE_LIMIT		(10)
+#define MOTOR_SERVO_CHANGE_LIMIT					(10)
 
 #define MOTOR_SLIDE_DCMOTOR_LIMIT_MAX				(50)
 #define MOTOR_SLIDE_DCMOTOR_LIMIT_MIN				(0)
@@ -507,23 +507,37 @@ void Motor_StateMachine(void)
 				{
 				// Small different, set to control value
 				ActualState.dcPercent =  ControlState.dcPercent;
-				Motor_DcMotorChangePercent(ActualState.dcPercent);
+
 				}
 			else
 			{
 				// Large different
 				if (ActualState.dcPercent < ControlState.dcPercent)
 				{
-					ActualState.dcPercent += MOTOR_STATE_MACHINE_SPEED_CHANGE_LIMIT;
-					Motor_DcMotorChangePercent(ActualState.dcPercent);
+					if ((ControlState.dcPercent - ControlState.dcPercent) > (4 * MOTOR_STATE_MACHINE_SPEED_CHANGE_LIMIT))
+					{
+						ActualState.dcPercent += 2 * MOTOR_STATE_MACHINE_SPEED_CHANGE_LIMIT;
+					}
+					else
+					{
+						ActualState.dcPercent += MOTOR_STATE_MACHINE_SPEED_CHANGE_LIMIT;
+					}
 				}
 				else
 				{
 					// ActualState.dcPercent > ControlState.dcPercent
-					ActualState.dcPercent -= MOTOR_STATE_MACHINE_SPEED_CHANGE_LIMIT;
-					Motor_DcMotorChangePercent(ActualState.dcPercent);
+					if ((ControlState.dcPercent - ActualState.dcPercent) > (4 *MOTOR_STATE_MACHINE_SPEED_CHANGE_LIMIT))
+					{
+						ActualState.dcPercent -= 2 * MOTOR_STATE_MACHINE_SPEED_CHANGE_LIMIT;
+					}
+					else
+					{
+						ActualState.dcPercent -= MOTOR_STATE_MACHINE_SPEED_CHANGE_LIMIT;
+					}
 				}
 			}
+
+			Motor_DcMotorChangePercent(ActualState.dcPercent);
 		}
 		else
 		{
@@ -537,11 +551,25 @@ void Motor_StateMachine(void)
 	{
 		if (ActualState.angle < ControlState.angle)
 		{
-			ActualState.angle += MOTOR_SERVO_CHANGE_LIMIT;
+			if ((ActualState.angle < 0) && (ControlState.angle > 0))
+			{
+				ActualState.angle += (2 * MOTOR_SERVO_CHANGE_LIMIT);
+			}
+			else
+			{
+				ActualState.angle += MOTOR_SERVO_CHANGE_LIMIT;
+			}
 		}
 		else
 		{
-			ActualState.angle -= MOTOR_SERVO_CHANGE_LIMIT;
+			if ((ActualState.angle > 0) && (ControlState.angle < 0))
+			{
+				ActualState.angle -= (2 * MOTOR_SERVO_CHANGE_LIMIT);
+			}
+			else
+			{
+				ActualState.angle -= MOTOR_SERVO_CHANGE_LIMIT;
+			}
 		}
 		Motor_ServoChangeAngle(ActualState.angle);
 	}
