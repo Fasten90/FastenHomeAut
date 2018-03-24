@@ -1893,6 +1893,7 @@ static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedM
 	if ((ESP8266_TcpSendIsStarted_Flag == false) && (ESP8266_TcpSent_WaitSendOk_Flag == false))
 	{
 		// Send (first time)
+		ESP8266_TcpSendBuffer_EnableFlag = true;	// Clear send buffer
 		ESP8266_SendTcpMessageNonBlockingMode_Start();
 		// ESP8266_TcpSendIsStarted_Flag set true by ESP8266_SendTcpMessageNonBlockingMode_Start
 	}
@@ -1949,6 +1950,8 @@ static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedM
 		}
 		else
 		{
+			bool recvOk = false;
+
 			ESP8266_DEBUG_PRINTF("Received message: \"%s\", length: %d", receiveBuffer, receivedMessageLength);
 
 			// Received ~telnet command
@@ -1965,6 +1968,7 @@ static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedM
 				ESP8266_RequestSendTcpMessage(responseBuffer, respMsgLength);
 
 				ESP8266_ClearReceive(false, receivedMessageLength);
+				recvOk = true;
 			}
 			else if (cmdResult == CmdH_Result_Ok_SendSuccessful)
 			{
@@ -1975,6 +1979,7 @@ static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedM
 				ESP8266_RequestSendTcpMessage(responseBuffer, respMsgLength);
 
 				ESP8266_ClearReceive(false, receivedMessageLength);
+				recvOk = true;
 			}
 			else
 			{
@@ -1987,6 +1992,21 @@ static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedM
 			{
 				ESP8266_ClearReceive(false, receivedMessageLength);
 			}
+
+			// Check errors
+			static uint8_t recvCounter = 0;
+			if (recvOk == false)
+			{
+				recvCounter++;
+
+				// Clear, if have lot of errors
+				if (recvCounter > 10)
+				{
+					ESP8266_ClearReceive(false, receivedMessageLength);
+					recvCounter = 0;
+				}
+			}
+
 		}
 	}
 	else if (ESP8266_TcpSendBuffer_EnableFlag == false)
