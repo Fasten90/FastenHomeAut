@@ -2140,7 +2140,7 @@ static CmdH_Result_t CommandFunction_Display(uint32_t argc, char** argv)
 	if (!StrCmp("write", argv[1]))
 	{
 		char *separated[2];
-		if (STRING_Splitter(argv[2], ',', separated, 2))
+		if (STRING_Splitter(argv[2], ",", separated, 2))
 		{
 			// Check line parameter
 			uint32_t line;
