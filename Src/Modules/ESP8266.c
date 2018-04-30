@@ -1362,7 +1362,7 @@ void ESP8266_StatusMachine(void)
 			}
 #if (ESP8266_VERSION == 0)
 			else if (!StrCmpFirst("ALREADY CONNECT\r\n", (const char *)receiveBuffer)
-				||   !StrCmpFirst("ALREAY CONNECT\r\n", (const char *)receiveBuffer))
+				||   !StrCmpFirst("ALREAY CONNECT\r\n", (const char *)receiveBuffer)) // ESP8266 FW old version has a bug
 #else
 			else if (!StrCmpFirst("ALREADY CONNECTED\r\n", (const char *)receiveBuffer))
 #endif
@@ -1916,6 +1916,7 @@ static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedM
 		{
 			ESP8266_DEBUG_PRINT("Not received \"> \"");
 			// Resend
+			// TODO: There is a bug, when we try to connect, and hurry will receive command (and we lost the "> ")
 			ESP8266_TcpSendIsStarted_Flag = false;
 		}
 
@@ -1956,6 +1957,7 @@ static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedM
 
 			// Received ~telnet command
 			char responseBuffer[ESP8266_TCP_MESSAGE_MAX_LENGTH];
+			responseBuffer[0] = '\0';
 			// TODO: Use the global buffer immediately?
 
 			// Execute the command
@@ -1964,8 +1966,12 @@ static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedM
 			if (cmdResult == CmdH_Result_Ok)
 			{
 				// Response in the buffer
-				size_t respMsgLength = StringLength(responseBuffer);
-				ESP8266_RequestSendTcpMessage(responseBuffer, respMsgLength);
+				if (StrCmp("\r\n", responseBuffer))
+				{
+					// Not empty answer
+					size_t respMsgLength = StringLength(responseBuffer);
+					ESP8266_RequestSendTcpMessage(responseBuffer, respMsgLength);
+				}
 
 				ESP8266_ClearReceive(false, receivedMessageLength);
 				recvOk = true;
