@@ -158,7 +158,7 @@ def tcp_send_thread():
 				tcp_send_thread_is_ok = False
 				return
 		else:
-			print("Not send message (not received login msg)")
+			print("Message wasn't sent (not received login msg)")
 		
 		# Delay
 		time.sleep(0.1)
@@ -184,6 +184,7 @@ def tcp_receive_thread():
 				break
 			elif data == b'login':
 				login_received = True
+				print("Login message received")
 			print("Received data: {}".format(str(data)))
 		except Exception as excpt:
 			print("Error in receiving thread" + str(excpt))
