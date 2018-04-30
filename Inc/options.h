@@ -729,6 +729,10 @@
 	#define CONFIG_ESP8266_TCP_SERVER_PORT						(2000)
 	#define CONFIG_ESP8266_TCP_SERVER_PORT_STRING				"2000"
 
+	///< Send "login" message after TCP connection
+	// 1 - on
+	// 0 - off
+	#define CONFIG_ESP8266_TCP_CONNECT_LOGIN_MSG_ENABLE			(1)
 #endif	// #ifdef CONFIG_MODULE_ESP8266_ENABLE
 
 

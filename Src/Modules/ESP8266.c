@@ -166,7 +166,9 @@ static bool ESP8266_TcpSendBuffer_EnableFlag = true;
 static bool ESP8266_TcpSendIsStarted_Flag    = false;
 static bool ESP8266_TcpSent_WaitSendOk_Flag  = false;
 
+#if (CONFIG_ESP8266_TCP_CONNECT_LOGIN_MSG_ENABLE == 1)
 static bool ESP8266_TcpLoginMessageIsSent_Flag = false;
+#endif
 
 #if (CONFIG_ESP8266_MULTIPLE_CONNECTION == 1)
 static uint8_t ESP8266_TcpMessageId = 0;
@@ -1920,14 +1922,18 @@ static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedM
 			ESP8266_TcpSendIsStarted_Flag = false;
 		}
 
+	#if (CONFIG_ESP8266_TCP_CONNECT_LOGIN_MSG_ENABLE == 1)
 		ESP8266_TcpLoginMessageIsSent_Flag = false;
+	#endif
 	}
 	// Now: else if ((ESP8266_TcpSendIsStarted_Flag == true) && (ESP8266_TcpSent_WaitSendOk_Flag == true))
+	#if (CONFIG_ESP8266_TCP_CONNECT_LOGIN_MSG_ENABLE == 1)
 	else if (ESP8266_TcpLoginMessageIsSent_Flag == false)
 	{
 		ESP8266_RequestSendTcpMessage("login", STRING_LENGTH("login"));
 		ESP8266_TcpLoginMessageIsSent_Flag = true;
 	}
+	#endif
 	else if (receivedMessageLength != 0)
 	{
 		if (!StrCmpFirst("\r\nERROR\r\nUnlink\r\n", (const char *)receiveBuffer))
