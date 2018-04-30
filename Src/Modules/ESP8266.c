@@ -1972,12 +1972,14 @@ static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedM
 			if (cmdResult == CmdH_Result_Ok)
 			{
 				// Response in the buffer
+	#if (CONFIG_ESP8266_TCP_MSG_ANSWER_FAST_MODE_ENABLE == 0)
 				if (StrCmp("\r\n", responseBuffer))
 				{
 					// Not empty answer
 					size_t respMsgLength = StringLength(responseBuffer);
 					ESP8266_RequestSendTcpMessage(responseBuffer, respMsgLength);
 				}
+	#endif
 
 				ESP8266_ClearReceive(false, receivedMessageLength);
 				recvOk = true;

@@ -733,6 +733,11 @@
 	// 1 - on
 	// 0 - off
 	#define CONFIG_ESP8266_TCP_CONNECT_LOGIN_MSG_ENABLE			(1)
+
+	///< Fast answer mode (turned off answer)
+	// 1 - Fast mode enabled
+	// 0 - Original mode
+	#define CONFIG_ESP8266_TCP_MSG_ANSWER_FAST_MODE_ENABLE		(1)
 #endif	// #ifdef CONFIG_MODULE_ESP8266_ENABLE
 
 
