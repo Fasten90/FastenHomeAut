@@ -1089,7 +1089,11 @@ void ESP8266_StatusMachine(void)
 
 		case Esp8266Status_ConnectWifiNetworkCheckResponse:
 
-			if (!StrCmpFirst("\r\nOK\r\n", (const char *)receiveBuffer))
+			if (!StrCmpFirst("\r\nOK\r\n", (const char *)receiveBuffer)
+	#if (ESP8266_VERSION == 1)
+			|| (STRING_FindString((const char *)receiveBuffer, "WIFI CONNECTED") != NULL)
+	#endif
+			)
 			{
 				// Command OK, step to wait response
 				ESP8266StatusMachine += 2;	// TODO: Now, it skipped wait finish
@@ -1905,14 +1909,17 @@ static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedM
 
 		// TCP message sending started, wait "> "
 		// Check, response is "> "
-		if (!StrCmpFirst(">", (const char *)receiveBuffer) || !StrCmpFirst("\r\n>", (const char *)receiveBuffer))
+		if (!StrCmpFirst(">", (const char *)receiveBuffer) || !StrCmpFirst("\r\n>", (const char *)receiveBuffer)
+	#if (ESP8266_VERSION == 1)
+			|| (!StrCmpFirst("\r\nOK\r\n\r\n>", (const char *)receiveBuffer))
+	#endif
+		)
 		{
 			// Received "> ", we can send message
 			ESP8266_DEBUG_PRINT("Received \">\"");
-			ESP8266_ClearReceive(false, 1);
 			ESP8266_TcpSent_WaitSendOk_Flag = true;
 			TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 100);
-			ESP8266_ClearReceive(false, STRING_LENGTH("> "));
+			ESP8266_ClearReceive(true, 0); // Clear all is not the best idea
 		}
 		else
 		{
