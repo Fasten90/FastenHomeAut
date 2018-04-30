@@ -527,12 +527,6 @@ void CmdH_SendLine(const char *message)
 		}
 		CmdH_SendMessage("\r\n");
 	}
-
-	/*
-	if (message != NULL)
-		CmdH_SendMessage(message);
-	CmdH_SendMessage("\r\n");
-	*/
 }
 
 

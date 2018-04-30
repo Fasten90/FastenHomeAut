@@ -1533,7 +1533,7 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 		// Set DC motor
 		if (StringToSignedDecimalNum(argv[2], &convertValue))
 		{
-			if (convertValue <= 100 && convertValue > -100)
+			if ((convertValue <= 100) && (convertValue > -100))
 			{
 				#ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
 				IO_Output_SetStatus(IO_LED_Green, IO_Output_Cmd_SetOn);
@@ -1620,7 +1620,7 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 				int8_t percent = (uint8_t)convertValue;
 				Motor_StateMachine_SetDc(percent);
 				TaskHandler_ClearTimeoutTask(Task_MotorTimeout);
-				result = CmdH_Result_Ok_SendSuccessful;
+				result = CmdH_Result_Ok;
 
 				isOk = true;
 			}
@@ -1648,7 +1648,7 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 					Motor_StateMachine_SetAngle(angle);
 					TaskHandler_ClearTimeoutTask(Task_MotorTimeout);
 
-					result = CmdH_Result_Ok_SendSuccessful;
+					result = CmdH_Result_Ok;
 				}
 				else
 				{
