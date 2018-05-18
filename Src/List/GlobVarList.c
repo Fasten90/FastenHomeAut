@@ -19,6 +19,7 @@
 #include "GlobVarList.h"
 #include "ErrorHandler.h"
 #include "ADC.h"
+#include "BoardInfos.h"
 
 
 
