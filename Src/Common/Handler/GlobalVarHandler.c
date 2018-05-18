@@ -591,8 +591,8 @@ static void GlobVarH_GetEnumerator(const GlobVarH_VarRecord_t * varRecord)
 	}
 
 	// If has good enumList
-	// Check value (It is not too high?)
-	if (enumValue > varRecord->maxValue)
+	// Check value (It is not too high?) (The highest enum value cannot used, so the check should be ">=")
+	if (enumValue >= varRecord->maxValue)
 	{
 		// TODO: Add new result type?
 		CmdH_SendMessage("ERROR - Enum has too high value");
