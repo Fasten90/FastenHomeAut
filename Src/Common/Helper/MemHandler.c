@@ -94,12 +94,56 @@ void * memset(void * ptr, int value, size_t size)
 
 
 /**
- * \brief	Memory move
+ * \brief	Memory move (overlap secured)
+ * 			The function does not use intermediate buffer for copy
  * \param[out]	destination	where to copy
  * \param[in]	source		from copy
  * \param[in]	num			How many length to move (in bytes)?
  */
 void * memmove(void * destination, const void * source, size_t size)
+{
+	size_t i;
+	uint8_t *dest = destination;
+	uint8_t *src = (uint8_t *)source;
+
+#if CONFIG_MEM_CHECK_POINTERS == 1
+	if ((dest == NULL) || (src == NULL) || (src == dest))
+	{
+		return NULL;
+	}
+	MEM_ASSERT(MEM_IN_RAM(source, size));
+	MEM_ASSERT(MEM_IN_RAM(destination, size));
+#endif
+
+	if (src > dest)
+	{
+		for (i = 0; i < size; i++)
+		{
+			dest[i] = src[i];
+			src[i] = 0;
+		}
+	}
+	else /* Not need check the (src < dest) */
+	{
+		for (i = size; i > 0; i--)
+		{
+			dest[i] = src[i];
+			src[i] = 0;
+		}
+	}
+
+	return NULL;
+}
+
+
+
+/**
+ * \brief	Memory cut (copy & delete original)
+ * \param[out]	destination	where to copy
+ * \param[in]	source		from copy
+ * \param[in]	num			How many length to move (in bytes)?
+ */
+void * memcut(void * destination, const void * source, size_t size)
 {
 	size_t i;
 	uint8_t *dest = destination;
@@ -334,6 +378,7 @@ uint32_t MEM_UnitTest(void)
 
 
 	// Test memmove
+	// Simple copy test
 	testBuffer2[0] = 0xFF;
 	testBuffer2[9] = 0xFF;
 	testBuffer3[0] = 0xFF;
@@ -349,6 +394,69 @@ uint32_t MEM_UnitTest(void)
 	}
 	UNITTEST_ASSERT((testBuffer3[0] == 0xFF), "memmove");
 	UNITTEST_ASSERT((testBuffer3[9] == 0xFF), "memmove");
+
+
+	// memmove: overlap test 1.
+	testBuffer2[0] = 0xFF;
+	testBuffer2[9] = 0xFF;
+	memset(&testBuffer2[1], 0xAA, 4);
+	memset(&testBuffer2[5], 0xBB, 4);
+
+	memmove(&testBuffer2[1], &testBuffer2[3], 4); // overlapped
+
+	for (i = 1; i < 3; i++)
+	{
+		UNITTEST_ASSERT((testBuffer2[i] == 0xAA), "memmove"); // not changed
+	}
+	for (i = 3; i < 9; i++)
+	{
+		UNITTEST_ASSERT((testBuffer2[i] == 0xBB), "memmove"); // changed/original
+	}
+	UNITTEST_ASSERT((testBuffer3[0] == 0xFF), "memmove");
+	UNITTEST_ASSERT((testBuffer3[9] == 0xFF), "memmove");
+
+
+	// memmove: overlap test 2.
+	testBuffer2[0] = 0xFF;
+	testBuffer2[9] = 0xFF;
+	memset(&testBuffer2[1], 0xAA, 4);
+	memset(&testBuffer2[5], 0xBB, 4);
+
+	memmove(&testBuffer2[5], &testBuffer2[3], 4); // overlapped
+
+	for (i = 1; i < 7; i++)
+	{
+		UNITTEST_ASSERT((testBuffer2[i] == 0xAA), "memmove"); // changed/original
+	}
+	for (i = 7; i < 9; i++)
+	{
+		UNITTEST_ASSERT((testBuffer2[i] == 0xBB), "memmove"); // not changed
+	}
+	UNITTEST_ASSERT((testBuffer3[0] == 0xFF), "memmove");
+	UNITTEST_ASSERT((testBuffer3[9] == 0xFF), "memmove");
+
+
+	// memcut test
+	testBuffer2[0] = 0xFF;
+	testBuffer2[9] = 0xFF;
+	testBuffer3[0] = 0xFF;
+	testBuffer3[9] = 0xFF;
+	memset(&testBuffer2[1], 0xAA, 8);
+	memset(&testBuffer3[1], 0xFF, 8);
+
+	memcut(&testBuffer3[1], &testBuffer2[1], 8);
+
+	for (i = 1; i < 9; i++)
+	{
+		UNITTEST_ASSERT((testBuffer3[i] == 0xAA), "memcut"); // copied value
+		UNITTEST_ASSERT((testBuffer2[i] == 0x00), "memcut"); // cleared value
+	}
+
+	// Original guards values shall not changed
+	UNITTEST_ASSERT((testBuffer2[0] == 0xFF), "memcut");
+	UNITTEST_ASSERT((testBuffer2[9] == 0xFF), "memcut");
+	UNITTEST_ASSERT((testBuffer3[0] == 0xFF), "memcut");
+	UNITTEST_ASSERT((testBuffer3[9] == 0xFF), "memcut");
 
 
 	// Finish
