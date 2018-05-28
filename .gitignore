@@ -89,3 +89,4 @@ $RECYCLE.BIN/
 
 # Python
 *.pyc
+/Out
