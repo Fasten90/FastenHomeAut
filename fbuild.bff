@@ -14,12 +14,8 @@ Settings
                         "SystemRoot=C:\Windows" }
 }
 
-//  TODO: Delete! Copied from Atollic TrueSTUDIO
-//-DCONFIG_USE_PANEL_PC=1 -I../../FastenHomeAut/Drivers/Windows/Inc -I../../FastenHomeAut/Inc/Common -I../../FastenHomeAut/Inc/Communication -I../../FastenHomeAut/Inc/HwTester -I../../FastenHomeAut/Inc/Modules -I../../FastenHomeAut/Inc -I../../FastenHomeAut/Inc/Game -I../../FastenHomeAut/Inc/List -I../../FastenHomeAut/Inc/Display -I../../FastenHomeAut/Inc/Common/Helper -I../../FastenHomeAut/Inc/Common/Handler -I../../FastenHomeAut/Inc/SelfTest 
 
-// Test: (from Atollic) -O0 -g3 -Wall -c -fmessage-length=0
-
-// X86 ToolChain
+// Compiler + Linkers
 //------------------------------------------------------------------------------
 .Compiler           = '$GccPath$\bin\gcc.exe'
 .CompilerOptions    = '"%1"'           // Input
@@ -31,11 +27,6 @@ Settings
 .Linker             = '$GccPath$\bin\ld.exe'
 .LinkerOptions      = ' "%1"'          // Input
                     + ' -o"%2"'        // Output
-// TODO: Extend the Linker options
-                    //+ ' /WX'           // Warnings as errors
-                    //+ ' /NOLOGO'       // No linker spam
-                    //+ ' /DEBUG'        // Keep debug info when linking
-                    //+ ' /NODEFAULTLIB' // We'll specify the libs explicitly
 
 
 // Defines
@@ -71,15 +62,11 @@ ObjectList( 'Fasten-Lib' )
 {
     .CompilerInputPath  = '\Src\'
     .CompilerInputPattern = '*.c'
-    //.CompilerInputPath  = '\Src\|*.c|true|'
-    //.CompilerInputPath  = '\Src\|*.c|'
-    
-    //.CompilerInputFiles =  '\Src\main.c' // Works
-    //.CompilerInputFiles =  '\Src\ErrorHandler.c' // Works
+
     .CompilerOutputPath = 'Out\'
 }
 
-Executable( 'FastenHomeAut' )
+Executable( 'FastenHomeAutPC' )
 {
     .Libraries          = { "Fasten-Lib" }
     .LinkerOutput       = 'Out\FBuildTestCompile.exe'
