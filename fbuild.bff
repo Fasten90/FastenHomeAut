@@ -1,4 +1,4 @@
-// HelloWorld
+// FastenHomeAut FastBuild config
 //------------------------------------------------------------------------------
 
 //#define PROJECT_PC
@@ -17,7 +17,7 @@
 //------------------------------------------------------------------------------
 Settings
 {
-    .Environment    = { "PATH=$GccPath$\Common7\IDE\;$GccPath$\bin\",
+    .Environment    = { "PATH=$GccPath$\bin\",
                         "TMP=C:\Windows\Temp",
                         "SystemRoot=C:\Windows" }
 }
@@ -71,7 +71,6 @@ Settings
 #if PROJECT_PC
 .LinkerOptions      = ' "%1"'          // Input
                     + ' -o"%2"'        // Output
-
 #endif
 #if PROJECT_STM32F0
 .LinkerOptions      = ' -mthumb'
@@ -109,7 +108,7 @@ Settings
 
 // Include paths
 //------------------------------------------------------------------------------
-// ' /I"$GccPath$/include/"'
+// TODO: Delete if not need: ' /I"$GccPath$/include/"'
 #if PROJECT_PC
 .BaseIncludePaths   = ' -IDrivers/Windows/Inc'
                     + ' -IInc/Common'
