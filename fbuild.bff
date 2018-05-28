@@ -1,0 +1,89 @@
+// HelloWorld
+//------------------------------------------------------------------------------
+
+// GCC Path (Atollic 7.1.1)
+//------------------------------------------------------------------------------
+.GccPath         = 'C:\Engineer\Program\TrueSTUDIO for ARM 7.1.1\PCTools\'
+
+// Settings
+//------------------------------------------------------------------------------
+Settings
+{
+    .Environment    = { "PATH=$GccPath$\Common7\IDE\;$GccPath$\bin\",
+                        "TMP=C:\Windows\Temp",
+                        "SystemRoot=C:\Windows" }
+}
+
+//  TODO: Delete! Copied from Atollic TrueSTUDIO
+//-DCONFIG_USE_PANEL_PC=1 -I../../FastenHomeAut/Drivers/Windows/Inc -I../../FastenHomeAut/Inc/Common -I../../FastenHomeAut/Inc/Communication -I../../FastenHomeAut/Inc/HwTester -I../../FastenHomeAut/Inc/Modules -I../../FastenHomeAut/Inc -I../../FastenHomeAut/Inc/Game -I../../FastenHomeAut/Inc/List -I../../FastenHomeAut/Inc/Display -I../../FastenHomeAut/Inc/Common/Helper -I../../FastenHomeAut/Inc/Common/Handler -I../../FastenHomeAut/Inc/SelfTest 
+
+// Test: (from Atollic) -O0 -g3 -Wall -c -fmessage-length=0
+
+// X86 ToolChain
+//------------------------------------------------------------------------------
+.Compiler           = '$GccPath$\bin\gcc.exe'
+.CompilerOptions    = '"%1"'           // Input
+                    + ' -o"%2"'        // Output
+                    + ' -O0'           // Optimalization
+                    + ' -g3'           // ??
+                    + ' -c'            // Compile ...
+                    + ' -Wall'         // Warning level 4
+.Linker             = '$GccPath$\bin\ld.exe'
+.LinkerOptions      = ' "%1"'          // Input
+                    + ' -o"%2"'        // Output
+// TODO: Extend the Linker options
+                    //+ ' /WX'           // Warnings as errors
+                    //+ ' /NOLOGO'       // No linker spam
+                    //+ ' /DEBUG'        // Keep debug info when linking
+                    //+ ' /NODEFAULTLIB' // We'll specify the libs explicitly
+
+
+// Defines
+.Defines = ' -DCONFIG_USE_PANEL_PC=1'
+.CompilerOptions    + .Defines
+
+
+// Include paths
+//------------------------------------------------------------------------------
+// ' /I"$GccPath$/include/"'
+.BaseIncludePaths   = ' -IDrivers/Windows/Inc'
+                    + ' -IInc/Common'
+                    + ' -IInc/Communication'
+                    + ' -IInc/HwTester'
+                    + ' -IInc/Modules'
+                    + ' -IInc'
+                    + ' -IInc/Game'
+                    + ' -IInc/List'
+                    + ' -IInc/Display'
+                    + ' -IInc/Common/Helper'
+                    + ' -IInc/Common/Handler'
+                    + ' -IInc/SelfTest'
+.CompilerOptions    + .BaseIncludePaths
+
+// Library paths
+//------------------------------------------------------------------------------
+//.LibPaths           = ' /LIBPATH:"$GccPath$\lib"'
+//.LinkerOptions      + .LibPaths
+
+// FastenLib
+//------------------------------------------------------------------------------
+ObjectList( 'Fasten-Lib' )
+{
+    .CompilerInputPath  = '\Src\'
+    .CompilerInputPattern = '*.c'
+    //.CompilerInputPath  = '\Src\|*.c|true|'
+    //.CompilerInputPath  = '\Src\|*.c|'
+    
+    //.CompilerInputFiles =  '\Src\main.c' // Works
+    //.CompilerInputFiles =  '\Src\ErrorHandler.c' // Works
+    .CompilerOutputPath = 'Out\'
+}
+
+Executable( 'FastenHomeAut' )
+{
+    .Libraries          = { "Fasten-Lib" }
+    .LinkerOutput       = 'Out\FBuildTestCompile.exe'
+}
+
+// All
+//------------------------------------------------------------------------------
