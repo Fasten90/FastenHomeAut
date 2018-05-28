@@ -1,9 +1,17 @@
 // HelloWorld
 //------------------------------------------------------------------------------
 
+//#define PROJECT_PC
+#define PROJECT_STM32F0
+
 // GCC Path (Atollic 7.1.1)
 //------------------------------------------------------------------------------
+#if PROJECT_PC
 .GccPath         = 'C:\Engineer\Program\TrueSTUDIO for ARM 7.1.1\PCTools\'
+#endif
+#if PROJECT_STM32F0
+.GccPath         = 'C:\Engineer\Program\TrueSTUDIO for ARM 7.1.1\ARMTools\'
+#endif
 
 // Settings
 //------------------------------------------------------------------------------
@@ -17,26 +25,92 @@ Settings
 
 // Compiler + Linkers
 //------------------------------------------------------------------------------
+#if PROJECT_PC
 .Compiler           = '$GccPath$\bin\gcc.exe'
-.CompilerOptions    = '"%1"'           // Input
+#endif
+#if PROJECT_STM32F0
+.Compiler           = '$GccPath$\bin\arm-atollic-eabi-gcc.exe'
+#endif
+
+#if PROJECT_PC
+.CompilerOptions    = ' "%1"'          // Input
                     + ' -o"%2"'        // Output
                     + ' -O0'           // Optimalization
-                    + ' -g3'           // ??
+                    + ' -g3'           // ?? Debug
                     + ' -c'            // Compile ...
                     + ' -Wall'         // Warning level 4
+#endif
+#if PROJECT_STM32F0
+.CompilerOptions    = ' -mthumb'
+                    + ' -mcpu=cortex-m0'
+                    + ' -std=gnu11'
+                    + ' -O0'
+                    + ' -ffunction-sections'
+                    + ' -fdata-sections'
+                    + ' -fno-strict-aliasing'
+                    + ' -g'
+                    + ' -fstack-usage'
+                    + ' -Wall'
+                    + ' -Wextra'
+                    + ' -pedantic'
+                    + ' -Wmissing-include-dirs'
+                    + ' -Wswitch-default'
+                    + ' -Wswitch-enum'
+                    + ' "%1"'          // Input
+                    + ' -o"%2"'        // Output
+                    + ' -c'
+#endif
+
+#if PROJECT_PC
 .Linker             = '$GccPath$\bin\ld.exe'
+#endif
+#if PROJECT_STM32F0
+.Linker             = '$GccPath$\bin\arm-atollic-eabi-gcc.exe'
+#endif
+
+#if PROJECT_PC
 .LinkerOptions      = ' "%1"'          // Input
                     + ' -o"%2"'        // Output
 
+#endif
+#if PROJECT_STM32F0
+.LinkerOptions      = ' -mthumb'
+                    + ' -mcpu=cortex-m0'
+                    + ' -T..\FastenNodeF0\Debug_STM32F030C8_FLASH.ld'   // TODO: Make parameter?
+                    + ' -Wl,--start-group'
+                    + ' -lc'
+                    + ' -lm'
+                    + ' -Wl,--end-group'
+                    + ' -specs=nano.specs'
+                    + ' -nodefaultlibs'
+                    + ' -static'
+                    + ' -Wl,-Map=FastenHomeAut.map' // TODO: Project name!
+                    + ' -Wl,--gc-sections'
+                    + ' -Wl,--defsym=malloc_getpagesize_P=0x80'
+                    + ' -o"%2"'        // Output
+                    + ' "%1"'          // Input
+#endif
 
 // Defines
+//------------------------------------------------------------------------------
+#if PROJECT_PC
 .Defines = ' -DCONFIG_USE_PANEL_PC=1'
+#endif
+#if PROJECT_STM32F0
+.Defines = ' -D__weak=__attribute__((weak))'
+         + ' -D__packed=__attribute__((__packed__))'
+         + ' -DUSE_HAL_DRIVER'
+         + ' -DCONFIG_USE_PANEL_FASTENNODE=1'
+         + ' -DSTM32F030x8'
+#endif
+
 .CompilerOptions    + .Defines
 
 
 // Include paths
 //------------------------------------------------------------------------------
 // ' /I"$GccPath$/include/"'
+#if PROJECT_PC
 .BaseIncludePaths   = ' -IDrivers/Windows/Inc'
                     + ' -IInc/Common'
                     + ' -IInc/Communication'
@@ -49,6 +123,25 @@ Settings
                     + ' -IInc/Common/Helper'
                     + ' -IInc/Common/Handler'
                     + ' -IInc/SelfTest'
+#endif
+#if PROJECT_STM32F0
+.BaseIncludePaths = ' -IDrivers/STM32F0xx_HAL_Driver/Inc'
+                  + ' -IDrivers/STM32F0xx_HAL_Driver/Inc/Legacy'
+                  + ' -IDrivers/CMSIS/Device/ST/STM32F0xx/Include'
+                  + ' -IDrivers/CMSIS/Include'
+                  + ' -IInc/Common'
+                  + ' -IInc/Communication'
+                  + ' -IInc/HwTester'
+                  + ' -IInc/Modules'
+                  + ' -IInc/Game'
+                  + ' -IInc'
+                  + ' -IInc/Common/Handler'
+                  + ' -IInc/Common/Helper'
+                  + ' -IInc/Display'
+                  + ' -IInc/List'
+                  + ' -IInc/SelfTest'
+#endif
+
 .CompilerOptions    + .BaseIncludePaths
 
 // Library paths
@@ -66,10 +159,17 @@ ObjectList( 'Fasten-Lib' )
     .CompilerOutputPath = 'Out\'
 }
 
+
 Executable( 'FastenHomeAutPC' )
 {
     .Libraries          = { "Fasten-Lib" }
     .LinkerOutput       = 'Out\FBuildTestCompile.exe'
+}
+
+Executable( 'FastenHomeAutF0' )
+{
+    .Libraries          = { "Fasten-Lib" }
+    .LinkerOutput       = 'Out\FBuildFastenHomeAutF0.elf'
 }
 
 // All
