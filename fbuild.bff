@@ -1,8 +1,8 @@
 // FastenHomeAut FastBuild config
 //------------------------------------------------------------------------------
 
-//#define PROJECT_PC
-#define PROJECT_STM32F0
+#define PROJECT_PC
+//#define PROJECT_STM32F0
 
 // GCC Path (Atollic 7.1.1)
 //------------------------------------------------------------------------------
@@ -62,15 +62,18 @@ Settings
 #endif
 
 #if PROJECT_PC
-.Linker             = '$GccPath$\bin\ld.exe'
+// TODO: gcc.exe or ld.exe?
+.Linker             = '$GccPath$\bin\gcc.exe'
 #endif
 #if PROJECT_STM32F0
 .Linker             = '$GccPath$\bin\arm-atollic-eabi-gcc.exe'
 #endif
 
 #if PROJECT_PC
-.LinkerOptions      = ' "%1"'          // Input
-                    + ' -o"%2"'        // Output
+.LinkerOptions      = ' -o"%2"'        // Output
+                    + ' "%1"'          // Input
+                    //+ ' -g'             // Debug
+                    //+ ' -Wl,-V'
 #endif
 #if PROJECT_STM32F0
 .LinkerOptions      = ' -mthumb'
@@ -145,24 +148,39 @@ Settings
 
 // Library paths
 //------------------------------------------------------------------------------
-//.LibPaths           = ' /LIBPATH:"$GccPath$\lib"'
+
+#if PROJECT_PC
+.WindowsLibPath = 'C:\Engineer\Program\TrueSTUDIO for ARM 7.1.1\PCTools'
+
+// -L parameter: Linked directory
+//.LibPaths           = ' -L"$WindowsLibPath$\include"'
+                    //+ ' -L"$WindowsLibPath$\lib\gcc\mingw32\5.3.0\include"'
+                    //+ ' -L"$WindowsLibPath$\lib\gcc\mingw32\5.3.0\include-fixed"'
+                    //+ ' -L"$WindowsLibPath$\lib\gcc\mingw32\include"'
+
 //.LinkerOptions      + .LibPaths
+#endif
 
 // FastenLib
 //------------------------------------------------------------------------------
 ObjectList( 'Fasten-Lib' )
 {
-    .CompilerInputPath  = '\Src\'
+// TODO: Middlewares directory?
+#if PROJECT_PC
+    .CompilerInputPath  = { '\Src\', '\Drivers\Windows\' }
+#endif
     .CompilerInputPattern = '*.c'
 
-    .CompilerOutputPath = 'Out\'
+    .CompilerOutputPath = 'Out\Compiles'
 }
 
 
 Executable( 'FastenHomeAutPC' )
 {
     .Libraries          = { "Fasten-Lib" }
-    .LinkerOutput       = 'Out\FBuildTestCompile.exe'
+    .LinkerOutput       = 'Out\FBuildFastenHomeAutPC.exe'
+//    .LinkerOptions      + ' libcmt.lib'     // Std Lib (Multi-Threaded, Static, Release)
+//                        + ' kernel32.lib'   // Kernel functions
 }
 
 Executable( 'FastenHomeAutF0' )
