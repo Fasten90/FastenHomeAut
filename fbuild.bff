@@ -169,6 +169,9 @@ ObjectList( 'Fasten-Lib' )
 #if PROJECT_PC
     .CompilerInputPath  = { '\Src\', '\Drivers\Windows\' }
 #endif
+#if PROJECT_STM32F0
+    .CompilerInputPath  = { '\Src\', '\Drivers\STM32F0xx_HAL_Driver\', '\Drivers\CMSIS\Device\ST\STM32F0xx\Source\' }
+#endif
     .CompilerInputPattern = '*.c'
 
     .CompilerOutputPath = 'Out\Compiles'
