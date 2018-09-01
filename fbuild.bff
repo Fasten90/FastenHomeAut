@@ -4,13 +4,13 @@
 #define PROJECT_PC
 //#define PROJECT_STM32F0
 
-// GCC Path (Atollic 7.1.1)
+// GCC Path (Atollic 9.0.1)
 //------------------------------------------------------------------------------
 #if PROJECT_PC
-.GccPath         = 'C:\Engineer\Program\TrueSTUDIO for ARM 7.1.1\PCTools\'
+.GccPath         = 'C:\Programs\Engineer\TrueSTUDIO for STM32 9.0.1\PCTools\'
 #endif
 #if PROJECT_STM32F0
-.GccPath         = 'C:\Engineer\Program\TrueSTUDIO for ARM 7.1.1\ARMTools\'
+.GccPath         = 'C:\Programs\Engineer\TrueSTUDIO for STM32 9.0.1\ARMTools\'
 #endif
 
 // Settings
