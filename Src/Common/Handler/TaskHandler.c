@@ -428,7 +428,7 @@ void TaskHandler_PrintStatistics(void)
 	// Print Statistics table
 
 	const char const fixheader[] = "| %9d | %3d | %20s |";
-	char str[2 + 9 + 3 + 3 + 3 + 20 + 2];
+	char str[2 + 9 + 3 + 3 + 3 + 20 + 2 + 1];
 	char header[sizeof(fixheader)];
 
 
@@ -470,7 +470,7 @@ void TaskHandler_PrintTaskRunCounts(void)
 {
 	TaskID_t i;
 	static const char const fixheader[] = "| %20s | %9u |";
-	char str[2 + 20 + 3 + 9 + 2];
+	char str[2 + 20 + 3 + 9 + 2 + 1];
 	char header[sizeof(fixheader)];
 
 	TaskHandler_PrintTaskRunCountsTableHeader(fixheader, str, header);
