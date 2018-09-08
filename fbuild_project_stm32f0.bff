@@ -1,20 +1,16 @@
 // FastenHomeAut FastBuild config
 //------------------------------------------------------------------------------
 
-#define PROJECT_PC
-//#define PROJECT_STM32F0
 
 // GCC Path (Atollic 9.0.1)
 //------------------------------------------------------------------------------
-#if PROJECT_PC
-.GccPath         = 'C:\Programs\Engineer\TrueSTUDIO for STM32 9.0.1\PCTools\'
-#endif
-#if PROJECT_STM32F0
+
 .GccPath         = 'C:\Programs\Engineer\TrueSTUDIO for STM32 9.0.1\ARMTools\'
-#endif
+
 
 // Settings
 //------------------------------------------------------------------------------
+
 Settings
 {
     .Environment    = { "PATH=$GccPath$\bin\",
@@ -25,22 +21,9 @@ Settings
 
 // Compiler + Linkers
 //------------------------------------------------------------------------------
-#if PROJECT_PC
-.Compiler           = '$GccPath$\bin\gcc.exe'
-#endif
-#if PROJECT_STM32F0
-.Compiler           = '$GccPath$\bin\arm-atollic-eabi-gcc.exe'
-#endif
 
-#if PROJECT_PC
-.CompilerOptions    = ' "%1"'          // Input
-                    + ' -o"%2"'        // Output
-                    + ' -O0'           // Optimalization
-                    + ' -g3'           // ?? Debug
-                    + ' -c'            // Compile ...
-                    + ' -Wall'         // Warning level 4
-#endif
-#if PROJECT_STM32F0
+.Compiler           = '$GccPath$\bin\arm-atollic-eabi-gcc.exe'
+
 .CompilerOptions    = ' -mthumb'
                     + ' -mcpu=cortex-m0'
                     + ' -std=gnu11'
@@ -59,23 +42,9 @@ Settings
                     + ' "%1"'          // Input
                     + ' -o"%2"'        // Output
                     + ' -c'
-#endif
 
-#if PROJECT_PC
-// TODO: gcc.exe or ld.exe?
-.Linker             = '$GccPath$\bin\gcc.exe'
-#endif
-#if PROJECT_STM32F0
 .Linker             = '$GccPath$\bin\arm-atollic-eabi-gcc.exe'
-#endif
 
-#if PROJECT_PC
-.LinkerOptions      = ' -o"%2"'        // Output
-                    + ' "%1"'          // Input
-                    //+ ' -g'             // Debug
-                    //+ ' -Wl,-V'
-#endif
-#if PROJECT_STM32F0
 .LinkerOptions      = ' -mthumb'
                     + ' -mcpu=cortex-m0'
                     + ' -T..\FastenNodeF0\Debug_STM32F030C8_FLASH.ld'   // TODO: Make parameter?
@@ -91,42 +60,22 @@ Settings
                     + ' -Wl,--defsym=malloc_getpagesize_P=0x80'
                     + ' -o"%2"'        // Output
                     + ' "%1"'          // Input
-#endif
 
 // Defines
 //------------------------------------------------------------------------------
-#if PROJECT_PC
-.Defines = ' -DCONFIG_USE_PANEL_PC=1'
-#endif
-#if PROJECT_STM32F0
+
 .Defines = ' -D__weak=__attribute__((weak))'
          + ' -D__packed=__attribute__((__packed__))'
          + ' -DUSE_HAL_DRIVER'
          + ' -DCONFIG_USE_PANEL_FASTENNODE=1'
          + ' -DSTM32F030x8'
-#endif
 
 .CompilerOptions    + .Defines
 
 
 // Include paths
 //------------------------------------------------------------------------------
-// TODO: Delete if not need: ' /I"$GccPath$/include/"'
-#if PROJECT_PC
-.BaseIncludePaths   = ' -IDrivers/Windows/Inc'
-                    + ' -IInc/Common'
-                    + ' -IInc/Communication'
-                    + ' -IInc/HwTester'
-                    + ' -IInc/Modules'
-                    + ' -IInc'
-                    + ' -IInc/Game'
-                    + ' -IInc/List'
-                    + ' -IInc/Display'
-                    + ' -IInc/Common/Helper'
-                    + ' -IInc/Common/Handler'
-                    + ' -IInc/SelfTest'
-#endif
-#if PROJECT_STM32F0
+
 .BaseIncludePaths = ' -IDrivers/STM32F0xx_HAL_Driver/Inc'
                   + ' -IDrivers/STM32F0xx_HAL_Driver/Inc/Legacy'
                   + ' -IDrivers/CMSIS/Device/ST/STM32F0xx/Include'
@@ -142,48 +91,19 @@ Settings
                   + ' -IInc/Display'
                   + ' -IInc/List'
                   + ' -IInc/SelfTest'
-#endif
 
 .CompilerOptions    + .BaseIncludePaths
 
-// Library paths
-//------------------------------------------------------------------------------
-
-#if PROJECT_PC
-.WindowsLibPath = 'C:\Engineer\Program\TrueSTUDIO for ARM 7.1.1\PCTools'
-
-// -L parameter: Linked directory
-//.LibPaths           = ' -L"$WindowsLibPath$\include"'
-                    //+ ' -L"$WindowsLibPath$\lib\gcc\mingw32\5.3.0\include"'
-                    //+ ' -L"$WindowsLibPath$\lib\gcc\mingw32\5.3.0\include-fixed"'
-                    //+ ' -L"$WindowsLibPath$\lib\gcc\mingw32\include"'
-
-//.LinkerOptions      + .LibPaths
-#endif
-
 // FastenLib
 //------------------------------------------------------------------------------
+
 ObjectList( 'Fasten-Lib' )
 {
-// TODO: Middlewares directory?
-#if PROJECT_PC
-    .CompilerInputPath  = { '\Src\', '\Drivers\Windows\' }
-#endif
-#if PROJECT_STM32F0
     .CompilerInputPath  = { '\Src\', '\Drivers\STM32F0xx_HAL_Driver\', '\Drivers\CMSIS\Device\ST\STM32F0xx\Source\' }
-#endif
+
     .CompilerInputPattern = '*.c'
 
     .CompilerOutputPath = 'Out\Compiles'
-}
-
-
-Executable( 'FastenHomeAutPC' )
-{
-    .Libraries          = { "Fasten-Lib" }
-    .LinkerOutput       = 'Out\FBuildFastenHomeAutPC.exe'
-//    .LinkerOptions      + ' libcmt.lib'     // Std Lib (Multi-Threaded, Static, Release)
-//                        + ' kernel32.lib'   // Kernel functions
 }
 
 Executable( 'FastenHomeAutF0' )
@@ -191,6 +111,3 @@ Executable( 'FastenHomeAutF0' )
     .Libraries          = { "Fasten-Lib" }
     .LinkerOutput       = 'Out\FBuildFastenHomeAutF0.elf'
 }
-
-// All
-//------------------------------------------------------------------------------
