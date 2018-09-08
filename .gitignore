@@ -82,11 +82,15 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-/Debug/
-*.list
-*.map
-/DoxyDocs/
-
 # Python
 *.pyc
+
+/Debug/
+/DoxyDocs/
 /Out
+*.list
+*.map
+*.log
+
+# FBuild
+*.fdb
