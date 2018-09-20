@@ -159,7 +159,8 @@ CmdH_Result_t CmdH_ExecuteCommand(char *command, char *response, size_t length)
 		{
 			uprintf("Received command: \"%s\", from %s\r\n", command, TaskHandler_GetActualRunningTaskName());
 		}
-#else
+#elif defined(CONFIG_EVENTLOG_CMDHANDLER_ENABLE) || defined(CONFIG_COMMANDHANDLER_NOTIFY_COMMAND_RECEIVED_FROM_NOT_DEBUGPORT)
+		// ~ #else
 		(void)taskID;
 #endif
 	}

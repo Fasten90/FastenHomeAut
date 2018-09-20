@@ -630,7 +630,6 @@ uint32_t CircularBuffer_UnitTest(void)
 	UNITTEST_ASSERT(CircularBuffer_PutChar(&circBufferInfo, 'a') == false, "ERROR: PutCHar()");
 
 	// Drops
-	length = 0;
 	length = CircularBuffer_DropCharacters(&circBufferInfo, 10);
 	UNITTEST_ASSERT(length == 10, "ERROR: DropCharacters()");
 

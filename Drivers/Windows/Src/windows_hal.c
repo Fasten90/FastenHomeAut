@@ -17,6 +17,7 @@
 
 #include "options.h"
 
+#include "windows_hal_def.h"
 #include "windows_hal.h"
 
 #include <windows.h>
@@ -240,6 +241,8 @@ DWORD WINAPI Windows_StdinReceiveThread(void* data)
 
 		printf("Type message: ");
 
+		// gets() enabled to use in this situation, because it is only test for windows, not a safety-critical application
+		// cppcheck-suppress getsCalled
 		command = gets(str);
 
 		if (command != NULL && strlen(str) > 0)

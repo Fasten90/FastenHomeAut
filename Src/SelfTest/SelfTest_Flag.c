@@ -121,6 +121,7 @@ bool SelfTest_Flag_Test(void)
 		successfulTest++;
 	}
 
+	// cppcheck-suppress knownConditionTrueFalse
 	if (overflowval == 0)
 	{
 		successfulTest++;
