@@ -54,8 +54,7 @@
  *----------------------------------------------------------------------------*/
 
 
-/// Integer typedefs
-
+///< Integer typedefs
 typedef unsigned char				uint8_t;
 typedef signed char					int8_t;
 typedef short unsigned int			uint16_t;
@@ -66,9 +65,8 @@ typedef signed int					int32_t;
 #endif
 
 
-/// Other typedefs
-
-typedef int8_t						char8_t;
+///< Other typedefs
+typedef char						char_t;
 typedef float						float32_t;
 typedef bool						bool_t;
 

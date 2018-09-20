@@ -115,7 +115,7 @@ bool SelfTest_Flag_Test(void)
 
 	apsr.w = __get_APSR();
 
-	if (apsr.b.C == 1 && apsr.b.Z == 1)
+	if ((apsr.b.C == 1) && (apsr.b.Z == 1))
 	{
 		//uprintf("Carry and Zero flag is 1\r\n");
 		successfulTest++;
