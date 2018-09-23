@@ -1,0 +1,27 @@
+Cppcheck configs
+
+------------------------
+
+
+The installed cppcheck path shall be added to the PATH
+
+Ignores:
+-iDrivers/CMSIS -iDrivers/STM32F0xx_HAL_Driver -iDrivers/STM32F4xx_HAL_Driver
+
+
+Skipped messages:
+
+The scope of the variable 'varname' can be reduced
+variableScope
+
+The function 'funcName' is never used.
+unusedFunction
+
+
+--std=c99, c11
+
+
+
+TODO:
+c99, c11
+
