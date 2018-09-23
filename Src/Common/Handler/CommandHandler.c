@@ -114,8 +114,8 @@ CmdH_Result_t CmdH_ExecuteCommand(char *command, char *response, size_t length)
 	{
 		*firstNewLine = '\0';
 	}
+
 	if (StrTrim(command) == 0)
-	//if (StringLength(command) == 0)
 	{
 		Debug_Printf(Debug_CommandHandler, "Error! Received 0 length command!");
 		result = CmdH_Result_Error_CallCmdHandlerWithInvalidArgument;
