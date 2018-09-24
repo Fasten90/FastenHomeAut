@@ -50,8 +50,9 @@
  * __ICARM__
  * __GNUC__
  * __STDC__
+ * __clang__ (Added by later - for test)
  */
-#if !defined(__CC_ARM__) && !defined(__ICARM__) && !defined(__GNUC__) && !defined(__STDC__)
+#if !defined(__CC_ARM__) && !defined(__ICARM__) && !defined(__GNUC__) && !defined(__STDC__) && !defined(__clang__)
 #error "Unknown compiler!"
 #endif
 

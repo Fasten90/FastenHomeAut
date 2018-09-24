@@ -174,7 +174,7 @@ typedef struct
   uint32_t      RESERVED2;   /*!< Reserved,                                                    0x0C */
   __IO uint32_t INIT;        /*!< Initial CRC value register,                  Address offset: 0x10 */
   __IO uint32_t RESERVED3;   /*!< Reserved,                                                    0x14 */
-} CRC_TypeDef;
+} CRC_TypeDef_Modified; /* Typedef has been modified because CLANG */
 
 /** 
   * @brief Debug MCU
@@ -561,7 +561,7 @@ typedef struct
 #define FLASH               ((FLASH_TypeDef *) FLASH_R_BASE)
 #define OB                  ((OB_TypeDef *) OB_BASE) 
 #define RCC                 ((RCC_TypeDef *) RCC_BASE)
-#define CRC                 ((CRC_TypeDef *) CRC_BASE)
+#define CRC_MODIFIED        ((CRC_TypeDef_Modified *) CRC_BASE) /* CRC define and Typedef changed because CLANG compile error */
 #define GPIOA               ((GPIO_TypeDef *) GPIOA_BASE)
 #define GPIOB               ((GPIO_TypeDef *) GPIOB_BASE)
 #define GPIOC               ((GPIO_TypeDef *) GPIOC_BASE)
