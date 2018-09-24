@@ -295,7 +295,7 @@ int main(void)
 	CmdH_SetResponse(responseBuffer, 2048);
 	// TODO: Check UnitTestList_Run return value
 	UnitTestList_Run();
-	printf(responseBuffer);
+	printf("%s", responseBuffer); /* Clang genereated compile warning when "printf(responseBuffer);" used */
 	#endif
 
 	// STDIN

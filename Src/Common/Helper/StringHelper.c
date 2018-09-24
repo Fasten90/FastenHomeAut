@@ -2370,7 +2370,7 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
 					{
 						if (remainLength < 8)
 						{
-							paramNum2 = remainLength;
+							paramNum2 = remainLength; /* CLANG static analyzer error: not used value! */
 						}
 					}
 					uint8_t hexLen = DecimalToHexaString(uival, &str[length], 8);
@@ -2788,11 +2788,12 @@ uint32_t StringHelper_UnitTest(void)
 
 	// Float
 
-	// Good
-	result = StringToFloat("-123.3499", &fvalue);
+	// Good Float test
+	result = StringToFloat("-123.3499", &fvalue); /* CLANG WARNING: Possible to not change fvalue... */
 	UNITTEST_ASSERT(result, "StringToFloat error");
 	UNITTEST_ASSERT(((fvalue < -123.3498) && (fvalue > -123.3500)), "StringToFloat error");
 
+	// Wrong Float test
 	result = StringToFloat("-123a.3999", &fvalue);
 	UNITTEST_ASSERT(!result, "StringToFloat error");
 
