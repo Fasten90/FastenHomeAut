@@ -1,30 +1,26 @@
-:: Okay
-::clang Src/* Drivers/Windows/* -IDrivers/Windows/Inc -IInc/Common -IInc/Communication -IInc/HwTester -IInc/Modules -IInc -IInc/Game -IInc/List -IInc/Display -IInc/Common/Helper -IInc/Common/Handler -IInc/SelfTest -DCONFIG_USE_PANEL_PC=1 -I/Programs/Engineer/LLVM/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v
+:: Compile - per file - okay
+::clang Src/* Src/Common/* Src/Common/Helper/* Src/Common/Handler/* Src/Communication/* Src/HwTester/* Src/Modules/* Src/Game/* Src/List/* Src/Display/* Src/SelfTest/* Drivers/Windows/Src/* -IDrivers/Windows/Inc -IInc/Common -IInc/Communication -IInc/HwTester -IInc/Modules -IInc -IInc/Game -IInc/List -IInc/Display -IInc/Common/Helper -IInc/Common/Handler -IInc/SelfTest -DCONFIG_USE_PANEL_PC=1 -I/Programs/Engineer/LLVM/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v
 
 
-:: Linker error
-::clang Src/* Drivers/Windows/* -IDrivers/Windows/Inc -IInc/Common -IInc/Communication -IInc/HwTester -IInc/Modules -IInc -IInc/Game -IInc/List -IInc/Display -IInc/Common/Helper -IInc/Common/Handler -IInc/SelfTest -DCONFIG_USE_PANEL_PC=1 -I/Programs/Engineer/LLVM/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v -o Out/ClangCompiled.exe
+:: Compile - out.exe - Linker error
+::clang Src/* Src/Common/* Src/Common/Helper/* Src/Common/Handler/* Src/Communication/* Src/HwTester/* Src/Modules/* Src/Game/* Src/List/* Src/Display/* Src/SelfTest/* Drivers/Windows/Src/* -IDrivers/Windows/Inc -IInc/Common -IInc/Communication -IInc/HwTester -IInc/Modules -IInc -IInc/Game -IInc/List -IInc/Display -IInc/Common/Helper -IInc/Common/Handler -IInc/SelfTest -DCONFIG_USE_PANEL_PC=1 -I/Programs/Engineer/LLVM/include -std=c11 -target x86_64-w64-mingw64 -Wall -v -o Out/ClangCompiled.exe
 
 
-:: Half okay, there is no report file
-::clang --analyze --analyzer-output html Src/* Drivers/Windows/* -IDrivers/Windows/Inc -IInc/Common -IInc/Communication -IInc/HwTester -IInc/Modules -IInc -IInc/Game -IInc/List -IInc/Display -IInc/Common/Helper -IInc/Common/Handler -IInc/SelfTest -DCONFIG_USE_PANEL_PC=1 -I/Programs/Engineer/LLVM/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v 
+:: Analyze - okay
+clang --analyze --analyzer-output html Src/* Src/Common/* Src/Common/Helper/* Src/Common/Handler/* Src/Communication/* Src/HwTester/* Src/Modules/* Src/Game/* Src/List/* Src/Display/* Src/SelfTest/* Drivers/Windows/Src/* -IDrivers/Windows/Inc -IInc/Common -IInc/Communication -IInc/HwTester -IInc/Modules -IInc -IInc/Game -IInc/List -IInc/Display -IInc/Common/Helper -IInc/Common/Handler -IInc/SelfTest -DCONFIG_USE_PANEL_PC=1 -I/Programs/Engineer/LLVM/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v
 
 
-clang --analyze --analyzer-output html Src/* Src/Common/Helper/* Drivers/Windows/* -IDrivers/Windows/Inc -IInc/Common -IInc/Communication -IInc/HwTester -IInc/Modules -IInc -IInc/Game -IInc/List -IInc/Display -IInc/Common/Helper -IInc/Common/Handler -IInc/SelfTest -DCONFIG_USE_PANEL_PC=1 -I/Programs/Engineer/LLVM/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v
-::  -o Out - only in one file?
+:: Analyze - error with "only one file"
+::clang --analyze --analyzer-output html Src/* Src/Common/* Src/Common/Helper/* Src/Common/Handler/* Src/Communication/* Src/HwTester/* Src/Modules/* Src/Game/* Src/List/* Src/Display/* Src/SelfTest/* Drivers/Windows/Src/* -IDrivers/Windows/Inc -IInc/Common -IInc/Communication -IInc/HwTester -IInc/Modules -IInc -IInc/Game -IInc/List -IInc/Display -IInc/Common/Helper -IInc/Common/Handler -IInc/SelfTest -DCONFIG_USE_PANEL_PC=1 -I/Programs/Engineer/LLVM/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v -o Out
+:: -o Out - only in one file?
 
-:: TODO: Add other source directories!
 
+:: Clang parameters
 :: -v ~verbose
 :: -S Only preprocess+compile
 :: ?? -o Out/ClangCompiled.exe
 
-:: Check "--analyze" argument
-::clang Src/main.c -IDrivers/Windows/Inc -IInc/Common -IInc/Communication -IInc/HwTester -IInc/Modules -IInc -IInc/Game -IInc/List -IInc/Display -IInc/Common/Helper -IInc/Common/Handler -IInc/SelfTest -DCONFIG_USE_PANEL_PC=1 -I/Programs/Engineer/LLVM/include -std=c11 -target x86_64-w64-mingw64 --analyze -o Out/ClangAnalysis.log
 
-
-:: Check "clang-check"
-::clang-check -analyze
-
-
+:: TODO:
+:: c: C99
 :: cpp: clang++ -std=c++14
