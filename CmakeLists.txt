@@ -3,7 +3,8 @@ project (FastenHomeAut)
 
 # Include list
 # ".." is necessary because make called from <project>\build directory
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I../Drivers/Windows/Inc -I../Inc/Common -I../Inc/Communication -I../Inc/HwTester -I../Inc/Modules -I../Inc -I../Inc/Game -I../Inc/List -I../Inc/Display -I../Inc/Common/Helper -I../Inc/Common/Handler -I../Inc/SelfTest -DCONFIG_USE_PANEL_PC=1")
+# Now used: "../.." because <project>/Out/<MakeBuildDirectory>
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I../../Drivers/Windows/Inc -I../../Inc/Common -I../../Inc/Communication -I../../Inc/HwTester -I../../Inc/Modules -I../../Inc -I../../Inc/Game -I../../Inc/List -I../../Inc/Display -I../../Inc/Common/Helper -I../../Inc/Common/Handler -I../../Inc/SelfTest -DCONFIG_USE_PANEL_PC=1")
 # C parameters
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -std=c11")
 # Clang error suppression
