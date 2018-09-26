@@ -23,10 +23,6 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__clang__=1")
 file(GLOB_RECURSE FASTEN_SOURCE_FILES "Src/*.c")
 file(GLOB_RECURSE DRIVER_SOURCE_FILES "Drivers/Windows/Src/*.c")
 
-# TODO: Delete if not need
 set(SOURCE_FILES ${FASTEN_SOURCE_FILES} ${DRIVER_SOURCE_FILES})
-
-# Worked but not enough
-#add_executable(FastenHomeAut Src/main.c)
 
 add_executable(FastenHomeAut ${SOURCE_FILES})
