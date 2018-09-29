@@ -85,12 +85,17 @@ $RECYCLE.BIN/
 # Python
 *.pyc
 
-/Debug/
-/DoxyDocs/
-/Out
+# Other files (e.g. generated files)
 *.list
 *.map
 *.log
 
 # FBuild
 *.fdb
+
+# Out directories
+/Debug
+/Out
+
+# Tools
+/Tools/llvm-7.0.0.src
