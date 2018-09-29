@@ -117,7 +117,7 @@ void Queue_Init(QueueListInfo_t * queue)
 
 	// Make one "empty" queue element
 	size_t dataSize = queue->bufferSize - sizeof(QueueElement_t);
-	void * pDataPointer = (void *)((uint32_t)queue->pBuffer + sizeof(QueueElement_t));
+	void * pDataPointer = (void *)((Address_t)queue->pBuffer + sizeof(QueueElement_t));
 	QueueDataType_t dataType = QueuedataType_Ram;
 	// Add full empty queue
 	Queue_AddQueueElement(queue->first, pDataPointer, dataSize, dataType, QUEUE_NOTUSED);
@@ -338,7 +338,7 @@ bool Queue_PutLastElement(QueueListInfo_t * queue, void * pData, size_t dataSize
 		void * pNewElementData = pData;
 		if (dataType == QueuedataType_Ram)
 		{
-			pNewElementData = (void *)((uint32_t)pElement + sizeof(QueueElement_t));
+			pNewElementData = (void *)((Address_t)pElement + sizeof(QueueElement_t));
 			memcpy(pNewElementData, pData, dataSize);
 		}
 
@@ -349,23 +349,23 @@ bool Queue_PutLastElement(QueueListInfo_t * queue, void * pData, size_t dataSize
 
 
 		// TODO: This is amateur solution for the searching empty space
-		void * pEndOfData = (void *)((uint32_t)pElement + sizeof(QueueElement_t)  + ((dataType == QueuedataType_Ram) ? (dataSize) : (0)));
+		void * pEndOfData = (void *)((Address_t)pElement + sizeof(QueueElement_t)  + ((dataType == QueuedataType_Ram) ? (dataSize) : (0)));
 		// Make Stack aligned safe
 		pEndOfData = (void *)MEM_MAKE_ALIGNED_ADDRESS(pEndOfData);
 
 		// Create empty queue element, or this is the last element
 		// Make one "empty" queue element
-		if (((uint32_t)pEndOfData + sizeof(QueueElement_t)) <= ((uint32_t)queue->pBuffer + queue->bufferSize))
+		if (((Address_t)pEndOfData + sizeof(QueueElement_t)) <= ((Address_t)queue->pBuffer + queue->bufferSize))
 		{
 			// Has enough space to create last QueueElement
 
 			// Make one "empty" queue element
 			void * pEmptyQueueElement = pEndOfData;
-			size_t emptyDataSize = ((uint32_t)queue->pBuffer + queue->bufferSize) - ((uint32_t)pEmptyQueueElement + sizeof(QueueElement_t));
+			size_t emptyDataSize = ((Address_t)queue->pBuffer + queue->bufferSize) - ((Address_t)pEmptyQueueElement + sizeof(QueueElement_t));
 
 			void * pEmptyDataPointer = NULL;
 			if (emptyDataSize > 0)
-				pEmptyDataPointer = (void *)((uint32_t)pEmptyQueueElement + sizeof(QueueElement_t));
+				pEmptyDataPointer = (void *)((Address_t)pEmptyQueueElement + sizeof(QueueElement_t));
 
 			QueueDataType_t emptyDataType = QueuedataType_Ram;
 			// Add empty queue
@@ -401,8 +401,9 @@ void Queue_Defragmentation(void);
 #ifdef MODULE_QUEUE_UNITTEST_ENABLE
 uint32_t Queue_UnitTest(void)
 {
-	#define TEST_BUFFER_SIZE		(200U)
+	#define TEST_BUFFER_SIZE		(400U)
 	uint8_t testBuffer[TEST_BUFFER_SIZE];
+
 	QueueListInfo_t testQueue =
 	{
 		.pBuffer = testBuffer,

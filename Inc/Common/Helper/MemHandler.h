@@ -52,7 +52,24 @@
 
 ///< Make address to aligned address (upward rounding to word aligned)
 // TODO: It is architecture dependent
-#define MEM_MAKE_ALIGNED_ADDRESS(_address)				(((uint32_t)_address % 4) ? ((uint32_t)_address + (4 - ((uint32_t)_address % 4))) : ((uint32_t)_address))
+#if defined(__MINGW32__) && defined(__MINGW64__)
+	/* MinGW32 + MinGW64 */
+	/* Address size: 8bit */
+	#define MEM_ALIGN_SIZE		((uint8_t)8)
+	typedef uint64_t Address_t;
+#elif defined(__MINGW32__)
+	/* Address size: 4bit */
+	#define MEM_ALIGN_SIZE		((uint8_t)4)
+	typedef uint32_t Address_t;
+#else
+	/* Address size: 4bit */
+	#define MEM_ALIGN_SIZE		((uint8_t)4)
+	typedef uint32_t Address_t;
+#endif
+
+
+#define MEM_MAKE_ALIGNED_ADDRESS(_address)				\
+		(((Address_t)_address % MEM_ALIGN_SIZE) ? ((Address_t)_address + (MEM_ALIGN_SIZE - ((Address_t)_address % MEM_ALIGN_SIZE))) : ((Address_t)_address))
 
 
 

@@ -60,15 +60,15 @@ typedef struct QueueElement_t
 	QueueGuard_t headerGuardValue;			///< Guard value for security
 #endif
 
-	bool isUsed;						///< It is used? (true = yes, it is used. false = not used, empty element)
+	bool isUsed;							///< It is used? (true = yes, it is used. false = not used, empty element)
 
-	void * dataPointer;					///< Data pointer
-	size_t dataSize;					///< Element data size (in byte)
+	void * dataPointer;						///< Data pointer
+	size_t dataSize;						///< Element data size (in byte)
 
-	QueueDataType_t dataType;			///< Actual element type (const or not)
+	QueueDataType_t dataType;				///< Actual element type (const or not)
 
-	struct QueueElement_t * prevQueueData;		///< Previous queue element
-	struct QueueElement_t * nextQueueData;		///< Next queue element
+	struct QueueElement_t * prevQueueData;	///< Previous queue element
+	struct QueueElement_t * nextQueueData;	///< Next queue element
 
 #if (QUEUE_STATISTICS_ENABLED == 1)
 	DateTime_t putTime;
