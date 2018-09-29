@@ -1,0 +1,12 @@
+CMake configs
+
+------------
+
+!! mingw64 shall be added to PATH !!
+
+Paths:
+GCC (mingw64): c:\Programs\Engineer\mingw64\bin\gcc.exe
+
+Try it:
+c:/Programs/Engineer/mingw64/bin/gcc.exe CMakeFiles\3.12.2\CompilerIdC\CMakeCCompilerId.c
+

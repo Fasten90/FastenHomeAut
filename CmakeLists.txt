@@ -1,0 +1,28 @@
+cmake_minimum_required (VERSION 2.6)
+project (FastenHomeAut)
+
+# Include list
+# ".." is necessary because make called from <project>\build directory
+# Now used: "../.." because <project>/Out/<MakeBuildDirectory>
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I../../Drivers/Windows/Inc -I../../Inc/Common -I../../Inc/Communication -I../../Inc/HwTester -I../../Inc/Modules -I../../Inc -I../../Inc/Game -I../../Inc/List -I../../Inc/Display -I../../Inc/Common/Helper -I../../Inc/Common/Handler -I../../Inc/SelfTest -DCONFIG_USE_PANEL_PC=1")
+# C parameters
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -std=c11")
+# Clang error suppression
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__clang__=1")
+
+
+# Target:  -target x86_64-w64-mingw64
+# Clang C flag: -I/Programs/Engineer/LLVM/include
+
+# E.g.
+#file(GLOB_RECURSE Foo_SOURCES "src/*.cpp")
+#add_executable (FooExe ${Foo_SOURCES})
+
+# Sources
+#Src/*.c Src/Common/*.c Src/Common/Helper/*.c Src/Common/Handler/*.c Src/Communication/*.c Src/HwTester/*.c Src/Modules/*.c Src/Game/*.c Src/List/*.c Src/Display/*.c Src/SelfTest/*.c Drivers/Windows/Src/*.c
+file(GLOB_RECURSE FASTEN_SOURCE_FILES "Src/*.c")
+file(GLOB_RECURSE DRIVER_SOURCE_FILES "Drivers/Windows/Src/*.c")
+
+set(SOURCE_FILES ${FASTEN_SOURCE_FILES} ${DRIVER_SOURCE_FILES})
+
+add_executable(FastenHomeAut ${SOURCE_FILES})
