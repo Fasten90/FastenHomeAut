@@ -23,7 +23,7 @@ if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/Programs/Engineer/LLVM/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v -o Out/ClangCmakeCompiled/")
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
     # using GCC
-    # Not need now
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__clang__=1")
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "TinyCC")
     # using TCC
     # TCC include
