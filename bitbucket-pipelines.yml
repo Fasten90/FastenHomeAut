@@ -29,7 +29,7 @@ pipelines:
 
           - cmake --version
 
-          - cd $BITBUCKET_CLONE DIR
+          - cd $BITBUCKET_CLONE_DIR
           - mkdir Out
           - cd Out
           - mkdir CMakeBuild
