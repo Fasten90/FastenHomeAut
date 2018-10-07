@@ -1,34 +1,43 @@
 cmake_minimum_required (VERSION 2.6)
 project (FastenHomeAut)
 
+
 # Include list
 # ".." is necessary because make called from <project>\build directory
 # Now used: "../.." because <project>/Out/<MakeBuildDirectory>
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I../../Drivers/Windows/Inc -I../../Inc/Common -I../../Inc/Communication -I../../Inc/HwTester -I../../Inc/Modules -I../../Inc -I../../Inc/Game -I../../Inc/List -I../../Inc/Display -I../../Inc/Common/Helper -I../../Inc/Common/Handler -I../../Inc/SelfTest -DCONFIG_USE_PANEL_PC=1")
+
 # C parameters
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -std=c11")
-# Clang error suppression
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__clang__=1")
 
 
+# Compiler type
+message("Compiler ID: ${CMAKE_C_COMPILER_ID}")
+
+
+# Set compiler dependent settings
 if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
+    # Clang error suppression
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__clang__=1")
     # using Clang
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/Programs/Engineer/LLVM/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v -o Out/ClangCmakeCompiled/")
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
     # using GCC
-elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "Intel")
-    # using Intel C++
-elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
-    # using Visual Studio C++
-elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "tcc")
+    # Not need now
+elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "TinyCC")
     # using TCC
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/Programs/Engineer/tcc/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v -o Out/ClangCmakeCompiled/")
+    # TCC include
+    # TODO: Why not necessary?
+    #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/Programs/Engineer/tcc/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v -o Out/CmakeTccCompiled/")
+    # Memory and Bound checks: -b # TODO: Not works yet
+    #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -b")
 endif()
 
 
 # E.g.
 #file(GLOB_RECURSE Foo_SOURCES "src/*.cpp")
 #add_executable (FooExe ${Foo_SOURCES})
+
 
 # Sources
 #Src/*.c Src/Common/*.c Src/Common/Helper/*.c Src/Common/Handler/*.c Src/Communication/*.c Src/HwTester/*.c Src/Modules/*.c Src/Game/*.c Src/List/*.c Src/Display/*.c Src/SelfTest/*.c Drivers/Windows/Src/*.c
