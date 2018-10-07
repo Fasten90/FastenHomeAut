@@ -1,11 +1,11 @@
-echo Run CMake
+echo Run CMake - MinGW64
 
 
 :: Go to Out/CMakeBuild
 mkdir Out
 cd Out
-mkdir CMakeBuild
-cd CMakeBuild
+mkdir CMakeBuildMinGW64
+cd CMakeBuildMinGW64
 
 
 :: Run CMake
