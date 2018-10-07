@@ -69,6 +69,14 @@ void UnitTest_CheckResult(bool isValid, const char *conString, const char *error
 	{
 		// Valid
 		UnitTest_ValidCnt++;
+
+#if (UNITTEST_PRINT_ASSERT == 1)
+		// Successful ASSERT, but need print
+		uprintf("Assert OK: %s:%d - \"%s\" - \"%s\"\r\n",
+				UnitTest_FileName, line,
+				conString,
+				errorString);
+#endif
 	}
 	else
 	{
