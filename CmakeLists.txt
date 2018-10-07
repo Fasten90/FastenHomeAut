@@ -11,8 +11,20 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -std=c11")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__clang__=1")
 
 
-# Target:  -target x86_64-w64-mingw64
-# Clang C flag: -I/Programs/Engineer/LLVM/include
+if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
+    # using Clang
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/Programs/Engineer/LLVM/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v -o Out/ClangCmakeCompiled/")
+elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
+    # using GCC
+elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "Intel")
+    # using Intel C++
+elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
+    # using Visual Studio C++
+elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "tcc")
+    # using TCC
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/Programs/Engineer/tcc/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v -o Out/ClangCmakeCompiled/")
+endif()
+
 
 # E.g.
 #file(GLOB_RECURSE Foo_SOURCES "src/*.cpp")
