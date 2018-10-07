@@ -83,6 +83,9 @@ static CmdH_Result_t CommandFunction_reset(uint32_t argc, char** argv);
 #ifdef CONFIG_MODULE_UNITTEST_ENABLE
 static CmdH_Result_t CommandFunction_unittest(uint32_t argc, char** argv);
 #endif
+#ifdef CONFIG_USE_PANEL_PC
+static CmdH_Result_t CommandFunction_exit(uint32_t argc, char** argv);
+#endif
 #ifdef CONFIG_MODULE_TEST_ENABLE
 static CmdH_Result_t CommandFunction_moduletest(uint32_t argc, char** argv);
 #endif
@@ -243,6 +246,14 @@ const CmdH_Command_t CmdH_CommandList[] =
 		.commandArgNum = CmdH_CommandArgNum_0 | CmdH_CommandArgNum_1,
 		.description = "Run unit tests",
 		.syntax = "(modul)",
+	},
+#endif
+#ifdef CONFIG_USE_PANEL_PC
+	{
+		.name = "exit",
+		.commandFunctionPointer = CommandFunction_exit,
+		.commandArgNum = CmdH_CommandArgNum_0,
+		.description = "exit",
 	},
 #endif
 #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
@@ -702,6 +713,26 @@ static CmdH_Result_t CommandFunction_unittest(uint32_t argc, char** argv)
 	return CmdH_Result_Ok;
 }
 #endif	// #ifdef CONFIG_MODULE_UNITTEST_ENABLE
+
+
+
+#ifdef CONFIG_USE_PANEL_PC
+/**
+ * \brief	Exit (to windows)
+ */
+static CmdH_Result_t CommandFunction_exit(uint32_t argc, char** argv)
+{
+	// Suppress warning
+	(void)argc;
+	(void)argv;
+
+	CmdH_SendLine("Exit...");
+
+	exit(0);
+
+	return CmdH_Result_Ok;
+}
+#endif
 
 
 
