@@ -29,16 +29,15 @@ pipelines:
 
           - cmake --version
 
-          - ls
-          - cd $BITBUCKET_CLONE_DIR
-          - ls
+          #- cd $BITBUCKET_CLONE_DIR # TODO: Not need, delete it!
           - mkdir Out
           - cd Out
           - mkdir CMakeBuild
           - cd CMakeBuild
 
           # Call the CMake.
-          - cmake ../..
+          # TODO: Tried change ../.. to $BITBUCKET_CLONE_DIR
+          - cmake $BITBUCKET_CLONE_DIR
 
           # Build the project.
           - echo 'Start Make'
