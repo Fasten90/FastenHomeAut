@@ -96,6 +96,7 @@ void * memset(void * ptr, int value, size_t size)
 /**
  * \brief	Memory move (overlap secured)
  * 			The function does not use intermediate buffer for copy
+ * 			The function does not delete the source
  * \param[out]	destination	where to copy
  * \param[in]	source		from copy
  * \param[in]	num			How many length to move (in bytes)?
@@ -117,18 +118,17 @@ void * memmove(void * destination, const void * source, size_t size)
 
 	if (src > dest)
 	{
+		/* Normal copy, not problem */
 		for (i = 0; i < size; i++)
 		{
 			dest[i] = src[i];
-			src[i] = 0;
 		}
 	}
 	else /* Not need check the (src < dest) */
 	{
 		for (i = size; i > 0; i--)
 		{
-			dest[i] = src[i];
-			src[i] = 0;
+			dest[i-1] = src[i-1];
 		}
 	}
 
@@ -313,6 +313,7 @@ uint32_t MEM_UnitTest(void)
 	// Test memcmp
 	static const uint8_t testBuffer1[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 	uint8_t testBuffer2[10];
+	uint8_t testBuffer3[10];
 	uint8_t i;
 
 	for (i = 0; i < 10; i++)
@@ -345,7 +346,6 @@ uint32_t MEM_UnitTest(void)
 
 
 	// Test memcpy
-	uint8_t testBuffer3[10];
 	testBuffer3[0] = 0xFF;
 	testBuffer3[9] = 0xFF;
 
@@ -402,7 +402,16 @@ uint32_t MEM_UnitTest(void)
 	memset(&testBuffer2[1], 0xAA, 4);
 	memset(&testBuffer2[5], 0xBB, 4);
 
-	memmove(&testBuffer2[1], &testBuffer2[3], 4); // overlapped
+	/*      dest             source           length */
+	memmove(&testBuffer2[1], &testBuffer2[3], 4); // overlapped, but copy order is normal (i++)
+
+	/*
+	 * From AA, AA, AA, AA, BB, BB, BB, BB
+	 *                      |
+	 *              +-------+
+	 *              ˇ
+	 *              BB, BB, BB
+	 */
 
 	for (i = 1; i < 3; i++)
 	{
@@ -412,8 +421,8 @@ uint32_t MEM_UnitTest(void)
 	{
 		UNITTEST_ASSERT((testBuffer2[i] == 0xBB), "memmove"); // changed/original
 	}
-	UNITTEST_ASSERT((testBuffer3[0] == 0xFF), "memmove");
-	UNITTEST_ASSERT((testBuffer3[9] == 0xFF), "memmove");
+	UNITTEST_ASSERT((testBuffer2[0] == 0xFF), "memmove");
+	UNITTEST_ASSERT((testBuffer2[9] == 0xFF), "memmove");
 
 
 	// memmove: overlap test 2.
@@ -422,7 +431,15 @@ uint32_t MEM_UnitTest(void)
 	memset(&testBuffer2[1], 0xAA, 4);
 	memset(&testBuffer2[5], 0xBB, 4);
 
-	memmove(&testBuffer2[5], &testBuffer2[3], 4); // overlapped
+	memmove(&testBuffer2[5], &testBuffer2[3], 4); // overlapped: Copy order shall be changed
+
+	/*
+	 * From AA, AA, AA, AA, BB, BB, BB, BB
+	 *              |
+	 *              +-------+
+	 *                      ˇ
+	 *              AA, AA, AA, AA
+	 */
 
 	for (i = 1; i < 7; i++)
 	{
@@ -432,8 +449,8 @@ uint32_t MEM_UnitTest(void)
 	{
 		UNITTEST_ASSERT((testBuffer2[i] == 0xBB), "memmove"); // not changed
 	}
-	UNITTEST_ASSERT((testBuffer3[0] == 0xFF), "memmove");
-	UNITTEST_ASSERT((testBuffer3[9] == 0xFF), "memmove");
+	UNITTEST_ASSERT((testBuffer2[0] == 0xFF), "memmove");
+	UNITTEST_ASSERT((testBuffer2[9] == 0xFF), "memmove");
 
 
 	// memcut test
