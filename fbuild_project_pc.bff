@@ -78,14 +78,14 @@ ObjectList( 'Fasten-Lib' )
 
     .CompilerInputPattern = '*.c'
 
-    .CompilerOutputPath = 'Out\Compiles'
+    .CompilerOutputPath = 'Out\FBuildPC'
 }
 
 
 Executable( 'FastenHomeAutPC' )
 {
     .Libraries          = { "Fasten-Lib" }
-    .LinkerOutput       = 'Out\FBuildFastenHomeAutPC.exe'
+    .LinkerOutput       = 'Out\FBuildPC\FBuildFastenHomeAutPC.exe'
 //    .LinkerOptions      + ' libcmt.lib'     // Std Lib (Multi-Threaded, Static, Release)
 //                        + ' kernel32.lib'   // Kernel functions
 }

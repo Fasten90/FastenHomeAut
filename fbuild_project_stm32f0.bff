@@ -103,11 +103,11 @@ ObjectList( 'Fasten-Lib' )
 
     .CompilerInputPattern = '*.c'
 
-    .CompilerOutputPath = 'Out\Compiles'
+    .CompilerOutputPath = 'Out\FBuildSTM32F0'
 }
 
 Executable( 'FastenHomeAutF0' )
 {
     .Libraries          = { "Fasten-Lib" }
-    .LinkerOutput       = 'Out\FBuildFastenHomeAutF0.elf'
+    .LinkerOutput       = 'Out\FBuildSTM32F0\FBuildFastenHomeAutF0.elf'
 }
