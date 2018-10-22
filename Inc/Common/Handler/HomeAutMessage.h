@@ -78,7 +78,7 @@ typedef struct
 typedef enum
 {
 	DataType_Unknown = 0,
-	
+
 	// Login
 	Login_ImLoginImNodeSmall,
 	Login_ImLoginImNodeMedium,
@@ -86,7 +86,7 @@ typedef enum
 	Login_ImLoginImDiscovery,
 	Login_Welcome,
 	Login_Sync,
-	
+
 	// State
 	State_Temperature,
 	State_Brightness,
@@ -97,7 +97,7 @@ typedef enum
 	State_Accelerometer,
 	State_Input,
 	State_Output,
-	
+
 	// Alarm
 	Alarm_TooHot,
 	Alarm_TooCold,
@@ -116,7 +116,7 @@ typedef enum
 	Alarm_Moving,
 	Alarm_SoundImpacted,
 	Alarm_DoorOpened,
-	
+
 	// Command: Master send command to Slave
 	Command_SetOutput,
 	Command_AllOutput,
@@ -125,18 +125,18 @@ typedef enum
 	Command_AllLed,
 	Command_ResetLed,
 	Command_Remote,
-	
+
 	// Mode: Master set Slave mode
 	Mode_RemoteControl,
 	Mode_Spectator,
 	Mode_Sleep,
-	
+
 	// Config: Master config the slave
 	Config_TODO,
 	Config_AnythingLimit,
-	
+
 	// Too add new DataType here
-	
+
 	DataType_End
 } HomeAut_DataType;
 
@@ -169,7 +169,7 @@ typedef struct
 
 ///< Function enum - "FUNCTION" string
 extern const FunctionTypeParity FunctionTypeParity_List[];
-	
+
 ///< DataType enum - "DATATYPE" string
 extern const DataTypeParity DataTypeParity_List[];
 
