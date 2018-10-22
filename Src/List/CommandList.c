@@ -732,7 +732,7 @@ static CmdH_Result_t CommandFunction_exit(uint32_t argc, char** argv)
 
 	return CmdH_Result_Ok;
 }
-#endif
+#endif	// #ifdef CONFIG_USE_PANEL_PC
 
 
 
