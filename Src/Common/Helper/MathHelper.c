@@ -20,6 +20,84 @@
 #endif
 
 
+
+/**
+ * \brief Absolute value of argument
+ */
+float absolute(float arg)
+{
+	/* Not recommend to use integer operand, because if the value is too large, we will loss data */
+	return ( (arg > 0.0f) ? arg : (-1) * arg);
+}
+
+
+
+/**
+ * \brief Round value
+ * 		  > x.5 >
+ *
+ */
+int32_t round_int(float arg)
+{
+	int32_t retval;
+
+    if (arg < 0.0f)
+    {
+    	retval = (int32_t)(arg - 0.5f);
+    }
+    else
+    {
+    	retval = (int32_t)(arg + 0.5f);
+    }
+
+    return retval;
+}
+
+
+
+/**
+ * \brief Floor value
+ * 		  x.y --> x.0
+ */
+int32_t floor_int(float arg)
+{
+	int32_t retval;
+
+	if (arg < 0.0f)
+	{
+		retval = (int32_t)(arg - 1.0f);
+	}
+	else
+	{
+		retval = (int32_t)(arg);
+	}
+
+	return retval;
+}
+
+
+
+/**
+ * \brief	Ceil value
+ * 			x.y --> (x+1).0
+ */
+int32_t ceil_int(float arg)
+{
+	int32_t retval;
+
+	if (arg < 0.0f)
+	{
+		retval = (int32_t)(arg);
+	}
+	else
+	{
+		retval = (int32_t)(arg + 1.0f);
+	}
+
+	return retval;
+}
+
+
 /**
  * \brief	Power(a,b) = a^b
  */
@@ -68,7 +146,6 @@ uint32_t power_secured(uint32_t a, uint8_t b)
 			{
 				// Overflow! Return with "largest" value
 				num = prevNum;
-
 				break;
 			}
 			else
@@ -278,6 +355,33 @@ uint16_t random(void)
 uint32_t MathHelper_UnitTest(void)
 {
 	UnitTest_Start("Calc", __FILE__);
+
+
+	/* float absolute(float arg); */
+	UNITTEST_ASSERT((absolute(0.5f) > 0.4999f) && (absolute(0.5f) < 0.5001f), "absolute error");
+	UNITTEST_ASSERT((absolute(-0.5f) > 0.4999f) && (absolute(-0.5f) < 0.5001f), "absolute error");
+
+
+	/* int32_t round_int(float arg); */
+	UNITTEST_ASSERT((round_int(0.5001f) == 1), "round_int error");
+	UNITTEST_ASSERT((round_int(0.4999f) == 0), "round_int error");
+	UNITTEST_ASSERT((round_int(-0.5001f) == -1), "round_int error");
+	UNITTEST_ASSERT((round_int(-0.4999f) == 0), "round_int error");
+
+
+	/* int32_t floor_int(float arg); */
+	UNITTEST_ASSERT((floor_int(0.5001f) == 0), "floor_int error");
+	UNITTEST_ASSERT((floor_int(0.4999f) == 0), "floor_int error");
+	UNITTEST_ASSERT((floor_int(-0.5001f) == -1), "floor_int error");
+	UNITTEST_ASSERT((floor_int(-0.4999f) == -1), "floor_int error");
+
+
+	/* int32_t ceil_int(float arg); */
+	UNITTEST_ASSERT((ceil_int(0.5001f) == 1), "ceil_int error");
+	UNITTEST_ASSERT((ceil_int(0.4999f) == 1), "ceil_int error");
+	UNITTEST_ASSERT((ceil_int(-0.5001f) == 0), "ceil_int error");
+	UNITTEST_ASSERT((ceil_int(-0.4999f) == 0), "ceil_int error");
+
 
 	/*		 Test power()		*/
 	UNITTEST_ASSERT(power(0, 0)==1, "power error");

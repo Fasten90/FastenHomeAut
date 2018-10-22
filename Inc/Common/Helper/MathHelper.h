@@ -56,6 +56,18 @@
 
 // TODO: Rename these functions?
 
+/* float abs(float arg); */
+float absolute(float arg);
+
+/* Not implemented: float round(float arg); */
+int32_t round_int(float arg);
+
+/* Not implemented: float floor(float arg); */
+int32_t floor_int(float arg);
+
+/* Not implemented: float ceil(float arg); */
+int32_t ceil_int(float arg);
+
 uint32_t power(uint32_t a, uint8_t b);
 uint32_t power_secured(uint32_t a, uint8_t b);
 
