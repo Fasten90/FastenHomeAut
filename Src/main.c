@@ -290,24 +290,29 @@ int main(void)
 #ifdef CONFIG_PLATFORM_PC_WINDOWS
 	// Windows functions - Run unittest immediately
 
-	#ifdef CONFIG_MODULE_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_UNITTEST_ENABLE
 	char responseBuffer[2048];
 	CmdH_SetResponse(responseBuffer, 2048);
 	// TODO: Check UnitTestList_Run return value
 
 	uint32_t utResult = UnitTestList_Run();
-		#if (CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE == 1)
-		if (utResult != 0)
-		{
-			printf("%s", responseBuffer);
-		}
-		// Return with UnitTest result:
-		exit(utResult);
-		#else
-		// Print result
-		printf("%s", responseBuffer); /* Clang generated compile warning when "printf(responseBuffer);" used */
-		#endif
-	#endif
+
+#if (CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE == 1)
+	if (utResult != 0)
+	{
+		printf("%s", responseBuffer);
+	}
+	else
+	{
+		printf("%s", "Every test has run successfully!");
+	}
+	// Return with UnitTest result:
+	exit(utResult);
+#else
+	// Print result
+	printf("%s", responseBuffer); /* Clang generated compile warning when "printf(responseBuffer);" used */
+#endif
+#endif
 
 	// STDIN
 	UART_HandleTypeDef Debug_UartHandle;
