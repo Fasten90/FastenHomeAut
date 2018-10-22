@@ -147,6 +147,12 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #endif
 
 
+///< Compiler message
+// E.g.: #pragma message "Compiling " __FILE__ "..."
+// TODO: Not works on MSVC
+#define DO_PRAGMA(_msg) _Pragma (#_msg)
+#define COMPILER_MESSAGE(_msg) DO_PRAGMA(message ("Compile message: - " #_msg))
+
 
 /*------------------------------------------------------------------------------
  *									Global functions

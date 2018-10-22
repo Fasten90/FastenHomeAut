@@ -184,6 +184,8 @@ static void IO_CheckList(void)
  */
 void IO_Output_Test(void)
 {
+	COMPILER_MESSAGE("IO Test (infinite loop) turned on!")
+
 	while(1)
 	{
 		// Turn on all IOs
