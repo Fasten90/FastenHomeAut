@@ -121,8 +121,9 @@ void IO_Init(void)
 	}
 
 	// Turn off all IOs
-	for (i = 0; i < (IO_Output_Count -1); i++)
+	for (i = 0; i < (IO_Output_Count - 1); i++)
 	{
+		// Start from i+1 because we shall start after "Unknown"
 		IO_Output_SetStatus(i+1, IO_Output_Cmd_SetOff);
 	}
 
@@ -158,7 +159,7 @@ static void IO_CheckList(void)
 {
 	uint8_t i;
 
-	for (i = 0; i < (IO_Output_Count -1); i++)
+	for (i = 0; i < (IO_Output_Count - 1); i++)
 	{
 		ASSERT(IO_Output_List[i].GPIO_Port != NULL);
 		ASSERT((IO_Output_List[i].lowVoltageState == IO_Status_Off) || (IO_Output_List[i].lowVoltageState == IO_Status_On));
@@ -166,7 +167,7 @@ static void IO_CheckList(void)
 	}
 
 	#if (IO_INPUTS_NUM > 0)
-	for (i = 0; i < (IO_Input_Count -1); i++)
+	for (i = 0; i < (IO_Input_Count - 1); i++)
 	{
 		ASSERT(IO_Input_List[i].GPIO_Port != NULL);
 		ASSERT((IO_Input_List[i].lowVoltageState == IO_Status_Off) || (IO_Input_List[i].lowVoltageState == IO_Status_On));
@@ -188,9 +189,10 @@ void IO_Output_Test(void)
 
 	while(1)
 	{
-		// Turn on all IOs
 		uint8_t i;
-		for (i = 0; i < (IO_Output_Count -1); i++)
+
+		// Turn on all IOs
+		for (i = 0; i < (IO_Output_Count - 1); i++)
 		{
 			IO_Output_SetStatus(i+1, IO_Output_Cmd_SetOn);
 		}
@@ -199,7 +201,7 @@ void IO_Output_Test(void)
 		DelayMs(200);
 
 		// Turn off all IOs
-		for (i = 0; i < (IO_Output_Count -1); i++)
+		for (i = 0; i < (IO_Output_Count - 1); i++)
 		{
 			IO_Output_SetStatus(i+1, IO_Output_Cmd_SetOff);
 		}
