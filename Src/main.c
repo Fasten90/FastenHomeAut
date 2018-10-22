@@ -294,8 +294,19 @@ int main(void)
 	char responseBuffer[2048];
 	CmdH_SetResponse(responseBuffer, 2048);
 	// TODO: Check UnitTestList_Run return value
-	UnitTestList_Run();
-	printf("%s", responseBuffer); /* Clang genereated compile warning when "printf(responseBuffer);" used */
+
+	uint32_t utResult = UnitTestList_Run();
+		#if (CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE == 1)
+		if (utResult != 0)
+		{
+			printf("%s", responseBuffer);
+		}
+		// Return with UnitTest result:
+		exit(utResult);
+		#else
+		// Print result
+		printf("%s", responseBuffer); /* Clang generated compile warning when "printf(responseBuffer);" used */
+		#endif
 	#endif
 
 	// STDIN

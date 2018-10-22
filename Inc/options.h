@@ -552,6 +552,24 @@
 #endif
 
 
+#if defined(CONFIG_USE_PANEL_PC)
+	/*
+	 * Exit after UnitTest running, with result
+	 *		1	Enable
+	 * 		0	Disable
+	 *
+	 * Result:
+	 * 		 0 - if okay (exit(0))
+	 * 		>0 - UnitTest error
+	 *
+	 */
+	#define CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE		(1)
+
+	// TODO: Need to check this define?
+
+	#define UNITTEST_PRINT_ASSERT						(0)
+#endif
+
 
 /*------------------------------------------------------------------------------
  *								Terminal settings

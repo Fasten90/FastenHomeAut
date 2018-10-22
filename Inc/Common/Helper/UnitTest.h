@@ -13,6 +13,7 @@
 #define UNITTEST_H_
 
 
+#include "options.h"
 #include "GenericTypeDefs.h"
 
 
@@ -24,13 +25,17 @@
  * (1)	SW will pause, when a UnitTest result be failed
  * (0)	SW will continue the run (and printed the condition)
  */
-#define UNITTEST_PAUSE_WHEN_ERROR					(0)
+#ifndef UNITTEST_PAUSE_WHEN_ERROR
+	#define UNITTEST_PAUSE_WHEN_ERROR					(0)
+#endif
 
 /**
  * (1)	Print assert message (very useful for finding bug)
  * (0)	Do not print assert message
  */
-#define UNITTEST_PRINT_ASSERT						(1)
+#ifndef UNITTEST_PRINT_ASSERT
+	#define UNITTEST_PRINT_ASSERT						(1)
+#endif
 
 // if con == true, is valid
 #define UNITTEST_ASSERT(con, errorstring)			UnitTest_CheckResult(con, #con, errorstring, __LINE__)
