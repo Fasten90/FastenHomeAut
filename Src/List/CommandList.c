@@ -821,7 +821,7 @@ void SetImportantValue(uint32_t newValue)
  */
 static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 {
-	COMPILER_MESSAGE("Test function turned on! Disable in release!")
+	COMPILER_MESSAGE("Test function turned on! Disable in release!");
 	//#pragma message "Compiling " __FILE__ "..."
 
 	// Suppress warning
