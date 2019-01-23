@@ -313,7 +313,7 @@ int main(void)
 	printf("%s\r\n", responseBuffer); /* Clang generated compile warning when "printf(responseBuffer);" used */
 	printf("Unit test result: %d\r\n", utResult);
 #endif
-#endif
+#endif /* #ifdef CONFIG_PLATFORM_PC_WINDOWS */
 
 	// STDIN
 	UART_HandleTypeDef Debug_UartHandle;
