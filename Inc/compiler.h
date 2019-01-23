@@ -152,7 +152,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 // TODO: Not works on MSVC?
 #ifndef __TINYC__
 	#define DO_PRAGMA(_msg) _Pragma (#_msg)
-	#define COMPILER_MESSAGE(_msg) DO_PRAGMA(message ("Compile message: - " #_msg))
+	#define COMPILER_MESSAGE(_msg) DO_PRAGMA(message ("Compiler message: - " #_msg))
 #else
 	// TinyCC (TCC) doesn't support _Pragma
 	#define COMPILER_MESSAGE(_msg)

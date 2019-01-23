@@ -389,7 +389,7 @@ static void UART_Handler(UART_Handler_t *handler)
 
 		val = (uint16_t)(huart->Instance->RDR);
 
-		/* don't put errored data into the FIFO */
+		/* Don't put errored data into the FIFO */
 		if (!err)
 		{
 			// TODO: Check rxEnable flag
