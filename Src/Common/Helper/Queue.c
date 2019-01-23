@@ -393,8 +393,12 @@ bool Queue_PutLastElement(QueueListInfo_t * queue, void * pData, size_t dataSize
 
 
 
-// TODO: Implement it
 void Queue_Defragmentation(void);
+void Queue_Defragmentation(void)
+{
+	// TODO: Implement it
+	return;
+}
 
 
 
