@@ -300,24 +300,25 @@ int main(void)
 #if (CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE == 1)
 	if (utResult != 0)
 	{
-		printf("%s", responseBuffer);
+		printf("%s\r\n", responseBuffer);
 	}
 	else
 	{
-		printf("%s", "Every test has run successfully!");
+		printf("%s\r\n", "Every test has run successfully!");
 	}
 	// Return with UnitTest result:
 	exit(utResult);
 #else
 	// Print result
-	printf("%s", responseBuffer); /* Clang generated compile warning when "printf(responseBuffer);" used */
+	printf("%s\r\n", responseBuffer); /* Clang generated compile warning when "printf(responseBuffer);" used */
+	printf("Unit test result: %d\r\n", utResult);
 #endif
 #endif
 
 	// STDIN
 	UART_HandleTypeDef Debug_UartHandle;
 	HAL_UART_Init(&Debug_UartHandle);
-#endif
+#endif /* #ifdef CONFIG_PLATFORM_PC_WINDOWS */
 
 
 #ifdef CONFIG_MODULE_MEASUREMENTTIMER_ENABLE
