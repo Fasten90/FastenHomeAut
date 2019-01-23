@@ -17,6 +17,9 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
+
+#ifdef CONFIG_MODULE_UART_ENABLE
+
 #include "compiler.h"
 #include "board.h"
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
@@ -447,3 +450,4 @@ void UART_ReceiveEnable(UART_Handler_t * handler)
 }
 
 
+#endif /* #ifdef CONFIG_MODULE_UART_ENABLE */
