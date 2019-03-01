@@ -21,6 +21,9 @@
 #include "MemHandler.h"
 #include "MeasurementTimer.h"
 
+#include "Timing.h"
+#include "UnitTest.h"
+
 
 #ifdef CONFIG_MODULE_MEASUREMENTTIMER_ENABLE
 
@@ -35,8 +38,8 @@
  *  Local variables
  *----------------------------------------------------------------------------*/
 
-static TIM_HandleTypeDef MeasurementTimer_TimerHandle;
-static uint32_t MeasurementTimer_ElapsedSeconds = 0;
+TIM_HandleTypeDef MeasurementTimer_TimerHandle = { 0 };
+static volatile uint32_t MeasurementTimer_ElapsedSeconds = 0;
 
 
 
@@ -57,7 +60,7 @@ static uint32_t MeasurementTimer_ElapsedSeconds = 0;
  */
 void MeasurementTimer_Init(void)
 {
-	/* Counter Prescaler value */
+	/* Counter prescaler value */
 	uint32_t PrescalerValue = 0;
 	uint32_t Period = 0;
 
@@ -65,9 +68,10 @@ void MeasurementTimer_Init(void)
 	HAL_TIM_PWM_MspInit(&MeasurementTimer_TimerHandle);
 
 	/* Compute the prescaler value */
-	PrescalerValue = (uint32_t)(SystemCoreClock / MEASUREMENTTIMER_TIMER_PRESCALER ) - 1;
-
+	//PrescalerValue = (uint32_t)(SystemCoreClock / MEASUREMENTTIMER_TIMER_PRESCALER) - 1;
+	PrescalerValue = (uint32_t)(SystemCoreClock / MEASUREMENTTIMER_TIMER_PRESCALER);
 	Period = MEASUREMENTTIMER_TIMER_PERIOD_VALUE;
+
 
 	/* -1- Configure the TIM peripheral */
 	MeasurementTimer_TimerHandle.Instance = MEASUREMENTTIMER_TIMx;
@@ -105,10 +109,8 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 	MEASUREMENTTIMER_TIMER_CLK_ENABLES();
 
 	/* TODO: Added for Error handling... need it? */
-#if UNUSED
-	HAL_NVIC_SetPriority(TIM3_IRQn, 5, 0);
-	HAL_NVIC_EnableIRQ(TIM3_IRQn);
-#endif
+	HAL_NVIC_SetPriority(MEASUREMENTTIMER_TIMx_IRQn, MEASUREMENTTIMER_IT_PRIORITY, 0);
+	HAL_NVIC_EnableIRQ(MEASUREMENTTIMER_TIMx_IRQn);
 }
 
 
@@ -118,6 +120,7 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
  */
 void MeasurementTimer_StartMeasurement(void)
 {
+	/* TODO: Hardware dependent zero set */
 	/* Clear */
 	MeasurementTimer_TimerHandle.Instance->CNT = 0;
 
@@ -147,12 +150,48 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
  */
 uint32_t MeasurementTimer_GetTime(void)
 {
+	/* TODO: Hardware dependent */
 	uint32_t timerValue = MeasurementTimer_TimerHandle.Instance->CNT;
 
-	/* TimerValue is in us */
-	return (MeasurementTimer_ElapsedSeconds * 1000000) + timerValue;
+	/* TimerValue is in us:
+	 * Elapsed seconds + actual usec part
+	 */
+	return (MeasurementTimer_ElapsedSeconds * 1000000U) + (timerValue * MEASUREMENTTIMER_USEC_CORRECTION_MUL);
 }
 
+
+
+#ifdef MODULE_MEASUREMENTTIMER_UNITTEST_ENABLE
+/**
+ * \brief	MeasurementTimer UnitTest
+ */
+uint32_t MeasurementTimer_UnitTest(void)
+{
+	UnitTest_Start("MeasurementTimer", __FILE__);
+
+
+	/* Test Measurement Timer - Wait ~1 second */
+	uint32_t elapsedUsec = 0;
+	const uint8_t enabledAccuracyPercent = 1;
+	const uint32_t testMsec = 1000;
+	const uint32_t testUSec = 1000000U;
+
+	MeasurementTimer_Init();
+	MeasurementTimer_StartMeasurement();
+
+	DelayMs(testMsec);
+
+	elapsedUsec = MeasurementTimer_GetTime();
+
+	UNITTEST_ASSERT((elapsedUsec > (testUSec * ((float)(100-enabledAccuracyPercent)/100)))
+					 && (elapsedUsec < (testUSec * ((float)(100+enabledAccuracyPercent)/100))), "1 second measurement error");
+
+
+	// Finish
+	return UnitTest_End();
+}
+
+#endif /* MODULE_MEASUREMENTTIMER_UNITTEST_ENABLE */
 
 
 #endif /* CONFIG_MODULE_MEASUREMENTTIMER_ENABLE */

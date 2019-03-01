@@ -32,6 +32,7 @@
 #include "TaskHandler.h"
 #include "GlobalVarHandler.h"
 #include "EventLog.h"
+#include "MeasurementTimer.h"
 
 #include "UnitTestList.h"
 
@@ -125,6 +126,10 @@ uint32_t UnitTestList_Run(void)
 
 #ifdef MODULE_QUEUE_UNITTEST_ENABLE
 	result += Queue_UnitTest();
+#endif
+
+#ifdef MODULE_MEASUREMENTTIMER_UNITTEST_ENABLE
+	result += MeasurementTimer_UnitTest();
 #endif
 
 	return result;

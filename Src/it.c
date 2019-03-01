@@ -27,6 +27,9 @@
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
 #include "CommonADC.h"
 #endif
+#ifdef CONFIG_MODULE_MEASUREMENTTIMER_ENABLE
+#include "MeasurementTimer.h"
+#endif
 
 ///< Includes microcontroller family libraries
 #if defined(CONFIG_PLATFORM_MCU_STM32F4xx)
@@ -380,6 +383,14 @@ void TIM3_IRQHandler(void)
 	LED_RED_OFF();
 }
 #endif
+#endif
+
+
+#ifdef CONFIG_MODULE_MEASUREMENTTIMER_ENABLE
+void MEASUREMENTTIMER_IRQ_HANDLER(void)
+{
+	HAL_TIM_IRQHandler(&MeasurementTimer_TimerHandle);
+}
 #endif
 
 
