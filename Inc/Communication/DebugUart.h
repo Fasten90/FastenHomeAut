@@ -85,7 +85,7 @@ size_t uprintf(const char *format, ...);
 void DebugUart_ProcessReceivedCharacters(void);
 
 
-#else
+#else /* #ifdef CONFIG_MODULE_DEBUGUART_ENABLE */
 
 // Not used DEBUGUART
 
@@ -100,6 +100,7 @@ void DebugUart_ProcessReceivedCharacters(void);
 #else
 
 #include <stdio.h>
+
 #define uprintf(...)							printf(__VA_ARGS__)
 #define DebugUart_SendChar(_c)					putchar(_c)
 #define DebugUart_SendMessage(_msg)				puts(_msg)
@@ -109,9 +110,9 @@ void DebugUart_ProcessReceivedCharacters(void);
 
 #define DebugUart_StartReceive()
 
-#endif
+#endif /* #ifndef CONFIG_PLATFORM_PC_WINDOWS */
 
-#endif
+#endif /* #ifdef CONFIG_MODULE_DEBUGUART_ENABLE */
 
 
 

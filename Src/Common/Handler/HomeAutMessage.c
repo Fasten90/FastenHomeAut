@@ -481,8 +481,11 @@ bool HomeAutMessage_CreateAndSendHomeAutMessage(
 #elif defined(CONFIG_MODULE_DEBUGUART_ENABLE)
 		DebugUart_SendMessage(message);
 		return true;
+#elif defined(CONFIG_USE_PANEL_PC)
+		uprintf("[HomeAutMessage] %s", message);
+		return true;
 #else
-#warning "HomeAutMessage module cannot send message to anything"
+		#warning "HomeAutMessage module cannot send message to anything"
 		return true;
 #endif
 	}	

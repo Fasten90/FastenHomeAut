@@ -17,6 +17,9 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
+
+#ifdef CONFIG_MODULE_UART_ENABLE
+
 #include "compiler.h"
 #include "board.h"
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
@@ -386,7 +389,7 @@ static void UART_Handler(UART_Handler_t *handler)
 
 		val = (uint16_t)(huart->Instance->RDR);
 
-		/* don't put errored data into the FIFO */
+		/* Don't put errored data into the FIFO */
 		if (!err)
 		{
 			// TODO: Check rxEnable flag
@@ -447,3 +450,4 @@ void UART_ReceiveEnable(UART_Handler_t * handler)
 }
 
 
+#endif /* #ifdef CONFIG_MODULE_UART_ENABLE */

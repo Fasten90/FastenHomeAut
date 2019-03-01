@@ -851,5 +851,17 @@
 	#define CONFIG_COMMUNICATION_HAS_MORE_COMM_PORT
 #endif
 
+//#define CONFIG_COMMUNICATION_HAS_UART_PORT
+// TODO: Be careful, this define is implementation dependent (DebugUart, Bluetooth, ESP8266 peripherals on UART)
+#if ( defined(CONFIG_MODULE_DEBUGUART_ENABLE) \
+	|| defined(CONFIG_MODULE_BLUETOOTH_ENABLE) \
+	|| defined(CONFIG_MODULE_ESP8266_ENABLE))
+	#define CONFIG_COMMUNICATION_HAS_UART_PORT
+#endif
+
+#if defined(CONFIG_COMMUNICATION_HAS_UART_PORT) && !defined(CONFIG_MODULE_UART_ENABLE)
+	#define CONFIG_MODULE_UART_ENABLE
+#endif
+
 
 #endif /* OPTIONS_H_ */
