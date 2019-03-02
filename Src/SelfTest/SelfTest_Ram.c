@@ -45,7 +45,7 @@
 
 #ifdef CONFIG_MODULE_SELFTEST_ENABLE
 /**
- * \brief  SelfTest RAM test
+ * @brief  SelfTest RAM test
  */
 bool SelfTest_Ram_Test(void)
 {

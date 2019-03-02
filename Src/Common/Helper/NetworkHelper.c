@@ -44,8 +44,8 @@
 
 
 /**
- * \brief    Print IP to string
- * \return    string length
+ * @brief    Print IP to string
+ * @return    string length
  */
 uint8_t Network_PrintIp(char *str, Network_IP_t *ip)
 {
@@ -59,8 +59,8 @@ uint8_t Network_PrintIp(char *str, Network_IP_t *ip)
 
 
 /**
- * \brief    Print IP to string
- * \return    string length
+ * @brief    Print IP to string
+ * @return    string length
  */
 uint8_t Network_PrintIpOnDebug(char *str, Network_IP_t *ip)
 {
@@ -75,9 +75,9 @@ uint8_t Network_PrintIpOnDebug(char *str, Network_IP_t *ip)
 
 
 /**
- * \brief    Convert string IP address to Network_IP_t
- * \retval    true, if ok
- * \retval    false, if false
+ * @brief    Convert string IP address to Network_IP_t
+ * @retval    true, if ok
+ * @retval    false, if false
  */
 bool Network_ConvertIpAddressStringToIP(char *message, Network_IP_t *address)
 {

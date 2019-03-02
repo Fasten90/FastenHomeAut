@@ -103,7 +103,7 @@ static void Snake_DrawPoints(uint16_t x, uint16_t y);
 
 
 /**
- * \brief    Initialize Snake game (start position, etc.)
+ * @brief    Initialize Snake game (start position, etc.)
  */
 void Snake_Init(void)
 {

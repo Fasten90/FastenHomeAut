@@ -44,7 +44,7 @@ RTC_HandleTypeDef RtcHandle;
 
 
 /**
- * \brief    Initialize RTC
+ * @brief    Initialize RTC
  */
 void RTC_Init(void)
 {
@@ -147,7 +147,7 @@ void RTC_CalendarConfig(DateTime_t *dateTime)
 
 
 /**
- * \brief    Set date
+ * @brief    Set date
  */
 void RTC_SetDate(Date_t *date)
 {
@@ -169,7 +169,7 @@ void RTC_SetDate(Date_t *date)
 
 
 /**
- * \brief    Set time
+ * @brief    Set time
  */
 void RTC_SetTime(Time_t *time)
 {
@@ -195,7 +195,7 @@ void RTC_SetTime(Time_t *time)
 
 
 /**
- * \brief    Get DateTime
+ * @brief    Get DateTime
  */
 void RTC_GetDateTime(DateTime_t *dateTime)
 {
@@ -206,7 +206,7 @@ void RTC_GetDateTime(DateTime_t *dateTime)
 
 
 /**
- * \brief    Get date
+ * @brief    Get date
  */
 void RTC_GetDate(Date_t *date)
 {
@@ -223,7 +223,7 @@ void RTC_GetDate(Date_t *date)
 
 
 /**
- * \brief    Get time
+ * @brief    Get time
  */
 void RTC_GetTime(Time_t *time)
 {

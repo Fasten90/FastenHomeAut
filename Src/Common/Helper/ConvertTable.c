@@ -45,7 +45,7 @@
 
 
 /**
- * \brief    Check convert table (monotonity)
+ * @brief    Check convert table (monotonity)
  */
 bool ConvertTable_Init(const ConverTable_t * table)
 {
@@ -66,7 +66,7 @@ bool ConvertTable_Init(const ConverTable_t * table)
 
 
 /**
- * \brief    Get convert value (uint32_t --> float)
+ * @brief    Get convert value (uint32_t --> float)
  */
 float ConvertTable_GetValue(const ConverTable_t * table, uint32_t value)
 {
@@ -114,7 +114,7 @@ float ConvertTable_GetValue(const ConverTable_t * table, uint32_t value)
 
 #ifdef MODULE_CONVERTTABLE_UNITTEST_ENABLE
 /**
- * \brief    Convert table unit test
+ * @brief    Convert table unit test
  */
 uint32_t ConvertTable_UnitTest(void)
 {

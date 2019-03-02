@@ -89,7 +89,7 @@ typedef enum
 #endif
 
     // XXX: Add new Task enum here!
-    // \note: !! Be careful !! Sync with TaskList
+    // @note: !! Be careful !! Sync with TaskList
 
     Task_Count
 } TaskName_t;

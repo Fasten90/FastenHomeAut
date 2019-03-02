@@ -71,7 +71,7 @@
 
 #if defined(CONFIG_MODULE_IO_ENABLE) & defined(CONFIG_USE_PANEL_HOMEAUTCENTERPANEL)
 
-// \note: In the schematic the blue and red LED are inversely
+// @note: In the schematic the blue and red LED are inversely
 // blue: PE5
 // green: PE6
 // red: PA8

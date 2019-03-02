@@ -68,7 +68,7 @@ static void SSD1306_fastSPIwrite(uint8_t d);
  *----------------------------------------------------------------------------*/
 
 /**
- * \brief    Initialize Display - SSD1306
+ * @brief    Initialize Display - SSD1306
  */
 void Display_SSD1306_Init(void)
 {
@@ -309,7 +309,7 @@ static void SSD1306_HardwareInit(void)
 
 
 /**
- * \brief    Send command on SPI
+ * @brief    Send command on SPI
  */
 static void SSD1306_command(uint8_t c)
 {
@@ -328,7 +328,7 @@ static void SSD1306_command(uint8_t c)
 
 
 /**
- * \brief    Send command on SPI to Display
+ * @brief    Send command on SPI to Display
  */
 static void SSD1306_fastSPIwrite(uint8_t d)
 {
@@ -338,7 +338,7 @@ static void SSD1306_fastSPIwrite(uint8_t d)
 
 
 /**
- * \brief    The most basic function, set a single pixel
+ * @brief    The most basic function, set a single pixel
  */
 // __attribute__( ( section(".data") ) )
 void SSD1306_drawPixel(uint8_t x, uint8_t y, Display_Color_t color)
@@ -399,7 +399,7 @@ void SSD1306_drawFixVerticalLine(int16_t x, int16_t y, uint8_t row)
 
 
 /**
- * \brief    Draw image (put pixel to buffer image)
+ * @brief    Draw image (put pixel to buffer image)
  */
 void SSD1306_drawImage(uint8_t setx, uint8_t sety, uint8_t sizex, uint8_t sizey, uint8_t *img)
 {
@@ -423,7 +423,7 @@ void SSD1306_drawImage(uint8_t setx, uint8_t sety, uint8_t sizex, uint8_t sizey,
 
 
 /**
- * \brief    Invert display
+ * @brief    Invert display
  * TODO: Delete?
  */
 void SSD1306_invertDisplay(bool invert)
@@ -619,7 +619,7 @@ void SSD1306_display(void)
 
 
 /**
- *    \brief    Clear everything
+ *    @brief    Clear everything
  */
 void SSD1306_clearDisplay(void)
 {
@@ -941,7 +941,7 @@ void SSD1306_drawFastVLineInternal(int16_t x, int16_t __y, int16_t __h,
 
 
 /**
- * \brief    Display SPI communication IRQ handler
+ * @brief    Display SPI communication IRQ handler
  */
 void DISPLAY_SSD1306_SPIx_IRQHandler(void)
 {
@@ -1014,7 +1014,7 @@ void SPIx_DMA_TX_IRQHandler(void)
 
 #ifdef CONFIG_MODULE_DISPLAY_TEST_WITH_TERMINAL
 /**
- * \brief    Print Display (Actual screen) on debug port
+ * @brief    Print Display (Actual screen) on debug port
  */
 void Display_SendOnTerminal(void)
 {

@@ -97,7 +97,7 @@
  *     - Read adc values time of 1 second (1000 millisecond)
  *
  * For DAC-s (Digital-Analog Converter):
- * - \note Not available in all STM32F4xx!
+ * - @note Not available in all STM32F4xx!
  * - Send: \code dac <1/2> <voltage with decimal point> \endcode
  *   + Example: \code dac 1 3.0 \endcode
  *   + 1. = A4 pin
@@ -257,7 +257,7 @@ static const char * GetStrListElement(uint8_t i)
 
 
 /**
- * \brief    Main function
+ * @brief    Main function
  */
 int main(void)
 {
@@ -406,7 +406,7 @@ int main(void)
 
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
     // DebugUart initializing
-    // \note    Be careful, Terminal need to initializing after this
+    // @note    Be careful, Terminal need to initializing after this
     DebugUart_Init();
 #endif
 

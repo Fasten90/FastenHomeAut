@@ -70,7 +70,7 @@
 
 
 /**
- * \brief    Initialize CircularBuffer
+ * @brief    Initialize CircularBuffer
  */
 void CircularBuffer_Init(CircularBufferInfo_t *circBuff)
 {
@@ -89,9 +89,9 @@ void CircularBuffer_Init(CircularBufferInfo_t *circBuff)
 
 
 /**
- * \brief    Return with there is a new character in the buffer?
- * \retval    true    Has new character
- * \retval    false    Hasn't new character
+ * @brief    Return with there is a new character in the buffer?
+ * @retval    true    Has new character
+ * @retval    false    Hasn't new character
  */
 bool CircularBuffer_IsNotEmpty(CircularBufferInfo_t *circBuff)
 {
@@ -101,9 +101,9 @@ bool CircularBuffer_IsNotEmpty(CircularBufferInfo_t *circBuff)
 
 
 /**
- * \brief    Buffer is full?
- * \retval    true    full
- * \retval    false    not full (has empty space)
+ * @brief    Buffer is full?
+ * @retval    true    full
+ * @retval    false    not full (has empty space)
  */
 bool CircularBuffer_IsFull(CircularBufferInfo_t *circBuff)
 {
@@ -131,7 +131,7 @@ bool CircularBuffer_IsFull(CircularBufferInfo_t *circBuff)
 
 
 /**
- * \brief    Clear buffer (set Circular buffer to empty)
+ * @brief    Clear buffer (set Circular buffer to empty)
  */
 void CircularBuffer_Clear(CircularBufferInfo_t *circBuff)
 {
@@ -146,7 +146,7 @@ void CircularBuffer_Clear(CircularBufferInfo_t *circBuff)
 
 
 /**
- * \brief    Get character and step position (get & drop)
+ * @brief    Get character and step position (get & drop)
  */
 bool CircularBuffer_GetChar(CircularBufferInfo_t *circBuff, char * c)
 {
@@ -174,8 +174,8 @@ bool CircularBuffer_GetChar(CircularBufferInfo_t *circBuff, char * c)
 
 
 /**
- * \brief    Get characters (from ReadCnt to WriteCnt)
- * \note    Counter not modified --> Need "drop" characters
+ * @brief    Get characters (from ReadCnt to WriteCnt)
+ * @note    Counter not modified --> Need "drop" characters
  */
 uint16_t CircularBuffer_GetString(CircularBufferInfo_t *circBuff, char *message, uint16_t maxLen)
 {
@@ -233,8 +233,8 @@ uint16_t CircularBuffer_GetString(CircularBufferInfo_t *circBuff, char *message,
 
 
 /**
- * \brief    Clear buffer from readCnt (length count)
- * \note    Not cleared all character from readCnt to writeCnt
+ * @brief    Clear buffer from readCnt (length count)
+ * @note    Not cleared all character from readCnt to writeCnt
  */
 uint16_t CircularBuffer_DropCharacters(CircularBufferInfo_t *circBuff, uint16_t length)
 {
@@ -333,7 +333,7 @@ uint16_t CircularBuffer_DropCharacters(CircularBufferInfo_t *circBuff, uint16_t 
 
 
 /**
- * \brief    Put character to Circular buffer
+ * @brief    Put character to Circular buffer
  */
 bool CircularBuffer_PutChar(CircularBufferInfo_t *circBuff, char c)
 {
@@ -373,7 +373,7 @@ bool CircularBuffer_PutChar(CircularBufferInfo_t *circBuff, char c)
 
 
 /**
- * \brief    Put string to CircularBuffer
+ * @brief    Put string to CircularBuffer
  */
 uint16_t CircularBuffer_PutString(CircularBufferInfo_t *circBuff, const char *str, uint16_t needCopyLength)
 {
@@ -394,7 +394,7 @@ uint16_t CircularBuffer_PutString(CircularBufferInfo_t *circBuff, const char *st
 
 #if (CIRCULARBUFFER_STATISTICS_ENABLE == 1)
 /**
- * \brief    Print CircularBuffer info and statistics to string
+ * @brief    Print CircularBuffer info and statistics to string
  */
 size_t CircularBuffer_PrintStatistics(char *str, size_t len, CircularBufferInfo_t *circBuff)
 {
@@ -414,7 +414,7 @@ size_t CircularBuffer_PrintStatistics(char *str, size_t len, CircularBufferInfo_
 
 #ifdef MODULE_CIRCULARBUFFER_UNITTEST_ENABLE
 /**
- * \brief    CircularBuffer UnitTest
+ * @brief    CircularBuffer UnitTest
  */
 uint32_t CircularBuffer_UnitTest(void)
 {

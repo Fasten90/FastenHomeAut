@@ -57,7 +57,7 @@ static size_t WebpageHandler_SendHeader(char *resp, size_t webpageLength, const 
 
 
 /**
- * \brief  WebpageHandler initialization
+ * @brief  WebpageHandler initialization
  */
 void WebpageHandler_Init(void)
 {
@@ -67,8 +67,8 @@ void WebpageHandler_Init(void)
 
 
 /**
- * \brief    Check GET request
- * \retval    response length
+ * @brief    Check GET request
+ * @retval    response length
  */
 size_t WebpageHandler_GetRequrest(const char *request, char *resp)
 {

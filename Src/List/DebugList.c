@@ -73,7 +73,7 @@ DebugRecord_t DebugTasks[] =
 
     /*
      * XXX: Add here new Debug task struct
-     * \note    Do not forget synchronize with Debug_t enum
+     * @note    Do not forget synchronize with Debug_t enum
      */
 };
 
@@ -96,7 +96,7 @@ DebugRecord_t DebugTasks[] =
  *----------------------------------------------------------------------------*/
 
  /**
-  * \brief    DebugList initialization - Check debug list
+  * @brief    DebugList initialization - Check debug list
   */
 void DebugList_Init(void)
 {

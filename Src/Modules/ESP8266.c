@@ -281,7 +281,7 @@ static bool ESP8266_SearchGetRequest(const char *recvMsg);
 
 
 /**
- * \brief    Initialize ESP8266
+ * @brief    Initialize ESP8266
  */
 void ESP8266_Init(void)
 {
@@ -352,7 +352,7 @@ void ESP8266_Init(void)
 
 
 /**
- * \brief    Receive enable
+ * @brief    Receive enable
  */
 static inline void ESP8266_ReceiveEnable(void)
 {
@@ -362,7 +362,7 @@ static inline void ESP8266_ReceiveEnable(void)
 
 
 /**
- * \brief    Send enable
+ * @brief    Send enable
  */
 static inline void ESP8266_SendEnable(void)
 {
@@ -372,7 +372,7 @@ static inline void ESP8266_SendEnable(void)
 
 
 /**
- * \brief    Reset ESP8266 module on RST pin
+ * @brief    Reset ESP8266 module on RST pin
  */
 static void ESP8266_ResetHardware(void)
 {
@@ -384,7 +384,7 @@ static void ESP8266_ResetHardware(void)
 
 
 /**
- * \brief    Send string to ESP8266
+ * @brief    Send string to ESP8266
  */
 size_t ESP8266_SendString(const char *msg)
 {
@@ -409,7 +409,7 @@ size_t ESP8266_SendString(const char *msg)
 
 
 /**
- * \brief    Send message to ESP8266
+ * @brief    Send message to ESP8266
  *             Use with fix length, e.g. binary message
  */
 static size_t ESP8266_SendMsgWithLength(const char *msg, size_t msgLength)
@@ -425,7 +425,7 @@ static size_t ESP8266_SendMsgWithLength(const char *msg, size_t msgLength)
 
 
 /**
- * \brief    Convert IP string to IP number
+ * @brief    Convert IP string to IP number
  */
 static bool ESP8266_ConvertIpString(char *message)
 {
@@ -482,7 +482,7 @@ static bool ESP8266_ConvertIpString(char *message)
 
 
 /**
- * \brief    Print ESP8266 IP addresses
+ * @brief    Print ESP8266 IP addresses
  */
 size_t ESP8266_PrintIpAddress(char *str)
 {
@@ -501,7 +501,7 @@ size_t ESP8266_PrintIpAddress(char *str)
 
 
 /**
- * \brief    ESP8266 receive reinitialize
+ * @brief    ESP8266 receive reinitialize
  */
 static void ESP8266_StartReceive(void)
 {
@@ -512,7 +512,7 @@ static void ESP8266_StartReceive(void)
 
 
 /**
- * \brief    Clear receive buffer
+ * @brief    Clear receive buffer
  */
 static void ESP8266_ClearReceive(bool isFullClear, size_t stepLength)
 {
@@ -531,7 +531,7 @@ static void ESP8266_ClearReceive(bool isFullClear, size_t stepLength)
 
 
 /**
- * \brief    Request send TCP message
+ * @brief    Request send TCP message
  */
 bool ESP8266_RequestSendTcpMessage(const char *msg, size_t msgLength)    // TODO: Add <id> parameter?
 {
@@ -561,7 +561,7 @@ bool ESP8266_RequestSendTcpMessage(const char *msg, size_t msgLength)    // TODO
 
 #if (CONFIG_ESP8266_TRANSPARENT_MODE_ENABLED == 0)
 /**
- * \brief    Send message on TCP
+ * @brief    Send message on TCP
  */
 static bool ESP8266_SendTcpMessageNonBlockingMode_Start(size_t msgLength)
 {
@@ -621,7 +621,7 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_Start(size_t msgLength)
 }
 #elif (CONFIG_ESP8266_TRANSPARENT_MODE_ENABLED == 1)
 /**
- * \brief    Send message on TCP
+ * @brief    Send message on TCP
  */
 static bool ESP8266_SendTcpMessageNonBlockingMode_Start(void)
 {
@@ -648,8 +648,8 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_Start(void)
 
 
 /**
- * \brief    Send TCP message which are in ESP8266_TcpTransmitBuffer
- * \note    Recommend received "> " before this function
+ * @brief    Send TCP message which are in ESP8266_TcpTransmitBuffer
+ * @note    Recommend received "> " before this function
  *             After this message, should received "SEND OK"
  */
 static bool ESP8266_SendTcpMessageNonBlockingMode_SendMessage(const char *msg, size_t msgLength)
@@ -676,7 +676,7 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_SendMessage(const char *msg, s
 
 #if (ESP8266_TCP_CLOSE_AFTER_HTTP_GET == 1)
 /**
- * \brief    Close TCP connection: last <id> connection
+ * @brief    Close TCP connection: last <id> connection
  */
 static void ESP8266_SendTcpClose(void)
 {
@@ -696,7 +696,7 @@ static void ESP8266_SendTcpClose(void)
 
 #ifdef NOT_USED
 /**
- * \brief    Start send TCP message with blocked
+ * @brief    Start send TCP message with blocked
  */
 bool ESP8266_StartSendTcpMessageBlocked(size_t length)
 {
@@ -748,8 +748,8 @@ bool ESP8266_StartSendTcpMessageBlocked(size_t length)
 
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 /**
- * \brief    ESP8266 state machine
- * \note    Call this task a lot of times (it is not an infinite loop)
+ * @brief    ESP8266 state machine
+ * @note    Call this task a lot of times (it is not an infinite loop)
  */
 void ESP8266_StatusMachine(void)
 {
@@ -1572,7 +1572,7 @@ void ESP8266_StatusMachine(void)
 
 
 /**
- * \brief    Required new state
+ * @brief    Required new state
  */
 void ESP8266_RequiredNewState(ESP8266_AdjustableState_t newState)
 {
@@ -1633,7 +1633,7 @@ void ESP8266_RequiredNewState(ESP8266_AdjustableState_t newState)
 
 #if (CONFIG_ESP8266_TRANSPARENT_MODE_ENABLED == 0)
 /**
- * \brief    Check idle state messages
+ * @brief    Check idle state messages
  *             - Link
  *             - Unlink
  *             - +IPD: Received message
@@ -2047,9 +2047,9 @@ static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedM
 
 #if (CONFIG_ESP8266_TRANSPARENT_MODE_ENABLED == 0)
 /**
- * \brief    Process received TCP message
+ * @brief    Process received TCP message
  *             Actual message start with: \r\n+IPD,
- * \retval    Processed (Need drop chars)
+ * @retval    Processed (Need drop chars)
  */
 static bool ESP8266_ProcessReceivedTcpMessage(char *receiveBuffer)
 {

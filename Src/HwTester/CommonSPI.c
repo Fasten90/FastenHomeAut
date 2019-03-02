@@ -48,7 +48,7 @@
 
 
 /**
- * \brief    Common SPI initialization for general SPI message sending (IT mode)
+ * @brief    Common SPI initialization for general SPI message sending (IT mode)
  */
 void CommonSPI_Init(void)
 {

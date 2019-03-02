@@ -142,7 +142,7 @@ static void GlobVarH_UT_Clear(void);
 
 
 /**
- * \brief    Initialize GlobVarH module + checks
+ * @brief    Initialize GlobVarH module + checks
  */
 void GlobVarH_Init(void)
 {
@@ -158,7 +158,7 @@ void GlobVarH_Init(void)
 
 #ifdef CONFIG_GLOBALVARHANDLER_CHECK_ENABLE
 /**
- * \brief    Check the GlobVarH_VarList[], are settings valid?
+ * @brief    Check the GlobVarH_VarList[], are settings valid?
  */
 static bool GlobVarH_CheckGlobalVarArray(const GlobVarH_VarListInfo_t *varList)
 {
@@ -301,8 +301,8 @@ GlobVarH_ProcessResult_t GlobVarH_ProcessVariableCommand(const GlobVarH_VarListI
 
 
 /**
- * \brief    Searching a global var name in GlobVarH_VarList
- * \retval    >= 0 if found (number of record is stored in varRecord)
+ * @brief    Searching a global var name in GlobVarH_VarList
+ * @retval    >= 0 if found (number of record is stored in varRecord)
  *             -1, if not found
  */
 static GlobVarH_ID_t GlobVarH_SearchVariableName(const GlobVarH_VarListInfo_t *varList, const char *varName, const GlobVarH_VarRecord_t **varRecord)
@@ -329,7 +329,7 @@ static GlobVarH_ID_t GlobVarH_SearchVariableName(const GlobVarH_VarListInfo_t *v
 
 
 /**
- * \brief    Get value of a global variable. Response is written to buffer pointed by CmdH_ResponseBuffer.
+ * @brief    Get value of a global variable. Response is written to buffer pointed by CmdH_ResponseBuffer.
  */
 static GlobVarH_ProcessResult_t GlobVarH_GetVariable(const GlobVarH_VarRecord_t * varRecord)
 {
@@ -413,7 +413,7 @@ static GlobVarH_ProcessResult_t GlobVarH_GetVariable(const GlobVarH_VarRecord_t 
 
 
 /**
- * \brief    Get integer value. Response is written to buffer pointed by CmdH_ResponseBuffer.
+ * @brief    Get integer value. Response is written to buffer pointed by CmdH_ResponseBuffer.
  */
 static void GlobVarH_GetInteger(const GlobVarH_VarRecord_t * varRecord)
 {
@@ -545,7 +545,7 @@ static void GlobVarH_GetInteger(const GlobVarH_VarRecord_t * varRecord)
 
 
 /**
- * \brief    Get bits / get binary values. Response is written to buffer pointed by CmdH_ResponseBuffer.
+ * @brief    Get bits / get binary values. Response is written to buffer pointed by CmdH_ResponseBuffer.
  */
 static void GlobVarH_GetBits(const GlobVarH_VarRecord_t * varRecord)
 {
@@ -569,7 +569,7 @@ static void GlobVarH_GetBits(const GlobVarH_VarRecord_t * varRecord)
 
 
 /**
- * \brief    Get enumerators. Response is written to buffer pointed by CmdH_ResponseBuffer.
+ * @brief    Get enumerators. Response is written to buffer pointed by CmdH_ResponseBuffer.
  */
 static void GlobVarH_GetEnumerator(const GlobVarH_VarRecord_t * varRecord)
 {
@@ -606,7 +606,7 @@ static void GlobVarH_GetEnumerator(const GlobVarH_VarRecord_t * varRecord)
 
 
 /**
- * \brief    Get function value into the GlobVarH_TemporaryValue variable
+ * @brief    Get function value into the GlobVarH_TemporaryValue variable
  */
 static void GlobVarH_GetFunctionValue(const GlobVarH_VarRecord_t * varRecord)
 {
@@ -623,7 +623,7 @@ static void GlobVarH_GetFunctionValue(const GlobVarH_VarRecord_t * varRecord)
 
 
 /**
- * \brief    Set variable
+ * @brief    Set variable
  */
 static GlobVarH_ProcessResult_t GlobVarH_SetVariable(const GlobVarH_VarRecord_t *varRecord, const char *param)
 {
@@ -695,7 +695,7 @@ static GlobVarH_ProcessResult_t GlobVarH_SetVariable(const GlobVarH_VarRecord_t 
 
 
 /**
- * \brief    Set bool variable
+ * @brief    Set bool variable
  */
 static GlobVarH_ProcessResult_t GlobVarH_SetBool(const GlobVarH_VarRecord_t *varRecord, const char *param)
 {
@@ -721,7 +721,7 @@ static GlobVarH_ProcessResult_t GlobVarH_SetBool(const GlobVarH_VarRecord_t *var
 
 
 /**
- * \brief    Set integer global variable
+ * @brief    Set integer global variable
  */
 static GlobVarH_ProcessResult_t GlobVarH_SetInteger(const GlobVarH_VarRecord_t *varRecord, const char *param)
 {
@@ -894,7 +894,7 @@ static GlobVarH_ProcessResult_t GlobVarH_SetInteger(const GlobVarH_VarRecord_t *
 
 
 /**
- * \brief    Set float type GlobalVar
+ * @brief    Set float type GlobalVar
  */
 static GlobVarH_ProcessResult_t GlobVarH_SetFloat(const GlobVarH_VarRecord_t *varRecord, const char *param)
 {
@@ -930,7 +930,7 @@ static GlobVarH_ProcessResult_t GlobVarH_SetFloat(const GlobVarH_VarRecord_t *va
 
 
 /**
- * \brief    Set bits type GlobalVar
+ * @brief    Set bits type GlobalVar
  */
 static GlobVarH_ProcessResult_t GlobVarH_SetBits(const GlobVarH_VarRecord_t *varRecord, const char *param)
 {
@@ -992,7 +992,7 @@ static GlobVarH_ProcessResult_t GlobVarH_SetBits(const GlobVarH_VarRecord_t *var
 
 
 /**
- * \brief    Set string type GlobalVar
+ * @brief    Set string type GlobalVar
  */
 static GlobVarH_ProcessResult_t GlobVarH_SetString(const GlobVarH_VarRecord_t *varRecord, const char *param)
 {
@@ -1020,7 +1020,7 @@ static GlobVarH_ProcessResult_t GlobVarH_SetString(const GlobVarH_VarRecord_t *v
 
 
 /**
- * \brief    Set enumerator
+ * @brief    Set enumerator
  */
 static GlobVarH_ProcessResult_t GlobVarH_SetEnumerator(const GlobVarH_VarRecord_t *varRecord, const char *param)
 {
@@ -1098,10 +1098,10 @@ static GlobVarH_ProcessResult_t GlobVarH_SetEnumerator(const GlobVarH_VarRecord_
 
 
 /**
- * \brief    Check values
+ * @brief    Check values
  *             - Check type value (integer)
  *             - Check min-max
- * \return    GlobVarH_Process_Ok_SetSuccessful_SendOk, if ok
+ * @return    GlobVarH_Process_Ok_SetSuccessful_SendOk, if ok
  */
 static GlobVarH_ProcessResult_t GlobVarH_CheckValue(const GlobVarH_VarRecord_t *varRecord, uint32_t num)
 {
@@ -1232,7 +1232,7 @@ static GlobVarH_ProcessResult_t GlobVarH_CheckValue(const GlobVarH_VarRecord_t *
 
 
 /**
- * \brief    Write process result
+ * @brief    Write process result
  */
 void GlobVarH_WriteResults(GlobVarH_ProcessResult_t result)
 {
@@ -1329,7 +1329,7 @@ void GlobVarH_WriteResults(GlobVarH_ProcessResult_t result)
 
 
 /*
- * \brief    Send header (for List all variables)
+ * @brief    Send header (for List all variables)
  */
 static void GlobVarH_ListAllVariable_SendHeader(void)
 {
@@ -1339,7 +1339,7 @@ static void GlobVarH_ListAllVariable_SendHeader(void)
 
 
 /**
- * \brief    List all variables
+ * @brief    List all variables
  */
 void GlobVarH_ListAllVariableParameters(void)
 {
@@ -1384,7 +1384,7 @@ void GlobVarH_ListAllVariableParameters(void)
 
 
 /**
- * \brief    Print all variable values
+ * @brief    Print all variable values
  */
 void GlobVarH_PrintAllVariableValues(void)
 {
@@ -1411,7 +1411,7 @@ void GlobVarH_PrintAllVariableValues(void)
 
 
 /**
- * \brief    Print global variable descriptions
+ * @brief    Print global variable descriptions
  */
 static void GlobVarH_PrintVariableDescriptions(const GlobVarH_VarRecord_t *varRecord)
 {
@@ -1433,7 +1433,7 @@ static void GlobVarH_PrintVariableDescriptions(const GlobVarH_VarRecord_t *varRe
 
 #ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
 /**
- * \brief    Set trace with string parameter
+ * @brief    Set trace with string parameter
  */
 static void GlobVarH_SetTrace(GlobVarH_ID_t commandID, const char * param)
 {
@@ -1443,7 +1443,7 @@ static void GlobVarH_SetTrace(GlobVarH_ID_t commandID, const char * param)
     }
     else
     {
-        // \note: if the param does not equal to "enable" exactly, the tracing is disabled!
+        // @note: if the param does not equal to "enable" exactly, the tracing is disabled!
         // TODO: Check "disable" or not?
         GlobVarH_EnableTrace(commandID, false);
     }
@@ -1452,7 +1452,7 @@ static void GlobVarH_SetTrace(GlobVarH_ID_t commandID, const char * param)
 
 
 /**
- * \brief    Enable / Disable trace
+ * @brief    Enable / Disable trace
  */
 void GlobVarH_EnableTrace(GlobVarH_ID_t id, bool isEnable)
 {
@@ -1472,7 +1472,7 @@ void GlobVarH_EnableTrace(GlobVarH_ID_t id, bool isEnable)
 
 
 /**
- * \brief    Trace GlobalVar
+ * @brief    Trace GlobalVar
  */
 void GlobVarH_RunTrace(void)
 {
@@ -1534,7 +1534,7 @@ void GlobVarH_RunTrace(void)
 
 #ifdef CONFIG_GLOBALVARHANDLER_TRACE_RAM_BUFFER
 /**
- * \brief    Print Trace buffer content
+ * @brief    Print Trace buffer content
  */
 void GlobVarH_PrintTraceBuffer(void)
 {
@@ -1682,7 +1682,7 @@ static char GlobVarH_TestBuffer[GLOBVARH_TEST_BUFFER_SIZE];
 static uint8_t GlobVarH_TestBufferCnt = 0;
 
 /**
- * \brief    Clear Global Var UnitTest buffer
+ * @brief    Clear Global Var UnitTest buffer
  */
 static void GlobVarH_UT_Clear(void)
 {
@@ -1694,7 +1694,7 @@ static void GlobVarH_UT_Clear(void)
 
 
 /**
- * \brief    GlobalVarHandler unit test
+ * @brief    GlobalVarHandler unit test
  */
 uint32_t GlobVarH_UnitTest(void)
 {

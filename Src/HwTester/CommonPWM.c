@@ -47,7 +47,7 @@ static void CommonPWM_HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim);
 
 
 /**
- * \brief    Timer initialize
+ * @brief    Timer initialize
  */
 void CommonPWM_Init(void)
 {
@@ -122,7 +122,7 @@ void CommonPWM_Init(void)
 
 
 /**
- * \brief    HAL driver function: PWM MspInit - Initialize PWM GPIO-s and Timers
+ * @brief    HAL driver function: PWM MspInit - Initialize PWM GPIO-s and Timers
  */
 static void CommonPWM_HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 {
@@ -154,7 +154,7 @@ static void CommonPWM_HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 
 
 /**
- * \brief    Set PWM percent
+ * @brief    Set PWM percent
  */
 void CommonPWM_ChangePercent(uint8_t percent)
 {

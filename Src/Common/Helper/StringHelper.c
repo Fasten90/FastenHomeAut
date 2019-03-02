@@ -63,9 +63,9 @@
 
 
 /**
- * \brief    Convert signed decimal to string
- * \note    Only max INT_MAX / 2 number can be converted
- * \return    created string length
+ * @brief    Convert signed decimal to string
+ * @note    Only max INT_MAX / 2 number can be converted
+ * @return    created string length
  */
 uint8_t SignedDecimalToString(int32_t value, char *str)
 {
@@ -123,8 +123,8 @@ size_t SignedDecimalToStringSafe(int32_t value, char * str, size_t maxLength)
 
 
 /**
- * \brief    Convert unsigned decimal to string
- * \return    created string length
+ * @brief    Convert unsigned decimal to string
+ * @return    created string length
  */
 uint8_t UnsignedDecimalToString(uint32_t value, char *str)
 {
@@ -162,7 +162,7 @@ uint8_t UnsignedDecimalToString(uint32_t value, char *str)
 
 
 /**
- * \brief    uint32_t to string (with length)
+ * @brief    uint32_t to string (with length)
  */
 size_t UnsignedDecimalToStringSafe(uint32_t value, char *str, size_t maxLength)
 {
@@ -207,8 +207,8 @@ size_t UnsignedDecimalToStringSafe(uint32_t value, char *str, size_t maxLength)
 
 
 /**
- * \brief    Calculate unsigned decimal number "string length"
- * \return    length of number's string
+ * @brief    Calculate unsigned decimal number "string length"
+ * @return    length of number's string
  */
 uint8_t UnsignedDecimalLength(uint32_t value)
 {
@@ -232,7 +232,7 @@ uint8_t UnsignedDecimalLength(uint32_t value)
 
 
 /**
- * \brief    Unsigned decimal (uint32_t) to String with fill (a character to x length)
+ * @brief    Unsigned decimal (uint32_t) to String with fill (a character to x length)
  */
 uint8_t UnsignedDecimalToStringFill(uint32_t value, char *str, uint8_t fillLength, char fillCharacter)
 {
@@ -271,7 +271,7 @@ uint8_t UnsignedDecimalToStringFill(uint32_t value, char *str, uint8_t fillLengt
 
 
 /**
- * \brief    Convert signed decimal (int32_t) to string with fill
+ * @brief    Convert signed decimal (int32_t) to string with fill
  */
 uint8_t SignedDecimalToStringFill(int32_t value, char *str, uint8_t fillLength, char fillCharacter)
 {
@@ -332,8 +332,8 @@ uint8_t SignedDecimalToStringFill(int32_t value, char *str, uint8_t fillLength, 
 
 
 /**
- * \brief    Convert a octet (0-15) to Hexa character ('0' - '9' - 'A' - 'F')
- * \return    character (octet)
+ * @brief    Convert a octet (0-15) to Hexa character ('0' - '9' - 'A' - 'F')
+ * @return    character (octet)
  */
 char HexToHexChar(uint8_t value)
 {
@@ -361,8 +361,8 @@ char HexToHexChar(uint8_t value)
 
 
 /**
- * \brief    Convert a byte/octet to hexadecimal string
- * \return    Length
+ * @brief    Convert a byte/octet to hexadecimal string
+ * @return    Length
  */
 uint8_t ByteToHexaString(uint8_t byte, char *str)
 {
@@ -391,7 +391,7 @@ uint8_t ByteToHexaString(uint8_t byte, char *str)
 
 
 /**
- * \brief    Convert decimal number to binary string
+ * @brief    Convert decimal number to binary string
  *             For example: 10 (decimal) --> "1010" (binary)
  */
 uint8_t DecimalToBinaryString(uint32_t value, char *str, uint8_t maxLength)
@@ -441,8 +441,8 @@ uint8_t DecimalToBinaryString(uint32_t value, char *str, uint8_t maxLength)
 
 
 /**
- * \brief    Convert value to hexadecimal string
- * \return    created string length
+ * @brief    Convert value to hexadecimal string
+ * @return    created string length
  */
 uint8_t DecimalToHexaString(uint32_t value, char *str, uint8_t length)
 {
@@ -475,8 +475,8 @@ uint8_t DecimalToHexaString(uint32_t value, char *str, uint8_t length)
 
 
 /**
- * \brief    Convert float value to String
- * \return    Length
+ * @brief    Convert float value to String
+ * @return    Length
  */
 uint8_t FloatToString(float value, char *str, uint8_t integerLength, uint8_t fractionLength)
 {
@@ -536,9 +536,9 @@ uint8_t FloatToString(float value, char *str, uint8_t integerLength, uint8_t fra
 
 
 /**
- * \brief    Look the string is hexa or not
+ * @brief    Look the string is hexa or not
  * \str        Null terminated string
- * \return    How many hexa characters are in the string
+ * @return    How many hexa characters are in the string
  */
 uint8_t StringIsHexadecimalString(const char *str)
 {
@@ -571,8 +571,8 @@ uint8_t StringIsHexadecimalString(const char *str)
 
 
 /**
- * \brief    Check the string, it is unsigned decimal number?
- * \return    > 0 : decimal number length
+ * @brief    Check the string, it is unsigned decimal number?
+ * @return    > 0 : decimal number length
  *             0 not number
  */
 uint8_t StringIsUnsignedDecimalString(const char *str)
@@ -604,8 +604,8 @@ uint8_t StringIsUnsignedDecimalString(const char *str)
 
 
 /**
- * \brief    Check the string, it is signed decimal number?
- * \return    > 0 : decimal number length
+ * @brief    Check the string, it is signed decimal number?
+ * @return    > 0 : decimal number length
  *             0 not number
  */
 uint8_t StringIsSignedDecimalString(const char *str)
@@ -636,8 +636,8 @@ uint8_t StringIsSignedDecimalString(const char *str)
 
 
 /**
- * \brief    Check, it is hexadecimal number character?
- * \return    true, if hex number
+ * @brief    Check, it is hexadecimal number character?
+ * @return    true, if hex number
  *             false, if no hex number
  */
 bool IsHexChar(const char c)
@@ -663,8 +663,8 @@ bool IsHexChar(const char c)
 
 
 /**
- * \brief    Check, it is decimal number character?
- * \return    true, if number
+ * @brief    Check, it is decimal number character?
+ * @return    true, if number
  *             false, if no number
  */
 bool IsDecimalChar (const char c)
@@ -682,7 +682,7 @@ bool IsDecimalChar (const char c)
 
 
 /**
- * \brief    'Binary string' to 'uint32_t'
+ * @brief    'Binary string' to 'uint32_t'
  *            Example: "01110" -> 14
  */
 bool StringBinaryToNum(const char *str, uint32_t *num)
@@ -734,10 +734,10 @@ bool StringBinaryToNum(const char *str, uint32_t *num)
 
 
 /**
- * \brief    Convert Hex character to octet (0-9, A-F)
- * \param    c    ASCII character, which you need to convert to value
- * \param    *hexValue    the value
- * \return    result
+ * @brief    Convert Hex character to octet (0-9, A-F)
+ * @param    c    ASCII character, which you need to convert to value
+ * @param    *hexValue    the value
+ * @return    result
  *             true    successful
  *             false    failed
  */
@@ -769,8 +769,8 @@ bool HexCharToHex(const char c, uint8_t *hexValue)
 
 
 /**
- * \brief    Convert two hexadecimal character (string) to number (byte)
- * \return    true, if successful
+ * @brief    Convert two hexadecimal character (string) to number (byte)
+ * @return    true, if successful
  *             false, if has error
  */
 bool StringHexByteToNum(const char *str, uint8_t *byte)
@@ -790,8 +790,8 @@ bool StringHexByteToNum(const char *str, uint8_t *byte)
 
 
 /**
- * \brief    Convert Hex string to number(integer)
- * \return    true, if successful
+ * @brief    Convert Hex string to number(integer)
+ * @return    true, if successful
  *             false, if has error
  */
 bool StringHexToNum(const char *str, uint32_t *hexValue)
@@ -840,8 +840,8 @@ bool StringHexToNum(const char *str, uint32_t *hexValue)
 
 
 /**
- * \brief Convert decimal character to number (byte)
- * \return    value (number)
+ * @brief Convert decimal character to number (byte)
+ * @return    value (number)
  */
 uint8_t DecimalCharToNum(char c)
 {
@@ -858,8 +858,8 @@ uint8_t DecimalCharToNum(char c)
 
 
 /**
- * \brief    Convert Unsigned decimal string to integer
- * \return    true, if successful
+ * @brief    Convert Unsigned decimal string to integer
+ * @return    true, if successful
  *             false, if has error
  */
 bool StringToUnsignedDecimalNum(const char *str, uint32_t *value)
@@ -900,8 +900,8 @@ bool StringToUnsignedDecimalNum(const char *str, uint32_t *value)
 
 
 /**
- * \brief    Convert signed decimal string to signed integer
- * \return    true, if successful
+ * @brief    Convert signed decimal string to signed integer
+ * @return    true, if successful
  *             false, if has error
  */
 bool StringToSignedDecimalNum(const char *str, int32_t *value)
@@ -955,8 +955,8 @@ bool StringToSignedDecimalNum(const char *str, int32_t *value)
 
 
 /**
- * \brief    Convert Float string to num(float)
- * \return    true, if successful
+ * @brief    Convert Float string to num(float)
+ * @return    true, if successful
  *             false, if has error
  */
 bool StringToFloat(const char *str, float *num)
@@ -1047,7 +1047,7 @@ bool StringToFloat(const char *str, float *num)
 
 
 /**
- * \brief    Convert String to bool value
+ * @brief    Convert String to bool value
  */
 bool StringToBool(const char * str, bool * val)
 {
@@ -1114,7 +1114,7 @@ bool StringToBool(const char * str, bool * val)
 
 
 /**
- * \brief    Convert char to lowercase
+ * @brief    Convert char to lowercase
  */
 void ToLower(char * c)
 {
@@ -1129,7 +1129,7 @@ void ToLower(char * c)
 
 
 /**
- * \brief    Convert char to UpperCase
+ * @brief    Convert char to UpperCase
  */
 void ToUpper(char * c)
 {
@@ -1144,8 +1144,8 @@ void ToUpper(char * c)
 
 
 /**
- * \brief    Calculate string length
- * \return    length
+ * @brief    Calculate string length
+ * @return    length
  *             0, if null string
  */
 size_t StringLength(const char *str)
@@ -1169,8 +1169,8 @@ size_t StringLength(const char *str)
 
 
 /**
- * \brief    Compare two string
- * \return    1, if not equal
+ * @brief    Compare two string
+ * @return    1, if not equal
  *             0, if equal
  */
 uint8_t StrCmp(const char *str1, const char *str2)
@@ -1211,10 +1211,10 @@ uint8_t StrCmp(const char *str1, const char *str2)
 
 
 /**
- * \brief    Compare two string (with first string length)
- * \return    1, if not equal
+ * @brief    Compare two string (with first string length)
+ * @return    1, if not equal
  *             0, if equal
-*     \note    Be careful! If second string longer than first string and the begin of string are equal, the return value will be "equal" (0)
+*     @note    Be careful! If second string longer than first string and the begin of string are equal, the return value will be "equal" (0)
  */
 uint8_t StrCmpFirst(const char *str1, const char *str2)
 {
@@ -1241,8 +1241,8 @@ uint8_t StrCmpFirst(const char *str1, const char *str2)
 
 
 /**
- * \brief    Compare string in fix length
- * \return    1, if not equal
+ * @brief    Compare string in fix length
+ * @return    1, if not equal
  *             0, if equal
  */
 uint8_t StrCmpWithLength(const char * str1, const char *str2, size_t length)
@@ -1272,8 +1272,8 @@ uint8_t StrCmpWithLength(const char * str1, const char *str2, size_t length)
 
 
 /**
- * \brief    Copy string to *dest pointer
- * \return    Copied string length
+ * @brief    Copy string to *dest pointer
+ * @return    Copied string length
  */
 size_t StrCpy(char *dest, const char *str)
 {
@@ -1302,8 +1302,8 @@ size_t StrCpy(char *dest, const char *str)
 
 
 /**
- * \brief    Copy fix length string
- * \return    String length (=parameter)
+ * @brief    Copy fix length string
+ * @return    String length (=parameter)
  */
 size_t StrCpyFixLength(char *dest, const char *str, size_t length)
 {
@@ -1329,9 +1329,9 @@ size_t StrCpyFixLength(char *dest, const char *str, size_t length)
 
 
 /**
- * \brief    Copy fix length string
- * \return    String length (=parameter)
- * \note    EOS put on end of the string!
+ * @brief    Copy fix length string
+ * @return    String length (=parameter)
+ * @note    EOS put on end of the string!
  */
 size_t StrCpyFixLengthWithFillCharacter(char *dest, const char *str, size_t length, char fillChar)
 {
@@ -1369,8 +1369,8 @@ size_t StrCpyFixLengthWithFillCharacter(char *dest, const char *str, size_t leng
 
 
 /**
- * \brief    Copy ended string with max length
- * \return    String length
+ * @brief    Copy ended string with max length
+ * @return    String length
  */
 size_t StrCpyMax(char *dest, const char *str, size_t maxLength)
 {
@@ -1398,8 +1398,8 @@ size_t StrCpyMax(char *dest, const char *str, size_t maxLength)
 
 
 /**
- * \brief    Copy character x count
- * \return    String length
+ * @brief    Copy character x count
+ * @return    String length
  */
 size_t StrCpyCharacter(char *dest, char c, size_t num)
 {
@@ -1425,9 +1425,9 @@ size_t StrCpyCharacter(char *dest, char c, size_t num)
 
 
 /**
- * \brief    Append string to dest's end
+ * @brief    Append string to dest's end
  * \length    New string's length (original + copied)
- * \note    dest buffer can be overflowed, because there is no overflow checking!
+ * @note    dest buffer can be overflowed, because there is no overflow checking!
  */
 size_t StrAppend(char *dest, const char *str)
 {
@@ -1452,7 +1452,7 @@ size_t StrAppend(char *dest, const char *str)
 
 
 /**
- * \brief    Append string to dest's end
+ * @brief    Append string to dest's end
  * \length    New string's length (original + copied)
  */
 size_t StrAppendSafe(char *dest, const char *str, size_t destLength)
@@ -1484,7 +1484,7 @@ size_t StrAppendSafe(char *dest, const char *str, size_t destLength)
 
 
 /**
- * \brief    Char append
+ * @brief    Char append
  */
 size_t CharAppend(char *dest, const char c)
 {
@@ -1508,8 +1508,8 @@ size_t CharAppend(char *dest, const char c)
 
 
 /**
- * \brief    Trim string (cut space and others at end)
- * \note    Be careful, only call with changeable string!
+ * @brief    Trim string (cut space and others at end)
+ * @note    Be careful, only call with changeable string!
  */
 size_t StrTrim(char *str)
 {
@@ -1542,9 +1542,9 @@ size_t StrTrim(char *str)
 
 
 /**
- * \brief    Convert string to lowercase
+ * @brief    Convert string to lowercase
  * \str        '\0' terminated string
- * \note    Be careful, only call with changeable string!
+ * @note    Be careful, only call with changeable string!
  */
 void StringLower(char * str)
 {
@@ -1564,9 +1564,9 @@ void StringLower(char * str)
 
 
 /**
- * \brief    Convert string to UPPERCASE
+ * @brief    Convert string to UPPERCASE
  * \str        '\0' terminated string
- * \note    Be careful, only call with changeable string!
+ * @note    Be careful, only call with changeable string!
  */
 void StringUpper(char * str)
 {
@@ -1586,10 +1586,10 @@ void StringUpper(char * str)
 
 
 /**
- * \brief    Find character in string
- * \param    *str    scanned string
+ * @brief    Find character in string
+ * @param    *str    scanned string
  *             *findCharacter    which character should find
- * \return    'findCharacter' position in 'str' (pointer)
+ * @return    'findCharacter' position in 'str' (pointer)
  *             NULL    if not found
  */
 const char * STRING_FindCharacter(const char *str, const char findCharacter)
@@ -1620,7 +1620,7 @@ const char * STRING_FindCharacter(const char *str, const char findCharacter)
 
 
 /**
- * \brief    Find characters in string
+ * @brief    Find characters in string
  */
 const char * STRING_FindCharacters(const char *str, const char *findCharacters)
 {
@@ -1658,11 +1658,11 @@ const char * STRING_FindCharacters(const char *str, const char *findCharacters)
 
 
 /**
- * \brief    Find small string in big string
+ * @brief    Find small string in big string
  *             like strstr()
- * \param    *str    scanned string
+ * @param    *str    scanned string
  *             *fincString    which find
- * \return    'findString' position in 'str' (pointer)
+ * @return    'findString' position in 'str' (pointer)
  *             NULL    if not found
  */
 const char * STRING_FindString(const char *str, const char *findString)
@@ -1698,10 +1698,10 @@ const char * STRING_FindString(const char *str, const char *findString)
 
 
 /**
- * \brief    Separate / split string to small strings by delimiter char
+ * @brief    Separate / split string to small strings by delimiter char
  *             like strtok() (but not match)
  *             E.g.: source: "192.168.0.1", delimiter: '.' --> separated[0] -> "192", sepparated[1] -> "168", ...
- * \note    Be careful, pointers to original (source) string
+ * @note    Be careful, pointers to original (source) string
  *             source string need to be changeable!
  */
 uint8_t STRING_Splitter(char *source, const char *delimiters, char **separated, uint8_t paramLimit)
@@ -1778,10 +1778,10 @@ uint8_t STRING_Splitter(char *source, const char *delimiters, char **separated, 
 
 #if 0
 /**
- * \brief    Separate / split string to small strings by delimiter char
+ * @brief    Separate / split string to small strings by delimiter char
  *             like strtok() (but not match)
  *             E.g.: source: "192.168.0.1", delimiter: '.' --> separated[0] -> "192", sepparated[1] -> "168", ...
- * \note    Be careful, pointers to original (source) string
+ * @note    Be careful, pointers to original (source) string
  *             source string need to be changeable!
  */
 uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint8_t paramLimit)
@@ -1846,12 +1846,12 @@ uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint
 
 #ifndef STRING_SPRINTF_EXTENDED_ENABLE
 /**
- * \brief    Instead of sprintf()
+ * @brief    Instead of sprintf()
  *            Used '%' parameters
  *            %d, %u, %x, %X, %b, %c, %s, %f
  *            In other settings: %w, %h, %b (hexadecimals)
  *
- * \note    !! Be careful: 'str' can be overflow!!
+ * @note    !! Be careful: 'str' can be overflow!!
  */
 size_t string_printf(char *str, const char *format, va_list ap)
 {
@@ -1982,7 +1982,7 @@ size_t string_printf(char *str, const char *format, va_list ap)
 
 
 /**
- * \brief    Instead of sprintf()
+ * @brief    Instead of sprintf()
  *            Used '%' parameters
  *            %d, %u, %x, %X, %b, %c, %s, %f
  *            In other settings: %w, %h, %b (hexadecimals)
@@ -1995,7 +1995,7 @@ size_t string_printf(char *str, const char *format, va_list ap)
  *            %8s --> print string (with max length)
  *            %.2f  --> print float in this format: "123.00"
  *
- * \note    !! Be careful: 'str' can be overflow!!
+ * @note    !! Be careful: 'str' can be overflow!!
  */
 size_t string_printf(char *str, const char *format, va_list ap)
 {
@@ -2213,7 +2213,7 @@ size_t string_printf(char *str, const char *format, va_list ap)
 
 
 /**
- * \brief    Instead of snprintf()
+ * @brief    Instead of snprintf()
  *            Used '%' parameters
  *            %d, %u, %x, %X, %w, %h, %b, %c, %s, %f
  */
@@ -2492,7 +2492,7 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
 
 
 /**
- * \brief    Function like sprintf(); Print to string
+ * @brief    Function like sprintf(); Print to string
  */
 size_t usprintf(char *str, const char *format, ...)
 {
@@ -2514,7 +2514,7 @@ size_t usprintf(char *str, const char *format, ...)
 
 
 /**
- * \brief    Function like snprintf(); Print to string
+ * @brief    Function like snprintf(); Print to string
  */
 size_t usnprintf(char * str, size_t maxLen, const char * format, ...)
 {
@@ -2537,7 +2537,7 @@ size_t usnprintf(char * str, size_t maxLen, const char * format, ...)
 
 #ifdef MODULE_STRING_UNITTEST_ENABLE
 /**
- * \brief    String module Unit Test
+ * @brief    String module Unit Test
  */
 uint32_t StringHelper_UnitTest(void)
 {

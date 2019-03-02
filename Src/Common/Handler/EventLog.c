@@ -66,7 +66,7 @@ static void EventLog_DebugPrintLog(EventLogRecord_t * eventRecord);
  *----------------------------------------------------------------------------*/
 
 /**
- * \brief    Initialize EventLog
+ * @brief    Initialize EventLog
  */
 void EventLog_Init(void)
 {
@@ -82,7 +82,7 @@ void EventLog_Init(void)
 
 
 /**
- * \brief    Log event (to history)
+ * @brief    Log event (to history)
  */
 void EventLog_LogEvent(EventName_t eventName, EventData_t eventData, TaskID_t taskSource, EventType_t eventType)
 {
@@ -123,7 +123,7 @@ void EventLog_LogEvent(EventName_t eventName, EventData_t eventData, TaskID_t ta
 
 #ifdef CONFIG_EVETNLOG_PRINT_IMMEDIATELY
 /**
- * \brief    Debug print
+ * @brief    Debug print
  */
 static void EventLog_DebugPrintLog(EventLogRecord_t * eventRecord)
 {
@@ -151,7 +151,7 @@ static void EventLog_PrintLogTableHeader(const char * fixheader, char * str, cha
 
 
 /**
- * \brief    Print all logs
+ * @brief    Print all logs
  */
 void EventLog_PrintLogTable(void)
 {

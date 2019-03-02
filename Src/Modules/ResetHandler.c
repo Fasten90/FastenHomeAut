@@ -51,7 +51,7 @@ static void Reset_GetResetReasonString(uint32_t resetReason, char *resetString);
 
 
 /**
- * \brief Get reset reason
+ * @brief Get reset reason
  */
 static uint32_t Reset_GetResetReason(void)
 {
@@ -60,7 +60,7 @@ static uint32_t Reset_GetResetReason(void)
 
     for (i = 0; (1<<i) < ResetReason_Count; i++)
     {
-        // \note Be careful, now it is work in STM32F407, because:
+        // @note Be careful, now it is work in STM32F407, because:
         /*
          *    #define RCC_FLAG_BORRST                  ((uint8_t)0x79U)
         *    #define RCC_FLAG_PINRST                  ((uint8_t)0x7AU)
@@ -95,7 +95,7 @@ static uint32_t Reset_GetResetReason(void)
 
 
 /**
- * \brief    Get reset reason string
+ * @brief    Get reset reason string
  */
 static void Reset_GetResetReasonString(uint32_t resetReason, char *resetString)
 {
@@ -169,7 +169,7 @@ static void Reset_GetResetReasonString(uint32_t resetReason, char *resetString)
 
 
 /**
- * \brief    Clear reset flags
+ * @brief    Clear reset flags
  */
 void Reset_ClearResetFlags(void)
 {
@@ -179,7 +179,7 @@ void Reset_ClearResetFlags(void)
 
 
 /**
- * \brief    Print reset reasons to string
+ * @brief    Print reset reasons to string
  */
 size_t Reset_PrintResetReasons(char * dst)
 {

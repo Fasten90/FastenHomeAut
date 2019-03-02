@@ -82,7 +82,7 @@ static inline void Bluetooth_SendEnable(void);
 
 
 /**
- * \brief Bluetooth initialization
+ * @brief Bluetooth initialization
  */
 void Bluetooth_HC05_Init(void)
 {
@@ -98,7 +98,7 @@ void Bluetooth_HC05_Init(void)
 
 
 /**
- * \brief    Send enable
+ * @brief    Send enable
  */
 static inline void Bluetooth_SendEnable(void)
 {
@@ -108,7 +108,7 @@ static inline void Bluetooth_SendEnable(void)
 
 
 /**
- * \brief    Receive enable
+ * @brief    Receive enable
  */
 void Bluetooth_ReceiveEnable(void)
 {
@@ -118,7 +118,7 @@ void Bluetooth_ReceiveEnable(void)
 
 
 /**
- * \brief    Send string on Bluetooth
+ * @brief    Send string on Bluetooth
  */
 size_t Bluetooth_SendMessage(const char *msg)
 {
@@ -143,7 +143,7 @@ size_t Bluetooth_SendMessage(const char *msg)
 
 
 /**
- * \brief    Process received characters (if Terminal is not enabled)
+ * @brief    Process received characters (if Terminal is not enabled)
  */
 void Bluetooth_ProcessReceivedCharacters(void)
 {

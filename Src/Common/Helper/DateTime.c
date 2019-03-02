@@ -54,7 +54,7 @@ static bool DateTime_CheckItIsLeapYear(uint8_t year);
 
 
 /**
- * \brief    Convert DateTime string to DateTime_t
+ * @brief    Convert DateTime string to DateTime_t
  *             "2017-01-10 19:55:00  -> DateTime_t
  *             builded string length is: DATETIME_STRING_MAX_LENGTH
  */
@@ -153,8 +153,8 @@ bool DateTime_ConvertStringToDateTime(const char *string, DateTime_t *dateTime)
 
 
 /**
- * \brief    Convert DateString to Date
- * \note    Str must be modificable!
+ * @brief    Convert DateString to Date
+ * @note    Str must be modificable!
  */
 bool DateTime_ConvertDateStringToDate(char *str, Date_t *date)
 {
@@ -202,9 +202,9 @@ bool DateTime_ConvertDateStringToDate(char *str, Date_t *date)
 
 
 /**
- * \brief    Convert DateString to Time
- * \param[in]    str        String like "12:00:00"
- * \param[out]    time    Converted time
+ * @brief    Convert DateString to Time
+ * @param[in]    str        String like "12:00:00"
+ * @param[out]    time    Converted time
  */
 bool DateTime_ConvertTimeStringToTime(char *str, Time_t *time)
 {
@@ -247,7 +247,7 @@ bool DateTime_ConvertTimeStringToTime(char *str, Time_t *time)
 
 
 /**
- * \brief    Check value it is OK? (Is in range?)
+ * @brief    Check value it is OK? (Is in range?)
  */
 static bool DateTime_CheckValue(uint32_t originalValue, uint32_t minValue, uint32_t maxValue)
 {
@@ -264,9 +264,9 @@ static bool DateTime_CheckValue(uint32_t originalValue, uint32_t minValue, uint3
 
 
 /**
- * \brief    Check DateTime
- * \retval    true    if OK (valid)
- * \retval    false    if invalid
+ * @brief    Check DateTime
+ * @retval    true    if OK (valid)
+ * @retval    false    if invalid
  */
 bool DateTime_CheckDateTime(DateTime_t *dateTime)
 {
@@ -286,7 +286,7 @@ bool DateTime_CheckDateTime(DateTime_t *dateTime)
 
 
 /**
- * \brief    Print DateTime_t to string
+ * @brief    Print DateTime_t to string
  *             like: "YYYY-MM-DD HH:mm:ss"
  *                     19 character
  */
@@ -310,7 +310,7 @@ uint8_t DateTime_PrintDateTimeToString(char *message, DateTime_t *dateTime)
 
 
 /**
- * \brief    Compare DateTimes
+ * @brief    Compare DateTimes
  */
 DateTimeCompare_t DateTime_CompareDateTime(DateTime_t *dateTime1, DateTime_t *dateTime2)
 {
@@ -346,8 +346,8 @@ DateTimeCompare_t DateTime_CompareDateTime(DateTime_t *dateTime1, DateTime_t *da
 
 
 /**
- * \brief    Different of two DateTime
- * \retval    seconds
+ * @brief    Different of two DateTime
+ * @retval    seconds
  *                 if retval > 0, 1. DateTime is larger (later)
  *                 if retval < 0, 1. DateTime is smaller (former)
  *                 if retval == 0, wrong or no different
@@ -382,10 +382,10 @@ int32_t DateTime_CalculateDifferentOf2DateTime(DateTime_t *dateTime1, DateTime_t
 
 
 /**
- * \brief    Calculate DateTime second
+ * @brief    Calculate DateTime second
  *             Result it is elapsed seconds from 2000.01.01, 00:00:00
  *             If DateTime is smaller than 2000..., the result is 0
- * \return Elapsed time in seconds
+ * @return Elapsed time in seconds
  */
 static uint32_t DateTime_CalculateDateTimeSecond(DateTime_t *dateTime)
 {
@@ -432,10 +432,10 @@ static uint32_t DateTime_CalculateDateTimeSecond(DateTime_t *dateTime)
 
 
 /**
- * \brief    Check parameter year is Leap year?
- * \param    year    year after 2000 (e.g.: 2017 --> 17)
- * \retval    true    If leap year
- * \retval    false    If not leap year
+ * @brief    Check parameter year is Leap year?
+ * @param    year    year after 2000 (e.g.: 2017 --> 17)
+ * @retval    true    If leap year
+ * @retval    false    If not leap year
  */
 static bool DateTime_CheckItIsLeapYear(uint8_t year)
 {
@@ -464,8 +464,8 @@ static bool DateTime_CheckItIsLeapYear(uint8_t year)
 
 
 /**
- * \brief        Get days of Month
- * \retval        Parameter month's day number
+ * @brief        Get days of Month
+ * @retval        Parameter month's day number
  */
 static uint8_t DateTime_GetDaysOfMonth(uint8_t year, uint8_t month)
 {
@@ -511,7 +511,7 @@ static uint8_t DateTime_GetDaysOfMonth(uint8_t year, uint8_t month)
 
 
 /**
- * \brief    Step DateTime with more seconds
+ * @brief    Step DateTime with more seconds
  */
 void DateTime_StepMoreSecond(DateTime_t *dateTime, uint32_t stepSeconds)
 {
@@ -530,7 +530,7 @@ void DateTime_StepMoreSecond(DateTime_t *dateTime, uint32_t stepSeconds)
 
 
 /**
- * \brief        DateTime Second++
+ * @brief        DateTime Second++
  */
 void DateTime_StepOneSecond(DateTime_t *dateTime)
 {
@@ -579,8 +579,8 @@ void DateTime_StepOneSecond(DateTime_t *dateTime)
 
 
 /**
- * \brief    Add one minute to actual DateTime
- * \note    If minute is "59" the next value will "0" (and the hour is not stepped!)
+ * @brief    Add one minute to actual DateTime
+ * @note    If minute is "59" the next value will "0" (and the hour is not stepped!)
  *             Only can be use for "settings" not for periodically stepping
  */
 void DateTime_AddMinute(DateTime_t *dateTime)
@@ -604,8 +604,8 @@ void DateTime_AddMinute(DateTime_t *dateTime)
 
 
 /**
- * \brief    Add one hour to actual DateTime
- * \note    If hour is "23" the next value will "0" (and the day is not stepped!)
+ * @brief    Add one hour to actual DateTime
+ * @note    If hour is "23" the next value will "0" (and the day is not stepped!)
  */
 void DateTime_AddHour(DateTime_t *dateTime)
 {
@@ -627,11 +627,11 @@ void DateTime_AddHour(DateTime_t *dateTime)
 
 
 /**
- * \brief    DateTime Unit test
+ * @brief    DateTime Unit test
  */
 #ifdef MODULE_DATETIME_UNITTEST_ENABLE
 /**
- * \brief    String module Unit Test
+ * @brief    String module Unit Test
  */
 uint32_t DateTime_UnitTest(void)
 {

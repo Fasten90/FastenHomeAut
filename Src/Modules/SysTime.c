@@ -49,7 +49,7 @@ static DateTime_t DateTime_SystemTime = { 0 };
 
 
 /**
- * \brief    Get DateTime
+ * @brief    Get DateTime
  */
 inline __attribute__((always_inline)) void SysTime_GetDateTime(DateTime_t *dateTime)
 {
@@ -65,7 +65,7 @@ inline __attribute__((always_inline)) void SysTime_GetDateTime(DateTime_t *dateT
 
 
 /**
- * \brief    Set date
+ * @brief    Set date
  */
 inline __attribute__((always_inline)) void SysTime_SetDate(Date_t *date)
 {
@@ -81,7 +81,7 @@ inline __attribute__((always_inline)) void SysTime_SetDate(Date_t *date)
 
 
 /**
- * \brief    Set time
+ * @brief    Set time
  */
 inline __attribute__((always_inline)) void SysTime_SetTime(Time_t *time)
 {
@@ -97,7 +97,7 @@ inline __attribute__((always_inline)) void SysTime_SetTime(Time_t *time)
 
 
 /**
- * \brief    Step SysTime (with 1 second)
+ * @brief    Step SysTime (with 1 second)
  */
 void SysTime_StepSecond(void)
 {

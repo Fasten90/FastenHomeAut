@@ -60,12 +60,12 @@ typedef uint8_t CommProtocolBit_t;
 #endif
 
 
-typedef int8_t GlobVarH_ID_t;                        ///< type alias for counting the rows in the variable array. \sa GlobalVarList
+typedef int8_t GlobVarH_ID_t;                        ///< type alias for counting the rows in the variable array. @sa GlobalVarList
 
 
 ///< GlobalVariable type
-/// \note    This enum has a "name list" (GlobalVarTypesNames), must be in the same order with it!
-/// \sa    GlobalVarTypesNames
+/// @note    This enum has a "name list" (GlobalVarTypesNames), must be in the same order with it!
+/// @sa    GlobalVarTypesNames
 typedef enum
 {
     GlobVarH_Type_Unknown = 0,

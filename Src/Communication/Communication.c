@@ -60,7 +60,7 @@ static const char * const ProtocolNameList[] =
 
 
 /**
- * \brief    Initialize Communication (check lists)
+ * @brief    Initialize Communication (check lists)
  */
 void COMMUNICATION_Init()
 {
@@ -71,7 +71,7 @@ void COMMUNICATION_Init()
 
 
 /**
- * \brief    Send message (string) on selected communication protocol
+ * @brief    Send message (string) on selected communication protocol
  */
 size_t COMMUNICATION_SendMessage(CommProtocol_t protocol, const char *message)
 {
@@ -120,7 +120,7 @@ size_t COMMUNICATION_SendMessage(CommProtocol_t protocol, const char *message)
 
 
 /**
- * \brief    Send character on selected communication protocol
+ * @brief    Send character on selected communication protocol
  */
 size_t COMMUNICATION_SendChar(CommProtocol_t protocol, char c)
 {
@@ -161,8 +161,8 @@ size_t COMMUNICATION_SendChar(CommProtocol_t protocol, char c)
 
 
 /**
- * \brief    Send message on xy communication protocol
- * \param    protocol        what peripheral sending
+ * @brief    Send message on xy communication protocol
+ * @param    protocol        what peripheral sending
  */
 size_t COMMUNICATION_Printf(CommProtocol_t protocol, const char *format, ...)
 {
@@ -192,7 +192,7 @@ size_t COMMUNICATION_Printf(CommProtocol_t protocol, const char *format, ...)
 
 
 /**
- * \brief    Get protocol name
+ * @brief    Get protocol name
  */
 const char * COMMUNICATION_GetProtocolName(CommProtocol_t protocol)
 {
@@ -210,7 +210,7 @@ const char * COMMUNICATION_GetProtocolName(CommProtocol_t protocol)
 
 #ifdef CONFIG_PROTOCOL_BUFFER_ENABLE
 /**
- * \brief    Protocol buffer clear
+ * @brief    Protocol buffer clear
  */
 void COMMUNICATION_ClearProtocolBuffer(void)
 {

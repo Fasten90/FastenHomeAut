@@ -30,7 +30,7 @@ const Event_t EventList[] =
     {
         // Unknown (0) event
         .name = "-",
-        // \note Do not log this!
+        // @note Do not log this!
         .isNeedLog = false,
     },
     {
@@ -91,7 +91,7 @@ const Event_t EventList[] =
 #endif
 
     // XXX: Add here new event
-    // \note    Sync with EventName_t
+    // @note    Sync with EventName_t
 };
 
 
@@ -117,7 +117,7 @@ const EventId_t EventsNum = NUM_OF(EventList);
  *----------------------------------------------------------------------------*/
 
 /**
- * \brief    Initialize EventList - check
+ * @brief    Initialize EventList - check
  */
 void EventList_init(void)
 {

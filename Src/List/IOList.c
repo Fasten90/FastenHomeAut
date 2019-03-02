@@ -120,7 +120,7 @@ const IO_Input_Record_t IO_Input_List[] =
 
 
 /**
- * \brief  IOList initialization
+ * @brief  IOList initialization
  */
 void IO_List_Init(void)
 {

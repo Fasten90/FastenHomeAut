@@ -45,8 +45,8 @@
 
 
 /**
- * \brief        Delay (ms)
- * \param[in]    ms    millisecond, which time delay
+ * @brief        Delay (ms)
+ * @param[in]    ms    millisecond, which time delay
  */
 inline void DelayMs(uint32_t ms)
 {

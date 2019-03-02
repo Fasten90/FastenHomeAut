@@ -54,7 +54,7 @@ static volatile uint32_t MeasurementTimer_ElapsedSeconds = 0;
 
 
 /**
- * \brief    MeasurementTimer initialization
+ * @brief    MeasurementTimer initialization
  */
 void MeasurementTimer_Init(void)
 {
@@ -97,7 +97,7 @@ void MeasurementTimer_Init(void)
 
 
 /**
- * \brief    HAL driver function: PWM MspInit
+ * @brief    HAL driver function: PWM MspInit
  */
 void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 {
@@ -114,7 +114,7 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 
 
 /**
- * \brief    Set DC motor PWM percent
+ * @brief    Set DC motor PWM percent
  */
 void MeasurementTimer_StartMeasurement(void)
 {
@@ -144,7 +144,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 
 /**
- * \brief    Get value in us
+ * @brief    Get value in us
  */
 uint32_t MeasurementTimer_GetTime(void)
 {
@@ -161,7 +161,7 @@ uint32_t MeasurementTimer_GetTime(void)
 
 #ifdef MODULE_MEASUREMENTTIMER_UNITTEST_ENABLE
 /**
- * \brief    MeasurementTimer UnitTest
+ * @brief    MeasurementTimer UnitTest
  */
 uint32_t MeasurementTimer_UnitTest(void)
 {

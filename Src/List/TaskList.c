@@ -272,7 +272,7 @@ Task_t TaskList[] =
 #endif
 
     // XXX: Add here new tasks
-    // \note Be careful, taskList order need to be equal with TaskName_t
+    // @note Be careful, taskList order need to be equal with TaskName_t
     /*
     const char *taskName;                        ///< Task Name - Init
     const TaskFunctionPointer taskFunction;        ///< Task function - Init
@@ -317,7 +317,7 @@ const TaskID_t TasksNum = NUM_OF(TaskList);
 
 
 /**
- * \brief    TaskList init - check
+ * @brief    TaskList init - check
  */
 void TaskList_Init(void)
 {
@@ -329,7 +329,7 @@ void TaskList_Init(void)
 
 #ifdef CONFIG_MODULE_LED_TASK_ENABLE
 /**
- * \brief    LED blinking task
+ * @brief    LED blinking task
  */
 static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 {
@@ -406,7 +406,7 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 
 #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
 /**
- * \brief    Watchdog clear task
+ * @brief    Watchdog clear task
  */
 static TaskResult_t TaskWatchdogClear(ScheduleSource_t source)
 {

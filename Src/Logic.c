@@ -197,8 +197,8 @@ static void Logic_Display_LargeClock(ScheduleSource_t source);
 
 #ifdef CONFIG_FUNCTION_DISPLAY_MENU
 /**
- * \brief    "New submenu" initialization
- * \note    Do not call often, only at menu changing
+ * @brief    "New submenu" initialization
+ * @note    Do not call often, only at menu changing
  */
 void Logic_Display_Init(void)
 {
@@ -265,7 +265,7 @@ void Logic_Display_Init(void)
 
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
 /**
- * \brief    Button event handler
+ * @brief    Button event handler
  *             Only one button handling (button = i. button
  */
 void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
@@ -733,7 +733,7 @@ void Logic_RemoteController_SendMessage(void)
 
 #ifdef CONFIG_FUNCTION_DISPLAY_INPUT
 /**
- * \brief    Step active letter selection to next (left-right)
+ * @brief    Step active letter selection to next (left-right)
  */
 static void Logic_StepLetterPosition(int8_t step)
 {
@@ -755,7 +755,7 @@ static void Logic_StepLetterPosition(int8_t step)
 
 
 /**
- * \brief    Step Letter value to next (up-down)
+ * @brief    Step Letter value to next (up-down)
  */
 static void Logic_StepLetterNextValue(int8_t step)
 {
@@ -817,7 +817,7 @@ static void Logic_StepLetterNextValue(int8_t step)
 
 #if defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK)
 /**
- * \brief    SystemTime - step function
+ * @brief    SystemTime - step function
  */
 static void Logic_SystemTimeStepConfig(void)
 {
@@ -832,7 +832,7 @@ static void Logic_SystemTimeStepConfig(void)
 
 
 /**
- * \brief    SystemTime - change (increment) selected value (hour, minute, or none)
+ * @brief    SystemTime - change (increment) selected value (hour, minute, or none)
  */
 static void Logic_SystemTimeStepValue(void)
 {
@@ -875,7 +875,7 @@ static void Logic_SystemTimeStepValue(void)
 
 
 /**
- * \brief    Get system time (settings) state
+ * @brief    Get system time (settings) state
  */
 DisplayClock_ChangeState_t Logic_GetSystemTimeState(void)
 {

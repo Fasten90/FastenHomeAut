@@ -33,7 +33,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * \brief    Send string on SWO
+ * @brief    Send string on SWO
  */
 uint8_t SWO_SendMessage(const char *message)
 {
@@ -52,7 +52,7 @@ uint8_t SWO_SendMessage(const char *message)
 
 
 /**
- * \brief    Send character on SWO
+ * @brief    Send character on SWO
  */
 uint8_t SWO_SendChar(uint8_t ch)
 {

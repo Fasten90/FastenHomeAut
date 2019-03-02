@@ -168,7 +168,7 @@ const uint8_t WebpageList_404PageIndex = 0;
 
 
 /**
- * \brief  WebpageList initialization
+ * @brief  WebpageList initialization
  */
 void WebpageList_Init(void)
 {

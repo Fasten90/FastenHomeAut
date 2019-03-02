@@ -45,7 +45,7 @@ static uint32_t CommonDAC_VoltageToBinary(float voltage);
  *----------------------------------------------------------------------------*/
 
 /**
- * \brief    HAL driver: DAC MSP initialization
+ * @brief    HAL driver: DAC MSP initialization
  */
 void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac)
 {
@@ -77,7 +77,7 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac)
 
 
 /**
- * \brief    Initialize DAC
+ * @brief    Initialize DAC
  */
 void CommonDAC_Init(void)
 {
@@ -137,7 +137,7 @@ void CommonDAC_Init(void)
 
 
 /**
- * \brief    Convert voltage to DA value
+ * @brief    Convert voltage to DA value
  */
 static uint32_t CommonDAC_VoltageToBinary(float voltage)
 {
@@ -147,7 +147,7 @@ static uint32_t CommonDAC_VoltageToBinary(float voltage)
 
 
 /**
- * \brief    Set DAC value
+ * @brief    Set DAC value
  */
 bool CommonDAC_SetValue(DAC_Channel_t channel, float voltage)
 {

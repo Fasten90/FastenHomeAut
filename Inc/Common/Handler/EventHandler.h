@@ -80,7 +80,7 @@ typedef struct
     TaskID_t requiredTaskRunId;                ///< Task, which need execute, when event raised
 #endif
 
-    // \note: Please Do not change this structure!
+    // @note: Please Do not change this structure!
 } Event_t;
 
 

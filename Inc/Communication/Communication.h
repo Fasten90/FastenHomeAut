@@ -54,7 +54,7 @@ typedef enum
 
     /*
      * XXX: Add here new Protocol, and correct the CommProt_Disable (largest bit be set)
-     * \note    Do not forget Synchronize with ProtocolNameList
+     * @note    Do not forget Synchronize with ProtocolNameList
      */
     CommProt_Count
 } CommProtocol_t;
@@ -76,7 +76,7 @@ typedef enum
 
     /*
      * XXX: Add here new Protocol, and correct the CommProt_Disable (largest bit be set)
-     * \note    Do not forget Synchronize with CommProtocol_t
+     * @note    Do not forget Synchronize with CommProtocol_t
      */
     ComProtBit_All            = ((1 << CommProt_Count) - 1),
     CommProtBit_Disable        = (1 << CommProt_Count)

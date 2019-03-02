@@ -45,7 +45,7 @@
 
 #ifdef CONFIG_MODULE_SELFTEST_ENABLE
 /**
- * \brief  SelfTest_Flag Test
+ * @brief  SelfTest_Flag Test
  */
 bool SelfTest_Flag_Test(void)
 {

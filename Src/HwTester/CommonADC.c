@@ -90,7 +90,7 @@ extern void Error_Handler(void);
 
 
 /**
- * \brief    Initialize ADC with DMA
+ * @brief    Initialize ADC with DMA
  */
 void CommonADC_Init(void)
 {
@@ -185,7 +185,7 @@ void CommonADC_Init(void)
 
 
 /**
- * \brief    ADC Msp Init for HAL driver
+ * @brief    ADC Msp Init for HAL driver
  */
 void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 {
@@ -252,7 +252,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 
 
 /**
- * \brief    ADC callback function for HAL driver
+ * @brief    ADC callback function for HAL driver
  */
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 {
@@ -267,8 +267,8 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 
 
 /**
- * \brief    Infinite loop: print ADC values
- * \note    !! Be careful, it is blocking mode !!
+ * @brief    Infinite loop: print ADC values
+ * @note    !! Be careful, it is blocking mode !!
  */
 void CommonADC_Test(void)
 {
@@ -292,7 +292,7 @@ void CommonADC_Test(void)
 
 
 /**
- * \brief    Convert read value to voltage
+ * @brief    Convert read value to voltage
  */
 float CommonADC_ConvertToVoltage(uint32_t readValue)
 {
@@ -306,7 +306,7 @@ float CommonADC_ConvertToVoltage(uint32_t readValue)
 
 
 /**
- * \brief    Convert all read values
+ * @brief    Convert all read values
  */
 void CommonADC_ConvertAllMeasuredValues(void)
 {
@@ -322,7 +322,7 @@ void CommonADC_ConvertAllMeasuredValues(void)
 
 
 /**
- * \brief    Set "Print num"
+ * @brief    Set "Print num"
  */
 void CommonADC_SetPrintNum(uint8_t adcChannel)
 {
@@ -335,7 +335,7 @@ void CommonADC_SetPrintNum(uint8_t adcChannel)
 
 
 /**
- * \brief    Print x. adcChannel value (converted!)
+ * @brief    Print x. adcChannel value (converted!)
  */
 void CommonADC_PrintAdcValue(uint8_t adcChannel)
 {
@@ -353,7 +353,7 @@ void CommonADC_PrintAdcValue(uint8_t adcChannel)
 
 
 /**
- * \brief    Print saved channel's ADC
+ * @brief    Print saved channel's ADC
  */
 void CommonADC_PrintAdc(void)
 {

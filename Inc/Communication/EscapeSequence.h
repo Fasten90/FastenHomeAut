@@ -134,10 +134,10 @@
 
 
 /**
- * \brief    Color enum for Escape sequence
+ * @brief    Color enum for Escape sequence
  *            Intensity     0     1     2     3     4     5     6     7
  *            Normal     Black     Red     Green     Yellow     Blue     Magenta     Cyan     White
- * \note    Do not modify! It is depending from escape sequence codes
+ * @note    Do not modify! It is depending from escape sequence codes
  */
 typedef enum
 {
@@ -153,7 +153,7 @@ typedef enum
 
 
 /**
- * \brief    Text attributes for Escape sequence
+ * @brief    Text attributes for Escape sequence
  */
 typedef enum
 {
