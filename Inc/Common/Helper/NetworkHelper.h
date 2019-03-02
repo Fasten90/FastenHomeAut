@@ -1,12 +1,12 @@
 /*
- *		Network.h
- *		Created on:		2017-01-14
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Network general functions
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-01-14
+ *        Network.h
+ *        Created on:        2017-01-14
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        Network general functions
+ *        Target:            STM32Fx
+ *        Version:        v1
+ *        Last modified:    2017-01-14
  */
 
 #ifndef NETWORK_H_
@@ -35,7 +35,7 @@
 ///< Ethernet - IPv4 struct
 typedef struct
 {
-	uint8_t IP[4];
+    uint8_t IP[4];
 } Network_IP_t;
 
 

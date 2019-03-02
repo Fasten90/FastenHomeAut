@@ -1,12 +1,12 @@
 /*
- *		TaskHandler.h
- *		Created on:		2017-02-02
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Task handler
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-02-02
+ *        TaskHandler.h
+ *        Created on:        2017-02-02
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        Task handler
+ *        Target:            STM32Fx
+ *        Version:        v1
+ *        Last modified:    2017-02-02
  */
 
 #ifndef COMMON_TASKHANDLER_H_
@@ -40,19 +40,19 @@ typedef uint32_t TaskTick_t;
 ///< TaskResult for Task finish result
 typedef enum
 {
-	TaskResult_Fail,							///< Failed run (task)
-	TaskResult_Ok								///< Successful run
+    TaskResult_Fail,                            ///< Failed run (task)
+    TaskResult_Ok                                ///< Successful run
 } TaskResult_t;
 
 
 ///< Schedule source (Why executed the task by TaskHandler)
 typedef enum
 {
-	ScheduleSource_Unknown,						///< Unknown schedule reason
-	ScheduleSource_EventTriggered,				///< Triggered (event)
-	ScheduleSource_PeriodicSchedule,			///< Periodical scheduling
-	ScheduleSource_RunOnce,						///< Run once
-	ScheduleSource_TimeOut						///< TimeOut
+    ScheduleSource_Unknown,                        ///< Unknown schedule reason
+    ScheduleSource_EventTriggered,                ///< Triggered (event)
+    ScheduleSource_PeriodicSchedule,            ///< Periodical scheduling
+    ScheduleSource_RunOnce,                        ///< Run once
+    ScheduleSource_TimeOut                        ///< TimeOut
 } ScheduleSource_t;
 
 
@@ -63,20 +63,20 @@ typedef TaskResult_t (*TaskFunctionPointer)(ScheduleSource_t source);
 ///< Task structure
 typedef struct
 {
-	const char *taskName;						///< Task Name - Init
-	const TaskFunctionPointer taskFunction;		///< Task function - Init
-	TaskTick_t tick;							///< Task tick [ms] - RunTime
-	TaskTick_t taskScheduleRate;				///< Task scheduling rate [ms] - Init/Runtime
+    const char *taskName;                        ///< Task Name - Init
+    const TaskFunctionPointer taskFunction;        ///< Task function - Init
+    TaskTick_t tick;                            ///< Task tick [ms] - RunTime
+    TaskTick_t taskScheduleRate;                ///< Task scheduling rate [ms] - Init/Runtime
 
-	bool isRequestScheduling;					///< Task scheduling request (true, if request) - Runtime
-	bool isPeriodicScheduleDisabled;			///< Task schedule (periodic) disabled - Init/Runtime
-	bool isRunOnce;								///< Task scheduling once - Init/Runtime
-	bool isTimeOutTask;							///< Task is work in TimeOut mode - Init/Runtime
-	bool isDisabled;							///< Task is disabled/enabled - Init/Runtime
+    bool isRequestScheduling;                    ///< Task scheduling request (true, if request) - Runtime
+    bool isPeriodicScheduleDisabled;            ///< Task schedule (periodic) disabled - Init/Runtime
+    bool isRunOnce;                                ///< Task scheduling once - Init/Runtime
+    bool isTimeOutTask;                            ///< Task is work in TimeOut mode - Init/Runtime
+    bool isDisabled;                            ///< Task is disabled/enabled - Init/Runtime
 
 #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
-	uint32_t taskRunCount;						///< How many times ran [count] - RunTime
-	bool isDisableLogToStatistics;				///< Disable log to statistics - Init
+    uint32_t taskRunCount;                        ///< How many times ran [count] - RunTime
+    bool isDisableLogToStatistics;                ///< Disable log to statistics - Init
 #endif
 } Task_t;
 
@@ -108,7 +108,7 @@ void TaskHandler_PrintTaskRunCounts(void);
 const char * TaskHandler_GetActualRunningTaskName(void);
 TaskID_t TaskHandler_GetActualRunningTaskID(void);
 #else
-#define TaskHandler_GetActualRunningTaskID()		(0)
+#define TaskHandler_GetActualRunningTaskID()        (0)
 #endif
 
 uint32_t TaskHandler_UnitTest(void);

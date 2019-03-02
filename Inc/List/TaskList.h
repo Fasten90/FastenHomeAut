@@ -1,12 +1,12 @@
 /*
- *		TaskList.h
- *		Created on:		2017-02-02
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Task list
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-02-02
+ *        TaskList.h
+ *        Created on:        2017-02-02
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        Task list
+ *        Target:            STM32Fx
+ *        Version:        v1
+ *        Last modified:    2017-02-02
  */
 
 #ifndef TASKLIST_H_
@@ -38,62 +38,62 @@
 typedef enum
 {
 #ifdef CONFIG_MODULE_LED_TASK_ENABLE
-	Task_Led,
+    Task_Led,
 #endif
 #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
-	Task_WdtClr,
+    Task_WdtClr,
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-	Task_Esp8266,
+    Task_Esp8266,
 #endif
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
-	Task_MotorControl,
-	Task_MotorTimeout,
+    Task_MotorControl,
+    Task_MotorTimeout,
 #endif
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER
-	Task_RemoteController,
+    Task_RemoteController,
 #endif
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
-	Task_DebugUartProcess,
+    Task_DebugUartProcess,
 #endif
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
-	Task_ButtonPressed,
+    Task_ButtonPressed,
 #endif
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
-	Task_Display,
+    Task_Display,
 #endif
 #ifdef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
-	Task_SystemTime,
+    Task_SystemTime,
 #endif
 #ifdef CONFIG_MODULE_TASK_SOFTWARE_WATCHDOG_ENABLE
-	Task_SwWDT,
+    Task_SwWDT,
 #endif
 #ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
-	Task_Trace,
+    Task_Trace,
 #endif
 #ifdef CONFIG_FUNCTION_CHARGER
-	Task_IO,
+    Task_IO,
 #endif
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
-	Task_CommonAdc,
+    Task_CommonAdc,
 #endif
 #ifdef CONFIG_DEBUG_SELFTEST
-	Task_SelfTest,
+    Task_SelfTest,
 #endif
 #ifdef CONFIG_FUNCTION_PERIODICAL_SENDING
-	Task_PerodicalSending,
+    Task_PerodicalSending,
 #endif
 #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
-	Task_BluetoothProcess,
+    Task_BluetoothProcess,
 #endif
 #ifdef CONFIG_MODULE_COMMON_UART_ENABLE
-	Task_CommonUART,
+    Task_CommonUART,
 #endif
 
-	// XXX: Add new Task enum here!
-	// \note: !! Be careful !! Sync with TaskList
+    // XXX: Add new Task enum here!
+    // \note: !! Be careful !! Sync with TaskList
 
-	Task_Count
+    Task_Count
 } TaskName_t;
 
 

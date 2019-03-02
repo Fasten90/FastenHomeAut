@@ -1,13 +1,13 @@
 /*
- *		Font12x8.h
+ *        Font12x8.h
  *
- *		Created on:		2017. márc. 27.
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
- *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. márc. 27.
+ *        Created on:        2017. márc. 27.
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        -
+ *        Target:            STM32Fx
+ *        Version:        -
+ *        Last modified:    2017. márc. 27.
  */
 
 #ifndef MODULES_FONT12X8_H_
@@ -25,11 +25,11 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define FONT_12X8_NUM			( 128 )
-#define FONT_12X8_STORE_SIZE	( 12 )
+#define FONT_12X8_NUM            ( 128 )
+#define FONT_12X8_STORE_SIZE    ( 12 )
 
-#define FONT_12X8_HEIGHT		( 12 )
-#define FONT_12X8_WIDTH			( 8 )
+#define FONT_12X8_HEIGHT        ( 12 )
+#define FONT_12X8_WIDTH            ( 8 )
 
 
 /*------------------------------------------------------------------------------

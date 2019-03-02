@@ -1,12 +1,12 @@
 /*
- *		Communication.c
- *		Created on:		2016-12-03
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Communication module
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2016-12-03
+ *        Communication.c
+ *        Created on:        2016-12-03
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        Communication module
+ *        Target:            STM32Fx
+ *        Version:        v1
+ *        Last modified:    2016-12-03
  */
 
 
@@ -37,21 +37,21 @@ uint8_t Communication_BufferCnt = 0;
 ///< Protocol names
 static const char * const ProtocolNameList[] =
 {
-	"Unknown",
-	"DebugUart",
+    "Unknown",
+    "DebugUart",
 #ifdef CONFIG_SWO_ENABLE
-	"SWO"
+    "SWO"
 #endif
 #ifdef CONFIG_PROTOCOL_BUFFER_ENABLE
-	"Buffer",
+    "Buffer",
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-	"ESP8266Wifi",
+    "ESP8266Wifi",
 #endif
 
-	/*
-	 * XXX: Do not forget Synchronize with CommProtocol_t
-	 */
+    /*
+     * XXX: Do not forget Synchronize with CommProtocol_t
+     */
 };
 
 
@@ -62,163 +62,163 @@ static const char * const ProtocolNameList[] =
 
 
 /**
- * \brief	Initialize Communication (check lists)
+ * \brief    Initialize Communication (check lists)
  */
 void COMMUNICATION_Init()
 {
-	// Check Communication list size
-	BUILD_ASSERT(NUM_OF(ProtocolNameList) == CommProt_Count);
+    // Check Communication list size
+    BUILD_ASSERT(NUM_OF(ProtocolNameList) == CommProt_Count);
 }
 
 
 
 /**
- * \brief	Send message (string) on selected communication protocol
+ * \brief    Send message (string) on selected communication protocol
  */
 size_t COMMUNICATION_SendMessage(CommProtocol_t protocol, const char *message)
 {
-	size_t length = 0;
+    size_t length = 0;
 
-	switch (protocol)
-	{
+    switch (protocol)
+    {
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
-		case CommProt_Unknown:
-			// Unknown, send on debug
-			length = DebugUart_SendMessage(message);
-			break;
-		case CommProt_DebugUart:
-			// Send on Usart
-			length = DebugUart_SendMessage(message);
-			break;
+        case CommProt_Unknown:
+            // Unknown, send on debug
+            length = DebugUart_SendMessage(message);
+            break;
+        case CommProt_DebugUart:
+            // Send on Usart
+            length = DebugUart_SendMessage(message);
+            break;
 #endif
 #ifdef CONFIG_SWO_ENABLE
-		case CommProt_SWO:
-			// Send on SWO
-			length = SWO_SendMessage(message);
-			break;
+        case CommProt_SWO:
+            // Send on SWO
+            length = SWO_SendMessage(message);
+            break;
 #endif
 #ifdef CONFIG_PROTOCOL_BUFFER_ENABLE
-		case CommProt_Buffer:
-			length = StrCpyMax(&Communication_Buffer[Communication_BufferCnt], message, COMMUNICATION_PROTOCOL_BUFFER_SIZE-Communication_BufferCnt);
-			Communication_BufferCnt += length;
-			break;
+        case CommProt_Buffer:
+            length = StrCpyMax(&Communication_Buffer[Communication_BufferCnt], message, COMMUNICATION_PROTOCOL_BUFFER_SIZE-Communication_BufferCnt);
+            Communication_BufferCnt += length;
+            break;
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-		case CommProt_ESP8266Wifi:
-			// Send on wifi (TCP message)
-			length = ESP8266_RequestSendTcpMessage(message);
-			break;
+        case CommProt_ESP8266Wifi:
+            // Send on wifi (TCP message)
+            length = ESP8266_RequestSendTcpMessage(message);
+            break;
 #endif
-		case CommProt_Count:
-		default:
-			// Error, do not use
-			length = 0;
-			break;
-	}
+        case CommProt_Count:
+        default:
+            // Error, do not use
+            length = 0;
+            break;
+    }
 
-	return length;
+    return length;
 }
 
 
 
 /**
- * \brief	Send character on selected communication protocol
+ * \brief    Send character on selected communication protocol
  */
 size_t COMMUNICATION_SendChar(CommProtocol_t protocol, char c)
 {
-	switch (protocol)
-	{
+    switch (protocol)
+    {
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
-		case CommProt_Unknown:
-			// Unknown, send on debug
-			DebugUart_SendChar(c);
-			break;
-		case CommProt_DebugUart:
-			DebugUart_SendChar(c);
-			break;
+        case CommProt_Unknown:
+            // Unknown, send on debug
+            DebugUart_SendChar(c);
+            break;
+        case CommProt_DebugUart:
+            DebugUart_SendChar(c);
+            break;
 #endif
 #ifdef CONFIG_SWO_ENABLE
-		case CommProt_SWO:
-			SWO_SendChar(c);
-			break;
+        case CommProt_SWO:
+            SWO_SendChar(c);
+            break;
 #endif
 #ifdef CONFIG_PROTOCOL_BUFFER_ENABLE
-		case CommProt_Buffer:
-			Communication_Buffer[Communication_BufferCnt++] = c;
-			break;
+        case CommProt_Buffer:
+            Communication_Buffer[Communication_BufferCnt++] = c;
+            break;
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-		case CommProt_ESP8266Wifi:
-			DebugUart_SendChar(c);
-			break;
+        case CommProt_ESP8266Wifi:
+            DebugUart_SendChar(c);
+            break;
 #endif
-		case CommProt_Count:
-		default:
-			break;
-	}
+        case CommProt_Count:
+        default:
+            break;
+    }
 
-	return 1;
+    return 1;
 }
 
 
 
 /**
- * \brief	Send message on xy communication protocol
- * \param	protocol		what peripheral sending
+ * \brief    Send message on xy communication protocol
+ * \param    protocol        what peripheral sending
  */
 size_t COMMUNICATION_Printf(CommProtocol_t protocol, const char *format, ...)
 {
-	size_t length = 0;
+    size_t length = 0;
 
-	// Working in at:
-	char txBuffer[COMMUNICATION_TXBUFFER_SIZE];
-
-#ifdef CONFIG_DEBUG_MODE
-	txBuffer[COMMUNICATION_TXBUFFER_SIZE-1] = 0xEF;
-#endif
-
-	va_list ap;									// argument pointer
-	va_start(ap, format); 						// ap on arg
-	string_printf(txBuffer, format,ap);			// Separate and process
-	va_end(ap);						 			// Cleaning after end
+    // Working in at:
+    char txBuffer[COMMUNICATION_TXBUFFER_SIZE];
 
 #ifdef CONFIG_DEBUG_MODE
-	if (txBuffer[COMMUNICATION_TXBUFFER_SIZE-1] != 0xEF) DEBUG_BREAKPOINT();
+    txBuffer[COMMUNICATION_TXBUFFER_SIZE-1] = 0xEF;
 #endif
 
-	length = COMMUNICATION_SendMessage(protocol, txBuffer);
+    va_list ap;                                    // argument pointer
+    va_start(ap, format);                         // ap on arg
+    string_printf(txBuffer, format,ap);            // Separate and process
+    va_end(ap);                                     // Cleaning after end
 
-	return length;
+#ifdef CONFIG_DEBUG_MODE
+    if (txBuffer[COMMUNICATION_TXBUFFER_SIZE-1] != 0xEF) DEBUG_BREAKPOINT();
+#endif
+
+    length = COMMUNICATION_SendMessage(protocol, txBuffer);
+
+    return length;
 }
 
 
 
 /**
- * \brief	Get protocol name
+ * \brief    Get protocol name
  */
 const char * COMMUNICATION_GetProtocolName(CommProtocol_t protocol)
 {
-	const char * str = NULL;
+    const char * str = NULL;
 
-	if (protocol < CommProt_Count)
-	{
-		str = ProtocolNameList[protocol];
-	}
+    if (protocol < CommProt_Count)
+    {
+        str = ProtocolNameList[protocol];
+    }
 
-	return str;
+    return str;
 }
 
 
 
 #ifdef CONFIG_PROTOCOL_BUFFER_ENABLE
 /**
- * \brief	Protocol buffer clear
+ * \brief    Protocol buffer clear
  */
 void COMMUNICATION_ClearProtocolBuffer(void)
 {
-	memset(Communication_Buffer, 0, COMMUNICATION_PROTOCOL_BUFFER_SIZE);
-	Communication_BufferCnt = 0;
+    memset(Communication_Buffer, 0, COMMUNICATION_PROTOCOL_BUFFER_SIZE);
+    Communication_BufferCnt = 0;
 }
-#endif	// #ifdef CONFIG_PROTOCOL_BUFFER_ENABLE
+#endif    // #ifdef CONFIG_PROTOCOL_BUFFER_ENABLE
 
-#endif	// #ifdef CONFIG_MODULE_COMMUNICATION_ENABLE
+#endif    // #ifdef CONFIG_MODULE_COMMUNICATION_ENABLE

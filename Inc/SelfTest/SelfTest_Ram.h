@@ -1,12 +1,12 @@
 /*
- *		SelfTest_Ram.h
- *		Created on:		2018-01-27
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
- *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2018-01-27
+ *        SelfTest_Ram.h
+ *        Created on:        2018-01-27
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        -
+ *        Target:            STM32Fx
+ *        Version:        -
+ *        Last modified:    2018-01-27
  */
 
 #ifndef INC_SELFTEST_SELFTEST_RAM_H_

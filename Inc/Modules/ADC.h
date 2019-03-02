@@ -1,12 +1,12 @@
 /*
- *		ADC.h
- *		Created on:		2016-01-01
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		ADC (Analog-to-Digital Converter)
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-02-08
+ *        ADC.h
+ *        Created on:        2016-01-01
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        ADC (Analog-to-Digital Converter)
+ *        Target:            STM32Fx
+ *        Version:        v1
+ *        Last modified:    2017-02-08
  */
 
 #ifndef ADC_H_
@@ -36,11 +36,11 @@
 ///< ADC "device" list
 typedef enum
 {
-	ADC_Vsource,
-	ADC_StandardVoltageExample,
+    ADC_Vsource,
+    ADC_StandardVoltageExample,
 
-	// Do not use, only for count
-	ADC_Count
+    // Do not use, only for count
+    ADC_Count
 } ADC_MeasurementData_t;
 
 
@@ -49,11 +49,11 @@ typedef enum
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-extern ADC_HandleTypeDef		AdcHandle;
-extern volatile uint32_t		ADC_MeasuredValues[ADC_CHANNEL_NUM];
-extern volatile float			ADC_ConvertedValues[ADC_CHANNEL_NUM];
+extern ADC_HandleTypeDef        AdcHandle;
+extern volatile uint32_t        ADC_MeasuredValues[ADC_CHANNEL_NUM];
+extern volatile float            ADC_ConvertedValues[ADC_CHANNEL_NUM];
 
-extern volatile uint32_t		ADC_RunCnt;
+extern volatile uint32_t        ADC_RunCnt;
 
 
 

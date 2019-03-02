@@ -1,12 +1,12 @@
 /*
- *		WebpageHandler.h
- *		Created on:		2018-03-04
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
- *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2018-03-04
+ *        WebpageHandler.h
+ *        Created on:        2018-03-04
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        -
+ *        Target:            STM32Fx
+ *        Version:        -
+ *        Last modified:    2018-03-04
  */
 
 #ifndef INC_COMMUNICATION_WEBPAGEHANDLER_H_
@@ -30,7 +30,7 @@
  * 1 - copy
  * 0 - send with blocked
  */
-#define WEBPAGEHANDLER_MSG_COPY			(1)
+#define WEBPAGEHANDLER_MSG_COPY            (1)
 
 
 
@@ -40,10 +40,10 @@
 
 typedef struct
 {
-	const char * webpageName;
-	const char * webpageContain;
-	const size_t webpageLength;
-	const char * webpageType;
+    const char * webpageName;
+    const char * webpageContain;
+    const size_t webpageLength;
+    const char * webpageType;
 } WebpageInformation_t;
 
 

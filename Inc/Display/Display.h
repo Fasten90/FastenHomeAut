@@ -1,12 +1,12 @@
 /*
- *		Display.h
- *		Created on:		2017-04-02
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Display handling
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-04-02
+ *        Display.h
+ *        Created on:        2017-04-02
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        Display handling
+ *        Target:            STM32Fx
+ *        Version:        v1
+ *        Last modified:    2017-04-02
  */
 
 #ifndef MODULES_DISPLAY_H_
@@ -32,7 +32,7 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define NO_FORMAT				(Display_NoFormat)
+#define NO_FORMAT                (Display_NoFormat)
 
 
 
@@ -42,26 +42,26 @@
 
 typedef enum
 {
-	Font_Unknown,
+    Font_Unknown,
 #ifdef CONFIG_DISPLAY_FONT8X5_ENABLE
-	Font_8x5,
+    Font_8x5,
 #endif
 #ifdef CONFIG_DISPLAY_FONT12X8_ENABLE
-	Font_12x8,
+    Font_12x8,
 #endif
 #ifdef CONFIG_DISPLAY_FONT32X20_ENABLE
-	Font_32x20,
+    Font_32x20,
 #endif
 
-	Font_Count
+    Font_Count
 } FontType_t;
 
 
 typedef struct
 {
-	uint32_t Format_Center:		1;			///< Text on center
-	uint32_t Format_Inverse:	1;			///< Text inverted with the text character background
-	uint32_t Format_Underline:	1;			///< Text unverlined
+    uint32_t Format_Center:        1;            ///< Text on center
+    uint32_t Format_Inverse:    1;            ///< Text inverted with the text character background
+    uint32_t Format_Underline:    1;            ///< Text unverlined
 } FontFormat_t;
 
 

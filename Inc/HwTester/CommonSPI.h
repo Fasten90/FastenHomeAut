@@ -1,12 +1,12 @@
 /*
- *		CommonSPI.h
- *		Created on:		2017-03-16
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Common SPI
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-03-16
+ *        CommonSPI.h
+ *        Created on:        2017-03-16
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        Common SPI
+ *        Target:            STM32Fx
+ *        Version:        v1
+ *        Last modified:    2017-03-16
  */
 
 #ifndef COMMONSPI_H_

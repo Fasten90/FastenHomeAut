@@ -1,12 +1,12 @@
 /*
- *		CommandList.h
- *		Created on:		2016-01-01
- *		Author: 		Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		General commands's list
- *		Target:			STM32Fx
- *		Version:		v4
- *		Last modified:	2016-09-28
+ *        CommandList.h
+ *        Created on:        2016-01-01
+ *        Author:         Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        General commands's list
+ *        Target:            STM32Fx
+ *        Version:        v4
+ *        Last modified:    2016-09-28
  */
 
 #ifndef COMMANDLIST_H_
@@ -29,7 +29,7 @@
 
 #ifndef CONFIG_MODULE_COMMUNICATION_ENABLE
 #ifndef CommProt_DebugUart
-	#define CommProt_DebugUart			(0)
+    #define CommProt_DebugUart            (0)
 #endif
 #endif
 

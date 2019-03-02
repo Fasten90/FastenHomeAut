@@ -1,12 +1,12 @@
 /*
- *		UnitTestList.h
- *		Created on:		2018-03-03
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
- *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2018-03-03
+ *        UnitTestList.h
+ *        Created on:        2018-03-03
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        -
+ *        Target:            STM32Fx
+ *        Version:        -
+ *        Last modified:    2018-03-03
  */
 
 #ifndef INC_LIST_UNITTESTLIST_H_

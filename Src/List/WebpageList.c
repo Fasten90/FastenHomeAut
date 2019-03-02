@@ -1,12 +1,12 @@
 /*
- *		WebpageList.c
- *		Created on:		2018-03-05
- *		Author:			Vizi Gabor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
- *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2018-03-05
+ *        WebpageList.c
+ *        Created on:        2018-03-05
+ *        Author:            Vizi Gabor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        -
+ *        Target:            STM32Fx
+ *        Version:        -
+ *        Last modified:    2018-03-05
  */
 
 
@@ -178,4 +178,4 @@ void WebpageList_Init(void)
 }
 
 
-#endif	/* #ifdef CONFIG_MODULE_WEBPAGE_ENABLE */
+#endif    /* #ifdef CONFIG_MODULE_WEBPAGE_ENABLE */

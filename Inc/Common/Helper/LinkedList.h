@@ -1,12 +1,12 @@
 /*
- *		LinkedList.h
- *		Created on:		2017-08-01
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Linked list handler
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-08-01
+ *        LinkedList.h
+ *        Created on:        2017-08-01
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        Linked list handler
+ *        Target:            STM32Fx
+ *        Version:        v1
+ *        Last modified:    2017-08-01
  */
 
 #ifndef COMMON_LINKEDLIST_H_
@@ -26,7 +26,7 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define LINKEDLIST_STORE_LENGTH		(10U)
+#define LINKEDLIST_STORE_LENGTH        (10U)
 
 
 
@@ -35,15 +35,15 @@
  *----------------------------------------------------------------------------*/
 
 
-typedef uint32_t	ListItem_Value_t;
+typedef uint32_t    ListItem_Value_t;
 
 ///< ListItem for LinkedList
 typedef struct ListItem
 {
-	ListItem_Value_t val;
-	struct ListItem *prev;
-	struct ListItem *next;
-	bool isBusy;
+    ListItem_Value_t val;
+    struct ListItem *prev;
+    struct ListItem *next;
+    bool isBusy;
 } ListItem;
 
 

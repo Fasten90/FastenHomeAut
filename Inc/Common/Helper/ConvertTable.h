@@ -1,12 +1,12 @@
 /*
- *		ConvertTable.h
- *		Created on:		2017-09-17
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
- *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017-09-17
+ *        ConvertTable.h
+ *        Created on:        2017-09-17
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        -
+ *        Target:            STM32Fx
+ *        Version:        -
+ *        Last modified:    2017-09-17
  */
 
 #ifndef CONVERTTABLE_H_
@@ -36,16 +36,16 @@
 ///< Convert table record (ADC - converted value pair)
 typedef struct
 {
-	uint32_t adcValue;						///< ADC value
-	float convertedValue;					///< Converted value
+    uint32_t adcValue;                        ///< ADC value
+    float convertedValue;                    ///< Converted value
 } ConvertTableRecord_t;
 
 
 ///< Convert table record list (records + num)
 typedef struct
 {
-	const ConvertTableRecord_t *recordList;	///< List (ADC-Converted value)
-	const uint16_t size;					///< Size
+    const ConvertTableRecord_t *recordList;    ///< List (ADC-Converted value)
+    const uint16_t size;                    ///< Size
 } ConverTable_t;
 
 

@@ -1,12 +1,12 @@
 /*
- *		DisplayImages.h
- *		Created on:		2017-04-02
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Display - images
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-04-02
+ *        DisplayImages.h
+ *        Created on:        2017-04-02
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        Display - images
+ *        Target:            STM32Fx
+ *        Version:        v1
+ *        Last modified:    2017-04-02
  */
 
 #ifndef DISPLAYIMAGES_H_

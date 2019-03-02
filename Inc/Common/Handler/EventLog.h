@@ -1,12 +1,12 @@
 /*
- *		EventLog.h
- *		Created on:		2017-02-05
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Event logger
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-02-05
+ *        EventLog.h
+ *        Created on:        2017-02-05
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        Event logger
+ *        Target:            STM32Fx
+ *        Version:        v1
+ *        Last modified:    2017-02-05
  */
 
 #ifndef COMMON_EVENTLOG_H_
@@ -33,24 +33,24 @@
  *----------------------------------------------------------------------------*/
 
 #ifndef CONFIG_EVENTLOG_LOG_SIZE
-	#define CONFIG_EVENTLOG_LOG_SIZE		(100)
+    #define CONFIG_EVENTLOG_LOG_SIZE        (100)
 #endif
 
 ///< Save log circular mode (1), or once full mode
 #ifndef EVENTLOG_BUFFER_USE_CIRCULAR
-	#define EVENTLOG_BUFFER_USE_CIRCULAR	(1)
+    #define EVENTLOG_BUFFER_USE_CIRCULAR    (1)
 #endif
 
 ///< Save DateTime (1), or not (0) (If turned off, it use less RAM)
 #ifndef EVENTLOG_SAVE_DATETIME
-	#define EVENTLOG_SAVE_DATETIME			(0)
+    #define EVENTLOG_SAVE_DATETIME            (0)
 #endif
 
 ///< Print event immediately
 // #define CONFIG_EVETNLOG_PRINT_IMMEDIATELY
 
 ///< Save event at EventLog initialization ( 1 - on, 0 - off )
-#define EVENTLOG_SAVE_EVENT_AT_INIT			( 0 )
+#define EVENTLOG_SAVE_EVENT_AT_INIT            ( 0 )
 
 
 
@@ -59,23 +59,23 @@
  *----------------------------------------------------------------------------*/
 
 
-typedef uint8_t		EventLogCnt_t;
+typedef uint8_t        EventLogCnt_t;
 
 #if CONFIG_EVENTLOG_LOG_SIZE > 255
-	#error "LogCnt_t type is wrong!"
+    #error "LogCnt_t type is wrong!"
 #endif
 
 
 ///< EventLog Record structure for log
 typedef struct
 {
-	EventName_t eventName;					///< Event name (enum)
-	EventData_t eventData;					///< Event data / informations
-	EventType_t eventType;					///< Event type
-	TaskID_t taskSource;					///< Event source (Task)
-	uint32_t tick;							///< Event tick
+    EventName_t eventName;                    ///< Event name (enum)
+    EventData_t eventData;                    ///< Event data / informations
+    EventType_t eventType;                    ///< Event type
+    TaskID_t taskSource;                    ///< Event source (Task)
+    uint32_t tick;                            ///< Event tick
 #if (EVENTLOG_SAVE_DATETIME == 1) && (defined(CONFIG_MODULE_RTC_ENABLE) || defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE))
-	DateTime_t dateTime;					///< Event date time
+    DateTime_t dateTime;                    ///< Event date time
 #endif
 } EventLogRecord_t;
 

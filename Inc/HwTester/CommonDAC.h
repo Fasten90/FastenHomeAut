@@ -1,12 +1,12 @@
 /*
- *		CommonDac.h
- *		Created on:		2016-11-21
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Common DAC (Digital-to-Analog Converter)
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2016-12-13
+ *        CommonDac.h
+ *        Created on:        2016-11-21
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        Common DAC (Digital-to-Analog Converter)
+ *        Target:            STM32Fx
+ *        Version:        v1
+ *        Last modified:    2016-12-13
  */
 
 #ifndef COMMONDAC_H_
@@ -30,9 +30,9 @@
 ///< DAC Channel number
 typedef enum
 {
-	Channel_Unknown,
-	Channel_1,
-	Channel_2
+    Channel_Unknown,
+    Channel_1,
+    Channel_2
 } DAC_Channel_t;
 
 

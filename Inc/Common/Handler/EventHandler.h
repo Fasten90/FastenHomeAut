@@ -1,12 +1,12 @@
 /*
- *		EventHandler.h
- *		Created on:		2017-02-05
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Event handler
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-02-05
+ *        EventHandler.h
+ *        Created on:        2017-02-05
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        Event handler
+ *        Target:            STM32Fx
+ *        Version:        v1
+ *        Last modified:    2017-02-05
  */
 
 #ifndef COMMON_EVENTHANDLER_H_
@@ -37,30 +37,30 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-typedef uint32_t	EventData_t;
-typedef uint8_t		EventId_t;
+typedef uint32_t    EventData_t;
+typedef uint8_t        EventId_t;
 
 // EventLog - subscription bits - for TaskHandler
-typedef uint32_t	EventLogSubscription_t;
+typedef uint32_t    EventLogSubscription_t;
 
 
 ///< Event - dynamic struct
 typedef struct
 {
-	uint32_t tick;								///< Tick (When occurred the event)
-	EventLogSubscription_t eventRaised;			///< Event flags
+    uint32_t tick;                                ///< Tick (When occurred the event)
+    EventLogSubscription_t eventRaised;            ///< Event flags
 } EventRun_t;
 
 
 typedef enum
 {
-	EventType_Unknown,
-	EventType_Raised,
-	EventType_Get,
-	EventType_Cleared,
+    EventType_Unknown,
+    EventType_Raised,
+    EventType_Get,
+    EventType_Cleared,
 
-	// Do not use this!
-	EventType_Count
+    // Do not use this!
+    EventType_Count
 } EventType_t;
 
 
@@ -72,17 +72,17 @@ typedef uint8_t TaskID_t;
 ///< Event - static struct
 typedef struct
 {
-	const char * name;						///< Event name (string)
-	bool isNeedLog;							///< Need log?
+    const char * name;                        ///< Event name (string)
+    bool isNeedLog;                            ///< Need log?
 #ifdef CONFIG_EVENTHANDLER_REQUIRED_TASK_MODE
-	EventLogSubscription_t subscription;	///< Subscriptions (bits)
+    EventLogSubscription_t subscription;    ///< Subscriptions (bits)
 #endif
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
-	bool isHasRequiredTask;					///< Need require task scheduling? (Valid with below variable)
-	TaskID_t requiredTaskRunId;				///< Task, which need execute, when event raised
+    bool isHasRequiredTask;                    ///< Need require task scheduling? (Valid with below variable)
+    TaskID_t requiredTaskRunId;                ///< Task, which need execute, when event raised
 #endif
 
-	// \note: Please Do not change this structure!
+    // \note: Please Do not change this structure!
 } Event_t;
 
 

@@ -1,12 +1,12 @@
 /*
- *		WebpageList.h
- *		Created on:		2018-03-05
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
- *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2018-03-05
+ *        WebpageList.h
+ *        Created on:        2018-03-05
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        -
+ *        Target:            STM32Fx
+ *        Version:        -
+ *        Last modified:    2018-03-05
  */
 
 #ifndef INC_LIST_WEBPAGELIST_H_

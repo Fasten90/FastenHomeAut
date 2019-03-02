@@ -1,12 +1,12 @@
 /*
- *		version.h
- *		Created on:		2016-12-11
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Version
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2016-12-11
+ *        version.h
+ *        Created on:        2016-12-11
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        Version
+ *        Target:            STM32Fx
+ *        Version:        v1
+ *        Last modified:    2016-12-11
  */
 
 #ifndef VERSION_H_
@@ -18,10 +18,10 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define VERSION_STRING		"v0.1.4.8"
+#define VERSION_STRING        "v0.1.4.8"
 
-#define DATE_VERSION		__DATE__
-#define TIME_VERSION		__TIME__
+#define DATE_VERSION        __DATE__
+#define TIME_VERSION        __TIME__
 
 
 

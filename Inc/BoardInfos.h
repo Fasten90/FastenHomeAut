@@ -1,12 +1,12 @@
 /*
- *		BoardInfos.h
- *		Created on:		2018-01-21
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Informations for device/board
- *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2018-01-21
+ *        BoardInfos.h
+ *        Created on:        2018-01-21
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        Informations for device/board
+ *        Target:            STM32Fx
+ *        Version:        -
+ *        Last modified:    2018-01-21
  */
 
 #ifndef BOARDINFOS_H_

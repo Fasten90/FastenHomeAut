@@ -1,12 +1,12 @@
 /*
- *		Table.h
- *		Created on:		2017-12-21
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
- *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017-12-21
+ *        Table.h
+ *        Created on:        2017-12-21
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        -
+ *        Target:            STM32Fx
+ *        Version:        -
+ *        Last modified:    2017-12-21
  */
 
 #ifndef COMMON_HELPER_TABLE_H_
@@ -27,12 +27,12 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define TABLE_SEND_BLOCKED			(1)
+#define TABLE_SEND_BLOCKED            (1)
 
 #if (TABLE_SEND_BLOCKED == 1)
-#define Table_SendLine(_str)				DebugUart_SendLineBlocked(_str)
+#define Table_SendLine(_str)                DebugUart_SendLineBlocked(_str)
 #else
-#define Table_SendLine(_str)				DebugUart_SendLine(_str)
+#define Table_SendLine(_str)                DebugUart_SendLine(_str)
 #endif
 
 

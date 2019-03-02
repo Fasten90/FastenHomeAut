@@ -1,13 +1,13 @@
 /*
- *		Font32x20.h
+ *        Font32x20.h
  *
- *		Created on:		2017. máj. 12.
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
- *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. máj. 12.
+ *        Created on:        2017. máj. 12.
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        -
+ *        Target:            STM32Fx
+ *        Version:        -
+ *        Last modified:    2017. máj. 12.
  */
 
 #ifndef MODULES_FONT32X20_H_
@@ -23,11 +23,11 @@
 
 
 // This font contain only 11 "font character": 0-9 (numbers) + ':' character for hour displaying
-#define FONT_32X20_NUM				( 11 )
-#define FONT_32X20_STORE_SIZE		( 20 )
+#define FONT_32X20_NUM                ( 11 )
+#define FONT_32X20_STORE_SIZE        ( 20 )
 
-#define FONT_32X20_HEIGHT			( 32 )
-#define FONT_32X20_WIDTH			( 20 )
+#define FONT_32X20_HEIGHT            ( 32 )
+#define FONT_32X20_WIDTH            ( 20 )
 
 
 /*------------------------------------------------------------------------------

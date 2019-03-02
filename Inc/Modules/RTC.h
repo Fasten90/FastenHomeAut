@@ -1,12 +1,12 @@
 /*
- *		RTC.h
- *		Created on:		2017-01-17
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		RTC (Real Time Clock)
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-01-17
+ *        RTC.h
+ *        Created on:        2017-01-17
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        RTC (Real Time Clock)
+ *        Target:            STM32Fx
+ *        Version:        v1
+ *        Last modified:    2017-01-17
  */
 
 #ifndef RTC_H_
@@ -28,8 +28,8 @@
  *----------------------------------------------------------------------------*/
 
 // Defines related to Clock configuration
-#define RTC_ASYNCH_PREDIV	0x7F	// LSE as RTC clock
-#define RTC_SYNCH_PREDIV	0x00FF	// LSE as RTC clock
+#define RTC_ASYNCH_PREDIV    0x7F    // LSE as RTC clock
+#define RTC_SYNCH_PREDIV    0x00FF    // LSE as RTC clock
 
 
 

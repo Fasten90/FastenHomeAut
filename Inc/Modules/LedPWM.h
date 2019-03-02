@@ -1,12 +1,12 @@
 /*
- *		LedPWM.h
- *		Created on:		2017-02-15
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		LED PWM
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-02-15
+ *        LedPWM.h
+ *        Created on:        2017-02-15
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        LED PWM
+ *        Target:            STM32Fx
+ *        Version:        v1
+ *        Last modified:    2017-02-15
  */
 
 #ifndef LEDPWM_H_
@@ -32,8 +32,8 @@
 #define  LED_TIMER_PERIOD_VALUE       (uint32_t)(666 - 1)  /* Period Value  */
 
 
-#define LED_BLUE_SET_PERCENT(percent)	LED_PWM_ChangePercent(&TimLedBlueHandle,LED_BLUE_TIMER_CHANNEL,percent);
-#define LED_GREEN_SET_PERCENT(percent)	LED_PWM_ChangePercent(&TimLedGreenHandle,LED_GREEN_TIMER_CHANNEL,percent);
+#define LED_BLUE_SET_PERCENT(percent)    LED_PWM_ChangePercent(&TimLedBlueHandle,LED_BLUE_TIMER_CHANNEL,percent);
+#define LED_GREEN_SET_PERCENT(percent)    LED_PWM_ChangePercent(&TimLedGreenHandle,LED_GREEN_TIMER_CHANNEL,percent);
 
 
 /*
@@ -67,10 +67,10 @@ extern TIM_HandleTypeDef    TimLedGreenHandle;
 void LedPWM_Init(void);
 void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim);
 void LED_PWM_ChangePercent(TIM_HandleTypeDef *TimHandle,
-		uint32_t timerChannel, uint8_t percent);
+        uint32_t timerChannel, uint8_t percent);
 
 
 
-#endif	// #ifdef CONFIG_MODULE_LEDPWM_ENABLE
+#endif    // #ifdef CONFIG_MODULE_LEDPWM_ENABLE
 
 #endif /* LEDPWM_H_ */

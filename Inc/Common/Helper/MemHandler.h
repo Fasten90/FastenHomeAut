@@ -1,12 +1,12 @@
 /*
- *		MEM.h
- *		Created on:		2016-08-31
- *		Author: 		Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		MEM functions
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-07-15
+ *        MEM.h
+ *        Created on:        2016-08-31
+ *        Author:         Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        MEM functions
+ *        Target:            STM32Fx
+ *        Version:        v1
+ *        Last modified:    2017-07-15
  */
 
 #ifndef MEM_H_
@@ -15,7 +15,7 @@
 
 
 /*------------------------------------------------------------------------------
- *	Includes
+ *    Includes
  *----------------------------------------------------------------------------*/
 
 #include "GenericTypeDefs.h"
@@ -24,28 +24,28 @@
 
 
 /*------------------------------------------------------------------------------
- *	Macros
+ *    Macros
  *----------------------------------------------------------------------------*/
 
-#define	CONFIG_MEM_CHECK_POINTERS		1
-#define CONFIG_MEM_CHECK_POINTER_RANGE	1
+#define    CONFIG_MEM_CHECK_POINTERS        1
+#define CONFIG_MEM_CHECK_POINTER_RANGE    1
 
-#define CONFIG_MEM_STACK_GUARD_LENGTH	(1000U)
-#define CONFIG_MEM_STACK_GUARD_VALUE	(0xEF)
+#define CONFIG_MEM_STACK_GUARD_LENGTH    (1000U)
+#define CONFIG_MEM_STACK_GUARD_VALUE    (0xEF)
 
 
 #if CONFIG_MEM_CHECK_POINTER_RANGE == 1
-	#define MEM_ASSERT(_con)							if (!_con) MEM_ERROR_HANDLER();
-	#define MEM_IN_FLASH(_pnt, _size)					((uint32_t)_pnt >= MEM_FLASH_START && ((uint32_t)_pnt + _size) < MEM_FLASH_END)
-	#define MEM_IN_RAM(_pnt, _size)						((uint32_t)_pnt >= MEM_RAM_START && ((uint32_t)_pnt + _size) < MEM_RAM_END)
-	#define MEM_HAS_NOT_OVERLAP(_pnt1, _pnt2, _size)	(((uint32_t)_pnt1 < (uint32_t)_pnt2) ? (((uint32_t)_pnt1 + _size) <= (uint32_t)_pnt2) : (((uint32_t)_pnt2 + _size) <= (uint32_t)_pnt1))
+    #define MEM_ASSERT(_con)                            if (!_con) MEM_ERROR_HANDLER();
+    #define MEM_IN_FLASH(_pnt, _size)                    ((uint32_t)_pnt >= MEM_FLASH_START && ((uint32_t)_pnt + _size) < MEM_FLASH_END)
+    #define MEM_IN_RAM(_pnt, _size)                        ((uint32_t)_pnt >= MEM_RAM_START && ((uint32_t)_pnt + _size) < MEM_RAM_END)
+    #define MEM_HAS_NOT_OVERLAP(_pnt1, _pnt2, _size)    (((uint32_t)_pnt1 < (uint32_t)_pnt2) ? (((uint32_t)_pnt1 + _size) <= (uint32_t)_pnt2) : (((uint32_t)_pnt2 + _size) <= (uint32_t)_pnt1))
 
-	#define MEM_IN_FLASH_OR_RAM(_pnt, _size)			(MEM_IN_FLASH(_pnt, _size) || MEM_IN_RAM(_pnt, _size))
+    #define MEM_IN_FLASH_OR_RAM(_pnt, _size)            (MEM_IN_FLASH(_pnt, _size) || MEM_IN_RAM(_pnt, _size))
 
-	#define MEM_ERROR_HANDLER()							Error_Handler()
+    #define MEM_ERROR_HANDLER()                            Error_Handler()
 #else
-	#define MEM_ASSERT(_con)
-	#define MEM_IN_RAM(_pnt, _size)						(true)
+    #define MEM_ASSERT(_con)
+    #define MEM_IN_RAM(_pnt, _size)                        (true)
 #endif
 
 
@@ -53,23 +53,23 @@
 ///< Make address to aligned address (upward rounding to word aligned)
 // TODO: It is architecture dependent
 #if defined(__MINGW32__) && defined(__MINGW64__)
-	/* MinGW32 + MinGW64 */
-	/* Address size: 8bit */
-	#define MEM_ALIGN_SIZE		((uint8_t)8)
-	typedef uint64_t Address_t;
+    /* MinGW32 + MinGW64 */
+    /* Address size: 8bit */
+    #define MEM_ALIGN_SIZE        ((uint8_t)8)
+    typedef uint64_t Address_t;
 #elif defined(__MINGW32__)
-	/* Address size: 4bit */
-	#define MEM_ALIGN_SIZE		((uint8_t)4)
-	typedef uint32_t Address_t;
+    /* Address size: 4bit */
+    #define MEM_ALIGN_SIZE        ((uint8_t)4)
+    typedef uint32_t Address_t;
 #else
-	/* Address size: 4bit */
-	#define MEM_ALIGN_SIZE		((uint8_t)4)
-	typedef uint32_t Address_t;
+    /* Address size: 4bit */
+    #define MEM_ALIGN_SIZE        ((uint8_t)4)
+    typedef uint32_t Address_t;
 #endif
 
 
-#define MEM_MAKE_ALIGNED_ADDRESS(_address)				\
-		(((Address_t)_address % MEM_ALIGN_SIZE) ? ((Address_t)_address + (MEM_ALIGN_SIZE - ((Address_t)_address % MEM_ALIGN_SIZE))) : ((Address_t)_address))
+#define MEM_MAKE_ALIGNED_ADDRESS(_address)                \
+        (((Address_t)_address % MEM_ALIGN_SIZE) ? ((Address_t)_address + (MEM_ALIGN_SIZE - ((Address_t)_address % MEM_ALIGN_SIZE))) : ((Address_t)_address))
 
 
 

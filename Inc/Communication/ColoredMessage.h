@@ -1,12 +1,12 @@
 /*
- *		ColoredMessage.h
- *		Created on:		2016-09-10
- *		Author: 		Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Formatted (colored / backgroundcolor) message
- *		Target:			STM32Fx
- *		Version:		v4
- *		Last modified:	2016-09-28
+ *        ColoredMessage.h
+ *        Created on:        2016-09-10
+ *        Author:         Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        Formatted (colored / backgroundcolor) message
+ *        Target:            STM32Fx
+ *        Version:        v4
+ *        Last modified:    2016-09-28
  */
 
 #ifndef COLOREDMESSAGE_H_
@@ -28,8 +28,8 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define COLOREDMESSAGE_STANDARD_TEXT_COLOR					((MsgColors_t)Color_Black)
-#define COLOREDMESSAGE_STANDARD_BACKGROUND_COLOR			((MsgColors_t)Color_White)
+#define COLOREDMESSAGE_STANDARD_TEXT_COLOR                    ((MsgColors_t)Color_Black)
+#define COLOREDMESSAGE_STANDARD_BACKGROUND_COLOR            ((MsgColors_t)Color_White)
 
 
 
