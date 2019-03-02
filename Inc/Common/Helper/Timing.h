@@ -1,16 +1,14 @@
 /*
- *		Timing.h
- *		Created on:		2018-01-21
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
- *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2018-01-21
+ *    Timing.h
+ *    Created on:   2018-01-21
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       STM32Fx
  */
 
-#ifndef INC_COMMON_HELPER_TIMING_H_
-#define INC_COMMON_HELPER_TIMING_H_
+#ifndef TIMING_H_
+#define TIMING_H_
 
 
 
@@ -47,4 +45,4 @@ void DelayMs(uint32_t ms);
 
 
 
-#endif /* INC_COMMON_HELPER_TIMING_H_ */
+#endif /* TIMING_H_ */

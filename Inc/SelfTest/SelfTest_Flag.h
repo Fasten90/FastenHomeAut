@@ -1,16 +1,14 @@
 /*
- *		SelfTest_Flag.h
- *		Created on:		2018-01-24
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
- *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2018-01-24
+ *    SelfTest_Flag.h
+ *    Created on:   2018-01-24
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       STM32Fx
  */
 
-#ifndef INC_SELFTEST_SELFTEST_FLAG_H_
-#define INC_SELFTEST_SELFTEST_FLAG_H_
+#ifndef SELFTEST_FLAG_H_
+#define SELFTEST_FLAG_H_
 
 
 
@@ -47,4 +45,4 @@ bool SelfTest_Flag_Test(void);
 
 
 
-#endif /* INC_SELFTEST_SELFTEST_FLAG_H_ */
+#endif /* SELFTEST_FLAG_H_ */

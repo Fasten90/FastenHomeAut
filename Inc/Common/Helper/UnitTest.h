@@ -1,12 +1,10 @@
 /*
- *		UnitTest.h
- *		Created on:		2016-11-24
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		UnitTest module
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2016-11-24
+ *    UnitTest.h
+ *    Created on:   2016-11-24
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     UnitTest module
+ *    Target:       STM32Fx
  */
 
 #ifndef UNITTEST_H_
@@ -22,23 +20,23 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * (1)	SW will pause, when a UnitTest result be failed
- * (0)	SW will continue the run (and printed the condition)
+ * (1)    SW will pause, when a UnitTest result be failed
+ * (0)    SW will continue the run (and printed the condition)
  */
 #ifndef UNITTEST_PAUSE_WHEN_ERROR
-	#define UNITTEST_PAUSE_WHEN_ERROR					(0)
+    #define UNITTEST_PAUSE_WHEN_ERROR                    (0)
 #endif
 
 /**
- * (1)	Print assert message (very useful for finding bug)
- * (0)	Do not print assert message
+ * (1)    Print assert message (very useful for finding bug)
+ * (0)    Do not print assert message
  */
 #ifndef UNITTEST_PRINT_ASSERT
-	#define UNITTEST_PRINT_ASSERT						(1)
+    #define UNITTEST_PRINT_ASSERT                        (1)
 #endif
 
 // if con == true, is valid
-#define UNITTEST_ASSERT(con, errorstring)			UnitTest_CheckResult(con, #con, errorstring, __LINE__)
+#define UNITTEST_ASSERT(con, errorstring)            UnitTest_CheckResult(con, #con, errorstring, __LINE__)
 
 
 

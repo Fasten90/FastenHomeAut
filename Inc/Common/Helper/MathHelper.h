@@ -1,12 +1,10 @@
 /*
- *		Calc.h
- *		Created on:		2016-09-26
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Calculate / Math functions
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-06-02
+ *    Calc.h
+ *    Created on:   2016-09-26
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Calculate 
+ *    Target:       STM32Fx
  */
 
 #ifndef MATHHELPER_H_
@@ -18,13 +16,13 @@
 
 
 /*------------------------------------------------------------------------------
- *	Macros
+ *    Macros
  *----------------------------------------------------------------------------*/
 
-#define MAX(a, b)			(((a) > (b)) ? (a) : (b))
-#define MIN(a, b)			(((a) < (b)) ? (a) : (b))
-#define ABS(x)				(((x) < 0) ? -(x) : (x))	/* UNSAFE */
-#define ABSDIFF(a, b)		((a) > (b) ? (a) - (b) : (b) - (a))
+#define MAX(a, b)            (((a) > (b)) ? (a) : (b))
+#define MIN(a, b)            (((a) < (b)) ? (a) : (b))
+#define ABS(x)                (((x) < 0) ? -(x) : (x))    /* UNSAFE */
+#define ABSDIFF(a, b)        ((a) > (b) ? (a) - (b) : (b) - (a))
 
 
 #ifndef SET_BIT
@@ -38,14 +36,14 @@
 
 
 // float       pow( float base, float exp );
-#define pow(_base, _exp)	power(_base, _exp)
+#define pow(_base, _exp)    power(_base, _exp)
 
 
-#define rand()				(random())
+#define rand()                (random())
 
 
 #ifndef RAND_MAX
-#define RAND_MAX			(0x7FFF)
+#define RAND_MAX            (0x7FFF)
 #endif
 
 

@@ -1,16 +1,14 @@
 /*
- *		SelfTest_Ram.h
- *		Created on:		2018-01-27
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
- *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2018-01-27
+ *    SelfTest_Ram.h
+ *    Created on:   2018-01-27
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       STM32Fx
  */
 
-#ifndef INC_SELFTEST_SELFTEST_RAM_H_
-#define INC_SELFTEST_SELFTEST_RAM_H_
+#ifndef SELFTEST_RAM_H_
+#define SELFTEST_RAM_H_
 
 
 
@@ -47,4 +45,4 @@ bool SelfTest_Ram_Test(void);
 
 
 
-#endif /* INC_SELFTEST_SELFTEST_RAM_H_ */
+#endif /* SELFTEST_RAM_H_ */

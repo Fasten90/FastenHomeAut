@@ -80,7 +80,7 @@
  *
  * For common IO-s:
  * - Send IO pin initialization command:
- *    \code	ioinit <port><pin> <input/output> \endcode
+ *    \code    ioinit <port><pin> <input/output> \endcode
  *   + Example: \code ioinit a1 input  \endcode or \code ioinit b13 output \endcode
  * - Send read / write command:
  *   + Read pin: \code ioin <port><pin> \endcode
@@ -97,7 +97,7 @@
  *     - Read adc values time of 1 second (1000 millisecond)
  *
  * For DAC-s (Digital-Analog Converter):
- * - \note Not available in all STM32F4xx!
+ * - @note Not available in all STM32F4xx!
  * - Send: \code dac <1/2> <voltage with decimal point> \endcode
  *   + Example: \code dac 1 3.0 \endcode
  *   + 1. = A4 pin
@@ -153,7 +153,7 @@
  * - Enjoy it
  *
  *
- * \author	Vizi Gábor
+ * \author    Vizi Gábor
  *
  * <fasten90@gmail.com>
  * <vizi.gabor90@gmail.com>
@@ -217,8 +217,8 @@
  *----------------------------------------------------------------------------*/
 
 #if defined(CONFIG_MODULE_ESCAPEBROWSER_ENABLE)
-	static const char * const strList[] = { "1", "2", "3", NULL };
-	static char strBuffer[300] = { 0 };
+    static const char * const strList[] = { "1", "2", "3", NULL };
+    static char strBuffer[300] = { 0 };
 #endif
 
 
@@ -243,258 +243,258 @@ bool SelfTest_FailedRamTest = false;
 // TODO: Put to other
 static const char * GetStrListElement(uint8_t i)
 {
-	const char *str = NULL;
+    const char *str = NULL;
 
-	if (i < NUM_OF(strList))
-	{
-		str =  strList[i];
-	}
+    if (i < NUM_OF(strList))
+    {
+        str =  strList[i];
+    }
 
-	return str;
+    return str;
 }
 #endif
 
 
 
 /**
- * \brief	Main function
+ * @brief    Main function
  */
 int main(void)
 {
-	/* MCU Configuration----------------------------------------------------------*/
+    /* MCU Configuration----------------------------------------------------------*/
 
-	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-	HAL_Init();
+    /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+    HAL_Init();
 
-	/* Configure the system clock */
-	SystemClock_Config();
+    /* Configure the system clock */
+    SystemClock_Config();
 
 
 #ifdef CONFIG_MODULE_SELFTEST_ENABLE
-	// Stack use
-	volatile uint8_t selfTestStackStartVariable = 0;
-	SelfTest_StackStartAddress = (void *)&selfTestStackStartVariable;
+    // Stack use
+    volatile uint8_t selfTestStackStartVariable = 0;
+    SelfTest_StackStartAddress = (void *)&selfTestStackStartVariable;
 
-	// RAM test
-	if (!SelfTest_Ram_Test())
-	{
-		// Failed RAM test
-		SelfTest_FailedRamTest = true;
-	}
+    // RAM test
+    if (!SelfTest_Ram_Test())
+    {
+        // Failed RAM test
+        SelfTest_FailedRamTest = true;
+    }
 
-	// Flag test
-	SelfTest_Flag_Test();
+    // Flag test
+    SelfTest_Flag_Test();
 #endif
 
 
 #ifdef CONFIG_PLATFORM_PC_WINDOWS
-	// Windows functions - Run unittest immediately
+    // Windows functions - Run unittest immediately
 
 #ifdef CONFIG_MODULE_UNITTEST_ENABLE
-	char responseBuffer[2048];
-	CmdH_SetResponse(responseBuffer, 2048);
-	// TODO: Check UnitTestList_Run return value
+    char responseBuffer[2048];
+    CmdH_SetResponse(responseBuffer, 2048);
+    // TODO: Check UnitTestList_Run return value
 
-	uint32_t utResult = UnitTestList_Run();
+    uint32_t utResult = UnitTestList_Run();
 
 #if (CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE == 1)
-	if (utResult != 0)
-	{
-		printf("%s\r\n", responseBuffer);
-	}
-	else
-	{
-		printf("%s\r\n", "Every test has run successfully!");
-	}
-	// Return with UnitTest result:
-	exit(utResult);
+    if (utResult != 0)
+    {
+        printf("%s\r\n", responseBuffer);
+    }
+    else
+    {
+        printf("%s\r\n", "Every test has run successfully!");
+    }
+    // Return with UnitTest result:
+    exit(utResult);
 #else
-	// Print result
-	printf("%s\r\n", responseBuffer); /* Clang generated compile warning when "printf(responseBuffer);" used */
-	printf("Unit test result: %d\r\n", utResult);
+    // Print result
+    printf("%s\r\n", responseBuffer); /* Clang generated compile warning when "printf(responseBuffer);" used */
+    printf("Unit test result: %d\r\n", utResult);
 #endif
 #endif /* #ifdef CONFIG_PLATFORM_PC_WINDOWS */
 
-	// STDIN
-	UART_HandleTypeDef Debug_UartHandle;
-	HAL_UART_Init(&Debug_UartHandle);
+    // STDIN
+    UART_HandleTypeDef Debug_UartHandle;
+    HAL_UART_Init(&Debug_UartHandle);
 #endif /* #ifdef CONFIG_PLATFORM_PC_WINDOWS */
 
 
 #ifdef CONFIG_MODULE_MEASUREMENTTIMER_ENABLE
-	// MeasurementTimer
-	MeasurementTimer_Init();
-	MeasurementTimer_StartMeasurement();
+    // MeasurementTimer
+    MeasurementTimer_Init();
+    MeasurementTimer_StartMeasurement();
 #endif
 
 
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
-	// EventLog
-	EventLog_Init();
+    // EventLog
+    EventLog_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
-	// EventHandler
-	EventHandler_Init();
+    // EventHandler
+    EventHandler_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_IO_ENABLE
-	// LED
-	IO_Init();
+    // LED
+    IO_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
-	// Button
-	BUTTON_Init();
+    // Button
+    BUTTON_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_COMMON_UART_ENABLE
-	CommonUART_Init();
+    CommonUART_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_COMMON_DAC_ENABLE
-	// Common DAC
-	CommonDAC_Init();
+    // Common DAC
+    CommonDAC_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
-	// Common ADC
-	CommonADC_Init();
-	// Test, blocking
-	//CommonADC_Test();
+    // Common ADC
+    CommonADC_Init();
+    // Test, blocking
+    //CommonADC_Test();
 #endif
 
 
 #ifdef CONFIG_MODULE_ADC_ENABLE
-	// ADC
-	ADC_Init();
+    // ADC
+    ADC_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_COMMON_PWM_ENABLE
-	// Common PWM Initialize
-	CommonPWM_Init();
+    // Common PWM Initialize
+    CommonPWM_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_COMMONSPI_ENABLE
-	// Common SPI
-	CommonSPI_Init();
+    // Common SPI
+    CommonSPI_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
-	// Remote car motors
-	Motor_Init();
+    // Remote car motors
+    Motor_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
-	// Display
-	Display_SSD1306_Init();
-	#ifdef CONFIG_FUNCTION_DISPLAY_MENU
-	Logic_Display_Init();
-	#endif
+    // Display
+    Display_SSD1306_Init();
+    #ifdef CONFIG_FUNCTION_DISPLAY_MENU
+    Logic_Display_Init();
+    #endif
 #endif
 
 
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
-	// DebugUart initializing
-	// \note	Be careful, Terminal need to initializing after this
-	DebugUart_Init();
+    // DebugUart initializing
+    // @note    Be careful, Terminal need to initializing after this
+    DebugUart_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
-	// Bluetooth module initializing
-	Bluetooth_HC05_Init();
+    // Bluetooth module initializing
+    Bluetooth_HC05_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
-	// CommandHandler initialization
-	CmdH_Init();
+    // CommandHandler initialization
+    CmdH_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
-	GlobVarH_Init();
+    GlobVarH_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_TERMINAL_ENABLE
-	// Terminal init
-	Terminal_Init();
+    // Terminal init
+    Terminal_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-	// ESP8266
-	ESP8266_Init();
+    // ESP8266
+    ESP8266_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_RTC_ENABLE
-	// RTC
-	RTC_Init();
+    // RTC
+    RTC_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
-	// Watchdog
-	Watchdog_Init();
+    // Watchdog
+    Watchdog_Init();
 #endif
 
 
 #if defined(CONFIG_MODULE_TERMINAL_ENABLE) && !defined(CONFIG_MODULE_TASKHANDLER_ENABLE) && !defined(CONFIG_USE_FREERTOS)
-	// Terminal infinite loop, if not used TaskHandler and FreeRTOS
-	Terminal_CheckCommand();
+    // Terminal infinite loop, if not used TaskHandler and FreeRTOS
+    Terminal_CheckCommand();
 #endif
 
 
 #ifdef CONFIG_MODULE_MEASUREMENTTIMER_ENABLE
-	// MeasurementTimer
-	uint32_t initTimeInUs = MeasurementTimer_GetTime();
-	uprintf("Init time: %u[us], %u[ms]", initTimeInUs, initTimeInUs/1000);
+    // MeasurementTimer
+    uint32_t initTimeInUs = MeasurementTimer_GetTime();
+    uprintf("Init time: %u[us], %u[ms]", initTimeInUs, initTimeInUs/1000);
 #endif
 
 
 #if defined(CONFIG_MODULE_ESCAPEBROWSER_ENABLE)
-	EscapeBrowser_Init(GetStrListElement);
+    EscapeBrowser_Init(GetStrListElement);
 
-	EscapeBrowser_PrintNewLineList(strBuffer);
-	DebugUart_SendLineBlocked(strBuffer);
+    EscapeBrowser_PrintNewLineList(strBuffer);
+    DebugUart_SendLineBlocked(strBuffer);
 #endif
 
 
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
-	// Task handler
-	TaskHandler_Init();
+    // Task handler
+    TaskHandler_Init();
 
 
-	// Run task scheduler
-	TaskHandler_Scheduler();
+    // Run task scheduler
+    TaskHandler_Scheduler();
 
-	// TaskHandler never return here!!
+    // TaskHandler never return here!!
 #endif
 
 
 #ifdef CONFIG_USE_FREERTOS
-	// FreeRTOS scheduler
-	vTaskStartScheduler();
+    // FreeRTOS scheduler
+    vTaskStartScheduler();
 #endif
 
 
-	// !! Never reach this code !!
-	Error_Handler();
+    // !! Never reach this code !!
+    Error_Handler();
 
-}	// End of main
+}    // End of main
 
 
 
@@ -534,33 +534,33 @@ void SystemClock_Config(void)
 void SystemClock_Config(void)
 {
 
-	RCC_OscInitTypeDef RCC_OscInitStruct;
-	RCC_ClkInitTypeDef RCC_ClkInitStruct;
+    RCC_OscInitTypeDef RCC_OscInitStruct;
+    RCC_ClkInitTypeDef RCC_ClkInitStruct;
 
-	__PWR_CLK_ENABLE();
+    __PWR_CLK_ENABLE();
 
-	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
-
-
-	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-	RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-	RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-	HAL_RCC_OscConfig(&RCC_OscInitStruct);
+    __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
 
-	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_SYSCLK;
-	RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_MSI;
-	RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-	RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
-	RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-	HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0);
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+    RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+    RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+    HAL_RCC_OscConfig(&RCC_OscInitStruct);
 
-	HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
 
-	HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
+    RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_SYSCLK;
+    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_MSI;
+    RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+    RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+    HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0);
+
+    HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
+
+    HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
 }
-#endif	// #ifdef CONFIG_USE_PANEL_NODEMEDIUM
+#endif    // #ifdef CONFIG_USE_PANEL_NODEMEDIUM
 
 
 
@@ -570,15 +570,15 @@ void SystemClock_Config(void)
  */
 void SystemClock_Config(void)
 {
-	return;
+    return;
 }
 #endif
 
 
 
 #if defined(CONFIG_USE_PANEL_HOMEAUTCENTERPANEL) \
-	|| defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) \
-	|| defined(CONFIG_USE_PANEL_NUCLEOF401RE)
+    || defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) \
+    || defined(CONFIG_USE_PANEL_NUCLEOF401RE)
 /**
  * System Clock Configuration
  */
@@ -602,7 +602,7 @@ void SystemClock_Config(void)
   HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
 }
-#endif	// #ifdef CONFIG_USE_PANEL_...
+#endif    // #ifdef CONFIG_USE_PANEL_...
 
 
 
@@ -612,58 +612,58 @@ void SystemClock_Config(void)
 
 void vApplicationTickHook( void )
 {
-	// Not used
+    // Not used
 }
 
 /*-----------------------------------------------------------*/
 
 void vApplicationMallocFailedHook( void )
 {
-	/* vApplicationMallocFailedHook() will only be called if
-	configUSE_MALLOC_FAILED_HOOK is set to 1 in FreeRTOSConfig.h.  It is a hook
-	function that will get called if a call to pvPortMalloc() fails.
-	pvPortMalloc() is called internally by the kernel whenever a task, queue,
-	timer or semaphore is created.  It is also called by various parts of the
-	demo application.  If heap_1.c or heap_2.c are used, then the size of the
-	heap available to pvPortMalloc() is defined by configTOTAL_HEAP_SIZE in
-	FreeRTOSConfig.h, and the xPortGetFreeHeapSize() API function can be used
-	to query the size of free heap space that remains (although it does not
-	provide information on how the remaining heap might be fragmented). */
-	taskDISABLE_INTERRUPTS();
-	//for( ;; );
-	Error_Handler();
+    /* vApplicationMallocFailedHook() will only be called if
+    configUSE_MALLOC_FAILED_HOOK is set to 1 in FreeRTOSConfig.h.  It is a hook
+    function that will get called if a call to pvPortMalloc() fails.
+    pvPortMalloc() is called internally by the kernel whenever a task, queue,
+    timer or semaphore is created.  It is also called by various parts of the
+    demo application.  If heap_1.c or heap_2.c are used, then the size of the
+    heap available to pvPortMalloc() is defined by configTOTAL_HEAP_SIZE in
+    FreeRTOSConfig.h, and the xPortGetFreeHeapSize() API function can be used
+    to query the size of free heap space that remains (although it does not
+    provide information on how the remaining heap might be fragmented). */
+    taskDISABLE_INTERRUPTS();
+    //for( ;; );
+    Error_Handler();
 }
 
 /*-----------------------------------------------------------*/
 
 void vApplicationIdleHook( void )
 {
-	/* vApplicationIdleHook() will only be called if configUSE_IDLE_HOOK is set
-	to 1 in FreeRTOSConfig.h.  It will be called on each iteration of the idle
-	task.  It is essential that code added to this hook function never attempts
-	to block in any way (for example, call xQueueReceive() with a block time
-	specified, or call vTaskDelay()).  If the application makes use of the
-	vTaskDelete() API function (as this demo application does) then it is also
-	important that vApplicationIdleHook() is permitted to return to its calling
-	function, because it is the responsibility of the idle task to clean up
-	memory allocated by the kernel to any task that has since been deleted. */
+    /* vApplicationIdleHook() will only be called if configUSE_IDLE_HOOK is set
+    to 1 in FreeRTOSConfig.h.  It will be called on each iteration of the idle
+    task.  It is essential that code added to this hook function never attempts
+    to block in any way (for example, call xQueueReceive() with a block time
+    specified, or call vTaskDelay()).  If the application makes use of the
+    vTaskDelete() API function (as this demo application does) then it is also
+    important that vApplicationIdleHook() is permitted to return to its calling
+    function, because it is the responsibility of the idle task to clean up
+    memory allocated by the kernel to any task that has since been deleted. */
 }
 
 /*-----------------------------------------------------------*/
 
 void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName )
 {
-	( void ) pcTaskName;
-	( void ) pxTask;
+    ( void ) pcTaskName;
+    ( void ) pxTask;
 
-	/* Run time stack overflow checking is performed if
-	configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.  This hook
-	function is called if a stack overflow is detected. */
-	taskDISABLE_INTERRUPTS();
-	//for( ;; );
-	Error_Handler();
+    /* Run time stack overflow checking is performed if
+    configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.  This hook
+    function is called if a stack overflow is detected. */
+    taskDISABLE_INTERRUPTS();
+    //for( ;; );
+    Error_Handler();
 }
 
 /*-----------------------------------------------------------*/
 
-#endif	// #ifdef CONFIG_USE_FREERTOS
+#endif    // #ifdef CONFIG_USE_FREERTOS

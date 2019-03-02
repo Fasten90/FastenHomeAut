@@ -1,12 +1,10 @@
 /*
- *		Watchdog.h
- *		Created on:		2017-02-06
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Watchdog
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-02-06
+ *    Watchdog.h
+ *    Created on:   2017-02-06
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Watchdog
+ *    Target:       STM32Fx
  */
 
 #ifndef WATCHDOG_H_
@@ -54,7 +52,7 @@ void Watchdog_Clear(void);
 // If Watchdog not enabled
 #define Watchdog_Clear()
 
-#endif	// #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
+#endif    // #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
 
 
 #endif /* WATCHDOG_H_ */

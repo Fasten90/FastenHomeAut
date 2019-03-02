@@ -1,12 +1,10 @@
 /*
- *		SelfTest_Flag.c
- *		Created on:		2018-01-24
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
- *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2018-01-24
+ *    SelfTest_Flag.c
+ *    Created on:   2018-01-24
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       STM32Fx
  */
 
 
@@ -47,128 +45,128 @@
 
 #ifdef CONFIG_MODULE_SELFTEST_ENABLE
 /**
- * \brief  SelfTest_Flag Test
+ * @brief  SelfTest_Flag Test
  */
 bool SelfTest_Flag_Test(void)
 {
-	APSR_Type apsr;
-	uint8_t successfulTest = 0;
-	const uint8_t testCount = 5;
+    APSR_Type apsr;
+    uint8_t successfulTest = 0;
+    const uint8_t testCount = 5;
 
-	/*
-	    core_m0.h
-	        APSR_Type
-	        cmsis_armcc.h
-	            __STATIC_INLINE uint32_t __get_APSR(void)
-	*/
+    /*
+        core_m0.h
+            APSR_Type
+            cmsis_armcc.h
+                __STATIC_INLINE uint32_t __get_APSR(void)
+    */
 
-	/*		Flag Test		*/
-	//uint32_t reg = __get_APSR();
+    /*        Flag Test        */
+    //uint32_t reg = __get_APSR();
 
-	/*
-	volatile uint8_t a = 5;
-	volatile uint8_t b = 4;
-	b++;
-	volatile uint8_t c = a-b;
-	*/
-
-
-	// Wrong:
-	/*
-	register volatile uint8_t a = 1;
-	a--;
-
-	apsr.w = __get_APSR();
-
-	if (apsr.b.Z == 1)
-	{
-		uprintf("Zero flag is 1\r\n");
-	}
-
-	uprintf("a value: %u\r\n", a);
-	*/
+    /*
+    volatile uint8_t a = 5;
+    volatile uint8_t b = 4;
+    b++;
+    volatile uint8_t c = a-b;
+    */
 
 
-	/* Signed adding overflow (add two positive signed number, which will overflow (result is a negative value)) */
+    // Wrong:
+    /*
+    register volatile uint8_t a = 1;
+    a--;
 
-	volatile int32_t add1 = 0x7FFFFFF0U;
-	volatile int32_t add2 = 0x000000FFU;
-	// cppcheck-suppress integerOverflow
-	volatile uint32_t addres = add1 + add2;
+    apsr.w = __get_APSR();
 
-	apsr.w = __get_APSR();
+    if (apsr.b.Z == 1)
+    {
+        uprintf("Zero flag is 1\r\n");
+    }
 
-	if (apsr.b.V == 1)
-	{
-		//uprintf("Overflow flag is 1\r\n");
-		successfulTest++;
-	}
-
-	//uprintf("Addition value: %u\r\n", addres);
-	(void)addres;
+    uprintf("a value: %u\r\n", a);
+    */
 
 
-	/* Unsigned adding overflow */
+    /* Signed adding overflow (add two positive signed number, which will overflow (result is a negative value)) */
 
-	volatile uint32_t overflowval = 0xFFFFFFFFU;
-	overflowval++;
+    volatile int32_t add1 = 0x7FFFFFF0U;
+    volatile int32_t add2 = 0x000000FFU;
+    // cppcheck-suppress integerOverflow
+    volatile uint32_t addres = add1 + add2;
 
-	apsr.w = __get_APSR();
+    apsr.w = __get_APSR();
 
-	if ((apsr.b.C == 1) && (apsr.b.Z == 1))
-	{
-		//uprintf("Carry and Zero flag is 1\r\n");
-		successfulTest++;
-	}
+    if (apsr.b.V == 1)
+    {
+        //uprintf("Overflow flag is 1\r\n");
+        successfulTest++;
+    }
 
-	// cppcheck-suppress knownConditionTrueFalse
-	if (overflowval == 0)
-	{
-		successfulTest++;
-	}
-
-	//uprintf("overflowval value: %u\r\n", overflowval);
+    //uprintf("Addition value: %u\r\n", addres);
+    (void)addres;
 
 
-	/* Too large multiplex */
+    /* Unsigned adding overflow */
 
-	volatile uint32_t mul1 = 0xF0000000U;
-	volatile uint32_t mul2 = 0xF0000000U;
-	volatile uint32_t mulres = mul1 * mul2;
-	/* not overflowed, but why? result is 0 */
+    volatile uint32_t overflowval = 0xFFFFFFFFU;
+    overflowval++;
 
-	apsr.w = __get_APSR();
+    apsr.w = __get_APSR();
 
-	if (apsr.b.Z == 1)
-	{
-		//uprintf("Zero flag is 1\r\n");
-		successfulTest++;
-	}
+    if ((apsr.b.C == 1) && (apsr.b.Z == 1))
+    {
+        //uprintf("Carry and Zero flag is 1\r\n");
+        successfulTest++;
+    }
 
-	//uprintf("Multiplex value: %u\r\n", mulres);
-	(void)mulres;
+    // cppcheck-suppress knownConditionTrueFalse
+    if (overflowval == 0)
+    {
+        successfulTest++;
+    }
 
-
-	/* Underflow subtraction */
-
-	volatile uint32_t sub1 = 2;
-	volatile uint32_t sub2 = 4;
-	volatile uint32_t subres = sub1 - sub2;
-
-	apsr.w = __get_APSR();
-
-	if (apsr.b.N == 1)
-	{
-		//uprintf("Negative flag is 1\r\n");
-		successfulTest++;
-	}
-
-	//uprintf("Subtraction value: %u\r\n", subres);
-	(void)subres;
+    //uprintf("overflowval value: %u\r\n", overflowval);
 
 
-	// Return with result (true = successful)
-	return (successfulTest == testCount);
+    /* Too large multiplex */
+
+    volatile uint32_t mul1 = 0xF0000000U;
+    volatile uint32_t mul2 = 0xF0000000U;
+    volatile uint32_t mulres = mul1 * mul2;
+    /* not overflowed, but why? result is 0 */
+
+    apsr.w = __get_APSR();
+
+    if (apsr.b.Z == 1)
+    {
+        //uprintf("Zero flag is 1\r\n");
+        successfulTest++;
+    }
+
+    //uprintf("Multiplex value: %u\r\n", mulres);
+    (void)mulres;
+
+
+    /* Underflow subtraction */
+
+    volatile uint32_t sub1 = 2;
+    volatile uint32_t sub2 = 4;
+    volatile uint32_t subres = sub1 - sub2;
+
+    apsr.w = __get_APSR();
+
+    if (apsr.b.N == 1)
+    {
+        //uprintf("Negative flag is 1\r\n");
+        successfulTest++;
+    }
+
+    //uprintf("Subtraction value: %u\r\n", subres);
+    (void)subres;
+
+
+    // Return with result (true = successful)
+    return (successfulTest == testCount);
 }
 #endif
 

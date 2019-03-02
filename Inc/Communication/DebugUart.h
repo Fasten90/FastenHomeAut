@@ -1,12 +1,10 @@
 /*
- *		DebugUart.h
- *		Created on:		2017-03-15
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Debug uart functions
-  *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-03-15
+ *    DebugUart.h
+ *    Created on:   2017-03-15
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Debug uart functions
+ *    Target:       STM32Fx
  */
 
 #ifndef DEBUGUART_H_
@@ -34,15 +32,15 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define DEBUGUART_TX_BUFFER_SIZE				(256UL)		///< Size of Transmission buffer
-#define DEBUGUART_RX_BUFFER_SIZE				(256UL)		///< Size of Reception buffer
+#define DEBUGUART_TX_BUFFER_SIZE                (256UL)        ///< Size of Transmission buffer
+#define DEBUGUART_RX_BUFFER_SIZE                (256UL)        ///< Size of Reception buffer
 
-#define DEBUGUART_RESPONSE_BUFFER				(256U)
-#define DEBUGUART_PROCESS_BUFFER				(256U)
+#define DEBUGUART_RESPONSE_BUFFER                (256U)
+#define DEBUGUART_PROCESS_BUFFER                (256U)
 
 
 // Variadic macro
-#define DebugUart_Printf(...)					uprintf(__VA_ARGS__)
+#define DebugUart_Printf(...)                    uprintf(__VA_ARGS__)
 
 
 
@@ -91,22 +89,22 @@ void DebugUart_ProcessReceivedCharacters(void);
 
 #ifndef CONFIG_PLATFORM_PC_WINDOWS
 
-#define uprintf(...)							(0)
-#define DebugUart_SendChar(_c)					(putc)_c
-#define DebugUart_SendMessage(_msg)				(void)_msg
-#define DebugUart_SendLine(_msg)				(void)_msg
-#define DebugUart_SendMessageBlocked(_msg)		(void)_msg
+#define uprintf(...)                            (0)
+#define DebugUart_SendChar(_c)                    (putc)_c
+#define DebugUart_SendMessage(_msg)                (void)_msg
+#define DebugUart_SendLine(_msg)                (void)_msg
+#define DebugUart_SendMessageBlocked(_msg)        (void)_msg
 
 #else
 
 #include <stdio.h>
 
-#define uprintf(...)							printf(__VA_ARGS__)
-#define DebugUart_SendChar(_c)					putchar(_c)
-#define DebugUart_SendMessage(_msg)				puts(_msg)
-#define DebugUart_SendLine(_msg)				puts(_msg)
-#define DebugUart_SendMessageBlocked(_msg)		puts(_msg)
-#define DebugUart_SendLineBlocked(_msg)			puts(_msg)
+#define uprintf(...)                            printf(__VA_ARGS__)
+#define DebugUart_SendChar(_c)                    putchar(_c)
+#define DebugUart_SendMessage(_msg)                puts(_msg)
+#define DebugUart_SendLine(_msg)                puts(_msg)
+#define DebugUart_SendMessageBlocked(_msg)        puts(_msg)
+#define DebugUart_SendLineBlocked(_msg)            puts(_msg)
 
 #define DebugUart_StartReceive()
 

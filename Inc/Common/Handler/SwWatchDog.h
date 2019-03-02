@@ -1,16 +1,14 @@
 /*
- *		SwWatchDog.h
- *		Created on:		2017-12-02
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
- *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017-12-02
+ *    SwWatchDog.h
+ *    Created on:   2017-12-02
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       STM32Fx
  */
 
-#ifndef COMMON_HANDLER_SWWATCHDOG_H_
-#define COMMON_HANDLER_SWWATCHDOG_H_
+#ifndef SWWATCHDOG_H_
+#define SWWATCHDOG_H_
 
 
 #include "options.h"
@@ -28,15 +26,15 @@
  *----------------------------------------------------------------------------*/
 
 #ifdef CONFIG_DEBUG_SW_WATCHDOG_ENABLE
-	#define SW_WATCHDOG_INC()				SwWatchDog_Inc()
-	#define SW_WATCHDOG_CHECK()				SwWatchDog_CheckState()
+    #define SW_WATCHDOG_INC()                SwWatchDog_Inc()
+    #define SW_WATCHDOG_CHECK()                SwWatchDog_CheckState()
 #else
-	#define SW_WATCHDOG_INC()
-	#define SW_WATCHDOG_CHECK()
+    #define SW_WATCHDOG_INC()
+    #define SW_WATCHDOG_CHECK()
 #endif
 
 
-#define SW_WATCHDOG_PERIOD					(1050U)					// TaskHandler Sw Watchdog period time [ms]
+#define SW_WATCHDOG_PERIOD                    (1050U)                    // TaskHandler Sw Watchdog period time [ms]
 
 
 
@@ -61,4 +59,4 @@ void SwWatchDog_CheckState(void);
 
 
 
-#endif /* COMMON_HANDLER_SWWATCHDOG_H_ */
+#endif /* SWWATCHDOG_H_ */

@@ -1,12 +1,10 @@
 /*
- *		CommonAdc.h
- *		Created on:		2016-11-21
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Common ADC (Analog-to-Digital Converter)
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2016-12-13
+ *    CommonAdc.h
+ *    Created on:   2016-11-21
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Common ADC 
+ *    Target:       STM32Fx
  */
 
 #ifndef COMMONADC_H_
@@ -39,9 +37,9 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-extern ADC_HandleTypeDef		AdcHandle;
-extern volatile uint32_t		ADC_MeasuredValues[ADC_CHANNEL_NUM];
-extern volatile float			ADC_ConvertedValues[ADC_CHANNEL_NUM];
+extern ADC_HandleTypeDef        AdcHandle;
+extern volatile uint32_t        ADC_MeasuredValues[ADC_CHANNEL_NUM];
+extern volatile float            ADC_ConvertedValues[ADC_CHANNEL_NUM];
 
 
 

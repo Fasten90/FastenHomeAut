@@ -33,8 +33,8 @@
   */ 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F4xx_HAL_CONF_H
-#define __STM32F4xx_HAL_CONF_H
+#ifndef STM32F4XX_HAL_CONF_H_
+#define STM32F4XX_HAL_CONF_H_
 
 #ifdef __cplusplus
  extern "C" {
@@ -154,7 +154,7 @@
 /**
   * @brief This is the HAL system configuration section
   */
-#define  VDD_VALUE		      ((uint32_t)3300U) /*!< Value of VDD in mv */           
+#define  VDD_VALUE              ((uint32_t)3300U) /*!< Value of VDD in mv */           
 #define  TICK_INT_PRIORITY            ((uint32_t)15U)   /*!< tick interrupt priority */            
 #define  USE_RTOS                     0U     
 #define  PREFETCH_ENABLE              1U
@@ -445,7 +445,7 @@
 }
 #endif
 
-#endif /* __STM32F4xx_HAL_CONF_H */
+#endif /* STM32F4XX_HAL_CONF_H_ */
  
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

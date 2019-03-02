@@ -1,16 +1,14 @@
 /*
- *		Bluetooth_HC05.h
- *		Created on:		2017-10-21
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
- *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017-10-21
+ *    Bluetooth_HC05.h
+ *    Created on:   2017-10-21
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       STM32Fx
  */
 
-#ifndef MODULES_BLUETOOTH_HC05_H_
-#define MODULES_BLUETOOTH_HC05_H_
+#ifndef BLUETOOTH_HC05_H_
+#define BLUETOOTH_HC05_H_
 
 
 
@@ -27,11 +25,11 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define BLUETOOTH_RX_BUFFER_SIZE			(100)
-#define BLUETOOTH_TX_BUFFER_SIZE			(100)
+#define BLUETOOTH_RX_BUFFER_SIZE            (100)
+#define BLUETOOTH_TX_BUFFER_SIZE            (100)
 
-#define BLUETOOTH_PROCESS_BUFFER_SIZE		(100)
-#define BLUETOOTH_RESPONSE_BUFFER_SIZE		(100)
+#define BLUETOOTH_PROCESS_BUFFER_SIZE        (100)
+#define BLUETOOTH_RESPONSE_BUFFER_SIZE        (100)
 
 
 
@@ -61,4 +59,4 @@ void Bluetooth_ProcessReceivedCharacters(void);
 
 
 
-#endif /* MODULES_BLUETOOTH_HC05_H_ */
+#endif /* BLUETOOTH_HC05_H_ */

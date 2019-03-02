@@ -1,12 +1,10 @@
 /*
- *		UnitTestList.c
- *		Created on:		2018-03-03
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
- *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2018-03-03
+ *    UnitTestList.c
+ *    Created on:   2018-03-03
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       STM32Fx
  */
 
 
@@ -62,77 +60,77 @@
 
 
 /**
- * \brief  UnitTest - Run
+ * @brief  UnitTest - Run
  */
 uint32_t UnitTestList_Run(void)
 {
-	uint32_t result = 0;
+    uint32_t result = 0;
 
 #ifdef MODULE_STRING_UNITTEST_ENABLE
-	result += StringHelper_UnitTest();
+    result += StringHelper_UnitTest();
 #endif
 
 #ifdef MODULE_DATETIME_UNITTEST_ENABLE
-	result += DateTime_UnitTest();
+    result += DateTime_UnitTest();
 #endif
 
 #ifdef MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
-	result += HomeAutMessage_UnitTest();
+    result += HomeAutMessage_UnitTest();
 #endif
 
 #ifdef MODULE_COMMANDHANDLER_UNITTEST_ENABLE
-	result += CmdH_UnitTest();
+    result += CmdH_UnitTest();
 #endif
 
 #if defined(CONFIG_MODULE_GLOBALVARHANDLER_ENABLE) && defined(MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE)
-	result += GlobVarH_UnitTest();
+    result += GlobVarH_UnitTest();
 #endif
 
 #ifdef MODULE_CIRCULARBUFFER_UNITTEST_ENABLE
-	result += CircularBuffer_UnitTest();
+    result += CircularBuffer_UnitTest();
 #endif
 
 #ifdef MODULE_TASKHANDLER_UNNITEST_ENABLE
-	result += TaskHandler_UnitTest();
+    result += TaskHandler_UnitTest();
 #endif
 
 #if defined(CONFIG_MODULE_EVENTLOG_ENABLE) && defined(MODULE_EVENTLOG_UNITTEST_ENABLE)
-	result += EventLog_UnitTest();
+    result += EventLog_UnitTest();
 #endif
 
 #ifdef MODULE_MATHHELPER_UNITTEST_ENABLE
-	result += MathHelper_UnitTest();
+    result += MathHelper_UnitTest();
 #endif
 
 #ifdef MODULE_MEM_UNITTEST_ENABLE
-	result += MEM_UnitTest();
+    result += MEM_UnitTest();
 #endif
 
 #ifdef MODULE_LINKEDLIST_UNITTEST_ENABLE
-	result += LinkedList_UnitTest();
+    result += LinkedList_UnitTest();
 #endif
 
 #ifdef MODULE_EVENTHANDLER_UNITTEST_ENABLE
-	result += EventHandler_UnitTest();
+    result += EventHandler_UnitTest();
 #endif
 
 #if defined(MODULE_CONVERTTABLE_UNITTEST_ENABLE) && defined(CONFIG_MODULE_CONVERTTABLE_ENABLE)
-	result += ConvertTable_UnitTest();
+    result += ConvertTable_UnitTest();
 #endif
 
 #ifdef MODULE_SECUREDDATATYPES_UNITTEST_ENABLE
-	result += SecuredDataTypes_UnitTest();
+    result += SecuredDataTypes_UnitTest();
 #endif
 
 #ifdef MODULE_QUEUE_UNITTEST_ENABLE
-	result += Queue_UnitTest();
+    result += Queue_UnitTest();
 #endif
 
 #ifdef MODULE_MEASUREMENTTIMER_UNITTEST_ENABLE
-	result += MeasurementTimer_UnitTest();
+    result += MeasurementTimer_UnitTest();
 #endif
 
-	return result;
+    return result;
 }
 
 

@@ -1,16 +1,14 @@
 /*
- *		CommonUART.h
- *		Created on:		2017-12-28
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		HwTester UART function: Communicate on other UART from/to DebugUart
- *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017-12-28
+ *    CommonUART.h
+ *    Created on:   2017-12-28
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     HwTester UART function
+ *    Target:       STM32Fx
  */
 
-#ifndef HWTESTER_COMMONUART_H_
-#define HWTESTER_COMMONUART_H_
+#ifndef COMMONUART_H_
+#define COMMONUART_H_
 
 
 
@@ -26,10 +24,10 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define COMMONUART_TX_BUFFER_SIZE			(255U)
-#define COMMONUART_RX_BUFFER_SIZE			(255U)
-#define COMMONUART_PROCESS_BUFFER_SIZE		(100U)
-#define COMMONUART_RESPONSE_BUFFER_SIZE		(100U)
+#define COMMONUART_TX_BUFFER_SIZE            (255U)
+#define COMMONUART_RX_BUFFER_SIZE            (255U)
+#define COMMONUART_PROCESS_BUFFER_SIZE        (100U)
+#define COMMONUART_RESPONSE_BUFFER_SIZE        (100U)
 
 
 
@@ -58,4 +56,4 @@ void CommonUART_ProcessReceivedCharacters(void);
 
 
 
-#endif /* HWTESTER_COMMONUART_H_ */
+#endif /* COMMONUART_H_ */

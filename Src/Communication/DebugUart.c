@@ -1,12 +1,10 @@
 /*
- *		DebugUart.c
- *		Created on:		2017-03-15
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Debug uart functions
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-03-15
+ *    DebugUart.c
+ *    Created on:   2017-03-15
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Debug uart functions
+ *    Target:       STM32Fx
  */
 
 
@@ -15,7 +13,7 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
-#include <stdarg.h>		// for "..." parameters in printf function
+#include <stdarg.h>        // for "..." parameters in printf function
 
 #include "options.h"
 #include "Communication.h"
@@ -45,29 +43,29 @@ static volatile char DebugUart_TxBuffer[DEBUGUART_TX_BUFFER_SIZE] = { 0 };
 
 static CircularBufferInfo_t DebugUart_TxBuffStruct =
 {
-	.buffer = (char *)DebugUart_TxBuffer,
-	.name = "DebugUart_TxBuffer",
-	.size = DEBUGUART_TX_BUFFER_SIZE
+    .buffer = (char *)DebugUart_TxBuffer,
+    .name = "DebugUart_TxBuffer",
+    .size = DEBUGUART_TX_BUFFER_SIZE
 };
 
 static CircularBufferInfo_t DebugUart_RxBuffStruct =
 {
-	.buffer = (char *)DebugUart_RxBuffer,
-	.name = "DebugUart_RxBuffer",
-	.size = DEBUGUART_RX_BUFFER_SIZE
+    .buffer = (char *)DebugUart_RxBuffer,
+    .name = "DebugUart_RxBuffer",
+    .size = DEBUGUART_RX_BUFFER_SIZE
 };
 
 UART_HandleTypeDef DebugUart_Handle;
 
 UART_Handler_t DebugUart =
 {
-	.huart = &DebugUart_Handle,
-	.tx = &DebugUart_TxBuffStruct,
-	.rx = &DebugUart_RxBuffStruct,
-	.txIsEnabled = true,
-	.rxIsEnalbed = true,
+    .huart = &DebugUart_Handle,
+    .tx = &DebugUart_TxBuffStruct,
+    .rx = &DebugUart_RxBuffStruct,
+    .txIsEnabled = true,
+    .rxIsEnalbed = true,
 #ifdef CONFIG_MODULE_UART_REQUIRE_TASKSCHEDULE_ENABLE
-	.requiredTask = Task_DebugUartProcess,
+    .requiredTask = Task_DebugUartProcess,
 #endif
 };
 
@@ -98,227 +96,227 @@ xSemaphoreHandle DebugUart_Tx_Semaphore = NULL;
 
 
 /**
- * \brief	DebugUart init
+ * @brief    DebugUart init
  */
 void DebugUart_Init(void)
 {
-	CircularBuffer_Init(&DebugUart_RxBuffStruct);
-	CircularBuffer_Init(&DebugUart_TxBuffStruct);
+    CircularBuffer_Init(&DebugUart_RxBuffStruct);
+    CircularBuffer_Init(&DebugUart_TxBuffStruct);
 
-	// Init UART
-	UART_Init(&DebugUart_Handle);
+    // Init UART
+    UART_Init(&DebugUart_Handle);
 
 #ifdef CONFIG_USE_FREERTOS
-	DebugUart_Rx_Semaphore = xSemaphoreCreateBinary();
-	DebugUart_Tx_Semaphore = xSemaphoreCreateBinary();
+    DebugUart_Rx_Semaphore = xSemaphoreCreateBinary();
+    DebugUart_Tx_Semaphore = xSemaphoreCreateBinary();
 
-	if (DebugUart_Rx_Semaphore == NULL || DebugUart_Tx_Semaphore == NULL)
-	{
-		Error_Handler();
-	}
-#endif	//#ifdef CONFIG_USE_FREERTOS
+    if (DebugUart_Rx_Semaphore == NULL || DebugUart_Tx_Semaphore == NULL)
+    {
+        Error_Handler();
+    }
+#endif    //#ifdef CONFIG_USE_FREERTOS
 
-	// Start receive
-	DebugUart_ReceiveEnable();
+    // Start receive
+    DebugUart_ReceiveEnable();
 }
 
 
 
 /**
- * \brief	Send enable
+ * @brief    Send enable
  */
 static inline void DebugUart_SendEnable(void)
 {
-	UART_SendEnable(&DebugUart);
+    UART_SendEnable(&DebugUart);
 }
 
 
 
 /**
- * \brief	Receive enable
+ * @brief    Receive enable
  */
 void DebugUart_ReceiveEnable(void)
 {
-	UART_ReceiveEnable(&DebugUart);
+    UART_ReceiveEnable(&DebugUart);
 
 #ifdef CONFIG_USE_FREERTOS
-	// Wait for semaphore
-	xSemaphoreTake(DebugUart_Rx_Semaphore, (portTickType) 1000);
+    // Wait for semaphore
+    xSemaphoreTake(DebugUart_Rx_Semaphore, (portTickType) 1000);
 #endif
 }
 
 
 
 /**
- * \brief	Send a char on USART
+ * @brief    Send a char on USART
  */
 bool DebugUart_SendChar(char c)
 {
-	bool isOk = false;
+    bool isOk = false;
 
-	if (CircularBuffer_PutChar(&DebugUart_TxBuffStruct, c))
-	{
-		isOk = true;
-		DebugUart_SendEnable();
-	}
+    if (CircularBuffer_PutChar(&DebugUart_TxBuffStruct, c))
+    {
+        isOk = true;
+        DebugUart_SendEnable();
+    }
 
-	return isOk;
+    return isOk;
 }
 
 
 
 /**
- * \brief	Send string on USART
+ * @brief    Send string on USART
  */
 size_t DebugUart_SendMessage(const char *msg)
 {
-	size_t length = 0;
-	size_t putLength;
+    size_t length = 0;
+    size_t putLength;
 
-	length = StringLength(msg);
+    length = StringLength(msg);
 
-	if (length == 0)
-	{
-		return 0;
-	}
+    if (length == 0)
+    {
+        return 0;
+    }
 
-	putLength = CircularBuffer_PutString(&DebugUart_TxBuffStruct, msg, length);
+    putLength = CircularBuffer_PutString(&DebugUart_TxBuffStruct, msg, length);
 
-	if (putLength > 0)
-		DebugUart_SendEnable();
+    if (putLength > 0)
+        DebugUart_SendEnable();
 
-	return putLength;
+    return putLength;
 }
 
 
 
 /**
- * \brief Send message with newline
+ * @brief Send message with newline
  */
 size_t DebugUart_SendLine(const char *msg)
 {
-	size_t length = 0;
+    size_t length = 0;
 
-	// TODO: if (msg != NULL) ?
-	length += DebugUart_SendMessage(msg);
-	length += DebugUart_SendMessage("\r\n");
+    // TODO: if (msg != NULL) ?
+    length += DebugUart_SendMessage(msg);
+    length += DebugUart_SendMessage("\r\n");
 
-	return length;
+    return length;
 }
 
 
 
 /**
- * \brief	Send message with blocking mode
- * 			Use only extreme / important situation!
+ * @brief    Send message with blocking mode
+ *             Use only extreme / important situation!
  */
 size_t DebugUart_SendMessageBlocked(const char * msg)
 {
-	size_t length = StringLength(msg);
+    size_t length = StringLength(msg);
 
-	// TODO: Clear statuses?
-	//UART_ResetStatus(&DebugUart_Handle);
-	//HAL_UART_AbortTransmit_IT()
+    // TODO: Clear statuses?
+    //UART_ResetStatus(&DebugUart_Handle);
+    //HAL_UART_AbortTransmit_IT()
 
-	HAL_UART_Transmit(&DebugUart_Handle, (uint8_t *)msg, length, 1000);
+    HAL_UART_Transmit(&DebugUart_Handle, (uint8_t *)msg, length, 1000);
 
-	return length;
+    return length;
 }
 
 
 
 /**
- * \brief	Send line (blocking mode)
- * \note	Use only important / large message
+ * @brief    Send line (blocking mode)
+ * @note    Use only important / large message
  */
 size_t DebugUart_SendLineBlocked(const char * msg)
 {
-	size_t length = 0;
+    size_t length = 0;
 
-	// TODO: if (msg != NULL) ?
-	length += DebugUart_SendMessageBlocked(msg);
-	length += DebugUart_SendMessageBlocked("\r\n");
+    // TODO: if (msg != NULL) ?
+    length += DebugUart_SendMessageBlocked(msg);
+    length += DebugUart_SendMessageBlocked("\r\n");
 
-	return length;
+    return length;
 }
 
 
 
 /**
- * \brief	Function like printf(); Print on debug serial port
- * 			Copy character to buffer and after that, sending.
+ * @brief    Function like printf(); Print on debug serial port
+ *             Copy character to buffer and after that, sending.
  */
 size_t uprintf(const char *format, ...)
 {
-	// Working in at:
-	char txBuffer[DEBUGUART_TX_BUFFER_SIZE];
+    // Working in at:
+    char txBuffer[DEBUGUART_TX_BUFFER_SIZE];
 
 #ifdef CONFIG_DEBUG_MODE
-	txBuffer[DEBUGUART_TX_BUFFER_SIZE-1] = 0xEF;
+    txBuffer[DEBUGUART_TX_BUFFER_SIZE-1] = 0xEF;
 #endif
 
-	va_list ap;									// argument pointer
-	va_start(ap, format); 						// ap on arg
-	string_printf(txBuffer, format, ap);		// Separate and process
-	va_end(ap);						 			// Cleaning after end
+    va_list ap;                                    // argument pointer
+    va_start(ap, format);                         // ap on arg
+    string_printf(txBuffer, format, ap);        // Separate and process
+    va_end(ap);                                     // Cleaning after end
 
 #ifdef CONFIG_DEBUG_MODE
-	if (txBuffer[DEBUGUART_TX_BUFFER_SIZE-1] != 0xEF) DEBUG_BREAKPOINT();
+    if (txBuffer[DEBUGUART_TX_BUFFER_SIZE-1] != 0xEF) DEBUG_BREAKPOINT();
 #endif
 
-	return DebugUart_SendMessage(txBuffer);		// Send on Usart
+    return DebugUart_SendMessage(txBuffer);        // Send on Usart
 }
 
 
 
 #if !defined(CONFIG_MODULE_TERMINAL_ENABLE)
 /**
- * \brief	Process received characters (if Terminal is not enabled)
+ * @brief    Process received characters (if Terminal is not enabled)
  */
 void DebugUart_ProcessReceivedCharacters(void)
 {
-	char recvBuf[DEBUGUART_PROCESS_BUFFER];
+    char recvBuf[DEBUGUART_PROCESS_BUFFER];
 
-	// Received new character?
-	if (CircularBuffer_IsNotEmpty(DebugUart.rx))
-	{
-		// Copy received message to buffer
-		CircularBuffer_GetString(DebugUart.rx, recvBuf, DEBUGUART_PROCESS_BUFFER);
+    // Received new character?
+    if (CircularBuffer_IsNotEmpty(DebugUart.rx))
+    {
+        // Copy received message to buffer
+        CircularBuffer_GetString(DebugUart.rx, recvBuf, DEBUGUART_PROCESS_BUFFER);
 
-		// Received newline character? (End of command)
-		char * newLinePos = (char *)STRING_FindCharacters((const char *)recvBuf, "\r\n");
-		if (newLinePos != NULL)
-		{
-			// Has newline, process the received command
-			*newLinePos = '\0';
+        // Received newline character? (End of command)
+        char * newLinePos = (char *)STRING_FindCharacters((const char *)recvBuf, "\r\n");
+        if (newLinePos != NULL)
+        {
+            // Has newline, process the received command
+            *newLinePos = '\0';
 
-			if (StringLength(recvBuf) > 0)
-			{
-				char respBuf[DEBUGUART_RESPONSE_BUFFER];
-				respBuf[0] = '\0';
+            if (StringLength(recvBuf) > 0)
+            {
+                char respBuf[DEBUGUART_RESPONSE_BUFFER];
+                respBuf[0] = '\0';
 
-				// Search command and run
-				CmdH_Result_t cmdResult = CmdH_ExecuteCommand(recvBuf, respBuf, DEBUGUART_RESPONSE_BUFFER);
+                // Search command and run
+                CmdH_Result_t cmdResult = CmdH_ExecuteCommand(recvBuf, respBuf, DEBUGUART_RESPONSE_BUFFER);
 
-				CmdH_PrintResult(cmdResult);
+                CmdH_PrintResult(cmdResult);
 
-				DebugUart_SendMessage(respBuf);
-			}
+                DebugUart_SendMessage(respBuf);
+            }
 
-			// Drop processed characters
-			size_t processedLength = (newLinePos - recvBuf) + 1;
-			if (newLinePos != &recvBuf[DEBUGUART_PROCESS_BUFFER-1])
-			{
-				// Check next character is not '\n' or '\r'?
-				if ((*(newLinePos+1) == '\r') || (*(newLinePos+1) == '\n'))
-					processedLength++;
-			}
-			CircularBuffer_DropCharacters(DebugUart.rx, processedLength);
-		}
-	}
+            // Drop processed characters
+            size_t processedLength = (newLinePos - recvBuf) + 1;
+            if (newLinePos != &recvBuf[DEBUGUART_PROCESS_BUFFER-1])
+            {
+                // Check next character is not '\n' or '\r'?
+                if ((*(newLinePos+1) == '\r') || (*(newLinePos+1) == '\n'))
+                    processedLength++;
+            }
+            CircularBuffer_DropCharacters(DebugUart.rx, processedLength);
+        }
+    }
 }
 #endif
 
 
 
-#endif	// #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
+#endif    // #ifdef CONFIG_MODULE_DEBUGUART_ENABLE

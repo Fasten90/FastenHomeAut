@@ -1,12 +1,10 @@
 /*
- *		USART.h
- *		Created on:		2016-01-01
- *		Author: 		Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		USART communication
- *		Target:			STM32Fx
- *		Version:		v4
- *		Last modified:	2016-09-28
+ *    USART.h
+ *    Created on:   2016-01-01
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     USART communication
+ *    Target:       STM32Fx
  */
 
 #ifndef UART_H_
@@ -38,13 +36,13 @@
 
 typedef struct
 {
-	UART_HandleTypeDef * huart;			/* pointer to the HAL_UART struct */
-	CircularBufferInfo_t *tx;
-	CircularBufferInfo_t *rx;			/* transmit (out of STM32) and receive (in to STM32) FIFOs */
-	bool txIsEnabled;
-	bool rxIsEnalbed;
+    UART_HandleTypeDef * huart;            /* pointer to the HAL_UART struct */
+    CircularBufferInfo_t *tx;
+    CircularBufferInfo_t *rx;            /* transmit (out of STM32) and receive (in to STM32) FIFOs */
+    bool txIsEnabled;
+    bool rxIsEnalbed;
 #ifdef CONFIG_MODULE_UART_REQUIRE_TASKSCHEDULE_ENABLE
-	TaskID_t requiredTask;
+    TaskID_t requiredTask;
 #endif
 } UART_Handler_t;
 

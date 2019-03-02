@@ -1,12 +1,10 @@
 /*
- *		Timing.c
- *		Created on:		2018-01-21
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
- *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2018-01-21
+ *    Timing.c
+ *    Created on:   2018-01-21
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       STM32Fx
  */
 
 
@@ -47,15 +45,15 @@
 
 
 /**
- * \brief		Delay (ms)
- * \param[in]	ms	millisecond, which time delay
+ * @brief        Delay (ms)
+ * @param[in]    ms    millisecond, which time delay
  */
 inline void DelayMs(uint32_t ms)
 {
 #ifdef CONFIG_USE_FREERTOS
-	vTaskDelay((TickType_t)(ms/portTICK_PERIOD_MS));
+    vTaskDelay((TickType_t)(ms/portTICK_PERIOD_MS));
 #else
-	HAL_Delay(ms);
+    HAL_Delay(ms);
 #endif
 }
 

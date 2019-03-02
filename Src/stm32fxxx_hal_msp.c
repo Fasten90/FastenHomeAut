@@ -35,11 +35,11 @@
 #include "options.h"
 
 #if defined(CONFIG_PLATFORM_MCU_STM32F0xx)
-	#include "stm32f0xx_hal.h"
+    #include "stm32f0xx_hal.h"
 #elif defined(CONFIG_PLATFORM_MCU_STM32F4xx)
-	#include "stm32f4xx_hal.h"
+    #include "stm32f4xx_hal.h"
 #elif defined(CONFIG_PLATFORM_PC_WINDOWS)
-	#include "windows_hal.h"
+    #include "windows_hal.h"
 #endif
 
 

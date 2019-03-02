@@ -1,12 +1,10 @@
 /*
- *		Debug.c
- *		Created on:		2017-08-17
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Debug print
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-08-17
+ *    Debug.c
+ *    Created on:   2017-08-17
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Debug print
+ *    Target:       STM32Fx
  */
 
 
@@ -59,186 +57,186 @@ extern DebugRecord_t DebugTasks[];
 
 
 /**
- * \brief	Print fix string
+ * @brief    Print fix string
  */
 void Debug_Print(Debug_t debugTask, const char *msg)
 {
-	ASSERT(MEM_IN_FLASH_OR_RAM(msg, 0));
-	if ((debugTask >= Debug_Count) || (msg == NULL))
-		return;
+    ASSERT(MEM_IN_FLASH_OR_RAM(msg, 0));
+    if ((debugTask >= Debug_Count) || (msg == NULL))
+        return;
 
-	if (DebugTasks[debugTask].isEnabled)
-	{
+    if (DebugTasks[debugTask].isEnabled)
+    {
 #ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
-		// Text color
-		char colorMsg[ESCAPE_FORMAT_STANDARD_STRING_MAX_LENGTH * 2] = { 0 };
-		ColoredMessage_SendTextColor(colorMsg, DebugTasks[debugTask].color);
-	#ifdef CONFIG_DEBUG_BACKGROUND_ENABLE
-		if (DebugTasks[debugTask].background)	// TODO: Not good idea. Now, we cannot use "black = 0" color in background
-		{
-			ColoredMessage_SendBackgroundColor(colorMsg, DebugTasks[debugTask].background);
-		}
-	#endif
-		DebugUart_SendMessage(colorMsg);
+        // Text color
+        char colorMsg[ESCAPE_FORMAT_STANDARD_STRING_MAX_LENGTH * 2] = { 0 };
+        ColoredMessage_SendTextColor(colorMsg, DebugTasks[debugTask].color);
+    #ifdef CONFIG_DEBUG_BACKGROUND_ENABLE
+        if (DebugTasks[debugTask].background)    // TODO: Not good idea. Now, we cannot use "black = 0" color in background
+        {
+            ColoredMessage_SendBackgroundColor(colorMsg, DebugTasks[debugTask].background);
+        }
+    #endif
+        DebugUart_SendMessage(colorMsg);
 #endif
 
-		// TaskName
-		uprintf("%s: ", DebugTasks[debugTask].name);
+        // TaskName
+        uprintf("%s: ", DebugTasks[debugTask].name);
 
-		// Send debug message:
-		DebugUart_SendLine(msg);
+        // Send debug message:
+        DebugUart_SendLine(msg);
 
 #ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
-		// Set default color
-		colorMsg[0] = '\0';	// Clear colorMsg
-		ColoredMessage_SendDefaultFormat(colorMsg);
-		DebugUart_SendMessage(colorMsg);
+        // Set default color
+        colorMsg[0] = '\0';    // Clear colorMsg
+        ColoredMessage_SendDefaultFormat(colorMsg);
+        DebugUart_SendMessage(colorMsg);
 #endif
-	}
+    }
 }
 
 
 
 /**
- * \brief	Debug print
- * 			The parameterized debug task is has color and task name, which printed out
+ * @brief    Debug print
+ *             The parameterized debug task is has color and task name, which printed out
  */
 void Debug_Printf(Debug_t debugTask, const char *format, ...)
 {
-	// Check DebugTasks list size
-	ASSERT(MEM_IN_FLASH_OR_RAM(format, 0));
+    // Check DebugTasks list size
+    ASSERT(MEM_IN_FLASH_OR_RAM(format, 0));
 
-	if ((debugTask >= Debug_Count) || (format == NULL))
-		return;
+    if ((debugTask >= Debug_Count) || (format == NULL))
+        return;
 
-	if (DebugTasks[debugTask].isEnabled)
-	{
+    if (DebugTasks[debugTask].isEnabled)
+    {
 #ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
-		// Text color
-		char colorMsg[ESCAPE_FORMAT_STANDARD_STRING_MAX_LENGTH * 2] = { 0 };
-		ColoredMessage_SendTextColor(colorMsg, DebugTasks[debugTask].color);
-	#ifdef CONFIG_DEBUG_BACKGROUND_ENABLE
-		if (DebugTasks[debugTask].background)	// TODO: Not good idea. Now, we cannot use "black = 0" color in background
-		{
-			ColoredMessage_SendBackgroundColor(colorMsg, DebugTasks[debugTask].background);
-		}
-	#endif
-		DebugUart_SendMessage(colorMsg);
+        // Text color
+        char colorMsg[ESCAPE_FORMAT_STANDARD_STRING_MAX_LENGTH * 2] = { 0 };
+        ColoredMessage_SendTextColor(colorMsg, DebugTasks[debugTask].color);
+    #ifdef CONFIG_DEBUG_BACKGROUND_ENABLE
+        if (DebugTasks[debugTask].background)    // TODO: Not good idea. Now, we cannot use "black = 0" color in background
+        {
+            ColoredMessage_SendBackgroundColor(colorMsg, DebugTasks[debugTask].background);
+        }
+    #endif
+        DebugUart_SendMessage(colorMsg);
 #endif
 
-		// TaskName
-		uprintf("%s: ", DebugTasks[debugTask].name);
+        // TaskName
+        uprintf("%s: ", DebugTasks[debugTask].name);
 
-		// Send debug message:
-		// Working in at:
-		char txBuffer[DEBUGUART_TX_BUFFER_SIZE];
+        // Send debug message:
+        // Working in at:
+        char txBuffer[DEBUGUART_TX_BUFFER_SIZE];
 
 #ifdef CONFIG_DEBUG_MODE
-		txBuffer[DEBUGUART_TX_BUFFER_SIZE-1] = 0xEF;
+        txBuffer[DEBUGUART_TX_BUFFER_SIZE-1] = 0xEF;
 #endif
 
-		va_list ap;									// argument pointer
-		va_start(ap, format); 						// ap on arg
-		size_t sentChars = string_printf_safe(txBuffer, DEBUGUART_TX_BUFFER_SIZE-1, format, ap);		// Separate and process
-		va_end(ap);						 			// Cleaning after end
+        va_list ap;                                    // argument pointer
+        va_start(ap, format);                         // ap on arg
+        size_t sentChars = string_printf_safe(txBuffer, DEBUGUART_TX_BUFFER_SIZE-1, format, ap);        // Separate and process
+        va_end(ap);                                     // Cleaning after end
 
-		if (sentChars >= (DEBUGUART_TX_BUFFER_SIZE - 5))
-		{
-			StrCpy(&txBuffer[DEBUGUART_TX_BUFFER_SIZE-1-6], "[...]");
-		}
+        if (sentChars >= (DEBUGUART_TX_BUFFER_SIZE - 5))
+        {
+            StrCpy(&txBuffer[DEBUGUART_TX_BUFFER_SIZE-1-6], "[...]");
+        }
 
 #ifdef CONFIG_DEBUG_MODE
-		if (txBuffer[DEBUGUART_TX_BUFFER_SIZE-1] != 0xEF)
-		{
-			DEBUG_BREAKPOINT();
-		}
+        if (txBuffer[DEBUGUART_TX_BUFFER_SIZE-1] != 0xEF)
+        {
+            DEBUG_BREAKPOINT();
+        }
 #endif
 
-		DebugUart_SendLine(txBuffer);				// Send on Usart
+        DebugUart_SendLine(txBuffer);                // Send on Usart
 
 #ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
-		// Set default color
-		colorMsg[0] = '\0';	// Clear colorMsg
-		ColoredMessage_SendDefaultFormat(colorMsg);
-		DebugUart_SendMessage(colorMsg);
+        // Set default color
+        colorMsg[0] = '\0';    // Clear colorMsg
+        ColoredMessage_SendDefaultFormat(colorMsg);
+        DebugUart_SendMessage(colorMsg);
 #endif
-	}
+    }
 }
 
 
 
 /**
- * \brief	Enable-Disable debug print
+ * @brief    Enable-Disable debug print
  */
 bool Debug_SetEnable(Debug_t task, bool enable)
 {
-	if (task >= Debug_Count)
-		return false;
+    if (task >= Debug_Count)
+        return false;
 
-	DebugTasks[task].isEnabled = enable;
+    DebugTasks[task].isEnabled = enable;
 
-	return true;
+    return true;
 }
 
 
 
 /**
- * \brief	Enable-Disable debug task with name
+ * @brief    Enable-Disable debug task with name
  */
 bool Debug_SetDebugTaskWithName(char *name, bool enable)
 {
-	uint8_t i;
-	bool result = false;
+    uint8_t i;
+    bool result = false;
 
-	for (i = 0; i < Debug_Count; i++)
-	{
-		if (!StrCmp(name, DebugTasks[i].name))
-		{
-			// Found
-			DebugTasks[i].isEnabled = enable;
-			result = true;
+    for (i = 0; i < Debug_Count; i++)
+    {
+        if (!StrCmp(name, DebugTasks[i].name))
+        {
+            // Found
+            DebugTasks[i].isEnabled = enable;
+            result = true;
 
-			break;
-		}
-	}
+            break;
+        }
+    }
 
-	return result;
+    return result;
 }
 
 
 
 /**
- * \brief	Print DebugList Table Header
+ * @brief    Print DebugList Table Header
  */
 static void Debug_PrintDebugListTableHeader(const char * fixheader, char * str, char * header)
 {
-	Table_PrintTableWithBorder(fixheader, str, header, "DebugName", "en");
+    Table_PrintTableWithBorder(fixheader, str, header, "DebugName", "en");
 }
 
 
 
 /**
- * \brief	Print Debug list
+ * @brief    Print Debug list
  */
 void Debug_PrintDebugList(void)
 {
-	uint8_t i;
-	static const char const fixheader[] = "| %20s | %3s |";
-	char str[2 + 20 + 3 + 3 + 2];
-	char header[sizeof(fixheader)];
+    uint8_t i;
+    static const char const fixheader[] = "| %20s | %3s |";
+    char str[2 + 20 + 3 + 3 + 2];
+    char header[sizeof(fixheader)];
 
-	Debug_PrintDebugListTableHeader(fixheader, str, header);
+    Debug_PrintDebugListTableHeader(fixheader, str, header);
 
-	for (i = 0; i < Debug_Count; i++)
-	{
-		usprintf(str, fixheader,
-				DebugTasks[i].name,
-				((DebugTasks[i].isEnabled) ? ("x") : (" ")));
+    for (i = 0; i < Debug_Count; i++)
+    {
+        usprintf(str, fixheader,
+                DebugTasks[i].name,
+                ((DebugTasks[i].isEnabled) ? ("x") : (" ")));
 
-		Table_SendLine(str);
-	}
+        Table_SendLine(str);
+    }
 
-	Debug_PrintDebugListTableHeader(fixheader, str, header);
+    Debug_PrintDebugListTableHeader(fixheader, str, header);
 }
 
 
@@ -253,4 +251,4 @@ void Debug_PrintDebugList(void)
 
 
 
-#endif	// #ifdef CONFIG_MODULE_DEBUG_ENABLE
+#endif    // #ifdef CONFIG_MODULE_DEBUG_ENABLE

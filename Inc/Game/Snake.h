@@ -1,16 +1,14 @@
 /*
- *		Snake.h
- *		Created on:		2017-09-06
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Snake game
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-09-06
+ *    Snake.h
+ *    Created on:   2017-09-06
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Snake game
+ *    Target:       STM32Fx
  */
 
-#ifndef GAME_SNAKE_H_
-#define GAME_SNAKE_H_
+#ifndef SNAKE_H_
+#define SNAKE_H_
 
 
 
@@ -34,18 +32,18 @@
 
 typedef enum
 {
-	Step_Unknown,
+    Step_Unknown,
 
-	// "User buttons"
-	Step_Up,
-	Step_Down,
-	Step_Right,
-	Step_Left,
+    // "User buttons"
+    Step_Up,
+    Step_Down,
+    Step_Right,
+    Step_Left,
 
-	Step_Gift,
+    Step_Gift,
 
-	// Do not use! Only for checking
-	Step_Count
+    // Do not use! Only for checking
+    Step_Count
 } SnakeStep_t;
 
 
@@ -67,4 +65,4 @@ SnakeStep_t Snake_GetLastStep(void);
 
 
 
-#endif /* GAME_SNAKE_H_ */
+#endif /* SNAKE_H_ */

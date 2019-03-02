@@ -1,16 +1,14 @@
 /*
- *		Display_SSD1306.h
- *		Created on:		2017-03-16
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Display - SSD1306 driver
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-03-16
+ *    Display_SSD1306.h
+ *    Created on:   2017-03-16
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Display - SSD1306 driver
+ *    Target:       STM32Fx
  */
 
-#ifndef MODULES_DISPLAY_SSD1306_H_
-#define MODULES_DISPLAY_SSD1306_H_
+#ifndef DISPLAY_SSD1306_H_
+#define DISPLAY_SSD1306_H_
 
 
 
@@ -74,8 +72,8 @@
   #define SSD1306_LCDHEIGHT                 16
 #endif
 
-#define DISPLAY_WIDTH						SSD1306_LCDWIDTH
-#define DISPLAY_HEIGHT						SSD1306_LCDHEIGHT
+#define DISPLAY_WIDTH                        SSD1306_LCDWIDTH
+#define DISPLAY_HEIGHT                        SSD1306_LCDHEIGHT
 
 
 #define SSD1306_SETCONTRAST 0x81
@@ -132,9 +130,9 @@
 
 typedef enum
 {
-	DisplayColor_Black,
-	DisplayColor_White,
-	DisplayColor_Inverse,
+    DisplayColor_Black,
+    DisplayColor_White,
+    DisplayColor_Inverse,
 } Display_Color_t;
 
 
@@ -181,4 +179,4 @@ void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi);
 void Display_SendOnTerminal(void);
 
 
-#endif /* MODULES_DISPLAY_SSD1306_H_ */
+#endif /* DISPLAY_SSD1306_H_ */
