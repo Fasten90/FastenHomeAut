@@ -21,7 +21,8 @@ with open(commit_msg_filepath, 'r') as f:
     content = f.read()
 
 # Commit message shall be start with "# "
-if not content.startswith("# "):
+# or accept the default "Merge branch" commit message
+if not (content.startswith("# ") or content.startswith("Merge branch")):
     print("commit-msg: ERROR! The commit message must start with  \"# \"")
     sys.exit(1)
 
