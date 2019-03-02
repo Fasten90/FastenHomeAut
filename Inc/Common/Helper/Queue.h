@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef COMMON_HELPER_QUEUE_H_
-#define COMMON_HELPER_QUEUE_H_
+#ifndef QUEUE_H_
+#define QUEUE_H_
 
 
 
@@ -106,4 +106,4 @@ uint32_t Queue_UnitTest(void);
 
 
 
-#endif /* COMMON_HELPER_QUEUE_H_ */
+#endif /* QUEUE_H_ */

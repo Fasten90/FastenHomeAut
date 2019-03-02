@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef HWTESTER_COMMONUART_H_
-#define HWTESTER_COMMONUART_H_
+#ifndef COMMONUART_H_
+#define COMMONUART_H_
 
 
 
@@ -56,4 +56,4 @@ void CommonUART_ProcessReceivedCharacters(void);
 
 
 
-#endif /* HWTESTER_COMMONUART_H_ */
+#endif /* COMMONUART_H_ */

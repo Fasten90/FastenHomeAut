@@ -10,8 +10,8 @@
  *        Last modified:    2017. máj. 12.
  */
 
-#ifndef MODULES_FONT32X20_H_
-#define MODULES_FONT32X20_H_
+#ifndef FONT32X20_H_
+#define FONT32X20_H_
 
 
 
@@ -49,4 +49,4 @@ extern const uint32_t Font32x20[FONT_32X20_NUM][FONT_32X20_STORE_SIZE];
 
 
 
-#endif /* MODULES_FONT32X20_H_ */
+#endif /* FONT32X20_H_ */

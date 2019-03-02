@@ -226,4 +226,4 @@ void ESP8266_RequiredNewState(ESP8266_AdjustableState_t newState);
 
 
 
-#endif /* ESP8266_H_*/
+#endif /* ESP8266_H_ */

@@ -104,4 +104,4 @@ void Motor_StateMachine_SetDc(int16_t dc);
 
 
 
-#endif /* HWTESTER_COMMONPWM_H_ */
+#endif /* MOTOR_H_ */

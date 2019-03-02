@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef COMMON_EVENTLOG_H_
-#define COMMON_EVENTLOG_H_
+#ifndef EVENTLOG_H_
+#define EVENTLOG_H_
 
 
 
@@ -100,4 +100,4 @@ uint32_t EventLog_UnitTest(void);
 #endif // #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
 
 
-#endif /* COMMON_EVENTLOG_H_ */
+#endif /* EVENTLOG_H_ */

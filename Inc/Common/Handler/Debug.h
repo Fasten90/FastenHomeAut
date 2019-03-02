@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef COMMON_DEBUG_H_
-#define COMMON_DEBUG_H_
+#ifndef DEBUG_H_
+#define DEBUG_H_
 
 
 
@@ -69,4 +69,4 @@ void Debug_PrintDebugList(void);
 #endif
 
 
-#endif /* COMMON_DEBUG_H_ */
+#endif /* DEBUG_H_ */

@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef MEM_H_
-#define MEM_H_
+#ifndef MEMHANDLER_H_
+#define MEMHANDLER_H_
 
 
 
@@ -91,4 +91,4 @@ uint32_t MEM_UnitTest(void);
 
 
 
-#endif /* MEM_H_ */
+#endif /* MEMHANDLER_H_ */

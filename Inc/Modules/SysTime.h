@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef MODULES_SYSTIME_H_
-#define MODULES_SYSTIME_H_
+#ifndef SYSTIME_H_
+#define SYSTIME_H_
 
 
 
@@ -51,4 +51,4 @@ void SysTime_StepSecond(void);
 
 
 
-#endif /* MODULES_SYSTIME_H_ */
+#endif /* SYSTIME_H_ */

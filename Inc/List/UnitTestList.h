@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef INC_LIST_UNITTESTLIST_H_
-#define INC_LIST_UNITTESTLIST_H_
+#ifndef UNITTESTLIST_H_
+#define UNITTESTLIST_H_
 
 
 
@@ -45,4 +45,4 @@ uint32_t UnitTestList_Run(void);
 
 
 
-#endif /* INC_LIST_UNITTESTLIST_H_ */
+#endif /* UNITTESTLIST_H_ */

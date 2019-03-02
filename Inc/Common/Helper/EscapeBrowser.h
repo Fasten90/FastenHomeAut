@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef INC_COMMON_HELPER_ESCAPEBROWSER_H_
-#define INC_COMMON_HELPER_ESCAPEBROWSER_H_
+#ifndef ESCAPEBROWSER_H_
+#define ESCAPEBROWSER_H_
 
 
 
@@ -69,4 +69,4 @@ void EscapeBrowser_ProcessReceivedCharaters(void);
 
 
 
-#endif /* INC_COMMON_HELPER_ESCAPEBROWSER_H_ */
+#endif /* ESCAPEBROWSER_H_ */

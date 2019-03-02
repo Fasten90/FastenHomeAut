@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef COMMON_LINKEDLIST_H_
-#define COMMON_LINKEDLIST_H_
+#ifndef LINKEDLIST_H_
+#define LINKEDLIST_H_
 
 
 
@@ -60,4 +60,4 @@ uint32_t LinkedList_UnitTest(void);
 
 
 
-#endif /* COMMON_LINKEDLIST_H_ */
+#endif /* LINKEDLIST_H_ */

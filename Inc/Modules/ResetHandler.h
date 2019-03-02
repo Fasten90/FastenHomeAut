@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef MODULES_RESETHANDLER_H_
-#define MODULES_RESETHANDLER_H_
+#ifndef RESETHANDLER_H_
+#define RESETHANDLER_H_
 
 
 
@@ -80,4 +80,4 @@ size_t Reset_PrintResetReasons(char * dst);
 
 
 
-#endif /* MODULES_RESETHANDLER_H_ */
+#endif /* RESETHANDLER_H_ */

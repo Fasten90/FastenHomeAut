@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef GAME_SNAKE_H_
-#define GAME_SNAKE_H_
+#ifndef SNAKE_H_
+#define SNAKE_H_
 
 
 
@@ -65,4 +65,4 @@ SnakeStep_t Snake_GetLastStep(void);
 
 
 
-#endif /* GAME_SNAKE_H_ */
+#endif /* SNAKE_H_ */

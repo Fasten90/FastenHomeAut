@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef MODULES_DISPLAY_SSD1306_H_
-#define MODULES_DISPLAY_SSD1306_H_
+#ifndef DISPLAY_SSD1306_H_
+#define DISPLAY_SSD1306_H_
 
 
 
@@ -179,4 +179,4 @@ void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi);
 void Display_SendOnTerminal(void);
 
 
-#endif /* MODULES_DISPLAY_SSD1306_H_ */
+#endif /* DISPLAY_SSD1306_H_ */

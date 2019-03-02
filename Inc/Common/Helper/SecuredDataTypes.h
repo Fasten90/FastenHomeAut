@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef COMMON_SECUREDDATATYPES_H_
-#define COMMON_SECUREDDATATYPES_H_
+#ifndef SECUREDDATATYPES_H_
+#define SECUREDDATATYPES_H_
 
 
 
@@ -63,4 +63,4 @@ uint32_t SecuredDataTypes_UnitTest(void);
 
 
 
-#endif /* COMMON_SECUREDDATATYPES_H_ */
+#endif /* SECUREDDATATYPES_H_ */

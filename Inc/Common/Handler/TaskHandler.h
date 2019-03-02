@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef COMMON_TASKHANDLER_H_
-#define COMMON_TASKHANDLER_H_
+#ifndef TASKHANDLER_H_
+#define TASKHANDLER_H_
 
 
 
@@ -113,4 +113,4 @@ uint32_t TaskHandler_UnitTest(void);
 
 
 
-#endif /* COMMON_TASKHANDLER_H_ */
+#endif /* TASKHANDLER_H_ */

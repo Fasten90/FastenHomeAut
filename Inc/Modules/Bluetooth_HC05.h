@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef MODULES_BLUETOOTH_HC05_H_
-#define MODULES_BLUETOOTH_HC05_H_
+#ifndef BLUETOOTH_HC05_H_
+#define BLUETOOTH_HC05_H_
 
 
 
@@ -59,4 +59,4 @@ void Bluetooth_ProcessReceivedCharacters(void);
 
 
 
-#endif /* MODULES_BLUETOOTH_HC05_H_ */
+#endif /* BLUETOOTH_HC05_H_ */

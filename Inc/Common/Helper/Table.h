@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef COMMON_HELPER_TABLE_H_
-#define COMMON_HELPER_TABLE_H_
+#ifndef TABLE_H_
+#define TABLE_H_
 
 
 
@@ -55,4 +55,4 @@ void Table_PrintTableWithBorder(const char * fixheader, char * str, char * heade
 
 
 
-#endif /* COMMON_HELPER_TABLE_H_ */
+#endif /* TABLE_H_ */

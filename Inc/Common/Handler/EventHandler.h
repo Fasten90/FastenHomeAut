@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef COMMON_EVENTHANDLER_H_
-#define COMMON_EVENTHANDLER_H_
+#ifndef EVENTHANDLER_H_
+#define EVENTHANDLER_H_
 
 
 
@@ -118,4 +118,4 @@ bool EventHandler_CheckEventState(...)
 
 
 
-#endif /* COMMON_EVENTHANDLER_H_ */
+#endif /* EVENTHANDLER_H_ */

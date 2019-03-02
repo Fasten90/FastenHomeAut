@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef STRING_H_
-#define STRING_H_
+#ifndef STRINGHELPER_H_
+#define STRINGHELPER_H_
 
 
 
@@ -188,4 +188,4 @@ uint32_t StringHelper_UnitTest(void);
 
 
 
-#endif /* STRING_H_ */
+#endif /* STRINGHELPER_H_ */

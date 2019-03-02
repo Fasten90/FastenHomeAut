@@ -80,4 +80,4 @@ const char * BUTTON_GetPressTypeName(ButtonPressType_t pressType);
 
 
 
-#endif /* TEMPLATE_H_ */
+#endif /* BUTTON_H_ */

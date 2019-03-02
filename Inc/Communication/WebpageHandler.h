@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef INC_COMMUNICATION_WEBPAGEHANDLER_H_
-#define INC_COMMUNICATION_WEBPAGEHANDLER_H_
+#ifndef WEBPAGEHANDLER_H_
+#define WEBPAGEHANDLER_H_
 
 
 
@@ -61,4 +61,4 @@ size_t WebpageHandler_GetRequrest(const char *request, char *resp);
 
 
 
-#endif /* INC_COMMUNICATION_WEBPAGEHANDLER_H_ */
+#endif /* WEBPAGEHANDLER_H_ */

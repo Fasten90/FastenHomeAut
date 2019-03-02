@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef NETWORK_H_
-#define NETWORK_H_
+#ifndef NETWORKHELPER_H_
+#define NETWORKHELPER_H_
 
 
 
@@ -59,4 +59,4 @@ bool Network_ConvertIpAddressStringToIP(char *message, Network_IP_t *address);
 
 
 
-#endif /* NETWORK_H_ */
+#endif /* NETWORKHELPER_H_ */

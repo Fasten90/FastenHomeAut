@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef INC_COMMON_HELPER_TIMING_H_
-#define INC_COMMON_HELPER_TIMING_H_
+#ifndef TIMING_H_
+#define TIMING_H_
 
 
 
@@ -45,4 +45,4 @@ void DelayMs(uint32_t ms);
 
 
 
-#endif /* INC_COMMON_HELPER_TIMING_H_ */
+#endif /* TIMING_H_ */

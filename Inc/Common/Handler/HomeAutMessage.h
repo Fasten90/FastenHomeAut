@@ -199,4 +199,4 @@ uint32_t HomeAutMessage_UnitTest(void);
 
 
 
-#endif /* HOMEAUTMESSAGE_H_*/
+#endif /* HOMEAUTMESSAGE_H_ */

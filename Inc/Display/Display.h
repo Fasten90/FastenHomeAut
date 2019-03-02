@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef MODULES_DISPLAY_H_
-#define MODULES_DISPLAY_H_
+#ifndef DISPLAY_H_
+#define DISPLAY_H_
 
 
 
@@ -106,4 +106,4 @@ void Display_TestClock(void);
 
 
 
-#endif /* MODULES_DISPLAY_H_ */
+#endif /* DISPLAY_H_ */

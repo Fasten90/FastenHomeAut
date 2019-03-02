@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef INC_LIST_WEBPAGELIST_H_
-#define INC_LIST_WEBPAGELIST_H_
+#ifndef WEBPAGELIST_H_
+#define WEBPAGELIST_H_
 
 
 
@@ -45,4 +45,4 @@ void WebpageList_Init(void);
 
 
 
-#endif /* INC_LIST_WEBPAGELIST_H_ */
+#endif /* WEBPAGELIST_H_ */

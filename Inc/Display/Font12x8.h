@@ -10,8 +10,8 @@
  *        Last modified:    2017. márc. 27.
  */
 
-#ifndef MODULES_FONT12X8_H_
-#define MODULES_FONT12X8_H_
+#ifndef FONT12X8_H_
+#define FONT12X8_H_
 
 
 /*------------------------------------------------------------------------------
@@ -52,4 +52,4 @@ extern const uint8_t Font12x8[FONT_12X8_NUM][FONT_12X8_STORE_SIZE];
 
 
 
-#endif /* MODULES_FONT12X8_H_ */
+#endif /* FONT12X8_H_ */

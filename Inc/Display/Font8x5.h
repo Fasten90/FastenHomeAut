@@ -10,8 +10,8 @@
  *        Last modified:    2017. márc. 19.
  */
 
-#ifndef MODULES_FONT8X5_H_
-#define MODULES_FONT8X5_H_
+#ifndef FONT8X5_H_
+#define FONT8X5_H_
 
 
 
@@ -54,4 +54,4 @@ extern const uint8_t Font8x5[FONT_8X5_NUM][FONT_8X5_STORE_SIZE];
 
 
 
-#endif /* MODULES_FONT8X5_H_ */
+#endif /* FONT8X5_H_ */

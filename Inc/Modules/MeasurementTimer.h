@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef INC_MODULES_MEASUREMENTTIMER_H_
-#define INC_MODULES_MEASUREMENTTIMER_H_
+#ifndef MEASUREMENTTIMER_H_
+#define MEASUREMENTTIMER_H_
 
 
 #include "board.h"
@@ -63,4 +63,4 @@ uint32_t MeasurementTimer_GetTime(void);
 uint32_t MeasurementTimer_UnitTest(void);
 
 
-#endif /* INC_MODULES_MEASUREMENTTIMER_H_ */
+#endif /* MEASUREMENTTIMER_H_ */

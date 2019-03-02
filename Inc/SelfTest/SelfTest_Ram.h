@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef INC_SELFTEST_SELFTEST_RAM_H_
-#define INC_SELFTEST_SELFTEST_RAM_H_
+#ifndef SELFTEST_RAM_H_
+#define SELFTEST_RAM_H_
 
 
 
@@ -45,4 +45,4 @@ bool SelfTest_Ram_Test(void);
 
 
 
-#endif /* INC_SELFTEST_SELFTEST_RAM_H_ */
+#endif /* SELFTEST_RAM_H_ */

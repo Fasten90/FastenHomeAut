@@ -75,4 +75,4 @@ void CommonPWM_ChangePercent(uint8_t percent);
 
 #endif    // #ifdef CONFIG_MODULE_COMMON_PWM_ENABLE
 
-#endif /* HWTESTER_COMMONPWM_H_ */
+#endif /* COMMONPWM_H_ */

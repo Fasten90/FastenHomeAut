@@ -7,8 +7,8 @@
  *    Target:       STM32Fx
  */
 
-#ifndef COMMON_HANDLER_SWWATCHDOG_H_
-#define COMMON_HANDLER_SWWATCHDOG_H_
+#ifndef SWWATCHDOG_H_
+#define SWWATCHDOG_H_
 
 
 #include "options.h"
@@ -59,4 +59,4 @@ void SwWatchDog_CheckState(void);
 
 
 
-#endif /* COMMON_HANDLER_SWWATCHDOG_H_ */
+#endif /* SWWATCHDOG_H_ */
