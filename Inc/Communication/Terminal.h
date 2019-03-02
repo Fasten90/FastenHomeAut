@@ -1,12 +1,10 @@
 /*
- *        Terminal.h
- *        Created on:        2017-02-02
- *        Author:            Vizi G�bor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        Terminal
- *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2017-02-02
+ *    Terminal.h
+ *    Created on:   2017-02-02
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Terminal
+ *    Target:       STM32Fx
  */
 
 #ifndef TERMINAL_H_

@@ -1,12 +1,10 @@
 /*
- *        queue.h
- *        Created on:        2018-01-06
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        -
- *        Target:            STM32Fx
- *        Version:        -
- *        Last modified:    2018-01-06
+ *    queue.h
+ *    Created on:   2018-01-06
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       STM32Fx
  */
 
 #ifndef COMMON_HELPER_QUEUE_H_

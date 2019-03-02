@@ -1,12 +1,10 @@
 /*
- *        IOList.h
- *        Created on:        2018-02-03
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        -
- *        Target:            STM32Fx
- *        Version:        -
- *        Last modified:    2018-02-03
+ *    IOList.h
+ *    Created on:   2018-02-03
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       STM32Fx
  */
 
 #ifndef IOLIST_H_

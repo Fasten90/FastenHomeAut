@@ -1,12 +1,10 @@
 /*
- *        MeasurementTimer.c
- *        Created on:        2018-03-02
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        MeasurementTimer for measure events - now only one event can be measured
- *        Target:            STM32Fx
- *        Version:        -
- *        Last modified:    2018-03-02
+ *    MeasurementTimer.c
+ *    Created on:   2018-03-02
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     MeasurementTimer for measure events - now only one event can be measured
+ *    Target:       STM32Fx
  */
 
 

@@ -1,12 +1,10 @@
 /*
- *        ColoredMessage.c
- *        Created on:        2016-09-10
- *        Author:         Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        Formatted (colored / backgroundcolor) message
- *        Target:            STM32Fx
- *        Version:        v4
- *        Last modified:    2018-01-23
+ *    ColoredMessage.c
+ *    Created on:   2016-09-10
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Formatted 
+ *    Target:       STM32Fx
  */
 
 

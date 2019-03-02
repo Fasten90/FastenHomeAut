@@ -1,12 +1,10 @@
 /*
- *        ConvertTable.c
- *        Created on:        2017-09-17
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        Conversion table: ADC <-> Real value (E.g. Analog value <--> Voltage [V])
- *        Target:            STM32Fx
- *        Version:        -
- *        Last modified:    2017-09-17
+ *    ConvertTable.c
+ *    Created on:   2017-09-17
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Conversion table
+ *    Target:       STM32Fx
  */
 
 

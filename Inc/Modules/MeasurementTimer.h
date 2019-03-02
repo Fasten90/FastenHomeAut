@@ -1,12 +1,10 @@
 /*
- *        MeasurementTimer.h
- *        Created on:        2018-03-02
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        -
- *        Target:            STM32Fx
- *        Version:        -
- *        Last modified:    2018-03-02
+ *    MeasurementTimer.h
+ *    Created on:   2018-03-02
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       STM32Fx
  */
 
 #ifndef INC_MODULES_MEASUREMENTTIMER_H_

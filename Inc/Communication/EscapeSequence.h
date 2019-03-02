@@ -1,16 +1,10 @@
 /*
- *        EscapeSequence.h
- *        Created on:        2016-11-29
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        ANSI Escape sequences
- *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2016-11-29
- *
- *        Read:
- *        https://en.wikipedia.org/wiki/ANSI_escape_code
- *        http://ascii-table.com/ansi-escape-sequences.php
+ *    EscapeSequence.h
+ *    Created on:   2016-11-29
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     ANSI Escape sequences
+ *    Target:       STM32Fx
  */
 
 #ifndef ESCAPESEQUENCE_H_

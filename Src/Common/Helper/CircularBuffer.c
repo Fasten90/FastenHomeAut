@@ -1,12 +1,10 @@
 /*
- *        CircularBuffer.c
- *        Created on:        2017-03-04
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        Circular buffer handler
- *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2017-03-04
+ *    CircularBuffer.c
+ *    Created on:   2017-03-04
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Circular buffer handler
+ *    Target:       STM32Fx
  */
 
 

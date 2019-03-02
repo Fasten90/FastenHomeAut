@@ -1,13 +1,10 @@
 /*
- *        USART.c
- *        Created on:        2016-01-01
- *        Author:         Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        USART communication
- *        Target:            STM32Fx
- *        Version:        v4
- *        Last modified:    2016-09-28
- *        Source:            https://www.eevblog.com/forum/microcontrollers/'best'-way-to-load-uart-data-to-ring-buffer-with-stm32hal/
+ *    USART.c
+ *    Created on:   2016-01-01
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     USART communication
+ *    Target:       STM32Fx
  */
 
 

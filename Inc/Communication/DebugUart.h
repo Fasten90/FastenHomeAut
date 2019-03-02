@@ -1,12 +1,10 @@
 /*
- *        DebugUart.h
- *        Created on:        2017-03-15
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        Debug uart functions
-  *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2017-03-15
+ *    DebugUart.h
+ *    Created on:   2017-03-15
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Debug uart functions
+ *    Target:       STM32Fx
  */
 
 #ifndef DEBUGUART_H_

@@ -1,12 +1,10 @@
 /*
- *        ADC.c
- *        Created on:        2016-01-01
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        ADC (Analog-to-Digital Converter)
- *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2017-02-08
+ *    ADC.c
+ *    Created on:   2016-01-01
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     ADC 
+ *    Target:       STM32Fx
  */
 
 

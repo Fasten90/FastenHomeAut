@@ -1,12 +1,10 @@
 /*
- *        String.h
- *        Created on:        2016-01-01
- *        Author:         Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        String manipulation functions
- *        Target:            STM32Fx
- *        Version:        v4
- *        Last modified:    2016-09-28
+ *    String.h
+ *    Created on:   2016-01-01
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     String manipulation functions
+ *    Target:       STM32Fx
  */
 
 #ifndef STRING_H_

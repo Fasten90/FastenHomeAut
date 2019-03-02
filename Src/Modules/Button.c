@@ -1,12 +1,10 @@
 /*
- *        Button.c
- *        Created on:        2016-01-01
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        Button handler module
- *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2017-02-08
+ *    Button.c
+ *    Created on:   2016-01-01
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Button handler module
+ *    Target:       STM32Fx
  */
 
 

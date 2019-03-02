@@ -1,12 +1,10 @@
 /*
- *        CommonIO.h
- *        Created on:        2016-11-28
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        Common IO
- *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2016-11-28
+ *    CommonIO.h
+ *    Created on:   2016-11-28
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Common IO
+ *    Target:       STM32Fx
  */
 
 #ifndef COMMONIO_H_

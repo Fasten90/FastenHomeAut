@@ -1,12 +1,10 @@
 /*
- *        Calc.c
- *        Created on:        2016-09-26
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        Calculate / Math functions
- *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2017-06-02
+ *    Calc.c
+ *    Created on:   2016-09-26
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Calculate 
+ *    Target:       STM32Fx
  */
 
 

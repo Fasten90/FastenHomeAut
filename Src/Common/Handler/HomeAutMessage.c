@@ -1,12 +1,10 @@
 /*
- *        HomeAutMessage.c
- *        Created on:        2016.01.01
- *        Author:         Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        HomeAutMessage message handling
- *        Target:            STM32Fx
- *        Version:        v4
- *        Last modified:    2016.09.28
+ *    HomeAutMessage.c
+ *    Created on:   2016
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     HomeAutMessage message handling
+ *    Target:       STM32Fx
  */
 
 

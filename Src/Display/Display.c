@@ -1,12 +1,10 @@
 /*
- *        Display.c
- *        Created on:        2017-04-02
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        Display handling
- *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2017-04-02
+ *    Display.c
+ *    Created on:   2017-04-02
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Display handling
+ *    Target:       STM32Fx
  */
 
 

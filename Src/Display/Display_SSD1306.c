@@ -1,21 +1,10 @@
 /*
- *        Display_SSD1306.c
- *        Created on:        2017-03-16
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        Display - SSD1306 driver
- *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2017-03-16
- *        Help: An arduino (C++) code:
- *            https://github.com/adafruit/Adafruit_SSD1306/blob/master/Adafruit_SSD1306.cpp
- *        Modified:
- *            - C++ --> C
- *            - Renames, refactors
- *            - Added comments
- *            - porting (from Atmel to ST - HAL driver)
- *            - Added string printing functions
- *            - Use my font: 8x5
+ *    Display_SSD1306.c
+ *    Created on:   2017-03-16
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Display - SSD1306 driver
+ *    Target:       STM32Fx
  */
 
 

@@ -1,12 +1,10 @@
 /*
- *        Debug.c
- *        Created on:        2017-08-17
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        Debug print
- *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2017-08-17
+ *    Debug.c
+ *    Created on:   2017-08-17
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Debug print
+ *    Target:       STM32Fx
  */
 
 

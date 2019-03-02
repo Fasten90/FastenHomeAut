@@ -1,12 +1,10 @@
 /*
- *        HardFaultHandler.h
- *        Created on:        2017-11-24
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        -
- *        Target:            STM32Fx
- *        Version:        -
- *        Last modified:    2017-11-24
+ *    HardFaultHandler.h
+ *    Created on:   2017-11-24
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       STM32Fx
  */
 
 #ifndef HARDFAULTHANDLER_H_

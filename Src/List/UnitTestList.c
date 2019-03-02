@@ -1,12 +1,10 @@
 /*
- *        UnitTestList.c
- *        Created on:        2018-03-03
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        -
- *        Target:            STM32Fx
- *        Version:        -
- *        Last modified:    2018-03-03
+ *    UnitTestList.c
+ *    Created on:   2018-03-03
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       STM32Fx
  */
 
 

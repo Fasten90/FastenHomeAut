@@ -1,12 +1,10 @@
 /*
- *        LinkedList.c
- *        Created on:        2017-08-01
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        Linked list handler
- *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2017-08-01
+ *    LinkedList.c
+ *    Created on:   2017-08-01
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Linked list handler
+ *    Target:       STM32Fx
  */
 
 

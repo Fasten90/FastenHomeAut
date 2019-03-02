@@ -1,12 +1,10 @@
 /*
- *        Communication.c
- *        Created on:        2016-12-03
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        Communication module
- *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2016-12-03
+ *    Communication.c
+ *    Created on:   2016-12-03
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Communication module
+ *    Target:       STM32Fx
  */
 
 

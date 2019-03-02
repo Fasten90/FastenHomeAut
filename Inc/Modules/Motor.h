@@ -1,12 +1,10 @@
 /*
- *        Motor.h
- *        Created on:        2017-02-11
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        Motor control
- *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2017-02-11
+ *    Motor.h
+ *    Created on:   2017-02-11
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Motor control
+ *    Target:       STM32Fx
  */
 
 #ifndef MOTOR_H_

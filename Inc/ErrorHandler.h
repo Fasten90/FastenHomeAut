@@ -1,12 +1,10 @@
 /*
- *        ErrorHandler.h
- *        Created on:        2016-09-15
- *        Author:         Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        Global variables
- *        Target:            STM32Fx
- *        Version:        v4
- *        Last modified:    2016-11-23
+ *    ErrorHandler.h
+ *    Created on:   2016-09-15
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Global variables
+ *    Target:       STM32Fx
  */
 
 #ifndef ERRORHANDLER_H_

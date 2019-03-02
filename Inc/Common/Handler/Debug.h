@@ -1,12 +1,10 @@
 /*
- *        Debug.h
- *        Created on:        2017-08-17
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        Debug prints (with colorized messages and enabling)
- *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2017-08-17
+ *    Debug.h
+ *    Created on:   2017-08-17
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Debug prints 
+ *    Target:       STM32Fx
  */
 
 #ifndef COMMON_DEBUG_H_

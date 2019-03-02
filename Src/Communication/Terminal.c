@@ -1,12 +1,10 @@
 /*
- *        Terminal.c
- *        Created on:        2017-02-02
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        Terminal
- *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2017-02-02
+ *    Terminal.c
+ *    Created on:   2017-02-02
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Terminal
+ *    Target:       STM32Fx
  */
 
 

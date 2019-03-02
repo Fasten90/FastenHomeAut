@@ -1,12 +1,10 @@
 /*
- *        SecuredDataTypes.h
- *        Created on:        2017-08-24
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        Secure data types and handlers
- *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2017-08-24
+ *    SecuredDataTypes.h
+ *    Created on:   2017-08-24
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Secure data types and handlers
+ *    Target:       STM32Fx
  */
 
 #ifndef COMMON_SECUREDDATATYPES_H_

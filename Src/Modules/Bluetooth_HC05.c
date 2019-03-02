@@ -1,12 +1,10 @@
 /*
- *        Bluetooth_HC05.c
- *        Created on:        2017-10-21
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        -
- *        Target:            STM32Fx
- *        Version:        -
- *        Last modified:    2017-10-21
+ *    Bluetooth_HC05.c
+ *    Created on:   2017-10-21
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       STM32Fx
  */
 
 

@@ -1,12 +1,10 @@
 /*
- *        RTC.h
- *        Created on:        2017-01-17
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        RTC (Real Time Clock)
- *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2017-01-17
+ *    RTC.h
+ *    Created on:   2017-01-17
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     RTC 
+ *    Target:       STM32Fx
  */
 
 #ifndef RTC_H_

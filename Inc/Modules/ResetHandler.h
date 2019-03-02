@@ -1,12 +1,10 @@
 /*
- *        Reset.h
- *        Created on:        2017-02-27
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        Reset module
- *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2017-02-27
+ *    Reset.h
+ *    Created on:   2017-02-27
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Reset module
+ *    Target:       STM32Fx
  */
 
 #ifndef MODULES_RESETHANDLER_H_

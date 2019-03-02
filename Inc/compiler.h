@@ -1,12 +1,10 @@
 /*
- *        compiler.h
- *      Created on:     2013-11-19
- *        Author:         Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        compiler defines/includes file for project
- *        Target:            STM32Fx
- *        Version:        v4
- *        Last modified:    2016-09-28
+ *    compiler.h
+ *    Created on:   2013-11-19
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     compiler defines
+ *    Target:       STM32Fx
  */
 
 #ifndef COMPILER_H_

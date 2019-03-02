@@ -1,12 +1,10 @@
 /*
- *        WebpageHandler.h
- *        Created on:        2018-03-04
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        -
- *        Target:            STM32Fx
- *        Version:        -
- *        Last modified:    2018-03-04
+ *    WebpageHandler.h
+ *    Created on:   2018-03-04
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       STM32Fx
  */
 
 #ifndef INC_COMMUNICATION_WEBPAGEHANDLER_H_

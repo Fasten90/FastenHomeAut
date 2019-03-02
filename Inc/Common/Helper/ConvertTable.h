@@ -1,12 +1,10 @@
 /*
- *        ConvertTable.h
- *        Created on:        2017-09-17
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        -
- *        Target:            STM32Fx
- *        Version:        -
- *        Last modified:    2017-09-17
+ *    ConvertTable.h
+ *    Created on:   2017-09-17
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       STM32Fx
  */
 
 #ifndef CONVERTTABLE_H_

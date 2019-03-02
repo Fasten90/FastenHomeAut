@@ -1,12 +1,10 @@
 /*
- *        board.h
- *      Created on:     2013-11-19
- *        Author:         Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        board/panel defines: pins, ports, etc
- *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2017-05-05
+ *    board.h
+ *    Created on:   2013-11-19
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     board
+ *    Target:       STM32Fx
  */
 
 #ifndef BOARD_H_

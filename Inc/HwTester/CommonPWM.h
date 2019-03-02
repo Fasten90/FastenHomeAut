@@ -1,12 +1,10 @@
 /*
- *        CommonPWM.h
- *        Created on:        2017-02-27
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        Common PWM
- *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2017-02-27
+ *    CommonPWM.h
+ *    Created on:   2017-02-27
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Common PWM
+ *    Target:       STM32Fx
  */
 
 #ifndef COMMONPWM_H_

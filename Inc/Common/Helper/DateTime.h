@@ -1,12 +1,10 @@
 /*
- *        DateTime.h
- *        Created on:        2017-01-10
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        DateTime handling
- *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2017-01-10
+ *    DateTime.h
+ *    Created on:   2017-01-10
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     DateTime handling
+ *    Target:       STM32Fx
  */
 
 #ifndef DATETIME_H_

@@ -1,15 +1,10 @@
 /*
- *        RTC.c
- *        Created on:        2017-01-17
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        RTC (Real Time Clock)
- *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2017-01-17
- *
- * This file use ST example codes:
- * STM32Cube_FW_F4_V1.14.0\Projects\STM32F446ZE-Nucleo\Examples\RTC\RTC_Calendar\
+ *    RTC.c
+ *    Created on:   2017-01-17
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     RTC 
+ *    Target:       STM32Fx
  */
 
 

@@ -1,12 +1,10 @@
 /*
- *        CommonUART.c
- *        Created on:        2017-12-28
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        -
- *        Target:            STM32Fx
- *        Version:        -
- *        Last modified:    2017-12-28
+ *    CommonUART.c
+ *    Created on:   2017-12-28
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       STM32Fx
  */
 
 

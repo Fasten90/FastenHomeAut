@@ -1,12 +1,10 @@
 /*
- *        SwWatchDog.h
- *        Created on:        2017-12-02
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        -
- *        Target:            STM32Fx
- *        Version:        -
- *        Last modified:    2017-12-02
+ *    SwWatchDog.h
+ *    Created on:   2017-12-02
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       STM32Fx
  */
 
 #ifndef COMMON_HANDLER_SWWATCHDOG_H_

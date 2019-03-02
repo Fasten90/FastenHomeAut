@@ -1,12 +1,10 @@
 /*
- *        Watchdog.c
- *        Created on:        2017-02-06
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        Watchdog
- *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2017-02-06
+ *    Watchdog.c
+ *    Created on:   2017-02-06
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Watchdog
+ *    Target:       STM32Fx
  */
 
 

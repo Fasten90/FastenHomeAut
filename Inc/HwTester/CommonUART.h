@@ -1,12 +1,10 @@
 /*
- *        CommonUART.h
- *        Created on:        2017-12-28
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        HwTester UART function: Communicate on other UART from/to DebugUart
- *        Target:            STM32Fx
- *        Version:        -
- *        Last modified:    2017-12-28
+ *    CommonUART.h
+ *    Created on:   2017-12-28
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     HwTester UART function
+ *    Target:       STM32Fx
  */
 
 #ifndef HWTESTER_COMMONUART_H_

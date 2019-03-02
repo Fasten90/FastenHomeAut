@@ -1,12 +1,10 @@
 /*
- *        options.h
- *         Created on:        2016-09-28
- *        Author:         Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        Configs for project
- *        Target:            STM32Fx
- *        Version:        v4
- *        Last modified:    2016-09-28
+ *    options.h
+ *    Created on:   2016-09-28
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Configs for project
+ *    Target:       STM32Fx
  */
 
 #ifndef OPTIONS_H_

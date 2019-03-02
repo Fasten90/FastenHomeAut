@@ -1,12 +1,10 @@
 /*
- *        UnitTest.h
- *        Created on:        2016-11-24
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        UnitTest module
- *        Target:            STM32Fx
- *        Version:        v1
- *        Last modified:    2016-11-24
+ *    UnitTest.h
+ *    Created on:   2016-11-24
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     UnitTest module
+ *    Target:       STM32Fx
  */
 
 #ifndef UNITTEST_H_
