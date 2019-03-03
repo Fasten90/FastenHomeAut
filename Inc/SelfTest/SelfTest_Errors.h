@@ -43,6 +43,7 @@
 void SelfTest_Errors_Constwrite(void);
 void SelfTest_Errors_ZeroDivide(void);
 void SelfTest_Errors_MemFault(void);
+void SelfTest_Erros_StackOverFlow(void);
 
 
 

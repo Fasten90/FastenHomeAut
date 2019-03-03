@@ -2434,6 +2434,12 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 
                 result = CmdH_Result_Ok_SendSuccessful;
             }
+            else if (!StrCmp("stackoverflow", argv[2]))
+            {
+                SelfTest_Erros_StackOverFlow();
+
+                result = CmdH_Result_Ok_SendSuccessful;
+            }
             else
             {
                 result = CmdH_Result_Error_WrongArgument2;
