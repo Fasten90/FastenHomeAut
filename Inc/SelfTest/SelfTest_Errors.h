@@ -12,7 +12,6 @@
 
 
 
-
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
@@ -41,7 +40,9 @@
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void SelfTest_Errors_Init(void);
+void SelfTest_Errors_Constwrite(void);
+void SelfTest_Errors_ZeroDivide(void);
+void SelfTest_Errors_MemFault(void);
 
 
 

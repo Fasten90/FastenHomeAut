@@ -54,7 +54,7 @@
 #include "BoardInfos.h"
 #include "Queue.h"
 #include "UnitTestList.h"
-
+#include "SelfTest_Errors.h"
 
 
 /*------------------------------------------------------------------------------
@@ -2405,6 +2405,7 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
     }
     else
     {
+#ifdef CONFIG_MODULE_SELFTEST_ERRORS_ENABLE
         // Enabled simulation
         if (!StrCmp("infloop", argv[1]))
         {
@@ -2417,49 +2418,19 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
         {
             if (!StrCmp("constwrite", argv[2]))
             {
-                /*
-                 * Generate Fault to test FaultHandler()
-                 * @note    !! Be careful !! It is an error, the SW will crash (go to FaultHandler) !!
-                 */
-
-                // Const write
-                // cppcheck-suppress stringLiteralWrite
-                static const char const buffer[] = "const";
-                char * pnt = (char *)buffer;
-
-                uprintf("Buffer: %s\r\n", buffer);
-
-                pnt[2] = 'e';
-
-                uprintf("Buffer: %s\r\n", buffer);
+                SelfTest_Errors_Constwrite();
 
                 result = CmdH_Result_Ok_SendSuccessful;
             }
             else if (!StrCmp("zerodivide", argv[2]))
             {
-                /* Test zero dividing
-                 * @note !! Be careful !! It is an error, the sw will crash (go to FaultHandler) !!
-                 */
-                uint32_t a = 5;
-                uint32_t b = 0;
-                uint32_t c;
-
-                // Zero division
-                // cppcheck-suppress zerodiv
-                c = a/b;
-
-                uprintf("ZeroDivide result: %d\r\n", c);
+                SelfTest_Errors_ZeroDivide();
 
                 result = CmdH_Result_Ok_SendSuccessful;
             }
             else if (!StrCmp("failpointer", argv[2]))
             {
-                // Test invalid pointer
-                const uint32_t constValue = 0x12345678;
-                uint32_t * wrongPointer = (uint32_t *)constValue;
-                *wrongPointer = 0;
-
-                uprintf("WrongPointer value: %d\r\n", *wrongPointer);
+                SelfTest_Errors_MemFault();
 
                 result = CmdH_Result_Ok_SendSuccessful;
             }
@@ -2468,16 +2439,19 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
                 result = CmdH_Result_Error_WrongArgument2;
             }
         }
+#endif /* CONFIG_MODULE_SELFTEST_ERRORS_ENABLE */
+        /* TODO: Not too beautiful solution these defines */
 #ifdef CONFIG_SWO_ENABLE
-        else if (!StrCmp("SWO", argv[1]))
+        if (!StrCmp("SWO", argv[1]))
         {
             // Test SWO
             //COMMUNICATION_SendMessage(CommProt_SWO, "Test message on SWO\n");
             SWO_SendMessage("Test message on SWO\n");
         }
 #endif
+        /* TODO: Not too beautiful solution these defines */
 #ifdef CONFIG_MODULE_IO_ENABLE
-        else if (!StrCmp("input", argv[1]))
+        if (!StrCmp("input", argv[1]))
         {
             uint32_t pin;
             if (StringToUnsignedDecimalNum(argv[2], &pin))
