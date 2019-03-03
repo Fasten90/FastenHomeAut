@@ -34,13 +34,12 @@
 
 
 /**
- * \brief  ${file_base} initialization
+ * @brief  ${file_base} initialization
  */
 void ${file_base}_Init(void)
 {
 
 }
-
 
 
 </template></templates>
