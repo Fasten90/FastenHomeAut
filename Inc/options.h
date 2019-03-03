@@ -374,7 +374,7 @@
 
     //#define CONFIG_MODULE_MOTOR_ENABLE
 
-    #define CONFIG_MODULE_IO_ENABLE
+    //#define CONFIG_MODULE_IO_ENABLE
     //#define CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE
 
     //#define CONFIG_MODULE_LINKEDLIST_ENABLE
@@ -480,7 +480,7 @@
 //#define CONFIG_MODULE_TEST_ENABLE
 
 ///< Simulation mode: Enable "simulate" command
-//#define CONFIG_MODULE_SIMULATION_ENABLE
+#define CONFIG_MODULE_SIMULATION_ENABLE
 
 ///< SWO: Serial Wire Output enable
 //#define CONFIG_SWO_ENABLE
@@ -528,8 +528,7 @@
     //#define MODULE_CONVERTTABLE_UNITTEST_ENABLE
     //#define MODULE_SECUREDDATATYPES_UNITTEST_ENABLE
     //#define MODULE_QUEUE_UNITTEST_ENABLE
-
-    #define MODULE_MEASUREMENTTIMER_UNITTEST_ENABLE
+    //#define MODULE_MEASUREMENTTIMER_UNITTEST_ENABLE
 
     #if (defined(MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE) || defined(MODULE_COMMANDHANDLER_UNITTEST_ENABLE))&& !defined(CONFIG_PROTOCOL_BUFFER_ENABLE)
     // TODO: Delete these
@@ -566,7 +565,7 @@
      *         >0 - UnitTest error
      *
      */
-    #define CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE        (1)
+    #define CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE        (0)
 
     // TODO: Need to check this define?
 
