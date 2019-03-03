@@ -494,7 +494,7 @@
 ///< MCU SelfTest
 //#define CONFIG_MODULE_SELFTEST_ENABLE
 
-///< MCU SelfTest - Error tests
+///< SelfTest - Error tests
 #define CONFIG_MODULE_SELFTEST_ERRORS_ENABLE
 
 

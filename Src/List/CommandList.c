@@ -2399,7 +2399,7 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
         else
         {
             // Error
-            CmdH_SendLine("Simulation is not enabled!");
+            CmdH_SendLine("Simulation is not enabled! Type \"simulation enable\" command first!");
             result = CmdH_Result_Ok;    // Not ok, but do not send other error message
         }
     }

@@ -46,7 +46,7 @@
 
 /**
  * Generate Fault to test FaultHandler()
- * @note    !! Be careful !! It is an error, the SW will crash (go to FaultHandler) !!
+ * @note    !! Be careful !! It is an error, the SW will crash (e.g. CortexM go to FaultHandler) !!
  */
 void SelfTest_Errors_Constwrite(void)
 {
@@ -66,7 +66,8 @@ void SelfTest_Errors_Constwrite(void)
 
 /**
  * Test zero dividing
- * @note !! Be careful !! It is an error, the sw will crash (go to FaultHandler) !!
+ * @note    !! Be careful !! It is an error, the SW will crash (e.g. CortexM go to FaultHandler) !!
+ * @note    Not every target support the ZeroDivide "HardFault" flag
  */
 void SelfTest_Errors_ZeroDivide(void)
 {
@@ -89,6 +90,7 @@ void SelfTest_Errors_ZeroDivide(void)
 void SelfTest_Errors_MemFault(void)
 {
     // Test invalid pointer
+    // TODO: This address normally is an invalid address, but not every target-platform, but shall provide a target dependent invalid address
     const uint32_t constValue = 0x12345678;
     uint32_t * wrongPointer = (uint32_t *)constValue;
     *wrongPointer = 0;
