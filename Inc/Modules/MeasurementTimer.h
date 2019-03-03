@@ -26,14 +26,14 @@
 
 #ifdef MEASUREMENT_RESOLUTION_16BIT
 /* 16 bit resolution */
-#define MEASUREMENTTIMER_TIMER_PRESCALER        (50000U)                // 20us timebase
-#define MEASUREMENTTIMER_TIMER_PERIOD_VALUE        (50000U)
+#define MEASUREMENTTIMER_TIMER_PRESCALER        (50000U)                  // 20us timebase
+#define MEASUREMENTTIMER_TIMER_PERIOD_VALUE     (50000U)
 
 #define MEASUREMENTTIMER_USEC_CORRECTION_MUL    (20)
 #else
 /* 32 bit resolution */
 #define MEASUREMENTTIMER_TIMER_PRESCALER        (1000000U)                // 1_000_000 = us timebase
-#define MEASUREMENTTIMER_TIMER_PERIOD_VALUE        (1000000U)                // 1_000_000us = 1s
+#define MEASUREMENTTIMER_TIMER_PERIOD_VALUE     (1000000U)                // 1_000_000us = 1s
 #define MEASUREMENTTIMER_USEC_CORRECTION_MUL    (1)
 #endif
 

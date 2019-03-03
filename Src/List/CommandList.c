@@ -648,10 +648,9 @@ static CmdH_Result_t CommandFunction_welcome(uint32_t argc, char** argv)
  */
 static CmdH_Result_t CommandFunction_help(uint32_t argc, char** argv)
 {
-
     if (argc == 1)
     {
-        // if Arg2 is empty, listing all commands
+        // If Arg2 is empty, listing all commands
         CmdH_PrintAllCommands();
     }
     else if (argc == 2)

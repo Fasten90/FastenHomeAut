@@ -559,7 +559,7 @@
     /*
      * Exit after UnitTest running, with result
      *        1    Enable
-     *         0    Disable
+     *        0    Disable
      *
      * Result:
      *          0 - if okay (exit(0))
@@ -570,7 +570,7 @@
 
     // TODO: Need to check this define?
 
-    #define UNITTEST_PRINT_ASSERT                        (0)
+    #define UNITTEST_PRINT_ASSERT                          (0)
 #endif
 
 
