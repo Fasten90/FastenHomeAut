@@ -494,6 +494,9 @@
 ///< MCU SelfTest
 //#define CONFIG_MODULE_SELFTEST_ENABLE
 
+///< SelfTest - Error tests
+#define CONFIG_MODULE_SELFTEST_ERRORS_ENABLE
+
 
 ///< Debug - Formatted text (colored texts)
 #define CONFIG_MODULE_DEBUG_ENABLE
