@@ -284,7 +284,7 @@ int main(void)
 
     // Flag test
     SelfTest_Flag_Test();
-#endif
+#endif /* CONFIG_MODULE_SELFTEST_ENABLE */
 
 
 #ifdef CONFIG_PLATFORM_PC_WINDOWS
@@ -293,7 +293,6 @@ int main(void)
 #ifdef CONFIG_MODULE_UNITTEST_ENABLE
     char responseBuffer[2048];
     CmdH_SetResponse(responseBuffer, 2048);
-    // TODO: Check UnitTestList_Run return value
 
     uint32_t utResult = UnitTestList_Run();
 
@@ -313,12 +312,12 @@ int main(void)
     printf("%s\r\n", responseBuffer); /* Clang generated compile warning when "printf(responseBuffer);" used */
     printf("Unit test result: %d\r\n", utResult);
 #endif
-#endif /* #ifdef CONFIG_PLATFORM_PC_WINDOWS */
+#endif /* CONFIG_PLATFORM_PC_WINDOWS */
 
     // STDIN
     UART_HandleTypeDef Debug_UartHandle;
     HAL_UART_Init(&Debug_UartHandle);
-#endif /* #ifdef CONFIG_PLATFORM_PC_WINDOWS */
+#endif /* CONFIG_PLATFORM_PC_WINDOWS */
 
 
 #ifdef CONFIG_MODULE_MEASUREMENTTIMER_ENABLE
@@ -494,7 +493,7 @@ int main(void)
     // !! Never reach this code !!
     Error_Handler();
 
-}    // End of main
+} /* End of main */
 
 
 
