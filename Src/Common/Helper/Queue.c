@@ -448,6 +448,8 @@ uint32_t Queue_UnitTest(void)
     UNITTEST_ASSERT((testQueue.end == (QueueElement_t *)(MEM_MAKE_ALIGNED_ADDRESS((testBuffer + sizeof(QueueElement_t) + 5)))),
             "PutLastElement end pointer error");
 
+    // FIXME: There is a 64 bit bug here
+    #warning 64-bit system bug here
 
     // Add an element
     UNITTEST_ASSERT(Queue_PutLastElement(&testQueue, "4321", 4, QueuedataType_Ram),

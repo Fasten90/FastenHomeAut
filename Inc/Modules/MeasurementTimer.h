@@ -38,6 +38,7 @@
 #endif
 
 
+
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
@@ -48,7 +49,10 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
+#ifdef HAL_MODULE_ENABLED
+/* This is a hardware / target dependent struct */
 extern TIM_HandleTypeDef MeasurementTimer_TimerHandle;
+#endif
 
 
 
@@ -61,6 +65,7 @@ void MeasurementTimer_StartMeasurement(void);
 uint32_t MeasurementTimer_GetTime(void);
 
 uint32_t MeasurementTimer_UnitTest(void);
+
 
 
 #endif /* MEASUREMENTTIMER_H_ */

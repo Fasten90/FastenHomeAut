@@ -14,6 +14,7 @@
  *----------------------------------------------------------------------------*/
 
 
+#include "options.h"
 #include "GenericTypeDefs.h"
 #include "DebugUart.h"
 #include "board.h"
@@ -29,7 +30,7 @@
  *  Functions
  *----------------------------------------------------------------------------*/
 
-
+#ifdef CONFIG_STANDARD_LIBRARY_MEMHANDLERS_ENABLE
 /**
  * @brief    Memory copy
  * @param[out]    destination    where to copy
@@ -133,7 +134,7 @@ void * memmove(void * destination, const void * source, size_t size)
     return NULL;
 }
 
-
+#endif
 
 /**
  * @brief    Memory cut (copy & delete original)

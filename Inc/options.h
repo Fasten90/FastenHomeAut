@@ -407,6 +407,12 @@
 
     //#define CONFIG_MODULE_TERMINAL_ENABLE
     //#define CONFIG_MODULE_COLOREDMESSAGE_ENABLE
+	// TODO: Not works --> HAL_UART_MspInit
+	//#define CONFIG_MODULE_DEBUGUART_ENABLE
+
+	// TODO: Not works --> DebugUart struct
+	//#define CONFIG_MODULE_TERMINAL_ENABLE
+	//#define CONFIG_MODULE_COLOREDMESSAGE_ENABLE
 
     #define CONFIG_MODULE_TASKHANDLER_ENABLE
 
@@ -497,10 +503,12 @@
 ///< SelfTest - Error tests
 #define CONFIG_MODULE_SELFTEST_ERRORS_ENABLE
 
-
 ///< Debug - Formatted text (colored texts)
 #define CONFIG_MODULE_DEBUG_ENABLE
 #define CONFIG_MODULE_COLOREDMESSAGE_ENABLE
+
+///< Standard library MemHandler functions
+#define CONFIG_STANDARD_LIBRARY_MEMHANDLERS_ENABLE
 
 
 
@@ -570,6 +578,21 @@
     // TODO: Need to check this define?
 
     #define UNITTEST_PRINT_ASSERT                          (0)
+	/*
+	 * Exit after UnitTest running, with result
+	 *		1	Enable
+	 * 		0	Disable
+	 *
+	 * Result:
+	 * 		 0 - if okay (exit(0))
+	 * 		>0 - UnitTest error
+	 *
+	 */
+	#define CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE		(0)
+
+	// TODO: Need to check this define?
+
+	#define UNITTEST_PRINT_ASSERT						(0)
 #endif
 
 
@@ -859,6 +882,18 @@
     || defined(CONFIG_MODULE_BLUETOOTH_ENABLE) \
     || defined(CONFIG_MODULE_ESP8266_ENABLE))
     #define CONFIG_COMMUNICATION_HAS_UART_PORT
+#endif
+
+#if defined(CONFIG_COMMUNICATION_HAS_UART_PORT) && !defined(CONFIG_MODULE_UART_ENABLE) && !defined(CONFIG_USE_PANEL_PC)
+	#define CONFIG_MODULE_UART_ENABLE
+#endif
+
+//#define CONFIG_COMMUNICATION_HAS_UART_PORT
+// TODO: Be careful, this define is implementation dependent (DebugUart, Bluetooth, ESP8266 peripherals on UART)
+#if ( defined(CONFIG_MODULE_DEBUGUART_ENABLE) \
+	|| defined(CONFIG_MODULE_BLUETOOTH_ENABLE) \
+	|| defined(CONFIG_MODULE_ESP8266_ENABLE))
+	#define CONFIG_COMMUNICATION_HAS_UART_PORT
 #endif
 
 #if defined(CONFIG_COMMUNICATION_HAS_UART_PORT) && !defined(CONFIG_MODULE_UART_ENABLE)
