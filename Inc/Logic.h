@@ -94,7 +94,7 @@ typedef enum
     Menu_LargeClock,
 #endif
 
-    // XXX: Syncronize with Logic_MenuList
+    // XXX: Synchronize with Logic_MenuList
 
     // Count
     Menu_Count

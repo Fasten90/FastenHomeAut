@@ -1142,7 +1142,7 @@ static void Logic_Display_Input(ScheduleSource_t source)
     if ((DisplayInput_OldLetterPosition != DisplayInput_LetterPosition)
         && (DisplayInput_OldLetterPosition == DisplayInput_LetterPosition_MaxLimit))
     {
-        // TODO: Button printing
+        // TODO: Button printing - string printing
         // OK
         Display_PrintFont12x8('O', DisplayInput_LetterPosition_MaxLimit, 2, NO_FORMAT);
         Display_PrintFont12x8('K', DisplayInput_LetterPosition_MaxLimit + 1, 2, NO_FORMAT);
@@ -1177,7 +1177,7 @@ static void Logic_Display_Input(ScheduleSource_t source)
             // Vibrate (not show char)
             if (DisplayInput_LetterPosition == DisplayInput_LetterPosition_MaxLimit)
             {
-                // TODO: Button printing
+                // TODO: Button printing - string printing
                 // OK
                 Display_PrintFont12x8('O', DisplayInput_LetterPosition_MaxLimit, 2, NO_FORMAT);
                 Display_PrintFont12x8('K', DisplayInput_LetterPosition_MaxLimit + 1, 2, NO_FORMAT);
