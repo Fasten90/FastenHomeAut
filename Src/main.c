@@ -519,7 +519,9 @@ void SystemClock_Config(void)
 
     __SYSCFG_CLK_ENABLE();
 
+    HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
 
+    HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 }
 #endif //#ifdef CONFIG_USE_PANEL_NODESMALL
 
