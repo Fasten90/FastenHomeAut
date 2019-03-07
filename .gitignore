@@ -99,3 +99,5 @@ $RECYCLE.BIN/
 
 # Tools
 /Tools/llvm-7.0.0.src
+
+/Utils/SourceCodeChecker/
