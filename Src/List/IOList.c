@@ -15,11 +15,10 @@
 
 #include "options.h"
 
-#ifdef CONFIG_MODULE_IO_ENABLE
-
 #include "IO.h"
 #include "IOList.h"
 
+#ifdef CONFIG_MODULE_IO_ENABLE
 
 
 /*------------------------------------------------------------------------------
