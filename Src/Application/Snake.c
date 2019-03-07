@@ -117,6 +117,9 @@ void Snake_Init(void)
 
     memset(Snake_Matrix, 0, sizeof(Snake_Matrix));
 
+    /*
+     * Start small snake with --> format
+     */
     Snake_Matrix[Snake_StartPoint.x][Snake_StartPoint.y] = Step_Right;
     Snake_Matrix[Snake_StartPoint.x-1][Snake_StartPoint.y] = Step_Right;
     Snake_Matrix[Snake_StartPoint.x-2][Snake_StartPoint.y] = Step_Right;
