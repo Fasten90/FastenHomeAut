@@ -19,7 +19,7 @@
 #include "MemHandler.h"
 #include "StringHelper.h"
 
-#ifdef MODULE_STRING_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_STRING_UNITTEST_ENABLE
     #include "unittest.h"
 #endif
 
@@ -2535,7 +2535,7 @@ size_t usnprintf(char * str, size_t maxLen, const char * format, ...)
 
 
 
-#ifdef MODULE_STRING_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_STRING_UNITTEST_ENABLE
 /**
  * @brief    String module Unit Test
  */
@@ -2958,7 +2958,7 @@ uint32_t StringHelper_UnitTest(void)
     // End of unittest
     return UnitTest_End();
 }
-#endif    // #ifdef MODULE_STRING_UNITTEST_ENABLE
+#endif    // #ifdef CONFIG_MODULE_STRING_UNITTEST_ENABLE
 
 
 // Other printf:

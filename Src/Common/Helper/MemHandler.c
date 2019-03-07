@@ -20,7 +20,7 @@
 #include "board.h"
 #include "MemHandler.h"
 
-#ifdef MODULE_MEM_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_MEM_UNITTEST_ENABLE
     #include "UnitTest.h"
 #endif
 
@@ -300,7 +300,7 @@ bool mem_CheckPointer(void * pnt, size_t size)
 
 
 
-#ifdef MODULE_MEM_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_MEM_UNITTEST_ENABLE
 /**
  * @brief    MEM module Unit Test
  */
@@ -478,4 +478,4 @@ uint32_t MEM_UnitTest(void)
     // Finish
     return UnitTest_End();
 }
-#endif    // #ifdef MODULE_MEM_UNITTEST_ENABLE
+#endif    // #ifdef CONFIG_MODULE_MEM_UNITTEST_ENABLE

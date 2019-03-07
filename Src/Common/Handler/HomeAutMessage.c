@@ -14,7 +14,7 @@
 #include "HomeAutMessage.h"
 #include "DebugUart.h"
 
-#ifdef MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
 #include "unittest.h"
 #endif
 
@@ -614,7 +614,7 @@ void HomeAutMessage_SendMessage(uint8_t myAddress,
 
 
 
-#ifdef MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
 /**
  * @brief    Test an HomeAutMessage
  */
@@ -665,7 +665,7 @@ uint32_t HomeAutMessage_UnitTest(void)
     // Finish
     return UnitTest_End();
 }
-#endif    // #ifdef MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
+#endif    // #ifdef CONFIG_MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
 
 
 

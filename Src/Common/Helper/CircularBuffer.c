@@ -22,7 +22,7 @@
 #include "StringHelper.h"
 #endif
 
-#ifdef MODULE_CIRCULARBUFFER_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_CIRCULARBUFFER_UNITTEST_ENABLE
     #include "StringHelper.h"
     #include "UnitTest.h"
 #endif
@@ -33,7 +33,7 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#ifdef MODULE_CIRCULARBUFFER_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_CIRCULARBUFFER_UNITTEST_ENABLE
     #define CIRCBUFF_BUFFER_SIZE                        (256U)
     #define CIRCULARBUFFER_ERROR()
 #else
@@ -412,7 +412,7 @@ size_t CircularBuffer_PrintStatistics(char *str, size_t len, CircularBufferInfo_
 
 
 
-#ifdef MODULE_CIRCULARBUFFER_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_CIRCULARBUFFER_UNITTEST_ENABLE
 /**
  * @brief    CircularBuffer UnitTest
  */

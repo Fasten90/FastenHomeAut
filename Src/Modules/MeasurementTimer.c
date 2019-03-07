@@ -159,7 +159,7 @@ uint32_t MeasurementTimer_GetTime(void)
 
 
 
-#ifdef MODULE_MEASUREMENTTIMER_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_MEASUREMENTTIMER_UNITTEST_ENABLE
 /**
  * @brief    MeasurementTimer UnitTest
  */
@@ -189,7 +189,7 @@ uint32_t MeasurementTimer_UnitTest(void)
     return UnitTest_End();
 }
 
-#endif /* MODULE_MEASUREMENTTIMER_UNITTEST_ENABLE */
+#endif /* CONFIG_MODULE_MEASUREMENTTIMER_UNITTEST_ENABLE */
 
 
 #endif /* CONFIG_MODULE_MEASUREMENTTIMER_ENABLE */

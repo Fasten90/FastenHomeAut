@@ -13,7 +13,7 @@
 #include "compiler.h"
 #include "MathHelper.h"
 
-#ifdef MODULE_MATHHELPER_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_MATHHELPER_UNITTEST_ENABLE
 #include "UnitTest.h"
 #endif
 
@@ -346,7 +346,7 @@ uint16_t random(void)
 
 
 
-#ifdef MODULE_MATHHELPER_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_MATHHELPER_UNITTEST_ENABLE
 /**
  * @brief    MathHelper UnitTest
  */

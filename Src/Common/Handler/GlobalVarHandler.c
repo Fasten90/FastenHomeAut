@@ -19,7 +19,7 @@
 #include "CommandHandler.h"
 #include "MathHelper.h"
 
-#ifdef MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
     #include "UnitTest.h"
 #endif
 
@@ -130,7 +130,7 @@ static GlobVarH_ProcessResult_t GlobVarH_SetEnumerator(const GlobVarH_VarRecord_
 static void GlobVarH_SetTrace(GlobVarH_ID_t commandID, const char * param);
 #endif
 
-#ifdef MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
 static void GlobVarH_UT_Clear(void);
 #endif
 
@@ -1589,7 +1589,7 @@ void GlobVarH_PrintTraceBuffer(void)
 
 
 
-#ifdef MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
 
 // UnitTest variables
 uint8_t testUint8 = 0;
@@ -2042,7 +2042,7 @@ uint32_t GlobVarH_UnitTest(void)
 
     return UnitTest_End();
 }
-#endif    // #ifdef MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
+#endif    // #ifdef CONFIG_MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE
 
 
 #else

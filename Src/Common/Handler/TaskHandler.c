@@ -23,7 +23,7 @@
 #include "EventHandler.h"
 #include "SwWatchDog.h"
 
-#ifdef MODULE_TASKHANDLER_UNNITEST_ENABLE
+#ifdef CONFIG_MODULE_TASKHANDLER_UNNITEST_ENABLE
 #include "UnitTest.h"
 #endif
 
@@ -508,7 +508,7 @@ TaskID_t TaskHandler_GetActualRunningTaskID(void)
 
 
 
-#ifdef MODULE_TASKHANDLER_UNNITEST_ENABLE
+#ifdef CONFIG_MODULE_TASKHANDLER_UNNITEST_ENABLE
 uint32_t TaskHandler_UnitTest(void)
 {
     uint8_t i;

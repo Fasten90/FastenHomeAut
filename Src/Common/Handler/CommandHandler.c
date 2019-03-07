@@ -21,7 +21,7 @@
 #include "EventHandler.h"
 #include "Debug.h"
 
-#ifdef MODULE_COMMANDHANDLER_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_COMMANDHANDLER_UNITTEST_ENABLE
 #include "UnitTest.h"
 #endif
 
@@ -583,7 +583,7 @@ void CmdH_SetResponse(char *respBuffer, size_t respLength)
 
 
 
-#ifdef MODULE_COMMANDHANDLER_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_COMMANDHANDLER_UNITTEST_ENABLE
 /**
  * @brief    CommandHandler unit test
  */

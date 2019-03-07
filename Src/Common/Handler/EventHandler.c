@@ -23,7 +23,7 @@
 #include "EventLog.h"
 #include "EventHandler.h"
 
-#ifdef MODULE_EVENTHANDLER_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_EVENTHANDLER_UNITTEST_ENABLE
 #include "UnitTest.h"
 #endif
 
@@ -217,7 +217,7 @@ const char * EventHandler_GetEventTypeName(EventType_t eventType)
 
 
 
-#ifdef MODULE_EVENTHANDLER_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_EVENTHANDLER_UNITTEST_ENABLE
 /**
  * @brief    EventHandler UnitTest
  */

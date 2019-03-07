@@ -29,7 +29,7 @@
 #include "SysTime.h"
 #endif
 
-#ifdef MODULE_EVENTLOG_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_EVENTLOG_UNITTEST_ENABLE
     #include "UnitTest.h"
     #include "ErrorHandler.h"
     #include "Timing.h"
@@ -208,7 +208,7 @@ void EventLog_PrintLogTable(void)
 
 
 
-#ifdef MODULE_EVENTLOG_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_EVENTLOG_UNITTEST_ENABLE
 uint32_t EventLog_UnitTest(void)
 {
     // Start Unit test

@@ -18,7 +18,7 @@
 #include "SecuredDataTypes.h"
 
 
-#ifdef MODULE_SECUREDDATATYPES_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_SECUREDDATATYPES_UNITTEST_ENABLE
 #include "UnitTest.h"
 
 static uint8_t Secured_ErrorCnt = 0;
@@ -136,7 +136,7 @@ void Set_SecuredUint32(SecuredUint32_t *data, uint32_t value)
 
 
 
-#ifdef MODULE_SECUREDDATATYPES_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_SECUREDDATATYPES_UNITTEST_ENABLE
 /**
  * @brief    Secured data types Unit test
  */
@@ -193,6 +193,6 @@ uint32_t SecuredDataTypes_UnitTest(void)
 
     return UnitTest_End();
 }
-#endif    // #ifdef MODULE_SECUREDDATATYPES_UNITTEST_ENABLE
+#endif    // #ifdef CONFIG_MODULE_SECUREDDATATYPES_UNITTEST_ENABLE
 
 

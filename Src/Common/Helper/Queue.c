@@ -60,7 +60,7 @@
 #include "SysTime.h"
 #endif
 
-#ifdef MODULE_QUEUE_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_QUEUE_UNITTEST_ENABLE
 #include "UnitTest.h"
 #include "StringHelper.h"
 #endif
@@ -402,7 +402,7 @@ void Queue_Defragmentation(void)
 
 
 
-#ifdef MODULE_QUEUE_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_QUEUE_UNITTEST_ENABLE
 uint32_t Queue_UnitTest(void)
 {
     #define TEST_BUFFER_SIZE        (400U)

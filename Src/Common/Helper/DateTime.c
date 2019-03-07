@@ -16,7 +16,7 @@
 #include "StringHelper.h"
 #include "DateTime.h"
 
-#ifdef MODULE_DATETIME_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_DATETIME_UNITTEST_ENABLE
     #include "unittest.h"
 #endif
 
@@ -629,7 +629,7 @@ void DateTime_AddHour(DateTime_t *dateTime)
 /**
  * @brief    DateTime Unit test
  */
-#ifdef MODULE_DATETIME_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_DATETIME_UNITTEST_ENABLE
 /**
  * @brief    String module Unit Test
  */

@@ -112,7 +112,7 @@ float ConvertTable_GetValue(const ConverTable_t * table, uint32_t value)
 
 
 
-#ifdef MODULE_CONVERTTABLE_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_CONVERTTABLE_UNITTEST_ENABLE
 /**
  * @brief    Convert table unit test
  */
@@ -208,6 +208,6 @@ uint32_t ConvertTable_UnitTest(void)
     // Finish
     return UnitTest_End();
 }
-#endif    // #ifdef MODULE_CONVERTTABLE_UNITTEST_ENABLE
+#endif    // #ifdef CONFIG_MODULE_CONVERTTABLE_UNITTEST_ENABLE
 
 #endif    // #ifdef CONFIG_MODULE_CONVERTTABLE_ENABLE

@@ -230,7 +230,7 @@ static void LinkedList_PrintListItem(ListItem * item)
 
 
 
-#ifdef MODULE_LINKEDLIST_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_LINKEDLIST_UNITTEST_ENABLE
 uint32_t LinkedList_UnitTest(void)
 {
 
@@ -299,6 +299,6 @@ uint32_t LinkedList_UnitTest(void)
     // Finish
     return UnitTest_End();
 }
-#endif    // #ifdef MODULE_LINKEDLIST_UNITTEST_ENABLE
+#endif    // #ifdef CONFIG_MODULE_LINKEDLIST_UNITTEST_ENABLE
 
 #endif    // #ifdef CONFIG_MODULE_LINKEDLIST_ENABLE
