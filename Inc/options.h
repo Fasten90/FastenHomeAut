@@ -520,6 +520,7 @@
 ///< Unit tests
 #define CONFIG_MODULE_UNITTEST_ENABLE
 #if defined(CONFIG_MODULE_UNITTEST_ENABLE) && !defined(CONFIG_USE_PANEL_PC)
+    // Unittest at embedded target
     //#define CONFIG_MODULE_STRING_UNITTEST_ENABLE
     //#define CONFIG_MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
     //#define CONFIG_MODULE_DATETIME_UNITTEST_ENABLE
@@ -543,7 +544,7 @@
     #define CONFIG_PROTOCOL_BUFFER_ENABLE
     #endif
 #elif defined(CONFIG_USE_PANEL_PC)
-    // Forced all UnitTest
+    // Forced all possible UnitTest for PC
     #define CONFIG_MODULE_STRING_UNITTEST_ENABLE
     #define CONFIG_MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
     #define CONFIG_MODULE_DATETIME_UNITTEST_ENABLE
