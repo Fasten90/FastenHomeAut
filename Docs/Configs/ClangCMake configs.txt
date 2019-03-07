@@ -1,0 +1,9 @@
+CLangCmake
+
+https://llvm.org/docs/CMake.html
+
+[Clang installed]
+
+- Download LLVM source
+- Unzip
+

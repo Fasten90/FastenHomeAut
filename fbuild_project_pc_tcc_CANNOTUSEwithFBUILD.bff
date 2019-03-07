@@ -1,0 +1,92 @@
+// FastenHomeAut FastBuild config
+//------------------------------------------------------------------------------
+
+// GCC Path (Atollic 9.0.1)
+//------------------------------------------------------------------------------
+
+.GccPath         = 'c:\Programs\Engineer\tcc\'
+
+// Settings
+//------------------------------------------------------------------------------
+
+Settings
+{
+    .Environment    = { "PATH=$GccPath$\bin\",
+                        "TMP=C:\Windows\Temp",
+                        "SystemRoot=C:\Windows" }
+}
+
+
+// Compiler + Linkers
+//------------------------------------------------------------------------------
+
+.Compiler           = '$GccPath$\bin\tcc.exe'
+
+.CompilerOptions    = ' "%1"'          // Input
+                    + ' -o"%2"'        // Output
+                    + ' -O0'           // Optimalization
+                    + ' -g3'           // ?? Debug
+                    + ' -c'            // Compile ...
+                    + ' -Wall'         // Warning level 4
+
+.Linker             = '$GccPath$\bin\tcc.exe'
+
+.LinkerOptions      = ' -o"%2"'        // Output
+                    + ' "%1"'          // Input
+                    //+ ' -g'             // Debug
+                    //+ ' -Wl,-V'
+
+
+// Defines
+//------------------------------------------------------------------------------
+
+.Defines = ' -DCONFIG_USE_PANEL_PC=1'
+
+.CompilerOptions    + .Defines
+
+
+// Include paths
+//------------------------------------------------------------------------------
+
+.BaseIncludePaths   = ' -IDrivers/Windows/Inc'
+                    + ' -IInc/Common'
+                    + ' -IInc/Communication'
+                    + ' -IInc/HwTester'
+                    + ' -IInc/Modules'
+                    + ' -IInc'
+                    + ' -IInc/Game'
+                    + ' -IInc/List'
+                    + ' -IInc/Display'
+                    + ' -IInc/Common/Helper'
+                    + ' -IInc/Common/Handler'
+                    + ' -IInc/SelfTest'
+
+.CompilerOptions    + .BaseIncludePaths
+
+// Library paths
+//------------------------------------------------------------------------------
+
+.WindowsLibPath = 'c:\Programs\Engineer\tcc\include\'
+
+
+// FastenLib
+//------------------------------------------------------------------------------
+
+ObjectList( 'Fasten-Lib' )
+{
+    .CompilerInputPath  = { '\Src\', '\Drivers\Windows\' }
+
+    .CompilerInputPattern = '*.c'
+
+    .CompilerOutputPath = 'Out\CompileFbuildFastenHomeAutPCtcc'
+}
+
+
+Executable( 'FastenHomeAutPC' )
+{
+    .Libraries          = { "Fasten-Lib" }
+    .LinkerOutput       = 'Out\FBuildFastenHomeAutPCtcc.exe'
+//    .LinkerOptions      + ' libcmt.lib'     // Std Lib (Multi-Threaded, Static, Release)
+//                        + ' kernel32.lib'   // Kernel functions
+}
+
