@@ -17,7 +17,7 @@ Project configs:
 ../FastenHomeAut/Inc/Communication
 ../FastenHomeAut/Inc/HwTester
 ../FastenHomeAut/Inc/Modules
-../FastenHomeAut/Inc/Game
+../FastenHomeAut/Inc/Application
 ../FastenHomeAut/Inc/Common/Handler
 ../FastenHomeAut/Inc/Common/Helper
 ../FastenHomeAut/Inc/Display

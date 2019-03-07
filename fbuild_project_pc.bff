@@ -54,7 +54,7 @@ Settings
                     + ' -IInc/HwTester'
                     + ' -IInc/Modules'
                     + ' -IInc'
-                    + ' -IInc/Game'
+                    + ' -IInc/Application'
                     + ' -IInc/List'
                     + ' -IInc/Display'
                     + ' -IInc/Common/Helper'

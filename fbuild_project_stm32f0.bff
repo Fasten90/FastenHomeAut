@@ -84,7 +84,7 @@ Settings
                   + ' -IInc/Communication'
                   + ' -IInc/HwTester'
                   + ' -IInc/Modules'
-                  + ' -IInc/Game'
+                  + ' -IInc/Application'
                   + ' -IInc'
                   + ' -IInc/Common/Handler'
                   + ' -IInc/Common/Helper'
