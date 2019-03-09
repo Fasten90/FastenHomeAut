@@ -20,7 +20,9 @@
  *----------------------------------------------------------------------------*/
 
 // bool type
+#if (CONFIG_COMPILER_USE_DEFAULT_BOOL == 1)
 #include <stdbool.h>
+#endif /* CONFIG_COMPILER_USE_DEFAULT_BOOL */
 
 // uint32_t type
 #include <stdint.h>
@@ -52,6 +54,17 @@
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
+
+
+#if (CONFIG_COMPILER_USE_DEFAULT_BOOL == 0)
+/**
+ * This solution will help in "small storage" for bool
+ */
+typedef uint8_t bool;
+
+#define true  1
+#define false 0
+#endif /* CONFIG_COMPILER_USE_DEFAULT_BOOL */
 
 
 ///< Integer typedefs
