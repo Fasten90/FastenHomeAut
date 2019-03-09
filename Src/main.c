@@ -653,8 +653,8 @@ void vApplicationIdleHook( void )
 
 void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName )
 {
-    ( void ) pcTaskName;
-    ( void ) pxTask;
+    UNUSED_ARGUMENT(pcTaskName);
+    UNUSED_ARGUMENT(pxTask);
 
     /* Run time stack overflow checking is performed if
     configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.  This hook

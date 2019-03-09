@@ -595,8 +595,8 @@ const CmdH_CommandID_t CmdH_CommandNum = NUM_OF(CmdH_CommandList);
 static CmdH_Result_t CommandFunction_cls(uint32_t argc, char** argv)
 {
     /* Suppress warning */
-    (void)argc;
-    (void)argv;
+    UNUSED_ARGUMENT(argc);
+    UNUSED_ARGUMENT(argv);
 
 #ifdef CONFIG_MODULE_TERMINAL_ENABLE
     Terminal_SendCls();
@@ -613,8 +613,8 @@ static CmdH_Result_t CommandFunction_cls(uint32_t argc, char** argv)
 static CmdH_Result_t CommandFunction_version(uint32_t argc, char** argv)
 {
     /* Suppress warning */
-    (void)argc;
-    (void)argv;
+    UNUSED_ARGUMENT(argc);
+    UNUSED_ARGUMENT(argv);
 
     CmdH_SendLine(Global_Version);
 
@@ -629,8 +629,8 @@ static CmdH_Result_t CommandFunction_version(uint32_t argc, char** argv)
 static CmdH_Result_t CommandFunction_welcome(uint32_t argc, char** argv)
 {
     /* Suppress warning */
-    (void)argc;
-    (void)argv;
+    UNUSED_ARGUMENT(argc);
+    UNUSED_ARGUMENT(argv);
 
 #ifdef CONFIG_MODULE_TERMINAL_ENABLE
     Terminal_SendWelcome();
@@ -670,8 +670,8 @@ static CmdH_Result_t CommandFunction_help(uint32_t argc, char** argv)
 static CmdH_Result_t CommandFunction_reset(uint32_t argc, char** argv)
 {
     /* Suppress warning */
-    (void)argc;
-    (void)argv;
+    UNUSED_ARGUMENT(argc);
+    UNUSED_ARGUMENT(argv);
 
     uint16_t i;
 
@@ -698,8 +698,8 @@ static CmdH_Result_t CommandFunction_reset(uint32_t argc, char** argv)
 static CmdH_Result_t CommandFunction_unittest(uint32_t argc, char** argv)
 {
     /* Suppress warning */
-    (void)argc;
-    (void)argv;
+    UNUSED_ARGUMENT(argc);
+    UNUSED_ARGUMENT(argv);
 
     CmdH_SendLine("Start unittest");
 
@@ -720,8 +720,8 @@ static CmdH_Result_t CommandFunction_unittest(uint32_t argc, char** argv)
 static CmdH_Result_t CommandFunction_exit(uint32_t argc, char** argv)
 {
     /* Suppress warning */
-    (void)argc;
-    (void)argv;
+    UNUSED_ARGUMENT(argc);
+    UNUSED_ARGUMENT(argv);
 
     CmdH_SendLine("Exit...");
 
@@ -740,8 +740,8 @@ static CmdH_Result_t CommandFunction_exit(uint32_t argc, char** argv)
 static CmdH_Result_t CommandFunction_moduletest(uint32_t argc, char** argv)
 {
     /* Suppress warning */
-    (void)argc;
-    (void)argv;
+    UNUSED_ARGUMENT(argc);
+    UNUSED_ARGUMENT(argv);
 
 
 #ifdef CONFIG_MODULE_IO_ENABLE
@@ -822,8 +822,8 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
     /* pragma message "Compiling " __FILE__ "..." */
 
     /* Suppress warning */
-    (void)argc;
-    (void)argv;
+    UNUSED_ARGUMENT(argc);
+    UNUSED_ARGUMENT(argv);
 
     CmdH_SendLine("Test start");
 
@@ -1128,7 +1128,7 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 static CmdH_Result_t CommandFunction_get(uint32_t argc, char** argv)
 {
     /* Suppress warning */
-    (void)argc;
+    UNUSED_ARGUMENT(argc);
 
     /* Process */
     GlobVarH_ProcessResult_t result = GlobVarH_ProcessVariableCommand(
@@ -1149,7 +1149,7 @@ static CmdH_Result_t CommandFunction_get(uint32_t argc, char** argv)
 static CmdH_Result_t CommandFunction_set(uint32_t argc, char** argv)
 {
     /* Suppress warning */
-    (void)argc;
+    UNUSED_ARGUMENT(argc);
 
     /* Process */
     GlobVarH_ProcessResult_t result = GlobVarH_ProcessVariableCommand(
@@ -1170,7 +1170,7 @@ static CmdH_Result_t CommandFunction_set(uint32_t argc, char** argv)
 static CmdH_Result_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** argv)
 {
     /* Suppress warning */
-    (void)argc;
+    UNUSED_ARGUMENT(argc);
 
     /* Process */
     GlobVarH_ProcessResult_t result = GlobVarH_ProcessVariableCommand(
@@ -1190,8 +1190,8 @@ static CmdH_Result_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** ar
 static CmdH_Result_t CommandFunction_GlobalVariableList(uint32_t argc, char** argv)
 {
     /* Suppress warning */
-    (void)argc;
-    (void)argv;
+    UNUSED_ARGUMENT(argc);
+    UNUSED_ARGUMENT(argv);
 
     GlobVarH_ListAllVariableParameters();
 
@@ -1207,8 +1207,8 @@ static CmdH_Result_t CommandFunction_GlobalVariableValueList(uint32_t argc,
         char** argv)
 {
     /* Suppress warning */
-    (void)argc;
-    (void)argv;
+    UNUSED_ARGUMENT(argc);
+    UNUSED_ARGUMENT(argv);
 
     GlobVarH_PrintAllVariableValues();
 
@@ -1227,7 +1227,7 @@ static CmdH_Result_t CommandFunction_GlobalVariableTrace(uint32_t argc,
     CmdH_Result_t result = CmdH_Result_Unknown;
 
     /* Suppress warning */
-    (void)argc;
+    UNUSED_ARGUMENT(argc);
 
     uint32_t id;
     if (StringToUnsignedDecimalNum(argv[1], &id))
@@ -1290,7 +1290,7 @@ static CmdH_Result_t CommandFunction_GlobalVariableTrace(uint32_t argc,
 static CmdH_Result_t CommandFunction_dac(uint32_t argc, char** argv)
 {
     /* Suppress warning */
-    (void)argc;
+    UNUSED_ARGUMENT(argc);
 
     uint32_t channelNum;
     float voltage = 0.0f;
@@ -1332,7 +1332,7 @@ static CmdH_Result_t CommandFunction_dac(uint32_t argc, char** argv)
 static CmdH_Result_t CommandFunction_io(uint32_t argc, char** argv)
 {
     /* Suppress warning */
-    (void)argc;
+    UNUSED_ARGUMENT(argc);
 
     if (!StrCmp("ioinit", argv[0]))
     {
@@ -1435,8 +1435,8 @@ static CmdH_Result_t CommandFunction_io(uint32_t argc, char** argv)
 static CmdH_Result_t CommandFunction_adc(uint32_t argc, char** argv)
 {
     /* Suppress warning */
-    (void)argc;
-    (void)argv;
+    UNUSED_ARGUMENT(argc);
+    UNUSED_ARGUMENT(argv);
 
     uint8_t i;
 
@@ -1519,7 +1519,7 @@ static CmdH_Result_t CommandFunction_adcread(uint32_t argc, char** argv)
 static CmdH_Result_t CommandFunction_PWM(uint32_t argc, char** argv)
 {
     /* Suppress unused args */
-    (void)argc;
+    UNUSED_ARGUMENT(argc);
 
     uint8_t percent;
     uint32_t convertValue;
@@ -1552,7 +1552,7 @@ static CmdH_Result_t CommandFunction_PWM(uint32_t argc, char** argv)
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
 static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 {
-    (void)argc;
+    UNUSED_ARGUMENT(argc);
     CmdH_Result_t result = CmdH_Result_Unknown;
     int32_t convertValue;
 
@@ -1702,7 +1702,7 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 static CmdH_Result_t CommandFunction_ESP8266(uint32_t argc, char** argv)
 {
-    (void)argc;
+    UNUSED_ARGUMENT(argc);
     bool result = CmdH_Result_Unknown;
 
     if (!StrCmp("sendonwifi", argv[1]))
@@ -1819,8 +1819,8 @@ static CmdH_Result_t CommandFunction_Time(uint32_t argc, char** argv)
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
 static CmdH_Result_t CommandFunction_EventLog(uint32_t argc, char** argv)
 {
-    (void)argc;
-    (void)argv;
+    UNUSED_ARGUMENT(argc);
+    UNUSED_ARGUMENT(argv);
 
     /* List all event logs */
     EventLog_PrintLogTable();
@@ -1837,8 +1837,8 @@ static CmdH_Result_t CommandFunction_EventLog(uint32_t argc, char** argv)
  */
 static CmdH_Result_t CommandFunction_adc(uint32_t argc, char** argv)
 {
-    (void)argc;
-    (void)argv;
+    UNUSED_ARGUMENT(argc);
+    UNUSED_ARGUMENT(argv);
 
     /* Print ADC values */
     ADC_PrintAllValues();
@@ -1963,7 +1963,7 @@ static CmdH_Result_t CommandFunction_flashwrite(uint32_t argc, char** argv)
  */
 static CmdH_Result_t CommandFunction_raspberrypi(uint32_t argc, char** argv)
 {
-    (void)argc;
+    UNUSED_ARGUMENT(argc);
 
     /* Check arg 2 */
     if (!StrCmp("setout", argv[1]))
@@ -2016,7 +2016,7 @@ static CmdH_Result_t CommandFunction_raspberrypi(uint32_t argc, char** argv)
  */
 static CmdH_Result_t CommandFunction_mr(uint32_t argc, char** argv)
 {
-    (void)argc;
+    UNUSED_ARGUMENT(argc);
 
     uint32_t *source;
     int16_t size;
@@ -2070,7 +2070,7 @@ static CmdH_Result_t CommandFunction_mr(uint32_t argc, char** argv)
  */
 static CmdH_Result_t CommandFunction_mw(uint32_t argc, char** argv)
 {
-    (void)argc;
+    UNUSED_ARGUMENT(argc);
 
     uint8_t *destination1;
     uint16_t *destination2;
@@ -2126,7 +2126,7 @@ static CmdH_Result_t CommandFunction_mw(uint32_t argc, char** argv)
  */
 static CmdH_Result_t CommandFunction_go(uint32_t argc, char** argv)
 {
-    (void)argc;
+    UNUSED_ARGUMENT(argc);
 
     uint32_t destination;
     int (*fpntr)(void);
@@ -2162,7 +2162,7 @@ static CmdH_Result_t CommandFunction_go(uint32_t argc, char** argv)
  */
 static CmdH_Result_t CommandFunction_Display(uint32_t argc, char** argv)
 {
-    (void)argc;
+    UNUSED_ARGUMENT(argc);
 
     CmdH_Result_t result = CmdH_Result_Unknown;
 
@@ -2383,7 +2383,7 @@ static CmdH_Result_t CommandFunction_IO(uint32_t argc, char** argv)
  */
 static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 {
-    (void)argc;
+    UNUSED_ARGUMENT(argc);
     CmdH_Result_t result = CmdH_Result_Unknown;
     static bool Simulation_IsEnabled = false;
 
@@ -2571,7 +2571,7 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
  */
 static CmdH_Result_t CommandFunction_TaskHandler(uint32_t argc, char** argv)
 {
-    (void)argc;
+    UNUSED_ARGUMENT(argc);
     CmdH_Result_t result = CmdH_Result_Unknown;
 
     #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
@@ -2594,7 +2594,7 @@ static CmdH_Result_t CommandFunction_TaskHandler(uint32_t argc, char** argv)
         result = CmdH_Result_Error_WrongArgument1;
     }
     #else
-    (void)argv;
+    UNUSED_ARGUMENT(argv);
     #endif
 
     return result;

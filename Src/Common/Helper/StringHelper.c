@@ -2318,7 +2318,7 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                     uint8_t decLen = SignedDecimalToStringSafe(ival, &str[length], remainLength+1);
                     length += decLen;
                     remainLength -= decLen;
-                    (void)fillCharacter;
+                    UNUSED_ARGUMENT(fillCharacter);
                     /* TODO: with Fill function */
                     /*
                     if (paramNum2 <= remainLength)
@@ -2342,7 +2342,7 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                     uint8_t decLen = UnsignedDecimalToStringSafe(uival, &str[length], remainLength+1);
                     length += decLen;
                     remainLength -= decLen;
-                    (void)fillCharacter;
+                    UNUSED_ARGUMENT(fillCharacter);
                     /* TODO: with Fill function */
                     /*
                     string += UnsignedDecimalToStringFill(uival, string,
@@ -2432,7 +2432,7 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                 case 'f':
                     /* %f - float */
                     flval = va_arg(ap, double);                    /* Double / Float */
-                    (void)flval;
+                    UNUSED_ARGUMENT(flval);
                     /* TODO: Not implemented function (for length safe) */
                     /* EBUG_BREAKPOINT(); */
                     uint8_t floatLength;

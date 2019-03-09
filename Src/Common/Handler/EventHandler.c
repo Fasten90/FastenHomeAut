@@ -115,8 +115,8 @@ void EventHandler_GenerateEvent(EventName_t eventName, EventData_t eventData, Ta
         EventLog_LogEvent(eventName, eventData, taskSource, EventType_Raised);
     }
 #else
-    (void)taskSource;
-    (void)eventData;
+    UNUSED_ARGUMENT(taskSource);
+    UNUSED_ARGUMENT(eventData);
 #endif
 }
 
@@ -179,7 +179,7 @@ void EventHandler_ClearEvent(EventName_t eventName, TaskID_t taskSource)
         EventLog_LogEvent(eventName, taskSource, taskSource, EventType_Get);
     }
 #else
-    (void)taskSource;
+    UNUSED_ARGUMENT(taskSource);
 #endif
 }
 

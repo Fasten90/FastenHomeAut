@@ -234,7 +234,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
     /* Suppress warning */
-    (void)hadc;
+    UNUSED_ARGUMENT(hadc);
 
 #ifdef CONFIG_DEBUG_SELFTEST
     ADC_RunCnt++;
@@ -248,7 +248,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
  */
 void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
 {
-    (void)hadc;
+    UNUSED_ARGUMENT(hadc);
 }
 
 
@@ -258,7 +258,7 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
  */
 void HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
 {
-    (void)hadc;
+    UNUSED_ARGUMENT(hadc);
     DEBUG_BREAKPOINT();
 }
 

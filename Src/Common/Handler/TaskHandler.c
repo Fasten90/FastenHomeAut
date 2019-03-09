@@ -241,7 +241,7 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 #ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
     uprintf("- %s task run %s\r\n", TaskList[taskID].taskName, (result == TaskResult_Ok) ? ("successful") : ("failed"));
 #else
-    (void)result;
+    UNUSED_ARGUMENT(result);
 #endif
 #ifdef CONFIG_EVENTLOG_TASKHANDLER_LOG_ENABLE
     EventHandler_GenerateEvent(Event_TaskScheduled, taskID, 0);

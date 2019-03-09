@@ -194,8 +194,8 @@ bool Queue_DropFirstElement(QueueListInfo_t * queue, bool needDelete)
 {
     /* TODO: Implement */
 
-    (void)queue;
-    (void)needDelete;
+    UNUSED_ARGUMENT(queue);
+    UNUSED_ARGUMENT(needDelete);
 
     return false;
 }
@@ -286,11 +286,11 @@ bool Queue_GetLastElement(QueueListInfo_t * queue, void * pData, size_t * dataSi
 bool Queue_GetLastElement(QueueListInfo_t * queue, void * pData, size_t * dataSize, size_t bufferSize, bool needDelete)
 {
     /* TODO: Implement! */
-    (void)queue;
-    (void)pData;
-    (void)dataSize;
-    (void)bufferSize;
-    (void)needDelete;
+    UNUSED_ARGUMENT(queue);
+    UNUSED_ARGUMENT(pData);
+    UNUSED_ARGUMENT(dataSize);
+    UNUSED_ARGUMENT(bufferSize);
+    UNUSED_ARGUMENT(needDelete);
 
     return false;
 }
@@ -301,10 +301,10 @@ bool Queue_PutFirstElement(QueueListInfo_t * queue, void * pData, size_t dataSiz
 bool Queue_PutFirstElement(QueueListInfo_t * queue, void * pData, size_t dataSize, QueueDataType_t dataTpye)
 {
     /* TODO: Implement! */
-    (void)queue;
-    (void)pData;
-    (void)dataSize;
-    (void)dataTpye;
+    UNUSED_ARGUMENT(queue);
+    UNUSED_ARGUMENT(pData);
+    UNUSED_ARGUMENT(dataSize);
+    UNUSED_ARGUMENT(dataTpye);
 
     return false;
 }

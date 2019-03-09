@@ -82,9 +82,9 @@ void UnitTest_CheckResult(bool isValid, const char *conString, const char *error
         UnitTest_InvalidCnt++;
 
 #if (UNITTEST_PAUSE_WHEN_ERROR == 1)
-        (void)conString;
-        (void)errorString;
-        (void)line;
+        UNUSED_ARGUMENT(conString);
+        UNUSED_ARGUMENT(errorString);
+        UNUSED_ARGUMENT(line);
         DEBUG_BREAKPOINT();
 #else
 

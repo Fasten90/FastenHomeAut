@@ -126,7 +126,7 @@ void CommonPWM_Init(void)
  */
 static void CommonPWM_HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 {
-    (void)htim;
+    UNUSED_ARGUMENT(htim);
 
 
     GPIO_InitTypeDef GPIO_InitStruct;

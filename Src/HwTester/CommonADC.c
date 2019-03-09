@@ -257,7 +257,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 {
     /* Suppress warning */
-    (void)AdcHandle;
+    UNUSED_ARGUMENT(AdcHandle);
 
 #ifdef CONFIG_DEBUG_SELFTEST
     ADC_RunCnt++;

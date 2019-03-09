@@ -960,7 +960,7 @@ void DISPLAY_SSD1306_SPIx_IRQHandler(void)
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 {
     /* Suppress warning */
-    (void)hspi;
+    UNUSED_ARGUMENT(hspi);
 
     HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
 
@@ -986,7 +986,7 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi)
 {
     /* Suppress warning */
-    (void)hspi;
+    UNUSED_ARGUMENT(hspi);
 
     HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
     Display_TransferInProgress = false;

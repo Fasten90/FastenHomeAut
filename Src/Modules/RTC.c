@@ -89,7 +89,7 @@ void RTC_Init(void)
   */
 void HAL_RTC_MspInit(RTC_HandleTypeDef *hrtc)
 {
-    (void)hrtc;
+    UNUSED_ARGUMENT(hrtc);
 
     RCC_OscInitTypeDef        RCC_OscInitStruct;
     RCC_PeriphCLKInitTypeDef  PeriphClkInitStruct;

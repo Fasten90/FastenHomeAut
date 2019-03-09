@@ -159,7 +159,7 @@ CmdH_Result_t CmdH_ExecuteCommand(char *command, char *response, size_t length)
         }
 #elif defined(CONFIG_EVENTLOG_CMDHANDLER_ENABLE) || defined(CONFIG_COMMANDHANDLER_NOTIFY_COMMAND_RECEIVED_FROM_NOT_DEBUGPORT)
         /* ~ #else */
-        (void)taskID;
+        UNUSED_ARGUMENT(taskID);
 #endif
     }
 

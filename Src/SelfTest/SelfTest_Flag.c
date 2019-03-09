@@ -103,7 +103,7 @@ bool SelfTest_Flag_Test(void)
     }
 
     /* printf("Addition value: %u\r\n", addres); */
-    (void)addres;
+    UNUSED_ARGUMENT(addres);
 
 
     /* Unsigned adding overflow */
@@ -144,7 +144,7 @@ bool SelfTest_Flag_Test(void)
     }
 
     /* printf("Multiplex value: %u\r\n", mulres); */
-    (void)mulres;
+    UNUSED_ARGUMENT(mulres);
 
 
     /* Underflow subtraction */
@@ -162,7 +162,7 @@ bool SelfTest_Flag_Test(void)
     }
 
     /* printf("Subtraction value: %u\r\n", subres); */
-    (void)subres;
+    UNUSED_ARGUMENT(subres);
 
 
     /* Return with result (true = successful) */

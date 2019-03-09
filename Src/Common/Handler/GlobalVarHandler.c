@@ -238,7 +238,7 @@ GlobVarH_ProcessResult_t GlobVarH_ProcessVariableCommand(const GlobVarH_VarListI
         {
 #else
         /* TODO: Delete this parameter from function parameter */
-        (void)source;
+        UNUSED_ARGUMENT(source);
 #endif
 
             /* Source is enabled */
@@ -254,7 +254,7 @@ GlobVarH_ProcessResult_t GlobVarH_ProcessVariableCommand(const GlobVarH_VarListI
                     {
                         result = GlobVarH_SetVariable(varRecord, param);    /* It not const, can set */
                         /* Get actual value: */
-                        (void)GlobVarH_GetVariable(varRecord);                /* Not necessary to check GetVariable() return value / result */
+                        UNUSED_ARGUMENT(GlobVarH_GetVariable(varRecord));                /* Not necessary to check GetVariable() return value / result */
                     }
                     else
                     {

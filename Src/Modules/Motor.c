@@ -372,7 +372,7 @@ static uint32_t Motor_ServoConvertAngleToPeriod(int8_t angle)
  */
 void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 {
-    (void)htim;
+    UNUSED_ARGUMENT(htim);
 
 
     GPIO_InitTypeDef GPIO_InitStruct;

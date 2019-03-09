@@ -336,7 +336,7 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 #ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
     uprintf("Run %s %d\r\n", TaskList[id].taskName, id);
 #else
-    (void)source;
+    UNUSED_ARGUMENT(source);
 #endif
 
 
@@ -410,7 +410,7 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
  */
 static TaskResult_t TaskWatchdogClear(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
     Watchdog_Clear();
 
@@ -423,7 +423,7 @@ static TaskResult_t TaskWatchdogClear(ScheduleSource_t source)
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 static TaskResult_t TaskEsp8266(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
     ESP8266_StatusMachine();
 
@@ -436,7 +436,7 @@ static TaskResult_t TaskEsp8266(ScheduleSource_t source)
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
 static TaskResult_t Task_Motor(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
     Motor_StateMachine();
 
@@ -447,7 +447,7 @@ static TaskResult_t Task_Motor(ScheduleSource_t source)
 
 static TaskResult_t Task_MotorConnStop(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
     Motor_ControlStop();
 
@@ -466,7 +466,7 @@ static TaskResult_t Task_MotorConnStop(ScheduleSource_t source)
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER
 static TaskResult_t Task_RemoteControllerSending(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
     Logic_RemoteController_SendMessage();
 
@@ -479,7 +479,7 @@ static TaskResult_t Task_RemoteControllerSending(ScheduleSource_t source)
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 static TaskResult_t Task_ProcessDebugUartCommandReceived(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
 #if defined(CONFIG_MODULE_TERMINAL_ENABLE)
     Terminal_CheckCommand();
@@ -498,7 +498,7 @@ static TaskResult_t Task_ProcessDebugUartCommandReceived(ScheduleSource_t source
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
 static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
     bool canSleep = true;
 
     /* Toggle LED */
@@ -629,7 +629,7 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
 static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
     #ifdef CONFIG_FUNCTION_DISPLAY_MENU
     Logic_DisplayHandler(source);
@@ -646,7 +646,7 @@ static TaskResult_t Task_SystemTimeSecondStep(ScheduleSource_t source)
 {
     /* TODO: If not called by fix 1000ms, it is not accurate */
     /* Idea: give scheduling ms by parameter */
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
     /* Step SystemTime +1 second */
     SysTime_StepSecond();
@@ -683,7 +683,7 @@ static TaskResult_t Task_SystemTimeSecondStep(ScheduleSource_t source)
 #ifdef CONFIG_MODULE_TASK_SOFTWARE_WATCHDOG_ENABLE
 static TaskResult_t Task_SoftwareWatchDog(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
     /* Software WatchDog - Timeout task */
     /* If This task is running, the system is lagging */
@@ -699,7 +699,7 @@ static TaskResult_t Task_SoftwareWatchDog(ScheduleSource_t source)
 static TaskResult_t Task_GlobalVarTrace(ScheduleSource_t source)
 {
     /* UNUSED parameter */
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
     /* Trace GlobalVars */
     GlobVarH_RunTrace();
@@ -714,7 +714,7 @@ static TaskResult_t Task_GlobalVarTrace(ScheduleSource_t source)
 static TaskResult_t Task_InputOutput(ScheduleSource_t source)
 {
     /* UNUSED parameter */
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
     Logic_CheckCharger();
 
@@ -729,7 +729,7 @@ static TaskResult_t Task_InputOutput(ScheduleSource_t source)
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
 static TaskResult_t Task_CommonAdcFunction(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
     /* Convert ADC values */
     CommonADC_ConvertAllMeasuredValues();
@@ -754,7 +754,7 @@ static TaskResult_t Task_CommonAdcFunction(ScheduleSource_t source)
 #ifdef CONFIG_DEBUG_SELFTEST
 static TaskResult_t Task_SelfTestFunction(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
     /* SelfTest: */
 
@@ -776,7 +776,7 @@ static TaskResult_t Task_SelfTestFunction(ScheduleSource_t source)
 #ifdef CONFIG_FUNCTION_PERIODICAL_SENDING
 static TaskResult_t Task_PeriodicalSendingFunction(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
     Logic_PeriodicalSending();
 
@@ -789,7 +789,7 @@ static TaskResult_t Task_PeriodicalSendingFunction(ScheduleSource_t source)
 #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
 static TaskResult_t Task_BluetoothProcessFunction(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
     Bluetooth_ProcessReceivedCharacters();
 
@@ -801,7 +801,7 @@ static TaskResult_t Task_BluetoothProcessFunction(ScheduleSource_t source)
 #ifdef CONFIG_MODULE_COMMON_UART_ENABLE
 static TaskResult_t Task_CommonUARTfunction(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
     CommonUART_ProcessReceivedCharacters();
 

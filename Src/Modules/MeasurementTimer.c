@@ -101,7 +101,7 @@ void MeasurementTimer_Init(void)
  */
 void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 {
-    (void)htim;
+    UNUSED_ARGUMENT(htim);
 
     /* TIMx Peripheral clock enable */
     MEASUREMENTTIMER_TIMER_CLK_ENABLES();
@@ -135,7 +135,7 @@ void MeasurementTimer_StartMeasurement(void)
   */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-    (void)htim;
+    UNUSED_ARGUMENT(htim);
 
     /* 1 sec elapsed */
     MeasurementTimer_ElapsedSeconds++;

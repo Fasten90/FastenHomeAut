@@ -50,7 +50,7 @@ static uint32_t CommonDAC_VoltageToBinary(float voltage);
 void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac)
 {
     /* Suppress warning */
-    (void)hdac;
+    UNUSED_ARGUMENT(hdac);
 
     GPIO_InitTypeDef GPIO_InitStruct;
 

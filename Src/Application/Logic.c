@@ -277,12 +277,12 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
     BUTTON_DEBUG_PRINT("%s pressed %s", buttonName, typeName);
 
 #elif BUTTON_NUM == 1
-    (void)button;
-    (void)type;
+    UNUSED_ARGUMENT(button);
+    UNUSED_ARGUMENT(type);
     BUTTON_DEBUG_PRINT("Pressed");
 #else
-(void)button;
-(void)type;
+    UNUSED_ARGUMENT(button);
+    UNUSED_ARGUMENT(type);
 #warning "BUTTON_NUM is not defined or has unimplemented value!"
 #endif
 
@@ -483,7 +483,7 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
         /* TODO: Handle button change functions? */
     #elif defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK) && (BUTTON_NUM == 1)
         /* One button mode */
-        (void)type;
+        UNUSED_ARGUMENT(type);
 
         if (button == PressedButton_User)
         {
@@ -501,7 +501,7 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
         }
     #elif defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK) && (BUTTON_NUM > 1)
         /* More button mode */
-        (void)type;
+        UNUSED_ARGUMENT(type);
         /* TODO: Up-Down / Right-Up difference... */
         if ((button == PressedButton_Right) || (button == PressedButton_Left))
         {
@@ -556,7 +556,7 @@ static const int8_t Car_Turning_MinValue = -30;
 
 static void Logic_RemoteController_Button(ButtonType_t button, ButtonPressType_t type)
 {
-    (void)type;
+    UNUSED_ARGUMENT(type);
 
     /* Check buttons */
     if (button == PressedButton_Right)
