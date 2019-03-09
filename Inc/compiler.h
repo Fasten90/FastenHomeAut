@@ -101,10 +101,10 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #else
     #ifdef CONFIG_DEBUG_MODE
         // Assert --> Breakpoint
-        #define ASSERT(__e)            do {                         \
-                                        if (!(__e))                \
-                                            DEBUG_BREAKPOINT();    \
-                                    } while(0)
+        #define ASSERT(__e)            do {                           \
+                                           if (!(__e))                \
+                                               DEBUG_BREAKPOINT();    \
+                                       } while(0)
     #else
         // Debug mode turned off (ASSERT() do nothing)
         #define ASSERT(__e)
@@ -118,7 +118,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 /**
  * Macro for checking - compile time checking
  *
- * OK        if condition is TRUE
+ * OK       if condition is TRUE
  * Error    if condition is FALSE
  *
  * @note    Only can use on a function
