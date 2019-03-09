@@ -60,15 +60,15 @@ static uint32_t Reset_GetResetReason(void)
 
     for (i = 0; (1<<i) < ResetReason_Count; i++)
     {
-        // @note Be careful, now it is work in STM32F407, because:
+        // @note Be careful, now it works in STM32F407, because:
         /*
          *    #define RCC_FLAG_BORRST                  ((uint8_t)0x79U)
-        *    #define RCC_FLAG_PINRST                  ((uint8_t)0x7AU)
-        *    #define RCC_FLAG_PORRST                  ((uint8_t)0x7BU)
-        *    #define RCC_FLAG_SFTRST                  ((uint8_t)0x7CU)
-        *    #define RCC_FLAG_IWDGRST                 ((uint8_t)0x7DU)
-        *    #define RCC_FLAG_WWDGRST                 ((uint8_t)0x7EU)
-        *    #define RCC_FLAG_LPWRRST                 ((uint8_t)0x7FU)
+         *    #define RCC_FLAG_PINRST                  ((uint8_t)0x7AU)
+         *    #define RCC_FLAG_PORRST                  ((uint8_t)0x7BU)
+         *    #define RCC_FLAG_SFTRST                  ((uint8_t)0x7CU)
+         *    #define RCC_FLAG_IWDGRST                 ((uint8_t)0x7DU)
+         *    #define RCC_FLAG_WWDGRST                 ((uint8_t)0x7EU)
+         *    #define RCC_FLAG_LPWRRST                 ((uint8_t)0x7FU)
          */
 #ifdef CONFIG_PLATFORM_MCU_STM32F4xx
         if (__HAL_RCC_GET_FLAG(RCC_FLAG_BORRST + i))
@@ -148,7 +148,7 @@ static void Reset_GetResetReasonString(uint32_t resetReason, char *resetString)
                 reset &= ~(1 << i);
                 if (reset)
                 {
-                    // If there are some reset flag, print ', '
+                    // If there are some more reset flag, print ', '
                     length += usprintf(&resetString[length], ", ");
                 }
                 else
