@@ -902,4 +902,18 @@
 #endif
 
 
+
+/*------------------------------------------------------------------------------
+ *                             Compiler specific settings
+ *----------------------------------------------------------------------------*/
+
+/**
+ * Bool using
+ * 1 - Use the default  bool
+ * 0 - Use our bool
+ */
+#define CONFIG_COMPILER_USE_DEFAULT_BOOL        (0)
+
+
+
 #endif /* OPTIONS_H_ */
