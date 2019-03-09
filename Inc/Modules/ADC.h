@@ -37,7 +37,7 @@ typedef enum
     ADC_Vsource,
     ADC_StandardVoltageExample,
 
-    // Do not use, only for count
+    /* Do not use, only for count */
     ADC_Count
 } ADC_MeasurementData_t;
 
@@ -83,7 +83,7 @@ void ADC_PrintAllValues(void);
 
 
 
-#endif // #ifdef CONFIG_MODULE_ADC_ENABLE
+#endif /* #ifdef CONFIG_MODULE_ADC_ENABLE */
 
 
 #endif /* ADC_H_ */

@@ -40,13 +40,13 @@
  */
 void Error_Handler(void)
 {
-    // Error LED
+    /* Error LED */
     IO_Output_SetStatus(IO_LED_Red, IO_Output_Cmd_SetOn);
     IO_Output_SetStatus(IO_LED_Green, IO_Output_Cmd_SetOff);
     IO_Output_SetStatus(IO_LED_Blue, IO_Output_Cmd_SetOff);
 
 #ifdef CONFIG_USE_FREERTOS
-    // End task scheduling
+    /* End task scheduling */
     vTaskEndScheduler();
 #endif
 
@@ -63,11 +63,11 @@ void Error_Handler(void)
 #endif
 
 
-    // Stop debugger
+    /* Stop debugger */
     DEBUG_BREAKPOINT();
 
-    // Infinite loop, do not disable interrupts ...
-    // TODO: But... If there is no interrupt?
+    /* Infinite loop, do not disable interrupts ... */
+    /* TODO: But... If there is no interrupt? */
     uint8_t cnt = 8;
     while (cnt--)
     {
@@ -75,8 +75,8 @@ void Error_Handler(void)
         DelayMs(125);
     }
 
-    // Reset...
-    // TODO: It is not the best solution, The user will not detect the reset
+    /* Reset... */
+    /* TODO: It is not the best solution, The user will not detect the reset */
     NVIC_SystemReset();
 }
 
@@ -91,7 +91,7 @@ void Error_Handler(void)
  */
 void assert_failed(uint8_t *file, uint32_t line)
 {
-    // ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line)
+    /* ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
     Assert_Function((char *)file, line, (char *)"assert_failed");
 }
 #endif
@@ -103,16 +103,16 @@ void assert_failed(uint8_t *file, uint32_t line)
  */
 void Assert_Function(char *file, uint32_t line, char *exp)
 {
-    // Error LED
+    /* Error LED */
     IO_Output_SetStatus(IO_LED_Red, IO_Output_Cmd_SetOn);
     IO_Output_SetStatus(IO_LED_Green, IO_Output_Cmd_SetOff);
     IO_Output_SetStatus(IO_LED_Blue, IO_Output_Cmd_SetOff);
 
-    // Send error message
+    /* Send error message */
     char errorMsg[255];
     usprintf(errorMsg, "File: %s, %d. line: %s\r\n", file, line, exp);
     DebugUart_SendMessageBlocked(errorMsg);
-    // TODO: Need the wait? Message was sent blocked
+    /* TODO: Need the wait? Message was sent blocked */
     DelayMs(100);
 
     DEBUG_BREAKPOINT();

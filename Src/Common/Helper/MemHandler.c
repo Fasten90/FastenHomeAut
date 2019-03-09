@@ -176,7 +176,7 @@ void * memcut(void * destination, const void * source, size_t size)
  */
 void * meminit(void * ptr, size_t num)
 {
-    // Note: Not need check pointer, because memset() should check that
+    /* Note: Not need check pointer, because memset() should check that */
     return memset(ptr, 0, num);
 }
 
@@ -218,7 +218,7 @@ int memcmp(const void * ptr1, const void * ptr2, size_t size)
         }
     }
 
-    return 0;        // If equal (there is no different)
+    return 0;        /* If equal (there is no different) */
 }
 
 
@@ -246,9 +246,9 @@ void mem_CheckStackGuardValues(void)
     uint16_t i = 0;
     uint16_t guardGoodCnt = 0;
     bool guardWasFound = false;
-    // Do not initialize buffer with fix values!!!!
-    // (cppcheck style) Variable 'stackOverFlowCheckerVariable' is not assigned a value.
-    // cppcheck-suppress unassignedVariable
+    /* Do not initialize buffer with fix values!!!! */
+    /* (cppcheck style) Variable 'stackOverFlowCheckerVariable' is not assigned a value. */
+    /* cppcheck-suppress unassignedVariable */
     uint8_t stackOverFlowCheckerVariable[CONFIG_MEM_STACK_GUARD_LENGTH];
 
     for (i = 0; i < CONFIG_MEM_STACK_GUARD_LENGTH; i++)
@@ -284,7 +284,7 @@ bool mem_CheckPointer(void * pnt, size_t size)
 {
     bool isOk = false;
 
-    // Check pointer range is in RAM or FLASH?
+    /* Check pointer range is in RAM or FLASH? */
     if (((uint32_t)pnt >= MEM_RAM_START && ((uint32_t)pnt + size) < MEM_RAM_END)
         || ((uint32_t)pnt >= MEM_FLASH_START && ((uint32_t)pnt + size) < MEM_FLASH_END))
     {
@@ -309,7 +309,7 @@ uint32_t MEM_UnitTest(void)
     UnitTest_Start("MEM", __FILE__);
 
 
-    // Test memcmp
+    /* Test memcmp */
     static const uint8_t testBuffer1[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
     uint8_t testBuffer2[10];
     uint8_t testBuffer3[10];
@@ -320,10 +320,10 @@ uint32_t MEM_UnitTest(void)
         testBuffer2[i] = i;
     }
 
-    // Equal buffer
+    /* Equal buffer */
     UNITTEST_ASSERT(!memcmp(testBuffer1, testBuffer2, 10), "memcmp");
 
-    // Different buffer
+    /* Different buffer */
     testBuffer2[9] = 0;
     UNITTEST_ASSERT(memcmp(testBuffer1, testBuffer2, 10), "memcmp");
 
@@ -331,9 +331,9 @@ uint32_t MEM_UnitTest(void)
     UNITTEST_ASSERT(!memcmp(testBuffer1, testBuffer2, 10), "memcmp");
 
 
-    // Test meminit
+    /* Test meminit */
     testBuffer2[0] = 0xFF;
-    testBuffer2[5] = 0xAA;        // Check, it will be cleared (to 0)?
+    testBuffer2[5] = 0xAA;        /* Check, it will be cleared (to 0)? */
     testBuffer2[9] = 0xFF;
     meminit(&testBuffer2[1], 8);
     for (i = 1; i < 9; i++)
@@ -344,7 +344,7 @@ uint32_t MEM_UnitTest(void)
     UNITTEST_ASSERT((testBuffer2[9] == 0xFF), "meminit");
 
 
-    // Test memcpy
+    /* Test memcpy */
     testBuffer3[0] = 0xFF;
     testBuffer3[9] = 0xFF;
 
@@ -355,7 +355,7 @@ uint32_t MEM_UnitTest(void)
     UNITTEST_ASSERT((testBuffer3[9] == 0xFF), "memcpy");
 
 
-    // Test memset
+    /* Test memset */
     testBuffer3[0] = 0xFF;
     testBuffer3[9] = 0xFF;
     memset(&testBuffer3[1], 0xAA, 8);
@@ -376,8 +376,8 @@ uint32_t MEM_UnitTest(void)
     UNITTEST_ASSERT((testBuffer3[9] == 0xFF), "memset");
 
 
-    // Test memmove
-    // Simple copy test
+    /* Test memmove */
+    /* Simple copy test */
     testBuffer2[0] = 0xFF;
     testBuffer2[9] = 0xFF;
     testBuffer3[0] = 0xFF;
@@ -395,14 +395,14 @@ uint32_t MEM_UnitTest(void)
     UNITTEST_ASSERT((testBuffer3[9] == 0xFF), "memmove");
 
 
-    // memmove: overlap test 1.
+    /* memmove: overlap test 1. */
     testBuffer2[0] = 0xFF;
     testBuffer2[9] = 0xFF;
     memset(&testBuffer2[1], 0xAA, 4);
     memset(&testBuffer2[5], 0xBB, 4);
 
     /*      dest             source           length */
-    memmove(&testBuffer2[1], &testBuffer2[3], 4); // overlapped, but copy order is normal (i++)
+    memmove(&testBuffer2[1], &testBuffer2[3], 4); /* overlapped, but copy order is normal (i++) */
 
     /*
      * From AA, AA, AA, AA, BB, BB, BB, BB
@@ -414,23 +414,23 @@ uint32_t MEM_UnitTest(void)
 
     for (i = 1; i < 3; i++)
     {
-        UNITTEST_ASSERT((testBuffer2[i] == 0xAA), "memmove"); // not changed
+        UNITTEST_ASSERT((testBuffer2[i] == 0xAA), "memmove"); /* not changed */
     }
     for (i = 3; i < 9; i++)
     {
-        UNITTEST_ASSERT((testBuffer2[i] == 0xBB), "memmove"); // changed/original
+        UNITTEST_ASSERT((testBuffer2[i] == 0xBB), "memmove"); /* changed/original */
     }
     UNITTEST_ASSERT((testBuffer2[0] == 0xFF), "memmove");
     UNITTEST_ASSERT((testBuffer2[9] == 0xFF), "memmove");
 
 
-    // memmove: overlap test 2.
+    /* memmove: overlap test 2. */
     testBuffer2[0] = 0xFF;
     testBuffer2[9] = 0xFF;
     memset(&testBuffer2[1], 0xAA, 4);
     memset(&testBuffer2[5], 0xBB, 4);
 
-    memmove(&testBuffer2[5], &testBuffer2[3], 4); // overlapped: Copy order shall be changed
+    memmove(&testBuffer2[5], &testBuffer2[3], 4); /* overlapped: Copy order shall be changed */
 
     /*
      * From AA, AA, AA, AA, BB, BB, BB, BB
@@ -442,17 +442,17 @@ uint32_t MEM_UnitTest(void)
 
     for (i = 1; i < 7; i++)
     {
-        UNITTEST_ASSERT((testBuffer2[i] == 0xAA), "memmove"); // changed/original
+        UNITTEST_ASSERT((testBuffer2[i] == 0xAA), "memmove"); /* changed/original */
     }
     for (i = 7; i < 9; i++)
     {
-        UNITTEST_ASSERT((testBuffer2[i] == 0xBB), "memmove"); // not changed
+        UNITTEST_ASSERT((testBuffer2[i] == 0xBB), "memmove"); /* not changed */
     }
     UNITTEST_ASSERT((testBuffer2[0] == 0xFF), "memmove");
     UNITTEST_ASSERT((testBuffer2[9] == 0xFF), "memmove");
 
 
-    // memcut test
+    /* memcut test */
     testBuffer2[0] = 0xFF;
     testBuffer2[9] = 0xFF;
     testBuffer3[0] = 0xFF;
@@ -464,18 +464,18 @@ uint32_t MEM_UnitTest(void)
 
     for (i = 1; i < 9; i++)
     {
-        UNITTEST_ASSERT((testBuffer3[i] == 0xAA), "memcut"); // copied value
-        UNITTEST_ASSERT((testBuffer2[i] == 0x00), "memcut"); // cleared value
+        UNITTEST_ASSERT((testBuffer3[i] == 0xAA), "memcut"); /* copied value */
+        UNITTEST_ASSERT((testBuffer2[i] == 0x00), "memcut"); /* cleared value */
     }
 
-    // Original guards values shall not changed
+    /* Original guards values shall not changed */
     UNITTEST_ASSERT((testBuffer2[0] == 0xFF), "memcut");
     UNITTEST_ASSERT((testBuffer2[9] == 0xFF), "memcut");
     UNITTEST_ASSERT((testBuffer3[0] == 0xFF), "memcut");
     UNITTEST_ASSERT((testBuffer3[9] == 0xFF), "memcut");
 
 
-    // Finish
+    /* Finish */
     return UnitTest_End();
 }
-#endif    // #ifdef CONFIG_MODULE_MEM_UNITTEST_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_MEM_UNITTEST_ENABLE */

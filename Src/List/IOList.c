@@ -59,8 +59,8 @@ const IO_Output_Record_t IO_Output_List[] =
      * const char * const name;                ///< Name of LED
      */
 
-    // NOTE: Be careful, when change the order and num, synchronize with LED_NUM_MAX define
-    // Note: Not recommend space or other separator character on the name
+    /* NOTE: Be careful, when change the order and num, synchronize with LED_NUM_MAX define */
+    /* Note: Not recommend space or other separator character on the name */
 };
 
 
@@ -125,14 +125,14 @@ void IO_List_Init(void)
 {
     BUILD_ASSERT((NUM_OF(IO_Output_List)) == (IO_Output_Count - 1));
 
-    // Do not be empty
+    /* Do not be empty */
     BUILD_ASSERT((NUM_OF(IO_Output_List)) != 0);
 
 #if (IO_INPUTS_NUM > 0)
     BUILD_ASSERT((NUM_OF(IO_Input_List)) == (IO_Input_Count - 1));
 #endif
 
-    // Note: RunTime structure checks in the IO.c
+    /* Note: RunTime structure checks in the IO.c */
 }
 
 

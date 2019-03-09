@@ -13,7 +13,7 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
-#include <stdarg.h>        // for "..." parameters in printf function
+#include <stdarg.h>        /* for "..." parameters in printf function */
 
 #include "options.h"
 #include "Communication.h"
@@ -103,7 +103,7 @@ void DebugUart_Init(void)
     CircularBuffer_Init(&DebugUart_RxBuffStruct);
     CircularBuffer_Init(&DebugUart_TxBuffStruct);
 
-    // Init UART
+    /* Init UART */
     UART_Init(&DebugUart_Handle);
 
 #ifdef CONFIG_USE_FREERTOS
@@ -114,9 +114,9 @@ void DebugUart_Init(void)
     {
         Error_Handler();
     }
-#endif    //#ifdef CONFIG_USE_FREERTOS
+#endif    /* ifdef CONFIG_USE_FREERTOS */
 
-    // Start receive
+    /* Start receive */
     DebugUart_ReceiveEnable();
 }
 
@@ -140,7 +140,7 @@ void DebugUart_ReceiveEnable(void)
     UART_ReceiveEnable(&DebugUart);
 
 #ifdef CONFIG_USE_FREERTOS
-    // Wait for semaphore
+    /* Wait for semaphore */
     xSemaphoreTake(DebugUart_Rx_Semaphore, (portTickType) 1000);
 #endif
 }
@@ -197,7 +197,7 @@ size_t DebugUart_SendLine(const char *msg)
 {
     size_t length = 0;
 
-    // TODO: if (msg != NULL) ?
+    /* TODO: if (msg != NULL) ? */
     length += DebugUart_SendMessage(msg);
     length += DebugUart_SendMessage("\r\n");
 
@@ -214,9 +214,9 @@ size_t DebugUart_SendMessageBlocked(const char * msg)
 {
     size_t length = StringLength(msg);
 
-    // TODO: Clear statuses?
-    //UART_ResetStatus(&DebugUart_Handle);
-    //HAL_UART_AbortTransmit_IT()
+    /* TODO: Clear statuses? */
+    /* ART_ResetStatus(&DebugUart_Handle); */
+    /* AL_UART_AbortTransmit_IT() */
 
     HAL_UART_Transmit(&DebugUart_Handle, (uint8_t *)msg, length, 1000);
 
@@ -233,7 +233,7 @@ size_t DebugUart_SendLineBlocked(const char * msg)
 {
     size_t length = 0;
 
-    // TODO: if (msg != NULL) ?
+    /* TODO: if (msg != NULL) ? */
     length += DebugUart_SendMessageBlocked(msg);
     length += DebugUart_SendMessageBlocked("\r\n");
 
@@ -248,23 +248,23 @@ size_t DebugUart_SendLineBlocked(const char * msg)
  */
 size_t uprintf(const char *format, ...)
 {
-    // Working in at:
+    /* Working in at: */
     char txBuffer[DEBUGUART_TX_BUFFER_SIZE];
 
 #ifdef CONFIG_DEBUG_MODE
     txBuffer[DEBUGUART_TX_BUFFER_SIZE-1] = 0xEF;
 #endif
 
-    va_list ap;                                    // argument pointer
-    va_start(ap, format);                         // ap on arg
-    string_printf(txBuffer, format, ap);        // Separate and process
-    va_end(ap);                                     // Cleaning after end
+    va_list ap;                                    /* argument pointer */
+    va_start(ap, format);                         /* ap on arg */
+    string_printf(txBuffer, format, ap);        /* Separate and process */
+    va_end(ap);                                     /* Cleaning after end */
 
 #ifdef CONFIG_DEBUG_MODE
     if (txBuffer[DEBUGUART_TX_BUFFER_SIZE-1] != 0xEF) DEBUG_BREAKPOINT();
 #endif
 
-    return DebugUart_SendMessage(txBuffer);        // Send on Usart
+    return DebugUart_SendMessage(txBuffer);        /* Send on Usart */
 }
 
 
@@ -277,17 +277,17 @@ void DebugUart_ProcessReceivedCharacters(void)
 {
     char recvBuf[DEBUGUART_PROCESS_BUFFER];
 
-    // Received new character?
+    /* Received new character? */
     if (CircularBuffer_IsNotEmpty(DebugUart.rx))
     {
-        // Copy received message to buffer
+        /* Copy received message to buffer */
         CircularBuffer_GetString(DebugUart.rx, recvBuf, DEBUGUART_PROCESS_BUFFER);
 
-        // Received newline character? (End of command)
+        /* Received newline character? (End of command) */
         char * newLinePos = (char *)STRING_FindCharacters((const char *)recvBuf, "\r\n");
         if (newLinePos != NULL)
         {
-            // Has newline, process the received command
+            /* Has newline, process the received command */
             *newLinePos = '\0';
 
             if (StringLength(recvBuf) > 0)
@@ -295,7 +295,7 @@ void DebugUart_ProcessReceivedCharacters(void)
                 char respBuf[DEBUGUART_RESPONSE_BUFFER];
                 respBuf[0] = '\0';
 
-                // Search command and run
+                /* Search command and run */
                 CmdH_Result_t cmdResult = CmdH_ExecuteCommand(recvBuf, respBuf, DEBUGUART_RESPONSE_BUFFER);
 
                 CmdH_PrintResult(cmdResult);
@@ -303,11 +303,11 @@ void DebugUart_ProcessReceivedCharacters(void)
                 DebugUart_SendMessage(respBuf);
             }
 
-            // Drop processed characters
+            /* Drop processed characters */
             size_t processedLength = (newLinePos - recvBuf) + 1;
             if (newLinePos != &recvBuf[DEBUGUART_PROCESS_BUFFER-1])
             {
-                // Check next character is not '\n' or '\r'?
+                /* Check next character is not '\n' or '\r'? */
                 if ((*(newLinePos+1) == '\r') || (*(newLinePos+1) == '\n'))
                     processedLength++;
             }
@@ -319,4 +319,4 @@ void DebugUart_ProcessReceivedCharacters(void)
 
 
 
-#endif    // #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_DEBUGUART_ENABLE */

@@ -19,10 +19,10 @@
 
 
 #ifdef CONFIG_PLATFORM_MCU_STM32F0xx
-    // STM32F0
+    /* STM32F0 */
     #include "stm32f0xx_hal.h"
     #include "stm32_hal_legacy.h"
-    //#include "core_cm0plus.h"
+    /* include "core_cm0plus.h" */
 #endif
 
 

@@ -141,7 +141,7 @@ void RTC_CalendarConfig(DateTime_t *dateTime)
 
 
     /*##-3- Writes a data in a RTC Backup data Register1 #######################*/
-    //HAL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR1, 0x32F2);
+    /* AL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR1, 0x32F2); */
 }
 
 
@@ -262,4 +262,4 @@ void RTC_CalendarShow(char *showdate, char *showtime)
 
 
 
-#endif    // #ifdef CONFIG_MODULE_RTC_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_RTC_ENABLE */

@@ -79,9 +79,9 @@ void EXTI4_15_IRQHandler(void)
         HAL_GPIO_EXTI_IRQHandler(BUTTON_LEFT_GPIO_PIN);
     }
 
-    //HAL_GPIO_EXTI_IRQHandler(TAMPER_BUTTON_PIN);
+    /* AL_GPIO_EXTI_IRQHandler(TAMPER_BUTTON_PIN); */
 }
-#endif     // #ifdef CONFIG_USE_PANEL_NODESMALL
+#endif     /* #ifdef CONFIG_USE_PANEL_NODESMALL */
 
 
 
@@ -101,7 +101,7 @@ void EXTI2_IRQHandler(void)
 
 void EXTI9_5_IRQHandler(void)
 {
-    // 9
+    /* 9 */
     
     if ( HAL_GPIO_ReadPin(BUTTON_LEFT_GPIO_PORT, BUTTON_LEFT_GPIO_PIN) == GPIO_PIN_SET)
     {
@@ -113,15 +113,15 @@ void EXTI9_5_IRQHandler(void)
 void EXTI15_10_IRQHandler(void)
 {
     
-    // 13    - BUTTON_DOWN    
+    /* 13    - BUTTON_DOWN     */
     if (HAL_GPIO_ReadPin(BUTTON_DOWN_GPIO_PORT, BUTTON_DOWN_GPIO_PIN) == GPIO_PIN_SET)
     {
         HAL_GPIO_EXTI_IRQHandler(BUTTON_DOWN_GPIO_PIN);
     }
     
     
-    // SENSOR_MOTION            GPIO_PIN_12
-    // SENSOR_SOUND_IMPACT        GPIO_PIN_14
+    /* SENSOR_MOTION            GPIO_PIN_12 */
+    /* SENSOR_SOUND_IMPACT        GPIO_PIN_14 */
     if (HAL_GPIO_ReadPin(SENSOR_MOTION_GPIO_PORT, SENSOR_MOTION_GPIO_PIN) == GPIO_PIN_SET)
     {
         HAL_GPIO_EXTI_IRQHandler(SENSOR_MOTION_GPIO_PIN);
@@ -133,16 +133,16 @@ void EXTI15_10_IRQHandler(void)
 }    
 
 
-#endif //#ifdef CONFIG_USE_PANEL_NODEMEDIUM
+#endif /* ifdef CONFIG_USE_PANEL_NODEMEDIUM */
 
 
 
 #ifdef CONFIG_USE_PANEL_HOMEAUTCENTERPANEL
 
-// Up        PC7
-// Down        PC8
-// Right    PA0
-// Left        PC9
+/* Up        PC7 */
+/* Down        PC8 */
+/* Right    PA0 */
+/* Left        PC9 */
 
 
 void EXTI0_IRQHandler(void)
@@ -153,7 +153,7 @@ void EXTI0_IRQHandler(void)
 
 void EXTI9_5_IRQHandler(void)
 {
-    // 7-8-9
+    /* 7-8-9 */
     
     if (HAL_GPIO_ReadPin(BUTTON_LEFT_GPIO_PORT, BUTTON_LEFT_GPIO_PIN) == GPIO_PIN_SET)
     {
@@ -169,27 +169,27 @@ void EXTI9_5_IRQHandler(void)
     }
 }
 
-#endif //#ifdef CONFIG_USE_PANEL_CENTERPANEL
+#endif /* ifdef CONFIG_USE_PANEL_CENTERPANEL */
 
 
 
 #ifdef CONFIG_USE_PANEL_STM32F4DISCOVERY
-// PA0 - User button
+/* PA0 - User button */
 void EXTI0_IRQHandler(void)
 {
     HAL_GPIO_EXTI_IRQHandler(BUTTON_USER_GPIO_PIN);
 }
-#endif    // #ifdef CONFIG_USE_PANEL_STM32F4DISCOVERY
+#endif    /* #ifdef CONFIG_USE_PANEL_STM32F4DISCOVERY */
 
 
 
 #ifdef CONFIG_USE_PANEL_NUCLEOF401RE
-// PC13 - User button
+/* PC13 - User button */
 void EXTI15_10_IRQHandler(void)
 {
     HAL_GPIO_EXTI_IRQHandler(BUTTON_USER_GPIO_PIN);
 }
-#endif    // #ifdef CONFIG_USE_PANEL_NUCLEOF401RE
+#endif    /* #ifdef CONFIG_USE_PANEL_NUCLEOF401RE */
 
 
 
@@ -205,7 +205,7 @@ BUTTON_LEFT            GPIOA15
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
 void EXTI0_1_IRQHandler(void)
 {
-    // TODO: Delete this:
+    /* TODO: Delete this: */
     /*
     if (HAL_GPIO_ReadPin(BUTTON_UP_GPIO_PORT, BUTTON_UP_GPIO_PIN) == GPIO_PIN_SET)
     {
@@ -216,7 +216,7 @@ void EXTI0_1_IRQHandler(void)
         HAL_GPIO_EXTI_IRQHandler(BUTTON_UP_GPIO_PIN);
     }
 
-    // Clear IT
+    /* Clear IT */
     __HAL_GPIO_EXTI_CLEAR_IT(BUTTON_UP_GPIO_PIN);
 
 #ifdef CONFIG_DEBUG_MODE
@@ -227,8 +227,8 @@ void EXTI0_1_IRQHandler(void)
 
 void EXTI4_15_IRQHandler(void)
 {
-    /*
-    // Original mode: It sometimes not handle the IRQ and the sw will crash (infinite loop)
+#if 0
+    /* Original mode: It sometimes not handle the IRQ and the sw will crash (infinite loop) */
     if (HAL_GPIO_ReadPin(BUTTON_RIGHT_GPIO_PORT, BUTTON_RIGHT_GPIO_PIN) == GPIO_PIN_SET)
     {
         HAL_GPIO_EXTI_IRQHandler(BUTTON_RIGHT_GPIO_PIN);
@@ -240,7 +240,8 @@ void EXTI4_15_IRQHandler(void)
     if (HAL_GPIO_ReadPin(BUTTON_LEFT_GPIO_PORT, BUTTON_LEFT_GPIO_PIN) == GPIO_PIN_SET)
     {
         HAL_GPIO_EXTI_IRQHandler(BUTTON_LEFT_GPIO_PIN);
-    }*/
+    }
+#endif
 
     if (__HAL_GPIO_EXTI_GET_IT(BUTTON_RIGHT_GPIO_PIN) != RESET)
     {
@@ -255,13 +256,13 @@ void EXTI4_15_IRQHandler(void)
         HAL_GPIO_EXTI_IRQHandler(BUTTON_LEFT_GPIO_PIN);
     }
 
-    // Clear IT
+    /* Clear IT */
     if (__HAL_GPIO_EXTI_GET_IT(BUTTON_RIGHT_GPIO_PIN | BUTTON_DOWN_GPIO_PIN | BUTTON_LEFT_GPIO_PIN))
     {
         __HAL_GPIO_EXTI_CLEAR_IT(BUTTON_RIGHT_GPIO_PIN | BUTTON_DOWN_GPIO_PIN | BUTTON_LEFT_GPIO_PIN);
     }
 #ifdef CONFIG_DEBUG_MODE
-    // Check, there is EXTI interrupt?
+    /* Check, there is EXTI interrupt? */
     if (__HAL_GPIO_EXTI_GET_IT(GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6
             | GPIO_PIN_7 | GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10
             | GPIO_PIN_11 | GPIO_PIN_12 | GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15)
@@ -269,9 +270,9 @@ void EXTI4_15_IRQHandler(void)
         Error_Handler();
 #endif
 }
-#endif    // #ifdef CONFIG_MODULE_BUTTON_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_BUTTON_ENABLE */
 
-#endif    // #ifdef CONFIG_USE_PANEL_FASTENNODE
+#endif    /* #ifdef CONFIG_USE_PANEL_FASTENNODE */
 
 
 
@@ -284,31 +285,31 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
-    // Button handling
+    /* Button handling */
 
 #if defined(CONFIG_USE_PANEL_HOMEAUTPANELS)
     if (GPIO_Pin == BUTTON_UP_GPIO_PIN)
     {
-        // Toggle LED
-        //LED_RED_TOGGLE();
+        /* Toggle LED */
+        /* ED_RED_TOGGLE(); */
         BUTTON_Clicked |= (1 << PressedButton_Up);
     }
     if (GPIO_Pin == BUTTON_DOWN_GPIO_PIN)
     {
-        // Toggle LED
-        //LED_RED_TOGGLE();
+        /* Toggle LED */
+        /* ED_RED_TOGGLE(); */
         BUTTON_Clicked |= (1 << PressedButton_Down);
     }
     if (GPIO_Pin == BUTTON_RIGHT_GPIO_PIN)
     {
-        // Toggle LED
-        //LED_RED_TOGGLE();
+        /* Toggle LED */
+        /* ED_RED_TOGGLE(); */
         BUTTON_Clicked |= (1 << PressedButton_Right);
     }
     if (GPIO_Pin == BUTTON_LEFT_GPIO_PIN)
     {
-        // Toggle LED
-        //LED_RED_TOGGLE();
+        /* Toggle LED */
+        /* ED_RED_TOGGLE(); */
         BUTTON_Clicked |= (1 << PressedButton_Left);
     }
     #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
@@ -317,13 +318,13 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
         TaskHandler_RequestTaskScheduling(Task_ButtonPressed);
     }
     #endif
-#endif    // #ifdef CONFIG_MODULE_BUTTON_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_BUTTON_ENABLE */
 
 #if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_NUCLEOF401RE)
     if (GPIO_Pin == BUTTON_USER_GPIO_PIN)
     {
-        // Toggle LED
-        //LED_GREEN_TOGGLE();
+        /* Toggle LED */
+        /* ED_GREEN_TOGGLE(); */
         BUTTON_Clicked |= (1 << PressedButton_User);
 
         #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
@@ -336,16 +337,16 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 #if defined(CONFIG_MODULE_IO_ENABLE) && defined(CONFIG_MODULE_IO_INPUT_MOTION_ENABLE)
     if (GPIO_Pin == SENSOR_MOTION_GPIO_PIN)
     {
-        // TODO: Check actual state !
-        //InputState_t inputState =
+        /* TODO: Check actual state ! */
+        /* nputState_t inputState = */
         IO_SetInputState(Input_MotionMove, InputState_Active);
     }
 #endif
 #if defined(CONFIG_MODULE_IO_ENABLE) && defined(CONFIG_MODULE_IO_INPUT_SOUNDIMPACT_ENABLE)
     if (GPIO_Pin == SENSOR_SOUND_IMPACT_GPIO_PIN)
     {
-        // TODO: Check actual state !
-        //InputState_t inputState =
+        /* TODO: Check actual state ! */
+        /* nputState_t inputState = */
         IO_SetInputState(Input_SoundImpact, InputState_Active);
     }
 #endif
@@ -353,7 +354,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 #if !defined(CONFIG_MODULE_IO_ENABLE) || !defined(CONFIG_MODULE_BUTTON_ENABLE)
     (void)GPIO_Pin;
 #endif
-}    // End of HAL_GPIO_EXTI_Callback()
+}    /* End of HAL_GPIO_EXTI_Callback() */
 
 
 
@@ -369,10 +370,10 @@ void ADCx_DMA_IRQHandler(void)
 #if UNUSED
 void TIM3_IRQHandler(void)
 {
-    // Error...
+    /* Error... */
 #warning "Delete, not need, never run"
-    extern TIM_HandleTypeDef    TimPWMDcMotor_Handle;    // Dc motor
-    extern TIM_HandleTypeDef    TimPWMServo_Handle;    // Servo motor
+    extern TIM_HandleTypeDef    TimPWMDcMotor_Handle;    /* Dc motor */
+    extern TIM_HandleTypeDef    TimPWMServo_Handle;    /* Servo motor */
 
     __HAL_TIM_CLEAR_FLAG(&TimPWMDcMotor_Handle, 0xFFFFFFFF);
     __HAL_TIM_CLEAR_FLAG(&TimPWMServo_Handle, 0xFFFFFFFF);

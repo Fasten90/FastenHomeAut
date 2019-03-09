@@ -24,7 +24,7 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-// Timer handler declaration
+/* Timer handler declaration */
 TIM_HandleTypeDef    TimLedBlueHandle;
 TIM_HandleTypeDef    TimLedGreenHandle;
 
@@ -52,7 +52,7 @@ TIM_HandleTypeDef    TimLedGreenHandle;
  */
 void LedPWM_Init(void)
 {
-    // Timer Output Compare Configuration Structure declaration
+    /* Timer Output Compare Configuration Structure declaration */
     /* Timer Output Compare Configuration Structure declaration */
     TIM_OC_InitTypeDef sConfig;
 
@@ -62,17 +62,17 @@ void LedPWM_Init(void)
     uint32_t Pulse = 0;
 
 
-    // TODO: Not need
-    //HAL_TIM_PWM_MspInit(NULL);
+    /* TODO: Not need */
+    /* AL_TIM_PWM_MspInit(NULL); */
 
 
 
     /* Compute the prescaler value to have TIM3 counter clock equal to 16000000 Hz */
-    //uhPrescalerValue = (uint32_t)(SystemCoreClock / 16000000) - 1;
+    /* hPrescalerValue = (uint32_t)(SystemCoreClock / 16000000) - 1; */
     PrescalerValue = (uint32_t)(SystemCoreClock / 400000 ) - 1;
 
     Period = LED_TIMER_PERIOD_VALUE;
-    Pulse = Period * 12.5 / 100;    // = 12.5%
+    Pulse = Period * 12.5 / 100;    /* = 12.5% */
 
 
     /*##-1- Configure the TIM peripheral #######################################*/
@@ -115,7 +115,7 @@ void LedPWM_Init(void)
        + Counter direction = Up
     */
 
-    // BLUE LED
+    /* BLUE LED */
 
     TimLedBlueHandle.Instance = TIMx_BLUE;
 
@@ -134,11 +134,11 @@ void LedPWM_Init(void)
     /*##-2- Configure the PWM channels #########################################*/
     /* Common configuration for all channels */
     sConfig.OCMode       = TIM_OCMODE_PWM1;
-    sConfig.OCPolarity   = TIM_OCPOLARITY_LOW;        // TIM_OCPOLARITY_HIGH
+    sConfig.OCPolarity   = TIM_OCPOLARITY_LOW;        /* TIM_OCPOLARITY_HIGH */
     sConfig.OCFastMode   = TIM_OCFAST_DISABLE;
-    sConfig.OCNPolarity  = TIM_OCNPOLARITY_LOW;        // TIM_OCNPOLARITY_HIGH
-    sConfig.OCIdleState  = TIM_OCIDLESTATE_SET;        // TIM_OCIDLESTATE_RESET
-    sConfig.OCNIdleState = TIM_OCNIDLESTATE_SET;    // TIM_OCNIDLESTATE_RESET
+    sConfig.OCNPolarity  = TIM_OCNPOLARITY_LOW;        /* TIM_OCNPOLARITY_HIGH */
+    sConfig.OCIdleState  = TIM_OCIDLESTATE_SET;        /* TIM_OCIDLESTATE_RESET */
+    sConfig.OCNIdleState = TIM_OCNIDLESTATE_SET;    /* TIM_OCNIDLESTATE_RESET */
 
     /* Set the pulse value for channel 1 */
     sConfig.Pulse = Pulse;
@@ -150,7 +150,7 @@ void LedPWM_Init(void)
 
 
 
-    // GREEN LED
+    /* GREEN LED */
 
 
     TimLedGreenHandle.Instance = TIMx_GREEN;
@@ -210,18 +210,18 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
     GPIO_InitTypeDef GPIO_InitStruct;
 
 
-    //##-1- Enable peripherals and GPIO Clocks #################################
-    // TIMx Peripheral clock enable
-    //TIMx_BLUE_CLK_ENABLE();
-    //TIMx_GREEN_CLK_ENABLE();
+    /* #-1- Enable peripherals and GPIO Clocks ################################# */
+    /* TIMx Peripheral clock enable */
+    /* IMx_BLUE_CLK_ENABLE(); */
+    /* IMx_GREEN_CLK_ENABLE(); */
     TIMER_CLK_ENABLES();
 
-    // Enable GPIO Channels Clock
+    /* Enable GPIO Channels Clock */
     LED_PORT_CLK_ENABLES();
 
 
-    // BLUE
-    //Configure GPIO pin
+    /* BLUE */
+    /* onfigure GPIO pin */
     GPIO_InitStruct.Pin = BOARD_LED_BLUE_PIN;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
@@ -230,8 +230,8 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
     HAL_GPIO_Init(BOARD_LED_BLUE_PORT, &GPIO_InitStruct);
 
 
-    // GREEN
-    //Configure GPIO pin
+    /* GREEN */
+    /* onfigure GPIO pin */
     GPIO_InitStruct.Pin = BOARD_LED_GREEN_PIN;
     GPIO_InitStruct.Alternate = TIMx_LED_GREEN_GPIO_AF;
     HAL_GPIO_Init(BOARD_LED_GREEN_PORT, &GPIO_InitStruct);
@@ -248,7 +248,7 @@ void LED_PWM_ChangePercent(TIM_HandleTypeDef *TimHandle, uint32_t timerChannel, 
     TIM_OC_InitTypeDef sConfig;
 
 
-    uint32_t Pulse = LED_TIMER_PERIOD_VALUE * percent / 100;    // % számítás
+    uint32_t Pulse = LED_TIMER_PERIOD_VALUE * percent / 100;    /* % számítás */
 
 
     /*##-2- Configure the PWM channels #########################################*/
@@ -263,7 +263,7 @@ void LED_PWM_ChangePercent(TIM_HandleTypeDef *TimHandle, uint32_t timerChannel, 
     /* Set the pulse value for channel 1 */
     sConfig.Pulse = Pulse;
 
-    // Config ...
+    /* Config ... */
     if (HAL_TIM_PWM_ConfigChannel(TimHandle, &sConfig, timerChannel) != HAL_OK)
     {
         /* Configuration Error */
@@ -271,7 +271,7 @@ void LED_PWM_ChangePercent(TIM_HandleTypeDef *TimHandle, uint32_t timerChannel, 
     }
 
 
-    // Need start... Yes, need...
+    /* Need start... Yes, need... */
     if (HAL_TIM_PWM_Start(TimHandle, timerChannel) != HAL_OK)
     {
         /* PWM Generation Error */
@@ -281,4 +281,4 @@ void LED_PWM_ChangePercent(TIM_HandleTypeDef *TimHandle, uint32_t timerChannel, 
 
 
 
-#endif    // #ifdef CONFIG_MODULE_LEDPWM_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_LEDPWM_ENABLE */

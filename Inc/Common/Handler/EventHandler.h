@@ -38,7 +38,7 @@
 typedef uint32_t    EventData_t;
 typedef uint8_t        EventId_t;
 
-// EventLog - subscription bits - for TaskHandler
+/* EventLog - subscription bits - for TaskHandler */
 typedef uint32_t    EventLogSubscription_t;
 
 
@@ -57,7 +57,7 @@ typedef enum
     EventType_Get,
     EventType_Cleared,
 
-    // Do not use this!
+    /* Do not use this! */
     EventType_Count
 } EventType_t;
 
@@ -80,7 +80,7 @@ typedef struct
     TaskID_t requiredTaskRunId;                ///< Task, which need execute, when event raised
 #endif
 
-    // @note: Please Do not change this structure!
+    /* @note: Please Do not change this structure! */
 } Event_t;
 
 
@@ -114,7 +114,7 @@ uint32_t EventHandler_UnitTest(void);
 #define EventHandler_GenerateEvent(...)
 bool EventHandler_CheckEventState(...)
 
-#endif // #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
+#endif /* #ifdef CONFIG_MODULE_EVENTLOG_ENABLE */
 
 
 

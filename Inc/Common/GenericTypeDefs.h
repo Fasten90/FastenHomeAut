@@ -19,15 +19,15 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
-// bool type
+/* bool type */
 #if (CONFIG_COMPILER_USE_DEFAULT_BOOL == 1)
 #include <stdbool.h>
 #endif /* CONFIG_COMPILER_USE_DEFAULT_BOOL */
 
-// uint32_t type
+/* uint32_t type */
 #include <stdint.h>
 
-// size_t, NULL
+/* size_t, NULL */
 #include <stddef.h>
 
 
@@ -39,8 +39,8 @@
 #define BOOL_MAX    (1)
 
 
-// This defines are defined in "stdint.h" file
-// TODO: Delete if not need
+/* This defines are defined in "stdint.h" file */
+/* TODO: Delete if not need */
 /*
 #define UINT8_MAX     (0xFF)
 #define INT8_MAX      (0x7F)

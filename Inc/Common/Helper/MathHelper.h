@@ -35,7 +35,7 @@
 #define BIT_IS_SET(val, bitIndex) (val & (1 << bitIndex))
 
 
-// float       pow( float base, float exp );
+/* float       pow( float base, float exp ); */
 #define pow(_base, _exp)    power(_base, _exp)
 
 
@@ -52,7 +52,7 @@
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-// TODO: Rename these functions?
+/* TODO: Rename these functions? */
 
 /* float abs(float arg); */
 float absolute(float arg);

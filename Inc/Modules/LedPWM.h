@@ -34,12 +34,12 @@
 #define LED_GREEN_SET_PERCENT(percent)    LED_PWM_ChangePercent(&TimLedGreenHandle,LED_GREEN_TIMER_CHANNEL,percent);
 
 
-/*
-#define  PULSE1_VALUE       (uint32_t)(PERIOD_VALUE/2)        // Capture Compare 1 Value
-#define  PULSE2_VALUE       (uint32_t)(PERIOD_VALUE*37.5/100) // Capture Compare 2 Value
-#define  PULSE3_VALUE       (uint32_t)(PERIOD_VALUE/4)        // Capture Compare 3 Value
-#define  PULSE4_VALUE       (uint32_t)(PERIOD_VALUE*12.5/100) // Capture Compare 4 Value
-*/
+#if 0
+#define  PULSE1_VALUE       (uint32_t)(PERIOD_VALUE/2)        /* Capture Compare 1 Value */
+#define  PULSE2_VALUE       (uint32_t)(PERIOD_VALUE*37.5/100) /* Capture Compare 2 Value */
+#define  PULSE3_VALUE       (uint32_t)(PERIOD_VALUE/4)        /* Capture Compare 3 Value */
+#define  PULSE4_VALUE       (uint32_t)(PERIOD_VALUE*12.5/100) /* Capture Compare 4 Value */
+#endif
 
 
 
@@ -69,6 +69,6 @@ void LED_PWM_ChangePercent(TIM_HandleTypeDef *TimHandle,
 
 
 
-#endif    // #ifdef CONFIG_MODULE_LEDPWM_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_LEDPWM_ENABLE */
 
 #endif /* LEDPWM_H_ */

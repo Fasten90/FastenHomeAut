@@ -11,7 +11,7 @@
 #define BOARD_H_
 
 
-#include "options.h" // which panel used
+#include "options.h" /* which panel used */
 
 
 
@@ -53,7 +53,7 @@
 #elif defined(STM32F40xx)
 #warning "Set these values"
 #elif defined(CONFIG_PLATFORM_PC_WINDOWS)
-// Do not use...
+/* Do not use... */
 #define MEM_FLASH_START        (0x00000000)
 #define MEM_FLASH_END        (0xFFFFFFFF)
 #define MEM_RAM_START        (0x00000000)
@@ -71,10 +71,10 @@
 
 #if defined(CONFIG_MODULE_IO_ENABLE) & defined(CONFIG_USE_PANEL_HOMEAUTCENTERPANEL)
 
-// @note: In the schematic the blue and red LED are inversely
-// blue: PE5
-// green: PE6
-// red: PA8
+/* @note: In the schematic the blue and red LED are inversely */
+/* blue: PE5 */
+/* green: PE6 */
+/* red: PA8 */
 
 #define LED_NUM_MIN                (1)
 #define LED_NUM_MAX                (3)
@@ -109,15 +109,15 @@
 #define LED_BLUE_STATUS()        HAL_GPIO_ReadPin(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN)
 #define LED_GREEN_STATUS()        HAL_GPIO_ReadPin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN)
 
-#endif //#ifdef CONFIG_USE_PANEL_CENTERPANEL
+#endif /* ifdef CONFIG_USE_PANEL_CENTERPANEL */
 
 
 
 #if defined(CONFIG_MODULE_IO_ENABLE) & defined(CONFIG_USE_PANEL_STM32F4DISCOVERY)
 
-// blue: PE5
-// green: PE6
-// red: PA8
+/* blue: PE5 */
+/* green: PE6 */
+/* red: PA8 */
 
 #define LED_NUM_MIN                (1)
 #define LED_NUM_MAX                (3)
@@ -149,13 +149,13 @@
 #define LED_BLUE_STATUS()        HAL_GPIO_ReadPin(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN)
 #define LED_RED_STATUS()        HAL_GPIO_ReadPin(BOARD_LED_RED_PORT, BOARD_LED_RED_PIN)
 
-#endif //#ifdef CONFIG_USE_PANEL_CENTERPANEL
+#endif /* ifdef CONFIG_USE_PANEL_CENTERPANEL */
 
 
 
 #if defined(CONFIG_MODULE_IO_ENABLE) && defined(CONFIG_USE_PANEL_NUCLEOF401RE)
 
-// Green user LED: PA5
+/* Green user LED: PA5 */
 
 #define LED_NUM_MIN                (1)
 #define LED_NUM_MAX                (1)
@@ -187,7 +187,7 @@
 
 #if !defined(CONFIG_MODULE_IO_ENABLE)
 
-// if not defined CONFIG_MODULE_IO_ENABLE
+/* if not defined CONFIG_MODULE_IO_ENABLE */
 #define LED_GREEN_ON()
 #define LED_BLUE_ON()
 #define LED_RED_ON()
@@ -206,11 +206,11 @@
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//             TIMERS for LEDs
+/*             TIMERS for LEDs */
 ///////////////////////////////////////////////////////////////////////////////
 
 
-// TODO: LED timers / PWM, need beautify
+/* TODO: LED timers / PWM, need beautify */
 
 
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
@@ -240,7 +240,7 @@
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//         ADC  - ANALOG
+/*         ADC  - ANALOG */
 ///////////////////////////////////////////////////////////////////////////////
 
 
@@ -259,9 +259,9 @@
 
 
 
-// SENSOR_LIGH_ADC
-// PA1
-// ADC1_IN1
+/* SENSOR_LIGH_ADC */
+/* PA1 */
+/* ADC1_IN1 */
 #define    ADC_SENSOR_LIGHT_PORT            GPIOA
 #define    ADC_SENSOR_LIGHT_CLK            RCC_AHB1Periph_GPIOA
 #define    ADC_SENSOR_LIGHT_PIN            GPIO_PIN_1
@@ -269,18 +269,18 @@
 
 
 
-// SENSOR_MICROPHONE_ADC
-// PA6
-// ADC1_IN6
+/* SENSOR_MICROPHONE_ADC */
+/* PA6 */
+/* ADC1_IN6 */
 #define    ADC_SENSOR_MICROPHONE_PORT            GPIOA
 #define    ADC_SENSOR_MICROPHONE_CLK            RCC_AHB1Periph_GPIOA
 #define    ADC_SENSOR_MICROPHONE_PIN            GPIO_PIN_6
 #define    ADC_SENSOR_MICROPHONE_CHANNEL        ADC_CHANNEL_6
 
 
-// VSOURCE_ADC
-// PA7
-// ADC1_IN7
+/* VSOURCE_ADC */
+/* PA7 */
+/* ADC1_IN7 */
 #define    ADC_VSOURCE_PORT            GPIOA
 #define    ADC_VSOURCE_CLK                RCC_AHB1Periph_GPIOA
 #define    ADC_VSOURCE_PIN                GPIO_PIN_7
@@ -291,14 +291,14 @@
 #define ADC_VREFINT_CHANNEL            ADC_CHANNEL_17
 
 
-#endif    // CONFIG_USE_PANEL_NODEMSMALL
+#endif    /* CONFIG_USE_PANEL_NODEMSMALL */
 
 
 
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
 
 
-// ANALOG
+/* ANALOG */
 #define BOARD_USE_ADC                ADC1
 
 
@@ -309,58 +309,58 @@
 
 
 #define ADC_CHANNEL_NUM                ( 5 )    
-// now: Vsource, ligh, mic, prox, internal temp
+/* now: Vsource, ligh, mic, prox, internal temp */
 
 
 
-// SENSOR_LIGH_ADC
-// PC0
-// ADC_IN10
+/* SENSOR_LIGH_ADC */
+/* PC0 */
+/* ADC_IN10 */
 #define    ADC_SENSOR_LIGHT_PORT            GPIOC
 #define    ADC_SENSOR_LIGHT_PIN            GPIO_PIN_0
 #define    ADC_SENSOR_LIGHT_CHANNEL        ADC_CHANNEL_10
 
 
 
-// SENSOR_MICROPHONE_ADC
-// PC1
-// ADC_IN11
+/* SENSOR_MICROPHONE_ADC */
+/* PC1 */
+/* ADC_IN11 */
 #define    ADC_SENSOR_MICROPHONE_PORT            GPIOC
 #define    ADC_SENSOR_MICROPHONE_PIN            GPIO_PIN_1
 #define    ADC_SENSOR_MICROPHONE_CHANNEL        ADC_CHANNEL_11
 
 
 
-// SENSOR_PROXIMITY_ADC
-// PC2
-// ADC_IN12
+/* SENSOR_PROXIMITY_ADC */
+/* PC2 */
+/* ADC_IN12 */
 #define    ADC_SENSOR_PROXIMITY_PORT            GPIOC
 #define    ADC_SENSOR_PROXIMITY_PIN            GPIO_PIN_2
 #define    ADC_SENSOR_PROXIMITY_CHANNEL        ADC_CHANNEL_12
 
 
 
-// VSOURCE_ADC
-// PB12
-// ADC_IN18
+/* VSOURCE_ADC */
+/* PB12 */
+/* ADC_IN18 */
 #define    ADC_VSOURCE_PORT            GPIOB
 #define    ADC_VSOURCE_PIN                GPIO_PIN_12
 #define    ADC_VSOURCE_CHANNEL            ADC_CHANNEL_18
 
 
 
-// NOTE: L1 not included internal Tempsensor :(
+/* NOTE: L1 not included internal Tempsensor :( */
 #define ADC_TEMPSENSOR_CHANNEL        ADC_CHANNEL_16
 #define ADC_VREFINT_CHANNEL            ADC_CHANNEL_17
 
 
-#endif    // CONFIG_USE_PANEL_NODEMEDIUM
+#endif    /* CONFIG_USE_PANEL_NODEMEDIUM */
 
 
 
 #if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_NUCLEOF401RE)
 
-// ANALOG
+/* ANALOG */
 
 #define ADC_CHANNEL_NUM                    (3)
 
@@ -402,7 +402,7 @@
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//            DAC
+/*            DAC */
 ///////////////////////////////////////////////////////////////////////////////
 
 
@@ -436,7 +436,7 @@
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//            BUTTONS
+/*            BUTTONS */
 ///////////////////////////////////////////////////////////////////////////////
 
 
@@ -466,16 +466,16 @@
         __GPIOD_CLK_ENABLE()        \
 
 
-#endif    // #ifdef CONFIG_USE_PANEL_NODEMEDIUM
+#endif    /* #ifdef CONFIG_USE_PANEL_NODEMEDIUM */
 
 
 
 #ifdef CONFIG_USE_PANEL_HOMEAUTCENTERPANEL
 
-// Up        PC7
-// Down        PC8
-// Right    PA0
-// Left        PC9
+/* Up        PC7 */
+/* Down        PC8 */
+/* Right    PA0 */
+/* Left        PC9 */
 
 #define BUTTON_NUM                    4
 
@@ -498,13 +498,13 @@
         __GPIOC_CLK_ENABLE()
 
 
-#endif    // #ifdef CONFIG_USE_PANEL_CENTERPANEL
+#endif    /* #ifdef CONFIG_USE_PANEL_CENTERPANEL */
 
 
 
 #ifdef CONFIG_USE_PANEL_STM32F4DISCOVERY
 
-// User button: PA0
+/* User button: PA0 */
 
 #define BUTTON_NUM                                    1
 
@@ -524,7 +524,7 @@
 
 #ifdef CONFIG_USE_PANEL_NUCLEOF401RE
 
-// User button: PC13
+/* User button: PC13 */
 
 #define BUTTON_NUM                                    1
 
@@ -543,25 +543,25 @@
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//            TEMPERATURE - I2C - LM75
+/*            TEMPERATURE - I2C - LM75 */
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifdef CONFIG_MODULE_ADC_ENABLE
-// I2C_SCL        PB10
-// I2C_SDA        PB11
+/* I2C_SCL        PB10 */
+/* I2C_SDA        PB11 */
 
 
-//MSB LSB
-//1 0 0 1 A2 A1 A0
+/* SB LSB */
+/*  0 0 1 A2 A1 A0 */
 #define TEMPERATURE_I2C_TEMP_ADDRESS    ((uint16_t)( 0x0000 | (1<<6)  | (1 << 3 ) ) )
-// 0b1001000
-// 1,0,0,1,0,0,0 BITs, and not hex !!!!!!!!!!!!!!
-// Wrong example: 0x1001000
+/* 0b1001000 */
+/* 1,0,0,1,0,0,0 BITs, and not hex !!!!!!!!!!!!!! */
+/* Wrong example: 0x1001000 */
 
-// pointer register:
+/* pointer register: */
 #define TEMPERATURE_I2C_REGISTER_TEMP    ((uint8_t)0x00)
 
-#endif    // CONFIG_MODULE_ADC_ENABLE
+#endif    /* CONFIG_MODULE_ADC_ENABLE */
 
 #ifdef CONFIG_USE_PANEL_NODESMALL
 #define I2Cx                             I2C1
@@ -575,19 +575,19 @@
 
 /* I2C TIMING is calculated in case of the I2C Clock source is the SYSCLK = 48 MHz */
 /* Set TIMING to 0x00E0D3FF to reach 100 KHz speed (Rise time = 50ns, Fall time = 10ns) */
-//#define I2Cx_TIMING                      0x00E0D3FF
-//#define I2Cx_TIMING                      0x00201D2A
-// 100kHz, 100ns rise, 200ns fall
+/* define I2Cx_TIMING                      0x00E0D3FF */
+/* define I2Cx_TIMING                      0x00201D2A */
+/* 100kHz, 100ns rise, 200ns fall */
 
 #define I2Cx_TIMING                      0x00301D28
-// 100kHz, 250ns rise, 250ns fall
+/* 100kHz, 250ns rise, 250ns fall */
 
-//com.l2fprod.common.propertysheet.PropertySheetTableModel$Item@9cec42    0x00301D28
+/* om.l2fprod.common.propertysheet.PropertySheetTableModel$Item@9cec42    0x00301D28 */
 
 
-//com.l2fprod.common.propertysheet.PropertySheetTableModel$Item@198731b    0x2000090E
+/* om.l2fprod.common.propertysheet.PropertySheetTableModel$Item@198731b    0x2000090E */
 
-//com.l2fprod.common.propertysheet.PropertySheetTableModel$Item@7f591a    0x00201D2A
+/* om.l2fprod.common.propertysheet.PropertySheetTableModel$Item@7f591a    0x00201D2A */
 
 /* Definition for I2Cx Pins */
 #define I2Cx_SCL_PIN                    GPIO_PIN_10
@@ -609,12 +609,12 @@
 #define I2Cx_DMA_TX_RX_IRQHandler       DMA1_Channel2_3_IRQHandler
 
 /* Size of Trasmission buffer */
-//#define TXBUFFERSIZE                      (COUNTOF(aTxBuffer) - 1)
+/* define TXBUFFERSIZE                      (COUNTOF(aTxBuffer) - 1) */
 /* Size of Reception buffer */
-//#define RXBUFFERSIZE                      TXBUFFERSIZE
+/* define RXBUFFERSIZE                      TXBUFFERSIZE */
 
 
-#endif // #ifdef CONFIG_USE_PANEL_NODESMALL
+#endif /* #ifdef CONFIG_USE_PANEL_NODESMALL */
 
 
 
@@ -631,19 +631,19 @@
 
 /* I2C TIMING is calculated in case of the I2C Clock source is the SYSCLK = 48 MHz */
 /* Set TIMING to 0x00E0D3FF to reach 100 KHz speed (Rise time = 50ns, Fall time = 10ns) */
-//#define I2Cx_TIMING                      0x00E0D3FF
-//#define I2Cx_TIMING                      0x00201D2A
-// 100kHz, 100ns rise, 200ns fall
+/* define I2Cx_TIMING                      0x00E0D3FF */
+/* define I2Cx_TIMING                      0x00201D2A */
+/* 100kHz, 100ns rise, 200ns fall */
 
 #define I2Cx_TIMING                      0x00301D28
-// 100kHz, 250ns rise, 250ns fall
+/* 100kHz, 250ns rise, 250ns fall */
 
-//com.l2fprod.common.propertysheet.PropertySheetTableModel$Item@9cec42    0x00301D28
+/* om.l2fprod.common.propertysheet.PropertySheetTableModel$Item@9cec42    0x00301D28 */
 
 
-//com.l2fprod.common.propertysheet.PropertySheetTableModel$Item@198731b    0x2000090E
+/* om.l2fprod.common.propertysheet.PropertySheetTableModel$Item@198731b    0x2000090E */
 
-//com.l2fprod.common.propertysheet.PropertySheetTableModel$Item@7f591a    0x00201D2A
+/* om.l2fprod.common.propertysheet.PropertySheetTableModel$Item@7f591a    0x00201D2A */
 
 /* Definition for I2Cx Pins */
 #define I2Cx_SCL_PIN                    GPIO_PIN_10
@@ -665,16 +665,16 @@
 #define I2Cx_DMA_TX_RX_IRQHandler       DMA1_Channel2_3_IRQHandler
 
 /* Size of Trasmission buffer */
-//#define TXBUFFERSIZE                      (COUNTOF(aTxBuffer) - 1)
+/* define TXBUFFERSIZE                      (COUNTOF(aTxBuffer) - 1) */
 /* Size of Reception buffer */
-//#define RXBUFFERSIZE                      TXBUFFERSIZE
+/* define RXBUFFERSIZE                      TXBUFFERSIZE */
 
-#endif // #ifdef CONFIG_USE_PANEL_NODEMEDIUM
+#endif /* #ifdef CONFIG_USE_PANEL_NODEMEDIUM */
 
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//            FLASH - SPI
+/*            FLASH - SPI */
 ///////////////////////////////////////////////////////////////////////////////
 
 
@@ -709,7 +709,7 @@
 #define DISPLAY_SSD1306_SPIx_FORCE_RESET()               __SPI1_FORCE_RESET()
 #define DISPLAY_SSD1306_SPIx_RELEASE_RESET()             __SPI1_RELEASE_RESET()
 
-// Definition for DISPLAY_SSD1306_SPIx Pins
+/* Definition for DISPLAY_SSD1306_SPIx Pins */
 #define DISPLAY_SSD1306_SPIx_SCK_PIN                     GPIO_PIN_3
 #define DISPLAY_SSD1306_SPIx_SCK_GPIO_PORT               GPIOB
 #define DISPLAY_SSD1306_SPIx_SCK_AF                      GPIO_AF0_SPI1
@@ -727,13 +727,13 @@
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
 
 
-// FLASH_SPI_CS                PB0
-// FLASH_SPI_WP                PB1
-// FLASH_SPI_HOLD            PA4
-// FLASH - SPI
-// CLK                        PA5
-// MISO                        PA6
-// MOSI                        PA7
+/* FLASH_SPI_CS                PB0 */
+/* FLASH_SPI_WP                PB1 */
+/* FLASH_SPI_HOLD            PA4 */
+/* FLASH - SPI */
+/* CLK                        PA5 */
+/* MISO                        PA6 */
+/* MOSI                        PA7 */
 
 
 
@@ -752,7 +752,7 @@
 #define DISPLAY_SSD1306_SPIx_RELEASE_RESET()            __SPI1_RELEASE_RESET()
 
 
-// Definition for DISPLAY_SSD1306_SPIx Pins
+/* Definition for DISPLAY_SSD1306_SPIx Pins */
 #define DISPLAY_SSD1306_SPIx_SCK_PIN                    GPIO_PIN_5
 #define DISPLAY_SSD1306_SPIx_SCK_GPIO_PORT                GPIOA
 #define DISPLAY_SSD1306_SPIx_SCK_AF                        GPIO_AF5_SPI1
@@ -772,28 +772,28 @@
 #define FLASH_SPI_HOLD_GPIO_PORT        GPIOA
 
 
-#endif    // CONFIG_USE_PANEL_NODEMEDIUM
+#endif    /* CONFIG_USE_PANEL_NODEMEDIUM */
 
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// DEBUG - USART
+/* DEBUG - USART */
 ///////////////////////////////////////////////////////////////////////////////
 
 
 
 #if defined(CONFIG_USE_PANEL_NODEMEDIUM) || defined(CONFIG_USE_PANEL_HOMEAUTCENTERPANEL)
 
-// USART
-// DEBUG_USART        USART1
-// DEBUG_USART_TX    -    PA9
-// DEBUG_USART_RX    -    PA10
+/* USART */
+/* DEBUG_USART        USART1 */
+/* DEBUG_USART_TX    -    PA9 */
+/* DEBUG_USART_RX    -    PA10 */
 
 
 #define DEBUG_USARTx                    USART1
 
 
-//#define DEBUG_USART_CLK_ENABLE()        __USART1_CLK_ENABLE()
+/* define DEBUG_USART_CLK_ENABLE()        __USART1_CLK_ENABLE() */
 
 #define DEBUG_USART_CLK_ENABLES()        \
         __USART1_CLK_ENABLE();            \
@@ -810,7 +810,7 @@
 
 #define DEBUG_USART_BAUDRATE            9600
 
-// Definition for USARTx's NVIC
+/* Definition for USARTx's NVIC */
 #define DEBUG_USARTx_IRQn               USART1_IRQn
 #define DEBUG_USARTx_IRQHandler         USART1_IRQHandler
 
@@ -823,10 +823,10 @@
 
 #if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_NUCLEOF401RE)
 
-// USART
-// DEBUG_USART            USART6
-// DEBUG_USART_TX        PC6
-// DEBUG_USART_RX        PC7
+/* USART */
+/* DEBUG_USART            USART6 */
+/* DEBUG_USART_TX        PC6 */
+/* DEBUG_USART_RX        PC7 */
 
 #define DEBUG_USARTx                    USART6
 
@@ -846,7 +846,7 @@
 #define DEBUG_USART_BAUDRATE            115200
 
 
-// Definition for USARTx's NVIC
+/* Definition for USARTx's NVIC */
 #define DEBUG_USARTx_IRQn               USART6_IRQn
 #define DEBUG_USARTx_IRQHandler         USART6_IRQHandler
 
@@ -859,16 +859,16 @@
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//            ESP8266        -    USART
+/*            ESP8266        -    USART */
 ///////////////////////////////////////////////////////////////////////////////
 
 
 
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
 
-// USART2
-// USART_TX        PA2
-// USART_RX        PA3
+/* USART2 */
+/* USART_TX        PA2 */
+/* USART_RX        PA3 */
 
 #define ESP8266_USARTx                        USART2
 
@@ -887,7 +887,7 @@
     
 #define ESP8266_USART_AF                    GPIO_AF7_USART2
 
-// Definition for USARTx's NVIC
+/* Definition for USARTx's NVIC */
 #define ESP8266_USARTx_IRQn                  USART2_IRQn
 #define ESP8266_USARTx_IRQHandler            USART2_IRQHandler
 
@@ -898,15 +898,15 @@
 
 
 
-#endif // #ifdef CONFIG_USE_PANEL_NODEMEDIUM
+#endif /* #ifdef CONFIG_USE_PANEL_NODEMEDIUM */
 
 
 
 #ifdef CONFIG_USE_PANEL_HOMEAUTCENTERPANEL
 
-// USART2
-// USART_TX        PA2
-// USART_RX        PA3
+/* USART2 */
+/* USART_TX        PA2 */
+/* USART_RX        PA3 */
 
 #define ESP8266_USARTx                        USART2
 
@@ -923,7 +923,7 @@
     
 #define ESP8266_USART_AF                    GPIO_AF7_USART2
 
-// Definition for USARTx's NVIC
+/* Definition for USARTx's NVIC */
 #define ESP8266_USARTx_IRQn                  USART2_IRQn
 #define ESP8266_USARTx_IRQHandler            USART2_IRQHandler
 
@@ -933,15 +933,15 @@
 #define ESP8266_USART_BAUDRATE                9600
 
 
-#endif // #ifdef CONFIG_USE_PANEL_CENTERPANEL
+#endif /* #ifdef CONFIG_USE_PANEL_CENTERPANEL */
 
 
 
 #if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) && defined(CONFIG_MODULE_ESP8266_ENABLE)
 
-// USART3
-// USART_TX        PD8
-// USART_RX        PB11
+/* USART3 */
+/* USART_TX        PD8 */
+/* USART_RX        PB11 */
 
 #define ESP8266_USARTx                        USART3
 
@@ -959,7 +959,7 @@
 
 #define ESP8266_USART_AF                    GPIO_AF7_USART3
 
-// Definition for USARTx's NVIC
+/* Definition for USARTx's NVIC */
 #define ESP8266_USARTx_IRQn                  USART3_IRQn
 #define ESP8266_USARTx_IRQHandler            USART3_IRQHandler
 
@@ -994,12 +994,12 @@ _GPIO2            PA11
 
 
 
-#endif // #ifdef CONFIG_USE_PANEL_CENTERPANEL
+#endif /* #ifdef CONFIG_USE_PANEL_CENTERPANEL */
 
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//            ESP8266        -    OTHER PINS
+/*            ESP8266        -    OTHER PINS */
 ///////////////////////////////////////////////////////////////////////////////
 
 
@@ -1031,7 +1031,7 @@ _GPIO2            PA8
 
 
 
-#endif    // #ifdef CONFIG_USE_PANEL_NODEMEDIUM
+#endif    /* #ifdef CONFIG_USE_PANEL_NODEMEDIUM */
 
 
 
@@ -1067,12 +1067,12 @@ _GPIO2            PB8
 
 
 
-#endif    // #ifdef CONFIG_USE_PANEL_CENTERPANEL
+#endif    /* #ifdef CONFIG_USE_PANEL_CENTERPANEL */
 
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//            IO
+/*            IO */
 ///////////////////////////////////////////////////////////////////////////////
 
 
@@ -1081,15 +1081,15 @@ _GPIO2            PB8
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
 #ifdef CONFIG_MODULE_IO_INPUT_MOTION_ENABLE
 
-// SENSOR_MOTION        PC12
-// SENSOR_MOITON_EN        X
+/* SENSOR_MOTION        PC12 */
+/* SENSOR_MOITON_EN        X */
 
-// SENSOR_SOUND_IMPACT    PB14
+/* SENSOR_SOUND_IMPACT    PB14 */
 
 
 #define SENSOR_MOTION_GPIO_PINS_CLK_ENABLE()            __GPIOC_CLK_ENABLE()
         
-// PIR signaling; HIGH = movement/LOW = no movement
+/* PIR signaling; HIGH = movement/LOW = no movement */
 #define SENSOR_MOTION_GPIO_PORT                            GPIOC
 #define SENSOR_MOTION_GPIO_PIN                            GPIO_PIN_12
 
@@ -1100,7 +1100,7 @@ _GPIO2            PB8
 
 #define SENSOR_SOUND_GPIO_PINS_CLK_ENABLE()                __GPIOB_CLK_ENABLE()
 
-// SOUND_IMPACT: high, when sound
+/* SOUND_IMPACT: high, when sound */
 #define SENSOR_SOUND_IMPACT_GPIO_PORT                    GPIOB
 #define SENSOR_SOUND_IMPACT_GPIO_PIN                    GPIO_PIN_14
 
@@ -1127,9 +1127,9 @@ _GPIO2            PB8
 
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
 
-// DIGITAL_INPUT_2        PC8
-// RELAY_1_EN            PC11
-// RELAY_2_EN            PC10
+/* DIGITAL_INPUT_2        PC8 */
+/* RELAY_1_EN            PC11 */
+/* RELAY_2_EN            PC10 */
 
 /*
 DO NOT USE THEM AT NODEMEDIUM:
@@ -1152,8 +1152,8 @@ SENSOR_OPENCLOSE    PC6
 
 #ifdef CONFIG_USE_PANEL_HOMEAUTCENTERPANEL
 
-// RELAY_1_EN            PD3
-// RELAY_2_EN            PD4
+/* RELAY_1_EN            PD3 */
+/* RELAY_2_EN            PD4 */
 
 #define RELAY_1_GPIO_PORT            GPIOD
 #define RELAY_1_GPIO_PIN            GPIO_PIN_3
@@ -1184,19 +1184,19 @@ SENSOR_OPENCLOSE    PC6
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//            ETC
+/*            ETC */
 ///////////////////////////////////////////////////////////////////////////////
 
 
 #if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) && defined(CONFIG_MODULE_MOTOR_ENABLE)
 
 
-// RobonAUT - DinamoSaurus 2015 board: PB8, Motor control, TIM4-CH3 / TIM10-CH1
+/* RobonAUT - DinamoSaurus 2015 board: PB8, Motor control, TIM4-CH3 / TIM10-CH1 */
 #define MOTOR_MOTORS_PWM_GPIO_CLK_ENABLES()        __GPIOB_CLK_ENABLE()
 
 #define MOTOR_PWM_DCMOTOR_PORT                    GPIOB
 #define MOTOR_DCMOTOR_PWM_GPIO_PIN                GPIO_PIN_8
-// RobonAUT - DinamoSaurus 2015 board: PB7, Servo, TIM4-CH2
+/* RobonAUT - DinamoSaurus 2015 board: PB7, Servo, TIM4-CH2 */
 #define MOTOR_SERVOMOTOR_PWM_GPIO_PORT            GPIOB
 #define MOTOR_SERVOMOTOR_PWM_GPIO_PIN            GPIO_PIN_7
 
@@ -1232,7 +1232,7 @@ SENSOR_OPENCLOSE    PC6
 
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
 
-// Display - SSD1306 - 0.96'OLED
+/* Display - SSD1306 - 0.96'OLED */
 
 #define DISPLAY_SSD1306_SPIx                            SPI2
 #define DISPLAY_SSD1306_SPIx_CLK_ENABLE()                __HAL_RCC_SPI2_CLK_ENABLE()
@@ -1271,11 +1271,11 @@ SENSOR_OPENCLOSE    PC6
 #define DISPLAY_SSD1306_DATACOMMAND_GPIO_PIN            GPIO_PIN_11
 #define DISPLAY_SSD1306_DATACOMMAND_GPIO_PORT            GPIOD
 
-#endif    // CONFIG_MODULE_DISPLAY_ENABLE
+#endif    /* CONFIG_MODULE_DISPLAY_ENABLE */
 
 
 
-#endif    // CONFIG_USE_PANEL_STM32F4DISCOVERY
+#endif    /* CONFIG_USE_PANEL_STM32F4DISCOVERY */
 
 
 
@@ -1285,10 +1285,10 @@ SENSOR_OPENCLOSE    PC6
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 
 
-// USART
-// DEBUG_USART        USART1
-// DEBUG_USART_TX    -    PA9
-// DEBUG_USART_RX    -    PA10
+/* USART */
+/* DEBUG_USART        USART1 */
+/* DEBUG_USART_TX    -    PA9 */
+/* DEBUG_USART_RX    -    PA10 */
 
 
 #define ESP8266_USARTx                    USART1
@@ -1313,7 +1313,7 @@ SENSOR_OPENCLOSE    PC6
 #define ESP8266_USARTx_IRQn                USART1_IRQn
 #define ESP8266_USARTx_IRQHandler        USART1_IRQHandler
 
-// WITHOUT FREERTOS: If use FreeRTOS, you need higher priority
+/* WITHOUT FREERTOS: If use FreeRTOS, you need higher priority */
 #define ESP8266_USART_PREEMT_PRIORITY    2
 #define ESP8266_USART_SUB_PRIORITY        0
 
@@ -1344,16 +1344,16 @@ _GPIO2            PB15
         __GPIOB_CLK_ENABLE();            \
         __GPIOA_CLK_ENABLE()
 
-#endif    // #ifdef CONFIG_MODULE_ESP8266_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_ESP8266_ENABLE */
 
 
 
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
 
-// UP        S4    BUTTON_0        GPIOB14
-// LEFT        S5    BUTTON_3        GPIOB13
-// DOWN        S3    BUTTON_2        GPIOB12
-// RIGHT    S1    BUTTON_1        GPIOA0
+/* UP        S4    BUTTON_0        GPIOB14 */
+/* LEFT        S5    BUTTON_3        GPIOB13 */
+/* DOWN        S3    BUTTON_2        GPIOB12 */
+/* RIGHT    S1    BUTTON_1        GPIOA0 */
 
 #define BUTTON_NUM                    4
 
@@ -1380,9 +1380,9 @@ _GPIO2            PB15
 
 #ifdef CONFIG_MODULE_IO_ENABLE
 
-// LED_RED            PC13
-// LED_BLUE            PB8
-// LED_GREEN        PB9
+/* LED_RED            PC13 */
+/* LED_BLUE            PB8 */
+/* LED_GREEN        PB9 */
 
 
 #define LED_NUM_MIN                (1)
@@ -1415,9 +1415,9 @@ _GPIO2            PB15
 #define LED_BLUE_STATUS()        HAL_GPIO_ReadPin(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN)
 #define LED_RED_STATUS()        HAL_GPIO_ReadPin(BOARD_LED_RED_PORT, BOARD_LED_RED_PIN)
 
-#endif    // CONFIG_MODULE_IO_ENABLE
+#endif    /* CONFIG_MODULE_IO_ENABLE */
 
-#endif    // CONFIG_USE_PANEL_HOMEAUTNODESMALL
+#endif    /* CONFIG_USE_PANEL_HOMEAUTNODESMALL */
 
 
 
@@ -1426,9 +1426,9 @@ _GPIO2            PB15
 
 #ifdef CONFIG_MODULE_IO_ENABLE
 
-// LED_GREEN        PC14
-// LED_BLUE            PC15
-// LED_RED            PC13
+/* LED_GREEN        PC14 */
+/* LED_BLUE            PC15 */
+/* LED_RED            PC13 */
 
 
 #define LED_NUM_MAX                (3)
@@ -1459,13 +1459,13 @@ _GPIO2            PB15
 #define LED_BLUE_STATUS()        HAL_GPIO_ReadPin(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN)
 #define LED_RED_STATUS()        HAL_GPIO_ReadPin(BOARD_LED_RED_PORT, BOARD_LED_RED_PIN)
 
-#endif    // CONFIG_MODULE_IO_ENABLE
+#endif    /* CONFIG_MODULE_IO_ENABLE */
 
 
 
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
 
-// Display - SSD1306 - 0.96'OLED
+/* Display - SSD1306 - 0.96'OLED */
 
 #define DISPLAY_SSD1306_SPIx                            SPI1
 #define DISPLAY_SSD1306_SPIx_CLK_ENABLE()                __HAL_RCC_SPI1_CLK_ENABLE()
@@ -1516,18 +1516,18 @@ _GPIO2            PB15
 #define SPIx_DMA_TX_IRQHandler                            DMA1_Channel2_3_IRQHandler
 #endif
 
-#endif    // CONFIG_MODULE_DISPLAY_ENABLE
+#endif    /* CONFIG_MODULE_DISPLAY_ENABLE */
 
 
 
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
 
-// DC: PWM3, DIR, DIR2
-// SERVO: PWM2
+/* DC: PWM3, DIR, DIR2 */
+/* SERVO: PWM2 */
 
-// DIR1 + DIR2, PA1, PB2
-// PWM3: TIM16_CH1 - PA6
-// PWM2: TIM17_CH1 - PA7
+/* DIR1 + DIR2, PA1, PB2 */
+/* PWM3: TIM16_CH1 - PA6 */
+/* PWM2: TIM17_CH1 - PA7 */
 
 #define MOTOR_MOTORS_PWM_GPIO_CLK_ENABLES()        __GPIOA_CLK_ENABLE()
 
@@ -1564,7 +1564,7 @@ _GPIO2            PB15
 #define MOTOR_MOTORS_PWM_ON_ONE_TIMER
 
 
-#endif    // CONFIG_MODULE_MOTOR_ENABLE
+#endif    /* CONFIG_MODULE_MOTOR_ENABLE */
 
 
 
@@ -1582,16 +1582,16 @@ _GPIO2            PB15
 
 #define MEASUREMENT_RESOLUTION_16BIT
 
-#endif    // CONFIG_MODULE_MEASUREMENTTIMER_ENABLE
+#endif    /* CONFIG_MODULE_MEASUREMENTTIMER_ENABLE */
 
 
 
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 
-// USART
-// DEBUG_USART            USART2
-// DEBUG_USART_TX        PA2
-// DEBUG_USART_RX        PA3
+/* USART */
+/* DEBUG_USART            USART2 */
+/* DEBUG_USART_TX        PA2 */
+/* DEBUG_USART_RX        PA3 */
 
 #define DEBUG_USARTx                    USART2
 
@@ -1611,7 +1611,7 @@ _GPIO2            PB15
 #define DEBUG_USART_BAUDRATE            115200
 
 
-// Definition for USARTx's NVIC
+/* Definition for USARTx's NVIC */
 #define DEBUG_USARTx_IRQn               USART2_IRQn
 #define DEBUG_USARTx_IRQHandler         USART2_IRQHandler
 
@@ -1619,14 +1619,14 @@ _GPIO2            PB15
 #define DEBUG_USART_SUB_PRIORITY        0
 
 
-#endif    // CONFIG_MODULE_DEBUGUART_ENABLE
+#endif    /* CONFIG_MODULE_DEBUGUART_ENABLE */
 
 
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 
-// USART1
-// USART_TX        PA9
-// USART_RX        PA10
+/* USART1 */
+/* USART_TX        PA9 */
+/* USART_RX        PA10 */
 
 #define ESP8266_USARTx                        USART1
 
@@ -1643,7 +1643,7 @@ _GPIO2            PB15
 
 #define ESP8266_USART_AF                    GPIO_AF1_USART1
 
-// Definition for USARTx's NVIC
+/* Definition for USARTx's NVIC */
 #define ESP8266_USARTx_IRQn                  USART1_IRQn
 #define ESP8266_USARTx_IRQHandler            USART1_IRQHandler
 
@@ -1681,14 +1681,14 @@ _CH                PA12
 #define ESP8266_CH_GPIO_PORT            GPIOA
 
 
-#endif // CONFIG_MODULE_ESP8266_ENABLE
+#endif /* CONFIG_MODULE_ESP8266_ENABLE */
 
 
 #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
 
-// USART1
-// USART_TX        PA9
-// USART_RX        PA10
+/* USART1 */
+/* USART_TX        PA9 */
+/* USART_RX        PA10 */
 
 #define BLUETOOTH_USARTx                    USART1
 
@@ -1705,7 +1705,7 @@ _CH                PA12
 
 #define BLUETOOTH_USART_AF                    GPIO_AF1_USART1
 
-// Definition for USARTx's NVIC
+/* Definition for USARTx's NVIC */
 #define BLUETOOTH_USARTx_IRQn                  USART1_IRQn
 #define BLUETOOTH_USARTx_IRQHandler            USART1_IRQHandler
 
@@ -1718,15 +1718,15 @@ _CH                PA12
 #define BLUETOOTH_USART_BAUDRATE            9600
 #endif
 
-#endif    // #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE */
 
 
 
 #ifdef CONFIG_MODULE_COMMON_UART_ENABLE
 
-// USART1
-// USART_TX        PA9
-// USART_RX        PA10
+/* USART1 */
+/* USART_TX        PA9 */
+/* USART_RX        PA10 */
 
 #define COMMONUART_USARTx                    USART1
 
@@ -1743,7 +1743,7 @@ _CH                PA12
 
 #define COMMONUART_USART_AF                    GPIO_AF1_USART1
 
-// Definition for USARTx's NVIC
+/* Definition for USARTx's NVIC */
 #define COMMONUART_USARTx_IRQn              USART1_IRQn
 #define COMMONUART_USARTx_IRQHandler           USART1_IRQHandler
 
@@ -1753,7 +1753,7 @@ _CH                PA12
 #define COMMONUART_USART_BAUDRATE            9600
 
 
-#endif    // #ifdef CONFIG_MODULE_COMMON_UART_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_COMMON_UART_ENABLE */
 
 
 
@@ -1785,9 +1785,9 @@ BUTTON_LEFT            GPIOA15
         __GPIOA_CLK_ENABLE();        \
         __GPIOB_CLK_ENABLE()        \
 
-// NOTE: Button GPIO IRQ in Button.c!!
+/* NOTE: Button GPIO IRQ in Button.c!! */
 
-#endif    // CONFIG_MODULE_BUTTON_ENABLE
+#endif    /* CONFIG_MODULE_BUTTON_ENABLE */
 
 
 
@@ -1811,9 +1811,9 @@ BUTTON_LEFT            GPIOA15
 #define ADC_CHANNEL_NUM                    (1)
 
 
-// VSOURCE_ADC
-// PB1
-// ADC_IN9
+/* VSOURCE_ADC */
+/* PB1 */
+/* ADC_IN9 */
 #define    ADC_VSOURCE_GPIO_PORT            GPIOB
 #define    ADC_VSOURCE_GPIO_PIN            GPIO_PIN_1
 #define    ADC_VSOURCE_CHANNEL                ADC_CHANNEL_9
@@ -1848,10 +1848,10 @@ BUTTON_LEFT            GPIOA15
 
 #define VSOURCE_BATTERY_MAX_VOLTAGE        (3.9f)
 
-#endif    // #if defined(CONFIG_MODULE_ADC_ENABLE) || defined(CONFIG_MODULE_COMMON_ADC_ENABLE)
+#endif    /* #if defined(CONFIG_MODULE_ADC_ENABLE) || defined(CONFIG_MODULE_COMMON_ADC_ENABLE) */
 
 
-#endif    // CONFIG_USE_PANEL_FASTENNODE
+#endif    /* CONFIG_USE_PANEL_FASTENNODE */
 
 
 

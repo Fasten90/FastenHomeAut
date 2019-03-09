@@ -29,7 +29,7 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-// Configs:
+/* Configs: */
 ///< Enable Output blink
 #define CONFIG_IO_OUTPUT_BLINK_ENABLE
 #define IO_OUPUT_STATES_STRING_MAX_LENGTH        (20U + (30U * (IO_Output_Count - 1)))
@@ -54,7 +54,7 @@ typedef enum
 #endif
     IO_Output_Cmd_GetStatus,
 
-    // Do not use:
+    /* Do not use: */
     IO_Output_Cmd_Count
 } IO_Output_Cmd_t;
 
@@ -71,7 +71,7 @@ typedef enum
 ///< IO - Output - registration record structure
 typedef struct
 {
-    // GPIO registrations
+    /* GPIO registrations */
     const GPIO_TypeDef * const GPIO_Port;    ///< GPIO port
     const uint32_t GPIO_Pin;                ///< GPIO Pin
     const IO_Status_t lowVoltageState;        ///< Low voltage state
@@ -83,7 +83,7 @@ typedef struct
 ///< IO - Input - registration record structure
 typedef struct
 {
-    // GPIO registrations
+    /* GPIO registrations */
     const GPIO_TypeDef * const GPIO_Port;    ///< GPIO port
     const uint32_t GPIO_Pin;                ///< GPIO Pin
     const IO_Status_t lowVoltageState;        ///< Low voltage state
@@ -117,7 +117,7 @@ const char * IO_GetStatusName(IO_Status_t status);
 
 #else
 
-// Empty IO set definition
+/* Empty IO set definition */
 #define IO_Output_SetStatus(_pin, _set)
 
 #endif

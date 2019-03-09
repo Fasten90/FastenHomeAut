@@ -20,11 +20,11 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-// "|HomeAut|192.168.100.100|192.168.100.014|2017-01-10 18:49:50|COMMAND|REMOTE|00000000|\0"
-// This example length: 87
+/* "|HomeAut|192.168.100.100|192.168.100.014|2017-01-10 18:49:50|COMMAND|REMOTE|00000000|\0" */
+/* This example length: 87 */
 #define HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH                    ( 90 )
-// "|HomeAut|1.1.1.1|1.1.1.2|2017-01-10 18:49:50|COMMAND|REMOTE|00000000|\0"
-// This example length: 70
+/* "|HomeAut|1.1.1.1|1.1.1.2|2017-01-10 18:49:50|COMMAND|REMOTE|00000000|\0" */
+/* This example length: 70 */
 #define HOMEAUTMESSAGE_MESSAGE_MIN_LENGTH                    ( 70 )
 
 #define    HOMEAUTMESSAGE_SEPARATOR_CHARACTER                    ( '|' )
@@ -40,7 +40,7 @@
 #define HOMEAUTMESSAGE_MESSAGE_STRUCT_DATATYPE_COUNT        ( 5 )
 #define HOMEAUTMESSAGE_MESSAGE_STRUCT_DATA_COUNT            ( 6 )
 
-// 2017-01-10 19:38:00
+/* 2017-01-10 19:38:00 */
 #define HOMEAUTMESSAGE_MESSAGE_DATETIME_LENGTH                ( 19 )
 
 
@@ -77,7 +77,7 @@ typedef enum
 {
     DataType_Unknown = 0,
 
-    // Login
+    /* Login */
     Login_ImLoginImNodeSmall,
     Login_ImLoginImNodeMedium,
     Login_ImLoginImCenterPanel,
@@ -85,7 +85,7 @@ typedef enum
     Login_Welcome,
     Login_Sync,
 
-    // State
+    /* State */
     State_Temperature,
     State_Brightness,
     State_Sound,
@@ -96,7 +96,7 @@ typedef enum
     State_Input,
     State_Output,
 
-    // Alarm
+    /* Alarm */
     Alarm_TooHot,
     Alarm_TooCold,
     Alarm_InternalTemperature_TooHot,
@@ -115,7 +115,7 @@ typedef enum
     Alarm_SoundImpacted,
     Alarm_DoorOpened,
 
-    // Command: Master send command to Slave
+    /* Command: Master send command to Slave */
     Command_SetOutput,
     Command_AllOutput,
     Command_ResetOutput,
@@ -124,16 +124,16 @@ typedef enum
     Command_ResetLed,
     Command_Remote,
 
-    // Mode: Master set Slave mode
+    /* Mode: Master set Slave mode */
     Mode_RemoteControl,
     Mode_Spectator,
     Mode_Sleep,
 
-    // Config: Master config the slave
+    /* Config: Master config the slave */
     Config_TODO,
     Config_AnythingLimit,
 
-    // Too add new DataType here
+    /* Too add new DataType here */
 
     DataType_End
 } HomeAut_DataType;

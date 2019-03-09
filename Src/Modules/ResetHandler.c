@@ -60,7 +60,7 @@ static uint32_t Reset_GetResetReason(void)
 
     for (i = 0; (1<<i) < ResetReason_Count; i++)
     {
-        // @note Be careful, now it works in STM32F407, because:
+        /* @note Be careful, now it works in STM32F407, because: */
         /*
          *    #define RCC_FLAG_BORRST                  ((uint8_t)0x79U)
          *    #define RCC_FLAG_PINRST                  ((uint8_t)0x7AU)
@@ -80,13 +80,13 @@ static uint32_t Reset_GetResetReason(void)
 #error "Unknown Microcontroller family"
 #endif
         {
-            // Set flags, if have
+            /* Set flags, if have */
             resetReason |= (1 << i);
         }
 
     }
 
-    // Clear reset flags
+    /* Clear reset flags */
     __HAL_RCC_CLEAR_RESET_FLAGS();
 
     return resetReason;
@@ -105,7 +105,7 @@ static void Reset_GetResetReasonString(uint32_t resetReason, char *resetString)
 
     if (resetReason)
     {
-        // If has reset reason value
+        /* If has reset reason value */
         for (i = 0; (1<<i) < ResetReason_Count; i++)
         {
             switch (reset & (1 << i))
@@ -144,16 +144,16 @@ static void Reset_GetResetReasonString(uint32_t resetReason, char *resetString)
 
             if (reset & (1 << i))
             {
-                // Clear flag
+                /* Clear flag */
                 reset &= ~(1 << i);
                 if (reset)
                 {
-                    // If there are some more reset flag, print ', '
+                    /* If there are some more reset flag, print ', ' */
                     length += usprintf(&resetString[length], ", ");
                 }
                 else
                 {
-                    // There is no more reset flag
+                    /* There is no more reset flag */
                     break;
                 }
             }
@@ -161,7 +161,7 @@ static void Reset_GetResetReasonString(uint32_t resetReason, char *resetString)
     }
     else
     {
-        // If hasn't got value of reset
+        /* If hasn't got value of reset */
         usprintf(resetString, "There is no reset reason");
     }
 }
@@ -193,7 +193,7 @@ size_t Reset_PrintResetReasons(char * dst)
 
 
 
-// TODO: Add UnitTest
+/* TODO: Add UnitTest */
 
 
 

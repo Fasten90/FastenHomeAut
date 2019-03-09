@@ -73,7 +73,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle);
 
 
 
-#endif // #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
+#endif /* #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE */
 
 
 #endif /* COMMONADC_H_ */

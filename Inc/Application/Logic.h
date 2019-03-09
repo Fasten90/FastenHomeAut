@@ -71,7 +71,7 @@ typedef enum
     DisplayClock_Hour,
     DisplayClock_Minute,
 
-    // Do not use!
+    /* Do not use! */
     DisplayClock_Count
 } DisplayClock_ChangeState_t;
 #endif
@@ -94,9 +94,9 @@ typedef enum
     Menu_LargeClock,
 #endif
 
-    // XXX: Synchronize with Logic_MenuList
+    /* XXX: Synchronize with Logic_MenuList */
 
-    // Count
+    /* Count */
     Menu_Count
 } DisplayMenu_t;
 

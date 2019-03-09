@@ -44,7 +44,7 @@ const char * const IO_Output_Cmd_NameList[] =
 #endif
     "status"
 
-    // NOTE: Synchronize with IO_Output_Cmd_t
+    /* NOTE: Synchronize with IO_Output_Cmd_t */
 };
 
 
@@ -88,17 +88,17 @@ static void IO_CheckList(void);
  */
 void IO_Init(void)
 {
-    // Check list
+    /* Check list */
     BUILD_ASSERT((NUM_OF(IO_Output_Cmd_NameList)) == IO_Output_Cmd_Count);
 
 #ifdef CONFIG_DEBUG_MODE
-    // Check list in runtime
+    /* Check list in runtime */
     IO_CheckList();
 #endif
 
     GPIO_InitTypeDef GPIO_InitStructure;
 
-    // GPIO Peripheral clock enable
+    /* GPIO Peripheral clock enable */
     IO_PORT_CLK_ENABLES();
 
     uint8_t i;
@@ -107,42 +107,42 @@ void IO_Init(void)
         GPIO_TypeDef * port = (GPIO_TypeDef *)IO_Output_List[i].GPIO_Port;
         uint32_t pin = IO_Output_List[i].GPIO_Pin;
 
-        // Configure pins
+        /* Configure pins */
 
-        // Common settings
-        //GPIO_InitStructure.Alternate = GPIO_AF;
+        /* Common settings */
+        /* PIO_InitStructure.Alternate = GPIO_AF; */
         GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
         GPIO_InitStructure.Pull = GPIO_NOPULL;
         GPIO_InitStructure.Speed = GPIO_SPEED_LOW;
 
-        // Different settings
+        /* Different settings */
         GPIO_InitStructure.Pin = pin;
         HAL_GPIO_Init(port, &GPIO_InitStructure);
     }
 
-    // Turn off all IOs
+    /* Turn off all IOs */
     for (i = 0; i < (IO_Output_Count - 1); i++)
     {
-        // Start from i+1 because we shall start after "Unknown"
+        /* Start from i+1 because we shall start after "Unknown" */
         IO_Output_SetStatus(i+1, IO_Output_Cmd_SetOff);
     }
 
 #if (IO_INPUTS_NUM > 0)
-    // Inputs
+    /* Inputs */
     for (i = 0; i < (IO_Input_Count -1); i++)
     {
         GPIO_TypeDef * port = (GPIO_TypeDef *)IO_Input_List[i].GPIO_Port;
         uint32_t pin = IO_Input_List[i].GPIO_Pin;
 
-        // Configure pins
+        /* Configure pins */
 
-        // Common settings
-        //GPIO_InitStructure.Alternate = GPIO_AF;
+        /* Common settings */
+        /* PIO_InitStructure.Alternate = GPIO_AF; */
         GPIO_InitStructure.Mode = GPIO_MODE_INPUT;
         GPIO_InitStructure.Pull = GPIO_NOPULL;
         GPIO_InitStructure.Speed = GPIO_SPEED_LOW;
 
-        // Different settings
+        /* Different settings */
         GPIO_InitStructure.Pin = pin;
         HAL_GPIO_Init(port, &GPIO_InitStructure);
     }
@@ -191,22 +191,22 @@ void IO_Output_Test(void)
     {
         uint8_t i;
 
-        // Turn on all IOs
+        /* Turn on all IOs */
         for (i = 0; i < (IO_Output_Count - 1); i++)
         {
             IO_Output_SetStatus(i+1, IO_Output_Cmd_SetOn);
         }
 
-        // Delay
+        /* Delay */
         DelayMs(200);
 
-        // Turn off all IOs
+        /* Turn off all IOs */
         for (i = 0; i < (IO_Output_Count - 1); i++)
         {
             IO_Output_SetStatus(i+1, IO_Output_Cmd_SetOff);
         }
 
-        // Delay
+        /* Delay */
         DelayMs(200);
     }
 }
@@ -238,17 +238,17 @@ IO_Status_t IO_Output_SetStatus(IO_Output_Name_t ioName, IO_Output_Cmd_t ioCmd)
     #if defined(CONFIG_IO_OUTPUT_BLINK_ENABLE)
             case IO_Output_Cmd_SetBlink:
     #endif
-                //IO_OUT_ON();
+                /* O_OUT_ON(); */
                 HAL_GPIO_WritePin(port, pin, (lowVoltageState == IO_Status_Off) ? (GPIO_PIN_SET) : (GPIO_PIN_RESET));
                 break;
 
             case IO_Output_Cmd_SetOff:
-                //IO_OUT_OFF();
+                /* O_OUT_OFF(); */
                 HAL_GPIO_WritePin(port, pin, (lowVoltageState == IO_Status_Off) ? (GPIO_PIN_RESET) : (GPIO_PIN_SET));
                 break;
 
             case IO_Output_Cmd_SetToggle:
-                //IO_OUT_TOGGLE();
+                /* O_OUT_TOGGLE(); */
                 HAL_GPIO_TogglePin(port, pin);
                 break;
 
@@ -256,12 +256,12 @@ IO_Status_t IO_Output_SetStatus(IO_Output_Name_t ioName, IO_Output_Cmd_t ioCmd)
             case IO_Output_Cmd_DontCare:
             case IO_Output_Cmd_Count:
             default:
-                // Do nothing
+                /* Do nothing */
                 break;
         }
 
-        // Return with IO status, so IO_Output_Cmd_GetStatus state is handled with this
-        //return IO_OUT_STATUS();
+        /* Return with IO status, so IO_Output_Cmd_GetStatus state is handled with this */
+        /* eturn IO_OUT_STATUS(); */
         const GPIO_PinState pinState = HAL_GPIO_ReadPin(port, pin);
 
         status = (lowVoltageState == IO_Status_Off)
@@ -285,15 +285,15 @@ IO_Status_t IO_Output_GetStatus(IO_Output_Name_t ioName)
 
     if ((ioName < IO_Output_Count) && (ioName != IO_Output_Unknown))
     {
-        // Get IO datas
+        /* Get IO datas */
         GPIO_TypeDef * port = (GPIO_TypeDef *)IO_Output_List[ioName-1].GPIO_Port;
         uint32_t pin = IO_Output_List[ioName-1].GPIO_Pin;
         IO_Status_t lowVoltageState = IO_Output_List[ioName-1].lowVoltageState;
 
-        // Read pin
+        /* Read pin */
         GPIO_PinState pinState = HAL_GPIO_ReadPin(port, pin);
 
-        // Set state
+        /* Set state */
         status = (lowVoltageState == IO_Status_Off)
                 ? ((pinState == GPIO_PIN_RESET) ? IO_Status_Off : IO_Status_On)
                 : ((pinState == GPIO_PIN_RESET) ? IO_Status_On : IO_Status_Off);
@@ -312,12 +312,12 @@ IO_Output_Name_t IO_Output_GetOutputNumFromName(const char *name)
     uint8_t i;
     IO_Output_Name_t outputNum = IO_Output_Unknown;
 
-    // Search IO Output name in the list
+    /* Search IO Output name in the list */
     for (i = 0; i < (IO_Output_Count -1) - 1; i++)
     {
         if (!StrCmp(IO_Output_List[i].name, name))
         {
-            // IO Output num = index+1
+            /* IO Output num = index+1 */
             outputNum = i + 1;
             break;
         }
@@ -352,7 +352,7 @@ IO_Output_Cmd_t IO_Output_GetTypeFromString(const char *typeString)
     uint8_t i;
     IO_Output_Cmd_t outputCmdType = 0;
 
-    // Search IO Output type string in the list
+    /* Search IO Output type string in the list */
     for (i = 0; i < IO_Output_Cmd_Count; i++)
     {
         if (!StrCmp(IO_Output_Cmd_NameList[i], typeString))
@@ -427,9 +427,9 @@ size_t IO_Output_PrintStates(char *str)
 void IO_LED_PWMTask(void)
 {
 
-    // Blue LED blinking like PWM
+    /* Blue LED blinking like PWM */
 
-    // 50 Hz --> 20ms
+    /* 50 Hz --> 20ms */
 
     static uint8_t LED_PwmCnt = 0;
     static uint8_t LED_PwmLimit = 0;
@@ -442,12 +442,12 @@ void IO_LED_PWMTask(void)
     LED_2ms++;
     if (LED_2ms >= 100/2)
     {
-        // Run every 100. ms
+        /* Run every 100. ms */
 
         LED_2ms = 0;
         LED_100ms++;
 
-        // Change PWM percent
+        /* Change PWM percent */
 
         if (LED_PwmLimitDir)
         {
@@ -458,13 +458,13 @@ void IO_LED_PWMTask(void)
             LED_PwmLimit++;
         }
 
-        // Change direction
+        /* Change direction */
         if (LED_100ms >= LED_PWM_ChangeDir_100ms_limit)
         {
-            // Run every 1000. msec = every sec
+            /* Run every 1000. msec = every sec */
             LED_100ms = 0;
 
-            // Change dir after 1 sec
+            /* Change dir after 1 sec */
             if (LED_PwmLimit == 0)
             {
                 LED_PwmLimitDir = false;
@@ -476,22 +476,22 @@ void IO_LED_PWMTask(void)
         }
     }
 
-    // PWM limit: 0-10
+    /* PWM limit: 0-10 */
 
-    // Check, need LED blinking?
+    /* Check, need LED blinking? */
     if (LED_PwmCnt < LED_PwmLimit)
     {
         IO_Output_SetStatus(IO_LED_Blue, IO_Output_Cmd_SetOn);
-        //IO_Output_SetStatus(IO_LED_Blue, IO_Output_Cmd_SetToggle);
+        /* O_Output_SetStatus(IO_LED_Blue, IO_Output_Cmd_SetToggle); */
     }
     else
     {
         IO_Output_SetStatus(IO_LED_Blue, IO_Output_Cmd_SetOff);
     }
 
-    // PWM counter
+    /* PWM counter */
     LED_PwmCnt++;
-    if (LED_PwmCnt >= LED_PwmMaxLimit)    // Max limit
+    if (LED_PwmCnt >= LED_PwmMaxLimit)    /* Max limit */
     {
         LED_PwmCnt = 0;
     }
@@ -506,13 +506,13 @@ void IO_LED_PWMTask(void)
  */
 void IO_Output_Handler(void)
 {
-    // Now only have one task: check blink state and turn off the LED if need
+    /* Now only have one task: check blink state and turn off the LED if need */
     uint8_t i;
     for (i = 0; i < IO_Output_Count; i++)
     {
         if (IO_Output_ActualState[i] == IO_Output_Cmd_SetBlink)
         {
-            // Need corrects the LED index
+            /* Need corrects the LED index */
             IO_Output_SetStatus((i+1), IO_Output_Cmd_SetOff);
         }
     }
@@ -535,7 +535,7 @@ IO_Status_t IO_GetInputState(IO_Input_Name_t inputPin)
 
     if ((inputPin == IO_Input_Unknown) || (inputPin >= IO_Input_Count))
     {
-        // Wrong value
+        /* Wrong value */
         return IO_Status_Unknown;
     }
 
@@ -551,12 +551,12 @@ IO_Status_t IO_GetInputState(IO_Input_Name_t inputPin)
     }
     else
     {
-        // GPIO_PIN_SET
+        /* GPIO_PIN_SET */
         inputState = (lowVoltageState == IO_Status_Off) ? IO_Status_On : IO_Status_Off;
     }
 
-    // TODO: Store the read value
-    //inputState = IO_InputStates[inputpin];
+    /* TODO: Store the read value */
+    /* nputState = IO_InputStates[inputpin]; */
 
     return inputState;
 }
@@ -572,7 +572,7 @@ const char * IO_GetInputName(IO_Input_Name_t inputPin)
 
     if ((inputPin != IO_Input_Unknown) && (inputPin < IO_Input_Count))
     {
-        // Value is ok
+        /* Value is ok */
         str = IO_Input_List[inputPin-1].name;
     }
 
@@ -580,7 +580,7 @@ const char * IO_GetInputName(IO_Input_Name_t inputPin)
 }
 
 
-// TODO: SetInputState - from ISR e.g.
+/* TODO: SetInputState - from ISR e.g. */
 
 
-#endif    // #ifdef CONFIG_MODULE_IO_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_IO_ENABLE */

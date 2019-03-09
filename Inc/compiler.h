@@ -27,15 +27,15 @@
 
 ///< Includes Platform / Microcontroller family libraries
 #if defined(CONFIG_PLATFORM_MCU_STM32F4xx)
-    // STM32F4 (E.g. F4Discovery)
+    /* STM32F4 (E.g. F4Discovery) */
     #include "stm32f4xx_hal.h"
     #include "stm32_hal_legacy.h"
 #elif defined(CONFIG_PLATFORM_MCU_STM32F0xx)
-    // STM32F0
+    /* STM32F0 */
     #include "stm32f0xx_hal.h"
     #include "stm32_hal_legacy.h"
 #elif defined(CONFIG_PLATFORM_PC_WINDOWS)
-    // PC
+    /* PC */
     #include "windows_hal.h"
 #else
 #warning "Missed platform / microcontroller family define / include"
@@ -73,7 +73,7 @@ FreeRTOS/Source/portable/[compiler]/[architecture]/port.c.
 FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 */
 
-#endif    // #ifdef CONFIG_USE_FREERTOS
+#endif    /* #ifdef CONFIG_USE_FREERTOS */
 
 
 ///< Macro for list's element size/num
@@ -94,25 +94,25 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 
 ///< Runtime Assert function
-// @note    If true, it is OK
-//            If false, "error"
+/* @note    If true, it is OK */
+/*            If false, "error" */
 #ifdef ASSERT_MODE_HARD
     #define ASSERT(__e)                ((__e) ? (void)0 : Assert_Function(__FILE__, __LINE__, #__e))
 #else
     #ifdef CONFIG_DEBUG_MODE
-        // Assert --> Breakpoint
+        /* Assert --> Breakpoint */
         #define ASSERT(__e)            do {                           \
                                            if (!(__e))                \
                                                DEBUG_BREAKPOINT();    \
                                        } while(0)
     #else
-        // Debug mode turned off (ASSERT() do nothing)
+        /* Debug mode turned off (ASSERT() do nothing) */
         #define ASSERT(__e)
     #endif
 #endif
 
 
-// #define assert_param(expr) ((void)0)    // incompatible redefinition ...
+/* #define assert_param(expr) ((void)0)    // incompatible redefinition ... */
 
 
 /**
@@ -134,7 +134,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 ///< Breakpoint
 #ifdef CONFIG_DEBUG_MODE
     #ifndef CONFIG_PLATFORM_PC_WINDOWS
-    // ASM: Breakpoint
+    /* ASM: Breakpoint */
     #define DEBUG_BREAKPOINT()        __asm("BKPT #0\n")
     #else
     #include "Windows.h"
@@ -146,13 +146,13 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 
 ///< Compiler message
-// E.g.: #pragma message "Compiling " __FILE__ "..."
-// TODO: Not works on MSVC?
+/* E.g.: #pragma message "Compiling " __FILE__ "..." */
+/* TODO: Not works on MSVC? */
 #ifndef __TINYC__
     #define DO_PRAGMA(_msg) _Pragma (#_msg)
     #define COMPILER_MESSAGE(_msg) DO_PRAGMA(message ("Compiler message: - " #_msg))
 #else
-    // TinyCC (TCC) doesn't support _Pragma
+    /* TinyCC (TCC) doesn't support _Pragma */
     #define COMPILER_MESSAGE(_msg)
 #endif
 

@@ -108,7 +108,7 @@ const char * COMMUNICATION_GetProtocolName(CommProtocol_t protocol);
 
 void COMMUNICATION_ClearProtocolBuffer(void);
 
-#endif    // #ifdef CONFIG_MODULE_COMMUNICATION_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_COMMUNICATION_ENABLE */
 
 
 

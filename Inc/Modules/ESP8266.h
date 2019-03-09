@@ -34,7 +34,7 @@
 #define ESP8266_DEBUG_TXBUFFERSIZE        (255U)
 
 
-//#define ESP8266_USE_BLOCK_MODE
+/* define ESP8266_USE_BLOCK_MODE */
 
 
 /*
@@ -58,7 +58,7 @@
 #endif
 
 #if (ESP8266_DEBUG_MODE == 1)
-// Variadic Macro
+/* Variadic Macro */
     #if defined(CONFIG_MODULE_DEBUG_ENABLE)
     #define ESP8266_DEBUG_PRINTF(...)                    Debug_Printf(Debug_ESP8266, __VA_ARGS__)
     #else
@@ -81,7 +81,7 @@
 #endif
 
 
-// TODO: Make enum
+/* TODO: Make enum */
 #define    EVENT_LINK                                ( 1 )
 #define    EVENT_UNLINK                            ( 2 )
 #define    EVENT_RECEIVED_GOOD_TCP_MESSAGE            ( 3 )
@@ -89,12 +89,12 @@
 
 
 ///< Receive message header
-// "\r\n"
-// "+IPD,0,20:"
+/* "\r\n" */
+/* "+IPD,0,20:" */
 #define ESP8266_TCP_MESSAGEHEADER_LENGTH        ( 12 )
 
 ///< Receive message end
-// "\r\nOK\r\n"
+/* "\r\nOK\r\n" */
 #define ESP8266_HOMEAUT_MESSAGEBOTTOM_LENGTH    ( 6 )
 
 
@@ -114,7 +114,7 @@
 
 #define ESP8266_TX_BUFFER_LENGTH                ( 512U )
 
-// TODO: Beautify!
+/* TODO: Beautify! */
 #define ESP8266_RX_TCP_MSG_MAX_LENGTH            ( ESP8266_RX_BUFFER_LENGTH - ESP8266_TCP_MESSAGEHEADER_LENGTH )
 
 
@@ -122,10 +122,10 @@
 #ifdef HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH
 #define ESP8266_TCP_MESSAGE_MAX_LENGTH            ( HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH )
 #define ESP8266_TCP_MESSAGE_MIN_LENGTH            ( HOMEAUTMESSAGE_MESSAGE_MIN_LENGTH )
-/// ESP8266 queue item size
+//* ESP8266 queue item size */
 #define ESP8266_MESSAGE_QUEUE_ITEM_SIZE            ( ESP8266_TCP_MESSAGE_MAX_LENGTH )
 #else
-// If not defined HOMEAUTMESSAGE...
+/* If not defined HOMEAUTMESSAGE... */
 #define ESP8266_TCP_MESSAGE_MAX_LENGTH            ( 500 )
 #define ESP8266_TCP_MESSAGE_MIN_LENGTH            ( 5 )
 ///< ESP8266 queue item size
@@ -145,15 +145,15 @@
                                 LED_GREEN_OFF()
 
 
-// Reset (low = reset active)
+/* Reset (low = reset active) */
 #define ESP8266_RST_ACTIVE()    \
     HAL_GPIO_WritePin(ESP8266_RST_GPIO_PORT, ESP8266_RST_GPIO_PIN, GPIO_PIN_RESET)
-// Reset end (high = inactive)
+/* Reset end (high = inactive) */
 #define ESP8266_RST_INACTIVE()    \
     HAL_GPIO_WritePin(ESP8266_RST_GPIO_PORT, ESP8266_RST_GPIO_PIN, GPIO_PIN_SET)
 
 
-//#define ESP8266_PERIODICALLY_SEND_VERSION
+/* define ESP8266_PERIODICALLY_SEND_VERSION */
 
 
 

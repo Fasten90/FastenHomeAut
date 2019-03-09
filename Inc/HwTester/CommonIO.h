@@ -25,7 +25,7 @@ typedef enum
     IO_INPUT,
     IO_OUTPUT,
 
-    // Do not use:
+    /* Do not use: */
     IO_COUNT
 } IO_Type;
 
@@ -39,7 +39,7 @@ typedef enum
     OUTPUT_TOGGLE,
     OUTPUT_STATUS,
 
-    // Do not use:
+    /* Do not use: */
     OUTPUT_COUNT
 } Output_Type;
 

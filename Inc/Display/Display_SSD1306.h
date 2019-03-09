@@ -24,7 +24,7 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-//#define SSD1306_ROTATION_ENABLE
+/* define SSD1306_ROTATION_ENABLE */
 
 
 #define BLACK 0
@@ -33,9 +33,9 @@
 
 
 
-#define SSD1306_I2C_ADDRESS   0x3C  // 011110+SA0+RW - 0x3C or 0x3D
-// Address for 128x32 is 0x3C
-// Address for 128x64 is 0x3D (default) or 0x3C (if SA0 is grounded)
+#define SSD1306_I2C_ADDRESS   0x3C  /* 011110+SA0+RW - 0x3C or 0x3D */
+/* Address for 128x32 is 0x3C */
+/* Address for 128x64 is 0x3D (default) or 0x3C (if SA0 is grounded) */
 
 /*=========================================================================
     SSD1306 Displays
@@ -48,8 +48,8 @@
     SSD1306_96_16
     -----------------------------------------------------------------------*/
 #define SSD1306_128_64
-//#define SSD1306_128_32
-//   #define SSD1306_96_16
+/* define SSD1306_128_32 */
+/*   #define SSD1306_96_16 */
 /*=========================================================================*/
 
 #if defined SSD1306_128_64 && defined SSD1306_128_32
@@ -113,7 +113,7 @@
 #define SSD1306_EXTERNALVCC 0x1
 #define SSD1306_SWITCHCAPVCC 0x2
 
-// Scrolling #defines
+/* Scrolling #defines */
 #define SSD1306_ACTIVATE_SCROLL 0x2F
 #define SSD1306_DEACTIVATE_SCROLL 0x2E
 #define SSD1306_SET_VERTICAL_SCROLL_AREA 0xA3

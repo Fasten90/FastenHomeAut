@@ -240,7 +240,7 @@ bool SelfTest_FailedRamTest = false;
  *----------------------------------------------------------------------------*/
 
 #if defined(CONFIG_MODULE_ESCAPEBROWSER_ENABLE)
-// TODO: Put to other
+/* TODO: Put to other */
 static const char * GetStrListElement(uint8_t i)
 {
     const char *str = NULL;
@@ -271,24 +271,24 @@ int main(void)
 
 
 #ifdef CONFIG_MODULE_SELFTEST_ENABLE
-    // Stack use
+    /* Stack use */
     volatile uint8_t selfTestStackStartVariable = 0;
     SelfTest_StackStartAddress = (void *)&selfTestStackStartVariable;
 
-    // RAM test
+    /* RAM test */
     if (!SelfTest_Ram_Test())
     {
-        // Failed RAM test
+        /* Failed RAM test */
         SelfTest_FailedRamTest = true;
     }
 
-    // Flag test
+    /* Flag test */
     SelfTest_Flag_Test();
 #endif /* CONFIG_MODULE_SELFTEST_ENABLE */
 
 
 #ifdef CONFIG_PLATFORM_PC_WINDOWS
-    // Windows functions - Run unittest immediately
+    /* Windows functions - Run unittest immediately */
 
 #ifdef CONFIG_MODULE_UNITTEST_ENABLE
     char responseBuffer[2048];
@@ -305,48 +305,48 @@ int main(void)
     {
         printf("%s\r\n", "Every test has run successfully!");
     }
-    // Return with UnitTest result:
+    /* Return with UnitTest result: */
     exit(utResult);
 #else
-    // Print result
+    /* Print result */
     printf("%s\r\n", responseBuffer); /* Clang generated compile warning when "printf(responseBuffer);" used */
     printf("Unit test result: %d\r\n", utResult);
 #endif
 #endif /* CONFIG_PLATFORM_PC_WINDOWS */
 
-    // STDIN
+    /* STDIN */
     UART_HandleTypeDef Debug_UartHandle;
     HAL_UART_Init(&Debug_UartHandle);
 #endif /* CONFIG_PLATFORM_PC_WINDOWS */
 
 
 #ifdef CONFIG_MODULE_MEASUREMENTTIMER_ENABLE
-    // MeasurementTimer
+    /* MeasurementTimer */
     MeasurementTimer_Init();
     MeasurementTimer_StartMeasurement();
 #endif
 
 
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
-    // EventLog
+    /* EventLog */
     EventLog_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
-    // EventHandler
+    /* EventHandler */
     EventHandler_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_IO_ENABLE
-    // LED
+    /* LED */
     IO_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
-    // Button
+    /* Button */
     BUTTON_Init();
 #endif
 
@@ -357,45 +357,45 @@ int main(void)
 
 
 #ifdef CONFIG_MODULE_COMMON_DAC_ENABLE
-    // Common DAC
+    /* Common DAC */
     CommonDAC_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
-    // Common ADC
+    /* Common ADC */
     CommonADC_Init();
-    // Test, blocking
-    //CommonADC_Test();
+    /* Test, blocking */
+    /* ommonADC_Test(); */
 #endif
 
 
 #ifdef CONFIG_MODULE_ADC_ENABLE
-    // ADC
+    /* ADC */
     ADC_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_COMMON_PWM_ENABLE
-    // Common PWM Initialize
+    /* Common PWM Initialize */
     CommonPWM_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_COMMONSPI_ENABLE
-    // Common SPI
+    /* Common SPI */
     CommonSPI_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
-    // Remote car motors
+    /* Remote car motors */
     Motor_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
-    // Display
+    /* Display */
     Display_SSD1306_Init();
     #ifdef CONFIG_FUNCTION_DISPLAY_MENU
     Logic_Display_Init();
@@ -404,20 +404,20 @@ int main(void)
 
 
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
-    // DebugUart initializing
-    // @note    Be careful, Terminal need to initializing after this
+    /* DebugUart initializing */
+    /* @note    Be careful, Terminal need to initializing after this */
     DebugUart_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
-    // Bluetooth module initializing
+    /* Bluetooth module initializing */
     Bluetooth_HC05_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
-    // CommandHandler initialization
+    /* CommandHandler initialization */
     CmdH_Init();
 #endif
 
@@ -428,37 +428,37 @@ int main(void)
 
 
 #ifdef CONFIG_MODULE_TERMINAL_ENABLE
-    // Terminal init
+    /* Terminal init */
     Terminal_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-    // ESP8266
+    /* ESP8266 */
     ESP8266_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_RTC_ENABLE
-    // RTC
+    /* RTC */
     RTC_Init();
 #endif
 
 
 #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
-    // Watchdog
+    /* Watchdog */
     Watchdog_Init();
 #endif
 
 
 #if defined(CONFIG_MODULE_TERMINAL_ENABLE) && !defined(CONFIG_MODULE_TASKHANDLER_ENABLE) && !defined(CONFIG_USE_FREERTOS)
-    // Terminal infinite loop, if not used TaskHandler and FreeRTOS
+    /* Terminal infinite loop, if not used TaskHandler and FreeRTOS */
     Terminal_CheckCommand();
 #endif
 
 
 #ifdef CONFIG_MODULE_MEASUREMENTTIMER_ENABLE
-    // MeasurementTimer
+    /* MeasurementTimer */
     uint32_t initTimeInUs = MeasurementTimer_GetTime();
     uprintf("Init time: %u[us], %u[ms]", initTimeInUs, initTimeInUs/1000);
 #endif
@@ -473,23 +473,23 @@ int main(void)
 
 
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
-    // Task handler
+    /* Task handler */
     TaskHandler_Init();
 
-    // Run task scheduler
+    /* Run task scheduler */
     TaskHandler_Scheduler();
 
-    // TaskHandler never return here!!
+    /* TaskHandler never return here!! */
 #endif
 
 
 #ifdef CONFIG_USE_FREERTOS
-    // FreeRTOS scheduler
+    /* FreeRTOS scheduler */
     vTaskStartScheduler();
 #endif
 
 
-    // !! Never reach this code !!
+    /* !! Never reach this code !! */
     Error_Handler();
 
 } /* End of main */
@@ -523,7 +523,7 @@ void SystemClock_Config(void)
 
     HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 }
-#endif //#ifdef CONFIG_USE_PANEL_NODESMALL
+#endif /* ifdef CONFIG_USE_PANEL_NODESMALL */
 
 
 
@@ -560,7 +560,7 @@ void SystemClock_Config(void)
     HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
 }
-#endif    // #ifdef CONFIG_USE_PANEL_NODEMEDIUM
+#endif    /* #ifdef CONFIG_USE_PANEL_NODEMEDIUM */
 
 
 
@@ -602,7 +602,7 @@ void SystemClock_Config(void)
   HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
 }
-#endif    // #ifdef CONFIG_USE_PANEL_...
+#endif    /* #ifdef CONFIG_USE_PANEL_... */
 
 
 
@@ -612,7 +612,7 @@ void SystemClock_Config(void)
 
 void vApplicationTickHook( void )
 {
-    // Not used
+    /* Not used */
 }
 
 /*-----------------------------------------------------------*/
@@ -630,7 +630,7 @@ void vApplicationMallocFailedHook( void )
     to query the size of free heap space that remains (although it does not
     provide information on how the remaining heap might be fragmented). */
     taskDISABLE_INTERRUPTS();
-    //for( ;; );
+    /* or( ;; ); */
     Error_Handler();
 }
 
@@ -660,10 +660,10 @@ void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName )
     configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.  This hook
     function is called if a stack overflow is detected. */
     taskDISABLE_INTERRUPTS();
-    //for( ;; );
+    /* or( ;; ); */
     Error_Handler();
 }
 
 /*-----------------------------------------------------------*/
 
-#endif    // #ifdef CONFIG_USE_FREERTOS
+#endif    /* #ifdef CONFIG_USE_FREERTOS */

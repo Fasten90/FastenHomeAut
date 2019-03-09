@@ -59,19 +59,19 @@ static uint8_t Secured_ErrorCnt = 0;
  */
 bool Get_SecuredBool(SecuredBool_t *data)
 {
-    // Check pointer
+    /* Check pointer */
     if (data == NULL)
         return false;
 
-    // Check validity
+    /* Check validity */
     if (data->isEn == !data->negIsEn)
     {
-        // Valid
+        /* Valid */
         return data->isEn;
     }
     else
     {
-        // Invalid
+        /* Invalid */
         SECURED_ERROR();
         return false;
     }
@@ -84,11 +84,11 @@ bool Get_SecuredBool(SecuredBool_t *data)
  */
 void Set_SecuredBool(SecuredBool_t *data, bool value)
 {
-    // Check pointer
+    /* Check pointer */
     if (data == NULL)
         return;
 
-    // Set value
+    /* Set value */
     data->isEn = value;
     data->negIsEn = !value;
 }
@@ -100,19 +100,19 @@ void Set_SecuredBool(SecuredBool_t *data, bool value)
  */
 uint32_t Get_SecuredUint32(SecuredUint32_t *data)
 {
-    // Check pointer
+    /* Check pointer */
     if (data == NULL)
         return 0;
 
-    // Check validity
+    /* Check validity */
     if (data->data == ~data->negData)
     {
-        // Valid
+        /* Valid */
         return data->data;
     }
     else
     {
-        // Invalid
+        /* Invalid */
         SECURED_ERROR();
         return 0;
     }
@@ -125,11 +125,11 @@ uint32_t Get_SecuredUint32(SecuredUint32_t *data)
  */
 void Set_SecuredUint32(SecuredUint32_t *data, uint32_t value)
 {
-    // Check pointer
+    /* Check pointer */
     if (data == NULL)
         return;
 
-    // Set value
+    /* Set value */
     data->data = value;
     data->negData = ~value;
 }
@@ -147,11 +147,11 @@ uint32_t SecuredDataTypes_UnitTest(void)
 
     UnitTest_Start("SecuredDataTypes", __FILE__);
 
-    // Clear error cnt
+    /* Clear error cnt */
     Secured_ErrorCnt = 0;
 
 
-    // Test "SecuredBool"
+    /* Test "SecuredBool" */
 
     Set_SecuredBool(&secBool, false);
     UNITTEST_ASSERT(Get_SecuredBool(&secBool) == false, "Set bool error!");
@@ -161,19 +161,19 @@ uint32_t SecuredDataTypes_UnitTest(void)
 
     UNITTEST_ASSERT(Secured_ErrorCnt == 0, "ErrorCnt is incremented!");
 
-    // Make wrong
+    /* Make wrong */
     secBool.negIsEn = 123;
 
-    // Wait wrong value: false
+    /* Wait wrong value: false */
     UNITTEST_ASSERT(Get_SecuredBool(&secBool) == false, "Get bool error!");
     UNITTEST_ASSERT(Secured_ErrorCnt == 1, "ErrorCnt error!");
 
 
-    // Clear error cnt
+    /* Clear error cnt */
     Secured_ErrorCnt = 0;
 
 
-    // Test "SecuredUint32"
+    /* Test "SecuredUint32" */
 
     Set_SecuredUint32(&secInt, 0);
     UNITTEST_ASSERT(Get_SecuredUint32(&secInt) == 0, "Set uint error!");
@@ -183,16 +183,16 @@ uint32_t SecuredDataTypes_UnitTest(void)
 
     UNITTEST_ASSERT(Secured_ErrorCnt == 0, "ErrorCnt is incremented!");
 
-    // Make wrong
+    /* Make wrong */
     secInt.negData = 0xFA12;
 
-    // Wait wrong value: 0
+    /* Wait wrong value: 0 */
     UNITTEST_ASSERT(Get_SecuredUint32(&secInt) == 0, "Get uint error!");
     UNITTEST_ASSERT(Secured_ErrorCnt == 1, "ErrorCnt error!");
 
 
     return UnitTest_End();
 }
-#endif    // #ifdef CONFIG_MODULE_SECUREDDATATYPES_UNITTEST_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_SECUREDDATATYPES_UNITTEST_ENABLE */
 
 

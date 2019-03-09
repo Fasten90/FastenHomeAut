@@ -59,6 +59,6 @@ inline void DelayMs(uint32_t ms)
 
 
 
-// TODO: void DelayUs(uint32_t us);
+/* TODO: void DelayUs(uint32_t us); */
 
 

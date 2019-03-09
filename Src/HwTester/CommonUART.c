@@ -112,7 +112,7 @@ void CommonUART_Init(void)
 
     UART_Init(&CommonUART_UartHandle);
 
-    //CommonUART_SendEnable();
+    /* ommonUART_SendEnable(); */
     CommonUART_ReceiveEnable();
 }
 
@@ -154,7 +154,7 @@ size_t CommonUART_SendMessage(const char *msg)
     }
 
     putLength = CircularBuffer_PutString(&CommonUART_TxBuffStruct, msg, length);
-    // not added \r\n
+    /* not added \r\n */
     putLength += CircularBuffer_PutString(&CommonUART_TxBuffStruct, "\r\n", 2);
 
     if (putLength > 0)
@@ -172,37 +172,37 @@ void CommonUART_ProcessReceivedCharacters(void)
 {
     char recvBuf[COMMONUART_PROCESS_BUFFER_SIZE];
 
-    // Received new character?
+    /* Received new character? */
     if (CircularBuffer_IsNotEmpty(&CommonUART_RxBuffStruct))
     {
-        // Copy received message to buffer
+        /* Copy received message to buffer */
         CircularBuffer_GetString(&CommonUART_RxBuffStruct, recvBuf, COMMONUART_PROCESS_BUFFER_SIZE);
 
         static uint32_t CommonUart_LastReceived = 0;
 
-        // Received newline character? (End of command)
+        /* Received newline character? (End of command) */
         char * newLinePos = (char *)STRING_FindCharacters((const char *)recvBuf, "\r\n\0");
 
-        // TODO: Beautify!
+        /* TODO: Beautify! */
 
-        // Check message "time"
+        /* Check message "time" */
         if (newLinePos == NULL)
         {
             uint32_t actualTime = HAL_GetTick();
 
-            // if received one char after a long silent time, it will be printed with alone
+            /* if received one char after a long silent time, it will be printed with alone */
             if (StringLength(recvBuf) == 1)
             {
-                // It is after a long time?
-                // TODO: Not the best solution... if not receive more char, it will not printed
+                /* It is after a long time? */
+                /* TODO: Not the best solution... if not receive more char, it will not printed */
                 CommonUart_LastReceived = actualTime;
             }
             else
             {
-                // Note: Be careful: Recommend to set "check time" to task period time
+                /* Note: Be careful: Recommend to set "check time" to task period time */
                 if ((CommonUart_LastReceived + 1000) <= actualTime)
                 {
-                    // Received a long time...
+                    /* Received a long time... */
                     newLinePos = recvBuf + StringLength(recvBuf);
                 }
 
@@ -212,21 +212,21 @@ void CommonUART_ProcessReceivedCharacters(void)
 
         if (newLinePos != NULL)
         {
-            // Has newline, process the received command
+            /* Has newline, process the received command */
             if (*newLinePos == '\r' || *newLinePos == '\n')
                 *newLinePos = '\0';
 
             if (StringLength(recvBuf) != 0)
             {
-                // Send on DebugUart (these are different from DebugUart Process() function)
+                /* Send on DebugUart (these are different from DebugUart Process() function) */
                 uprintf("Received: \"%s\"\r\n", recvBuf);
             }
 
-            // Drop processed characters
+            /* Drop processed characters */
             size_t processedLength = (newLinePos - recvBuf) + 1;
             if (newLinePos != &recvBuf[COMMONUART_RESPONSE_BUFFER_SIZE-1])
             {
-                // Check next character is not '\n' or '\r'?
+                /* Check next character is not '\n' or '\r'? */
                 if ((*(newLinePos+1) == '\r') || (*(newLinePos+1) == '\n'))
                     processedLength++;
             }
@@ -237,9 +237,9 @@ void CommonUART_ProcessReceivedCharacters(void)
 
 #else
 
-// CommonUART module is not used
+/* CommonUART module is not used */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 #pragma GCC diagnostic pop
 
-#endif    // #ifdef CONFIG_MODULE_COMMON_UART_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_COMMON_UART_ENABLE */

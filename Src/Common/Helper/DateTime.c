@@ -77,35 +77,35 @@ bool DateTime_ConvertStringToDateTime(const char *string, DateTime_t *dateTime)
 
     if (StringLength(string) != (DATETIME_STRING_MAX_LENGTH - 1))
     {
-        // Wrong length
+        /* Wrong length */
         return false;
     }
 
     StrCpy((char *)&dateTimeString, string);
 
-    // Split at space: "2017-01-18 20:10:00"
+    /* Split at space: "2017-01-18 20:10:00" */
     if (STRING_Splitter(dateTimeString, " ", separated, 2) == 2)
     {
-        // Convert date/time strings
+        /* Convert date/time strings */
         isOk &= DateTime_ConvertDateStringToDate(separated[0], &convertedDateTime.date);
         isOk &= DateTime_ConvertTimeStringToTime(separated[1], &convertedDateTime.time);
 
         if (isOk)
         {
-            // Copy to parameter, if ok
+            /* Copy to parameter, if ok */
             memcpy(dateTime, &convertedDateTime, sizeof(DateTime_t));
         }
     }
     else
     {
-        // Failed split, wrong string
+        /* Failed split, wrong string */
         isOk = false;
     }
 
 
 #if DATETIME_OLD_CODE
 
-    // Check separators and put 0
+    /* Check separators and put 0 */
     if (dateTimeString.separator_1[0] == '-') dateTimeString.separator_1[0] = '\0';
     else isOk = false;
 
@@ -121,8 +121,8 @@ bool DateTime_ConvertStringToDateTime(const char *string, DateTime_t *dateTime)
     if (dateTimeString.separator_5[0] == ':') dateTimeString.separator_5[0] = '\0';
     else isOk = false;
 
-    // If separator characters are ok
-    // TODO: Do no change parameter, while the result is not good?
+    /* If separator characters are ok */
+    /* TODO: Do no change parameter, while the result is not good? */
     if (isOk)
     {
         uint32_t convertValue;
@@ -167,10 +167,10 @@ bool DateTime_ConvertDateStringToDate(char *str, Date_t *date)
         return false;
     }
 
-    // Separate
+    /* Separate */
     if (STRING_Splitter(str, "-", separated, 3) == 3)
     {
-        // Successful separate
+        /* Successful separate */
         uint32_t convertValue;
 
         isOk &= StringToUnsignedDecimalNum(separated[0], &convertValue);
@@ -185,7 +185,7 @@ bool DateTime_ConvertDateStringToDate(char *str, Date_t *date)
         isOk &= DateTime_CheckValue(convertValue, 1, 31);
         convertDate.day = (uint8_t)convertValue;
 
-        // If ok, copy to parameter
+        /* If ok, copy to parameter */
         if (isOk)
         {
             memcpy(date, &convertDate, sizeof(Date_t));
@@ -212,10 +212,10 @@ bool DateTime_ConvertTimeStringToTime(char *str, Time_t *time)
     bool isOk = true;
     Time_t convertTime;
 
-    // Separate
+    /* Separate */
     if (STRING_Splitter(str, ":", separated, 3) == 3)
     {
-        // Successful separate
+        /* Successful separate */
         uint32_t convertValue;
 
         isOk &= StringToUnsignedDecimalNum(separated[0], &convertValue);
@@ -230,7 +230,7 @@ bool DateTime_ConvertTimeStringToTime(char *str, Time_t *time)
         isOk &= DateTime_CheckValue(convertValue, 0, 59);
         convertTime.second = (uint8_t)convertValue;
 
-        // If ok, copy to parameter
+        /* If ok, copy to parameter */
         if (isOk)
         {
             memcpy(time, &convertTime, sizeof(Time_t));
@@ -272,7 +272,7 @@ bool DateTime_CheckDateTime(DateTime_t *dateTime)
 {
     bool isOk = true;
 
-    // Check values
+    /* Check values */
     isOk &= DateTime_CheckValue(dateTime->date.year, DATETIME_DATE_YEAR_MIN_VALUE, DATETIME_DATE_YEAR_MAX_VALUE);
     isOk &= DateTime_CheckValue(dateTime->date.month, 1, 12);
     isOk &= DateTime_CheckValue(dateTime->date.day, 1, 31);
@@ -354,7 +354,7 @@ DateTimeCompare_t DateTime_CompareDateTime(DateTime_t *dateTime1, DateTime_t *da
  */
 int32_t DateTime_CalculateDifferentOf2DateTime(DateTime_t *dateTime1, DateTime_t *dateTime2)
 {
-    // Calculate seconds of DateTime
+    /* Calculate seconds of DateTime */
     bool isOk = true;
     uint32_t seconds1;
     uint32_t seconds2;
@@ -365,14 +365,14 @@ int32_t DateTime_CalculateDifferentOf2DateTime(DateTime_t *dateTime1, DateTime_t
 
     if (isOk)
     {
-        // OK
+        /* OK */
         seconds1 = DateTime_CalculateDateTimeSecond(dateTime1);
         seconds2 = DateTime_CalculateDateTimeSecond(dateTime2);
         different = seconds1 - seconds2;
     }
     else
     {
-        // Wrong
+        /* Wrong */
         different = 0;
     }
 
@@ -392,38 +392,38 @@ static uint32_t DateTime_CalculateDateTimeSecond(DateTime_t *dateTime)
     uint32_t second = 0;
     uint8_t i;
 
-    // Check DateTime, it is valid?
+    /* Check DateTime, it is valid? */
     if (DateTime_CheckDateTime(dateTime))
     {
-        // If valid...
-        // Calculate "full" years
+        /* If valid... */
+        /* Calculate "full" years */
         for (i = 0; i < dateTime->date.year; i++)
         {
-            // One year second = days of year * hours of day * minutes of hour * seconds of minute
+            /* One year second = days of year * hours of day * minutes of hour * seconds of minute */
             second += 365 * 24 * 60 * 60;
-            // Check, this year is leap year?
+            /* Check, this year is leap year? */
             if (DateTime_CheckItIsLeapYear(i))
             {
-                // Add one day
+                /* Add one day */
                 second += 24 * 60 * 60;
             }
         }
 
-        // Add part year's second
-        // Month
+        /* Add part year's second */
+        /* Month */
         for (i = 1; i < dateTime->date.month; i++)
         {
             second += DateTime_GetDaysOfMonth(dateTime->date.year, i) * 24 * 60 * 60;
         }
 
-        second += (dateTime->date.day -1) * 24 * 60 * 60;    // Days
-        second += dateTime->time.hour * 60 * 60;            // Hours
-        second += dateTime->time.minute * 60;                // Minutes
-        second += dateTime->time.second;                    // Seconds
+        second += (dateTime->date.day -1) * 24 * 60 * 60;    /* Days */
+        second += dateTime->time.hour * 60 * 60;            /* Hours */
+        second += dateTime->time.minute * 60;                /* Minutes */
+        second += dateTime->time.second;                    /* Seconds */
     }
     else
     {
-        second = 0;                                            // Wrong
+        second = 0;                                            /* Wrong */
     }
 
     return second;
@@ -472,7 +472,7 @@ static uint8_t DateTime_GetDaysOfMonth(uint8_t year, uint8_t month)
     uint8_t days;
     bool valid;
 
-    // Check parameters
+    /* Check parameters */
     if ((month == 0) || (month > 12))
     {
         valid = false;
@@ -488,11 +488,11 @@ static uint8_t DateTime_GetDaysOfMonth(uint8_t year, uint8_t month)
 
     if (valid)
     {
-        // If parameters are good, get days
-        //if ((month == 2) && ((year & 0x03) == 0))
+        /* If parameters are good, get days */
+        /* f ((month == 2) && ((year & 0x03) == 0)) */
         if ((month == 2) && (!DateTime_CheckItIsLeapYear(year)))
         {
-            // February and leap year
+            /* February and leap year */
             days = 29;
         }
         else
@@ -524,7 +524,7 @@ void DateTime_StepMoreSecond(DateTime_t *dateTime, uint32_t stepSeconds)
             DateTime_StepOneSecond(dateTime);
         }
     }
-    // TODO: Else: do not steps, because too much seconds received
+    /* TODO: Else: do not steps, because too much seconds received */
 }
 
 
@@ -534,7 +534,7 @@ void DateTime_StepMoreSecond(DateTime_t *dateTime, uint32_t stepSeconds)
  */
 void DateTime_StepOneSecond(DateTime_t *dateTime)
 {
-    // TODO: Check pointer
+    /* TODO: Check pointer */
 
     ++dateTime->time.second;
 
@@ -599,7 +599,7 @@ void DateTime_AddMinute(DateTime_t *dateTime)
 }
 
 
-// TODO: Idea, if more minute / hour added: dateTime->time.minute = (dateTime->time.minute + 1) % 60;
+/* TODO: Idea, if more minute / hour added: dateTime->time.minute = (dateTime->time.minute + 1) % 60; */
 
 
 
@@ -621,7 +621,7 @@ void DateTime_AddHour(DateTime_t *dateTime)
         dateTime->time.hour++;
     }
 
-    //dateTime->time.hour = (dateTime->time.hour + 1) % 24;
+    /* ateTime->time.hour = (dateTime->time.hour + 1) % 24; */
 }
 
 
@@ -635,40 +635,40 @@ void DateTime_AddHour(DateTime_t *dateTime)
  */
 uint32_t DateTime_UnitTest(void)
 {
-    // Test variables
+    /* Test variables */
     DateTimeCompare_t comp;
     bool result;
 
-    // Start of unittest
+    /* Start of unittest */
     UnitTest_Start("DateTime", __FILE__);
 
     /*                Check DateTime_CompareDateTime function            */
 
-    // Equal date
+    /* Equal date */
     DateTime_t test1 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
     DateTime_t test2 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
     comp = DateTime_CompareDateTime(&test1, &test2);
     UNITTEST_ASSERT(comp == DateTimeCompare_Equal, "DateTime_CompareDateTime error");
 
-    // First older
+    /* First older */
     DateTime_t test3 = { .date.year=17, .date.month=1, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
     DateTime_t test4 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
     comp = DateTime_CompareDateTime(&test3, &test4);
     UNITTEST_ASSERT(comp == DateTimeCompare_FirstOldSecondNew, "DateTime_CompareDateTime error");
 
-    // First older
+    /* First older */
     DateTime_t test5 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
     DateTime_t test6 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=1 };
     comp = DateTime_CompareDateTime(&test5, &test6);
     UNITTEST_ASSERT(comp == DateTimeCompare_FirstOldSecondNew, "DateTime_CompareDateTime error");
 
-    // First newer
+    /* First newer */
     DateTime_t test7 = { .date.year=18, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
     DateTime_t test8 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
     comp = DateTime_CompareDateTime(&test7, &test8);
     UNITTEST_ASSERT(comp == DateTimeCompare_FirstNewSecondOld, "DateTime_CompareDateTime error");
 
-    // First newer
+    /* First newer */
     DateTime_t test9 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=13, .time.second=0 };
     DateTime_t test10 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
     comp = DateTime_CompareDateTime(&test9, &test10);
@@ -676,7 +676,7 @@ uint32_t DateTime_UnitTest(void)
 
 
     /*                Check DateTime_CheckDateTime function            */
-    // Check these dateTimes are valid?
+    /* Check these dateTimes are valid? */
     result = true;
     result &= DateTime_CheckDateTime(&test1);
     result &= DateTime_CheckDateTime(&test2);
@@ -690,7 +690,7 @@ uint32_t DateTime_UnitTest(void)
     result &= DateTime_CheckDateTime(&test10);
     UNITTEST_ASSERT(result == true, "DateTime_CheckDateTime error");
 
-    // Check these dateTimes are invalids?
+    /* Check these dateTimes are invalids? */
     DateTime_t test11 = { .date.year=150, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
     DateTime_t test12 = { .date.year=17, .date.month=0, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
     DateTime_t test13 = { .date.year=17, .date.month=2, .date.day=0, .time.hour=12, .time.minute=12, .time.second=0 };
@@ -731,25 +731,25 @@ uint32_t DateTime_UnitTest(void)
 
     /*            DateTime_CalculateDifferentOf2DateTime        */
 
-    // 1 second
+    /* 1 second */
     DateTime_t test500 = { { 17, 05, 06 }, { 20, 42, 00} };
     DateTime_t test501 = { { 17, 05, 06 }, { 20, 42, 01} };
     int32_t test500_diff = DateTime_CalculateDifferentOf2DateTime(&test500, &test501);
     UNITTEST_ASSERT(test500_diff == -1, "DateTime_CalculateDifferentOf2DateTime error");
 
-    // 1 day
+    /* 1 day */
     DateTime_t test502 = { { 17, 05, 06 }, { 20, 42, 00} };
     DateTime_t test503 = { { 17, 05, 07 }, { 20, 42, 00} };
     int32_t test502_diff = DateTime_CalculateDifferentOf2DateTime(&test502, &test503);
     UNITTEST_ASSERT(test502_diff == -(24 * 60 * 60), "DateTime_CalculateDifferentOf2DateTime error");
 
-    // 1 month
+    /* 1 month */
     DateTime_t test504 = { { 17, 06, 06 }, { 20, 42, 00} };
     DateTime_t test505 = { { 17, 05, 06 }, { 20, 42, 00} };
     int32_t test504_diff = DateTime_CalculateDifferentOf2DateTime(&test504, &test505);
     UNITTEST_ASSERT(test504_diff == (31 * 24 * 60 * 60), "DateTime_CalculateDifferentOf2DateTime error");
 
-    // 1 year
+    /* 1 year */
     DateTime_t test506 = { { 18, 05, 07 }, { 20, 42, 00} };
     DateTime_t test507 = { { 17, 05, 07 }, { 20, 42, 00} };
     int32_t test506_diff = DateTime_CalculateDifferentOf2DateTime(&test506, &test507);
@@ -757,53 +757,53 @@ uint32_t DateTime_UnitTest(void)
 
 
     /*            DateTime_StepMoreSecond            */
-    // Step 1 second
+    /* Step 1 second */
     DateTime_t test601 = { { 17, 05, 07 }, { 20, 42, 00} };
     DateTime_t test602 = { { 17, 05, 07 }, { 20, 42, 01} };
     DateTime_StepMoreSecond(&test601, 1);
     UNITTEST_ASSERT(!memcmp(&test601, &test602, sizeof(DateTime_t)), "DateTime_Steps error");
 
-    // Step from 2017.12.31 23:59:59 -> to 2018.01.01 00:00:00
+    /* Step from 2017.12.31 23:59:59 -> to 2018.01.01 00:00:00 */
     DateTime_t test605 = { { 17, 12, 31 }, { 23, 59, 59 } };
     DateTime_t test606 = { { 18, 1, 1 }, { 0, 0, 0 } };
     DateTime_StepMoreSecond(&test605, 1);
     UNITTEST_ASSERT(!memcmp(&test605, &test606, sizeof(DateTime_t)), "DateTime_Steps error");
 
-    // Step 62 second
+    /* Step 62 second */
     DateTime_t test603 = { { 17, 05, 07 }, { 20, 42, 59} };
     DateTime_t test604 = { { 17, 05, 07 }, { 20, 44, 01} };
     DateTime_StepMoreSecond(&test603, 62);
     UNITTEST_ASSERT(!memcmp(&test603, &test604, sizeof(DateTime_t)), "DateTime_Steps error");
 
-    // Step 60 seconds
+    /* Step 60 seconds */
     DateTime_t test700tst = { { 18, 1, 1 }, { 0, 0, 0 } };
     DateTime_t test700res = { { 18, 1, 1 }, { 0, 1, 0 } };
     DateTime_StepMoreSecond(&test700tst, 60);
     UNITTEST_ASSERT(!memcmp(&test700tst, &test700res, sizeof(DateTime_t)), "DateTime_Steps error");
 
-    // Step 600 seconds
+    /* Step 600 seconds */
     DateTime_t test701tst = { { 18, 1, 1 }, { 0, 0, 0 } };
     DateTime_t test701res = { { 18, 1, 1 }, { 0, 10, 0 } };
     DateTime_StepMoreSecond(&test701tst, 600);
     UNITTEST_ASSERT(!memcmp(&test701tst, &test701res, sizeof(DateTime_t)), "DateTime_Steps error");
 
-    // Step too much: DATETIME_STEPSECOND_MAX_LIMIT
+    /* Step too much: DATETIME_STEPSECOND_MAX_LIMIT */
     DateTime_t test702tst = { { 18, 1, 1 }, { 0, 0, 0 } };
     DateTime_t test702res = { { 18, 1, 1 }, { 0, 0, 0 } };
     DateTime_StepMoreSecond(&test702tst, DATETIME_STEPSECOND_MAX_LIMIT);
-    // Expected result: Do not modify
+    /* Expected result: Do not modify */
     UNITTEST_ASSERT(!memcmp(&test702tst, &test702res, sizeof(DateTime_t)), "DateTime_Steps error");
 
 
     /*            Test DateTime_AddMinute()            */
 
-    // Add one minute in simple situation
+    /* Add one minute in simple situation */
     DateTime_t test800tst = { { 18, 1, 1 }, { 0, 0, 0 } };
     DateTime_t test800res = { { 18, 1, 1 }, { 0, 1, 0 } };
     DateTime_AddMinute(&test800tst);
     UNITTEST_ASSERT(!memcmp(&test800tst, &test800res, sizeof(DateTime_t)), "DateTime_AddMinute error");
 
-    // Add one minute at year's end
+    /* Add one minute at year's end */
     DateTime_t test801tst = { { 18, 12, 31 }, { 23, 59, 30 } };
     DateTime_t test801res = { { 18, 12, 31 }, { 23,  0, 30 } };
     DateTime_AddMinute(&test801tst);
@@ -816,13 +816,13 @@ uint32_t DateTime_UnitTest(void)
 
     /*            Test DateTime_AddHour()            */
 
-    // Add one hour in simple situation
+    /* Add one hour in simple situation */
     DateTime_t test900tst = { { 18, 1, 1 }, { 0, 0, 0 } };
     DateTime_t test900res = { { 18, 1, 1 }, { 1, 0, 0 } };
     DateTime_AddHour(&test900tst);
     UNITTEST_ASSERT(!memcmp(&test900tst, &test900res, sizeof(DateTime_t)), "DateTime_AddHour error");
 
-    // Add one hour at year's end
+    /* Add one hour at year's end */
     DateTime_t test901tst = { { 18, 12, 31 }, { 23, 30, 0 } };
     DateTime_t test901res = { { 18, 12, 31 }, {  0, 30, 0 } };
     DateTime_AddHour(&test901tst);
@@ -833,10 +833,10 @@ uint32_t DateTime_UnitTest(void)
     /* Cannot test the result */
 
 
-    // TODO: Add more DateTime UnitTests
+    /* TODO: Add more DateTime UnitTests */
 
 
-    // Finish
+    /* Finish */
     return UnitTest_End();
 }
 #endif

@@ -172,7 +172,7 @@ const uint8_t WebpageList_404PageIndex = 0;
  */
 void WebpageList_Init(void)
 {
-// TODO:
+/* TODO: */
 }
 
 

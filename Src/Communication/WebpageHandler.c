@@ -61,7 +61,7 @@ static size_t WebpageHandler_SendHeader(char *resp, size_t webpageLength, const 
  */
 void WebpageHandler_Init(void)
 {
-    // TODO: Create init function if need
+    /* TODO: Create init function if need */
 }
 
 
@@ -94,7 +94,7 @@ size_t WebpageHandler_GetRequrest(const char *request, char *resp)
     /* If not found... */
     if (!isFound)
     {
-        // 404 page
+        /* 404 page */
         respLength = WebpageHandler_SendResponse(resp, WebpageList[WebpageList_404PageIndex].webpageContain,
                 WebpageList[WebpageList_404PageIndex].webpageLength, WebpageList[WebpageList_404PageIndex].webpageType);
 
@@ -121,19 +121,19 @@ static size_t WebpageHandler_SendResponse(char *resp, const char *webpage, const
 
 static size_t WebpageHandler_SendHeader(char *resp, size_t webpageLength, const char *type)
 {
-    // TODO: Drop not necessary elements
+    /* TODO: Drop not necessary elements */
     return usprintf(resp,
             "HTTP/1.1 200 OK\r\n"
-            //"Date: Sun, 18 Oct 2009 08:56:53 GMT\r\n"
-            //"Server: Apache/2.2.14 (Win32)\r\n"
-            //"Last-Modified: Sat, 20 Nov 2004 07:16:26 GMT\r\n"
-            //"ETag: \"10000000565a5-2c-3e94b66c2e680\"\r\n"
+            /* Date: Sun, 18 Oct 2009 08:56:53 GMT\r\n" */
+            /* Server: Apache/2.2.14 (Win32)\r\n" */
+            /* Last-Modified: Sat, 20 Nov 2004 07:16:26 GMT\r\n" */
+            /* ETag: \"10000000565a5-2c-3e94b66c2e680\"\r\n" */
             "Accept-Ranges: bytes\r\n"
             "Content-Length: %d\r\n"
             "Connection: close\r\n"
-            "Content-Type: %s\r\n" // "Content-Type: text/html\r\n" or "Content-Type: image/x-icon\r\n"
+            "Content-Type: %s\r\n" /* "Content-Type: text/html\r\n" or "Content-Type: image/x-icon\r\n" */
             "\r\n",
-            //"X-Pad: avoid browser bug\r\n"
+            /* X-Pad: avoid browser bug\r\n" */
             webpageLength,
             type
     );
@@ -143,7 +143,7 @@ static size_t WebpageHandler_SendHeader(char *resp, size_t webpageLength, const 
 
 static void WebpageHandler_SendResponse(char *resp, const char *webpage, const size_t webpageLength)
 {
-    // TODO: Implement it
+    /* TODO: Implement it */
     #warning "Not implemented function"
 }
 

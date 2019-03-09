@@ -49,7 +49,7 @@
 
 
 ///< Make address to aligned address (upward rounding to word aligned)
-// TODO: It is architecture dependent
+/* TODO: It is architecture dependent */
 #if defined(__MINGW32__) && defined(__MINGW64__)
     /* MinGW32 + MinGW64 */
     /* Address size: 8bit */

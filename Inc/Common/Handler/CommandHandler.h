@@ -27,12 +27,12 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-//    Config defines
+/*    Config defines */
 #define CMDH_COMMAND_MAX_LENGTH                (255U)
 #define CMDH_COMMAND_ARG_MAX_COUNT            (3)
-#define CMDH_COMMAND_ARG_MAX_NUM_BITS        (0x0F)    // 0b1111 <-- warning: "binary constants are a GCC extension
+#define CMDH_COMMAND_ARG_MAX_NUM_BITS        (0x0F)    /* 0b1111 <-- warning: "binary constants are a GCC extension */
 
-//#define CMDH_COMMAND_DELIMITER_CHAR            ((char)' ')
+/* define CMDH_COMMAND_DELIMITER_CHAR            ((char)' ') */
 #define CMDH_COMMAND_DELIMITER_CHAR            ((const char *)" ")
 
 
@@ -41,7 +41,7 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-// TODO: These are need?
+/* TODO: These are need? */
 #ifndef CONFIG_MODULE_COMMUNICATION_ENABLE
 typedef uint8_t CommProtocol_t;
 typedef uint8_t CommProtocolBit_t;
@@ -93,7 +93,7 @@ typedef enum
     CmdH_CommandArgNum_2 = (1 << 2),
     CmdH_CommandArgNum_3 = (1 << 3)
 
-    // Set one by one bit
+    /* Set one by one bit */
 } CmdH_CommandArgNum_t;
 
 
@@ -107,7 +107,7 @@ typedef struct
     const char *example;                                        ///< Example of parameters
     const CmdH_CommandArgNum_t commandArgNum;                    ///< Required command argument num
 
-    // TODO: Add optional enabled communication source
+    /* TODO: Add optional enabled communication source */
 } CmdH_Command_t;
 
 

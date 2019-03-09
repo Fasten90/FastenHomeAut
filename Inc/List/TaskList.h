@@ -88,8 +88,8 @@ typedef enum
     Task_CommonUART,
 #endif
 
-    // XXX: Add new Task enum here!
-    // @note: !! Be careful !! Sync with TaskList
+    /* XXX: Add new Task enum here! */
+    /* @note: !! Be careful !! Sync with TaskList */
 
     Task_Count
 } TaskName_t;

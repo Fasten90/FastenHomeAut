@@ -25,9 +25,9 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-// Defines related to Clock configuration
-#define RTC_ASYNCH_PREDIV    0x7F    // LSE as RTC clock
-#define RTC_SYNCH_PREDIV    0x00FF    // LSE as RTC clock
+/* Defines related to Clock configuration */
+#define RTC_ASYNCH_PREDIV    0x7F    /* LSE as RTC clock */
+#define RTC_SYNCH_PREDIV    0x00FF    /* LSE as RTC clock */
 
 
 
@@ -62,7 +62,7 @@ void RTC_CalendarShow(char *showdate, char *showtime);
 
 
 
-#endif // #ifdef CONFIG_MODULE_RTC_ENABLE
+#endif /* #ifdef CONFIG_MODULE_RTC_ENABLE */
 
 
 #endif /* RTC_H_ */

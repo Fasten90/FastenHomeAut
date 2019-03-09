@@ -22,7 +22,7 @@
 #include "compiler.h"
 
 
-// This font contain only 11 "font character": 0-9 (numbers) + ':' character for hour displaying
+/* This font contain only 11 "font character": 0-9 (numbers) + ':' character for hour displaying */
 #define FONT_32X20_NUM                ( 11 )
 #define FONT_32X20_STORE_SIZE        ( 20 )
 

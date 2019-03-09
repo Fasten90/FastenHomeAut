@@ -59,7 +59,7 @@ const GlobVarH_VarRecord_t GlobVarH_VarList[] =
         },
         {
             .name = "tick",
-            .varPointer = (void * const)&GlobVarH_TemporaryValue,    // It is need for function pointer
+            .varPointer = (void * const)&GlobVarH_TemporaryValue,    /* It is need for function pointer */
             .getFunctionPointer = (GeneralFunctionPointer)HAL_GetTick,
             .type = GlobVarH_Type_Uint32,
             .isReadOnly = true,
@@ -83,7 +83,7 @@ const GlobVarH_VarRecord_t GlobVarH_VarList[] =
 #endif
 
 
-        // XXX: Add new global variable here
+        /* XXX: Add new global variable here */
         /*
             const char * const name;                ///< Name of global variable [string]
             const GlobVarH_Type_t type;                ///< Type of global variable
@@ -125,4 +125,4 @@ GlobVarH_VarListInfo_t GlobVarH_Variables =
 
 
 
-#endif    // #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE */

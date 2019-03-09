@@ -75,7 +75,7 @@ void EventLog_Init(void)
     LogCounter = 0;
 
 #if ( EVENTLOG_SAVE_EVENT_AT_INIT == 1 )
-    //EventHandler_GenerateEvent(Event_LogEventStarted, 0, 0);
+    /* ventHandler_GenerateEvent(Event_LogEventStarted, 0, 0); */
 #endif
 }
 
@@ -89,13 +89,13 @@ void EventLog_LogEvent(EventName_t eventName, EventData_t eventData, TaskID_t ta
     if (LogCounter > CONFIG_EVENTLOG_LOG_SIZE-1)
     {
 #if EVENTLOG_BUFFER_USE_CIRCULAR == 1
-        LogCounter = 0;            // In circular buffer mode, continue at begin of buffer
+        LogCounter = 0;            /* In circular buffer mode, continue at begin of buffer */
 #else
-        return;                    // In not circular buffer mode, do not save record, exit
+        return;                    /* In not circular buffer mode, do not save record, exit */
 #endif
     }
 
-    // Save event
+    /* Save event */
     EventLogs[LogCounter].eventName = eventName;
     EventLogs[LogCounter].eventData = eventData;
     EventLogs[LogCounter].eventType = eventType;
@@ -170,7 +170,7 @@ void EventLog_PrintLogTable(void)
     EventLog_PrintLogTableHeader(fixheader, str, header);
 
 
-    // Send i. log record
+    /* Send i. log record */
     for (i = 0; i < CONFIG_EVENTLOG_LOG_SIZE; i++)
     {
         if (EventLogs[i].eventName)
@@ -197,12 +197,12 @@ void EventLog_PrintLogTable(void)
         }
         else
         {
-            // There is no more "valid" log record
+            /* There is no more "valid" log record */
             break;
         }
     }
 
-    // Send end of log
+    /* Send end of log */
     EventLog_PrintLogTableHeader(fixheader, str, header);
 }
 
@@ -211,36 +211,36 @@ void EventLog_PrintLogTable(void)
 #ifdef CONFIG_MODULE_EVENTLOG_UNITTEST_ENABLE
 uint32_t EventLog_UnitTest(void)
 {
-    // Start Unit test
+    /* Start Unit test */
     UnitTest_Start("EventLog", __FILE__);
 
 
-    // Need wait 1 ms, for first eventlog create tick result (!=0)
+    /* Need wait 1 ms, for first eventlog create tick result (!=0) */
     DelayMs(1);
 
-    // Test EventLog initialize
+    /* Test EventLog initialize */
 
     EventLog_Init();
 
 #if ( EVENTLOG_SAVE_EVENT_AT_INIT == 1 )
-    // Check, first record is "LogEventStarted" ?
+    /* Check, first record is "LogEventStarted" ? */
     UNITTEST_ASSERT(EventLogs[0].eventName == Event_LogEventStarted, "EventLog_Init error");
     UNITTEST_ASSERT(EventLogs[0].eventType == EventType_Raised, "EventLog_Init error");
     UNITTEST_ASSERT(EventLogs[0].eventData == 0, "EventLog_Init error");
     UNITTEST_ASSERT(EventLogs[0].tick != 0, "EventLog_Init error");
 
-    // Check, second record is empty ?
+    /* Check, second record is empty ? */
     UNITTEST_ASSERT(EventLogs[1].eventName == 0, "EventLog_Init error");
     UNITTEST_ASSERT(EventLogs[1].eventType == 0, "EventLog_Init error");
     UNITTEST_ASSERT(EventLogs[1].eventData == 0, "EventLog_Init error");
     UNITTEST_ASSERT(EventLogs[1].tick == 0, "EventLog_Init error");
 
 
-    // Test log event (record)
+    /* Test log event (record) */
 
     EventLog_LogEvent(Event_LogEventStarted, 0x12345678, 0, EventType_Raised);
 
-    // Check, second record is "LogEventStarted" ?
+    /* Check, second record is "LogEventStarted" ? */
     UNITTEST_ASSERT(EventLogs[1].eventName == Event_LogEventStarted, "EventLog_Init error");
     UNITTEST_ASSERT(EventLogs[1].eventType == EventType_Raised, "EventLog_Init error");
     UNITTEST_ASSERT(EventLogs[1].eventData == 0x12345678, "EventLog_Init error");
@@ -248,30 +248,30 @@ uint32_t EventLog_UnitTest(void)
 
 #else
 
-    // Check, first record is empty ?
+    /* Check, first record is empty ? */
     UNITTEST_ASSERT(EventLogs[0].eventName == 0, "EventLog_Init error");
     UNITTEST_ASSERT(EventLogs[0].eventType == 0, "EventLog_Init error");
     UNITTEST_ASSERT(EventLogs[0].eventData == 0, "EventLog_Init error");
     UNITTEST_ASSERT(EventLogs[0].tick == 0, "EventLog_Init error");
 
-    // Check, second record is empty ?
+    /* Check, second record is empty ? */
     UNITTEST_ASSERT(EventLogs[1].eventName == 0, "EventLog_Init error");
     UNITTEST_ASSERT(EventLogs[1].eventType == 0, "EventLog_Init error");
     UNITTEST_ASSERT(EventLogs[1].eventData == 0, "EventLog_Init error");
     UNITTEST_ASSERT(EventLogs[1].tick == 0, "EventLog_Init error");
 
 
-    // Test log event (record)
+    /* Test log event (record) */
 
     EventLog_LogEvent(Event_LogEventStarted, 0x12345678, 0, EventType_Raised);
 
-    // Check, second record is "LogEventStarted" ?
+    /* Check, second record is "LogEventStarted" ? */
     UNITTEST_ASSERT(EventLogs[0].eventName == Event_LogEventStarted, "EventLog_Init error");
     UNITTEST_ASSERT(EventLogs[0].eventType == EventType_Raised, "EventLog_Init error");
     UNITTEST_ASSERT(EventLogs[0].eventData == 0x12345678, "EventLog_Init error");
     UNITTEST_ASSERT(EventLogs[0].tick != 0, "EventLog_Init error");
 
-    // Check, second record is empty ?
+    /* Check, second record is empty ? */
     UNITTEST_ASSERT(EventLogs[1].eventName == 0, "EventLog_Init error");
     UNITTEST_ASSERT(EventLogs[1].eventType == 0, "EventLog_Init error");
     UNITTEST_ASSERT(EventLogs[1].eventData == 0, "EventLog_Init error");
@@ -279,11 +279,11 @@ uint32_t EventLog_UnitTest(void)
 
 #endif
 
-    // Finish unit test
+    /* Finish unit test */
     return UnitTest_End();
 }
 #endif
 
 
 
-#endif    // #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_EVENTLOG_ENABLE */

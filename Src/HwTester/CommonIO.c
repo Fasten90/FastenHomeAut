@@ -45,13 +45,13 @@ bool CommonIO_Init(char port, uint8_t pin, IO_Type io)
     GPIO_InitStruct.Pin = IO_GetPin(pin);
     GPIO_InitStruct.Mode = IO_GetMode(io);
 
-    // Check parameters
+    /* Check parameters */
     if (GPIO_port == NULL || GPIO_InitStruct.Pin == 0xFFFFFFFF || !clk)
     {
         return false;
     }
 
-    // GPIO_InitStruct.Alternate -> don't care
+    /* GPIO_InitStruct.Alternate -> don't care */
     HAL_GPIO_Init(GPIO_port, &GPIO_InitStruct);
 
     return true;
@@ -70,14 +70,14 @@ bool CommonIO_SetOutput(char port, uint8_t pin, Output_Type output)
 
     uint32_t realPin = IO_GetPin(pin);
 
-    // Check parameters
+    /* Check parameters */
     if (GPIO_port == NULL || realPin == 0xFFFFFFFF || output >= OUTPUT_COUNT)
     {
-        // Wrong parameters
+        /* Wrong parameters */
         return false;
     }
 
-    // Check it is configurated?
+    /* Check it is configurated? */
 
     switch (output)
     {
@@ -129,10 +129,10 @@ bool CommonIO_ReadPin(char port, uint8_t pin)
 
     uint32_t realPin = IO_GetPin(pin);
 
-    // Check parameters
+    /* Check parameters */
     if (GPIO_port == NULL || realPin == 0xFFFFFFFF)
     {
-        // Wrong parameters
+        /* Wrong parameters */
         return false;
     }
 
@@ -346,4 +346,4 @@ static uint32_t IO_GetMode(IO_Type io)
 
 
 
-#endif    // #ifdef CONFIG_MODULE_COMMON_IO_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_COMMON_IO_ENABLE */

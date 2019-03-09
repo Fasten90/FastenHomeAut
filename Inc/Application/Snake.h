@@ -34,7 +34,7 @@ typedef enum
 {
     Step_Unknown,
 
-    // "User buttons"
+    /* "User buttons" */
     Step_Up,
     Step_Down,
     Step_Right,
@@ -42,7 +42,7 @@ typedef enum
 
     Step_Gift,
 
-    // Do not use! Only for checking
+    /* Do not use! Only for checking */
     Step_Count
 } SnakeStep_t;
 

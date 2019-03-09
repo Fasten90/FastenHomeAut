@@ -101,12 +101,12 @@ inline __attribute__((always_inline)) void SysTime_SetTime(Time_t *time)
  */
 void SysTime_StepSecond(void)
 {
-    // TODO: Disable INT?
+    /* TODO: Disable INT? */
 
-    // Step SystemTime +1 second
+    /* Step SystemTime +1 second */
     DateTime_StepOneSecond(&DateTime_SystemTime);
 }
 
 
 
-#endif    // #ifdef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE */

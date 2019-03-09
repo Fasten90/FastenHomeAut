@@ -81,44 +81,44 @@ uint8_t Network_PrintIpOnDebug(char *str, Network_IP_t *ip)
  */
 bool Network_ConvertIpAddressStringToIP(char *message, Network_IP_t *address)
 {
-    // Process String like "192.168.0.1"
+    /* Process String like "192.168.0.1" */
 
     char *separated[4];
 
     if (STRING_Splitter(message, ".",  separated, 4) == 4)
     {
-        // Successful separated
-        // Convert IP string to number
+        /* Successful separated */
+        /* Convert IP string to number */
         uint8_t i;
         for (i = 0; i < 4; i++)
         {
             uint32_t convertValue;
             if (StringToUnsignedDecimalNum(separated[i], &convertValue))
             {
-                // Successful convert to number
+                /* Successful convert to number */
                 if (convertValue <= 255)
                 {
                     address->IP[i] = (uint8_t)convertValue;
                 }
                 else
                 {
-                    // Error, Too large value
+                    /* Error, Too large value */
                     return false;
                 }
             }
             else
             {
-                // Failed convert to number
+                /* Failed convert to number */
                 return false;
             }
         }
 
-        // Successful convert
+        /* Successful convert */
         return true;
     }
     else
     {
-        // Failed separate string
+        /* Failed separate string */
         return false;
     }
 }

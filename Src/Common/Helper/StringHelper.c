@@ -13,7 +13,7 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
-#include <stdarg.h>        // for "..." parameters in printf function
+#include <stdarg.h>        /* for "..." parameters in printf function */
 #include "GenericTypeDefs.h"
 #include "MathHelper.h"
 #include "MemHandler.h"
@@ -71,19 +71,19 @@ uint8_t SignedDecimalToString(int32_t value, char *str)
 {
     uint8_t length = 0;
     
-    // Check pointer
+    /* Check pointer */
     if (str == NULL)
     {
         return 0;
     }
 
-    if (value < 0)    // if negative decimal num
+    if (value < 0)    /* if negative decimal num */
     {
         str[length++] = '-';
-        value = (uint32_t) (value * (-1));    // Sign +
+        value = (uint32_t) (value * (-1));    /* Sign + */
     }
 
-    // Return with length
+    /* Return with length */
     return (length + UnsignedDecimalToString (value, &str[length]));
 }
 
@@ -93,28 +93,28 @@ size_t SignedDecimalToStringSafe(int32_t value, char * str, size_t maxLength)
 {
     size_t length = 0;
 
-    // Check pointer
+    /* Check pointer */
     if (str == NULL)
     {
         return 0;
     }
 
-    if (value < 0)    // if negative decimal num
+    if (value < 0)    /* if negative decimal num */
     {
         if (maxLength > 0)
         {
             str[length] = '-';
             length++;
-            value = (uint32_t) (value * (-1));    // Sign +
+            value = (uint32_t) (value * (-1));    /* Sign + */
         }
         else
         {
-            // Cannot print
+            /* Cannot print */
             return 0;
         }
     }
 
-    // Add number
+    /* Add number */
     length += UnsignedDecimalToStringSafe(value, &str[length], (maxLength - length));
 
     return length;
@@ -130,31 +130,31 @@ uint8_t UnsignedDecimalToString(uint32_t value, char *str)
 {
     uint8_t length = 0;
 
-    // Check pointer
+    /* Check pointer */
     if (str == NULL)
     {
         return 0;
     }
 
-    // Largest num: 1xxxxxx...
+    /* Largest num: 1xxxxxx... */
     uint32_t decade = 1000000000;
 
-    // Find first "largest" decimal digit
+    /* Find first "largest" decimal digit */
     while (decade > value && decade > 1)
         decade /= 10;
 
     do
     {
-        // Put next digit
+        /* Put next digit */
         str[length] = ((value/decade) + '0');
         length++;
 
-        value %= decade;            // Value - first digit
-        decade /= 10;                // /10
+        value %= decade;            /* Value - first digit */
+        decade /= 10;                /* /10 */
     }
     while (decade >= 1);
 
-    str[length] = '\0';                // End character
+    str[length] = '\0';                /* End character */
 
     return length;
 }
@@ -172,34 +172,34 @@ size_t UnsignedDecimalToStringSafe(uint32_t value, char *str, size_t maxLength)
     if (str == NULL || maxLength == 0)
         return 0;
 
-    // Largest num: 1xxxxxx...
+    /* Largest num: 1xxxxxx... */
     uint32_t decade = 1000000000;
 
-    /// TODO: Implement without "isStarted"
+    //* TODO: Implement without "isStarted" */
     while ((decade > 1) && ((length+1) < maxLength))
     {
         if ((value >= decade) || (isStarted == true))
         {
-            // Put first digit
-            // Add the ascii code of '0' character to get the desired value's caracter code
+            /* Put first digit */
+            /* Add the ascii code of '0' character to get the desired value's caracter code */
             str[length] = ((value/decade) + '0');
             length++;
             isStarted = true;
         }
 
-        value %= decade;            // Value - first digit
-        decade /= 10;                // /10
+        value %= decade;            /* Value - first digit */
+        decade /= 10;                /* /10 */
     }
 
-    // TODO: Merge this "last digit" with above code
+    /* TODO: Merge this "last digit" with above code */
     if ((length+1) < maxLength)
     {
-        // Add the ascii code of '0' character to get the desired value's caracter code
-        str[length] = (value + '0');    // Last digit
+        /* Add the ascii code of '0' character to get the desired value's caracter code */
+        str[length] = (value + '0');    /* Last digit */
         length++;
     }
 
-    str[length] = '\0';                // End character
+    str[length] = '\0';                /* End character */
 
     return length;
 }
@@ -221,7 +221,7 @@ uint8_t UnsignedDecimalLength(uint32_t value)
 
     while (value > 0)
     {
-        // value : 10
+        /* value : 10 */
         value /= 10;
         length++;
     }
@@ -247,20 +247,20 @@ uint8_t UnsignedDecimalToStringFill(uint32_t value, char *str, uint8_t fillLengt
 
     if (length >= fillLength)
     {
-        // Not need fill
-        // Put number
+        /* Not need fill */
+        /* Put number */
         length = UnsignedDecimalToString(value, str);
     }
     else
     {
         uint8_t i;
 
-        // Need fill
+        /* Need fill */
         for (i = 0; i < (fillLength - length); i++)
         {
             str[i] = fillCharacter;
         }
-        // Put number
+        /* Put number */
         length = i;
         length += UnsignedDecimalToString(value, &str[length]);
     }
@@ -285,43 +285,43 @@ uint8_t SignedDecimalToStringFill(int32_t value, char *str, uint8_t fillLength, 
 
     if (value >= 0)
     {
-        // Sign +
+        /* Sign + */
         length = UnsignedDecimalToStringFill((uint32_t)value, str, fillLength, fillCharacter);
     }
     else
     {
-        // Sign -
+        /* Sign - */
 
-        value *= -1;    // Sign swap
+        value *= -1;    /* Sign swap */
 
-        // Check "fill character"
+        /* Check "fill character" */
         if (fillCharacter == ' ')
         {
-            // ' ', put sign at last
-            // "    -123"
+            /* ' ', put sign at last */
+            /* "    -123" */
             length = UnsignedDecimalLength(value);
             if (length > fillLength)
             {
-                length = SignedDecimalToString(-value, str);            // Not need fill
+                length = SignedDecimalToString(-value, str);            /* Not need fill */
             }
             else
             {
-                // Need fill
-                // "    -123"
+                /* Need fill */
+                /* "    -123" */
                 for (i=0; i<(fillLength-length-1); i++)
                 {
                     str[i] = ' ';
                 }
-                length = i;    // sign
+                length = i;    /* sign */
                 str[length++] = '-';
                 length += UnsignedDecimalToString(value,&str[length]);
             }
         }
         else
         {
-            // "-0000123"
+            /* "-0000123" */
             length = 0;
-            str[length++] = '-';    // Print '-'
+            str[length++] = '-';    /* Print '-' */
             length += UnsignedDecimalToStringFill((uint32_t)value,&str[length],fillLength,fillCharacter);
         }
     }
@@ -337,17 +337,17 @@ uint8_t SignedDecimalToStringFill(int32_t value, char *str, uint8_t fillLength, 
  */
 char HexToHexChar(uint8_t value)
 {
-    // TODO: Rename hex --> to nibble
+    /* TODO: Rename hex --> to nibble */
     char hexChar;
 
     if (value <= 9)
     {
-        // 0- 9
+        /* 0- 9 */
         hexChar = (value + '0');
     }
     else if ((value >= 10) && (value <= 15))
     {
-        // A-F
+        /* A-F */
         hexChar = (value - 10 + 'A');
     }
     else
@@ -374,15 +374,15 @@ uint8_t ByteToHexaString(uint8_t byte, char *str)
         return 0;
     }
 
-    // First hex
+    /* First hex */
     hex = (byte >> 4);
     str[length++] = HexToHexChar(hex);
 
-    // Second hex
+    /* Second hex */
     hex = (byte & 0x0F);
     str[length++] = HexToHexChar(hex);
 
-    // Put end char
+    /* Put end char */
     str[length] = '\0';
 
     return length;
@@ -404,18 +404,18 @@ uint8_t DecimalToBinaryString(uint32_t value, char *str, uint8_t maxLength)
         return 0;
     }
 
-    // Search first '1' bit:
+    /* Search first '1' bit: */
     bitIndex = GetLargestBitIndex(value);
     if (bitIndex < 0)
     {
-        // Print one '0'
+        /* Print one '0' */
         bitIndex = 0;
     }
 
-    // When reach this, bitIndex found the first '1'bit
+    /* When reach this, bitIndex found the first '1'bit */
     for (i = 0; i < maxLength; i++)
     {
-        // It '1' or '0'?
+        /* It '1' or '0'? */
         if (value & (1 << bitIndex))
         {
             str[i] = '1';
@@ -424,7 +424,7 @@ uint8_t DecimalToBinaryString(uint32_t value, char *str, uint8_t maxLength)
         {
             str[i] = '0';
         }
-        // If reach end, break
+        /* If reach end, break */
         if (bitIndex == 0)
         {
             i++;
@@ -433,7 +433,7 @@ uint8_t DecimalToBinaryString(uint32_t value, char *str, uint8_t maxLength)
         bitIndex--;
     }
 
-    str[i] = '\0';        // Put end character
+    str[i] = '\0';        /* Put end character */
 
     return i;
 }
@@ -454,7 +454,7 @@ uint8_t DecimalToHexaString(uint32_t value, char *str, uint8_t length)
         return 0;
     }
 
-    // Check parameters
+    /* Check parameters */
     if ((length > 8) || (length == 0))
     {
         return 0;
@@ -462,7 +462,7 @@ uint8_t DecimalToHexaString(uint32_t value, char *str, uint8_t length)
 
     for (i = 0; i < length; i++)
     {
-        // Convert next byte
+        /* Convert next byte */
         octet = (uint8_t)(0x0F & (value >> ((length-i-1)*4)));
         str[i] = HexToHexChar (octet);
     }
@@ -484,50 +484,50 @@ uint8_t FloatToString(float value, char *str, uint8_t integerLength, uint8_t fra
     uint8_t length = 0;
     uint32_t calcValue;
 
-    // Sign
+    /* Sign */
     if (value < 0)
     {
-        // Put '-'
+        /* Put '-' */
         str[length++] = '-';
-        value = (value * (-1));    // make positive
+        value = (value * (-1));    /* make positive */
     }
 
-    // Integer: minimum interLength length (if integer part is longer then this num, it printed)
+    /* Integer: minimum interLength length (if integer part is longer then this num, it printed) */
     calcValue = (uint32_t)value;
     length += UnsignedDecimalToStringFill(calcValue, &str[length], integerLength, ' ');
 
-    // If has fractionLength parameter (=/= 0), print it
+    /* If has fractionLength parameter (=/= 0), print it */
     if (fractionLength)
     {
-        // Point '.'
+        /* Point '.' */
         str[length++] = '.';
 
-        // Fraction:
-        // float : 4.567
-        // fractionLength: 4
-        // string: 4.5670
+        /* Fraction: */
+        /* float : 4.567 */
+        /* fractionLength: 4 */
+        /* string: 4.5670 */
 
-        // TODO: Make with multiplex (e.g. 0.567 -> * 1000 = 567 --> UnsignedDecimalToString...
+        /* TODO: Make with multiplex (e.g. 0.567 -> * 1000 = 567 --> UnsignedDecimalToString... */
 
-        // 4.567 --> 0.567 --> 5670
-        // Only fraction
+        /* 4.567 --> 0.567 --> 5670 */
+        /* Only fraction */
         value = (value - (uint32_t)value);
 
-        // * 10, and write
+        /* * 10, and write */
         while (fractionLength--)
         {
-            // 0.567 --> 5.67
-            value *= 10;             // "shift left" = *10
-            // 5.67 --> 5
-            num = (uint8_t)value;    // integer value (MSB octet)
-            // 5.67 - 5
-            value -= num;            // value--
+            /* 0.567 --> 5.67 */
+            value *= 10;             /* "shift left" = *10 */
+            /* 5.67 --> 5 */
+            num = (uint8_t)value;    /* integer value (MSB octet) */
+            /* 5.67 - 5 */
+            value -= num;            /* value-- */
             str[length++] = num + '0';
         }
     }
-    // If hasn't fractionLength parameter, '.' and fraction part not printed
+    /* If hasn't fractionLength parameter, '.' and fraction part not printed */
 
-    // Put end char
+    /* Put end char */
     str[length] = '\0';
 
     return length;
@@ -542,11 +542,11 @@ uint8_t FloatToString(float value, char *str, uint8_t integerLength, uint8_t fra
  */
 uint8_t StringIsHexadecimalString(const char *str)
 {
-    // TODO: uint8_t length to size_t?
+    /* TODO: uint8_t length to size_t? */
     uint8_t length = 0;
     uint8_t i;
 
-    // Check parameters
+    /* Check parameters */
     if (str == NULL)
     {
         return 0;
@@ -554,7 +554,7 @@ uint8_t StringIsHexadecimalString(const char *str)
     
     for (i = 0; str[i] != '\0'; i++)
     {
-        // Number all? 0-9, A-F, a-f
+        /* Number all? 0-9, A-F, a-f */
         if (IsHexChar(str[i]))
         {
             length++;
@@ -593,7 +593,7 @@ uint8_t StringIsUnsignedDecimalString(const char *str)
         }
         else
         {
-            // Return 0, if not number
+            /* Return 0, if not number */
             return 0;
         }
     }
@@ -617,7 +617,7 @@ uint8_t StringIsSignedDecimalString(const char *str)
         return 0;
     }
 
-    // Sign
+    /* Sign */
     if (str[0] == '-' )
     {
         length++;
@@ -627,7 +627,7 @@ uint8_t StringIsSignedDecimalString(const char *str)
         length++;
     }
 
-    // Check after sign
+    /* Check after sign */
     length += StringIsUnsignedDecimalString (&str[length]);
 
     return length;
@@ -700,7 +700,7 @@ bool StringBinaryToNum(const char *str, uint32_t *num)
         return false;
     }
 
-    // TODO: Check Prefix ??
+    /* TODO: Check Prefix ?? */
     for (i = 0; str[i]; i++)
     {
         if (str[i] == '1')
@@ -709,23 +709,23 @@ bool StringBinaryToNum(const char *str, uint32_t *num)
         }
         else if (str[i] == '0')
         {
-            // Do nothing, it is ok
-            // TODO: Optimize: this if (str[i] != '0') { return false; }, and not need else
+            /* Do nothing, it is ok */
+            /* TODO: Optimize: this if (str[i] != '0') { return false; }, and not need else */
             value |= 0x00;
         }
         else
         {
-            return false;        // Wrong character here
+            return false;        /* Wrong character here */
         }
 
-        // Shift left
+        /* Shift left */
         if (str[i+1])
         {
             value <<= 1;
         }
     }
 
-    // Finish
+    /* Finish */
     *num = value;
 
     return true;
@@ -800,26 +800,26 @@ bool StringHexToNum(const char *str, uint32_t *hexValue)
     uint32_t calculatedValue = 0;
     uint8_t calculatedByte = 0;
 
-    // Check length
+    /* Check length */
     if (StringIsHexadecimalString(str) == 0)
     {
-        return false;                                    // Wrong string or wrong octetlength
+        return false;                                    /* Wrong string or wrong octetlength */
     }
 
-    // Create hexValue
+    /* Create hexValue */
     for (i = 0; str[i] != '\0'; i++)
     {
-        // shift <<4 + add next hex
+        /* shift <<4 + add next hex */
         if (IsHexChar(str[i]))
         {
             if (HexCharToHex(str[i], &calculatedByte))
             {
-                calculatedValue <<= 4;                    // Shift one byte left original value
-                calculatedValue += calculatedByte;        // Add new value
+                calculatedValue <<= 4;                    /* Shift one byte left original value */
+                calculatedValue += calculatedByte;        /* Add new value */
             }
             else
             {
-                return false;                            // Failed (hex character)
+                return false;                            /* Failed (hex character) */
             }
         }
         else
@@ -828,7 +828,7 @@ bool StringHexToNum(const char *str, uint32_t *hexValue)
         }
         if (i >= 8)
         {
-            break;                                        // Has an "uint32_t"
+            break;                                        /* Has an "uint32_t" */
         }
     }
 
@@ -878,17 +878,17 @@ bool StringToUnsignedDecimalNum(const char *str, uint32_t *value)
         if (IsDecimalChar(str[i]))
         {
             decimal = DecimalCharToNum(str[i]);
-            calculatedValue *= 10;            // Shift left 1* =  *10
-            calculatedValue += decimal;        // Add new value
+            calculatedValue *= 10;            /* Shift left 1* =  *10 */
+            calculatedValue += decimal;        /* Add new value */
         }
         else
         {
-            return false;                    // Wrong character
+            return false;                    /* Wrong character */
         }
 
         if (i > 10)
         {
-            return false;                    // To long num
+            return false;                    /* To long num */
         }
     }
 
@@ -915,19 +915,19 @@ bool StringToSignedDecimalNum(const char *str, int32_t *value)
 
     if (str[0] == '-')
     {
-        // It is negative
+        /* It is negative */
         isNegative = true;
         length = 1;
     }
     else if (str[0] == '+')
     {
-        // Positive
+        /* Positive */
         isNegative = false ;
         length = 1;
     }
     else
     {
-        // Positive
+        /* Positive */
         isNegative = false;
         length = 0;
     }
@@ -936,12 +936,12 @@ bool StringToSignedDecimalNum(const char *str, int32_t *value)
     {
         if (isNegative)
         {
-            // Negative, converted value need * -1
+            /* Negative, converted value need * -1 */
             *value = -1 * (int32_t)convertValue;
         }
         else
         {
-            // Positive
+            /* Positive */
             *value = convertValue;
         }
         return true;
@@ -975,9 +975,9 @@ bool StringToFloat(const char *str, float *num)
 
     stringLength = StringLength(str);
 
-    // Sign
+    /* Sign */
     if (str[0] == '-')
-    {    // It is negative
+    {    /* It is negative */
         isNegative = true;
         length = 1;
     }
@@ -993,15 +993,15 @@ bool StringToFloat(const char *str, float *num)
     }
 
 
-    // Integer
+    /* Integer */
 
-    // Find '.'
+    /* Find '.' */
     for (i = 0; str[length+i] != '.'; i++)
     {
         numString[i] = str[length + i];
         if (i >= stringLength)
         {
-            return false;        // Error, overflow
+            return false;        /* Error, overflow */
         }
     }
 
@@ -1009,32 +1009,32 @@ bool StringToFloat(const char *str, float *num)
     pointCnt = length+i;
 
 
-    // Convert integer
+    /* Convert integer */
     if (!StringToUnsignedDecimalNum(numString, &integer))
     {
-        return false;            // Error with convert integer part
+        return false;            /* Error with convert integer part */
     }
 
-    // Integer (before .)
+    /* Integer (before .) */
     *num = integer;
 
-    // Convert fraction
+    /* Convert fraction */
     if (!StringToUnsignedDecimalNum(&str[pointCnt + 1], &integer))
     {
-        return false;            // Error with convert fraction part
+        return false;            /* Error with convert fraction part */
     }
 
     fractionPart = integer;
-    // We converted after point part, ".567", but we need to shift right
+    /* We converted after point part, ".567", but we need to shift right */
     for (i = 0; i < (stringLength - pointCnt - 1); i++ )
     {
-        // >> point
-        // Example: 567 == > 56.7
+        /* >> point */
+        /* Example: 567 == > 56.7 */
         fractionPart /= 10;
     }
-    // Ready fraction
+    /* Ready fraction */
 
-    *num += fractionPart;        // Add Integer and Fraction
+    *num += fractionPart;        /* Add Integer and Fraction */
 
     if (isNegative)
     {
@@ -1058,7 +1058,7 @@ bool StringToBool(const char * str, bool * val)
     bool boolVal = false;
     uint32_t num;
 
-    // Check it is decimal?
+    /* Check it is decimal? */
     if (StringToUnsignedDecimalNum(str, &num))
     {
         if (num == 1)
@@ -1073,17 +1073,17 @@ bool StringToBool(const char * str, bool * val)
         }
         else
         {
-            isBool = false;            // Wrong num (not 0, and not 1)
+            isBool = false;            /* Wrong num (not 0, and not 1) */
         }
     }
     else
     {
-        // Not number
+        /* Not number */
 
-        // Check it is "true" / "false" ?
-        // Check it is "on" / "off"?
-        // Check it is "enable" / "disable"
-        // Check it is "set" / "reset"
+        /* Check it is "true" / "false" ? */
+        /* Check it is "on" / "off"? */
+        /* Check it is "enable" / "disable" */
+        /* Check it is "set" / "reset" */
         if (!StrCmp((const char*)str, "true")
             || !StrCmp((const char*)str, "on")
             || !StrCmp((const char*)str, "enable")
@@ -1102,7 +1102,7 @@ bool StringToBool(const char * str, bool * val)
         }
         else
         {
-            // Not good "string"
+            /* Not good "string" */
             isBool = false;;
         }
     }
@@ -1120,8 +1120,8 @@ void ToLower(char * c)
 {
     if ((*c >= 'A') && (*c <= 'Z'))
     {
-        // Need to change to small letter
-        // length between Big Letter and small letter
+        /* Need to change to small letter */
+        /* length between Big Letter and small letter */
         *c = *c - ('A' - 'a');
     }
 }
@@ -1135,8 +1135,8 @@ void ToUpper(char * c)
 {
     if ((*c >= 'a') && (*c <= 'z'))
     {
-        // Need to change to small letter
-        // length between Big Letter and small letter
+        /* Need to change to small letter */
+        /* length between Big Letter and small letter */
         *c = *c + ('A' - 'a');
     }
 }
@@ -1157,10 +1157,10 @@ size_t StringLength(const char *str)
         return 0;
     }
 
-    // Added max length checking
+    /* Added max length checking */
     while ((length < STRING_SIZE_MAX) && (str[length] != '\0'))
     {
-        length++;    // Length = string length
+        length++;    /* Length = string length */
     }
 
     return length;
@@ -1177,19 +1177,19 @@ uint8_t StrCmp(const char *str1, const char *str2)
 {
     size_t i = 0;
 
-    // Check parameters
+    /* Check parameters */
     if ((str1 == NULL) && (str2 == NULL))
     {
-        // Equal, because both of string are NULL
+        /* Equal, because both of string are NULL */
         return 0;
     }
     else if ((str1 == NULL) || (str2 == NULL))
     {
-        // One of parameter is NULL... not equal
+        /* One of parameter is NULL... not equal */
         return 1;
     }
 
-    // Check characters
+    /* Check characters */
     while ((*str1 == *str2) && *str1 && *str2 && (i < STRING_SIZE_MAX))
     {
         str1++;
@@ -1199,11 +1199,11 @@ uint8_t StrCmp(const char *str1, const char *str2)
 
     if (*str1 == *str2)
     {
-        return 0;        // last character is equal
+        return 0;        /* last character is equal */
     }
     else
     {
-        // If string last character is not equal
+        /* If string last character is not equal */
         return 1;
     }
 }
@@ -1222,7 +1222,7 @@ uint8_t StrCmpFirst(const char *str1, const char *str2)
 
     if ((str1 == NULL) || (str2 == NULL))
     {
-        // One of parameter is NULL... not equal
+        /* One of parameter is NULL... not equal */
         return 1;
     }
 
@@ -1230,12 +1230,12 @@ uint8_t StrCmpFirst(const char *str1, const char *str2)
     {
         if ((str1[i] != str2[i]) || (i >= STRING_SIZE_MAX))
         {
-            return 1;    // not equal
+            return 1;    /* not equal */
         }
         i++;
     }
 
-    return 0;            // Good, equal
+    return 0;            /* Good, equal */
 }
 
 
@@ -1249,24 +1249,24 @@ uint8_t StrCmpWithLength(const char * str1, const char *str2, size_t length)
 {
     size_t i;
 
-    // Check pointers + length
+    /* Check pointers + length */
     if ((str1 == NULL) || (str2 == NULL) || (length == 0) || (length > STRING_SIZE_MAX))
     {
         return 1;
     }
 
-    // Compare characters
+    /* Compare characters */
     for (i = 0; i < length; i++)
     {
         if (*str1 != *str2)
         {
-            return 1;    // not equal
+            return 1;    /* not equal */
         }
         str1++;
         str2++;        
     }
     
-    return 0;        // equal    
+    return 0;        /* equal     */
 }
 
 
@@ -1280,23 +1280,23 @@ size_t StrCpy(char *dest, const char *str)
     size_t i;
     size_t length;
 
-    // Check parameter
+    /* Check parameter */
     if ((dest == NULL) || (str == NULL))
     {
         return 0;
     }
 
-    // TODO: Optimize: without length calculating (length --> str[i] != '\0')
+    /* TODO: Optimize: without length calculating (length --> str[i] != '\0') */
     length = StringLength(str);
 
-    // Copy characters
+    /* Copy characters */
     for (i = 0; i < length; i++)
     {
         dest[i] = str[i];
     }
     dest[length] = '\0';
 
-    return length;                    // Return length
+    return length;                    /* Return length */
 }
 
 
@@ -1314,13 +1314,13 @@ size_t StrCpyFixLength(char *dest, const char *str, size_t length)
         return 0;
     }
 
-    // Copy characters
+    /* Copy characters */
     for (i = 0; i < length; i++)
     {
         dest[i] = str[i];
     }
 
-    // TODO: put '\0'? It is correct?
+    /* TODO: put '\0'? It is correct? */
     dest[i] = '\0';
 
     return length;
@@ -1337,21 +1337,21 @@ size_t StrCpyFixLengthWithFillCharacter(char *dest, const char *str, size_t leng
 {
     size_t i = 0;
 
-    // Check parameters (Not need check str, because str is NULL, we should copy 'fillChar' with 'length' num to 'dest')
+    /* Check parameters (Not need check str, because str is NULL, we should copy 'fillChar' with 'length' num to 'dest') */
     if (dest == NULL)
         return 0;
 
-    // If str is NULL, copy fillChar(s) to *dest
+    /* If str is NULL, copy fillChar(s) to *dest */
     if (str != NULL)
     {
-        // Copy characters
+        /* Copy characters */
         for (i = 0; (i < length) && (str[i]); i++)
         {
             dest[i] = str[i];
         }
     }
 
-    // Fill with character after string
+    /* Fill with character after string */
     if (i < length)
     {
         for (; i < length; i++)
@@ -1360,7 +1360,7 @@ size_t StrCpyFixLengthWithFillCharacter(char *dest, const char *str, size_t leng
         }
     }
 
-    // End of string
+    /* End of string */
     dest[i] = '\0';
 
     return length;
@@ -1377,20 +1377,20 @@ size_t StrCpyMax(char *dest, const char *str, size_t maxLength)
     size_t length = 0;
     length = StringLength(str);
 
-    // Check parameters
+    /* Check parameters */
     if (str == NULL || dest == NULL || maxLength == 0 || length == 0)
     {
         return 0;
     }
 
-    // Check long
+    /* Check long */
     if (length >= maxLength)
     {
-        length = maxLength - 1;                    // Too long, only can copy "length-1" characters + '\0'
+        length = maxLength - 1;                    /* Too long, only can copy "length-1" characters + '\0' */
     }
 
-    StrCpyFixLength(dest, str, length);            // Copy characters
-    dest[length] = '\0';                        // Put end
+    StrCpyFixLength(dest, str, length);            /* Copy characters */
+    dest[length] = '\0';                        /* Put end */
 
     return length;
 }
@@ -1405,19 +1405,19 @@ size_t StrCpyCharacter(char *dest, char c, size_t num)
 {
     size_t i;
 
-    // Check parameters
+    /* Check parameters */
     if (dest == NULL || num == 0)
     {
         return 0;
     }
 
-    // Copy characters
+    /* Copy characters */
     for (i = 0; i < num; i++)
     {
         dest[i] = c;
     }
 
-    dest[i] = '\0';                // Put end
+    dest[i] = '\0';                /* Put end */
 
     return i;
 }
@@ -1438,7 +1438,7 @@ size_t StrAppend(char *dest, const char *str)
         return length;
     }
 
-    // TODO: Optimize with search EOS here
+    /* TODO: Optimize with search EOS here */
     length = StringLength(dest);
 
     if (str != NULL)
@@ -1459,7 +1459,7 @@ size_t StrAppendSafe(char *dest, const char *str, size_t destLength)
 {
     size_t length = 0;
 
-    // Check parameters (str not need check)
+    /* Check parameters (str not need check) */
     if (dest == NULL)
     {
         return length;
@@ -1472,8 +1472,8 @@ size_t StrAppendSafe(char *dest, const char *str, size_t destLength)
         size_t copyLength = StringLength(str);
         if (destLength <= (length + copyLength))
         {
-            // How many characters can we copy?
-            copyLength = destLength - length - 1;    // Last character should be '\0'
+            /* How many characters can we copy? */
+            copyLength = destLength - length - 1;    /* Last character should be '\0' */
         }
         length += StrCpyFixLength(&dest[length], str, copyLength);
     }
@@ -1495,7 +1495,7 @@ size_t CharAppend(char *dest, const char c)
         return length;
     }
 
-    // TODO: Optimize with search EOS here
+    /* TODO: Optimize with search EOS here */
     length = StringLength(dest);
 
     dest[length] = c;
@@ -1513,7 +1513,7 @@ size_t CharAppend(char *dest, const char c)
  */
 size_t StrTrim(char *str)
 {
-    // Check pointer
+    /* Check pointer */
     if (str == NULL)
     {
         return 0;
@@ -1522,17 +1522,17 @@ size_t StrTrim(char *str)
     size_t length = StringLength(str) - 1;
     size_t i;
 
-    // Start from end of string
+    /* Start from end of string */
     for (i = length; i > 0; i--)
     {
         if (str[i] == ' ' || str[i] == '\t' || str[i] == '\r' || str[i] == '\n')
         {
-            str[i] = '\0';        // Replace ' ' to \0
+            str[i] = '\0';        /* Replace ' ' to \0 */
         }
         else
         {
-            // 'i' value contain the new length
-            break;                // Not space, good character, end
+            /* 'i' value contain the new length */
+            break;                /* Not space, good character, end */
         }
     }
 
@@ -1595,21 +1595,21 @@ void StringUpper(char * str)
 const char * STRING_FindCharacter(const char *str, const char findCharacter)
 {
     size_t i;
-    // TODO: Without StringLength
+    /* TODO: Without StringLength */
     size_t length = StringLength(str);
 
-    // Check parameter
+    /* Check parameter */
     if ((str == NULL) || (length == 0))
     {
         return NULL;
     }
 
-    // Search first equal character
+    /* Search first equal character */
     for (i = 0; i < length; i++)
     {
         if (str[i] == findCharacter)
         {
-            // Equal
+            /* Equal */
             return (char *)&str[i];
         }
     }
@@ -1628,21 +1628,21 @@ const char * STRING_FindCharacters(const char *str, const char *findCharacters)
     uint8_t j;
     const char * findPos = NULL;
 
-    // Check parameter
+    /* Check parameter */
     if ((str == NULL) || (findCharacters == NULL))
     {
         return NULL;
     }
 
-    // Search in string
+    /* Search in string */
     for (i = 0; i < STRING_SIZE_MAX && str[i] != '\0'; i++)
     {
-        // Check with finding characters
+        /* Check with finding characters */
         for (j = 0; j < 255 && findCharacters[j] != '\0'; j++)
         {
             if (str[i] == findCharacters[j])
             {
-                // Equal
+                /* Equal */
                 findPos = &str[i];
                 break;
             }
@@ -1672,18 +1672,18 @@ const char * STRING_FindString(const char *str, const char *findString)
     size_t findStringLength = StringLength(findString);
     const char * findPos = NULL;
 
-    // Check parameters
+    /* Check parameters */
     if ((str == NULL) || (findString == NULL) || (length == 0) || (findStringLength == 0) || findStringLength > length)
     {
         return NULL;
     }
 
-    // Search first equal character
+    /* Search first equal character */
     for (i = 0; i < (length - findStringLength); i++)
     {
         if (findString[0] == str[i])
         {
-            // First character is equal
+            /* First character is equal */
             if (!StrCmpWithLength(findString, &str[i], findStringLength))
             {
                 findPos = (char *)&str[i];
@@ -1710,35 +1710,35 @@ uint8_t STRING_Splitter(char *source, const char *delimiters, char **separated, 
     size_t j;
     uint8_t parameters = 0;
 
-    // TODO: Make more beautiful!
+    /* TODO: Make more beautiful! */
 
-    // Check parameters
+    /* Check parameters */
     if ((source == NULL) || (separated == NULL) || (delimiters == NULL) || (paramLimit == 0))
     {
-        return 0;            // Fail parameters
+        return 0;            /* Fail parameters */
     }
 
-    separated[0] = NULL;    // Make empty
+    separated[0] = NULL;    /* Make empty */
 
-    // Split
+    /* Split */
     j = 0;
     for (i = 0; source[i]; i++)
     {
-        // There is delimiter?
+        /* There is delimiter? */
         uint8_t k;
         bool isFound = false;
         for (k = 0; delimiters[k] != '\0'; k++)
         {
             if ((source[i] == delimiters[k]) || (source[i+1] == '\0'))
             {
-                // Found delimiter or end character
+                /* Found delimiter or end character */
                 if (source[i] == delimiters[k])
                 {
                     source[i] = '\0';
                 }
                 if (j == 0)
                 {
-                    // one length parameter // TODO: Do with more beautiful
+                    /* one length parameter // TODO: Do with more beautiful */
                     separated[parameters] = &source[i];
                 }
                 parameters++;
@@ -1752,7 +1752,7 @@ uint8_t STRING_Splitter(char *source, const char *delimiters, char **separated, 
         {
             if (parameters >= paramLimit)
             {
-                // maximal tokens found
+                /* maximal tokens found */
                 break;
             }
             else
@@ -1762,10 +1762,10 @@ uint8_t STRING_Splitter(char *source, const char *delimiters, char **separated, 
         }
         else
         {
-            // Not ended, count
+            /* Not ended, count */
             if (j == 0)
             {
-                separated[parameters] = &source[i];        // New string found
+                separated[parameters] = &source[i];        /* New string found */
             }
             j++;
         }
@@ -1790,36 +1790,36 @@ uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint
     size_t j;
     uint8_t parameters = 0;
 
-    // Check parameters
+    /* Check parameters */
     if (source == NULL || separated == NULL || paramLimit == 0)
     {
-        return 0;            // Fail parameters
+        return 0;            /* Fail parameters */
     }
 
-    separated[0] = NULL;    // Make empty
+    separated[0] = NULL;    /* Make empty */
 
-    // Split
+    /* Split */
     j = 0;
     for (i = 0; source[i]; i++)
     {
-        // There is delimiter?
+        /* There is delimiter? */
         if ((source[i] == delimiterChar) || (source[i+1] == '\0'))
         {
-            // Found delimiter or end character
+            /* Found delimiter or end character */
             if (source[i] == delimiterChar)
             {
                 source[i] = '\0';
             }
             if (j == 0)
             {
-                // one length parameter // TODO: Do with more beautiful
+                /* one length parameter // TODO: Do with more beautiful */
                 separated[parameters] = &source[i];
             }
             parameters++;
             j = 0;
             if (parameters >= paramLimit)
             {
-                // maximal tokens found
+                /* maximal tokens found */
                 break;
             }
             else
@@ -1829,10 +1829,10 @@ uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint
         }
         else
         {
-            // Not ended, count
+            /* Not ended, count */
             if (j == 0)
             {
-                separated[parameters] = &source[i];        // New string found
+                separated[parameters] = &source[i];        /* New string found */
             }
             j++;
         }
@@ -1855,129 +1855,129 @@ uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint
  */
 size_t string_printf(char *str, const char *format, va_list ap)
 {
-    // TODO: Use "new" typedefs
+    /* TODO: Use "new" typedefs */
 
-    // Type variables
-    char    *p;            // step on format string
-    char    *sval;        // string
-    int        ival;        // int
-    unsigned int uival;    // uint
-    float    flval;        // float
-    char     cval;        // character
+    /* Type variables */
+    char    *p;            /* step on format string */
+    char    *sval;        /* string */
+    int        ival;        /* int */
+    unsigned int uival;    /* uint */
+    float    flval;        /* float */
+    char     cval;        /* character */
 
     char *string = str;
 
-    // Check parameters
+    /* Check parameters */
     if (str == NULL || format == NULL)
         return 0;
 
-    for (p = (char *)format; *p; p++)                // p to EOS
+    for (p = (char *)format; *p; p++)                /* p to EOS */
     {
-        if (*p != '%')                                // copy, if not '%'
+        if (*p != '%')                                /* copy, if not '%' */
         {
-            *string = *p;                            // copy to string
+            *string = *p;                            /* copy to string */
             string++;
         }
         else
         {
-            // '%' character
+            /* '%' character */
             p++;
 
-            // Process next character (after '%', or etc)
+            /* Process next character (after '%', or etc) */
             switch (*p)
             {
                 case 'd':
-                    // signed (int)
-                    ival = va_arg(ap, int);    // Decimal = signed int (~int32_t)
+                    /* signed (int) */
+                    ival = va_arg(ap, int);    /* Decimal = signed int (~int32_t) */
                     string += SignedDecimalToString(ival, string);
                     break;
 
                 case 'u':
-                    // unsigned (int)
-                    uival = va_arg(ap, int);// Uint = Unsigned int (~uint32_t)
+                    /* unsigned (int) */
+                    uival = va_arg(ap, int);/* Uint = Unsigned int (~uint32_t) */
                     string += UnsignedDecimalToString(uival, string);
                     break;
 
-                    // TODO: Create 'x' and 'X' to different
+                    /* TODO: Create 'x' and 'X' to different */
                 case 'x':
                 case 'X':
-                    // %x - Hex - parameterized byte num
+                    /* %x - Hex - parameterized byte num */
                     uival = va_arg(ap, unsigned int);
                     string += DecimalToHexaString(uival, string, 8);
                     break;
 
 #if defined(STRING_HEXADECIMAL_FORMATS)
                 case 'w':
-                    // Hex // 32 bits    // 8 hex    // 4 byte
+                    /* Hex // 32 bits    // 8 hex    // 4 byte */
                     uival = va_arg(ap, unsigned int);
                     string += DecimalToHexaString(uival, string, 8);
                     break;
 
                 case 'h':
-                    // Hex // 16 bits    // 4 hex    // 2 byte
+                    /* Hex // 16 bits    // 4 hex    // 2 byte */
                     ival = va_arg(ap, int);
                     string += DecimalToHexaString(ival, string, 4);
                     break;
 
                 case 'b':
-                    // Hex    // 8 bits    // 2 hex    // 1 byte
+                    /* Hex    // 8 bits    // 2 hex    // 1 byte */
                     ival = va_arg(ap, int);
                     string += DecimalToHexaString(ival, string, 2);
                     break;
 #else
                 case 'b':
-                    // Binary print (from uint32_t)
+                    /* Binary print (from uint32_t) */
                     uival = va_arg(ap,  unsigned int);
                     string += DecimalToBinaryString(uival, string, 33);
                     break;
 #endif
                 case 'c':
-                    // %c - char
-                    cval = va_arg(ap, int);                        // Char
-                    // Default: copy one character
-                    *string = cval;                            // Copy to string
+                    /* %c - char */
+                    cval = va_arg(ap, int);                        /* Char */
+                    /* Default: copy one character */
+                    *string = cval;                            /* Copy to string */
                     string++;
                     *string = '\0';
                     break;
 
                 case 'f':
-                    // %f - float
-                    flval = va_arg(ap, double);                    // Double / Float
+                    /* %f - float */
+                    flval = va_arg(ap, double);                    /* Double / Float */
                     string += FloatToString(flval, string, 0, 6);
                     break;
 
                 case 's':
-                    // %s - string
-                    sval = va_arg(ap, char*);                    // String
-                    // Standard string copy
+                    /* %s - string */
+                    sval = va_arg(ap, char*);                    /* String */
+                    /* Standard string copy */
                     string += StrCpy(string, sval);
                     break;
 
                 case 'p':
-                    // %p - pointer - print address in hexadecimal
+                    /* %p - pointer - print address in hexadecimal */
                     uival = va_arg(ap, unsigned int);
                     string += DecimalToHexaString(uival, string, 8);
                     break;
 
                 default:
-                    *string = *p;                    // Other, for example: '%'
+                    *string = *p;                    /* Other, for example: '%' */
                     string++;
                     break;
             }
-        }    // End of '%'
+        }    /* End of '%' */
 
-    }    // End of for loop
+    }    /* End of for loop */
 
-    // string's end
+    /* string's end */
     *string = '\0';
 
-    // Return with length
+    /* Return with length */
     return (string-str);
 }
 
 
 
-#else    // #ifdef STRING_SPRINTF_EXTENDED_ENABLE
+#else    /* #ifdef STRING_SPRINTF_EXTENDED_ENABLE */
 
 
 
@@ -1999,50 +1999,50 @@ size_t string_printf(char *str, const char *format, va_list ap)
  */
 size_t string_printf(char *str, const char *format, va_list ap)
 {
-    // TODO: Use "new" typedefs
+    /* TODO: Use "new" typedefs */
 
-    // Type variables
-    char    *p;            // step on format string
-    char    *sval;        // string
-    int        ival;        // int
-    unsigned int uival;    // uint
-    float    flval;        // float
-    char     cval;        // character
+    /* Type variables */
+    char    *p;            /* step on format string */
+    char    *sval;        /* string */
+    int        ival;        /* int */
+    unsigned int uival;    /* uint */
+    float    flval;        /* float */
+    char     cval;        /* character */
 
     char *string = str;
 
-    // Process variables
+    /* Process variables */
     bool paramHasLength;
     uint8_t paramNum1;
     uint8_t paramNum2;
     char fillCharacter;
 
-    // Check parameters
+    /* Check parameters */
     if (str == NULL || format == NULL)
         return 0;
 
-    for (p = (char *)format; *p; p++)                // p to EOS
+    for (p = (char *)format; *p; p++)                /* p to EOS */
     {
-        if (*p != '%')                                // copy, if not '%'
+        if (*p != '%')                                /* copy, if not '%' */
         {
-            *string = *p;                            // copy to string
+            *string = *p;                            /* copy to string */
             string++;
         }
         else
         {
-            // '%' character
+            /* '%' character */
             p++;
-            paramNum1 = 0;    // for standard %08x
+            paramNum1 = 0;    /* for standard %08x */
             paramNum2 = 0;
             paramHasLength = false;
             fillCharacter = ' ';
 
-            // Check %...x (parameter after %, before x, u, f, s)
-            // Next character is num?
+            /* Check %...x (parameter after %, before x, u, f, s) */
+            /* Next character is num? */
             if (IsDecimalChar(*p))
             {
-                // It is num (1. param)
-                // Replace, if has two parameter
+                /* It is num (1. param) */
+                /* Replace, if has two parameter */
                 paramNum2 = DecimalCharToNum(*p);
                 fillCharacter = *p;
                 paramHasLength = true;
@@ -2050,62 +2050,62 @@ size_t string_printf(char *str, const char *format, va_list ap)
 
                 if (IsDecimalChar(*p))
                 {
-                    // xy
-                    // It is num (2. param)
+                    /* xy */
+                    /* It is num (2. param) */
                     paramNum1 = paramNum2;
                     paramNum2 = DecimalCharToNum(*p);
                     p++;
                 }
                 else if (*p == '.')
                 {
-                    // x.
+                    /* x. */
                     p++;
                     if (IsDecimalChar(*p))
                     {
-                        // x.y
+                        /* x.y */
                         paramNum1 = paramNum2;
                         paramNum2 = DecimalCharToNum(*p);
                         p++;
                     }
                     else
                     {
-                        // x.?
-                        // x = paramNum1
-                        // ?=0 now, for correct float printing
-                        // Do not step p pointer, because this character can be f, x, etc.
+                        /* x.? */
+                        /* x = paramNum1 */
+                        /* ?=0 now, for correct float printing */
+                        /* Do not step p pointer, because this character can be f, x, etc. */
                         paramNum1 = paramNum2;
                         paramNum2 = 0;
                     }
                 }
                 else
                 {
-                    // x        ==>        x = fill character, y = length
-                    // If only has one parameter
-                    fillCharacter = ' ';    // Blank character
+                    /* x        ==>        x = fill character, y = length */
+                    /* If only has one parameter */
+                    fillCharacter = ' ';    /* Blank character */
                 }
             }
 
-            // Process next character (after '%', or etc)
+            /* Process next character (after '%', or etc) */
             switch (*p)
             {
                 case 'd':
-                    // signed (int)
-                    ival = va_arg(ap, int);    // Decimal = signed int (~int32_t)
+                    /* signed (int) */
+                    ival = va_arg(ap, int);    /* Decimal = signed int (~int32_t) */
                     string += SignedDecimalToStringFill(ival, string,
                             paramNum2, fillCharacter);
                     break;
 
                 case 'u':
-                    // unsigned (int)
-                    uival = va_arg(ap, int);// Uint = Unsigned int (~uint32_t)
+                    /* unsigned (int) */
+                    uival = va_arg(ap, int);/* Uint = Unsigned int (~uint32_t) */
                     string += UnsignedDecimalToStringFill(uival, string,
                             paramNum2, fillCharacter);
                     break;
 
-                    // TODO: Create 'x' and 'X' to different
+                    /* TODO: Create 'x' and 'X' to different */
                 case 'x':
                 case 'X':
-                    // %x - Hex - parameterized byte num
+                    /* %x - Hex - parameterized byte num */
                     uival = va_arg(ap, unsigned int);
                     if (paramHasLength)
                     {
@@ -2118,49 +2118,49 @@ size_t string_printf(char *str, const char *format, va_list ap)
                     break;
 #if defined(STRING_HEXADECIMAL_FORMATS)
                 case 'w':
-                    // Hex // 32 bits    // 8 hex    // 4 byte
+                    /* Hex // 32 bits    // 8 hex    // 4 byte */
                     uival = va_arg(ap, unsigned int);
                     string += DecimalToHexaString(uival, string, 8);
                     break;
 
                 case 'h':
-                    // Hex // 16 bits    // 4 hex    // 2 byte
+                    /* Hex // 16 bits    // 4 hex    // 2 byte */
                     ival = va_arg(ap, int);
                     string += DecimalToHexaString(ival, string, 4);
                     break;
 
                 case 'b':
-                    // Hex    // 8 bits    // 2 hex    // 1 byte
+                    /* Hex    // 8 bits    // 2 hex    // 1 byte */
                     ival = va_arg(ap, int);
                     string += DecimalToHexaString(ival, string, 2);
                     break;
 #else
                 case 'b':
-                    // Binary print (from uint32_t)
+                    /* Binary print (from uint32_t) */
                     uival = va_arg(ap,  unsigned int);
                     string += DecimalToBinaryString(uival, string, 33);
                     break;
 #endif
                 case 'c':
-                    // %c - char
-                    cval = va_arg(ap, int);                        // Char
+                    /* %c - char */
+                    cval = va_arg(ap, int);                        /* Char */
                     if (paramHasLength)
                     {
-                        // Copy more character
+                        /* Copy more character */
                         string += StrCpyCharacter(string, cval, (paramNum1 * 10 + paramNum2));
                     }
                     else
                     {
-                        // Default: copy one character
-                        *string = cval;                            // Copy to string
+                        /* Default: copy one character */
+                        *string = cval;                            /* Copy to string */
                         string++;
                         *string = '\0';
                     }
                     break;
 
                 case 'f':
-                    // %f - float
-                    flval = va_arg(ap, double);                    // Double / Float
+                    /* %f - float */
+                    flval = va_arg(ap, double);                    /* Double / Float */
                     if (paramHasLength)
                     {
                         string += FloatToString(flval, string, paramNum1, paramNum2);
@@ -2172,43 +2172,43 @@ size_t string_printf(char *str, const char *format, va_list ap)
                     break;
 
                 case 's':
-                    // %s - string
-                    sval = va_arg(ap, char*);                    // String
+                    /* %s - string */
+                    sval = va_arg(ap, char*);                    /* String */
                     if (paramHasLength)
                     {
-                        // String copy with length
+                        /* String copy with length */
                         uint8_t stringLength = paramNum1*10 + paramNum2;
                         string += StrCpyFixLengthWithFillCharacter(string, sval, stringLength, ' ');
                     }
                     else
                     {
-                        // Standard string copy
+                        /* Standard string copy */
                         string += StrCpy(string, sval);
                     }
                     break;
 
                 case 'p':
-                    // %p - pointer - print address in hexadecimal
+                    /* %p - pointer - print address in hexadecimal */
                     uival = va_arg(ap, unsigned int);
                     string += DecimalToHexaString(uival, string, 8);
                     break;
 
                 default:
-                    *string = *p;                    // Other, for example: '%'
+                    *string = *p;                    /* Other, for example: '%' */
                     string++;
                     break;
             }
-        }    // End of '%'
+        }    /* End of '%' */
 
-    }    // End of for loop
+    }    /* End of for loop */
 
-    // string's end
+    /* string's end */
     *string = '\0';
 
-    // Return with length
+    /* Return with length */
     return (string-str);
 }
-#endif    // #ifdef STRING_SPRINTF_EXTENDED_ENABLE
+#endif    /* #ifdef STRING_SPRINTF_EXTENDED_ENABLE */
 
 
 
@@ -2219,53 +2219,53 @@ size_t string_printf(char *str, const char *format, va_list ap)
  */
 size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list ap)
 {
-    // TODO: Use "new" typedefs
+    /* TODO: Use "new" typedefs */
 
-    // Type variables
-    char    *p;            // step on format string
-    char    *sval;        // string
-    int        ival;        // int
-    unsigned int uival;    // uint
-    float    flval;        // float
-    char     cval;        // character
+    /* Type variables */
+    char    *p;            /* step on format string */
+    char    *sval;        /* string */
+    int        ival;        /* int */
+    unsigned int uival;    /* uint */
+    float    flval;        /* float */
+    char     cval;        /* character */
 
-    // String variables
+    /* String variables */
     size_t length = 0;
     size_t remainLength = maxLen - 1;
 
-    // Process variables
+    /* Process variables */
     bool paramHasLength;
     uint8_t paramNum1;
     uint8_t paramNum2;
     char fillCharacter;
 
-    // Check parameters
+    /* Check parameters */
     if (str == NULL || format == NULL)
         return 0;
 
-    for (p = (char *)format; *p; p++)                // p to EOS
+    for (p = (char *)format; *p; p++)                /* p to EOS */
     {
-        if ((*p != '%') && (remainLength > 0))    // copy, if not '%'
+        if ((*p != '%') && (remainLength > 0))    /* copy, if not '%' */
         {
-            str[length] = *p;                        // copy to string
+            str[length] = *p;                        /* copy to string */
             length++;
             remainLength--;
         }
         else
         {
-            // '%' character
+            /* '%' character */
             p++;
-            paramNum1 = 0;    // for standard %08x
+            paramNum1 = 0;    /* for standard %08x */
             paramNum2 = 0;
             paramHasLength = false;
             fillCharacter = ' ';
 
-            // Check %...x (parameter after %, before x, u, f, s)
-            // Next character is num?
+            /* Check %...x (parameter after %, before x, u, f, s) */
+            /* Next character is num? */
             if (IsDecimalChar(*p))
             {
-                // It is num (1. param)
-                // Replace, if has two parameter
+                /* It is num (1. param) */
+                /* Replace, if has two parameter */
                 paramNum2 = DecimalCharToNum(*p);
                 fillCharacter = *p;
                 paramHasLength = true;
@@ -2273,53 +2273,53 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
 
                 if (IsDecimalChar(*p))
                 {
-                    // xy
-                    // It is num (2. param)
+                    /* xy */
+                    /* It is num (2. param) */
                     paramNum1 = paramNum2;
                     paramNum2 = DecimalCharToNum(*p);
                     p++;
                 }
                 else if (*p == '.')
                 {
-                    // x.
+                    /* x. */
                     p++;
                     if (IsDecimalChar(*p))
                     {
-                        // x.y
+                        /* x.y */
                         paramNum1 = paramNum2;
                         paramNum2 = DecimalCharToNum(*p);
                         p++;
                     }
                     else
                     {
-                        // x.?
-                        // x = paramNum1
-                        // ?=0 now, for correct float printing
-                        // Do not step p pointer, because this character can be f, x, etc.
+                        /* x.? */
+                        /* x = paramNum1 */
+                        /* ?=0 now, for correct float printing */
+                        /* Do not step p pointer, because this character can be f, x, etc. */
                         paramNum1 = paramNum2;
                         paramNum2 = 0;
                     }
                 }
                 else
                 {
-                    // x        ==>        x = fill character, y = length
-                    // If only has one parameter
-                    fillCharacter = ' ';    // Blank character
+                    /* x        ==>        x = fill character, y = length */
+                    /* If only has one parameter */
+                    fillCharacter = ' ';    /* Blank character */
                 }
             }
 
-            // Process next character (after '%', or etc)
+            /* Process next character (after '%', or etc) */
             switch (*p)
             {
                 case 'd':
                 {
-                    // signed (int)
-                    ival = va_arg(ap, int);    // Decimal = signed int (~int32_t)
+                    /* signed (int) */
+                    ival = va_arg(ap, int);    /* Decimal = signed int (~int32_t) */
                     uint8_t decLen = SignedDecimalToStringSafe(ival, &str[length], remainLength+1);
                     length += decLen;
                     remainLength -= decLen;
                     (void)fillCharacter;
-                    // TODO: with Fill function
+                    /* TODO: with Fill function */
                     /*
                     if (paramNum2 <= remainLength)
                     {
@@ -2337,13 +2337,13 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
 
                 case 'u':
                 {
-                    // unsigned (int)
-                    uival = va_arg(ap, int);// Uint = Unsigned int (~uint32_t)
+                    /* unsigned (int) */
+                    uival = va_arg(ap, int);/* Uint = Unsigned int (~uint32_t) */
                     uint8_t decLen = UnsignedDecimalToStringSafe(uival, &str[length], remainLength+1);
                     length += decLen;
                     remainLength -= decLen;
                     (void)fillCharacter;
-                    // TODO: with Fill function
+                    /* TODO: with Fill function */
                     /*
                     string += UnsignedDecimalToStringFill(uival, string,
                             paramNum2, fillCharacter);
@@ -2351,12 +2351,12 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                 }
                     break;
 
-                    // TODO: Create 'x' and 'X' to different
+                    /* TODO: Create 'x' and 'X' to different */
                 case 'x':
                 case 'X':
-                    // %x - Hex - parameterized byte num
+                    /* %x - Hex - parameterized byte num */
                     uival = va_arg(ap, unsigned int);
-                    // TODO: Not implemented function (for length safe)
+                    /* TODO: Not implemented function (for length safe) */
                     if (paramHasLength)
                     {
                         if (paramNum2 > remainLength)
@@ -2377,39 +2377,39 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                     break;
 #if defined(STRING_HEXADECIMAL_FORMATS)
                 case 'w':
-                    // Hex // 32 bits    // 8 hex    // 4 byte
+                    /* Hex // 32 bits    // 8 hex    // 4 byte */
                     uival = va_arg(ap, unsigned int);
                     string += DecimalToHexaString(uival, string, 8);
                     break;
 
                 case 'h':
-                    // Hex // 16 bits    // 4 hex    // 2 byte
+                    /* Hex // 16 bits    // 4 hex    // 2 byte */
                     ival = va_arg(ap, int);
                     string += DecimalToHexaString(ival, string, 4);
                     break;
 
                 case 'b':
-                    // Hex    // 8 bits    // 2 hex    // 1 byte
+                    /* Hex    // 8 bits    // 2 hex    // 1 byte */
                     ival = va_arg(ap, int);
                     string += DecimalToHexaString(ival, string, 2);
                     break;
 #else
                 case 'b':
-                    // Binary print (from uint32_t)
+                    /* Binary print (from uint32_t) */
                     uival = va_arg(ap,  unsigned int);
-                    // TODO: Not implemented function (for length safe)
-                    //DEBUG_BREAKPOINT();
+                    /* TODO: Not implemented function (for length safe) */
+                    /* EBUG_BREAKPOINT(); */
                     uint8_t binLength = DecimalToBinaryString(uival, &str[length], 33);
                     length += binLength;
                     remainLength -= binLength;
                     break;
 #endif
                 case 'c':
-                    // %c - char
-                    cval = va_arg(ap, int);                        // Char
+                    /* %c - char */
+                    cval = va_arg(ap, int);                        /* Char */
                     if (paramHasLength)
                     {
-                        // Copy more character
+                        /* Copy more character */
                         uint8_t cNum = paramNum1 * 10 + paramNum2;
                         if (cNum > remainLength)
                             cNum = remainLength;
@@ -2418,10 +2418,10 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                     }
                     else
                     {
-                        // Default: copy one character
+                        /* Default: copy one character */
                         if (remainLength > 0)
                         {
-                            str[length] = cval;                            // Copy to string
+                            str[length] = cval;                            /* Copy to string */
                             length++;
                             remainLength--;
                             str[length] = '\0';
@@ -2430,11 +2430,11 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                     break;
 
                 case 'f':
-                    // %f - float
-                    flval = va_arg(ap, double);                    // Double / Float
+                    /* %f - float */
+                    flval = va_arg(ap, double);                    /* Double / Float */
                     (void)flval;
-                    // TODO: Not implemented function (for length safe)
-                    //DEBUG_BREAKPOINT();
+                    /* TODO: Not implemented function (for length safe) */
+                    /* EBUG_BREAKPOINT(); */
                     uint8_t floatLength;
                     if (paramHasLength)
                     {
@@ -2449,11 +2449,11 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                     break;
 
                 case 's':
-                    // %s - string
-                    sval = va_arg(ap, char*);                    // String
+                    /* %s - string */
+                    sval = va_arg(ap, char*);                    /* String */
                     if (paramHasLength)
                     {
-                        // String copy with length
+                        /* String copy with length */
                         uint8_t stringLength = paramNum1*10 + paramNum2;
                         if (stringLength > remainLength)
                             stringLength = remainLength;
@@ -2463,7 +2463,7 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                     }
                     else
                     {
-                        // Standard string copy
+                        /* Standard string copy */
                         uint8_t stringLength = StrCpyMax(&str[length], sval, remainLength);
                         length += stringLength;
                         remainLength -= stringLength;
@@ -2473,19 +2473,19 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                 default:
                     if (remainLength > 0)
                     {
-                        str[length] = *p;                    // Other, for example: '%'
+                        str[length] = *p;                    /* Other, for example: '%' */
                         length++;
                     }
                     break;
             }
-        }    // End of '%'
+        }    /* End of '%' */
 
-    }    // End of for loop
+    }    /* End of for loop */
 
-    // string's end
+    /* string's end */
     str[length] = '\0';
 
-    // Return with length
+    /* Return with length */
     return length;
 }
 
@@ -2503,10 +2503,10 @@ size_t usprintf(char *str, const char *format, ...)
 
     STRING_ASSERT(MEM_IN_RAM(str, 0));
 
-    va_list ap;                                    // argument pointer
-    va_start(ap, format);                         // ap on arg
-    length = string_printf(str, format, ap);    // Separate and process
-    va_end(ap);                                     // Cleaning after end
+    va_list ap;                                    /* argument pointer */
+    va_start(ap, format);                         /* ap on arg */
+    length = string_printf(str, format, ap);    /* Separate and process */
+    va_end(ap);                                     /* Cleaning after end */
 
     return length;
 }
@@ -2525,10 +2525,10 @@ size_t usnprintf(char * str, size_t maxLen, const char * format, ...)
 
     STRING_ASSERT(MEM_IN_RAM(str, maxLen));
 
-    va_list ap;                                    // argument pointer
-    va_start(ap, format);                         // ap on arg
-    resultLength = string_printf_safe(str, maxLen, format, ap);    // Separate and process
-    va_end(ap);                                     // Cleaning after end
+    va_list ap;                                    /* argument pointer */
+    va_start(ap, format);                         /* ap on arg */
+    resultLength = string_printf_safe(str, maxLen, format, ap);    /* Separate and process */
+    va_end(ap);                                     /* Cleaning after end */
 
     return resultLength;
 }
@@ -2551,110 +2551,110 @@ uint32_t StringHelper_UnitTest(void)
     const char * cpString;
 
 
-    // Start of unittest
+    /* Start of unittest */
     UnitTest_Start("String", __FILE__);
 
 
-    /// String compare StrCmp()
-    // Equal:
+    //* String compare StrCmp() */
+    /* Equal: */
     UNITTEST_ASSERT(!StrCmp("example", "example"), "StrCmp error");
-    // Not equal:
+    /* Not equal: */
     UNITTEST_ASSERT(StrCmp("example", "example1"), "StrCmp error");
     UNITTEST_ASSERT(StrCmp("example1", "example2"), "StrCmp error");
     UNITTEST_ASSERT(StrCmp("example1", "example"), "StrCmp error");
 
 
-    // StrCmpFirst()
-    // Equal:
+    /* StrCmpFirst() */
+    /* Equal: */
     UNITTEST_ASSERT(!StrCmpFirst("example", "example"), "StrCmpFirst error");
     UNITTEST_ASSERT(!StrCmpFirst("example", "example1"), "StrCmpFirst error");
-    // Not equal:
+    /* Not equal: */
     UNITTEST_ASSERT(StrCmpFirst("example1", "example2"), "StrCmpFirst error");
     UNITTEST_ASSERT(StrCmpFirst("example1", "example"), "StrCmpFirst error");
 
 
-    // TODO: Use STRING_SPRINTF_EXTENDED_ENABLE define
+    /* TODO: Use STRING_SPRINTF_EXTENDED_ENABLE define */
 
-    // Float print tests
+    /* Float print tests */
 
-    // "123.339996" ~ like "%0.6"
+    /* "123.339996" ~ like "%0.6" */
     usprintf(buffer,"%f",123.34);
     UNITTEST_ASSERT(!StrCmp(buffer, "123.339996"), "Float error");
 
-    // "123"
+    /* "123" */
     usprintf(buffer,"%1.0f",123.34);
     UNITTEST_ASSERT(!StrCmp(buffer, "123"), "Float error");
 
-    // "123.3"
+    /* "123.3" */
     usprintf(buffer, "%1.1f",123.34);
     UNITTEST_ASSERT(!StrCmp(buffer, "123.3"), "Float error");
 
-    // "123.33999"
+    /* "123.33999" */
     usprintf(buffer,"%1.5f",123.34);
     UNITTEST_ASSERT(!StrCmp(buffer, "123.33999"), "Float error");
 
-    // "  123.3"
+    /* "  123.3" */
     usprintf(buffer, "%5.1f",123.34);
     UNITTEST_ASSERT(!StrCmp(buffer, "  123.3"), "Float error");
 
-    // "123.33999"
+    /* "123.33999" */
     usprintf(buffer,"%5.5f",123.34);
     UNITTEST_ASSERT(!StrCmp(buffer, "  123.33999"), "Float error");
 
-    // TODO: "%.2f?
+    /* TODO: "%.2f? */
 
 
-    // Integer print tests
+    /* Integer print tests */
 
-    // Printed: "123"
+    /* Printed: "123" */
     usprintf(buffer, "%0u",123);
     UNITTEST_ASSERT(!StrCmp(buffer, "123"), "Integer error");
 
-    // Printed:    "123"
+    /* Printed:    "123" */
     usprintf(buffer, "%1u",123);
     UNITTEST_ASSERT(!StrCmp(buffer, "123"), "Integer error");
 
-    // Printed: " 123"
+    /* Printed: " 123" */
     usprintf(buffer, "%4u",123);
     UNITTEST_ASSERT(!StrCmp(buffer, " 123"), "Integer error");
 
-    // Printed: "      123"
+    /* Printed: "      123" */
     usprintf(buffer, "%9u",123);
     UNITTEST_ASSERT(!StrCmp(buffer, "      123"), "Integer error");
 
-    // Printed: "00123", it is OK
+    /* Printed: "00123", it is OK */
     usprintf(buffer, "%05u",123);
     UNITTEST_ASSERT(!StrCmp(buffer, "00123"), "Integer error");
 
-    // Integer print tests (wrong examples):
-    usprintf(buffer, "%A5",123);        // Printed: "A5u", because 'A' is not a number
+    /* Integer print tests (wrong examples): */
+    usprintf(buffer, "%A5",123);        /* Printed: "A5u", because 'A' is not a number */
     UNITTEST_ASSERT(!StrCmp(buffer, "A5"), "Integer error");
-    usprintf(buffer, "%-5u",123);        // Printed: "-5u", because '-' is not a number
+    usprintf(buffer, "%-5u",123);        /* Printed: "-5u", because '-' is not a number */
     UNITTEST_ASSERT(!StrCmp(buffer, "-5u"), "Integer error");
 
-    // Signed Integer print tests:
+    /* Signed Integer print tests: */
 
-    // Printed: "-123"
+    /* Printed: "-123" */
     usprintf(buffer, "%0d",-123);
     UNITTEST_ASSERT(!StrCmp(buffer, "-123"), "Integer error");
 
-    // Printed:    "-123"
+    /* Printed:    "-123" */
     usprintf(buffer, "%1d",-123);
     UNITTEST_ASSERT(!StrCmp(buffer, "-123"), "Integer error");
 
-    // Printed: "-123"
+    /* Printed: "-123" */
     usprintf(buffer, "%4d",-123);
     UNITTEST_ASSERT(!StrCmp(buffer, "-123"), "Integer error");
 
-    // Printed: "     -123"
+    /* Printed: "     -123" */
     usprintf(buffer, "%9d",-123);
     UNITTEST_ASSERT(!StrCmp(buffer, "     -123"), "Integer error");
 
-    // Printed: "-0123", it is OK
+    /* Printed: "-0123", it is OK */
     usprintf(buffer, "%05d",-123);
     UNITTEST_ASSERT(!StrCmp(buffer, "-00123"), "Integer error");
 
-    // Hexadecimal print tests:
+    /* Hexadecimal print tests: */
     usprintf(buffer, "0x%x",0xFFFFFFFF);
     UNITTEST_ASSERT(!StrCmp(buffer, "0xFFFFFFFF"), "Hexadecimal error");
     usprintf(buffer, "0x%01x",0xFFFFFFFF);
@@ -2695,39 +2695,39 @@ uint32_t StringHelper_UnitTest(void)
     usprintf(buffer, "0x%09x",0x12345678);
     UNITTEST_ASSERT(!StrCmp(buffer, "0x"), "Hexadecimal error");
 
-    // Binaries printf
+    /* Binaries printf */
     usprintf(buffer, "0b%b",0x000000FF);
     UNITTEST_ASSERT(!StrCmp(buffer, "0b11111111"), "Binary error");
     usprintf(buffer, "0b%b",0x00000055);
     UNITTEST_ASSERT(!StrCmp(buffer, "0b1010101"), "Binary error");
 
-    // String (%s)
+    /* String (%s) */
 
-    // Standard %s print
+    /* Standard %s print */
     usprintf(buffer, "%s", "text");
     UNITTEST_ASSERT(!StrCmp(buffer, "text"), "String error (%s)");
 
-    // max 5 character
+    /* max 5 character */
     usprintf(buffer, "%5s", "longtext");
     UNITTEST_ASSERT(!StrCmp(buffer, "longt"), "String error (%s)");
 
-    // 10 character, need fill with ' '
+    /* 10 character, need fill with ' ' */
     usprintf(buffer, "%10s", "longtext");
     UNITTEST_ASSERT(!StrCmp(buffer, "longtext  "), "String error (%s)");
 
-    // max 10 character
+    /* max 10 character */
     usprintf(buffer, "%10s", "toolongtext");
     UNITTEST_ASSERT(!StrCmp(buffer, "toolongtex"), "String error (%s)");
 
 
 
-    // string -> num converters
+    /* string -> num converters */
 
-    // string -> decimal
+    /* string -> decimal */
 
-    // Byte
+    /* Byte */
 
-    // Good bytes
+    /* Good bytes */
     result = StringHexByteToNum("00", &value8);
     UNITTEST_ASSERT(result, "StringByteToNum error");
     UNITTEST_ASSERT((value8 == 0x00), "StringByteToNum error");
@@ -2738,24 +2738,24 @@ uint32_t StringHelper_UnitTest(void)
     UNITTEST_ASSERT(result, "StringByteToNum error");
     UNITTEST_ASSERT((value8 == 0xFF), "StringByteToNum error");
 
-    // Wrong byte
+    /* Wrong byte */
     result = StringHexByteToNum("FG", &value8);
     UNITTEST_ASSERT(!result, "StringByteToNum error");
 
 
-    // Hexs
+    /* Hexs */
 
-    // Good hex
+    /* Good hex */
     result = StringHexToNum("12345678", &value32);
     UNITTEST_ASSERT(result, "StringHexToNum error");
     UNITTEST_ASSERT(value32 == 0x12345678, "StringHexToNum error");
 
-    // Wrong hex
+    /* Wrong hex */
     result = StringHexToNum("123G5678", &value32);
     UNITTEST_ASSERT(!result, "StringHexToNum error");
 
 
-    // Binaries
+    /* Binaries */
     result = StringBinaryToNum("010101", &value32);
     UNITTEST_ASSERT(result, "StringBinaryToNum error");
     UNITTEST_ASSERT(value32 == 0x15, "StringHexToNum error");
@@ -2766,9 +2766,9 @@ uint32_t StringHelper_UnitTest(void)
     UNITTEST_ASSERT(!result, "StringBinaryToNum error");
 
 
-    // Decimals
+    /* Decimals */
 
-    // Good decimals
+    /* Good decimals */
     result = StringToSignedDecimalNum("-123",&ivalue32);
     UNITTEST_ASSERT(result, "StringToSignedDecimalNum error");
     UNITTEST_ASSERT(ivalue32 == -123, "StringToSignedDecimalNum error");
@@ -2777,43 +2777,43 @@ uint32_t StringHelper_UnitTest(void)
     UNITTEST_ASSERT(result, "StringToUnsignedDecimalNum error");
     UNITTEST_ASSERT(value32 == 123, "StringToUnsignedDecimalNum error");
 
-    // Wrong decimals
+    /* Wrong decimals */
     result = StringToSignedDecimalNum("-123a",&ivalue32);
     UNITTEST_ASSERT(!result, "StringToSignedDecimalNum error");
 
     result = StringToUnsignedDecimalNum("-123",&value32);
     UNITTEST_ASSERT(!result, "StringToUnsignedDecimalNum error");
 
-    // Float
+    /* Float */
 
-    // Good Float test
+    /* Good Float test */
     result = StringToFloat("-123.3499", &fvalue); /* CLANG WARNING: Possible to not change fvalue... */
     UNITTEST_ASSERT(result, "StringToFloat error");
     UNITTEST_ASSERT(((fvalue < -123.3498) && (fvalue > -123.3500)), "StringToFloat error");
 
-    // Wrong Float test
+    /* Wrong Float test */
     result = StringToFloat("-123a.3999", &fvalue);
     UNITTEST_ASSERT(!result, "StringToFloat error");
 
 
-    // TODO: StringToBool test
+    /* TODO: StringToBool test */
 
 
-    /// String function testing
+    //* String function testing */
 
-    // Test: uint8_t StrCpyCharacter(char *dest, char c, uint8_t num)
+    /* Test: uint8_t StrCpyCharacter(char *dest, char c, uint8_t num) */
     StrCpyCharacter(buffer, 'a', 10);
     uint8_t i;
     for (i = 0; i < 10; i++)
     {
         UNITTEST_ASSERT(buffer[i] == 'a', "StrCpyCharacter error");
     }
-    // Check end character
+    /* Check end character */
     UNITTEST_ASSERT(buffer[10] == '\0', "StrCpyCharacter error");
 
 
-    // Test: Test StrTrim()
-    // TODO: Test return value!
+    /* Test: Test StrTrim() */
+    /* TODO: Test return value! */
     StrCpy(buffer, "String with spaces end...    ");
     StrTrim(buffer);
     UNITTEST_ASSERT(!StrCmp("String with spaces end...", buffer), "StrTrim error");
@@ -2823,72 +2823,72 @@ uint32_t StringHelper_UnitTest(void)
     UNITTEST_ASSERT(!StrCmp("End without space.", buffer), "StrTrim error");
 
 
-    // STRING_FindCharacter()
+    /* STRING_FindCharacter() */
     StrCpy(buffer, "longtexttofinding");
-    // Valid finding
+    /* Valid finding */
     cpString = STRING_FindCharacter((const char *)buffer, 't');
     UNITTEST_ASSERT(cpString == buffer+4, "FindCharacter wrong find error");
     cpString = STRING_FindCharacter(buffer, 'l');
     UNITTEST_ASSERT(cpString == buffer, "FindCharacter wrong find error");
-    // Invalid finding
+    /* Invalid finding */
     cpString = STRING_FindCharacter(buffer, 'z');
     UNITTEST_ASSERT(cpString == NULL, "FindCharacter not find error error");
-    // 0 length string
+    /* 0 length string */
     cpString = STRING_FindCharacter("", 'z');
     UNITTEST_ASSERT(cpString == NULL, "FindCharacter 0 length error");
-    // Null pointer
+    /* Null pointer */
     cpString = STRING_FindCharacter(NULL, 'z');
     UNITTEST_ASSERT(cpString == NULL, "FindCharacter null pointererror");
-    // Unchangeable string
+    /* Unchangeable string */
     UNITTEST_ASSERT(!StrCmp(buffer, "longtexttofinding"), "FindCharacter changed original string");
 
 
-    // STRING_FindCharacters()
+    /* STRING_FindCharacters() */
     StrCpy(buffer, "longtexttofinding");
-    // Valid finding
+    /* Valid finding */
     cpString = STRING_FindCharacters(buffer, "text");
     UNITTEST_ASSERT(cpString == buffer+4, "FindCharacter wrong find error");
     cpString = STRING_FindCharacters(buffer, "long");
     UNITTEST_ASSERT(cpString == buffer, "FindCharacter wrong find error");
-    // Invalid finding
+    /* Invalid finding */
     cpString = STRING_FindCharacters(buffer, "z");
     UNITTEST_ASSERT(cpString == NULL, "FindCharacter not find error error");
-    // 0 length string
+    /* 0 length string */
     cpString = STRING_FindCharacters("", "z");
     UNITTEST_ASSERT(cpString == NULL, "FindCharacter 0 length error");
-    // Null pointer
+    /* Null pointer */
     cpString = STRING_FindCharacters(NULL, "z");
     UNITTEST_ASSERT(cpString == NULL, "FindCharacter null pointererror");
-    // Unchangeable string
+    /* Unchangeable string */
     UNITTEST_ASSERT(!StrCmp(buffer, "longtexttofinding"), "FindCharacter changed original string");
 
 
-    // STRING_FindString()
+    /* STRING_FindString() */
     StrCpy(buffer, "longtexttofinding");
-    // Valid finding
+    /* Valid finding */
     cpString = STRING_FindString(buffer, "text");
     UNITTEST_ASSERT(cpString == buffer+4, "FindString error");
-    // There is no
+    /* There is no */
     cpString = STRING_FindString(buffer, "wrongtext");
     UNITTEST_ASSERT(cpString == NULL, "FindString error");
-    // Overflow
+    /* Overflow */
     cpString = STRING_FindString(buffer, "findingoverflow");
     UNITTEST_ASSERT(cpString == NULL, "FindString overflow error");
-    // 0 length string
+    /* 0 length string */
     cpString = STRING_FindString("", "findingoverflow");
     UNITTEST_ASSERT(cpString == NULL, "FindString 0 length error");
     cpString = STRING_FindString("longtexttofinding", "");
     UNITTEST_ASSERT(cpString == NULL, "FindString 0 length error");
-    // Test with NULL pointer
+    /* Test with NULL pointer */
     cpString = STRING_FindString("longtexttofinding", NULL);
     UNITTEST_ASSERT(cpString == NULL, "FindString null pointer error");
     cpString = STRING_FindString(NULL, "findingoverflow");
     UNITTEST_ASSERT(cpString == NULL, "FindString null pointer error");
-    // Unchangeable string
+    /* Unchangeable string */
     UNITTEST_ASSERT(!StrCmp(buffer, "longtexttofinding"), "FindString changed original string");
 
 
-    // STRING_Splitter()
+    /* STRING_Splitter() */
     StrCpy(buffer, "need to separate this text");
     value8 = STRING_Splitter(buffer, " ", splitted, 10);
     UNITTEST_ASSERT(value8 == 5, "STRING_Splitter error");
@@ -2911,28 +2911,28 @@ uint32_t StringHelper_UnitTest(void)
     UNITTEST_ASSERT(splitted[0] == NULL, "STRING_Splitter error");
 
 
-    // TODO: Add new tests for STRING_Splitter()
+    /* TODO: Add new tests for STRING_Splitter() */
 
 
-    // TODO: Test StrAppend
-    // TODO: Test size_t CharAppend(char *dest, const char c)
+    /* TODO: Test StrAppend */
+    /* TODO: Test size_t CharAppend(char *dest, const char c) */
 
 
-    // TODO:  Test safe (length) functions
+    /* TODO:  Test safe (length) functions */
 
-    // usnprintf
+    /* usnprintf */
     usnprintf(buffer, 30, "%d %u 1234 %c %s", 1, 2, 'a', "str");
     UNITTEST_ASSERT(!StrCmp(buffer, "1 2 1234 a str"), "usnprintf error");
-    // TODO: Add other test, if usnprintf improved
+    /* TODO: Add other test, if usnprintf improved */
 
 
-    // Test StrAppendSafe
+    /* Test StrAppendSafe */
     buffer[0] = '\0';
     StrAppendSafe(buffer, "First string, ", 30);
     StrAppendSafe(buffer, "Second string", 30);
     UNITTEST_ASSERT(!StrCmp(buffer, "First string, Second string"), "StrAppendSafe error");
 
-    // Check overflow
+    /* Check overflow */
     buffer[0] = '\0';
     buffer[19] = 0xAA;
     buffer[20] = 0xBB;
@@ -2943,27 +2943,27 @@ uint32_t StringHelper_UnitTest(void)
     UNITTEST_ASSERT((buffer[20] == (char)0xBB), "StrAppendSafe overflow error");
 
 
-    // StringLower()
+    /* StringLower() */
     StrCpy(buffer, "123ABCabc$");
     StringLower(buffer);
     UNITTEST_ASSERT(!StrCmp(buffer, "123abcabc$"), "StringLower error");
 
 
-    // StringUpper()
+    /* StringUpper() */
     StrCpy(buffer, "123ABCabc$");
     StringUpper(buffer);
     UNITTEST_ASSERT(!StrCmp(buffer, "123ABCABC$"), "StringUpper error");
 
 
-    // End of unittest
+    /* End of unittest */
     return UnitTest_End();
 }
-#endif    // #ifdef CONFIG_MODULE_STRING_UNITTEST_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_STRING_UNITTEST_ENABLE */
 
 
-// Other printf:
-/*
-// Link: http://electronics.stackexchange.com/questions/206113/how-do-i-use-the-printf-function-on-stm32/206118
+/* Other printf: */
+#if 0
+/* Link: http://electronics.stackexchange.com/questions/206113/how-do-i-use-the-printf-function-on-stm32/206118 */
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
@@ -2971,23 +2971,21 @@ uint32_t StringHelper_UnitTest(void)
 void vprint(const char *fmt, va_list argp)
 {
     char string[200];
-    if (0 < vsprintf(string,fmt,argp)) // build string
+    if (0 < vsprintf(string,fmt,argp)) /* build string */
     {
-        HAL_UART_Transmit(&huart1, (uint8_t*)string, strlen(string), 0xffffff); // send message via UART
+        HAL_UART_Transmit(&huart1, (uint8_t*)string, strlen(string), 0xffffff); /* send message via UART */
     }
 }
 
-void my_printf(const char *fmt, ...) // custom printf() function
+void my_printf(const char *fmt, ...) /* custom printf() function */
 {
     va_list argp;
     va_start(argp, fmt);
     vprint(target, fmt, argp);
     va_end(argp);
 }
-*/
+#endif
 
 
-// Other printf:
-/*
-// Link: http://www.sparetimelabs.com/tinyprintf/tinyprintf.php
-*/
+/* Other printf: */
+/* Link: http://www.sparetimelabs.com/tinyprintf/tinyprintf.php */

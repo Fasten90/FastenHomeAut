@@ -36,9 +36,9 @@ IWDG_HandleTypeDef IWDG_Handle;
  */
 void Watchdog_Init(void)
 {
-    // Configure IWDG
+    /* Configure IWDG */
     IWDG_Handle.Init.Prescaler = IWDG_PRESCALER_32;
-    IWDG_Handle.Init.Reload = IWDG_RLR_RL;    // Max value
+    IWDG_Handle.Init.Reload = IWDG_RLR_RL;    /* Max value */
     IWDG_Handle.Init.Window = IWDG_WINDOW_DISABLE;
     IWDG_Handle.Instance = IWDG;
 
@@ -64,4 +64,4 @@ void Watchdog_Clear(void)
 
 
 
-#endif    // #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_WATCHDOG_ENABLE */

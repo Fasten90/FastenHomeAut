@@ -46,10 +46,10 @@ void BUTTON_Init(void)
 {
     GPIO_InitTypeDef   GPIO_InitStructure;
 
-    // Enable GPIO clocks
+    /* Enable GPIO clocks */
     BUTTON_CLK_ENABLES();
 
-    // Configure x pin as input floating
+    /* Configure x pin as input floating */
     GPIO_InitStructure.Mode = GPIO_MODE_IT_RISING;
     GPIO_InitStructure.Pull = GPIO_NOPULL;
     
@@ -69,45 +69,45 @@ void BUTTON_Init(void)
 #endif
 
 #if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_NUCLEOF401RE)
-    // User    button
+    /* User    button */
     GPIO_InitStructure.Pin  = BUTTON_USER_GPIO_PIN;
     HAL_GPIO_Init(BUTTON_USER_GPIO_PORT, &GPIO_InitStructure);
 #endif
     
-    // Config IT-s
+    /* Config IT-s */
     
 #ifdef CONFIG_USE_PANEL_HOMEAUTNODESMALL
-    // Enable and set EXTI lines 0 to 1 Interrupt to the lowest priority
+    /* Enable and set EXTI lines 0 to 1 Interrupt to the lowest priority */
     HAL_NVIC_SetPriority(EXTI0_1_IRQn, 1, 0);
     HAL_NVIC_EnableIRQ(EXTI0_1_IRQn); 
      
      
-    // Enable and set EXTI lines 4 to 15 Interrupt to the lowest priority
+    /* Enable and set EXTI lines 4 to 15 Interrupt to the lowest priority */
     HAL_NVIC_SetPriority(EXTI4_15_IRQn, 2, 0);
     HAL_NVIC_EnableIRQ(EXTI4_15_IRQn); 
 #endif
 
 
 #ifdef CONFIG_USE_PANEL_FASTENNODE
-    // Enable and set EXTI lines 0 to 1 Interrupt to the lowest priority
+    /* Enable and set EXTI lines 0 to 1 Interrupt to the lowest priority */
     HAL_NVIC_SetPriority(EXTI0_1_IRQn, 1, 0);
     HAL_NVIC_EnableIRQ(EXTI0_1_IRQn);
 
 
-    // Enable and set EXTI lines 4 to 15 Interrupt to the lowest priority
+    /* Enable and set EXTI lines 4 to 15 Interrupt to the lowest priority */
     HAL_NVIC_SetPriority(EXTI4_15_IRQn, 2, 0);
     HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);
 #endif
 
     
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
-    // 0, 2, 9, 13. pins
+    /* 0, 2, 9, 13. pins */
     
-    // Enable and set EXTI lines
+    /* Enable and set EXTI lines */
     HAL_NVIC_SetPriority(EXTI0_IRQn, 1, 0);
     HAL_NVIC_EnableIRQ(EXTI0_IRQn); 
      
-    // Enable and set EXTI lines
+    /* Enable and set EXTI lines */
     HAL_NVIC_SetPriority(EXTI2_IRQn, 2, 0);
     HAL_NVIC_EnableIRQ(EXTI2_IRQn); 
     
@@ -120,25 +120,25 @@ void BUTTON_Init(void)
     
     
 #ifdef CONFIG_USE_PANEL_HOMEAUTCENTERPANEL
-    // Up        PC7
-    // Down        PC8
-    // Right    PA0
-    // Left        PC9
+    /* Up        PC7 */
+    /* Down        PC8 */
+    /* Right    PA0 */
+    /* Left        PC9 */
     
-    // Enable and set EXTI lines
+    /* Enable and set EXTI lines */
     HAL_NVIC_SetPriority(EXTI0_IRQn, 1, 0);
     HAL_NVIC_EnableIRQ(EXTI0_IRQn); 
      
-    // Enable and set EXTI lines
+    /* Enable and set EXTI lines */
     HAL_NVIC_SetPriority(EXTI9_5_IRQn, 2, 0);
     HAL_NVIC_EnableIRQ(EXTI9_5_IRQn); 
 #endif
 
 
 #if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_NUCLEOF401RE)
-    // User    button
+    /* User    button */
 
-    // Enable and set EXTI lines
+    /* Enable and set EXTI lines */
     HAL_NVIC_SetPriority(BUTTON_USER_EXTI_IRQn,
             BUTTON_USER_INTERRUPT_PREEMT_PRIORITY,
             BUTTON_USER_INTERRUPT_SUB_PRIORITY);
@@ -166,7 +166,7 @@ bool BUTTON_GetButtonState(ButtonType_t button)
             break;
 
 #elif BUTTON_NUM > 1
-            // Set (high) state = pressed state = true
+            /* Set (high) state = pressed state = true */
         case PressedButton_Up:
             state = (HAL_GPIO_ReadPin(BUTTON_UP_GPIO_PORT, BUTTON_UP_GPIO_PIN) == GPIO_PIN_SET) ? true : false;
             break;
@@ -281,4 +281,4 @@ const char * BUTTON_GetPressTypeName(ButtonPressType_t pressType)
 
 
 
-#endif    // #ifdef CONFIG_MODULE_BUTTON_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_BUTTON_ENABLE */

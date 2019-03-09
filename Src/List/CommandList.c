@@ -301,7 +301,7 @@ const CmdH_Command_t CmdH_CommandList[] =
         .example = "tick enable",
     },
 #endif
-#endif    // #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE */
 #ifdef CONFIG_MODULE_COMMON_IO_ENABLE
     {
         .name = "ioinit",
@@ -594,7 +594,7 @@ const CmdH_CommandID_t CmdH_CommandNum = NUM_OF(CmdH_CommandList);
  */
 static CmdH_Result_t CommandFunction_cls(uint32_t argc, char** argv)
 {
-    // Suppress warning
+    /* Suppress warning */
     (void)argc;
     (void)argv;
 
@@ -612,7 +612,7 @@ static CmdH_Result_t CommandFunction_cls(uint32_t argc, char** argv)
  */
 static CmdH_Result_t CommandFunction_version(uint32_t argc, char** argv)
 {
-    // Suppress warning
+    /* Suppress warning */
     (void)argc;
     (void)argv;
 
@@ -628,7 +628,7 @@ static CmdH_Result_t CommandFunction_version(uint32_t argc, char** argv)
  */
 static CmdH_Result_t CommandFunction_welcome(uint32_t argc, char** argv)
 {
-    // Suppress warning
+    /* Suppress warning */
     (void)argc;
     (void)argv;
 
@@ -650,12 +650,12 @@ static CmdH_Result_t CommandFunction_help(uint32_t argc, char** argv)
 {
     if (argc == 1)
     {
-        // If Arg2 is empty, listing all commands
+        /* If Arg2 is empty, listing all commands */
         CmdH_PrintAllCommands();
     }
     else if (argc == 2)
     {
-        // Has Arg2, find the command & print help
+        /* Has Arg2, find the command & print help */
         CmdH_SearchCommandAndPrintHelp(argv[1]);
     }
 
@@ -669,7 +669,7 @@ static CmdH_Result_t CommandFunction_help(uint32_t argc, char** argv)
  */
 static CmdH_Result_t CommandFunction_reset(uint32_t argc, char** argv)
 {
-    // Suppress warning
+    /* Suppress warning */
     (void)argc;
     (void)argv;
 
@@ -677,13 +677,13 @@ static CmdH_Result_t CommandFunction_reset(uint32_t argc, char** argv)
 
     CmdH_SendLine("Reset...");
 
-    // Wait
+    /* Wait */
     for (i = 0; i < 1000; i++);
 
-    // Reset
+    /* Reset */
     NVIC_SystemReset();
 
-    // Wait
+    /* Wait */
     for (i = 0; i < 1000; i++);
 
     return CmdH_Result_Ok;
@@ -697,7 +697,7 @@ static CmdH_Result_t CommandFunction_reset(uint32_t argc, char** argv)
  */
 static CmdH_Result_t CommandFunction_unittest(uint32_t argc, char** argv)
 {
-    // Suppress warning
+    /* Suppress warning */
     (void)argc;
     (void)argv;
 
@@ -709,7 +709,7 @@ static CmdH_Result_t CommandFunction_unittest(uint32_t argc, char** argv)
 
     return CmdH_Result_Ok;
 }
-#endif    // #ifdef CONFIG_MODULE_UNITTEST_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_UNITTEST_ENABLE */
 
 
 
@@ -719,7 +719,7 @@ static CmdH_Result_t CommandFunction_unittest(uint32_t argc, char** argv)
  */
 static CmdH_Result_t CommandFunction_exit(uint32_t argc, char** argv)
 {
-    // Suppress warning
+    /* Suppress warning */
     (void)argc;
     (void)argv;
 
@@ -729,7 +729,7 @@ static CmdH_Result_t CommandFunction_exit(uint32_t argc, char** argv)
 
     return CmdH_Result_Ok;
 }
-#endif    // #ifdef CONFIG_USE_PANEL_PC
+#endif    /* #ifdef CONFIG_USE_PANEL_PC */
 
 
 
@@ -739,7 +739,7 @@ static CmdH_Result_t CommandFunction_exit(uint32_t argc, char** argv)
  */
 static CmdH_Result_t CommandFunction_moduletest(uint32_t argc, char** argv)
 {
-    // Suppress warning
+    /* Suppress warning */
     (void)argc;
     (void)argv;
 
@@ -747,10 +747,10 @@ static CmdH_Result_t CommandFunction_moduletest(uint32_t argc, char** argv)
 #ifdef CONFIG_MODULE_IO_ENABLE
     uint8_t i;
 
-    // LED test
+    /* LED test */
     CmdH_SendLine("LED test");
 
-    // LEDs on
+    /* LEDs on */
     for (i = LED_NUM_MIN; i <= LED_NUM_MAX; i++)
     {
         IO_Output_SetStatus(i, LED_Cmd_SetOn);
@@ -759,22 +759,22 @@ static CmdH_Result_t CommandFunction_moduletest(uint32_t argc, char** argv)
 
     Watchdog_Clear();
 
-    // LEDs off
+    /* LEDs off */
     for (i = LED_NUM_MIN; i <= LED_NUM_MAX; i++)
     {
         IO_Output_SetStatus(i, LED_Cmd_SetOff);
         DelayMs(500);
     }
-#endif    // #ifdef CONFIG_MODULE_IO_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_IO_ENABLE */
 
 
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
-    // Clear flag
+    /* Clear flag */
     BUTTON_Clicked = 0;
 
     CmdH_SendLine("\r\nButton test: Please press button!");
 
-    // TODO: Implement with Event...
+    /* TODO: Implement with Event... */
     while (!BUTTON_Clicked)
     {
         CmdH_SendChar('.');
@@ -786,12 +786,12 @@ static CmdH_Result_t CommandFunction_moduletest(uint32_t argc, char** argv)
 #endif
 
 
-    // Beep in terminal
+    /* Beep in terminal */
     CmdH_SendLine("Beep test");
     CmdH_SendChar(TERMINAL_KEY_BELL);
 
 
-    // Send formatted messages
+    /* Send formatted messages */
 #ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
     CmdH_SendLine("Formatted message test");
     FormattedMessage_Test();
@@ -799,13 +799,13 @@ static CmdH_Result_t CommandFunction_moduletest(uint32_t argc, char** argv)
 
     return CmdH_Result_Ok;
 }
-#endif    // #ifdef CONFIG_MODULE_TEST_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_TEST_ENABLE */
 
 
 
 #ifdef CONFIG_TEST_MODE
 
-//volatile uint32_t importantValue = 0;
+/* olatile uint32_t importantValue = 0; */
 
 /*
 void SetImportantValue(uint32_t newValue)
@@ -819,9 +819,9 @@ void SetImportantValue(uint32_t newValue)
 static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 {
     COMPILER_MESSAGE("Test function turned on! Disable in release!");
-    //#pragma message "Compiling " __FILE__ "..."
+    /* pragma message "Compiling " __FILE__ "..." */
 
-    // Suppress warning
+    /* Suppress warning */
     (void)argc;
     (void)argv;
 
@@ -832,9 +832,9 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
      */
 
 
-    // Test variadic macros
-    // Warning: "ISO C does not permit named variadic macros [-Wvariadic-macros]
-    // in Atollic TrueSTUDIO, 7.1.1
+    /* Test variadic macros */
+    /* Warning: "ISO C does not permit named variadic macros [-Wvariadic-macros] */
+    /* in Atollic TrueSTUDIO, 7.1.1 */
 
     /*
      * Example:
@@ -842,7 +842,7 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
      * #define eprintf(args...) fprintf (stderr, args)
      */
 
-    //#define eprintf(args...) uprintf(args)
+    /* define eprintf(args...) uprintf(args) */
     /*
     #define eprintf(...)             uprintf(__VA_ARGS__)
 
@@ -851,7 +851,7 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
     */
 
 
-    // Test code size with init value
+    /* Test code size with init value */
 
     /*
     uint32_t testValue = 0;
@@ -866,50 +866,50 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 
 
 
-    /*
-    // RTC - Print DateTime in one line with refreshing
+#if 0
+    /* RTC - Print DateTime in one line with refreshing */
 
     DateTime_t actualDateTime = { { 17, 5, 7 }, { 19, 45, 0 } };
 
-    // Clear button state
+    /* Clear button state */
     BUTTON_Clicked = 0;
-    // Until pressed button...
+    /* Until pressed button... */
     while (!BUTTON_Clicked)
     {
-        // Wait 1 second
+        /* Wait 1 second */
         DelayMs(1000);
 
-        // Step 1 second
+        /* Step 1 second */
         DateTime_StepOneSecond(&actualDateTime);
 
-        // Send actual DateTime
+        /* Send actual DateTime */
         char message[80];
         DateTime_PrintDateTimeToString(message, &actualDateTime);
         CmdH_SendMessage(ESCAPE_DELETELINE);
-        // Cursor to line start
+        /* Cursor to line start */
         CmdH_SendMessage(ESCAPE_CURSOR_TO_LINESTART);
-        //CmdH_SendMessage(ESCAPE_CURSORLEFTLOTOF);
+        /* mdH_SendMessage(ESCAPE_CURSORLEFTLOTOF); */
 
         CmdH_SendMessage(message);
     }
-    */
+#endif
 
 
 
-    /*
-    // Print DateTime test
+#if 0
+    /* Print DateTime test */
 
     DateTime_t actualDateTime = { { 17, 5, 7 }, { 21, 38, 0 } };
 
-    // Clear button state
+    /* Clear button state */
     BUTTON_Clicked = 0;
     while (!BUTTON_Clicked)
     {
-        // Step 1 second
+        /* Step 1 second */
         DelayMs(1000);
         DateTime_StepOneSecond(&actualDateTime);
 
-        // Send actual DateTime
+        /* Send actual DateTime */
         char message[80];
         DateTime_PrintDateTimeToString(message, &actualDateTime);
 
@@ -917,14 +917,14 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 
         Display_SetClock(&actualDateTime.time);
 
-        // Should display, because this test is blocked mode
+        /* Should display, because this test is blocked mode */
         Display_Activate();
     }
-    */
+#endif
 
 
 
-    // Stack test
+    /* Stack test */
     /*
     static bool stackIsFilled = false;
     if (!stackIsFilled)
@@ -939,11 +939,11 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
      */
 
 
-    // print() test
-    //printf("Example");
+    /* print() test */
+    /* rintf("Example"); */
 
 
-    // Debug test
+    /* Debug test */
     /*
     #include "Debug.h"
     Debug_Printf(Debug_ESP8266, "Formatted %s", "text");
@@ -973,14 +973,14 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
      */
 
 
-    /*
-    // Snake
+#if 0
+    /* Snake */
     #include "Snake.h"
     Snake_Init();
-     */
+#endif
 
 
-    // The 2 solution are equal in code size
+    /* The 2 solution are equal in code size */
     /*
     uint32_t test = 0;
     test |= 1 << 1;
@@ -1003,51 +1003,50 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
     */
 
 
-    //Terminal_TestLoading();
+    /* erminal_TestLoading(); */
 
 
-    // -\_("))_/-
-    //uprintf("-\\_(\"))_/-");
+    /* -\_("))_/- */
+    /* printf("-\\_(\"))_/-"); */
 
 
 
-    // Which use more space?
+    /* Which use more space? */
     //
-    /*
-    // 1,
+#if 0
+    /* 1, */
     DebugUart_SendMessage("message: ");
     DebugUart_SendMessage("1");
-    //    text       data        bss        dec        hex    filename
-    //    48116        232       4784      53132
-    //
-     * */
+    /*    text       data        bss        dec        hex    filename */
+    /*    48116        232       4784      53132 */
+#endif
 
 
-    // 2.
-    //DebugUart_Printf("message: %s", "1");
-    //Print size information
-    //    text       data        bss        dec        hex    filename
-    //    48112        232       4784      53128       cf88    C:\Engineer\Projects\AtollicWorkspace\FastenNodeF0\Debug\FastenNodeF0.elf
-
-
-
-    // Test: 2.
-    // 0.
-    // 48076
-
-    // 1.
-    //DebugUart_SendMessage("message");
-    // 48096 text
-
-    // 2. format string (it will be slower)
-    //DebugUart_Printf("message");
-    // 48096
-
-    // 1. and 2. solution are equal in code size
+    /* 2. */
+    /* ebugUart_Printf("message: %s", "1"); */
+    /* rint size information */
+    /*    text       data        bss        dec        hex    filename */
+    /*    48112        232       4784      53128       cf88    C:\Engineer\Projects\AtollicWorkspace\FastenNodeF0\Debug\FastenNodeF0.elf */
 
 
 
-    // Test dim
+    /* Test: 2. */
+    /* 0. */
+    /* 48076 */
+
+    /* 1. */
+    /* ebugUart_SendMessage("message"); */
+    /* 48096 text */
+
+    /* 2. format string (it will be slower) */
+    /* ebugUart_Printf("message"); */
+    /* 48096 */
+
+    /* 1. and 2. solution are equal in code size */
+
+
+
+    /* Test dim */
     /*
     static bool dimTest = false;
     if (dimTest)
@@ -1059,14 +1058,14 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
     */
 
 
-    // Test Get function
-    //importantValue = 5;
+    /* Test Get function */
+    /* mportantValue = 5; */
     /*
      *    text       data        bss        dec        hex    filename
      *    48892        252       4592      53736       d1e8    C:\Engineer\Projects\AtollicWorkspace\FastenNodeF0\Debug\FastenNodeF0.elf
      */
 
-    //SetImportantValue(5);
+    /* etImportantValue(5); */
     /*
      * text       data        bss        dec        hex    filename
      * 48916        252       4592      53760       d200    C:\Engineer\Projects\AtollicWorkspace\FastenNodeF0\Debug\FastenNodeF0.elf
@@ -1086,7 +1085,7 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
      */
 
 
-    //ColoredMessage_Test();
+    /* oloredMessage_Test(); */
 
 
     /* PlantUML test */
@@ -1117,7 +1116,7 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 
     return CmdH_Result_Ok;
 }
-#endif    // #ifdef CONFIG_TEST_MODE
+#endif    /* #ifdef CONFIG_TEST_MODE */
 
 
 
@@ -1128,10 +1127,10 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
  */
 static CmdH_Result_t CommandFunction_get(uint32_t argc, char** argv)
 {
-    // Suppress warning
+    /* Suppress warning */
     (void)argc;
 
-    // Process
+    /* Process */
     GlobVarH_ProcessResult_t result = GlobVarH_ProcessVariableCommand(
             &GlobVarH_Variables, argv[1], argv[2],
             GlobVarH_SetGet_Get, CommProt_DebugUart);
@@ -1149,10 +1148,10 @@ static CmdH_Result_t CommandFunction_get(uint32_t argc, char** argv)
  */
 static CmdH_Result_t CommandFunction_set(uint32_t argc, char** argv)
 {
-    // Suppress warning
+    /* Suppress warning */
     (void)argc;
 
-    // Process
+    /* Process */
     GlobVarH_ProcessResult_t result = GlobVarH_ProcessVariableCommand(
             &GlobVarH_Variables, argv[1], argv[2],
             GlobVarH_SetGet_Set, CommProt_DebugUart);
@@ -1170,10 +1169,10 @@ static CmdH_Result_t CommandFunction_set(uint32_t argc, char** argv)
  */
 static CmdH_Result_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** argv)
 {
-    // Suppress warning
+    /* Suppress warning */
     (void)argc;
 
-    // Process
+    /* Process */
     GlobVarH_ProcessResult_t result = GlobVarH_ProcessVariableCommand(
             &GlobVarH_Variables, argv[1], argv[2],
             GlobVarH_SetGet_Help, CommProt_DebugUart);
@@ -1190,7 +1189,7 @@ static CmdH_Result_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** ar
  */
 static CmdH_Result_t CommandFunction_GlobalVariableList(uint32_t argc, char** argv)
 {
-    // Suppress warning
+    /* Suppress warning */
     (void)argc;
     (void)argv;
 
@@ -1207,7 +1206,7 @@ static CmdH_Result_t CommandFunction_GlobalVariableList(uint32_t argc, char** ar
 static CmdH_Result_t CommandFunction_GlobalVariableValueList(uint32_t argc,
         char** argv)
 {
-    // Suppress warning
+    /* Suppress warning */
     (void)argc;
     (void)argv;
 
@@ -1227,14 +1226,14 @@ static CmdH_Result_t CommandFunction_GlobalVariableTrace(uint32_t argc,
 {
     CmdH_Result_t result = CmdH_Result_Unknown;
 
-    // Suppress warning
+    /* Suppress warning */
     (void)argc;
 
     uint32_t id;
     if (StringToUnsignedDecimalNum(argv[1], &id))
     {
-        // "trace <id> enable/disable"
-        // Good ID
+        /* "trace <id> enable/disable" */
+        /* Good ID */
         if (!StrCmp("enable", argv[2]))
         {
             GlobVarH_EnableTrace(id, true);
@@ -1250,11 +1249,11 @@ static CmdH_Result_t CommandFunction_GlobalVariableTrace(uint32_t argc,
     }
     else if(!StrCmp("period", argv[1]))
     {
-        // Trace period time setting
+        /* Trace period time setting */
         uint32_t time;
         if (StringToUnsignedDecimalNum(argv[2], &time))
         {
-            // Parameter is good, set Trace task periodic time
+            /* Parameter is good, set Trace task periodic time */
             TaskHandler_SetTaskPeriodicTime(Task_Trace, time);
             result = CmdH_Result_Ok_SendSuccessful;
         }
@@ -1265,8 +1264,8 @@ static CmdH_Result_t CommandFunction_GlobalVariableTrace(uint32_t argc,
     }
     else
     {
-        // trace <varname> enable/disable
-        // First parameter is not "id", maybe "name", try process
+        /* trace <varname> enable/disable */
+        /* First parameter is not "id", maybe "name", try process */
         GlobVarH_ProcessResult_t varResult = GlobVarH_ProcessVariableCommand(
                 &GlobVarH_Variables, argv[1], argv[2], GlobVarH_SetGet_Trace, CommProt_DebugUart);
 
@@ -1279,7 +1278,7 @@ static CmdH_Result_t CommandFunction_GlobalVariableTrace(uint32_t argc,
 }
 #endif
 
-#endif    // #ifdef CONFIG_MODULE_GlobVarHENABLE
+#endif    /* #ifdef CONFIG_MODULE_GlobVarHENABLE */
 
 
 
@@ -1290,25 +1289,25 @@ static CmdH_Result_t CommandFunction_GlobalVariableTrace(uint32_t argc,
  */
 static CmdH_Result_t CommandFunction_dac(uint32_t argc, char** argv)
 {
-    // Suppress warning
+    /* Suppress warning */
     (void)argc;
 
     uint32_t channelNum;
     float voltage = 0.0f;
 
-    // Check 1. argument (channel num)
+    /* Check 1. argument (channel num) */
     if (!StringToUnsignedDecimalNum(argv[1], &channelNum))
     {
         return CmdH_Result_Error_WrongArgument1;
     }
 
-    // Check 2. argument (voltage)
+    /* Check 2. argument (voltage) */
     if (!StringToFloat(argv[2], &voltage))
     {
         return CmdH_Result_Error_WrongArgument2;
     }
 
-    // Set DAC value
+    /* Set DAC value */
     if (CommonDAC_SetValue(channelNum, voltage))
     {
         return CmdH_Result_Ok_SendSuccessful;
@@ -1332,17 +1331,17 @@ static CmdH_Result_t CommandFunction_dac(uint32_t argc, char** argv)
  */
 static CmdH_Result_t CommandFunction_io(uint32_t argc, char** argv)
 {
-    // Suppress warning
+    /* Suppress warning */
     (void)argc;
 
     if (!StrCmp("ioinit", argv[0]))
     {
-        // Init
+        /* Init */
         char port = argv[1][0];
         uint32_t pin;
         if (StringToUnsignedDecimalNum(&argv[1][1], &pin))
         {
-            // TODO: with enum string?
+            /* TODO: with enum string? */
             IO_Type io = IO_UNKNOWN;
             if (!StrCmp("input", argv[2]))
             {
@@ -1373,7 +1372,7 @@ static CmdH_Result_t CommandFunction_io(uint32_t argc, char** argv)
     }
     else if (!StrCmp("ioout", argv[0]))
     {
-        // Output
+        /* Output */
         char port = argv[1][0];
         uint32_t pin;
         if (StringToUnsignedDecimalNum(&argv[1][1], &pin))
@@ -1395,7 +1394,7 @@ static CmdH_Result_t CommandFunction_io(uint32_t argc, char** argv)
             {
                 output = OUTPUT_STATUS;
             }
-            // Set output
+            /* Set output */
             bool status = CommonIO_SetOutput(port,pin,output);
             CmdH_Printf("Output status: %d\r\n", status);
             return CmdH_Result_Ok;
@@ -1407,7 +1406,7 @@ static CmdH_Result_t CommandFunction_io(uint32_t argc, char** argv)
     }
     else if (!StrCmp("ioin", argv[0]))
     {
-        // Input
+        /* Input */
         char port = argv[1][0];
         uint32_t pin;
         if (StringToUnsignedDecimalNum(&argv[1][1], &pin))
@@ -1435,7 +1434,7 @@ static CmdH_Result_t CommandFunction_io(uint32_t argc, char** argv)
  */
 static CmdH_Result_t CommandFunction_adc(uint32_t argc, char** argv)
 {
-    // Suppress warning
+    /* Suppress warning */
     (void)argc;
     (void)argv;
 
@@ -1466,32 +1465,32 @@ static CmdH_Result_t CommandFunction_adcread(uint32_t argc, char** argv)
     uint16_t milliSec = 0;
     CmdH_Result_t result;
 
-    // Check 1. argument
+    /* Check 1. argument */
     if (StringToUnsignedDecimalNum(argv[1], &convertValue))
     {
-        // Received good period value
+        /* Received good period value */
         milliSec = (uint16_t)convertValue;
     }
     else if (!StrCmp("stop", argv[1]))
     {
-        // Stop
+        /* Stop */
         TaskHandler_DisableTask(Task_CommonAdc);
         result = CmdH_Result_Ok_SendSuccessful;
     }
     else
     {
-        // First argument is wrong
+        /* First argument is wrong */
         result = CmdH_Result_Error_WrongArgument1;
     }
 
-    // Check 2. argument
+    /* Check 2. argument */
     if (argc == 3)
     {
         if (StringToUnsignedDecimalNum(argv[2], &convertValue))
         {
             if (convertValue < ADC_CHANNEL_NUM)
             {
-                // Is Ok
+                /* Is Ok */
                 TaskHandler_RequestTaskScheduling(Task_CommonAdc);
                 TaskHandler_SetTaskPeriodicTime(Task_CommonAdc, milliSec);
                 CommonADC_SetPrintNum(convertValue);
@@ -1499,13 +1498,13 @@ static CmdH_Result_t CommandFunction_adcread(uint32_t argc, char** argv)
             }
             else
             {
-                // Wrong ADC num
+                /* Wrong ADC num */
                 result = CmdH_Result_Error_WrongArgument2;
             }
         }
         else
         {
-            // Second argument is wrong
+            /* Second argument is wrong */
             result = CmdH_Result_Error_WrongArgument2;
         }
     }
@@ -1519,7 +1518,7 @@ static CmdH_Result_t CommandFunction_adcread(uint32_t argc, char** argv)
 #ifdef CONFIG_MODULE_COMMON_PWM_ENABLE
 static CmdH_Result_t CommandFunction_PWM(uint32_t argc, char** argv)
 {
-    // Suppress unused args
+    /* Suppress unused args */
     (void)argc;
 
     uint8_t percent;
@@ -1560,7 +1559,7 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
 
     if (!StrCmp("dc", argv[1]))
     {
-        // Set DC motor
+        /* Set DC motor */
         if (StringToSignedDecimalNum(argv[2], &convertValue))
         {
             if ((convertValue <= 100) && (convertValue > -100))
@@ -1585,7 +1584,7 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
     }
     else if (!StrCmp("servo", argv[1]))
     {
-        // Set servo motor
+        /* Set servo motor */
         if (StringToSignedDecimalNum(argv[2], &convertValue))
         {
             if (convertValue <= 90 && convertValue >= -90)
@@ -1614,7 +1613,7 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
     }
     else if (!StrCmp("slide", argv[1]))
     {
-        // Motor Slide (DC and Servo too)
+        /* Motor Slide (DC and Servo too) */
         if (!StrCmp("on", argv[2]))
         {
             MotorTestSlide_Enabled = true;
@@ -1635,11 +1634,11 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
     }
     else
     {
-        // "motor <dc value> <turning value>"
-        // TODO: Merge with commands at above
+        /* "motor <dc value> <turning value>" */
+        /* TODO: Merge with commands at above */
         bool isOk = false;
 
-        // 1. argument: DC
+        /* 1. argument: DC */
         if (StringToSignedDecimalNum(argv[1], &convertValue))
         {
             if (convertValue <= 100 && convertValue > -100)
@@ -1664,7 +1663,7 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
             result = CmdH_Result_Error_WrongArgument2;
         }
 
-        // 2. argument: servo
+        /* 2. argument: servo */
         if (isOk)
         {
             if (StringToSignedDecimalNum(argv[2], &convertValue))
@@ -1690,7 +1689,7 @@ static CmdH_Result_t CommandFunction_Motor(uint32_t argc, char** argv)
                 result = CmdH_Result_Error_WrongArgument2;
             }
         }
-        // else: isOk = false --> not need handle
+        /* else: isOk = false --> not need handle */
 
     }
 
@@ -1708,15 +1707,15 @@ static CmdH_Result_t CommandFunction_ESP8266(uint32_t argc, char** argv)
 
     if (!StrCmp("sendonwifi", argv[1]))
     {
-        // Send message to ESP8266 sending queue, which will send on ESP8266 TCP connection
+        /* Send message to ESP8266 sending queue, which will send on ESP8266 TCP connection */
         size_t msgLength = StringLength(argv[2]);
         ESP8266_RequestSendTcpMessage(argv[2], msgLength);
         result = CmdH_Result_Ok_SendSuccessful;
     }
     else if (!StrCmp("sendtomodule", argv[1]))
     {
-        // Send forward to ESP8266 module last parameter
-        // Send: received string + \r\n
+        /* Send forward to ESP8266 module last parameter */
+        /* Send: received string + \r\n */
         char sendString[50];
         usnprintf(sendString, 50, "%s\r\n", argv[2]);
         ESP8266_SendString(sendString);
@@ -1726,13 +1725,13 @@ static CmdH_Result_t CommandFunction_ESP8266(uint32_t argc, char** argv)
     {
         if (!StrCmp("wifi", argv[2]))
         {
-            // WiFi Reconnect
+            /* WiFi Reconnect */
             ESP8266_RequiredNewState(ESP8266_AdjustableState_ReconnectWifi);
             result = CmdH_Result_Ok_SendSuccessful;
         }
         else if (!StrCmp("tcp", argv[2]))
         {
-            // TCP Reconnect
+            /* TCP Reconnect */
             ESP8266_RequiredNewState(ESP8266_AdjustableState_ReconnectTCP);
             result = CmdH_Result_Ok_SendSuccessful;
         }
@@ -1743,7 +1742,7 @@ static CmdH_Result_t CommandFunction_ESP8266(uint32_t argc, char** argv)
     }
     else if (!StrCmp("ip", argv[1]))
     {
-        // Print ESP8266 IP addresses
+        /* Print ESP8266 IP addresses */
         char ipBuffer[80];
         ESP8266_PrintIpAddress(ipBuffer);
         CmdH_SendLine(ipBuffer);
@@ -1751,7 +1750,7 @@ static CmdH_Result_t CommandFunction_ESP8266(uint32_t argc, char** argv)
     }
     else
     {
-        // Wrong 1. parameter
+        /* Wrong 1. parameter */
         result = CmdH_Result_Error_WrongArgument1;
     }
 
@@ -1768,11 +1767,11 @@ static CmdH_Result_t CommandFunction_Time(uint32_t argc, char** argv)
 
     if (!StrCmp("setdate", argv[1]) && argc == 3)
     {
-        // Set date
+        /* Set date */
         Date_t date;
         if (DateTime_ConvertDateStringToDate(argv[2], &date))
         {
-            // Successful convert, set
+            /* Successful convert, set */
             SysTime_SetDate(&date);
             result = CmdH_Result_Ok_SendSuccessful;
         }
@@ -1783,11 +1782,11 @@ static CmdH_Result_t CommandFunction_Time(uint32_t argc, char** argv)
     }
     else if (!StrCmp("settime", argv[1]) && argc == 3)
     {
-        // Set time
+        /* Set time */
         Time_t time;
         if (DateTime_ConvertTimeStringToTime(argv[2], &time))
         {
-            // Successful convert, set
+            /* Successful convert, set */
             SysTime_SetTime(&time);
             result = CmdH_Result_Ok_SendSuccessful;
         }
@@ -1823,7 +1822,7 @@ static CmdH_Result_t CommandFunction_EventLog(uint32_t argc, char** argv)
     (void)argc;
     (void)argv;
 
-    // List all event logs
+    /* List all event logs */
     EventLog_PrintLogTable();
 
     return CmdH_Result_Ok;
@@ -1841,7 +1840,7 @@ static CmdH_Result_t CommandFunction_adc(uint32_t argc, char** argv)
     (void)argc;
     (void)argv;
 
-    // Print ADC values
+    /* Print ADC values */
     ADC_PrintAllValues();
 
     return CmdH_Result_Ok;
@@ -1859,7 +1858,7 @@ static CmdH_Result_t CommandFunction_flashdel(uint32_t argc, char** argv)
 {
     uint32_t Arg2Num;
 
-    // Convert arg2 hex
+    /* Convert arg2 hex */
     if (!StringHexToNum(argv[1], &Arg2Num))
     {
         return CmdH_Result_Error_WrongArgument1;
@@ -1897,7 +1896,7 @@ static CmdH_Result_t CommandFunction_flashread(uint32_t argc, char** argv)
 
     uint32_t Arg2Num;
 
-    // Convert arg2 hex
+    /* Convert arg2 hex */
     if (!StringHexToNum(argv[1], &Arg2Num))
     {
         return CmdH_Result_Error_WrongArgument1;
@@ -1927,13 +1926,13 @@ static CmdH_Result_t CommandFunction_flashwrite(uint32_t argc, char** argv)
 {
     uint32_t Arg2Num;
 
-    // Convert arg2 hex
+    /* Convert arg2 hex */
     if (!StringHexToNum(argv[1], &Arg2Num))
     {
         return CmdH_Result_Error_WrongArgument1;
     }
 
-    // Convert arg3, decimal
+    /* Convert arg3, decimal */
     if (!StringToUnsignedDecimalNum(argv[2], &Arg3Num))
     {
         return CmdH_Result_Error_WrongArgument2;
@@ -1954,7 +1953,7 @@ static CmdH_Result_t CommandFunction_flashwrite(uint32_t argc, char** argv)
 
     return CmdH_Result_Ok;
 }
-#endif    // #ifdef CONFIG_MODULE_FLASH_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_FLASH_ENABLE */
 
 
 
@@ -1966,10 +1965,10 @@ static CmdH_Result_t CommandFunction_raspberrypi(uint32_t argc, char** argv)
 {
     (void)argc;
 
-    // Check arg 2
+    /* Check arg 2 */
     if (!StrCmp("setout", argv[1]))
     {
-        // setout
+        /* setout */
         /*
         HomeAutMessage_CreateAndSendHomeAutMessage(
             0,255,
@@ -1977,7 +1976,7 @@ static CmdH_Result_t CommandFunction_raspberrypi(uint32_t argc, char** argv)
             Arg3Num, 1);
         */
 
-        // Convert arg3, decimal
+        /* Convert arg3, decimal */
         uint32_t value;
         if (!StringToUnsignedDecimalNum(argv[2], &value))
         {
@@ -1999,7 +1998,7 @@ static CmdH_Result_t CommandFunction_raspberrypi(uint32_t argc, char** argv)
     }
     else
     {
-        // Wrong command - not "setout"
+        /* Wrong command - not "setout" */
         return CmdH_Result_Error_WrongArgument1;
     }
 }
@@ -2025,23 +2024,23 @@ static CmdH_Result_t CommandFunction_mr(uint32_t argc, char** argv)
     uint32_t Arg2Num;
     uint32_t Arg3Num;
 
-    // Convert arg2, source to hex
+    /* Convert arg2, source to hex */
     if (!StringHexToNum(argv[1], &Arg2Num))
     {
         return CmdH_Result_Error_WrongArgument1;
     }
-    // Convert arg3, size to dec
+    /* Convert arg3, size to dec */
     if (!StringToUnsignedDecimalNum(argv[2], &Arg3Num))
     {
         return CmdH_Result_Error_WrongArgument2;
     }
 
-    // casting for valid numbers
+    /* casting for valid numbers */
     source = (uint32_t *)Arg2Num;
     size = (int16_t)Arg3Num;
-    // <size> max 256
+    /* <size> max 256 */
 
-    // \Note:    Address not checked
+    /* \Note:    Address not checked */
 
     CmdH_Printf("Source: 0x%X\r\n"
                             "Size: %d\r\n",
@@ -2051,7 +2050,7 @@ static CmdH_Result_t CommandFunction_mr(uint32_t argc, char** argv)
     {
         if (!(i % 4))
         {
-            // 0., 4., ...
+            /* 0., 4., ... */
             CmdH_Printf("\r\n 0x%X:", (uint32_t)&source[i]);
         }
         CmdH_Printf(" %02X", source[i]);
@@ -2079,12 +2078,12 @@ static CmdH_Result_t CommandFunction_mw(uint32_t argc, char** argv)
     uint32_t Arg2Num;
     uint32_t Arg3Num;
 
-    // Convert hex
+    /* Convert hex */
     if (!StringHexToNum(argv[1], &Arg2Num))
     {
         return CmdH_Result_Error_WrongArgument1;
     }
-    // Convert hex
+    /* Convert hex */
     if (!StringHexToNum(argv[2], &Arg3Num))
     {
         return CmdH_Result_Error_WrongArgument2;
@@ -2134,7 +2133,7 @@ static CmdH_Result_t CommandFunction_go(uint32_t argc, char** argv)
     uint32_t Arg2Num;
 
 
-    // Convert hex
+    /* Convert hex */
     if (!StringHexToNum(argv[1], &Arg2Num))
     {
         return CmdH_Result_Error_WrongArgument1;
@@ -2143,13 +2142,13 @@ static CmdH_Result_t CommandFunction_go(uint32_t argc, char** argv)
     destination = Arg2Num;
     CmdH_Printf("Go destination: 0x%X\r\n", destination);
 
-    fpntr = (int (*)(void))destination;        // casting
+    fpntr = (int (*)(void))destination;        /* casting */
     fpntr();
 
-    // Now, for example: "go 20000151"
+    /* Now, for example: "go 20000151" */
 
-    // We can use the "jump" ASM instruction, but not a good idea
-    // Programming manual page 92, B instruction
+    /* We can use the "jump" ASM instruction, but not a good idea */
+    /* Programming manual page 92, B instruction */
 
     return CmdH_Result_Ok;
 }
@@ -2172,11 +2171,11 @@ static CmdH_Result_t CommandFunction_Display(uint32_t argc, char** argv)
         char *separated[2];
         if (STRING_Splitter(argv[2], ",", separated, 2))
         {
-            // Check line parameter
+            /* Check line parameter */
             uint32_t line;
             if (StringToUnsignedDecimalNum(separated[0], &line))
             {
-                // Print line
+                /* Print line */
                 Display_PrintString(separated[1], line, Font_8x5, NO_FORMAT);
                 Display_Activate();
                 result = CmdH_Result_Ok_SendSuccessful;
@@ -2193,7 +2192,7 @@ static CmdH_Result_t CommandFunction_Display(uint32_t argc, char** argv)
     }
     else if (!StrCmp("clear", argv[1]))
     {
-        // Clear
+        /* Clear */
         Display_Clear();
         Display_Activate();
         result = CmdH_Result_Ok_SendSuccessful;
@@ -2202,7 +2201,7 @@ static CmdH_Result_t CommandFunction_Display(uint32_t argc, char** argv)
     #ifdef CONFIG_DISPLAY_FONT8X5_ENABLE
     else if (!StrCmp("test1", argv[1]))
     {
-        // Test font - 8x5
+        /* Test font - 8x5 */
         Display_Test8x5Font();
         result = CmdH_Result_Ok_SendSuccessful;
     }
@@ -2210,7 +2209,7 @@ static CmdH_Result_t CommandFunction_Display(uint32_t argc, char** argv)
     #ifdef CONFIG_DISPLAY_FONT12X8_ENABLE
     else if (!StrCmp("test2", argv[1]))
     {
-        // Test font - 12x8
+        /* Test font - 12x8 */
         Display_Test12x8Font();
         result = CmdH_Result_Ok_SendSuccessful;
     }
@@ -2218,16 +2217,16 @@ static CmdH_Result_t CommandFunction_Display(uint32_t argc, char** argv)
     #ifdef CONFIG_DISPLAY_FONT32X20_ENABLE
     else if  (!StrCmp("test3", argv[1]))
     {
-        // Test font - 32x20
+        /* Test font - 32x20 */
         Display_Test32x20Font();
         result = CmdH_Result_Ok_SendSuccessful;
     }
     #endif
-#endif    // #ifdef CONFIG_MODULE_DISPLAY_TEST
+#endif    /* #ifdef CONFIG_MODULE_DISPLAY_TEST */
 #ifdef CONFIG_MODULE_DISPLAY_TEST_WITH_TERMINAL
     else if (!StrCmp("debugprint", argv[1]))
     {
-        // Debugprint Display
+        /* Debugprint Display */
         Display_SendOnTerminal();
         result = CmdH_Result_Ok_SendSuccessful;
     }
@@ -2265,7 +2264,7 @@ static CmdH_Result_t CommandFunction_IO(uint32_t argc, char** argv)
         }
 #endif
 
-        // TODO: Delete, if not need
+        /* TODO: Delete, if not need */
         /*
         CmdH_SendLine("Output states:");
         for (i = 0; i < IO_Output_Count; i++)
@@ -2292,12 +2291,12 @@ static CmdH_Result_t CommandFunction_IO(uint32_t argc, char** argv)
          *                led status
          */
 
-        // Convert arg2, decimal
+        /* Convert arg2, decimal */
         bool isFirstParamNum = false;
         uint32_t Arg2Num;
         bool isGetStatus = false;
 
-        // Check 1. argument
+        /* Check 1. argument */
         if (StringToUnsignedDecimalNum(argv[1], &Arg2Num))
         {
             isFirstParamNum = true;
@@ -2308,7 +2307,7 @@ static CmdH_Result_t CommandFunction_IO(uint32_t argc, char** argv)
         }
         else
         {
-            // Not number, check it is color?
+            /* Not number, check it is color? */
             uint8_t ledNum = IO_Output_GetOutputNumFromName(argv[1]);
             if (ledNum != 0)
             {
@@ -2317,44 +2316,44 @@ static CmdH_Result_t CommandFunction_IO(uint32_t argc, char** argv)
             }
         }
 
-        // Continue
+        /* Continue */
         if (isGetStatus)
         {
-            // "status"
-            // Print IOs statuses
+            /* "status" */
+            /* Print IOs statuses */
             char outStateString[IO_OUPUT_STATES_STRING_MAX_LENGTH];
             IO_Output_PrintStates(outStateString);
             CmdH_SendLine(outStateString);
 
-            // TODO: Print input statuses
+            /* TODO: Print input statuses */
             result = CmdH_Result_Ok;
         }
         else if (isFirstParamNum == true)
         {
-            // 1. param = num (IO num)
+            /* 1. param = num (IO num) */
 
-            // Check parameters
+            /* Check parameters */
             if (Arg2Num >= IO_Output_Count)
             {
-                // First argument is wrong number
+                /* First argument is wrong number */
                 result = CmdH_Result_Error_WrongArgument1;
             }
             else
             {
-                // Good count
-                // Get type "set type"
+                /* Good count */
+                /* Get type "set type" */
                 IO_Output_Cmd_t setType = IO_Output_GetTypeFromString(argv[2]);
                 IO_Output_Name_t ioNum = Arg2Num;
                 IO_Status_t status = false;
 
                 if (setType == IO_Output_Cmd_DontCare)
                 {
-                    // Error, do nothing
+                    /* Error, do nothing */
                     result = CmdH_Result_Error_WrongArgument2;
                 }
                 else
                 {
-                    // Set IO
+                    /* Set IO */
                     status = IO_Output_SetStatus(ioNum, setType);
                     CmdH_Printf("IO %d. (name: %s) status: %s\r\n", ioNum, IO_Output_GetName(ioNum), IO_GetStatusName(status));
                     result = CmdH_Result_Ok;
@@ -2363,7 +2362,7 @@ static CmdH_Result_t CommandFunction_IO(uint32_t argc, char** argv)
         }
         else
         {
-            // First param is not status and not LED num
+            /* First param is not status and not LED num */
             result = CmdH_Result_Error_WrongArgument1;
         }
     }
@@ -2397,19 +2396,19 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
         }
         else
         {
-            // Error
+            /* Error */
             CmdH_SendLine("Simulation is not enabled! Type \"simulation enable\" command first!");
-            result = CmdH_Result_Ok;    // Not ok, but do not send other error message
+            result = CmdH_Result_Ok;    /* Not ok, but do not send other error message */
         }
     }
     else
     {
 #ifdef CONFIG_MODULE_SELFTEST_ERRORS_ENABLE
-        // Enabled simulation
+        /* Enabled simulation */
         if (!StrCmp("infloop", argv[1]))
         {
-            // @note    Be careful!!!!
-            // Infinite loop test for WatchDog test
+            /* @note    Be careful!!!! */
+            /* Infinite loop test for WatchDog test */
             while(1);
             result = CmdH_Result_Ok_SendSuccessful;
         }
@@ -2449,8 +2448,8 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 #ifdef CONFIG_SWO_ENABLE
         if (!StrCmp("SWO", argv[1]))
         {
-            // Test SWO
-            //COMMUNICATION_SendMessage(CommProt_SWO, "Test message on SWO\n");
+            /* Test SWO */
+            /* OMMUNICATION_SendMessage(CommProt_SWO, "Test message on SWO\n"); */
             SWO_SendMessage("Test message on SWO\n");
         }
 #endif
@@ -2486,7 +2485,7 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
         else if (!StrCmp("buttonpress", argv[1]))
         {
-            // Button press simulation
+            /* Button press simulation */
             if (argc == 3)
             {
                 bool isOk = true;
@@ -2515,10 +2514,10 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 #ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
         else if (!StrCmp("event", argv[1]))
         {
-            // Generate an event
+            /* Generate an event */
             if (StringIsUnsignedDecimalString(argv[2]))
             {
-                // Event "number"
+                /* Event "number" */
                 uint32_t value;
                 if (StringToUnsignedDecimalNum(argv[2], &value))
                 {
@@ -2532,7 +2531,7 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
             }
             else
             {
-                // Not number, search string in event list
+                /* Not number, search string in event list */
                 EventId_t i;
                 bool isOk = false;
 
@@ -2540,7 +2539,7 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
                 {
                     if (!StrCmp(EventList[i].name, argv[2]))
                     {
-                        // Equal
+                        /* Equal */
                         EventHandler_GenerateEvent(i, 0, 0);
                         isOk = true;
                         break;
@@ -2578,14 +2577,14 @@ static CmdH_Result_t CommandFunction_TaskHandler(uint32_t argc, char** argv)
     #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
     if (!StrCmp("statistics", argv[1]))
     {
-        // TaskHandler statistics
+        /* TaskHandler statistics */
         TaskHandler_PrintStatistics();
 
         result = CmdH_Result_Ok;
     }
     else if (!StrCmp("runcounts", argv[1]))
     {
-        // TaskHandler - Run counts
+        /* TaskHandler - Run counts */
         TaskHandler_PrintTaskRunCounts();
 
         result = CmdH_Result_Ok;
@@ -2611,7 +2610,7 @@ static CmdH_Result_t CommandFunction_Debug(uint32_t argc, char** argv)
 
     if (argc == 1)
     {
-        // Debug list
+        /* Debug list */
         Debug_PrintDebugList();
         result = CmdH_Result_Ok;
     }
@@ -2623,32 +2622,32 @@ static CmdH_Result_t CommandFunction_Debug(uint32_t argc, char** argv)
 
         if (!StrCmp("enable", argv[2]))
         {
-            // Enable
+            /* Enable */
             enable = true;
             isOk = true;
         }
         else if (!StrCmp("disable", argv[2]))
         {
-            // Disable
+            /* Disable */
             enable = false;
             isOk = true;
         }
         else
         {
-            // Wrong 2. parameter
+            /* Wrong 2. parameter */
             isOk = false;
             result = CmdH_Result_Error_WrongArgument2;
         }
 
         if (isOk)
         {
-            // Check 1. parameter
+            /* Check 1. parameter */
             if (StringToUnsignedDecimalNum(argv[1], &value))
             {
-                // 1. parameter is number
+                /* 1. parameter is number */
                 if (Debug_SetEnable((Debug_t)value, enable))
                 {
-                    // Successful
+                    /* Successful */
                     result = CmdH_Result_Ok_SendSuccessful;
                 }
                 else
@@ -2658,7 +2657,7 @@ static CmdH_Result_t CommandFunction_Debug(uint32_t argc, char** argv)
             }
             else
             {
-                // Find in "list"
+                /* Find in "list" */
                 if (Debug_SetDebugTaskWithName(argv[1], enable))
                 {
                     result = CmdH_Result_Ok_SendSuccessful;
@@ -2669,7 +2668,7 @@ static CmdH_Result_t CommandFunction_Debug(uint32_t argc, char** argv)
                 }
             }
         }
-        //else: Handled in "enable" / "disable" case
+        /* lse: Handled in "enable" / "disable" case */
     }
 
     return result;
@@ -2687,7 +2686,7 @@ static CmdH_Result_t CommandFunction_Button(uint32_t argc, char** argv)
 #if BUTTON_NUM > 1
     uint8_t i;
 
-    // Print all button state
+    /* Print all button state */
     for (i = 0; i < BUTTON_NUM; i++)
     {
         bool buttonState = BUTTON_GetButtonState(i);
@@ -2696,7 +2695,7 @@ static CmdH_Result_t CommandFunction_Button(uint32_t argc, char** argv)
         CmdH_Printf("Button: %s is %s\r\n", buttonName, buttonState ? "pressed" : "released");
     }
 #else
-    // Print one button state
+    /* Print one button state */
     bool buttonState = BUTTON_GetButtonState(0);
     const char * buttonName = BUTTON_GetButtonName(0);
     CmdH_Printf("Button: %s is %s\r\n", buttonName, buttonState ? "pressed" : "released");
@@ -2713,12 +2712,12 @@ static CmdH_Result_t CommandFunction_PeriodicalSending(uint32_t argc, char** arg
 {
     CmdH_Result_t result = CmdH_Result_Unknown;
 
-    // TODO: Or GlobalVarHandler? enable flag, period, message
+    /* TODO: Or GlobalVarHandler? enable flag, period, message */
     Logic_SetPeriodicalMessageSendg(argv[1]);
 
     if (argc == 3)
     {
-        // Has period parameter
+        /* Has period parameter */
         uint32_t value;
         if (StringToUnsignedDecimalNum(argv[2], &value))
         {
