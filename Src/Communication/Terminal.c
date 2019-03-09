@@ -960,6 +960,7 @@ void Terminal_SendWelcome(void)
 #endif
 
 #ifdef CONFIG_MODULE_RESETREASON_ENABLE
+    // TODO: Not a good idea to hardcode here the reset reason string size
     char rstReasonStr[100];
     Reset_PrintResetReasons(rstReasonStr);
     Terminal_SendLine(rstReasonStr);

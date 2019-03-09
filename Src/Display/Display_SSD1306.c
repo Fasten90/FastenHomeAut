@@ -45,7 +45,7 @@ static SPI_HandleTypeDef SpiHandle;
 static bool Display_TransferInProgress = false;
 
 ///< Actual image (screen buffer)
-static uint8_t buffer[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] = { 0 };
+static uint8_t display_buffer[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] = { 0 };
 
 #ifdef CONFIG_DISPLAY_SPI_USE_DMA
 static DMA_HandleTypeDef hdma_tx;
@@ -372,13 +372,13 @@ void SSD1306_drawPixel(uint8_t x, uint8_t y, Display_Color_t color)
     switch (color)
     {
         case WHITE:
-            buffer[x + (y / 8) * SSD1306_LCDWIDTH] |= (1 << (y & 7));
+            display_buffer[x + (y / 8) * SSD1306_LCDWIDTH] |= (1 << (y & 7));
             break;
         case BLACK:
-            buffer[x + (y / 8) * SSD1306_LCDWIDTH] &= ~(1 << (y & 7));
+            display_buffer[x + (y / 8) * SSD1306_LCDWIDTH] &= ~(1 << (y & 7));
             break;
         case INVERSE:
-            buffer[x + (y / 8) * SSD1306_LCDWIDTH] ^= (1 << (y & 7));
+            display_buffer[x + (y / 8) * SSD1306_LCDWIDTH] ^= (1 << (y & 7));
             break;
         default:
             break;
@@ -392,7 +392,7 @@ void SSD1306_drawPixel(uint8_t x, uint8_t y, Display_Color_t color)
 void SSD1306_drawFixVerticalLine(int16_t x, int16_t y, uint8_t row)
 {
     // TODO: Check parameters
-    buffer[x + (y / 8) * SSD1306_LCDWIDTH] = row;
+    display_buffer[x + (y / 8) * SSD1306_LCDWIDTH] = row;
 }
 #endif
 
@@ -414,7 +414,7 @@ void SSD1306_drawImage(uint8_t setx, uint8_t sety, uint8_t sizex, uint8_t sizey,
         for (j = 0; j < sizey/8; j++)
         {
             // Copy an byte
-            buffer[sety/8*SSD1306_LCDWIDTH + setx + i + j*SSD1306_LCDWIDTH] =
+            display_buffer[sety/8*SSD1306_LCDWIDTH + setx + i + j*SSD1306_LCDWIDTH] =
                     img[j*sizex + i];
         }
     }
@@ -601,10 +601,10 @@ void SSD1306_display(void)
 
     
 #ifdef CONFIG_DISPLAY_SPI_USE_DMA
-    HAL_SPI_Transmit_DMA(&SpiHandle, buffer, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8));
+    HAL_SPI_Transmit_DMA(&SpiHandle, display_buffer, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8));
 #else
     // TODO: This Sending need 20ms, optimize!! (HAL_SPI_Transmit_IT)
-    HAL_SPI_Transmit_IT(&SpiHandle, buffer, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8));
+    HAL_SPI_Transmit_IT(&SpiHandle, display_buffer, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8));
 #endif
 
 #ifdef CONFIG_EVENTLOG_DISPLAY_LOG_ENABLE
@@ -623,7 +623,7 @@ void SSD1306_display(void)
  */
 void SSD1306_clearDisplay(void)
 {
-    memset(buffer, 0, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8));
+    memset(display_buffer, 0, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8));
 }
 
 
@@ -705,7 +705,7 @@ void SSD1306_drawFastHLineInternal(int16_t x, int16_t y, int16_t w,
     }
 
     // set up the pointer for  movement through the buffer
-    register uint8_t *pBuf = buffer;
+    register uint8_t *pBuf = display_buffer;
     // adjust the buffer pointer for the current row
     pBuf += ((y / 8) * SSD1306_LCDWIDTH);
     // and offset x columns in
@@ -825,7 +825,7 @@ void SSD1306_drawFastVLineInternal(int16_t x, int16_t __y, int16_t __h,
     register uint8_t h = __h;
 
     // set up the pointer for fast movement through the buffer
-    register uint8_t *pBuf = buffer;
+    register uint8_t *pBuf = display_buffer;
     // adjust the buffer pointer for the current row
     pBuf += ((y / 8) * SSD1306_LCDWIDTH);
     // and offset x columns in
@@ -1036,7 +1036,7 @@ void Display_SendOnTerminal(void)
         {
             // Print pixel
             char ch = ' ';
-            if (buffer[x + (y / 8) * SSD1306_LCDWIDTH] & (1 << (y & 7)))
+            if (display_buffer[x + (y / 8) * SSD1306_LCDWIDTH] & (1 << (y & 7)))
             {
                 ch = '#';
             }
