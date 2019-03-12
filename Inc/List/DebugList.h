@@ -57,7 +57,7 @@ typedef enum
      * @note    Do not forget synchronize with DebugTasks
      */
 
-    // Do not use, it used for enum count
+    /* Do not use, it used for enum count */
     Debug_Count
 } Debug_t;
 

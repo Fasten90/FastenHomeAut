@@ -81,7 +81,7 @@ void ADC_Init(void)
 
     ADC_ChannelConfTypeDef   sConfig;
 
-    //HAL_ADC_MspInit(&AdcHandle);    // Called by HAL driver
+    /* AL_ADC_MspInit(&AdcHandle);    // Called by HAL driver */
 
     /* Configuration of AdcHandle init structure: ADC parameters and regular group */
     AdcHandle.Instance = ADCx;
@@ -92,7 +92,7 @@ void ADC_Init(void)
     AdcHandle.Init.ContinuousConvMode    = ENABLE;                            /* Continuous mode disabled to have only 1 rank converted at each conversion trig, and because discontinuous mode is enabled */
     AdcHandle.Init.DiscontinuousConvMode = DISABLE;                            /* Sequencer of regular group will convert the sequence in several sub-divided sequences */
     AdcHandle.Init.ExternalTrigConvEdge  = ADC_EXTERNALTRIGCONVEDGE_NONE;
-    //AdcHandle.Init.ExternalTrigConv      = ADC_EXTERNALTRIGCONV;        /* Trig of conversion start done manually by software, without external event */
+    /* dcHandle.Init.ExternalTrigConv      = ADC_EXTERNALTRIGCONV; */        /* Trig of conversion start done manually by software, without external event */
     AdcHandle.Init.DataAlign             = ADC_DATAALIGN_RIGHT;
     AdcHandle.Init.DMAContinuousRequests = ENABLE;                            /* ADC-DMA continuous requests to match with DMA configured in circular mode */
     AdcHandle.Init.EOCSelection          = DISABLE;
@@ -114,7 +114,7 @@ void ADC_Init(void)
     /*       than 4us. Refer to device datasheet for min/typ/max values.        */
     sConfig.Channel      = ADC_VSOURCE_CHANNEL;
     sConfig.Rank         = 1;
-    sConfig.SamplingTime = ADC_SAMPLETIME_239CYCLES_5;    // TODO: Make define for sampling times
+    sConfig.SamplingTime = ADC_SAMPLETIME_239CYCLES_5;    /* TODO: Make define for sampling times */
 
     if (HAL_ADC_ConfigChannel(&AdcHandle, &sConfig) != HAL_OK)
     {
@@ -233,8 +233,8 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
  */
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
-    // Suppress warning
-    (void)hadc;
+    /* Suppress warning */
+    UNUSED_ARGUMENT(hadc);
 
 #ifdef CONFIG_DEBUG_SELFTEST
     ADC_RunCnt++;
@@ -248,7 +248,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
  */
 void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
 {
-    (void)hadc;
+    UNUSED_ARGUMENT(hadc);
 }
 
 
@@ -258,7 +258,7 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
  */
 void HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
 {
-    (void)hadc;
+    UNUSED_ARGUMENT(hadc);
     DEBUG_BREAKPOINT();
 }
 
@@ -269,7 +269,7 @@ void HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
  */
 void ADC_ConvertAllMeasuredValues(void)
 {
-    // TODO: We can convert in a loop, but some ADC not work in standard measuring
+    /* TODO: We can convert in a loop, but some ADC not work in standard measuring */
     uint8_t i;
 
     for (i = 0; i < ADC_CHANNEL_NUM; i++)
@@ -277,18 +277,18 @@ void ADC_ConvertAllMeasuredValues(void)
         switch ((ADC_MeasurementData_t)i)
         {
             case ADC_Vsource:
-                // Convert source voltage
+                /* Convert source voltage */
                 ADC_ConvertedValues[i] = ADC_ConvertToSourceVoltage(ADC_MeasuredValues[i]);
                 break;
 
             case ADC_StandardVoltageExample:
-                // Convert standard
+                /* Convert standard */
                 ADC_ConvertedValues[i] = ADC_ConvertToVoltage(ADC_MeasuredValues[i]);
                 break;
 
             case ADC_Count:
             default:
-                // Error
+                /* Error */
                 break;
         }
     }

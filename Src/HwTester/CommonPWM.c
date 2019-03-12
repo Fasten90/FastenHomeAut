@@ -61,21 +61,21 @@ void CommonPWM_Init(void)
     uint32_t Pulse = 0;
 
 
-    // Now this HAL_TIM_PWM_MspInit clone not called by HAL
+    /* Now this HAL_TIM_PWM_MspInit clone not called by HAL */
     CommonPWM_HAL_TIM_PWM_MspInit(NULL);
 
 
     /* Compute the prescaler value to have TIM3 counter clock equal to 16000000 Hz */
-    //uhPrescalerValue = (uint32_t)(SystemCoreClock / 16000000) - 1;
+    /* hPrescalerValue = (uint32_t)(SystemCoreClock / 16000000) - 1; */
     PrescalerValue = (uint32_t)(SystemCoreClock / COMMONPWM_PRESCALER_VALUE) - 1;
 
     Period = COMMONPWM_TIMER_PERIOD_VALUE;
-    Pulse = 0;    // Because we want 0%...  Old version: Period * percent / 100;
+    Pulse = 0;    /* Because we want 0%...  Old version: Period * percent / 100; */
 
 
     /*##-1- Configure the TIM peripheral #######################################*/
 
-    // PWM1
+    /* PWM1 */
 
     CommonPWM_Timer_Handle.Instance = COMMONPWM_TIMx;
 
@@ -94,11 +94,11 @@ void CommonPWM_Init(void)
     /*##-2- Configure the PWM channels #########################################*/
     /* Common configuration for all channels */
     sConfig.OCMode       = TIM_OCMODE_PWM1;
-    sConfig.OCPolarity   = TIM_OCNPOLARITY_LOW;        // TIM_OCPOLARITY_HIGH
+    sConfig.OCPolarity   = TIM_OCNPOLARITY_LOW;        /* TIM_OCPOLARITY_HIGH */
     sConfig.OCFastMode   = TIM_OCFAST_DISABLE;
-    sConfig.OCIdleState  = TIM_OCIDLESTATE_RESET;        // TIM_OCIDLESTATE_RESET
-    //sConfig.OCNPolarity  = TIM_OCNPOLARITY_HIGH;        // TIM_OCNPOLARITY_HIGH
-    //sConfig.OCNIdleState = TIM_OCNIDLESTATE_RESET;    // TIM_OCNIDLESTATE_RESET
+    sConfig.OCIdleState  = TIM_OCIDLESTATE_RESET;        /* TIM_OCIDLESTATE_RESET */
+    /* Config.OCNPolarity  = TIM_OCNPOLARITY_HIGH;        // TIM_OCNPOLARITY_HIGH */
+    /* Config.OCNIdleState = TIM_OCNIDLESTATE_RESET;    // TIM_OCNIDLESTATE_RESET */
 
     /* Set the pulse value for channel 1 */
     sConfig.Pulse = Pulse;
@@ -126,22 +126,22 @@ void CommonPWM_Init(void)
  */
 static void CommonPWM_HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 {
-    (void)htim;
+    UNUSED_ARGUMENT(htim);
 
 
     GPIO_InitTypeDef GPIO_InitStruct;
 
 
-    //##-1- Enable peripherals and GPIO Clocks #################################
-    // TIMx Peripheral clock enable
+    /* #-1- Enable peripherals and GPIO Clocks ################################# */
+    /* TIMx Peripheral clock enable */
     COMMONPWM_TIMER_CLK_ENABLES();
 
-    // Enable GPIO Channels Clock
+    /* Enable GPIO Channels Clock */
     COMMONPWM_TIMER_GPIO_CLK_ENABLES();
 
 
-    // PWM1
-    // Configure GPIO pin
+    /* PWM1 */
+    /* Configure GPIO pin */
     GPIO_InitStruct.Pin = COMMONPWM_PIN1_GPIO_PIN;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
@@ -165,7 +165,7 @@ void CommonPWM_ChangePercent(uint8_t percent)
     TIM_OC_InitTypeDef sConfig;
 
 
-    uint32_t Pulse = COMMONPWM_TIMER_PERIOD_VALUE * percent / 100;    // % percent calculate
+    uint32_t Pulse = COMMONPWM_TIMER_PERIOD_VALUE * percent / 100;    /* % percent calculate */
 
 
     /*##-2- Configure the PWM channels #########################################*/
@@ -180,7 +180,7 @@ void CommonPWM_ChangePercent(uint8_t percent)
     /* Set the pulse value for channel 1 */
     sConfig.Pulse = Pulse;
 
-    // Config ...
+    /* Config ... */
     if (HAL_TIM_PWM_ConfigChannel(TimHandle, &sConfig, timerChannel) != HAL_OK)
     {
         /* Configuration Error */
@@ -188,7 +188,7 @@ void CommonPWM_ChangePercent(uint8_t percent)
     }
 
 
-    // Need start...
+    /* Need start... */
     if (HAL_TIM_PWM_Start(TimHandle, timerChannel) != HAL_OK)
     {
         /* PWM Generation Error */
@@ -197,4 +197,4 @@ void CommonPWM_ChangePercent(uint8_t percent)
 
 }
 
-#endif    // #ifdef CONFIG_MODULE_COMMON_PWM_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_COMMON_PWM_ENABLE */

@@ -74,11 +74,11 @@
  */
 void CircularBuffer_Init(CircularBufferInfo_t *circBuff)
 {
-    // Check buffer parameters
+    /* Check buffer parameters */
     ASSERT(circBuff->buffer != NULL);
     ASSERT(circBuff->size > 0);
     ASSERT(circBuff->name != NULL);
-    // TODO: Check: buffer is in RAM?
+    /* TODO: Check: buffer is in RAM? */
 
     memset(circBuff->buffer, 0, circBuff->size);
 
@@ -118,7 +118,7 @@ bool CircularBuffer_IsFull(CircularBufferInfo_t *circBuff)
     }
     else
     {
-        // readCnt = 0
+        /* readCnt = 0 */
         if (circBuff->writeCnt == (circBuff->size - 1))
         {
             isFull = true;
@@ -138,7 +138,7 @@ void CircularBuffer_Clear(CircularBufferInfo_t *circBuff)
     circBuff->readCnt = circBuff->writeCnt;
 
 #if (CIRCULARBUFFER_DROP_WITH_CLEAR == 1)
-    // Clear buffer
+    /* Clear buffer */
     memset(circBuff->buffer, 0, circBuff->size);
 #endif
 }
@@ -181,22 +181,22 @@ uint16_t CircularBuffer_GetString(CircularBufferInfo_t *circBuff, char *message,
 {
     uint16_t i = 0;
 
-    // Check parameters
+    /* Check parameters */
     if ((circBuff == NULL) || (message == NULL) || (maxLen <= 1))
         return 0;
 
-    // TODO: Check message is in RAM?
+    /* TODO: Check message is in RAM? */
 
-    // Check actual Counters
+    /* Check actual Counters */
     CIRCULARBUFFER_CHECK_CIRCBUFFER(circBuff);
     CIRCULARBUFFER_CHECK_WRITE_COUNTER(circBuff);
     CIRCULARBUFFER_CHECK_READ_COUNTER(circBuff);
 
-    // TODO: With GetChar() ?
+    /* TODO: With GetChar() ? */
 
     if (circBuff->readCnt < circBuff->writeCnt)
     {
-        // No overflow
+        /* No overflow */
         for (i = 0; i < (circBuff->writeCnt-circBuff->readCnt) && (i < (maxLen - 1)); i++)
         {
             message[i] = circBuff->buffer[circBuff->readCnt+i];
@@ -206,26 +206,26 @@ uint16_t CircularBuffer_GetString(CircularBufferInfo_t *circBuff, char *message,
     }
     else if (circBuff->readCnt > circBuff->writeCnt)
     {
-        // Overflow situation
+        /* Overflow situation */
 
-        // Buffer to end
+        /* Buffer to end */
         for (i = 0; (i < circBuff->size-circBuff->readCnt) && (i < (maxLen - 1)); i++)
         {
             message[i] = circBuff->buffer[circBuff->readCnt+i];
         }
 
         uint16_t oldCnt = i;
-        // Begin of buffer
+        /* Begin of buffer */
         for (i = 0; (i < circBuff->writeCnt) && ((oldCnt + i) < (maxLen - 1)); i++)
         {
             message[oldCnt+i] = circBuff->buffer[i];
         }
-        // Put end
+        /* Put end */
         i += oldCnt;
 
         message[i] =  '\0';
     }
-    // else if (circBuff->readCnt == circBuff->writeCnt) - Do nothing, because buffer is empty
+    /* else if (circBuff->readCnt == circBuff->writeCnt) - Do nothing, because buffer is empty */
 
     return i;
 }
@@ -242,14 +242,14 @@ uint16_t CircularBuffer_DropCharacters(CircularBufferInfo_t *circBuff, uint16_t 
     uint16_t i;
 #endif
 
-    // Check actual Counters
+    /* Check actual Counters */
     CIRCULARBUFFER_CHECK_CIRCBUFFER(circBuff);
     CIRCULARBUFFER_CHECK_WRITE_COUNTER(circBuff);
     CIRCULARBUFFER_CHECK_READ_COUNTER(circBuff);
 
     if (circBuff->readCnt < circBuff->writeCnt)
     {
-        // No overflow
+        /* No overflow */
         uint16_t maxLength = circBuff->writeCnt - circBuff->readCnt;
         if (length > maxLength)
         {
@@ -267,21 +267,21 @@ uint16_t CircularBuffer_DropCharacters(CircularBufferInfo_t *circBuff, uint16_t 
     }
     else if (circBuff->readCnt > circBuff->writeCnt)
     {
-        // "Overflow"
+        /* "Overflow" */
         uint16_t firstClear = circBuff->size - circBuff->readCnt;
         uint16_t secondClear = 0;
         bool overflowed = false;
 
         if (firstClear > length)
         {
-            // Not need drop all of last characters
+            /* Not need drop all of last characters */
             firstClear = length;
             secondClear = 0;
         }
         else
         {
-            // firstClear <= length
-            // -> Overread (need read from start of buffer)
+            /* firstClear <= length */
+            /* -> Overread (need read from start of buffer) */
             secondClear = length - firstClear;
             overflowed = true;
         }
@@ -293,36 +293,36 @@ uint16_t CircularBuffer_DropCharacters(CircularBufferInfo_t *circBuff, uint16_t 
         }
 
 #if (CIRCULARBUFFER_DROP_WITH_CLEAR == 1)
-        // Clear Buffer to end
+        /* Clear Buffer to end */
         for (i = 0; i < firstClear; i++)
         {
             circBuff->buffer[circBuff->readCnt + i] = '\0';
         }
 
-        // Clear from begin of buffer
+        /* Clear from begin of buffer */
         for (i = 0; i < secondClear; i++)
         {
             circBuff->buffer[i] = '\0';
         }
 #endif
 
-        if (overflowed) // TODO: It is correct? If was "<=" it is wrong, after that this was "firstClear < length"
+        if (overflowed) /* TODO: It is correct? If was "<=" it is wrong, after that this was "firstClear < length" */
         {
-            // "Overread"
+            /* "Overread" */
             circBuff->readCnt = secondClear;
         }
         else
         {
-            // Not overread, can add readlength
+            /* Not overread, can add readlength */
             circBuff->readCnt += length;
         }
     }
-    else    // else if (circBuff->readCnt == circBuff->writeCnt)
+    else    /* else if (circBuff->readCnt == circBuff->writeCnt) */
     {
         length = 0;
     }
 
-    // TODO: Delete if not need
+    /* TODO: Delete if not need */
     CIRCULARBUFFER_CHECK_CIRCBUFFER(circBuff);
     CIRCULARBUFFER_CHECK_WRITE_COUNTER(circBuff);
     CIRCULARBUFFER_CHECK_READ_COUNTER(circBuff);
@@ -337,13 +337,13 @@ uint16_t CircularBuffer_DropCharacters(CircularBufferInfo_t *circBuff, uint16_t 
  */
 bool CircularBuffer_PutChar(CircularBufferInfo_t *circBuff, char c)
 {
-    // TODO: Pointer check: is in RAM?
+    /* TODO: Pointer check: is in RAM? */
     if (circBuff == NULL)
         return false;
 
     bool isOk = false;
 
-    // Put to actual position
+    /* Put to actual position */
     if (!CircularBuffer_IsFull(circBuff))
     {
         circBuff->buffer[circBuff->writeCnt] = c;
@@ -362,7 +362,7 @@ bool CircularBuffer_PutChar(CircularBufferInfo_t *circBuff, char c)
 #if (CIRCULARBUFFER_STATISTICS_ENABLE == 1)
     else
     {
-        // Failed put char
+        /* Failed put char */
         circBuff->statDroppedCharCnt++;
     }
 #endif
@@ -418,7 +418,7 @@ size_t CircularBuffer_PrintStatistics(char *str, size_t len, CircularBufferInfo_
  */
 uint32_t CircularBuffer_UnitTest(void)
 {
-    char buffer256[CIRCBUFF_BUFFER_SIZE + 1];    // size + 1 "overflow" checker byte
+    char buffer256[CIRCBUFF_BUFFER_SIZE + 1];    /* size + 1 "overflow" checker byte */
 
     CircularBufferInfo_t circBufferInfo =
     {
@@ -435,7 +435,7 @@ uint32_t CircularBuffer_UnitTest(void)
 #endif
 
 
-    // Start
+    /* Start */
     UnitTest_Start("CircularBuffer", __FILE__);
 
 
@@ -443,13 +443,13 @@ uint32_t CircularBuffer_UnitTest(void)
      * Check Init()
      */
 
-    // Make wrong cnt-s
+    /* Make wrong cnt-s */
     circBufferInfo.readCnt = 1;
     circBufferInfo.writeCnt = 1;
     buffer256[0] = 1;
-    // Init
+    /* Init */
     CircularBuffer_Init(&circBufferInfo);
-    // Check results
+    /* Check results */
     UNITTEST_ASSERT(circBufferInfo.readCnt == 0, "Init() error");
     UNITTEST_ASSERT(circBufferInfo.writeCnt == 0, "Init() error");
     UNITTEST_ASSERT(circBufferInfo.buffer[0] == '\0', "Init() error");
@@ -460,7 +460,7 @@ uint32_t CircularBuffer_UnitTest(void)
      */
     circBufferInfo.writeCnt = 0;
     circBufferInfo.readCnt = 11;
-    // Print too long string (free space: 10)
+    /* Print too long string (free space: 10) */
     length = CircularBuffer_PutString(&circBufferInfo, "0123456789xx", 12);
     UNITTEST_ASSERT(length == 10, "PutString() error");
     UNITTEST_ASSERT(!StrCmp(buffer256, "0123456789"), "PutString() error");
@@ -470,7 +470,7 @@ uint32_t CircularBuffer_UnitTest(void)
 
     circBufferInfo.writeCnt = 10;
     circBufferInfo.readCnt = 0;
-    // Print ok
+    /* Print ok */
     length = CircularBuffer_PutString(&circBufferInfo, "0123456789xx", 12);
     UNITTEST_ASSERT(length == 12, "PutString() error");
     UNITTEST_ASSERT(!StrCmp(&buffer256[10], "0123456789xx"), "PutString() error");
@@ -478,11 +478,11 @@ uint32_t CircularBuffer_UnitTest(void)
     UNITTEST_ASSERT(circBufferInfo.readCnt == 0, "PutString() error");
 
 
-    // Test at end of buffer
+    /* Test at end of buffer */
     buffer256[256] = 0xEF;
     circBufferInfo.writeCnt = 250;
     circBufferInfo.readCnt = 10;
-    // Check overflow
+    /* Check overflow */
     length = CircularBuffer_PutString(&circBufferInfo, "0123456789xx", 12);
     UNITTEST_ASSERT(length == 12, "PutString() error");
     UNITTEST_ASSERT(!StrCmpWithLength(&buffer256[250], "012345", 6), "PutString() error");
@@ -495,25 +495,25 @@ uint32_t CircularBuffer_UnitTest(void)
     /*
      *         Test data in begin of buffer
      */
-    // Put some characters to buffer...
+    /* Put some characters to buffer... */
     StrCpy(buffer256, "0123456789xx");
     circBufferInfo.writeCnt = 10;
     circBufferInfo.readCnt = 0;
 
-    // Test: Get characters
+    /* Test: Get characters */
     length = CircularBuffer_GetString(&circBufferInfo, emptyBuffer, 20);
     UNITTEST_ASSERT(length == 10, "ERROR in GetCharacters()");
     UNITTEST_ASSERT(!StrCmp(emptyBuffer, "0123456789"), "ERROR in GetCharacters()");
     UNITTEST_ASSERT(circBufferInfo.writeCnt == 10, "PutString() error");
     UNITTEST_ASSERT(circBufferInfo.readCnt == 0, "PutString() error");
 
-    // Test: ClearBuffer
+    /* Test: ClearBuffer */
     CircularBuffer_Clear(&circBufferInfo);
 #if (CIRCULARBUFFER_DROP_WITH_CLEAR == 1)
-    // Check, buffer is cleared?
+    /* Check, buffer is cleared? */
     for (i = 0; i < 10; i++)
     {
-        // Check characters
+        /* Check characters */
         UNITTEST_ASSERT(buffer256[i] == '\0', "ERROR in Clear()");
     }
 #endif
@@ -521,7 +521,7 @@ uint32_t CircularBuffer_UnitTest(void)
     UNITTEST_ASSERT(circBufferInfo.writeCnt == 10, "Clear() error");
     UNITTEST_ASSERT(circBufferInfo.readCnt == 10, "Clear() error");
 
-    // Check, do not overflowed by clear
+    /* Check, do not overflowed by clear */
     UNITTEST_ASSERT(!StrCmp("xx", &buffer256[10]), "ERROR: Clear() is overflowed");
 
 
@@ -543,27 +543,27 @@ uint32_t CircularBuffer_UnitTest(void)
     circBufferInfo.writeCnt = 5;
     circBufferInfo.readCnt = 251;
 
-    buffer256[256] = (char)0xEF;    // "After buffer"
+    buffer256[256] = (char)0xEF;    /* "After buffer" */
 
-    // Test: Get characters
+    /* Test: Get characters */
     length = CircularBuffer_GetString(&circBufferInfo, emptyBuffer, 20);
     UNITTEST_ASSERT(length == 256-251+5, "ERROR in Clear()");
     UNITTEST_ASSERT(!StrCmp(emptyBuffer, "1234567890"), "ERROR in GetCharacters()");
 
-    // Test: ClearBuffer
+    /* Test: ClearBuffer */
     length = CircularBuffer_DropCharacters(&circBufferInfo, 10);
     UNITTEST_ASSERT(length == 256-251+5, "ERROR in Clear()");
 
 #if (CIRCULARBUFFER_DROP_WITH_CLEAR == 1)
-    // Check, buffer is cleared?
+    /* Check, buffer is cleared? */
     for (i = 0; i < 256-251; i++)
     {
-        // Check characters
+        /* Check characters */
         UNITTEST_ASSERT((buffer256[251+i] == '\0'), "ERROR in Clear()");
     }
     for (i = 0; i < 251-256+sizeof("1234567890"); i++)
     {
-        // Check characters
+        /* Check characters */
         UNITTEST_ASSERT((buffer256[i] == '\0'), "ERROR in Clear()");
     }
 #endif
@@ -571,11 +571,11 @@ uint32_t CircularBuffer_UnitTest(void)
     UNITTEST_ASSERT(circBufferInfo.writeCnt == 5, "Clear() error");
     UNITTEST_ASSERT(circBufferInfo.readCnt == 5, "Clear() error");
 
-    // Check overflow
+    /* Check overflow */
     UNITTEST_ASSERT(buffer256[256] == (char)0xEF, "ERROR: Clear() is overflowed()");
 
 
-    // Test wrong counter
+    /* Test wrong counter */
     circBufferInfo.readCnt = 256;
     circBufferInfo.writeCnt = 256;
     CircularBuffer_DropCharacters(&circBufferInfo, 10);
@@ -583,10 +583,10 @@ uint32_t CircularBuffer_UnitTest(void)
     UNITTEST_ASSERT(circBufferInfo.readCnt == 255, "ERROR: readCnt wrong");
 
 
-    // Test: writeCnt > BUFFER_SIZE
+    /* Test: writeCnt > BUFFER_SIZE */
 
-    buffer256[255] = (char)0xEF;    // In buffer end
-    buffer256[256] = (char)0xEF;    // "After buffer"
+    buffer256[255] = (char)0xEF;    /* In buffer end */
+    buffer256[256] = (char)0xEF;    /* "After buffer" */
     circBufferInfo.readCnt = 256;
     circBufferInfo.writeCnt = 200;
     CircularBuffer_DropCharacters(&circBufferInfo, 10);
@@ -601,7 +601,7 @@ uint32_t CircularBuffer_UnitTest(void)
 
     uint16_t j;
 
-    buffer256[256] = (char)0xEF;    // "After buffer"
+    buffer256[256] = (char)0xEF;    /* "After buffer" */
 
     bool isOk = true;
     for (j = 0; j < 255; j++)
@@ -609,7 +609,7 @@ uint32_t CircularBuffer_UnitTest(void)
         isOk &= CircularBuffer_PutChar(&circBufferInfo, 'a');
     }
 
-    // Every chars should be contained
+    /* Every chars should be contained */
     UNITTEST_ASSERT(isOk == true, "ERROR: PutChar()");
 
     isOk = true;
@@ -617,32 +617,32 @@ uint32_t CircularBuffer_UnitTest(void)
     {
         isOk &= (circBufferInfo.buffer[j] == 'a');
     }
-    // Every chars should be 'a'
+    /* Every chars should be 'a' */
     UNITTEST_ASSERT(isOk == true, "ERROR: PutChar()");
 
     UNITTEST_ASSERT(buffer256[256] == (char)0xEF, "ERROR: Overflow!");
 
-    // This buffer should be full and cannot add next char
+    /* This buffer should be full and cannot add next char */
     UNITTEST_ASSERT(CircularBuffer_IsFull(&circBufferInfo) == true, "ERROR: IsFull()");
     UNITTEST_ASSERT(CircularBuffer_IsNotEmpty(&circBufferInfo) == true, "ERROR: IsNotEmpty()");
     UNITTEST_ASSERT(CircularBuffer_PutChar(&circBufferInfo, 'a') == false, "ERROR: PutCHar()");
 
-    // Drops
+    /* Drops */
     length = CircularBuffer_DropCharacters(&circBufferInfo, 10);
     UNITTEST_ASSERT(length == 10, "ERROR: DropCharacters()");
 
-    // Add new characters
+    /* Add new characters */
     isOk = true;
     for (j = 0; j < 10; j++)
     {
         isOk &= CircularBuffer_PutChar(&circBufferInfo, 'b');
     }
     UNITTEST_ASSERT(isOk == true, "ERROR: PutChar()");
-// TODO: Here full
+/* TODO: Here full */
     length = CircularBuffer_DropCharacters(&circBufferInfo, 240);
     UNITTEST_ASSERT(length == 240, "ERROR: DropCharacters()");
 
-    // Test GetString (from 250. char)
+    /* Test GetString (from 250. char) */
     length = CircularBuffer_GetString(&circBufferInfo, emptyBuffer, 10);
     UNITTEST_ASSERT(length == 9, "ERROR: CircularBuffer_GetString()");
     UNITTEST_ASSERT(!StrCmp(emptyBuffer, "aaaaabbbb"), "ERROR: CircularBuffer_GetString()");
@@ -651,10 +651,10 @@ uint32_t CircularBuffer_UnitTest(void)
 
 
 
-    // TODO: Test GetChar()
+    /* TODO: Test GetChar() */
 
 
-    // Finish unittest
+    /* Finish unittest */
     return UnitTest_End();
 }
 #endif

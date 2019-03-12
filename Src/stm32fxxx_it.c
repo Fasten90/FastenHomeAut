@@ -46,8 +46,8 @@
 #include "windows_hal.h"
 #endif
 
-// TODO: This is need?
-//#include "cmsis_os.h"
+/* TODO: This is need? */
+/* include "cmsis_os.h" */
 
 #include "ErrorHandler.h"
 #include "SwWatchDog.h"
@@ -89,35 +89,36 @@ void HardFault_Handler(void)
         " handler2_address_const: .word prvGetRegistersFromStack    \n"
     );
 #elif 0
-    // https://blog.feabhas.com/2013/02/developing-a-generic-hard-fault-handler-for-arm-cortex-m3cortex-m4/
-    // Not work
+    /* https://blog.feabhas.com/2013/02/developing-a-generic-hard-fault-handler-for-arm-cortex-m3cortex-m4/ */
+    /* Not work */
     __asm volatile
     (
         " mrs r0, MSP \n"
         " b prvGetRegistersFromStack \n"
     );
 #elif 0
-    // Segger version
+    /* Segger version */
+    /* This version is for Cortex M0 */
     /*
-     ;// This version is for Cortex M0
+    ;
     movs R0, #4
     mov R1, LR
-    tst R0, R1 ;// Check EXC_RETURN in Link register bit 2.
+    tst R0, R1 ; Check EXC_RETURN in Link register bit 2.
     bne Uses_PSP
-    mrs R0, MSP ;// Stacking was using MSP.
+    mrs R0, MSP ;  Stacking was using MSP.
     b Pass_StackPtr
-     */
+    */
     __asm volatile
     (
     "movs R0, #4 \n"
     "mov R1, LR \n"
-    "tst R0, R1 \n" // Check EXC_RETURN in Link register bit 2.
-    //"bne Uses_PSP \n"        // mrs R0, PSP ;// Stacking was using PSP.
-    "mrs R0, MSP \n" // Stacking was using MSP.
+    "tst R0, R1 \n" /* Check EXC_RETURN in Link register bit 2. */
+    /* bne Uses_PSP \n"        // mrs R0, PSP ;// Stacking was using PSP. */
+    "mrs R0, MSP \n" /* Stacking was using MSP. */
     "b prvGetRegistersFromStack  \n"
     );
 #elif 1
-    // Own version
+    /* Own version */
     __asm volatile
     (
         " mrs r0, MSP \n"

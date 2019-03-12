@@ -26,7 +26,7 @@
  *----------------------------------------------------------------------------*/
 
 ///< Enable background
-//#define CONFIG_DEBUG_BACKGROUND_ENABLE
+/* define CONFIG_DEBUG_BACKGROUND_ENABLE */
 
 
 
@@ -64,7 +64,7 @@ bool Debug_SetEnable(Debug_t task, bool enable);
 bool Debug_SetDebugTaskWithName(char *name, bool enable);
 void Debug_PrintDebugList(void);
 #else
-// Empty macro for suppress warnings
+/* Empty macro for suppress warnings */
 #define Debug_Printf(...)
 #endif
 

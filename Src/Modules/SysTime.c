@@ -58,7 +58,7 @@ inline __attribute__((always_inline)) void SysTime_GetDateTime(DateTime_t *dateT
 #elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
     memcpy(dateTime, &DateTime_SystemTime, sizeof(DateTime_t));
 #else
-    (void)dateTime;
+    UNUSED_ARGUMENT(dateTime);
 #endif
 }
 
@@ -74,7 +74,7 @@ inline __attribute__((always_inline)) void SysTime_SetDate(Date_t *date)
 #elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
     memcpy(&DateTime_SystemTime.date, date, sizeof(Date_t));
 #else
-    (void)date;
+    UNUSED_ARGUMENT(date);
 #endif
 }
 
@@ -90,7 +90,7 @@ inline __attribute__((always_inline)) void SysTime_SetTime(Time_t *time)
 #elif defined(CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE)
     memcpy(&DateTime_SystemTime.time, time, sizeof(Time_t));
 #else
-    (void)time;
+    UNUSED_ARGUMENT(time);
 #endif
 }
 
@@ -101,12 +101,12 @@ inline __attribute__((always_inline)) void SysTime_SetTime(Time_t *time)
  */
 void SysTime_StepSecond(void)
 {
-    // TODO: Disable INT?
+    /* TODO: Disable INT? */
 
-    // Step SystemTime +1 second
+    /* Step SystemTime +1 second */
     DateTime_StepOneSecond(&DateTime_SystemTime);
 }
 
 
 
-#endif    // #ifdef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE */

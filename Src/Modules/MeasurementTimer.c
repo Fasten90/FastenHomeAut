@@ -66,7 +66,7 @@ void MeasurementTimer_Init(void)
     HAL_TIM_PWM_MspInit(&MeasurementTimer_TimerHandle);
 
     /* Compute the prescaler value */
-    //PrescalerValue = (uint32_t)(SystemCoreClock / MEASUREMENTTIMER_TIMER_PRESCALER) - 1;
+    /* rescalerValue = (uint32_t)(SystemCoreClock / MEASUREMENTTIMER_TIMER_PRESCALER) - 1; */
     PrescalerValue = (uint32_t)(SystemCoreClock / MEASUREMENTTIMER_TIMER_PRESCALER);
     Period = MEASUREMENTTIMER_TIMER_PERIOD_VALUE;
 
@@ -101,7 +101,7 @@ void MeasurementTimer_Init(void)
  */
 void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 {
-    (void)htim;
+    UNUSED_ARGUMENT(htim);
 
     /* TIMx Peripheral clock enable */
     MEASUREMENTTIMER_TIMER_CLK_ENABLES();
@@ -135,7 +135,7 @@ void MeasurementTimer_StartMeasurement(void)
   */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-    (void)htim;
+    UNUSED_ARGUMENT(htim);
 
     /* 1 sec elapsed */
     MeasurementTimer_ElapsedSeconds++;
@@ -185,7 +185,7 @@ uint32_t MeasurementTimer_UnitTest(void)
                      && (elapsedUsec < (testUSec * ((float)(100+enabledAccuracyPercent)/100))), "1 second measurement error");
 
 
-    // Finish
+    /* Finish */
     return UnitTest_End();
 }
 

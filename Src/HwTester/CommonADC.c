@@ -96,7 +96,7 @@ void CommonADC_Init(void)
 {
     ADC_ChannelConfTypeDef   sConfig;
 
-    //HAL_ADC_MspInit(&AdcHandle);    // Called by HAL driver
+    /* AL_ADC_MspInit(&AdcHandle);    // Called by HAL driver */
 
     /* Configuration of AdcHandle init structure: ADC parameters and regular group */
     AdcHandle.Instance = ADCx;
@@ -256,8 +256,8 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
  */
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
 {
-    // Suppress warning
-    (void)AdcHandle;
+    /* Suppress warning */
+    UNUSED_ARGUMENT(AdcHandle);
 
 #ifdef CONFIG_DEBUG_SELFTEST
     ADC_RunCnt++;
@@ -314,7 +314,7 @@ void CommonADC_ConvertAllMeasuredValues(void)
     
     for (i = 0; i < ADC_CHANNEL_NUM; i++)
     {
-        // Convert all values
+        /* Convert all values */
         ADC_ConvertedValues[i] = CommonADC_ConvertToVoltage(ADC_MeasuredValues[i]);
     }
 }
@@ -341,7 +341,7 @@ void CommonADC_PrintAdcValue(uint8_t adcChannel)
 {
     if (adcChannel < ADC_CHANNEL_NUM)
     {
-        // Print
+        /* Print */
         CmdH_Printf("ADC: %d. value: %2.2f\r\n", adcChannel, ADC_ConvertedValues[adcChannel]);
     }
     else
@@ -362,4 +362,4 @@ void CommonADC_PrintAdc(void)
 
 
 
-#endif // #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
+#endif /* #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE */

@@ -24,9 +24,9 @@
  */
 void ColoredMessage_SendMsgWithBackgroundColor(char *str, const char *msg, MsgColors_t textColor, MsgColors_t backgroundColor)
 {
-    ColoredMessage_SendBackgroundAndTextColor(str, backgroundColor, textColor);        // Send background + text color
-    StrAppend(str, msg);                                                            // Send message
-    ColoredMessage_SendDefaultFormat(str);                                            // Restore format (bg + text color)
+    ColoredMessage_SendBackgroundAndTextColor(str, backgroundColor, textColor);        /* Send background + text color */
+    StrAppend(str, msg);                                                            /* Send message */
+    ColoredMessage_SendDefaultFormat(str);                                            /* Restore format (bg + text color) */
 }
 
 
@@ -37,9 +37,9 @@ void ColoredMessage_SendMsgWithBackgroundColor(char *str, const char *msg, MsgCo
  */
 void ColoredMessage_SendMsg(char *str, const char *msg, MsgColors_t textColor)
 {
-    ColoredMessage_SendTextColor(str, textColor);                                // Send text color
-    StrAppend(str, msg);                                                        // Send message
-    ColoredMessage_SendDefaultFormat(str);                                        // Restore format (text color)
+    ColoredMessage_SendTextColor(str, textColor);                                /* Send text color */
+    StrAppend(str, msg);                                                        /* Send message */
+    ColoredMessage_SendDefaultFormat(str);                                        /* Restore format (text color) */
 }
 
 
@@ -156,7 +156,7 @@ void ColoredMessage_Test(void)
 {
     char str[255] = { 0 };
 
-    // Send colored messages
+    /* Send colored messages */
     ColoredMessage_SendMsg(str, "Red text\r\n", Color_Red);
     ColoredMessage_SendMsg(str, "Yellow text\r\n", Color_Yellow);
 
@@ -183,7 +183,7 @@ void ColoredMessage_Test(void)
 
 #else
 
-// ColoredMessage module is not used
+/* ColoredMessage module is not used */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 #pragma GCC diagnostic pop

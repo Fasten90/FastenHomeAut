@@ -266,4 +266,4 @@ const uint8_t Font8x5[FONT_8X5_NUM][FONT_8X5_STORE_SIZE] =
 };
 /* End of font*/
 
-#endif    // #ifdef CONFIG_DISPLAY_FONT8X5_ENABLE
+#endif    /* #ifdef CONFIG_DISPLAY_FONT8X5_ENABLE */

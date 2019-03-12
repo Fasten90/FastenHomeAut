@@ -62,8 +62,8 @@ typedef enum
     Event_Display_SpiEvent,
 #endif
 
-    // XXX: Add here new event
-    // @note    Sync with EventList[]
+    /* XXX: Add here new event */
+    /* @note    Sync with EventList[] */
 
     Event_Count
 

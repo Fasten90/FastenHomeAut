@@ -65,16 +65,16 @@ static void CmdH_PrintCommandHelp(CmdH_CommandID_t commandID);
  */
 void CmdH_Init(void)
 {
-    // Check CmdH_CommandList[]
+    /* Check CmdH_CommandList[] */
     CmdH_CommandID_t i;
     for (i = 0; i < CmdH_CommandNum; i++)
     {
-        ASSERT(CmdH_CommandList[i].commandFunctionPointer != NULL);        // Need command function pointer
-        ASSERT(CmdH_CommandList[i].name != NULL);                        // Need name
-        ASSERT(CmdH_CommandList[i].commandArgNum != 0);                    // Need command argument number
+        ASSERT(CmdH_CommandList[i].commandFunctionPointer != NULL);        /* Need command function pointer */
+        ASSERT(CmdH_CommandList[i].name != NULL);                        /* Need name */
+        ASSERT(CmdH_CommandList[i].commandArgNum != 0);                    /* Need command argument number */
         ASSERT(CmdH_CommandList[i].commandArgNum <= CMDH_COMMAND_ARG_MAX_NUM_BITS);
 
-        // example, description, syntax are optional parameters
+        /* example, description, syntax are optional parameters */
     }
 }
 
@@ -89,8 +89,8 @@ CmdH_Result_t CmdH_ExecuteCommand(char *command, char *response, size_t length)
 {
     CmdH_Result_t result = CmdH_Result_Unknown;
 
-    // Check parameters
-    // TODO: With ASSERT() ?
+    /* Check parameters */
+    /* TODO: With ASSERT() ? */
     if (response == NULL)
     {
         Debug_Printf(Debug_CommandHandler, "Error! Wrong response buffer!");
@@ -106,7 +106,7 @@ CmdH_Result_t CmdH_ExecuteCommand(char *command, char *response, size_t length)
         Debug_Printf(Debug_CommandHandler, "Error! Received 0 length response buffer!");
         result = CmdH_Result_Error_CallCmdHandlerWithInvalidArgument;
     }
-    // Put '\0' to newline position, for successful executing
+    /* Put '\0' to newline position, for successful executing */
     char * firstNewLine = (char *)STRING_FindCharacters(command, "\r\n");
     if (firstNewLine != NULL)
     {
@@ -121,7 +121,7 @@ CmdH_Result_t CmdH_ExecuteCommand(char *command, char *response, size_t length)
 
     if (result != CmdH_Result_Error_CallCmdHandlerWithInvalidArgument)
     {
-        // Log event
+        /* Log event */
 #if defined(CONFIG_EVENTLOG_CMDHANDLER_ENABLE) || defined(CONFIG_COMMANDHANDLER_NOTIFY_COMMAND_RECEIVED_FROM_NOT_DEBUGPORT)
         TaskID_t taskID = TaskHandler_GetActualRunningTaskID();
 #endif
@@ -129,21 +129,21 @@ CmdH_Result_t CmdH_ExecuteCommand(char *command, char *response, size_t length)
         EventHandler_GenerateEvent(Event_CommandHandler_ProcessCommand, 0, taskID);
 #endif
 
-        // Separate command
+        /* Separate command */
         CmdH_CommandArgCount = CmdH_CommandParser(command, CmdH_CommandArguments);
 
-        // Check parse result
+        /* Check parse result */
         if ((CmdH_CommandArgCount > 0) && (CmdH_CommandArgCount <= CMDH_COMMAND_ARG_MAX_COUNT))
         {
-            // Save important values
+            /* Save important values */
             CmdH_ResponseBuffer = response;
             CmdH_ResponseBufferLength = length;
 
-            result = CmdH_SearchCommand();                    // Search and execute the command
+            result = CmdH_SearchCommand();                    /* Search and execute the command */
         }
         else
         {
-            result = CmdH_Result_Error_WrongArgumentNum;    // 0 or too large argument num
+            result = CmdH_Result_Error_WrongArgumentNum;    /* 0 or too large argument num */
         }
 
 #if defined(CONFIG_COMMANDHANDLER_NOTIFY_COMMAND_RECEIVED_FROM_NOT_DEBUGPORT) && defined(CONFIG_MODULE_DEBUGUART_ENABLE) && defined(CONFIG_MODULE_COMMUNICATION_ENABLE)
@@ -158,8 +158,8 @@ CmdH_Result_t CmdH_ExecuteCommand(char *command, char *response, size_t length)
             uprintf("Received command: \"%s\", from %s\r\n", command, TaskHandler_GetActualRunningTaskName());
         }
 #elif defined(CONFIG_EVENTLOG_CMDHANDLER_ENABLE) || defined(CONFIG_COMMANDHANDLER_NOTIFY_COMMAND_RECEIVED_FROM_NOT_DEBUGPORT)
-        // ~ #else
-        (void)taskID;
+        /* ~ #else */
+        UNUSED_ARGUMENT(taskID);
 #endif
     }
 
@@ -183,20 +183,20 @@ CmdH_Result_t CmdH_ExecuteCommandWithParams(char *command, char *param, char *re
     CmdH_Result_t result = CmdH_Result_Unknown;
 
 #ifdef CONFIG_EVENTLOG_CMDHANDLER_ENABLE
-    EventHandler_GenerateEvent(Event_CommandHandler_ProcessCommand, 0, TaskHandler_GetActualRunningTaskID());    // Log event
+    EventHandler_GenerateEvent(Event_CommandHandler_ProcessCommand, 0, TaskHandler_GetActualRunningTaskID());    /* Log event */
 #endif
 
-    // Separate command and its parameters:
+    /* Separate command and its parameters: */
     CmdH_CommandArguments[0] = command;
-    CmdH_CommandArgCount = CmdH_CommandParser(param, &CmdH_CommandArguments[1]) + 1;                        // +1: command is 1 word
+    CmdH_CommandArgCount = CmdH_CommandParser(param, &CmdH_CommandArguments[1]) + 1;                        /* +1: command is 1 word */
 
-    if ((CmdH_CommandArgCount > 0) && (CmdH_CommandArgCount <= CMDH_COMMAND_ARG_MAX_COUNT))                    // Check parsing result
+    if ((CmdH_CommandArgCount > 0) && (CmdH_CommandArgCount <= CMDH_COMMAND_ARG_MAX_COUNT))                    /* Check parsing result */
     {
-        // Save important values
+        /* Save important values */
         CmdH_ResponseBuffer = response;
         CmdH_ResponseBufferLength = length;
 
-        result = CmdH_SearchCommand();                                                                        // Find and execute the command
+        result = CmdH_SearchCommand();                                                                        /* Find and execute the command */
     }
     else
     {
@@ -232,7 +232,7 @@ static uint8_t CmdH_CommandParser(char *command, char **dst)
     uint8_t commandArgCount;
 
     commandArgCount = STRING_Splitter(command, CMDH_COMMAND_DELIMITER_CHAR, dst, CMDH_COMMAND_ARG_MAX_COUNT);
-    // NOTE: Now, ArgCount never will be larger than CMDH_COMMAND_ARG_MAX_COUNT
+    /* NOTE: Now, ArgCount never will be larger than CMDH_COMMAND_ARG_MAX_COUNT */
 
     return commandArgCount;
 }
@@ -247,26 +247,26 @@ static CmdH_Result_t CmdH_SearchCommand(void)
     CmdH_CommandID_t i;
     CmdH_Result_t result = CmdH_Result_Error_CommandNotFound;
 
-    // Search the command
+    /* Search the command */
     for (i = 0; i < CmdH_CommandNum; i++)
     {
 
         if (!StrCmp(CmdH_CommandArguments[0], CmdH_CommandList[i].name))
         {
 #ifdef CONFIG_EVENTLOG_CMDHANDLER_ENABLE
-            EventHandler_GenerateEvent(Event_CommandHandler_ProcessCommand, i, TaskHandler_GetActualRunningTaskID());    // Event
+            EventHandler_GenerateEvent(Event_CommandHandler_ProcessCommand, i, TaskHandler_GetActualRunningTaskID());    /* Event */
 #endif
 
-            result = CmdH_RunCommand(i);        // Found the command, execute it
+            result = CmdH_RunCommand(i);        /* Found the command, execute it */
 
 #ifdef CONFIG_EVENTLOG_CMDHANDLER_ENABLE
-            EventHandler_GenerateEvent(Event_CommandHandler_ProcessCommand, i, TaskHandler_GetActualRunningTaskID());    // Event
+            EventHandler_GenerateEvent(Event_CommandHandler_ProcessCommand, i, TaskHandler_GetActualRunningTaskID());    /* Event */
 #endif
             break;
         }
     }
 
-    return result;    // Return with validation
+    return result;    /* Return with validation */
 }
 
 
@@ -285,7 +285,7 @@ void CmdH_PrintResult(CmdH_Result_t result)
             break;
 
         case CmdH_Result_Ok:
-            // Do not send response
+            /* Do not send response */
             break;
 
         case CmdH_Result_Ok_SendSuccessful:
@@ -347,25 +347,25 @@ static CmdH_Result_t CmdH_RunCommand(CmdH_CommandID_t commandID)
     CmdH_Result_t result;
     bool needWriteHelp = false;
 
-    // Check argument nums
+    /* Check argument nums */
     result = CmdH_CheckArgumentNumIsGood(CmdH_CommandArgCount, CmdH_CommandList[commandID].commandArgNum);
 
     if (result == CmdH_Result_Ok)
     {
-        // Good, found & argument num is ok
+        /* Good, found & argument num is ok */
 
-        // Call function
+        /* Call function */
         CmdH_FunctionPointer_t thisFunction = (CmdH_FunctionPointer_t)CmdH_CommandList[commandID].commandFunctionPointer;
 
-        // Execute the command function
+        /* Execute the command function */
         result = thisFunction(CmdH_CommandArgCount, (char**)CmdH_CommandArguments);
     }
     else
     {
-        needWriteHelp = true;        // if not Ok, write help
+        needWriteHelp = true;        /* if not Ok, write help */
     }
 
-    // Write command help, if command run failed
+    /* Write command help, if command run failed */
     if (needWriteHelp)
     {
         CmdH_PrintCommandHelp(commandID);
@@ -388,7 +388,7 @@ void CmdH_PrintAllCommands(void)
             "Commands list:");
     for (i = 0; i < CmdH_CommandNum; i++)
     {
-        CmdH_SendLine(CmdH_CommandList[i].name);    // Write a command
+        CmdH_SendLine(CmdH_CommandList[i].name);    /* Write a command */
     }
 }
 
@@ -404,10 +404,10 @@ void CmdH_SearchCommandAndPrintHelp(const char *command)
 
     for (i = 0; i < CmdH_CommandNum; i++)
     {
-        // Find the command
+        /* Find the command */
         if (!StrCmp(CmdH_CommandList[i].name, command))
         {
-            // Command's describe
+            /* Command's describe */
             CmdH_PrintCommandHelp(i);
             isOk = true;
         }
@@ -426,7 +426,7 @@ void CmdH_SearchCommandAndPrintHelp(const char *command)
  */
 static void CmdH_PrintCommandHelp(CmdH_CommandID_t commandID)
 {
-    // Print command to source
+    /* Print command to source */
     CmdH_Printf(
             "Command name: %s\r\n"
             "Function: %s\r\n"
@@ -438,7 +438,7 @@ static void CmdH_PrintCommandHelp(CmdH_CommandID_t commandID)
             CmdH_CommandList[commandID].name, CmdH_CommandList[commandID].syntax,
             CmdH_CommandList[commandID].name, CmdH_CommandList[commandID].example);
 
-    // TODO: Print required parameter num
+    /* TODO: Print required parameter num */
 }
 
 
@@ -448,20 +448,20 @@ static void CmdH_PrintCommandHelp(CmdH_CommandID_t commandID)
  */
 static CmdH_Result_t CmdH_CheckArgumentNumIsGood(uint8_t receivedArgNum, uint8_t commandArgNum)
 {
-    // Check commandArgNum. bit is set?
+    /* Check commandArgNum. bit is set? */
     if (receivedArgNum > CMDH_COMMAND_ARG_MAX_COUNT)
     {
         return CmdH_Result_Error_TooManyArgument;
     }
-    // commandArgNum not should to check, because checked in Init()
+    /* commandArgNum not should to check, because checked in Init() */
 
     if (commandArgNum & (1 << (receivedArgNum-1)))
     {
-        return CmdH_Result_Ok;        // Good, there is this bit
+        return CmdH_Result_Ok;        /* Good, there is this bit */
     }
     else
     {
-        // Check min-max
+        /* Check min-max */
         volatile uint8_t maxRequiredArgNum = 0;
         uint8_t minRequiredArgNum = 0;
         uint8_t i;
@@ -477,18 +477,18 @@ static CmdH_Result_t CmdH_CheckArgumentNumIsGood(uint8_t receivedArgNum, uint8_t
             }
         }
         
-        // Check min, max
+        /* Check min, max */
         if (receivedArgNum < minRequiredArgNum)
         {
-            return CmdH_Result_Error_TooFewArgument;        // Too few
+            return CmdH_Result_Error_TooFewArgument;        /* Too few */
         }
         else if (receivedArgNum > maxRequiredArgNum)
         {
-            return CmdH_Result_Error_TooManyArgument;        // Too many
+            return CmdH_Result_Error_TooManyArgument;        /* Too many */
         }
         else
         {
-            return CmdH_Result_Error_WrongArgumentNum;    // Wrong num
+            return CmdH_Result_Error_WrongArgumentNum;    /* Wrong num */
         }
     }
 }
@@ -505,10 +505,10 @@ void CmdH_SendMessage(const char *message)
         size_t length = StrCpyMax(CmdH_ResponseBuffer, message, CmdH_ResponseBufferLength);
         CmdH_ResponseBuffer += length;
         CmdH_ResponseBufferLength -= length;
-        // Not need check length, because StrCpyMax is length safe (worst case: length = 0, but never larger than ResponseBufferLength)
+        /* Not need check length, because StrCpyMax is length safe (worst case: length = 0, but never larger than ResponseBufferLength) */
     }
 
-    //COMMUNICATION_SendMessage(CmdH_CommandSource, message);
+    /* OMMUNICATION_SendMessage(CmdH_CommandSource, message); */
 }
 
 
@@ -543,7 +543,7 @@ void CmdH_SendChar(char c)
         CmdH_ResponseBufferLength--;
     }
 
-    //COMMUNICATION_SendChar(CmdH_CommandSource, c);
+    /* OMMUNICATION_SendChar(CmdH_CommandSource, c); */
 }
 
 
@@ -556,15 +556,15 @@ void CmdH_Printf(const char *format, ...)
 {
     size_t length = 0;
 
-    // Check buffer
+    /* Check buffer */
     if ((CmdH_ResponseBuffer == NULL) || (CmdH_ResponseBufferLength == 0))
         return;
 
-    // print formatted string to response buffer
-    va_list ap;                                    // argument pointer
-    va_start(ap, format);                         // ap on arg
-    length = string_printf_safe(CmdH_ResponseBuffer, CmdH_ResponseBufferLength, format, ap);        // Separate and process
-    va_end(ap);                                     // Cleaning after end
+    /* print formatted string to response buffer */
+    va_list ap;                                    /* argument pointer */
+    va_start(ap, format);                         /* ap on arg */
+    length = string_printf_safe(CmdH_ResponseBuffer, CmdH_ResponseBufferLength, format, ap);        /* Separate and process */
+    va_end(ap);                                     /* Cleaning after end */
 
     CmdH_ResponseBuffer += length;
     CmdH_ResponseBufferLength -= length;
@@ -589,7 +589,7 @@ void CmdH_SetResponse(char *respBuffer, size_t respLength)
  */
 uint32_t CmdH_UnitTest(void)
 {
-    // Start of unittest
+    /* Start of unittest */
     UnitTest_Start("CommandHandler", __FILE__);
 
     CmdH_Result_t result;
@@ -599,131 +599,131 @@ uint32_t CmdH_UnitTest(void)
     char cmdParamBuffer[CMD_UNITTEST_BUFFER_SIZE];
 
 
-    // Check "version" (good) command
+    /* Check "version" (good) command */
     result = CmdH_ExecuteCommand("version", buffer, CMD_UNITTEST_BUFFER_SIZE);
 
-    // Check command execute result
+    /* Check command execute result */
     UNITTEST_ASSERT(result == CmdH_Result_Ok, "CmdH_PrepareFindExecuteCommand error");
 
-    // Check command argument num
+    /* Check command argument num */
     UNITTEST_ASSERT(CmdH_CommandArgCount == 1, "CmdH_PrepareFindExecuteCommand error");
 
-    // Check command source
-    //UNITTEST_ASSERT(CmdH_CommandSource == CommProt_DebugUart, "CmdH_PrepareFindExecuteCommand error");
+    /* Check command source */
+    /* NITTEST_ASSERT(CmdH_CommandSource == CommProt_DebugUart, "CmdH_PrepareFindExecuteCommand error"); */
 
-    // Check separated / splitted command
+    /* Check separated / splitted command */
     UNITTEST_ASSERT(!StrCmp(CmdH_CommandArguments[0], "version"), "CmdH_PrepareFindExecuteCommand error");
     UNITTEST_ASSERT(CmdH_CommandArguments[1] == NULL, "CmdH_PrepareFindExecuteCommand error");
 
 
-    // Check wrong command: not find
+    /* Check wrong command: not find */
     result = CmdH_ExecuteCommand("WrongCommand", buffer, CMD_UNITTEST_BUFFER_SIZE);
 
-    // Check command execute result
+    /* Check command execute result */
     UNITTEST_ASSERT(result == CmdH_Result_Error_CommandNotFound, "CmdH_PrepareFindExecuteCommand error");
 
-    // Check command argument num: will be 1
+    /* Check command argument num: will be 1 */
     UNITTEST_ASSERT(CmdH_CommandArgCount == 1, "CmdH_PrepareFindExecuteCommand error");
 
-    // Check command source
-    //UNITTEST_ASSERT(CmdH_CommandSource == CommProt_DebugUart, "CmdH_PrepareFindExecuteCommand error");
+    /* Check command source */
+    /* NITTEST_ASSERT(CmdH_CommandSource == CommProt_DebugUart, "CmdH_PrepareFindExecuteCommand error"); */
 
-    // Check separated / splitted command
+    /* Check separated / splitted command */
     UNITTEST_ASSERT(!StrCmp(CmdH_CommandArguments[0], "WrongCommand"), "CmdH_PrepareFindExecuteCommand error");
     UNITTEST_ASSERT(CmdH_CommandArguments[1] == NULL, "CmdH_PrepareFindExecuteCommand error");
 
 
-    // Check wrong command: too many arguments ( >3)
-    StrCpy(cmdSrcBuffer, "version with lot of arguments");            // command string must reside in RAM!
+    /* Check wrong command: too many arguments ( >3) */
+    StrCpy(cmdSrcBuffer, "version with lot of arguments");            /* command string must reside in RAM! */
     result = CmdH_ExecuteCommand(cmdSrcBuffer, buffer, CMD_UNITTEST_BUFFER_SIZE);
 
-    // Check command execute result: true/successful, because CommandHandler will find "version" command
+    /* Check command execute result: true/successful, because CommandHandler will find "version" command */
     UNITTEST_ASSERT(result == CmdH_Result_Error_TooManyArgument, "CmdH_PrepareFindExecuteCommand error");
 
-    // Check command argument num
+    /* Check command argument num */
     UNITTEST_ASSERT(CmdH_CommandArgCount == CMDH_COMMAND_ARG_MAX_COUNT, "CmdH_PrepareFindExecuteCommand error");
 
-    // Check command source
-    //UNITTEST_ASSERT(CmdH_CommandSource == CommProt_DebugUart, "CmdH_PrepareFindExecuteCommand error");
+    /* Check command source */
+    /* NITTEST_ASSERT(CmdH_CommandSource == CommProt_DebugUart, "CmdH_PrepareFindExecuteCommand error"); */
 
-    // Check separated / splitted command
+    /* Check separated / splitted command */
     UNITTEST_ASSERT(!StrCmp(CmdH_CommandArguments[0], "version"), "CmdH_PrepareFindExecuteCommand error");
     UNITTEST_ASSERT(!StrCmp(CmdH_CommandArguments[1], "with"), "CmdH_PrepareFindExecuteCommand error");
     UNITTEST_ASSERT(!StrCmp(CmdH_CommandArguments[2], "lot"), "CmdH_PrepareFindExecuteCommand error");
 
-    //--------------------------------------------------------------------------------------------------
-    // CmdH_ExecuteCommandWithParams test:
+    /* ------------------------------------------------------------------------------------------------- */
+    /* CmdH_ExecuteCommandWithParams test: */
 
-    //-----------------------------------------------------
-    // test with 5 parameter:
-    StrCpy(cmdSrcBuffer, "version");            // command string must reside in RAM!
-    StrCpy(cmdParamBuffer, "with lot of arguments");            // command string must reside in RAM!
+    /* ---------------------------------------------------- */
+    /* test with 5 parameter: */
+    StrCpy(cmdSrcBuffer, "version");            /* command string must reside in RAM! */
+    StrCpy(cmdParamBuffer, "with lot of arguments");            /* command string must reside in RAM! */
     result = CmdH_ExecuteCommandWithParams(cmdSrcBuffer, cmdParamBuffer, buffer, CMD_UNITTEST_BUFFER_SIZE);
 
-    // Check command execute result: true/successful, because CommandHandler will find "version" command
+    /* Check command execute result: true/successful, because CommandHandler will find "version" command */
     UNITTEST_ASSERT(result == CmdH_Result_Error_TooManyArgument, "CmdH_PrepareFindExecuteCommand error");
 
-    // Check command argument num
+    /* Check command argument num */
     UNITTEST_ASSERT(CmdH_CommandArgCount == 4, "CmdH_PrepareFindExecuteCommand error");
 
-    // Check command source
-    //UNITTEST_ASSERT(CmdH_CommandSource == CommProt_DebugUart, "CmdH_PrepareFindExecuteCommand error");
+    /* Check command source */
+    /* NITTEST_ASSERT(CmdH_CommandSource == CommProt_DebugUart, "CmdH_PrepareFindExecuteCommand error"); */
 
-    // Check separated / splitted command
+    /* Check separated / splitted command */
     UNITTEST_ASSERT(!StrCmp(CmdH_CommandArguments[0], "version"), "CmdH_PrepareFindExecuteCommand error");
     UNITTEST_ASSERT(!StrCmp(CmdH_CommandArguments[1], "with"), "CmdH_PrepareFindExecuteCommand error");
     UNITTEST_ASSERT(!StrCmp(CmdH_CommandArguments[2], "lot"), "CmdH_PrepareFindExecuteCommand error");
     UNITTEST_ASSERT(!StrCmp(CmdH_CommandArguments[3], "of"), "CmdH_PrepareFindExecuteCommand error");
 
 
-    //-----------------------------------------------------
+    /* ---------------------------------------------------- */
 #if defined(CONFIG_MODULE_GLOBALVARHANDLER_ENABLE)
-    // test with 1 parameter:
-    StrCpy(cmdSrcBuffer, "get");            // command string must reside in RAM!
-    StrCpy(cmdParamBuffer, "SN");            // command string must reside in RAM!
+    /* test with 1 parameter: */
+    StrCpy(cmdSrcBuffer, "get");            /* command string must reside in RAM! */
+    StrCpy(cmdParamBuffer, "SN");            /* command string must reside in RAM! */
     result = CmdH_ExecuteCommandWithParams(cmdSrcBuffer, cmdParamBuffer, buffer, CMD_UNITTEST_BUFFER_SIZE);
 
-    // Check command execute result: true/successful, because CommandHandler will find "version" command
+    /* Check command execute result: true/successful, because CommandHandler will find "version" command */
     UNITTEST_ASSERT(result == CmdH_Result_Ok, "CmdH_PrepareFindExecuteCommand error");
 
-    // Check command argument num
+    /* Check command argument num */
     UNITTEST_ASSERT(CmdH_CommandArgCount == 2, "CmdH_PrepareFindExecuteCommand error");
 
-    // Check command source
-    //UNITTEST_ASSERT(CmdH_CommandSource == CommProt_DebugUart, "CmdH_PrepareFindExecuteCommand error");
+    /* Check command source */
+    /* NITTEST_ASSERT(CmdH_CommandSource == CommProt_DebugUart, "CmdH_PrepareFindExecuteCommand error"); */
 
-    // Check separated / splitted command
+    /* Check separated / splitted command */
     UNITTEST_ASSERT(!StrCmp(CmdH_CommandArguments[0], "get"), "CmdH_PrepareFindExecuteCommand error");
     UNITTEST_ASSERT(!StrCmp(CmdH_CommandArguments[1], "SN"), "CmdH_PrepareFindExecuteCommand error");
 #endif /* CONFIG_MODULE_GLOBALVARHANDLER_ENABLE */
 
 
-    //-----------------------------------------------------
+    /* ---------------------------------------------------- */
 #ifdef CONFIG_MODULE_IO_ENABLE
-    // test with 2 parameters:
-    StrCpy(cmdSrcBuffer, "led");            // command string must reside in RAM!
-    StrCpy(cmdParamBuffer, "1 on");            // command string must reside in RAM!
+    /* test with 2 parameters: */
+    StrCpy(cmdSrcBuffer, "led");            /* command string must reside in RAM! */
+    StrCpy(cmdParamBuffer, "1 on");            /* command string must reside in RAM! */
     result = CmdH_ExecuteCommandWithParams(CommProt_DebugUart, cmdSrcBuffer, cmdParamBuffer, buffer, CMD_UNITTEST_BUFFER_SIZE);
 
-    // Check command execute result: true/successful, because CommandHandler will find "version" command
+    /* Check command execute result: true/successful, because CommandHandler will find "version" command */
     UNITTEST_ASSERT(result == CmdH_Result_Ok, "CmdH_PrepareFindExecuteCommand error");
 
-    // Check command argument num
+    /* Check command argument num */
     UNITTEST_ASSERT(CmdH_CommandArgCount == 3, "CmdH_PrepareFindExecuteCommand error");
 
-    // Check command source
-    //UNITTEST_ASSERT(CmdH_CommandSource == CommProt_DebugUart, "CmdH_PrepareFindExecuteCommand error");
+    /* Check command source */
+    /* NITTEST_ASSERT(CmdH_CommandSource == CommProt_DebugUart, "CmdH_PrepareFindExecuteCommand error"); */
 
-    // Check separated / splitted command
+    /* Check separated / splitted command */
     UNITTEST_ASSERT(!StrCmp(CmdH_CommandArguments[0], "led"), "CmdH_PrepareFindExecuteCommand error");
     UNITTEST_ASSERT(!StrCmp(CmdH_CommandArguments[1], "1"), "CmdH_PrepareFindExecuteCommand error");
     UNITTEST_ASSERT(!StrCmp(CmdH_CommandArguments[2], "on"), "CmdH_PrepareFindExecuteCommand error");
 #endif
 
-    // End of unittest
+    /* End of unittest */
     return UnitTest_End();
 }
 
 #endif
 
-#endif    // #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE */

@@ -40,4 +40,4 @@ const uint32_t Font32x20[FONT_32X20_NUM][FONT_32X20_STORE_SIZE] =
 
 
 
-#endif    // #ifdef CONFIG_DISPLAY_FONT32X20_ENABLE
+#endif    /* #ifdef CONFIG_DISPLAY_FONT32X20_ENABLE */

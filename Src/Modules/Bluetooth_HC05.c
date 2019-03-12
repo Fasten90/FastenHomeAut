@@ -91,7 +91,7 @@ void Bluetooth_HC05_Init(void)
 
     UART_Init(&Bluetooth_UartHandle);
 
-    //Bluetooth_SendEnable();
+    /* luetooth_SendEnable(); */
     Bluetooth_ReceiveEnable();
 }
 
@@ -149,37 +149,37 @@ void Bluetooth_ProcessReceivedCharacters(void)
 {
     char recvBuf[BLUETOOTH_PROCESS_BUFFER_SIZE];
 
-    // Received new character?
+    /* Received new character? */
     if (CircularBuffer_IsNotEmpty(&Bluetooth_RxBuffStruct))
     {
-        // Copy received message to buffer
+        /* Copy received message to buffer */
         CircularBuffer_GetString(&Bluetooth_RxBuffStruct, recvBuf, BLUETOOTH_PROCESS_BUFFER_SIZE);
 
-        // Received newline character? (End of command)
+        /* Received newline character? (End of command) */
         char * newLinePos = (char *)STRING_FindCharacters((const char *)recvBuf, "\r\n");
         if (newLinePos != NULL)
         {
-            // Has newline, process the received command
+            /* Has newline, process the received command */
             char respBuf[BLUETOOTH_RESPONSE_BUFFER_SIZE];
             respBuf[0] = '\0';
 
             *newLinePos = '\0';
 
-            // Search command and run
+            /* Search command and run */
             CmdH_Result_t cmdResult = CmdH_ExecuteCommand(recvBuf, respBuf, BLUETOOTH_RESPONSE_BUFFER_SIZE);
 
             CmdH_PrintResult(cmdResult);
 
             Bluetooth_SendMessage(respBuf);
 
-            // Send on DebugUart (these are different from DebugUart Process() function)
+            /* Send on DebugUart (these are different from DebugUart Process() function) */
             uprintf("Received Bluetooth command: \"%s\"\r\n", recvBuf);
 
-            // Drop processed characters
+            /* Drop processed characters */
             size_t processedLength = (newLinePos - recvBuf) + 1;
             if (newLinePos != &recvBuf[BLUETOOTH_RESPONSE_BUFFER_SIZE-1])
             {
-                // Check next character is not '\n' or '\r'?
+                /* Check next character is not '\n' or '\r'? */
                 if ((*(newLinePos+1) == '\r') || (*(newLinePos+1) == '\n'))
                     processedLength++;
             }
@@ -190,9 +190,9 @@ void Bluetooth_ProcessReceivedCharacters(void)
 
 #else
 
-// Bluetooth module is not used
+/* Bluetooth module is not used */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 #pragma GCC diagnostic pop
 
-#endif    // #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE */

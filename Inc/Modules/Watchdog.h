@@ -44,15 +44,15 @@
  *----------------------------------------------------------------------------*/
 
 #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
-// Watchdog enabled: function implement in .c file
+/* Watchdog enabled: function implement in .c file */
 void Watchdog_Init(void);
 void Watchdog_Clear(void);
 
 #else
-// If Watchdog not enabled
+/* If Watchdog not enabled */
 #define Watchdog_Clear()
 
-#endif    // #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_WATCHDOG_ENABLE */
 
 
 #endif /* WATCHDOG_H_ */

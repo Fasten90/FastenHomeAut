@@ -42,7 +42,7 @@ typedef enum
     PressedButton_Left,
 #endif
 
-    // Last, do not use
+    /* Last, do not use */
     PressedButton_Count
 } ButtonType_t;
 
@@ -76,7 +76,7 @@ bool BUTTON_GetButtonState(ButtonType_t button);
 const char * BUTTON_GetButtonName(ButtonType_t button);
 const char * BUTTON_GetPressTypeName(ButtonPressType_t pressType);
 
-//void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
+/* oid HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin); */
 
 
 

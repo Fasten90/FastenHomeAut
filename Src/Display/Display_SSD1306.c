@@ -97,10 +97,10 @@ void Display_SSD1306_Init(void)
     HAL_GPIO_Init(DISPLAY_SSD1306_SPIx_MOSI_GPIO_PORT, &GPIO_InitStruct);
 
 
-    // Initialize other GPIO pins
+    /* Initialize other GPIO pins */
     DISPLAY_SSD1306_PINS_CLK_ENABLE();
 
-    // CS
+    /* CS */
     GPIO_InitStruct.Pin = DISPLAY_SSD1306_SPIx_CS_GPIO_PIN;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
@@ -109,7 +109,7 @@ void Display_SSD1306_Init(void)
     HAL_GPIO_Init(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, &GPIO_InitStruct);
     HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
 
-    // RST
+    /* RST */
     GPIO_InitStruct.Pin = DISPLAY_SSD1306_RST_GPIO_PIN;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
@@ -119,7 +119,7 @@ void Display_SSD1306_Init(void)
     HAL_GPIO_WritePin(DISPLAY_SSD1306_RST_GPIO_PORT,
             DISPLAY_SSD1306_RST_GPIO_PIN, SET);
 
-    // Data/Command
+    /* Data/Command */
     GPIO_InitStruct.Pin = DISPLAY_SSD1306_DATACOMMAND_GPIO_PIN;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
@@ -189,7 +189,7 @@ void Display_SSD1306_Init(void)
 }
 
 
-// #ifdef CONFIG_DISPLAY_SPI_USE_DMA
+/* #ifdef CONFIG_DISPLAY_SPI_USE_DMA */
 #if 0
 void HAL_SPI_MspInit(SPI_HandleTypeDef *hspi)
 {
@@ -231,7 +231,7 @@ GPIO_InitTypeDef  GPIO_InitStruct;
 static void SSD1306_HardwareInit(void)
 {
 
-    // Reset --> low --> high
+    /* Reset --> low --> high */
     HAL_GPIO_WritePin(DISPLAY_SSD1306_RST_GPIO_PORT,
             DISPLAY_SSD1306_RST_GPIO_PIN, RESET);
 
@@ -240,49 +240,49 @@ static void SSD1306_HardwareInit(void)
     HAL_GPIO_WritePin(DISPLAY_SSD1306_RST_GPIO_PORT,
             DISPLAY_SSD1306_RST_GPIO_PIN, SET);
 
-    // Wait after reset
+    /* Wait after reset */
     DelayMs(100);
 
-    // Init sequence
-    SSD1306_command(SSD1306_DISPLAYOFF);                    // 0xAE
-    SSD1306_command(SSD1306_SETDISPLAYCLOCKDIV);            // 0xD5
-    SSD1306_command(0x80);                           // the suggested ratio 0x80
+    /* Init sequence */
+    SSD1306_command(SSD1306_DISPLAYOFF);                    /* 0xAE */
+    SSD1306_command(SSD1306_SETDISPLAYCLOCKDIV);            /* 0xD5 */
+    SSD1306_command(0x80);                           /* the suggested ratio 0x80 */
 
-    SSD1306_command(SSD1306_SETMULTIPLEX);                  // 0xA8
+    SSD1306_command(SSD1306_SETMULTIPLEX);                  /* 0xA8 */
     SSD1306_command(SSD1306_LCDHEIGHT - 1);
 
-    SSD1306_command(SSD1306_SETDISPLAYOFFSET);              // 0xD3
-    SSD1306_command(0x0);                                   // no offset
-    SSD1306_command(SSD1306_SETSTARTLINE | 0x0);            // line #0
-    SSD1306_command(SSD1306_CHARGEPUMP);                    // 0x8D
-    //if (vccstate == SSD1306_EXTERNALVCC)    // TODO:
-    //SSD1306_command(0x10);
-    //else
+    SSD1306_command(SSD1306_SETDISPLAYOFFSET);              /* 0xD3 */
+    SSD1306_command(0x0);                                   /* no offset */
+    SSD1306_command(SSD1306_SETSTARTLINE | 0x0);            /* line #0 */
+    SSD1306_command(SSD1306_CHARGEPUMP);                    /* 0x8D */
+    /* f (vccstate == SSD1306_EXTERNALVCC)    // TODO: */
+    /* SD1306_command(0x10); */
+    /* lse */
     SSD1306_command(0x14);
-    SSD1306_command(SSD1306_MEMORYMODE);                    // 0x20
-    SSD1306_command(0x00);                                // 0x0 act like ks0108
+    SSD1306_command(SSD1306_MEMORYMODE);                    /* 0x20 */
+    SSD1306_command(0x00);                                /* 0x0 act like ks0108 */
     SSD1306_command(SSD1306_SEGREMAP | 0x1);
     SSD1306_command(SSD1306_COMSCANDEC);
 
 #if defined(SSD1306_128_32)
-    SSD1306_command(SSD1306_SETCOMPINS);                    // 0xDA
+    SSD1306_command(SSD1306_SETCOMPINS);                    /* 0xDA */
     SSD1306_command(0x02);
-    SSD1306_command(SSD1306_SETCONTRAST);// 0x81
+    SSD1306_command(SSD1306_SETCONTRAST);/* 0x81 */
     SSD1306_command(0x8F);
 
 #elif defined(SSD1306_128_64)
-    SSD1306_command(SSD1306_SETCOMPINS);                    // 0xDA
+    SSD1306_command(SSD1306_SETCOMPINS);                    /* 0xDA */
     SSD1306_command(0x12);
-    SSD1306_command(SSD1306_SETCONTRAST);                   // 0x81
-    //if (vccstate == SSD1306_EXTERNALVCC)    // TODO:
-    //SSD1306_command(0x9F);
-    //  else
+    SSD1306_command(SSD1306_SETCONTRAST);                   /* 0x81 */
+    /* f (vccstate == SSD1306_EXTERNALVCC)    // TODO: */
+    /* SD1306_command(0x9F); */
+    /*  else */
     SSD1306_command(0xCF);
 
 #elif defined(SSD1306_96_16)
-    SSD1306_command(SSD1306_SETCOMPINS);                    // 0xDA
-    SSD1306_command(0x2);//ada x12
-    SSD1306_command(SSD1306_SETCONTRAST);// 0x81
+    SSD1306_command(SSD1306_SETCOMPINS);                    /* 0xDA */
+    SSD1306_command(0x2);/* da x12 */
+    SSD1306_command(SSD1306_SETCONTRAST);/* 0x81 */
     if (vccstate == SSD1306_EXTERNALVCC)
     {   SSD1306_command(0x10);}
     else
@@ -290,20 +290,20 @@ static void SSD1306_HardwareInit(void)
 
 #endif
 
-    SSD1306_command(SSD1306_SETPRECHARGE);                  // 0xd9
-    //if (vccstate == SSD1306_EXTERNALVCC)    // TODO:
-    //SSD1306_command(0x22);
-    //else
+    SSD1306_command(SSD1306_SETPRECHARGE);                  /* 0xd9 */
+    /* f (vccstate == SSD1306_EXTERNALVCC)    // TODO: */
+    /* SD1306_command(0x22); */
+    /* lse */
     SSD1306_command(0xF1);
 
-    SSD1306_command(SSD1306_SETVCOMDETECT);                 // 0xDB
+    SSD1306_command(SSD1306_SETVCOMDETECT);                 /* 0xDB */
     SSD1306_command(0x40);
-    SSD1306_command(SSD1306_DISPLAYALLON_RESUME);           // 0xA4
-    SSD1306_command(SSD1306_NORMALDISPLAY);                 // 0xA6
+    SSD1306_command(SSD1306_DISPLAYALLON_RESUME);           /* 0xA4 */
+    SSD1306_command(SSD1306_NORMALDISPLAY);                 /* 0xA6 */
 
     SSD1306_command(SSD1306_DEACTIVATE_SCROLL);
 
-    SSD1306_command(SSD1306_DISPLAYON);                 //--turn on oled panel
+    SSD1306_command(SSD1306_DISPLAYON);                 /* -turn on oled panel */
 }
 
 
@@ -340,15 +340,15 @@ static void SSD1306_fastSPIwrite(uint8_t d)
 /**
  * @brief    The most basic function, set a single pixel
  */
-// __attribute__( ( section(".data") ) )
+/* __attribute__( ( section(".data") ) ) */
 void SSD1306_drawPixel(uint8_t x, uint8_t y, Display_Color_t color)
 {
     if ((x >= SSD1306_LCDWIDTH) || (y >= SSD1306_LCDHEIGHT))
         return;
 
 #ifdef SSD1306_ROTATION_ENABLE
-    // check rotation, move pixel around if necessary
-    uint8_t rotation = 0;    // TODO:
+    /* check rotation, move pixel around if necessary */
+    uint8_t rotation = 0;    /* TODO: */
     switch (rotation)
     {
         case 1:
@@ -368,7 +368,7 @@ void SSD1306_drawPixel(uint8_t x, uint8_t y, Display_Color_t color)
     }
 #endif
 
-    // x is which column
+    /* x is which column */
     switch (color)
     {
         case WHITE:
@@ -391,7 +391,7 @@ void SSD1306_drawPixel(uint8_t x, uint8_t y, Display_Color_t color)
 #warning "Not tested"
 void SSD1306_drawFixVerticalLine(int16_t x, int16_t y, uint8_t row)
 {
-    // TODO: Check parameters
+    /* TODO: Check parameters */
     display_buffer[x + (y / 8) * SSD1306_LCDWIDTH] = row;
 }
 #endif
@@ -403,17 +403,17 @@ void SSD1306_drawFixVerticalLine(int16_t x, int16_t y, uint8_t row)
  */
 void SSD1306_drawImage(uint8_t setx, uint8_t sety, uint8_t sizex, uint8_t sizey, uint8_t *img)
 {
-    // TODO: Only 8n size can be used
+    /* TODO: Only 8n size can be used */
     uint8_t i;
     uint8_t j;
 
-    // Step on a row (left to right)
+    /* Step on a row (left to right) */
     for (i = 0; i < sizex; i++)
     {
-        // Step on a column (a 1x8 column is a byte)
+        /* Step on a column (a 1x8 column is a byte) */
         for (j = 0; j < sizey/8; j++)
         {
-            // Copy an byte
+            /* Copy an byte */
             display_buffer[sety/8*SSD1306_LCDWIDTH + setx + i + j*SSD1306_LCDWIDTH] =
                     img[j*sizex + i];
         }
@@ -440,10 +440,10 @@ void SSD1306_invertDisplay(bool invert)
 
 
 
-// startscrollright
-// Activate a right handed scroll for rows start through stop
-// Hint, the display is 16 rows tall. To scroll the whole display, run:
-// display.scrollright(0x00, 0x0F)
+/* startscrollright */
+/* Activate a right handed scroll for rows start through stop */
+/* Hint, the display is 16 rows tall. To scroll the whole display, run: */
+/* display.scrollright(0x00, 0x0F) */
 void SSD1306_startscrollright(uint8_t start, uint8_t stop)
 {
     SSD1306_command(SSD1306_RIGHT_HORIZONTAL_SCROLL);
@@ -458,10 +458,10 @@ void SSD1306_startscrollright(uint8_t start, uint8_t stop)
 
 
 
-// startscrollleft
-// Activate a right handed scroll for rows start through stop
-// Hint, the display is 16 rows tall. To scroll the whole display, run:
-// display.scrollright(0x00, 0x0F)
+/* startscrollleft */
+/* Activate a right handed scroll for rows start through stop */
+/* Hint, the display is 16 rows tall. To scroll the whole display, run: */
+/* display.scrollright(0x00, 0x0F) */
 void SSD1306_startscrollleft(uint8_t start, uint8_t stop)
 {
     SSD1306_command(SSD1306_LEFT_HORIZONTAL_SCROLL);
@@ -476,10 +476,10 @@ void SSD1306_startscrollleft(uint8_t start, uint8_t stop)
 
 
 
-// startscrolldiagright
-// Activate a diagonal scroll for rows start through stop
-// Hint, the display is 16 rows tall. To scroll the whole display, run:
-// display.scrollright(0x00, 0x0F)
+/* startscrolldiagright */
+/* Activate a diagonal scroll for rows start through stop */
+/* Hint, the display is 16 rows tall. To scroll the whole display, run: */
+/* display.scrollright(0x00, 0x0F) */
 void SSD1306_startscrolldiagright(uint8_t start, uint8_t stop)
 {
     SSD1306_command(SSD1306_SET_VERTICAL_SCROLL_AREA);
@@ -496,10 +496,10 @@ void SSD1306_startscrolldiagright(uint8_t start, uint8_t stop)
 
 
 
-// startscrolldiagleft
-// Activate a diagonal scroll for rows start through stop
-// Hint, the display is 16 rows tall. To scroll the whole display, run:
-// display.scrollright(0x00, 0x0F)
+/* startscrolldiagleft */
+/* Activate a diagonal scroll for rows start through stop */
+/* Hint, the display is 16 rows tall. To scroll the whole display, run: */
+/* display.scrollright(0x00, 0x0F) */
 void SSD1306_startscrolldiagleft(uint8_t start, uint8_t stop)
 {
     SSD1306_command(SSD1306_SET_VERTICAL_SCROLL_AREA);
@@ -523,28 +523,28 @@ void SSD1306_stopscroll(void)
 
 
 
-// Dim the display
-// dim = true: display is dimmed
-// dim = false: display is normal
+/* Dim the display */
+/* dim = true: display is dimmed */
+/* dim = false: display is normal */
 void SSD1306_dim(bool dim)
 {
     uint8_t contrast;
 
     if (dim)
     {
-        contrast = 0; // Dimmed display
+        contrast = 0; /* Dimmed display */
     }
     else
     {
-        // TODO:
-        //if (_vccstate == SSD1306_EXTERNALVCC) {
-        //contrast = 0x9F;
-        //} else {
+        /* TODO: */
+        /* f (_vccstate == SSD1306_EXTERNALVCC) { */
+        /* ontrast = 0x9F; */
+        /*  else { */
         contrast = 0xCF;
         //}
     }
-    // the range of contrast to too small to be really useful
-    // it is useful to dim the display
+    /* the range of contrast to too small to be really useful */
+    /* it is useful to dim the display */
     SSD1306_command(SSD1306_SETCONTRAST);
     SSD1306_command(contrast);
 }
@@ -553,44 +553,45 @@ void SSD1306_dim(bool dim)
 
 void SSD1306_display(void)
 {
-    // TODO: Check Display_TransferInProgress
+    /* TODO: Check Display_TransferInProgress */
 #ifdef CONFIG_EVENTLOG_DISPLAY_LOG_ENABLE
-    // Save event
+    /* Save event */
     EventHandler_GenerateEvent(Event_Display_SpiEvent, 3, Task_Display);
 #endif
 
     SSD1306_command(SSD1306_COLUMNADDR);
-    SSD1306_command(0);   // Column start address (0 = reset)
-    SSD1306_command(SSD1306_LCDWIDTH - 1); // Column end address (127 = reset)
+    SSD1306_command(0);   /* Column start address (0 = reset) */
+    SSD1306_command(SSD1306_LCDWIDTH - 1); /* Column end address (127 = reset) */
 
     SSD1306_command(SSD1306_PAGEADDR);
-    SSD1306_command(0); // Page start address (0 = reset)
+    SSD1306_command(0); /* Page start address (0 = reset) */
 #if SSD1306_LCDHEIGHT == 64
-    SSD1306_command(7); // Page end address
+    SSD1306_command(7); /* Page end address */
 #endif
 #if SSD1306_LCDHEIGHT == 32
-    SSD1306_command(3); // Page end address
+    SSD1306_command(3); /* Page end address */
 #endif
 #if SSD1306_LCDHEIGHT == 16
-    SSD1306_command(1); // Page end address
+    SSD1306_command(1); /* Page end address */
 #endif
 
 #ifdef CONFIG_EVENTLOG_DISPLAY_LOG_ENABLE
-    // Save event
-    //EventHandler_GenerateEvent(Event_Display_SpiEvent, 1, Task_Display);
+    /* Save event */
+    /* ventHandler_GenerateEvent(Event_Display_SpiEvent, 1, Task_Display); */
 #endif
 
-    // SPI
+    /* SPI */
     HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
 
-    // Data
+    /* Data */
     HAL_GPIO_WritePin(DISPLAY_SSD1306_DATACOMMAND_GPIO_PORT,
             DISPLAY_SSD1306_DATACOMMAND_GPIO_PIN, SET);
 
     HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, RESET);
 
+    /* Blocking mode */
+    /* TODO: Make define for this */
     /*
-    // Blocking mode
     for (uint16_t i = 0; i < (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8); i++)
     {
         SSD1306_fastSPIwrite(buffer[i]);
@@ -603,17 +604,17 @@ void SSD1306_display(void)
 #ifdef CONFIG_DISPLAY_SPI_USE_DMA
     HAL_SPI_Transmit_DMA(&SpiHandle, display_buffer, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8));
 #else
-    // TODO: This Sending need 20ms, optimize!! (HAL_SPI_Transmit_IT)
+    /* TODO: This Sending need 20ms, optimize!! (HAL_SPI_Transmit_IT) */
     HAL_SPI_Transmit_IT(&SpiHandle, display_buffer, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8));
 #endif
 
 #ifdef CONFIG_EVENTLOG_DISPLAY_LOG_ENABLE
-    // Save event
+    /* Save event */
     EventHandler_GenerateEvent(Event_Display_SpiEvent, 4, Task_Display);
 #endif
 
-    // CS pin set in IT function
-    //HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
+    /* CS pin set in IT function */
+    /* AL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET); */
 }
 
 
@@ -632,26 +633,26 @@ void SSD1306_drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color)
 {
 #ifdef SSD1306_ROTATION_ENABLE
     bool bSwap = false;
-    uint8_t rotation = 0;    // TODO:
+    uint8_t rotation = 0;    /* TODO: */
     switch (rotation)
     {
         case 0:
-            // 0 degree rotation, do nothing
+            /* 0 degree rotation, do nothing */
             break;
         case 1:
-            // 90 degree rotation, swap x & y for rotation, then invert x
+            /* 90 degree rotation, swap x & y for rotation, then invert x */
             bSwap = true;
             ssd1306_swap(x, y);
             x = SSD1306_LCDWIDTH - x - 1;
             break;
         case 2:
-            // 180 degree rotation, invert x and y - then shift y around for height.
+            /* 180 degree rotation, invert x and y - then shift y around for height. */
             x = SSD1306_LCDWIDTH - x - 1;
             y = SSD1306_LCDHEIGHT - y - 1;
             x -= (w - 1);
             break;
         case 3:
-            // 270 degree rotation, swap x & y for rotation, then invert y  and adjust y for w (not to become h)
+            /* 270 degree rotation, swap x & y for rotation, then invert y  and adjust y for w (not to become h) */
             bSwap = true;
             ssd1306_swap(x, y);
             y = SSD1306_LCDHEIGHT - y - 1;
@@ -679,36 +680,36 @@ void SSD1306_drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color)
 void SSD1306_drawFastHLineInternal(int16_t x, int16_t y, int16_t w,
         uint16_t color)
 {
-    // Do bounds/limit checks
+    /* Do bounds/limit checks */
     if (y < 0 || y >= SSD1306_LCDHEIGHT)
     {
         return;
     }
 
-    // make sure we don't try to draw below 0
+    /* make sure we don't try to draw below 0 */
     if (x < 0)
     {
         w += x;
         x = 0;
     }
 
-    // make sure we don't go off the edge of the display
+    /* make sure we don't go off the edge of the display */
     if ((x + w) > SSD1306_LCDWIDTH)
     {
         w = (SSD1306_LCDWIDTH - x);
     }
 
-    // if our width is now negative, punt
+    /* if our width is now negative, punt */
     if (w <= 0)
     {
         return;
     }
 
-    // set up the pointer for  movement through the buffer
+    /* set up the pointer for  movement through the buffer */
     register uint8_t *pBuf = display_buffer;
-    // adjust the buffer pointer for the current row
+    /* adjust the buffer pointer for the current row */
     pBuf += ((y / 8) * SSD1306_LCDWIDTH);
-    // and offset x columns in
+    /* and offset x columns in */
     pBuf += x;
 
     register uint8_t mask = 1 << (y & 7);
@@ -746,26 +747,26 @@ void SSD1306_drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color)
 #ifdef SSD1306_ROTATION_ENABLE
     bool bSwap = false;
 
-    uint8_t rotation = 0;    // TODO:
+    uint8_t rotation = 0;    /* TODO: */
     switch (rotation)
     {
         case 0:
             break;
         case 1:
-            // 90 degree rotation, swap x & y for rotation, then invert x and adjust x for h (now to become w)
+            /* 90 degree rotation, swap x & y for rotation, then invert x and adjust x for h (now to become w) */
             bSwap = true;
             ssd1306_swap(x, y);
             x = SSD1306_LCDWIDTH - x - 1;
             x -= (h - 1);
             break;
         case 2:
-            // 180 degree rotation, invert x and y - then shift y around for height.
+            /* 180 degree rotation, invert x and y - then shift y around for height. */
             x = SSD1306_LCDWIDTH - x - 1;
             y = SSD1306_LCDHEIGHT - y - 1;
             y -= (h - 1);
             break;
         case 3:
-            // 270 degree rotation, swap x & y for rotation, then invert y
+            /* 270 degree rotation, swap x & y for rotation, then invert y */
             bSwap = true;
             ssd1306_swap(x, y);
             y = SSD1306_LCDHEIGHT - y - 1;
@@ -793,58 +794,58 @@ void SSD1306_drawFastVLineInternal(int16_t x, int16_t __y, int16_t __h,
         uint16_t color)
 {
 
-    // do nothing if we're off the left or right side of the screen
+    /* do nothing if we're off the left or right side of the screen */
     if (x < 0 || x >= SSD1306_LCDWIDTH)
     {
         return;
     }
 
-    // make sure we don't try to draw below 0
+    /* make sure we don't try to draw below 0 */
     if (__y < 0)
     {
-        // __y is negative, this will subtract enough from __h to account for __y being 0
+        /* __y is negative, this will subtract enough from __h to account for __y being 0 */
         __h += __y;
         __y = 0;
 
     }
 
-    // make sure we don't go past the height of the display
+    /* make sure we don't go past the height of the display */
     if ((__y + __h) > SSD1306_LCDHEIGHT)
     {
         __h = (SSD1306_LCDHEIGHT - __y);
     }
 
-    // if our height is now negative, punt
+    /* if our height is now negative, punt */
     if (__h <= 0)
     {
         return;
     }
 
-    // this display doesn't need ints for coordinates, use local byte registers for faster juggling
+    /* this display doesn't need ints for coordinates, use local byte registers for faster juggling */
     register uint8_t y = __y;
     register uint8_t h = __h;
 
-    // set up the pointer for fast movement through the buffer
+    /* set up the pointer for fast movement through the buffer */
     register uint8_t *pBuf = display_buffer;
-    // adjust the buffer pointer for the current row
+    /* adjust the buffer pointer for the current row */
     pBuf += ((y / 8) * SSD1306_LCDWIDTH);
-    // and offset x columns in
+    /* and offset x columns in */
     pBuf += x;
 
-    // do the first partial byte, if necessary - this requires some masking
+    /* do the first partial byte, if necessary - this requires some masking */
     register uint8_t mod = (y & 7);
     if (mod)
     {
-        // mask off the high n bits we want to set
+        /* mask off the high n bits we want to set */
         mod = 8 - mod;
 
-        // note - lookup table results in a nearly 10% performance improvement in fill* functions
-        // register uint8_t mask = ~(0xFF >> (mod));
+        /* note - lookup table results in a nearly 10% performance improvement in fill* functions */
+        /* register uint8_t mask = ~(0xFF >> (mod)); */
         static uint8_t premask[8] =
         { 0x00, 0x80, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC, 0xFE };
         register uint8_t mask = premask[mod];
 
-        // adjust the mask if we're not going to reach the end of this byte
+        /* adjust the mask if we're not going to reach the end of this byte */
         if (h < mod)
         {
             mask &= (0XFF >> (mod - h));
@@ -865,7 +866,7 @@ void SSD1306_drawFastVLineInternal(int16_t x, int16_t __y, int16_t __h,
                 break;
         }
 
-        // fast exit if we're done here!
+        /* fast exit if we're done here! */
         if (h < mod)
         {
             return;
@@ -876,48 +877,48 @@ void SSD1306_drawFastVLineInternal(int16_t x, int16_t __y, int16_t __h,
         pBuf += SSD1306_LCDWIDTH;
     }
 
-    // write solid bytes while we can - effectively doing 8 rows at a time
+    /* write solid bytes while we can - effectively doing 8 rows at a time */
     if (h >= 8)
     {
         if (color == INVERSE)
-        { // separate copy of the code so we don't impact performance of the black/white write version with an extra comparison per loop
+        { /* separate copy of the code so we don't impact performance of the black/white write version with an extra comparison per loop */
             do
             {
                 *pBuf = ~(*pBuf);
 
-                // adjust the buffer forward 8 rows worth of data
+                /* adjust the buffer forward 8 rows worth of data */
                 pBuf += SSD1306_LCDWIDTH;
 
-                // adjust h & y (there's got to be a faster way for me to do this, but this should still help a fair bit for now)
+                /* adjust h & y (there's got to be a faster way for me to do this, but this should still help a fair bit for now) */
                 h -= 8;
             } while (h >= 8);
         }
         else
         {
-            // store a local value to work with
+            /* store a local value to work with */
             register uint8_t val = (color == WHITE) ? 255 : 0;
 
             do
             {
-                // write our value in
+                /* write our value in */
                 *pBuf = val;
 
-                // adjust the buffer forward 8 rows worth of data
+                /* adjust the buffer forward 8 rows worth of data */
                 pBuf += SSD1306_LCDWIDTH;
 
-                // adjust h & y (there's got to be a faster way for me to do this, but this should still help a fair bit for now)
+                /* adjust h & y (there's got to be a faster way for me to do this, but this should still help a fair bit for now) */
                 h -= 8;
             } while (h >= 8);
         }
     }
 
-    // now do the final partial byte, if necessary
+    /* now do the final partial byte, if necessary */
     if (h)
     {
         mod = h & 7;
-        // this time we want to mask the low bits of the byte, vs the high bits we did above
-        // register uint8_t mask = (1 << mod) - 1;
-        // note - lookup table results in a nearly 10% performance improvement in fill* functions
+        /* this time we want to mask the low bits of the byte, vs the high bits we did above */
+        /* register uint8_t mask = (1 << mod) - 1; */
+        /* note - lookup table results in a nearly 10% performance improvement in fill* functions */
         static uint8_t postmask[8] =
         { 0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F };
         register uint8_t mask = postmask[mod];
@@ -958,8 +959,8 @@ void DISPLAY_SSD1306_SPIx_IRQHandler(void)
   */
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 {
-    // Suppress warning
-    (void)hspi;
+    /* Suppress warning */
+    UNUSED_ARGUMENT(hspi);
 
     HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
 
@@ -967,7 +968,7 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
     {
         Display_TransferInProgress = false;
 #ifdef CONFIG_EVENTLOG_DISPLAY_LOG_ENABLE
-        // Save event
+        /* Save event */
         EventHandler_GenerateEvent(Event_Display_SpiEvent, 5, Task_Display);
 #endif
     }
@@ -984,14 +985,14 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
   */
 void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi)
 {
-    // Suppress warning
-    (void)hspi;
+    /* Suppress warning */
+    UNUSED_ARGUMENT(hspi);
 
     HAL_GPIO_WritePin(DISPLAY_SSD1306_SPIx_CS_GPIO_PORT, DISPLAY_SSD1306_SPIx_CS_GPIO_PIN, SET);
     Display_TransferInProgress = false;
 
 #ifdef CONFIG_EVENTLOG_DISPLAY_LOG_ENABLE
-    // Save event
+    /* Save event */
     EventHandler_GenerateEvent(Event_Display_SpiEvent, 4, Task_Display);
 #endif
 }
@@ -1021,20 +1022,20 @@ void Display_SendOnTerminal(void)
     uint8_t x;
     uint8_t y;
 
-    // Print top frame row
+    /* Print top frame row */
     DebugUart_SendChar('+');
     for (x = 0; x < SSD1306_LCDWIDTH; x++) DebugUart_SendChar('-');
     DebugUart_SendLine("+");
 
-    // Print every row
+    /* Print every row */
     for (y = 0; y < SSD1306_LCDHEIGHT; y++)
     {
         DebugUart_SendChar('|');
 
-        // Print every pixel on row (=column)
+        /* Print every pixel on row (=column) */
         for (x = 0; x < SSD1306_LCDWIDTH; x++)
         {
-            // Print pixel
+            /* Print pixel */
             char ch = ' ';
             if (display_buffer[x + (y / 8) * SSD1306_LCDWIDTH] & (1 << (y & 7)))
             {
@@ -1043,11 +1044,11 @@ void Display_SendOnTerminal(void)
             DebugUart_SendChar(ch);
         }
 
-        // |\r\n
+        /* |\r\n */
         DebugUart_SendLine("|");
     }
 
-    // Print bottom frame row
+    /* Print bottom frame row */
     DebugUart_SendChar('+');
     for (x = 0; x < SSD1306_LCDWIDTH; x++) DebugUart_SendChar('-');
     DebugUart_SendLine("+");
@@ -1056,4 +1057,4 @@ void Display_SendOnTerminal(void)
 
 
 
-#endif    // #ifdef CONFIG_MODULE_DISPLAY_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_DISPLAY_ENABLE */

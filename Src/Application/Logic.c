@@ -101,7 +101,7 @@ static const uint8_t Display_Characters_size = sizeof(Display_Characters)/sizeof
 #ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
 static const uint16_t Display_CarAnimation_RefreshPeriod_MinLimit = 100;
 static const uint16_t Display_CarAnimation_RefreshPeriod_MaxLimit = 1000;
-static uint16_t Display_CarAnimation_RefreshPeriod_Actual = 300;        // Do not set const, user can change the refresh period time
+static uint16_t Display_CarAnimation_RefreshPeriod_Actual = 300;        /* Do not set const, user can change the refresh period time */
 #endif
 
 
@@ -138,7 +138,7 @@ static const char * const Logic_MenuList[] =
     "Clock",
     #endif
 
-    // XXX: Synchronize with DisplayMenu_t - but 0. (Menu_Main) is not need
+    /* XXX: Synchronize with DisplayMenu_t - but 0. (Menu_Main) is not need */
 };
 #endif
 
@@ -228,19 +228,19 @@ void Logic_Display_Init(void)
 
         #ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
         case Menu_Car:
-            // Display start screen
+            /* Display start screen */
             Display_LoadCarImage();
             break;
         #endif
 
         #ifdef CONFIG_FUNCTION_DISPLAY_INPUT
         case Menu_Input:
-            // Fill real string with empty character
+            /* Fill real string with empty character */
             memset(DisplayInput_ActualRealString, ' ', DisplayInput_StringLimit-1);
-            // Last char not need fill with ' ', because it is end character
+            /* Last char not need fill with ' ', because it is end character */
 
-            // Create OK button
-            // TODO: Create button?
+            /* Create OK button */
+            /* TODO: Create button? */
             Display_PrintFont12x8('O', DisplayInput_LetterPosition_MaxLimit, 2, NO_FORMAT);
             Display_PrintFont12x8('K', DisplayInput_LetterPosition_MaxLimit + 1, 2, NO_FORMAT);
             break;
@@ -277,12 +277,12 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
     BUTTON_DEBUG_PRINT("%s pressed %s", buttonName, typeName);
 
 #elif BUTTON_NUM == 1
-    (void)button;
-    (void)type;
+    UNUSED_ARGUMENT(button);
+    UNUSED_ARGUMENT(type);
     BUTTON_DEBUG_PRINT("Pressed");
 #else
-(void)button;
-(void)type;
+    UNUSED_ARGUMENT(button);
+    UNUSED_ARGUMENT(type);
 #warning "BUTTON_NUM is not defined or has unimplemented value!"
 #endif
 
@@ -312,17 +312,17 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 
             case PressedButton_Count:
             default:
-                // Error!
+                /* Error! */
                 break;
         }
 
         TaskHandler_RequestTaskScheduling(Task_Display);
         return;
     }
-#endif    // #ifdef CONFIG_FUNCTION_DISPLAY_MENU
+#endif    /* #ifdef CONFIG_FUNCTION_DISPLAY_MENU */
 
 #ifdef CONFIG_FUNCTION_DISPLAY_INPUT
-    // Check buttons
+    /* Check buttons */
     if (Logic_Display_ActualState == Menu_Input)
     {
         if (type != ButtonPress_ReleasedContinuous)
@@ -330,28 +330,28 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
             switch (button)
             {
                 case PressedButton_Right:
-                    // Right
+                    /* Right */
                     Logic_StepLetterPosition((type == ButtonPress_Short || type == ButtonPress_Continuous) ? 1 : 3);
                     break;
 
                 case PressedButton_Left:
-                    // Left
+                    /* Left */
                     Logic_StepLetterPosition((type == ButtonPress_Short || type == ButtonPress_Continuous) ? -1 : -3);
                     break;
 
                 case PressedButton_Up:
-                    // Up
+                    /* Up */
                     Logic_StepLetterNextValue((type == ButtonPress_Short || type == ButtonPress_Continuous) ? -1 : -3);
                     break;
 
                 case PressedButton_Down:
-                    // Down
+                    /* Down */
                     Logic_StepLetterNextValue((type == ButtonPress_Short || type == ButtonPress_Continuous) ? 1 : 3);
                     break;
 
                 case PressedButton_Count:
                 default:
-                    // Error!
+                    /* Error! */
                     break;
             }
         }
@@ -363,41 +363,41 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
     {
         if (!Logic_Snake_DisplaySnakeMenu)
         {
-            // Check buttons at Snake game
+            /* Check buttons at Snake game */
             if (type != ButtonPress_ReleasedContinuous)
             {
                 switch (button)
                 {
                     case PressedButton_Right:
-                        // Right
+                        /* Right */
                         Snake_Step(Step_Right);
                         break;
 
                     case PressedButton_Left:
-                        // Left
+                        /* Left */
                         Snake_Step(Step_Left);
                         break;
 
                     case PressedButton_Up:
-                        // Up
+                        /* Up */
                         Snake_Step(Step_Up);
                         break;
 
                     case PressedButton_Down:
-                        // Down
+                        /* Down */
                         Snake_Step(Step_Down);
                         break;
 
                     case PressedButton_Count:
                     default:
-                        // Error!
+                        /* Error! */
                         break;
                 }
             }
         }
         else
         {
-            // Check buttons at Snake menu
+            /* Check buttons at Snake menu */
             switch (button)
             {
                 case PressedButton_Right:
@@ -406,7 +406,7 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
                         Logic_Display_ChangeState(Menu_Snake);
                     else
                         Logic_Display_ChangeState(Menu_Main);
-                    // Clear SnakeMenu status
+                    /* Clear SnakeMenu status */
                     Logic_Snake_DisplaySnakeMenu = false;
                     break;
 
@@ -422,7 +422,7 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 
                 case PressedButton_Count:
                 default:
-                    // Error!
+                    /* Error! */
                     break;
             }
 
@@ -432,7 +432,7 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 #endif
 
 #ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
-    // Check buttons
+    /* Check buttons */
     if (Logic_Display_ActualState == Menu_Car)
     {
         if (type != ButtonPress_ReleasedContinuous)
@@ -440,7 +440,7 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
             switch (button)
             {
                 case PressedButton_Right:
-                    // Right
+                    /* Right */
                     if (Display_CarAnimation_RefreshPeriod_Actual <= Display_CarAnimation_RefreshPeriod_MaxLimit)
                     {
                         Display_CarAnimation_RefreshPeriod_Actual += Display_CarAnimation_RefreshPeriod_MinLimit;
@@ -449,7 +449,7 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
                     break;
 
                 case PressedButton_Left:
-                    // Left
+                    /* Left */
                     if (Display_CarAnimation_RefreshPeriod_Actual >= Display_CarAnimation_RefreshPeriod_MinLimit)
                     {
                         Display_CarAnimation_RefreshPeriod_Actual -= Display_CarAnimation_RefreshPeriod_MinLimit;
@@ -459,13 +459,13 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 
                 case PressedButton_Up:
                 case PressedButton_Down:
-                    // Go to Main menu
+                    /* Go to Main menu */
                     Logic_Display_ChangeState(Menu_Main);
                     break;
 
                 case PressedButton_Count:
                 default:
-                    // Error!
+                    /* Error! */
                     break;
             }
         }
@@ -473,21 +473,21 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 #endif
 
 #ifdef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
-    // Check buttons
+    /* Check buttons */
     if (Logic_Display_ActualState == Menu_LargeClock)
     {
     #if !defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK)
 
-        // Go to Main menu
+        /* Go to Main menu */
         Logic_Display_ChangeState(Menu_Main);
-        // TODO: Handle button change functions?
+        /* TODO: Handle button change functions? */
     #elif defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK) && (BUTTON_NUM == 1)
-        // One button mode
-        (void)type;
+        /* One button mode */
+        UNUSED_ARGUMENT(type);
 
         if (button == PressedButton_User)
         {
-            // TODO: Add "exit"
+            /* TODO: Add "exit" */
             if (type == ButtonPress_Long)
             {
                 BUTTON_DEBUG_PRINT("Pressed a long time");
@@ -500,9 +500,9 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
             }
         }
     #elif defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK) && (BUTTON_NUM > 1)
-        // More button mode
-        (void)type;
-        // TODO: Up-Down / Right-Up difference...
+        /* More button mode */
+        UNUSED_ARGUMENT(type);
+        /* TODO: Up-Down / Right-Up difference... */
         if ((button == PressedButton_Right) || (button == PressedButton_Left))
         {
             Logic_SystemTimeStepConfig();
@@ -511,13 +511,13 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
         {
             if (Logic_SystemTimeConfigState != DisplayClock_HourAndMinute)
             {
-                // Not exit step, step values
+                /* Not exit step, step values */
                 Logic_SystemTimeStepValue();
             }
             else
             {
-                // Exit step
-                // Go to Main menu
+                /* Exit step */
+                /* Go to Main menu */
                 Logic_Display_ChangeState(Menu_Main);
             }
         }
@@ -556,18 +556,18 @@ static const int8_t Car_Turning_MinValue = -30;
 
 static void Logic_RemoteController_Button(ButtonType_t button, ButtonPressType_t type)
 {
-    (void)type;
+    UNUSED_ARGUMENT(type);
 
-    // Check buttons
+    /* Check buttons */
     if (button == PressedButton_Right)
     {
-        // Right
+        /* Right */
 
         if (Car_TurningState == Car_Turning_Right)
         {
-            // Larger right
+            /* Larger right */
             Car_Turning_ActualValue -= Car_Turning_IncrementValue;
-            // Check limit
+            /* Check limit */
             if (Car_Turning_ActualValue < Car_Turning_MinValue)
             {
                 Car_Turning_ActualValue = Car_Turning_MinValue;
@@ -575,26 +575,26 @@ static void Logic_RemoteController_Button(ButtonType_t button, ButtonPressType_t
         }
         else if (Car_TurningState == Car_Turning_Straight)
         {
-            // Start right turning
+            /* Start right turning */
             Car_Turning_ActualValue = Car_Turning_StraightValue + Car_Turning_IncrementValue;
             Car_TurningState = Car_Turning_Right;
         }
         else
         {
-            // Straight
+            /* Straight */
             Car_Turning_ActualValue = Car_Turning_StraightValue;
             Car_TurningState = Car_Turning_Straight;
         }
     }
     else if (button == PressedButton_Left)
     {
-        // Left
+        /* Left */
 
         if (Car_TurningState == Car_Turning_Left)
         {
-            // Larger left
+            /* Larger left */
             Car_Turning_ActualValue += Car_Turning_IncrementValue;
-            // Check limit
+            /* Check limit */
             if (Car_Turning_ActualValue > Car_Turning_MaxValue)
             {
                 Car_Turning_ActualValue = Car_Turning_MaxValue;
@@ -602,26 +602,26 @@ static void Logic_RemoteController_Button(ButtonType_t button, ButtonPressType_t
         }
         else if (Car_TurningState == Car_Turning_Straight)
         {
-            // Start left turning
+            /* Start left turning */
             Car_Turning_ActualValue = Car_Turning_StraightValue + Car_Turning_IncrementValue;
             Car_TurningState = Car_Turning_Left;
         }
         else
         {
-            // Straight
+            /* Straight */
             Car_Turning_ActualValue = Car_Turning_StraightValue;
             Car_TurningState = Car_Turning_Straight;
         }
     }
     else if (button == PressedButton_Up)
     {
-        // Up
+        /* Up */
 
         if (Car_BackForwardState == Car_DcForward_Fordward)
         {
-            // Larger speed
+            /* Larger speed */
             Car_DcForward_ActualValue += Car_DcForward_IncrementValue;
-            // Check limit
+            /* Check limit */
             if (Car_DcForward_ActualValue > Car_DcForward_ForwardMaxValue)
             {
                 Car_DcForward_ActualValue = Car_DcForward_ForwardMaxValue;
@@ -629,25 +629,25 @@ static void Logic_RemoteController_Button(ButtonType_t button, ButtonPressType_t
         }
         else if (Car_BackForwardState == Car_DcForward_Stop)
         {
-            // Start go
+            /* Start go */
             Car_DcForward_ActualValue = Car_DcForward_FordwardStandardValue;
             Car_BackForwardState = Car_DcForward_Fordward;
         }
         else
         {
-            // Stop
+            /* Stop */
             Car_DcForward_ActualValue = Car_DcForward_StopValue;
             Car_BackForwardState = Car_DcForward_Stop;
         }
     }
     else if (button == PressedButton_Down)
     {
-        // Down
+        /* Down */
         if (Car_BackForwardState == Car_DcForward_Back)
         {
-            // Larger speed
+            /* Larger speed */
             Car_DcForward_ActualValue -= Car_DcForward_IncrementValue;
-            // Check limit
+            /* Check limit */
             if (Car_DcForward_ActualValue < Car_DcForward_ForwardMinValue)
             {
                 Car_DcForward_ActualValue = Car_DcForward_ForwardMinValue;
@@ -655,13 +655,13 @@ static void Logic_RemoteController_Button(ButtonType_t button, ButtonPressType_t
         }
         else if (Car_BackForwardState == Car_DcForward_Stop)
         {
-            // Start go
+            /* Start go */
             Car_DcForward_ActualValue = Car_DcForward_BackStandardValue;
             Car_BackForwardState = Car_DcForward_Back;
         }
         else
         {
-            // Stop
+            /* Stop */
             Car_DcForward_ActualValue = Car_DcForward_StopValue;
             Car_BackForwardState = Car_DcForward_Stop;
         }
@@ -669,10 +669,10 @@ static void Logic_RemoteController_Button(ButtonType_t button, ButtonPressType_t
 
 
     bool isChanged = false;
-    // Check, need send command?
+    /* Check, need send command? */
     if (Car_DcForward_PreviousValue != Car_DcForward_ActualValue)
     {
-        // Changed
+        /* Changed */
         DebugUart_Printf("Changed BackFordward value: previous: %d, now: %d\r\n",
                 Car_DcForward_PreviousValue, Car_DcForward_ActualValue);
         Car_DcForward_PreviousValue = Car_DcForward_ActualValue;
@@ -682,7 +682,7 @@ static void Logic_RemoteController_Button(ButtonType_t button, ButtonPressType_t
 
     if (Car_Tuning_PreviousValue != Car_Turning_ActualValue)
     {
-        // Changed
+        /* Changed */
         DebugUart_Printf("Changed Turning value: previous: %d, now: %d\r\n",
                 Car_Tuning_PreviousValue, Car_Turning_ActualValue);
         Car_Tuning_PreviousValue = Car_Turning_ActualValue;
@@ -702,32 +702,33 @@ void Logic_RemoteController_SendMessage(void)
 {
     if (Bluetooth_GetSendEnable())
     {
-        // Sending immediately
+        /* Sending immediately */
 
-        // Send message
-        /*char msg[30];
+        /* Send message */
+#if 0
+        char msg[30];
         usprintf(msg, "motor dc %d\r\n", Car_DcForward_ActualValue);
         SEND_MESSAGE_TO_CAR(msg);
 
-        // Send message on WiFi
+        /* Send message on WiFi */
         char msg[30];
         usprintf(msg, "motor servo %d\r\n", Car_Turning_ActualValue);
         SEND_MESSAGE_TO_CAR(msg);
-        */
+#endif
         char msg[40];
         usprintf(msg, "motor %d %d\r\n", Car_DcForward_ActualValue, Car_Turning_ActualValue);
         SEND_MESSAGE_TO_CAR(msg);
 
-        // For periodical message
+        /* For periodical message */
         TaskHandler_SetTaskPeriodicTime(Task_RemoteController, 300);
     }
     else
     {
-        // Check after some ms...
+        /* Check after some ms... */
         TaskHandler_SetTaskPeriodicTime(Task_RemoteController, 20);
     }
 }
-#endif    // CONFIG_FUNCTION_REMOTECONTROLLER
+#endif    /* CONFIG_FUNCTION_REMOTECONTROLLER */
 
 
 
@@ -740,12 +741,12 @@ static void Logic_StepLetterPosition(int8_t step)
     DisplayInput_LetterPosition += step;
     if (step > 0 && (DisplayInput_LetterPosition > DisplayInput_LetterPosition_MaxLimit))
     {
-        // Overflow
+        /* Overflow */
         DisplayInput_LetterPosition = DisplayInput_LetterPosition_MinLimit;
     }
     else if (step < 0 && (DisplayInput_LetterPosition > DisplayInput_LetterPosition_MaxLimit))
     {
-        // Underflow
+        /* Underflow */
         DisplayInput_LetterPosition = DisplayInput_LetterPosition_MaxLimit;
     }
 
@@ -763,52 +764,52 @@ static void Logic_StepLetterNextValue(int8_t step)
 
     if (DisplayInput_LetterPosition == DisplayInput_LetterPosition_MaxLimit)
     {
-        // At "OK" button --> Run command
-        // TODO: CommPort --> Display
+        /* At "OK" button --> Run command */
+        /* TODO: CommPort --> Display */
         char str[DisplayInput_StringLimit];
         StrCpyMax(str, DisplayInput_ActualRealString, DisplayInput_StringLimit);
         StrTrim(str);
-        // TODO: Check 0 length command?
+        /* TODO: Check 0 length command? */
         char respBuffer[50];
         CmdH_ExecuteCommand(str, respBuffer, 50);
         uprintf("Display input command: \"%s\"\r\n", str);
-        // Now, automatically exit to main menu
+        /* Now, automatically exit to main menu */
         Logic_Display_ChangeState(Menu_Main);
     }
     else
     {
-        // Not "OK" button
+        /* Not "OK" button */
         if (step < 0 && selectedLetter > 0 && (int8_t)selectedLetter-step > 0)
         {
-            // Can go "down"
-            // += (- value) => -=
+            /* Can go "down" */
+            /* += (- value) => -= */
             selectedLetter += step;
         }
         else if (step < 0)
         {
-            // "Underflow"
+            /* "Underflow" */
             selectedLetter = Display_Characters_size - 1;
         }
         else if (step > 0 && (uint8_t)(selectedLetter+step) < sizeof(Display_Characters)/sizeof(Display_Characters[0]))
         {
-            // Can go "up"
+            /* Can go "up" */
             selectedLetter += step;
         }
         else if (step > 0)
         {
-            // "Overflow"
+            /* "Overflow" */
             selectedLetter = 0;
         }
 
-        // If change letter
-        // Save actual letter
+        /* If change letter */
+        /* Save actual letter */
         DisplayInput_ActualString[DisplayInput_LetterPosition] = selectedLetter;
 
-        // Convert to realstring
+        /* Convert to realstring */
         DisplayInput_ActualRealString[DisplayInput_LetterPosition] = Display_Characters[selectedLetter];
     }
 
-    // Refresh display
+    /* Refresh display */
     TaskHandler_RequestTaskScheduling(Task_Display);
 }
 #endif
@@ -821,7 +822,7 @@ static void Logic_StepLetterNextValue(int8_t step)
  */
 static void Logic_SystemTimeStepConfig(void)
 {
-    // Change "setting" column
+    /* Change "setting" column */
     TaskHandler_RequestTaskScheduling(Task_Display);
 
     Logic_SystemTimeConfigState++;
@@ -839,34 +840,34 @@ static void Logic_SystemTimeStepValue(void)
     switch (Logic_SystemTimeConfigState)
     {
         case DisplayClock_HourAndMinute:
-            // Unknown
+            /* Unknown */
             break;
 
         case DisplayClock_Hour:
         {
-            // Hour
+            /* Hour */
             DateTime_t dateTime;
             SysTime_GetDateTime(&dateTime);
             DateTime_AddHour(&dateTime);
-            SysTime_SetTime(&dateTime.time);    // Only hour changed, date is not
+            SysTime_SetTime(&dateTime.time);    /* Only hour changed, date is not */
             TaskHandler_RequestTaskScheduling(Task_Display);
         }
             break;
 
         case DisplayClock_Minute:
         {
-            // Minute
+            /* Minute */
             DateTime_t dateTime;
             SysTime_GetDateTime(&dateTime);
             DateTime_AddMinute(&dateTime);
-            SysTime_SetTime(&dateTime.time);    // Only hour changed, date is not
+            SysTime_SetTime(&dateTime.time);    /* Only hour changed, date is not */
             TaskHandler_RequestTaskScheduling(Task_Display);
         }
             break;
 
         case DisplayClock_Count:
         default:
-            // Error !
+            /* Error ! */
             Logic_SystemTimeConfigState = 0;
             break;
     }
@@ -881,14 +882,14 @@ DisplayClock_ChangeState_t Logic_GetSystemTimeState(void)
 {
     return Logic_SystemTimeConfigState;
 }
-#endif    // #ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK
+#endif    /* #ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK */
 
 
 
 #ifdef CONFIG_FUNCTION_ESP8266_WRITE_IP_TO_DISPLAY
 void Logic_WriteIpToDisplay(void)
 {
-    // TODO: Write IP address to Display
+    /* TODO: Write IP address to Display */
 #warning "Implement this!"
 }
 #endif
@@ -901,16 +902,16 @@ void Logic_CheckCharger(void)
     InputState_t chargeState = IO_GetInputState(Input_BatteryCharger);
     bool isCharging = false;
 
-    // Check actual state
+    /* Check actual state */
     switch (chargeState)
     {
         case InputState_Active:
-            // Battery is charging...
+            /* Battery is charging... */
             isCharging = true;
             break;
 
         case InputState_Inactive:
-            // Battery is not charging
+            /* Battery is not charging */
             isCharging = false;
             break;
 
@@ -918,21 +919,21 @@ void Logic_CheckCharger(void)
         case InputState_Count:
         default:
             uprintf("Battery charge state error!\r\n");
-            //break;
+            /* reak; */
             return;
-            // Do not continue to execute, because input state is not correct!
+            /* Do not continue to execute, because input state is not correct! */
     }
 
 
     if (Logic_BatteryIsCharging != isCharging)
     {
-        // Charge state is changed!
+        /* Charge state is changed! */
         Logic_BatteryIsCharging = isCharging;
 
-        // Require Display task run
+        /* Require Display task run */
         TaskHandler_RequestTaskScheduling(Task_Display);
 
-        // Print actual state
+        /* Print actual state */
         if (isCharging)
             uprintf("Battery is charging...\r\n");
         else
@@ -998,17 +999,17 @@ void Logic_DisplayHandler(ScheduleSource_t source)
 
 static void Logic_Display_MainMenu(void)
 {
-    // Check Menu list size
+    /* Check Menu list size */
     BUILD_ASSERT(NUM_OF(Logic_MenuList) == (Menu_Count - 1));
 
-    // Main menu
+    /* Main menu */
     #ifdef CONFIG_FUNCTION_CHARGER
-    // Loading image for Display battery charge state
+    /* Loading image for Display battery charge state */
     static uint8_t loadPercent = 0;
 
     if (Logic_BatteryIsCharging)
     {
-        // Loading (progress bar)
+        /* Loading (progress bar) */
         Display_ChargeLoading(loadPercent);
         loadPercent += 5;
 
@@ -1016,13 +1017,13 @@ static void Logic_Display_MainMenu(void)
         {
             loadPercent = 0;
         }
-        // Require periodical schedule
+        /* Require periodical schedule */
         TaskHandler_SetTaskOnceRun(Task_Display, 1000);
     }
     else
     {
-        // Not charging:
-        // Display actual voltage of battery
+        /* Not charging: */
+        /* Display actual voltage of battery */
         #ifdef CONFIG_MODULE_ADC_ENABLE
         float voltage = ADC_GetValue(ADC_Vsource);
         uint8_t percent = voltage / VSOURCE_BATTERY_MAX_VOLTAGE * 100;
@@ -1036,18 +1037,18 @@ static void Logic_Display_MainMenu(void)
     #endif
 
     #if defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK) && defined(CONFIG_DISPLAY_CLOCK_SMALL)
-    // Display small clock on main menu
+    /* Display small clock on main menu */
     EventHandler_GenerateEvent(Event_Display_SpiEvent, 0, Task_Display);
 
-    // Only show clock (small - on menu)
+    /* Only show clock (small - on menu) */
     if (Logic_Display_ActualState == Menu_Main)
     {
-        // TODO: Optimize... This function run around 14ms from 8MHz clock
+        /* TODO: Optimize... This function run around 14ms from 8MHz clock */
         DateTime_t dateTime;
         SysTime_GetDateTime(&dateTime);
         Display_ShowSmallClock(&dateTime.time);
 
-        // Disable Display task, because when clock will update, it require Display task scheduling
+        /* Disable Display task, because when clock will update, it require Display task scheduling */
         TaskHandler_DisableTask(Task_Display);
     }
     #endif
@@ -1058,8 +1059,8 @@ static void Logic_Display_MainMenu(void)
     if (Logic_Display_SelectedState != oldSelectedMenu)
     {
         oldSelectedMenu = Logic_Display_SelectedState;
-        // Display main menu list
-        // TODO: Optimize... Run at ~40ms
+        /* Display main menu list */
+        /* TODO: Optimize... Run at ~40ms */
         Logic_Display_PrintMainMenuList();
     }
 
@@ -1075,15 +1076,15 @@ static void Logic_Display_PrintMainMenuList(void)
     FontFormat_t selectedFormat = { 0 };
     selectedFormat.Format_Inverse = 1;
 
-    // TODO: RunTime warning! This function run at 40ms! Optimize!
+    /* TODO: RunTime warning! This function run at 40ms! Optimize! */
 
-    // Print menu
-    // TODO: Do with smaller text
+    /* Print menu */
+    /* TODO: Do with smaller text */
 
     uint8_t i;
 
 #ifdef CONFIG_FUNCTION_DISPLAY_MENU_SCROLLING
-    // Scrolled menu (only for > DisplayMenu_ShowMenuLimit)
+    /* Scrolled menu (only for > DisplayMenu_ShowMenuLimit) */
     BUILD_ASSERT(NUM_OF(Logic_MenuList) > DisplayMenu_ShowMenuLimit);
 
     uint8_t startLine = 0;
@@ -1091,7 +1092,7 @@ static void Logic_Display_PrintMainMenuList(void)
     {
         if ((uint8_t)(Logic_Display_SelectedState + DisplayMenu_ShowMenuLimit - 2) >= NUM_OF(Logic_MenuList))
         {
-            // Overflowed
+            /* Overflowed */
             startLine = NUM_OF(Logic_MenuList) - DisplayMenu_ShowMenuLimit;
         }
         else
@@ -1102,31 +1103,31 @@ static void Logic_Display_PrintMainMenuList(void)
 
     for (i = 0; i < DisplayMenu_ShowMenuLimit; i++)
     {
-        // Clear
-        // TODO: Not a beautiful solution
+        /* Clear */
+        /* TODO: Not a beautiful solution */
         Display_PrintString("             ",
-                DisplayMenu_MenuListLineOffset + i,            // <x.> line
+                DisplayMenu_MenuListLineOffset + i,            /* <x.> line */
                 Font_12x8,
                 NO_FORMAT);
 
-        // Print menu name
+        /* Print menu name */
         Display_PrintString(
-                Logic_MenuList[startLine + i],                // Menu "name" string
-                DisplayMenu_MenuListLineOffset + i,            // <x.> line
-                Font_12x8,                // Font
-                Logic_Display_SelectedState == startLine+i+1 ? selectedFormat : NO_FORMAT);    // i + 1, because enum started with "Main"
+                Logic_MenuList[startLine + i],                /* Menu "name" string */
+                DisplayMenu_MenuListLineOffset + i,            /* <x.> line */
+                Font_12x8,                /* Font */
+                Logic_Display_SelectedState == startLine+i+1 ? selectedFormat : NO_FORMAT);    /* i + 1, because enum started with "Main" */
     }
 #else
-    // Only max DisplayMenu_ShowMenuLimit menu item can displayed
+    /* Only max DisplayMenu_ShowMenuLimit menu item can displayed */
     BUILD_ASSERT(NUM_OF(Logic_MenuList) <= DisplayMenu_ShowMenuLimit);
 
     for (i = 0; i < NUM_OF(Logic_MenuList); i++)
     {
         Display_PrintString(
-                Logic_MenuList[i],        // Menu "name" string
-                i + DisplayMenu_MenuListLineOffset,            // <x.> line
-                Font_12x8,                // Font
-                Logic_Display_SelectedState == i+1 ? selectedFormat : NO_FORMAT);    // i + 1, because enum started with "Main"
+                Logic_MenuList[i],        /* Menu "name" string */
+                i + DisplayMenu_MenuListLineOffset,            /* <x.> line */
+                Font_12x8,                /* Font */
+                Logic_Display_SelectedState == i+1 ? selectedFormat : NO_FORMAT);    /* i + 1, because enum started with "Main" */
     }
 #endif
 }
@@ -1142,27 +1143,27 @@ static void Logic_Display_Input(ScheduleSource_t source)
     if ((DisplayInput_OldLetterPosition != DisplayInput_LetterPosition)
         && (DisplayInput_OldLetterPosition == DisplayInput_LetterPosition_MaxLimit))
     {
-        // TODO: Button printing - string printing
-        // OK
+        /* TODO: Button printing - string printing */
+        /* OK */
         Display_PrintFont12x8('O', DisplayInput_LetterPosition_MaxLimit, 2, NO_FORMAT);
         Display_PrintFont12x8('K', DisplayInput_LetterPosition_MaxLimit + 1, 2, NO_FORMAT);
     }
-    // Save old value
+    /* Save old value */
     DisplayInput_OldLetterPosition = DisplayInput_LetterPosition;
 
-    // Button clicked
+    /* Button clicked */
     if (source == ScheduleSource_EventTriggered)
     {
-        // Button press triggering
+        /* Button press triggering */
         Display_VibrateLetter = false;
 
-        // Display "all" string
+        /* Display "all" string */
         Display_PrintString(DisplayInput_ActualRealString, 2, Font_12x8, NO_FORMAT);
 
-        // It is empty char? (=space)
+        /* It is empty char? (=space) */
         if (DisplayInput_ActualRealString[DisplayInput_LetterPosition] == ' ')
         {
-            // There is a space character, Display a white box
+            /* There is a space character, Display a white box */
             Display_PrintFont12x8((char)0x01, DisplayInput_LetterPosition, 2, NO_FORMAT);
         }
 
@@ -1171,29 +1172,29 @@ static void Logic_Display_Input(ScheduleSource_t source)
     }
     else
     {
-        // Vibration, if need (periodical)
+        /* Vibration, if need (periodical) */
         if (Display_VibrateLetter)
         {
-            // Vibrate (not show char)
+            /* Vibrate (not show char) */
             if (DisplayInput_LetterPosition == DisplayInput_LetterPosition_MaxLimit)
             {
-                // TODO: Button printing - string printing
-                // OK
+                /* TODO: Button printing - string printing */
+                /* OK */
                 Display_PrintFont12x8('O', DisplayInput_LetterPosition_MaxLimit, 2, NO_FORMAT);
                 Display_PrintFont12x8('K', DisplayInput_LetterPosition_MaxLimit + 1, 2, NO_FORMAT);
             }
             else
             {
-                // Normal char
-                // It is empty char? (=space)
+                /* Normal char */
+                /* It is empty char? (=space) */
                 if (DisplayInput_ActualRealString[DisplayInput_LetterPosition] == ' ')
                 {
-                    // There is a space character, Display a white box
+                    /* There is a space character, Display a white box */
                     Display_PrintFont12x8((char)0x01, DisplayInput_LetterPosition, 2, NO_FORMAT);
                 }
                 else
                 {
-                    // There is a normal character... vibrate with hiding
+                    /* There is a normal character... vibrate with hiding */
                     Display_PrintFont12x8(' ', DisplayInput_LetterPosition, 2, NO_FORMAT);
                 }
             }
@@ -1204,11 +1205,11 @@ static void Logic_Display_Input(ScheduleSource_t source)
         }
         else
         {
-            // Normal (show char)
+            /* Normal (show char) */
             if (DisplayInput_LetterPosition == DisplayInput_LetterPosition_MaxLimit)
             {
-                // TODO: Button printing
-                // OK
+                /* TODO: Button printing */
+                /* OK */
                 FontFormat_t format = { 0 };
                 format.Format_Inverse = 1;
                 Display_PrintFont12x8('O', DisplayInput_LetterPosition_MaxLimit, 2, format);
@@ -1216,7 +1217,7 @@ static void Logic_Display_Input(ScheduleSource_t source)
             }
             else
             {
-                // Normal char
+                /* Normal char */
                 Display_PrintFont12x8(
                     DisplayInput_ActualRealString[DisplayInput_LetterPosition],
                     DisplayInput_LetterPosition, 2, NO_FORMAT);
@@ -1228,7 +1229,7 @@ static void Logic_Display_Input(ScheduleSource_t source)
         }
     }
 }
-#endif    // #ifdef CONFIG_FUNCTION_DISPLAY_INPUT
+#endif    /* #ifdef CONFIG_FUNCTION_DISPLAY_INPUT */
 
 
 
@@ -1236,22 +1237,22 @@ static void Logic_Display_Input(ScheduleSource_t source)
 static void Logic_Display_LargeClock(ScheduleSource_t source)
 {
     #ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
-    // Display refresh by clock
+    /* Display refresh by clock */
 
-    // Display vibrate function: if we are in setting mode, hour or minute will vibrate
+    /* Display vibrate function: if we are in setting mode, hour or minute will vibrate */
     static bool Display_VibrateStateHide = false;
 
     if (source == ScheduleSource_EventTriggered)
         Display_VibrateStateHide = false;
 
-    // Get actual DateTime
+    /* Get actual DateTime */
     DateTime_t dateTime;
     SysTime_GetDateTime(&dateTime);
 
     switch (Logic_GetSystemTimeState())
     {
         case DisplayClock_Hour:
-            // Hour setting
+            /* Hour setting */
             if (Display_VibrateStateHide)
             {
                 Display_ShowLargeClockHalf(&dateTime.time, DisplayClock_Minute);
@@ -1266,7 +1267,7 @@ static void Logic_Display_LargeClock(ScheduleSource_t source)
             break;
 
         case DisplayClock_Minute:
-            // Minute settings
+            /* Minute settings */
             if (Display_VibrateStateHide)
             {
                 Display_ShowLargeClockHalf(&dateTime.time, DisplayClock_Hour);
@@ -1283,13 +1284,13 @@ static void Logic_Display_LargeClock(ScheduleSource_t source)
         case DisplayClock_HourAndMinute:
         case DisplayClock_Count:
         default:
-            // Not in setting, display the hour and minute too
+            /* Not in setting, display the hour and minute too */
             Display_ShowLargeClock(&dateTime.time);
             TaskHandler_DisableTask(Task_Display);
             break;
     }
     #else
-    // Only display a simple large clock (there is no vibration, not changeable)
+    /* Only display a simple large clock (there is no vibration, not changeable) */
 
     DateTime_t dateTime;
     SysTime_GetDateTime(&dateTime);
@@ -1308,7 +1309,7 @@ static void Logic_Display_Snake(void)
 {
     static SnakeStep_t SnakeStep = Step_Unknown;
 
-    // Periodical stepping
+    /* Periodical stepping */
     SnakeStep = Snake_GetLastStep();
 
     Snake_Step(SnakeStep);
@@ -1337,15 +1338,15 @@ inline void Logic_Display_Snake_ChangeToMenu(void)
 {
     Logic_Snake_DisplaySnakeMenu = true;
 }
-#endif    // #ifdef CONFIG_FUNCTION_GAME_SNAKE
+#endif    /* #ifdef CONFIG_FUNCTION_GAME_SNAKE */
 
 
 
 #ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
 static void Logic_Display_CarAnimation(void)
 {
-    // Car image
-    // TODO: Optimize this?
+    /* Car image */
+    /* TODO: Optimize this? */
     Display_ChangeCarImage();
     TaskHandler_SetTaskOnceRun(Task_Display, Display_CarAnimation_RefreshPeriod_Actual);
 }
@@ -1369,7 +1370,7 @@ bool Logic_Display_GetClockIsNeedRefresh(void)
 
 
 
-#endif    // #ifdef CONFIG_MODULE_DISPLAY_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_DISPLAY_ENABLE */
 
 
 

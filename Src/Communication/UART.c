@@ -78,12 +78,12 @@ static void UART_Handler(UART_Handler_t *handler);
 void UART_Init(UART_HandleTypeDef *UartHandle)
 {
     
-    // HW init, Port init, etc...
-    //HAL_UART_MspInit(UartHandle);            // It is called from HAL_UART_Init() function
+    /* HW init, Port init, etc... */
+    /* AL_UART_MspInit(UartHandle);            // It is called from HAL_UART_Init() function */
 
 
-    //##-1- Configure the UART peripheral
-    // Put the USART peripheral in the Asynchronous mode (UART Mode)
+    /* #-1- Configure the UART peripheral */
+    /* Put the USART peripheral in the Asynchronous mode (UART Mode) */
     /* UARTx configured as follow:
       - Word Length = 8 Bits
       - Stop Bit = One Stop bit
@@ -131,10 +131,10 @@ void UART_Init(UART_HandleTypeDef *UartHandle)
 
         __HAL_UART_CLEAR_IT(UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
 
-        //__HAL_UART_ENABLE_IT(UartHandle, UART_IT_RXNE);        /* receiver not empty */
+        /* _HAL_UART_ENABLE_IT(UartHandle, UART_IT_RXNE); */       /* receiver not empty */
         __HAL_UART_DISABLE_IT(UartHandle, UART_IT_TXE);            /* transmit empty */
     }
-    else    // != HAL_OK
+    else    /* != HAL_OK */
     {    
         Error_Handler();
     }
@@ -154,48 +154,48 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
     if (huart == &DebugUart_Handle)
     {
-        // ##-1- Enable peripherals and GPIO Clocks
+        /* ##-1- Enable peripherals and GPIO Clocks */
 
-        // Enable GPIO TX/RX clock
-        // Enable USARTx clock
+        /* Enable GPIO TX/RX clock */
+        /* Enable USARTx clock */
         DEBUG_USART_CLK_ENABLES();
 
-        // ##-2- Configure peripheral GPIO
-        // UART TX GPIO pin configuration
+        /* ##-2- Configure peripheral GPIO */
+        /* UART TX GPIO pin configuration */
         GPIO_InitStruct.Pin       = DEBUG_USART_TX_GPIO_PIN;
         GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
         GPIO_InitStruct.Pull      = GPIO_NOPULL;
         GPIO_InitStruct.Speed     = GPIO_SPEED_HIGH;
-        GPIO_InitStruct.Alternate = DEBUG_USART_AF;        // It is initialize alternate function
+        GPIO_InitStruct.Alternate = DEBUG_USART_AF;        /* It is initialize alternate function */
 
         HAL_GPIO_Init(DEBUG_USART_TX_GPIO_PORT, &GPIO_InitStruct);
 
-        // UART RX GPIO pin configuration
+        /* UART RX GPIO pin configuration */
         GPIO_InitStruct.Pin = DEBUG_USART_RX_GPIO_PIN;
-        //GPIO_InitStruct.Alternate = DEBUG_USART_AF;
+        /* PIO_InitStruct.Alternate = DEBUG_USART_AF; */
 
         HAL_GPIO_Init(DEBUG_USART_RX_GPIO_PORT, &GPIO_InitStruct);
 
 
-        // ##-3- Configure the NVIC for UART
-        // NVIC for USARTx
+        /* ##-3- Configure the NVIC for UART */
+        /* NVIC for USARTx */
 
         HAL_NVIC_SetPriority(DEBUG_USARTx_IRQn, DEBUG_USART_PREEMT_PRIORITY, DEBUG_USART_SUB_PRIORITY);
         HAL_NVIC_EnableIRQ(DEBUG_USARTx_IRQn);
     }
-#endif    // #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_DEBUGUART_ENABLE */
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
     if (huart == &ESP8266_UartHandle)
     {
-        // ##-1- Enable peripherals and GPIO Clocks
+        /* ##-1- Enable peripherals and GPIO Clocks */
 
-        // Enable GPIO TX/RX clock
-        // Enable USARTx clock
+        /* Enable GPIO TX/RX clock */
+        /* Enable USARTx clock */
         ESP8266_USART_CLK_ENABLES();
 
         
-        // ##-2- Configure peripheral GPIO
-        // UART TX GPIO pin configuration
+        /* ##-2- Configure peripheral GPIO */
+        /* UART TX GPIO pin configuration */
         GPIO_InitStruct.Pin       = ESP8266_USART_TX_GPIO_PIN;
         GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
         GPIO_InitStruct.Pull      = GPIO_NOPULL;
@@ -204,32 +204,32 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 
         HAL_GPIO_Init(ESP8266_USART_TX_GPIO_PORT, &GPIO_InitStruct);
 
-        // UART RX GPIO pin configuration
+        /* UART RX GPIO pin configuration */
         GPIO_InitStruct.Pin = ESP8266_USART_RX_GPIO_PIN;
-        //GPIO_InitStruct.Alternate = ESP8266_USART_AF;
+        /* PIO_InitStruct.Alternate = ESP8266_USART_AF; */
 
         HAL_GPIO_Init(ESP8266_USART_RX_GPIO_PORT, &GPIO_InitStruct);
 
 
-        // ##-3- Configure the NVIC for UART
-        // NVIC for USARTx
+        /* ##-3- Configure the NVIC for UART */
+        /* NVIC for USARTx */
 
         HAL_NVIC_SetPriority(ESP8266_USARTx_IRQn, ESP8266_USART_PREEMT_PRIORITY, ESP8266_USART_SUB_PRIORITY);
         HAL_NVIC_EnableIRQ(ESP8266_USARTx_IRQn);
     }
-#endif    // #ifdef CONFIG_MODULE_ESP8266_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_ESP8266_ENABLE */
 #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
     if (huart == &Bluetooth_UartHandle)
     {
-        // ##-1- Enable peripherals and GPIO Clocks
+        /* ##-1- Enable peripherals and GPIO Clocks */
 
-        // Enable GPIO TX/RX clock
-        // Enable USARTx clock
+        /* Enable GPIO TX/RX clock */
+        /* Enable USARTx clock */
         BLUETOOTH_USART_CLK_ENABLES();
 
 
-        // ##-2- Configure peripheral GPIO
-        // UART TX GPIO pin configuration
+        /* ##-2- Configure peripheral GPIO */
+        /* UART TX GPIO pin configuration */
         GPIO_InitStruct.Pin       = BLUETOOTH_USART_TX_GPIO_PIN;
         GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
         GPIO_InitStruct.Pull      = GPIO_NOPULL;
@@ -238,32 +238,32 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 
         HAL_GPIO_Init(BLUETOOTH_USART_TX_GPIO_PORT, &GPIO_InitStruct);
 
-        // UART RX GPIO pin configuration
+        /* UART RX GPIO pin configuration */
         GPIO_InitStruct.Pin = BLUETOOTH_USART_RX_GPIO_PIN;
-        //GPIO_InitStruct.Alternate = BLUETOOTH_USART_AF;
+        /* PIO_InitStruct.Alternate = BLUETOOTH_USART_AF; */
 
         HAL_GPIO_Init(BLUETOOTH_USART_RX_GPIO_PORT, &GPIO_InitStruct);
 
 
-        // ##-3- Configure the NVIC for UART
-        // NVIC for USARTx
+        /* ##-3- Configure the NVIC for UART */
+        /* NVIC for USARTx */
 
         HAL_NVIC_SetPriority(BLUETOOTH_USARTx_IRQn, BLUETOOTH_USART_PREEMT_PRIORITY, BLUETOOTH_USART_SUB_PRIORITY);
         HAL_NVIC_EnableIRQ(BLUETOOTH_USARTx_IRQn);
     }
-#endif    // #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE */
 #ifdef CONFIG_MODULE_COMMON_UART_ENABLE
     if (huart == &CommonUART_UartHandle)
     {
-        // ##-1- Enable peripherals and GPIO Clocks
+        /* ##-1- Enable peripherals and GPIO Clocks */
 
-        // Enable GPIO TX/RX clock
-        // Enable USARTx clock
+        /* Enable GPIO TX/RX clock */
+        /* Enable USARTx clock */
         COMMONUART_USART_CLK_ENABLES();
 
 
-        // ##-2- Configure peripheral GPIO
-        // UART TX GPIO pin configuration
+        /* ##-2- Configure peripheral GPIO */
+        /* UART TX GPIO pin configuration */
         GPIO_InitStruct.Pin       = COMMONUART_USART_TX_GPIO_PIN;
         GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
         GPIO_InitStruct.Pull      = GPIO_NOPULL;
@@ -272,25 +272,25 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 
         HAL_GPIO_Init(COMMONUART_USART_TX_GPIO_PORT, &GPIO_InitStruct);
 
-        // UART RX GPIO pin configuration
+        /* UART RX GPIO pin configuration */
         GPIO_InitStruct.Pin = COMMONUART_USART_RX_GPIO_PIN;
-        //GPIO_InitStruct.Alternate = COMMONUART_USART_AF;
+        /* PIO_InitStruct.Alternate = COMMONUART_USART_AF; */
 
         HAL_GPIO_Init(COMMONUART_USART_RX_GPIO_PORT, &GPIO_InitStruct);
 
 
-        // ##-3- Configure the NVIC for UART
-        // NVIC for USARTx
+        /* ##-3- Configure the NVIC for UART */
+        /* NVIC for USARTx */
 
         HAL_NVIC_SetPriority(COMMONUART_USARTx_IRQn, COMMONUART_USART_PREEMT_PRIORITY, COMMONUART_USART_SUB_PRIORITY);
         HAL_NVIC_EnableIRQ(COMMONUART_USARTx_IRQn);
     }
-#endif    // #ifdef CONFIG_MODULE_COMMONUART_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_COMMONUART_ENABLE */
 }
 
 
 
-// TODO: Put to DebugUart ?
+/* TODO: Put to DebugUart ? */
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 void DEBUG_USARTx_IRQHandler(void)
 {
@@ -300,7 +300,7 @@ void DEBUG_USARTx_IRQHandler(void)
 
 
 
-// TODO: Put to ESP8266?
+/* TODO: Put to ESP8266? */
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 void ESP8266_USARTx_IRQHandler(void)
 {
@@ -389,9 +389,9 @@ static void UART_Handler(UART_Handler_t *handler)
         /* Don't put errored data into the FIFO */
         if (!err)
         {
-            // TODO: Check rxEnable flag
+            /* TODO: Check rxEnable flag */
             CircularBuffer_PutChar(handler->rx, val);
-            // TODO: TaskHandler_Request or CallBack, which use semaphore and TaskHandler request?
+            /* TODO: TaskHandler_Request or CallBack, which use semaphore and TaskHandler request? */
 #ifdef CONFIG_MODULE_UART_REQUIRE_TASKSCHEDULE_ENABLE
             TaskHandler_RequestTaskScheduling(handler->requiredTask);
 #endif
@@ -409,7 +409,7 @@ static void UART_Handler(UART_Handler_t *handler)
         * if there's data to send, send it.
         * otherwise disable the transmit empty interrupt.
         */
-        // TODO: Check txEnable flag
+        /* TODO: Check txEnable flag */
         if (CircularBuffer_GetChar(handler->tx, &val))
         {
             huart->Instance->TDR = val;

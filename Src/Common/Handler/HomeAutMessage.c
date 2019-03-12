@@ -25,7 +25,7 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-// Constant global variables
+/* Constant global variables */
 
 ///< HomeAut Header
 const char HOMEAUTMESSAGE_DefaultHeader[] = "HomeAut";
@@ -63,7 +63,7 @@ const FunctionTypeParity FunctionTypeParity_List[] =
         .function = Function_Config
     },
 
-    // XXX: Add here new FunctionType
+    /* XXX: Add here new FunctionType */
 
     {
         .name = NULL,
@@ -75,9 +75,9 @@ const FunctionTypeParity FunctionTypeParity_List[] =
 ///< HomeAut DataType parity list
 const DataTypeParity DataTypeParity_List[] =
 {
-    // 6 char length
+    /* 6 char length */
 
-    // LOGIN
+    /* LOGIN */
     {
         .name = "NSMALL",
         .type = Login_ImLoginImNodeSmall
@@ -104,7 +104,7 @@ const DataTypeParity DataTypeParity_List[] =
     },
 
 
-    // STATE
+    /* STATE */
     {
         .name = "TEMP",
         .type = State_Temperature
@@ -130,7 +130,7 @@ const DataTypeParity DataTypeParity_List[] =
         .type = State_Output
     },
 
-    // ALARM
+    /* ALARM */
     {
         .name = "PRESSEDBUTTON",
         .type = Alarm_PressedButton
@@ -176,7 +176,7 @@ const DataTypeParity DataTypeParity_List[] =
         .type = Alarm_SoundImpacted
     },
 
-    // COMMAND
+    /* COMMAND */
     {
         .name = "SETOUT",
         .type = Command_SetOutput
@@ -186,7 +186,7 @@ const DataTypeParity DataTypeParity_List[] =
         .type = Command_Remote
     },
 
-    // XXX: Add here new DataType
+    /* XXX: Add here new DataType */
 
     {
         .name = NULL,
@@ -212,23 +212,23 @@ bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
         HomeAut_InformationType *messageInformation)
 {
 
-    // Information data
+    /* Information data */
     HomeAut_InformationType information = { 0 };
     
-    // For separate
+    /* For separate */
     uint8_t messageLength;
     char message[HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH];
     bool isOk = true;
     char *split[HOMEAUTMESSAGE_SPLIT_NUM] = { 0 };
     uint8_t i;
     
-    // |HomeAut|192.168.100.100|192.168.100.014|2017-01-10 18:49:50|COMMAND|REMOTE|00000000|\0
+    /* |HomeAut|192.168.100.100|192.168.100.014|2017-01-10 18:49:50|COMMAND|REMOTE|00000000|\0 */
 
-    // Check length
+    /* Check length */
     messageLength = StringLength(messageString);
     if (messageLength >= HOMEAUTMESSAGE_MESSAGE_MIN_LENGTH)
     {
-        // OK, copy message to modify buffer
+        /* OK, copy message to modify buffer */
         StrCpy(message, messageString);
     }
     else
@@ -237,14 +237,14 @@ bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
     }
 
 
-    // Check first character
+    /* Check first character */
     if (isOk)
     {
         isOk = (message[0] == HOMEAUTMESSAGE_SEPARATOR_CHARACTER);
     }
 
 
-    // Split
+    /* Split */
     if (isOk)
     {
         isOk = (STRING_Splitter(&message[1], HOMEAUTMESSAGE_SEPARATOR_STRING,
@@ -252,7 +252,7 @@ bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
     }
 
 
-    // Check header
+    /* Check header */
     if (isOk)
     {
         isOk = !StrCmp(split[HOMEAUTMESSAGE_MESSAGE_STRUCT_HEADER_COUNT],
@@ -260,7 +260,7 @@ bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
     }
 
 
-    // Check source address
+    /* Check source address */
     if (isOk)
     {
         isOk = Network_ConvertIpAddressStringToIP(
@@ -269,7 +269,7 @@ bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
     }
 
 
-    // Check target address
+    /* Check target address */
     if (isOk)
     {
         isOk = Network_ConvertIpAddressStringToIP(
@@ -278,7 +278,7 @@ bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
     }
 
 
-    // DateTime
+    /* DateTime */
     if (isOk)
     {
         isOk = DateTime_ConvertStringToDateTime(
@@ -287,7 +287,7 @@ bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
     }
 
 
-    // Function
+    /* Function */
     if (isOk)
     {
         information.Function = Function_Invalid;
@@ -306,13 +306,13 @@ bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
     }
 
 
-    // Data type
+    /* Data type */
     if (isOk)
     {
         information.DataType = DataType_Unknown;
         for (i = 0; DataTypeParity_List[i].type != DataType_End; i++)
         {
-            //DataTypeParity_List[i].name
+            /* ataTypeParity_List[i].name */
             if (!StrCmp(
                     (char *)split[HOMEAUTMESSAGE_MESSAGE_STRUCT_DATATYPE_COUNT],
                     (char *)DataTypeParity_List[i].name))
@@ -327,18 +327,18 @@ bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
     }
 
 
-    // Data
+    /* Data */
     if (isOk)
     {
         isOk = StringHexToNum(split[HOMEAUTMESSAGE_MESSAGE_STRUCT_DATA_COUNT], &information.Data);
     }
 
 
-    // Finish
+    /* Finish */
     if (isOk)
     {
         information.isValid = true;
-        // If message is good, copy information to parameter
+        /* If message is good, copy information to parameter */
         memcpy(messageInformation, &information, sizeof(HomeAut_InformationType));
     }
 
@@ -357,38 +357,38 @@ uint8_t HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation
     uint8_t length = 0;
     uint8_t i;
 
-    // Separator
+    /* Separator */
     length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
 
-    // Header Header
+    /* Header Header */
     length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_DefaultHeader);
 
-    // Separator
+    /* Separator */
     length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
 
     ///////////////////////
-    // Others, variables
+    /* Others, variables */
     ///////////////////////
 
-    // Source Address
+    /* Source Address */
     length += Network_PrintIp(&createToMessage[length], &messageInformation->SourceAddress);
 
-    // Separator
+    /* Separator */
     length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
 
-    // Target Address
+    /* Target Address */
     length += Network_PrintIp(&createToMessage[length], &messageInformation->TargetAddress);
 
-    // Separator
+    /* Separator */
     length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
 
-    // DateTime
+    /* DateTime */
     length += DateTime_PrintDateTimeToString(&createToMessage[length], &messageInformation->DateTime);
 
-    // Separator
+    /* Separator */
     length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
     
-    // Function
+    /* Function */
     for (i = 0; FunctionTypeParity_List[i].function != Function_End; i++)
     {
         if (FunctionTypeParity_List[i].function == messageInformation->Function )
@@ -398,10 +398,10 @@ uint8_t HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation
         }
     }
     
-    // Separator
+    /* Separator */
     length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
 
-    // DataType
+    /* DataType */
     for (i = 0; DataTypeParity_List[i].type != DataType_End; i++)
     {
         if (DataTypeParity_List[i].type == messageInformation->DataType )
@@ -411,13 +411,13 @@ uint8_t HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation
         }
     }
     
-    // Separator
+    /* Separator */
     length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
 
-    // Data
+    /* Data */
     length += DecimalToHexaString(messageInformation->Data, &createToMessage[length], 8);
     
-    // Separator
+    /* Separator */
     length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
     
     
@@ -461,16 +461,16 @@ bool HomeAutMessage_CreateAndSendHomeAutMessage(
 
     messageInformation.isValid = true;
     
-    // Create message ...
+    /* Create message ... */
     if (HomeAutMessage_CreateMessage(&messageInformation, message))
     {
-        // Send message
+        /* Send message */
 #ifdef CONFIG_USE_FREERTOS
         return ESP8266_SendMessageToQueue(message);
 #elif defined(CONFIG_MODULE_ESP8266_ENABLE)
         if (ESP8266_TcpConnectionStatus == ESP8266_TcpConnectionStatus_Connected)
         {
-            return ESP8266_SendTcpMessage((const char *)&message);    // direct sending
+            return ESP8266_SendTcpMessage((const char *)&message);    /* direct sending */
         }
         else
         {
@@ -501,7 +501,7 @@ bool HomeAutMessage_CreateAndSendHomeAutMessage(
 void HomeAutMessage_SendMessage(uint8_t myAddress,
         HomeAut_FunctionType functionType, HomeAut_DataType dataType, float data)
 {
-    //myAddress    // ok
+    /* yAddress    // ok */
     char function = 0;
     char type = 0;
 
@@ -545,7 +545,7 @@ void HomeAutMessage_SendMessage(uint8_t myAddress,
             type = 's';
             break;
         case State_Battery:
-            type = 'v';        // Status ~Voltage
+            type = 'v';        /* Status ~Voltage */
             break;
         case State_Input:
             type = 'i';
@@ -608,7 +608,7 @@ void HomeAutMessage_SendMessage(uint8_t myAddress,
     }
 
 
-    // Sending:
+    /* Sending: */
     uprintf("#%d_%c%c_%0.2f\r\n", myAddress, function, type, data);
 }
 
@@ -624,26 +624,26 @@ uint32_t HomeAutMessage_UnitTest(void)
     UnitTest_Start("HomeAutMessage", __FILE__);
 
 
-    // |HomeAut|<SourceAddress>|<TargetAddress>|<DateTime>|<Function>|<DataType>|<Data>|
+    /* |HomeAut|<SourceAddress>|<TargetAddress>|<DateTime>|<Function>|<DataType>|<Data>| */
     const char TestMessage[] = "|HomeAut|192.168.100.100|192.168.100.14|2017-01-10 18:49:50|COMMAND|REMOTE|01234567|";
     HomeAut_InformationType testInformation = { 0 };
     char exampleStringMessage[HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH];
     uint8_t length;
 
 
-    // It is valid message?
+    /* It is valid message? */
     UNITTEST_ASSERT(HomeAutMessage_CheckAndProcessMessage(
             TestMessage, &testInformation),
             "HomeAutMessage Check function has error");
 
 
-    // Check results (processed values)
+    /* Check results (processed values) */
     UNITTEST_ASSERT(
             ((testInformation.isValid == true)
-            // TODO: Extend SourceAddress & TargetAddress checks
+            /* TODO: Extend SourceAddress & TargetAddress checks */
             && (testInformation.SourceAddress.IP[0] == 192)
             && (testInformation.TargetAddress.IP[0] == 192)
-            // TODO: Check DateTime with more culture
+            /* TODO: Check DateTime with more culture */
             && (testInformation.DateTime.date.year == 17)
             && (testInformation.Function == Function_Command)
             && (testInformation.DataType == Command_Remote)
@@ -651,22 +651,22 @@ uint32_t HomeAutMessage_UnitTest(void)
             "HomeAutMessage processed value(s) error(s)");
 
 
-    // Check message creating
+    /* Check message creating */
     length = HomeAutMessage_CreateMessage(&testInformation, exampleStringMessage);
     UNITTEST_ASSERT(length == StringLength(TestMessage),
             "HomeAutMessage CreateMessage error");
 
 
-    // Check created message
+    /* Check created message */
     UNITTEST_ASSERT(!StrCmp(TestMessage, exampleStringMessage),
             "HomeAutMessage created message error");
 
 
-    // Finish
+    /* Finish */
     return UnitTest_End();
 }
-#endif    // #ifdef CONFIG_MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE */
 
 
 
-#endif    // CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
+#endif    /* CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE */

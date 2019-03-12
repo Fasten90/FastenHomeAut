@@ -21,7 +21,7 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-// Set default values for module options:
+/* Set default values for module options: */
 #if !defined(GLOBVARH_UNIT_ENABLE)
     #define GLOBVARH_UNIT_ENABLE                0        ///< optional unit field to a global variable
 #endif
@@ -64,8 +64,8 @@ typedef int8_t GlobVarH_ID_t;                        ///< type alias for countin
 
 
 ///< GlobalVariable type
-/// @note    This enum has a "name list" (GlobalVarTypesNames), must be in the same order with it!
-/// @sa    GlobalVarTypesNames
+//* @note    This enum has a "name list" (GlobalVarTypesNames), must be in the same order with it! */
+//* @sa    GlobalVarTypesNames */
 typedef enum
 {
     GlobVarH_Type_Unknown = 0,
@@ -138,7 +138,7 @@ typedef struct
     void * const varPointer;                ///< Pointer of variable
     const bool isReadOnly;                    ///< Is read only?
 
-    // NOTE: callback functions can not be used for string variable!
+    /* NOTE: callback functions can not be used for string variable! */
     const GeneralFunctionPointer getFunctionPointer;    ///< Callback function for getting the value of the variable
     const GeneralFunctionPointer setFunctionPointer;    ///< Callback function for setting the value of the variable
 
@@ -146,13 +146,13 @@ typedef struct
     const uint32_t minValue;                ///< Min value
 
 
-    // TODO: Optimize these: isHex (bool), isReadOnly (bool)
+    /* TODO: Optimize these: isHex (bool), isReadOnly (bool) */
     const bool isHex;                        ///< Set-get in hexadecimal format? The variable is interpretable in hex format!
 
     const char * const * enumList;            ///< Enum list, if it is enumerator
 
 #if GLOBVARH_SOURCE_ENABLE == 1
-    const CommProtocolBit_t sourceEnable;    ///< Enabled sources (for set-get)    // TODO: compiler option
+    const CommProtocolBit_t sourceEnable;    ///< Enabled sources (for set-get)    /* TODO: compiler option */
 #endif
 #if GLOBVARH_UNIT_ENABLE == 1
     const char * const unit;                ///< units [string], example: [cm]

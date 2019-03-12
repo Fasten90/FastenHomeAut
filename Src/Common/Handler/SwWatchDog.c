@@ -77,9 +77,9 @@ void SwWatchDog_CheckState(void)
         ms = 0;
         if (SwWatchDog_Counter == lastCnt)
         {
-            // SwWatchDog counter is not changed :(
+            /* SwWatchDog counter is not changed :( */
 
-            // Be careful: Error_Handler is use the SysTick handler...
+            /* Be careful: Error_Handler is use the SysTick handler... */
             Error_Handler();
         }
 
@@ -90,7 +90,7 @@ void SwWatchDog_CheckState(void)
 
 #else
 
-// SwWatchDog module is not used
+/* SwWatchDog module is not used */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 #pragma GCC diagnostic pop

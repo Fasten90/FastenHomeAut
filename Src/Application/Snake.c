@@ -46,7 +46,7 @@ typedef struct
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-// TODO: Optimizing
+/* TODO: Optimizing */
 #define SNAKE_POINT_PIXEL_SIZE    (4)
 
 #define SNAKE_HEADER_HEIGHT        (10)
@@ -134,26 +134,26 @@ void Snake_Init(void)
 
 void Snake_Step(SnakeStep_t step)
 {
-    // There is no game
+    /* There is no game */
     if (!Snake_GameInProgress) return;
 
     if (Snake_StepIsValid(Snake_LastStep, step))
     {
-        // it is possible step!
-        // Check collision
+        /* it is possible step! */
+        /* Check collision */
         if (!Snake_CheckCollision(step))
         {
-            // No collision, add new point
+            /* No collision, add new point */
             Snake_AddNewCoord(step);
 
             if (!Snake_CaptureEvent)
             {
-                // If not captured a gift, need delete last point
+                /* If not captured a gift, need delete last point */
                 Snake_DeleteLastPoint();
             }
             else
             {
-                // Clear flag
+                /* Clear flag */
                 Snake_CaptureEvent = false;
             }
 
@@ -166,7 +166,7 @@ void Snake_Step(SnakeStep_t step)
             Snake_AddNewCoord(step);
 
             PRINT("Collision!\r\n");
-            // Finish game!
+            /* Finish game! */
             Snake_FinishLose();
         }
         Display_Activate();
@@ -238,22 +238,22 @@ static bool Snake_CheckCollision(SnakeStep_t step)
     changeCoord.y += Snake_StartPoint.y;
 
 
-    // Check border
-    // TODO: Now work with "underflow", but it is not beautiful solution
+    /* Check border */
+    /* TODO: Now work with "underflow", but it is not beautiful solution */
     if (changeCoord.x >= SNAKE_SIZE_X || changeCoord.y >= SNAKE_SIZE_Y)
     {
         isCollision = true;
     }
-    // Check, the new point is gift?
+    /* Check, the new point is gift? */
     else if (Snake_Matrix[changeCoord.x][changeCoord.y] == Step_Gift)
     {
         Snake_CaptureGift(changeCoord);
         isCollision = false;
     }
-    // Check "original points" / Tail
+    /* Check "original points" / Tail */
     else if (Snake_Matrix[changeCoord.x][changeCoord.y] != Step_Unknown)
     {
-        // There is an old point here
+        /* There is an old point here */
         isCollision = true;
     }
 
@@ -298,20 +298,20 @@ static SnakeCoord_t Snake_ConvertStepToCoordinate(SnakeStep_t step)
 
 void Snake_Draw(void)
 {
-    // Print header (Score)
+    /* Print header (Score) */
     char string[20];
     usprintf(string, "Score: %d", Snake_Score);
     Display_PrintString(string, 0, Font_8x5, NO_FORMAT);
 
-    // Header Line
+    /* Header Line */
     uint8_t pixel;
     for (pixel = 0; pixel < DISPLAY_WIDTH; pixel++)
     {
-        // TODO: Rectangular / Line drawing?
+        /* TODO: Rectangular / Line drawing? */
         SSD1306_drawPixel(pixel, SNAKE_HEADER_HEIGHT - 1, WHITE);
     }
 
-    // Step around on the matrix
+    /* Step around on the matrix */
     for (uint16_t i = 0; i < SNAKE_SIZE_X; i++)
     {
         for (uint16_t j = 0; j < SNAKE_SIZE_Y; j++)
@@ -336,7 +336,7 @@ static void Snake_DrawPoints(uint16_t x, uint16_t y)
     {
         for (uint8_t l = 0; l < SNAKE_POINT_PIXEL_SIZE; l++)
         {
-            // Be careful: the display 0,0 point is the top left, but on matrix 0,0 pont is the bottom, left point
+            /* Be careful: the display 0,0 point is the top left, but on matrix 0,0 pont is the bottom, left point */
             SSD1306_drawPixel(x*SNAKE_POINT_PIXEL_SIZE + k,
                     DISPLAY_HEIGHT - (y*SNAKE_POINT_PIXEL_SIZE + l),
                     (Snake_Matrix[x][y] != 0)? WHITE : BLACK);
@@ -367,7 +367,7 @@ static void Snake_CaptureGift(SnakeCoord_t coord)
 
 static void Snake_PutNewGift(void)
 {
-    // Put new gift
+    /* Put new gift */
     uint32_t freeSpaces = Snake_CalculateFreePoints();
     uint32_t giftPos = Snake_GenerateRandomPosition(freeSpaces);
     Snake_PutGiftPosition(giftPos);
@@ -377,14 +377,14 @@ static void Snake_PutNewGift(void)
 
 static void Snake_DeleteLastPoint(void)
 {
-    // Check oldest point "next point"
+    /* Check oldest point "next point" */
     SnakeStep_t oldestStep = Snake_Matrix[Snake_EndPoint.x][Snake_EndPoint.y];
     SnakeCoord_t changeCord = Snake_ConvertStepToCoordinate(oldestStep);
 
-    // Clear oldest point
+    /* Clear oldest point */
     Snake_Matrix[Snake_EndPoint.x][Snake_EndPoint.y] = 0;
 
-    // Change new oldest point
+    /* Change new oldest point */
     Snake_EndPoint.x += changeCord.x;
     Snake_EndPoint.y += changeCord.y;
 }
@@ -459,7 +459,7 @@ static void Snake_PutGiftPosition(uint32_t giftPos)
 
 static void Snake_DrawGiftToPoint(uint16_t x, uint16_t y)
 {
-    // Put to X
+    /* Put to X */
     uint8_t putMatrix[SNAKE_POINT_PIXEL_SIZE][SNAKE_POINT_PIXEL_SIZE] = {
             { 1, 0, 0, 1 },
             { 0, 1, 1, 0 },
@@ -471,7 +471,7 @@ static void Snake_DrawGiftToPoint(uint16_t x, uint16_t y)
     {
         for (uint8_t j = 0; j < SNAKE_POINT_PIXEL_SIZE; j++)
         {
-            // Be careful: the display 0,0 point is the top left, but on matrix 0,0 pont is the bottom, left point
+            /* Be careful: the display 0,0 point is the top left, but on matrix 0,0 pont is the bottom, left point */
             SSD1306_drawPixel(x*SNAKE_POINT_PIXEL_SIZE + i,
                     DISPLAY_HEIGHT - (y*SNAKE_POINT_PIXEL_SIZE + j),
                     putMatrix[i][j] ? WHITE : BLACK);
@@ -480,6 +480,6 @@ static void Snake_DrawGiftToPoint(uint16_t x, uint16_t y)
 
 }
 
-#endif    // #ifdef CONFIG_FUNCTION_GAME_SNAKE
+#endif    /* #ifdef CONFIG_FUNCTION_GAME_SNAKE */
 
 

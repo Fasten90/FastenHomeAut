@@ -49,11 +49,11 @@
  */
 bool ConvertTable_Init(const ConverTable_t * table)
 {
-    // Check monotonity
+    /* Check monotonity */
     uint16_t i;
     for (i = 1; i < table->size; i++)
     {
-        // TODO: With ASSERT() ?
+        /* TODO: With ASSERT() ? */
         if (table->recordList[i].adcValue <= table->recordList[i-1].adcValue)
             return false;
         if (table->recordList[i].convertedValue <= table->recordList[i-1].convertedValue)
@@ -77,16 +77,16 @@ float ConvertTable_GetValue(const ConverTable_t * table, uint32_t value)
     {
         if (value == table->recordList[i].adcValue)
         {
-            // Equal with an fix value
+            /* Equal with an fix value */
             retval = table->recordList[i].convertedValue;
             break;
         }
         else if (value < table->recordList[i].adcValue)
         {
-            // Find first larger value
+            /* Find first larger value */
             if (i > 0)
             {
-                // TODO: Check i-- is good?
+                /* TODO: Check i-- is good? */
                 retval = (float)table->recordList[i-1].convertedValue
                     + ((value - table->recordList[i-1].adcValue)
                         * (table->recordList[i].convertedValue - table->recordList[i-1].convertedValue)
@@ -94,14 +94,14 @@ float ConvertTable_GetValue(const ConverTable_t * table, uint32_t value)
             }
             else
             {
-                // i == 0 --> first value
+                /* i == 0 --> first value */
                 retval = table->recordList[i].convertedValue;
             }
             break;
         }
         else if (i == (table->size - 1))
         {
-            // Last value
+            /* Last value */
             retval = table->recordList[i].convertedValue;
             break;
         }
@@ -150,11 +150,11 @@ uint32_t ConvertTable_UnitTest(void)
     };
 
 
-    // Test Init()
+    /* Test Init() */
     UNITTEST_ASSERT(ConvertTable_Init(&testConvertTableInfo), "Init error");
 
 
-    // Fix cases
+    /* Fix cases */
     testValue = 10;
     expectedValue = 0.0f;
     floatValue = ConvertTable_GetValue(&testConvertTableInfo, testValue);
@@ -171,7 +171,7 @@ uint32_t ConvertTable_UnitTest(void)
     UNITTEST_ASSERT((floatValue < expectedValue + maxDiff) && (floatValue > expectedValue - maxDiff), "GetValue error");
 
 
-    // Inner cases
+    /* Inner cases */
     testValue = 15;
     expectedValue = 0.5f;
     floatValue = ConvertTable_GetValue(&testConvertTableInfo, testValue);
@@ -193,7 +193,7 @@ uint32_t ConvertTable_UnitTest(void)
     UNITTEST_ASSERT((floatValue < expectedValue + maxDiff) && (floatValue > expectedValue - maxDiff), "GetValue error");
 
 
-    // Too low, too high cases
+    /* Too low, too high cases */
     testValue = 5;
     expectedValue = 0.0f;
     floatValue = ConvertTable_GetValue(&testConvertTableInfo, testValue);
@@ -205,9 +205,9 @@ uint32_t ConvertTable_UnitTest(void)
     UNITTEST_ASSERT((floatValue < expectedValue + maxDiff) && (floatValue > expectedValue - maxDiff), "GetValue error");
 
 
-    // Finish
+    /* Finish */
     return UnitTest_End();
 }
-#endif    // #ifdef CONFIG_MODULE_CONVERTTABLE_UNITTEST_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_CONVERTTABLE_UNITTEST_ENABLE */
 
-#endif    // #ifdef CONFIG_MODULE_CONVERTTABLE_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_CONVERTTABLE_ENABLE */

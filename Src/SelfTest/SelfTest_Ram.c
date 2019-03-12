@@ -55,13 +55,13 @@ bool SelfTest_Ram_Test(void)
     volatile uint32_t stackLastVariable = 0U;
     stackActualAddress = (uint8_t *)&stackLastVariable;
 
-    // End of BSS address
+    /* End of BSS address */
     extern uint32_t _ebss;
 
-    // It suppose decrementing stack
+    /* It suppose decrementing stack */
     for (i = (uint8_t *)&_ebss; i < stackActualAddress; i++)
     {
-        // 0xAA
+        /* 0xAA */
         *i = 0xAAU;
         if (*i != 0xAAU)
         {
@@ -75,7 +75,7 @@ bool SelfTest_Ram_Test(void)
 
         for (i = (uint8_t *)&_ebss; i < stackActualAddress; i++)
         {
-            // 0x55
+            /* 0x55 */
             *i = 0x55U;
             if (*i != 0x55U)
             {

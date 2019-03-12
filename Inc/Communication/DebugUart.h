@@ -39,7 +39,7 @@
 #define DEBUGUART_PROCESS_BUFFER                (256U)
 
 
-// Variadic macro
+/* Variadic macro */
 #define DebugUart_Printf(...)                    uprintf(__VA_ARGS__)
 
 
@@ -85,7 +85,7 @@ void DebugUart_ProcessReceivedCharacters(void);
 
 #else /* #ifdef CONFIG_MODULE_DEBUGUART_ENABLE */
 
-// Not used DEBUGUART
+/* Not used DEBUGUART */
 
 #ifndef CONFIG_PLATFORM_PC_WINDOWS
 

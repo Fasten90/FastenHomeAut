@@ -28,9 +28,9 @@
 const Event_t EventList[] =
 {
     {
-        // Unknown (0) event
+        /* Unknown (0) event */
         .name = "-",
-        // @note Do not log this!
+        /* @note Do not log this! */
         .isNeedLog = false,
     },
     {
@@ -90,8 +90,8 @@ const Event_t EventList[] =
     }
 #endif
 
-    // XXX: Add here new event
-    // @note    Sync with EventName_t
+    /* XXX: Add here new event */
+    /* @note    Sync with EventName_t */
 };
 
 
@@ -121,7 +121,7 @@ const EventId_t EventsNum = NUM_OF(EventList);
  */
 void EventList_init(void)
 {
-    // Check EventList size
+    /* Check EventList size */
     BUILD_ASSERT(NUM_OF(EventList) == Event_Count);
 }
 

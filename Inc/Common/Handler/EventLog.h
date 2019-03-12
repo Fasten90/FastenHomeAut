@@ -45,7 +45,7 @@
 #endif
 
 ///< Print event immediately
-// #define CONFIG_EVETNLOG_PRINT_IMMEDIATELY
+/* #define CONFIG_EVETNLOG_PRINT_IMMEDIATELY */
 
 ///< Save event at EventLog initialization ( 1 - on, 0 - off )
 #define EVENTLOG_SAVE_EVENT_AT_INIT            ( 0 )
@@ -97,7 +97,7 @@ uint32_t EventLog_UnitTest(void);
 
 
 
-#endif // #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
+#endif /* #ifdef CONFIG_MODULE_EVENTLOG_ENABLE */
 
 
 #endif /* EVENTLOG_H_ */

@@ -155,4 +155,4 @@ void CommonSPI_Init(void)
 
 
 
-#endif    // CONFIG_MODULE_COMMONSPI_ENABLE
+#endif    /* CONFIG_MODULE_COMMONSPI_ENABLE */

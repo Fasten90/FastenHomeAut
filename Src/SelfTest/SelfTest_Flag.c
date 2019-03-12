@@ -17,7 +17,7 @@
 #include "GenericTypeDefs.h"
 #include "compiler.h"
 #include "SelfTest_Flag.h"
-//#include "DebugUart.h"
+/* include "DebugUart.h" */
 
 
 
@@ -61,7 +61,7 @@ bool SelfTest_Flag_Test(void)
     */
 
     /*        Flag Test        */
-    //uint32_t reg = __get_APSR();
+    /* int32_t reg = __get_APSR(); */
 
     /*
     volatile uint8_t a = 5;
@@ -71,7 +71,7 @@ bool SelfTest_Flag_Test(void)
     */
 
 
-    // Wrong:
+    /* Wrong: */
     /*
     register volatile uint8_t a = 1;
     a--;
@@ -91,19 +91,19 @@ bool SelfTest_Flag_Test(void)
 
     volatile int32_t add1 = 0x7FFFFFF0U;
     volatile int32_t add2 = 0x000000FFU;
-    // cppcheck-suppress integerOverflow
+    /* cppcheck-suppress integerOverflow */
     volatile uint32_t addres = add1 + add2;
 
     apsr.w = __get_APSR();
 
     if (apsr.b.V == 1)
     {
-        //uprintf("Overflow flag is 1\r\n");
+        /* printf("Overflow flag is 1\r\n"); */
         successfulTest++;
     }
 
-    //uprintf("Addition value: %u\r\n", addres);
-    (void)addres;
+    /* printf("Addition value: %u\r\n", addres); */
+    UNUSED_ARGUMENT(addres);
 
 
     /* Unsigned adding overflow */
@@ -115,17 +115,17 @@ bool SelfTest_Flag_Test(void)
 
     if ((apsr.b.C == 1) && (apsr.b.Z == 1))
     {
-        //uprintf("Carry and Zero flag is 1\r\n");
+        /* printf("Carry and Zero flag is 1\r\n"); */
         successfulTest++;
     }
 
-    // cppcheck-suppress knownConditionTrueFalse
+    /* cppcheck-suppress knownConditionTrueFalse */
     if (overflowval == 0)
     {
         successfulTest++;
     }
 
-    //uprintf("overflowval value: %u\r\n", overflowval);
+    /* printf("overflowval value: %u\r\n", overflowval); */
 
 
     /* Too large multiplex */
@@ -139,12 +139,12 @@ bool SelfTest_Flag_Test(void)
 
     if (apsr.b.Z == 1)
     {
-        //uprintf("Zero flag is 1\r\n");
+        /* printf("Zero flag is 1\r\n"); */
         successfulTest++;
     }
 
-    //uprintf("Multiplex value: %u\r\n", mulres);
-    (void)mulres;
+    /* printf("Multiplex value: %u\r\n", mulres); */
+    UNUSED_ARGUMENT(mulres);
 
 
     /* Underflow subtraction */
@@ -157,15 +157,15 @@ bool SelfTest_Flag_Test(void)
 
     if (apsr.b.N == 1)
     {
-        //uprintf("Negative flag is 1\r\n");
+        /* printf("Negative flag is 1\r\n"); */
         successfulTest++;
     }
 
-    //uprintf("Subtraction value: %u\r\n", subres);
-    (void)subres;
+    /* printf("Subtraction value: %u\r\n", subres); */
+    UNUSED_ARGUMENT(subres);
 
 
-    // Return with result (true = successful)
+    /* Return with result (true = successful) */
     return (successfulTest == testCount);
 }
 #endif

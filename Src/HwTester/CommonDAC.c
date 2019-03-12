@@ -49,8 +49,8 @@ static uint32_t CommonDAC_VoltageToBinary(float voltage);
  */
 void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac)
 {
-    // Suppress warning
-    (void)hdac;
+    /* Suppress warning */
+    UNUSED_ARGUMENT(hdac);
 
     GPIO_InitTypeDef GPIO_InitStruct;
 
@@ -81,7 +81,7 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac)
  */
 void CommonDAC_Init(void)
 {
-    HAL_DAC_MspInit(&DacHandle);    // TODO: there is no need call for this?
+    HAL_DAC_MspInit(&DacHandle);    /* TODO: there is no need call for this? */
 
     /*##-1- Configure the DAC peripheral */
     DacHandle.Instance = DACx;
@@ -154,19 +154,19 @@ bool CommonDAC_SetValue(DAC_Channel_t channel, float voltage)
     uint32_t channelDefine = 0;
     uint32_t dacValue = 0;
 
-    // Check voltage
+    /* Check voltage */
     if (voltage > COMMON_DAC_MAX_VOLTAGE)
     {
-        // Cut value
+        /* Cut value */
         voltage = COMMON_DAC_MAX_VOLTAGE;
     }
     else if (voltage < 0.0)
     {
-        // Cut value
+        /* Cut value */
         voltage = 0.0;
     }
 
-    // Check channel
+    /* Check channel */
     switch (channel)
     {
         case Channel_1:
@@ -183,17 +183,17 @@ bool CommonDAC_SetValue(DAC_Channel_t channel, float voltage)
             break;
     }
 
-    // Check value
+    /* Check value */
     dacValue = CommonDAC_VoltageToBinary(voltage);
 
     if (HAL_DAC_SetValue(&DacHandle, channelDefine, DAC_ALIGN_12B_R, dacValue) != HAL_OK)
     {
         /* Setting value Error */
-        //Error_Handler();
+        /* rror_Handler(); */
         return false;
     }
 
     return true;
 }
 
-#endif    // CONFIG_MODULE_COMMON_DAC_ENABLE
+#endif    /* CONFIG_MODULE_COMMON_DAC_ENABLE */

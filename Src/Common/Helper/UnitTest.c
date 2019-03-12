@@ -65,11 +65,11 @@ void UnitTest_CheckResult(bool isValid, const char *conString, const char *error
 {
     if (isValid)
     {
-        // Valid
+        /* Valid */
         UnitTest_ValidCnt++;
 
 #if (UNITTEST_PRINT_ASSERT == 1)
-        // Successful ASSERT, but need print
+        /* Successful ASSERT, but need print */
         uprintf("Assert OK: %s:%d - \"%s\" - \"%s\"\r\n",
                 UnitTest_FileName, line,
                 conString,
@@ -78,13 +78,13 @@ void UnitTest_CheckResult(bool isValid, const char *conString, const char *error
     }
     else
     {
-        // Invalid
+        /* Invalid */
         UnitTest_InvalidCnt++;
 
 #if (UNITTEST_PAUSE_WHEN_ERROR == 1)
-        (void)conString;
-        (void)errorString;
-        (void)line;
+        UNUSED_ARGUMENT(conString);
+        UNUSED_ARGUMENT(errorString);
+        UNUSED_ARGUMENT(line);
         DEBUG_BREAKPOINT();
 #else
 
@@ -95,7 +95,7 @@ void UnitTest_CheckResult(bool isValid, const char *conString, const char *error
         DebugUart_SendMessage(coloredMsg);
     #endif
 
-        // Failed condition + message will printed
+        /* Failed condition + message will printed */
         uprintf("\r\n"
                 "Error in \"%s\" at %d. line.\r\n"
                 "Condition: \"%s\"\r\n"
@@ -106,8 +106,8 @@ void UnitTest_CheckResult(bool isValid, const char *conString, const char *error
                 errorString);
 
     #ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
-        // Set default color
-        coloredMsg[0] = '\0';    // Clear colorMsg
+        /* Set default color */
+        coloredMsg[0] = '\0';    /* Clear colorMsg */
 
         ColoredMessage_SendTextColor(coloredMsg, COLOREDMESSAGE_STANDARD_TEXT_COLOR);
         ColoredMessage_SendBackgroundColor(coloredMsg, COLOREDMESSAGE_STANDARD_BACKGROUND_COLOR);
@@ -143,7 +143,7 @@ uint32_t UnitTest_End(void)
 #ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
         ColoredMessage_SendErrorMsg(coloredMsg, "UnitTest run failed\r\n");
         DebugUart_SendMessage(coloredMsg);
-        // Send sound
+        /* Send sound */
         DebugUart_SendChar(TERMINAL_KEY_BELL);
 #else
         uprintf("UnitTest run failed\r\n");
@@ -164,4 +164,4 @@ uint32_t UnitTest_End(void)
 
 
 
-#endif    // #ifdef CONFIG_MODULE_UNITTEST_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_UNITTEST_ENABLE */

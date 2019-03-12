@@ -89,16 +89,16 @@ void TaskHandler_Init(void)
 {
     TaskID_t i;
 
-    // Check TaskList contain
+    /* Check TaskList contain */
     for (i = 0; i < TasksNum; i++)
     {
-        // Need task function
+        /* Need task function */
         ASSERT(TaskList[i].taskFunction != NULL);
 
-        // Need task name
+        /* Need task name */
         ASSERT(TaskList[i].taskName != NULL);
 
-        // Need period
+        /* Need period */
         ASSERT(TaskList[i].taskScheduleRate != 0);
 
         /*if (isWrong)
@@ -106,8 +106,8 @@ void TaskHandler_Init(void)
     }
 
 
-    // TODO: Optimize with static and dynamic list
-    // Init task ticks
+    /* TODO: Optimize with static and dynamic list */
+    /* Init task ticks */
     for (i = 0; i < TasksNum; i++)
     {
         TaskList[i].tick = 0;
@@ -131,59 +131,59 @@ void TaskHandler_Scheduler(void)
     uint32_t elapsedTick = 0;
 
 
-    // Run TaskHandler - Infinite loop
-    // @note    Be careful, after this while loop is not reached
+    /* Run TaskHandler - Infinite loop */
+    /* @note    Be careful, after this while loop is not reached */
     while (1)
     {
-        // Calculate elapsed tick
+        /* Calculate elapsed tick */
         actualTick = HAL_GetTick();
         elapsedTick = actualTick - oldTick;
         oldTick = actualTick;
 
-        // Time optimizing...
-        // TODO: Check "required" tasks!
+        /* Time optimizing... */
+        /* TODO: Check "required" tasks! */
         if (elapsedTick != 0)
         {
             TaskID_t i;
 
             TaskHandler_IncrementTicks(elapsedTick);
 
-            // Check schedule list
+            /* Check schedule list */
             for (i = 0; i < TasksNum; i++)
             {
-                // Need scheduling?
+                /* Need scheduling? */
                 if (!TaskList[i].isDisabled)
                 {
-                    // TODO: only parameter give in if(), and after that, call TaskHandler_RunTask with parameter
+                    /* TODO: only parameter give in if(), and after that, call TaskHandler_RunTask with parameter */
                     if (!TaskList[i].isPeriodicScheduleDisabled
                         && TaskList[i].tick >= TaskList[i].taskScheduleRate)
                     {
-                        // Schedule - periodical
+                        /* Schedule - periodical */
                         TaskHandler_RunTask(i, ScheduleSource_PeriodicSchedule);
                     }
                     else if (TaskList[i].isRunOnce
                         && TaskList[i].tick >= TaskList[i].taskScheduleRate)
                     {
-                        // Schedule - once
+                        /* Schedule - once */
                         TaskHandler_RunTask(i, ScheduleSource_RunOnce);
                     }
                     else if (TaskList[i].isTimeOutTask
                         && TaskList[i].tick >= TaskList[i].taskScheduleRate)
                     {
-                        // TimeOut task
+                        /* TimeOut task */
                         TaskHandler_RunTask(i, ScheduleSource_TimeOut);
                     }
                     else if (TaskList[i].isRequestScheduling)
                     {
-                        // Schedule - event triggered
+                        /* Schedule - event triggered */
                         TaskHandler_RunTask(i, ScheduleSource_EventTriggered);
                     }
                 }
             }
         }
-    }    // End of while(1)
+    }    /* End of while(1) */
 
-    // Never reach this / Never return
+    /* Never reach this / Never return */
 }
 
 
@@ -213,13 +213,13 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 {
     TaskResult_t result = TaskResult_Fail;
 
-    // Clear once run
+    /* Clear once run */
     if (TaskList[taskID].isRunOnce)
     {
         TaskList[taskID].isDisabled = true;
     }
 
-    // Clear request
+    /* Clear request */
     TaskList[taskID].isRequestScheduling = false;
 
 #ifdef CONFIG_TASKHANDLER_DEBUG_RUN_ENABLE
@@ -227,28 +227,28 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
     TaskHandler_ActualRunningTaskID = taskID;
 #endif
 
-    // Software WatchDog: We are "alive"
+    /* Software WatchDog: We are "alive" */
     SW_WATCHDOG_INC();
 
 #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
-    // Measure run time:
+    /* Measure run time: */
     uint32_t startTime = HAL_GetTick();
 #endif
 
-    // Execute task
+    /* Execute task */
     result = TaskList[taskID].taskFunction(source);
 
 #ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
     uprintf("- %s task run %s\r\n", TaskList[taskID].taskName, (result == TaskResult_Ok) ? ("successful") : ("failed"));
 #else
-    (void)result;
+    UNUSED_ARGUMENT(result);
 #endif
 #ifdef CONFIG_EVENTLOG_TASKHANDLER_LOG_ENABLE
     EventHandler_GenerateEvent(Event_TaskScheduled, taskID, 0);
 #endif
 
-    // Clear tick
-    // TODO: Tick clearing or subtraction?
+    /* Clear tick */
+    /* TODO: Tick clearing or subtraction? */
     TaskList[taskID].tick = 0;
 
 #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
@@ -258,8 +258,8 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 
     if (!TaskList[taskID].isDisableLogToStatistics)
     {
-        // Need log to statistics
-        // TODO: Put to statistics function
+        /* Need log to statistics */
+        /* TODO: Put to statistics function */
         TaskHandler_StatisticsRanTaskTicks[TaskHandler_StatisticsIndex].startTick = startTime;
         TaskHandler_StatisticsRanTaskTicks[TaskHandler_StatisticsIndex].runTime = runTime;
         TaskHandler_StatisticsRanTaskTicks[TaskHandler_StatisticsIndex].taskId = taskID;
@@ -344,7 +344,7 @@ void TaskHandler_ClearTimeoutTask(TaskID_t taskID)
 {
     if (taskID < Task_Count && TaskList[taskID].isTimeOutTask == true)
     {
-        // Clear
+        /* Clear */
         TaskList[taskID].tick = 0;
         TaskList[taskID].isDisabled = false;
 #ifdef CONFIG_EVENTLOG_TASKHANDLER_LOG_ENABLE
@@ -375,37 +375,37 @@ void TaskHandler_PrintStatistics(void)
     uint8_t runTimes = 0;
     uint8_t i;
     uint32_t lastTick = 0;
-    //uint32_t lastRunTime = 0;
+    /* int32_t lastRunTime = 0; */
 
-    // Calculate Statistics values
+    /* Calculate Statistics values */
     for (i = 0; i < TASKHANDLER_STATISTICS_LIMIT; i++)
     {
         if (TaskHandler_StatisticsRanTaskTicks[i].startTick > 0)
         {
-            // This tick is "ran task tick"
+            /* This tick is "ran task tick" */
             if (TaskHandler_StatisticsRanTaskTicks[i].startTick < oldestTick)
             {
-                // This tick is the oldest tick
+                /* This tick is the oldest tick */
                 oldestTick = TaskHandler_StatisticsRanTaskTicks[i].startTick;
             }
 
-            // Time ++
+            /* Time ++ */
             runTimes += TaskHandler_StatisticsRanTaskTicks[i].runTime;
             if (!(lastTick == TaskHandler_StatisticsRanTaskTicks[i].startTick
                 && TaskHandler_StatisticsRanTaskTicks[i].runTime == 0))
                 {
-                // Upper time
+                /* Upper time */
                 runTimes += 1;
                 }
 
-            // Save last values
+            /* Save last values */
             lastTick = TaskHandler_StatisticsRanTaskTicks[i].startTick;
-            //lastRunTime = TaskHandler_StatisticsRanTaskTicks[i].runTime;
+            /* astRunTime = TaskHandler_StatisticsRanTaskTicks[i].runTime; */
         }
     }
 
-    // If reached here, we have the oldest tick + ran num
-    // Calculate CPU usage
+    /* If reached here, we have the oldest tick + ran num */
+    /* Calculate CPU usage */
     uint32_t actualTick = HAL_GetTick();
     uint32_t allTime = actualTick - oldestTick;
     uint8_t cpuPercent = 0;
@@ -423,7 +423,7 @@ void TaskHandler_PrintStatistics(void)
             );
 
 
-    // Print Statistics table
+    /* Print Statistics table */
 
     const char const fixheader[] = "| %9d | %3d | %20s |";
     char str[2 + 9 + 3 + 3 + 3 + 20 + 2 + 1];
@@ -432,12 +432,12 @@ void TaskHandler_PrintStatistics(void)
 
     TaskHandler_PrintStatisticsTableHeader(fixheader, str, header);
 
-    // Print all table
+    /* Print all table */
     for (i = 0; i < TASKHANDLER_STATISTICS_LIMIT; i++)
     {
         if (TaskHandler_StatisticsRanTaskTicks[i].startTick > 0)
         {
-            // Print: "<StartTick> - <RunTime: ms> - <TaskName>"
+            /* Print: "<StartTick> - <RunTime: ms> - <TaskName>" */
             usprintf(str, fixheader,
                     TaskHandler_StatisticsRanTaskTicks[i].startTick,
                     TaskHandler_StatisticsRanTaskTicks[i].runTime,
@@ -482,7 +482,7 @@ void TaskHandler_PrintTaskRunCounts(void)
 
     TaskHandler_PrintTaskRunCountsTableHeader(fixheader, str, header);
 }
-#endif    // #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
+#endif    /* #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS */
 
 
 
@@ -514,20 +514,20 @@ uint32_t TaskHandler_UnitTest(void)
     uint8_t i;
     bool result;
 
-    // Start Unit test
+    /* Start Unit test */
     UnitTest_Start("TaskHandler", __FILE__);
 
 
-    // Test Initialization
+    /* Test Initialization */
 
-    // Clear requests: Be careful, it make some wrongs
+    /* Clear requests: Be careful, it make some wrongs */
     for (i = 0; i < TasksNum; i++)
     {
         TaskList[i].isRequestScheduling = false;
     }
     TaskHandler_Init();
 
-    // Check, all tick are 0?
+    /* Check, all tick are 0? */
     for (i = 0; i < TasksNum; i++)
     {
         result = (TaskList[i].tick == 0);
@@ -535,10 +535,10 @@ uint32_t TaskHandler_UnitTest(void)
     }
 
 
-    // Test Scheduler time elapsing
+    /* Test Scheduler time elapsing */
     TaskHandler_IncrementTicks(1);
 
-    // Check all tick is incremented?
+    /* Check all tick is incremented? */
     for (i = 0; i < TasksNum; i++)
     {
         result = (TaskList[i].tick == 1);
@@ -547,13 +547,13 @@ uint32_t TaskHandler_UnitTest(void)
 
 
 
-    // TODO: Test TaskHandler_RunTask ?
+    /* TODO: Test TaskHandler_RunTask ? */
 
 
 
-    // Test TaskHandler_SetTaskPeriodicTime
+    /* Test TaskHandler_SetTaskPeriodicTime */
 
-    // Save values
+    /* Save values */
     uint32_t oldTaskScheduleRate;
     bool oldOnceRun = TaskList[0].isRunOnce;
     oldTaskScheduleRate = TaskList[0].taskScheduleRate;
@@ -570,14 +570,14 @@ uint32_t TaskHandler_UnitTest(void)
     result = (TaskList[0].isRunOnce == false);
     UNITTEST_ASSERT(result, "TaskHandler_SetTaskTime Error");
 
-    // Restore
+    /* Restore */
     TaskList[0].isRunOnce = oldOnceRun;
 
 
 
-    // Test TaskHandler_SetTaskOnceRun
+    /* Test TaskHandler_SetTaskOnceRun */
 
-    // Save values
+    /* Save values */
     oldOnceRun = TaskList[0].isRunOnce;
     oldTaskScheduleRate =TaskList[0].taskScheduleRate;
 
@@ -593,12 +593,12 @@ uint32_t TaskHandler_UnitTest(void)
     result = (TaskList[0].isRunOnce == true);
     UNITTEST_ASSERT(result, "TaskHandler_ScheduleTaskOnce Error");
 
-    // Restore
+    /* Restore */
     TaskList[0].isRunOnce = oldOnceRun;
 
 
 
-    // Test task disabling
+    /* Test task disabling */
 
     bool oldDisableValue = TaskList[0].isDisabled;
 
@@ -606,30 +606,30 @@ uint32_t TaskHandler_UnitTest(void)
     result = (TaskList[0].isDisabled == true);
     UNITTEST_ASSERT(result, "TaskHandler_DisableTask Error");
 
-    // Restore task disable value
+    /* Restore task disable value */
     TaskList[0].isDisabled = oldDisableValue;
 
 
 
-    // Test task request
+    /* Test task request */
     bool oldRequest = TaskList[0].isRequestScheduling;
 
     TaskHandler_RequestTaskScheduling(0);
     result = (TaskList[0].isRequestScheduling == true);
     UNITTEST_ASSERT(result, "TaskHandler_RequestTaskScheduling Error");
 
-    // Restore task request value
+    /* Restore task request value */
     TaskList[0].isRequestScheduling = oldRequest;
 
 
-    // TODO: Test TimeOut task!
+    /* TODO: Test TimeOut task! */
 
 
-    // Finish
+    /* Finish */
     return UnitTest_End();
 }
 #endif
 
 
 
-#endif    // #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE */

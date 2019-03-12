@@ -31,7 +31,7 @@
 #define TERMINAL_HISTORY_MAX_COUNT                    (5)
 
 
-// Optimized version:
+/* Optimized version: */
 #define TERMINAL_SEND_WELCOME()                        \
         Terminal_SendMessage(                        \
         "\r\n"                                        \
@@ -56,7 +56,7 @@
 #define TERMINAL_SEND_NEW_LINE()            Terminal_SendMessage("\r\n")
 
 
-///    Defines for characters
+//*    Defines for characters */
 
 #if defined(CONFIG_TERMINAL_USE_ZOC) || defined(CONFIG_TERMINAL_USE_PUTTY)
     #define TERMINAL_KEY_DELETE                ('\x08')
@@ -72,14 +72,14 @@
 #define TERMINAL_KEY_ESCAPESEQUENCE_2        ('[')
 
 
-// 8 = BS = Backspace
+/* 8 = BS = Backspace */
 #define TERMINAL_SEND_KEY_BACKSPACE()        Terminal_SendMessage("\x08")
 
-// 127 = DEL = Delete
+/* 127 = DEL = Delete */
 #define TERMINAL_SEND_KEY_DEL()                 Terminal_SendMessage("\x7F'")
 
 
-// -\_("))_/-
+/* -\_("))_/- */
 #define TERMINAL_STRING_DONTKNOW            ("-\_(\"))_/-")
 
 

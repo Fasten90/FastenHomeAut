@@ -142,13 +142,13 @@ uint32_t power_secured(uint32_t a, uint8_t b)
             num = num * a;
             if (num < prevNum)
             {
-                // Overflow! Return with "largest" value
+                /* Overflow! Return with "largest" value */
                 num = prevNum;
                 break;
             }
             else
             {
-                prevNum = num;        // Save value
+                prevNum = num;        /* Save value */
             }
         }
     }
@@ -167,7 +167,7 @@ uint8_t DigitNum(uint32_t num, uint8_t radix)
 {
     uint8_t digit = 1;
 
-    // Check radix is valid?
+    /* Check radix is valid? */
     if (radix == 0 || radix == 1)
         return 0;
 
@@ -270,7 +270,7 @@ uint8_t popcount(uint32_t value)
 
     if (value == 0)
     {
-        // 0 value has zero 1 bits
+        /* 0 value has zero 1 bits */
         return 0;
     }
 
@@ -324,7 +324,7 @@ uint8_t GetBit(uint32_t value, uint8_t index)
 {
     if ((value == 0) || (index > 31))
     {
-        // 0 or wrong index
+        /* 0 or wrong index */
         return 0;
     }
 
@@ -339,7 +339,7 @@ uint8_t GetBit(uint32_t value, uint8_t index)
  */
 uint16_t random(void)
 {
-    // @note    This random is dependent from tick. If you call fastly and often, the value will not change enough
+    /* @note    This random is dependent from tick. If you call fastly and often, the value will not change enough */
     uint16_t randomValue = HAL_GetTick() % RAND_MAX;
     return randomValue;
 }
@@ -392,7 +392,7 @@ uint32_t MathHelper_UnitTest(void)
     UNITTEST_ASSERT(power(2, 10)==1024, "power error");
     UNITTEST_ASSERT(power(2, 16)==65536, "power error");
     UNITTEST_ASSERT(power(1024, 0)==1, "power error");
-    // Overflow
+    /* Overflow */
     UNITTEST_ASSERT(power(2, 32)==0, "power error");
 
 
@@ -408,16 +408,16 @@ uint32_t MathHelper_UnitTest(void)
     UNITTEST_ASSERT(power_secured(2, 16)==65536, "power error");
     UNITTEST_ASSERT(power_secured(1024, 0)==1, "power error");
 
-    // Overflow - but last
+    /* Overflow - but last */
     UNITTEST_ASSERT(power_secured(2, 32)==2147483648, "power error");
 
 
     /*        DigitNum()            */
-    // Wrong radixes (0, 1)
+    /* Wrong radixes (0, 1) */
     UNITTEST_ASSERT(DigitNum(1, 0) == 0, "DigitNum error");
     UNITTEST_ASSERT(DigitNum(1, 1) == 0, "DigitNum error");
 
-    // Good situations
+    /* Good situations */
     UNITTEST_ASSERT(DigitNum(10, 10) == 2, "DigitNum error");
     UNITTEST_ASSERT(DigitNum(16, 10) == 2, "DigitNum error");
     UNITTEST_ASSERT(DigitNum(16, 16) == 2, "DigitNum error");
@@ -428,10 +428,10 @@ uint32_t MathHelper_UnitTest(void)
 
     /*        Increment()            */
     uint32_t num = 0;
-    // Check with normal example
+    /* Check with normal example */
     UNITTEST_ASSERT(Increment(&num)==1, "Increment error");
     UNITTEST_ASSERT(num==1, "Increment error");
-    // Check with overflow possibility
+    /* Check with overflow possibility */
     num = UINT32_MAX;
     UNITTEST_ASSERT(Increment(&num)==UINT32_MAX, "Increment error");
     UNITTEST_ASSERT(num==UINT32_MAX, "Increment error");
@@ -439,10 +439,10 @@ uint32_t MathHelper_UnitTest(void)
 
     /*        Decrement()            */
     num = 1;
-    // Check with normal example
+    /* Check with normal example */
     UNITTEST_ASSERT(Decrement(&num)==0, "Decrement error");
     UNITTEST_ASSERT(num==0, "Decrement error");
-    // Check with underflow possibility
+    /* Check with underflow possibility */
     num = 0;
     UNITTEST_ASSERT(Decrement(&num)==0, "Decrement error");
     UNITTEST_ASSERT(num==0, "Decrement error");
@@ -491,7 +491,7 @@ uint32_t MathHelper_UnitTest(void)
     ClearBit(&value, 32);
     UNITTEST_ASSERT(value == 0xFFFFFFFF, "ClearBit error");
 
-    // Do nothing
+    /* Do nothing */
     ClearBit(NULL, 0);
 
 
@@ -513,7 +513,7 @@ uint32_t MathHelper_UnitTest(void)
     SetBit(&value, 32);
     UNITTEST_ASSERT(value == 0xFFFFFFFF, "SetBit error");
 
-    // Do nothing
+    /* Do nothing */
     SetBit(NULL, 0);
 
 
@@ -527,10 +527,10 @@ uint32_t MathHelper_UnitTest(void)
     UNITTEST_ASSERT(GetBit(0x00000000, 32) == 0, "GetBit error");
 
 
-    // TODO: Test random();
+    /* TODO: Test random(); */
 
 
-    // Finish
+    /* Finish */
     return UnitTest_End();
 }
 #endif

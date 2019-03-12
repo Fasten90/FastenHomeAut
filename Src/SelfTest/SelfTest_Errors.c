@@ -50,8 +50,8 @@
  */
 void SelfTest_Errors_Constwrite(void)
 {
-    // Const write
-    // cppcheck-suppress stringLiteralWrite
+    /* Const write */
+    /* cppcheck-suppress stringLiteralWrite */
     static const char const buffer[] = "const";
     char * pnt = (char *)buffer;
 
@@ -75,8 +75,8 @@ void SelfTest_Errors_ZeroDivide(void)
     uint32_t b = 0;
     uint32_t c;
 
-    // Zero division
-    // cppcheck-suppress zerodiv
+    /* Zero division */
+    /* cppcheck-suppress zerodiv */
     c = a/b;
 
     uprintf("ZeroDivide result: %d\r\n", c);
@@ -89,8 +89,8 @@ void SelfTest_Errors_ZeroDivide(void)
  */
 void SelfTest_Errors_MemFault(void)
 {
-    // Test invalid pointer
-    // TODO: This address normally is an invalid address, but not every target-platform, but shall provide a target dependent invalid address
+    /* Test invalid pointer */
+    /* TODO: This address normally is an invalid address, but not every target-platform, but shall provide a target dependent invalid address */
     const uint32_t constValue = 0x12345678;
     uint32_t * wrongPointer = (uint32_t *)constValue;
     *wrongPointer = 0;
@@ -116,7 +116,7 @@ void SelfTest_Erros_StackOverFlow(void)
     UNUSED_ARGUMENT(dummyVar2);
     UNUSED_ARGUMENT(dummyVar3);
 
-    // @note: Be careful, recursive, never return...
+    /* @note: Be careful, recursive, never return... */
     SelfTest_Erros_StackOverFlow();
 }
 

@@ -17,7 +17,7 @@
 
 #ifdef CONFIG_MODULE_DEBUG_ENABLE
 
-#include <stdarg.h>// for "va_list"
+#include <stdarg.h>/* for "va_list" */
 #include "ColoredMessage.h"
 #include "StringHelper.h"
 #include "DebugUart.h"
@@ -53,7 +53,7 @@ extern DebugRecord_t DebugTasks[];
 
 
 
-// TODO: Modify Debug function for other protocol (like telnet)
+/* TODO: Modify Debug function for other protocol (like telnet) */
 
 
 /**
@@ -68,11 +68,11 @@ void Debug_Print(Debug_t debugTask, const char *msg)
     if (DebugTasks[debugTask].isEnabled)
     {
 #ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
-        // Text color
+        /* Text color */
         char colorMsg[ESCAPE_FORMAT_STANDARD_STRING_MAX_LENGTH * 2] = { 0 };
         ColoredMessage_SendTextColor(colorMsg, DebugTasks[debugTask].color);
     #ifdef CONFIG_DEBUG_BACKGROUND_ENABLE
-        if (DebugTasks[debugTask].background)    // TODO: Not good idea. Now, we cannot use "black = 0" color in background
+        if (DebugTasks[debugTask].background)    /* TODO: Not good idea. Now, we cannot use "black = 0" color in background */
         {
             ColoredMessage_SendBackgroundColor(colorMsg, DebugTasks[debugTask].background);
         }
@@ -80,15 +80,15 @@ void Debug_Print(Debug_t debugTask, const char *msg)
         DebugUart_SendMessage(colorMsg);
 #endif
 
-        // TaskName
+        /* TaskName */
         uprintf("%s: ", DebugTasks[debugTask].name);
 
-        // Send debug message:
+        /* Send debug message: */
         DebugUart_SendLine(msg);
 
 #ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
-        // Set default color
-        colorMsg[0] = '\0';    // Clear colorMsg
+        /* Set default color */
+        colorMsg[0] = '\0';    /* Clear colorMsg */
         ColoredMessage_SendDefaultFormat(colorMsg);
         DebugUart_SendMessage(colorMsg);
 #endif
@@ -103,7 +103,7 @@ void Debug_Print(Debug_t debugTask, const char *msg)
  */
 void Debug_Printf(Debug_t debugTask, const char *format, ...)
 {
-    // Check DebugTasks list size
+    /* Check DebugTasks list size */
     ASSERT(MEM_IN_FLASH_OR_RAM(format, 0));
 
     if ((debugTask >= Debug_Count) || (format == NULL))
@@ -112,11 +112,11 @@ void Debug_Printf(Debug_t debugTask, const char *format, ...)
     if (DebugTasks[debugTask].isEnabled)
     {
 #ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
-        // Text color
+        /* Text color */
         char colorMsg[ESCAPE_FORMAT_STANDARD_STRING_MAX_LENGTH * 2] = { 0 };
         ColoredMessage_SendTextColor(colorMsg, DebugTasks[debugTask].color);
     #ifdef CONFIG_DEBUG_BACKGROUND_ENABLE
-        if (DebugTasks[debugTask].background)    // TODO: Not good idea. Now, we cannot use "black = 0" color in background
+        if (DebugTasks[debugTask].background)    /* TODO: Not good idea. Now, we cannot use "black = 0" color in background */
         {
             ColoredMessage_SendBackgroundColor(colorMsg, DebugTasks[debugTask].background);
         }
@@ -124,21 +124,21 @@ void Debug_Printf(Debug_t debugTask, const char *format, ...)
         DebugUart_SendMessage(colorMsg);
 #endif
 
-        // TaskName
+        /* TaskName */
         uprintf("%s: ", DebugTasks[debugTask].name);
 
-        // Send debug message:
-        // Working in at:
+        /* Send debug message: */
+        /* Working in at: */
         char txBuffer[DEBUGUART_TX_BUFFER_SIZE];
 
 #ifdef CONFIG_DEBUG_MODE
         txBuffer[DEBUGUART_TX_BUFFER_SIZE-1] = 0xEF;
 #endif
 
-        va_list ap;                                    // argument pointer
-        va_start(ap, format);                         // ap on arg
-        size_t sentChars = string_printf_safe(txBuffer, DEBUGUART_TX_BUFFER_SIZE-1, format, ap);        // Separate and process
-        va_end(ap);                                     // Cleaning after end
+        va_list ap;                                    /* argument pointer */
+        va_start(ap, format);                         /* ap on arg */
+        size_t sentChars = string_printf_safe(txBuffer, DEBUGUART_TX_BUFFER_SIZE-1, format, ap);        /* Separate and process */
+        va_end(ap);                                     /* Cleaning after end */
 
         if (sentChars >= (DEBUGUART_TX_BUFFER_SIZE - 5))
         {
@@ -152,11 +152,11 @@ void Debug_Printf(Debug_t debugTask, const char *format, ...)
         }
 #endif
 
-        DebugUart_SendLine(txBuffer);                // Send on Usart
+        DebugUart_SendLine(txBuffer);                /* Send on Usart */
 
 #ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
-        // Set default color
-        colorMsg[0] = '\0';    // Clear colorMsg
+        /* Set default color */
+        colorMsg[0] = '\0';    /* Clear colorMsg */
         ColoredMessage_SendDefaultFormat(colorMsg);
         DebugUart_SendMessage(colorMsg);
 #endif
@@ -192,7 +192,7 @@ bool Debug_SetDebugTaskWithName(char *name, bool enable)
     {
         if (!StrCmp(name, DebugTasks[i].name))
         {
-            // Found
+            /* Found */
             DebugTasks[i].isEnabled = enable;
             result = true;
 
@@ -243,12 +243,12 @@ void Debug_PrintDebugList(void)
 
 #else
 
-// Debug module is not used
-// Suppressed "ISO C forbids an empty translation unit [-Wpedantic]"
+/* Debug module is not used */
+/* Suppressed "ISO C forbids an empty translation unit [-Wpedantic]" */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 #pragma GCC diagnostic pop
 
 
 
-#endif    // #ifdef CONFIG_MODULE_DEBUG_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_DEBUG_ENABLE */

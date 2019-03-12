@@ -35,7 +35,7 @@
     #define UNITTEST_PRINT_ASSERT                        (1)
 #endif
 
-// if con == true, is valid
+/* if con == true, is valid */
 #define UNITTEST_ASSERT(con, errorstring)            UnitTest_CheckResult(con, #con, errorstring, __LINE__)
 
 

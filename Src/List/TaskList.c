@@ -124,7 +124,7 @@ Task_t TaskList[] =
         .taskScheduleRate = 2,
     #endif
     #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
-        // Do not log LED task, not important and run short
+        /* Do not log LED task, not important and run short */
         .isDisableLogToStatistics = true,
     #endif
     },
@@ -171,7 +171,7 @@ Task_t TaskList[] =
         .isPeriodicScheduleDisabled = true,
         .taskScheduleRate = 1000,
 #else
-        // UART handler not required task scheduling. Need check by periodically
+        /* UART handler not required task scheduling. Need check by periodically */
         .taskScheduleRate = 50,
 #endif
     },
@@ -252,7 +252,7 @@ Task_t TaskList[] =
         .isPeriodisScheduleDisabled = true,
         .taskScheduleRate = 1000,
 #else
-        // UART handler not required task scheduling. Need check by periodically
+        /* UART handler not required task scheduling. Need check by periodically */
         .taskScheduleRate = 50,
 #endif
     },
@@ -265,14 +265,14 @@ Task_t TaskList[] =
         .isPeriodisScheduleDisabled = false,
         .taskScheduleRate = 1000,
     #else
-        // UART handler not required task scheduling. Need check by periodically
+        /* UART handler not required task scheduling. Need check by periodically */
         .taskScheduleRate = 50,
     #endif
     },
 #endif
 
-    // XXX: Add here new tasks
-    // @note Be careful, taskList order need to be equal with TaskName_t
+    /* XXX: Add here new tasks */
+    /* @note Be careful, taskList order need to be equal with TaskName_t */
     /*
     const char *taskName;                        ///< Task Name - Init
     const TaskFunctionPointer taskFunction;        ///< Task function - Init
@@ -311,9 +311,9 @@ const TaskID_t TasksNum = NUM_OF(TaskList);
  *----------------------------------------------------------------------------*/
 
 
-// XXX: Function form:
-//typedef TaskResult_t (*TaskFunctionPointer)(ScheduleSource_t source);
-// static TaskResult_t Task_Name(ScheduleSource_t source);
+/* XXX: Function form: */
+/* ypedef TaskResult_t (*TaskFunctionPointer)(ScheduleSource_t source); */
+/* static TaskResult_t Task_Name(ScheduleSource_t source); */
 
 
 /**
@@ -321,7 +321,7 @@ const TaskID_t TasksNum = NUM_OF(TaskList);
  */
 void TaskList_Init(void)
 {
-    // Check TaskList size and enums
+    /* Check TaskList size and enums */
     BUILD_ASSERT(NUM_OF(TaskList) == Task_Count);
 }
 
@@ -336,25 +336,25 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 #ifdef CONFIG_TASKHANDLER_DEBUG_ENABLE
     uprintf("Run %s %d\r\n", TaskList[id].taskName, id);
 #else
-    (void)source;
+    UNUSED_ARGUMENT(source);
 #endif
 
 
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-    // ESP8266 connection status LED
+    /* ESP8266 connection status LED */
 
     static uint8_t Task_LedCnt = 0;
-    // Blue led toggle every time
+    /* Blue led toggle every time */
     IO_Output_SetStatus(IO_LED_Blue, IO_Output_Cmd_SetToggle);
 
     if (((Task_LedCnt % 2) == 0) && (ESP8266_ConnectionStatus == ESP8266_WifiConnectionStatus_SuccessfulServerStarted))
     {
-        // *2 - fast, if has connection
+        /* *2 - fast, if has connection */
         IO_Output_SetStatus(IO_LED_Green, IO_Output_Cmd_SetToggle);
     }
     if (((Task_LedCnt % 5) == 0) && (ESP8266_ConnectionStatus != ESP8266_WifiConnectionStatus_SuccessfulServerStarted))
     {
-        // *5 (slow - if there is no connection
+        /* *5 (slow - if there is no connection */
         IO_Output_SetStatus(IO_LED_Green, IO_Output_Cmd_SetToggle);
     }
 
@@ -369,12 +369,12 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
     IO_Output_SetStatus(IO_LED_Green, IO_Output_Cmd_SetToggle);
     if ((Task_LedCnt % 5) == 0)
     {
-        // *5
+        /* *5 */
         IO_Output_SetStatus(LED_Blue, IO_Output_Cmd_SetToggle);
     }
     if ((Task_LedCnt % 25) == 0)
     {
-        // * 5 * 5 (=*25)
+        /* * 5 * 5 (=*25) */
         IO_Output_SetStatus(LED_Red, IO_Output_Cmd_SetToggle);
     }
 
@@ -385,7 +385,7 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
     }
 #elif defined(LED_TASK_PWM_STYLE)
 
-    // Blue LED blinking like PWM
+    /* Blue LED blinking like PWM */
     IO_LED_PWMTask();
 
     #if defined(CONFIG_IO_OUTPUT_BLINK_ENABLE)
@@ -394,13 +394,13 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
 
 #endif
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
-    // Turn off LEDs
+    /* Turn off LEDs */
     IO_Output_SetStatus(IO_LED_Green, IO_Output_Cmd_SetOff);
 #endif
 
     return TaskResult_Ok;
 }
-#endif    // #ifdef CONFIG_MODULE_IO_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_IO_ENABLE */
 
 
 
@@ -410,7 +410,7 @@ static TaskResult_t Task_LedBlink(ScheduleSource_t source)
  */
 static TaskResult_t TaskWatchdogClear(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
     Watchdog_Clear();
 
@@ -423,7 +423,7 @@ static TaskResult_t TaskWatchdogClear(ScheduleSource_t source)
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
 static TaskResult_t TaskEsp8266(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
     ESP8266_StatusMachine();
 
@@ -436,7 +436,7 @@ static TaskResult_t TaskEsp8266(ScheduleSource_t source)
 #ifdef CONFIG_MODULE_MOTOR_ENABLE
 static TaskResult_t Task_Motor(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
     Motor_StateMachine();
 
@@ -447,12 +447,12 @@ static TaskResult_t Task_Motor(ScheduleSource_t source)
 
 static TaskResult_t Task_MotorConnStop(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
     Motor_ControlStop();
 
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
-    // TODO: LED blink 1 ms
+    /* TODO: LED blink 1 ms */
     IO_Output_SetStatus(IO_LED_Red, IO_Output_Cmd_SetOn);
     IO_Output_SetStatus(IO_LED_Red, IO_Output_Cmd_SetOff);
 #endif
@@ -466,7 +466,7 @@ static TaskResult_t Task_MotorConnStop(ScheduleSource_t source)
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER
 static TaskResult_t Task_RemoteControllerSending(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
     Logic_RemoteController_SendMessage();
 
@@ -479,7 +479,7 @@ static TaskResult_t Task_RemoteControllerSending(ScheduleSource_t source)
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
 static TaskResult_t Task_ProcessDebugUartCommandReceived(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
 #if defined(CONFIG_MODULE_TERMINAL_ENABLE)
     Terminal_CheckCommand();
@@ -498,10 +498,10 @@ static TaskResult_t Task_ProcessDebugUartCommandReceived(ScheduleSource_t source
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
 static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
     bool canSleep = true;
 
-    // Toggle LED
+    /* Toggle LED */
 #ifdef CONFIG_MODULE_IO_ENABLE
     IO_Output_SetStatus(IO_LED_Green, IO_Output_Cmd_SetToggle);
     IO_Output_SetStatus(IO_LED_Green, IO_Output_Cmd_SetToggle);
@@ -517,41 +517,41 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
     {
         if (BUTTON_Clicked & (1 << i))
         {
-            // Button pressed "first"
-            // Save: this button is pressed
+            /* Button pressed "first" */
+            /* Save: this button is pressed */
             if (!(BUTTON_PressedButtons & (1 << i)))
             {
                 BUTTON_PressedButtons |= (1 << i);
                 BUTTON_PressTimeTick[i] = HAL_GetTick();
             }
-            // Check the next time
+            /* Check the next time */
             TaskHandler_SetTaskOnceRun(Task_ButtonPressed, 10);
             canSleep = false;
         }
         else if (BUTTON_PressedButtons & (1 << i))
         {
-            // This button pressed at previous time
-            // Check, this button is in pressing state?
+            /* This button pressed at previous time */
+            /* Check, this button is in pressing state? */
             if (!BUTTON_GetButtonState(i))
             {
-                // Not pressed = End of press
+                /* Not pressed = End of press */
                 BUTTON_PressedButtons &= ~(1 << i);
 
-                // Handle button press
+                /* Handle button press */
                 uint32_t buttonPressTime = HAL_GetTick() - BUTTON_PressTimeTick[i];
 
                 if (buttonPressTime > CONFIG_BUTTON_LONG_PRESS_TIME_TICK_LIMIT)
                 {
-                    // Long button, but need to check, this is an Continuous button pressing?
+                    /* Long button, but need to check, this is an Continuous button pressing? */
                     if (buttonPressTime > CONFIG_BUTTON_CONTINUOUS_PRESS_TIME_TICK_LIMIT)
                     {
-                        // Continuous button release, do not run ButtonHandler
+                        /* Continuous button release, do not run ButtonHandler */
                         Logic_ButtonEventHandler(i, ButtonPress_ReleasedContinuous);
                         EventHandler_GenerateEvent(Event_ButtonPressed, (i<<8 | ButtonPress_ReleasedContinuous), Task_ButtonPressed);
                     }
                     else
                     {
-                        // Released "long" button pressing
+                        /* Released "long" button pressing */
                         Logic_ButtonEventHandler(i, ButtonPress_Long);
                         EventHandler_GenerateEvent(Event_ButtonPressed, (i<<8 | ButtonPress_Long), Task_ButtonPressed);
                     }
@@ -561,17 +561,17 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
                     Logic_ButtonEventHandler(i, ButtonPress_Short);
                     EventHandler_GenerateEvent(Event_ButtonPressed, (i<<8 | ButtonPress_Short), Task_ButtonPressed);
                 }
-                // Not need schedule ButtonTask at next time
-                // canSleep = true; // Stay true
+                /* Not need schedule ButtonTask at next time */
+                /* canSleep = true; // Stay true */
             }
             else
             {
-                // Button in pressing,
+                /* Button in pressing, */
                 uint32_t buttonPressTime = HAL_GetTick() - BUTTON_PressTimeTick[i];
 
                 if (buttonPressTime > CONFIG_BUTTON_CONTINUOUS_PRESS_TIME_TICK_LIMIT)
                 {
-                    // Continuous stepping
+                    /* Continuous stepping */
                     Logic_ButtonEventHandler(i, ButtonPress_Continuous);
                     EventHandler_GenerateEvent(Event_ButtonPressed, (i<<8 | ButtonPress_Continuous), Task_ButtonPressed);
                     TaskHandler_SetTaskOnceRun(Task_ButtonPressed, 100);
@@ -579,7 +579,7 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
                 }
                 else
                 {
-                    // Check button at next time, for know: continuous button pressing or long/short?
+                    /* Check button at next time, for know: continuous button pressing or long/short? */
                     TaskHandler_SetTaskOnceRun(Task_ButtonPressed, 10);
                     canSleep = false;
                 }
@@ -587,17 +587,17 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
         }
         else
         {
-            // Not pressed at now and previous time!
-            // canSleep = true; // Stay true
+            /* Not pressed at now and previous time! */
+            /* canSleep = true; // Stay true */
         }
     }
 
 #else
-    // Button long press not used
+    /* Button long press not used */
     uint8_t i;
     for (i = 0; i < PressedButton_Count; i++)
     {
-        // Save: this button is pressed
+        /* Save: this button is pressed */
         if (!(BUTTON_Clicked & (1 << i)))
         {
             BUTTON_Clicked &= ~(1 << i);
@@ -606,17 +606,17 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
     }
 #endif
 
-    // Clear flag
+    /* Clear flag */
     BUTTON_Clicked = 0;
 
     if (canSleep)
     {
-        // Button task can be sleep
+        /* Button task can be sleep */
         TaskHandler_DisableTask(Task_ButtonPressed);
     }
 
 #ifdef CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
-    // Test for HomeAutMessage
+    /* Test for HomeAutMessage */
     HomeAutMessage_SendMessage(1, Function_Alarm, Alarm_PressedButton, 17);
 #endif
 
@@ -629,7 +629,7 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
 static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
     #ifdef CONFIG_FUNCTION_DISPLAY_MENU
     Logic_DisplayHandler(source);
@@ -644,19 +644,19 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 #ifdef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
 static TaskResult_t Task_SystemTimeSecondStep(ScheduleSource_t source)
 {
-    // TODO: If not called by fix 1000ms, it is not accurate
-    // Idea: give scheduling ms by parameter
-    (void)source;
+    /* TODO: If not called by fix 1000ms, it is not accurate */
+    /* Idea: give scheduling ms by parameter */
+    UNUSED_ARGUMENT(source);
 
-    // Step SystemTime +1 second
+    /* Step SystemTime +1 second */
     SysTime_StepSecond();
 
-    // Test code
-    //uprintf(".");
+    /* Test code */
+    /* printf("."); */
 
 
     #ifdef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
-    // Display refresh
+    /* Display refresh */
         #if defined(CONFIG_DISPLAY_CLOCK_LARGE)
     DateTime_t dateTime;
     SysTime_GetDateTime(&dateTime);
@@ -683,10 +683,10 @@ static TaskResult_t Task_SystemTimeSecondStep(ScheduleSource_t source)
 #ifdef CONFIG_MODULE_TASK_SOFTWARE_WATCHDOG_ENABLE
 static TaskResult_t Task_SoftwareWatchDog(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
-    // Software WatchDog - Timeout task
-    // If This task is running, the system is lagging
+    /* Software WatchDog - Timeout task */
+    /* If This task is running, the system is lagging */
     DebugUart_SendLine("Software WatchdDog Timeout! System is lagging!\r\n");
 
     return TaskResult_Ok;
@@ -698,10 +698,10 @@ static TaskResult_t Task_SoftwareWatchDog(ScheduleSource_t source)
 #ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
 static TaskResult_t Task_GlobalVarTrace(ScheduleSource_t source)
 {
-    // UNUSED parameter
-    (void)source;
+    /* UNUSED parameter */
+    UNUSED_ARGUMENT(source);
 
-    // Trace GlobalVars
+    /* Trace GlobalVars */
     GlobVarH_RunTrace();
 
     return TaskResult_Ok;
@@ -713,8 +713,8 @@ static TaskResult_t Task_GlobalVarTrace(ScheduleSource_t source)
 #ifdef CONFIG_FUNCTION_CHARGER
 static TaskResult_t Task_InputOutput(ScheduleSource_t source)
 {
-    // UNUSED parameter
-    (void)source;
+    /* UNUSED parameter */
+    UNUSED_ARGUMENT(source);
 
     Logic_CheckCharger();
 
@@ -729,18 +729,18 @@ static TaskResult_t Task_InputOutput(ScheduleSource_t source)
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
 static TaskResult_t Task_CommonAdcFunction(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
-    // Convert ADC values
+    /* Convert ADC values */
     CommonADC_ConvertAllMeasuredValues();
 
-    // Print
+    /* Print */
     CommonADC_PrintAdc();
 
-    // Check it is interrupted (with button)?
+    /* Check it is interrupted (with button)? */
     if (BUTTON_Clicked)
     {
-        // Pressed button. Stop ADC printing
+        /* Pressed button. Stop ADC printing */
         CommandHandler_SendLine("ADC read is interrupted");
         TaskHandler_DisableTask(Task_CommonAdc);
     }
@@ -754,15 +754,15 @@ static TaskResult_t Task_CommonAdcFunction(ScheduleSource_t source)
 #ifdef CONFIG_DEBUG_SELFTEST
 static TaskResult_t Task_SelfTestFunction(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
-    // SelfTest:
+    /* SelfTest: */
 
     #if defined(CONFIG_MODULE_ADC_ENABLE) || defined(CONFIG_MODULE_COMMON_ADC_ENABLE)
-    // Check ADC-DMA
+    /* Check ADC-DMA */
     if (ADC_RunCnt == 0)
     {
-        // ADC is not run...
+        /* ADC is not run... */
         Error_Handler();
     }
     #endif
@@ -776,7 +776,7 @@ static TaskResult_t Task_SelfTestFunction(ScheduleSource_t source)
 #ifdef CONFIG_FUNCTION_PERIODICAL_SENDING
 static TaskResult_t Task_PeriodicalSendingFunction(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
     Logic_PeriodicalSending();
 
@@ -789,7 +789,7 @@ static TaskResult_t Task_PeriodicalSendingFunction(ScheduleSource_t source)
 #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
 static TaskResult_t Task_BluetoothProcessFunction(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
     Bluetooth_ProcessReceivedCharacters();
 
@@ -801,7 +801,7 @@ static TaskResult_t Task_BluetoothProcessFunction(ScheduleSource_t source)
 #ifdef CONFIG_MODULE_COMMON_UART_ENABLE
 static TaskResult_t Task_CommonUARTfunction(ScheduleSource_t source)
 {
-    (void)source;
+    UNUSED_ARGUMENT(source);
 
     CommonUART_ProcessReceivedCharacters();
 
@@ -811,4 +811,4 @@ static TaskResult_t Task_CommonUARTfunction(ScheduleSource_t source)
 
 
 
-#endif //#ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
+#endif /* ifdef CONFIG_MODULE_TASKHANDLER_ENABLE */

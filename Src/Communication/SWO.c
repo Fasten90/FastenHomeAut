@@ -41,7 +41,7 @@ uint8_t SWO_SendMessage(const char *message)
 
     while(*message)
     {
-        // Send next char
+        /* Send next char */
         SWO_SendChar(*message);
         message++;
     }
@@ -65,4 +65,4 @@ uint8_t SWO_SendChar(uint8_t ch)
     return 1;
 }
 
-#endif    // CONFIG_SWO_ENABLE
+#endif    /* CONFIG_SWO_ENABLE */

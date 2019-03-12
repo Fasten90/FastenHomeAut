@@ -28,7 +28,7 @@
 
 #define  DATETIME_STEPSECOND_MAX_LIMIT            (1000U)
 
-// 2017-01-10 19:56:00\0
+/* 2017-01-10 19:56:00\0 */
 #define DATETIME_STRING_MAX_LENGTH                (20)
 
 #define DATETIME_DATE_YEAR_MAX_FULL_VALUE        (2050)
@@ -72,18 +72,18 @@ typedef struct
 ///< DateTime string structure
 typedef struct
 {
-    char year[4];                // 2017
-    char separator_1[1];        // -
-    char month[2];                // 01
-    char separator_2[1];        // -
-    char day[2];                // 10
-    char separator_space[1];    // ' '
-    char hour[2];                // 20
-    char separator_4[1];        // :
-    char minute[2];                // 01
-    char separator_5[1];        // :
-    char second[2];                // 00
-    char end[1];                // '\0' or other
+    char year[4];                /* 2017 */
+    char separator_1[1];        /* - */
+    char month[2];                /* 01 */
+    char separator_2[1];        /* - */
+    char day[2];                /* 10 */
+    char separator_space[1];    /* ' ' */
+    char hour[2];                /* 20 */
+    char separator_4[1];        /* : */
+    char minute[2];                /* 01 */
+    char separator_5[1];        /* : */
+    char second[2];                /* 00 */
+    char end[1];                /* '\0' or other */
 } DateTimeString_t;
 #endif
 

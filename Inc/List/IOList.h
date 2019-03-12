@@ -44,7 +44,7 @@ typedef enum
     IO_LED_Red,
 #endif
 
-    // Do not use:
+    /* Do not use: */
     IO_Output_Count
 } IO_Output_Name_t;
 
@@ -63,7 +63,7 @@ typedef enum
     IO_Input_BatteryCharger,
 #endif
 
-    // Do not use:
+    /* Do not use: */
     IO_Input_Count
 } IO_Input_Name_t;
 
