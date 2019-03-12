@@ -55,6 +55,8 @@
 #include "Queue.h"
 #include "UnitTestList.h"
 #include "SelfTest_Errors.h"
+#include "ButtonSimulator.h"
+
 
 
 /*------------------------------------------------------------------------------
@@ -170,7 +172,9 @@ static CmdH_Result_t CommandFunction_CircBuffStat(uint32_t argc, char** argv);
 #ifdef CONFIG_MODULE_COMMON_UART_ENABLE
 static CmdH_Result_t CommandFunction_CommonUART(uint32_t argc, char** argv);
 #endif
-
+#ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
+static CmdH_Result_t CommandFunction_ButtonSimulator(uint32_t argc, char** argv);
+#endif
 
 
 /*------------------------------------------------------------------------------
@@ -565,6 +569,15 @@ const CmdH_Command_t CmdH_CommandList[] =
         .description = "Common UART",
     },
 #endif
+#ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
+    {
+        .name = "buttonsimulator",
+        .commandFunctionPointer = CommandFunction_ButtonSimulator,
+        .commandArgNum = CmdH_CommandArgNum_0,
+        .description = "Button Simulator",
+    },
+#endif
+
 
     /*
      * XXX: Add new commands here
@@ -2769,6 +2782,22 @@ static CmdH_Result_t CommandFunction_CommonUART(uint32_t argc, char** argv)
     UNUSED(argc);
 
     CommonUART_SendMessage(argv[1]);
+
+    return CmdH_Result_Ok_SendSuccessful;
+}
+#endif
+
+
+
+#ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
+static CmdH_Result_t CommandFunction_ButtonSimulator(uint32_t argc, char** argv)
+{
+    UNUSED(argc);
+    UNUSED(argv);
+
+    CmdH_SendLine("Started Button simulating. Press the cursors!");
+
+    ButtonSimulator_Set(true);
 
     return CmdH_Result_Ok_SendSuccessful;
 }

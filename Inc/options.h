@@ -435,6 +435,13 @@
     #ifdef CONFIG_MODULE_BUTTON_ENABLE
         #error "In PC/Windows mode Button module is not supported"
     #endif
+
+    #define CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
+    #ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
+        #ifndef BUTTON_NUM
+            #define BUTTON_NUM                    4
+        #endif
+    #endif
 #endif
 
 
