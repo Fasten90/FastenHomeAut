@@ -23,6 +23,8 @@
 #include <windows.h>
 #include <time.h>
 #include <winbase.h>
+#include <stdio.h>
+#include <unistd.h>
 
 // for STDIN thread
 #include "CommandHandler.h"
@@ -301,6 +303,17 @@ DWORD WINAPI Windows_StdinReceiveThread(void* data)
 
 
 
+void windows_delay_ms(int mseconds)
+{
+    // Stroing start time
+    clock_t start_time = clock();
+
+    // looping till required time is not achieved
+    while (clock() < start_time + mseconds);
+}
+
+
+
 /**
  * \brief	Thread for SysTick (increment tick)
  */
@@ -323,8 +336,28 @@ DWORD WINAPI Windows_SysTickThread(void* data)
 	*/
 	while(1)
 	{
-		Sleep(1);
-		SysTick_Handler();
+	    /* Sleep(1) is not too accurate */
+		/* Sleep(1); */
+
+	    /* Known warning: 'usleep' is deprecated [-Wdeprecated-declarations] */
+	    /* usleep not enough good too... */
+		/*usleep(100); */
+
+	    /* Delay not supported by standard library? */
+	    /*delay(1);*/
+
+	    /* Not enough accurate */
+	    /*windows_delay_ms(1);*/
+
+	    /* Wrong experiences with these 1ms scheduling */
+	    /*SysTick_Handler();*/
+
+	    const int ms = 10;
+	    windows_delay_ms(ms);
+	    for (int i=0; i < ms; i++)
+	    {
+	        SysTick_Handler();
+	    }
 	}
 
 	return 0;
