@@ -19,6 +19,10 @@
 #include "DisplayHandler.h"
 #include "DebugUart.h"
 #include "MemHandler.h"
+#include "EscapeSequence.h"
+
+
+#define DISPLAY_CHANGED_LINES_ENABLE
 
 
 
@@ -34,7 +38,11 @@
  *  Local variables
  *----------------------------------------------------------------------------*/
 
-uint8_t display_buffer[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] = { 0 };
+static uint8_t display_buffer[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] = { 0 };
+
+#ifdef DISPLAY_CHANGED_LINES_ENABLE
+static bool_t Display_ChangedLines[SSD1306_LCDHEIGHT] = { 0 };
+#endif /* DISPLAY_CHANGED_LINES_ENABLE */
 
 
 
@@ -103,6 +111,10 @@ void DisplayHandler_DrawPixel(uint8_t x, uint8_t y, Display_Color_t color)
         default:
             break;
     }
+
+#ifdef DISPLAY_CHANGED_LINES_ENABLE
+    Display_ChangedLines[y] = true;
+#endif /* DISPLAY_CHANGED_LINES_ENABLE */
 }
 
 
@@ -150,6 +162,10 @@ void DisplayHandler_DrawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t colo
     }
 #else
     DisplayHandler_DrawFastVLineInternal(x, y, h, color);
+
+    #ifdef DISPLAY_CHANGED_LINES_ENABLE
+    Display_ChangedLines[y] = true;
+    #endif /* DISPLAY_CHANGED_LINES_ENABLE */
 #endif
 }
 
@@ -198,6 +214,10 @@ void DisplayHandler_DrawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t colo
     }
 #else
     DisplayHandler_DrawFastHLineInternal(x, y, w, color);
+
+    #ifdef DISPLAY_CHANGED_LINES_ENABLE
+    Display_ChangedLines[y] = true;
+    #endif /* DISPLAY_CHANGED_LINES_ENABLE */
 #endif
 }
 
@@ -449,6 +469,14 @@ void DisplayHandler_DrawImage(uint8_t setx, uint8_t sety, uint8_t sizex, uint8_t
 void DisplayHandler_ClearDisplay(void)
 {
     memset(display_buffer, 0, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8));
+
+#if defined(CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE)
+    DebugUart_SendMessage(ESCAPE_ERASE_CLS);
+#endif
+
+#ifdef DISPLAY_CHANGED_LINES_ENABLE
+    memset(Display_ChangedLines, 1, NUM_OF(Display_ChangedLines) * sizeof(Display_ChangedLines[0]));
+#endif /* DISPLAY_CHANGED_LINES_ENABLE */
 }
 
 
@@ -462,12 +490,36 @@ inline void DisplayHandler_ShowDisplay(void)
 
 #if defined(CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE)
 /**
- * This is only for debug
+ * This is only for Windows display simulator
  */
 static void SSD1306_display(void)
 {
+#if 0
+    /* Originally it was for the clean all display */
+    DebugUart_SendMessage(ESCAPE_ERASE_CLS);
+#elif 0
+    DebugUart_SendMessage(ESCAPE_CURSOR_TOPLEFT);
+#elif 0
+    for (uint8_t i= 0; i < SSD1306_LCDHEIGHT + 2; i++)
+    {
+
+        DebugUart_SendMessage(ESCAPE_CURSORUP);
+    }
+#elif 1
+    #define ESCAPE_CURSORUP_DISPLAY         ("\x1B[" "67" "A")
+    DebugUart_SendMessage(ESCAPE_CURSORUP_DISPLAY);
+#else
+    /* ESC [ lines F   Moves cursor to beginning of the line, lines (default 1) lines up. */
+    #define ESCAPE_CURSORUP_DISPLAY         ("\x1B" "[" "66" "F")
+    DebugUart_SendMessage(ESCAPE_CURSORUP_DISPLAY);
+#endif
+
     /* There is no HW to show the screen. Instead of that print it */
     DisplayHandler_SendOnTerminal();
+
+    #ifdef DISPLAY_CHANGED_LINES_ENABLE
+    memset(Display_ChangedLines, 0, NUM_OF(Display_ChangedLines) * sizeof(Display_ChangedLines[0]));
+    #endif /* DISPLAY_CHANGED_LINES_ENABLE */
 }
 #endif
 
@@ -491,6 +543,10 @@ void DisplayHandler_SendOnTerminal(void)
     /* Print every row */
     for (y = 0; y < SSD1306_LCDHEIGHT; y++)
     {
+        #ifdef DISPLAY_CHANGED_LINES_ENABLE
+        if (Display_ChangedLines[y])
+        {
+        #endif /* DISPLAY_CHANGED_LINES_ENABLE */
         DebugUart_SendChar('|');
 
         /* Print every pixel on row (=column) */
@@ -507,6 +563,32 @@ void DisplayHandler_SendOnTerminal(void)
 
         /* |\r\n */
         DebugUart_SendLine("|");
+
+        #ifdef DISPLAY_CHANGED_LINES_ENABLE
+        Display_ChangedLines[y] = false;
+        }
+        /* else - that line not changed */
+        else
+        {
+            #if 0
+            DebugUart_SendMessage(ESCAPE_CURSORDOWN);
+            #elif 0
+            DebugUart_SendMessage("\n");
+            #elif 0
+            #define ESCAPE_MOVE_LINE_DOWN   ("\x1B" "[1B")
+            DebugUart_SendMessage(ESCAPE_MOVE_LINE_DOWN);
+            #elif 1
+            /* ESC [ row d     Moves the cursor to line row (absolute, 1-based). */
+            char_t escape[6] = { 0 };
+            usprintf(escape, "\x1B" "[" "%dd", y + 3);
+            DebugUart_SendMessage(escape);
+            #else
+            /* ESC [ lines E   Moves cursor to beginning of the line, lines (default 1) lines down. */
+            #define ESCAPE_MOVE_LINE_DOWN   ("\x1B" "[E")
+            DebugUart_SendMessage(ESCAPE_MOVE_LINE_DOWN);
+            #endif
+        }
+        #endif /* DISPLAY_CHANGED_LINES_ENABLE */
     }
 
     /* Print bottom frame row */

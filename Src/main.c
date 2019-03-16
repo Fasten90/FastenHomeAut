@@ -394,9 +394,11 @@ int main(void)
 #endif
 
 
-#ifdef CONFIG_MODULE_DISPLAY_ENABLE
+#if defined(CONFIG_MODULE_DISPLAY_ENABLE) || defined(CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE)
     /* Display */
+    #ifdef CONFIG_HW_DISPLAY_ENABLE
     Display_SSD1306_Init();
+    #endif
     #ifdef CONFIG_FUNCTION_DISPLAY_MENU
     Logic_Display_Init();
     #endif
