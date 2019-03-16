@@ -260,7 +260,6 @@ DWORD WINAPI Windows_StdinReceiveThread(void* data)
 
 			printf("CommandHandler answered:\r\n"
 					"%s", respBuffer);
-
 #ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
 			if (ButtonSimulator_IsEnabled)
 			{

@@ -34,7 +34,7 @@
 
 /* CSI n G    CHA – Cursor Horizontal Absolute    Moves the cursor to column n. */
 /* CSI 1 G  -> go start of line */
-#define ESCAPE_CURSOR_TO_LINESTART        ("\x1B" "[1G")
+#define ESCAPE_CURSOR_TO_LINESTART       ("\x1B" "[1G")
 
 
 /* CSI n A    CUU – Cursor Up    Moves the cursor n (default 1) cells in the given direction. */
@@ -42,21 +42,21 @@
 /* CSI n B    CUD – Cursor Down */
 /* CSI n C    CUF – Cursor Forward */
 /* CSI n D    CUB – Cursor Back */
-#define ESCAPE_CURSORRIGHT                ("\x1B" "[C")
+#define ESCAPE_CURSORRIGHT               ("\x1B" "[C")
 
 
 /* Cursor step left */
 #define ESCAPE_CURSORLEFT                ("\x1B" "[D")
 
 /* Cursor step up */
-#define ESCAPE_CURSORUP                    ("\x1B" "[A")
+#define ESCAPE_CURSORUP                  ("\x1B" "[A")
 
 /* Cursor step down */
 #define ESCAPE_CURSORDOWN                ("\x1B" "[B")
 
 
 /* Cursor go left (loft of step) */
-#define ESCAPE_CURSORLEFTLOTOF            ("\x1B" "[100D")
+#define ESCAPE_CURSORLEFTLOTOF           ("\x1B" "[100D")
 
 
 /* CURSOR SAVE/RESTORE */

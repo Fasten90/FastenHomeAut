@@ -21,42 +21,42 @@
 
 #ifdef CONFIG_USE_PANEL_NUCLEOF401RE
     #define BOARD_NAME        "NucleoF401RE"
-    #define BOARD_MCU        "STM32F401RE"
+    #define BOARD_MCU         "STM32F401RE"
 #elif CONFIG_USE_PANEL_STM32F4DISCOVERY
     #define BOARD_NAME        "STM32F4Discovery"
-    #define BOARD_MCU        "STM32F407VGT6"
+    #define BOARD_MCU         "STM32F407VGT6"
 #elif CONFIG_USE_PANEL_HOMEAUTCENTERPANEL
     #define BOARD_NAME        "HomeAutCenterPanel"
-    #define BOARD_MCU        "-"
+    #define BOARD_MCU         "-"
 #elif  CONFIG_USE_PANEL_HOMEAUTNODESMALL
     #define BOARD_NAME        "HomeAutNodeSmall"
-    #define BOARD_MCU        "-"
+    #define BOARD_MCU         "-"
 #elif CONFIG_USE_PANEL_FASTENNODE
     #define BOARD_NAME        "FastenNode"
-    #define BOARD_MCU        "STM32F030C8"
+    #define BOARD_MCU         "STM32F030C8"
 #elif CONFIG_USE_PANEL_PC
     #define BOARD_NAME        "FastenPC"
-    #define BOARD_MCU        "Win32"
+    #define BOARD_MCU         "Win32"
 #else
     #warning "Missed BOARD_NAME define!"
     #define BOARD_NAME        "UnknownBoard"
-    #define BOARD_MCU        "-"
+    #define BOARD_MCU         "-"
 #endif
 
 
 
 #ifdef STM32F030x8
 #define MEM_FLASH_START        (0x08000000)
-#define MEM_FLASH_END        (0x08000000 + 64*1024)
-#define MEM_RAM_START        (0x20000000)
+#define MEM_FLASH_END          (0x08000000 + 64*1024)
+#define MEM_RAM_START          (0x20000000)
 #define MEM_RAM_END            (0x20002000)
 #elif defined(STM32F40xx)
 #warning "Set these values"
 #elif defined(CONFIG_PLATFORM_PC_WINDOWS)
 /* Do not use... */
 #define MEM_FLASH_START        (0x00000000)
-#define MEM_FLASH_END        (0xFFFFFFFF)
-#define MEM_RAM_START        (0x00000000)
+#define MEM_FLASH_END          (0xFFFFFFFF)
+#define MEM_RAM_START          (0x00000000)
 #define MEM_RAM_END            (0xFFFFFFFF)
 #else
 #warning "ERROR! memory FLASH - RAM values are missed"

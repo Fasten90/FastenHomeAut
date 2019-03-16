@@ -678,17 +678,17 @@
     /* ESP8266 Debug mode: */
     /* 1 - on */
     /* 0 - off */
-    #define ESP8266_DEBUG_MODE                        (1)
+    #define ESP8266_DEBUG_MODE                         (1)
 
     /* Print all received message */
     /* 1 - on */
     /* 0 - off */
-    #define ESP8266_DEBUG_PRINT_ALL_RECEIVED_MSG    (0)
+    #define ESP8266_DEBUG_PRINT_ALL_RECEIVED_MSG       (0)
 
     /* ESP8266 - Connection type */
     /* 1 - Dynamic (Can change WiFi and TCP client/server */
     /* 0 - Static, fix connection type (only server or only client) */
-    #define CONFIG_ESP8266_CONNECT_DYNAMIC            (0)
+    #define CONFIG_ESP8266_CONNECT_DYNAMIC             (0)
 
     /* Module will be WiFi network "server" */
     /* 1 - WifiHost */
@@ -698,9 +698,9 @@
     /* Fix IP */
     /* 1 - Fix IP */
     /* 0 - Not fix IP */
-    #define CONFIG_ESP8266_FIX_IP                    (0)
+    #define CONFIG_ESP8266_FIX_IP                      (0)
     #if (CONFIG_ESP8266_FIX_IP == 1)
-        #define CONFIG_ESP8266_FIX_IP_ADDRESS        "9.6.5.14"
+        #define CONFIG_ESP8266_FIX_IP_ADDRESS          "9.6.5.14"
     #endif
 
     /* Module TCP state */
