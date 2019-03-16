@@ -194,6 +194,12 @@ bool BUTTON_GetButtonState(ButtonType_t button)
 }
 
 
+/* Until this, these codes were made for Hardware button function */
+#endif /* CONFIG_MODULE_BUTTON_ENABLE */
+
+
+#if defined(CONFIG_MODULE_BUTTON_ENABLE) || defined(CONFIG_MODULE_BUTTONSIMULATOR_ENABLE)
+
 
 /**
  * @brief    Get button name
@@ -281,4 +287,4 @@ const char * BUTTON_GetPressTypeName(ButtonPressType_t pressType)
 
 
 
-#endif    /* #ifdef CONFIG_MODULE_BUTTON_ENABLE */
+#endif    /* CONFIG_MODULE_BUTTON_ENABLE || CONFIG_MODULE_BUTTONSIMULATOR_ENABLE */

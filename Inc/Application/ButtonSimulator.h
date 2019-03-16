@@ -1,24 +1,21 @@
 /*
- *    Button.h
- *    Created on:   2016-01-01
- *    Author:       Vizi Gabor
+ *    ButtonSimulator.h
+ *    Created on:   2019-03-12
+ *    Author:       Fasten
  *    E-mail:       vizi.gabor90@gmail.com
- *    Function:     Button handler module
+ *    Function:     -
  *    Target:       STM32Fx
  */
- 
-#ifndef BUTTON_H_
-#define BUTTON_H_
+
+#ifndef BUTTONSIMULATOR_H_
+#define BUTTONSIMULATOR_H_
+
 
 
 
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
-
-#include "options.h"
-#include "board.h"
-#include "compiler.h"
 
 
 
@@ -32,31 +29,13 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-///< Buttons (which button)
-typedef enum
-{
-#if BUTTON_NUM == 1
-    PressedButton_User,
-#elif BUTTON_NUM > 1
-    PressedButton_Up,
-    PressedButton_Down,
-    PressedButton_Right,
-    PressedButton_Left,
-#endif
-
-    /* Last, do not use */
-    PressedButton_Count
-} ButtonType_t;
-
-
-///< Button press type
-typedef enum
-{
-    ButtonPress_Short,
-    ButtonPress_Long,
-    ButtonPress_Continuous,
-    ButtonPress_ReleasedContinuous
-} ButtonPressType_t;
+typedef enum {
+    Key_None,
+    Key_Up,
+    Key_Down,
+    Key_Right,
+    Key_Left
+} ButtonSimulator_Key_t;
 
 
 
@@ -64,7 +43,7 @@ typedef enum
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-extern volatile uint8_t BUTTON_Clicked;
+extern bool ButtonSimulator_IsEnabled;
 
 
 
@@ -72,14 +51,9 @@ extern volatile uint8_t BUTTON_Clicked;
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void BUTTON_Init(void);
-bool BUTTON_GetButtonState(ButtonType_t button);
-
-const char * BUTTON_GetButtonName(ButtonType_t button);
-const char * BUTTON_GetPressTypeName(ButtonPressType_t pressType);
-
-/* oid HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin); */
+void ButtonSimulator_Set(bool newValue);
+void ButtonSimulator_ProcessChar(char_t * str);
 
 
 
-#endif /* BUTTON_H_ */
+#endif /* BUTTONSIMULATOR_H_ */

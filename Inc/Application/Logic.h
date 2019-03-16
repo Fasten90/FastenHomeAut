@@ -35,6 +35,8 @@
 #define BUTTON_DEBUG_PRINT(...)        Debug_Printf(Debug_Button, __VA_ARGS__)
 #elif defined(CONFIG_BUTTON_DEBUG_ENABLE) && defined(CONFIG_MODULE_DEBUGUART_ENABLE)
 #define BUTTON_DEBUG_PRINT(...)        uprintf(__VA_ARGS__)
+#elif defined(CONFIG_PLATFORM_PC_WINDOWS)
+#define BUTTON_DEBUG_PRINT(...)        printf(__VA_ARGS__)
 #else
 #define BUTTON_DEBUG_PRINT(...)
 #endif

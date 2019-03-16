@@ -263,7 +263,7 @@ void Logic_Display_Init(void)
 
 
 
-#ifdef CONFIG_MODULE_BUTTON_ENABLE
+#if defined(CONFIG_MODULE_BUTTON_ENABLE) || defined(CONFIG_MODULE_BUTTONSIMULATOR_ENABLE)
 /**
  * @brief    Button event handler
  *             Only one button handling (button = i. button

@@ -27,6 +27,11 @@
 // for STDIN thread
 #include "CommandHandler.h"
 
+#ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
+#include <conio.h> /* getch() */
+#include "ButtonSimulator.h"
+#endif
+
 
 
 /*------------------------------------------------------------------------------
@@ -255,6 +260,27 @@ DWORD WINAPI Windows_StdinReceiveThread(void* data)
 
 			printf("CommandHandler answered:\r\n"
 					"%s", respBuffer);
+
+#ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
+			if (ButtonSimulator_IsEnabled)
+			{
+			    char str[4] = { 0 };
+			    int str_pos = 0;
+			    while (true)
+			    {
+			        str[str_pos]= getch();
+			        str_pos++;
+
+			        if (str_pos >= 2)
+			        {
+			            printf("Received: %s\r\n", str);
+			            ButtonSimulator_ProcessChar(str);
+			            str_pos = 0;
+			            /* TODO: Make return situation */
+			        }
+			    }
+			}
+#endif
 		}
 		else
 		{
