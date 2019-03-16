@@ -166,7 +166,6 @@ void SSD1306_stopscroll(void);
 void SSD1306_dim(bool dim);
 
 void SSD1306_drawFixVerticalLine(int16_t x, int16_t y, uint8_t row);
-void SSD1306_drawImage(uint8_t setx, uint8_t sety, uint8_t sizex, uint8_t sizey, uint8_t *img);
 
 void DISPLAY_SSD1306_SPIx_IRQHandler(void);
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi);

@@ -19,6 +19,7 @@
 #ifdef CONFIG_FUNCTION_GAME_SNAKE
 
 #include "Display.h"
+#include "DisplayHandler.h"
 #include "Display_SSD1306.h"
 #include "DebugList.h"
 #include "Debug.h"

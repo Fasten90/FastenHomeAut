@@ -349,30 +349,6 @@ void SSD1306_drawFixVerticalLine(int16_t x, int16_t y, uint8_t row)
 
 
 /**
- * @brief    Draw image (put pixel to buffer image)
- */
-void SSD1306_drawImage(uint8_t setx, uint8_t sety, uint8_t sizex, uint8_t sizey, uint8_t *img)
-{
-    /* TODO: Only 8n size can be used */
-    uint8_t i;
-    uint8_t j;
-
-    /* Step on a row (left to right) */
-    for (i = 0; i < sizex; i++)
-    {
-        /* Step on a column (a 1x8 column is a byte) */
-        for (j = 0; j < sizey/8; j++)
-        {
-            /* Copy an byte */
-            display_buffer[sety/8*SSD1306_LCDWIDTH + setx + i + j*SSD1306_LCDWIDTH] =
-                    img[j*sizex + i];
-        }
-    }
-}
-
-
-
-/**
  * @brief    Invert display
  * TODO: Delete?
  */

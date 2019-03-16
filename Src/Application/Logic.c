@@ -185,7 +185,7 @@ static void Logic_Display_CarAnimation(void);
 static void Logic_RemoteController_Button(ButtonType_t button, ButtonPressType_t type);
 #endif
 
-#if defined(CONFIG_MODULE_DISPLAY_ENABLE) && defined(CONFIG_DISPLAY_CLOCK_LARGE)
+#if defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK) && defined(CONFIG_DISPLAY_CLOCK_LARGE)
 static void Logic_Display_LargeClock(ScheduleSource_t source);
 #endif
 
@@ -246,7 +246,7 @@ void Logic_Display_Init(void)
             break;
         #endif
 
-        #ifdef CONFIG_DISPLAY_CLOCK_LARGE
+        #if defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK) && defined(CONFIG_DISPLAY_CLOCK_LARGE)
         case Menu_LargeClock:
             Logic_Display_LargeClock(ScheduleSource_Unknown);
             break;
@@ -1038,7 +1038,9 @@ static void Logic_Display_MainMenu(void)
 
     #if defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK) && defined(CONFIG_DISPLAY_CLOCK_SMALL)
     /* Display small clock on main menu */
+    #if defined(CONFIG_HW_DISPLAY_ENABLE)
     EventHandler_GenerateEvent(Event_Display_SpiEvent, 0, Task_Display);
+    #endif
 
     /* Only show clock (small - on menu) */
     if (Logic_Display_ActualState == Menu_Main)
@@ -1053,7 +1055,9 @@ static void Logic_Display_MainMenu(void)
     }
     #endif
 
+    #if defined(CONFIG_HW_DISPLAY_ENABLE)
     EventHandler_GenerateEvent(Event_Display_SpiEvent, 1, Task_Display);
+    #endif
 
     static DisplayMenu_t oldSelectedMenu = Menu_Main;
     if (Logic_Display_SelectedState != oldSelectedMenu)
@@ -1064,7 +1068,9 @@ static void Logic_Display_MainMenu(void)
         Logic_Display_PrintMainMenuList();
     }
 
+    #if defined(CONFIG_HW_DISPLAY_ENABLE)
     EventHandler_GenerateEvent(Event_Display_SpiEvent, 2, Task_Display);
+    #endif
 
     Display_Activate();
 }

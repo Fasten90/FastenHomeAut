@@ -80,7 +80,7 @@ static TaskResult_t Task_ProcessDebugUartCommandReceived(ScheduleSource_t source
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
 static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source);
 #endif
-#ifdef CONFIG_MODULE_DISPLAY_ENABLE
+#if defined(CONFIG_MODULE_DISPLAY_ENABLE) || defined(CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE)
 static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source);
 #endif
 #ifdef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
@@ -184,7 +184,7 @@ Task_t TaskList[] =
         .taskScheduleRate = 10,
     },
 #endif
-#ifdef CONFIG_MODULE_DISPLAY_ENABLE
+#if defined(CONFIG_MODULE_DISPLAY_ENABLE) || defined(CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE)
     {
         .taskName = "DisplayRefresh",
         .taskFunction = Task_DisplayChangeImage,
@@ -626,7 +626,7 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
 
 
 
-#ifdef CONFIG_MODULE_DISPLAY_ENABLE
+#if defined(CONFIG_MODULE_DISPLAY_ENABLE) || defined(CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE)
 static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 {
     UNUSED_ARGUMENT(source);
