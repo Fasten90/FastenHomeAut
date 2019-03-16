@@ -149,9 +149,12 @@ typedef enum
 
 void Display_SSD1306_Init(void);
 
-void SSD1306_clearDisplay(void);
 void SSD1306_invertDisplay(bool invert);
+
+#if !defined(CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE)
+/* This function has override if not the Display HW used */
 void SSD1306_display(void);
+#endif
 
 void SSD1306_startscrollright(uint8_t start, uint8_t stop);
 void SSD1306_startscrollleft(uint8_t start, uint8_t stop);
@@ -162,21 +165,11 @@ void SSD1306_stopscroll(void);
 
 void SSD1306_dim(bool dim);
 
-void SSD1306_drawPixel(uint8_t x, uint8_t y, Display_Color_t color);
 void SSD1306_drawFixVerticalLine(int16_t x, int16_t y, uint8_t row);
-void SSD1306_drawImage(uint8_t setx, uint8_t sety, uint8_t sizex, uint8_t sizey, uint8_t *img);
-
-void SSD1306_drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
-void SSD1306_drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
-
-void SSD1306_drawFastVLineInternal(int16_t x, int16_t y, int16_t h, uint16_t color);
-void SSD1306_drawFastHLineInternal(int16_t x, int16_t y, int16_t w, uint16_t color);
 
 void DISPLAY_SSD1306_SPIx_IRQHandler(void);
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi);
 void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi);
-
-void Display_SendOnTerminal(void);
 
 
 #endif /* DISPLAY_SSD1306_H_ */

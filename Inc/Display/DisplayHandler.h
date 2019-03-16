@@ -1,21 +1,24 @@
 /*
- *    ButtonSimulator.h
- *    Created on:   2019-03-12
+ *    DisplayHandler.h
+ *    Created on:   2019-03-16
  *    Author:       Fasten
  *    E-mail:       vizi.gabor90@gmail.com
  *    Function:     -
  *    Target:       STM32Fx
  */
 
-#ifndef BUTTONSIMULATOR_H_
-#define BUTTONSIMULATOR_H_
-
+#ifndef DISPLAYHANDLER_H_
+#define DISPLAYHANDLER_H_
 
 
 
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
+
+#include "options.h"
+#include "GenericTypeDefs.h"
+#include "Display_SSD1306.h"
 
 
 
@@ -29,21 +32,11 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-typedef enum {
-    Key_None,
-    Key_Up,
-    Key_Down,
-    Key_Right,
-    Key_Left
-} ButtonSimulator_Key_t;
-
 
 
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
-
-extern bool ButtonSimulator_IsEnabled;
 
 
 
@@ -51,9 +44,18 @@ extern bool ButtonSimulator_IsEnabled;
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void ButtonSimulator_Set(bool newValue);
-bool_t ButtonSimulator_ProcessChar(char_t * str);
+void DisplayHandler_DrawPixel(uint8_t x, uint8_t y, Display_Color_t color);
+void DisplayHandler_DrawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
+void DisplayHandler_DrawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
+void DisplayHandler_DrawFastVLineInternal(int16_t x, int16_t y, int16_t h, uint16_t color);
+void DisplayHandler_DrawFastHLineInternal(int16_t x, int16_t y, int16_t w, uint16_t color);
+void DisplayHandler_DrawImage(uint8_t setx, uint8_t sety, uint8_t sizex, uint8_t sizey, uint8_t *img);
+
+void DisplayHandler_ClearDisplay(void);
+void DisplayHandler_ShowDisplay(void);
+
+void DisplayHandler_SendOnTerminal(void);
 
 
 
-#endif /* BUTTONSIMULATOR_H_ */
+#endif /* DISPLAYHANDLER_H_ */

@@ -15,14 +15,14 @@
 
 #include "options.h"
 
-#include "Display_SSD1306.h"
+#include "DisplayHandler.h"
 #include "DisplayImages.h"
 #include "ErrorHandler.h"
 #include "Timing.h"
 #include "StringHelper.h"
 #include "Display.h"
 
-#ifdef CONFIG_MODULE_DISPLAY_ENABLE
+#if defined(CONFIG_MODULE_DISPLAY_ENABLE) || defined(CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE)
 
 #ifdef CONFIG_DISPLAY_FONT8X5_ENABLE
 #include "Font8x5.h"
@@ -182,12 +182,12 @@ void Display_PrintFont8x5(uint8_t chr, uint8_t index, uint8_t line, FontFormat_t
             register uint8_t y = lineStart + j;
             if (storedChar & (1 << (7-j)))
             {
-                SSD1306_drawPixel(x, y,
+                DisplayHandler_DrawPixel(x, y,
                         format.Format_Inverse ? BLACK : WHITE);
             }
             else
             {
-                SSD1306_drawPixel(x, y,
+                DisplayHandler_DrawPixel(x, y,
                         format.Format_Inverse ? WHITE : BLACK);
             }
         }
@@ -227,12 +227,12 @@ void Display_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line, FontFormat_
             register uint8_t x = indexStart + j;
             if (storedChar & (1 << (7-j)))
             {
-                SSD1306_drawPixel(x, y,
+                DisplayHandler_DrawPixel(x, y,
                         format.Format_Inverse ? BLACK : WHITE);
             }
             else
             {
-                SSD1306_drawPixel(x, y,
+                DisplayHandler_DrawPixel(x, y,
                         format.Format_Inverse ? WHITE : BLACK);
             }
         }
@@ -281,12 +281,12 @@ void Display_PrintFont32x20(uint8_t chr, uint8_t index, uint8_t startposx, uint8
             uint8_t y = startposy + j;
             if (Font32x20[chr][i] & (1 << (31-j)))
             {
-                SSD1306_drawPixel(x, y,
+                DisplayHandler_DrawPixel(x, y,
                         format.Format_Inverse ? BLACK : WHITE);
             }
             else
             {
-                SSD1306_drawPixel(x, y,
+                DisplayHandler_DrawPixel(x, y,
                         format.Format_Inverse ? WHITE : BLACK);
             }
         }
@@ -301,7 +301,7 @@ void Display_PrintFont32x20(uint8_t chr, uint8_t index, uint8_t startposx, uint8
  */
 inline void Display_Clear(void)
 {
-    SSD1306_clearDisplay();
+    DisplayHandler_ClearDisplay();
 }
 
 
@@ -311,12 +311,11 @@ inline void Display_Clear(void)
  */
 inline void Display_Activate(void)
 {
-    SSD1306_display();
-/*
+    DisplayHandler_ShowDisplay();
+
 #ifdef CONFIG_MODULE_DISPLAY_TEST_WITH_TERMINAL
     Display_SendOnTerminal();
 #endif
-*/
 }
 
 
@@ -335,7 +334,7 @@ static void Display_FillRectangle(uint8_t x, uint8_t y, uint8_t width, uint8_t h
         /* Step on rows */
         for (j = y; j <= y + height; j++)
         {
-            SSD1306_drawPixel(i, j, color);
+            DisplayHandler_DrawPixel(i, j, color);
         }
     }
 
@@ -355,10 +354,10 @@ void Display_LoadingInit(uint8_t x, uint8_t y, uint8_t width, uint8_t height)
     Display_FillRectangle(x, y, width, height, BLACK);
 
     /* Init empty rectangle */
-    SSD1306_drawFastVLine(x, y, height, WHITE);
-    SSD1306_drawFastVLine(x+width, y, height, WHITE);
-    SSD1306_drawFastHLine(x, y, width, WHITE);
-    SSD1306_drawFastHLine(x, y+height, width, WHITE);
+    DisplayHandler_DrawFastVLine(x, y, height, WHITE);
+    DisplayHandler_DrawFastVLine(x+width, y, height, WHITE);
+    DisplayHandler_DrawFastHLine(x, y, width, WHITE);
+    DisplayHandler_DrawFastHLine(x, y+height, width, WHITE);
 
     /* 0 percent */
 }
@@ -423,7 +422,7 @@ void Display_LoadCarImage(void)
 {
     Display_Clear();
 
-    SSD1306_drawImage(8, 8, 120, 48, (uint8_t *)Display_Image_Car);
+    DisplayHandler_DrawImage(8, 8, 120, 48, (uint8_t *)Display_Image_Car);
 
     Display_Activate();
 }
@@ -455,8 +454,8 @@ void Display_ChangeCarImage(void)
     }
 
     /* Draw 2 wheel */
-    SSD1306_drawImage(24, 40, 16, 16, img);
-    SSD1306_drawImage(96, 40, 16, 16, img);
+    DisplayHandler_DrawImage(24, 40, 16, 16, img);
+    DisplayHandler_DrawImage(96, 40, 16, 16, img);
 
     CarActualStateCnt++;
 
@@ -669,4 +668,4 @@ void Display_TestClock(void)
 
 
 
-#endif    /* #ifdef CONFIG_MODULE_DISPLAY_ENABLE */
+#endif    /* CONFIG_MODULE_DISPLAY_ENABLE || CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE */

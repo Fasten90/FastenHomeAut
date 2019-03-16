@@ -19,6 +19,7 @@
 #include "Terminal.h"
 #include "Button.h"
 #include "Logic.h"
+#include "DebugUart.h"
 
 
 #ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
@@ -60,7 +61,7 @@ void ButtonSimulator_Set(bool newValue)
 
 
 
-void ButtonSimulator_ProcessChar(char_t * str)
+bool_t ButtonSimulator_ProcessChar(char_t * str)
 {
     ButtonSimulator_Key_t key = Key_None;
 
@@ -138,7 +139,13 @@ void ButtonSimulator_ProcessChar(char_t * str)
     else
     {
         /* TODO: Print */
+        DebugUart_SendLine("Not arrow key received!");
     }
+
+    /**
+     * Return true, if it was arrow key
+     */
+    return (key != Key_None);
 }
 
 

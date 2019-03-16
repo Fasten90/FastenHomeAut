@@ -85,13 +85,15 @@
 #endif
 
 
-#ifdef CONFIG_HW_DISPLAY_ENABLE
+#define CONFIG_FUNCTION_DISPLAY
+
+
+#ifdef CONFIG_FUNCTION_DISPLAY
     ///< Display: Menu
     #define CONFIG_FUNCTION_DISPLAY_MENU
     #ifdef CONFIG_FUNCTION_DISPLAY_MENU
-        #ifndef CONFIG_MODULE_DISPLAY_ENABLE
-            #define CONFIG_MODULE_DISPLAY_ENABLE
-        #endif
+        #define CONFIG_REQUIRE_DISPLAY
+
         /* Display: clock */
         #define CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
         #define CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
@@ -138,21 +140,16 @@
     ///< Display: Input function
     /* define CONFIG_FUNCTION_DISPLAY_INPUT */
     #ifdef CONFIG_FUNCTION_DISPLAY_INPUT
-        #ifndef CONFIG_MODULE_DISPLAY_ENABLE
-            #define CONFIG_MODULE_DISPLAY_ENABLE
-        #endif
-        #ifndef CONFIG_MODULE_BUTTON_ENABLE
-            #define CONFIG_MODULE_BUTTON_ENABLE
-        #endif
+        #define CONFIG_REQUIRE_DISPLAY
+        #define CONFIG_REQUIRE_BUTTON
     #endif
 
 
     ///< Charger function
     /* define CONFIG_FUNCTION_CHARGER */
     #ifdef CONFIG_FUNCTION_CHARGER
-        #ifndef CONFIG_MODULE_DISPLAY_ENABLE
-            #define CONFIG_MODULE_DISPLAY_ENABLE
-        #endif
+        #define CONFIG_REQUIRE_DISPLAY
+
         #ifndef CONFIG_MODULE_ADC_ENABLE
             #define CONFIG_MODULE_ADC_ENABLE
         #endif
@@ -168,9 +165,8 @@
     ///< Snake game
     /* define CONFIG_FUNCTION_GAME_SNAKE */
     #ifdef CONFIG_FUNCTION_GAME_SNAKE
-        #ifndef CONFIG_MODULE_DISPLAY_ENABLE
-            #define CONFIG_MODULE_DISPLAY_ENABLE
-        #endif
+        #define CONFIG_REQUIRE_DISPLAY
+
         #ifndef CONFIG_DISPLAY_FONT8X5_ENABLE
             #define CONFIG_DISPLAY_FONT8X5_ENABLE
         #endif
@@ -183,6 +179,28 @@
 
 ///< Periodical sending UART message function
 /* define CONFIG_FUNCTION_PERIODICAL_SENDING */
+
+
+#ifdef CONFIG_REQUIRE_DISPLAY
+    #if !defined(CONFIG_MODULE_DISPLAY_ENABLE) && defined(CONFIG_HW_DISPLAY_ENABLE)
+        #define CONFIG_MODULE_DISPLAY_ENABLE
+    #elif !defined(CONFIG_HW_DISPLAY_ENABLE)
+        #define CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE
+    #else
+        #error "Could not used because Display module missed!"
+    #endif
+#endif
+
+
+#ifdef CONFIG_REQUIRE_BUTTON
+    #if !defined(CONFIG_MODULE_BUTTON_ENABLE) && defined(CONFIG_HW_BUTTON_ENABLE)
+        #define CONFIG_MODULE_BUTTON_ENABLE
+    #elif !defined(CONFIG_HW_BUTTON_ENABLE)
+        #define CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
+    #else
+        #error "Could not used because Button module missed!"
+    #endif
+#endif
 
 
 
@@ -429,10 +447,17 @@
 
     #define CONFIG_MODULE_UNITTEST_ENABLE
 
-    #ifdef CONFIG_MODULE_DISPLAY_ENABLE
+    //#define CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE
+    #ifdef CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE
+        #define CONFIG_DISPLAY_FONT8X5_ENABLE
+        #define CONFIG_DISPLAY_FONT12X8_ENABLE
+        #define CONFIG_DISPLAY_FONT32X20_ENABLE
+    #endif
+
+    #if defined(CONFIG_MODULE_DISPLAY_ENABLE) || defined(CONFIG_HW_DISPLAY_ENABLE)
         #error "In PC/Windows mode Display module is not supported"
     #endif
-    #ifdef CONFIG_MODULE_BUTTON_ENABLE
+    #if defined(CONFIG_MODULE_BUTTON_ENABLE) || defined(CONFIG_HW_BUTTON_ENABLE)
         #error "In PC/Windows mode Button module is not supported"
     #endif
 

@@ -19,6 +19,7 @@
 #ifdef CONFIG_FUNCTION_GAME_SNAKE
 
 #include "Display.h"
+#include "DisplayHandler.h"
 #include "Display_SSD1306.h"
 #include "DebugList.h"
 #include "Debug.h"
@@ -308,7 +309,7 @@ void Snake_Draw(void)
     for (pixel = 0; pixel < DISPLAY_WIDTH; pixel++)
     {
         /* TODO: Rectangular / Line drawing? */
-        SSD1306_drawPixel(pixel, SNAKE_HEADER_HEIGHT - 1, WHITE);
+        DisplayHandler_DrawPixel(pixel, SNAKE_HEADER_HEIGHT - 1, WHITE);
     }
 
     /* Step around on the matrix */
@@ -337,7 +338,7 @@ static void Snake_DrawPoints(uint16_t x, uint16_t y)
         for (uint8_t l = 0; l < SNAKE_POINT_PIXEL_SIZE; l++)
         {
             /* Be careful: the display 0,0 point is the top left, but on matrix 0,0 pont is the bottom, left point */
-            SSD1306_drawPixel(x*SNAKE_POINT_PIXEL_SIZE + k,
+            DisplayHandler_DrawPixel(x*SNAKE_POINT_PIXEL_SIZE + k,
                     DISPLAY_HEIGHT - (y*SNAKE_POINT_PIXEL_SIZE + l),
                     (Snake_Matrix[x][y] != 0)? WHITE : BLACK);
         }
@@ -472,7 +473,7 @@ static void Snake_DrawGiftToPoint(uint16_t x, uint16_t y)
         for (uint8_t j = 0; j < SNAKE_POINT_PIXEL_SIZE; j++)
         {
             /* Be careful: the display 0,0 point is the top left, but on matrix 0,0 pont is the bottom, left point */
-            SSD1306_drawPixel(x*SNAKE_POINT_PIXEL_SIZE + i,
+            DisplayHandler_DrawPixel(x*SNAKE_POINT_PIXEL_SIZE + i,
                     DISPLAY_HEIGHT - (y*SNAKE_POINT_PIXEL_SIZE + j),
                     putMatrix[i][j] ? WHITE : BLACK);
         }
