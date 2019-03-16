@@ -92,13 +92,8 @@
     ///< Display: Menu
     #define CONFIG_FUNCTION_DISPLAY_MENU
     #ifdef CONFIG_FUNCTION_DISPLAY_MENU
-        #if !defined(CONFIG_MODULE_DISPLAY_ENABLE) && defined(CONFIG_HW_DISPLAY_ENABLE)
-            #define CONFIG_MODULE_DISPLAY_ENABLE
-        #elif !defined(CONFIG_HW_DISPLAY_ENABLE)
-            #define CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE
-        #else
-            #error "Could not used because Display module missed!"
-        #endif
+        #define CONFIG_REQUIRE_DISPLAY
+
         /* Display: clock */
         #define CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
         #define CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
@@ -145,26 +140,16 @@
     ///< Display: Input function
     /* define CONFIG_FUNCTION_DISPLAY_INPUT */
     #ifdef CONFIG_FUNCTION_DISPLAY_INPUT
-        #ifndef CONFIG_MODULE_DISPLAY_ENABLE
-            // TODO: Make need define
-            //#define CONFIG_MODULE_DISPLAY_ENABLE
-        #endif
-        #if !defined(CONFIG_MODULE_BUTTON_ENABLE) && defined(CONFIG_HW_BUTTON_ENABLE)
-            #define CONFIG_MODULE_BUTTON_ENABLE
-        #elif !defined(CONFIG_HW_BUTTON_ENABLE)
-            #define CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
-        #else
-            #error "Could not used because Button module missed!"
-        #endif
+        #define CONFIG_REQUIRE_DISPLAY
+        #define CONFIG_REQUIRE_BUTTON
     #endif
 
 
     ///< Charger function
     /* define CONFIG_FUNCTION_CHARGER */
     #ifdef CONFIG_FUNCTION_CHARGER
-        #ifndef CONFIG_MODULE_DISPLAY_ENABLE
-            #define CONFIG_MODULE_DISPLAY_ENABLE
-        #endif
+        #define CONFIG_REQUIRE_DISPLAY
+
         #ifndef CONFIG_MODULE_ADC_ENABLE
             #define CONFIG_MODULE_ADC_ENABLE
         #endif
@@ -180,10 +165,8 @@
     ///< Snake game
     /* define CONFIG_FUNCTION_GAME_SNAKE */
     #ifdef CONFIG_FUNCTION_GAME_SNAKE
-        #ifndef CONFIG_MODULE_DISPLAY_ENABLE
-            // TODO: Make need define
-            //#define CONFIG_MODULE_DISPLAY_ENABLE
-        #endif
+        #define CONFIG_REQUIRE_DISPLAY
+
         #ifndef CONFIG_DISPLAY_FONT8X5_ENABLE
             #define CONFIG_DISPLAY_FONT8X5_ENABLE
         #endif
@@ -196,6 +179,28 @@
 
 ///< Periodical sending UART message function
 /* define CONFIG_FUNCTION_PERIODICAL_SENDING */
+
+
+#ifdef CONFIG_REQUIRE_DISPLAY
+    #if !defined(CONFIG_MODULE_DISPLAY_ENABLE) && defined(CONFIG_HW_DISPLAY_ENABLE)
+        #define CONFIG_MODULE_DISPLAY_ENABLE
+    #elif !defined(CONFIG_HW_DISPLAY_ENABLE)
+        #define CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE
+    #else
+        #error "Could not used because Display module missed!"
+    #endif
+#endif
+
+
+#ifdef CONFIG_REQUIRE_BUTTON
+    #if !defined(CONFIG_MODULE_BUTTON_ENABLE) && defined(CONFIG_HW_BUTTON_ENABLE)
+        #define CONFIG_MODULE_BUTTON_ENABLE
+    #elif !defined(CONFIG_HW_BUTTON_ENABLE)
+        #define CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
+    #else
+        #error "Could not used because Button module missed!"
+    #endif
+#endif
 
 
 
