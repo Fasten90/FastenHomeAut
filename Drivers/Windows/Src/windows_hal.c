@@ -260,26 +260,35 @@ DWORD WINAPI Windows_StdinReceiveThread(void* data)
 
 			printf("CommandHandler answered:\r\n"
 					"%s", respBuffer);
-#ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
+
+    #ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
 			if (ButtonSimulator_IsEnabled)
 			{
 			    char str[4] = { 0 };
 			    int str_pos = 0;
-			    while (true)
+			    while (ButtonSimulator_IsEnabled)
 			    {
 			        str[str_pos]= getch();
 			        str_pos++;
 
 			        if (str_pos >= 2)
 			        {
-			            printf("Received: %s\r\n", str);
-			            ButtonSimulator_ProcessChar(str);
+			            /* Debug print */
+			            /* printf("Received: %s\r\n", str); */
+
+			            bool result = ButtonSimulator_ProcessChar(str);
+			            if (!result)
+			            {
+			                /* Turn off key mode / Buttonsimulator! */
+			                ButtonSimulator_Set(false);
+			                printf("Exit from buttonsimulator!\r\n");
+			            }
+
 			            str_pos = 0;
-			            /* TODO: Make return situation */
 			        }
 			    }
 			}
-#endif
+    #endif
 		}
 		else
 		{

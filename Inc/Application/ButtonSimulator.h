@@ -52,7 +52,7 @@ extern bool ButtonSimulator_IsEnabled;
  *----------------------------------------------------------------------------*/
 
 void ButtonSimulator_Set(bool newValue);
-void ButtonSimulator_ProcessChar(char_t * str);
+bool_t ButtonSimulator_ProcessChar(char_t * str);
 
 
 
