@@ -314,7 +314,7 @@ inline void Display_Activate(void)
     DisplayHandler_ShowDisplay();
 
 #ifdef CONFIG_MODULE_DISPLAY_TEST_WITH_TERMINAL
-    Display_SendOnTerminal();
+    DisplayHandler_SendOnTerminal();
 #endif
 }
 

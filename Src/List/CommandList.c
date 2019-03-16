@@ -25,6 +25,7 @@
 #include "Button.h"
 #include "DateTime.h"
 #include "Display.h"
+#include "DisplayHandler.h"
 #include "Display_SSD1306.h"
 #include "IO.h"
 #include "Watchdog.h"
@@ -2240,7 +2241,7 @@ static CmdH_Result_t CommandFunction_Display(uint32_t argc, char** argv)
     else if (!StrCmp("debugprint", argv[1]))
     {
         /* Debugprint Display */
-        Display_SendOnTerminal();
+        DisplayHandler_SendOnTerminal();
         result = CmdH_Result_Ok_SendSuccessful;
     }
 #endif
