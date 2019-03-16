@@ -90,21 +90,21 @@ void DebugUart_ProcessReceivedCharacters(void);
 #ifndef CONFIG_PLATFORM_PC_WINDOWS
 
 #define uprintf(...)                            (0)
-#define DebugUart_SendChar(_c)                    (putc)_c
-#define DebugUart_SendMessage(_msg)                (void)_msg
+#define DebugUart_SendChar(_c)                  (putc)_c
+#define DebugUart_SendMessage(_msg)             (void)_msg
 #define DebugUart_SendLine(_msg)                (void)_msg
-#define DebugUart_SendMessageBlocked(_msg)        (void)_msg
+#define DebugUart_SendMessageBlocked(_msg)      (void)_msg
 
 #else
 
 #include <stdio.h>
 
 #define uprintf(...)                            printf(__VA_ARGS__)
-#define DebugUart_SendChar(_c)                    putchar(_c)
-#define DebugUart_SendMessage(_msg)                puts(_msg)
+#define DebugUart_SendChar(_c)                  putchar(_c)
+#define DebugUart_SendMessage(_msg)             puts(_msg)
 #define DebugUart_SendLine(_msg)                puts(_msg)
-#define DebugUart_SendMessageBlocked(_msg)        puts(_msg)
-#define DebugUart_SendLineBlocked(_msg)            puts(_msg)
+#define DebugUart_SendMessageBlocked(_msg)      puts(_msg)
+#define DebugUart_SendLineBlocked(_msg)         puts(_msg)
 
 #define DebugUart_StartReceive()
 
