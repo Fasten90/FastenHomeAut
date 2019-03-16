@@ -15,14 +15,14 @@
 
 #include "options.h"
 
-#include "Display_SSD1306.h"
+#include "DisplayHandler.h"
 #include "DisplayImages.h"
 #include "ErrorHandler.h"
 #include "Timing.h"
 #include "StringHelper.h"
 #include "Display.h"
 
-#ifdef CONFIG_MODULE_DISPLAY_ENABLE
+#if defined(CONFIG_MODULE_DISPLAY_ENABLE) || defined(CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE)
 
 #ifdef CONFIG_DISPLAY_FONT8X5_ENABLE
 #include "Font8x5.h"
@@ -311,12 +311,11 @@ inline void Display_Clear(void)
  */
 inline void Display_Activate(void)
 {
-    SSD1306_display();
-/*
+    DisplayHandler_Display();
+
 #ifdef CONFIG_MODULE_DISPLAY_TEST_WITH_TERMINAL
     Display_SendOnTerminal();
 #endif
-*/
 }
 
 
@@ -669,4 +668,4 @@ void Display_TestClock(void)
 
 
 
-#endif    /* #ifdef CONFIG_MODULE_DISPLAY_ENABLE */
+#endif    /* CONFIG_MODULE_DISPLAY_ENABLE || CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE */

@@ -429,6 +429,13 @@
 
     #define CONFIG_MODULE_UNITTEST_ENABLE
 
+    #define CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE
+    #ifdef CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE
+        #define CONFIG_DISPLAY_FONT8X5_ENABLE
+        #define CONFIG_DISPLAY_FONT12X8_ENABLE
+        #define CONFIG_DISPLAY_FONT32X20_ENABLE
+    #endif
+
     #ifdef CONFIG_MODULE_DISPLAY_ENABLE
         #error "In PC/Windows mode Display module is not supported"
     #endif
