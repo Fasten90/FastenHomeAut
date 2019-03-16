@@ -60,7 +60,7 @@ static void SSD1306_display(void);
  * @brief    The most basic function, set a single pixel
  */
 /* __attribute__( ( section(".data") ) ) */
-void SSD1306_drawPixel(uint8_t x, uint8_t y, Display_Color_t color)
+void DisplayHandler_DrawPixel(uint8_t x, uint8_t y, Display_Color_t color)
 {
     if ((x >= SSD1306_LCDWIDTH) || (y >= SSD1306_LCDHEIGHT))
         return;
@@ -106,7 +106,7 @@ void SSD1306_drawPixel(uint8_t x, uint8_t y, Display_Color_t color)
 
 
 
-void SSD1306_drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color)
+void DisplayHandler_DrawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color)
 {
 #ifdef SSD1306_ROTATION_ENABLE
     bool bSwap = false;
@@ -141,20 +141,20 @@ void SSD1306_drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color)
 
     if (bSwap)
     {
-        SSD1306_drawFastHLineInternal(x, y, h, color);
+        DisplayHandler_DrawFastHLineInternal(x, y, h, color);
     }
     else
     {
-        SSD1306_drawFastVLineInternal(x, y, h, color);
+        DisplayHandler_DrawFastVLineInternal(x, y, h, color);
     }
 #else
-    SSD1306_drawFastVLineInternal(x, y, h, color);
+    DisplayHandler_DrawFastVLineInternal(x, y, h, color);
 #endif
 }
 
 
 
-void SSD1306_drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color)
+void DisplayHandler_DrawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color)
 {
 #ifdef SSD1306_ROTATION_ENABLE
     bool bSwap = false;
@@ -189,20 +189,20 @@ void SSD1306_drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color)
 
     if (bSwap)
     {
-        SSD1306_drawFastVLineInternal(x, y, w, color);
+        DisplayHandler_DrawFastVLineInternal(x, y, w, color);
     }
     else
     {
-        SSD1306_drawFastHLineInternal(x, y, w, color);
+        DisplayHandler_DrawFastHLineInternal(x, y, w, color);
     }
 #else
-    SSD1306_drawFastHLineInternal(x, y, w, color);
+    DisplayHandler_DrawFastHLineInternal(x, y, w, color);
 #endif
 }
 
 
 
-void SSD1306_drawFastVLineInternal(int16_t x, int16_t __y, int16_t __h,
+void DisplayHandler_DrawFastVLineInternal(int16_t x, int16_t __y, int16_t __h,
         uint16_t color)
 {
 
@@ -353,7 +353,7 @@ void SSD1306_drawFastVLineInternal(int16_t x, int16_t __y, int16_t __h,
 
 
 
-void SSD1306_drawFastHLineInternal(int16_t x, int16_t y, int16_t w,
+void DisplayHandler_DrawFastHLineInternal(int16_t x, int16_t y, int16_t w,
         uint16_t color)
 {
     /* Do bounds/limit checks */
@@ -421,7 +421,7 @@ void SSD1306_drawFastHLineInternal(int16_t x, int16_t y, int16_t w,
 /**
  * @brief    Draw image (put pixel to buffer image)
  */
-void SSD1306_drawImage(uint8_t setx, uint8_t sety, uint8_t sizex, uint8_t sizey, uint8_t *img)
+void DisplayHandler_DrawImage(uint8_t setx, uint8_t sety, uint8_t sizex, uint8_t sizey, uint8_t *img)
 {
     /* TODO: Only 8n size can be used */
     uint8_t i;
@@ -445,14 +445,14 @@ void SSD1306_drawImage(uint8_t setx, uint8_t sety, uint8_t sizex, uint8_t sizey,
 /**
  *    @brief    Clear everything
  */
-void SSD1306_clearDisplay(void)
+void DisplayHandler_ClearDisplay(void)
 {
     memset(display_buffer, 0, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8));
 }
 
 
 
-inline void DisplayHandler_Display(void)
+inline void DisplayHandler_ShowDisplay(void)
 {
     SSD1306_display();
 }
@@ -466,7 +466,7 @@ inline void DisplayHandler_Display(void)
 static void SSD1306_display(void)
 {
     /* There is no HW to show the screen. Instead of that print it */
-    Display_SendOnTerminal();
+    DisplayHandler_SendOnTerminal();
 }
 #endif
 
@@ -477,7 +477,7 @@ static void SSD1306_display(void)
 /**
  * @brief    Print Display (Actual screen) on debug port
  */
-void Display_SendOnTerminal(void)
+void DisplayHandler_SendOnTerminal(void)
 {
     uint8_t x;
     uint8_t y;
