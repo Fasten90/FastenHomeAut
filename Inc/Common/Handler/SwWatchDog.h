@@ -27,14 +27,14 @@
 
 #ifdef CONFIG_DEBUG_SW_WATCHDOG_ENABLE
     #define SW_WATCHDOG_INC()                SwWatchDog_Inc()
-    #define SW_WATCHDOG_CHECK()                SwWatchDog_CheckState()
+    #define SW_WATCHDOG_CHECK()              SwWatchDog_CheckState()
 #else
     #define SW_WATCHDOG_INC()
     #define SW_WATCHDOG_CHECK()
 #endif
 
 
-#define SW_WATCHDOG_PERIOD                    (1050U)                    /* TaskHandler Sw Watchdog period time [ms] */
+#define SW_WATCHDOG_PERIOD                   (1050U)                    /* TaskHandler Sw Watchdog period time [ms] */
 
 
 
