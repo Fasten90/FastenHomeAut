@@ -45,6 +45,7 @@ static uint8_t display_buffer[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] = { 0 };
 
 #ifdef DISPLAY_CHANGED_LINES_ENABLE
 static bool_t Display_ChangedLines[SSD1306_LCDHEIGHT] = { 0 };
+bool DisplayHandler_FirstPrintOk = false;
 #endif /* DISPLAY_CHANGED_LINES_ENABLE */
 
 
@@ -501,8 +502,15 @@ static void SSD1306_display(void)
     /* Originally it was for the clean all display */
     DebugUart_SendMessage(ESCAPE_ERASE_CLS);
 #elif defined(CONFIG_TERMINAL_USE_CONEMU)
-    #define ESCAPE_CURSORUP_DISPLAY         ("\x1B[" "67" "A")
-    DebugUart_SendMessage(ESCAPE_CURSORUP_DISPLAY);
+    char_t escape[6] = { 0 };
+    uint8_t y_start = 1;
+    if (DisplayHandler_FirstPrintOk)
+    {
+        y_start = 2; /* Shall step 2. line because the top frame */
+    }
+    /* ESC [ row d     Moves the cursor to line row (absolute, 1-based). */
+    usprintf(escape, "\x1B" "[" "%dd", y_start);
+    DebugUart_SendMessage(escape);
 #else
     #warning "Unknown terminal used"
 #endif
@@ -529,9 +537,16 @@ void DisplayHandler_SendOnTerminal(void)
     uint8_t y;
 
     /* Print top frame row */
-    DebugUart_SendChar('+');
-    for (x = 0; x < SSD1306_LCDWIDTH; x++) DebugUart_SendChar('-');
-    DebugUart_SendLine("+");
+  #ifdef DISPLAY_CHANGED_LINES_ENABLE
+    if (!DisplayHandler_FirstPrintOk)
+    {
+  #endif /* DISPLAY_CHANGED_LINES_ENABLE */
+        DebugUart_SendChar('+');
+        for (x = 0; x < SSD1306_LCDWIDTH; x++) DebugUart_SendChar('-');
+        DebugUart_SendLine("+");
+  #ifdef DISPLAY_CHANGED_LINES_ENABLE
+    }
+  #endif /* DISPLAY_CHANGED_LINES_ENABLE */
 
     /* Print every row */
     for (y = 0; y < SSD1306_LCDHEIGHT; y++)
@@ -566,7 +581,7 @@ void DisplayHandler_SendOnTerminal(void)
             #if defined(CONFIG_TERMINAL_USE_CONEMU)
             /* ESC [ row d     Moves the cursor to line row (absolute, 1-based). */
             char_t escape[6] = { 0 };
-            usprintf(escape, "\x1B" "[" "%dd", y + 3);
+            usprintf(escape, "\x1B" "[" "%dd", y + 2);
             DebugUart_SendMessage(escape);
             #else
             #warning "This terminal not supported"
@@ -576,9 +591,17 @@ void DisplayHandler_SendOnTerminal(void)
     }
 
     /* Print bottom frame row */
-    DebugUart_SendChar('+');
-    for (x = 0; x < SSD1306_LCDWIDTH; x++) DebugUart_SendChar('-');
-    DebugUart_SendLine("+");
+  #ifdef DISPLAY_CHANGED_LINES_ENABLE
+    if (!DisplayHandler_FirstPrintOk)
+    {
+  #endif /* DISPLAY_CHANGED_LINES_ENABLE */
+        DebugUart_SendChar('+');
+        for (x = 0; x < SSD1306_LCDWIDTH; x++) DebugUart_SendChar('-');
+        DebugUart_SendLine("+");
+  #ifdef DISPLAY_CHANGED_LINES_ENABLE
+        DisplayHandler_FirstPrintOk = true;
+    }
+  #endif /* DISPLAY_CHANGED_LINES_ENABLE */
 }
 #endif /* defined(CONFIG_MODULE_DISPLAY_TEST_WITH_TERMINAL) || defined(CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE) */
 
