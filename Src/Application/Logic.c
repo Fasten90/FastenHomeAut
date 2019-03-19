@@ -65,7 +65,7 @@
 
 #define DisplayInput_StringLimit                    (DisplayInput_LetterPosition_MaxLimit + 1)
 
-#define DisplayMenu_ShowMenuLimit                    (3)
+#define DisplayMenu_ShowMenuLimit                   (3)
 
 
 
@@ -270,21 +270,27 @@ void Logic_Display_Init(void)
  */
 void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 {
-#if BUTTON_NUM == 4
+#if defined(BUTTON_DEBUG_ON)
+  #if BUTTON_NUM == 4
     const char * buttonName = BUTTON_GetButtonName(button);
     const char * typeName = BUTTON_GetPressTypeName(type);
 
     BUTTON_DEBUG_PRINT("%s pressed %s", buttonName, typeName);
 
-#elif BUTTON_NUM == 1
+  #elif BUTTON_NUM == 1
     UNUSED_ARGUMENT(button);
     UNUSED_ARGUMENT(type);
     BUTTON_DEBUG_PRINT("Pressed");
+  #else
+    UNUSED_ARGUMENT(button);
+    UNUSED_ARGUMENT(type);
+    #warning "BUTTON_NUM is not defined or has unimplemented value!"
+  #endif
 #else
     UNUSED_ARGUMENT(button);
     UNUSED_ARGUMENT(type);
-#warning "BUTTON_NUM is not defined or has unimplemented value!"
 #endif
+
 
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER
     Logic_RemoteController_Button(button, type);
