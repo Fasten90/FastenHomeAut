@@ -581,7 +581,7 @@ void DisplayHandler_SendOnTerminal(void)
             #if defined(CONFIG_TERMINAL_USE_CONEMU)
             /* ESC [ row d     Moves the cursor to line row (absolute, 1-based). */
             char_t escape[6] = { 0 };
-            usprintf(escape, "\x1B" "[" "%dd", y + 2);
+            usprintf(escape, "\x1B" "[" "%dd", y + 3);
             DebugUart_SendMessage(escape);
             #else
             #warning "This terminal not supported"
