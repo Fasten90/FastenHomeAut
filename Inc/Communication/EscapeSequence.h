@@ -65,13 +65,13 @@
 
 
 /* SI u    RCP – Restore Cursor Position    Restores the cursor position. */
-#define ESCAPE_RESTORECURSOR            ("\x1B" "[u")
+#define ESCAPE_RESTORECURSOR             ("\x1B" "[u")
 
 
 /* Erase Functions: */
 /* (CSI in UTF-8 is 0xC2, 0x9B) = ESC+[ */
 /* ESC[2J Clear screen and home cursor */
-#define ESCAPE_ERASE_CLS                ("\x1B" "[2J")
+#define ESCAPE_ERASE_CLS                 ("\x1B" "[2J")
 
 
 /* Goto top left corner */
@@ -81,7 +81,7 @@
 /* ; */
 /* 1 = column */
 /* H */
-#define ESCAPE_CURSOR_TOPLEFT            ("\x1B" "[1;1H")
+#define ESCAPE_CURSOR_TOPLEFT             ("\x1B" "[1;1H")
 
 
 #define ESCAPE_SEND_CLS                    ESCAPE_ERASE_CLS ESCAPE_CURSOR_TOPLEFT
@@ -96,13 +96,13 @@
 /* 40–47     Set background color     40 + x, where x is from the color table below */
 #define ESCAPE_BACKGROUND_GREEN            ("\x1B" "[42m")
 
-#define ESCAPE_BACKGROUND_RED            ("\x1B" "[41m")
+#define ESCAPE_BACKGROUND_RED              ("\x1B" "[41m")
 
 #define ESCAPE_BACKGROUND_WHITE            ("\x1B" "[47m")
 
-#define ESCAPE_TEXT_BLACK                ("\x1B" "[30m")
+#define ESCAPE_TEXT_BLACK                  ("\x1B" "[30m")
 
-#define ESCAPE_BACKGROUND_DEFAULT        ("\x1B" "[49m")        /* NOTE: Does not work in Hyperterminal */
+#define ESCAPE_BACKGROUND_DEFAULT          ("\x1B" "[49m")        /* NOTE: Does not work in Hyperterminal */
 
 #define ESCAPE_FORMAT_RESET                ("\x1B" "[0m")        /* NOTE: At Hyperterminal the background will be black */
 
@@ -116,21 +116,21 @@
  */
 #define ESCAPE_FORMAT_TEXTCOLOR_START            ("\x1B" "[3")
 
-#define ESCAPE_FORMAT_BACKGROUNDCOLOR_START        ("\x1B" "[4")
+#define ESCAPE_FORMAT_BACKGROUNDCOLOR_START      ("\x1B" "[4")
 
-#define ESCAPE_FORMAT_ONLY_START                ("\x1B" "[")
+#define ESCAPE_FORMAT_ONLY_START                 ("\x1B" "[")
 
 #define ESCAPE_FORMAT_ONLY_TEXTROUNDCOLOR        ("3")
 
-#define ESCAPE_FORMAT_ONLY_BACKGROUNDCOLOR        ("4")
+#define ESCAPE_FORMAT_ONLY_BACKGROUNDCOLOR       ("4")
 
-#define ESCAPE_FORMAT_SEPARATE                    (";")
+#define ESCAPE_FORMAT_SEPARATE                   (";")
 
 #define ESCAPE_FORMAT_END                        ("m")
 
 #define ESCAPE_FORMAT_STANDARD_STRING_MAX_LENGTH    ( sizeof("\x1B" "[30" "m") )
-#define ESCAPE_FORMAT_2PARAM_STRING_MAX_LENGTH        ( sizeof("\x1B" "[30" ";" "47" "m") )
-#define ESCAPE_FORMAT_3PARAM_STRING_MAX_LENGTH        ( sizeof("\x1B" "[30" ";" "47" ";" "1" "m") )
+#define ESCAPE_FORMAT_2PARAM_STRING_MAX_LENGTH      ( sizeof("\x1B" "[30" ";" "47" "m") )
+#define ESCAPE_FORMAT_3PARAM_STRING_MAX_LENGTH      ( sizeof("\x1B" "[30" ";" "47" ";" "1" "m") )
 
 
 /**

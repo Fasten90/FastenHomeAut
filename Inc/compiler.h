@@ -82,15 +82,16 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 ///< Stringification
 #define STR(str)                        #str
-#define STR2(str)                        STR(str)
+#define STR2(str)                       STR(str)
+
 
 ///< Concatenation
-#define CONCATENATE(con1, con2)            con1##con2
+#define CONCATENATE(con1, con2)         con1##con2
 #define CONCATENATE2(con1, con2)        CONCATENATE(con1, con2)
 
 
 ///< Unused argument
-#define UNUSED_ARGUMENT(param)            ((void)param)
+#define UNUSED_ARGUMENT(param)          ((void)param)
 
 
 ///< Runtime Assert function
