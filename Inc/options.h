@@ -456,6 +456,10 @@
 
     #define CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON
 
+    /* Select a terminal for PC */
+    #define CONFIG_TERMINAL_USE_CONEMU
+    //#define CONFIG_TERMINAL_USE_CMD
+
     #if defined(CONFIG_MODULE_DISPLAY_ENABLE) || defined(CONFIG_HW_DISPLAY_ENABLE)
         #error "In PC/Windows mode Display module is not supported"
     #endif

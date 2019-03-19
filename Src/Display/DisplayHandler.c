@@ -23,7 +23,9 @@
 #include "EscapeSequence.h"
 
 
-#define DISPLAY_CHANGED_LINES_ENABLE
+#ifdef CONFIG_TERMINAL_USE_CONEMU
+    #define DISPLAY_CHANGED_LINES_ENABLE
+#endif
 
 
 
@@ -495,24 +497,14 @@ inline void DisplayHandler_ShowDisplay(void)
  */
 static void SSD1306_display(void)
 {
-#if 0
+#if defined(CONFIG_TERMINAL_USE_CMD)
     /* Originally it was for the clean all display */
     DebugUart_SendMessage(ESCAPE_ERASE_CLS);
-#elif 0
-    DebugUart_SendMessage(ESCAPE_CURSOR_TOPLEFT);
-#elif 0
-    for (uint8_t i= 0; i < SSD1306_LCDHEIGHT + 2; i++)
-    {
-
-        DebugUart_SendMessage(ESCAPE_CURSORUP);
-    }
-#elif 1
+#elif defined(CONFIG_TERMINAL_USE_CONEMU)
     #define ESCAPE_CURSORUP_DISPLAY         ("\x1B[" "67" "A")
     DebugUart_SendMessage(ESCAPE_CURSORUP_DISPLAY);
 #else
-    /* ESC [ lines F   Moves cursor to beginning of the line, lines (default 1) lines up. */
-    #define ESCAPE_CURSORUP_DISPLAY         ("\x1B" "[" "66" "F")
-    DebugUart_SendMessage(ESCAPE_CURSORUP_DISPLAY);
+    #warning "Unknown terminal used"
 #endif
 
     /* There is no HW to show the screen. Instead of that print it */
@@ -571,22 +563,13 @@ void DisplayHandler_SendOnTerminal(void)
         /* else - that line not changed */
         else
         {
-            #if 0
-            DebugUart_SendMessage(ESCAPE_CURSORDOWN);
-            #elif 0
-            DebugUart_SendMessage("\n");
-            #elif 0
-            #define ESCAPE_MOVE_LINE_DOWN   ("\x1B" "[1B")
-            DebugUart_SendMessage(ESCAPE_MOVE_LINE_DOWN);
-            #elif 1
+            #if defined(CONFIG_TERMINAL_USE_CONEMU)
             /* ESC [ row d     Moves the cursor to line row (absolute, 1-based). */
             char_t escape[6] = { 0 };
             usprintf(escape, "\x1B" "[" "%dd", y + 3);
             DebugUart_SendMessage(escape);
             #else
-            /* ESC [ lines E   Moves cursor to beginning of the line, lines (default 1) lines down. */
-            #define ESCAPE_MOVE_LINE_DOWN   ("\x1B" "[E")
-            DebugUart_SendMessage(ESCAPE_MOVE_LINE_DOWN);
+            #warning "This terminal not supported"
             #endif
         }
         #endif /* DISPLAY_CHANGED_LINES_ENABLE */
