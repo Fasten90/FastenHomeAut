@@ -311,8 +311,8 @@ int main(void)
     /* Print result */
     printf("%s\r\n", responseBuffer); /* Clang generated compile warning when "printf(responseBuffer);" used */
     printf("Unit test result: %d\r\n", utResult);
-#endif
-#endif /* CONFIG_PLATFORM_PC_WINDOWS */
+#endif /* CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE */
+#endif /* CONFIG_MODULE_UNITTEST_ENABLE */
 
     /* STDIN */
     UART_HandleTypeDef Debug_UartHandle;
