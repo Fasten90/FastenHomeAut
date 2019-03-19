@@ -28,7 +28,9 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
+#ifndef CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON
 bool ButtonSimulator_IsEnabled =  false;
+#endif
 
 
 
@@ -51,6 +53,7 @@ static void ButtonSimulator_ExecuteKey(ButtonSimulator_Key_t key);
  *----------------------------------------------------------------------------*/
 
 
+#ifndef CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON
 /**
  * @brief  ButtonSimulator set
  */
@@ -58,6 +61,7 @@ void ButtonSimulator_Set(bool newValue)
 {
     ButtonSimulator_IsEnabled = newValue;
 }
+#endif /* CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON */
 
 
 
@@ -178,6 +182,7 @@ static void ButtonSimulator_ExecuteKey(ButtonSimulator_Key_t key)
             break;
     }
 }
+
 
 
 #endif /* CONFIG_MODULE_BUTTONSIMULATOR_ENABLE */

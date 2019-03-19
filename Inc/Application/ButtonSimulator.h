@@ -43,7 +43,9 @@ typedef enum {
  *  Global variables
  *----------------------------------------------------------------------------*/
 
+#ifndef CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON
 extern bool ButtonSimulator_IsEnabled;
+#endif
 
 
 

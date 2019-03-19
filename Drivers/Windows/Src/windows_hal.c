@@ -239,6 +239,7 @@ DWORD WINAPI Windows_StdinReceiveThread(void* data)
 {
 	// Do stuff.  This will be the first function called on the new thread.
 	// When this function returns, the thread goes away.  See MSDN for more details.
+    #if !defined(CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON)
 	while (1)
 	{
 		// Not safe!
@@ -266,10 +267,18 @@ DWORD WINAPI Windows_StdinReceiveThread(void* data)
     #ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
 			if (ButtonSimulator_IsEnabled)
 			{
+    #endif /* #ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE */
+    #endif /*  #if !defined(CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON) */
+    #if defined(CONFIG_MODULE_BUTTONSIMULATOR_ENABLE) || defined(CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON)
 			    char str[4] = { 0 };
 			    int str_pos = 0;
+    #if !defined(CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON)
 			    while (ButtonSimulator_IsEnabled)
+    #else
+                while (1)
+    #endif
 			    {
+
 			        str[str_pos]= getch();
 			        str_pos++;
 
@@ -279,24 +288,30 @@ DWORD WINAPI Windows_StdinReceiveThread(void* data)
 			            /* printf("Received: %s\r\n", str); */
 
 			            bool result = ButtonSimulator_ProcessChar(str);
+    #if !defined(CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON)
 			            if (!result)
 			            {
 			                /* Turn off key mode / Buttonsimulator! */
 			                ButtonSimulator_Set(false);
 			                printf("Exit from buttonsimulator!\r\n");
 			            }
+    #else
+			            UNUSED_VARIABLE(result);
+    #endif
 
 			            str_pos = 0;
 			        }
 			    }
+    #endif /* #if defined(CONFIG_MODULE_BUTTONSIMULATOR_ENABLE) || defined(CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON) */
+    #if !defined(CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON)
 			}
-    #endif
 		}
 		else
 		{
 			printf("Null message received!\r\n");
 		}
 	}
+    #endif /* !defined(CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON) */
 
 	return 0;
 }

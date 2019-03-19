@@ -173,7 +173,7 @@ static CmdH_Result_t CommandFunction_CircBuffStat(uint32_t argc, char** argv);
 #ifdef CONFIG_MODULE_COMMON_UART_ENABLE
 static CmdH_Result_t CommandFunction_CommonUART(uint32_t argc, char** argv);
 #endif
-#ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
+#if defined(CONFIG_MODULE_BUTTONSIMULATOR_ENABLE) && !defined(CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON)
 static CmdH_Result_t CommandFunction_ButtonSimulator(uint32_t argc, char** argv);
 #endif
 
@@ -570,7 +570,7 @@ const CmdH_Command_t CmdH_CommandList[] =
         .description = "Common UART",
     },
 #endif
-#ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
+#if defined(CONFIG_MODULE_BUTTONSIMULATOR_ENABLE) && !defined(CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON)
     {
         .name = "buttonsimulator",
         .commandFunctionPointer = CommandFunction_ButtonSimulator,
@@ -2790,7 +2790,7 @@ static CmdH_Result_t CommandFunction_CommonUART(uint32_t argc, char** argv)
 
 
 
-#ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
+#if defined(CONFIG_MODULE_BUTTONSIMULATOR_ENABLE) && !defined(CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON)
 static CmdH_Result_t CommandFunction_ButtonSimulator(uint32_t argc, char** argv)
 {
     UNUSED(argc);

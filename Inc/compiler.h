@@ -94,6 +94,10 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #define UNUSED_ARGUMENT(param)          ((void)param)
 
 
+///< Unused variable
+#define UNUSED_VARIABLE(param)          ((void)param)
+
+
 ///< Runtime Assert function
 /* @note    If true, it is OK */
 /*            If false, "error" */

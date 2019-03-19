@@ -18,6 +18,7 @@
 #include "Display_SSD1306.h"
 #include "DisplayHandler.h"
 #include "DebugUart.h"
+#include "StringHelper.h"
 #include "MemHandler.h"
 #include "EscapeSequence.h"
 

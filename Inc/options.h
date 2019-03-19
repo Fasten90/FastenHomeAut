@@ -454,6 +454,8 @@
         #define CONFIG_DISPLAY_FONT32X20_ENABLE
     #endif
 
+    #define CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON
+
     #if defined(CONFIG_MODULE_DISPLAY_ENABLE) || defined(CONFIG_HW_DISPLAY_ENABLE)
         #error "In PC/Windows mode Display module is not supported"
     #endif
