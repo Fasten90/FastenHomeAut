@@ -394,6 +394,13 @@ int main(void)
 #endif
 
 
+#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
+    /* DebugUart initializing */
+    /* @note    Be careful, Terminal need to initializing after this */
+    DebugUart_Init();
+#endif
+
+
 #if defined(CONFIG_MODULE_DISPLAY_ENABLE) || defined(CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE)
     /* Display */
     #ifdef CONFIG_HW_DISPLAY_ENABLE
@@ -402,13 +409,6 @@ int main(void)
     #ifdef CONFIG_FUNCTION_DISPLAY_MENU
     Logic_Display_Init();
     #endif
-#endif
-
-
-#ifdef CONFIG_MODULE_DEBUGUART_ENABLE
-    /* DebugUart initializing */
-    /* @note    Be careful, Terminal need to initializing after this */
-    DebugUart_Init();
 #endif
 
 

@@ -41,7 +41,8 @@
  *  Local variables
  *----------------------------------------------------------------------------*/
 
-static uint8_t display_buffer[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] = { 0 };
+///< Not static, because shall used from Display_ file
+uint8_t display_buffer[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] = { 0 };
 
 #ifdef DISPLAY_CHANGED_LINES_ENABLE
 static bool_t Display_ChangedLines[SSD1306_LCDHEIGHT] = { 0 };
