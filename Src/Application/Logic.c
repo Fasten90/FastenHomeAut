@@ -67,6 +67,12 @@
 
 #define DisplayMenu_ShowMenuLimit                   (3)
 
+#if defined(CONFIG_HW_DISPLAY_ENABLE)
+    #define DISPLAY_GENERATE_EVENT(__event_type, __data)    EventHandler_GenerateEvent(__event_type, __data, Task_Display)
+#else
+    #define DISPLAY_GENERATE_EVENT(__event_type, __data)
+#endif
+
 
 
 /*------------------------------------------------------------------------------
@@ -1044,9 +1050,7 @@ static void Logic_Display_MainMenu(void)
 
     #if defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK) && defined(CONFIG_DISPLAY_CLOCK_SMALL)
     /* Display small clock on main menu */
-    #if defined(CONFIG_HW_DISPLAY_ENABLE)
-    EventHandler_GenerateEvent(Event_Display_SpiEvent, 0, Task_Display);
-    #endif
+    DISPLAY_GENERATE_EVENT(Event_Display_SpiEvent, 0);
 
     /* Only show clock (small - on menu) */
     if (Logic_Display_ActualState == Menu_Main)
@@ -1061,9 +1065,7 @@ static void Logic_Display_MainMenu(void)
     }
     #endif
 
-    #if defined(CONFIG_HW_DISPLAY_ENABLE)
-    EventHandler_GenerateEvent(Event_Display_SpiEvent, 1, Task_Display);
-    #endif
+    DISPLAY_GENERATE_EVENT(Event_Display_SpiEvent, 1);
 
     static DisplayMenu_t oldSelectedMenu = Menu_Main;
     if (Logic_Display_SelectedState != oldSelectedMenu)
@@ -1074,9 +1076,7 @@ static void Logic_Display_MainMenu(void)
         Logic_Display_PrintMainMenuList();
     }
 
-    #if defined(CONFIG_HW_DISPLAY_ENABLE)
-    EventHandler_GenerateEvent(Event_Display_SpiEvent, 2, Task_Display);
-    #endif
+    DISPLAY_GENERATE_EVENT(Event_Display_SpiEvent, 2);
 
     Display_Activate();
 }
