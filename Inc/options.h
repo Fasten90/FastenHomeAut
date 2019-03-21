@@ -434,6 +434,9 @@
 	/* define CONFIG_MODULE_TERMINAL_ENABLE */
 	/* define CONFIG_MODULE_COLOREDMESSAGE_ENABLE */
 
+    /* TODO: Not works, because the DebugUart handling */
+    /* #define CONFIG_MODULE_ESCAPEBROWSER_ENABLE */
+
     #define CONFIG_MODULE_TASKHANDLER_ENABLE
 
     #define CONFIG_MODULE_COMMANDHANDLER_ENABLE
