@@ -19,6 +19,7 @@
 #include "options.h"
 #include "Button.h"
 #include "TaskHandler.h"
+#include "SmallApps.h"
 
 #ifdef CONFIG_BUTTON_DEBUG_ENABLE
 #include "DebugUart.h"
@@ -123,9 +124,6 @@ void Logic_DisplayHandler(ScheduleSource_t source);
 void Logic_Display_ChangeState(DisplayMenu_t nextState);
 bool Logic_Display_GetClockIsNeedRefresh(void);
 void Logic_Display_Snake_ChangeToMenu(void);
-
-void Logic_SetPeriodicalMessageSendg(char * msg);
-void Logic_PeriodicalSending(void);
 
 
 

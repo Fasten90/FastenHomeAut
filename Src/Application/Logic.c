@@ -142,11 +142,6 @@ static const char * const Logic_MenuList[] =
 #endif
 
 
-#ifdef CONFIG_FUNCTION_PERIODICAL_SENDING
-static char PeriodicalSending_Message[50] = { 0 };
-#endif
-
-
 
 /*------------------------------------------------------------------------------
  *  Function declarations
@@ -1172,19 +1167,3 @@ bool Logic_Display_GetClockIsNeedRefresh(void)
 
 
 #endif    /* #ifdef CONFIG_MODULE_DISPLAY_ENABLE */
-
-
-
-#ifdef CONFIG_FUNCTION_PERIODICAL_SENDING
-void Logic_SetPeriodicalMessageSendg(char * msg)
-{
-    StrCpyMax(PeriodicalSending_Message, msg, 50);
-}
-
-
-
-void Logic_PeriodicalSending(void)
-{
-    DebugUart_SendLine(PeriodicalSending_Message);
-}
-#endif
