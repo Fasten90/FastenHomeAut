@@ -1,15 +1,14 @@
 /*
- *    Bluetooth_HC05.h
- *    Created on:   2017-10-21
- *    Author:       Vizi Gabor
+ *    RemoteController.h
+ *    Created on:   2019-03-22
+ *    Author:       Fasten
  *    E-mail:       vizi.gabor90@gmail.com
  *    Function:     -
  *    Target:       STM32Fx
  */
 
-#ifndef BLUETOOTH_HC05_H_
-#define BLUETOOTH_HC05_H_
-
+#ifndef REMOTECONTROLLER_H_
+#define REMOTECONTROLLER_H_
 
 
 
@@ -17,9 +16,7 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
-
-#include "compiler.h"
-#include "UART.h"
+#include "Button.h"
 
 
 
@@ -27,17 +24,28 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define BLUETOOTH_RX_BUFFER_SIZE            (100)
-#define BLUETOOTH_TX_BUFFER_SIZE            (100)
-
-#define BLUETOOTH_PROCESS_BUFFER_SIZE        (100)
-#define BLUETOOTH_RESPONSE_BUFFER_SIZE        (100)
-
 
 
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
+
+#if defined(CONFIG_FUNCTION_REMOTECONTROLLER)
+typedef enum
+{
+    Car_DcForward_Stop,
+    Car_DcForward_Fordward,
+    Car_DcForward_Back
+} Car_DcForward_t;
+
+
+typedef enum
+{
+    Car_Turning_Straight,
+    Car_Turning_Left,
+    Car_Turning_Right
+} Car_Turning_t;
+#endif
 
 
 
@@ -45,20 +53,15 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-extern UART_HandleTypeDef Bluetooth_UartHandle;
-extern UART_Handler_t Bluetooth;
-
 
 
 /*------------------------------------------------------------------------------
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void Bluetooth_HC05_Init(void);
-void Bluetooth_ReceiveEnable(void);
-size_t Bluetooth_SendMessage(const char *msg);
-void Bluetooth_ProcessReceivedCharacters(void);
+void Logic_RemoteController_Button(ButtonType_t button, ButtonPressType_t type);
+void Logic_RemoteController_SendMessage(void);
 
 
 
-#endif /* BLUETOOTH_HC05_H_ */
+#endif /* REMOTECONTROLLER_H_ */

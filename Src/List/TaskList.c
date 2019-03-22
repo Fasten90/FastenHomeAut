@@ -48,6 +48,9 @@
 #ifdef CONFIG_MODULE_ESCAPEBROWSER_ENABLE
 #include "EscapeBrowser.h"
 #endif
+#ifdef CONFIG_FUNCTION_REMOTECONTROLLER
+#include "RemoteController.h"
+#endif
 
 #include "TaskList.h"
 
@@ -249,7 +252,7 @@ Task_t TaskList[] =
         .taskName = "BluetoothProcess",
         .taskFunction = Task_BluetoothProcessFunction,
 #ifdef CONFIG_MODULE_UART_REQUIRE_TASKSCHEDULE_ENABLE
-        .isPeriodisScheduleDisabled = true,
+        .isPeriodicScheduleDisabled = true,
         .taskScheduleRate = 1000,
 #else
         /* UART handler not required task scheduling. Need check by periodically */
@@ -262,7 +265,7 @@ Task_t TaskList[] =
         .taskName = "CommonUART",
         .taskFunction = Task_CommonUARTfunction,
     #ifdef CONFIG_MODULE_UART_REQUIRE_TASKSCHEDULE_ENABLE
-        .isPeriodisScheduleDisabled = false,
+        .isPeriodicScheduleDisabled = false,
         .taskScheduleRate = 1000,
     #else
         /* UART handler not required task scheduling. Need check by periodically */
@@ -278,7 +281,7 @@ Task_t TaskList[] =
     const TaskFunctionPointer taskFunction;        ///< Task function - Init
     TaskTick_t taskScheduleRate;                ///< Task scheduling rate [ms] - Init/Runtime
     bool isRequestScheduling;                    ///< Task scheduling request (true, if request) - Runtime
-    bool isPeriodisScheduleDisabled;            ///< Task schedule (periodic) disabled - Init/Runtime
+    bool isPeriodicScheduleDisabled;            ///< Task schedule (periodic) disabled - Init/Runtime
     bool isRunOnce;                                ///< Task scheduling once - Init/Runtime
     bool isTimeOutTask;                            ///< Task is work in TimeOut mode - Init/Runtime
     bool isDisabled;                            ///< Task is disabled/enabled - Init/Runtime

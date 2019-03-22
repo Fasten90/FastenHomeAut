@@ -50,23 +50,6 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-#if defined(CONFIG_FUNCTION_REMOTECONTROLLER)
-typedef enum
-{
-    Car_DcForward_Stop,
-    Car_DcForward_Fordward,
-    Car_DcForward_Back
-} Car_DcForward_t;
-
-
-typedef enum
-{
-    Car_Turning_Straight,
-    Car_Turning_Left,
-    Car_Turning_Right
-} Car_Turning_t;
-#endif
-
 
 
 #if defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK)
@@ -140,8 +123,6 @@ void Logic_DisplayHandler(ScheduleSource_t source);
 void Logic_Display_ChangeState(DisplayMenu_t nextState);
 bool Logic_Display_GetClockIsNeedRefresh(void);
 void Logic_Display_Snake_ChangeToMenu(void);
-
-void Logic_RemoteController_SendMessage(void);
 
 void Logic_SetPeriodicalMessageSendg(char * msg);
 void Logic_PeriodicalSending(void);
