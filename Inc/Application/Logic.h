@@ -51,22 +51,28 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
+///< App Function pointers
+
+typedef void (*AppInit_FunctionPointer_t)(void);
+
+typedef void (*AppEvent_FunctionPointer_t)(ButtonType_t button, ButtonPressType_t type);
+
+typedef void (*AppUpdate_FunctionPointer_t)(ScheduleSource_t source);
 
 
-#if defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK)
-typedef enum
+///< App list struct
+typedef struct
 {
-    DisplayClock_HourAndMinute,
-    DisplayClock_Hour,
-    DisplayClock_Minute,
+    char_t * AppName;
+    AppInit_FunctionPointer_t initFunction;
+    AppEvent_FunctionPointer_t eventFunction;
+    AppUpdate_FunctionPointer_t updateFunction;
 
-    /* Do not use! */
-    DisplayClock_Count
-} DisplayClock_ChangeState_t;
-#endif
+} App_List_t;
 
 
 
+/* TODO: Move to AppList? */
 typedef enum
 {
     Menu_Main,
@@ -89,14 +95,6 @@ typedef enum
     Menu_Count
 } DisplayMenu_t;
 
-
-typedef enum
-{
-    SnakeMenu_NewGame,
-    SnakeMenu_Exit,
-
-    SnakeMenu_Count
-} DisplaySnakeMenu_t;
 
 
 /*------------------------------------------------------------------------------
