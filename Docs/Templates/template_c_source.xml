@@ -6,6 +6,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
+#include "GenericTypeDefs.h"
 #include "${file_base}.h"
 
 
