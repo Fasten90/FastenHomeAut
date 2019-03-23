@@ -2727,7 +2727,7 @@ static CmdH_Result_t CommandFunction_PeriodicalSending(uint32_t argc, char** arg
     CmdH_Result_t result = CmdH_Result_Unknown;
 
     /* TODO: Or GlobalVarHandler? enable flag, period, message */
-    Logic_SetPeriodicalMessageSendg(argv[1]);
+    App_PeriodicalMessageSending_Set(argv[1]);
 
     if (argc == 3)
     {

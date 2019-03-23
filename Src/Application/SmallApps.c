@@ -43,7 +43,7 @@
  *----------------------------------------------------------------------------*/
 
 #ifdef CONFIG_FUNCTION_PERIODICAL_SENDING
-static char PeriodicalSending_Message[50] = { 0 };
+static char PeriodicalMessageSending_Msg[50] = { 0 };
 #endif /* CONFIG_FUNCTION_PERIODICAL_SENDING */
 
 
@@ -53,23 +53,23 @@ static uint8_t DisplayInput_LetterPosition = 0;
 static char DisplayInput_ActualRealString[DisplayInput_StringLimit] = { 0 };
 static uint8_t DisplayInput_ActualString[DisplayInput_LetterPosition_MaxLimit+1] = { 0 };
 
-static const char const Display_Characters[] = { ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+static const char const DisplayInput_Characters[] = { ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
     't', 'u', 'v', 'w', 'x', 'y', 'z' };
 
-static const uint8_t Display_Characters_size = sizeof(Display_Characters)/sizeof(Display_Characters[0]);
+static const uint8_t DisplayInput_Characters_size = sizeof(DisplayInput_Characters)/sizeof(DisplayInput_Characters[0]);
 #endif /* CONFIG_FUNCTION_DISPLAY_INPUT */
 
 
 #ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
-static const uint16_t Display_CarAnimation_RefreshPeriod_MinLimit = 100;
-static const uint16_t Display_CarAnimation_RefreshPeriod_MaxLimit = 1000;
-static uint16_t Display_CarAnimation_RefreshPeriod_Actual = 300;        /* Do not set const, user can change the refresh period time */
+static const uint16_t DisplayCarAnimation_RefreshPeriod_MinLimit = 100;
+static const uint16_t DisplayCarAnimation_RefreshPeriod_MaxLimit = 1000;
+static uint16_t DisplayCarAnimation_RefreshPeriod_Actual = 300;        /* Do not set const, user can change the refresh period time */
 #endif /* CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN */
 
 
 #if defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK)
-static DisplayClock_ChangeState_t Logic_SystemTimeConfigState = 0;
+static DisplayClock_ChangeState_t App_Clock_SystemTimeConfigState = 0;
 #endif /* CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK */
 
 
@@ -81,13 +81,13 @@ static DisplayClock_ChangeState_t Logic_SystemTimeConfigState = 0;
 extern void Logic_Display_ChangeState(App_Type_t nextState);
 
 #ifdef CONFIG_FUNCTION_DISPLAY_INPUT
-static void Logic_StepLetterPosition(int8_t step);
-static void Logic_StepLetterNextValue(int8_t step);
+static void DisplayInput_StepLetterPosition(int8_t step);
+static void DisplayInput_StepLetterNextValue(int8_t step);
 #endif
 
 #ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
-static void Logic_SystemTimeStepConfig(void);
-static void Logic_SystemTimeStepValue(void);
+static void DisplayLargeClock_StepConfig(void);
+static void DisplayLargeClock_StepValue(void);
 #endif
 
 
@@ -97,16 +97,16 @@ static void Logic_SystemTimeStepValue(void);
  *----------------------------------------------------------------------------*/
 
 #ifdef CONFIG_FUNCTION_PERIODICAL_SENDING
-void Logic_SetPeriodicalMessageSendg(char * msg)
+void App_PeriodicalMessageSending_Set(char * msg)
 {
-    StrCpyMax(PeriodicalSending_Message, msg, 50);
+    StrCpyMax(PeriodicalMessageSending_Msg, msg, 50);
 }
 
 
 
-void Logic_PeriodicalSending(void)
+void App_PeriodicalMessageSending_Run(void)
 {
-    DebugUart_SendLine(PeriodicalSending_Message);
+    DebugUart_SendLine(PeriodicalMessageSending_Msg);
 }
 
 #endif /* CONFIG_FUNCTION_PERIODICAL_SENDING */
@@ -137,22 +137,22 @@ void App_DisplayInput_Event(ButtonType_t button, ButtonPressType_t type)
         {
             case PressedButton_Right:
                 /* Right */
-                Logic_StepLetterPosition((type == ButtonPress_Short || type == ButtonPress_Continuous) ? 1 : 3);
+                DisplayInput_StepLetterPosition((type == ButtonPress_Short || type == ButtonPress_Continuous) ? 1 : 3);
                 break;
 
             case PressedButton_Left:
                 /* Left */
-                Logic_StepLetterPosition((type == ButtonPress_Short || type == ButtonPress_Continuous) ? -1 : -3);
+                DisplayInput_StepLetterPosition((type == ButtonPress_Short || type == ButtonPress_Continuous) ? -1 : -3);
                 break;
 
             case PressedButton_Up:
                 /* Up */
-                Logic_StepLetterNextValue((type == ButtonPress_Short || type == ButtonPress_Continuous) ? -1 : -3);
+                DisplayInput_StepLetterNextValue((type == ButtonPress_Short || type == ButtonPress_Continuous) ? -1 : -3);
                 break;
 
             case PressedButton_Down:
                 /* Down */
-                Logic_StepLetterNextValue((type == ButtonPress_Short || type == ButtonPress_Continuous) ? 1 : 3);
+                DisplayInput_StepLetterNextValue((type == ButtonPress_Short || type == ButtonPress_Continuous) ? 1 : 3);
                 break;
 
             case PressedButton_Count:
@@ -168,7 +168,7 @@ void App_DisplayInput_Event(ButtonType_t button, ButtonPressType_t type)
 /**
  * @brief    Step active letter selection to next (left-right)
  */
-static void Logic_StepLetterPosition(int8_t step)
+static void DisplayInput_StepLetterPosition(int8_t step)
 {
     DisplayInput_LetterPosition += step;
     if (step > 0 && (DisplayInput_LetterPosition > DisplayInput_LetterPosition_MaxLimit))
@@ -190,7 +190,7 @@ static void Logic_StepLetterPosition(int8_t step)
 /**
  * @brief    Step Letter value to next (up-down)
  */
-static void Logic_StepLetterNextValue(int8_t step)
+static void DisplayInput_StepLetterNextValue(int8_t step)
 {
     uint8_t selectedLetter = DisplayInput_ActualString[DisplayInput_LetterPosition];
 
@@ -220,9 +220,9 @@ static void Logic_StepLetterNextValue(int8_t step)
         else if (step < 0)
         {
             /* "Underflow" */
-            selectedLetter = Display_Characters_size - 1;
+            selectedLetter = DisplayInput_Characters_size - 1;
         }
-        else if (step > 0 && (uint8_t)(selectedLetter+step) < sizeof(Display_Characters)/sizeof(Display_Characters[0]))
+        else if (step > 0 && (uint8_t)(selectedLetter+step) < sizeof(DisplayInput_Characters)/sizeof(DisplayInput_Characters[0]))
         {
             /* Can go "up" */
             selectedLetter += step;
@@ -238,7 +238,7 @@ static void Logic_StepLetterNextValue(int8_t step)
         DisplayInput_ActualString[DisplayInput_LetterPosition] = selectedLetter;
 
         /* Convert to realstring */
-        DisplayInput_ActualRealString[DisplayInput_LetterPosition] = Display_Characters[selectedLetter];
+        DisplayInput_ActualRealString[DisplayInput_LetterPosition] = DisplayInput_Characters[selectedLetter];
     }
 
     /* Refresh display */
@@ -247,7 +247,7 @@ static void Logic_StepLetterNextValue(int8_t step)
 
 
 
-void Logic_Display_Input(ScheduleSource_t source)
+void App_DisplayInput_Update(ScheduleSource_t source)
 {
     static bool Display_VibrateLetter = false;
 
@@ -347,19 +347,26 @@ void Logic_Display_Input(ScheduleSource_t source)
 
 
 #ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
-void Logic_Display_CarAnimation(ScheduleSource_t source)
+void App_DisplayCarAnimation_Init(void)
+{
+    Display_LoadCarImage();
+}
+
+
+
+void App_DisplayCarAnimation_Update(ScheduleSource_t source)
 {
     UNUSED_ARGUMENT(source);
 
     /* Car image */
     /* TODO: Optimize this? */
     Display_ChangeCarImage();
-    TaskHandler_SetTaskOnceRun(Task_Display, Display_CarAnimation_RefreshPeriod_Actual);
+    TaskHandler_SetTaskOnceRun(Task_Display, DisplayCarAnimation_RefreshPeriod_Actual);
 }
 
 
 
-void Logic_Display_CarAnimation_Event(ButtonType_t button, ButtonPressType_t type)
+void App_DisplayCarAnimation_Event(ButtonType_t button, ButtonPressType_t type)
 {
     if (type != ButtonPress_ReleasedContinuous)
     {
@@ -367,19 +374,19 @@ void Logic_Display_CarAnimation_Event(ButtonType_t button, ButtonPressType_t typ
         {
             case PressedButton_Right:
                 /* Right */
-                if (Display_CarAnimation_RefreshPeriod_Actual <= Display_CarAnimation_RefreshPeriod_MaxLimit)
+                if (DisplayCarAnimation_RefreshPeriod_Actual <= DisplayCarAnimation_RefreshPeriod_MaxLimit)
                 {
-                    Display_CarAnimation_RefreshPeriod_Actual += Display_CarAnimation_RefreshPeriod_MinLimit;
-                    Logic_Display_CarAnimation(ScheduleSource_Unknown);
+                    DisplayCarAnimation_RefreshPeriod_Actual += DisplayCarAnimation_RefreshPeriod_MinLimit;
+                    App_DisplayCarAnimation_Update(ScheduleSource_Unknown);
                 }
                 break;
 
             case PressedButton_Left:
                 /* Left */
-                if (Display_CarAnimation_RefreshPeriod_Actual >= Display_CarAnimation_RefreshPeriod_MinLimit)
+                if (DisplayCarAnimation_RefreshPeriod_Actual >= DisplayCarAnimation_RefreshPeriod_MinLimit)
                 {
-                    Display_CarAnimation_RefreshPeriod_Actual -= Display_CarAnimation_RefreshPeriod_MinLimit;
-                    Logic_Display_CarAnimation(ScheduleSource_Unknown);
+                    DisplayCarAnimation_RefreshPeriod_Actual -= DisplayCarAnimation_RefreshPeriod_MinLimit;
+                    App_DisplayCarAnimation_Update(ScheduleSource_Unknown);
                 }
                 break;
 
@@ -401,14 +408,14 @@ void Logic_Display_CarAnimation_Event(ButtonType_t button, ButtonPressType_t typ
 
 
 #ifdef CONFIG_DISPLAY_CLOCK_LARGE
-void Logic_Display_LargeClock_Init(void)
+void App_DisplayLargeClock_Init(void)
 {
-    Logic_Display_LargeClock_Update(ScheduleSource_Unknown);
+    App_DisplayLargeClock_Update(ScheduleSource_Unknown);
 }
 
 
 
-void App_LargeClock_Event(ButtonType_t button, ButtonPressType_t type)
+void App_DisplayLargeClock_Event(ButtonType_t button, ButtonPressType_t type)
 {
     #if !defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK)
 
@@ -425,12 +432,12 @@ void App_LargeClock_Event(ButtonType_t button, ButtonPressType_t type)
             if (type == ButtonPress_Long)
             {
                 BUTTON_DEBUG_PRINT("Pressed a long time");
-                Logic_SystemTimeStepConfig();
+                DisplayLargeClock_StepConfig();
             }
             else if (type == ButtonPress_Short)
             {
                 BUTTON_DEBUG_PRINT("Pressed a short time");
-                Logic_SystemTimeStepValue();
+                DisplayLargeClock_StepValue();
             }
         }
     #elif defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK) && (BUTTON_NUM > 1)
@@ -439,14 +446,14 @@ void App_LargeClock_Event(ButtonType_t button, ButtonPressType_t type)
         /* TODO: Up-Down / Right-Up difference... */
         if ((button == PressedButton_Right) || (button == PressedButton_Left))
         {
-            Logic_SystemTimeStepConfig();
+            DisplayLargeClock_StepConfig();
         }
         else if ((button == PressedButton_Up) || (button == PressedButton_Down))
         {
-            if (Logic_SystemTimeConfigState != DisplayClock_HourAndMinute)
+            if (App_Clock_SystemTimeConfigState != DisplayClock_HourAndMinute)
             {
                 /* Not exit step, step values */
-                Logic_SystemTimeStepValue();
+                DisplayLargeClock_StepValue();
             }
             else
             {
@@ -460,7 +467,7 @@ void App_LargeClock_Event(ButtonType_t button, ButtonPressType_t type)
 
 
 
-void Logic_Display_LargeClock_Update(ScheduleSource_t source)
+void App_DisplayLargeClock_Update(ScheduleSource_t source)
 {
     #ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
     /* Display refresh by clock */
@@ -534,14 +541,14 @@ void Logic_Display_LargeClock_Update(ScheduleSource_t source)
 /**
  * @brief    SystemTime - step function
  */
-static void Logic_SystemTimeStepConfig(void)
+static void DisplayLargeClock_StepConfig(void)
 {
     /* Change "setting" column */
     TaskHandler_RequestTaskScheduling(Task_Display);
 
-    Logic_SystemTimeConfigState++;
-    if (Logic_SystemTimeConfigState >= DisplayClock_Count)
-        Logic_SystemTimeConfigState = 0;
+    App_Clock_SystemTimeConfigState++;
+    if (App_Clock_SystemTimeConfigState >= DisplayClock_Count)
+        App_Clock_SystemTimeConfigState = 0;
 }
 
 
@@ -549,9 +556,9 @@ static void Logic_SystemTimeStepConfig(void)
 /**
  * @brief    SystemTime - change (increment) selected value (hour, minute, or none)
  */
-static void Logic_SystemTimeStepValue(void)
+static void DisplayLargeClock_StepValue(void)
 {
-    switch (Logic_SystemTimeConfigState)
+    switch (App_Clock_SystemTimeConfigState)
     {
         case DisplayClock_HourAndMinute:
             /* Unknown */
@@ -582,7 +589,7 @@ static void Logic_SystemTimeStepValue(void)
         case DisplayClock_Count:
         default:
             /* Error ! */
-            Logic_SystemTimeConfigState = 0;
+            App_Clock_SystemTimeConfigState = 0;
             break;
     }
 }
@@ -594,7 +601,7 @@ static void Logic_SystemTimeStepValue(void)
  */
 DisplayClock_ChangeState_t Logic_GetSystemTimeState(void)
 {
-    return Logic_SystemTimeConfigState;
+    return App_Clock_SystemTimeConfigState;
 }
 #endif    /* #ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK */
 

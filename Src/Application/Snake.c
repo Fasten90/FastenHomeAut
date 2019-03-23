@@ -154,7 +154,7 @@ void Snake_Init(void)
 
 
 
-void Logic_Display_Snake(ScheduleSource_t source)
+void Snake_Update(ScheduleSource_t source)
 {
     UNUSED_ARGUMENT(source);
 

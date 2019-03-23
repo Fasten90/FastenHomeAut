@@ -68,7 +68,7 @@ typedef enum
  *----------------------------------------------------------------------------*/
 
 void Snake_Init(void);
-void Logic_Display_Snake(ScheduleSource_t source);
+void Snake_Update(ScheduleSource_t source);
 void Snake_Event(ButtonType_t button, ButtonPressType_t type);
 
 void Snake_Step(SnakeStep_t step);

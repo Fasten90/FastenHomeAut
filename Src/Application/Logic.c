@@ -89,7 +89,7 @@ static volatile bool Logic_Display_ChangedState = false;
 static volatile App_Type_t Logic_Display_ActualState = AppType_MainMenu;
 static volatile App_Type_t Logic_Display_SelectedState = AppType_MainMenu;
 
-static const uint8_t DisplayMenu_MenuListLineOffset = 2;
+static const uint8_t Logic_Display_MenuListLineOffset = 2;
 #endif /* CONFIG_FUNCTION_DISPLAY_MENU */
 
 
@@ -423,14 +423,14 @@ static void Logic_Display_PrintMainMenuList(void)
         /* Clear */
         /* TODO: Not a beautiful solution */
         Display_PrintString("             ",
-                DisplayMenu_MenuListLineOffset + i,            /* <x.> line */
+                Logic_Display_MenuListLineOffset + i,            /* <x.> line */
                 Font_12x8,
                 NO_FORMAT);
 
         /* Print menu name */
         Display_PrintString(
                 AppList[startLine + i].AppName,                /* Menu "name" string */
-                DisplayMenu_MenuListLineOffset + i,            /* <x.> line */
+                Logic_Display_MenuListLineOffset + i,            /* <x.> line */
                 Font_12x8,                /* Font */
                 Logic_Display_SelectedState == startLine+i+1 ? selectedFormat : NO_FORMAT);    /* i + 1, because enum started with "Main" */
     }
@@ -442,7 +442,7 @@ static void Logic_Display_PrintMainMenuList(void)
     {
         Display_PrintString(
                 Logic_MenuList[i],        /* Menu "name" string */
-                i + DisplayMenu_MenuListLineOffset,            /* <x.> line */
+                i + Logic_Display_MenuListLineOffset,            /* <x.> line */
                 Font_12x8,                /* Font */
                 Logic_Display_SelectedState == i+1 ? selectedFormat : NO_FORMAT);    /* i + 1, because enum started with "Main" */
     }

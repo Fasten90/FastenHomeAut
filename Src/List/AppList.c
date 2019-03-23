@@ -36,7 +36,7 @@ const App_List_t AppList[] = {
         .AppName = "Snake",
         .initFunction = Snake_Init,
         .eventFunction = Snake_Event,
-        .updateFunction = Logic_Display_Snake
+        .updateFunction = Snake_Update
     },
     #endif
     #ifdef CONFIG_FUNCTION_DISPLAY_INPUT
@@ -44,23 +44,23 @@ const App_List_t AppList[] = {
         .AppName = "Input",
         .initFunction = App_DisplayInput_Init,
         .eventFunction = App_DisplayInput_Event,
-        .updateFunction = Logic_Display_Input
+        .updateFunction = App_DisplayInput_Update
     },
     #endif
     #ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
     {
         .AppName = "CarAnimation",
-        .initFunction = Display_LoadCarImage,
-        .eventFunction = Logic_Display_CarAnimation_Event,
-        .updateFunction = Logic_Display_CarAnimation
+        .initFunction = App_DisplayCarAnimation_Init,
+        .eventFunction = App_DisplayCarAnimation_Event,
+        .updateFunction = App_DisplayCarAnimation_Update
     },
     #endif
     #ifdef CONFIG_DISPLAY_CLOCK_LARGE
     {
         .AppName = "Clock",
-        .initFunction = Logic_Display_LargeClock_Init,
-        .eventFunction = App_LargeClock_Event,
-        .updateFunction = Logic_Display_LargeClock_Update
+        .initFunction = App_DisplayLargeClock_Init,
+        .eventFunction = App_DisplayLargeClock_Event,
+        .updateFunction = App_DisplayLargeClock_Update
     },
     #endif
 };

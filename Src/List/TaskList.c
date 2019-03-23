@@ -781,7 +781,7 @@ static TaskResult_t Task_PeriodicalSendingFunction(ScheduleSource_t source)
 {
     UNUSED_ARGUMENT(source);
 
-    Logic_PeriodicalSending();
+    App_PeriodicalMessageSending_Run();
 
     return TaskResult_Ok;
 }

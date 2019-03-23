@@ -57,22 +57,23 @@ typedef enum
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void Logic_SetPeriodicalMessageSendg(char * msg);
-void Logic_PeriodicalSending(void);
+void App_PeriodicalMessageSending_Set(char * msg);
+void App_PeriodicalMessageSending_Run(void);
 
 
-void Logic_Display_Input(ScheduleSource_t source);
 void App_DisplayInput_Init(void);
 void App_DisplayInput_Event(ButtonType_t button, ButtonPressType_t type);
+void App_DisplayInput_Update(ScheduleSource_t source);
 
 
-void Logic_Display_CarAnimation_Event(ButtonType_t button, ButtonPressType_t type);
-void Logic_Display_CarAnimation(ScheduleSource_t source);
+void App_DisplayCarAnimation_Init(void);
+void App_DisplayCarAnimation_Event(ButtonType_t button, ButtonPressType_t type);
+void App_DisplayCarAnimation_Update(ScheduleSource_t source);
 
 
-void Logic_Display_LargeClock_Init(void);
-void App_LargeClock_Event(ButtonType_t button, ButtonPressType_t type);
-void Logic_Display_LargeClock_Update(ScheduleSource_t source);
+void App_DisplayLargeClock_Init(void);
+void App_DisplayLargeClock_Event(ButtonType_t button, ButtonPressType_t type);
+void App_DisplayLargeClock_Update(ScheduleSource_t source);
 
 
 
