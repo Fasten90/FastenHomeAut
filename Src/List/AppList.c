@@ -38,32 +38,31 @@ const App_List_t AppList[] = {
         .eventFunction = Snake_Event,
         .updateFunction = Logic_Display_Snake
     },
-#endif
-#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
+    #endif
+    #ifdef CONFIG_FUNCTION_DISPLAY_INPUT
     {
         .AppName = "Input",
         .initFunction = App_DisplayInput_Init,
         .eventFunction = App_DisplayInput_Event,
         .updateFunction = Logic_Display_Input
     },
-#endif
-
-#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
+    #endif
+    #ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
     {
         .AppName = "CarAnimation",
         .initFunction = Display_LoadCarImage,
         .eventFunction = Logic_Display_CarAnimation_Event,
         .updateFunction = Logic_Display_CarAnimation
     },
-#endif
-#ifdef CONFIG_DISPLAY_CLOCK_LARGE
+    #endif
+    #ifdef CONFIG_DISPLAY_CLOCK_LARGE
     {
         .AppName = "Clock",
         .initFunction = Logic_Display_LargeClock_Init,
         .eventFunction = App_LargeClock_Event,
         .updateFunction = Logic_Display_LargeClock_Update
     },
-#endif
+    #endif
 };
 
 const uint8_t AppList_Num = NUM_OF(AppList);
@@ -92,7 +91,8 @@ const uint8_t AppList_Num = NUM_OF(AppList);
  */
 void AppList_Init(void)
 {
-
+    /* Check AppList size */
+    BUILD_ASSERT(NUM_OF(AppList) == (AppType_Count - 1));
 }
 
 

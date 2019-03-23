@@ -21,6 +21,7 @@
 #include "TaskList.h"
 #include "CommandHandler.h"
 #include "SysTime.h"
+#include "AppList.h"
 
 
 #define DisplayInput_LetterPosition_MaxLimit        (11)
@@ -76,6 +77,8 @@ static DisplayClock_ChangeState_t Logic_SystemTimeConfigState = 0;
 /*------------------------------------------------------------------------------
  *  Function declarations
  *----------------------------------------------------------------------------*/
+
+extern void Logic_Display_ChangeState(App_Type_t nextState);
 
 #ifdef CONFIG_FUNCTION_DISPLAY_INPUT
 static void Logic_StepLetterPosition(int8_t step);
@@ -203,7 +206,7 @@ static void Logic_StepLetterNextValue(int8_t step)
         CmdH_ExecuteCommand(str, respBuffer, 50);
         uprintf("Display input command: \"%s\"\r\n", str);
         /* Now, automatically exit to main menu */
-        Logic_Display_ChangeState(Menu_Main);
+        Logic_Display_ChangeState(AppType_MainMenu);
     }
     else
     {
@@ -383,7 +386,7 @@ void Logic_Display_CarAnimation_Event(ButtonType_t button, ButtonPressType_t typ
             case PressedButton_Up:
             case PressedButton_Down:
                 /* Go to Main menu */
-                Logic_Display_ChangeState(Menu_Main);
+                Logic_Display_ChangeState(AppType_MainMenu);
                 break;
 
             case PressedButton_Count:
@@ -410,7 +413,7 @@ void App_LargeClock_Event(ButtonType_t button, ButtonPressType_t type)
     #if !defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK)
 
         /* Go to Main menu */
-        Logic_Display_ChangeState(Menu_Main);
+        Logic_Display_ChangeState(AppType_MainMenu);
         /* TODO: Handle button change functions? */
     #elif defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK) && (BUTTON_NUM == 1)
         /* One button mode */
@@ -449,7 +452,7 @@ void App_LargeClock_Event(ButtonType_t button, ButtonPressType_t type)
             {
                 /* Exit step */
                 /* Go to Main menu */
-                Logic_Display_ChangeState(Menu_Main);
+                Logic_Display_ChangeState(AppType_MainMenu);
             }
         }
     #endif

@@ -67,33 +67,7 @@ typedef struct
     AppInit_FunctionPointer_t initFunction;
     AppEvent_FunctionPointer_t eventFunction;
     AppUpdate_FunctionPointer_t updateFunction;
-
 } App_List_t;
-
-
-
-/* TODO: Move to AppList? */
-typedef enum
-{
-    Menu_Main,
-#ifdef CONFIG_FUNCTION_GAME_SNAKE
-    Menu_Snake,
-#endif
-#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
-    Menu_Input,
-#endif
-#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
-    Menu_Car,
-#endif
-#ifdef CONFIG_DISPLAY_CLOCK_LARGE
-    Menu_LargeClock,
-#endif
-
-    /* XXX: Synchronize with Logic_MenuList */
-
-    /* Count */
-    Menu_Count
-} DisplayMenu_t;
 
 
 
@@ -119,7 +93,6 @@ void Logic_CheckCharger(void);
 
 void Logic_DisplayHandler(ScheduleSource_t source);
 
-void Logic_Display_ChangeState(DisplayMenu_t nextState);
 bool Logic_Display_GetClockIsNeedRefresh(void);
 void Logic_Display_Snake_ChangeToMenu(void);
 

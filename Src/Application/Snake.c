@@ -29,6 +29,7 @@
 #include "MathHelper.h"
 #include "StringHelper.h"
 #include "TaskList.h"
+#include "AppList.h"
 
 
 
@@ -88,6 +89,8 @@ static volatile DisplaySnakeMenu_t Logic_Display_SnakeMenu_ActualState = SnakeMe
 /*------------------------------------------------------------------------------
  *  Function declarations
  *----------------------------------------------------------------------------*/
+
+extern void Logic_Display_ChangeState(App_Type_t nextState);
 
 static bool Snake_StepIsValid(SnakeStep_t lastStep, SnakeStep_t actualStep);
 static void Snake_AddNewCoord(SnakeStep_t step);
@@ -211,9 +214,9 @@ void Snake_Event(ButtonType_t button, ButtonPressType_t type)
             case PressedButton_Right:
             case PressedButton_Left:
                 if (Logic_Display_SnakeMenu_ActualState == SnakeMenu_NewGame)
-                    Logic_Display_ChangeState(Menu_Snake);
+                    Logic_Display_ChangeState(AppType_Snake);
                 else
-                    Logic_Display_ChangeState(Menu_Main);
+                    Logic_Display_ChangeState(AppType_MainMenu);
                 /* Clear SnakeMenu status */
                 Logic_Snake_DisplaySnakeMenu = false;
                 break;
@@ -527,7 +530,7 @@ static void Snake_FinishLose(void)
 
     Snake_GameInProgress = false;
 
-    Logic_Display_ChangeState(Menu_Snake);
+    Logic_Display_ChangeState(AppType_Snake);
     Logic_Display_Snake_ChangeToMenu();
 }
 

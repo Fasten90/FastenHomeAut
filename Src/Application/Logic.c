@@ -28,6 +28,7 @@
 #include "MathHelper.h"
 #include "EventHandler.h"
 #include "EventList.h"
+#include "AppList.h"
 
 #ifdef CONFIG_FUNCTION_CHARGER
 #include "ADC.h"
@@ -84,8 +85,9 @@ static bool Logic_BatteryIsCharging = false;
 
 #ifdef CONFIG_FUNCTION_DISPLAY_MENU
 static volatile bool Logic_Display_ChangedState = false;
-static volatile DisplayMenu_t Logic_Display_ActualState = Menu_Main;
-static volatile DisplayMenu_t Logic_Display_SelectedState = Menu_Main;
+
+static volatile App_Type_t Logic_Display_ActualState = AppType_MainMenu;
+static volatile App_Type_t Logic_Display_SelectedState = AppType_MainMenu;
 
 static const uint8_t DisplayMenu_MenuListLineOffset = 2;
 #endif /* CONFIG_FUNCTION_DISPLAY_MENU */
@@ -95,6 +97,9 @@ static const uint8_t DisplayMenu_MenuListLineOffset = 2;
 /*------------------------------------------------------------------------------
  *  Function declarations
  *----------------------------------------------------------------------------*/
+
+///< This function used from another Apps, but because the App_Type_t, cannot externed at .h file
+void Logic_Display_ChangeState(App_Type_t nextState);
 
 #ifdef CONFIG_FUNCTION_DISPLAY_MENU
 static void Logic_Display_MainMenu();
@@ -116,7 +121,7 @@ void Logic_Display_Init(void)
 {
     Display_Clear();
 
-    if (Logic_Display_ActualState == Menu_Main)
+    if (Logic_Display_ActualState == AppType_MainMenu)
     {
     #ifdef CONFIG_DISPLAY_CLOCK_SMALL
         DateTime_t dateTime;
@@ -125,12 +130,13 @@ void Logic_Display_Init(void)
     #endif
         Logic_Display_PrintMainMenuList();
     }
-    else if (Logic_Display_ActualState < AppList_Num)
+    else if (Logic_Display_ActualState < AppType_Count)
     {
-        AppList[Logic_Display_ActualState].initFunction();
+        AppList[Logic_Display_ActualState-1].initFunction();
     }
     else
     {
+        /* TODO: Error situation */
         Logic_Display_MainMenu();
     }
 
@@ -173,8 +179,8 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
     Logic_RemoteController_Button(button, type);
 #endif
 
-#ifdef CONFIG_FUNCTION_DISPLAY_MENU
-    if (Logic_Display_ActualState == Menu_Main)
+    #ifdef CONFIG_FUNCTION_DISPLAY_MENU
+    if (Logic_Display_ActualState == AppType_MainMenu)
     {
         switch (button)
         {
@@ -189,7 +195,7 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
                 break;
 
             case PressedButton_Down:
-                if (Logic_Display_SelectedState < Menu_Count-1)
+                if (Logic_Display_SelectedState < AppType_Count-1)
                     Logic_Display_SelectedState++;
                 break;
 
@@ -202,17 +208,18 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
         TaskHandler_RequestTaskScheduling(Task_Display);
         return;
     }
+    else if (Logic_Display_ActualState < AppType_Count)
+    {
+        AppList[Logic_Display_ActualState-1].eventFunction(button, type);
+    }
     else
     {
-        if (Logic_Display_ActualState < AppList_Num)
-        {
-            AppList[Logic_Display_ActualState].eventFunction(button, type);
-        }
+        /* TODO: Error situation */
     }
-#endif    /* #ifdef CONFIG_FUNCTION_DISPLAY_MENU */
+    #endif    /* #ifdef CONFIG_FUNCTION_DISPLAY_MENU */
 
 }
-#endif
+#endif /* CONFIG_MODULE_BUTTON_ENABLE || CONFIG_MODULE_BUTTONSIMULATOR_ENABLE */
 
 
 
@@ -285,13 +292,17 @@ void Logic_DisplayHandler(ScheduleSource_t source)
         Logic_Display_Init();
     }
 
-    if (Logic_Display_ActualState < AppList_Num)
+    if (Logic_Display_ActualState == AppType_MainMenu)
     {
-        AppList[Logic_Display_ActualState].updateFunction(source);
+        Logic_Display_MainMenu();
+    }
+    else if (Logic_Display_ActualState < AppType_Count)
+    {
+        AppList[Logic_Display_ActualState-1].updateFunction(source);
     }
     else
     {
-        Logic_Display_MainMenu();
+        /* TODO: Error situation */
     }
 }
 
@@ -299,6 +310,12 @@ void Logic_DisplayHandler(ScheduleSource_t source)
 
 static void Logic_Display_MainMenu(void)
 {
+    /*  +---------------------+
+     *  | HH:mm         [---] |
+     *  |                     |
+     */
+
+
     /* Check Menu list size */
     /* TODO: Delete */
     /* BUILD_ASSERT(NUM_OF(AppL) == (Menu_Count - 1)); */
@@ -342,7 +359,7 @@ static void Logic_Display_MainMenu(void)
     DISPLAY_GENERATE_EVENT(Event_Display_SpiEvent, 0);
 
     /* Only show clock (small - on menu) */
-    if (Logic_Display_ActualState == Menu_Main)
+    if (Logic_Display_ActualState == AppType_MainMenu)
     {
         /* TODO: Optimize... This function run around 14ms from 8MHz clock */
         DateTime_t dateTime;
@@ -356,7 +373,7 @@ static void Logic_Display_MainMenu(void)
 
     DISPLAY_GENERATE_EVENT(Event_Display_SpiEvent, 1);
 
-    static DisplayMenu_t oldSelectedMenu = Menu_Main;
+    static App_Type_t oldSelectedMenu = AppType_MainMenu;
     if (Logic_Display_SelectedState != oldSelectedMenu)
     {
         oldSelectedMenu = Logic_Display_SelectedState;
@@ -434,7 +451,7 @@ static void Logic_Display_PrintMainMenuList(void)
 
 
 
-void Logic_Display_ChangeState(DisplayMenu_t nextState)
+void Logic_Display_ChangeState(App_Type_t nextState)
 {
     Logic_Display_ChangedState = true;
     Logic_Display_ActualState = nextState;
@@ -445,7 +462,7 @@ void Logic_Display_ChangeState(DisplayMenu_t nextState)
 
 bool Logic_Display_GetClockIsNeedRefresh(void)
 {
-    return (Logic_Display_ActualState == Menu_Main ? true : false);
+    return (Logic_Display_ActualState == AppType_MainMenu ? true : false);
 }
 
 
