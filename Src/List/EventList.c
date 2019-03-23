@@ -119,7 +119,7 @@ const EventId_t EventsNum = NUM_OF(EventList);
 /**
  * @brief    Initialize EventList - check
  */
-void EventList_init(void)
+void EventList_Init(void)
 {
     /* Check EventList size */
     BUILD_ASSERT(NUM_OF(EventList) == Event_Count);

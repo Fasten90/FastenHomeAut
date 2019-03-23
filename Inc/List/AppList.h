@@ -1,25 +1,23 @@
 /*
- *    Bluetooth_HC05.h
- *    Created on:   2017-10-21
- *    Author:       Vizi Gabor
+ *    AppList.h
+ *    Created on:   2019-03-22
+ *    Author:       Fasten
  *    E-mail:       vizi.gabor90@gmail.com
  *    Function:     -
  *    Target:       STM32Fx
  */
 
-#ifndef BLUETOOTH_HC05_H_
-#define BLUETOOTH_HC05_H_
-
-
+#ifndef APPLIST_H_
+#define APPLIST_H_
 
 
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
 
-
-#include "compiler.h"
-#include "UART.h"
+#include "options.h"
+#include "AppList.h"
+#include "Logic.h"
 
 
 
@@ -27,17 +25,33 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define BLUETOOTH_RX_BUFFER_SIZE            (100)
-#define BLUETOOTH_TX_BUFFER_SIZE            (100)
-
-#define BLUETOOTH_PROCESS_BUFFER_SIZE        (100)
-#define BLUETOOTH_RESPONSE_BUFFER_SIZE        (100)
-
 
 
 /*------------------------------------------------------------------------------
  *  Type definitions
  *----------------------------------------------------------------------------*/
+
+typedef enum
+{
+    AppType_MainMenu,
+
+#ifdef CONFIG_FUNCTION_GAME_SNAKE
+    AppType_Snake,
+#endif
+#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
+    AppType_Input,
+#endif
+#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
+    AppType_CarAnimation,
+#endif
+#ifdef CONFIG_DISPLAY_CLOCK_LARGE
+    AppType_Clock,
+#endif
+
+    /* Note: Last item, do not put anything after */
+    AppType_Count
+
+} App_Type_t;
 
 
 
@@ -45,20 +59,16 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-extern UART_HandleTypeDef Bluetooth_UartHandle;
-extern UART_Handler_t Bluetooth;
+extern const App_List_t AppList[];
+
+extern const uint8_t AppList_Num;
 
 
 
 /*------------------------------------------------------------------------------
- *  Global function declarations
+ *  Function declarations
  *----------------------------------------------------------------------------*/
 
-void Bluetooth_HC05_Init(void);
-void Bluetooth_ReceiveEnable(void);
-size_t Bluetooth_SendMessage(const char *msg);
-void Bluetooth_ProcessReceivedCharacters(void);
 
 
-
-#endif /* BLUETOOTH_HC05_H_ */
+#endif /* APPLIST_H_ */

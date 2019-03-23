@@ -19,6 +19,7 @@
 #include "options.h"
 #include "Button.h"
 #include "TaskHandler.h"
+#include "SmallApps.h"
 
 #ifdef CONFIG_BUTTON_DEBUG_ENABLE
 #include "DebugUart.h"
@@ -50,69 +51,24 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
-#if defined(CONFIG_FUNCTION_REMOTECONTROLLER)
-typedef enum
+///< App Function pointers
+
+typedef void (*AppInit_FunctionPointer_t)(void);
+
+typedef void (*AppEvent_FunctionPointer_t)(ButtonType_t button, ButtonPressType_t type);
+
+typedef void (*AppUpdate_FunctionPointer_t)(ScheduleSource_t source);
+
+
+///< App list struct
+typedef struct
 {
-    Car_DcForward_Stop,
-    Car_DcForward_Fordward,
-    Car_DcForward_Back
-} Car_DcForward_t;
+    char_t * AppName;
+    AppInit_FunctionPointer_t initFunction;
+    AppEvent_FunctionPointer_t eventFunction;
+    AppUpdate_FunctionPointer_t updateFunction;
+} App_List_t;
 
-
-typedef enum
-{
-    Car_Turning_Straight,
-    Car_Turning_Left,
-    Car_Turning_Right
-} Car_Turning_t;
-#endif
-
-
-
-#if defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK)
-typedef enum
-{
-    DisplayClock_HourAndMinute,
-    DisplayClock_Hour,
-    DisplayClock_Minute,
-
-    /* Do not use! */
-    DisplayClock_Count
-} DisplayClock_ChangeState_t;
-#endif
-
-
-
-typedef enum
-{
-    Menu_Main,
-#ifdef CONFIG_FUNCTION_GAME_SNAKE
-    Menu_Snake,
-#endif
-#ifdef CONFIG_FUNCTION_DISPLAY_INPUT
-    Menu_Input,
-#endif
-#ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
-    Menu_Car,
-#endif
-#ifdef CONFIG_DISPLAY_CLOCK_LARGE
-    Menu_LargeClock,
-#endif
-
-    /* XXX: Synchronize with Logic_MenuList */
-
-    /* Count */
-    Menu_Count
-} DisplayMenu_t;
-
-
-typedef enum
-{
-    SnakeMenu_NewGame,
-    SnakeMenu_Exit,
-
-    SnakeMenu_Count
-} DisplaySnakeMenu_t;
 
 
 /*------------------------------------------------------------------------------
@@ -137,14 +93,8 @@ void Logic_CheckCharger(void);
 
 void Logic_DisplayHandler(ScheduleSource_t source);
 
-void Logic_Display_ChangeState(DisplayMenu_t nextState);
 bool Logic_Display_GetClockIsNeedRefresh(void);
 void Logic_Display_Snake_ChangeToMenu(void);
-
-void Logic_RemoteController_SendMessage(void);
-
-void Logic_SetPeriodicalMessageSendg(char * msg);
-void Logic_PeriodicalSending(void);
 
 
 

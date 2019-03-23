@@ -28,6 +28,21 @@
 #include "Snake.h"
 #include "MathHelper.h"
 #include "StringHelper.h"
+#include "TaskList.h"
+#include "AppList.h"
+
+
+
+/* TODO: Optimizing */
+#define SNAKE_POINT_PIXEL_SIZE      (4)
+
+#define SNAKE_HEADER_HEIGHT         (10)
+
+#define SNAKE_SIZE_X                (DISPLAY_WIDTH/SNAKE_POINT_PIXEL_SIZE)
+#define SNAKE_SIZE_Y                ((DISPLAY_HEIGHT-SNAKE_HEADER_HEIGHT)/SNAKE_POINT_PIXEL_SIZE)
+
+
+#define PRINT(...)                  Debug_Printf(Debug_GameSnake, __VA_ARGS__)
 
 
 
@@ -47,17 +62,11 @@ typedef struct
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-/* TODO: Optimizing */
-#define SNAKE_POINT_PIXEL_SIZE    (4)
-
-#define SNAKE_HEADER_HEIGHT        (10)
-
-#define SNAKE_SIZE_X            (DISPLAY_WIDTH/SNAKE_POINT_PIXEL_SIZE)
-#define SNAKE_SIZE_Y            ((DISPLAY_HEIGHT-SNAKE_HEADER_HEIGHT)/SNAKE_POINT_PIXEL_SIZE)
 
 
-#define PRINT(...)                Debug_Printf(Debug_GameSnake, __VA_ARGS__)
-
+/*------------------------------------------------------------------------------
+ *  Local variables
+ *----------------------------------------------------------------------------*/
 
 uint8_t Snake_Matrix[SNAKE_SIZE_X][SNAKE_SIZE_Y] = { 0 };
 
@@ -71,17 +80,17 @@ bool Snake_CaptureEvent = false;
 
 bool Snake_GameInProgress = false;
 
+static bool Logic_Snake_DisplaySnakeMenu = false;
 
-
-/*------------------------------------------------------------------------------
- *  Local variables
- *----------------------------------------------------------------------------*/
+static volatile DisplaySnakeMenu_t Logic_Display_SnakeMenu_ActualState = SnakeMenu_NewGame;
 
 
 
 /*------------------------------------------------------------------------------
  *  Function declarations
  *----------------------------------------------------------------------------*/
+
+extern void Logic_Display_ChangeState(App_Type_t nextState);
 
 static bool Snake_StepIsValid(SnakeStep_t lastStep, SnakeStep_t actualStep);
 static void Snake_AddNewCoord(SnakeStep_t step);
@@ -97,10 +106,14 @@ static void Snake_PutGiftPosition(uint32_t giftPos);
 static void Snake_DrawGiftToPoint(uint16_t x, uint16_t y);
 static void Snake_DrawPoints(uint16_t x, uint16_t y);
 
+static void Logic_Display_PrintSnakeMenuList(void);
+
+
 
 /*------------------------------------------------------------------------------
  *  Functions
  *----------------------------------------------------------------------------*/
+
 
 
 /**
@@ -108,27 +121,146 @@ static void Snake_DrawPoints(uint16_t x, uint16_t y);
  */
 void Snake_Init(void)
 {
-    Snake_StartPoint.x = SNAKE_SIZE_X/2 + 1;
-    Snake_StartPoint.y = SNAKE_SIZE_Y/2;
-    Snake_LastStep = Step_Right;
+    if (!Logic_Snake_DisplaySnakeMenu)
+    {
+        /* Normal init */
+        Snake_StartPoint.x = SNAKE_SIZE_X/2 + 1;
+        Snake_StartPoint.y = SNAKE_SIZE_Y/2;
+        Snake_LastStep = Step_Right;
 
-    Snake_Score = 0;
+        Snake_Score = 0;
 
-    Snake_GameInProgress = true;
+        Snake_GameInProgress = true;
 
-    memset(Snake_Matrix, 0, sizeof(Snake_Matrix));
+        memset(Snake_Matrix, 0, sizeof(Snake_Matrix));
 
-    /*
-     * Start small snake with --> format
-     */
-    Snake_Matrix[Snake_StartPoint.x][Snake_StartPoint.y] = Step_Right;
-    Snake_Matrix[Snake_StartPoint.x-1][Snake_StartPoint.y] = Step_Right;
-    Snake_Matrix[Snake_StartPoint.x-2][Snake_StartPoint.y] = Step_Right;
+        /*
+         * Start small snake with --> format
+         */
+        Snake_Matrix[Snake_StartPoint.x][Snake_StartPoint.y] = Step_Right;
+        Snake_Matrix[Snake_StartPoint.x-1][Snake_StartPoint.y] = Step_Right;
+        Snake_Matrix[Snake_StartPoint.x-2][Snake_StartPoint.y] = Step_Right;
 
-    Snake_EndPoint.x = Snake_StartPoint.x-2;
-    Snake_EndPoint.y = Snake_StartPoint.y;
+        Snake_EndPoint.x = Snake_StartPoint.x-2;
+        Snake_EndPoint.y = Snake_StartPoint.y;
 
-    Snake_PutNewGift();
+        Snake_PutNewGift();
+    }
+    else
+    {
+        Logic_Display_PrintSnakeMenuList();
+    }
+}
+
+
+
+void Snake_Update(ScheduleSource_t source)
+{
+    UNUSED_ARGUMENT(source);
+
+    static SnakeStep_t SnakeStep = Step_Unknown;
+
+    /* Periodical stepping */
+    SnakeStep = Snake_GetLastStep();
+
+    Snake_Step(SnakeStep);
+
+    TaskHandler_SetTaskOnceRun(Task_Display, 500);
+}
+
+
+
+void Snake_Event(ButtonType_t button, ButtonPressType_t type)
+{
+    if (!Logic_Snake_DisplaySnakeMenu)
+    {
+        /* Check buttons at Snake game */
+        if (type != ButtonPress_ReleasedContinuous)
+        {
+            switch (button)
+            {
+                case PressedButton_Right:
+                    /* Right */
+                    Snake_Step(Step_Right);
+                    break;
+
+                case PressedButton_Left:
+                    /* Left */
+                    Snake_Step(Step_Left);
+                    break;
+
+                case PressedButton_Up:
+                    /* Up */
+                    Snake_Step(Step_Up);
+                    break;
+
+                case PressedButton_Down:
+                    /* Down */
+                    Snake_Step(Step_Down);
+                    break;
+
+                case PressedButton_Count:
+                default:
+                    /* Error! */
+                    break;
+            }
+        }
+    }
+    else
+    {
+        /* Check buttons at Snake menu */
+        switch (button)
+        {
+            case PressedButton_Right:
+            case PressedButton_Left:
+                if (Logic_Display_SnakeMenu_ActualState == SnakeMenu_NewGame)
+                    Logic_Display_ChangeState(AppType_Snake);
+                else
+                    Logic_Display_ChangeState(AppType_MainMenu);
+                /* Clear SnakeMenu status */
+                Logic_Snake_DisplaySnakeMenu = false;
+                break;
+
+            case PressedButton_Up:
+                if (Logic_Display_SnakeMenu_ActualState > 0)
+                    Logic_Display_SnakeMenu_ActualState--;
+                break;
+
+            case PressedButton_Down:
+                if (Logic_Display_SnakeMenu_ActualState < SnakeMenu_Count-1)
+                    Logic_Display_SnakeMenu_ActualState++;
+                break;
+
+            case PressedButton_Count:
+            default:
+                /* Error! */
+                break;
+        }
+
+        TaskHandler_RequestTaskScheduling(Task_Display);
+    }
+}
+
+
+
+static void Logic_Display_PrintSnakeMenuList(void)
+{
+    FontFormat_t format = { 0 };
+    format.Format_Inverse = 1;
+
+    Display_PrintString("New game", 3, Font_12x8,
+            (Logic_Display_SnakeMenu_ActualState == SnakeMenu_NewGame) ? format : NO_FORMAT);
+    Display_PrintString("Exit", 4, Font_12x8,
+            (Logic_Display_SnakeMenu_ActualState == SnakeMenu_Exit) ? format : NO_FORMAT);
+
+    Display_Activate();
+}
+
+
+
+inline void Logic_Display_Snake_ChangeToMenu(void)
+{
+    Logic_Snake_DisplaySnakeMenu = true;
 }
 
 
@@ -398,7 +530,7 @@ static void Snake_FinishLose(void)
 
     Snake_GameInProgress = false;
 
-    Logic_Display_ChangeState(Menu_Snake);
+    Logic_Display_ChangeState(AppType_Snake);
     Logic_Display_Snake_ChangeToMenu();
 }
 

@@ -1,14 +1,15 @@
 /*
- *    Snake.h
- *    Created on:   2017-09-06
- *    Author:       Vizi Gabor
+ *    SmallApps.h
+ *    Created on:   2019-03-22
+ *    Author:       Fasten
  *    E-mail:       vizi.gabor90@gmail.com
- *    Function:     Snake game
+ *    Function:     -
  *    Target:       STM32Fx
  */
 
-#ifndef SNAKE_H_
-#define SNAKE_H_
+#ifndef SMALLAPPS_H_
+#define SMALLAPPS_H_
+
 
 
 
@@ -16,8 +17,9 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
-#include "compiler.h"
+#include "options.h"
 #include "Button.h"
+#include "TaskHandler.h"
 
 
 
@@ -31,29 +33,17 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
+#if defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK)
 typedef enum
 {
-    Step_Unknown,
+    DisplayClock_HourAndMinute,
+    DisplayClock_Hour,
+    DisplayClock_Minute,
 
-    /* "User buttons" */
-    Step_Up,
-    Step_Down,
-    Step_Right,
-    Step_Left,
-
-    Step_Gift,
-
-    /* Do not use! Only for checking */
-    Step_Count
-} SnakeStep_t;
-
-typedef enum
-{
-    SnakeMenu_NewGame,
-    SnakeMenu_Exit,
-
-    SnakeMenu_Count
-} DisplaySnakeMenu_t;
+    /* Do not use! */
+    DisplayClock_Count
+} DisplayClock_ChangeState_t;
+#endif
 
 
 
@@ -67,15 +57,24 @@ typedef enum
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void Snake_Init(void);
-void Snake_Update(ScheduleSource_t source);
-void Snake_Event(ButtonType_t button, ButtonPressType_t type);
-
-void Snake_Step(SnakeStep_t step);
-void Snake_Draw(void);
-SnakeStep_t Snake_GetLastStep(void);
+void App_PeriodicalMessageSending_Set(char * msg);
+void App_PeriodicalMessageSending_Run(void);
 
 
+void App_DisplayInput_Init(void);
+void App_DisplayInput_Event(ButtonType_t button, ButtonPressType_t type);
+void App_DisplayInput_Update(ScheduleSource_t source);
 
 
-#endif /* SNAKE_H_ */
+void App_DisplayCarAnimation_Init(void);
+void App_DisplayCarAnimation_Event(ButtonType_t button, ButtonPressType_t type);
+void App_DisplayCarAnimation_Update(ScheduleSource_t source);
+
+
+void App_DisplayLargeClock_Init(void);
+void App_DisplayLargeClock_Event(ButtonType_t button, ButtonPressType_t type);
+void App_DisplayLargeClock_Update(ScheduleSource_t source);
+
+
+
+#endif /* SMALLAPPS_H_ */

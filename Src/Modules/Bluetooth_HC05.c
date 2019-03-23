@@ -22,6 +22,7 @@
 #include "CommandHandler.h"
 #include "Bluetooth_HC05.h"
 #include "DebugUart.h"
+#include "TaskList.h"
 
 
 

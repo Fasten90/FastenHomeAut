@@ -1,14 +1,14 @@
 /*
- *    Snake.h
- *    Created on:   2017-09-06
- *    Author:       Vizi Gabor
+ *    RemoteController.h
+ *    Created on:   2019-03-22
+ *    Author:       Fasten
  *    E-mail:       vizi.gabor90@gmail.com
- *    Function:     Snake game
+ *    Function:     -
  *    Target:       STM32Fx
  */
 
-#ifndef SNAKE_H_
-#define SNAKE_H_
+#ifndef REMOTECONTROLLER_H_
+#define REMOTECONTROLLER_H_
 
 
 
@@ -16,7 +16,6 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
-#include "compiler.h"
 #include "Button.h"
 
 
@@ -31,29 +30,22 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
+#if defined(CONFIG_FUNCTION_REMOTECONTROLLER)
 typedef enum
 {
-    Step_Unknown,
+    Car_DcForward_Stop,
+    Car_DcForward_Fordward,
+    Car_DcForward_Back
+} Car_DcForward_t;
 
-    /* "User buttons" */
-    Step_Up,
-    Step_Down,
-    Step_Right,
-    Step_Left,
-
-    Step_Gift,
-
-    /* Do not use! Only for checking */
-    Step_Count
-} SnakeStep_t;
 
 typedef enum
 {
-    SnakeMenu_NewGame,
-    SnakeMenu_Exit,
-
-    SnakeMenu_Count
-} DisplaySnakeMenu_t;
+    Car_Turning_Straight,
+    Car_Turning_Left,
+    Car_Turning_Right
+} Car_Turning_t;
+#endif
 
 
 
@@ -67,15 +59,9 @@ typedef enum
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void Snake_Init(void);
-void Snake_Update(ScheduleSource_t source);
-void Snake_Event(ButtonType_t button, ButtonPressType_t type);
-
-void Snake_Step(SnakeStep_t step);
-void Snake_Draw(void);
-SnakeStep_t Snake_GetLastStep(void);
+void Logic_RemoteController_Button(ButtonType_t button, ButtonPressType_t type);
+void Logic_RemoteController_SendMessage(void);
 
 
 
-
-#endif /* SNAKE_H_ */
+#endif /* REMOTECONTROLLER_H_ */
