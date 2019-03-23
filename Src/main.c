@@ -137,6 +137,11 @@
  * - Win32 (tested)
  *
  *
+ * Win32:
+ * ------------------------
+ * - Recommended Console size: 130x67
+ *
+ *
  * How development?
  * ------------------------
  *
