@@ -52,11 +52,11 @@ const IO_Output_Record_t IO_Output_List[] =
 #endif
 
     /*
-     * XXX: Add new IO ouput here
+     * XXX: Add new IO output here
      * GPIO_TypeDef * GPIO_Port;            ///< GPIO port
-     * uint32_t GPIO_Pin;                    ///< GPIO Pin
+     * uint32_t GPIO_Pin;                   ///< GPIO Pin
      * LED_Status_t lowVoltageState;        ///< Low voltage state
-     * const char * const name;                ///< Name of LED
+     * const char * const name;             ///< Name of LED
      */
 
     /* NOTE: Be careful, when change the order and num, synchronize with LED_NUM_MAX define */

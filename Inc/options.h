@@ -53,7 +53,7 @@
 
 
 ///< Remote controller (for car) function
-/* define CONFIG_FUNCTION_REMOTECONTROLLER_CAR */
+/* #define CONFIG_FUNCTION_REMOTECONTROLLER_CAR */
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
     #ifndef CONFIG_MODULE_MOTOR_ENABLE
         #define CONFIG_MODULE_MOTOR_ENABLE
@@ -66,7 +66,7 @@
 
 
 ///< Remote controller (for controller) function
-/* define CONFIG_FUNCTION_REMOTECONTROLLER */
+/* #define CONFIG_FUNCTION_REMOTECONTROLLER */
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER
     #ifndef CONFIG_MODULE_BUTTON_ENABLE
         #define CONFIG_MODULE_BUTTON_ENABLE
@@ -86,8 +86,6 @@
 
 
 #define CONFIG_FUNCTION_DISPLAY
-
-
 #ifdef CONFIG_FUNCTION_DISPLAY
     ///< Display: Menu
     #define CONFIG_FUNCTION_DISPLAY_MENU
@@ -178,7 +176,7 @@
 
 
 ///< Periodical sending UART message function
-/* define CONFIG_FUNCTION_PERIODICAL_SENDING */
+#define CONFIG_FUNCTION_PERIODICAL_SENDING /* */
 
 
 #ifdef CONFIG_REQUIRE_DISPLAY

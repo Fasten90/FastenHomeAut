@@ -123,7 +123,7 @@ void IO_Init(void)
     /* Turn off all IOs */
     for (i = 0; i < (IO_Output_Count - 1); i++)
     {
-        /* Start from i+1 because we shall start after "Unknown" */
+        /* Start from i+1 because we shall start after "IO_Output_Unknown" */
         IO_Output_SetStatus(i+1, IO_Output_Cmd_SetOff);
     }
 
@@ -181,7 +181,7 @@ static void IO_CheckList(void)
 
 /**
  * @brief    IO (e.g. LED) blinking in infinite loop
- * @note    !! It is blocking !!
+ * @note     !! It is blocking !!
  */
 void IO_Output_Test(void)
 {
@@ -261,7 +261,7 @@ IO_Status_t IO_Output_SetStatus(IO_Output_Name_t ioName, IO_Output_Cmd_t ioCmd)
         }
 
         /* Return with IO status, so IO_Output_Cmd_GetStatus state is handled with this */
-        /* eturn IO_OUT_STATUS(); */
+        /* return IO_OUT_STATUS(); */
         const GPIO_PinState pinState = HAL_GPIO_ReadPin(port, pin);
 
         status = (lowVoltageState == IO_Status_Off)
@@ -276,8 +276,8 @@ IO_Status_t IO_Output_SetStatus(IO_Output_Name_t ioName, IO_Output_Cmd_t ioCmd)
 
 /**
  * @brief    Get IO Output status
- * @return    true, if high
- *             false, if low
+ * @return   true, if high
+ *           false, if low
  */
 IO_Status_t IO_Output_GetStatus(IO_Output_Name_t ioName)
 {
@@ -422,11 +422,10 @@ size_t IO_Output_PrintStates(char *str)
 #if defined(LED_TASK_PWM_STYLE)
 /**
  * @brief    LED Task - PWM style
- * @note    Call this function periodically - 2 ms times
+ * @note     Call this function periodically - 2 ms times
  */
 void IO_LED_PWMTask(void)
 {
-
     /* Blue LED blinking like PWM */
 
     /* 50 Hz --> 20ms */
