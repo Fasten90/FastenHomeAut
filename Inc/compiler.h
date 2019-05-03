@@ -138,12 +138,14 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 ///< Breakpoint
 #ifdef CONFIG_DEBUG_MODE
-    #ifndef CONFIG_PLATFORM_PC_WINDOWS
+    #if !defined(CONFIG_PLATFORM_PC_WINDOWS)
     /* ASM: Breakpoint */
     #define DEBUG_BREAKPOINT()        __asm("BKPT #0\n")
-    #else
+    #elif defined (__WIN32__)
     #include "Windows.h"
     #define DEBUG_BREAKPOINT()        DebugBreak()
+    #elif defined (__linux__)
+    #warning "Linux Debug breakpoint does not supported yet"
     #endif
 #else
 #define DEBUG_BREAKPOINT()
