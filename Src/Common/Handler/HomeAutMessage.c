@@ -15,7 +15,7 @@
 #include "DebugUart.h"
 
 #ifdef CONFIG_MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
-#include "unittest.h"
+#include "UnitTest.h"
 #endif
 
 

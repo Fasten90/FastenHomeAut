@@ -20,7 +20,7 @@
 #include "StringHelper.h"
 
 #ifdef CONFIG_MODULE_STRING_UNITTEST_ENABLE
-    #include "unittest.h"
+    #include "UnitTest.h"
 #endif
 
 
