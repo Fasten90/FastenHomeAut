@@ -29,7 +29,10 @@ pipelines:
 
           - cmake --version
 
-          - cd $BITBUCKET_CLONE_DIR
+          # TODO: Perhaps does not need
+          #- cd $BITBUCKET_CLONE_DIR
+          - echo 'List actual directory'
+          - ls
           
           #- mkdir Out
           #- cd Out
