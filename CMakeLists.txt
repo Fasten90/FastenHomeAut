@@ -19,7 +19,7 @@ if(DEFINED ENV{CI})
     # Include list
     # ".." is necessary because make called from <project>\build directory
 
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -IDrivers/Windows/Inc -IInc/Common -IInc/Communication -IInc/HwTester -IInc/Modules -IInc -IInc/Application -IInc/List -IInc/Display -IInc/Common/Helper -IInc/Common/Handler -IInc/SelfTest -DCONFIG_USE_PANEL_PC=1")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I../Drivers/Windows/Inc -I../Inc/Common -I../Inc/Communication -I../Inc/HwTester -I../Inc/Modules -I../Inc -I../Inc/Application -I../Inc/List -I../Inc/Display -I../Inc/Common/Helper -I../Inc/Common/Handler -I../Inc/SelfTest -DCONFIG_USE_PANEL_PC=1")
 
 else()
     # LOCAL build
