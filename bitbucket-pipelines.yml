@@ -40,7 +40,7 @@ pipelines:
           - cd ./Out
           #- mkdir CMakeBuild
           #- cd CMakeBuild
-          - ls
+          - pwd
 
           # Call the CMake.
           #- cmake ../..
