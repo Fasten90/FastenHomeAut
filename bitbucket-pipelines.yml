@@ -36,8 +36,8 @@ pipelines:
           # Win: cd
           - ls
           
-          - mkdir ./Out
-          - cd ./Out
+          - mkdir build
+          - cd build
           #- mkdir CMakeBuild
           #- cd CMakeBuild
           - pwd
