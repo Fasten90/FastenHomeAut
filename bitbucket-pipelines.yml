@@ -38,7 +38,8 @@ pipelines:
 
           # Call the CMake.
           #- cmake ../..
-          - cmake
+          # Normally: "- cmake" is enough
+          - cmake -D"CMAKE_MAKE_PROGRAM:FILEPATH=make.exe" -D"CMAKE_C_COMPILER:FILEPATH=gcc.exe" -D"CMAKE_CXX_COMPILER:FILEPATH=g++.exe" CC=gcc -G "MinGW Makefiles" ../..
 
           # Build the project.
           - echo 'Start Make'
