@@ -30,7 +30,7 @@ pipelines:
           - cmake --version
 
           # TODO: Perhaps does not need
-          - cd $BITBUCKET_CLONE_DIR
+          #- cd $BITBUCKET_CLONE_DIR
           - echo 'List actual directory'
           - pwd
           # Win: cd
