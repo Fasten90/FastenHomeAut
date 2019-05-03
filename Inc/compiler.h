@@ -146,6 +146,10 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
     #define DEBUG_BREAKPOINT()        DebugBreak()
     #elif defined (__linux__)
     #warning "Linux Debug breakpoint does not supported yet"
+    #define DEBUG_BREAKPOINT()
+    #else
+    #warning "Unknown architect - breakpoint does not used"
+    #define DEBUG_BREAKPOINT()
     #endif
 #else
 #define DEBUG_BREAKPOINT()
