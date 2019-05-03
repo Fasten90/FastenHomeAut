@@ -29,16 +29,16 @@ pipelines:
 
           - cmake --version
 
-          #- cd $BITBUCKET_CLONE_DIR
+          - cd $BITBUCKET_CLONE_DIR
           
-          - mkdir Out
-          - cd Out
-          - mkdir CMakeBuild
-          - cd CMakeBuild
+          #- mkdir Out
+          #- cd Out
+          #- mkdir CMakeBuild
+          #- cd CMakeBuild
 
           # Call the CMake.
-          - cmake ..\..
-          #- cmake ..
+          #- cmake ../..
+          - cmake
 
           # Build the project.
           - echo 'Start Make'
