@@ -7,49 +7,46 @@ project (FastenHomeAut)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -std=c11")
 
 
+# Compiler type
+message("Compiler ID: ${CMAKE_C_COMPILER_ID}")
+
+
 # CI vs Local build
 # Includes, compilers
 if(DEFINED ENV{CI})
     # CI build
     message(STATUS "CI environment variable defined")
-
-    # Compiler type
-    message("Compiler ID: ${CMAKE_C_COMPILER_ID}")
-
-    # Include list
-    # ".." is necessary because make called from <project>\build directory
-
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I../Drivers/Windows/Inc -I../Inc/Common -I../Inc/Communication -I../Inc/HwTester -I../Inc/Modules -I../Inc -I../Inc/Application -I../Inc/List -I../Inc/Display -I../Inc/Common/Helper -I../Inc/Common/Handler -I../Inc/SelfTest -DCONFIG_USE_PANEL_PC=1")
-
 else()
     # LOCAL build
     message(STATUS "CI environment variable has not defined")
+endif()
 
-    # Include list
-    # ".." is necessary because make called from <project>\build directory
-    # Now used: "../.." because <project>/Out/<MakeBuildDirectory>
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I../../Drivers/Windows/Inc -I../../Inc/Common -I../../Inc/Communication -I../../Inc/HwTester -I../../Inc/Modules -I../../Inc -I../../Inc/Application -I../../Inc/List -I../../Inc/Display -I../../Inc/Common/Helper -I../../Inc/Common/Handler -I../../Inc/SelfTest -DCONFIG_USE_PANEL_PC=1")
 
-    # Compiler type
-    message("Compiler ID: ${CMAKE_C_COMPILER_ID}")
+# Include list
+# ".." is necessary because make called from <project>\build directory
+# Now used: "../.." because <project>/Out/<MakeBuildDirectory>
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I../../Drivers/Windows/Inc -I../../Inc/Common -I../../Inc/Communication -I../../Inc/HwTester -I../../Inc/Modules -I../../Inc -I../../Inc/Application -I../../Inc/List -I../../Inc/Display -I../../Inc/Common/Helper -I../../Inc/Common/Handler -I../../Inc/SelfTest -DCONFIG_USE_PANEL_PC=1")
 
-    # Set compiler dependent settings
-    if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
-        # Clang error suppression
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__clang__=1")
-        # using Clang
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/Programs/Engineer/LLVM/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v -o Out/ClangCmakeCompiled/")
-    elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
-        # using GCC, MinGW32, MinGW64
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__clang__=1")
-    elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "TinyCC")
-        # using TCC
-        # TCC include
-        # TODO: Why not necessary?
-        #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/Programs/Engineer/tcc/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v -o Out/CmakeTccCompiled/")
-        # Memory and Bound checks: -b # TODO: Not works yet
-        #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -b")
-    endif()
+# Compiler type
+message("Compiler ID: ${CMAKE_C_COMPILER_ID}")
+
+# Set compiler dependent settings
+if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
+    # Clang error suppression
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__clang__=1")
+    # using Clang
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/Programs/Engineer/LLVM/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v -o Out/ClangCmakeCompiled/")
+elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
+    # using GCC, MinGW32, MinGW64
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__clang__=1")
+elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "TinyCC")
+    # using TCC
+    message("Compiler TCC - TODO")
+    # TCC include
+    # TODO: Why not necessary?
+    #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/Programs/Engineer/tcc/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v -o Out/CmakeTccCompiled/")
+    # Memory and Bound checks: -b # TODO: Not works yet
+    #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -b")
 endif()
 
 

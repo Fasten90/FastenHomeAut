@@ -36,17 +36,16 @@ pipelines:
           # Win: cd
           - ls
           
-          - mkdir build
-          - cd build
-          #- mkdir CMakeBuild
-          #- cd CMakeBuild
+          - mkdir Out
+          - cd Out
+          - mkdir CMakeBuild
+          - cd CMakeBuild
           - pwd
 
           # Call the CMake.
-          #- cmake ../..
-          # Normally: "- cmake" is enough
-          - cmake ..
-          #- cmake CC=gcc ..
+          # Normally: "- cmake" or "-cmake .." used
+          - cmake ../..
+          #- cmake CC=gcc ../..
           # -D"CMAKE_MAKE_PROGRAM:FILEPATH=make.exe" -D"CMAKE_C_COMPILER:FILEPATH=gcc.exe" -D"CMAKE_CXX_COMPILER:FILEPATH=g++.exe" CC=gcc -G "MinGW Makefiles"
 
           # Build the project.
