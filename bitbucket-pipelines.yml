@@ -39,7 +39,7 @@ pipelines:
 
           # Call the CMake.
           #- cmake ../..
-          cmake
+          - cmake
 
           # Build the project.
           - echo 'Start Make'
