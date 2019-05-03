@@ -31,7 +31,6 @@ pipelines:
 
           - cd $BITBUCKET_CLONE_DIR
           
-          
           #- mkdir Out
           #- cd Out
           #- mkdir CMakeBuild
