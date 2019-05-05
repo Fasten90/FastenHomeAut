@@ -25,8 +25,7 @@
 // CMSIS files include
 #include "core_windows.h"
 
-// TODO: rename this file?
-#include "stm32f030xc.h"
+#include "x86.h"
 
 // TODO: Put to conf file at Inc dir?
 #include "x86_hal_dma.h"
