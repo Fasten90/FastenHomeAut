@@ -44,7 +44,7 @@
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "windows_hal_def.h"
+#include "x86_hal_def.h"
 
 /** @addtogroup STM32F0xx_HAL_Driver
   * @{

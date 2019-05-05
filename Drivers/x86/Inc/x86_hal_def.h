@@ -16,7 +16,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include <stdio.h>
 
-#include "windows_other.h"
+#include "x86_other.h"
 #include "core_windows.h"
 #include "Legacy/stm32_hal_legacy.h"
 

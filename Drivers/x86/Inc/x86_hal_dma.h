@@ -44,7 +44,7 @@
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "windows_hal_def.h"
+#include "x86_hal_def.h"
 
 /** @addtogroup STM32F0xx_HAL_Driver
   * @{
@@ -448,7 +448,7 @@ typedef struct __DMA_HandleTypeDef
   */
 
 /* Include DMA HAL Extension module */
-#include "windows_hal_dma_ex.h"
+#include "x86_hal_dma_ex.h"
 
 /* Exported functions --------------------------------------------------------*/
 /** @addtogroup DMA_Exported_Functions

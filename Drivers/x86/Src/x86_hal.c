@@ -17,9 +17,6 @@
 
 #include "options.h"
 
-#include "windows_hal_def.h"
-#include "windows_hal.h"
-
 /* TODO: Change for Linux or make a new file */
 #include <windows.h>
 #include <time.h>
@@ -29,6 +26,9 @@
 
 // for STDIN thread
 #include "CommandHandler.h"
+
+#include "x86_hal.h"
+#include "x86_hal_def.h"
 
 #ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
 #include <conio.h> /* getch() */

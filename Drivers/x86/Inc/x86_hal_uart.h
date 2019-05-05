@@ -44,7 +44,7 @@
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "windows_hal_def.h"
+#include "x86_hal_def.h"
 
 /** @addtogroup STM32F0xx_HAL_Driver
   * @{
@@ -1272,7 +1272,7 @@ typedef struct
   */
 
 /* Include UART HAL Extended module */
-#include "windows_hal_uart_ex.h"
+#include "x86_hal_uart_ex.h"
 
 /* Exported functions --------------------------------------------------------*/
 /** @addtogroup UART_Exported_Functions UART Exported Functions

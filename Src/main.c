@@ -208,7 +208,7 @@
 #endif
 
 #ifdef CONFIG_PLATFORM_PC_WINDOWS
-#include "windows_hal.h"
+#include "x86_hal.h"
 #endif
 
 #if defined(CONFIG_MODULE_ESCAPEBROWSER_ENABLE)

@@ -29,9 +29,9 @@
 #include "stm32f030xc.h"
 
 // TODO: Put to conf file at Inc dir?
-#include "windows_hal_dma.h"
-#include "windows_hal_spi.h"
-#include "windows_hal_uart.h"
+#include "x86_hal_dma.h"
+#include "x86_hal_spi.h"
+#include "x86_hal_uart.h"
 
 
 

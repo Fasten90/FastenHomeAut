@@ -44,7 +44,7 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "windows_hal_def.h"
+#include "x86_hal_def.h"
 
 /** @addtogroup STM32F0xx_HAL_Driver
   * @{
@@ -605,7 +605,7 @@ typedef struct __SPI_HandleTypeDef
   */
 
 /* Include SPI HAL Extended module */
-#include "windows_hal_spi_ex.h"
+#include "x86_hal_spi_ex.h"
 
 /* Exported functions --------------------------------------------------------*/
 /** @addtogroup SPI_Exported_Functions
