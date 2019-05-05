@@ -34,9 +34,16 @@
     /* STM32F0 */
     #include "stm32f0xx_hal.h"
     #include "stm32_hal_legacy.h"
-#elif defined(CONFIG_PLATFORM_PC_WINDOWS)
-    /* PC */
-    #include "windows_hal.h"
+#elif defined(CONFIG_PLATFORM_X86)
+    /* x86 */
+    #include "x86_hal.h"
+    #ifdef _WIN32
+        #define CONFIG_PLATFORM_X86_WIN
+    #elif __linux__
+        #define CONFIG_PLATFORM_X86_LINUX
+    #else
+        #error "Unsupported x86 OS!"
+    #endif
 #else
 #warning "Missed platform / microcontroller family define / include"
 #endif
@@ -138,7 +145,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 ///< Breakpoint
 #ifdef CONFIG_DEBUG_MODE
-    #if !defined(CONFIG_PLATFORM_PC_WINDOWS)
+    #if !defined(CONFIG_PLATFORM_X86)
     /* ASM: Breakpoint */
     #define DEBUG_BREAKPOINT()        __asm("BKPT #0\n")
     #elif defined (__WIN32__)

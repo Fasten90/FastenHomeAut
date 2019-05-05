@@ -34,16 +34,18 @@
 /* Includes ------------------------------------------------------------------*/
 #include "options.h"
 
+#ifdef CONFIG_PLATFORM_MCU_STM32Fxxx
+
 #if defined(CONFIG_PLATFORM_MCU_STM32F0xx)
-#include "stm32f0xx_hal.h"
-#include "stm32f0xx.h"
-#include "stm32f0xx_it.h"
+    #include "stm32f0xx_hal.h"
+    #include "stm32f0xx.h"
+    #include "stm32f0xx_it.h"
 #elif defined(CONFIG_PLATFORM_MCU_STM32F4xx)
-#include "stm32f4xx_hal.h"
-#include "stm32f4xx.h"
-#include "stm32f4xx_it.h"
-#elif defined(CONFIG_PLATFORM_PC_WINDOWS)
-#include "windows_hal.h"
+    #include "stm32f4xx_hal.h"
+    #include "stm32f4xx.h"
+    #include "stm32f4xx_it.h"
+#else
+    #error "Not supported STM32Fxxx platform"
 #endif
 
 /* TODO: This is need? */
@@ -184,3 +186,5 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+#endif /* CONFIG_PLATFORM_MCU_STM32Fxxx */

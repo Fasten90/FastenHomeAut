@@ -69,7 +69,7 @@ bool_t ButtonSimulator_ProcessChar(char_t * str)
 {
     ButtonSimulator_Key_t key = Key_None;
 
-#ifdef CONFIG_PLATFORM_PC_WINDOWS
+#ifdef CONFIG_PLATFORM_X86
     /* TODO: Update the comments */
     if (str[0] == -32)        /* ESC */
     {

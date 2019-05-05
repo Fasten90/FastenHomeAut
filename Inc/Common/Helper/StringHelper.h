@@ -79,7 +79,7 @@
 #define snprintf(...)                    usnprintf(__VA_ARGS__)
 
 
-#ifndef CONFIG_PLATFORM_PC_WINDOWS
+#ifndef CONFIG_PLATFORM_X86
 #define printf(...)                        uprintf(__VA_ARGS__)
 #endif
 

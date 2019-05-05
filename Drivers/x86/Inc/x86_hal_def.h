@@ -1,13 +1,19 @@
-/**
-  ******************************************************************************
-  * @file    windows_hal.c
-  ******************************************************************************
-  * This file was copied from stm32f0xx_hal_def.h
-  */
+/*
+ *      x86_hal_def.h
+ *      Created on:     2019-05-05
+ *      Author:         Vizi Gábor
+ *      E-mail:         vizi.gabor90@gmail.com
+ *      Function:       -
+ *      Target:         x86
+ *      Version:        -
+ *      Last modified:  2019-05-05
+ *      Note:           Copied from stm32f0xx_hal_def.h
+ */
+
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __WINDOWS_HAL_DEF
-#define __WINDOWS_HAL_DEF
+#ifndef __X86_HAL_DEF
+#define __X86_HAL_DEF
 
 #ifdef __cplusplus
  extern "C" {
@@ -16,9 +22,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include <stdio.h>
 
-#include "windows_other.h"
+#include "x86_other.h"
 #include "core_windows.h"
-#include "Legacy/stm32_hal_legacy.h"
 
 
 /* Exported types ------------------------------------------------------------*/
@@ -148,4 +153,4 @@ typedef enum
 }
 #endif
 
-#endif /* ___STM32F0xx_HAL_DEF */
+#endif /* __X86_HAL_DEF */
