@@ -1,37 +1,33 @@
 /*
- *		windows_hal.h
+ *		x86_hal.h
  *		Created on:		2017-11-05
  *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		-
- *		Target:			STM32Fx
+ *		Target:			x86
  *		Version:		-
- *		Last modified:	2017-11-05
+ *		Last modified:	2019-05-05
  */
 
-#ifndef WINDOWS_HAL_H_
-#define WINDOWS_HAL_H_
 
+#ifndef X86_HAL_H_
+#define X86_HAL_H_
 
 
 /*------------------------------------------------------------------------------
  *  Includes
  *----------------------------------------------------------------------------*/
 
-// For suppress error (TXDATA_FLUSH ...)
-#define STM32F030x8
-
 
 // CMSIS files include
 #include "core_windows.h"
 
-// TODO: rename this file?
-#include "stm32f030xc.h"
+#include "x86.h"
 
 // TODO: Put to conf file at Inc dir?
-#include "windows_hal_dma.h"
-#include "windows_hal_spi.h"
-#include "windows_hal_uart.h"
+#include "x86_hal_dma.h"
+#include "x86_hal_spi.h"
+#include "x86_hal_uart.h"
 
 
 
@@ -73,4 +69,4 @@ void              HAL_ResumeTick(void);
 
 
 
-#endif /* WINDOWS_HAL_H_ */
+#endif /* X86_HAL_H_ */

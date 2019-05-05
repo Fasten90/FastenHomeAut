@@ -1,12 +1,12 @@
 /*
- *		windows_hal.c
+ *		x86_hal.c
  *		Created on:		2017-11-05
  *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		-
- *		Target:			STM32Fx
+ *		Target:			x86
  *		Version:		-
- *		Last modified:	2017-11-05
+ *		Last modified:	2019-05-05
  */
 
 
@@ -16,18 +16,26 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
+#include "compiler.h"
 
-#include "windows_hal_def.h"
-#include "windows_hal.h"
-
-#include <windows.h>
-#include <time.h>
-#include <winbase.h>
 #include <stdio.h>
+#include <time.h>
+
+#ifdef CONFIG_PLATFORM_X86_WIN
+#include <windows.h>
+#include <winbase.h>
+#elif defined(CONFIG_PLATFORM_X86_LINUX)
+/* Linux */
+#include <pthread.h>
+#endif
+
 #include <unistd.h>
 
 // for STDIN thread
 #include "CommandHandler.h"
+
+#include "x86_hal.h"
+#include "x86_hal_def.h"
 
 #ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
 #include <conio.h> /* getch() */
@@ -51,8 +59,14 @@
 static uint32_t uwTick = 0;
 
 ///< Thread handles
+#ifdef CONFIG_PLATFORM_X86_WIN
+// TODO: Rename
 HANDLE WindowsHal_SystickThreadHandle;
 HANDLE WindowsHal_UartConsoleThreadHandle;
+#elif defined(CONFIG_PLATFORM_X86_LINUX)
+pthread_t x86_linux_SystickThreadHandle;
+pthread_t x86_linux_UartConsoleThreadHandle;
+#endif
 
 
 
@@ -62,33 +76,20 @@ HANDLE WindowsHal_UartConsoleThreadHandle;
 
 extern void SysTick_Handler(void);
 
-DWORD WINAPI Windows_StdinReceiveThread(void* data);
-DWORD WINAPI Windows_SysTickThread(void* data);
+// TODO: Renames
+#ifdef CONFIG_PLATFORM_X86_WIN
+DWORD WINAPI Windows_SysTickThread(void * args);
+DWORD WINAPI Windows_StdinReceiveThread(void * args);
+#elif defined(CONFIG_PLATFORM_X86_LINUX)
+void * x86_linux_SysTickThread(void * args);
+void * x86_linux_StdinReceiveThread(void * args);
+#endif
 
 
 
 /*------------------------------------------------------------------------------
  *  Functions
  *----------------------------------------------------------------------------*/
-/*
-===============================================================================
-                      ##### HAL Control functions #####
- ===============================================================================
-    [..]  This section provides functions allowing to:
-      (+) Provide a tick value in millisecond
-      (+) Provide a blocking delay in millisecond
-      (+) Suspend the time base source interrupt
-      (+) Resume the time base source interrupt
-      (+) Get the HAL API driver version
-      (+) Get the device identifier
-      (+) Get the device revision identifier
-      (+) Enable/Disable Debug module during Sleep mode
-      (+) Enable/Disable Debug module during STOP mode
-      (+) Enable/Disable Debug module during STANDBY mode
-
-@endverbatim
-  * @{
-  */
 
 
 /**
@@ -101,12 +102,26 @@ void HAL_Init(void)
 	uwTick = 0;
 
 	// Create Thread
-	WindowsHal_SystickThreadHandle = CreateThread(NULL, 0, Windows_SysTickThread, NULL, 0, NULL);
+#ifdef CONFIG_PLATFORM_X86_WIN
+    WindowsHal_SystickThreadHandle = CreateThread(NULL, 0, Windows_SysTickThread, NULL, 0, NULL);
 
-	if (!WindowsHal_SystickThreadHandle)
-	{
-		printf("Error with thread!");
-	}
+    if (!WindowsHal_SystickThreadHandle)
+    {
+        printf("Error with thread!");
+    }
+
+#elif defined(CONFIG_PLATFORM_X86_LINUX)
+    /*int pthread_create(pthread_t *thread, const
+    pthread_attr_t *attr, void
+    *(*start_routine) (void *), void *arg);*/
+    int result = pthread_create(&x86_linux_SystickThreadHandle, (pthread_attr_t *)NULL, x86_linux_SysTickThread, (void *)NULL);
+
+    if (result != 0)
+    {
+        printf("Error with thread!");
+    }
+
+#endif
 }
 
 
@@ -218,24 +233,38 @@ void HAL_ResumeTick(void)
 // TODO: Need to put hal_uart.c ...
 HAL_StatusTypeDef HAL_UART_Init(UART_HandleTypeDef *huart)
 {
-
+    // Create Thread
+#ifdef CONFIG_PLATFORM_X86_WIN
 	WindowsHal_UartConsoleThreadHandle = CreateThread(NULL, 0, Windows_StdinReceiveThread, NULL, 0, NULL);
 
-	if (!WindowsHal_UartConsoleThreadHandle)
-	{
-		printf("Error with thread!");
-	}
+    if (!WindowsHal_SystickThreadHandle)
+    {
+        printf("Error with thread!");
+    }
+
+#elif defined(CONFIG_PLATFORM_X86_LINUX)
+    /*int pthread_create(pthread_t *thread, const
+    pthread_attr_t *attr, void
+    *(*start_routine) (void *), void *arg);*/
+    int result = pthread_create(&x86_linux_UartConsoleThreadHandle,  (pthread_attr_t *)NULL, x86_linux_StdinReceiveThread, (void *)NULL);
+
+    if (result != 0)
+    {
+        printf("Error with thread!");
+    }
+#endif
 
 	return HAL_OK;
 }
 
 
 
+#ifdef CONFIG_PLATFORM_X86_WIN
 // TODO: Implement more beautiful solution
 /**
  * \brief "STDIN --> UART" Receive thread
  */
-DWORD WINAPI Windows_StdinReceiveThread(void* data)
+DWORD WINAPI Windows_StdinReceiveThread(void * args)
 {
 	// Do stuff.  This will be the first function called on the new thread.
 	// When this function returns, the thread goes away.  See MSDN for more details.
@@ -315,9 +344,21 @@ DWORD WINAPI Windows_StdinReceiveThread(void* data)
 
 	return 0;
 }
+#elif defined(CONFIG_PLATFORM_X86_LINUX)
+
+void * x86_linux_StdinReceiveThread(void * args)
+{
+    /* TODO: */
+    while (1);
+
+    return NULL;
+}
+
+#endif
 
 
 
+/* TODO: Rename if works with Linux */
 void windows_delay_ms(int mseconds)
 {
     // Stroing start time
@@ -329,10 +370,11 @@ void windows_delay_ms(int mseconds)
 
 
 
+#ifdef CONFIG_PLATFORM_X86_WIN
 /**
  * \brief	Thread for SysTick (increment tick)
  */
-DWORD WINAPI Windows_SysTickThread(void* data)
+DWORD WINAPI Windows_SysTickThread(void * data)
 {
 	/*
 	void SysTick_Handler(void)
@@ -378,3 +420,22 @@ DWORD WINAPI Windows_SysTickThread(void* data)
 	return 0;
 }
 
+#elif defined(CONFIG_PLATFORM_X86_LINUX)
+
+void * x86_linux_SysTickThread(void * args)
+{
+    /* Note: This code parts was copied from above, from Win */
+    while(1)
+    {
+        const int ms = 10;
+        windows_delay_ms(ms);
+        for (int i=0; i < ms; i++)
+        {
+            SysTick_Handler();
+        }
+    }
+
+    return NULL;
+}
+
+#endif

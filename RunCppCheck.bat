@@ -2,18 +2,22 @@ echo Run Cppcheck
 
 :: cppcheck shall be added to the PATH
 
+:: TODO: Avoid the duplicated parts (Includes)
+
+:: C99
 cppcheck Src Inc Drivers ^
 -IInc/Common -IInc/Communication -IInc/HwTester -IInc/Modules -IInc -IInc/Application -IInc/List -IInc/Display -IInc/Common/Helper -IInc/Common/Handler -IInc/SelfTest ^
--IDrivers/Windows/Inc ^
+-IDrivers/x86/Inc ^
 -IDrivers/STM32F0xx_HAL_Driver/Inc -IDrivers/STM32F0xx_HAL_Driver/Inc/Legacy -IDrivers/CMSIS/Device/ST/STM32F0xx/Include ^
 -IDrivers/STM32F4xx_HAL_Driver/Inc -IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy -IDrivers/CMSIS/Device/ST/STM32F4xx/Include ^
 -IDrivers/CMSIS/Include ^
 -iDrivers/CMSIS -iDrivers/STM32F0xx_HAL_Driver -iDrivers/STM32F4xx_HAL_Driver ^
 --enable=all --inconclusive --suppressions-list=cppcheck_suppressions.txt --template="[{file}:{line}]:\t({severity})\t{message}" --inline-suppr --std=c99 --force --check-config 2> Out/CppcheckErrorsC99.txt
 
+:: C11
 cppcheck Src Inc Drivers ^
 -IInc/Common -IInc/Communication -IInc/HwTester -IInc/Modules -IInc -IInc/Application -IInc/List -IInc/Display -IInc/Common/Helper -IInc/Common/Handler -IInc/SelfTest ^
--IDrivers/Windows/Inc ^
+-IDrivers/x86/Inc ^
 -IDrivers/STM32F0xx_HAL_Driver/Inc -IDrivers/STM32F0xx_HAL_Driver/Inc/Legacy -IDrivers/CMSIS/Device/ST/STM32F0xx/Include ^
 -IDrivers/STM32F4xx_HAL_Driver/Inc -IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy -IDrivers/CMSIS/Device/ST/STM32F4xx/Include ^
 -IDrivers/CMSIS/Include ^

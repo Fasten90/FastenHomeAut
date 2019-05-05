@@ -48,7 +48,7 @@ Settings
 // Include paths
 //------------------------------------------------------------------------------
 
-.BaseIncludePaths   = ' -IDrivers/Windows/Inc'
+.BaseIncludePaths   = ' -IDrivers/x86/Inc'
                     + ' -IInc/Common'
                     + ' -IInc/Communication'
                     + ' -IInc/HwTester'
@@ -74,7 +74,7 @@ Settings
 
 ObjectList( 'Fasten-Lib' )
 {
-    .CompilerInputPath  = { '\Src\', '\Drivers\Windows\' }
+    .CompilerInputPath  = { '\Src\', '\Drivers\x86\' }
 
     .CompilerInputPattern = '*.c'
 

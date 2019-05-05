@@ -87,7 +87,7 @@ void DebugUart_ProcessReceivedCharacters(void);
 
 /* Not used DEBUGUART */
 
-#ifndef CONFIG_PLATFORM_PC_WINDOWS
+#ifndef CONFIG_PLATFORM_X86
 
 #define uprintf(...)                            (0)
 #define DebugUart_SendChar(_c)                  (putc)_c
@@ -108,7 +108,7 @@ void DebugUart_ProcessReceivedCharacters(void);
 
 #define DebugUart_StartReceive()
 
-#endif /* #ifndef CONFIG_PLATFORM_PC_WINDOWS */
+#endif /* #ifndef CONFIG_PLATFORM_X86 */
 
 #endif /* #ifdef CONFIG_MODULE_DEBUGUART_ENABLE */
 
