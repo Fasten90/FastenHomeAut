@@ -37,6 +37,13 @@
 #elif defined(CONFIG_PLATFORM_PC_WINDOWS)
     /* PC */
     #include "x86_hal.h"
+    #ifdef _WIN32
+        #define CONFIG_PLATFORM_X86_WIN
+    #elif __linux__
+        #define CONFIG_PLATFORM_X86_LINUX
+    #else
+        #error "Unsupported x86 OS!"
+    #endif
 #else
 #warning "Missed platform / microcontroller family define / include"
 #endif
