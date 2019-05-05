@@ -20,6 +20,7 @@
 #include "windows_hal_def.h"
 #include "windows_hal.h"
 
+/* TODO: Change for Linux or make a new file */
 #include <windows.h>
 #include <time.h>
 #include <winbase.h>
