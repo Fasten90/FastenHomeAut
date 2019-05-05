@@ -90,25 +90,6 @@ void * x86_linux_StdinReceiveThread(void * args);
 /*------------------------------------------------------------------------------
  *  Functions
  *----------------------------------------------------------------------------*/
-/*
-===============================================================================
-                      ##### HAL Control functions #####
- ===============================================================================
-    [..]  This section provides functions allowing to:
-      (+) Provide a tick value in millisecond
-      (+) Provide a blocking delay in millisecond
-      (+) Suspend the time base source interrupt
-      (+) Resume the time base source interrupt
-      (+) Get the HAL API driver version
-      (+) Get the device identifier
-      (+) Get the device revision identifier
-      (+) Enable/Disable Debug module during Sleep mode
-      (+) Enable/Disable Debug module during STOP mode
-      (+) Enable/Disable Debug module during STANDBY mode
-
-@endverbatim
-  * @{
-  */
 
 
 /**
