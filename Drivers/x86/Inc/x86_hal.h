@@ -18,9 +18,6 @@
  *  Includes
  *----------------------------------------------------------------------------*/
 
-// For suppress error (TXDATA_FLUSH ...)
-#define STM32F030x8
-
 
 // CMSIS files include
 #include "core_windows.h"
