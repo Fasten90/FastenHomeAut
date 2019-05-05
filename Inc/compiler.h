@@ -35,7 +35,7 @@
     #include "stm32f0xx_hal.h"
     #include "stm32_hal_legacy.h"
 #elif defined(CONFIG_PLATFORM_X86)
-    /* PC */
+    /* x86 */
     #include "x86_hal.h"
     #ifdef _WIN32
         #define CONFIG_PLATFORM_X86_WIN
