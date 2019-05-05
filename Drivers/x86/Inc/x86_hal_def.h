@@ -1,9 +1,15 @@
-/**
-  ******************************************************************************
-  * @file    windows_hal.c
-  ******************************************************************************
-  * This file was copied from stm32f0xx_hal_def.h
-  */
+/*
+ *      x86_hal_def.h
+ *      Created on:     2019-05-05
+ *      Author:         Vizi Gábor
+ *      E-mail:         vizi.gabor90@gmail.com
+ *      Function:       -
+ *      Target:         x86
+ *      Version:        -
+ *      Last modified:  2019-05-05
+ *      Note:           Copied from stm32f0xx_hal_def.h
+ */
+
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __WINDOWS_HAL_DEF
@@ -147,4 +153,4 @@ typedef enum
 }
 #endif
 
-#endif /* ___STM32F0xx_HAL_DEF */
+#endif /* __WINDOWS_HAL_DEF */

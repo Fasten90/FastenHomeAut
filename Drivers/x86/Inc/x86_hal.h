@@ -1,17 +1,17 @@
 /*
- *		windows_hal.h
+ *		x86_hal.h
  *		Created on:		2017-11-05
  *		Author:			Vizi Gábor
  *		E-mail:			vizi.gabor90@gmail.com
  *		Function:		-
- *		Target:			STM32Fx
+ *		Target:			x86
  *		Version:		-
- *		Last modified:	2017-11-05
+ *		Last modified:	2019-05-05
  */
+
 
 #ifndef WINDOWS_HAL_H_
 #define WINDOWS_HAL_H_
-
 
 
 /*------------------------------------------------------------------------------
