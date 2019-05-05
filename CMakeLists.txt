@@ -50,6 +50,13 @@ elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "TinyCC")
 endif()
 
 
+# Set target dependent settings
+if (UNIX)
+    #Linux need pthread for link
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
+endif (UNIX)
+
+
 # E.g.
 #file(GLOB_RECURSE Foo_SOURCES "src/*.cpp")
 #add_executable (FooExe ${Foo_SOURCES})
