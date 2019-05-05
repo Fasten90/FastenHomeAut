@@ -10,8 +10,8 @@
  */
 
 
-#ifndef WINDOWS_HAL_H_
-#define WINDOWS_HAL_H_
+#ifndef X86_HAL_H_
+#define X86_HAL_H_
 
 
 /*------------------------------------------------------------------------------
@@ -69,4 +69,4 @@ void              HAL_ResumeTick(void);
 
 
 
-#endif /* WINDOWS_HAL_H_ */
+#endif /* X86_HAL_H_ */

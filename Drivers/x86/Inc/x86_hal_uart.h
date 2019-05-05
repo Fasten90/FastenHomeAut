@@ -12,8 +12,8 @@
 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F0xx_HAL_UART_H
-#define __STM32F0xx_HAL_UART_H
+#ifndef __X86_HAL_UART_H
+#define __X86_HAL_UART_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -1366,7 +1366,4 @@ HAL_StatusTypeDef UART_WaitOnFlagUntilTimeout(UART_HandleTypeDef *huart, uint32_
 }
 #endif
 
-#endif /* __STM32F0xx_HAL_UART_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-
+#endif /* __X86_HAL_UART_H */

@@ -11,8 +11,8 @@
  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F0xx_HAL_DMA_H
-#define __STM32F0xx_HAL_DMA_H
+#ifndef __X86_HAL_DMA_H
+#define __X86_HAL_DMA_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -550,7 +550,4 @@ uint32_t             HAL_DMA_GetError(DMA_HandleTypeDef *hdma);
 }
 #endif
 
-#endif /* __STM32F0xx_HAL_DMA_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-
+#endif /* __X86_HAL_DMA_H */

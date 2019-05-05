@@ -378,4 +378,3 @@ DWORD WINAPI Windows_SysTickThread(void* data)
 
 	return 0;
 }
-

@@ -12,8 +12,8 @@
 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F0xx_HAL_UART_EX_H
-#define __STM32F0xx_HAL_UART_EX_H
+#ifndef __X86_HAL_UART_EX_H
+#define __X86_HAL_UART_EX_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -22,7 +22,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "x86_hal_def.h"
 
-/** @addtogroup STM32F0xx_HAL_Driver
+/** @addtogroup x86_HAL_Driver
   * @{
   */
 
@@ -832,7 +832,4 @@ HAL_StatusTypeDef HAL_LIN_SendBreak(UART_HandleTypeDef *huart);
 }
 #endif
 
-#endif /* __STM32F0xx_HAL_UART_EX_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-
+#endif /* __X86_HAL_UART_EX_H */

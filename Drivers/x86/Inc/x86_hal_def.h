@@ -12,8 +12,8 @@
 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __WINDOWS_HAL_DEF
-#define __WINDOWS_HAL_DEF
+#ifndef __X86_HAL_DEF
+#define __X86_HAL_DEF
 
 #ifdef __cplusplus
  extern "C" {
@@ -153,4 +153,4 @@ typedef enum
 }
 #endif
 
-#endif /* __WINDOWS_HAL_DEF */
+#endif /* __X86_HAL_DEF */
