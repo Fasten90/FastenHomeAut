@@ -34,7 +34,7 @@
     /* STM32F0 */
     #include "stm32f0xx_hal.h"
     #include "stm32_hal_legacy.h"
-#elif defined(CONFIG_PLATFORM_PC_WINDOWS)
+#elif defined(CONFIG_PLATFORM_X86)
     /* PC */
     #include "x86_hal.h"
     #ifdef _WIN32
@@ -145,7 +145,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 ///< Breakpoint
 #ifdef CONFIG_DEBUG_MODE
-    #if !defined(CONFIG_PLATFORM_PC_WINDOWS)
+    #if !defined(CONFIG_PLATFORM_X86)
     /* ASM: Breakpoint */
     #define DEBUG_BREAKPOINT()        __asm("BKPT #0\n")
     #elif defined (__WIN32__)

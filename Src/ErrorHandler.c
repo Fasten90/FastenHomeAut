@@ -18,7 +18,7 @@
 #include "TaskHandler.h"
 #include "Timing.h"
 
-#ifdef CONFIG_PLATFORM_PC_WINDOWS
+#ifdef CONFIG_PLATFORM_X86
 #include "x86_hal.h"
 #endif
 

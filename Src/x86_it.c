@@ -14,7 +14,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "options.h"
 
-#ifdef CONFIG_PLATFORM_PC_WINDOWS
+#ifdef CONFIG_PLATFORM_X86
 
 #include "x86_hal.h"
 
@@ -36,4 +36,4 @@ void SysTick_Handler(void)
 }
 
 
-#endif /* CONFIG_PLATFORM_PC_WINDOWS */
+#endif /* CONFIG_PLATFORM_X86 */

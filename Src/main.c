@@ -207,7 +207,7 @@
 #include "SelfTest_Ram.h"
 #endif
 
-#ifdef CONFIG_PLATFORM_PC_WINDOWS
+#ifdef CONFIG_PLATFORM_X86
 #include "x86_hal.h"
 #endif
 
@@ -292,7 +292,7 @@ int main(void)
 #endif /* CONFIG_MODULE_SELFTEST_ENABLE */
 
 
-#ifdef CONFIG_PLATFORM_PC_WINDOWS
+#ifdef CONFIG_PLATFORM_X86
     /* Windows functions - Run unittest immediately */
 
 #ifdef CONFIG_MODULE_UNITTEST_ENABLE
@@ -322,7 +322,7 @@ int main(void)
     /* STDIN */
     UART_HandleTypeDef Debug_UartHandle;
     HAL_UART_Init(&Debug_UartHandle);
-#endif /* CONFIG_PLATFORM_PC_WINDOWS */
+#endif /* CONFIG_PLATFORM_X86 */
 
 
 #ifdef CONFIG_MODULE_MEASUREMENTTIMER_ENABLE
@@ -571,7 +571,7 @@ void SystemClock_Config(void)
 
 
 
-#ifdef CONFIG_PLATFORM_PC_WINDOWS
+#ifdef CONFIG_PLATFORM_X86
 /**
  * System Clock Configuration
  */

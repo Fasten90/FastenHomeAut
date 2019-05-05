@@ -38,7 +38,7 @@
     #include "stm32f0xx_hal.h"
     #include "stm32f0xx.h"
     #include "stm32f0xx_it.h"
-#elif defined(CONFIG_PLATFORM_PC_WINDOWS)
+#elif defined(CONFIG_PLATFORM_X86)
     #include "x86_hal.h"
 #else
 #warning "Missed microcontroller family define / include"
