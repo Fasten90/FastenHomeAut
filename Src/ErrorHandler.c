@@ -19,7 +19,7 @@
 #include "Timing.h"
 
 #ifdef CONFIG_PLATFORM_PC_WINDOWS
-#include "windows_hal.h"
+#include "x86_hal.h"
 #endif
 
 

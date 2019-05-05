@@ -45,6 +45,8 @@
   ******************************************************************************
   */
 
+/* TODO: Refactor */
+
 /** @addtogroup CMSIS
   * @{
   */
@@ -189,11 +191,14 @@ typedef enum
 } FunctionalState;
 #define IS_FUNCTIONAL_STATE(STATE) (((STATE) == DISABLE) || ((STATE) == ENABLE))
 
+#if 0
+/* Was uncomment because the same "ERROR" definition at "wingdi.h" */
 typedef enum 
 {
-  ERROR = 0, 
+  ERROR = 0,
   SUCCESS = !ERROR
 } ErrorStatus;
+#endif
 
 /**
   * @}

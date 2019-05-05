@@ -36,7 +36,7 @@
     #include "stm32_hal_legacy.h"
 #elif defined(CONFIG_PLATFORM_PC_WINDOWS)
     /* PC */
-    #include "windows_hal.h"
+    #include "x86_hal.h"
 #else
 #warning "Missed platform / microcontroller family define / include"
 #endif
