@@ -17,7 +17,7 @@
 #include "DateTime.h"
 
 #ifdef CONFIG_MODULE_DATETIME_UNITTEST_ENABLE
-    #include "unittest.h"
+    #include "UnitTest.h"
 #endif
 
 

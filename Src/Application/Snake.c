@@ -23,7 +23,7 @@
 #include "Display_SSD1306.h"
 #include "DebugList.h"
 #include "Debug.h"
-#include "String.h"
+#include "StringHelper.h"
 #include "Logic.h"
 #include "Snake.h"
 #include "MathHelper.h"
