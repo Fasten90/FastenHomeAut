@@ -85,7 +85,7 @@
 #endif
 
 
-#define CONFIG_FUNCTION_DISPLAY
+//#define CONFIG_FUNCTION_DISPLAY
 #ifdef CONFIG_FUNCTION_DISPLAY
     ///< Display: Menu
     #define CONFIG_FUNCTION_DISPLAY_MENU
@@ -639,7 +639,7 @@
 	 * 		>0 - UnitTest error
 	 *
 	 */
-	#define CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE		(0)
+	#define CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE		(1)
 
 	/* TODO: Need to check this define? */
 
