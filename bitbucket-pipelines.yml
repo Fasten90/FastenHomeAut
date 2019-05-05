@@ -51,3 +51,12 @@ pipelines:
           # Build the project.
           - echo 'Start Make'
           - make
+          
+          # Check the results
+          - echo 'Finished compile-ing'
+          - ls
+          
+          # Run
+          - echo 'Execute...'
+          - ./FastenHomeAut.exe
+          - echo 'Finished executing'
