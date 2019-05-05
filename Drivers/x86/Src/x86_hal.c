@@ -38,7 +38,10 @@
 #include "x86_hal_def.h"
 
 #ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
-#include <conio.h> /* getch() */
+    #ifdef CONFIG_PLATFORM_X86_WIN
+    /* conio.h is MS-DOS compiler supported console input/output header. For Linux it does not work! */
+    #include <conio.h> /* getch() */
+    #endif
 #include "ButtonSimulator.h"
 #endif
 
