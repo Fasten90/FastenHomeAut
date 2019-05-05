@@ -58,5 +58,5 @@ pipelines:
           
           # Run
           - echo 'Execute...'
-          - ./FastenHomeAut.exe
+          - ./FastenHomeAut
           - echo 'Finished executing'
