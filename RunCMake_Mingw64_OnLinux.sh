@@ -17,7 +17,7 @@ make
 
 
 # Start compiled exe
-FastenHomeAut
+./FastenHomeAut
 
 
 :: Go to original directory
