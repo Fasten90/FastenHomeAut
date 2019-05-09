@@ -26,46 +26,46 @@ steps:
     #- apt-get update -qq
     #- apt-get install cmake -y
     #  Alternatively you could install a CMake 3.2.2 version through PPA repository.
-    - apt-get update -qq
-    - apt-get install software-properties-common -y
+    apt-get update -qq
+    apt-get install software-properties-common -y
     # Add PPA repository.
-    - echo 'deb http://ppa.launchpad.net/george-edison55/cmake-3.x/ubuntu trusty main' | tee -a /etc/apt/sources.list.d/cmake.list
-    - apt-get update -qq
-    - apt-get install cmake -y --force-yes
+    echo 'deb http://ppa.launchpad.net/george-edison55/cmake-3.x/ubuntu trusty main' | tee -a /etc/apt/sources.list.d/cmake.list
+    apt-get update -qq
+    apt-get install cmake -y --force-yes
     # Print the CMake version.
-    - echo 'Start CMake'
+    echo 'Start CMake'
 
-    - cmake --version
+    cmake --version
 
     # TODO: Perhaps does not need
     #- cd $BITBUCKET_CLONE_DIR
-    - echo 'List actual directory'
-    - pwd
+    echo 'List actual directory'
+    pwd
     # Win: cd
-    - ls
+    ls
     
-    - mkdir Out
-    - cd Out
-    - mkdir CMakeBuild
-    - cd CMakeBuild
-    - pwd
+    mkdir Out
+    cd Out
+    mkdir CMakeBuild
+    cd CMakeBuild
+    pwd
 
     # Call the CMake.
     # Normally: "- cmake" or "-cmake .." used
-    - cmake ../..
+    cmake ../..
     #- cmake CC=gcc ../..
     # -D"CMAKE_MAKE_PROGRAM:FILEPATH=make.exe" -D"CMAKE_C_COMPILER:FILEPATH=gcc.exe" -D"CMAKE_CXX_COMPILER:FILEPATH=g++.exe" CC=gcc -G "MinGW Makefiles"
 
     # Build the project.
-    - echo 'Start Make'
-    - make
+    echo 'Start Make'
+    make
     
     # Check the results
-    - echo 'Finished compile-ing'
-    - ls
+    echo 'Finished compile-ing'
+    ls
     
     # Run
-    - echo 'Execute...'
-    - ./FastenHomeAut
-    - echo 'Finished executing'
+    echo 'Execute...'
+    ./FastenHomeAut
+    echo 'Finished executing'
   displayName: 'Run FastenHomeAut - Azure pipeline'
