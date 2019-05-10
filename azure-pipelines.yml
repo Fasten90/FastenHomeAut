@@ -206,6 +206,3 @@ jobs:
       echo 'Execute...'
       ./FastenHomeAut
       echo 'Finished executing'
-
-    # Temporary disable
-    - enabled: false
