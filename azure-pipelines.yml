@@ -15,7 +15,7 @@ jobs:
 - job: build_win_msvc
   pool:
     vmImage: 'windows-2019'
-  displayName: 'Build for Windows'
+  displayName: 'Build for Windows - MSVC'
   steps:
   - script: |
       echo 'Start Windows build pipeline: MSVC'
@@ -44,6 +44,7 @@ jobs:
       echo 'Actual directory'
       cd
       
+      echo 'CMake'
       :: Call the CMake.
       :: Normally: "- cmake" or "-cmake .." used
       :: Note: As experience, default the mingw used
@@ -61,7 +62,10 @@ jobs:
       ::cmake -G "Visual Studio 16 2019" -A ARM
       ::cmake -G "Visual Studio 16 2019" -A ARM64
       
-      
+      ::-- Check for working C compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.20.27508/bin/Hostx64/x86/cl.exe
+      ::-- Check for working C compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.20.27508/bin/Hostx64/x86/cl.exe -- works
+      ::-- Check for working CXX compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.20.27508/bin/Hostx64/x86/cl.exe
+      ::-- Check for working CXX compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.20.27508/bin/Hostx64/x86/cl.exe -- works
       ::-- Check for working C compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.20.27508/bin/Hostx64/x64/cl.exe
       ::-- Check for working C compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.20.27508/bin/Hostx64/x64/cl.exe -- works
       ::-- Check for working CXX compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.20.27508/bin/Hostx64/x64/cl.exe
@@ -90,7 +94,7 @@ jobs:
 - job: build_win_mingw_gcc
   pool:
     vmImage: 'windows-2019'
-  displayName: 'Build for Windows'
+  displayName: 'Build for Windows - MinGW GCC'
   steps:
   - script: |
       echo 'Start Windows build pipeline: MinGW + GCC'
@@ -149,10 +153,10 @@ jobs:
       echo 'Finished executing'
 
 # Linux
-- job: build_linux
+- job: build_linux_gcc
   pool:
     vmImage: 'ubuntu-latest'
-  displayName: 'Build for Linux'
+  displayName: 'Build for Linux - GCC'
   steps:
   - script: |
 
