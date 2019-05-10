@@ -16,6 +16,7 @@ message("Compiler ID: ${CMAKE_C_COMPILER_ID}")
 
 # CI vs Local build
 # Includes, compilers
+# "CI" used in Bitbucket pipeline
 if(DEFINED ENV{CI})
     # CI build
     message(STATUS "CI environment variable defined")
@@ -50,6 +51,12 @@ elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "TinyCC")
     #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/Programs/Engineer/tcc/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v -o Out/CmakeTccCompiled/")
     # Memory and Bound checks: -b # TODO: Not works yet
     #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -b")
+elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
+    # MSVC - Microsoft Visual Studio
+    message("Compiler: MSVC")
+    
+else()
+    message("!! Cmake Error possibility !! Not known Compiler, please set it!")
 endif()
 
 
