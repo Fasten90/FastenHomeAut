@@ -41,10 +41,12 @@ jobs:
       :: Normally: "- cmake" or "-cmake .." used
       :: Note: As experience, default the mingw used
       ::cmake ../..
-      cmake -G "NMake Makefiles" ../..
       
-      :: Do not use:
-      :: cmake CC=gcc ../..
+      :: MSVC - NMake
+      ::cmake -G "NMake Makefiles" ../..
+      
+      :: GCC
+      cmake CC=gcc -G "MinGW Makefiles" ../..
       :: -D"CMAKE_MAKE_PROGRAM:FILEPATH=make.exe" -D"CMAKE_C_COMPILER:FILEPATH=gcc.exe" -D"CMAKE_CXX_COMPILER:FILEPATH=g++.exe" CC=gcc -G "MinGW Makefiles"
       
       echo 'List actual directory'      
