@@ -12,7 +12,7 @@ jobs:
 
 
 # Win - MSVC
-- job: build_win
+- job: build_win_msvc
   pool:
     vmImage: 'windows-2019'
   displayName: 'Build for Windows'
@@ -87,7 +87,7 @@ jobs:
 
 
 # Win
-- job: build_win
+- job: build_win_mingw_gcc
   pool:
     vmImage: 'windows-2019'
   displayName: 'Build for Windows'
