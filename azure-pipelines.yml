@@ -91,6 +91,9 @@ jobs:
       dir
       FastenHomeAut.exe
       cd Debug
+      dir
+      FastenHomeAut.exe
+      cd bin
       FastenHomeAut.exe
       echo 'Finished executing'
 
