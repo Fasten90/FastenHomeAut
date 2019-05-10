@@ -87,7 +87,9 @@ jobs:
       
       :: Run
       echo 'Execute...'
-      dir *.exe /S /B
+      ::dir *.exe /S /B
+      cd Debug
+      FastenHomeAut.exe
       
       echo 'Finished executing'
 
