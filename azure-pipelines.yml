@@ -87,6 +87,11 @@ jobs:
       
       :: Run
       echo 'Execute...'
+      cd Win32
+      FastenHomeAut.exe
+      cd bin
+      FastenHomeAut.exe
+      cd Debug
       FastenHomeAut.exe
       echo 'Finished executing'
 
