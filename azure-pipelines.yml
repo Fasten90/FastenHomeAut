@@ -77,6 +77,7 @@ jobs:
     vmImage: 'ubuntu-latest'
   displayName: 'Build for Linux'
   steps:
+  - enabled: false
   - script: |
 
       echo 'Start Linux build pipeline'
