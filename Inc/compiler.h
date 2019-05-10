@@ -56,8 +56,9 @@
  * __GNUC__
  * __STDC__
  * __clang__ (Added by later - for test)
+ * _MSC_VER  --> MSVC
  */
-#if !defined(__CC_ARM__) && !defined(__ICARM__) && !defined(__GNUC__) && !defined(__STDC__) && !defined(__clang__)
+#if !defined(__CC_ARM__) && !defined(__ICARM__) && !defined(__GNUC__) && !defined(__STDC__) && !defined(__clang__) && !defined(_MSC_VER  )
 #error "Unknown compiler!"
 #endif
 
@@ -172,6 +173,12 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #else
     /* TinyCC (TCC) doesn't support _Pragma */
     #define COMPILER_MESSAGE(_msg)
+#endif
+
+
+#if defined(_MSC_VER )
+    /* MSVC could not support __attribute__ because it is gcc extension */
+    #define __attribute__(x)
 #endif
 
 
