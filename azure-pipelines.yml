@@ -87,23 +87,8 @@ jobs:
       
       :: Run
       echo 'Execute...'
-      cd Win32
-      dir
-      FastenHomeAut.exe
-      cd Debug
-      dir
-      FastenHomeAut.exe
-      cd ZERO_CHECK
-      dir
-      FastenHomeAut.exe
+      dir *.exe /S /B
       
-      cd ..\..\..
-      cd Debug
-      dir
-      FastenHomeAut.exe
-      cd bin
-      dir
-      FastenHomeAut.exe
       echo 'Finished executing'
 
 
