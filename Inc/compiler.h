@@ -125,6 +125,15 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #endif
 
 
+#ifndef _MSC_VER
+    /* Inline function */
+    #define INLINE_FUNCTION     inline __attribute__((always_inline))
+#else
+    /* MSVC does not support the inline function */
+    #define INLINE_FUNCTION
+#endif
+
+
 /* #define assert_param(expr) ((void)0)    // incompatible redefinition ... */
 
 
@@ -152,6 +161,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
     #elif defined(_MSC_VER)
         /* MSVC Does not support #warning, so we shall be careful */
         #pragma message ("MSVC - Debug breakpoint not supported yet")
+        #define DEBUG_BREAKPOINT()
     #elif defined (__WIN32__)
         #include "Windows.h"
         #define DEBUG_BREAKPOINT()        DebugBreak()
@@ -170,9 +180,14 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 ///< Compiler message
 /* E.g.: #pragma message "Compiling " __FILE__ "..." */
 /* TODO: Not works on MSVC? */
-#ifndef __TINYC__
+#if !defined(__TINYC__) && !defined(_MSC_VER)
+    /* TINYCC and MSVC does not support */
     #define DO_PRAGMA(_msg) _Pragma (#_msg)
     #define COMPILER_MESSAGE(_msg) DO_PRAGMA(message ("Compiler message: - " #_msg))
+#elif defined(_MSC_VER)
+    /* MSVC */
+    /* TODO: */
+    #define COMPILER_MESSAGE(_msg)
 #else
     /* TinyCC (TCC) doesn't support _Pragma */
     #define COMPILER_MESSAGE(_msg)

@@ -52,7 +52,7 @@ static DateTime_t DateTime_SystemTime = { 0 };
 /**
  * @brief    Get DateTime
  */
-inline __attribute__((always_inline)) void SysTime_GetDateTime(DateTime_t *dateTime)
+INLINE_FUNCTION void SysTime_GetDateTime(DateTime_t *dateTime)
 {
 #if defined(CONFIG_MODULE_RTC_ENABLE)
     RTC_GetDateTime(&dateTime);
@@ -68,7 +68,7 @@ inline __attribute__((always_inline)) void SysTime_GetDateTime(DateTime_t *dateT
 /**
  * @brief    Set date
  */
-inline __attribute__((always_inline)) void SysTime_SetDate(Date_t *date)
+INLINE_FUNCTION void SysTime_SetDate(Date_t *date)
 {
 #if defined(CONFIG_MODULE_RTC_ENABLE)
     RTC_SetDate(&date);
@@ -84,7 +84,7 @@ inline __attribute__((always_inline)) void SysTime_SetDate(Date_t *date)
 /**
  * @brief    Set time
  */
-inline __attribute__((always_inline)) void SysTime_SetTime(Time_t *time)
+INLINE_FUNCTION void SysTime_SetTime(Time_t *time)
 {
 #if defined(CONFIG_MODULE_RTC_ENABLE)
     RTC_SetTime(&time);
