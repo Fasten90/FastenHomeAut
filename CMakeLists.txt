@@ -58,7 +58,7 @@ elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
     message(STATUS "Compiler: MSVC")
     
     # MSVC does not support the '-Wextra' and '-std=c11'
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -std=c++14")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Wall /std:c++14")
     
 else()
     message("!! Cmake Error possibility !! Not known Compiler, please set it!")
