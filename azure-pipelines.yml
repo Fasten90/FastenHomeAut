@@ -17,41 +17,40 @@ jobs:
   steps:
   - script: |
       echo 'Start Windows build pipeline'
-      # Print the gcc version
+      :: Print the gcc version
       gcc --version
-      # ?? Install a CMake 3.0.2 version
-      # Print the CMake version
+      :: ?? Install a CMake 3.0.2 version
+      :: Print the CMake version
       echo 'Start CMake'
       cmake --version
     
-      # TODO: Perhaps does not need
-      #- cd $BITBUCKET_CLONE_DIR
+      :: TODO: Perhaps does not need
       echo 'List actual directory'
       pwd
-      # Win: cd
-      ls
+      :: Win: cd
+      dir
 
       mkdir Out
       cd Out
       mkdir CMakeBuild
       cd CMakeBuild
-      pwd
+      cd
 
-      # Call the CMake.
-      # Normally: "- cmake" or "-cmake .." used
+      :: Call the CMake.
+      :: Normally: "- cmake" or "-cmake .." used
       cmake ../..
-      #- cmake CC=gcc ../..
-      # -D"CMAKE_MAKE_PROGRAM:FILEPATH=make.exe" -D"CMAKE_C_COMPILER:FILEPATH=gcc.exe" -D"CMAKE_CXX_COMPILER:FILEPATH=g++.exe" CC=gcc -G "MinGW Makefiles"
+      :: cmake CC=gcc ../..
+      :: -D"CMAKE_MAKE_PROGRAM:FILEPATH=make.exe" -D"CMAKE_C_COMPILER:FILEPATH=gcc.exe" -D"CMAKE_CXX_COMPILER:FILEPATH=g++.exe" CC=gcc -G "MinGW Makefiles"
 
-      # Build the project.
+      :: Build the project.
       echo 'Start Make'
       make
 
-      # Check the results
+      :: Check the results
       echo 'Finished compile-ing'
-      ls
+      dir
 
-      # Run
+      :: Run
       echo 'Execute...''
       FastenHomeAut.exe
       echo 'Finished executing'
