@@ -2,6 +2,9 @@
 cmake_minimum_required (VERSION 3.0)
 project (FastenHomeAut)
 
+# reported in Azure pipeline - Windows - MSVC?
+cmake_policy(SET CMP0054 NEW) 
+
 
 # C parameters
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -std=c11")

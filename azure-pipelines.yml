@@ -51,7 +51,7 @@ jobs:
       dir
 
       :: Run
-      echo 'Execute...''
+      echo 'Execute...'
       FastenHomeAut.exe
       echo 'Finished executing'
 
