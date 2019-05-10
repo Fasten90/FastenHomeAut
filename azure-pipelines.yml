@@ -17,6 +17,11 @@ jobs:
   steps:
   - script: |
       echo 'Start Windows build pipeline'
+      
+      :: Print SET
+      echo 'Environment variable settings'
+      SET
+      
       :: Print the gcc version
       gcc --version
       :: ?? Install a CMake 3.0.2 version
