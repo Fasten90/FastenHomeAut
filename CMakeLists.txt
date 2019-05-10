@@ -7,7 +7,7 @@ cmake_policy(SET CMP0054 NEW)
 
 
 # C parameters
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -std=c11")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 
 
 # Compiler type
@@ -31,6 +31,7 @@ endif()
 # Now used: "../.." because <project>/Out/<MakeBuildDirectory>
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I../../Drivers/x86/Inc -I../../Inc/Common -I../../Inc/Communication -I../../Inc/HwTester -I../../Inc/Modules -I../../Inc -I../../Inc/Application -I../../Inc/List -I../../Inc/Display -I../../Inc/Common/Helper -I../../Inc/Common/Handler -I../../Inc/SelfTest -DCONFIG_USE_PANEL_PC=1")
 
+
 # Compiler type
 message(STATUS "Compiler ID: ${CMAKE_C_COMPILER_ID}")
 
@@ -39,10 +40,11 @@ if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
     # Clang error suppression
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__clang__=1")
     # using Clang
+    # TODO: Change the hardcoded wrong path (/Programs/Engineer ...)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/Programs/Engineer/LLVM/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v -o Out/ClangCmakeCompiled/")
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
     # using GCC, MinGW32, MinGW64
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__clang__=1")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -std=c11 -D__clang__=1")
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "TinyCC")
     # using TCC
     message(STATUS "Compiler TCC - TODO")
@@ -54,6 +56,9 @@ elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "TinyCC")
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
     # MSVC - Microsoft Visual Studio
     message(STATUS "Compiler: MSVC")
+    
+    # MSVC does not support the '-Wextra' and '-std=c11'
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -std=c++14")
     
 else()
     message("!! Cmake Error possibility !! Not known Compiler, please set it!")
