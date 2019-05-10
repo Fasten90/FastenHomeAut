@@ -39,7 +39,9 @@ jobs:
       
       :: Call the CMake.
       :: Normally: "- cmake" or "-cmake .." used
-      cmake ../..
+      :: Note: As experience, default the mingw used
+      ::cmake ../..
+      cmake -G "NMake Makefiles" ../..
       
       :: Do not use:
       :: cmake CC=gcc ../..
