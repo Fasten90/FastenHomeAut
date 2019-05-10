@@ -6,28 +6,29 @@
 #trigger:
 #- master
 
-pool:
-  vmImage: 'ubuntu-latest'
 
+jobs:
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+# Win
+- job: build_win
+  pool:
+    vmImage: 'windows-2019'
+  displayName: 'Build for Windows'
+  steps:
+  - script: |
+    echo 'Start Windows build pipeline'
 
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-
-    echo 'Start pipeline'
     # Print the gcc version.
     gcc --version
+
     #  Install a CMake 3.0.2 version.
     #- apt-get update -qq
     #- apt-get install cmake -y
     #  Alternatively you could install a CMake 3.2.2 version through PPA repository.
+
     apt-get update -qq
     apt-get install software-properties-common -y
+
     # Add PPA repository.
     echo 'deb http://ppa.launchpad.net/george-edison55/cmake-3.x/ubuntu trusty main' | tee -a /etc/apt/sources.list.d/cmake.list
     apt-get update -qq
@@ -43,7 +44,7 @@ steps:
     pwd
     # Win: cd
     ls
-    
+
     mkdir Out
     cd Out
     mkdir CMakeBuild
@@ -59,13 +60,71 @@ steps:
     # Build the project.
     echo 'Start Make'
     make
-    
+
     # Check the results
     echo 'Finished compile-ing'
     ls
-    
+
     # Run
     echo 'Execute...'
-    ./FastenHomeAut
+    FastenHomeAut.exe
     echo 'Finished executing'
-  displayName: 'Run FastenHomeAut - Azure pipeline'
+
+# Linux
+- job: build_linux
+  pool:
+    vmImage: 'ubuntu-latest'
+  displayName: 'Build for Linux'
+  steps:
+  - script: |
+
+      echo 'Start Linux build pipeline'
+      # Print the gcc version.
+
+      gcc --version
+      #  Install a CMake 3.0.2 version.
+      #- apt-get update -qq
+      #- apt-get install cmake -y
+      #  Alternatively you could install a CMake 3.2.2 version through PPA repository.
+      apt-get update -qq
+      apt-get install software-properties-common -y
+      # Add PPA repository.
+      echo 'deb http://ppa.launchpad.net/george-edison55/cmake-3.x/ubuntu trusty main' | tee -a /etc/apt/sources.list.d/cmake.list
+      apt-get update -qq
+      apt-get install cmake -y --force-yes
+      # Print the CMake version.
+      echo 'Start CMake'
+
+      cmake --version
+
+      # TODO: Perhaps does not need
+      #- cd $BITBUCKET_CLONE_DIR
+      echo 'List actual directory'
+      pwd
+      # Win: cd
+      ls
+
+      mkdir Out
+      cd Out
+      mkdir CMakeBuild
+      cd CMakeBuild
+      pwd
+
+      # Call the CMake.
+      # Normally: "- cmake" or "-cmake .." used
+      cmake ../..
+      #- cmake CC=gcc ../..
+      # -D"CMAKE_MAKE_PROGRAM:FILEPATH=make.exe" -D"CMAKE_C_COMPILER:FILEPATH=gcc.exe" -D"CMAKE_CXX_COMPILER:FILEPATH=g++.exe" CC=gcc -G "MinGW Makefiles"
+
+      # Build the project.
+      echo 'Start Make'
+      make
+
+      # Check the results
+      echo 'Finished compile-ing'
+      ls
+
+      # Run
+      echo 'Execute...'
+      ./FastenHomeAut
+      echo 'Finished executing'
