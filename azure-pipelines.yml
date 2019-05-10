@@ -51,7 +51,7 @@ jobs:
       ::cmake -G "NMake Makefiles" ../..
       
       :: GCC - MinGW
-      :: At Azure win VM there is sh in installed GIT - shall skip
+      :: At Azure win VM there is sh in installed GIT - shall skip sh with '-DCMAKE_SH="CMAKE_SH-NOTFOUND"'
       cmake CC=gcc -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" ../..
       :: -D"CMAKE_MAKE_PROGRAM:FILEPATH=make.exe" -D"CMAKE_C_COMPILER:FILEPATH=gcc.exe" -D"CMAKE_CXX_COMPILER:FILEPATH=g++.exe" CC=gcc -G "MinGW Makefiles"
       
