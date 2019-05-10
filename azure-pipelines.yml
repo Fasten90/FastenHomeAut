@@ -93,7 +93,16 @@ jobs:
       cd Debug
       dir
       FastenHomeAut.exe
+      cd ZERO_CHECK
+      dir
+      FastenHomeAut.exe
+      
+      cd ..\..\..
+      cd Debug
+      dir
+      FastenHomeAut.exe
       cd bin
+      dir
       FastenHomeAut.exe
       echo 'Finished executing'
 
