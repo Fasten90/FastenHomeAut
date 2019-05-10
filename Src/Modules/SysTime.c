@@ -17,6 +17,7 @@
 
 #ifdef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
 
+#include "compiler.h"
 #include "DateTime.h"
 #include "SysTime.h"
 
