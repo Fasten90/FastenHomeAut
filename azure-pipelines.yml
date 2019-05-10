@@ -26,30 +26,36 @@ jobs:
     
       :: TODO: Perhaps does not need
       echo 'List actual directory'
-      pwd
-      :: Win: cd
+      cd
       dir
-
+      
       mkdir Out
       cd Out
       mkdir CMakeBuild
       cd CMakeBuild
+      
+      echo 'Actual directory'
       cd
-
+      
       :: Call the CMake.
       :: Normally: "- cmake" or "-cmake .." used
       cmake ../..
+      
+      :: Do not use:
       :: cmake CC=gcc ../..
       :: -D"CMAKE_MAKE_PROGRAM:FILEPATH=make.exe" -D"CMAKE_C_COMPILER:FILEPATH=gcc.exe" -D"CMAKE_CXX_COMPILER:FILEPATH=g++.exe" CC=gcc -G "MinGW Makefiles"
-
+      
+      echo 'List actual directory'      
+      dir
+      
       :: Build the project.
       echo 'Start Make'
       make
-
+      
       :: Check the results
       echo 'Finished compile-ing'
       dir
-
+      
       :: Run
       echo 'Execute...'
       FastenHomeAut.exe
