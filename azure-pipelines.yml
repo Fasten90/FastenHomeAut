@@ -78,7 +78,8 @@ jobs:
       
       :: Build the project.
       echo 'Start Make'
-      make
+      :: For MSVC we shall execute cmake --build instead of "make"
+      cmake --build .
       
       :: Check the results
       echo 'Finished compile-ing'
