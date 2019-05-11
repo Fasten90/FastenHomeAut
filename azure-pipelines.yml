@@ -265,8 +265,8 @@ jobs:
 
       # Call the CMake.
       # Normally: "cmake" or "cmake .." used
-      #cmake -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE:PATH="..\toolchain.cmake"  ..
-      cmake -G "MinGW Makefiles" -DCMAKE_TOOLCHAIN_FILE:PATH=" ..\toolchain.cmake" ../..
+      #cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE:PATH="..\toolchain.cmake"  ..
+      cmake -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE:PATH=" ../toolchain.cmake" ../..
       # cmake CC=gcc ../..
       # -D"CMAKE_MAKE_PROGRAM:FILEPATH=make.exe" -D"CMAKE_C_COMPILER:FILEPATH=gcc.exe" -D"CMAKE_CXX_COMPILER:FILEPATH=g++.exe" CC=gcc -G "MinGW Makefiles"
 
