@@ -265,7 +265,7 @@ jobs:
 
       # Call the CMake.
       # Normally: "cmake" or "cmake .." used
-      cmake -G "Unix Makefiles" CC=arm-none-eabi-gcc.exe ../..
+      cmake -G "Unix Makefiles" CC=arm-none-eabi-gcc ../..
       # cmake CC=gcc ../..
       # -D"CMAKE_MAKE_PROGRAM:FILEPATH=make.exe" -D"CMAKE_C_COMPILER:FILEPATH=gcc.exe" -D"CMAKE_CXX_COMPILER:FILEPATH=g++.exe" CC=gcc -G "MinGW Makefiles"
 
