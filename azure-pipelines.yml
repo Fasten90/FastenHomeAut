@@ -227,7 +227,7 @@ jobs:
       # Print the gcc version.
 
       gcc --version
-      arm-none-eabi-gcc --version
+
       #  Install a CMake 3.0.2 version.
       #- apt-get update -qq
       #- apt-get install cmake -y
@@ -238,6 +238,11 @@ jobs:
       echo 'deb http://ppa.launchpad.net/george-edison55/cmake-3.x/ubuntu trusty main' | tee -a /etc/apt/sources.list.d/cmake.list
       apt-get update -qq
       apt-get install cmake -y --force-yes
+      
+      # ARM-none-eabi-gcc
+      xpm install --global @gnu-mcu-eclipse/arm-none-eabi-gcc
+      arm-none-eabi-gcc --version
+
       # Print the CMake version.
       echo 'Start CMake'
 
@@ -258,7 +263,7 @@ jobs:
 
       # Call the CMake.
       # Normally: "cmake" or "cmake .." used
-      cmake -G "Ninja" CC=arm-none-eabi-gcc.exe ../..
+      cmake -G "Unix Makefiles" CC=arm-none-eabi-gcc.exe ../..
       # cmake CC=gcc ../..
       # -D"CMAKE_MAKE_PROGRAM:FILEPATH=make.exe" -D"CMAKE_C_COMPILER:FILEPATH=gcc.exe" -D"CMAKE_CXX_COMPILER:FILEPATH=g++.exe" CC=gcc -G "MinGW Makefiles"
 
