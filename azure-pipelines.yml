@@ -240,7 +240,9 @@ jobs:
       apt-get install cmake -y --force-yes
       
       # ARM-none-eabi-gcc
-      xpm install --global @gnu-mcu-eclipse/arm-none-eabi-gcc
+      add-apt-repository ppa:team-gcc-arm-embedded/ppa
+      apt-get update
+      apt-get install gcc-arm-embedded
       arm-none-eabi-gcc --version
 
       # Print the CMake version.
