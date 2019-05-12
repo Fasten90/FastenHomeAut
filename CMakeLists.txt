@@ -62,9 +62,9 @@ if ("${CMAKE_FASTENHOMEAUT_TARGET}" STREQUAL "STM32F0")
                         " -I../../Drivers/CMSIS/Include"
                         )
 
+    # " -D__weak=__attribute__((weak))"
+    # " -D__packed=__attribute__((__packed__))"
     string(CONCAT TARGET_DEFINES
-                       " -D__weak=__attribute__((weak))"
-                       " -D__packed=__attribute__((__packed__))"
                        " -DUSE_HAL_DRIVER"
                        " -DCONFIG_USE_PANEL_FASTENNODE=1"
                        " -DSTM32F030x8"
