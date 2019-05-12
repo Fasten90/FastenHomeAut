@@ -74,7 +74,7 @@ if ("${CMAKE_FASTENHOMEAUT_TARGET}" STREQUAL "STM32F0")
     
     # TODO: Make parameter for // TODO: Make parameter for FastenNodeF0\Debug_STM32F030C8_FLASH.ld
     #' -T..\FastenNodeF0\Debug_STM32F030C8_FLASH.ld'   
-    # " -specs=nano.specs" was added, but is used at Atollic
+    # " -specs=nano.specs" was added, but used at Atollic
     string(CONCAT TARGET_LINKER_OPTIONS
                               " -mthumb"
                               " -mcpu=cortex-m0"
@@ -82,7 +82,6 @@ if ("${CMAKE_FASTENHOMEAUT_TARGET}" STREQUAL "STM32F0")
                               " -lc"
                               " -lm"
                               " -Wl,--end-group"
-                              " -specs=nano.specs"
                               " -nodefaultlibs"
                               " -static"
                               " -Wl,-Map=FastenHomeAut.map"
