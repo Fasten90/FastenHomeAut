@@ -272,7 +272,7 @@ jobs:
 
       # Build the project.
       echo 'Start Make'
-      make
+      make VERBOSE=1
 
       # Check the results
       echo 'Finished compile-ing'
