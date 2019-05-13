@@ -219,11 +219,11 @@ jobs:
 - job: build_linux_gcc_arm
   pool:
     vmImage: 'ubuntu-latest'
-  displayName: 'Build for Linux - GCC - ARM'
+  displayName: 'Build for Linux - GCC - ARM - arm-none-eabi-gcc'
   steps:
   - script: |
 
-      echo 'Start Linux build pipeline'
+      echo 'Start Linux build pipeline - GCC - ARM - arm-none-eabi-gcc'
       # Print the gcc version.
 
       gcc --version
