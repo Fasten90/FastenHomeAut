@@ -34,9 +34,33 @@ endif()
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I../../Inc/Common -I../../Inc/Communication -I../../Inc/HwTester -I../../Inc/Modules -I../../Inc -I../../Inc/Application -I../../Inc/List -I../../Inc/Display -I../../Inc/Common/Helper -I../../Inc/Common/Handler -I../../Inc/SelfTest")
 
 # Target dependent: Library includes, Defines, target
-if ("${CMAKE_FASTENHOMEAUT_TARGET}" STREQUAL "STM32F0")
+# STM32F0_arm-none-eabi-gcc & STM32F0_arm-atollic-eabi-gcc
+if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F0_arm-.*")
     # STM32F0
     message(STATUS "# Selected target: STM32F0")
+    
+    set(CMAKE_SYSTEM_NAME Generic)
+    set(CMAKE_SYSTEM_PROCESSOR arm)
+
+    if ("${CMAKE_FASTENHOMEAUT_TARGET}" STREQUAL "STM32F0_arm-none-eabi-gcc")
+        set(CMAKE_C_COMPILER "arm-none-eabi-gcc")
+        set(CMAKE_CXX_COMPILER "arm-none-eabi-g++")
+    elseif ("${CMAKE_FASTENHOMEAUT_TARGET}" STREQUAL "STM32F0_arm-atollic-eabi-gcc")
+        if (NOT "${CMAKE_C_COMPILER}" MATCHES ".*arm-atollic-eabi-gcc.*")
+            set(CMAKE_C_COMPILER "arm-atollic-eabi-gcc")
+            set(CMAKE_CXX_COMPILER "arm-atollic-eabi-g++")
+        endif()
+    endif()
+
+    set(CMAKE_EXE_LINKER_FLAGS "--specs=nosys.specs" CACHE INTERNAL "")
+
+    set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+    set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+    set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+    set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+
+    set(CMAKE_FASTENHOMEAUT_TARGET "STM32F0")
+
     string(CONCAT TARGET_COMPILER_OPTIONS
                                 " -mthumb"
                                 " -mcpu=cortex-m0"
@@ -69,6 +93,10 @@ if ("${CMAKE_FASTENHOMEAUT_TARGET}" STREQUAL "STM32F0")
                        " -DCONFIG_USE_PANEL_FASTENNODE=1"
                        " -DSTM32F030x8"
                        )
+   
+    if ("${CMAKE_FASTENHOMEAUT_TARGET}" STREQUAL "STM32F0_arm-none-eabi-gcc")
+        string(CONCAT TARGET_DEFINES " -DCONFIG_STANDARD_LIBRARY_USE_DEFAULT")
+    endif()
 
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${TARGET_COMPILER_OPTIONS} ${TARGET_INCLUDES} ${TARGET_DEFINES}")
     
@@ -82,12 +110,16 @@ if ("${CMAKE_FASTENHOMEAUT_TARGET}" STREQUAL "STM32F0")
                               " -lc"
                               " -lm"
                               " -Wl,--end-group"
-                              " -nodefaultlibs"
                               " -static"
                               " -Wl,-Map=FastenHomeAut.map"
                               " -Wl,--gc-sections"
                               " -Wl,--defsym=malloc_getpagesize_P=0x80"
                               )
+                              
+    if ("${CMAKE_FASTENHOMEAUT_TARGET}" STREQUAL "STM32F0_arm-atollic-eabi-gcc")
+        string(CONCAT TARGET_LINKER_OPTIONS " -nodefaultlibs")
+    endif()
+
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${TARGET_LINKER_OPTIONS}")
 else()
     # Not defined STM32F0 --> So target: x86

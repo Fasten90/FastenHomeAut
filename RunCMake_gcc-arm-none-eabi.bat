@@ -8,12 +8,16 @@ mkdir CMakeBuildGccArmNoneEabi
 cd CMakeBuildGccArmNoneEabi
 
 
+
+
 :: Run CMake
 cmake ^
 -D"CMAKE_MAKE_PROGRAM:FILEPATH=c:/Programs/Engineer/Utils/CompilerTools/make.exe" ^
--D"CMAKE_C_COMPILER:FILEPATH=c:/Programs/Engineer/TrueSTUDIO for STM32 9.0.1/ARMTools/bin/arm-atollic-eabi-gcc.exe" ^
--D"CMAKE_CXX_COMPILER:FILEPATH=c:/Programs/Engineer/TrueSTUDIO for STM32 9.0.1/ARMTools/bin/arm-atollic-eabi-g++.exe" ^
--G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE:PATH="../../toolchain.cmake" ../..
+-G "Unix Makefiles" ^
+-D"CMAKE_C_COMPILER:FILEPATH=C:/Programs/Engineer/GNU_Tools_ARM_Embedded_8_2018-q4-major/bin/arm-none-eabi-gcc.exe" ^
+-D"CMAKE_CXX_COMPILER:FILEPATH=C:/Programs/Engineer/GNU_Tools_ARM_Embedded_8_2018-q4-major/bin/arm-none-eabi-g++.exe" ^
+-DCMAKE_TOOLCHAIN_FILE:PATH="../../Toolchain_ST32F0_arm-none-eabi-gcc.cmake" ^
+../..
 
 :: cmake -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE:PATH="../../toolchain.cmake" ../..
 
