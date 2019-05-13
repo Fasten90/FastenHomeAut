@@ -95,7 +95,7 @@ if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F0_arm-.*")
                        )
    
     if ("${CMAKE_FASTENHOMEAUT_TARGET}" STREQUAL "STM32F0_arm-none-eabi-gcc")
-        string(CONCAT TARGET_DEFINES " -DCONFIG_STANDARD_LIBRARY_USE_DEFAULT")
+        string(APPEND TARGET_DEFINES " -DCONFIG_STANDARD_LIBRARY_USE_DEFAULT")
     endif()
 
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${TARGET_COMPILER_OPTIONS} ${TARGET_INCLUDES} ${TARGET_DEFINES}")
@@ -116,8 +116,11 @@ if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F0_arm-.*")
                               " -Wl,--defsym=malloc_getpagesize_P=0x80"
                               )
 
-    if ("${CMAKE_FASTENHOMEAUT_TARGET}" STREQUAL "STM32F0_arm-atollic-eabi-gcc")
-        string(CONCAT TARGET_LINKER_OPTIONS " -nodefaultlibs")
+    # TODO: Delete this
+    if ("${CMAKE_FASTENHOMEAUT_TARGET}" STREQUAL "STM32F0_arm-none-eabi-gcc")
+        #string(APPEND TARGET_LINKER_OPTIONS " -nodefaultlibs")
+    elseif ("${CMAKE_FASTENHOMEAUT_TARGET}" STREQUAL "STM32F0_arm-atollic-eabi-gcc")
+        #string(CONCAT TARGET_LINKER_OPTIONS " -T../../../FastenNodeF0/Debug_STM32F030C8_FLASH.ld")
     endif()
 
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${TARGET_LINKER_OPTIONS}")
