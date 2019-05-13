@@ -279,6 +279,15 @@ jobs:
       ls
 
       # Run
-      echo 'Execute...'
-      ./FastenHomeAut
-      echo 'Finished executing'
+      echo 'Test result exists...'
+
+      file="FastenHomeAut"
+      if [ ! -f "$file" ]
+          echo "$0: File '${file}' has found."
+          echo 'Finished...'
+          exit 0
+      then
+          echo "$0: File '${file}' not found."
+          echo 'Finished...'
+          exit -1
+      fi
