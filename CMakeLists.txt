@@ -39,6 +39,7 @@ if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F0_arm-.*")
     # STM32F0
     message(STATUS "# Selected target: STM32F0")
     
+    # TODO: Copied 2 line not important, there is in toolchain too
     set(CMAKE_SYSTEM_NAME Generic)
     set(CMAKE_SYSTEM_PROCESSOR arm)
 
@@ -52,14 +53,13 @@ if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F0_arm-.*")
         endif()
     endif()
 
+    # TODO: Copied 5 line not important, there is in toolchain too
     set(CMAKE_EXE_LINKER_FLAGS "--specs=nosys.specs" CACHE INTERNAL "")
 
     set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
     set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
     set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
     set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
-
-    set(CMAKE_FASTENHOMEAUT_TARGET "STM32F0")
 
     string(CONCAT TARGET_COMPILER_OPTIONS
                                 " -mthumb"
@@ -115,7 +115,7 @@ if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F0_arm-.*")
                               " -Wl,--gc-sections"
                               " -Wl,--defsym=malloc_getpagesize_P=0x80"
                               )
-                              
+
     if ("${CMAKE_FASTENHOMEAUT_TARGET}" STREQUAL "STM32F0_arm-atollic-eabi-gcc")
         string(CONCAT TARGET_LINKER_OPTIONS " -nodefaultlibs")
     endif()
@@ -178,7 +178,7 @@ endif (UNIX)
 file(GLOB_RECURSE FASTEN_SOURCE_FILES "Src/*.c")
 
 # Target dependent sources
-if ("${CMAKE_FASTENHOMEAUT_TARGET}" STREQUAL "STM32F0")
+if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F0.*")
     file(GLOB_RECURSE DRIVER_SOURCE_FILES_1 "Drivers/STM32F0xx_HAL_Driver/*.c")
     file(GLOB_RECURSE DRIVER_SOURCE_FILES_2 "Drivers/CMSIS/Device/ST/STM32F0xx/Source/*.c")
     set(DRIVER_SOURCE_FILES ${DRIVER_SOURCE_FILES_1} ${DRIVER_SOURCE_FILES_2})
