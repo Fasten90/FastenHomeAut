@@ -25,14 +25,14 @@
  *    Macros
  *----------------------------------------------------------------------------*/
 
-#define    CONFIG_MEM_CHECK_POINTERS        1
+#define CONFIG_MEM_CHECK_POINTERS         1
 #define CONFIG_MEM_CHECK_POINTER_RANGE    1
 
 #define CONFIG_MEM_STACK_GUARD_LENGTH    (1000U)
-#define CONFIG_MEM_STACK_GUARD_VALUE    (0xEF)
+#define CONFIG_MEM_STACK_GUARD_VALUE     (0xEF)
 
 
-#if CONFIG_MEM_CHECK_POINTER_RANGE == 1
+#if (CONFIG_MEM_CHECK_POINTER_RANGE == 1)
     #define MEM_ASSERT(_con)                            if (!_con) MEM_ERROR_HANDLER();
     #define MEM_IN_FLASH(_pnt, _size)                    ((uint32_t)_pnt >= MEM_FLASH_START && ((uint32_t)_pnt + _size) < MEM_FLASH_END)
     #define MEM_IN_RAM(_pnt, _size)                        ((uint32_t)_pnt >= MEM_RAM_START && ((uint32_t)_pnt + _size) < MEM_RAM_END)
