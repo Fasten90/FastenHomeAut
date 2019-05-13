@@ -281,12 +281,13 @@ jobs:
       # Run
       echo 'Test result exists...'
 
-      file="FastenHomeAut"
-      if [ ! -f "$file" ]
+      file="./FastenHomeAut"
+      if [ -f "$file" ]
+      then
           echo "$0: File '${file}' has found."
           echo 'Finished...'
           exit 0
-      then
+      else
           echo "$0: File '${file}' not found."
           echo 'Finished...'
           exit -1
