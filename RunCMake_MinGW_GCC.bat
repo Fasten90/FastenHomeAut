@@ -9,8 +9,8 @@ cd CMakeBuild_MinGW_gcc
 
 
 :: Run CMake
-::cmake CC=gcc ..
-cmake CC=gcc -G "MinGW Makefiles" ../..
+::cmake CC=gcc -G "MinGW Makefiles" ../..
+cmake CC=gcc -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" ../..
 
 
 :: Run make
