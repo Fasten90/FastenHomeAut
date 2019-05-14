@@ -52,12 +52,13 @@ void SelfTest_Errors_Constwrite(void)
 {
     /* Const write */
     /* cppcheck-suppress stringLiteralWrite */
-    static const char const buffer[] = "const";
-    char * pnt = (char *)buffer;
+    static const char buffer[] = "const";
+    char * pntr = (char *)buffer;
 
     uprintf("Buffer: %s\r\n", buffer);
 
-    pnt[2] = 'e';
+    /* Rewrite the index 2. value of const buffer - which normally stored in FLASH */
+    pntr[2] = 'e';
 
     uprintf("Buffer: %s\r\n", buffer);
 }
