@@ -157,11 +157,11 @@ jobs:
       echo 'Finished executing'
 
 
-# Win - MinGW - GCC - self batch script
+# Win - MinGW - GCC - batch script
 - job: build_win_mingw_gcc_self_script
   pool:
     vmImage: 'windows-2019'
-  displayName: 'Build for Windows - MinGW GCC - self script'
+  displayName: 'Build for Windows - MinGW GCC - batch script'
   steps:
   - task: BatchScript@1
     inputs:
