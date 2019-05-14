@@ -237,6 +237,9 @@ void HAL_ResumeTick(void)
 // TODO: Need to put hal_uart.c ...
 HAL_StatusTypeDef HAL_UART_Init(UART_HandleTypeDef *huart)
 {
+    /* This argument not used for x86 platform, because it could not realized - now used STDIN/OUT implementation instead of UART */
+    UNUSED_ARGUMENT(huart);
+
     // Create Thread
 #ifdef CONFIG_PLATFORM_X86_WIN
 	WindowsHal_UartConsoleThreadHandle = CreateThread(NULL, 0, Windows_StdinReceiveThread, NULL, 0, NULL);
@@ -270,6 +273,9 @@ HAL_StatusTypeDef HAL_UART_Init(UART_HandleTypeDef *huart)
  */
 DWORD WINAPI Windows_StdinReceiveThread(void * args)
 {
+    /* * args was necessary for general thread function implementation */
+    UNUSED_ARGUMENT(args);
+
 	// Do stuff.  This will be the first function called on the new thread.
 	// When this function returns, the thread goes away.  See MSDN for more details.
     #if !defined(CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON)
@@ -378,8 +384,11 @@ void windows_delay_ms(int mseconds)
 /**
  * \brief	Thread for SysTick (increment tick)
  */
-DWORD WINAPI Windows_SysTickThread(void * data)
+DWORD WINAPI Windows_SysTickThread(void * args)
 {
+    /* * args was necessary for general thread function implementation */
+    UNUSED_ARGUMENT(args);
+
 	/*
 	void SysTick_Handler(void)
 	{
