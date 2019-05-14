@@ -56,8 +56,9 @@
  * __GNUC__
  * __STDC__
  * __clang__ (Added by later - for test)
+ * _MSC_VER  --> MSVC
  */
-#if !defined(__CC_ARM__) && !defined(__ICARM__) && !defined(__GNUC__) && !defined(__STDC__) && !defined(__clang__)
+#if !defined(__CC_ARM__) && !defined(__ICARM__) && !defined(__GNUC__) && !defined(__STDC__) && !defined(__clang__) && !defined(_MSC_VER)
 #error "Unknown compiler!"
 #endif
 
@@ -124,6 +125,15 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #endif
 
 
+#ifndef _MSC_VER
+    /* Inline function */
+    #define INLINE_FUNCTION     inline __attribute__((always_inline))
+#else
+    /* MSVC does not support the inline function */
+    #define INLINE_FUNCTION
+#endif
+
+
 /* #define assert_param(expr) ((void)0)    // incompatible redefinition ... */
 
 
@@ -146,17 +156,21 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 ///< Breakpoint
 #ifdef CONFIG_DEBUG_MODE
     #if !defined(CONFIG_PLATFORM_X86)
-    /* ASM: Breakpoint */
-    #define DEBUG_BREAKPOINT()        __asm("BKPT #0\n")
+        /* ARM - ASM: Breakpoint */
+        #define DEBUG_BREAKPOINT()        __asm("BKPT #0\n")
+    #elif defined(_MSC_VER)
+        /* MSVC Does not support #warning, so we shall be careful */
+        #pragma message ("MSVC - Debug breakpoint not supported yet")
+        #define DEBUG_BREAKPOINT()
     #elif defined (__WIN32__)
-    #include "Windows.h"
-    #define DEBUG_BREAKPOINT()        DebugBreak()
+        #include "Windows.h"
+        #define DEBUG_BREAKPOINT()        DebugBreak()
     #elif defined (__linux__)
-    #warning "Linux Debug breakpoint does not supported yet"
-    #define DEBUG_BREAKPOINT()
+        #warning "Linux Debug breakpoint does not supported yet"
+        #define DEBUG_BREAKPOINT()
     #else
-    #warning "Unknown architect - breakpoint does not used"
-    #define DEBUG_BREAKPOINT()
+        #warning "Unknown architect - breakpoint does not used"
+        #define DEBUG_BREAKPOINT()
     #endif
 #else
 #define DEBUG_BREAKPOINT()
@@ -166,12 +180,23 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 ///< Compiler message
 /* E.g.: #pragma message "Compiling " __FILE__ "..." */
 /* TODO: Not works on MSVC? */
-#ifndef __TINYC__
+#if !defined(__TINYC__) && !defined(_MSC_VER)
+    /* TINYCC and MSVC does not support */
     #define DO_PRAGMA(_msg) _Pragma (#_msg)
     #define COMPILER_MESSAGE(_msg) DO_PRAGMA(message ("Compiler message: - " #_msg))
+#elif defined(_MSC_VER)
+    /* MSVC */
+    /* TODO: */
+    #define COMPILER_MESSAGE(_msg)
 #else
     /* TinyCC (TCC) doesn't support _Pragma */
     #define COMPILER_MESSAGE(_msg)
+#endif
+
+
+#if defined(_MSC_VER )
+    /* MSVC could not support __attribute__ because it is gcc extension */
+    #define __attribute__(x)
 #endif
 
 

@@ -29,7 +29,8 @@
 #include <pthread.h>
 #endif
 
-#include <unistd.h>
+// TODO: Is it necessary for MinGW?
+//#include <unistd.h>
 
 // for STDIN thread
 #include "CommandHandler.h"

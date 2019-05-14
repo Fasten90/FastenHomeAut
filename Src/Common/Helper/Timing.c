@@ -48,7 +48,7 @@
  * @brief        Delay (ms)
  * @param[in]    ms    millisecond, which time delay
  */
-inline void DelayMs(uint32_t ms)
+INLINE_FUNCTION void DelayMs(uint32_t ms)
 {
 #ifdef CONFIG_USE_FREERTOS
     vTaskDelay((TickType_t)(ms/portTICK_PERIOD_MS));
