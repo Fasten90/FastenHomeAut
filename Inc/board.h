@@ -51,7 +51,7 @@
 #define MEM_RAM_START          (0x20000000)
 #define MEM_RAM_END            (0x20002000)
 #elif defined(STM32F40xx)
-#warning "Set these values"
+#warning "Set memory address values"
 #elif defined(CONFIG_PLATFORM_X86)
 /* Do not use... */
 #define MEM_FLASH_START        (0x00000000)
