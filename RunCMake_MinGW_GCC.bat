@@ -15,7 +15,8 @@ cmake CC=gcc -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" ../..
 
 :: Run make
 :: c:\Programs\Engineer\Utils\CompilerTools\make.exe
-c:\Programs\Engineer\Utils\CompilerTools\make.exe VERBOSE=1
+:: make shall be in the PATH
+make VERBOSE=1
 
 
 set filename="FastenHomeAut.exe"
