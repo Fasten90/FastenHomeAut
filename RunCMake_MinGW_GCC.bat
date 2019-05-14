@@ -1,3 +1,4 @@
+@echo off
 echo Run CMake - MinGW - GCC
 
 
@@ -10,11 +11,11 @@ cd CMakeBuild_MinGW_gcc
 
 :: Run CMake
 ::cmake CC=gcc -G "MinGW Makefiles" ../..
+:: Shall be added the '-DCMAKE_SH="CMAKE_SH-NOTFOUND"' because in Azure pipeline there was added the git, and we shall skip that
 cmake CC=gcc -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" ../..
 
 
 :: Run make
-:: c:\Programs\Engineer\Utils\CompilerTools\make.exe
 :: make shall be in the PATH
 make VERBOSE=1
 
