@@ -276,7 +276,7 @@ void mem_CheckStackGuardValues(void)
 
 
 /**
- * @brief    Check pointer is in good memory range?
+ * @brief     Check pointer is in good memory range?
  * @retval    true    is ok
  * @retval    false    wrong
  */
@@ -285,8 +285,8 @@ bool mem_CheckPointer(void * pnt, size_t size)
     bool isOk = false;
 
     /* Check pointer range is in RAM or FLASH? */
-    if (((uint32_t)pnt >= MEM_RAM_START && ((uint32_t)pnt + size) < MEM_RAM_END)
-        || ((uint32_t)pnt >= MEM_FLASH_START && ((uint32_t)pnt + size) < MEM_FLASH_END))
+    if (((Address_t)pnt >= MEM_RAM_START && ((Address_t)pnt + size) < MEM_RAM_END)
+        || ((Address_t)pnt >= MEM_FLASH_START && ((Address_t)pnt + size) < MEM_FLASH_END))
     {
         isOk = true;
     }
