@@ -169,7 +169,7 @@ jobs:
       #arguments: # Optional
       #modifyEnvironment: False # Optional
       #workingFolder: # Optional
-      failOnStandardError: true # Optional
+      #failOnStandardError: true # Optional
 
 
 # Linux - gcc
