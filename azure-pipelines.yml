@@ -156,6 +156,22 @@ jobs:
       FastenHomeAut.exe
       echo 'Finished executing'
 
+
+# Win - MinGW - GCC - self batch script
+- job: build_win_mingw_gcc_self_script
+  pool:
+    vmImage: 'windows-2019'
+  displayName: 'Build for Windows - MinGW GCC - self script'
+  steps:
+  - task: BatchScript@1
+    inputs:
+      filename: 'RunCMake_MinGW_GCC.bat'
+      #arguments: # Optional
+      #modifyEnvironment: False # Optional
+      #workingFolder: # Optional
+      failOnStandardError: true # Optional
+
+
 # Linux - gcc
 - job: build_linux_gcc
   pool:

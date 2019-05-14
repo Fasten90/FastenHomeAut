@@ -1,11 +1,11 @@
-echo Run CMake - MinGW64
+echo Run CMake - MinGW - GCC
 
 
 :: Go to Out/CMakeBuild
 mkdir Out
 cd Out
-mkdir CMakeBuildMinGW64
-cd CMakeBuildMinGW64
+mkdir CMakeBuild_MinGW_gcc
+cd CMakeBuild_MinGW_gcc
 
 
 :: Run CMake
@@ -60,4 +60,4 @@ if %test_executing_result_wrong% NEQ 0 (
     echo Script has run successfully
 )
 
-::exit %test_executing_result_wrong%
+exit %test_executing_result_wrong%
