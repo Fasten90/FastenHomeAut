@@ -1,5 +1,9 @@
 echo Run CMake - Clang
 
+# Installation tools
+#apt-get update
+#apt-get install -y clang-6.0 lldb-6.0 lld-6.0
+
 # Go to Out/CMakeBuild_Clang
 mkdir Out
 cd Out
