@@ -11,7 +11,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 
 
 # Compiler type
-message("Compiler ID: ${CMAKE_C_COMPILER_ID}")
+message(STATUS "# Compiler ID: ${CMAKE_C_COMPILER_ID}")
 
 
 # CI vs Local build
@@ -19,10 +19,10 @@ message("Compiler ID: ${CMAKE_C_COMPILER_ID}")
 # "CI" used in Bitbucket pipeline
 if(DEFINED ENV{CI})
     # CI build
-    message(STATUS "CI environment variable defined")
+    message(STATUS "# CI environment variable defined")
 else()
     # LOCAL build
-    message(STATUS "CI environment variable has not defined")
+    message(STATUS "# CI environment variable has not defined")
 endif()
 
 
@@ -136,17 +136,23 @@ message(STATUS "Compiler ID: ${CMAKE_C_COMPILER_ID}")
 
 # Set compiler dependent settings
 if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
+    # Clang
+    message(STATUS "# Compiler: Clang")
+
     # Clang error suppression
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__clang__=1")
     # using Clang
     # TODO: Change the hardcoded wrong path (/Programs/Engineer ...)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/Programs/Engineer/LLVM/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v -o Out/ClangCmakeCompiled/")
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
-    # using GCC, MinGW32, MinGW64
+    # GCC, MinGW32, MinGW64
+    message(STATUS "# Compiler: GNU (GCC, MinGW*)")
+
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -std=c11 -D__clang__=1")
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "TinyCC")
-    # using TCC
-    message(STATUS "Compiler TCC - TODO")
+    # TCC / TinyCC
+    message(STATUS "# Compiler TCC - TODO")
+
     # TCC include
     # TODO: Why not necessary?
     #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/Programs/Engineer/tcc/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v -o Out/CmakeTccCompiled/")
@@ -154,13 +160,12 @@ elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "TinyCC")
     #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -b")
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
     # MSVC - Microsoft Visual Studio
-    message(STATUS "Compiler: MSVC")
+    message(STATUS "# Compiler: MSVC")
     
     # MSVC does not support the '-Wextra' and '-std=c11'
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Wall /std:c++14")
-    
 else()
-    message("!! Cmake Error possibility !! Not known Compiler, please set it!")
+    message(STATUS "# !! Cmake Error possibility !! Not known Compiler, please set it!")
 endif()
 
 

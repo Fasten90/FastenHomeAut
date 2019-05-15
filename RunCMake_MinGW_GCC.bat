@@ -1,21 +1,23 @@
-echo Run CMake - MinGW64
+@echo off
+echo Run CMake - MinGW - GCC
 
 
 :: Go to Out/CMakeBuild
 mkdir Out
 cd Out
-mkdir CMakeBuildMinGW64
-cd CMakeBuildMinGW64
+mkdir CMakeBuild_MinGW_gcc
+cd CMakeBuild_MinGW_gcc
 
 
 :: Run CMake
-::cmake CC=gcc ..
-cmake CC=gcc -G "MinGW Makefiles" ../..
+::cmake CC=gcc -G "MinGW Makefiles" ../..
+:: Shall be added the '-DCMAKE_SH="CMAKE_SH-NOTFOUND"' because in Azure pipeline there was added the git, and we shall skip that
+cmake CC=gcc -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" ../..
 
 
 :: Run make
-:: c:\Programs\Engineer\Utils\CompilerTools\make.exe
-c:\Programs\Engineer\Utils\CompilerTools\make.exe VERBOSE=1
+:: make shall be in the PATH
+make VERBOSE=1
 
 
 set filename="FastenHomeAut.exe"
@@ -60,4 +62,4 @@ if %test_executing_result_wrong% NEQ 0 (
     echo Script has run successfully
 )
 
-::exit %test_executing_result_wrong%
+exit %test_executing_result_wrong%

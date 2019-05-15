@@ -52,12 +52,13 @@ void SelfTest_Errors_Constwrite(void)
 {
     /* Const write */
     /* cppcheck-suppress stringLiteralWrite */
-    static const char const buffer[] = "const";
-    char * pnt = (char *)buffer;
+    static const char buffer[] = "const";
+    char * pntr = (char *)buffer;
 
     uprintf("Buffer: %s\r\n", buffer);
 
-    pnt[2] = 'e';
+    /* Rewrite the index 2. value of const buffer - which normally stored in FLASH */
+    pntr[2] = 'e';
 
     uprintf("Buffer: %s\r\n", buffer);
 }
@@ -91,8 +92,9 @@ void SelfTest_Errors_MemFault(void)
 {
     /* Test invalid pointer */
     /* TODO: This address normally is an invalid address, but not every target-platform, but shall provide a target dependent invalid address */
+    /* TODO: Check constValue with MEM functions */
     const uint32_t constValue = 0x12345678;
-    uint32_t * wrongPointer = (uint32_t *)constValue;
+    uint32_t * wrongPointer = (uint32_t *)constValue; /* Set pointer address to an incorrect address */
     *wrongPointer = 0;
 
     uprintf("WrongPointer value: %d\r\n", *wrongPointer);

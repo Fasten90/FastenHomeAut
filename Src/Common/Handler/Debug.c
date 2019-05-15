@@ -221,8 +221,9 @@ static void Debug_PrintDebugListTableHeader(const char * fixheader, char * str, 
 void Debug_PrintDebugList(void)
 {
     uint8_t i;
-    static const char const fixheader[] = "| %20s | %3s |";
+    static const char fixheader[] = "| %20s | %3s |";
     char str[2 + 20 + 3 + 3 + 2];
+    /* sizeof(fixheader) -- string size */
     char header[sizeof(fixheader)];
 
     Debug_PrintDebugListTableHeader(fixheader, str, header);
