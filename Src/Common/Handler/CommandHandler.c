@@ -659,13 +659,36 @@ uint32_t CmdH_UnitTest(void)
     /* CmdH_ExecuteCommandWithParams test: */
 
     /* ---------------------------------------------------- */
-    /* test with 5 parameter: */
-    StrCpy(cmdSrcBuffer, "version");            /* command string must reside in RAM! */
+    /* test with 1 parameter: shall be okay */
+    StrCpy(cmdSrcBuffer, "version");                            /* command string must reside in RAM! */
+    StrCpy(cmdParamBuffer, "test");                             /* command string must reside in RAM! */
+    result = CmdH_ExecuteCommandWithParams(cmdSrcBuffer, cmdParamBuffer, buffer, CMD_UNITTEST_BUFFER_SIZE);
+
+    /* Check command execute result: too many argument, because "version" has not required argument, but we add */
+    UNITTEST_ASSERT(result == CmdH_Result_Error_TooManyArgument, "CmdH_PrepareFindExecuteCommand error");
+
+    /* Check command argument num */
+    UNITTEST_ASSERT(CmdH_CommandArgCount == 2, "CmdH_PrepareFindExecuteCommand error");
+
+    /* Check command source */
+    /* UNITTEST_ASSERT(CmdH_CommandSource == CommProt_DebugUart, "CmdH_PrepareFindExecuteCommand error"); */
+
+    /* Check separated / splitted command */
+    UNITTEST_ASSERT(!StrCmp(CmdH_CommandArguments[0], "version"), "CmdH_PrepareFindExecuteCommand error");
+    UNITTEST_ASSERT(!StrCmp(CmdH_CommandArguments[1], "test"), "CmdH_PrepareFindExecuteCommand error");
+
+    /* ---------------------------------------------------- */
+    /* test with 5 parameter: - too much argument for 3 argument situation */
+    StrCpy(cmdSrcBuffer, "version");                            /* command string must reside in RAM! */
     StrCpy(cmdParamBuffer, "with lot of arguments");            /* command string must reside in RAM! */
     result = CmdH_ExecuteCommandWithParams(cmdSrcBuffer, cmdParamBuffer, buffer, CMD_UNITTEST_BUFFER_SIZE);
 
-    /* Check command execute result: true/successful, because CommandHandler will find "version" command */
+    /* Check command execute result: too much argument */
+#if (CMDH_COMMAND_ARG_MAX_COUNT <= 3)
     UNITTEST_ASSERT(result == CmdH_Result_Error_TooManyArgument, "CmdH_PrepareFindExecuteCommand error");
+#else
+    #warning "Not handled CommandHandler test situation"
+#endif
 
     /* Check command argument num */
     UNITTEST_ASSERT(CmdH_CommandArgCount == 4, "CmdH_PrepareFindExecuteCommand error");
@@ -677,8 +700,9 @@ uint32_t CmdH_UnitTest(void)
     UNITTEST_ASSERT(!StrCmp(CmdH_CommandArguments[0], "version"), "CmdH_PrepareFindExecuteCommand error");
     UNITTEST_ASSERT(!StrCmp(CmdH_CommandArguments[1], "with"), "CmdH_PrepareFindExecuteCommand error");
     UNITTEST_ASSERT(!StrCmp(CmdH_CommandArguments[2], "lot"), "CmdH_PrepareFindExecuteCommand error");
+#if (CMDH_COMMAND_ARG_MAX_COUNT > 3)
     UNITTEST_ASSERT(!StrCmp(CmdH_CommandArguments[3], "of"), "CmdH_PrepareFindExecuteCommand error");
-
+#endif
 
     /* ---------------------------------------------------- */
 #if defined(CONFIG_MODULE_GLOBALVARHANDLER_ENABLE)
