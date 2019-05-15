@@ -144,7 +144,10 @@ if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
     # using Clang
     # TODO: Change the hardcoded wrong path (/Programs/Engineer ...)
     #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/Programs/Engineer/LLVM/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -target x86_64-w64-mingw64 -Wall -S -v")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -target x86_64-pc-linux-gnu -Wall -S -v")
+    # Possible targets:
+    # x86_64-w64-mingw64
+    # x86_64-pc-linux-gnu
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
     # GCC, MinGW32, MinGW64
     message(STATUS "# Compiler: GNU (GCC, MinGW*)")

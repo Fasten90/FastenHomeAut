@@ -1,4 +1,4 @@
-echo Run CMake - MinGW64
+echo Run CMake - Clang
 
 # Go to Out/CMakeBuild_Clang
 mkdir Out
