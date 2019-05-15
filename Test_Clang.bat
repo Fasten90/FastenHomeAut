@@ -24,3 +24,5 @@ clang --analyze --analyzer-output html Src/* Src/Common/* Src/Common/Helper/* Sr
 :: TODO:
 :: c: C99
 :: cpp: clang++ -std=c++14
+
+
