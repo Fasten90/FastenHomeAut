@@ -12,10 +12,12 @@ export CXX=/usr/bin/clang++
 
 # Run CMake
 # cmake CC=gcc ..
+echo Execute cmake
 cmake ../..
 
 
 # Run make
+echo Execute make
 make
 
 
