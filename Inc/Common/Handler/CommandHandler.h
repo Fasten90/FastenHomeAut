@@ -29,8 +29,8 @@
 
 /*    Config defines */
 #define CMDH_COMMAND_MAX_LENGTH                (255U)
-#define CMDH_COMMAND_ARG_MAX_COUNT            (3)
-#define CMDH_COMMAND_ARG_MAX_NUM_BITS        (0x0F)    /* 0b1111 <-- warning: "binary constants are a GCC extension */
+#define CMDH_COMMAND_ARG_MAX_COUNT             (3)
+#define CMDH_COMMAND_ARG_MAX_NUM_BITS          (0x0F)    /* 0b1111 <-- warning: "binary constants are a GCC extension */
 
 /* define CMDH_COMMAND_DELIMITER_CHAR            ((char)' ') */
 #define CMDH_COMMAND_DELIMITER_CHAR            ((const char *)" ")
@@ -62,17 +62,17 @@ typedef uint8_t CommProtocolBit_t;
 ///< Command results
 typedef enum
 {
-    CmdH_Result_Unknown = 0,                                ///< Unknown result (do not use!)
-    CmdH_Result_Ok,                                            ///< Successful - but not sending successful message (e.g. write answer from command)
-    CmdH_Result_Ok_SendSuccessful,                            ///< Successful - CommandHandler send "successful" message
+    CmdH_Result_Unknown = 0,                                 ///< Unknown result (do not use!)
+    CmdH_Result_Ok,                                          ///< Successful - but not sending successful message (e.g. write answer from command)
+    CmdH_Result_Ok_SendSuccessful,                           ///< Successful - CommandHandler send "successful" message
     CmdH_Result_Error_WrongArgument1,                        ///< First argument is wrong (type or range)
     CmdH_Result_Error_WrongArgument2,                        ///< Second argument is wrong (type or range)
     CmdH_Result_Error_WrongArgument3,                        ///< Third argument is wrong (type or range)
     CmdH_Result_Error_TooFewArgument,                        ///< Fewer argument than needed
-    CmdH_Result_Error_WrongArgumentNum,                        ///< Not good argument number
-    CmdH_Result_Error_TooManyArgument,                        ///< More argument than needed
-    CmdH_Result_Error_CommandNotFound,                        ///< Command not found
-    CmdH_Result_Error_CallCmdHandlerWithInvalidArgument,    ///< Called Command Handler with invalid argument
+    CmdH_Result_Error_WrongArgumentNum,                      ///< Not good argument number
+    CmdH_Result_Error_TooManyArgument,                       ///< More argument than needed
+    CmdH_Result_Error_CommandNotFound,                       ///< Command not found
+    CmdH_Result_Error_CallCmdHandlerWithInvalidArgument,     ///< Called Command Handler with invalid argument
     CmdH_Result_Error_Unknown                                ///< Unknown error (in command processing)
 } CmdH_Result_t;
 
