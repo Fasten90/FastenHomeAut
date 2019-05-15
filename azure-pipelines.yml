@@ -173,7 +173,7 @@ jobs:
 
 
 # Win - Clang
-- job: build_win_mingw_gcc
+- job: build_win_clang
   pool:
     vmImage: 'windows-2019'
   displayName: 'Build for Windows - Clang'
