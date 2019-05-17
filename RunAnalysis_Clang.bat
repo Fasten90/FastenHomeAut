@@ -9,6 +9,7 @@ mkdir ClangStaticAnalysisOutput
 cd ClangStaticAnalysisOutput
 
 
+:: TODO: Delete "-save-stats" ? Did nothing
 clang --analyze -Xanalyzer -analyzer-output=html -v -save-stats ^
 ../../Src/* ../../Src/Common/* ../../Src/Common/Helper/* ../../Src/Common/Handler/* ^
 ../../Src/Communication/* ../../Src/HwTester/* ../../Src/Modules/* ../../Src/Application/* ^
