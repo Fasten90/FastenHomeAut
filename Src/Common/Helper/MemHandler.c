@@ -247,13 +247,14 @@ void mem_CheckStackGuardValues(void)
     uint16_t guardGoodCnt = 0;
     bool guardWasFound = false;
     /* Do not initialize buffer with fix values!!!! */
+    /* NOTE: Be careful! Static analyzers will say, we read untinitialized variables - It is right, but now we want to do that! */
     /* (cppcheck style) Variable 'stackOverFlowCheckerVariable' is not assigned a value. */
     /* cppcheck-suppress unassignedVariable */
     uint8_t stackOverFlowCheckerVariable[CONFIG_MEM_STACK_GUARD_LENGTH];
 
     for (i = 0; i < CONFIG_MEM_STACK_GUARD_LENGTH; i++)
     {
-        if (!guardWasFound && stackOverFlowCheckerVariable[i] == CONFIG_MEM_STACK_GUARD_VALUE)
+        if (!guardWasFound && stackOverFlowCheckerVariable[i] == CONFIG_MEM_STACK_GUARD_VALUE) /* clang_sa_ignore[core.UndefinedBinaryOperatorResult] */
         {
             guardWasFound = true;
             guardGoodCnt = i;

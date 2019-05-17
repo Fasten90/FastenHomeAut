@@ -275,6 +275,7 @@ uint16_t CircularBuffer_DropCharacters(CircularBufferInfo_t *circBuff, uint16_t 
         if (firstClear > length)
         {
             /* Not need drop all of last characters */
+            /* TODO: Check! Clang told: firstClear not read */
             firstClear = length;
             secondClear = 0;
         }
