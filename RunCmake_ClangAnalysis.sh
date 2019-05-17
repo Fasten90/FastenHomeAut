@@ -35,9 +35,9 @@ clang --analyze -Xanalyzer -analyzer-output=html -v -save-stats \
     -DCONFIG_USE_PANEL_PC=1 -std=c11 -target x86_64-pc-linux-gnu -Wall
 
 
-:: List directories
+# List directories
 dir
 
 
-:: Go to original directory
+# Go to original directory
 cd ../..
