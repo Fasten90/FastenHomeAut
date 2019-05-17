@@ -311,7 +311,7 @@ jobs:
 
 
 # Linux - Clang - shell script
-- job: build_linux_cland_script
+- job: build_linux_clang_script
   pool:
     vmImage: 'ubuntu-latest'
   displayName: 'Build for Linux - Clang - shell script'
@@ -327,3 +327,23 @@ jobs:
       #failOnStderr: false # Optional
       #noProfile: true # Optional
       #noRc: true # Optional
+
+
+# Linux - Clang Static Analysis - shell script
+- job: build_linux_clang_analysis_script
+  pool:
+    vmImage: 'ubuntu-latest'
+  displayName: 'Build for Linux - Clang Analysis - shell script'
+  steps:
+  - task: Bash@3
+    inputs:
+      targetType: 'filePath' # Optional. Options: filePath, inline
+      #filePath: # Required when targetType == FilePath
+      filePath: RunCmake_ClangAnalysis.sh
+      #arguments: # Optional
+      #script: '# Write your commands here# Use the environment variables input below to pass secret variables to this script' # Required when targetType == Inline
+      #workingDirectory: # Optional
+      #failOnStderr: false # Optional
+      #noProfile: true # Optional
+      #noRc: true # Optional
+
