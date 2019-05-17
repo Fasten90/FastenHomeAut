@@ -2772,7 +2772,7 @@ uint32_t StringHelper_UnitTest(void)
     value32 = 0;
     result = StringBinaryToNum("010101010101010101010101010101010", &value32);
     UNITTEST_ASSERT(!result, "StringBinaryToNum error");
-    UNITTEST_ASSERT(value32 == 0xAAAAAAAA, "StringHexToNum error");
+    UNITTEST_ASSERT(value32 == 0, "StringHexToNum error"); /* Original value has not changed */
 
 
     /* Decimals */
