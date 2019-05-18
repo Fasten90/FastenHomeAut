@@ -12,3 +12,6 @@ CALL Run_ClangAnalysis.bat
 
 CALL Run_ClangFormatter.bat
 
+
+CALL RunCMake_GccCoverage.bat
+
