@@ -385,7 +385,7 @@ jobs:
     inputs:
       targetType: 'filePath' # Optional. Options: filePath, inline
       #filePath: # Required when targetType == FilePath
-      filePath: RunCmake_Clang.sh
+      filePath: RunCMake_Clang.sh
       #arguments: # Optional
       #script: '# Write your commands here# Use the environment variables input below to pass secret variables to this script' # Required when targetType == Inline
       #workingDirectory: # Optional
