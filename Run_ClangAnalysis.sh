@@ -1,4 +1,4 @@
-echo Run CMake - Clang
+echo Run - Clang - Analysis
 
 # Installation tools
 #apt-get update
@@ -7,8 +7,8 @@ echo Run CMake - Clang
 # Go to Out/CMakeBuild_Clang
 mkdir Out
 cd Out
-mkdir CMakeBuild_Clang
-cd CMakeBuild_Clang
+mkdir ClangAnalysis
+cd ClangAnalysis
 
 
 export CC=/usr/bin/clang

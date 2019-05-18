@@ -404,7 +404,7 @@ jobs:
     inputs:
       targetType: 'filePath' # Optional. Options: filePath, inline
       #filePath: # Required when targetType == FilePath
-      filePath: RunCmake_ClangAnalysis.sh
+      filePath: Run_ClangAnalysis.sh
       #arguments: # Optional
       #script: '# Write your commands here# Use the environment variables input below to pass secret variables to this script' # Required when targetType == Inline
       #workingDirectory: # Optional
