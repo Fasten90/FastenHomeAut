@@ -28,6 +28,6 @@ echo Coverage
 gcov --all-blocks --function-summaries --branch-probabilities --branch-counts --unconditional-branches main.c
 
 
-:: Go to original directory
+# Go to original directory
 cd ../..
 
