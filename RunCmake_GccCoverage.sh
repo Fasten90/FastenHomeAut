@@ -4,7 +4,7 @@ echo Run CMake - GCC -Coverage
 mkdir Out
 cd Out
 mkdir CMakeBuild_GccCoverage
-cd CMakeBuild_Coverage
+cd CMakeBuild_GccCoverage
 
 
 # Run CMake
