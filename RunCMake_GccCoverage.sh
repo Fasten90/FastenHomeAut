@@ -22,6 +22,11 @@ make -j4
 ./FastenHomeAut
 
 
+echo Coverage
+
+# TODO: Another files?
+gcov --all-blocks --function-summaries --branch-probabilities --branch-counts --unconditional-branches main.c
+
 
 :: Go to original directory
 cd ../..
