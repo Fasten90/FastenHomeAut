@@ -215,4 +215,28 @@ endif()
 
 set(SOURCE_FILES ${FASTEN_SOURCE_FILES} ${DRIVER_SOURCE_FILES})
 
-add_executable(FastenHomeAut ${SOURCE_FILES})
+
+# Test or normal output
+if ("${CMAKE_FASTENHOMEAUT_GCC_COERAGE}" STREQUAL "TRUE")
+    message(STATUS "# Test coverage turned on")    
+
+    SET(GCC_COVERAGE_COMPILE_FLAGS "-g -O0 -coverage -fprofile-arcs -ftest-coverage")
+    SET(GCC_COVERAGE_LINK_FLAGS    "-coverage -lgcov")
+    SET(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}" )
+    SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}" )
+    SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}" )
+
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY .)
+
+    include_directories(include)
+    
+    # In examples:
+    #set(CATCH_HEADER_PATH ${PROJECT_SOURCE_DIR}/test/catch.hpp)
+    #add_executable(FastenHomeAut_Test ${PROJECT_SOURCE_DIR}/test/test.cpp ${CATCH_HEADER_PATH}) 
+
+    add_executable(FastenHomeAut ${SOURCE_FILES}) 
+    
+else()
+    # Normal output
+    add_executable(FastenHomeAut ${SOURCE_FILES})
+endif ()
