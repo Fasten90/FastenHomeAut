@@ -25,12 +25,15 @@ FastenHomeAut.exe
 
 echo Coverage
 
+:: TODO: Another files?
 :: gcov ../../Src/main.c
 :: Works:
 ::gcov CMakeFiles/FastenHomeAut.dir/Src/main.c.gcno
 ::gcov --function-summaries CMakeFiles/FastenHomeAut.dir/Src/main.c.gcno
 
-gcov --function-summaries --branch-probabilities --branch-counts --unconditional-branches CMakeFiles/FastenHomeAut.dir/Src/main.c.gcno
+:: gcov -abcfu lib.c
+:: --all-blocks                Show information for every basic block
+gcov --all-blocks --function-summaries --branch-probabilities --branch-counts --unconditional-branches CMakeFiles/FastenHomeAut.dir/Src/main.c.gcno
 
 
 ::gcc -fprofile-arcs -ftest-coverage main.c
