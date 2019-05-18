@@ -173,68 +173,68 @@ jobs:
 
 
 # Win - Clang
-- job: build_win_clang
-  pool:
-    vmImage: 'windows-2019'
-  displayName: 'Build for Windows - Clang'
-  steps:
-  - script: |
-      echo 'Start Windows build pipeline: Clang'
-      
-      :: Print SET
-      echo 'Environment variable settings'
-      SET
-      
-      :: Print the gcc version
-      gcc --version
-      :: Print the CMake version
-      cmake --version
-      :: Print the Clang version
-      clang --version
-    
-      :: TODO: Perhaps does not need
-      echo 'List actual directory'
-      cd
-      dir
-      
-      mkdir Out
-      cd Out
-      mkdir CMakeBuild
-      cd CMakeBuild
-      
-      echo 'Actual directory'
-      cd
-      
-      echo 'CMake'
-      :: Call the CMake.
-      :: Normally: "- cmake" or "-cmake .." used
-      :: Note: As experience, default the mingw used
-      ::cmake ../..
-      
-      cmake -G "Visual Studio 16 2019" -A Win64 -T LLVM CC=clang-cl CX=clang-cl ../..
-      ::cmake -G "Visual Studio 16 2019" -A Win32 -T LLVM CC=clang-cl CXX=clang-cl -D"CMAKE_C_COMPILER:FILEPATH=C:\Programs\Engineer\LLVM-8.0.0-win64\bin\clang-cl" -D"CMAKE_CXX_COMPILER:FILEPATH=C:\Programs\Engineer\LLVM-8.0.0-win64\bin\clang-cl" ../..
-      
-      echo 'CMake finished'
-      
-      echo 'List actual directory'      
-      dir
-      
-      :: Build the project.
-      echo 'Start Make'
-      cmake
-      
-      :: Check the results
-      echo 'Finished compile-ing'
-      cd
-      dir
-      
-      :: Run
-      echo 'Execute...'
-      ::dir *.exe /S /B
-      cd Debug
-      FastenHomeAut.exe
-      
-      echo 'Finished executing'
+#- job: build_win_clang
+#  pool:
+#    vmImage: 'windows-2019'
+#  displayName: 'Build for Windows - Clang'
+#  steps:
+#  - script: |
+#      echo 'Start Windows build pipeline: Clang'
+#      
+#      :: Print SET
+#      echo 'Environment variable settings'
+#      SET
+#      
+#      :: Print the gcc version
+#      gcc --version
+#      :: Print the CMake version
+#      cmake --version
+#      :: Print the Clang version
+#      clang --version
+#    
+#      :: TODO: Perhaps does not need
+#      echo 'List actual directory'
+#      cd
+#      dir
+#      
+#      mkdir Out
+#      cd Out
+#      mkdir CMakeBuild
+#      cd CMakeBuild
+#      
+#      echo 'Actual directory'
+#      cd
+#      
+#      echo 'CMake'
+#      :: Call the CMake.
+#      :: Normally: "- cmake" or "-cmake .." used
+#      :: Note: As experience, default the mingw used
+#      ::cmake ../..
+#      
+#      cmake -G "Visual Studio 16 2019" -A Win64 -T LLVM CC=clang-cl CX=clang-cl ../..
+#      ::cmake -G "Visual Studio 16 2019" -A Win32 -T LLVM CC=clang-cl CXX=clang-cl -D"CMAKE_C_COMPILER:FILEPATH=C:\Programs\Engineer\LLVM-8.0.0-win64\bin\clang-cl" -D"CMAKE_CXX_COMPILER:FILEPATH=C:\Programs\Engineer\LLVM-8.0.0-win64\bin\clang-cl" ../..
+#      
+#      echo 'CMake finished'
+#      
+#      echo 'List actual directory'      
+#      dir
+#      
+#      :: Build the project.
+#      echo 'Start Make'
+#      cmake
+#      
+#      :: Check the results
+#      echo 'Finished compile-ing'
+#      cd
+#      dir
+#      
+#      :: Run
+#      echo 'Execute...'
+#      ::dir *.exe /S /B
+#      cd Debug
+#      FastenHomeAut.exe
+#      
+#      echo 'Finished executing'
 
 
 # Linux - gcc
