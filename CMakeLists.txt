@@ -143,10 +143,25 @@ if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__clang__=1")
     #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/Programs/Engineer/LLVM/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v")
     # Clang: -S --> preprocessor only
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -target x86_64-pc-linux-gnu -Wall -v")
+    
+    if (WIN32)
+        message(STATUS "# Clang platform: Win")
+        #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -target x86_64-pc-win32 -Wall -v")
+        #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -target x86_64-pc-windows-gnu -Wall -v")    
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -target x86_64-pc-windows-msvc -Wall -v")    
+    elseif (UNIX)
+        message(STATUS "# Clang platform: Linux")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -target x86_64-pc-linux-gnu -Wall -v")    
+    else()
+        message(STATUS "# Unknown Clang platform")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -target x86_64-pc-linux-gnu -Wall -v")        
+    endif ()
+
+    # clang++ -target x86_64-pc-windows-gnu -std=c++14 test.cc -o test.exe
     # Possible targets:
     # x86_64-w64-mingw64
     # x86_64-pc-linux-gnu
+
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
     # GCC, MinGW32, MinGW64
     message(STATUS "# Compiler: GNU (GCC, MinGW*)")
