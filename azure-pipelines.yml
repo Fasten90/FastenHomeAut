@@ -9,13 +9,11 @@
 
 jobs:
 
-
-
-# Win - MSVC
-- job: build_win_msvc
+# Win - Build - MSVC
+- job: win_build_msvc
   pool:
     vmImage: 'windows-2019'
-  displayName: 'Build for Windows - MSVC'
+  displayName: 'Windows - Build - MSVC'
   steps:
   - script: |
       echo 'Start Windows build pipeline: MSVC'
@@ -95,10 +93,10 @@ jobs:
 
 
 # Win - MinGW - GCC
-- job: build_win_mingw_gcc
+- job: win_build_mingw_gcc
   pool:
     vmImage: 'windows-2019'
-  displayName: 'Build for Windows - MinGW GCC'
+  displayName: 'Windows - Build - MinGW GCC'
   steps:
   - script: |
       echo 'Start Windows build pipeline: MinGW + GCC'
@@ -158,10 +156,10 @@ jobs:
 
 
 # Win - MinGW - GCC - batch script
-- job: build_win_mingw_gcc_self_script
+- job: win_build_mingw_gcc_self_script
   pool:
     vmImage: 'windows-2019'
-  displayName: 'Build for Windows - MinGW GCC - batch script'
+  displayName: 'Windows - MinGW GCC - batch script'
   steps:
   - task: BatchScript@1
     inputs:
@@ -172,11 +170,13 @@ jobs:
       #failOnStandardError: true # Optional
 
 
+# Note: Not works yet, there is no Clang installation on Azure windows images
+
 # Win - Clang
-#- job: build_win_clang
+#- job: win_build_clang
 #  pool:
 #    vmImage: 'windows-2019'
-#  displayName: 'Build for Windows - Clang'
+#  displayName: 'Windows - Build - Clang'
 #  steps:
 #  - script: |
 #      echo 'Start Windows build pipeline: Clang'
@@ -237,15 +237,15 @@ jobs:
 #      echo 'Finished executing'
 
 
-# Linux - gcc
-- job: build_linux_gcc
+# Linux - Build - gcc
+- job: linux_build_gcc
   pool:
     vmImage: 'ubuntu-latest'
-  displayName: 'Build for Linux - GCC'
+  displayName: 'Linux - Build - GCC'
   steps:
   - script: |
 
-      echo 'Start Linux build pipeline'
+      echo 'Start Linux build pipeline - GCC'
       # Print the gcc version.
 
       gcc --version
@@ -296,11 +296,11 @@ jobs:
       echo 'Finished executing'
 
 
-# Linux - gcc-arm
-- job: build_linux_gcc_arm
+# Linux - Build - gcc-arm
+- job: linux_build_gcc_arm
   pool:
     vmImage: 'ubuntu-latest'
-  displayName: 'Build for Linux - GCC - ARM - arm-none-eabi-gcc'
+  displayName: 'Linux - Build - GCC - ARM - arm-none-eabi-gcc'
   steps:
   - script: |
 
@@ -376,10 +376,10 @@ jobs:
 
 
 # Linux - Clang - shell script
-- job: build_linux_clang_script
+- job: linux_build_clang_script
   pool:
     vmImage: 'ubuntu-latest'
-  displayName: 'Build for Linux - Clang - shell script'
+  displayName: 'Linux - Build - Clang - shell script'
   steps:
   - task: Bash@3
     inputs:
@@ -395,10 +395,10 @@ jobs:
 
 
 # Linux - Clang Static Analysis - shell script
-- job: build_linux_clang_analysis_script
+- job: linux_clang_analysis_script
   pool:
     vmImage: 'ubuntu-latest'
-  displayName: 'Build for Linux - Clang Analysis - shell script'
+  displayName: 'Linux - Clang Analysis - shell script'
   steps:
   - task: Bash@3
     inputs:
@@ -414,10 +414,10 @@ jobs:
 
 
 # Linux - Clang Static Format - shell script
-- job: build_linux_clang_format_script
+- job: linux_clang_format_script
   pool:
     vmImage: 'ubuntu-latest'
-  displayName: 'Build for Linux - Clang Format - shell script'
+  displayName: 'Linux - Clang Format - shell script'
   steps:
   - task: Bash@3
     inputs:
