@@ -33,7 +33,14 @@ echo Coverage
 
 :: gcov -abcfu lib.c
 :: --all-blocks                Show information for every basic block
+echo Test commands
 gcov --all-blocks --function-summaries --branch-probabilities --branch-counts --unconditional-branches CMakeFiles/FastenHomeAut.dir/Src/main.c.gcno
+gcov --all-blocks --function-summaries --branch-probabilities --branch-counts --unconditional-branches CMakeFiles/FastenHomeAut.dir/Src/Common/Handler/CommandHandler.c.gcno
+gcov --all-blocks --function-summaries --branch-probabilities --branch-counts --unconditional-branches CMakeFiles/FastenHomeAut.dir/Src/Common/Helper/StringHelper.c.gcno
+
+echo Run python script for check all c files
+:: cd ../.. ?
+python ../../Run_GccCoverage_ForSourceFiles.py
 
 
 ::gcc -fprofile-arcs -ftest-coverage main.c
