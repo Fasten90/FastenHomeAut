@@ -18,12 +18,12 @@
  
 //* XXX: Select your panel */
 /* NOTE: Recommend define at project settings: */
-/* define CONFIG_USE_PANEL_NUCLEOF401RE */
-/* define CONFIG_USE_PANEL_STM32F4DISCOVERY */
-/* define CONFIG_USE_PANEL_HOMEAUTCENTERPANEL */
-/* define CONFIG_USE_PANEL_HOMEAUTNODESMALL */
-/* define CONFIG_USE_PANEL_FASTENNODE */
-/* define CONFIG_USE_PANEL_PC */
+/* #define CONFIG_USE_PANEL_NUCLEOF401RE */
+/* #define CONFIG_USE_PANEL_STM32F4DISCOVERY */
+/* #define CONFIG_USE_PANEL_HOMEAUTCENTERPANEL */
+/* #define CONFIG_USE_PANEL_HOMEAUTNODESMALL */
+/* #define CONFIG_USE_PANEL_FASTENNODE */
+/* #define CONFIG_USE_PANEL_PC */
 
 #if !defined(CONFIG_USE_PANEL_NUCLEOF401RE) \
     && !defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) \
@@ -72,7 +72,8 @@
         #define CONFIG_MODULE_BUTTON_ENABLE
     #endif
     #define CONFIG_MODULE_BLUETOOTH_ENABLE
-    /*#ifndef CONFIG_MODULE_ESP8266_ENABLE
+    /*
+    #ifndef CONFIG_MODULE_ESP8266_ENABLE
         #define CONFIG_MODULE_ESP8266_ENABLE
     #endif
     #define CONFIG_FUNCTION_ESP8266_WRITE_IP_TO_DISPLAY
@@ -108,12 +109,12 @@
 
 
     ///< Display: Show screen
-    /* define CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN */
+    /* #define CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN */
     /* TODO: What we want to displaying */
 
 
     ///< Display: Show clock
-    /* define CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK */
+    /* #define CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK */
     #ifdef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
         #define CONFIG_DISPLAY_CLOCK_LARGE
         #define CONFIG_DISPLAY_CLOCK_SMALL
@@ -124,7 +125,7 @@
 
 
     ///< Display: Clock change function
-    /* define CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK */
+    /* #define CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK */
     #ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
         #ifndef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
             #define CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
@@ -136,7 +137,7 @@
 
 
     ///< Display: Input function
-    /* define CONFIG_FUNCTION_DISPLAY_INPUT */
+    /* #define CONFIG_FUNCTION_DISPLAY_INPUT */
     #ifdef CONFIG_FUNCTION_DISPLAY_INPUT
         #define CONFIG_REQUIRE_DISPLAY
         #define CONFIG_REQUIRE_BUTTON
@@ -144,7 +145,7 @@
 
 
     ///< Charger function
-    /* define CONFIG_FUNCTION_CHARGER */
+    /* #define CONFIG_FUNCTION_CHARGER */
     #ifdef CONFIG_FUNCTION_CHARGER
         #define CONFIG_REQUIRE_DISPLAY
 
@@ -161,7 +162,7 @@
 
 
     ///< Snake game
-    /* define CONFIG_FUNCTION_GAME_SNAKE */
+    /* #define CONFIG_FUNCTION_GAME_SNAKE */
     #ifdef CONFIG_FUNCTION_GAME_SNAKE
         #define CONFIG_REQUIRE_DISPLAY
 
@@ -224,9 +225,9 @@
 
     #define CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
 
-    /* define CONFIG_MODULE_FLASH_ENABLE */
-    /* define CONFIG_MODULE_TEMPERATURE_ENABLE */
-    /* define CONFIG_MODULE_ADC_ENABLE */
+    /* #define CONFIG_MODULE_FLASH_ENABLE */
+    /* #define CONFIG_MODULE_TEMPERATURE_ENABLE */
+    /* #define CONFIG_MODULE_ADC_ENABLE */
 
 #endif
 
@@ -242,27 +243,27 @@
 
     #define CONFIG_MODULE_COMMANDHANDLER_ENABLE
 
-    /* define CONFIG_USE_FREERTOS */
+    /* #define CONFIG_USE_FREERTOS */
 
     #define CONFIG_MODULE_IO_ENABLE
 
     #define CONFIG_MODULE_BUTTON_ENABLE
 
-    /* define CONFIG_MODULE_IO_ENABLE */
+    /* #define CONFIG_MODULE_IO_ENABLE */
 
-    /* define CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE */
+    /* #define CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE */
 
-    /* define CONFIG_MODULE_ESP8266_ENABLE */
+    /* #define CONFIG_MODULE_ESP8266_ENABLE */
 
-    /* define CONFIG_MODULE_FLASH_ENABLE */
+    /* #define CONFIG_MODULE_FLASH_ENABLE */
 
-    /* define CONFIG_MODULE_TEMPERATURE_ENABLE */
+    /* #define CONFIG_MODULE_TEMPERATURE_ENABLE */
 
-    /* define CONFIG_MODULE_ADC_ENABLE */
+    /* #define CONFIG_MODULE_ADC_ENABLE */
 
-    /* define CONFIG_MODULE_SYSMANAGER_ENABLE */
+    /* #define CONFIG_MODULE_SYSMANAGER_ENABLE */
 
-    /* define CONFIG_MODULE_COMMON_DAC_ENABLE */
+    /* #define CONFIG_MODULE_COMMON_DAC_ENABLE */
     /* Because, there is no  DAC in NUCLEOF401RE */
 
     #define CONFIG_MODULE_COMMON_IO_ENABLE
@@ -280,7 +281,7 @@
     #define CONFIG_PLATFORM_MCU_STM32Fxxx
 
 
-    /* define CONFIG_USE_FREERTOS */
+    /* #define CONFIG_USE_FREERTOS */
 
     /* Modules: */
 
@@ -292,23 +293,23 @@
 
     #define CONFIG_MODULE_IO_ENABLE
 
-    /* define CONFIG_MODULE_LEDPWM_ENABLE */
+    /* #define CONFIG_MODULE_LEDPWM_ENABLE */
 
     #define CONFIG_MODULE_BUTTON_ENABLE
 
-    /* define CONFIG_MODULE_IO_ENABLE */
+    /* #define CONFIG_MODULE_IO_ENABLE */
 
-    /* define CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE */
+    /* #define CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE */
 
-    /* define CONFIG_MODULE_ESP8266_ENABLE */
+    /* #define CONFIG_MODULE_ESP8266_ENABLE */
 
-    /* define CONFIG_MODULE_FLASH_ENABLE */
+    /* #define CONFIG_MODULE_FLASH_ENABLE */
 
-    /* define CONFIG_MODULE_TEMPERATURE_ENABLE */
+    /* #define CONFIG_MODULE_TEMPERATURE_ENABLE */
 
-    /* define CONFIG_MODULE_ADC_ENABLE */
+    /* #define CONFIG_MODULE_ADC_ENABLE */
 
-    /* define CONFIG_MODULE_SYSMANAGER_ENABLE */
+    /* #define CONFIG_MODULE_SYSMANAGER_ENABLE */
 
     #define CONFIG_MODULE_COMMON_DAC_ENABLE
 
@@ -316,24 +317,24 @@
 
     #define CONFIG_MODULE_COMMON_ADC_ENABLE
 
-    /* define CONFIG_MODULE_COMMON_PWM_ENABLE */
+    /* #define CONFIG_MODULE_COMMON_PWM_ENABLE */
 
-    /* define CONFIG_MODULE_MOTOR_ENABLE */
+    /* #define CONFIG_MODULE_MOTOR_ENABLE */
 
-    /* define CONFIG_MODULE_RTC_ENABLE */
+    /* #define CONFIG_MODULE_RTC_ENABLE */
 
     #define CONFIG_MODULE_TASKHANDLER_ENABLE
 
     #define CONFIG_MODULE_EVENTLOG_ENABLE
 
-    /* define CONFIG_MODULE_WATCHDOG_ENABLE */
+    /* #define CONFIG_MODULE_WATCHDOG_ENABLE */
 
-    /* define CONFIG_MODULE_DISPLAY_ENABLE */
+    /* #define CONFIG_MODULE_DISPLAY_ENABLE */
 
-    /* define CONFIG_MODULE_IO_ENABLE */
-    /* define CONFIG_MODULE_IO_INPUT_MOTION_ENABLE */
-    /* define CONFIG_MODULE_IO_INPUT_SOUNDIMPACT_ENABLE */
-    /* define CONFIG_MODULE_IO_OUTPUT_EXAMPLE_ENABLE */
+    /* #define CONFIG_MODULE_IO_ENABLE */
+    /* #define CONFIG_MODULE_IO_INPUT_MOTION_ENABLE */
+    /* #define CONFIG_MODULE_IO_INPUT_SOUNDIMPACT_ENABLE */
+    /* #define CONFIG_MODULE_IO_OUTPUT_EXAMPLE_ENABLE */
 #endif
 
 
@@ -347,8 +348,8 @@
 
 
     /* Enabled modules */
-    /* define CONFIG_MODULE_DEBUGUART_ENABLE */
-    /* define CONFIG_MODULE_TERMINAL_ENABLE */
+    /* #define CONFIG_MODULE_DEBUGUART_ENABLE */
+    /* #define CONFIG_MODULE_TERMINAL_ENABLE */
 
     #define CONFIG_MODULE_TASKHANDLER_ENABLE
 
@@ -359,7 +360,7 @@
 
     #define CONFIG_MODULE_BUTTON_ENABLE
 
-    /* define CONFIG_MODULE_ESP8266_ENABLE */
+    /* #define CONFIG_MODULE_ESP8266_ENABLE */
 
 #endif
 
@@ -376,50 +377,50 @@
     /*            Enabled modules            */
 
     #define CONFIG_MODULE_DEBUGUART_ENABLE
-    /* define CONFIG_MODULE_TERMINAL_ENABLE */
-    /* define CONFIG_MODULE_COLOREDMESSAGE_ENABLE */
+    /* #define CONFIG_MODULE_TERMINAL_ENABLE */
+    /* #define CONFIG_MODULE_COLOREDMESSAGE_ENABLE */
 
 
     #define CONFIG_MODULE_COMMANDHANDLER_ENABLE
-    /* define CONFIG_MODULE_GLOBALVARHANDLER_ENABLE */
+    /* #define CONFIG_MODULE_GLOBALVARHANDLER_ENABLE */
 
 
     #define CONFIG_MODULE_TASKHANDLER_ENABLE
-    /* define CONFIG_USE_FREERTOS */
+    /* #define CONFIG_USE_FREERTOS */
 
 
-    /* define CONFIG_MODULE_COMMON_IO_ENABLE */
-    /* define CONFIG_MODULE_COMMON_UART_ENABLE */
+    /* #define CONFIG_MODULE_COMMON_IO_ENABLE */
+    /* #define CONFIG_MODULE_COMMON_UART_ENABLE */
 
-    /* define CONFIG_MODULE_DISPLAY_ENABLE */
+    /* #define CONFIG_MODULE_DISPLAY_ENABLE */
 
-    /* define CONFIG_MODULE_BUTTON_ENABLE */
+    /* #define CONFIG_MODULE_BUTTON_ENABLE */
 
-    /* define CONFIG_MODULE_ESP8266_ENABLE */
-    /* define CONFIG_MODULE_BLUETOOTH_ENABLE */
+    /* #define CONFIG_MODULE_ESP8266_ENABLE */
+    /* #define CONFIG_MODULE_BLUETOOTH_ENABLE */
 
-    /* define CONFIG_MODULE_MOTOR_ENABLE */
+    /* #define CONFIG_MODULE_MOTOR_ENABLE */
 
-    /* define CONFIG_MODULE_IO_ENABLE */
-    /* define CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE */
+    /* #define CONFIG_MODULE_IO_ENABLE */
+    /* #define CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE */
 
-    /* define CONFIG_MODULE_LINKEDLIST_ENABLE */
+    /* #define CONFIG_MODULE_LINKEDLIST_ENABLE */
 
-    /* define CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE */
+    /* #define CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE */
 
-    /* define CONFIG_MODULE_COMMUNICATION_ENABLE */
+    /* #define CONFIG_MODULE_COMMUNICATION_ENABLE */
 
-    /* define CONFIG_MODULE_CONVERTTABLE_ENABLE */
+    /* #define CONFIG_MODULE_CONVERTTABLE_ENABLE */
 
     #define CONFIG_MODULE_RESETREASON_ENABLE
 
     #define CONFIG_MODULE_HARDFAULTHANDLER_ENABLE
 
-    /* define CONFIG_MODULE_WATCHDOG_ENABLE */
+    /* #define CONFIG_MODULE_WATCHDOG_ENABLE */
 
-    /* define CONFIG_MODULE_ESCAPEBROWSER_ENABLE */
+    /* #define CONFIG_MODULE_ESCAPEBROWSER_ENABLE */
 
-    /* define CONFIG_MODULE_MEASUREMENTTIMER_ENABLE */
+    /* #define CONFIG_MODULE_MEASUREMENTTIMER_ENABLE */
 #endif
 
 
@@ -427,16 +428,16 @@
 #ifdef CONFIG_USE_PANEL_PC
     #define CONFIG_PLATFORM_X86
 
-    /* define CONFIG_MODULE_DEBUGUART_ENABLE */
+    /* #define CONFIG_MODULE_DEBUGUART_ENABLE */
 
-    /* define CONFIG_MODULE_TERMINAL_ENABLE */
-    /* define CONFIG_MODULE_COLOREDMESSAGE_ENABLE */
+    /* #define CONFIG_MODULE_TERMINAL_ENABLE */
+    /* #define CONFIG_MODULE_COLOREDMESSAGE_ENABLE */
 	/* TODO: Not works --> HAL_UART_MspInit */
-	/* define CONFIG_MODULE_DEBUGUART_ENABLE */
+	/* #define CONFIG_MODULE_DEBUGUART_ENABLE */
 
 	/* TODO: Not works --> DebugUart struct */
-	/* define CONFIG_MODULE_TERMINAL_ENABLE */
-	/* define CONFIG_MODULE_COLOREDMESSAGE_ENABLE */
+	/* #define CONFIG_MODULE_TERMINAL_ENABLE */
+	/* #define CONFIG_MODULE_COLOREDMESSAGE_ENABLE */
 
     /* TODO: Not works, because the DebugUart handling */
     /* #define CONFIG_MODULE_ESCAPEBROWSER_ENABLE */
@@ -454,7 +455,7 @@
 
     #define CONFIG_MODULE_UNITTEST_ENABLE
 
-    //#define CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE
+    /* #define CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE */
     #ifdef CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE
         #define CONFIG_DISPLAY_FONT8X5_ENABLE
         #define CONFIG_DISPLAY_FONT12X8_ENABLE
@@ -468,7 +469,7 @@
 
     /* Select a terminal for PC */
     #define CONFIG_TERMINAL_USE_CONEMU
-    //#define CONFIG_TERMINAL_USE_CMD
+    /* #define CONFIG_TERMINAL_USE_CMD */
 
     #if defined(CONFIG_MODULE_DISPLAY_ENABLE) || defined(CONFIG_HW_DISPLAY_ENABLE)
         #error "In PC/Windows mode Display module is not supported"
@@ -480,7 +481,7 @@
     #define CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
     #ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
         #ifndef BUTTON_NUM
-            #define BUTTON_NUM                    4
+            #define BUTTON_NUM                    (4)
         #endif
     #endif
 #endif
@@ -505,12 +506,12 @@
     /* FreeRTOS task defines */
 
     #define TERMINAL_TASK_STACK_SIZE        (configMINIMAL_STACK_SIZE * 10)
-    #define TERMINAL_TASK_PRIORITY            (tskIDLE_PRIORITY + 3UL)
+    #define TERMINAL_TASK_PRIORITY          (tskIDLE_PRIORITY + 3UL)
 
-    #define ESP8266_TASK_STACK_SIZE            (configMINIMAL_STACK_SIZE * 3)
-    #define ESP8266_TASK_PRIORITY            (tskIDLE_PRIORITY + 3UL)
+    #define ESP8266_TASK_STACK_SIZE         (configMINIMAL_STACK_SIZE * 3)
+    #define ESP8266_TASK_PRIORITY           (tskIDLE_PRIORITY + 3UL)
 
-    #define SYSMANAGER_TASK_STACK_SIZE        (configMINIMAL_STACK_SIZE * 2)
+    #define SYSMANAGER_TASK_STACK_SIZE      (configMINIMAL_STACK_SIZE * 2)
     #define SYSMANAGER_TASK_PRIORITY        (tskIDLE_PRIORITY + 3UL)
 #endif
 
@@ -521,34 +522,34 @@
  *----------------------------------------------------------------------------*/
 
 ///< ASSERT functions for HAL (Or set in stm32f0xx_hal_conf.h file)
-/* define USE_FULL_ASSERT */
+/* #define USE_FULL_ASSERT */
 
 ///< Debug mode: enable breakpoint and other debug support function
 #define CONFIG_DEBUG_MODE
 
 ///< Hard Assert mode - with file name and line
-/* define ASSERT_MODE_HARD */
+/* #define ASSERT_MODE_HARD */
 
 ///< Test Mode: Enable "test" command...
 #define CONFIG_TEST_MODE
 
 ///< Module test: Enable "moduletest" command ~hwtest
-/* define CONFIG_MODULE_TEST_ENABLE */
+/* #define CONFIG_MODULE_TEST_ENABLE */
 
 ///< Simulation mode: Enable "simulate" command
 #define CONFIG_MODULE_SIMULATION_ENABLE
 
 ///< SWO: Serial Wire Output enable
-/* define CONFIG_SWO_ENABLE */
+/* #define CONFIG_SWO_ENABLE */
 
 ///< SW Watchdog - check Task scheduling - called from SysTick (Debug function)
-/* define CONFIG_DEBUG_SW_WATCHDOG_ENABLE */
+/* #define CONFIG_DEBUG_SW_WATCHDOG_ENABLE */
 
 ///< SelfTests
-/* define CONFIG_DEBUG_SELFTEST */
+/* #define CONFIG_DEBUG_SELFTEST */
 
 ///< MCU SelfTest
-/* define CONFIG_MODULE_SELFTEST_ENABLE */
+/* #define CONFIG_MODULE_SELFTEST_ENABLE */
 
 ///< SelfTest - Error tests
 #define CONFIG_MODULE_SELFTEST_ERRORS_ENABLE
@@ -573,23 +574,23 @@
 #define CONFIG_MODULE_UNITTEST_ENABLE
 #if defined(CONFIG_MODULE_UNITTEST_ENABLE) && !defined(CONFIG_USE_PANEL_PC)
     /* Unittest at embedded target */
-    /* define CONFIG_MODULE_STRING_UNITTEST_ENABLE */
-    /* define CONFIG_MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE */
-    /* define CONFIG_MODULE_DATETIME_UNITTEST_ENABLE */
-    /* define CONFIG_MODULE_COMMANDHANDLER_UNITTEST_ENABLE */
-    /* define CONFIG_MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE */
-    /* define CONFIG_PROTOCOL_BUFFER_ENABLE */
-    /* define CONFIG_MODULE_CIRCULARBUFFER_UNITTEST_ENABLE */
-    /* define CONFIG_MODULE_TASKHANDLER_UNNITEST_ENABLE */
-    /* define CONFIG_MODULE_EVENTLOG_UNITTEST_ENABLE */
-    /* define CONFIG_MODULE_EVENTHANDLER_UNITTEST_ENABLE */
-    /* define CONFIG_MODULE_MATHHELPER_UNITTEST_ENABLE */
-    /* define CONFIG_MODULE_MEM_UNITTEST_ENABLE */
-    /* define CONFIG_MODULE_LINKEDLIST_UNITTEST_ENABLE */
-    /* define CONFIG_MODULE_CONVERTTABLE_UNITTEST_ENABLE */
-    /* define CONFIG_MODULE_SECUREDDATATYPES_UNITTEST_ENABLE */
-    /* define CONFIG_MODULE_QUEUE_UNITTEST_ENABLE */
-    /* define CONFIG_MODULE_MEASUREMENTTIMER_UNITTEST_ENABLE */
+    /* #define CONFIG_MODULE_STRING_UNITTEST_ENABLE */
+    /* #define CONFIG_MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE */
+    /* #define CONFIG_MODULE_DATETIME_UNITTEST_ENABLE */
+    /* #define CONFIG_MODULE_COMMANDHANDLER_UNITTEST_ENABLE */
+    /* #define CONFIG_MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE */
+    /* #define CONFIG_PROTOCOL_BUFFER_ENABLE */
+    /* #define CONFIG_MODULE_CIRCULARBUFFER_UNITTEST_ENABLE */
+    /* #define CONFIG_MODULE_TASKHANDLER_UNNITEST_ENABLE */
+    /* #define CONFIG_MODULE_EVENTLOG_UNITTEST_ENABLE */
+    /* #define CONFIG_MODULE_EVENTHANDLER_UNITTEST_ENABLE */
+    /* #define CONFIG_MODULE_MATHHELPER_UNITTEST_ENABLE */
+    /* #define CONFIG_MODULE_MEM_UNITTEST_ENABLE */
+    /* #define CONFIG_MODULE_LINKEDLIST_UNITTEST_ENABLE */
+    /* #define CONFIG_MODULE_CONVERTTABLE_UNITTEST_ENABLE */
+    /* #define CONFIG_MODULE_SECUREDDATATYPES_UNITTEST_ENABLE */
+    /* #define CONFIG_MODULE_QUEUE_UNITTEST_ENABLE */
+    /* #define CONFIG_MODULE_MEASUREMENTTIMER_UNITTEST_ENABLE */
 
     #if (defined(CONFIG_MODULE_GLOBALVARHANDLER_UNITTEST_ENABLE) || defined(CONFIG_MODULE_COMMANDHANDLER_UNITTEST_ENABLE))&& !defined(CONFIG_PROTOCOL_BUFFER_ENABLE)
     /* TODO: Delete these */
@@ -644,15 +645,15 @@
 /* define CONFIG_MODULE_TERMINAL_ENABLE */
 #ifdef CONFIG_MODULE_TERMINAL_ENABLE
 
-    /* define CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER */
+    /* #define CONFIG_DEBUGUSART_MODE_ONEPERONERCHARACTER */
 
     //* XXX: Select your terminal */
-    /* define CONFIG_TERMINAL_USE_HYPERTERMINAL */
+    /* #define CONFIG_TERMINAL_USE_HYPERTERMINAL */
     #define CONFIG_TERMINAL_USE_ZOC
-    /* define CONFIG_TERMINAL_USE_PUTTY */
+    /* #define CONFIG_TERMINAL_USE_PUTTY */
 
     ///< Wait password and until not received good password, commands are not evaluated
-    /* define CONFIG_TERMINAL_GET_PASSWORD_ENABLE */
+    /* #define CONFIG_TERMINAL_GET_PASSWORD_ENABLE */
 
     #define CONFIG_TERMINAL_PROMT_ENABLE
 
@@ -680,16 +681,16 @@
     #define CONFIG_COMMANDHANDLER_NOTIFY_COMMAND_RECEIVED_FROM_NOT_DEBUGPORT
 
     ///< CommandList settings
-    /* define CONFIG_COMMANDLIST_RAMREAD_WRITE_COMMAND_ENABLE */
-    /* define CONFIG_COMMANDLIST_GO_COMMAND_ENABLE */
+    /* #define CONFIG_COMMANDLIST_RAMREAD_WRITE_COMMAND_ENABLE */
+    /* #define CONFIG_COMMANDLIST_GO_COMMAND_ENABLE */
 #endif
 
 
 ///< GlobalVarHandler settings
 /* define CONFIG_MODULE_GLOBALVARHANDLER_ENABLE */
 #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
-    /* define CONFIG_GLOBALVARHANDLER_TRACE_ENABLE */
-    /* define CONFIG_GLOBALVARHANDLER_TRACE_RAM_BUFFER */
+    /* #define CONFIG_GLOBALVARHANDLER_TRACE_ENABLE */
+    /* #define CONFIG_GLOBALVARHANDLER_TRACE_RAM_BUFFER */
     #define CONFIG_GLOBALVARHANDLER_CHECK_ENABLE
 #endif
 
@@ -740,10 +741,10 @@
 
 
     /* DHCP Enable */
-    /* define CONFIG_ESP8266_CWDHCP_ENABLE */
+    /* #define CONFIG_ESP8266_CWDHCP_ENABLE */
 
     ///< Enable webpage
-    /* define CONFIG_MODULE_WEBPAGE_ENABLE */
+    /* #define CONFIG_MODULE_WEBPAGE_ENABLE */
 
     ///< Single-Multiple connection
     /* 1 - Multiple */
@@ -773,9 +774,9 @@
         /* Connect to other WiFi network */
         #define CONFIG_ESP8266_WIFI_NETWORK_NAME            "FastenWifi"
         #define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD        "FastenHome90"
-        /* define CONFIG_ESP8266_WIFI_NETWORK_NAME            "ARTN16" */
-        /* define CONFIG_ESP8266_WIFI_NETWORK_NAME            "USR5461" */
-        /* define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD        "Easdg2011" */
+        /* #define CONFIG_ESP8266_WIFI_NETWORK_NAME            "ARTN16" */
+        /* #define CONFIG_ESP8266_WIFI_NETWORK_NAME            "USR5461" */
+        /* #define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD        "Easdg2011" */
     #endif
 
     #ifndef CONFIG_ESP8266_WIFI_NETWORK_PASSWORD
@@ -827,37 +828,37 @@
 ///< EventHandler settings
 #define CONFIG_MODULE_EVENTHANDLER_ENABLE
 #ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
-    /* define CONFIG_EVENTHANDLER_REQUIRED_TASK_MODE */
+    /* #define CONFIG_EVENTHANDLER_REQUIRED_TASK_MODE */
 #endif
 
 
 ///< EventLog settings
-/* define CONFIG_MODULE_EVENTLOG_ENABLE */
+/* #define CONFIG_MODULE_EVENTLOG_ENABLE */
 #ifdef CONFIG_MODULE_EVENTLOG_ENABLE
-    /* define CONFIG_EVENTLOG_TASKHANDLER_LOG_ENABLE */
+    /* #define CONFIG_EVENTLOG_TASKHANDLER_LOG_ENABLE */
     #define CONFIG_EVENTLOG_DISPLAY_LOG_ENABLE
-    /* define CONFIG_EVENTLOG_PRINT_IMMEDIATELY */
-    /* define CONFIG_EVENTLOG_CMDHANDLER_ENABLE */
+    /* #define CONFIG_EVENTLOG_PRINT_IMMEDIATELY */
+    /* #define CONFIG_EVENTLOG_CMDHANDLER_ENABLE */
 #endif
 
 
 ///< Display settings
-/* define CONFIG_MODULE_DISPLAY_ENABLE */
+/* #define CONFIG_MODULE_DISPLAY_ENABLE */
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
     #define CONFIG_DISPLAY_FONT8X5_ENABLE
     #define CONFIG_DISPLAY_FONT12X8_ENABLE
     #define CONFIG_DISPLAY_FONT32X20_ENABLE
 
     /* Tests */
-    //#define CONFIG_MODULE_DISPLAY_TEST
-    //#define CONFIG_MODULE_DISPLAY_TEST_WITH_TERMINAL
+    /* #define CONFIG_MODULE_DISPLAY_TEST */
+    /* #define CONFIG_MODULE_DISPLAY_TEST_WITH_TERMINAL */
 
     #define CONFIG_DISPLAY_SPI_USE_DMA
 #endif
 
 
 ///< Button settings
-/* define CONFIG_MODULE_BUTTON_ENABLE */
+/* #define CONFIG_MODULE_BUTTON_ENABLE */
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
     #define CONFIG_BUTTON_DEBUG_ENABLE
     #define CONFIG_MODULE_BUTTON_LONG_PRESS
@@ -867,16 +868,16 @@
 
 
 ///< TaskHandler settings
-/* define CONFIG_MODULE_TASKHANDLER_ENABLE */
+/* #define CONFIG_MODULE_TASKHANDLER_ENABLE */
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 
     ///< Debug modes - Print debug message
-    /* define CONFIG_TASKHANDLER_DEBUG_ENABLE */
+    /* #define CONFIG_TASKHANDLER_DEBUG_ENABLE */
     ///< Other debug functions
     #define CONFIG_TASKHANDLER_DEBUG_RUN_ENABLE
 
     ///< Statistics (CPU usage, runtimes...)
-    /* define CONFIG_MODULE_TASKHANDLER_STATISTICS */
+    /* #define CONFIG_MODULE_TASKHANDLER_STATISTICS */
     #define TASKHANDLER_STATISTICS_LIMIT                        (100)
 
     ///< UART handler require Task scheduling
@@ -885,7 +886,7 @@
     /*  TaskList: */
 
     ///< Software Watchdog (task) - Debug function
-    /* define CONFIG_MODULE_TASK_SOFTWARE_WATCHDOG_ENABLE */
+    /* #define CONFIG_MODULE_TASK_SOFTWARE_WATCHDOG_ENABLE */
 
     ///< System time task
     #define CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
@@ -897,11 +898,11 @@
 
 
 ///< IO - LED settings
-/* define CONFIG_MODULE_IO_ENABLE */
+/* #define CONFIG_MODULE_IO_ENABLE */
 #ifdef CONFIG_MODULE_IO_ENABLE
-    /* define CONFIG_MODULE_LED_TASK_ENABLE */
+    /* #define CONFIG_MODULE_LED_TASK_ENABLE */
     #ifdef CONFIG_MODULE_LED_TASK_ENABLE
-        /* define LED_TASK_OLD_STYLE */
+        /* #define LED_TASK_OLD_STYLE */
         #define LED_TASK_PWM_STYLE
     #endif
     #define CONFIG_IO_OUTPUT_BLINK_ENABLE
@@ -909,14 +910,14 @@
 
 
 ///< Communication
-/* define CONFIG_COMMUNICATION_HAS_MORE_COMM_PORT */
+/* #define CONFIG_COMMUNICATION_HAS_MORE_COMM_PORT */
 #if ((defined(CONFIG_MODULE_DEBUGUART_ENABLE) && defined(CONFIG_MODULE_BLUETOOTH_ENABLE)) \
     || (defined(CONFIG_MODULE_DEBUGUART_ENABLE) && defined(CONFIG_MODULE_ESP8266_ENABLE)) \
     || (defined(CONFIG_MODULE_BLUETOOTH_ENABLE) && defined(CONFIG_MODULE_ESP8266_ENABLE)))
     #define CONFIG_COMMUNICATION_HAS_MORE_COMM_PORT
 #endif
 
-/* define CONFIG_COMMUNICATION_HAS_UART_PORT */
+/* #define CONFIG_COMMUNICATION_HAS_UART_PORT */
 /* TODO: Be careful, this define is implementation dependent (DebugUart, Bluetooth, ESP8266 peripherals on UART) */
 #if ( defined(CONFIG_MODULE_DEBUGUART_ENABLE) \
     || defined(CONFIG_MODULE_BLUETOOTH_ENABLE) \
@@ -928,7 +929,7 @@
 	#define CONFIG_MODULE_UART_ENABLE
 #endif
 
-/* define CONFIG_COMMUNICATION_HAS_UART_PORT */
+/* #define CONFIG_COMMUNICATION_HAS_UART_PORT */
 /* TODO: Be careful, this define is implementation dependent (DebugUart, Bluetooth, ESP8266 peripherals on UART) */
 #if ( defined(CONFIG_MODULE_DEBUGUART_ENABLE) \
 	|| defined(CONFIG_MODULE_BLUETOOTH_ENABLE) \
