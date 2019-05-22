@@ -5,6 +5,8 @@ echo Run CppCheck
 # sudo apt-get install cppcheck
 
 # TODO: Avoid the duplicated parts (Includes)
+mkdir Out
+
 
 # C99
 cppcheck Src Inc Drivers \

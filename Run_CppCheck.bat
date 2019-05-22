@@ -1,4 +1,4 @@
-echo Run Cppcheck
+echo Run CppCheck
 
 :: cppcheck shall be added to the PATH
 
@@ -12,7 +12,7 @@ cppcheck Src Inc Drivers ^
 -IDrivers/STM32F4xx_HAL_Driver/Inc -IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy -IDrivers/CMSIS/Device/ST/STM32F4xx/Include ^
 -IDrivers/CMSIS/Include ^
 -iDrivers/CMSIS -iDrivers/STM32F0xx_HAL_Driver -iDrivers/STM32F4xx_HAL_Driver ^
---enable=all --inconclusive --suppressions-list=cppcheck_suppressions.txt --template="[{file}:{line}]:\t({severity})\t{message}" --inline-suppr --std=c99 --force --check-config 2> Out/CppcheckErrorsC99.txt
+--enable=all --inconclusive --suppressions-list=cppcheck_suppressions.txt --template="[{file}:{line}]:\t({severity})\t{message}" --inline-suppr --std=c99 --force --check-config 2> Out/Cppcheck_ErrorsC99.txt
 
 :: C11
 cppcheck Src Inc Drivers ^
@@ -22,8 +22,8 @@ cppcheck Src Inc Drivers ^
 -IDrivers/STM32F4xx_HAL_Driver/Inc -IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy -IDrivers/CMSIS/Device/ST/STM32F4xx/Include ^
 -IDrivers/CMSIS/Include ^
 -iDrivers/CMSIS -iDrivers/STM32F0xx_HAL_Driver -iDrivers/STM32F4xx_HAL_Driver ^
---enable=all --inconclusive --suppressions-list=cppcheck_suppressions.txt --template="[{file}:{line}]:\t({severity})\t{message}" --inline-suppr --std=c11 --force --check-config 2> Out/CppcheckErrorsC11.txt
+--enable=all --inconclusive --suppressions-list=cppcheck_suppressions.txt --template="[{file}:{line}]:\t({severity})\t{message}" --inline-suppr --std=c11 --force --check-config 2> Out/Cppcheck_ErrorsC11.txt
 
 :: Open Error files with Notepad++
-start notepad++ "Out/CppcheckErrorsC99.txt"
-start notepad++ "Out/CppcheckErrorsC11.txt"
+start notepad++ "Out/Cppcheck_ErrorsC99.txt"
+start notepad++ "Out/Cppcheck_ErrorsC11.txt"
