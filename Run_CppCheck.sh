@@ -10,6 +10,8 @@ mkdir Out
 
 
 # C99
+echo CppCheck - C99
+
 cppcheck Src Inc Drivers \
 -IInc/Common -IInc/Communication -IInc/HwTester -IInc/Modules -IInc -IInc/Application -IInc/List -IInc/Display -IInc/Common/Helper -IInc/Common/Handler -IInc/SelfTest \
 -IDrivers/x86/Inc \
@@ -21,6 +23,8 @@ cppcheck Src Inc Drivers \
 
 
 # C11
+echo CppCheck - C11
+
 cppcheck Src Inc Drivers \
 -IInc/Common -IInc/Communication -IInc/HwTester -IInc/Modules -IInc -IInc/Application -IInc/List -IInc/Display -IInc/Common/Helper -IInc/Common/Handler -IInc/SelfTest \
 -IDrivers/x86/Inc \

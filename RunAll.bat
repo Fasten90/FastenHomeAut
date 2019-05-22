@@ -15,3 +15,6 @@ CALL Run_ClangFormatter.bat
 
 CALL RunCMake_GccCoverage.bat
 
+
+CALL Run_CppCheck.bat
+
