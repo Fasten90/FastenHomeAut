@@ -4,6 +4,9 @@ echo Run CMake - TinyCC - TCC
 # Install TCC
 sudo apt-get install tcc
 
+# TCC version
+tcc -version
+
 
 mkdir Out
 cd Out
@@ -12,7 +15,7 @@ cd CMakeBuild_Tcc
 
 
 # Run CMake
-cmake CC=tcc -G "MinGW Makefiles" ../..
+cmake CC=tcc ../..
 
 
 # Run make
