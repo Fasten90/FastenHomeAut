@@ -1,4 +1,4 @@
-echo Run CMake - TCC (TinyCC)
+echo Run CMake - TCC - TinyCC
 
 
 :: Go to Out/CMakeBuild_Tcc

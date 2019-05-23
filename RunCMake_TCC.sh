@@ -1,4 +1,4 @@
-echo Run CMake - TinyCC (TCC)
+echo Run CMake - TinyCC - TCC
 
 
 # Install TCC
