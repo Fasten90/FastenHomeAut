@@ -980,7 +980,7 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
     */
 
     /*
-    #include "Calc.h"
+    #include "MathHelper.h"
     uint32_t a = 0;
     Increment(&a);
     uprintf("Incremented value: %d", a);
