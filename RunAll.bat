@@ -18,3 +18,6 @@ CALL RunCMake_GccCoverage.bat
 
 CALL Run_CppCheck.bat
 
+
+CALL RunCmake_TCC.bat
+
