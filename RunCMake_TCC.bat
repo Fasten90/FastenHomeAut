@@ -1,11 +1,11 @@
-echo Run CMake - TCC
+echo Run CMake - TCC (TinyCC)
 
 
-:: Go to Out/CMakeBuildTcc
+:: Go to Out/CMakeBuild_Tcc
 mkdir Out
 cd Out
-mkdir CMakeBuildTcc
-cd CMakeBuildTcc
+mkdir CMakeBuild_Tcc
+cd CMakeBuild_Tcc
 
 
 :: Run CMake
@@ -25,5 +25,4 @@ FastenHomeAut.exe
 
 
 :: Go to original directory
-cd ..
-cd ..
+cd ../..
