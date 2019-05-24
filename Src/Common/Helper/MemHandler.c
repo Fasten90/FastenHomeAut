@@ -43,7 +43,7 @@ void * memcpy(void * destination, const void * source, size_t size)
     uint8_t *dest = destination;
     const uint8_t *src = source;
 
-#if CONFIG_MEM_CHECK_POINTERS == 1
+#if (CONFIG_MEM_CHECK_POINTERS == 1)
     if (dest == NULL || src == NULL)
     {
         return NULL;
@@ -74,7 +74,7 @@ void * memset(void * ptr, int value, size_t size)
     size_t i;
     uint8_t *dest = ptr;
 
-#if CONFIG_MEM_CHECK_POINTERS == 1
+#if (CONFIG_MEM_CHECK_POINTERS == 1)
     if (dest == NULL)
     {
         return NULL;
@@ -106,7 +106,7 @@ void * memmove(void * destination, const void * source, size_t size)
     uint8_t *dest = destination;
     uint8_t *src = (uint8_t *)source;
 
-#if CONFIG_MEM_CHECK_POINTERS == 1
+#if (CONFIG_MEM_CHECK_POINTERS == 1)
     if ((dest == NULL) || (src == NULL) || (src == dest))
     {
         return NULL;
@@ -148,7 +148,7 @@ void * memcut(void * destination, const void * source, size_t size)
     uint8_t *dest = destination;
     uint8_t *src = (uint8_t *)source;
 
-#if CONFIG_MEM_CHECK_POINTERS == 1
+#if (CONFIG_MEM_CHECK_POINTERS == 1)
     if ((dest == NULL) || (src == NULL))
     {
         return NULL;
@@ -197,7 +197,7 @@ int memcmp(const void * ptr1, const void * ptr2, size_t size)
     const uint8_t *buffer1 = ptr1;
     const uint8_t *buffer2 = ptr2;
 
-#if CONFIG_MEM_CHECK_POINTERS == 1
+#if (CONFIG_MEM_CHECK_POINTERS == 1)
     if ((buffer1 == NULL) || (buffer2 == NULL))
     {
         return -1;
