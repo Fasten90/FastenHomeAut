@@ -16,6 +16,8 @@
  *    Includes
  *----------------------------------------------------------------------------*/
 
+#include "options.h"
+#include "compiler.h"
 #include "GenericTypeDefs.h"
 #include "board.h"
 
@@ -25,34 +27,21 @@
  *    Macros
  *----------------------------------------------------------------------------*/
 
-#define CONFIG_MEM_CHECK_POINTERS         1
-#define CONFIG_MEM_CHECK_POINTER_RANGE    1
+///< MEM checkers - enable(1) / disable(0)
+#define CONFIG_MEM_CHECK_POINTERS         (1)
+#ifndef CONFIG_MEM_CHECK_POINTER_RANGE
+    #define CONFIG_MEM_CHECK_POINTER_RANGE    (1)
+#endif
+
 
 #define CONFIG_MEM_STACK_GUARD_LENGTH    (1000U)
 #define CONFIG_MEM_STACK_GUARD_VALUE     (0xEF)
 
 
-///< Make address to aligned address (upward rounding to word aligned)
-/* TODO: It is architecture dependent */
-/* TODO: __SIZEOF_POINTER__ */
-/* TODO: or sizeof(void *) in code */
-#if defined(__MINGW32__) && defined(__MINGW64__)
-    /* MinGW32 + MinGW64 */
-    /* Address size: 8bit */
-    #define MEM_ALIGN_SIZE        ((uint8_t)8)
-    typedef uint64_t Address_t;
-#elif defined(__MINGW32__)
-    /* Address size: 4bit */
-    #define MEM_ALIGN_SIZE        ((uint8_t)4)
-    typedef uint32_t Address_t;
-#else
-    /* Address size: 4bit */
-    #define MEM_ALIGN_SIZE        ((uint8_t)4)
-    typedef uint32_t Address_t;
-#endif
-
 
 #if (CONFIG_MEM_CHECK_POINTER_RANGE == 1)
+    /* MEM Checker macros */
+    /* TODO: Change to do {} while () ? */
     #define MEM_ASSERT(_con)                            if (!_con) MEM_ERROR_HANDLER();
     #define MEM_IN_FLASH(_pnt, _size)                   ((Address_t)_pnt >= MEM_FLASH_START && ((Address_t)_pnt + _size) < MEM_FLASH_END)
     #define MEM_IN_RAM(_pnt, _size)                     ((Address_t)_pnt >= MEM_RAM_START && ((Address_t)_pnt + _size) < MEM_RAM_END)
@@ -62,8 +51,11 @@
 
     #define MEM_ERROR_HANDLER()                         Error_Handler()
 #else
+    /* MEM Checker functions turned off */
     #define MEM_ASSERT(_con)
+    /* Condition MACROs - "always in RAM/FLASH" */
     #define MEM_IN_RAM(_pnt, _size)                     (true)
+    #define MEM_IN_FLASH_OR_RAM(_pnt, _size)            (true)
 #endif
 
 
