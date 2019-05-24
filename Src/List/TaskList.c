@@ -43,7 +43,7 @@
 #include "CommonUART.h"
 #endif
 #ifdef CONFIG_MODULE_WATCHDOG_ENABLE
-#include "WatchDog.h"
+#include "SwWatchDog.h"
 #endif
 #ifdef CONFIG_MODULE_ESCAPEBROWSER_ENABLE
 #include "EscapeBrowser.h"

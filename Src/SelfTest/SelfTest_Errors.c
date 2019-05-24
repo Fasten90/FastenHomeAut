@@ -77,8 +77,9 @@ void SelfTest_Errors_ZeroDivide(void)
     uint32_t c;
 
     /* Zero division */
+    /* NOTE: Be careful! Static analyzers will say, this is possible ZeroDivide - but we want to do that */
     /* cppcheck-suppress zerodiv */
-    c = a/b;
+    c = a/b;  /* clang_sa_ignore[core.DivideZero] */
 
     uprintf("ZeroDivide result: %d\r\n", c);
 }

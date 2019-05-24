@@ -708,7 +708,7 @@ uint32_t DateTime_UnitTest(void)
 
 
     /*            DateTime_ConvertStringToDateTime        */
-    DateTime_t test300;
+    DateTime_t test300 = { 0 };
     char strDateTime1[DATETIME_STRING_MAX_LENGTH] = { "2017-02-03 12:12:00" };
     result = DateTime_ConvertStringToDateTime(strDateTime1, &test300);
     UNITTEST_ASSERT(result == true, "DateTime_ConvertStringToDateTime error");

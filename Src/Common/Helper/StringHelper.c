@@ -2357,18 +2357,19 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                     /* %x - Hex - parameterized byte num */
                     uival = va_arg(ap, unsigned int);
                     /* TODO: Not implemented function (for length safe) */
+                    /* !! NOTE: Static analysers will say the paramNum2 not used */
                     if (paramHasLength)
                     {
                         if (paramNum2 > remainLength)
                         {
-                            paramNum2 = remainLength;
+                            paramNum2 = remainLength; /* clang_sa_ignore[deadcode.DeadStores] */
                         }
                     }
                     else
                     {
                         if (remainLength < 8)
                         {
-                            paramNum2 = remainLength; /* CLANG static analyzer error: not used value! */
+                            paramNum2 = remainLength; /* clang_sa_ignore[deadcode.DeadStores] */
                         }
                     }
                     uint8_t hexLen = DecimalToHexaString(uival, &str[length], 8);
@@ -2746,52 +2747,66 @@ uint32_t StringHelper_UnitTest(void)
     /* Hexs */
 
     /* Good hex */
+    value32 = 0;
     result = StringHexToNum("12345678", &value32);
     UNITTEST_ASSERT(result, "StringHexToNum error");
     UNITTEST_ASSERT(value32 == 0x12345678, "StringHexToNum error");
 
     /* Wrong hex */
+    value32 = 0;
     result = StringHexToNum("123G5678", &value32);
     UNITTEST_ASSERT(!result, "StringHexToNum error");
 
 
     /* Binaries */
+    value32 = 0;
     result = StringBinaryToNum("010101", &value32);
     UNITTEST_ASSERT(result, "StringBinaryToNum error");
     UNITTEST_ASSERT(value32 == 0x15, "StringHexToNum error");
+
+    value32 = 0;
     result = StringBinaryToNum("01010101010101010101010101010101", &value32);
     UNITTEST_ASSERT(result, "StringBinaryToNum error");
     UNITTEST_ASSERT(value32 == 0x55555555, "StringHexToNum error");
+
+    value32 = 0;
     result = StringBinaryToNum("010101010101010101010101010101010", &value32);
-    UNITTEST_ASSERT(!result, "StringBinaryToNum error");
+    UNITTEST_ASSERT(!result, "StringBinaryToNum error"); /* 33 bit tried to convert, result shall be "failed" */
+    UNITTEST_ASSERT(value32 == 0, "StringHexToNum error"); /* Original value has not changed */
 
 
     /* Decimals */
 
     /* Good decimals */
+    ivalue32 = 0;
     result = StringToSignedDecimalNum("-123",&ivalue32);
     UNITTEST_ASSERT(result, "StringToSignedDecimalNum error");
     UNITTEST_ASSERT(ivalue32 == -123, "StringToSignedDecimalNum error");
 
+    ivalue32 = 0;
     result = StringToUnsignedDecimalNum("123",&value32);
     UNITTEST_ASSERT(result, "StringToUnsignedDecimalNum error");
     UNITTEST_ASSERT(value32 == 123, "StringToUnsignedDecimalNum error");
 
     /* Wrong decimals */
+    ivalue32 = 0;
     result = StringToSignedDecimalNum("-123a",&ivalue32);
     UNITTEST_ASSERT(!result, "StringToSignedDecimalNum error");
 
+    ivalue32 = 0;
     result = StringToUnsignedDecimalNum("-123",&value32);
     UNITTEST_ASSERT(!result, "StringToUnsignedDecimalNum error");
 
     /* Float */
 
     /* Good Float test */
+    fvalue = 0.0f;
     result = StringToFloat("-123.3499", &fvalue); /* CLANG WARNING: Possible to not change fvalue... */
     UNITTEST_ASSERT(result, "StringToFloat error");
     UNITTEST_ASSERT(((fvalue < -123.3498) && (fvalue > -123.3500)), "StringToFloat error");
 
     /* Wrong Float test */
+    fvalue = 0.0f;
     result = StringToFloat("-123a.3999", &fvalue);
     UNITTEST_ASSERT(!result, "StringToFloat error");
 

@@ -141,9 +141,27 @@ if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
 
     # Clang error suppression
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__clang__=1")
-    # using Clang
-    # TODO: Change the hardcoded wrong path (/Programs/Engineer ...)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/Programs/Engineer/LLVM/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v -o Out/ClangCmakeCompiled/")
+    #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/Programs/Engineer/LLVM/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v")
+    # Clang: -S --> preprocessor only
+    
+    if (WIN32)
+        message(STATUS "# Clang platform: Win")
+        #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -target x86_64-pc-win32 -Wall -v")
+        #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -target x86_64-pc-windows-gnu -Wall -v")    
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -target x86_64-pc-windows-msvc -Wall -v")    
+    elseif (UNIX)
+        message(STATUS "# Clang platform: Linux")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -target x86_64-pc-linux-gnu -Wall -v")    
+    else()
+        message(STATUS "# Unknown Clang platform")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -target x86_64-pc-linux-gnu -Wall -v")        
+    endif ()
+
+    # clang++ -target x86_64-pc-windows-gnu -std=c++14 test.cc -o test.exe
+    # Possible targets:
+    # x86_64-w64-mingw64
+    # x86_64-pc-linux-gnu
+
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
     # GCC, MinGW32, MinGW64
     message(STATUS "# Compiler: GNU (GCC, MinGW*)")
@@ -197,4 +215,28 @@ endif()
 
 set(SOURCE_FILES ${FASTEN_SOURCE_FILES} ${DRIVER_SOURCE_FILES})
 
-add_executable(FastenHomeAut ${SOURCE_FILES})
+
+# Test or normal output
+if ("${CMAKE_FASTENHOMEAUT_GCC_COERAGE}" STREQUAL "TRUE")
+    message(STATUS "# Test coverage turned on")    
+
+    SET(GCC_COVERAGE_COMPILE_FLAGS "-g -O0 -coverage -fprofile-arcs -ftest-coverage")
+    SET(GCC_COVERAGE_LINK_FLAGS    "-coverage -lgcov")
+    SET(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}" )
+    SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}" )
+    SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}" )
+
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY .)
+
+    include_directories(include)
+    
+    # In examples:
+    #set(CATCH_HEADER_PATH ${PROJECT_SOURCE_DIR}/test/catch.hpp)
+    #add_executable(FastenHomeAut_Test ${PROJECT_SOURCE_DIR}/test/test.cpp ${CATCH_HEADER_PATH}) 
+
+    add_executable(FastenHomeAut ${SOURCE_FILES}) 
+    
+else()
+    # Normal output
+    add_executable(FastenHomeAut ${SOURCE_FILES})
+endif ()

@@ -25,7 +25,7 @@
 ### Who do I talk to? ###
 
 - Author
-    + Vizi Gábor
+    + Vizi Gabor
     + fasten90@gmail.com
     + vizi.gabor90@gmail.com
     + [My webpage](http://fasten.e5tv.hu/)
