@@ -2553,7 +2553,7 @@ uint32_t StringHelper_UnitTest(void)
 
 
     /* Start of unittest */
-    UnitTest_Start("String", __FILE__);
+    UnitTest_Start("StringHelper", __FILE__);
 
 
     //* String compare StrCmp() */

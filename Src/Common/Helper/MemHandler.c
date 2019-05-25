@@ -307,7 +307,7 @@ bool mem_CheckPointer(void * pnt, size_t size)
  */
 uint32_t MEM_UnitTest(void)
 {
-    UnitTest_Start("MEM", __FILE__);
+    UnitTest_Start("MemHandler", __FILE__);
 
 
     /* Test memcmp */
