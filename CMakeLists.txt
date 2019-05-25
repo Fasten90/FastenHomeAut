@@ -181,7 +181,16 @@ elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
     message(STATUS "# Compiler: MSVC")
     
     # MSVC does not support the '-Wextra' and '-std=c11'
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Wall /std:c++14")
+    # /Wall --> turn on all warnings
+    
+    # /wdnnnn --> turn off this check
+    # /wonnnn 	Reports the compiler warning that is specified by nnnn only once.
+
+    # C4668 'symbol' is not defined as a preprocessor macro, replacing with '0' for 'directives'
+    # /wd4668 --> turn off
+    # C4820 (level 4) 	'bytes' bytes padding added after construct 'member_name'
+    # /wd4820
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Wall /wd4668 /wd4820 /std:c++14")
 else()
     message(STATUS "# !! Cmake Error possibility !! Not known Compiler, please set it!")
 endif()
