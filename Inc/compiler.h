@@ -68,13 +68,24 @@
 /* __SIZEOF_POINTER__ */
 /* TODO: or sizeof(void *) in code */
 /* #if defined(__MINGW32__) && defined(__MINGW64__) */
-#if (__SIZEOF_POINTER__ == 8)
+
+
+#if !defined(_MSC_VER)
+    #define MEM_ALIGN_SIZE_MACRO    (__SIZEOF_POINTER__)
+#else
+    /* MSVC */
+    #define MEM_ALIGN_SIZE        ((uint8_t)sizeof(void *))
+    typedef size_t Address_t;
+#endif
+
+
+#if (MEM_ALIGN_SIZE_MACRO == 8)
     /* MinGW32 + MinGW64 */
     /* Address size: 64bit/8byte */
     #define MEM_ALIGN_SIZE        ((uint8_t)8)
     typedef uint64_t Address_t;
 /* #elif defined(__MINGW32__) */
-#elif (__SIZEOF_POINTER__ == 4)
+#elif (MEM_ALIGN_SIZE_MACRO == 4)
     /* Address size: 32bit/4byte */
     #define MEM_ALIGN_SIZE        ((uint8_t)4)
     typedef uint32_t Address_t;
@@ -84,9 +95,6 @@
     #define MEM_ALIGN_SIZE        ((uint8_t)4)
     typedef uint32_t Address_t;
 #endif
-
-
-#define MEM_ALIGN_SIZE_MACRO  (__SIZEOF_POINTER__)
 
 
 /* Check MinGW settings */
