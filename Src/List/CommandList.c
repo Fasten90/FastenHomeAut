@@ -739,6 +739,7 @@ static CmdH_Result_t CommandFunction_exit(uint32_t argc, char** argv)
 
     CmdH_SendLine("Exit...");
 
+    /* TODO: MSVC show warning for exit() */
     exit(0);
 
     return CmdH_Result_Ok;
