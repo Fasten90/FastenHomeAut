@@ -70,29 +70,28 @@
 
 #if !defined(_MSC_VER)
     #define MEM_ALIGN_SIZE_MACRO    (__SIZEOF_POINTER__)
+
+    /* #if defined(__MINGW32__) && defined(__MINGW64__) */
+    #if (MEM_ALIGN_SIZE_MACRO == 8)
+        /* MinGW32 + MinGW64 */
+        /* Address size: 64bit/8byte */
+        #define MEM_ALIGN_SIZE        ((uint8_t)8)
+        typedef uint64_t Address_t;
+    /* #elif defined(__MINGW32__) */
+    #elif (MEM_ALIGN_SIZE_MACRO == 4)
+        /* Address size: 32bit/4byte */
+        #define MEM_ALIGN_SIZE        ((uint8_t)4)
+        typedef uint32_t Address_t;
+    #else
+        /* Address size: Unknown / Unsupported */
+        #warning "Unsupported Address size! Check __SIZEOF_POINTER__ define! Has set default to 32bit system"
+        #define MEM_ALIGN_SIZE        ((uint8_t)4)
+        typedef uint32_t Address_t;
+    #endif
 #else
     /* MSVC */
     #define MEM_ALIGN_SIZE        ((uint8_t)sizeof(void *))
     typedef size_t Address_t;
-#endif
-
-
-/* #if defined(__MINGW32__) && defined(__MINGW64__) */
-#if (MEM_ALIGN_SIZE_MACRO == 8)
-    /* MinGW32 + MinGW64 */
-    /* Address size: 64bit/8byte */
-    #define MEM_ALIGN_SIZE        ((uint8_t)8)
-    typedef uint64_t Address_t;
-/* #elif defined(__MINGW32__) */
-#elif (MEM_ALIGN_SIZE_MACRO == 4)
-    /* Address size: 32bit/4byte */
-    #define MEM_ALIGN_SIZE        ((uint8_t)4)
-    typedef uint32_t Address_t;
-#else
-    /* Address size: Unknown / Unsupported */
-    #warning "Unsupported Address size! Check __SIZEOF_POINTER__ define! Has set default to 32bit system"
-    #define MEM_ALIGN_SIZE        ((uint8_t)4)
-    typedef uint32_t Address_t;
 #endif
 
 
