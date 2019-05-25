@@ -67,8 +67,6 @@
 ///< Make address to aligned address (upward rounding to word aligned)
 /* __SIZEOF_POINTER__ */
 /* TODO: or sizeof(void *) in code */
-/* #if defined(__MINGW32__) && defined(__MINGW64__) */
-
 
 #if !defined(_MSC_VER)
     #define MEM_ALIGN_SIZE_MACRO    (__SIZEOF_POINTER__)
@@ -79,6 +77,7 @@
 #endif
 
 
+/* #if defined(__MINGW32__) && defined(__MINGW64__) */
 #if (MEM_ALIGN_SIZE_MACRO == 8)
     /* MinGW32 + MinGW64 */
     /* Address size: 64bit/8byte */
