@@ -359,6 +359,8 @@ DWORD WINAPI Windows_StdinReceiveThread(void * args)
 void * x86_linux_StdinReceiveThread(void * args)
 {
     /* TODO: */
+    UNUSED_ARGUMENT(args);
+
     while (1);
 
     return NULL;
@@ -438,6 +440,8 @@ DWORD WINAPI Windows_SysTickThread(void * args)
 void * x86_linux_SysTickThread(void * args)
 {
     /* Note: This code parts was copied from above, from Win */
+    UNUSED_ARGUMENT(args);
+
     while(1)
     {
         const int ms = 10;
