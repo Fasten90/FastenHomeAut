@@ -2429,7 +2429,7 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
             /* @note    Be careful!!!! */
             /* Infinite loop test for WatchDog test */
             while(1);
-            result = CmdH_Result_Ok_SendSuccessful;
+            result = CmdH_Result_Ok_SendSuccessful; /* Static analyzers and compilers will report this line as "statement is unreachable" */
         }
         else if (!StrCmp("genfault", argv[1]))
         {

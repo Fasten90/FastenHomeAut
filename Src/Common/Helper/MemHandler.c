@@ -210,7 +210,7 @@ int memcmp(const void * ptr1, const void * ptr2, size_t size)
     {
         if (buffer1[i] < buffer2[i])
         {
-            return (-1-i);
+            return (-1-i); /* TODO: ARMCC generated warning here: Warning:  #68-D: integer conversion resulted in a change of sign */
         }
         else if (buffer1[i] > buffer2[i])
         {
