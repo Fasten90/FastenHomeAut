@@ -169,7 +169,7 @@ elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -std=c11 -D__clang__=1")
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "TinyCC")
     # TCC / TinyCC
-    message(STATUS "# Compiler TCC - TODO")
+    message(STATUS "# Compiler TCC")
 
     # TCC include
     # TODO: Why not necessary?
