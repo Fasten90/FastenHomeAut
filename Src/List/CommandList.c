@@ -58,6 +58,11 @@
 #include "SelfTest_Errors.h"
 #include "ButtonSimulator.h"
 
+#ifdef CONFIG_USE_PANEL_PC
+/* Need for exit() */
+#include <stdlib.h>
+#endif /* CONFIG_USE_PANEL_PC */
+
 
 
 /*------------------------------------------------------------------------------

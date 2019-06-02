@@ -39,7 +39,10 @@
 #define pow(_base, _exp)    power(_base, _exp)
 
 
+#if !defined(rand) && !defined(CONFIG_USE_PANEL_PC)
+/* TCC has rand() error */
 #define rand()                (random())
+#endif
 
 
 #ifndef RAND_MAX
