@@ -861,8 +861,8 @@ uint8_t DecimalCharToNum(char c)
 
 /**
  * @brief    Convert Unsigned decimal string to integer
- * @return    true, if successful
- *             false, if has error
+ * @return   true, if successful
+ *           false, if has error
  */
 bool StringToUnsignedDecimalNum(const char *str, uint32_t *value)
 {
@@ -1002,8 +1002,8 @@ bool StringToSignedDecimalNum(const char *str, int32_t *value)
 
 /**
  * @brief    Convert Float string to num(float)
- * @return    true, if successful
- *             false, if has error
+ * @return   true, if successful
+ *           false, if has error
  */
 bool StringToFloat(const char *str, float *num)
 {
@@ -1716,7 +1716,7 @@ const char * STRING_FindString(const char *str, const char *findString)
     size_t i;
     size_t length = StringLength(str);
     size_t findStringLength = StringLength(findString);
-    const char * findPos = NULL;
+    const char * pos = NULL;
 
     /* Check parameters */
     if ((str == NULL) || (findString == NULL) || (length == 0) || (findStringLength == 0) || findStringLength > length)
@@ -1732,13 +1732,13 @@ const char * STRING_FindString(const char *str, const char *findString)
             /* First character is equal */
             if (!StrCmpWithLength(findString, &str[i], findStringLength))
             {
-                findPos = (char *)&str[i];
+                pos = (char *)&str[i];
                 break;
             }
         }
     }
 
-    return findPos;
+    return pos;
 }
 
 
@@ -2223,7 +2223,7 @@ size_t string_printf(char *str, const char *format, va_list ap)
                     if (paramHasLength)
                     {
                         /* String copy with length */
-                        uint8_t stringLength = paramNum1*10 + paramNum2;
+                        uint8_t stringLength = paramNum1 * 10 + paramNum2;
                         string += StrCpyFixLengthWithFillCharacter(string, sval, stringLength, ' ');
                     }
                     else
@@ -2501,7 +2501,7 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                     if (paramHasLength)
                     {
                         /* String copy with length */
-                        uint8_t stringLength = paramNum1*10 + paramNum2;
+                        uint8_t stringLength = paramNum1 * 10 + paramNum2;
                         if (stringLength > remainLength)
                             stringLength = remainLength;
                         stringLength = StrCpyFixLengthWithFillCharacter(&str[length], sval, stringLength, ' ');
