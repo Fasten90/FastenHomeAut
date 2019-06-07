@@ -14,7 +14,7 @@
 
 #include "GpsHandler.h"
 #include "StringHelper.h"
-#include "DateTime.h"
+#include "Datetime.h"
 #include "Debug.h"
 
 #include "UnitTest.h"
@@ -1021,43 +1021,36 @@ static void DebugPrintCoordinate(CoordinateLog_t * coordLog)
 
 
 
-#ifdef MODULE_GPSHANDLER_UNITTEST_ENABLE
+#ifdef CONFIG_MODULE_GPSHANDLER_UNITTEST_ENABLE
 /**
- * \brief    GpsHandler module Unit Test
+ * @brief    GpsHandler module Unit Test
  */
-void GpsHandler_UnitTest(void)
+uint32_t GpsHandler_UnitTest(void)
 {
     UnitTest_Start("GpsHandler", __FILE__);
 
-    // Save debug configs
-    bool oldCoordDebug = GpsHandler_CoordDebugPrintIsEnabled;
-    GpsHandler_CoordDebugPrintIsEnabled = false;
-    bool oldDebug = GpsHandler_DebugIsEnabled;
-    GpsHandler_DebugIsEnabled = false;
-
-
     GpsHandler_ClearBuffer();
 
-    // Test: GpsHandler_ProcessCgnsinfMessage()
+    /* Test: GpsHandler_ProcessCgnsinfMessage() */
 
-    // "1,0,19800106001106.000,,,,0.00,0.0,0,,,,,,0,0,,,,,"
-    // Invalid DateTime, no coordinate...
+    /* "1,0,19800106001106.000,,,,0.00,0.0,0,,,,,,0,0,,,,," */
+    /* Invalid DateTime, no coordinate... */
     GpsHandler_ProcessCgnsinfMessage("1,0,19800106001106.000,,,,0.00,0.0,0,,,,,,0,0,,,,,");
 
-    // Expected results:
+    /* Expected results: */
     UNITTEST_ASSERT((GpsHandler_CoordLogActualCnt == 0), "GpsHandlerProcess error");
     UNITTEST_ASSERT((GpsHandler_IsReceivedCoordLog == false), "GpsHandlerProcess error");
 
 
-    // "1,1,20171116212122.000,47.492245,19.017659,687.576,1.22,184.7,1,,1.3,1.6,1.0,,5,5,,,44,,"
-    // Good DateTime, good coordinate
+    /* "1,1,20171116212122.000,47.492245,19.017659,687.576,1.22,184.7,1,,1.3,1.6,1.0,,5,5,,,44,," */
+    /* Good DateTime, good coordinate */
     GpsHandler_ProcessCgnsinfMessage("1,1,20171116212122.000,47.492245,19.017659,687.576,1.22,184.7,1,,1.3,1.6,1.0,,5,5,,,44,,");
 
     UNITTEST_ASSERT((GpsHandler_CoordLogActualCnt == 1), "GpsHandlerProcess error");
     UNITTEST_ASSERT((GpsHandler_IsReceivedCoordLog == true), "GpsHandlerProcess error");
 
     Coord_t expectedCoord = { .Lat = 47.492245, .Lon = 19.017659 };
-    DateTime_t expectedDateTime = { .date.Year = 17, .date.Month = 11, .date.Day = 16, .time.Hour = 21, .time.Minute = 21, .time.Second = 22 };
+    DateTime_t expectedDateTime = { .date.year = 17, .date.month = 11, .date.day = 16, .time.hour = 21, .time.minute = 21, .time.second = 22 };
     UNITTEST_ASSERT(
             (GpsHandler_CoordLogBuffer[0].coord.Lat >= expectedCoord.Lat - 0.00001f)
             && (GpsHandler_CoordLogBuffer[0].coord.Lat <= expectedCoord.Lat + 0.00001f)
@@ -1067,11 +1060,11 @@ void GpsHandler_UnitTest(void)
     UNITTEST_ASSERT(!memcmp(&GpsHandler_CoordLogBuffer[0].dateTime, &expectedDateTime, sizeof(DateTime_t)), "GpsHandlerProcess error - DateTime");
 
 
-    // Test GpsHandler_GetCoordinateByTime()
-    // A DateTime-mal megadva lekérdezünk koordinátát (azt kell kapnunk, amit fentebb bementettünk !!)
+    /* Test GpsHandler_GetCoordinateByTime() */
+    /* With datetime request coordinates - shall get what we saved at above */
     CoordinateLog_t getCoordLog = { 0 };
-    DateTime_t fromDateTime = { .date.Year = 17, .date.Month = 11, .date.Day = 16, .time.Hour = 21, .time.Minute = 21, .time.Second = 21 };
-    DateTime_t toDateTime = { .date.Year = 17, .date.Month = 11, .date.Day = 16, .time.Hour = 21, .time.Minute = 21, .time.Second = 23 };
+    DateTime_t fromDateTime = { .date.year = 17, .date.month = 11, .date.day = 16, .time.hour = 21, .time.minute = 21, .time.second = 21 };
+    DateTime_t toDateTime = { .date.year = 17, .date.month = 11, .date.day = 16, .time.hour = 21, .time.minute = 21, .time.second = 23 };
     UNITTEST_ASSERT(GpsHandler_GetCoordinateByTime(&getCoordLog, &fromDateTime, &toDateTime), "GpsHandler - GetByDateTime error");
     UNITTEST_ASSERT(
             (getCoordLog.coord.Lat >= expectedCoord.Lat - 0.00001f)
@@ -1082,32 +1075,29 @@ void GpsHandler_UnitTest(void)
     UNITTEST_ASSERT(!memcmp(&GpsHandler_CoordLogBuffer[0].dateTime, &expectedDateTime, sizeof(DateTime_t)), "GpsHandlerProcess error - DateTime");
 
 
-    // Ha nincs olyan dátumú, akkor talál? (!Ne találjon)
-    DateTime_t fromDateTime2 = { .date.Year = 17, .date.Month = 11, .date.Day = 16, .time.Hour = 21, .time.Minute = 21, .time.Second = 20 };
-    DateTime_t toDateTime2 = { .date.Year = 17, .date.Month = 11, .date.Day = 16, .time.Hour = 21, .time.Minute = 21, .time.Second = 21 };
+    /* If there is no correct datetime coordinate, will be the result empty? */
+    DateTime_t fromDateTime2 = { .date.year = 17, .date.month = 11, .date.day = 16, .time.hour = 21, .time.minute = 21, .time.second = 20 };
+    DateTime_t toDateTime2 = { .date.year = 17, .date.month = 11, .date.day = 16, .time.hour = 21, .time.minute = 21, .time.second = 21 };
     UNITTEST_ASSERT(GpsHandler_GetCoordinateByTime(&getCoordLog, &fromDateTime2, &toDateTime2) == false, "GpsHandler - GetByDateTime error");
 
 
-    // +CGNSINF: 1,1,20171205191016.000,47.492158,19.017985,174.498,0.00,30.0,1,,1.0,1.4,0.9,,13,9,,,38,,
+    /* +CGNSINF: 1,1,20171205191016.000,47.492158,19.017985,174.498,0.00,30.0,1,,1.0,1.4,0.9,,13,9,,,38,, */
 
-    // +CGNSINF: 1,1,20171205192122.000,47.492132,19.018004,176.125,3.67,177.6,1,,1.0,1.4,0.9,,13,9,,,38,,
+    /* +CGNSINF: 1,1,20171205192122.000,47.492132,19.018004,176.125,3.67,177.6,1,,1.0,1.4,0.9,,13,9,,,38,, */
 
-    // TODO: Kultúráltabb tesztelés..
-    // TODO: 1. Buffer telitöltése (felülíródik a 0.?)
-    // TODO: 2. Több koordináta feltöltésével is helyes (vagy az előbb megtalált) dátumú lesz visszaadva?
+    /* TODO: More beautiful test */
+    /* TODO: 1. fil buffer (will overwrite the 0. element?) */
+    /* TODO: 2. At more coordinates adding will be the found coordinates correct? */
 
-
-
-    // TODO: ...
 
     GpsHandler_ClearBuffer();
 
-    // NMEA GPRMC test
-    // "$GNRMC,034036.000,A,3150.8612,N,11711.9045,E,2.74,178.00,240516,,,A*7C"
+    /* NMEA GPRMC test */
+    /* "$GNRMC,034036.000,A,3150.8612,N,11711.9045,E,2.74,178.00,240516,,,A*7C" */
     GpsHandler_ProcessNmeaMessage("$GNRMC,034036.000,A,3150.8612,N,11711.9045,E,2.74,178.00,240516,,,A*7C");
 
     Coord_t expectedCoord2 = { .Lat = 31.8476868, .Lon = 117.19841 };
-    DateTime_t expectedDateTime2 = { .date.Year = 16, .date.Month = 5, .date.Day = 24, .time.Hour = 3, .time.Minute = 40, .time.Second = 36 };
+    DateTime_t expectedDateTime2 = { .date.year = 16, .date.month = 5, .date.day = 24, .time.hour = 3, .time.minute = 40, .time.second = 36 };
     UNITTEST_ASSERT(
             (GpsHandler_CoordLogBuffer[0].coord.Lat >= expectedCoord2.Lat - 0.00001f)
             && (GpsHandler_CoordLogBuffer[0].coord.Lat <= expectedCoord2.Lat + 0.00001f)
@@ -1120,10 +1110,10 @@ void GpsHandler_UnitTest(void)
     GpsHandler_ClearBuffer();
 
 
-    // +QGNSSRD: $GNRMC,184928.000,A,4729.5263,N,01901.0777,E,0.40,200.73,161217,,,A*7A
+    /* +QGNSSRD: $GNRMC,184928.000,A,4729.5263,N,01901.0777,E,0.40,200.73,161217,,,A*7A */
     GpsHandler_ProcessNmeaMessage("+QGNSSRD: $GNRMC,184928.000,A,4729.5263,N,01901.0777,E,0.40,200.73,161217,,,A*7A");
     Coord_t expectedCoord3 = { .Lat = 47.4921036, .Lon = 19.0179615 };
-    DateTime_t expectedDateTime3 = { .date.Year = 17, .date.Month = 12, .date.Day = 16, .time.Hour = 18, .time.Minute = 49, .time.Second = 28 };
+    DateTime_t expectedDateTime3 = { .date.year = 17, .date.month = 12, .date.day = 16, .time.hour = 18, .time.minute = 49, .time.second = 28 };
     UNITTEST_ASSERT(
             (GpsHandler_CoordLogBuffer[0].coord.Lat >= expectedCoord3.Lat - 0.00001f)
             && (GpsHandler_CoordLogBuffer[0].coord.Lat <= expectedCoord3.Lat + 0.00001f)
@@ -1133,15 +1123,11 @@ void GpsHandler_UnitTest(void)
     UNITTEST_ASSERT(!memcmp(&GpsHandler_CoordLogBuffer[0].dateTime, &expectedDateTime3, sizeof(DateTime_t)), "GpsHandlerProcess error - DateTime");
 
 
-    // TODO: Mégtöbb NMEA-s UnitTest
+    /* TODO: More NMEA UnitTest */
 
-    // Restore
-    GpsHandler_CoordDebugPrintIsEnabled = oldCoordDebug;
-    GpsHandler_DebugIsEnabled = oldDebug;
 
-    // Finish
+    /* Finish */
     GpsHandler_ClearBuffer();
-    UnitTest_End();
+    return UnitTest_End();
 }
-#endif    // #ifdef MODULE_GPSHANDLER_UNITTEST_ENABLE
-
+#endif    /* CONFIG_MODULE_GPSHANDLER_UNITTEST_ENABLE */

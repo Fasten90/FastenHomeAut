@@ -103,7 +103,7 @@ void GpsHandler_ClearBuffer(void);
 
 bool GPS_GetLastValidCoordinatesWithSysTick(uint32_t startSysTick, uint32_t endSysTick, uint8_t requestCoordinateNum, GPS_CoordinateLogMsg_t* logMessage);
 
-void GpsHandler_UnitTest(void);
+uint32_t GpsHandler_UnitTest(void);
 
 
 
