@@ -51,6 +51,9 @@ typedef enum
 #ifdef CONFIG_MODULE_WEBPAGE_ENABLE
     Debug_WebPage,
 #endif
+#ifdef CONFIG_MODULE_GPS_ENABLE
+    Debug_GPS,
+#endif
 
     /*
      * XXX: Add here new Debug task enums
