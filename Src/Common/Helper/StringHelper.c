@@ -37,6 +37,8 @@
 
 #define STRING_SIZE_MAX                (1024U)
 
+#define STRING_INTEGER_MAX_LENGTH      (10U)
+
 
 
 /*------------------------------------------------------------------------------
@@ -886,7 +888,51 @@ bool StringToUnsignedDecimalNum(const char *str, uint32_t *value)
             return false;                    /* Wrong character */
         }
 
-        if (i > 10)
+        if (i > STRING_INTEGER_MAX_LENGTH)
+        {
+            return false;                    /* To long num */
+        }
+    }
+
+    *value = calculatedValue;
+
+    return true;
+}
+
+
+
+/**
+ * @brief    Convert Unsigned decimal string to integer
+ *           string shall not be null terminated
+ * @return   true, if successful
+ *           false, if has error
+ */
+bool StringToUnsignedDecimalNumWithLength(const char * str, uint32_t * value, uint8_t stringLength)
+{
+    /* TODO: This function was copied from above - optimize! */
+    uint32_t calculatedValue = 0;
+    uint8_t i;
+    uint8_t decimal;
+
+    if ((str == NULL) || (value == NULL) || (stringLength == 0))
+    {
+        return false;
+    }
+
+    for (i = 0; i < stringLength; i++)
+    {
+        if (IsDecimalChar(str[i]))
+        {
+            decimal = DecimalCharToNum(str[i]);
+            calculatedValue *= 10;            /* Shift left 1* =  *10 */
+            calculatedValue += decimal;       /* Add new value */
+        }
+        else
+        {
+            return false;                    /* Wrong character */
+        }
+
+        if (i > STRING_INTEGER_MAX_LENGTH)
         {
             return false;                    /* To long num */
         }
@@ -968,7 +1014,7 @@ bool StringToFloat(const char *str, float *num)
     uint8_t pointCnt ;
     uint32_t integer;
     float fractionPart;
-    char numString[10] = { 0 };
+    char numString[STRING_INTEGER_MAX_LENGTH + 1] = { 0 };
 
     if ((str == NULL) || (num == NULL))
         return false;
@@ -2796,6 +2842,11 @@ uint32_t StringHelper_UnitTest(void)
     ivalue32 = 0;
     result = StringToUnsignedDecimalNum("-123",&value32);
     UNITTEST_ASSERT(!result, "StringToUnsignedDecimalNum error");
+
+
+    /* TODO: Test
+    bool StringToUnsignedDecimalNumWithLength(const char * str, uint32_t * value, uint8_t stringLength)
+    */
 
     /* Float */
 

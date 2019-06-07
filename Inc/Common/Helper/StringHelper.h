@@ -142,6 +142,8 @@ uint8_t DecimalCharToNum(char c);
 bool StringToUnsignedDecimalNum(const char *str, uint32_t *value);
 bool StringToSignedDecimalNum(const char *str, int32_t *value);
 
+bool StringToUnsignedDecimalNumWithLength(const char *str, uint32_t *value, uint8_t stringLength);
+
 /* String --> Float converter */
 bool StringToFloat(const char *str, float *num);
 
