@@ -25,15 +25,10 @@
  *  Macros
  *----------------------------------------------------------------------------*/
 
-#if (GSM_MODE == GSM_SIMCOM_SIM868)
-    #define GPSHANDLER_MESSAGE_MAX_LENGTH            (100U)
-    #define GPSHANDLER_MESSAGE_PARAMETER_NUM         (21U)
-#elif (GSM_MODE == GSM_QUECTEL_MC60)
-    #define GPSHANDLER_MESSAGE_MAX_LENGTH            (110U)
-    #define GPSHANDLER_MESSAGE_PARAMETER_NUM         (12U)
-#else
-    #error "GPS_MODE has set incorrectly"
-#endif
+#define GPSHANDLER_MESSAGE_CGNSINF_MAX_LENGTH         (100U)
+#define GPSHANDLER_MESSAGE_CGNSINF_PARAMETER_NUM      (21U)
+#define GPSHANDLER_MESSAGE_NMEA_MAX_LENGTH            (110U)
+#define GPSHANDLER_MESSAGE_NMEA_PARAMETER_NUM         (12U)
 
 #define GPSHANDLER_COORD_BUFFER_LENGTH               (100U)
 
@@ -176,13 +171,13 @@ static void GpsHandler_ProcessCgnsinfMessage(const char * msg)
         "1,1,20171116212122.000,47.492245,19.017659,687.576,1.22,184.7,1,,1.3,1.6,1.0,,5,5,,,44,,"
      */
 
-    char procMsg[GPSHANDLER_MESSAGE_MAX_LENGTH];
-    char * separated[GPSHANDLER_MESSAGE_PARAMETER_NUM] = { NULL };
+    char procMsg[GPSHANDLER_MESSAGE_CGNSINF_MAX_LENGTH];
+    char * separated[GPSHANDLER_MESSAGE_CGNSINF_PARAMETER_NUM] = { NULL };
 
-    StrCpyMax(procMsg, msg, GPSHANDLER_MESSAGE_MAX_LENGTH);
+    StrCpyMax(procMsg, msg, GPSHANDLER_MESSAGE_CGNSINF_MAX_LENGTH);
 
     /* Split by ',' - 21 parameter --> 20 ',' */
-    if (STRING_Splitter(procMsg, ",", separated, GPSHANDLER_MESSAGE_PARAMETER_NUM) == (GPSHANDLER_MESSAGE_PARAMETER_NUM - 1))
+    if (STRING_Splitter(procMsg, ",", separated, GPSHANDLER_MESSAGE_CGNSINF_PARAMETER_NUM) == (GPSHANDLER_MESSAGE_CGNSINF_PARAMETER_NUM - 1))
     {
         CoordinateLog_t coordLog = { 0 };
 
@@ -341,10 +336,10 @@ static void GpsHandler_ProcessNmeaMessage(char * msg)
     */
 
     /* TODO: Check max length of message ? */
-    char procMsg[GPSHANDLER_MESSAGE_MAX_LENGTH];
+    char procMsg[GPSHANDLER_MESSAGE_NMEA_MAX_LENGTH];
 
     /* TODO: Do not copy */
-    StrCpyMax(procMsg, msg, GPSHANDLER_MESSAGE_MAX_LENGTH);
+    StrCpyMax(procMsg, msg, GPSHANDLER_MESSAGE_NMEA_MAX_LENGTH);
 
     GPSHANDLER_DEBUG_PRINTF("Received NMEA msg: %s\r\n", procMsg);
 
@@ -354,10 +349,10 @@ static void GpsHandler_ProcessNmeaMessage(char * msg)
     if (headerPos != NULL)
     {
         headerPos += sizeof("$GNRMC,") - 1;
-        char * separated[GPSHANDLER_MESSAGE_PARAMETER_NUM] = { NULL };
+        char * separated[GPSHANDLER_MESSAGE_NMEA_PARAMETER_NUM] = { NULL };
 
-        uint8_t splitLength = STRING_Splitter(headerPos, ",", separated, GPSHANDLER_MESSAGE_PARAMETER_NUM);
-        if (splitLength == GPSHANDLER_MESSAGE_PARAMETER_NUM)
+        uint8_t splitLength = STRING_Splitter(headerPos, ",", separated, GPSHANDLER_MESSAGE_NMEA_PARAMETER_NUM);
+        if (splitLength == GPSHANDLER_MESSAGE_NMEA_PARAMETER_NUM)
         {
             /* Successful splitting */
 
@@ -580,7 +575,7 @@ static bool GpsHandler_ProcessNmeaGprmcMessage(char * separated[], GPS_NmeaRmcIn
 
 
 /**
- * @brief   Convert HHmmSS GPS time format to Time_t object
+ * @brief   Convert HHmmSS GPS time format to Time_t object (NMEA)
  * @return  Is okay
  */
 static bool GpsMessageHandler_ConvertTime(const char * str, Time_t * time)
@@ -602,7 +597,7 @@ static bool GpsMessageHandler_ConvertTime(const char * str, Time_t * time)
 
 
 /**
- * @brief   Convert YYMMDD GPS date format to Date_t object
+ * @brief   Convert DDMMYY GPS date format to Date_t object (NMEA)
  * @return  Is okay
  */
 static bool GpsMessageHandler_ConvertDate(const char * str, Date_t * date)
@@ -612,11 +607,11 @@ static bool GpsMessageHandler_ConvertDate(const char * str, Date_t * date)
     bool isOk = true;
 
     isOk &= StringToUnsignedDecimalNumWithLength(&str[0], &val, 2);
-    date->year = val;
+    date->day = val;
     isOk &= StringToUnsignedDecimalNumWithLength(&str[2], &val, 2);
     date->month = val;
     isOk &= StringToUnsignedDecimalNumWithLength(&str[4], &val, 2);
-    date->day = val;
+    date->year = val;
 
     return isOk;
 }
@@ -1049,7 +1044,7 @@ uint32_t GpsHandler_UnitTest(void)
     UNITTEST_ASSERT((GpsHandler_CoordLogActualCnt == 1), "GpsHandlerProcess error");
     UNITTEST_ASSERT((GpsHandler_IsReceivedCoordLog == true), "GpsHandlerProcess error");
 
-    Coord_t expectedCoord = { .Lat = 47.492245, .Lon = 19.017659 };
+    Coord_t expectedCoord = { .Lat = 47.492245f, .Lon = 19.017659f };
     DateTime_t expectedDateTime = { .date.year = 17, .date.month = 11, .date.day = 16, .time.hour = 21, .time.minute = 21, .time.second = 22 };
     UNITTEST_ASSERT(
             (GpsHandler_CoordLogBuffer[0].coord.Lat >= expectedCoord.Lat - 0.00001f)
@@ -1096,7 +1091,7 @@ uint32_t GpsHandler_UnitTest(void)
     /* "$GNRMC,034036.000,A,3150.8612,N,11711.9045,E,2.74,178.00,240516,,,A*7C" */
     GpsHandler_ProcessNmeaMessage("$GNRMC,034036.000,A,3150.8612,N,11711.9045,E,2.74,178.00,240516,,,A*7C");
 
-    Coord_t expectedCoord2 = { .Lat = 31.8476868, .Lon = 117.19841 };
+    Coord_t expectedCoord2 = { .Lat = 31.8476868f, .Lon = 117.19841f };
     DateTime_t expectedDateTime2 = { .date.year = 16, .date.month = 5, .date.day = 24, .time.hour = 3, .time.minute = 40, .time.second = 36 };
     UNITTEST_ASSERT(
             (GpsHandler_CoordLogBuffer[0].coord.Lat >= expectedCoord2.Lat - 0.00001f)
@@ -1112,7 +1107,7 @@ uint32_t GpsHandler_UnitTest(void)
 
     /* +QGNSSRD: $GNRMC,184928.000,A,4729.5263,N,01901.0777,E,0.40,200.73,161217,,,A*7A */
     GpsHandler_ProcessNmeaMessage("+QGNSSRD: $GNRMC,184928.000,A,4729.5263,N,01901.0777,E,0.40,200.73,161217,,,A*7A");
-    Coord_t expectedCoord3 = { .Lat = 47.4921036, .Lon = 19.0179615 };
+    Coord_t expectedCoord3 = { .Lat = 47.4921036f, .Lon = 19.0179615f };
     DateTime_t expectedDateTime3 = { .date.year = 17, .date.month = 12, .date.day = 16, .time.hour = 18, .time.minute = 49, .time.second = 28 };
     UNITTEST_ASSERT(
             (GpsHandler_CoordLogBuffer[0].coord.Lat >= expectedCoord3.Lat - 0.00001f)
