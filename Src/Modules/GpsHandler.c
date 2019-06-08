@@ -30,14 +30,14 @@
 #define GPSHANDLER_MESSAGE_NMEA_MAX_LENGTH            (110U)
 #define GPSHANDLER_MESSAGE_NMEA_PARAMETER_NUM         (12U)
 
-#define GPSHANDLER_COORD_BUFFER_LENGTH               (100U)
+#define GPSHANDLER_COORD_BUFFER_LENGTH                (100U)
 
 
-#define GPSHANDLER_DEBUG_ENABLE                      (1)
+#define GPSHANDLER_DEBUG_ENABLE                       (1)
 
 #if (GPSHANDLER_DEBUG_ENABLE == 1)
-    #define GPSHANDLER_DEBUG_PRINT(_str)             Debug_Print(Debug_GPS, _str)
-    #define GPSHANDLER_DEBUG_PRINTF(...)             Debug_Printf(Debug_GPS, __VA_ARGS__)
+    #define GPSHANDLER_DEBUG_PRINT(_str)              Debug_Print(Debug_GPS, _str)
+    #define GPSHANDLER_DEBUG_PRINTF(...)              Debug_Printf(Debug_GPS, __VA_ARGS__)
 #else
     /* Debug not used */
     #define GPSHANDLER_DEBUG_PRINT(_str)
@@ -666,7 +666,7 @@ static float GpsHandler_ConvertKnotToKmph(float floatValue)
 static bool GpsHandler_NmeaGprmcCheckAndConvert(GPS_NmeaRmcInfo_t * rmcData, CoordinateLog_t * coordLog)
 {
     /* East / West */
-    if(rmcData->isEast == true)
+    if (rmcData->isEast == true)
     {
         /* East - Longitude + */
         coordLog->coord.Lon = rmcData->longitude;
@@ -679,7 +679,7 @@ static bool GpsHandler_NmeaGprmcCheckAndConvert(GPS_NmeaRmcInfo_t * rmcData, Coo
 
 
     /* North / South */
-    if(rmcData->isNorth == true)
+    if (rmcData->isNorth == true)
     {
         /* North - Latitude + */
         coordLog->coord.Lat = rmcData->latitude;
