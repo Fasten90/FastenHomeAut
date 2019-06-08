@@ -28,6 +28,14 @@
 
 
 /*------------------------------------------------------------------------------
+ *  Macros
+ *----------------------------------------------------------------------------*/
+
+#define DEBUG_GUARD_VALUE       ((char)0xFF)
+
+
+
+/*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
 
@@ -129,10 +137,10 @@ void Debug_Printf(Debug_t debugTask, const char *format, ...)
 
         /* Send debug message: */
         /* Working in at: */
-        char txBuffer[DEBUGUART_TX_BUFFER_SIZE];
+        char txBuffer[DEBUGUART_TX_BUFFER_SIZE] = { 0 };
 
 #ifdef CONFIG_DEBUG_MODE
-        txBuffer[DEBUGUART_TX_BUFFER_SIZE-1] = 0xEF;
+        txBuffer[DEBUGUART_TX_BUFFER_SIZE-1] = DEBUG_GUARD_VALUE;
 #endif
 
         va_list ap;                                    /* argument pointer */
@@ -146,7 +154,7 @@ void Debug_Printf(Debug_t debugTask, const char *format, ...)
         }
 
 #ifdef CONFIG_DEBUG_MODE
-        if (txBuffer[DEBUGUART_TX_BUFFER_SIZE-1] != 0xEF)
+        if (txBuffer[DEBUGUART_TX_BUFFER_SIZE-1] != DEBUG_GUARD_VALUE)
         {
             DEBUG_BREAKPOINT();
         }
