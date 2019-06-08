@@ -1429,6 +1429,8 @@ size_t StrCpyMax(char *dest, const char *str, size_t maxLength)
         return 0;
     }
 
+    /* TODO: Copy immediately here ? */
+
     /* Check long */
     if (length >= maxLength)
     {

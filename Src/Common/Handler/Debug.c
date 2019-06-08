@@ -156,6 +156,7 @@ void Debug_Printf(Debug_t debugTask, const char *format, ...)
 #ifdef CONFIG_DEBUG_MODE
         if (txBuffer[DEBUGUART_TX_BUFFER_SIZE-1] != DEBUG_GUARD_VALUE)
         {
+            /* TODO: Report */
             DEBUG_BREAKPOINT();
         }
 #endif
