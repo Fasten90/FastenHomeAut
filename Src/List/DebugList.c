@@ -70,6 +70,14 @@ DebugRecord_t DebugTasks[] =
         .color = Color_Green,
     },
 #endif
+#ifdef CONFIG_MODULE_GPS_ENABLE
+    {
+        .name = "GPS",
+        .isEnabled = true,
+        .color = Color_Green,
+    },
+#endif
+
 
     /*
      * XXX: Add here new Debug task struct

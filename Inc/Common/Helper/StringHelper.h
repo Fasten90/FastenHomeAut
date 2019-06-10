@@ -32,10 +32,10 @@
 
 
 /* size_t strlen ( const char * str ); */
-#define strlen(_str)                    StringLength(_str)
+#define strlen(_str)                      StringLength(_str)
 
 
-#define strcmp(_str1, _str2)            StrCmp(_str1, _str2)
+#define strcmp(_str1, _str2)              StrCmp(_str1, _str2)
 
 
 /* int strncmp ( const char * str1, const char * str2, size_t num ); */
@@ -51,13 +51,13 @@
 
 /* char * strncpy ( char * destination, const char * source, size_t num ); */
 /* uint8_t StrCpyMax(char *dest, const char *str, uint8_t maxLength) */
-#define strncpy(_dest, _src, _num)        StrCpyMax(_dest, _src, _num)
+#define strncpy(_dest, _src, _num)         StrCpyMax(_dest, _src, _num)
 
 
-#define strcat(_dest_, _src)            StrAppend(_dest, _src)
+#define strcat(_dest_, _src)               StrAppend(_dest, _src)
 
 
-#define strncat(_dest, _src, _num)        StrAppend(_dest, _src, _num)
+#define strncat(_dest, _src, _num)         StrAppend(_dest, _src, _num)
 
 
 /* Location of character in string */
@@ -66,17 +66,17 @@
 
 /* Find characters in string */
 /* char * strpbrk ( const char *, const char * ); */
-#define strpbrk(_str, _characters)        STRING_FindCharacters(_str, _characters)
+#define strpbrk(_str, _characters)         STRING_FindCharacters(_str, _characters)
 
 
 /* char * strstr ( const char *, const char * ) */
-#define strstr(_str1, _str2)            STRING_FindString(_str1, _str2)
+#define strstr(_str1, _str2)               STRING_FindString(_str1, _str2)
 
 
-#define sprintf(...)                    usprintf(__VA_ARGS__)
+#define sprintf(...)                       usprintf(__VA_ARGS__)
 
 
-#define snprintf(...)                    usnprintf(__VA_ARGS__)
+#define snprintf(...)                      usnprintf(__VA_ARGS__)
 
 
 #ifndef CONFIG_PLATFORM_X86
@@ -142,8 +142,11 @@ uint8_t DecimalCharToNum(char c);
 bool StringToUnsignedDecimalNum(const char *str, uint32_t *value);
 bool StringToSignedDecimalNum(const char *str, int32_t *value);
 
+bool StringToUnsignedDecimalNumWithLength(const char *str, uint32_t *value, uint8_t stringLength);
+
 /* String --> Float converter */
 bool StringToFloat(const char *str, float *num);
+/* TODO: string to float with length? */
 
 /* String --> Bool converter */
 bool StringToBool(const char * str, bool * val);

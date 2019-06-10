@@ -31,6 +31,7 @@
 #include "GlobalVarHandler.h"
 #include "EventLog.h"
 #include "MeasurementTimer.h"
+#include "GpsHandler.h"
 
 #include "UnitTestList.h"
 
@@ -128,6 +129,10 @@ uint32_t UnitTestList_Run(void)
 
 #ifdef CONFIG_MODULE_MEASUREMENTTIMER_UNITTEST_ENABLE
     result += MeasurementTimer_UnitTest();
+#endif
+
+#if defined(CONFIG_MODULE_GPSHANDLER_UNITTEST_ENABLE) && defined(CONFIG_MODULE_GPS_ENABLE)
+    result += GpsHandler_UnitTest();
 #endif
 
     return result;

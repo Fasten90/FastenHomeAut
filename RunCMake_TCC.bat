@@ -1,3 +1,4 @@
+@echo off
 echo Run CMake - TCC - TinyCC
 
 

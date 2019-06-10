@@ -1,3 +1,4 @@
+@echo off
 echo Run CppCheck
 
 :: cppcheck shall be added to the PATH
