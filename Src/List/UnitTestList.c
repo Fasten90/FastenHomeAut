@@ -32,6 +32,7 @@
 #include "EventLog.h"
 #include "MeasurementTimer.h"
 #include "GpsHandler.h"
+#include "EEPROM.h"
 
 #include "UnitTestList.h"
 
@@ -134,6 +135,11 @@ uint32_t UnitTestList_Run(void)
 #if defined(CONFIG_MODULE_GPSHANDLER_UNITTEST_ENABLE) && defined(CONFIG_MODULE_GPS_ENABLE)
     result += GpsHandler_UnitTest();
 #endif
+
+#if defined(CONFIG_MODULE_EEPROM_ENABLE) && defined(CONFIG_MODULE_EEPROM_TEST)
+    result += EEPROM_ModuleTest();
+#endif
+
 
     return result;
 }

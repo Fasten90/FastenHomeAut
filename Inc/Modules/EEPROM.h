@@ -40,6 +40,7 @@ typedef enum
     EEPROM_RESULT_OK,
     EEPROM_RESULT_ERROR,
     EEPROM_RESULT_INVALID_ADDRESS,
+    EEPROM_RESULT_INVALID_DATA_SIZE
 } EEPROM_Result_t;
 
 
@@ -57,6 +58,8 @@ void EEPROM_Init(void);
 
 EEPROM_Result_t EEPROM_Write(const uint16_t address, const uint8_t * buffer, const uint16_t size);
 EEPROM_Result_t EEPROM_Read(const uint16_t address, uint8_t * buffer, const uint16_t size);
+
+uint32_t EEPROM_ModuleTest(void);
 
 
 
