@@ -19,11 +19,16 @@
 #include "MemHandler.h"
 #include "EEPROM.h"
 
-#include "UnitTest.h"
-
-
 
 #ifdef CONFIG_MODULE_EEPROM_ENABLE
+
+#include "UnitTest.h"
+
+#ifdef CONFIG_MODULE_VIRTUAL_EEPROM_ENABLE
+#include "VirtualEEPROM.h"
+#endif
+
+
 
 /*------------------------------------------------------------------------------
  *  Global variables
@@ -54,6 +59,9 @@
 void EEPROM_Init(void)
 {
 
+#ifdef CONFIG_MODULE_VIRTUAL_EEPROM_ENABLE
+    VirtualEEPROM_Init();
+#endif
 }
 
 
@@ -83,9 +91,12 @@ EEPROM_Result_t EEPROM_Write(const uint16_t address, const uint8_t * buffer, con
         return EEPROM_RESULT_INVALID_DATA_SIZE;
     }
 
-
+#ifdef CONFIG_MODULE_VIRTUAL_EEPROM_ENABLE
+    return VirtualEEPROM_Write(address, buffer, size);
+#else
     /* TODO: Implement */
     return EEPROM_RESULT_OK;
+#endif
 }
 
 
@@ -114,9 +125,12 @@ EEPROM_Result_t EEPROM_Read(const uint16_t address, uint8_t * buffer, const uint
         return EEPROM_RESULT_INVALID_DATA_SIZE;
     }
 
-
+#ifdef CONFIG_MODULE_VIRTUAL_EEPROM_ENABLE
+    return VirtualEEPROM_Read(address, buffer, size);
+#else
     /* TODO: Implement */
     return EEPROM_RESULT_OK;
+#endif
 }
 
 

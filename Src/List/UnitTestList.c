@@ -33,6 +33,7 @@
 #include "MeasurementTimer.h"
 #include "GpsHandler.h"
 #include "EEPROM.h"
+#include "VirtualEEPROM.h"
 
 #include "UnitTestList.h"
 
@@ -138,6 +139,10 @@ uint32_t UnitTestList_Run(void)
 
 #if defined(CONFIG_MODULE_EEPROM_ENABLE) && defined(CONFIG_MODULE_EEPROM_TEST)
     result += EEPROM_ModuleTest();
+
+    #if defined(CONFIG_MODULE_VIRTUAL_EEPROM_UNITTEST_ENABLE)
+    result += VirtualEEPROM_UnitTest();
+    #endif
 #endif
 
 
