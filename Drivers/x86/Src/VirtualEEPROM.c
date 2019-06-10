@@ -21,16 +21,18 @@
 
 #ifdef CONFIG_MODULE_VIRTUAL_EEPROM_ENABLE
 
+#include "MemHandler.h"
 #include "UnitTest.h"
 
 #include <stdio.h>
 
 /* For file exists checking */
-#include "MemHandler.h"
+
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
 
+/* unistd not available at MSVC and TCC*/
+/* #include <unistd.h> */
 
 
 /* <byte:2>\r\n */

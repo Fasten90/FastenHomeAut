@@ -33,7 +33,10 @@
 #include "MeasurementTimer.h"
 #include "GpsHandler.h"
 #include "EEPROM.h"
+
+#ifdef CONFIG_MODULE_VIRTUAL_EEPROM_ENABLE
 #include "VirtualEEPROM.h"
+#endif
 
 #include "UnitTestList.h"
 
