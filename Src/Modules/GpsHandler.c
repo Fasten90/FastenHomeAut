@@ -22,6 +22,8 @@
 
 #include "UnitTest.h"
 
+#ifdef CONFIG_MODULE_GPS_ENABLE
+
 
 
 /*------------------------------------------------------------------------------
@@ -1129,3 +1131,6 @@ uint32_t GpsHandler_UnitTest(void)
     return UnitTest_End();
 }
 #endif    /* CONFIG_MODULE_GPSHANDLER_UNITTEST_ENABLE */
+
+
+#endif /* CONFIG_MODULE_GPS_ENABLE */
