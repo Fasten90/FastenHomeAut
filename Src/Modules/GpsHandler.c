@@ -12,10 +12,13 @@
  *  Header files
  *----------------------------------------------------------------------------*/
 
+#include "options.h"
+#include "GenericTypeDefs.h"
 #include "GpsHandler.h"
 #include "StringHelper.h"
 #include "DateTime.h"
 #include "Debug.h"
+#include "DebugList.h"
 
 #include "UnitTest.h"
 
