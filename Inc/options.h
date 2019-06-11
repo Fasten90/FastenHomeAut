@@ -529,7 +529,7 @@
 /* #define USE_FULL_ASSERT */
 
 ///< Debug mode: enable breakpoint and other debug support function
-#define CONFIG_DEBUG_MODE
+/* #define CONFIG_DEBUG_MODE */
 
 ///< Hard Assert mode - with file name and line
 /* #define ASSERT_MODE_HARD */
