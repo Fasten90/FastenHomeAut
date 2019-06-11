@@ -95,7 +95,7 @@ void VirtualEEPROM_Init(void)
 
         fclose(file);
 
-        printf("Virtual EEPROM initialized with exists file");
+        printf("Virtual EEPROM initialized with exists file\n");
     }
     else
     {
@@ -108,7 +108,7 @@ void VirtualEEPROM_Init(void)
 
         fclose(file);
 
-        printf("Virtual EEPROM initialized with empty file");
+        printf("Virtual EEPROM initialized with empty file\n");
     }
 }
 
