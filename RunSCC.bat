@@ -4,17 +4,21 @@ echo Run Fasten SCC
 
 :: Go to Out/CMakeBuild_Tcc
 mkdir Tools
-cd Out
-mkdir SourceCodeChecker
-cd SourceCodeChecker
+cd Tools
+::mkdir SourceCodeChecker
+::cd SourceCodeChecker
 
 
 :: Clone SCC
 git clone https://fasten90@bitbucket.org/fasten90/sourcecodechecker.git
 
+cd
+dir
 
-cd ../..
+cd ..
 
+cd
+dir
 
 :: Run SCC
 :: Default config: scc_config.json
