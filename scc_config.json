@@ -20,5 +20,5 @@
     "CONFIG_TRAILING_WHITESPACE_CHECKER_ENABLED": true,
     "CONFIG_UNTIL_FIRST_ERROR": false,
     "CONFIG_STATISTICS_ENABLED": true,
-    "debug_enabled": true
+    "debug_enabled": false
 }
