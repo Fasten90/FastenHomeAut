@@ -8,8 +8,8 @@
  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __X86_HAL_DMA_H
-#define __X86_HAL_DMA_H
+#ifndef X86_HAL_DMA_H_
+#define X86_HAL_DMA_H_
 
 #ifdef __cplusplus
  extern "C" {
@@ -547,4 +547,4 @@ uint32_t             HAL_DMA_GetError(DMA_HandleTypeDef *hdma);
 }
 #endif
 
-#endif /* __X86_HAL_DMA_H */
+#endif /* X86_HAL_DMA_H_ */

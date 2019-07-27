@@ -8,8 +8,8 @@
  */
 
 
-#ifndef __X86_H
-#define __X86_H
+#ifndef X86_H_
+#define X86_H_
 
 #ifdef __cplusplus
  extern "C" {
@@ -344,4 +344,4 @@ typedef struct
 }
 #endif /* __cplusplus */
 
-#endif /* __X86_H */
+#endif /* X86_H_ */

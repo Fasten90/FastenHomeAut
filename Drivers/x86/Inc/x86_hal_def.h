@@ -9,8 +9,8 @@
 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __X86_HAL_DEF
-#define __X86_HAL_DEF
+#ifndef X86_HAL_DEF_H_
+#define X86_HAL_DEF_H_
 
 #ifdef __cplusplus
  extern "C" {
@@ -150,4 +150,4 @@ typedef enum
 }
 #endif
 
-#endif /* __X86_HAL_DEF */
+#endif /* X86_HAL_DEF_H_ */

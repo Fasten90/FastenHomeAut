@@ -9,8 +9,8 @@
 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __X86_HAL_UART_H
-#define __X86_HAL_UART_H
+#ifndef X86_HAL_UART_H_
+#define X86_HAL_UART_H_
 
 #ifdef __cplusplus
  extern "C" {
@@ -1363,4 +1363,4 @@ HAL_StatusTypeDef UART_WaitOnFlagUntilTimeout(UART_HandleTypeDef *huart, uint32_
 }
 #endif
 
-#endif /* __X86_HAL_UART_H */
+#endif /* X86_HAL_UART_H_ */

@@ -1,5 +1,5 @@
-#ifndef __CORE_WINDOWS_H
-#define __CORE_WINDOWS_H
+#ifndef CORE_WINDOWS_H_
+#define CORE_WINDOWS_H_
 
 /* IO definitions (access restrictions to peripheral registers) */
 
@@ -27,4 +27,4 @@
 
 
 
-#endif  /* #ifndef __CORE_WINDOWS_H */
+#endif /* CORE_WINDOWS_H_ */

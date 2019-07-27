@@ -16,8 +16,8 @@
   * @{
   */
     
-#ifndef __X86_OTHER_H
-#define __X86_OTHER_H
+#ifndef X86_OTHER_H_
+#define X86_OTHER_H_
 
 #ifdef __cplusplus
  extern "C" {
@@ -102,7 +102,7 @@ typedef enum
 }
 #endif /* __cplusplus */
 
-#endif /* __X86_OTHER_H */
+#endif /* X86_OTHER_H_ */
 /**
   * @}
   */
