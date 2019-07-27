@@ -266,7 +266,7 @@ static bool GpsHandler_ConvertCgnsinfDateTime(char * str, DateTime_t * dateTime)
     }
 
     isOk &= StringToUnsignedDecimalNumWithLength(&str[0], &val, 4);
-    dateTime->date.year = val - 2000;    // Converted to valid year (20xx --> xx ; e.g 2017 --> 17)
+    dateTime->date.year = val - 2000;    /*  Converted to valid year (20xx --> xx ; e.g 2017 --> 17) */
     isOk &= StringToUnsignedDecimalNumWithLength(&str[4], &val, 2);
     dateTime->date.month = val;
     isOk &= StringToUnsignedDecimalNumWithLength(&str[6], &val, 2);
@@ -545,7 +545,7 @@ static bool GpsHandler_ProcessNmeaGprmcMessage(char * separated[], GPS_NmeaRmcIn
     }
 
 
-    // 8   231.8      True course
+    /*  8   231.8      True course */
     /* TODO: Does not need? */
 
 
@@ -662,7 +662,7 @@ static bool GpsHandler_Coord2Float(float * floatValue, char * coordinateString, 
  */
 static float GpsHandler_ConvertKnotToKmph(float floatValue)
 {
-    // 1 knot = 1.85200 kilometers per hour
+    /*  1 knot = 1.85200 kilometers per hour */
     return floatValue * 1.85200;
 }
 

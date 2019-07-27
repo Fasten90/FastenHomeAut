@@ -17,12 +17,12 @@
  *----------------------------------------------------------------------------*/
 
 
-// CMSIS files include
+/*  CMSIS files include */
 #include "core_windows.h"
 
 #include "x86.h"
 
-// TODO: Put to conf file at Inc dir?
+/*  TODO: Put to conf file at Inc dir? */
 #include "x86_hal_dma.h"
 #include "x86_hal_spi.h"
 #include "x86_hal_uart.h"
@@ -60,10 +60,10 @@ void              HAL_SuspendTick(void);
 void              HAL_ResumeTick(void);
 
 
-// For suppress warnings
+/*  For suppress warnings */
 #define HAL_SYSTICK_IRQHandler()
 
-//#define SystemClock_Config()
+/* #define SystemClock_Config() */
 
 
 

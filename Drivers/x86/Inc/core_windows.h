@@ -22,7 +22,7 @@
 
 
 
-//void NVIC_SystemReset(void);
+/* void NVIC_SystemReset(void); */
 #define NVIC_SystemReset()
 
 

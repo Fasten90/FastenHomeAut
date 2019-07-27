@@ -90,7 +90,7 @@ typedef enum
                                     {                                      \
                                        (__HANDLE__)->Lock = HAL_LOCKED;    \
                                     }                                      \
-       	                          }while (0)
+                                     }while (0)
 
   #define __HAL_UNLOCK(__HANDLE__)                                          \
                                   do{                                       \
