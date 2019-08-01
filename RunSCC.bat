@@ -10,7 +10,11 @@ cd Tools
 
 
 :: Clone SCC
-git clone https://fasten90@bitbucket.org/fasten90/sourcecodechecker.git
+if defined PIPELINE_WORKSPACE (
+  echo PIPELINE_WORKSPACE is defined 
+  git clone https://fasten90@bitbucket.org/fasten90/sourcecodechecker.git
+)
+
 
 cd
 dir
