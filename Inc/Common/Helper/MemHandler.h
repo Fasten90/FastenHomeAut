@@ -1,5 +1,5 @@
 /*
- *    MEM.h
+ *    MemHandler.h
  *    Created on:   2016-08-31
  *    Author:       Vizi Gabor
  *    E-mail:       vizi.gabor90@gmail.com

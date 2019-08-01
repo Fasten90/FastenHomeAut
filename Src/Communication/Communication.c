@@ -9,16 +9,16 @@
 
 
 
-#include <stdarg.h>
 #include "options.h"
 
 #ifdef CONFIG_MODULE_COMMUNICATION_ENABLE
 
 #include "compiler.h"
-#include "String.h"
+#include <stdarg.h>
+#include "StringHelper.h"
 #include "DebugUart.h"
 #include "ESP8266.h"
-#include "MEM.h"
+#include "MemHandler.h"
 #include "Communication.h"
 
 
