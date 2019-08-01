@@ -521,3 +521,19 @@ jobs:
       #failOnStderr: false # Optional
       #noProfile: true # Optional
       #noRc: true # Optional
+
+# Windows - Fasten SCC - shell script
+- job: windows_test
+  pool:
+    vmImage: 'windows-2019'
+  displayName: 'Windows - Test'
+  steps:
+  - task: BatchScript@1
+    inputs:
+      filename: 'Test.bat'
+      #arguments: # Optional
+      #script: '# Write your commands here# Use the environment variables input below to pass secret variables to this script' # Required when targetType == Inline
+      #workingDirectory: # Optional
+      #failOnStderr: false # Optional
+      #noProfile: true # Optional
+      #noRc: true # Optional
