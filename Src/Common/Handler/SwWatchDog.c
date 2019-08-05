@@ -1,14 +1,12 @@
 /*
- *        SwWatchDog.c
- *        Created on:        2017-12-02
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        Software WatchDog: The check function should be called by periodical from interrupt (e.g. SysTick),
- *                        and the increment (alive) function called from TaskHandler, or while(1), or tasks.
- *                        If inc not called enough time ago, the software was frozen, and the CheckState() should call the Error_Handler()
- *        Target:            STM32Fx
- *        Version:        -
- *        Last modified:    2017-12-02
+ *    SwWatchDog.c
+ *    Created on:   2017-12-02
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Software WatchDog: The check function should be called by periodical from interrupt (e.g. SysTick),
+ *                  and the increment (alive) function called from TaskHandler, or while(1), or tasks.
+ *                  If inc not called enough time ago, the software was frozen, and the CheckState() should call the Error_Handler()
+ *    Target:       STM32Fx
  */
 
 
