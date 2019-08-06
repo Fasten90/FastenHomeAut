@@ -469,7 +469,20 @@
         #define CONFIG_MODULE_DISPLAY_TEST_WITH_TERMINAL
     #endif
 
-    #define CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON
+    /* #define CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON */
+
+    /* Button simulator - useful for Display Application test */
+    /* Note: be careful, this will override the CommandHandler */
+    /* #define CONFIG_MODULE_BUTTONSIMULATOR_ENABLE */
+    #ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
+        #ifndef BUTTON_NUM
+            #define BUTTON_NUM                    (4)
+        #endif
+    #endif
+
+    #if defined(CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON) && !defined(CONFIG_MODULE_BUTTONSIMULATOR_ENABLE)
+        #error "Defined CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON but undefined CONFIG_MODULE_BUTTONSIMULATOR_ENABLE. Use together, or only last."
+    #endif
 
     /* Select a terminal for PC */
     #define CONFIG_TERMINAL_USE_CONEMU
@@ -482,12 +495,6 @@
         #error "In PC/Windows mode Button module is not supported"
     #endif
 
-    #define CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
-    #ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
-        #ifndef BUTTON_NUM
-            #define BUTTON_NUM                    (4)
-        #endif
-    #endif
 #endif
 
 
@@ -628,11 +635,11 @@
     /*
      * Exit after UnitTest running, with result
      *        1    Enable
-     *         0    Disable
+     *        0    Disable  --> Normally, the Command handler mode will be available
      *
      * Result:
-     *          0 - if okay (exit(0))
-     *         >0 - UnitTest error
+     *        0 - if okay (exit(0))
+     *        >0 - UnitTest error
      *
      */
     #define CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE        (1)

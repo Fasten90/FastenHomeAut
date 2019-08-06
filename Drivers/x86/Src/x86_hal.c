@@ -301,19 +301,19 @@ DWORD WINAPI Windows_StdinReceiveThread(void * args)
             printf("CommandHandler answered:\r\n"
                     "%s", respBuffer);
 
-    #ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
+        #ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
             if (ButtonSimulator_IsEnabled)
             {
-    #endif /* #ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE */
+        #endif /* #ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE */
     #endif /*  #if !defined(CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON) */
     #if defined(CONFIG_MODULE_BUTTONSIMULATOR_ENABLE) || defined(CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON)
                 char str[4] = { 0 };
                 int str_pos = 0;
-    #if !defined(CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON)
+        #if !defined(CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON)
                 while (ButtonSimulator_IsEnabled)
-    #else
+        #else
                 while (1)
-    #endif
+        #endif
                 {
 
                     str[str_pos]= getch();
@@ -325,23 +325,23 @@ DWORD WINAPI Windows_StdinReceiveThread(void * args)
                         /* printf("Received: %s\r\n", str); */
 
                         bool result = ButtonSimulator_ProcessChar(str);
-    #if !defined(CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON)
+        #if !defined(CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON)
                         if (!result)
                         {
                             /* Turn off key mode / Buttonsimulator! */
                             ButtonSimulator_Set(false);
                             printf("Exit from buttonsimulator!\r\n");
                         }
-    #else
+        #else /* CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON */
                         UNUSED_VARIABLE(result);
-    #endif
+        #endif
 
                         str_pos = 0;
                     }
                 }
+            }
     #endif /* #if defined(CONFIG_MODULE_BUTTONSIMULATOR_ENABLE) || defined(CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON) */
     #if !defined(CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON)
-            }
         }
         else
         {
