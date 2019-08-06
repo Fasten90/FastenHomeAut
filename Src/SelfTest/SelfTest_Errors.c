@@ -125,4 +125,24 @@ void SelfTest_Erros_StackOverFlow(void)
 
 
 
+/**
+ * Test invalid function / invalid instruction
+ */
+void SelfTest_Errors_InvalidFunction(void)
+{
+    /*
+     * Idea:
+     * function pointer = null;
+     * pointer();
+     */
+
+    void (*Function)(void);
+
+    /* Note: Static code analyzers will report this! */
+    Function = NULL;
+
+    Function();
+}
+
+
 #endif /* CONFIG_MODULE_SELFTEST_ERRORS_ENABLE */

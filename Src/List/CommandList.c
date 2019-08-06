@@ -2437,24 +2437,35 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
             {
                 SelfTest_Errors_Constwrite();
 
+                /* Never reach */
                 result = CmdH_Result_Ok_SendSuccessful;
             }
             else if (!StrCmp("zerodivide", argv[2]))
             {
                 SelfTest_Errors_ZeroDivide();
 
+                /* Never reach */
                 result = CmdH_Result_Ok_SendSuccessful;
             }
             else if (!StrCmp("failpointer", argv[2]))
             {
                 SelfTest_Errors_MemFault();
 
+                /* Never reach */
                 result = CmdH_Result_Ok_SendSuccessful;
             }
             else if (!StrCmp("stackoverflow", argv[2]))
             {
                 SelfTest_Erros_StackOverFlow();
 
+                /* Never reach */
+                result = CmdH_Result_Ok_SendSuccessful;
+            }
+            else if (!StrCmp("wrongfunction", argv[2]))
+            {
+                SelfTest_Errors_InvalidFunction();
+
+                /* Never reach */
                 result = CmdH_Result_Ok_SendSuccessful;
             }
             else
