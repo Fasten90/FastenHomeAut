@@ -89,8 +89,15 @@ void SwWatchDog_CheckState(void)
 #else
 
 /* SwWatchDog module is not used */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-#pragma GCC diagnostic pop
+#if !defined(_MSC_VER)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wpedantic"
+    #pragma GCC diagnostic pop
+#else
+    /* MSVC */
+    __pragma(warning(push))
+    __pragma(warning(disable:4206)) /* Disable "nonstandard extension used: translation unit is empty" */
+    __pragma(warning(pop))
+#endif
 
 #endif

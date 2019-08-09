@@ -216,7 +216,7 @@ bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
     HomeAut_InformationType information = { 0 };
     
     /* For separate */
-    uint8_t messageLength;
+    size_t messageLength;
     char message[HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH];
     bool isOk = true;
     char *split[HOMEAUTMESSAGE_SPLIT_NUM] = { 0 };

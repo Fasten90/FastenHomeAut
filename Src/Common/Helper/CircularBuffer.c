@@ -423,7 +423,7 @@ uint32_t CircularBuffer_UnitTest(void)
 
     CircularBufferInfo_t circBufferInfo =
     {
-        .buffer = buffer256,
+        .buffer = buffer256, /* TODO: MSVC: warning C4221:  nonstandard extension used: 'buffer': cannot be initialized using address of automatic variable 'buffer256' */
         .name = "TestBuffer",
         .size = CIRCBUFF_BUFFER_SIZE
     };
