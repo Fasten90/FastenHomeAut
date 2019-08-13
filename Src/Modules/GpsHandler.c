@@ -266,17 +266,17 @@ static bool GpsHandler_ConvertCgnsinfDateTime(char * str, DateTime_t * dateTime)
     }
 
     isOk &= StringToUnsignedDecimalNumWithLength(&str[0], &val, 4);
-    dateTime->date.year = val - 2000;    /*  Converted to valid year (20xx --> xx ; e.g 2017 --> 17) */
+    dateTime->date.year = (uint8_t)(val - 2000);    /*  Converted to valid year (20xx --> xx ; e.g 2017 --> 17) */
     isOk &= StringToUnsignedDecimalNumWithLength(&str[4], &val, 2);
-    dateTime->date.month = val;
+    dateTime->date.month = (uint8_t)val;
     isOk &= StringToUnsignedDecimalNumWithLength(&str[6], &val, 2);
-    dateTime->date.day = val;
+    dateTime->date.day = (uint8_t)val;
     isOk &= StringToUnsignedDecimalNumWithLength(&str[8], &val, 2);
-    dateTime->time.hour = val;
+    dateTime->time.hour = (uint8_t)val;
     isOk &= StringToUnsignedDecimalNumWithLength(&str[10], &val, 2);
-    dateTime->time.minute = val;
+    dateTime->time.minute = (uint8_t)val;
     isOk &= StringToUnsignedDecimalNumWithLength(&str[12], &val, 2);
-    dateTime->time.second = val;
+    dateTime->time.second = (uint8_t)val;
 
     return isOk;
 }
@@ -590,11 +590,11 @@ static bool GpsMessageHandler_ConvertTime(const char * str, Time_t * time)
     bool isOk = true;
 
     isOk &= StringToUnsignedDecimalNumWithLength(&str[0], &val, 2);
-    time->hour = val;
+    time->hour = (uint8_t)val;
     isOk &= StringToUnsignedDecimalNumWithLength(&str[2], &val, 2);
-    time->minute = val;
+    time->minute = (uint8_t)val;
     isOk &= StringToUnsignedDecimalNumWithLength(&str[4], &val, 2);
-    time->second = val;
+    time->second = (uint8_t)val;
 
     return isOk;
 }
@@ -612,11 +612,11 @@ static bool GpsMessageHandler_ConvertDate(const char * str, Date_t * date)
     bool isOk = true;
 
     isOk &= StringToUnsignedDecimalNumWithLength(&str[0], &val, 2);
-    date->day = val;
+    date->day = (uint8_t)val;
     isOk &= StringToUnsignedDecimalNumWithLength(&str[2], &val, 2);
-    date->month = val;
+    date->month = (uint8_t)val;
     isOk &= StringToUnsignedDecimalNumWithLength(&str[4], &val, 2);
-    date->year = val;
+    date->year = (uint8_t)val;
 
     return isOk;
 }
@@ -663,7 +663,7 @@ static bool GpsHandler_Coord2Float(float * floatValue, char * coordinateString, 
 static float GpsHandler_ConvertKnotToKmph(float floatValue)
 {
     /*  1 knot = 1.85200 kilometers per hour */
-    return floatValue * 1.85200;
+    return floatValue * 1.85200f;
 }
 
 
