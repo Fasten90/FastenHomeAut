@@ -14,12 +14,13 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
+#include "AppList.h"
+
 
 #ifdef CONFIG_FUNCTION_DISPLAY
 
 /* Note: Shall be excluded if there is no used function, because  AppList will be empty */
 
-#include "AppList.h"
 #include "Logic.h"
 #include "Display.h"
 
