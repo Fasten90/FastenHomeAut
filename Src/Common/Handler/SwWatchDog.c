@@ -60,9 +60,9 @@ void SwWatchDog_Inc(void)
 
 
 /**
- *    @brief    Software WatchDog
- *    @note    Call this function from timer / SysTickHandler every 1 ms
- *            If main software not called SwWatchDog_Inc() (cnt is not increment), we know, the main sw (TaskHandler) was frozen
+ * @brief    Software WatchDog
+ * @note     Call this function from timer / SysTickHandler every 1 ms
+ *           If main software not called SwWatchDog_Inc() (cnt is not increment), we know, the main sw (TaskHandler) was frozen
  */
 void SwWatchDog_CheckState(void)
 {

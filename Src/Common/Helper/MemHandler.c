@@ -32,10 +32,10 @@
 
 #ifdef CONFIG_STANDARD_LIBRARY_MEMHANDLERS_ENABLE
 /**
- * @brief    Memory copy
- * @param[out]    destination    where to copy
- * @param[in]    source        from copy
- * @param[in]    num            How many length to copy (in bytes)?
+ * @brief        Memory copy
+ * @param[out] destination    where to copy
+ * @param[in]  source         from copy
+ * @param[in]  num            How many length to copy (in bytes)?
  */
 void * memcpy(void * destination, const void * source, size_t size)
 {
@@ -65,8 +65,8 @@ void * memcpy(void * destination, const void * source, size_t size)
 
 /**
  * @brief        Set memory
- * @param[out]    *ptr    Which memory area need set
- * @param[in]    value    With which value
+ * @param[out]   *ptr       Which memory area need set
+ * @param[in]    value      With which value
  * @param[in]    num        How many length to set (in bytes)?
  */
 void * memset(void * ptr, int value, size_t size)
@@ -93,11 +93,11 @@ void * memset(void * ptr, int value, size_t size)
 
 
 /**
- * @brief    Memory move (overlap secured)
- *             The function does not use intermediate buffer for copy
- *             The function does not delete the source
- * @param[out]    destination    where to copy
- * @param[in]    source        from copy
+ * @brief        Memory move (overlap secured)
+ *               The function does not use intermediate buffer for copy
+ *               The function does not delete the source
+ * @param[out]   destination    where to copy
+ * @param[in]    source         from copy
  * @param[in]    num            How many length to move (in bytes)?
  */
 void * memmove(void * destination, const void * source, size_t size)
@@ -137,9 +137,9 @@ void * memmove(void * destination, const void * source, size_t size)
 #endif
 
 /**
- * @brief    Memory cut (copy & delete original)
- * @param[out]    destination    where to copy
- * @param[in]    source        from copy
+ * @brief        Memory cut (copy & delete original)
+ * @param[out]   destination    where to copy
+ * @param[in]    source         from copy
  * @param[in]    num            How many length to move (in bytes)?
  */
 void * memcut(void * destination, const void * source, size_t size)
@@ -171,7 +171,7 @@ void * memcut(void * destination, const void * source, size_t size)
 
 /**
  * @brief        Initialize memory area with 0
- * @param[out]    *ptr    Which area
+ * @param[out]   *ptr       Which area
  * @param[in]    num        How many length (in bytes)?
  */
 void * meminit(void * ptr, size_t num)
@@ -184,12 +184,12 @@ void * meminit(void * ptr, size_t num)
 
 /**
  * @brief        Compare two memory buffer
- * @param[in]    *ptr1    first buffer
- * @param[in]    *ptr2    second buffer
- * @param[in]    num        buffer length (compare length)
- * @retval        0        if equal
- * @retval        <0        first buffer has lower value
- * @retval        >0        first buffer has greater value
+ * @param[in]    *ptr1     first buffer
+ * @param[in]    *ptr2     second buffer
+ * @param[in]    num       buffer length (compare length)
+ * @retval       0         if equal
+ * @retval       <0        first buffer has lower value
+ * @retval       >0        first buffer has greater value
  */
 int memcmp(const void * ptr1, const void * ptr2, size_t size)
 {
@@ -225,8 +225,8 @@ int memcmp(const void * ptr1, const void * ptr2, size_t size)
 
 /**
  * @brief    Stack overflow checker
- *             Fill large RAM buffer with GUARD values
- *             Useful for Stack size calculate (StackOverFlow checker)
+ *           Fill large RAM buffer with GUARD values
+ *           Useful for Stack size calculate (StackOverFlow checker)
  */
 void mem_StackFillWithGuardValues(void)
 {
