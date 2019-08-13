@@ -241,8 +241,12 @@ void mem_StackFillWithGuardValues(void)
  */
 void mem_CheckStackGuardValues(void)
 {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#ifdef COMPILER_GCC_PRAGMA_ENABLED
+    #pragma GCC diagnostic push
+    /* GCC Compilers reports the uninitialized problem */
+    #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+
     uint16_t i = 0;
     uint16_t guardGoodCnt = 0;
     bool guardWasFound = false;
@@ -266,7 +270,9 @@ void mem_CheckStackGuardValues(void)
             guardWasFound = false;
         }
     }
-#pragma GCC diagnostic pop
+#ifdef COMPILER_GCC_PRAGMA_ENABLED
+    #pragma GCC diagnostic pop
+#endif
 
     uprintf("MEM used: %d / %d, it is %d%%\r\n",
             guardGoodCnt,
@@ -278,7 +284,7 @@ void mem_CheckStackGuardValues(void)
 
 /**
  * @brief     Check pointer is in good memory range?
- * @retval    true    is ok
+ * @retval    true     is ok
  * @retval    false    wrong
  */
 bool mem_CheckPointer(void * pnt, size_t size)
@@ -286,6 +292,9 @@ bool mem_CheckPointer(void * pnt, size_t size)
     bool isOk = false;
 
     /* Check pointer range is in RAM or FLASH? */
+#if ((MEM_RAM_START == 0) || (MEM_FLASH_START == 0))
+    /* TODO: In this case, compilers report the "expression is always true" */
+#endif
     if (((Address_t)pnt >= MEM_RAM_START && ((Address_t)pnt + size) < MEM_RAM_END)
         || ((Address_t)pnt >= MEM_FLASH_START && ((Address_t)pnt + size) < MEM_FLASH_END))
     {
@@ -322,14 +331,14 @@ uint32_t MEM_UnitTest(void)
     }
 
     /* Equal buffer */
-    UNITTEST_ASSERT(!memcmp(testBuffer1, testBuffer2, 10), "memcmp");
+    UNITTEST_ASSERT((memcmp(testBuffer1, testBuffer2, 10) == 0), "memcmp");
 
     /* Different buffer */
     testBuffer2[9] = 0;
-    UNITTEST_ASSERT(memcmp(testBuffer1, testBuffer2, 10), "memcmp");
+    UNITTEST_ASSERT((memcmp(testBuffer1, testBuffer2, 10) != 0), "memcmp");
 
     testBuffer2[9] = 9;
-    UNITTEST_ASSERT(!memcmp(testBuffer1, testBuffer2, 10), "memcmp");
+    UNITTEST_ASSERT((memcmp(testBuffer1, testBuffer2, 10) == 0), "memcmp");
 
 
     /* Test meminit */
@@ -351,7 +360,7 @@ uint32_t MEM_UnitTest(void)
 
     memcpy(&testBuffer3[1], "12345678", 8);
 
-    UNITTEST_ASSERT((!memcmp("12345678", &testBuffer3[1], 8)), "memcpy");
+    UNITTEST_ASSERT((memcmp("12345678", &testBuffer3[1], 8) == 0), "memcpy");
     UNITTEST_ASSERT((testBuffer3[0] == 0xFF), "memcpy");
     UNITTEST_ASSERT((testBuffer3[9] == 0xFF), "memcpy");
 

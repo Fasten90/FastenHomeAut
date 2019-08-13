@@ -95,9 +95,9 @@ void SwWatchDog_CheckState(void)
     #pragma GCC diagnostic pop
 #else
     /* MSVC */
-    __pragma(warning(push))
-    __pragma(warning(disable:4206)) /* Disable "nonstandard extension used: translation unit is empty" */
-    __pragma(warning(pop))
+    /* Suppress "nonstandard extension used: translation unit is empty" warning */
+    /* warning C4206:  nonstandard extension used: translation unit is empty */
+    typedef uint32_t Compiler_TranslationUnitIsEmptySupression_t;
 #endif
 
 #endif

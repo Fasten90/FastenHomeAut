@@ -351,10 +351,10 @@ bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
 /**
  * @brief    Create an HomeAutMessage
  */
-uint8_t HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation, char *createToMessage)
+size_t HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation, char *createToMessage)
 {
     
-    uint8_t length = 0;
+    size_t length = 0;
     uint8_t i;
 
     /* Separator */

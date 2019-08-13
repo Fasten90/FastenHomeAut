@@ -182,7 +182,7 @@ extern HomeAut_InformationType HomeAutMessage_MessageInformation;
 
 bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
         HomeAut_InformationType *messageInformation);
-uint8_t HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation, char *createToMessage);
+size_t HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation, char *createToMessage);
 
 bool HomeAutMessage_CreateAndSendHomeAutMessage(
     Network_IP_t *myIp,

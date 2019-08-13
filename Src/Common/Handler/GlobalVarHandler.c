@@ -860,18 +860,18 @@ static GlobVarH_ProcessResult_t GlobVarH_SetInteger(const GlobVarH_VarRecord_t *
                     /* Good */
                     if (varType == GlobVarH_Type_Int8)
                     {
-                        uint8_t *numPointer = (uint8_t *)varRecord->varPointer;
-                        *numPointer = num;              /* TODO: Check: Cast need for suppress warning */
+                        int8_t *numPointer = (int8_t *)varRecord->varPointer;
+                        *numPointer = (int8_t)num;              /* Cast need for suppress warning */
                     }
                     else if (varType == GlobVarH_Type_Int16)
                     {
-                        uint16_t *numPointer = (uint16_t *)varRecord->varPointer;
-                        *numPointer = num;              /* TODO: Check: Cast need for suppress warning */
+                        int16_t *numPointer = (int16_t *)varRecord->varPointer;
+                        *numPointer = (int16_t)num;             /* Cast need for suppress warning */
                     }
                     else if (varType == GlobVarH_Type_Int32)
                     {
-                        uint32_t *numPointer = (uint32_t *)varRecord->varPointer;
-                        *numPointer = num;
+                        int32_t *numPointer = (int32_t *)varRecord->varPointer;
+                        *numPointer = num;                      /* Not need cast */
                     }
                     /* lse - not reaching */
                     return GlobVarH_Process_Ok_SetSuccessful_SendOk;

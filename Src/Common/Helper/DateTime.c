@@ -290,7 +290,7 @@ bool DateTime_CheckDateTime(DateTime_t *dateTime)
  *             like: "YYYY-MM-DD HH:mm:ss"
  *                     19 character
  */
-uint8_t DateTime_PrintDateTimeToString(char *message, DateTime_t *dateTime)
+size_t DateTime_PrintDateTimeToString(char *message, DateTime_t *dateTime)
 {
 
     if ((message == NULL) || (dateTime == NULL))
