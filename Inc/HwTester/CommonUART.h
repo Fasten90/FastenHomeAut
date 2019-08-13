@@ -24,9 +24,9 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define COMMONUART_TX_BUFFER_SIZE            (255U)
-#define COMMONUART_RX_BUFFER_SIZE            (255U)
-#define COMMONUART_PROCESS_BUFFER_SIZE        (100U)
+#define COMMONUART_TX_BUFFER_SIZE              (255U)
+#define COMMONUART_RX_BUFFER_SIZE              (255U)
+#define COMMONUART_PROCESS_BUFFER_SIZE         (100U)
 #define COMMONUART_RESPONSE_BUFFER_SIZE        (100U)
 
 

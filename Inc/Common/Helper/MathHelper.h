@@ -40,13 +40,13 @@
 
 
 #if !defined(rand) && !defined(CONFIG_USE_PANEL_PC)
-/* TCC has rand() error */
-#define rand()                (random())
+    /* TCC has rand() error */
+    #define rand()                (random())
 #endif
 
 
 #ifndef RAND_MAX
-#define RAND_MAX              (0x7FFF)
+    #define RAND_MAX              (0x7FFF)
 #endif
 
 
