@@ -14,9 +14,9 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
+#include "GenericTypeDefs.h"
 
 #ifdef CONFIG_MODULE_TERMINAL_ENABLE
-
 #include "StringHelper.h"
 #include "ErrorHandler.h"
 #include "Timing.h"

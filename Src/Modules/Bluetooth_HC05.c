@@ -14,6 +14,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
+#include "GenericTypeDefs.h"
 
 #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
 
