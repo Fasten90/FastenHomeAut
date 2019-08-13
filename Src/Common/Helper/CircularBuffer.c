@@ -488,7 +488,7 @@ uint32_t CircularBuffer_UnitTest(void)
     UNITTEST_ASSERT(length == 12, "PutString() error");
     UNITTEST_ASSERT(!StrCmpWithLength(&buffer256[250], "012345", 6), "PutString() error");
     UNITTEST_ASSERT(!StrCmpWithLength(&buffer256[0], "6789xx", 6), "PutString() error");
-    UNITTEST_ASSERT(buffer256[256] == 0xEF, "PutString() error");
+    UNITTEST_ASSERT((uint8_t)buffer256[256] == 0xEF, "PutString() error");
     UNITTEST_ASSERT(circBufferInfo.writeCnt == 6, "PutString() error");
     UNITTEST_ASSERT(circBufferInfo.readCnt == 10, "PutString() error");
 
@@ -573,7 +573,7 @@ uint32_t CircularBuffer_UnitTest(void)
     UNITTEST_ASSERT(circBufferInfo.readCnt == 5, "Clear() error");
 
     /* Check overflow */
-    UNITTEST_ASSERT(buffer256[256] == 0xEF, "ERROR: Clear() is overflowed()");
+    UNITTEST_ASSERT((uint8_t)buffer256[256] == 0xEF, "ERROR: Clear() is overflowed()");
 
 
     /* Test wrong counter */
@@ -621,7 +621,7 @@ uint32_t CircularBuffer_UnitTest(void)
     /* Every chars should be 'a' */
     UNITTEST_ASSERT(isOk == true, "ERROR: PutChar()");
 
-    UNITTEST_ASSERT(buffer256[256] == 0xEF, "ERROR: Overflow!");
+    UNITTEST_ASSERT((uint8_t)buffer256[256] == 0xEF, "ERROR: Overflow!");
 
     /* This buffer should be full and cannot add next char */
     UNITTEST_ASSERT(CircularBuffer_IsFull(&circBufferInfo) == true, "ERROR: IsFull()");
@@ -648,7 +648,7 @@ uint32_t CircularBuffer_UnitTest(void)
     UNITTEST_ASSERT(length == 9, "ERROR: CircularBuffer_GetString()");
     UNITTEST_ASSERT(!StrCmp(emptyBuffer, "aaaaabbbb"), "ERROR: CircularBuffer_GetString()");
 
-    UNITTEST_ASSERT(buffer256[256] == 0xEF, "ERROR: Overflow!");
+    UNITTEST_ASSERT((uint8_t)buffer256[256] == 0xEF, "ERROR: Overflow!");
 
 
 
