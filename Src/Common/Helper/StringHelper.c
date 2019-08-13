@@ -148,7 +148,7 @@ uint8_t UnsignedDecimalToString(uint32_t value, char *str)
     do
     {
         /* Put next digit */
-        str[length] = ((value/decade) + '0');
+        str[length] = ((char)(value/decade) + '0');
         length++;
 
         value %= decade;            /* Value - first digit */
@@ -184,7 +184,7 @@ size_t UnsignedDecimalToStringSafe(uint32_t value, char *str, size_t maxLength)
         {
             /* Put first digit */
             /* Add the ascii code of '0' character to get the desired value's caracter code */
-            str[length] = ((value/decade) + '0');
+            str[length] = ((char)(value/decade) + '0');
             length++;
             isStarted = true;
         }
@@ -197,7 +197,7 @@ size_t UnsignedDecimalToStringSafe(uint32_t value, char *str, size_t maxLength)
     if ((length+1) < maxLength)
     {
         /* Add the ascii code of '0' character to get the desired value's caracter code */
-        str[length] = (value + '0');    /* Last digit */
+        str[length] = ((char)value + '0');    /* Last digit */
         length++;
     }
 
@@ -1008,7 +1008,7 @@ bool StringToSignedDecimalNum(const char *str, int32_t *value)
 bool StringToFloat(const char *str, float *num)
 {
     bool isNegative = false;
-    uint8_t stringLength;
+    size_t stringLength;
     uint8_t i;
     uint8_t length;
     uint8_t pointCnt ;
@@ -1062,7 +1062,7 @@ bool StringToFloat(const char *str, float *num)
     }
 
     /* Integer (before .) */
-    *num = integer;
+    *num = (float)integer;
 
     /* Convert fraction */
     if (!StringToUnsignedDecimalNum(&str[pointCnt + 1], &integer))
@@ -1080,7 +1080,7 @@ bool StringToFloat(const char *str, float *num)
     }
     /* Ready fraction */
 
-    *num += fractionPart;        /* Add Integer and Fraction */
+    *num += (float)fractionPart;        /* Add Integer and Fraction */
 
     if (isNegative)
     {
@@ -2050,12 +2050,12 @@ size_t string_printf(char *str, const char *format, va_list ap)
     /* TODO: Use "new" typedefs */
 
     /* Type variables */
-    char    *p;            /* step on format string */
-    char    *sval;        /* string */
-    int        ival;        /* int */
+    char     *p;           /* step on format string */
+    char     *sval;        /* string */
+    int      ival;         /* int */
     unsigned int uival;    /* uint */
     float    flval;        /* float */
-    char     cval;        /* character */
+    char     cval;         /* character */
 
     char *string = str;
 
@@ -2191,7 +2191,7 @@ size_t string_printf(char *str, const char *format, va_list ap)
 #endif
                 case 'c':
                     /* %c - char */
-                    cval = va_arg(ap, int);                        /* Char */
+                    cval = (char)va_arg(ap, int);                        /* Char */
                     if (paramHasLength)
                     {
                         /* Copy more character */
@@ -2208,7 +2208,7 @@ size_t string_printf(char *str, const char *format, va_list ap)
 
                 case 'f':
                     /* %f - float */
-                    flval = va_arg(ap, double);                    /* Double / Float */
+                    flval = (float)va_arg(ap, double);                    /* Double / Float */
                     if (paramHasLength)
                     {
                         string += FloatToString(flval, string, paramNum1, paramNum2);
@@ -2363,7 +2363,7 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                 {
                     /* signed (int) */
                     ival = va_arg(ap, int);    /* Decimal = signed int (~int32_t) */
-                    uint8_t decLen = SignedDecimalToStringSafe(ival, &str[length], remainLength+1);
+                    uint8_t decLen = (uint8_t)SignedDecimalToStringSafe(ival, &str[length], remainLength+1);
                     length += decLen;
                     remainLength -= decLen;
                     UNUSED_ARGUMENT(fillCharacter);
@@ -2387,7 +2387,7 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                 {
                     /* unsigned (int) */
                     uival = va_arg(ap, int);/* Uint = Unsigned int (~uint32_t) */
-                    uint8_t decLen = UnsignedDecimalToStringSafe(uival, &str[length], remainLength+1);
+                    uint8_t decLen = (uint8_t)UnsignedDecimalToStringSafe(uival, &str[length], remainLength+1);
                     length += decLen;
                     remainLength -= decLen;
                     UNUSED_ARGUMENT(fillCharacter);
@@ -2410,14 +2410,14 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                     {
                         if (paramNum2 > remainLength)
                         {
-                            paramNum2 = remainLength; /* clang_sa_ignore[deadcode.DeadStores] */
+                            paramNum2 = (uint8_t)remainLength; /* clang_sa_ignore[deadcode.DeadStores] */
                         }
                     }
                     else
                     {
                         if (remainLength < 8)
                         {
-                            paramNum2 = remainLength; /* clang_sa_ignore[deadcode.DeadStores] */
+                            paramNum2 = (uint8_t)remainLength; /* clang_sa_ignore[deadcode.DeadStores] */
                         }
                     }
                     uint8_t hexLen = DecimalToHexaString(uival, &str[length], 8);
@@ -2455,13 +2455,15 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
 #endif
                 case 'c':
                     /* %c - char */
-                    cval = va_arg(ap, int);                        /* Char */
+                    cval = (char)va_arg(ap, int);                        /* Char */
                     if (paramHasLength)
                     {
                         /* Copy more character */
                         uint8_t cNum = paramNum1 * 10 + paramNum2;
                         if (cNum > remainLength)
-                            cNum = remainLength;
+                        {
+                            cNum = (uint8_t)remainLength;
+                        }
                         length += StrCpyCharacter(&str[length], cval, cNum);
                         remainLength -= cNum;
                     }
@@ -2480,7 +2482,7 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
 
                 case 'f':
                     /* %f - float */
-                    flval = va_arg(ap, double);                    /* Double / Float */
+                    flval = (float)va_arg(ap, double);                    /* Double / Float */
                     UNUSED_ARGUMENT(flval);
                     /* TODO: Not implemented function (for length safe) */
                     /* EBUG_BREAKPOINT(); */
@@ -2505,15 +2507,17 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                         /* String copy with length */
                         uint8_t stringLength = paramNum1 * 10 + paramNum2;
                         if (stringLength > remainLength)
-                            stringLength = remainLength;
-                        stringLength = StrCpyFixLengthWithFillCharacter(&str[length], sval, stringLength, ' ');
+                        {
+                            stringLength = (uint8_t)remainLength;
+                        }
+                        stringLength = (uint8_t)StrCpyFixLengthWithFillCharacter(&str[length], sval, stringLength, ' ');
                         length += stringLength;
                         remainLength -= stringLength;
                     }
                     else
                     {
                         /* Standard string copy */
-                        uint8_t stringLength = StrCpyMax(&str[length], sval, remainLength);
+                        uint8_t stringLength = (uint8_t)StrCpyMax(&str[length], sval, remainLength);
                         length += stringLength;
                         remainLength -= stringLength;
                     }
@@ -3008,7 +3012,7 @@ uint32_t StringHelper_UnitTest(void)
     StrAppendSafe(buffer, "1234567890", 20);
     UNITTEST_ASSERT(!StrCmp(buffer, "1234567890123456789"), "StrAppendSafe error");
     UNITTEST_ASSERT((buffer[19] == '\0'), "StrAppendSafe overflow error");
-    UNITTEST_ASSERT((buffer[20] == (char)0xBB), "StrAppendSafe overflow error");
+    UNITTEST_ASSERT(((uint8_t)buffer[20] == 0xBB), "StrAppendSafe overflow error");
 
 
     /* StringLower() */
