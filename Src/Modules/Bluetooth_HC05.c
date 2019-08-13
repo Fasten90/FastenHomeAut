@@ -200,7 +200,7 @@ void Bluetooth_ProcessReceivedCharacters(void)
     /* MSVC */
     /* Suppress "nonstandard extension used: translation unit is empty" warning */
     /* warning C4206:  nonstandard extension used: translation unit is empty */
-    typedef uint32_t Compiler_TranslationUnitIsEmptySupression_t;
+    typedef uint32_t Compiler_Bluetooth_HC05_TranslationUnitIsEmptySupression_t;
 #endif
 
 #endif    /* #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE */

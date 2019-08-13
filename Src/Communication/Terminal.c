@@ -1170,7 +1170,7 @@ void Terminal_SendLine(const char * message)
     /* MSVC */
     /* Suppress "nonstandard extension used: translation unit is empty" warning */
     /* warning C4206:  nonstandard extension used: translation unit is empty */
-    typedef uint32_t Compiler_TranslationUnitIsEmptySupression_t;
+    typedef uint32_t Compiler_Terminal_TranslationUnitIsEmptySupression_t;
 #endif
 
 #endif    /* #ifdef CONFIG_MODULE_TERMINAL_ENABLE */

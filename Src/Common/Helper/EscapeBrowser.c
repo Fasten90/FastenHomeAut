@@ -399,7 +399,7 @@ static size_t EscapeBroser_HandlerString(char *dst, const char *str)
     /* MSVC */
     /* Suppress "nonstandard extension used: translation unit is empty" warning */
     /* warning C4206:  nonstandard extension used: translation unit is empty */
-    typedef uint32_t Compiler_TranslationUnitIsEmptySupression_t;
+    typedef uint32_t Compiler_EscapeBrowser_TranslationUnitIsEmptySupression_t;
 #endif
 
 
