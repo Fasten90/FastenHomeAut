@@ -1,12 +1,10 @@
 /*
- *		x86_hal.h
- *		Created on:		2017-11-05
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
- *		Target:			x86
- *		Version:		-
- *		Last modified:	2019-05-05
+ *    x86_hal.h
+ *    Created on:   2017-11-05
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       x86
  */
 
 
@@ -19,12 +17,12 @@
  *----------------------------------------------------------------------------*/
 
 
-// CMSIS files include
+/*  CMSIS files include */
 #include "core_windows.h"
 
 #include "x86.h"
 
-// TODO: Put to conf file at Inc dir?
+/*  TODO: Put to conf file at Inc dir? */
 #include "x86_hal_dma.h"
 #include "x86_hal_spi.h"
 #include "x86_hal_uart.h"
@@ -62,10 +60,10 @@ void              HAL_SuspendTick(void);
 void              HAL_ResumeTick(void);
 
 
-// For suppress warnings
+/*  For suppress warnings */
 #define HAL_SYSTICK_IRQHandler()
 
-//#define SystemClock_Config()
+/* #define SystemClock_Config() */
 
 
 

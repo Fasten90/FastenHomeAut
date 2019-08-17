@@ -63,6 +63,57 @@
 #endif
 
 
+///< Architect byte-size
+///< Make address to aligned address (upward rounding to word aligned)
+/* __SIZEOF_POINTER__ */
+/* TODO: or sizeof(void *) in code */
+
+#if !defined(_MSC_VER)
+    #define MEM_ALIGN_SIZE_MACRO    (__SIZEOF_POINTER__)
+
+    /* #if defined(__MINGW32__) && defined(__MINGW64__) */
+    #if (MEM_ALIGN_SIZE_MACRO == 8)
+        /* MinGW32 + MinGW64 */
+        /* Address size: 64bit/8byte */
+        #define MEM_ALIGN_SIZE        ((uint8_t)8)
+        typedef uint64_t Address_t;
+    /* #elif defined(__MINGW32__) */
+    #elif (MEM_ALIGN_SIZE_MACRO == 4)
+        /* Address size: 32bit/4byte */
+        #define MEM_ALIGN_SIZE        ((uint8_t)4)
+        typedef uint32_t Address_t;
+    #else
+        /* Address size: Unknown / Unsupported */
+        #warning "Unsupported Address size! Check __SIZEOF_POINTER__ define! Has set default to 32bit system"
+        #define MEM_ALIGN_SIZE        ((uint8_t)4)
+        typedef uint32_t Address_t;
+    #endif
+#else
+    /* MSVC */
+    #define MEM_ALIGN_SIZE        ((uint8_t)sizeof(void *))
+    typedef size_t Address_t;
+#endif
+
+
+/* Check MinGW settings */
+#if (defined(__MINGW32__) && defined(__MINGW64__)) && (__SIZEOF_POINTER__ != 8)
+    #error "Architect - address size problem detected! MinGW64 (64bit) but not 8 byte aligned!"
+#endif
+
+#if defined(__MINGW32__) && !defined(__MINGW64__) && (__SIZEOF_POINTER__ != 4)
+    #error "Architect - address size problem detected! MinGW32 (32bit) but not 4 byte aligned!"
+#endif
+
+
+#if defined(CONFIG_PLATFORM_X86)
+    /* Not use Mem check */
+    #define CONFIG_MEM_CHECK_POINTER_RANGE (0)
+#else
+    /* Use memcheck, because this is embedded platform */
+    #define CONFIG_MEM_CHECK_POINTER_RANGE (1)
+#endif
+
+
 ///< FreeRTOS includes
 #ifdef CONFIG_USE_FREERTOS
 #include "FreeRTOSConfig.h"

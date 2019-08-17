@@ -265,8 +265,8 @@ static bool DateTime_CheckValue(uint32_t originalValue, uint32_t minValue, uint3
 
 /**
  * @brief    Check DateTime
- * @retval    true    if OK (valid)
- * @retval    false    if invalid
+ * @retval   true    if OK (valid)
+ * @retval   false    if invalid
  */
 bool DateTime_CheckDateTime(DateTime_t *dateTime)
 {

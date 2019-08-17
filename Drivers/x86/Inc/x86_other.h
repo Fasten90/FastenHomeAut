@@ -1,13 +1,10 @@
 /*
- *      x86_other.h
- *      Created on:     2019-05-05
- *      Author:         Vizi Gábor
- *      E-mail:         vizi.gabor90@gmail.com
- *      Function:       -
- *      Target:         x86
- *      Version:        -
- *      Last modified:  2019-05-05
- *      Note:           Copied from stm32f0xx.h
+ *    x86_other.h
+ *    Created on:   2019-05-05
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       x86
  */
 
 
@@ -19,8 +16,8 @@
   * @{
   */
     
-#ifndef __X86_OTHER_H
-#define __X86_OTHER_H
+#ifndef X86_OTHER_H_
+#define X86_OTHER_H_
 
 #ifdef __cplusplus
  extern "C" {
@@ -105,7 +102,7 @@ typedef enum
 }
 #endif /* __cplusplus */
 
-#endif /* __X86_OTHER_H */
+#endif /* X86_OTHER_H_ */
 /**
   * @}
   */

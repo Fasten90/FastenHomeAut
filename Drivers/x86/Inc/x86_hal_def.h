@@ -1,19 +1,16 @@
 /*
- *      x86_hal_def.h
- *      Created on:     2019-05-05
- *      Author:         Vizi Gábor
- *      E-mail:         vizi.gabor90@gmail.com
- *      Function:       -
- *      Target:         x86
- *      Version:        -
- *      Last modified:  2019-05-05
- *      Note:           Copied from stm32f0xx_hal_def.h
+ *    x86_hal_def.h
+ *    Created on:   2019-05-05
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       x86
  */
 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __X86_HAL_DEF
-#define __X86_HAL_DEF
+#ifndef X86_HAL_DEF_H_
+#define X86_HAL_DEF_H_
 
 #ifdef __cplusplus
  extern "C" {
@@ -93,7 +90,7 @@ typedef enum
                                     {                                      \
                                        (__HANDLE__)->Lock = HAL_LOCKED;    \
                                     }                                      \
-       	                          }while (0)
+                                     }while (0)
 
   #define __HAL_UNLOCK(__HANDLE__)                                          \
                                   do{                                       \
@@ -153,4 +150,4 @@ typedef enum
 }
 #endif
 
-#endif /* __X86_HAL_DEF */
+#endif /* X86_HAL_DEF_H_ */

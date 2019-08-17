@@ -31,6 +31,12 @@
 #include "GlobalVarHandler.h"
 #include "EventLog.h"
 #include "MeasurementTimer.h"
+#include "GpsHandler.h"
+#include "EEPROM.h"
+
+#ifdef CONFIG_MODULE_VIRTUAL_EEPROM_ENABLE
+#include "VirtualEEPROM.h"
+#endif
 
 #include "UnitTestList.h"
 
@@ -129,6 +135,19 @@ uint32_t UnitTestList_Run(void)
 #ifdef CONFIG_MODULE_MEASUREMENTTIMER_UNITTEST_ENABLE
     result += MeasurementTimer_UnitTest();
 #endif
+
+#if defined(CONFIG_MODULE_GPSHANDLER_UNITTEST_ENABLE) && defined(CONFIG_MODULE_GPS_ENABLE)
+    result += GpsHandler_UnitTest();
+#endif
+
+#if defined(CONFIG_MODULE_EEPROM_ENABLE) && defined(CONFIG_MODULE_EEPROM_TEST)
+    result += EEPROM_ModuleTest();
+
+    #if defined(CONFIG_MODULE_VIRTUAL_EEPROM_UNITTEST_ENABLE)
+    result += VirtualEEPROM_UnitTest();
+    #endif
+#endif
+
 
     return result;
 }

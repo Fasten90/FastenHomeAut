@@ -1,18 +1,15 @@
 /*
- *      x86_hal_dma.h
- *      Created on:     2019-05-05
- *      Author:         Vizi Gábor
- *      E-mail:         vizi.gabor90@gmail.com
- *      Function:       -
- *      Target:         x86
- *      Version:        -
- *      Last modified:  2019-05-05
- *      Note:           This file was copied from stm32f0xx_hal_dma.h [STMicroelectronics file]
+ *    x86_hal_dma.h
+ *    Created on:   2019-05-05
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       x86
  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __X86_HAL_DMA_H
-#define __X86_HAL_DMA_H
+#ifndef X86_HAL_DMA_H_
+#define X86_HAL_DMA_H_
 
 #ifdef __cplusplus
  extern "C" {
@@ -550,4 +547,4 @@ uint32_t             HAL_DMA_GetError(DMA_HandleTypeDef *hdma);
 }
 #endif
 
-#endif /* __X86_HAL_DMA_H */
+#endif /* X86_HAL_DMA_H_ */

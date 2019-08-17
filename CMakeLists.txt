@@ -6,9 +6,6 @@ project (FastenHomeAut)
 cmake_policy(SET CMP0054 NEW) 
 
 
-# C parameters
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
-
 
 # Compiler type
 message(STATUS "# Compiler ID: ${CMAKE_C_COMPILER_ID}")
@@ -53,15 +50,18 @@ if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F0_arm-.*")
         endif()
     endif()
 
-    # TODO: Copied 5 line not important, there is in toolchain too
-    set(CMAKE_EXE_LINKER_FLAGS "--specs=nosys.specs" CACHE INTERNAL "")
-
     set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
     set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
     set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
     set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
-    string(CONCAT TARGET_COMPILER_OPTIONS
+    if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "gcc*")
+        # gcc
+        
+        # TODO: Copied 5 line not important, there is in toolchain too
+        set(CMAKE_EXE_LINKER_FLAGS "--specs=nosys.specs" CACHE INTERNAL "")
+    
+        string(CONCAT TARGET_COMPILER_OPTIONS
                                 " -mthumb"
                                 " -mcpu=cortex-m0"
                                 " -std=gnu11"
@@ -78,6 +78,13 @@ if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F0_arm-.*")
                                 " -Wswitch-default"
                                 " -Wswitch-enum"
                                 )
+    else()
+        # E.g. STM32F0, but not gcc, if ARMCC (keil)
+        string(CONCAT TARGET_COMPILER_OPTIONS
+                        " --cpu Cortex-M0"
+                        )
+    endif()
+
 
     string(CONCAT TARGET_INCLUDES
                         " -I../../Drivers/STM32F0xx_HAL_Driver/Inc"
@@ -103,18 +110,25 @@ if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F0_arm-.*")
     # TODO: Make parameter for // TODO: Make parameter for FastenNodeF0\Debug_STM32F030C8_FLASH.ld
     #' -T..\FastenNodeF0\Debug_STM32F030C8_FLASH.ld'   
     # " -specs=nano.specs" was added, but used at Atollic
-    string(CONCAT TARGET_LINKER_OPTIONS
-                              " -mthumb"
-                              " -mcpu=cortex-m0"
-                              " -Wl,--start-group"
-                              " -lc"
-                              " -lm"
-                              " -Wl,--end-group"
-                              " -static"
-                              " -Wl,-Map=FastenHomeAut.map"
-                              " -Wl,--gc-sections"
-                              " -Wl,--defsym=malloc_getpagesize_P=0x80"
-                              )
+    if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "gcc*")
+        string(CONCAT TARGET_LINKER_OPTIONS
+                        " -mthumb"
+                        " -mcpu=cortex-m0"
+                        " -Wl,--start-group"
+                        " -lc"
+                        " -lm"
+                        " -Wl,--end-group"
+                        " -static"
+                        " -Wl,-Map=FastenHomeAut.map"
+                        " -Wl,--gc-sections"
+                        " -Wl,--defsym=malloc_getpagesize_P=0x80"
+                        )
+    else()
+        string(CONCAT TARGET_LINKER_OPTIONS
+                        " --cpu Cortex-M0"
+                        )
+    endif()
+                              
 
     # TODO: Delete this
     if ("${CMAKE_FASTENHOMEAUT_TARGET}" STREQUAL "STM32F0_arm-none-eabi-gcc")
@@ -124,6 +138,7 @@ if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F0_arm-.*")
     endif()
 
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${TARGET_LINKER_OPTIONS}")
+
 else()
     # Not defined STM32F0 --> So target: x86
     message(STATUS "# Selected target: x86")
@@ -169,19 +184,35 @@ elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -std=c11 -D__clang__=1")
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "TinyCC")
     # TCC / TinyCC
-    message(STATUS "# Compiler TCC - TODO")
+    message(STATUS "# Compiler TCC")
 
     # TCC include
     # TODO: Why not necessary?
     #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/Programs/Engineer/tcc/include -std=c11 -target x86_64-w64-mingw64 -Wall -S -v -o Out/CmakeTccCompiled/")
     # Memory and Bound checks: -b # TODO: Not works yet
     #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -b")
+    
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
     # MSVC - Microsoft Visual Studio
     message(STATUS "# Compiler: MSVC")
     
     # MSVC does not support the '-Wextra' and '-std=c11'
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Wall /std:c++14")
+    # /Wall --> turn on all warnings
+    
+    # /wdnnnn --> turn off this check
+    # /wonnnn 	Reports the compiler warning that is specified by nnnn only once.
+
+    # C4668 'symbol' is not defined as a preprocessor macro, replacing with '0' for 'directives'
+    # /wd4668 --> turn off
+    # C4820 (level 4) 	'bytes' bytes padding added after construct 'member_name'
+    # /wd4820
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Wall /wd4668 /wd4820 /std:c++14")
+elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "ARMCC")
+    # ARMCC
+    message(STATUS "# Compiler: ARMCC")
+    
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --C99")
 else()
     message(STATUS "# !! Cmake Error possibility !! Not known Compiler, please set it!")
 endif()

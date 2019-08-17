@@ -1,18 +1,15 @@
 /*
- *      x86.h
- *      Created on:     2019-05-05
- *      Author:         Vizi Gábor
- *      E-mail:         vizi.gabor90@gmail.com
- *      Function:       -
- *      Target:         x86
- *      Version:        -
- *      Last modified:  2019-05-05
- *      Note:           This file was copied from stm32f030xc.h [STMicroelectronics file]
+ *    x86.h
+ *    Created on:   2019-05-05
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       x86
  */
 
 
-#ifndef __X86_H
-#define __X86_H
+#ifndef X86_H_
+#define X86_H_
 
 #ifdef __cplusplus
  extern "C" {
@@ -347,4 +344,4 @@ typedef struct
 }
 #endif /* __cplusplus */
 
-#endif /* __X86_H */
+#endif /* X86_H_ */

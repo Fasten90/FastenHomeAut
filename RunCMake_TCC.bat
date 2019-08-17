@@ -1,9 +1,11 @@
+@echo off
 echo Run CMake - TCC - TinyCC
 
 
 :: Go to Out/CMakeBuild_Tcc
 mkdir Out
 cd Out
+rmdir /s /q CMakeBuild_Tcc
 mkdir CMakeBuild_Tcc
 cd CMakeBuild_Tcc
 

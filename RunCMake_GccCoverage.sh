@@ -24,7 +24,7 @@ make -j4
 
 echo Coverage
 
-# TODO: Another files?
+# TODO: Another files + PATH fixes
 gcov --all-blocks --function-summaries --branch-probabilities --branch-counts --unconditional-branches main.c
 
 

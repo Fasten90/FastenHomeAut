@@ -1,19 +1,16 @@
 /*
- *      x86_hal_uart_ex.h
- *      Created on:     2019-05-05
- *      Author:         Vizi Gábor
- *      E-mail:         vizi.gabor90@gmail.com
- *      Function:       -
- *      Target:         x86
- *      Version:        -
- *      Last modified:  2019-05-05
- *      Note:           This file was copied from stm32f0xxhal_uart_ex.h [STMicroelectronics file]
+ *    x86_hal_uart_ex.h
+ *    Created on:   2019-05-05
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       x86
  */
 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __X86_HAL_UART_EX_H
-#define __X86_HAL_UART_EX_H
+#ifndef X86_HAL_UART_EX_H_
+#define X86_HAL_UART_EX_H_
 
 #ifdef __cplusplus
  extern "C" {
@@ -221,8 +218,8 @@ typedef struct
 #define UART_MUTE_MODE_REQUEST              ((uint32_t)USART_RQR_MMRQ)         /*!< Mute Mode Request           */
 #define UART_RXDATA_FLUSH_REQUEST           ((uint32_t)USART_RQR_RXFRQ)        /*!< Receive Data flush Request  */
 #if !defined(STM32F030x6) && !defined(STM32F030x8) && !defined(STM32F070x6)  && !defined(STM32F070xB)  && !defined(STM32F030xC)      
-// XXX: TODO: modified for windows
-//#define UART_TXDATA_FLUSH_REQUEST           ((uint32_t)USART_RQR_TXFRQ)        /*!< Transmit data flush Request */
+/*  XXX: TODO: modified for windows */
+/* #define UART_TXDATA_FLUSH_REQUEST           ((uint32_t)USART_RQR_TXFRQ)        *//*!< Transmit data flush Request */
 #else
 #endif /* !defined(STM32F030x6) && !defined(STM32F030x8) && !defined(STM32F070x6)  && !defined(STM32F070xB)  && !defined(STM32F030xC) */ 
 /**
@@ -832,4 +829,4 @@ HAL_StatusTypeDef HAL_LIN_SendBreak(UART_HandleTypeDef *huart);
 }
 #endif
 
-#endif /* __X86_HAL_UART_EX_H */
+#endif /* X86_HAL_UART_EX_H_ */

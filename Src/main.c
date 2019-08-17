@@ -215,6 +215,11 @@
 #include "EscapeBrowser.h"
 #endif
 
+#if defined(CONFIG_USE_PANEL_PC) && (CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE == 1)
+/* Need for exit() */
+#include <stdlib.h>
+#endif
+
 
 
 /*------------------------------------------------------------------------------

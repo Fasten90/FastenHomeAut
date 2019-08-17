@@ -352,7 +352,7 @@ uint16_t random(void)
  */
 uint32_t MathHelper_UnitTest(void)
 {
-    UnitTest_Start("Calc", __FILE__);
+    UnitTest_Start("MathHelper", __FILE__);
 
 
     /* float absolute(float arg); */

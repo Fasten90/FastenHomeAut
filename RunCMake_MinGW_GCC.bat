@@ -62,4 +62,8 @@ if %test_executing_result_wrong% NEQ 0 (
     echo Script has run successfully
 )
 
-exit %test_executing_result_wrong%
+:: Clone SCC
+if defined PIPELINE_WORKSPACE (
+  echo PIPELINE_WORKSPACE is defined 
+  exit %test_executing_result_wrong%
+)

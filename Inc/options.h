@@ -86,7 +86,7 @@
 #endif
 
 
-//#define CONFIG_FUNCTION_DISPLAY
+/* #define CONFIG_FUNCTION_DISPLAY */
 #ifdef CONFIG_FUNCTION_DISPLAY
     ///< Display: Menu
     #define CONFIG_FUNCTION_DISPLAY_MENU
@@ -432,12 +432,12 @@
 
     /* #define CONFIG_MODULE_TERMINAL_ENABLE */
     /* #define CONFIG_MODULE_COLOREDMESSAGE_ENABLE */
-	/* TODO: Not works --> HAL_UART_MspInit */
-	/* #define CONFIG_MODULE_DEBUGUART_ENABLE */
+    /* TODO: Not works --> HAL_UART_MspInit */
+    /* #define CONFIG_MODULE_DEBUGUART_ENABLE */
 
-	/* TODO: Not works --> DebugUart struct */
-	/* #define CONFIG_MODULE_TERMINAL_ENABLE */
-	/* #define CONFIG_MODULE_COLOREDMESSAGE_ENABLE */
+    /* TODO: Not works --> DebugUart struct */
+    /* #define CONFIG_MODULE_TERMINAL_ENABLE */
+    /* #define CONFIG_MODULE_COLOREDMESSAGE_ENABLE */
 
     /* TODO: Not works, because the DebugUart handling */
     /* #define CONFIG_MODULE_ESCAPEBROWSER_ENABLE */
@@ -455,6 +455,10 @@
 
     #define CONFIG_MODULE_UNITTEST_ENABLE
 
+    #define CONFIG_MODULE_GPS_ENABLE
+
+    #define CONFIG_MODULE_EEPROM_ENABLE
+
     /* #define CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE */
     #ifdef CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE
         #define CONFIG_DISPLAY_FONT8X5_ENABLE
@@ -465,7 +469,20 @@
         #define CONFIG_MODULE_DISPLAY_TEST_WITH_TERMINAL
     #endif
 
-    #define CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON
+    /* #define CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON */
+
+    /* Button simulator - useful for Display Application test */
+    /* Note: be careful, this will override the CommandHandler */
+    /* #define CONFIG_MODULE_BUTTONSIMULATOR_ENABLE */
+    #ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
+        #ifndef BUTTON_NUM
+            #define BUTTON_NUM                    (4)
+        #endif
+    #endif
+
+    #if defined(CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON) && !defined(CONFIG_MODULE_BUTTONSIMULATOR_ENABLE)
+        #error "Defined CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON but undefined CONFIG_MODULE_BUTTONSIMULATOR_ENABLE. Use together, or only last."
+    #endif
 
     /* Select a terminal for PC */
     #define CONFIG_TERMINAL_USE_CONEMU
@@ -478,12 +495,6 @@
         #error "In PC/Windows mode Button module is not supported"
     #endif
 
-    #define CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
-    #ifdef CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
-        #ifndef BUTTON_NUM
-            #define BUTTON_NUM                    (4)
-        #endif
-    #endif
 #endif
 
 
@@ -525,7 +536,7 @@
 /* #define USE_FULL_ASSERT */
 
 ///< Debug mode: enable breakpoint and other debug support function
-#define CONFIG_DEBUG_MODE
+/* #define CONFIG_DEBUG_MODE */
 
 ///< Hard Assert mode - with file name and line
 /* #define ASSERT_MODE_HARD */
@@ -612,28 +623,30 @@
     #define CONFIG_MODULE_LINKEDLIST_UNITTEST_ENABLE
     #define CONFIG_MODULE_CONVERTTABLE_UNITTEST_ENABLE
     #define CONFIG_MODULE_SECUREDDATATYPES_UNITTEST_ENABLE
-    //#define CONFIG_MODULE_QUEUE_UNITTEST_ENABLE
+    /* #define CONFIG_MODULE_QUEUE_UNITTEST_ENABLE */
+    #define CONFIG_MODULE_GPSHANDLER_UNITTEST_ENABLE
+    #define CONFIG_MODULE_VIRTUAL_EEPROM_UNITTEST_ENABLE
 #endif
 
 
 #if defined(CONFIG_USE_PANEL_PC)
 
     #define UNITTEST_PRINT_ASSERT                          (0)
-	/*
-	 * Exit after UnitTest running, with result
-	 *		1	Enable
-	 * 		0	Disable
-	 *
-	 * Result:
-	 * 		 0 - if okay (exit(0))
-	 * 		>0 - UnitTest error
-	 *
-	 */
-	#define CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE		(1)
+    /*
+     * Exit after UnitTest running, with result
+     *        1    Enable
+     *        0    Disable  --> Normally, the Command handler mode will be available
+     *
+     * Result:
+     *        0 - if okay (exit(0))
+     *        >0 - UnitTest error
+     *
+     */
+    #define CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE        (1)
 
-	/* TODO: Need to check this define? */
+    /* TODO: Need to check this define? */
 
-	#define UNITTEST_PRINT_ASSERT						(0)
+    #define UNITTEST_PRINT_ASSERT                        (0)
 #endif
 
 
@@ -926,19 +939,28 @@
 #endif
 
 #if defined(CONFIG_COMMUNICATION_HAS_UART_PORT) && !defined(CONFIG_MODULE_UART_ENABLE) && !defined(CONFIG_USE_PANEL_PC)
-	#define CONFIG_MODULE_UART_ENABLE
+    #define CONFIG_MODULE_UART_ENABLE
 #endif
 
 /* #define CONFIG_COMMUNICATION_HAS_UART_PORT */
 /* TODO: Be careful, this define is implementation dependent (DebugUart, Bluetooth, ESP8266 peripherals on UART) */
 #if ( defined(CONFIG_MODULE_DEBUGUART_ENABLE) \
-	|| defined(CONFIG_MODULE_BLUETOOTH_ENABLE) \
-	|| defined(CONFIG_MODULE_ESP8266_ENABLE))
-	#define CONFIG_COMMUNICATION_HAS_UART_PORT
+    || defined(CONFIG_MODULE_BLUETOOTH_ENABLE) \
+    || defined(CONFIG_MODULE_ESP8266_ENABLE))
+    #define CONFIG_COMMUNICATION_HAS_UART_PORT
 #endif
 
 #if defined(CONFIG_COMMUNICATION_HAS_UART_PORT) && !defined(CONFIG_MODULE_UART_ENABLE)
     #define CONFIG_MODULE_UART_ENABLE
+#endif
+
+/* Test EEPROM module */
+#if defined(CONFIG_MODULE_EEPROM_ENABLE)
+    #define CONFIG_MODULE_EEPROM_TEST
+    #if defined(CONFIG_PLATFORM_X86)
+        /* Enable Virtual EEPROM only at x86 */
+        #define CONFIG_MODULE_VIRTUAL_EEPROM_ENABLE
+    #endif
 #endif
 
 

@@ -554,8 +554,8 @@ static void GlobVarH_GetBits(const GlobVarH_VarRecord_t * varRecord)
 
     /* xxxx11111yyyyyy */
     /*     mask  shift */
-    uint8_t shift = varRecord->minValue;
-    uint8_t bitLength = varRecord->maxValue - shift;
+    uint8_t shift = (uint8_t)varRecord->minValue;                /* minValue is general variable, need cast for compilers */
+    uint8_t bitLength = (uint8_t)varRecord->maxValue - shift;    /* maxValue is general variable, need cast for compilers */
     /* TODO: Check minValue and maxValue */
 
     /* Shift to right, and mask to make our important bits */
@@ -726,11 +726,12 @@ static GlobVarH_ProcessResult_t GlobVarH_SetBool(const GlobVarH_VarRecord_t *var
 static GlobVarH_ProcessResult_t GlobVarH_SetInteger(const GlobVarH_VarRecord_t *varRecord, const char *param)
 {
     GlobVarH_Type_t varType = varRecord->type;
-    uint32_t num;
 
     /* If hex */
     if (varRecord->isHex)
     {
+        uint32_t num = 0;     /* Initialization not necessary */
+
         if (!(param[0] == '0' && param[1] == 'x'))
         {
             /* Need set with "0x" */
@@ -749,19 +750,19 @@ static GlobVarH_ProcessResult_t GlobVarH_SetInteger(const GlobVarH_VarRecord_t *
                     case GlobVarH_Type_Uint8:
                     {
                         uint8_t *wPointer = (uint8_t *)varRecord->varPointer;
-                        *wPointer = num;
+                        *wPointer = (uint8_t)num;   /* Cast need for suppress warning */
                     }
                         break;
                     case GlobVarH_Type_Uint16:
                     {
                         uint16_t *wPointer = (uint16_t *)varRecord->varPointer;
-                        *wPointer = num;
+                        *wPointer = (uint16_t)num;   /* Cast need for suppress warning */
                     }
                         break;
                     case GlobVarH_Type_Uint32:
                     {
                         uint32_t *wPointer = (uint32_t *)varRecord->varPointer;
-                        *wPointer = num;
+                        *wPointer = num;            /* Cast not needed */
                     }
                         break;
 
@@ -795,10 +796,12 @@ static GlobVarH_ProcessResult_t GlobVarH_SetInteger(const GlobVarH_VarRecord_t *
     } /* End of "isHex" */
     else
     {
-    /* If it is not hex */
-    /* It is unsigned integers? */
+        /* If it is not hex */
+        /* It is unsigned integers? */
         if (varType == GlobVarH_Type_Uint8 || varType == GlobVarH_Type_Uint16 || varType == GlobVarH_Type_Uint32)
         {
+            uint32_t num = 0;     /* Initialization not necessary */
+
             /* Unsigned types */
             if (StringToUnsignedDecimalNum(param, &num))
             {
@@ -811,17 +814,17 @@ static GlobVarH_ProcessResult_t GlobVarH_SetInteger(const GlobVarH_VarRecord_t *
                     if (varType == GlobVarH_Type_Uint8)
                     {
                         uint8_t *numPointer = (uint8_t *)varRecord->varPointer;
-                        *numPointer = num;
+                        *numPointer = (uint8_t)num;   /* Cast need for suppress warning */
                     }
                     else if (varType == GlobVarH_Type_Uint16)
                     {
                         uint16_t *numPointer = (uint16_t *)varRecord->varPointer;
-                        *numPointer = num;
+                        *numPointer = (uint16_t)num;  /* Cast need for suppress warning */
                     }
                     else if (varType == GlobVarH_Type_Uint32)
                     {
                         uint32_t *numPointer = (uint32_t *)varRecord->varPointer;
-                        *numPointer = num;
+                        *numPointer = num;            /* Cast not needed */
                     }
 
                     return GlobVarH_Process_Ok_SetSuccessful_SendOk;        /* lse - not reaching */
@@ -845,7 +848,7 @@ static GlobVarH_ProcessResult_t GlobVarH_SetInteger(const GlobVarH_VarRecord_t *
         {
             /* Signed types */
 
-            int32_t num = 0;
+            int32_t num = 0;      /* Initialization not necessary */
 
             if (StringToSignedDecimalNum(param, &num))
             {
@@ -879,7 +882,7 @@ static GlobVarH_ProcessResult_t GlobVarH_SetInteger(const GlobVarH_VarRecord_t *
                 }
 
                 /* NOTE: Do not return from here */
-                /* eturn GlobVarH_Process_Ok_SetSuccessful_SendOk; */
+                /* return GlobVarH_Process_Ok_SetSuccessful_SendOk; */
             }
             else
             {
@@ -916,7 +919,7 @@ static GlobVarH_ProcessResult_t GlobVarH_SetFloat(const GlobVarH_VarRecord_t *va
             /* Wrong value (too high or too less) */
             /* Do nothing */
             /* TODO: Need process type like this: */
-            /* esult = Process_InvalidValue */
+            /* result = Process_InvalidValue */
         }
     }
     else
@@ -937,7 +940,7 @@ static GlobVarH_ProcessResult_t GlobVarH_SetBits(const GlobVarH_VarRecord_t *var
     uint32_t num = 0;
     bool isOk = true;
     GlobVarH_ProcessResult_t result = GlobVarH_Process_Unknown;
-    uint8_t maxLength = varRecord->maxValue - varRecord->minValue + 1;
+    uint8_t maxLength = (uint8_t)varRecord->maxValue - (uint8_t)varRecord->minValue + 1;   /* minValue and maxValue general type, but here it used only max uint8_t
 
     /* Check prefix, need '0b' */
     if ((StringLength(param) <= 2) || (param[0] != '0') || (param[1] != 'b'))
@@ -999,8 +1002,8 @@ static GlobVarH_ProcessResult_t GlobVarH_SetString(const GlobVarH_VarRecord_t *v
     GlobVarH_ProcessResult_t result = GlobVarH_Process_Unknown;
 
     /* Check length */
-    uint8_t stringLength = StringLength(param);
-    if (stringLength >= varRecord->maxValue - 1)    /* Need space EOS */
+    size_t stringLength = StringLength(param);
+    if (stringLength >= (varRecord->maxValue - 1))    /* Need space EOS */
     {
         result = GlobVarH_Process_FailParamTooLongString;        /* Too long */
     }
@@ -1178,7 +1181,8 @@ static GlobVarH_ProcessResult_t GlobVarH_CheckValue(const GlobVarH_VarRecord_t *
             break;
 
         case GlobVarH_Type_Bits:
-            if (num > (uint32_t)(power(2, varRecord->maxValue+1)-1))
+            /* Check 2^n */
+            if (num > (uint32_t)(power(2, (uint8_t)varRecord->maxValue+1)-1))  /* maxValue is general type, here it used only max uint8_t */
             {
                 result = GlobVarH_Process_InvalidValue_TooMuch;
             }

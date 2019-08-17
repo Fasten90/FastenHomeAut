@@ -1,13 +1,10 @@
 /*
- *      x86_hal_msp.c
- *      Created on:     2019-05-05
- *      Author:         Vizi Gábor
- *      E-mail:         vizi.gabor90@gmail.com
- *      Function:       -
- *      Target:         x86
- *      Version:        -
- *      Last modified:  2019-05-05
- *      Note:           Copied from stm32fx_hal_msp.c
+ *    x86_hal_msp.c
+ *    Created on:   2019-05-05
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       x86
  */
 
 /* Includes ------------------------------------------------------------------*/

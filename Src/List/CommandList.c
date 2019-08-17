@@ -58,6 +58,11 @@
 #include "SelfTest_Errors.h"
 #include "ButtonSimulator.h"
 
+#ifdef CONFIG_USE_PANEL_PC
+/* Need for exit() */
+#include <stdlib.h>
+#endif /* CONFIG_USE_PANEL_PC */
+
 
 
 /*------------------------------------------------------------------------------
@@ -2424,7 +2429,7 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
             /* @note    Be careful!!!! */
             /* Infinite loop test for WatchDog test */
             while(1);
-            result = CmdH_Result_Ok_SendSuccessful;
+            result = CmdH_Result_Ok_SendSuccessful; /* Static analyzers and compilers will report this line as "statement is unreachable" */
         }
         else if (!StrCmp("genfault", argv[1]))
         {
@@ -2432,24 +2437,35 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
             {
                 SelfTest_Errors_Constwrite();
 
+                /* Never reach */
                 result = CmdH_Result_Ok_SendSuccessful;
             }
             else if (!StrCmp("zerodivide", argv[2]))
             {
                 SelfTest_Errors_ZeroDivide();
 
+                /* Never reach */
                 result = CmdH_Result_Ok_SendSuccessful;
             }
             else if (!StrCmp("failpointer", argv[2]))
             {
                 SelfTest_Errors_MemFault();
 
+                /* Never reach */
                 result = CmdH_Result_Ok_SendSuccessful;
             }
             else if (!StrCmp("stackoverflow", argv[2]))
             {
                 SelfTest_Erros_StackOverFlow();
 
+                /* Never reach */
+                result = CmdH_Result_Ok_SendSuccessful;
+            }
+            else if (!StrCmp("wrongfunction", argv[2]))
+            {
+                SelfTest_Errors_InvalidFunction();
+
+                /* Never reach */
                 result = CmdH_Result_Ok_SendSuccessful;
             }
             else

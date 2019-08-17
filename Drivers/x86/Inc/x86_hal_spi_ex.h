@@ -1,19 +1,16 @@
 /*
- *      x86_hal_spi_ex.h
- *      Created on:     2019-05-05
- *      Author:         Vizi Gábor
- *      E-mail:         vizi.gabor90@gmail.com
- *      Function:       -
- *      Target:         x86
- *      Version:        -
- *      Last modified:  2019-05-05
- *      Note:           This file was copied from stm32f0xx_hal_spi_ex.h [STMicroelectronics file]
+ *    x86_hal_spi_ex.h
+ *    Created on:   2019-05-05
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       x86
  */
 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __X86_HAL_SPI_EX_H
-#define __X86_HAL_SPI_EX_H
+#ifndef X86_HAL_SPI_EX_H_
+#define X86_HAL_SPI_EX_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -64,4 +61,4 @@ HAL_StatusTypeDef HAL_SPIEx_FlushRxFifo(SPI_HandleTypeDef *hspi);
 }
 #endif
 
-#endif /* __X86_HAL_SPI_EX_H */
+#endif /* X86_HAL_SPI_EX_H_ */
