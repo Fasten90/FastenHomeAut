@@ -14,6 +14,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
+#include "GenericTypeDefs.h"
 
 #ifdef CONFIG_MODULE_COMMON_UART_ENABLE
 
@@ -238,8 +239,15 @@ void CommonUART_ProcessReceivedCharacters(void)
 #else
 
 /* CommonUART module is not used */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-#pragma GCC diagnostic pop
+#if !defined(_MSC_VER)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wpedantic"
+    #pragma GCC diagnostic pop
+#else
+    /* MSVC */
+    /* Suppress "nonstandard extension used: translation unit is empty" warning */
+    /* warning C4206:  nonstandard extension used: translation unit is empty */
+    typedef uint32_t Compiler_CommonUART_TranslationUnitIsEmptySupression_t;
+#endif
 
 #endif    /* #ifdef CONFIG_MODULE_COMMON_UART_ENABLE */

@@ -32,10 +32,10 @@
 
 #ifdef CONFIG_STANDARD_LIBRARY_MEMHANDLERS_ENABLE
 /**
- * @brief    Memory copy
- * @param[out]    destination    where to copy
- * @param[in]    source        from copy
- * @param[in]    num            How many length to copy (in bytes)?
+ * @brief        Memory copy
+ * @param[out] destination    where to copy
+ * @param[in]  source         from copy
+ * @param[in]  num            How many length to copy (in bytes)?
  */
 void * memcpy(void * destination, const void * source, size_t size)
 {
@@ -65,8 +65,8 @@ void * memcpy(void * destination, const void * source, size_t size)
 
 /**
  * @brief        Set memory
- * @param[out]    *ptr    Which memory area need set
- * @param[in]    value    With which value
+ * @param[out]   *ptr       Which memory area need set
+ * @param[in]    value      With which value
  * @param[in]    num        How many length to set (in bytes)?
  */
 void * memset(void * ptr, int value, size_t size)
@@ -93,11 +93,11 @@ void * memset(void * ptr, int value, size_t size)
 
 
 /**
- * @brief    Memory move (overlap secured)
- *             The function does not use intermediate buffer for copy
- *             The function does not delete the source
- * @param[out]    destination    where to copy
- * @param[in]    source        from copy
+ * @brief        Memory move (overlap secured)
+ *               The function does not use intermediate buffer for copy
+ *               The function does not delete the source
+ * @param[out]   destination    where to copy
+ * @param[in]    source         from copy
  * @param[in]    num            How many length to move (in bytes)?
  */
 void * memmove(void * destination, const void * source, size_t size)
@@ -137,9 +137,9 @@ void * memmove(void * destination, const void * source, size_t size)
 #endif
 
 /**
- * @brief    Memory cut (copy & delete original)
- * @param[out]    destination    where to copy
- * @param[in]    source        from copy
+ * @brief        Memory cut (copy & delete original)
+ * @param[out]   destination    where to copy
+ * @param[in]    source         from copy
  * @param[in]    num            How many length to move (in bytes)?
  */
 void * memcut(void * destination, const void * source, size_t size)
@@ -171,7 +171,7 @@ void * memcut(void * destination, const void * source, size_t size)
 
 /**
  * @brief        Initialize memory area with 0
- * @param[out]    *ptr    Which area
+ * @param[out]   *ptr       Which area
  * @param[in]    num        How many length (in bytes)?
  */
 void * meminit(void * ptr, size_t num)
@@ -184,12 +184,12 @@ void * meminit(void * ptr, size_t num)
 
 /**
  * @brief        Compare two memory buffer
- * @param[in]    *ptr1    first buffer
- * @param[in]    *ptr2    second buffer
- * @param[in]    num        buffer length (compare length)
- * @retval        0        if equal
- * @retval        <0        first buffer has lower value
- * @retval        >0        first buffer has greater value
+ * @param[in]    *ptr1     first buffer
+ * @param[in]    *ptr2     second buffer
+ * @param[in]    num       buffer length (compare length)
+ * @retval       0         if equal
+ * @retval       <0        first buffer has lower value
+ * @retval       >0        first buffer has greater value
  */
 int memcmp(const void * ptr1, const void * ptr2, size_t size)
 {
@@ -225,8 +225,8 @@ int memcmp(const void * ptr1, const void * ptr2, size_t size)
 
 /**
  * @brief    Stack overflow checker
- *             Fill large RAM buffer with GUARD values
- *             Useful for Stack size calculate (StackOverFlow checker)
+ *           Fill large RAM buffer with GUARD values
+ *           Useful for Stack size calculate (StackOverFlow checker)
  */
 void mem_StackFillWithGuardValues(void)
 {
@@ -241,8 +241,12 @@ void mem_StackFillWithGuardValues(void)
  */
 void mem_CheckStackGuardValues(void)
 {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#ifdef COMPILER_GCC_PRAGMA_ENABLED
+    #pragma GCC diagnostic push
+    /* GCC Compilers reports the uninitialized problem */
+    #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+
     uint16_t i = 0;
     uint16_t guardGoodCnt = 0;
     bool guardWasFound = false;
@@ -266,7 +270,9 @@ void mem_CheckStackGuardValues(void)
             guardWasFound = false;
         }
     }
-#pragma GCC diagnostic pop
+#ifdef COMPILER_GCC_PRAGMA_ENABLED
+    #pragma GCC diagnostic pop
+#endif
 
     uprintf("MEM used: %d / %d, it is %d%%\r\n",
             guardGoodCnt,
@@ -278,7 +284,7 @@ void mem_CheckStackGuardValues(void)
 
 /**
  * @brief     Check pointer is in good memory range?
- * @retval    true    is ok
+ * @retval    true     is ok
  * @retval    false    wrong
  */
 bool mem_CheckPointer(void * pnt, size_t size)
@@ -286,6 +292,9 @@ bool mem_CheckPointer(void * pnt, size_t size)
     bool isOk = false;
 
     /* Check pointer range is in RAM or FLASH? */
+#if ((MEM_RAM_START == 0) || (MEM_FLASH_START == 0))
+    /* TODO: In this case, compilers report the "expression is always true" */
+#endif
     if (((Address_t)pnt >= MEM_RAM_START && ((Address_t)pnt + size) < MEM_RAM_END)
         || ((Address_t)pnt >= MEM_FLASH_START && ((Address_t)pnt + size) < MEM_FLASH_END))
     {
@@ -322,14 +331,14 @@ uint32_t MEM_UnitTest(void)
     }
 
     /* Equal buffer */
-    UNITTEST_ASSERT(!memcmp(testBuffer1, testBuffer2, 10), "memcmp");
+    UNITTEST_ASSERT((memcmp(testBuffer1, testBuffer2, 10) == 0), "memcmp");
 
     /* Different buffer */
     testBuffer2[9] = 0;
-    UNITTEST_ASSERT(memcmp(testBuffer1, testBuffer2, 10), "memcmp");
+    UNITTEST_ASSERT((memcmp(testBuffer1, testBuffer2, 10) != 0), "memcmp");
 
     testBuffer2[9] = 9;
-    UNITTEST_ASSERT(!memcmp(testBuffer1, testBuffer2, 10), "memcmp");
+    UNITTEST_ASSERT((memcmp(testBuffer1, testBuffer2, 10) == 0), "memcmp");
 
 
     /* Test meminit */
@@ -351,7 +360,7 @@ uint32_t MEM_UnitTest(void)
 
     memcpy(&testBuffer3[1], "12345678", 8);
 
-    UNITTEST_ASSERT((!memcmp("12345678", &testBuffer3[1], 8)), "memcpy");
+    UNITTEST_ASSERT((memcmp("12345678", &testBuffer3[1], 8) == 0), "memcpy");
     UNITTEST_ASSERT((testBuffer3[0] == 0xFF), "memcpy");
     UNITTEST_ASSERT((testBuffer3[9] == 0xFF), "memcpy");
 

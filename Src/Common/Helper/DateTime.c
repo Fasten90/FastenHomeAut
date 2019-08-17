@@ -290,7 +290,7 @@ bool DateTime_CheckDateTime(DateTime_t *dateTime)
  *             like: "YYYY-MM-DD HH:mm:ss"
  *                     19 character
  */
-uint8_t DateTime_PrintDateTimeToString(char *message, DateTime_t *dateTime)
+size_t DateTime_PrintDateTimeToString(char *message, DateTime_t *dateTime)
 {
 
     if ((message == NULL) || (dateTime == NULL))
@@ -416,14 +416,14 @@ static uint32_t DateTime_CalculateDateTimeSecond(DateTime_t *dateTime)
             second += DateTime_GetDaysOfMonth(dateTime->date.year, i) * 24 * 60 * 60;
         }
 
-        second += (dateTime->date.day -1) * 24 * 60 * 60;    /* Days */
+        second += (dateTime->date.day -1) * 24 * 60 * 60;   /* Days */
         second += dateTime->time.hour * 60 * 60;            /* Hours */
-        second += dateTime->time.minute * 60;                /* Minutes */
+        second += dateTime->time.minute * 60;               /* Minutes */
         second += dateTime->time.second;                    /* Seconds */
     }
     else
     {
-        second = 0;                                            /* Wrong */
+        second = 0;                                         /* Wrong */
     }
 
     return second;

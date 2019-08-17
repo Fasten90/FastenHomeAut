@@ -14,11 +14,11 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
+#include "GenericTypeDefs.h"
 
 #ifdef CONFIG_MODULE_HARDFAULTHANDLER_ENABLE
 
 #include "HardFaultHandler.h"
-#include "GenericTypeDefs.h"
 #include "StringHelper.h"
 #include "DebugUart.h"
 

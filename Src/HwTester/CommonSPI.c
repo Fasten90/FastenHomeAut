@@ -16,8 +16,6 @@
 #include "compiler.h"
 #include "CommonSPI.h"
 
-
-
 #ifdef CONFIG_MODULE_COMMONSPI_ENABLE
 
 /*------------------------------------------------------------------------------
