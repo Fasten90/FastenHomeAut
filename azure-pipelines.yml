@@ -77,7 +77,10 @@ jobs:
       :: Build the project.
       echo 'Start Make'
       :: For MSVC we shall execute cmake --build instead of "make"
-      cmake --build .
+      :: log to stdout
+      ::cmake --build .
+      :: log to file
+      cmake --build . > MSVC_build.log 2>&1
       
       :: Check the results
       echo 'Finished compile-ing'
@@ -90,6 +93,8 @@ jobs:
       FastenHomeAut.exe
       
       echo 'Finished executing'
+  - publish: $(System.DefaultWorkingDirectory)/*.log
+    artifact: Build_MSVC_Artifact
 
 
 # Win - MinGW - GCC
@@ -522,7 +527,25 @@ jobs:
       #noProfile: true # Optional
       #noRc: true # Optional
 
-# Windows - Fasten SCC - shell script
+
+# Collect Compiler warnings
+- job: compiler_warnings
+  pool:
+    vmImage: 'windows-2019'
+  displayName: 'Compiler warnings'
+  dependsOn: win_build_msvc
+  steps:
+  - download: current
+    artifact: Build_MSVC_Artifact
+  - script: |
+      echo Collect Compile Warnings
+      dir
+      cd
+      type MSVC_build.log
+      more MSVC_build.log
+
+
+# Windows - Test - 1.
 - job: windows_test
   pool:
     vmImage: 'windows-2019'
@@ -537,3 +560,21 @@ jobs:
       #failOnStderr: false # Optional
       #noProfile: true # Optional
       #noRc: true # Optional
+  - publish: $(System.DefaultWorkingDirectory)/logfile.txt
+    artifact: WindowsTestArtifact
+
+
+# Windows - Test - 2.
+- job: windows_test_2
+  pool:
+    vmImage: 'windows-2019'
+  displayName: 'Windows - Test - 2.'
+  dependsOn: windows_test
+  steps:
+  - download: current
+    artifact: WindowsTestArtifact
+  - script: |
+      echo Windows test 2
+      type logfile.txt
+      more logfile.txt
+
