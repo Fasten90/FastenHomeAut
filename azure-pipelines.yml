@@ -542,15 +542,16 @@ jobs:
     artifact: Build_MSVC_Artifact
   - script: |
       echo Collect Compile Warnings
-      # Artifacts go to <pipeline>\<artifactname>
+      :: Artifacts go to <pipeline>\<artifactname>
       cd ../Build_MSVC_Artifact
-      # MSVC build log
+      :: MSVC build log
       echo ##################################################
       echo MSVC build:
       echo ##################################################
       type MSVC_build.log
       echo ##################################################
-      #more MSVC_build.log
+      :: Good, but not needed
+      ::more MSVC_build.log
 
 
 # Windows - Test - 1.
