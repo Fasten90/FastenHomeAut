@@ -81,6 +81,8 @@ jobs:
       ::cmake --build .
       :: log to file
       cmake --build . > MSVC_build.log 2>&1
+      :: Echo the file
+      type MSVC_build.log
       
       :: Check the results
       echo 'Finished compile-ing'
@@ -540,10 +542,15 @@ jobs:
     artifact: Build_MSVC_Artifact
   - script: |
       echo Collect Compile Warnings
-      dir
-      cd
+      # Artifacts go to <pipeline>\<artifactname>
+      cd ../Build_MSVC_Artifact
+      # MSVC build log
+      echo ##################################################
+      echo MSVC build:
+      echo ##################################################
       type MSVC_build.log
-      more MSVC_build.log
+      echo ##################################################
+      #more MSVC_build.log
 
 
 # Windows - Test - 1.
@@ -579,6 +586,8 @@ jobs:
       cd
       dir
       cd ../WindowsTestArtifact
+      echo ##################################################
       type logfile.txt
+      echo ##################################################
       more logfile.txt
 
