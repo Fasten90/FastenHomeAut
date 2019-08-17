@@ -93,7 +93,7 @@ jobs:
       FastenHomeAut.exe
       
       echo 'Finished executing'
-  - publish: $(System.DefaultWorkingDirectory)/*.log
+  - publish: $(System.DefaultWorkingDirectory)/MSVC_build.log
     artifact: Build_MSVC_Artifact
 
 
@@ -575,6 +575,8 @@ jobs:
     artifact: WindowsTestArtifact
   - script: |
       echo Windows test 2
+      cd
+      dir
       type logfile.txt
       more logfile.txt
 
