@@ -93,7 +93,8 @@ jobs:
       FastenHomeAut.exe
       
       echo 'Finished executing'
-  - publish: $(System.DefaultWorkingDirectory)/MSVC_build.log
+  # TODO: Azure pipeline could not recognize "*.log" 
+  - publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild/MSVC_build.log
     artifact: Build_MSVC_Artifact
 
 
@@ -577,6 +578,7 @@ jobs:
       echo Windows test 2
       cd
       dir
+      cd ../WindowsTestArtifact
       type logfile.txt
       more logfile.txt
 
