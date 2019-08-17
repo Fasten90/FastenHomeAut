@@ -1,19 +1,20 @@
 /*
- *        Queue.c
- *        Created on:        2018-01-06
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        Dynamic queue for giving/sending.
- *                        - It is useful for unknown message sending, if length range is large (e.g. message length: from 1 to 100)
- *                        - Header structure has a large size (~44 byte, if STATISTICS and GUARD configs are turned on),
- *                            therefore this module is not recommended to use if only send small packages
- *                            (small size array-array is better: ARRAY[MSG_MAX_LENGTH][MSG_MAX_COUNT])
- *                        - Now it can be used for FIFO queue/list
- *                        - Will extended to LIFO queue/list using, but now it is not available
- *        Target:            STM32Fx
- *        Version:        -
- *        Last modified:    2018-01-06
- *
+ *    Queue.c
+ *    Created on:   2018-01-06
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Dynamic queue for giving/sending.
+ *                  - It is useful for unknown message sending, if length range is large (e.g. message length: from 1 to 100)
+ *                  - Header structure has a large size (~44 byte, if STATISTICS and GUARD configs are turned on),
+ *                    therefore this module is not recommended to use if only send small packages
+ *                    (small size array-array is better: ARRAY[MSG_MAX_LENGTH][MSG_MAX_COUNT])
+ *                  - Now it can be used for FIFO queue/list
+ *                  - Will extended to LIFO queue/list using, but now it is not available
+ *    Target:       STM32Fx
+ */
+
+
+ /*
  *
  *
  * ---------------------------------------
@@ -42,8 +43,8 @@
  */
 
 
-/* TODO: Végiggondolni: queue element struktúra buffer is legyen, és RAM buffer is külön? Inkább egy buffer */
-/* TODO: láncolt adat? Még nem érdemes megcsinálni. Előnye: const és ram adat is mehet egymás után */
+/* TODO: Think on: queue element structure shall be buffer and RAM buffer indenpendently? Or only one buffer */
+/* TODO: Linked elements? Do not do it now yet. Pos: const and ram data could follow each other */
 
 
 
@@ -129,7 +130,7 @@ void Queue_Init(QueueListInfo_t * queue)
 
 
 /**
- * @brief    Add / Set queue element
+ * @brief   Add / Set queue element
  * @note    Not check empty space and others. Be careful when you use it!
  */
 static bool Queue_AddQueueElement(void * pElement, void * pData, size_t dataSize, QueueDataType_t dataType, bool isUsed)

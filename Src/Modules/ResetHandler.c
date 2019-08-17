@@ -14,10 +14,10 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
+#include "compiler.h"
 
 #ifdef CONFIG_MODULE_RESETREASON_ENABLE
 
-#include "compiler.h"
 #include "DebugUart.h"
 #include "StringHelper.h"
 #include "ResetHandler.h"

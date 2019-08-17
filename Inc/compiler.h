@@ -253,6 +253,10 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
     #define __attribute__(x)
 #endif
 
+#if !defined(_MSC_VER)
+    /* Define for enable using #pragma */
+    #define COMPILER_GCC_PRAGMA_ENABLED
+#endif
 
 /*------------------------------------------------------------------------------
  *                                    Global functions

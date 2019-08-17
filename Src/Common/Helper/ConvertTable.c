@@ -142,7 +142,7 @@ uint32_t ConvertTable_UnitTest(void)
         },
     };
 
-
+    /* TODO: MSVC:  warning C4221:  nonstandard extension used: 'recordList': cannot be initialized using address of automatic variable 'testTable' [D:\a\1\s\Out\CMakeBuild\FastenHomeAut.vcxproj] */
     const ConverTable_t testConvertTableInfo =
     {
         .recordList = testTable,

@@ -118,7 +118,7 @@ bool DateTime_ConvertStringToDateTime(const char *string, DateTime_t *dateTime);
 bool DateTime_ConvertDateStringToDate(char *str, Date_t *date);
 bool DateTime_ConvertTimeStringToTime(char *str, Time_t *time);
 
-uint8_t DateTime_PrintDateTimeToString(char *message, DateTime_t *dateTime);
+size_t DateTime_PrintDateTimeToString(char *message, DateTime_t *dateTime);
 
 bool DateTime_CheckDateTime(DateTime_t *dateTime);
 DateTimeCompare_t DateTime_CompareDateTime(DateTime_t *dateTime1, DateTime_t *dateTime2);

@@ -860,18 +860,18 @@ static GlobVarH_ProcessResult_t GlobVarH_SetInteger(const GlobVarH_VarRecord_t *
                     /* Good */
                     if (varType == GlobVarH_Type_Int8)
                     {
-                        uint8_t *numPointer = (uint8_t *)varRecord->varPointer;
-                        *numPointer = num;
+                        int8_t *numPointer = (int8_t *)varRecord->varPointer;
+                        *numPointer = (int8_t)num;              /* Cast need for suppress warning */
                     }
                     else if (varType == GlobVarH_Type_Int16)
                     {
-                        uint16_t *numPointer = (uint16_t *)varRecord->varPointer;
-                        *numPointer = num;
+                        int16_t *numPointer = (int16_t *)varRecord->varPointer;
+                        *numPointer = (int16_t)num;             /* Cast need for suppress warning */
                     }
                     else if (varType == GlobVarH_Type_Int32)
                     {
-                        uint32_t *numPointer = (uint32_t *)varRecord->varPointer;
-                        *numPointer = num;
+                        int32_t *numPointer = (int32_t *)varRecord->varPointer;
+                        *numPointer = num;                      /* Not need cast */
                     }
                     /* lse - not reaching */
                     return GlobVarH_Process_Ok_SetSuccessful_SendOk;
@@ -940,7 +940,7 @@ static GlobVarH_ProcessResult_t GlobVarH_SetBits(const GlobVarH_VarRecord_t *var
     uint32_t num = 0;
     bool isOk = true;
     GlobVarH_ProcessResult_t result = GlobVarH_Process_Unknown;
-    uint8_t maxLength = (uint8_t)varRecord->maxValue - (uint8_t)varRecord->minValue + 1;   /* minValue and maxValue general type, but here it used only max uint8_t
+    uint8_t maxLength = (uint8_t)varRecord->maxValue - (uint8_t)varRecord->minValue + 1;   /* minValue and maxValue general type, but here it used only max uint8_t */
 
     /* Check prefix, need '0b' */
     if ((StringLength(param) <= 2) || (param[0] != '0') || (param[1] != 'b'))

@@ -16,9 +16,9 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
+#include "GenericTypeDefs.h"
 
 #ifdef CONFIG_DEBUG_SW_WATCHDOG_ENABLE
-#include "GenericTypeDefs.h"
 #include "SwWatchDog.h"
 #include "ErrorHandler.h"
 
@@ -60,9 +60,9 @@ void SwWatchDog_Inc(void)
 
 
 /**
- *    @brief    Software WatchDog
- *    @note    Call this function from timer / SysTickHandler every 1 ms
- *            If main software not called SwWatchDog_Inc() (cnt is not increment), we know, the main sw (TaskHandler) was frozen
+ * @brief    Software WatchDog
+ * @note     Call this function from timer / SysTickHandler every 1 ms
+ *           If main software not called SwWatchDog_Inc() (cnt is not increment), we know, the main sw (TaskHandler) was frozen
  */
 void SwWatchDog_CheckState(void)
 {
@@ -89,8 +89,15 @@ void SwWatchDog_CheckState(void)
 #else
 
 /* SwWatchDog module is not used */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-#pragma GCC diagnostic pop
+#if !defined(_MSC_VER)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wpedantic"
+    #pragma GCC diagnostic pop
+#else
+    /* MSVC */
+    /* Suppress "nonstandard extension used: translation unit is empty" warning */
+    /* warning C4206:  nonstandard extension used: translation unit is empty */
+    typedef uint32_t Compiler_SwWatchDog_TranslationUnitIsEmptySupression_t;
+#endif
 
 #endif

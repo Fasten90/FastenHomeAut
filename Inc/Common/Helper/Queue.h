@@ -26,13 +26,13 @@
  *----------------------------------------------------------------------------*/
 
 /* Settings */
-#define QUEUE_STATISTICS_ENABLED        (1)
-#define QUEUE_GUARD_ENABLED                (1)
+#define QUEUE_STATISTICS_ENABLED         (1)
+#define QUEUE_GUARD_ENABLED              (1)
 #define QUEUE_ELEMENT_MAX_NUM            (1000)
 
-#define QUEUE_GUARD_VALUE                ((QueueGuard_t)0xEFEFEFEFEFU)
+#define QUEUE_GUARD_VALUE                ((QueueGuard_t)0xEFEFEFEFU)
 
-#define QUEUE_ISUSED                    ((bool)true)
+#define QUEUE_ISUSED                     ((bool)true)
 #define QUEUE_NOTUSED                    ((bool)false)
 
 
