@@ -563,7 +563,7 @@ jobs:
       copy ..\..\Build_MSVC_Artifact\MSVC_build.log
       :: Run CWC
       :: Default config: scc_config.json
-      python Tools/CompilerWarningCollector/CompilerWarningCollector.py
+      python CompilerWarningCollector/CompilerWarningCollector.py
 
 
 # Windows - Test - 1.
