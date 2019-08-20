@@ -539,17 +539,19 @@ jobs:
   dependsOn: win_build_msvc
   steps:
   - download: current
-    artifact: $(System.DefaultWorkingDirectory)/Build_MSVC_Artifact
+    # TODO: Try more beautiful artifact downloading
+    #artifact: $(System.DefaultWorkingDirectory)/Build_MSVC_Artifact
+    artifact: Build_MSVC_Artifact
   - script: |
       echo Compiler Warnings Collector
       :: Artifacts go to <pipeline>\<artifactname>
-      cd ../Build_MSVC_Artifact
+      ::cd ../Build_MSVC_Artifact
       :: MSVC build log
       echo ##################################################
       echo MSVC build:
       echo ##################################################
-      type MSVC_build.log
-      echo ##################################################
+      ::type MSVC_build.log
+      ::echo ##################################################
       :: Good, but not needed
       ::more MSVC_build.log
       :: Go to Tools for clone-ing
@@ -557,9 +559,11 @@ jobs:
       cd Tools
       :: Clone CWC
       git clone https://github.com/Fasten90/CompilerWarningCollector.git
+      :: Copy log file to here
+      copy ..\..\Build_MSVC_Artifact\MSVC_build.log
       :: Run CWC
       :: Default config: scc_config.json
-      python Tools/SourceCodeChecker/SourceCodeChecker.py
+      python Tools/CompilerWarningCollector/CompilerWarningCollector.py
 
 
 # Windows - Test - 1.
