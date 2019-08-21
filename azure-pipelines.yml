@@ -77,7 +77,12 @@ jobs:
       :: Build the project.
       echo 'Start Make'
       :: For MSVC we shall execute cmake --build instead of "make"
-      cmake --build .
+      :: log to stdout
+      ::cmake --build .
+      :: log to file
+      cmake --build . > MSVC_build.log 2>&1
+      :: Echo the file
+      type MSVC_build.log
       
       :: Check the results
       echo 'Finished compile-ing'
@@ -90,6 +95,9 @@ jobs:
       FastenHomeAut.exe
       
       echo 'Finished executing'
+  # TODO: Azure pipeline could not recognize "*.log" 
+  - publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild/MSVC_build.log
+    artifact: Build_MSVC_Artifact
 
 
 # Win - MinGW - GCC
@@ -522,7 +530,43 @@ jobs:
       #noProfile: true # Optional
       #noRc: true # Optional
 
-# Windows - Fasten SCC - shell script
+
+# Collect Compiler warnings
+- job: compiler_warnings
+  pool:
+    vmImage: 'windows-2019'
+  displayName: 'Compiler warnings'
+  dependsOn: win_build_msvc
+  steps:
+  - download: current
+    # TODO: Try more beautiful artifact downloading
+    #artifact: $(System.DefaultWorkingDirectory)/Build_MSVC_Artifact
+    artifact: Build_MSVC_Artifact
+  - script: |
+      echo Compiler Warnings Collector
+      :: Artifacts go to <pipeline>\<artifactname>
+      ::cd ../Build_MSVC_Artifact
+      :: MSVC build log
+      echo ##################################################
+      echo MSVC build:
+      echo ##################################################
+      ::type MSVC_build.log
+      ::echo ##################################################
+      :: Good, but not needed
+      ::more MSVC_build.log
+      :: Go to Tools for clone-ing
+      mkdir Tools
+      cd Tools
+      :: Clone CWC
+      git clone https://github.com/Fasten90/CompilerWarningCollector.git
+      :: Copy log file to here
+      copy ..\..\Build_MSVC_Artifact\MSVC_build.log
+      :: Run CWC
+      :: Default config: scc_config.json
+      python CompilerWarningCollector/CompilerWarningCollector.py
+
+
+# Windows - Test - 1.
 - job: windows_test
   pool:
     vmImage: 'windows-2019'
@@ -537,3 +581,26 @@ jobs:
       #failOnStderr: false # Optional
       #noProfile: true # Optional
       #noRc: true # Optional
+  - publish: $(System.DefaultWorkingDirectory)/logfile.txt
+    artifact: WindowsTestArtifact
+
+
+# Windows - Test - 2.
+- job: windows_test_2
+  pool:
+    vmImage: 'windows-2019'
+  displayName: 'Windows - Test - 2.'
+  dependsOn: windows_test
+  steps:
+  - download: current
+    artifact: WindowsTestArtifact
+  - script: |
+      echo Windows test 2
+      cd
+      dir
+      cd ../WindowsTestArtifact
+      echo ##################################################
+      type logfile.txt
+      echo ##################################################
+      more logfile.txt
+
