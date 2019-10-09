@@ -85,26 +85,26 @@ const GlobVarH_VarRecord_t GlobVarH_VarList[] =
 
         /* XXX: Add new global variable here */
         /*
-            const char * const name;                ///< Name of global variable [string]
+            const char * const name;                   ///< Name of global variable [string]
             const GlobVarH_Type_t type;                ///< Type of global variable
 
-            void * const varPointer;                ///< Pointer of variable
-            const bool isReadOnly;                    ///< Is read only?
+            void * const varPointer;                   ///< Pointer of variable
+            const bool isReadOnly;                     ///< Is read only?
 
-            const bool isFunction;                    ///< It is function?
+            const bool isFunction;                     ///< It is function?
             const GeneralFunctionPointer getFunctionPointer;    ///< Function
             const GeneralFunctionPointer setFunctionPointer;    ///< Function
 
-            const uint32_t maxValue;                ///< Max value
-            const uint32_t minValue;                ///< Min value
+            const uint32_t maxValue;                   ///< Max value
+            const uint32_t minValue;                   ///< Min value
 
-            const CommProtocol_t sourceEnable;        ///< Enabled sources (for set-get)
+            const CommProtocol_t sourceEnable;         ///< Enabled sources (for set-get)
 
-            const bool isHex;                        ///< Set-get in hexadecimal?
+            const bool isHex;                          ///< Set-get in hexadecimal?
 
-            const char * const * enumList;            ///< Enum list, if it is enumerator
+            const char * const * enumList;             ///< Enum list, if it is enumerator
 
-            const char * const unit;                ///< units [string], example: [cm]
+            const char * const unit;                   ///< units [string], example: [cm]
 
             const char * const description;            ///< descriptions of global variable [string]
          */
