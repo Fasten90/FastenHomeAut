@@ -642,7 +642,7 @@
      *        >0 - UnitTest error
      *
      */
-    #define CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE        (1)
+    #define CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE        (0)
 
     /* TODO: Need to check this define? */
 
