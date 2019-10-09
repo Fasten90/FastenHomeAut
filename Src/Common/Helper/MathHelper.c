@@ -77,7 +77,8 @@ int32_t floor_int(float arg)
 
 /**
  * @brief    Ceil value
- *             x.y --> (x+1).0
+ *           x.y --> (x+1).0
+ * @note     Possible to lost information in float --> int32 conversion
  */
 int32_t ceil_int(float arg)
 {
@@ -96,6 +97,7 @@ int32_t ceil_int(float arg)
 }
 
 
+
 /**
  * @brief    Power(a,b) = a^b
  */
@@ -105,7 +107,9 @@ uint32_t power(uint32_t a, uint8_t b)
     uint32_t num;
 
     if (b == 0)
+    {
         num = 1;
+    }
     else
     {
         num = a;
@@ -169,7 +173,9 @@ uint8_t DigitNum(uint32_t num, uint8_t radix)
 
     /* Check radix is valid? */
     if (radix == 0 || radix == 1)
+    {
         return 0;
+    }
 
     while (num >= radix)
     {

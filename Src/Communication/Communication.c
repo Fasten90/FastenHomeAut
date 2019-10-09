@@ -219,4 +219,12 @@ void COMMUNICATION_ClearProtocolBuffer(void)
 }
 #endif    /* #ifdef CONFIG_PROTOCOL_BUFFER_ENABLE */
 
+#else
+
+/* Communication module is not used */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic pop
+
+
 #endif    /* #ifdef CONFIG_MODULE_COMMUNICATION_ENABLE */
