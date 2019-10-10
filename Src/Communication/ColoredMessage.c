@@ -50,7 +50,7 @@ void ColoredMessage_SendMsg(char *str, const char *msg, MsgColors_t textColor)
 void ColoredMessage_SendTextColor(char *str, MsgColors_t textColor)
 {
     StrAppend(str, ESCAPE_FORMAT_TEXTCOLOR_START);
-    CharAppend(str, '0' + textColor);
+    CharAppend(str, '0' + (const char)textColor);
     StrAppend(str, ESCAPE_FORMAT_END);
 }
 
@@ -62,7 +62,7 @@ void ColoredMessage_SendTextColor(char *str, MsgColors_t textColor)
 void ColoredMessage_SendBackgroundColor(char *str, MsgColors_t backgroundColor)
 {
     StrAppend(str, ESCAPE_FORMAT_BACKGROUNDCOLOR_START);
-    CharAppend(str, '0' + backgroundColor);
+    CharAppend(str, '0' + (const char)backgroundColor);
     StrAppend(str, ESCAPE_FORMAT_END);
 }
 
@@ -75,7 +75,7 @@ void ColoredMessage_SendTextFormat(char *str, MsgFormat_t textFormat)
 {
     StrAppend(str, ESCAPE_FORMAT_ONLY_START);
 
-    CharAppend(str, '0' + textFormat);
+    CharAppend(str, '0' + (const char)textFormat);
 
     StrAppend(str, ESCAPE_FORMAT_END);
 }
@@ -90,12 +90,12 @@ size_t ColoredMessage_SendBackgroundAndTextColor(char *str, MsgColors_t backgrou
     StrAppend(str, ESCAPE_FORMAT_ONLY_START);
 
     StrAppend(str, ESCAPE_FORMAT_ONLY_BACKGROUNDCOLOR);
-    CharAppend(str, '0' + backgroundColor);
+    CharAppend(str, '0' + (const char)backgroundColor);
 
     StrAppend(str, ESCAPE_FORMAT_SEPARATE);
 
     StrAppend(str, ESCAPE_FORMAT_ONLY_TEXTROUNDCOLOR);
-    CharAppend(str, '0' + textColor);
+    CharAppend(str, '0' + (const char)textColor);
 
     StrAppend(str, ESCAPE_FORMAT_END);
 
@@ -112,16 +112,16 @@ void ColoredMessage_SendBackgroundAndTextColorAndFormat(char *str, MsgColors_t b
     StrAppend(str, ESCAPE_FORMAT_ONLY_START);
 
     StrAppend(str, ESCAPE_FORMAT_ONLY_BACKGROUNDCOLOR);
-    CharAppend(str, '0' + backgroundColor);
+    CharAppend(str, '0' + (const char)backgroundColor);
 
     StrAppend(str, ESCAPE_FORMAT_SEPARATE);
 
     StrAppend(str, ESCAPE_FORMAT_ONLY_TEXTROUNDCOLOR);
-    CharAppend(str, '0' + textColor);
+    CharAppend(str, '0' + (const char)textColor);
 
     StrAppend(str, ESCAPE_FORMAT_SEPARATE);
 
-    CharAppend(str, '0' + textFormat);
+    CharAppend(str, '0' + (const char)textFormat);
 
     StrAppend(str, ESCAPE_FORMAT_END);
 }
