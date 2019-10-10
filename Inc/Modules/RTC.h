@@ -3,7 +3,7 @@
  *    Created on:   2017-01-17
  *    Author:       Vizi Gabor
  *    E-mail:       vizi.gabor90@gmail.com
- *    Function:     RTC 
+ *    Function:     RTC
  *    Target:       STM32Fx
  */
 

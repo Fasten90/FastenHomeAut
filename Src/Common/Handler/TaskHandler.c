@@ -286,10 +286,10 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
  */
 void TaskHandler_SetTaskPeriodicTime(TaskID_t taskID, TaskTick_t taskTick)
 {
-     TaskList[taskID].isRunOnce = false;
-     TaskList[taskID].isDisabled = false;
-     TaskList[taskID].taskScheduleRate = taskTick;
-     TaskList[taskID].tick = 0;
+    TaskList[taskID].isRunOnce = false;
+    TaskList[taskID].isDisabled = false;
+    TaskList[taskID].taskScheduleRate = taskTick;
+    TaskList[taskID].tick = 0;
 }
 
 
@@ -299,10 +299,10 @@ void TaskHandler_SetTaskPeriodicTime(TaskID_t taskID, TaskTick_t taskTick)
  */
 void TaskHandler_SetTaskOnceRun(TaskID_t taskID, TaskTick_t taskTick)
 {
-     TaskList[taskID].isRunOnce = true;
-     TaskList[taskID].isDisabled = false;
-     TaskList[taskID].taskScheduleRate = taskTick;
-     TaskList[taskID].tick = 0;
+    TaskList[taskID].isRunOnce = true;
+    TaskList[taskID].isDisabled = false;
+    TaskList[taskID].taskScheduleRate = taskTick;
+    TaskList[taskID].tick = 0;
 }
 
 

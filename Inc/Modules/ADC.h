@@ -3,7 +3,7 @@
  *    Created on:   2016-01-01
  *    Author:       Vizi Gabor
  *    E-mail:       vizi.gabor90@gmail.com
- *    Function:     ADC 
+ *    Function:     ADC
  *    Target:       STM32Fx
  */
 

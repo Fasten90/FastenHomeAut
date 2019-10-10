@@ -3,7 +3,7 @@
  *    Created on:   2016-01-01
  *    Author:       Vizi Gabor
  *    E-mail:       vizi.gabor90@gmail.com
- *    Function:     ADC 
+ *    Function:     ADC
  *    Target:       STM32Fx
  */
 
@@ -155,9 +155,9 @@ void ADC_Init(void)
 
     /* Start ADC conversion on regular group with transfer by DMA */
     if (HAL_ADC_Start_DMA(&AdcHandle,
-                        (uint32_t *)ADC_MeasuredValues,
-                        ADC_CHANNEL_NUM
-                       ) != HAL_OK)
+                            (uint32_t *)ADC_MeasuredValues,
+                            ADC_CHANNEL_NUM
+                        ) != HAL_OK)
     {
         /* Start Error */
         Error_Handler();

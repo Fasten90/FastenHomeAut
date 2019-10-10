@@ -3,7 +3,7 @@
  *    Created on:   2016-11-21
  *    Author:       Vizi Gabor
  *    E-mail:       vizi.gabor90@gmail.com
- *    Function:     Common DAC 
+ *    Function:     Common DAC
  *    Target:       STM32Fx
  */
 

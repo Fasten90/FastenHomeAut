@@ -3,7 +3,7 @@
  *    Created on:   2016-11-21
  *    Author:       Vizi Gabor
  *    E-mail:       vizi.gabor90@gmail.com
- *    Function:     Common ADC 
+ *    Function:     Common ADC
  *    Target:       STM32Fx
  */
 

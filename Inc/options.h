@@ -15,7 +15,7 @@
 /*------------------------------------------------------------------------------
  *                                Config Defines
  *----------------------------------------------------------------------------*/
- 
+
 //* XXX: Select your panel */
 /* NOTE: Recommend define at project settings: */
 /* #define CONFIG_USE_PANEL_NUCLEOF401RE */

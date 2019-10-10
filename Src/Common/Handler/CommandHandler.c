@@ -476,7 +476,7 @@ static CmdH_Result_t CmdH_CheckArgumentNumIsGood(uint8_t receivedArgNum, uint8_t
                 }
             }
         }
-        
+
         /* Check min, max */
         if (receivedArgNum < minRequiredArgNum)
         {

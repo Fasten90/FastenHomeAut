@@ -3,7 +3,7 @@
  *    Created on:   2017-09-08
  *    Author:       Vizi Gabor
  *    E-mail:       vizi.gabor90@gmail.com
- *    Function:     Debug 
+ *    Function:     Debug
  *    Target:       STM32Fx
  */
 

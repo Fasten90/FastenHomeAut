@@ -220,10 +220,10 @@ static bool GlobVarH_CheckGlobalVarArray(const GlobVarH_VarListInfo_t *varList)
  */
 GlobVarH_ProcessResult_t GlobVarH_ProcessVariableCommand(const GlobVarH_VarListInfo_t *varList, const char *varName, const char *param, GlobVarH_SetGetType_t setGetType, CommProtocol_t source)
 {
-     GlobVarH_ProcessResult_t result = GlobVarH_Process_Unknown;
+    GlobVarH_ProcessResult_t result = GlobVarH_Process_Unknown;
 
-     if (varName == NULL)
-         return GlobVarH_Process_FailParam;
+    if (varName == NULL)
+        return GlobVarH_Process_FailParam;
 
     /* Search command */
     const GlobVarH_VarRecord_t *varRecord = NULL;

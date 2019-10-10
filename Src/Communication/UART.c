@@ -78,7 +78,7 @@ static void UART_Handler(UART_Handler_t *handler);
  */
 void UART_Init(UART_HandleTypeDef *UartHandle)
 {
-    
+
     /* HW init, Port init, etc... */
     /* AL_UART_MspInit(UartHandle);            // It is called from HAL_UART_Init() function */
 
@@ -86,11 +86,11 @@ void UART_Init(UART_HandleTypeDef *UartHandle)
     /* #-1- Configure the UART peripheral */
     /* Put the USART peripheral in the Asynchronous mode (UART Mode) */
     /* UARTx configured as follow:
-      - Word Length = 8 Bits
-      - Stop Bit = One Stop bit
-      - Parity = None
-      - BaudRate = 9600 baud
-      - Hardware flow control disabled (RTS and CTS signals) */
+     * - Word Length = 8 Bits
+     * - Stop Bit = One Stop bit
+     * - Parity = None
+     * - BaudRate = 9600 baud
+     * - Hardware flow control disabled (RTS and CTS signals) */
 #ifdef CONFIG_MODULE_DEBUGUART_ENABLE
     if (UartHandle == &DebugUart_Handle)
     {
@@ -119,7 +119,7 @@ void UART_Init(UART_HandleTypeDef *UartHandle)
         UartHandle->Init.BaudRate = COMMONUART_USART_BAUDRATE;
     }
 #endif
-    
+
     UartHandle->Init.WordLength   = UART_WORDLENGTH_8B;
     UartHandle->Init.StopBits     = UART_STOPBITS_1;
     UartHandle->Init.Parity       = UART_PARITY_NONE;
@@ -128,7 +128,7 @@ void UART_Init(UART_HandleTypeDef *UartHandle)
     UartHandle->Init.OverSampling = UART_OVERSAMPLING_16;
 
     if (HAL_UART_Init(UartHandle) == HAL_OK)
-    {    
+    {
 
         __HAL_UART_CLEAR_IT(UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
 
@@ -136,7 +136,7 @@ void UART_Init(UART_HandleTypeDef *UartHandle)
         __HAL_UART_DISABLE_IT(UartHandle, UART_IT_TXE);            /* transmit empty */
     }
     else    /* != HAL_OK */
-    {    
+    {
         Error_Handler();
     }
 }
@@ -194,7 +194,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
         /* Enable USARTx clock */
         ESP8266_USART_CLK_ENABLES();
 
-        
+
         /* ##-2- Configure peripheral GPIO */
         /* UART TX GPIO pin configuration */
         GPIO_InitStruct.Pin       = ESP8266_USART_TX_GPIO_PIN;

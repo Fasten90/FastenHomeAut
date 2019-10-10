@@ -164,14 +164,15 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
     #define ASSERT(__e)                ((__e) ? (void)0 : Assert_Function(__FILE__, __LINE__, #__e))
 #else
     #ifdef CONFIG_DEBUG_MODE
-        /* Assert --> Breakpoint */
-        #define ASSERT(__e)            do                            \
-                                       {                             \
-                                           if (!(__e))               \
-                                           {                         \
-                                               DEBUG_BREAKPOINT();   \
-                                           }                         \
-                                       } while(0U)
+    /* Assert --> Breakpoint */
+    #define ASSERT(__e)             \
+        do                          \
+        {                           \
+            if (!(__e))             \
+            {                       \
+                DEBUG_BREAKPOINT(); \
+            }                       \
+        } while(0U)
     #else
         /* Debug mode turned off (ASSERT() do nothing) */
         #define ASSERT(__e)
