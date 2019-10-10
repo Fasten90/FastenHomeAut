@@ -219,7 +219,7 @@ void COMMUNICATION_ClearProtocolBuffer(void)
 }
 #endif    /* #ifdef CONFIG_PROTOCOL_BUFFER_ENABLE */
 
-#else
+#else     /* #ifdef CONFIG_MODULE_COMMUNICATION_ENABLE */
 
 /* Communication module is not used */
 #if !defined(_MSC_VER)
@@ -230,7 +230,7 @@ void COMMUNICATION_ClearProtocolBuffer(void)
     /* MSVC */
     /* Suppress "nonstandard extension used: translation unit is empty" warning */
     /* warning C4206:  nonstandard extension used: translation unit is empty */
-    typedef uint32_t Compiler_Terminal_TranslationUnitIsEmptySupression_t;
+    typedef uint32_t Compiler_Communication_TranslationUnitIsEmptySupression_t;
 #endif
 
 
