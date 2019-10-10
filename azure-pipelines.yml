@@ -564,6 +564,9 @@ jobs:
       :: Run CWC
       :: Default config: scc_config.json
       python CompilerWarningCollector/CompilerWarningCollector.py
+  # TODO: Change to Compiler independent
+  - publish: $(System.DefaultWorkingDirectory)/MSVC_build_found_warnings.txt
+    artifact: CompilerWarning_MSVC_Artifact
 
 
 # Note: Working example for Artifact
