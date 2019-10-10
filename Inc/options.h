@@ -634,7 +634,7 @@
     #define UNITTEST_PRINT_ASSERT                          (0)
     /*
      * Exit after UnitTest running, with result
-     *        1    Enable
+     *        1    Enable   --> Exit with UnitTest result
      *        0    Disable  --> Normally, the Command handler mode will be available
      *
      * Result:
@@ -642,7 +642,10 @@
      *        >0 - UnitTest error
      *
      */
-    #define CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE        (0)
+    #ifndef CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE
+        /* This guard for CI --> It need to set (1), but on local computer, could override by Project settings */
+        #define CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE        (1)
+    #endif
 
     /* TODO: Need to check this define? */
 
