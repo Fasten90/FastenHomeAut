@@ -447,4 +447,20 @@ void UART_ReceiveEnable(UART_Handler_t * handler)
 }
 
 
+#else /* #ifdef CONFIG_MODULE_UART_ENABLE */
+
+
+/* UART module is not used */
+#if !defined(_MSC_VER)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wpedantic"
+    #pragma GCC diagnostic pop
+#else
+    /* MSVC */
+    /* Suppress "nonstandard extension used: translation unit is empty" warning */
+    /* warning C4206:  nonstandard extension used: translation unit is empty */
+    typedef uint32_t Compiler_Terminal_TranslationUnitIsEmptySupression_t;
+#endif
+
+
 #endif /* #ifdef CONFIG_MODULE_UART_ENABLE */
