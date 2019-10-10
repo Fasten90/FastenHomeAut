@@ -271,7 +271,7 @@ HAL_StatusTypeDef HAL_UART_Init(UART_HandleTypeDef *huart)
  */
 DWORD WINAPI Windows_StdinReceiveThread(void * args)
 {
-    /* * args was necessary for general thread function implementation */
+    /* "* args" was necessary for general thread function implementation */
     UNUSED_ARGUMENT(args);
 
     /*  Do stuff.  This will be the first function called on the new thread. */
@@ -280,15 +280,21 @@ DWORD WINAPI Windows_StdinReceiveThread(void * args)
     while (1)
     {
         /*  Not safe! */
-        char str[50] = { 0 };
+        #define COMMAND_BUFFER_LENGTH   (100)
+        char str[COMMAND_BUFFER_LENGTH] = { 0 };
         char respBuffer[2048];
         char * command;
 
         printf("Type message: ");
 
+    #if !defined(_MSC_VER)
         /*  gets() enabled to use in this situation, because it is only test for windows, not a safety-critical application */
         /*  cppcheck-suppress getsCalled */
         command = gets(str);
+    #else
+        /* MSVC unsupport in new versions the gets(), because it is dangerous, buffer-overflowable function */
+        command = gets_s(str, COMMAND_BUFFER_LENGTH);
+    #endif
 
         if (command != NULL && strlen(str) > 0)
         {
