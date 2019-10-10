@@ -3,7 +3,7 @@
  *    Created on:   2016-09-10
  *    Author:       Vizi Gabor
  *    E-mail:       vizi.gabor90@gmail.com
- *    Function:     Formatted 
+ *    Function:     Formatted messages
  *    Target:       STM32Fx
  */
 
@@ -18,6 +18,7 @@
 #include "ColoredMessage.h"
 
 
+/* TODO: Shall refactor this module to always return with length? */
 
 #define COLOR_CHECK_PARAM(_color)                               \
     do                                                          \

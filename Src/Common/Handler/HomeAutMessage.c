@@ -638,6 +638,7 @@ uint32_t HomeAutMessage_UnitTest(void)
 
 
     /* Check results (processed values) */
+    /* TODO: Refactor the assert */
     UNITTEST_ASSERT(
             ((testInformation.isValid == true)
             /* TODO: Extend SourceAddress & TargetAddress checks */
