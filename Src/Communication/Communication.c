@@ -10,6 +10,7 @@
 
 
 #include "options.h"
+#include "GenericTypeDefs.h"
 
 #ifdef CONFIG_MODULE_COMMUNICATION_ENABLE
 
