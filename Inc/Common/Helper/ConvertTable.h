@@ -35,7 +35,7 @@
 typedef struct
 {
     uint32_t adcValue;                        ///< ADC value
-    float convertedValue;                    ///< Converted value
+    float convertedValue;                     ///< Converted value
 } ConvertTableRecord_t;
 
 
@@ -43,7 +43,7 @@ typedef struct
 typedef struct
 {
     const ConvertTableRecord_t *recordList;    ///< List (ADC-Converted value)
-    const uint16_t size;                    ///< Size
+    const uint16_t size;                       ///< Size
 } ConverTable_t;
 
 
