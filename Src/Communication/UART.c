@@ -14,6 +14,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
+#include "GenericTypeDefs.h"
 
 #ifdef CONFIG_MODULE_UART_ENABLE
 
@@ -459,7 +460,7 @@ void UART_ReceiveEnable(UART_Handler_t * handler)
     /* MSVC */
     /* Suppress "nonstandard extension used: translation unit is empty" warning */
     /* warning C4206:  nonstandard extension used: translation unit is empty */
-    typedef uint32_t Compiler_Terminal_TranslationUnitIsEmptySupression_t;
+    typedef uint32_t Compiler_UART_TranslationUnitIsEmptySupression_t;
 #endif
 
 
