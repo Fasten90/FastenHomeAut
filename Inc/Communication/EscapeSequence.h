@@ -148,7 +148,8 @@ typedef enum
     Color_Blue,
     Color_Magenta,
     Color_Cyan,
-    Color_White
+    Color_White,
+    Color_Count /* Do not use this, only for checking */
 } MsgColors_t;
 
 
@@ -162,7 +163,8 @@ typedef enum
     Format_Underscore,
     Format_Blink,
     Format_ReverseVideoOn,
-    Format_ConcealedOn
+    Format_ConcealedOn,
+    Format_Count /* Do not use this, only for checking */
 } MsgFormat_t;
 
 

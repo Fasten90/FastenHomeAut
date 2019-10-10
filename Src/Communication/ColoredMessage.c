@@ -19,11 +19,42 @@
 
 
 
+#define COLOR_CHECK_PARAM(_color)                               \
+    do                                                          \
+    {                                                           \
+        if (_color >= Color_Count) /* Wrong color param */      \
+        {                                                       \
+            return;                                             \
+        }                                                       \
+    } while(0);
+
+#define FORMAT_CHECK_PARAM(_format)                             \
+    do                                                          \
+    {                                                           \
+        if (_format >= Format_Count) /* Wrong format param */   \
+        {                                                       \
+            return;                                             \
+        }                                                       \
+    } while(0);
+
+#define COLOR_CHECK_PARAM_RETURN_0(_color)                      \
+    do                                                          \
+    {                                                           \
+        if (_color >= Color_Count) /* Wrong color param */      \
+        {                                                       \
+            return 0;                                           \
+        }                                                       \
+    } while(0);
+
+
 /**
  * @brief    Send message on debug with textcolor & backgroundcolor
  */
 void ColoredMessage_SendMsgWithBackgroundColor(char *str, const char *msg, MsgColors_t textColor, MsgColors_t backgroundColor)
 {
+    COLOR_CHECK_PARAM(textColor);
+    COLOR_CHECK_PARAM(backgroundColor);
+
     ColoredMessage_SendBackgroundAndTextColor(str, backgroundColor, textColor);        /* Send background + text color */
     StrAppend(str, msg);                                                            /* Send message */
     ColoredMessage_SendDefaultFormat(str);                                            /* Restore format (bg + text color) */
@@ -37,6 +68,8 @@ void ColoredMessage_SendMsgWithBackgroundColor(char *str, const char *msg, MsgCo
  */
 void ColoredMessage_SendMsg(char *str, const char *msg, MsgColors_t textColor)
 {
+    COLOR_CHECK_PARAM(textColor);
+
     ColoredMessage_SendTextColor(str, textColor);                                /* Send text color */
     StrAppend(str, msg);                                                        /* Send message */
     ColoredMessage_SendDefaultFormat(str);                                        /* Restore format (text color) */
@@ -49,6 +82,8 @@ void ColoredMessage_SendMsg(char *str, const char *msg, MsgColors_t textColor)
  */
 void ColoredMessage_SendTextColor(char *str, MsgColors_t textColor)
 {
+    COLOR_CHECK_PARAM(textColor);
+
     StrAppend(str, ESCAPE_FORMAT_TEXTCOLOR_START);
     CharAppend(str, '0' + (const char)textColor);
     StrAppend(str, ESCAPE_FORMAT_END);
@@ -61,6 +96,8 @@ void ColoredMessage_SendTextColor(char *str, MsgColors_t textColor)
  */
 void ColoredMessage_SendBackgroundColor(char *str, MsgColors_t backgroundColor)
 {
+    COLOR_CHECK_PARAM(backgroundColor);
+
     StrAppend(str, ESCAPE_FORMAT_BACKGROUNDCOLOR_START);
     CharAppend(str, '0' + (const char)backgroundColor);
     StrAppend(str, ESCAPE_FORMAT_END);
@@ -73,6 +110,8 @@ void ColoredMessage_SendBackgroundColor(char *str, MsgColors_t backgroundColor)
  */
 void ColoredMessage_SendTextFormat(char *str, MsgFormat_t textFormat)
 {
+    FORMAT_CHECK_PARAM(textFormat);
+
     StrAppend(str, ESCAPE_FORMAT_ONLY_START);
 
     CharAppend(str, '0' + (const char)textFormat);
@@ -87,6 +126,9 @@ void ColoredMessage_SendTextFormat(char *str, MsgFormat_t textFormat)
  */
 size_t ColoredMessage_SendBackgroundAndTextColor(char *str, MsgColors_t backgroundColor, MsgColors_t textColor)
 {
+    COLOR_CHECK_PARAM_RETURN_0(textColor);
+    COLOR_CHECK_PARAM_RETURN_0(backgroundColor);
+
     StrAppend(str, ESCAPE_FORMAT_ONLY_START);
 
     StrAppend(str, ESCAPE_FORMAT_ONLY_BACKGROUNDCOLOR);
@@ -109,6 +151,9 @@ size_t ColoredMessage_SendBackgroundAndTextColor(char *str, MsgColors_t backgrou
  */
 void ColoredMessage_SendBackgroundAndTextColorAndFormat(char *str, MsgColors_t backgroundColor, MsgColors_t textColor, MsgFormat_t textFormat)
 {
+    COLOR_CHECK_PARAM(textColor);
+    COLOR_CHECK_PARAM(backgroundColor);
+
     StrAppend(str, ESCAPE_FORMAT_ONLY_START);
 
     StrAppend(str, ESCAPE_FORMAT_ONLY_BACKGROUNDCOLOR);
