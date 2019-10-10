@@ -1070,7 +1070,7 @@ bool StringToFloat(const char *str, float *num)
         return false;            /* Error with convert fraction part */
     }
 
-    fractionPart = integer;
+    fractionPart = (float)integer;
     /* We converted after point part, ".567", but we need to shift right */
     for (i = 0; i < (stringLength - pointCnt - 1); i++ )
     {

@@ -15,6 +15,7 @@
 
 
 #include "options.h"
+#include "compiler.h"
 #include "GenericTypeDefs.h"
 #include "DebugUart.h"
 #include "board.h"
@@ -292,11 +293,12 @@ bool mem_CheckPointer(void * pnt, size_t size)
     bool isOk = false;
 
     /* Check pointer range is in RAM or FLASH? */
-#if ((MEM_RAM_START == 0) || (MEM_FLASH_START == 0))
-    /* TODO: In this case, compilers report the "expression is always true" */
-#endif
-    if (((Address_t)pnt >= MEM_RAM_START && ((Address_t)pnt + size) < MEM_RAM_END)
-        || ((Address_t)pnt >= MEM_FLASH_START && ((Address_t)pnt + size) < MEM_FLASH_END))
+#if ((MEM_RAM_START == 0) && (MEM_FLASH_START == 0))
+    /* In this case, compilers report the "expression is always true"
+     * So the condition changed for only check the highest address
+     */
+    if ((((Address_t)pnt + size) < MEM_RAM_END)
+        || (((Address_t)pnt + size) < MEM_FLASH_END))
     {
         isOk = true;
     }
@@ -306,6 +308,23 @@ bool mem_CheckPointer(void * pnt, size_t size)
     }
 
     return isOk;
+#elif ((MEM_RAM_START != 0) && (MEM_FLASH_START != 0))
+    if ((((Address_t)pnt >= MEM_RAM_START) && ((Address_t)pnt + size) < MEM_RAM_END)
+        || (((Address_t)pnt >= MEM_FLASH_START) && ((Address_t)pnt + size) < MEM_FLASH_END))
+    {
+        isOk = true;
+    }
+    else
+    {
+        isOk = false;
+    }
+
+    return isOk;
+#else
+    COMPILER_MESSAGE("Unhandled situation")
+
+    return True;
+#endif
 }
 
 
