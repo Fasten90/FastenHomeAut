@@ -120,7 +120,7 @@
 
 #define ESCAPE_FORMAT_ONLY_START                 ("\x1B" "[")
 
-#define ESCAPE_FORMAT_ONLY_TEXTROUNDCOLOR        ("3")
+#define ESCAPE_FORMAT_ONLY_TEXTCOLOR        ("3")
 
 #define ESCAPE_FORMAT_ONLY_BACKGROUNDCOLOR       ("4")
 

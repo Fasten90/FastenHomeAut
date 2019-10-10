@@ -136,7 +136,7 @@ size_t ColoredMessage_SendBackgroundAndTextColor(char *str, MsgColors_t backgrou
 
     StrAppend(str, ESCAPE_FORMAT_SEPARATE);
 
-    StrAppend(str, ESCAPE_FORMAT_ONLY_TEXTROUNDCOLOR);
+    StrAppend(str, ESCAPE_FORMAT_ONLY_TEXTCOLOR);
     CharAppend(str, '0' + (const char)textColor);
 
     StrAppend(str, ESCAPE_FORMAT_END);
@@ -161,7 +161,7 @@ void ColoredMessage_SendBackgroundAndTextColorAndFormat(char *str, MsgColors_t b
 
     StrAppend(str, ESCAPE_FORMAT_SEPARATE);
 
-    StrAppend(str, ESCAPE_FORMAT_ONLY_TEXTROUNDCOLOR);
+    StrAppend(str, ESCAPE_FORMAT_ONLY_TEXTCOLOR);
     CharAppend(str, '0' + (const char)textColor);
 
     StrAppend(str, ESCAPE_FORMAT_SEPARATE);
