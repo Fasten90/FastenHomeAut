@@ -48,10 +48,10 @@
 
 #ifdef CONFIG_USE_PANEL_HOMEAUTNODESMALL
 /*
-  EXTI0_1_IRQn
-  EXTI2_3_IRQn
-  EXTI4_15_IRQn               
-*/
+ * EXTI0_1_IRQn
+ * EXTI2_3_IRQn
+ * EXTI4_15_IRQn
+ */
 
 void EXTI0_1_IRQHandler(void)
 {
@@ -94,7 +94,7 @@ void EXTI0_IRQHandler(void)
 
 
 void EXTI2_IRQHandler(void)
-{    
+{
     HAL_GPIO_EXTI_IRQHandler(BUTTON_UP_GPIO_PIN);
 }
 
@@ -102,7 +102,7 @@ void EXTI2_IRQHandler(void)
 void EXTI9_5_IRQHandler(void)
 {
     /* 9 */
-    
+
     if ( HAL_GPIO_ReadPin(BUTTON_LEFT_GPIO_PORT, BUTTON_LEFT_GPIO_PIN) == GPIO_PIN_SET)
     {
         HAL_GPIO_EXTI_IRQHandler(BUTTON_LEFT_GPIO_PIN);
@@ -112,14 +112,14 @@ void EXTI9_5_IRQHandler(void)
 
 void EXTI15_10_IRQHandler(void)
 {
-    
+
     /* 13    - BUTTON_DOWN     */
     if (HAL_GPIO_ReadPin(BUTTON_DOWN_GPIO_PORT, BUTTON_DOWN_GPIO_PIN) == GPIO_PIN_SET)
     {
         HAL_GPIO_EXTI_IRQHandler(BUTTON_DOWN_GPIO_PIN);
     }
-    
-    
+
+
     /* SENSOR_MOTION            GPIO_PIN_12 */
     /* SENSOR_SOUND_IMPACT        GPIO_PIN_14 */
     if (HAL_GPIO_ReadPin(SENSOR_MOTION_GPIO_PORT, SENSOR_MOTION_GPIO_PIN) == GPIO_PIN_SET)
@@ -130,7 +130,7 @@ void EXTI15_10_IRQHandler(void)
     {
         HAL_GPIO_EXTI_IRQHandler(SENSOR_SOUND_IMPACT_GPIO_PIN);
     }
-}    
+}
 
 
 #endif /* ifdef CONFIG_USE_PANEL_NODEMEDIUM */
@@ -154,7 +154,7 @@ void EXTI0_IRQHandler(void)
 void EXTI9_5_IRQHandler(void)
 {
     /* 7-8-9 */
-    
+
     if (HAL_GPIO_ReadPin(BUTTON_LEFT_GPIO_PORT, BUTTON_LEFT_GPIO_PIN) == GPIO_PIN_SET)
     {
         HAL_GPIO_EXTI_IRQHandler(BUTTON_LEFT_GPIO_PIN);
@@ -162,7 +162,7 @@ void EXTI9_5_IRQHandler(void)
     if (HAL_GPIO_ReadPin(BUTTON_UP_GPIO_PORT, BUTTON_UP_GPIO_PIN) == GPIO_PIN_SET)
     {
         HAL_GPIO_EXTI_IRQHandler(BUTTON_UP_GPIO_PIN);
-    }        
+    }
     if (HAL_GPIO_ReadPin(BUTTON_DOWN_GPIO_PORT, BUTTON_DOWN_GPIO_PIN) == GPIO_PIN_SET)
     {
         HAL_GPIO_EXTI_IRQHandler(BUTTON_DOWN_GPIO_PIN);

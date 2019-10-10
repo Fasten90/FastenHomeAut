@@ -72,7 +72,7 @@
 uint8_t SignedDecimalToString(int32_t value, char *str)
 {
     uint8_t length = 0;
-    
+
     /* Check pointer */
     if (str == NULL)
     {
@@ -553,7 +553,7 @@ uint8_t StringIsHexadecimalString(const char *str)
     {
         return 0;
     }
-    
+
     for (i = 0; str[i] != '\0'; i++)
     {
         /* Number all? 0-9, A-F, a-f */
@@ -1309,9 +1309,9 @@ uint8_t StrCmpWithLength(const char * str1, const char *str2, size_t length)
             return 1;    /* not equal */
         }
         str1++;
-        str2++;        
+        str2++;
     }
-    
+
     return 0;        /* equal     */
 }
 

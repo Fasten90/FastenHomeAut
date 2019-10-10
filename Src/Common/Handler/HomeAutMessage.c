@@ -214,14 +214,14 @@ bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
 
     /* Information data */
     HomeAut_InformationType information = { 0 };
-    
+
     /* For separate */
     size_t messageLength;
     char message[HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH];
     bool isOk = true;
     char *split[HOMEAUTMESSAGE_SPLIT_NUM] = { 0 };
     uint8_t i;
-    
+
     /* |HomeAut|192.168.100.100|192.168.100.014|2017-01-10 18:49:50|COMMAND|REMOTE|00000000|\0 */
 
     /* Check length */
@@ -342,9 +342,9 @@ bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
         memcpy(messageInformation, &information, sizeof(HomeAut_InformationType));
     }
 
-    
+
     return isOk;
-}        
+}
 
 
 
@@ -353,7 +353,7 @@ bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
  */
 size_t HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation, char *createToMessage)
 {
-    
+
     size_t length = 0;
     uint8_t i;
 
@@ -387,7 +387,7 @@ size_t HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation,
 
     /* Separator */
     length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
-    
+
     /* Function */
     for (i = 0; FunctionTypeParity_List[i].function != Function_End; i++)
     {
@@ -397,7 +397,7 @@ size_t HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation,
             break;
         }
     }
-    
+
     /* Separator */
     length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
 
@@ -410,17 +410,17 @@ size_t HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation,
             break;
         }
     }
-    
+
     /* Separator */
     length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
 
     /* Data */
     length += DecimalToHexaString(messageInformation->Data, &createToMessage[length], 8);
-    
+
     /* Separator */
     length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
-    
-    
+
+
     return length;
 }
 
@@ -443,24 +443,24 @@ bool HomeAutMessage_CreateAndSendHomeAutMessage(
     HomeAut_DataType dataType,
     uint32_t data)
 {
-    
+
     HomeAut_InformationType messageInformation;
     char message[HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH];
-    
+
     memcpy(&messageInformation.SourceAddress, myIp, sizeof(Network_IP_t));
 
     memcpy(&messageInformation.TargetAddress, destIp, sizeof(Network_IP_t));
-    
+
     memcpy(&messageInformation.DateTime, dateTime, sizeof(DateTime_t));
 
     messageInformation.Function = function;
-    
+
     messageInformation.DataType = dataType;
-    
+
     messageInformation.Data = data;
 
     messageInformation.isValid = true;
-    
+
     /* Create message ... */
     if (HomeAutMessage_CreateMessage(&messageInformation, message))
     {
@@ -486,7 +486,7 @@ bool HomeAutMessage_CreateAndSendHomeAutMessage(
         #warning "HomeAutMessage module cannot send message to anything"
         return true;
 #endif
-    }    
+    }
     else
     {
         return false;

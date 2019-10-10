@@ -88,67 +88,65 @@ void CommonSPI_Init(void)
     HAL_NVIC_EnableIRQ(SPIx_IRQn);
 
 
-
-
-      /*##-1- Configure the SPI peripheral #######################################*/
-      /* Set the SPI parameters */
-      SpiHandle.Instance               = SPIx;
-      SpiHandle.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
-      SpiHandle.Init.Direction         = SPI_DIRECTION_2LINES;
-      SpiHandle.Init.CLKPhase          = SPI_PHASE_1EDGE;
-      SpiHandle.Init.CLKPolarity       = SPI_POLARITY_HIGH;
-      SpiHandle.Init.CRCCalculation    = SPI_CRCCALCULATION_DISABLE;
-      SpiHandle.Init.CRCPolynomial     = 7;
-      SpiHandle.Init.DataSize          = SPI_DATASIZE_8BIT;
-      SpiHandle.Init.FirstBit          = SPI_FIRSTBIT_MSB;
-      SpiHandle.Init.NSS               = SPI_NSS_SOFT;
-      SpiHandle.Init.TIMode            = SPI_TIMODE_DISABLE;
+    /*##-1- Configure the SPI peripheral #######################################*/
+    /* Set the SPI parameters */
+    SpiHandle.Instance               = SPIx;
+    SpiHandle.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
+    SpiHandle.Init.Direction         = SPI_DIRECTION_2LINES;
+    SpiHandle.Init.CLKPhase          = SPI_PHASE_1EDGE;
+    SpiHandle.Init.CLKPolarity       = SPI_POLARITY_HIGH;
+    SpiHandle.Init.CRCCalculation    = SPI_CRCCALCULATION_DISABLE;
+    SpiHandle.Init.CRCPolynomial     = 7;
+    SpiHandle.Init.DataSize          = SPI_DATASIZE_8BIT;
+    SpiHandle.Init.FirstBit          = SPI_FIRSTBIT_MSB;
+    SpiHandle.Init.NSS               = SPI_NSS_SOFT;
+    SpiHandle.Init.TIMode            = SPI_TIMODE_DISABLE;
 
     #ifdef MASTER_BOARD
-      SpiHandle.Init.Mode = SPI_MODE_MASTER;
+    SpiHandle.Init.Mode = SPI_MODE_MASTER;
     #else
-      SpiHandle.Init.Mode = SPI_MODE_SLAVE;
+    SpiHandle.Init.Mode = SPI_MODE_SLAVE;
     #endif /* MASTER_BOARD */
 
-      if(HAL_SPI_Init(&SpiHandle) != HAL_OK)
-      {
+    if(HAL_SPI_Init(&SpiHandle) != HAL_OK)
+    {
         /* Initialization Error */
         Error_Handler();
-      }
+    }
 
     #ifdef MASTER_BOARD
-      /* Configure USER Button */
-      BSP_PB_Init(BUTTON_KEY, BUTTON_MODE_GPIO);
+    /* Configure USER Button */
+    BSP_PB_Init(BUTTON_KEY, BUTTON_MODE_GPIO);
 
-      /* Wait for USER Button press before starting the Communication */
-      while (BSP_PB_GetState(BUTTON_KEY) != 1)
-      {
+    /* Wait for USER Button press before starting the Communication */
+    while (BSP_PB_GetState(BUTTON_KEY) != 1)
+    {
         BSP_LED_Toggle(LED3);
         HAL_Delay(40);
-      }
+    }
 
-        BSP_LED_Off(LED3);
+    BSP_LED_Off(LED3);
     #endif /* MASTER_BOARD */
 
-      /*##-2- Start the Full Duplex Communication process ########################*/
-      /* While the SPI in TransmitReceive process, user can transmit data through
-         "aTxBuffer" buffer & receive data through "aRxBuffer" */
-      if(HAL_SPI_TransmitReceive_IT(&SpiHandle, (uint8_t*)aTxBuffer, (uint8_t *)aRxBuffer, BUFFERSIZE) != HAL_OK)
-      {
+    /*##-2- Start the Full Duplex Communication process ########################*/
+    /* While the SPI in TransmitReceive process, user can transmit data through
+     * "aTxBuffer" buffer & receive data through "aRxBuffer" */
+    if(HAL_SPI_TransmitReceive_IT(&SpiHandle, (uint8_t*)aTxBuffer, (uint8_t *)aRxBuffer, BUFFERSIZE) != HAL_OK)
+    {
         /* Transfer error in transmission process */
         Error_Handler();
-      }
+    }
 
-      /*##-3- Wait for the end of the transfer ###################################*/
-      /*  Before starting a new communication transfer, you need to check the current
-          state of the peripheral; if it’s busy you need to wait for the end of current
-          transfer before starting a new one.
-          For simplicity reasons, this example is just waiting till the end of the
-          transfer, but application may perform other tasks while transfer operation
-          is ongoing. */
-      while (HAL_SPI_GetState(&SpiHandle) != HAL_SPI_STATE_READY)
-      {
-      }
+    /*##-3- Wait for the end of the transfer ###################################*/
+    /*  Before starting a new communication transfer, you need to check the current
+     *  state of the peripheral; if it’s busy you need to wait for the end of current
+     *  transfer before starting a new one.
+     *  For simplicity reasons, this example is just waiting till the end of the
+     *  transfer, but application may perform other tasks while transfer operation
+     *  is ongoing. */
+    while (HAL_SPI_GetState(&SpiHandle) != HAL_SPI_STATE_READY)
+    {
+    }
 }
 
 

@@ -3,7 +3,7 @@
  *    Created on:   2016-09-26
  *    Author:       Vizi Gabor
  *    E-mail:       vizi.gabor90@gmail.com
- *    Function:     Calculate 
+ *    Function:     Calculator
  *    Target:       STM32Fx
  */
 

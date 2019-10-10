@@ -3,7 +3,7 @@
  *    Created on:   2016-09-10
  *    Author:       Vizi Gabor
  *    E-mail:       vizi.gabor90@gmail.com
- *    Function:     Formatted 
+ *    Function:     Colored message
  *    Target:       STM32Fx
  */
 

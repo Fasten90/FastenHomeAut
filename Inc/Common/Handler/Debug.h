@@ -3,7 +3,7 @@
  *    Created on:   2017-08-17
  *    Author:       Vizi Gabor
  *    E-mail:       vizi.gabor90@gmail.com
- *    Function:     Debug prints 
+ *    Function:     Debug prints
  *    Target:       STM32Fx
  */
 

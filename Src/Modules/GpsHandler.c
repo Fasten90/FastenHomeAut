@@ -141,39 +141,39 @@ void GpsHandler_ProcessMessage(const char * msg)
 static void GpsHandler_ProcessCgnsinfMessage(const char * msg)
 {
     /*
-        1  GNSS run status -- 0-1 {1}
-        2  Fix status -- 0-1 {1}
-        3  UTC date & Time yyyyMMddhhmmss.sss
-             yyyy: [1980,2039]
-             MM : [1,12]
-             dd: [1,31]
-             hh: [0,23]
-             mm: [0,59]
-             ss.sss:[0.000,60.999] {18}
-        4  Latitude ±dd.dddddd [-90.000000,90.000000] {10}
-        5  Longitude ±ddd.dddddd [-180.000000,180.000000] {11}
-        6  MSL Altitude meters {8}
-        7  Speed Over Ground Km/hour [0,999.99] {6}
-        8  Course Over Ground degrees [0,360.00] {6}
-        9  Fix Mode -- 0,1,2[1] {1}
-        10 Reserved1 {0}
-        11 HDOP -- [0,99.9] {4}
-        12 PDOP -- [0,99.9] {4}
-        13 VDOP -- [0,99.9] {4}
-        14 Reserved2 {0}
-        15 GPS Satellites in View -- [0,99] {2}
-        16 GNSS Satellites Used -- [0,99] {2}
-        17 GLONASS Satellites in View -- [0,99] {2}
-        18 Reserved3 {0}
-        19 C/N0 max dBHz [0,55] {2}
-        20 HPA[2] meters [0,9999.9] {6}
-        21 VPA[2] meters [0,9999.9] {6}
-
-        Total： {94} chars
-
-        E.g.
-        "1,0,19800106001106.000,,,,0.00,0.0,0,,,,,,0,0,,,,,"
-        "1,1,20171116212122.000,47.492245,19.017659,687.576,1.22,184.7,1,,1.3,1.6,1.0,,5,5,,,44,,"
+     *  1  GNSS run status -- 0-1 {1}
+     *  2  Fix status -- 0-1 {1}
+     *  3  UTC date & Time yyyyMMddhhmmss.sss
+     *       yyyy: [1980,2039]
+     *       MM : [1,12]
+     *       dd: [1,31]
+     *       hh: [0,23]
+     *       mm: [0,59]
+     *       ss.sss:[0.000,60.999] {18}
+     *  4  Latitude ±dd.dddddd [-90.000000,90.000000] {10}
+     *  5  Longitude ±ddd.dddddd [-180.000000,180.000000] {11}
+     *  6  MSL Altitude meters {8}
+     *  7  Speed Over Ground Km/hour [0,999.99] {6}
+     *  8  Course Over Ground degrees [0,360.00] {6}
+     *  9  Fix Mode -- 0,1,2[1] {1}
+     *  10 Reserved1 {0}
+     *  11 HDOP -- [0,99.9] {4}
+     *  12 PDOP -- [0,99.9] {4}
+     *  13 VDOP -- [0,99.9] {4}
+     *  14 Reserved2 {0}
+     *  15 GPS Satellites in View -- [0,99] {2}
+     *  16 GNSS Satellites Used -- [0,99] {2}
+     *  17 GLONASS Satellites in View -- [0,99] {2}
+     *  18 Reserved3 {0}
+     *  19 C/N0 max dBHz [0,55] {2}
+     *  20 HPA[2] meters [0,9999.9] {6}
+     *  21 VPA[2] meters [0,9999.9] {6}
+     *
+     *  Total： {94} chars
+     *
+     *  E.g.
+     *  "1,0,19800106001106.000,,,,0.00,0.0,0,,,,,,0,0,,,,,"
+     *  "1,1,20171116212122.000,47.492245,19.017659,687.576,1.22,184.7,1,,1.3,1.6,1.0,,5,5,,,44,,"
      */
 
     char procMsg[GPSHANDLER_MESSAGE_CGNSINF_MAX_LENGTH];

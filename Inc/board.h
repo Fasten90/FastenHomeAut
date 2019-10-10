@@ -308,7 +308,7 @@
         __GPIOC_CLK_ENABLE()
 
 
-#define ADC_CHANNEL_NUM                ( 5 )    
+#define ADC_CHANNEL_NUM                ( 5 )
 /* now: Vsource, ligh, mic, prox, internal temp */
 
 
@@ -875,7 +875,7 @@
 
 #define ESP8266_USART_CLK_ENABLES()            \
         __USART2_CLK_ENABLE();                \
-        __GPIOA_CLK_ENABLE()    
+        __GPIOA_CLK_ENABLE()
 
 
 
@@ -884,7 +884,7 @@
 
 #define ESP8266_USART_RX_GPIO_PORT            GPIOA
 #define ESP8266_USART_RX_GPIO_PIN            GPIO_PIN_3
-    
+
 #define ESP8266_USART_AF                    GPIO_AF7_USART2
 
 /* Definition for USARTx's NVIC */
@@ -912,7 +912,7 @@
 
 #define ESP8266_USART_CLK_ENABLES()            \
         __USART2_CLK_ENABLE();                \
-        __GPIOA_CLK_ENABLE()    
+        __GPIOA_CLK_ENABLE()
 
 
 #define ESP8266_USART_TX_GPIO_PORT            GPIOA
@@ -920,7 +920,7 @@
 
 #define ESP8266_USART_RX_GPIO_PORT            GPIOA
 #define ESP8266_USART_RX_GPIO_PIN            GPIO_PIN_3
-    
+
 #define ESP8266_USART_AF                    GPIO_AF7_USART2
 
 /* Definition for USARTx's NVIC */
@@ -1088,7 +1088,7 @@ _GPIO2            PB8
 
 
 #define SENSOR_MOTION_GPIO_PINS_CLK_ENABLE()            __GPIOC_CLK_ENABLE()
-        
+
 /* PIR signaling; HIGH = movement/LOW = no movement */
 #define SENSOR_MOTION_GPIO_PORT                            GPIOC
 #define SENSOR_MOTION_GPIO_PIN                            GPIO_PIN_12

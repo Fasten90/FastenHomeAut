@@ -3,7 +3,7 @@
  *    Created on:   2016-12-14
  *    Author:       Vizi Gabor
  *    E-mail:       vizi.gabor90@gmail.com
- *    Function:     SWO 
+ *    Function:     SWO
  *    Target:       STM32Fx
  */
 

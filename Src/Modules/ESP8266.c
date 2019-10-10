@@ -289,15 +289,15 @@ void ESP8266_Init(void)
     CircularBuffer_Init(ESP8266_Uart.tx);
     CircularBuffer_Init(ESP8266_Uart.rx);
 
-    
+
     /*    GPIO Init */
     GPIO_InitTypeDef  GPIO_InitStruct;
 
     ESP8266_PINS_CLK_ENABLES();
-    
-    
+
+
     /* GPIO0 & GPIO2 */
-    
+
     /* help for pins: http://www.electrodragon.com/w/ESP8266 */
     /* GPIO0 start with LOW level, after connecting will be on HIGH level */
     /* GPIO2 pin is on HIGH level... */
@@ -315,17 +315,17 @@ void ESP8266_Init(void)
     GPIO_InitStruct.Mode      = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull      = GPIO_PULLDOWN;
     GPIO_InitStruct.Speed     = GPIO_SPEED_LOW;
-    HAL_GPIO_Init(ESP8266_GPIO0_GPIO_PORT, &GPIO_InitStruct);    
+    HAL_GPIO_Init(ESP8266_GPIO0_GPIO_PORT, &GPIO_InitStruct);
     HAL_GPIO_WritePin(ESP8266_GPIO0_GPIO_PORT, ESP8266_GPIO0_GPIO_PIN, GPIO_PIN_RESET);
 
-    
+
     /* RST */
     GPIO_InitStruct.Pin       = ESP8266_RST_GPIO_PIN;
     GPIO_InitStruct.Mode      = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull      = GPIO_PULLUP;
     GPIO_InitStruct.Speed     = GPIO_SPEED_LOW;
     HAL_GPIO_Init(ESP8266_RST_GPIO_PORT, &GPIO_InitStruct);
-    
+
     ESP8266_ResetHardware();
 
 
@@ -334,14 +334,14 @@ void ESP8266_Init(void)
     GPIO_InitStruct.Mode      = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull      = GPIO_PULLUP;
     GPIO_InitStruct.Speed     = GPIO_SPEED_LOW;
-    HAL_GPIO_Init(ESP8266_CH_GPIO_PORT, &GPIO_InitStruct);    
+    HAL_GPIO_Init(ESP8266_CH_GPIO_PORT, &GPIO_InitStruct);
 
 
     /* CH UP */
     HAL_GPIO_WritePin(ESP8266_CH_GPIO_PORT, ESP8266_CH_GPIO_PIN, GPIO_PIN_SET);
     /* elayMs(2000); */
-    
-    
+
+
     /* USART TX - RX     */
     /* Init late USART, because we receive a lot of message at ESP8266 start */
     UART_Init(&ESP8266_UartHandle);
@@ -822,7 +822,7 @@ void ESP8266_StatusMachine(void)
                 ESP8266_LED_FAIL();
                 ESP8266StatusMachine = Esp8266Status_Init;
                 ESP8266_DEBUG_PRINTF("Config ATE0 response failed, received message: \"%s\"",
-                                     (const char *)receiveBuffer);
+                                    (const char *)receiveBuffer);
             }
             ESP8266_ClearReceive(true, 0);
             break;
@@ -851,7 +851,7 @@ void ESP8266_StatusMachine(void)
                 ESP8266_LED_FAIL();
                 ESP8266StatusMachine = Esp8266Status_Init;
                 ESP8266_DEBUG_PRINTF("Config AT failed, received message: \"%s\"",
-                                     (const char *)receiveBuffer);
+                                    (const char *)receiveBuffer);
             }
             ESP8266_ClearReceive(true, 0);
             break;
@@ -1052,7 +1052,7 @@ void ESP8266_StatusMachine(void)
                 ESP8266_LED_FAIL();
                 ESP8266StatusMachine = Esp8266Status_StartWifiHost;
                 ESP8266_DEBUG_PRINTF("Wifi server create failed, received message: \"%s\"\r\n",
-                                                     (const char *)receiveBuffer);
+                                    (const char *)receiveBuffer);
             }
             ESP8266_ClearReceive(true, 0);
             break;

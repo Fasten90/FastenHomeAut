@@ -3,7 +3,7 @@
  *    Created on:   2016-11-21
  *    Author:       Vizi Gabor
  *    E-mail:       vizi.gabor90@gmail.com
- *    Function:     Common ADC 
+ *    Function:     Common ADC
  *    Target:       STM32Fx
  */
 
@@ -114,7 +114,7 @@ void CommonADC_Init(void)
     AdcHandle.Init.DMAContinuousRequests = ENABLE;                            /* ADC-DMA continuous requests to match with DMA configured in circular mode */
     AdcHandle.Init.EOCSelection          = DISABLE;
 
-    
+
     if (HAL_ADC_Init(&AdcHandle) != HAL_OK)
     {
         /* ADC initialization error */
@@ -174,12 +174,12 @@ void CommonADC_Init(void)
     if (HAL_ADC_Start_DMA(&AdcHandle,
                         (uint32_t *)ADC_MeasuredValues,
                         ADC_CHANNEL_NUM
-                       ) != HAL_OK)
+                        ) != HAL_OK)
     {
         /* Start Error */
         Error_Handler();
     }
-  
+
 }
 
 
@@ -189,7 +189,7 @@ void CommonADC_Init(void)
  */
 void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 {
-    
+
     GPIO_InitTypeDef GPIO_InitStruct;
     static DMA_HandleTypeDef DmaHandle;
 
@@ -216,7 +216,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
     GPIO_InitStruct.Pin = ADCx_CHANNEL_PIN_3;
     HAL_GPIO_Init(ADCx_CHANNEL_GPIO_PORT, &GPIO_InitStruct);
 #endif
-    
+
 #if ADC_CHANNEL_NUM > 3
 #warning "ADC num is not 3, need extend the channel configs"
 #endif
@@ -272,11 +272,11 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
  */
 void CommonADC_Test(void)
 {
-    
+
     while (1)
     {
         uint8_t i;
-        
+
         DelayMs(10);
 
         uprintf("\r\n");
@@ -284,7 +284,7 @@ void CommonADC_Test(void)
         {
             uprintf("%d. value: %d\r\n", i, ADC_MeasuredValues[i]);
         }
-        
+
         DelayMs(1000);
     }
 }
@@ -311,7 +311,7 @@ float CommonADC_ConvertToVoltage(uint32_t readValue)
 void CommonADC_ConvertAllMeasuredValues(void)
 {
     uint8_t i;
-    
+
     for (i = 0; i < ADC_CHANNEL_NUM; i++)
     {
         /* Convert all values */

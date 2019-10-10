@@ -193,36 +193,36 @@ void Display_SSD1306_Init(void)
 #if 0
 void HAL_SPI_MspInit(SPI_HandleTypeDef *hspi)
 {
-GPIO_InitTypeDef  GPIO_InitStruct;
+    GPIO_InitTypeDef  GPIO_InitStruct;
 
-  if (hspi->Instance == DISPLAY_SSD1306_SPIx)
-  {
+    if (hspi->Instance == DISPLAY_SSD1306_SPIx)
+    {
 
-    /* Enable DMA clock */
-    DMAx_CLK_ENABLE();
+        /* Enable DMA clock */
+        DMAx_CLK_ENABLE();
 
-    /*##-3- Configure the DMA ##################################################*/
-    /* Configure the DMA handler for Transmission process */
-    hdma_tx.Instance                 = SPIx_TX_DMA_STREAM;
-    hdma_tx.Init.Direction           = DMA_MEMORY_TO_PERIPH;
-    hdma_tx.Init.PeriphInc           = DMA_PINC_DISABLE;
-    hdma_tx.Init.MemInc              = DMA_MINC_ENABLE;
-    hdma_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
-    hdma_tx.Init.MemDataAlignment    = DMA_MDATAALIGN_HALFWORD;
-    hdma_tx.Init.Mode                = DMA_NORMAL;
-    hdma_tx.Init.Priority            = DMA_PRIORITY_LOW;
+        /*##-3- Configure the DMA ##################################################*/
+        /* Configure the DMA handler for Transmission process */
+        hdma_tx.Instance                 = SPIx_TX_DMA_STREAM;
+        hdma_tx.Init.Direction           = DMA_MEMORY_TO_PERIPH;
+        hdma_tx.Init.PeriphInc           = DMA_PINC_DISABLE;
+        hdma_tx.Init.MemInc              = DMA_MINC_ENABLE;
+        hdma_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+        hdma_tx.Init.MemDataAlignment    = DMA_MDATAALIGN_HALFWORD;
+        hdma_tx.Init.Mode                = DMA_NORMAL;
+        hdma_tx.Init.Priority            = DMA_PRIORITY_LOW;
 
-    HAL_DMA_Init(&hdma_tx);
+        HAL_DMA_Init(&hdma_tx);
 
-    /* Associate the initialized DMA handle to the the SPI handle */
-    __HAL_LINKDMA(&SpiHandle, hdmatx, hdma_tx);
+        /* Associate the initialized DMA handle to the the SPI handle */
+        __HAL_LINKDMA(&SpiHandle, hdmatx, hdma_tx);
 
 
-    /*##-4- Configure the NVIC for DMA #########################################*/
-    /* NVIC configuration for DMA transfer complete interrupt (SPI3_TX) */
-    HAL_NVIC_SetPriority(SPIx_DMA_TX_IRQn, 1, 1);
-    HAL_NVIC_EnableIRQ(SPIx_DMA_TX_IRQn);
-  }
+        /*##-4- Configure the NVIC for DMA #########################################*/
+        /* NVIC configuration for DMA transfer complete interrupt (SPI3_TX) */
+        HAL_NVIC_SetPriority(SPIx_DMA_TX_IRQn, 1, 1);
+        HAL_NVIC_EnableIRQ(SPIx_DMA_TX_IRQn);
+    }
 }
 #endif
 
@@ -526,7 +526,7 @@ void SSD1306_display(void)
 
     Display_TransferInProgress = true;
 
-    
+
 #ifdef CONFIG_DISPLAY_SPI_USE_DMA
     HAL_SPI_Transmit_DMA(&SpiHandle, display_buffer, (SSD1306_LCDWIDTH * SSD1306_LCDHEIGHT / 8));
 #else

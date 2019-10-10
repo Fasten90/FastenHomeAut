@@ -91,7 +91,7 @@
 /*------------------------------------------------------------------------------
  *                            ESCAPE SEQUENCE  - COLORS
  *----------------------------------------------------------------------------*/
- 
+
 /* CSI n m     SGR – Select Graphic Rendition */
 /* 40–47     Set background color     40 + x, where x is from the color table below */
 #define ESCAPE_BACKGROUND_GREEN            ("\x1B" "[42m")
