@@ -628,7 +628,7 @@ uint32_t HomeAutMessage_UnitTest(void)
     const char TestMessage[] = "|HomeAut|192.168.100.100|192.168.100.14|2017-01-10 18:49:50|COMMAND|REMOTE|01234567|";
     HomeAut_InformationType testInformation = { 0 };
     char exampleStringMessage[HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH];
-    uint8_t length;
+    size_t length;
 
 
     /* It is valid message? */

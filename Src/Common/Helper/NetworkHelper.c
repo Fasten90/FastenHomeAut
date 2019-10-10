@@ -47,7 +47,7 @@
  * @brief    Print IP to string
  * @return    string length
  */
-uint8_t Network_PrintIp(char *str, Network_IP_t *ip)
+size_t Network_PrintIp(char *str, Network_IP_t *ip)
 {
     return usprintf(str, "%d.%d.%d.%d",
             ip->IP[0],
@@ -62,7 +62,7 @@ uint8_t Network_PrintIp(char *str, Network_IP_t *ip)
  * @brief    Print IP to string
  * @return    string length
  */
-uint8_t Network_PrintIpOnDebug(char *str, Network_IP_t *ip)
+size_t Network_PrintIpOnDebug(char *str, Network_IP_t *ip)
 {
     return uprintf("%s IP address: %d.%d.%d.%d\r\n",
             str,

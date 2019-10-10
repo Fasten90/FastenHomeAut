@@ -52,8 +52,8 @@ typedef uint16_t Network_Port_t;
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-uint8_t Network_PrintIp(char *str, Network_IP_t *ip);
-uint8_t Network_PrintIpOnDebug(char *str, Network_IP_t *ip);
+size_t Network_PrintIp(char *str, Network_IP_t *ip);
+size_t Network_PrintIpOnDebug(char *str, Network_IP_t *ip);
 
 bool Network_ConvertIpAddressStringToIP(char *message, Network_IP_t *address);
 
