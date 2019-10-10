@@ -11,7 +11,7 @@ cd Tools
 
 :: Clone SCC
 if defined PIPELINE_WORKSPACE (
-  echo PIPELINE_WORKSPACE is defined 
+  echo PIPELINE_WORKSPACE is defined, download SourceCodeChecker
   git clone https://fasten90@bitbucket.org/fasten90/sourcecodechecker.git
 )
 
@@ -24,7 +24,10 @@ cd ..
 cd
 dir
 
+
 :: Run SCC
 :: Default config: scc_config.json
+echo Run SourceCodeChecker
+echo ---------------------
 python Tools/SourceCodeChecker/SourceCodeChecker.py
 
