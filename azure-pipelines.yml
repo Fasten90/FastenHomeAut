@@ -419,6 +419,25 @@ jobs:
       #noRc: true # Optional
 
 
+# Linux - TinyCC (TCC) - shell script
+- job: linux_build_tinycc_script
+  pool:
+    vmImage: 'ubuntu-latest'
+  displayName: 'Linux - Build - TinyCC (TCC) - shell script'
+  steps:
+  - task: Bash@3
+    inputs:
+      targetType: 'filePath' # Optional. Options: filePath, inline
+      #filePath: # Required when targetType == FilePath
+      filePath: RunCMake_TCC.sh
+      #arguments: # Optional
+      #script: '# Write your commands here# Use the environment variables input below to pass secret variables to this script' # Required when targetType == Inline
+      #workingDirectory: # Optional
+      #failOnStderr: false # Optional
+      #noProfile: true # Optional
+      #noRc: true # Optional
+
+
 # Linux - Clang Static Analysis - shell script
 - job: linux_clang_analysis_script
   pool:
@@ -495,30 +514,11 @@ jobs:
       #noRc: true # Optional
 
 
-# Linux - TinyCC (TCC) - shell script
-- job: linux_build_tinycc_script
-  pool:
-    vmImage: 'ubuntu-latest'
-  displayName: 'Linux - Build - TinyCC (TCC) - shell script'
-  steps:
-  - task: Bash@3
-    inputs:
-      targetType: 'filePath' # Optional. Options: filePath, inline
-      #filePath: # Required when targetType == FilePath
-      filePath: RunCMake_TCC.sh
-      #arguments: # Optional
-      #script: '# Write your commands here# Use the environment variables input below to pass secret variables to this script' # Required when targetType == Inline
-      #workingDirectory: # Optional
-      #failOnStderr: false # Optional
-      #noProfile: true # Optional
-      #noRc: true # Optional
-
-
-# Windows - Fasten SCC - shell script
-- job: windows_fasten_scc
+# Fasten SCC - Source Code Checker - shell script
+- job: source_code_checker
   pool:
     vmImage: 'windows-2019'
-  displayName: 'Windows - Fasten-SCC - batch script'
+  displayName: 'Source Code Checker - batch script'
   steps:
   - task: BatchScript@1
     inputs:
@@ -531,11 +531,11 @@ jobs:
       #noRc: true # Optional
 
 
-# Collect Compiler warnings
+# Fasten CCW - Collect Compiler Warnings
 - job: compiler_warnings
   pool:
     vmImage: 'windows-2019'
-  displayName: 'Compiler warnings'
+  displayName: 'Collect Compiler Warnings'
   dependsOn: win_build_msvc
   steps:
   - download: current
@@ -566,41 +566,42 @@ jobs:
       python CompilerWarningCollector/CompilerWarningCollector.py
 
 
-# Windows - Test - 1.
-- job: windows_test
-  pool:
-    vmImage: 'windows-2019'
-  displayName: 'Windows - Test'
-  steps:
-  - task: BatchScript@1
-    inputs:
-      filename: 'Test.bat'
-      #arguments: # Optional
-      #script: '# Write your commands here# Use the environment variables input below to pass secret variables to this script' # Required when targetType == Inline
-      #workingDirectory: # Optional
-      #failOnStderr: false # Optional
-      #noProfile: true # Optional
-      #noRc: true # Optional
-  - publish: $(System.DefaultWorkingDirectory)/logfile.txt
-    artifact: WindowsTestArtifact
-
-
-# Windows - Test - 2.
-- job: windows_test_2
-  pool:
-    vmImage: 'windows-2019'
-  displayName: 'Windows - Test - 2.'
-  dependsOn: windows_test
-  steps:
-  - download: current
-    artifact: WindowsTestArtifact
-  - script: |
-      echo Windows test 2
-      cd
-      dir
-      cd ../WindowsTestArtifact
-      echo ##################################################
-      type logfile.txt
-      echo ##################################################
-      more logfile.txt
+# Note: Working example for Artifact
+## Windows - Test - 1.
+#- job: windows_test
+#  pool:
+#    vmImage: 'windows-2019'
+#  displayName: 'Windows - Test'
+#  steps:
+#  - task: BatchScript@1
+#    inputs:
+#      filename: 'Test.bat'
+#      #arguments: # Optional
+#      #script: '# Write your commands here# Use the environment variables input below to pass secret variables to this script' # Required when targetType == Inline
+#      #workingDirectory: # Optional
+#      #failOnStderr: false # Optional
+#      #noProfile: true # Optional
+#      #noRc: true # Optional
+#  - publish: $(System.DefaultWorkingDirectory)/logfile.txt
+#    artifact: WindowsTestArtifact
+#
+#
+## Windows - Test - 2.
+#- job: windows_test_2
+#  pool:
+#    vmImage: 'windows-2019'
+#  displayName: 'Windows - Test - 2.'
+#  dependsOn: windows_test
+#  steps:
+#  - download: current
+#    artifact: WindowsTestArtifact
+#  - script: |
+#      echo Windows test 2
+#      cd
+#      dir
+#      cd ../WindowsTestArtifact
+#      echo ##################################################
+#      type logfile.txt
+#      echo ##################################################
+#      more logfile.txt
 
