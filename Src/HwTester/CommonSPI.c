@@ -133,8 +133,8 @@ void CommonSPI_Init(void)
      * "aTxBuffer" buffer & receive data through "aRxBuffer" */
     if(HAL_SPI_TransmitReceive_IT(&SpiHandle, (uint8_t*)aTxBuffer, (uint8_t *)aRxBuffer, BUFFERSIZE) != HAL_OK)
     {
-      /* Transfer error in transmission process */
-      Error_Handler();
+        /* Transfer error in transmission process */
+        Error_Handler();
     }
 
     /*##-3- Wait for the end of the transfer ###################################*/
