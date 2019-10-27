@@ -584,7 +584,7 @@ jobs:
   pool:
     vmImage: 'windows-2019'
   displayName: 'Collect Compiler Warnings - GCC'
-  dependsOn: win_build_gcc
+  dependsOn: win_build_mingw_gcc
   steps:
   - download: current
     # TODO: Try more beautiful artifact downloading
