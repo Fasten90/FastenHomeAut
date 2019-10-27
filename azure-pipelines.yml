@@ -574,7 +574,7 @@ jobs:
       python CompilerWarningCollector/CompilerWarningCollector.py --file_list MSVC_build.log --comp MSVC
   # TODO: Change to Compiler independent
   - publish: $(System.DefaultWorkingDirectory)/Tools/MSVC_build_found_warnings.txt
-    artifact: CompilerWarning_Artifact
+    artifact: CompilerWarning_Artifact_MSVC
 
 
 # Fasten CCW - Collect Compiler Warnings
@@ -604,7 +604,7 @@ jobs:
       python CompilerWarningCollector/CompilerWarningCollector.py --file_list GCC_build.log --comp GCC
   # TODO: Change to Compiler independent
   - publish: $(System.DefaultWorkingDirectory)/Tools/GCC_build_found_warnings.txt
-    artifact: CompilerWarning_Artifact
+    artifact: CompilerWarning_Artifact_GCC
 
 
 # Note: Working example for Artifact
