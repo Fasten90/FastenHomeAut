@@ -540,19 +540,16 @@ jobs:
 
 
 # Fasten CCW - Collect Compiler Warnings
-- job: compiler_warnings
+- job: compiler_warnings_msvc
   pool:
     vmImage: 'windows-2019'
-  displayName: 'Collect Compiler Warnings'
-  dependsOn: [
-    win_build_msvc,
-    win_build_mingw_gcc
-    ]
+  displayName: 'Collect Compiler Warnings - MSVC'
+  dependsOn: win_build_msvc
   steps:
   - download: current
     # TODO: Try more beautiful artifact downloading
     #artifact: $(System.DefaultWorkingDirectory)/Build_MSVC_Artifact
-    artifact: [Build_MSVC_Artifact, Build_GCC_Artifact]
+    artifact: Build_MSVC_Artifact
   - script: |
       echo Compiler Warnings Collector
       :: Artifacts go to <pipeline>\<artifactname>
@@ -572,11 +569,40 @@ jobs:
       git clone https://github.com/Fasten90/CompilerWarningCollector.git
       :: Copy log file to here
       copy ..\..\Build_MSVC_Artifact\MSVC_build.log
-      copy ..\..\Build_GCC_Artifact\GCC_build.log
       :: Run CWC
       :: Default config: scc_config.json
       ::python CompilerWarningCollector/CompilerWarningCollector.py
       python CompilerWarningCollector/CompilerWarningCollector.py --file_list ../MSVC_build.log --comp MSVC
+  # TODO: Change to Compiler independent
+  - publish: $(System.DefaultWorkingDirectory)/Tools/MSVC_build_found_warnings.txt,
+      $(System.DefaultWorkingDirectory)/Tools/GCC_build_found_warnings.txt
+    artifact: CompilerWarning_Artifact
+
+
+# Fasten CCW - Collect Compiler Warnings
+- job: compiler_warnings_gcc
+  pool:
+    vmImage: 'windows-2019'
+  displayName: 'Collect Compiler Warnings - GCC'
+  dependsOn: win_build_gcc
+  steps:
+  - download: current
+    # TODO: Try more beautiful artifact downloading
+    #artifact: $(System.DefaultWorkingDirectory)/Build_MSVC_Artifact
+    artifact: Build_GCC_Artifact
+  - script: |
+      echo Compiler Warnings Collector
+      :: Artifacts go to <pipeline>\<artifactname>
+      echo ##################################################
+      mkdir Tools
+      cd Tools
+      :: Clone CWC
+      git clone https://github.com/Fasten90/CompilerWarningCollector.git
+      :: Copy log file to here
+      copy ..\..\Build_GCC_Artifact\GCC_build.log
+      :: Run CWC
+      :: Default config: scc_config.json
+      ::python CompilerWarningCollector/CompilerWarningCollector.py
       python CompilerWarningCollector/CompilerWarningCollector.py --file_list ../GCC_build.log --comp GCC
   # TODO: Change to Compiler independent
   - publish: $(System.DefaultWorkingDirectory)/Tools/MSVC_build_found_warnings.txt,
