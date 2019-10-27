@@ -552,7 +552,7 @@ jobs:
   - download: current
     # TODO: Try more beautiful artifact downloading
     #artifact: $(System.DefaultWorkingDirectory)/Build_MSVC_Artifact
-    artifact: Build_MSVC_Artifact, Build_GCC_Artifact
+    artifact: [Build_MSVC_Artifact, Build_GCC_Artifact]
   - script: |
       echo Compiler Warnings Collector
       :: Artifacts go to <pipeline>\<artifactname>
