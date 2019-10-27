@@ -572,10 +572,9 @@ jobs:
       :: Run CWC
       :: Default config: scc_config.json
       ::python CompilerWarningCollector/CompilerWarningCollector.py
-      python CompilerWarningCollector/CompilerWarningCollector.py --file_list ../MSVC_build.log --comp MSVC
+      python CompilerWarningCollector/CompilerWarningCollector.py --file_list MSVC_build.log --comp MSVC
   # TODO: Change to Compiler independent
-  - publish: $(System.DefaultWorkingDirectory)/Tools/MSVC_build_found_warnings.txt,
-      $(System.DefaultWorkingDirectory)/Tools/GCC_build_found_warnings.txt
+  - publish: $(System.DefaultWorkingDirectory)/Tools/MSVC_build_found_warnings.txt
     artifact: CompilerWarning_Artifact
 
 
@@ -603,10 +602,9 @@ jobs:
       :: Run CWC
       :: Default config: scc_config.json
       ::python CompilerWarningCollector/CompilerWarningCollector.py
-      python CompilerWarningCollector/CompilerWarningCollector.py --file_list ../GCC_build.log --comp GCC
+      python CompilerWarningCollector/CompilerWarningCollector.py --file_list GCC_build.log --comp GCC
   # TODO: Change to Compiler independent
-  - publish: $(System.DefaultWorkingDirectory)/Tools/MSVC_build_found_warnings.txt,
-      $(System.DefaultWorkingDirectory)/Tools/GCC_build_found_warnings.txt
+  - publish: $(System.DefaultWorkingDirectory)/Tools/GCC_build_found_warnings.txt
     artifact: CompilerWarning_Artifact
 
 
