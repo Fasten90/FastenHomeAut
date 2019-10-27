@@ -82,7 +82,7 @@ EEPROM_Result_t EEPROM_Write(const uint16_t address, const uint8_t * buffer, con
         return EEPROM_RESULT_ERROR;
     }
 
-#if (EEPROM_ADDRESS_START != 0)
+#if (EEPROM_ADDRESS_START_DEF != 0)
     if ((address < EEPROM_ADDRESS_START) || ((address + size) > EEPROM_ADDRESS_END))
 #else
     /* Note: Some compiler will report the always true situation */
@@ -121,7 +121,7 @@ EEPROM_Result_t EEPROM_Read(const uint16_t address, uint8_t * buffer, const uint
         return EEPROM_RESULT_ERROR;
     }
 
-#if (EEPROM_ADDRESS_START != 0)
+#if (EEPROM_ADDRESS_START_DEF != 0)
     if ((address < EEPROM_ADDRESS_START) || ((address + size) > EEPROM_ADDRESS_END))
 #else
     /* Note: Some compiler will report the always true situation */

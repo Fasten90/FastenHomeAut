@@ -25,9 +25,10 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define EEPROM_ADDRESS_START        ((uint16_t)0x0000U)
-#define EEPROM_SIZE                 ((uint16_t)0x800U)
-#define EEPROM_ADDRESS_END          ((uint16_t)(EEPROM_ADDRESS_START + EEPROM_SIZE))
+#define EEPROM_ADDRESS_START_DEF       (0)
+#define EEPROM_ADDRESS_START           ((uint16_t)0x0000U)
+#define EEPROM_SIZE                    ((uint16_t)0x800U)
+#define EEPROM_ADDRESS_END             ((uint16_t)(EEPROM_ADDRESS_START + EEPROM_SIZE))
 
 
 
