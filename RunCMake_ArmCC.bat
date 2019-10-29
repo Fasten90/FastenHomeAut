@@ -48,4 +48,10 @@ if %test_executing_result_wrong% NEQ 0 (
     echo Script has run successfully
 )
 
-::exit %test_executing_result_wrong%
+
+:: PIPELINE_WORKSPACE - Define available at Pipeline (e.g. Azure)
+if defined PIPELINE_WORKSPACE (
+  :: Return error at pipeline
+  exit %test_executing_result_wrong%
+)
+
