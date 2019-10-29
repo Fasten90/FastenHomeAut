@@ -94,8 +94,8 @@ void SelfTest_Errors_MemFault(void)
     /* Test invalid pointer */
     /* TODO: This address normally is an invalid address, but not every target-platform, but shall provide a target dependent invalid address */
     /* TODO: Check constValue with MEM functions */
-    const Address_t constValueMemAddress = 0x12345678;
-    uint32_t * wrongPointer = (Address_t *)constValueMemAddress; /* Set pointer address to an incorrect address */
+    const Address_t constValueMemAddress = (const Address_t)0x12345678;
+    Address_t * wrongPointer = (Address_t *)constValueMemAddress; /* Set pointer address to an incorrect address */
     *wrongPointer = 0; /* Note: Go to exception / MemFault */
 
     uprintf("WrongPointer value: %d\r\n", *wrongPointer);
