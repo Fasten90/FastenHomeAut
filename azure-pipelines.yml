@@ -187,64 +187,63 @@ stages:
         #failOnStandardError: true # Optional
 
 
+  # Linux - Build - gcc
+  - job: linux_build_gcc
+    pool:
+      vmImage: 'ubuntu-latest'
+    displayName: 'Linux - Build - GCC'
+    steps:
+    - script: |
 
-# Linux - Build - gcc
-- job: linux_build_gcc
-  pool:
-    vmImage: 'ubuntu-latest'
-  displayName: 'Linux - Build - GCC'
-  steps:
-  - script: |
+        echo 'Start Linux build pipeline - GCC'
+        # Print the gcc version.
 
-      echo 'Start Linux build pipeline - GCC'
-      # Print the gcc version.
+        gcc --version
+        #  Install a CMake 3.0.2 version.
+        #- apt-get update -qq
+        #- apt-get install cmake -y
+        #  Alternatively you could install a CMake 3.2.2 version through PPA repository.
+        apt-get update -qq
+        apt-get install software-properties-common -y
+        # Add PPA repository.
+        echo 'deb http://ppa.launchpad.net/george-edison55/cmake-3.x/ubuntu trusty main' | tee -a /etc/apt/sources.list.d/cmake.list
+        apt-get update -qq
+        apt-get install cmake -y --force-yes
+        # Print the CMake version.
+        echo 'Start CMake'
 
-      gcc --version
-      #  Install a CMake 3.0.2 version.
-      #- apt-get update -qq
-      #- apt-get install cmake -y
-      #  Alternatively you could install a CMake 3.2.2 version through PPA repository.
-      apt-get update -qq
-      apt-get install software-properties-common -y
-      # Add PPA repository.
-      echo 'deb http://ppa.launchpad.net/george-edison55/cmake-3.x/ubuntu trusty main' | tee -a /etc/apt/sources.list.d/cmake.list
-      apt-get update -qq
-      apt-get install cmake -y --force-yes
-      # Print the CMake version.
-      echo 'Start CMake'
+        cmake --version
 
-      cmake --version
+        # TODO: Perhaps does not need
+        #- cd $BITBUCKET_CLONE_DIR
+        echo 'List actual directory'
+        pwd
+        # Win: cd
+        ls
 
-      # TODO: Perhaps does not need
-      #- cd $BITBUCKET_CLONE_DIR
-      echo 'List actual directory'
-      pwd
-      # Win: cd
-      ls
+        mkdir Out
+        cd Out
+        mkdir CMakeBuild
+        cd CMakeBuild
+        pwd
 
-      mkdir Out
-      cd Out
-      mkdir CMakeBuild
-      cd CMakeBuild
-      pwd
+        # Call the CMake.
+        # Normally: "- cmake" or "-cmake .." used
+        cmake ../..
+        # -D"CMAKE_MAKE_PROGRAM:FILEPATH=make.exe" -D"CMAKE_C_COMPILER:FILEPATH=gcc.exe" -D"CMAKE_CXX_COMPILER:FILEPATH=g++.exe" CC=gcc -G "MinGW Makefiles"
 
-      # Call the CMake.
-      # Normally: "- cmake" or "-cmake .." used
-      cmake ../..
-      # -D"CMAKE_MAKE_PROGRAM:FILEPATH=make.exe" -D"CMAKE_C_COMPILER:FILEPATH=gcc.exe" -D"CMAKE_CXX_COMPILER:FILEPATH=g++.exe" CC=gcc -G "MinGW Makefiles"
+        # Build the project.
+        echo 'Start Make'
+        make
 
-      # Build the project.
-      echo 'Start Make'
-      make
+        # Check the results
+        echo 'Finished compile-ing'
+        ls
 
-      # Check the results
-      echo 'Finished compile-ing'
-      ls
-
-      # Run
-      echo 'Execute...'
-      ./FastenHomeAut
-      echo 'Finished executing'
+        # Run
+        echo 'Execute...'
+        ./FastenHomeAut
+        echo 'Finished executing'
 
 
   # Linux - Build - gcc-arm
@@ -589,34 +588,34 @@ stages:
       artifact: CompilerWarning_Artifact_MSVC
 
 
-    # Fasten CWC - Compiler Warnings Collector
-    - job: compiler_warnings_gcc
-      pool:
-        vmImage: 'windows-2019'
-      displayName: 'Compiler Warnings Collector - GCC'
-      dependsOn: win_build_mingw_gcc
-      steps:
-      - download: current
-        # TODO: Try more beautiful artifact downloading
-        #artifact: $(System.DefaultWorkingDirectory)/Build_MSVC_Artifact
-        artifact: Build_GCC_Artifact
-      - script: |
-          echo Compiler Warnings Collector
-          :: Artifacts go to <pipeline>\<artifactname>
-          echo ##################################################
-          mkdir Tools
-          cd Tools
-          :: Clone CWC
-          git clone https://github.com/Fasten90/CompilerWarningCollector.git
-          :: Copy log file to here
-          copy ..\..\Build_GCC_Artifact\GCC_build.log
-          :: Run CWC
-          :: Default config: scc_config.json
-          ::python CompilerWarningCollector/CompilerWarningCollector.py
-          python CompilerWarningCollector/CompilerWarningCollector.py --file_list GCC_build.log --comp GCC
-      # TODO: Change to Compiler independent
-      - publish: $(System.DefaultWorkingDirectory)/Tools/GCC_build_found_warnings.txt
-        artifact: CompilerWarning_Artifact_GCC
+  # Fasten CWC - Compiler Warnings Collector
+  - job: compiler_warnings_gcc
+    pool:
+      vmImage: 'windows-2019'
+    displayName: 'Compiler Warnings Collector - GCC'
+    dependsOn: win_build_mingw_gcc
+    steps:
+    - download: current
+      # TODO: Try more beautiful artifact downloading
+      #artifact: $(System.DefaultWorkingDirectory)/Build_MSVC_Artifact
+      artifact: Build_GCC_Artifact
+    - script: |
+        echo Compiler Warnings Collector
+        :: Artifacts go to <pipeline>\<artifactname>
+        echo ##################################################
+        mkdir Tools
+        cd Tools
+        :: Clone CWC
+        git clone https://github.com/Fasten90/CompilerWarningCollector.git
+        :: Copy log file to here
+        copy ..\..\Build_GCC_Artifact\GCC_build.log
+        :: Run CWC
+        :: Default config: scc_config.json
+        ::python CompilerWarningCollector/CompilerWarningCollector.py
+        python CompilerWarningCollector/CompilerWarningCollector.py --file_list GCC_build.log --comp GCC
+    # TODO: Change to Compiler independent
+    - publish: $(System.DefaultWorkingDirectory)/Tools/GCC_build_found_warnings.txt
+      artifact: CompilerWarning_Artifact_GCC
 
 
 # Note: Working example for Artifact
