@@ -668,7 +668,7 @@ stages:
         git clone https://github.com/Fasten90/CompilerWarningCollector.git
         copy ..\..\Build_Clang_Artifact\Clang_build.log
         python CompilerWarningCollector/CompilerWarningCollector.py --file_list Clang_build.log --comp Clang
-    - publish: $(System.DefaultWorkingDirectory)/Tools/GCC_ARM_build_found_warnings.txt
+    - publish: $(System.DefaultWorkingDirectory)/Tools/Clang_build_found_warnings.txt
       artifact: CompilerWarning_Artifact_Clang
 
   - job: compiler_warnings_tinycc
