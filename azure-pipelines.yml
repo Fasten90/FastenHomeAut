@@ -546,6 +546,7 @@ stages:
         #noProfile: true # Optional
         #noRc: true # Optional
 
+
 - stage: CompilerWarning
   dependsOn: Build
   jobs:
@@ -554,7 +555,8 @@ stages:
     pool:
       vmImage: 'windows-2019'
     displayName: 'Compiler Warnings Collector - MSVC'
-    dependsOn: win_build_msvc
+    # TODO: Commented, because this will run after build stage
+    #dependsOn: win_build_msvc
     steps:
     - download: current
       # TODO: Try more beautiful artifact downloading
@@ -593,7 +595,8 @@ stages:
     pool:
       vmImage: 'windows-2019'
     displayName: 'Compiler Warnings Collector - GCC'
-    dependsOn: win_build_mingw_gcc
+    # TODO: Commented, because this will run after build stage
+    #dependsOn: win_build_mingw_gcc
     steps:
     - download: current
       # TODO: Try more beautiful artifact downloading
