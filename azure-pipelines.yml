@@ -303,7 +303,11 @@ stages:
 
         # Build the project.
         echo 'Start Make'
-        make VERBOSE=1
+        #make VERBOSE=1
+        make VERBOSE=1 > GCC_ARM_build.log 2>&1
+
+        :: Echo the file
+        type GCC_ARM_build.log.log
 
         # Check the results
         echo 'Finished compile-ing'
@@ -324,6 +328,9 @@ stages:
             exit -1
         fi
 
+    - publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild/GCC_ARM_build.log
+      artifact: Build_GCC_ARM_Artifact
+
 
   # Linux - Clang - shell script
   - job: linux_build_clang_script
@@ -342,6 +349,9 @@ stages:
         #failOnStderr: false # Optional
         #noProfile: true # Optional
         #noRc: true # Optional
+    # TODO: Specific Out directory
+    - publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild_Clang/Clang_build.log
+      artifact: Build_Clang_Artifact
 
 
   # Linux - TinyCC (TCC) - shell script
@@ -361,6 +371,9 @@ stages:
         #failOnStderr: false # Optional
         #noProfile: true # Optional
         #noRc: true # Optional
+    # TODO: Specific Out directory
+    - publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild_Tcc/TinyCC_build.log
+      artifact: Build_TinyCC_Artifact
 
 
 - stage: Test
@@ -620,43 +633,59 @@ stages:
     - publish: $(System.DefaultWorkingDirectory)/Tools/GCC_build_found_warnings.txt
       artifact: CompilerWarning_Artifact_GCC
 
+  
+  # TODO: Refactor
+  - job: compiler_warnings_gcc_arm
+    pool:
+      vmImage: 'windows-2019'
+    displayName: 'Compiler Warnings Collector - GCC - ARM'
+    steps:
+    - download: current
+      artifact: Build_GCC_ARM_Artifact
+    - script: |
+        echo Compiler Warnings Collector
+        echo ##################################################
+        mkdir Tools
+        cd Tools
+        git clone https://github.com/Fasten90/CompilerWarningCollector.git
+        copy ..\..\Build_GCC_ARM_Artifact\GCC_ARM_build.log
+        python CompilerWarningCollector/CompilerWarningCollector.py --file_list GCC_ARM_build.log --comp GCC
+    - publish: $(System.DefaultWorkingDirectory)/Tools/GCC_ARM_build_found_warnings.txt
+      artifact: CompilerWarning_Artifact_GCC_ARM
 
-# Note: Working example for Artifact
-## Windows - Test - 1.
-#- job: windows_test
-#  pool:
-#    vmImage: 'windows-2019'
-#  displayName: 'Windows - Test'
-#  steps:
-#  - task: BatchScript@1
-#    inputs:
-#      filename: 'Test.bat'
-#      #arguments: # Optional
-#      #script: '# Write your commands here# Use the environment variables input below to pass secret variables to this script' # Required when targetType == Inline
-#      #workingDirectory: # Optional
-#      #failOnStderr: false # Optional
-#      #noProfile: true # Optional
-#      #noRc: true # Optional
-#  - publish: $(System.DefaultWorkingDirectory)/logfile.txt
-#    artifact: WindowsTestArtifact
-#
-#
-## Windows - Test - 2.
-#- job: windows_test_2
-#  pool:
-#    vmImage: 'windows-2019'
-#  displayName: 'Windows - Test - 2.'
-#  dependsOn: windows_test
-#  steps:
-#  - download: current
-#    artifact: WindowsTestArtifact
-#  - script: |
-#      echo Windows test 2
-#      cd
-#      dir
-#      cd ../WindowsTestArtifact
-#      echo ##################################################
-#      type logfile.txt
-#      echo ##################################################
-#      more logfile.txt
+  - job: compiler_warnings_clang
+    pool:
+      vmImage: 'windows-2019'
+    displayName: 'Compiler Warnings Collector - Clang'
+    steps:
+    - download: current
+      artifact: Build_Clang_Artifact
+    - script: |
+        echo Compiler Warnings Collector
+        echo ##################################################
+        mkdir Tools
+        cd Tools
+        git clone https://github.com/Fasten90/CompilerWarningCollector.git
+        copy ..\..\Build_Clang_Artifact\Clang_build.log
+        python CompilerWarningCollector/CompilerWarningCollector.py --file_list Clang_build.log --comp Clang
+    - publish: $(System.DefaultWorkingDirectory)/Tools/Clang_build_found_warnings.txt
+      artifact: CompilerWarning_Artifact_Clang
+
+  - job: compiler_warnings_tinycc
+    pool:
+      vmImage: 'windows-2019'
+    displayName: 'Compiler Warnings Collector - TinyCC'
+    steps:
+    - download: current
+      artifact: Build_TinyCC_Artifact
+    - script: |
+        echo Compiler Warnings Collector
+        echo ##################################################
+        mkdir Tools
+        cd Tools
+        git clone https://github.com/Fasten90/CompilerWarningCollector.git
+        copy ..\..\Build_TinyCC_Artifact\TinyCC_build.log
+        python CompilerWarningCollector/CompilerWarningCollector.py --file_list TinyCC_build.log --comp GCC
+    - publish: $(System.DefaultWorkingDirectory)/Tools/TinyCC_build_found_warnings.txt
+      artifact: CompilerWarning_Artifact_TinyCC
 

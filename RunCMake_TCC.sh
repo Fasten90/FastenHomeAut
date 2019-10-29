@@ -20,7 +20,18 @@ cmake CC=tcc ../..
 
 # Run make
 echo Execute make
-make
+
+# PIPELINE_WORKSPACE - Define available at Pipeline (e.g. Azure)
+if [[ -z "${PIPELINE_WORKSPACE}" ]]; then
+  # Local
+  echo Run on local
+  make
+else
+  # Pipeline
+  echo Run on pipeline
+  make > TinyCC_build.log 2>&1
+  cat TinyCC_build.log
+fi
 
 
 # Start compiled exe
