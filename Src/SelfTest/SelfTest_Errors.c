@@ -98,7 +98,7 @@ void SelfTest_Errors_MemFault(void)
     Address_t * wrongPointer = (Address_t *)constValueMemAddress; /* Set pointer address to an incorrect address */
     *wrongPointer = 0; /* Note: Go to exception / MemFault */
 
-    uprintf("WrongPointer value: %d\r\n", *wrongPointer);
+    uprintf("WrongPointer value: %d\r\n", (uint32_t)*wrongPointer); /* Suppress 64 bit --> 32 bit type conversion */
 }
 
 
