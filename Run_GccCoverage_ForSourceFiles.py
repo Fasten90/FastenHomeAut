@@ -9,7 +9,7 @@ import os
 # gcov --all-blocks --function-summaries --branch-probabilities --branch-counts --unconditional-branches CMakeFiles/FastenHomeAut.dir/Src/main.c.gcno
 
 __COMMAND = "gcov"
-#__COMMAND_ARG = "--all-blocks --function-summaries --branch-probabilities --branch-counts --unconditional-branches CMakeFiles/FastenHomeAut.dir/"
+__COMMAND_ARG = "--all-blocks --function-summaries --branch-probabilities --branch-counts --unconditional-branches"
 __gcov_file_dir = "CMakeFiles/FastenHomeAut.dir/"
 
 
@@ -70,16 +70,16 @@ for source in source_list:
     source = source.replace("\\", "/")
     gcno_file_path = __gcov_file_dir + source + ".gcno"
     
-    print("file: '{}'".format(gcno_file_path))
+    #print("file: '{}'".format(gcno_file_path))
     if os.path.exists(gcno_file_path):
         # Call
-        command = __COMMAND + " " + gcno_file_path
-        print("  Command: {}".format(command))
+        command = __COMMAND + " " + __COMMAND_ARG + " " + gcno_file_path
+        print("Command: {}".format(command))
         #subprocess.run(["ls", "-l"])
         #subprocess.run([__COMMAND, command_arg])
-        #return_code = subprocess.call("echo Hello World", shell=True)  
         return_code = subprocess.call(command, shell=True)
-        print("  Return code: {}".format(return_code))
+        # Debug code
+        #print("  Return code: {}".format(return_code))
     else:
         # Do not call
         print("'{}' has no gcno file".format(source))
