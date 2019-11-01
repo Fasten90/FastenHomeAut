@@ -17,13 +17,8 @@ if defined PIPELINE_WORKSPACE (
 )
 
 
-cd
-dir
-
+:: Go into the root
 cd ..
-
-cd
-dir
 
 
 :: Run SCC
