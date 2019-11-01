@@ -26,7 +26,7 @@ FastenHomeAut.exe
 echo Coverage
 
 
-:: Clone SCC
+:: Clone GccCoverageParser
 :: PIPELINE_WORKSPACE - Define available at Pipeline (e.g. Azure)
 if defined PIPELINE_WORKSPACE (
   echo PIPELINE_WORKSPACE is defined, download GccCoverageParser
@@ -39,6 +39,8 @@ if defined PIPELINE_WORKSPACE (
  
   git clone https://github.com/Fasten90/GccCoverageParser.git
   
+  cd ..
+
   cd Out
   cd CMakeBuild_GccCoverage
 )
