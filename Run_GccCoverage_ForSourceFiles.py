@@ -4,6 +4,9 @@ import glob
 import subprocess
 
 import os
+from enum import Enum
+import re
+
 
 # Note: Similar command shall be called all gcno file
 # gcov --all-blocks --function-summaries --branch-probabilities --branch-counts --unconditional-branches CMakeFiles/FastenHomeAut.dir/Src/main.c.gcno
@@ -86,4 +89,133 @@ for source in source_list:
 
 
 # from pathlib import Path
-    
+
+print(os.getcwd())
+
+gcov_file_list = glob.glob("*.gcov")
+
+
+
+# TODO: UnitTest
+"""
+      513:  871:    if ((str == NULL) || (value == NULL))
+        -:  872:    {
+    #####:  873:        return false;
+"""
+
+class gcov_info(Enum):
+    ERROR = 0
+    UNKNOWN = 1
+    UNCOVERED = 2
+    COVERED = 3
+
+def get_line_data(line):
+    [line_info, line_number, line_content] = line.split(":", 2)
+    line_info = line_info.strip()
+    line_number = int(line_number.strip())
+    if line_info.isdigit():
+        return (gcov_info.COVERED, int(line_info))
+    elif "-" == line_info:
+        return (gcov_info.UNKNOWN, None)
+    elif "#####" == line_info:
+        return (gcov_info.UNCOVERED, None)
+    else:
+        print("[ERROR]: gcov info could not recognize: '{}' at line {}.".format(line_info, line_number))
+        return (gcov_info.ERROR, None)
+
+# Function detection
+#   Limitations:
+#     more line declarated functions
+#     MACRO FUNCTION
+
+# TODO: Move unittest
+# https://regex101.com/r/PgMQnh/1
+"""
+void function()
+
+void function1(void)
+
+void function2(void) {
+
+void function3(int blabla)
+
+void function4(int blabla) {
+
+int function5(void)
+
+int * function6(int bla1, int bla2)
+
+INLINE_FUNCTION void function7(int blabla)
+
+void function8 ( int * bla )
+
+void function9 ( uint8_t * ehh, Type_ omg )
+
+bool BUTTON_GetButtonState(ButtonType_t button)
+"""
+
+"""
+Wrong unittest
+"""
+
+#regex_function_detect = re.compile(r"^[\w\* ]+ (?P<function_name>\w*) *\( *[\w\,\*\_ ]* *\)")
+regex_function_detect = re.compile(r"^ *([\w]+[\w\* ]*) (?P<function_name>[^\(\=\? ]+) *\( *[^\)\=\>\<.]+ *\) *\{*$")
+
+gcov_info_list = {}
+
+def parse_gcov_file(file_path):
+    with open(file_path, 'r') as file:
+        gcov_info_list[file_path] = {}
+        file_content = file.readlines()
+        prev_func_exists = False
+        prev_func_name = ""
+        for i, line in enumerate(file_content):
+            # Is detect function?
+            line_try_parse_for_function = line.split(":", 2)[2]
+            actual_line_is_function_decl = regex_function_detect.match(line_try_parse_for_function)
+            if actual_line_is_function_decl:
+                # New function declaration, break the previous!
+                function_name = actual_line_is_function_decl.group("function_name")
+                # Check line data
+                (line_info, line_data) = get_line_data(line)
+
+                assert(line_info == gcov_info.COVERED or line_info == gcov_info.UNKNOWN or line_info.UNCOVERED)
+                function_is_covered = True if line_info == gcov_info.COVERED else False
+
+                gcov_info_list[file_path][function_name] = {
+                    "covered_function": function_is_covered,
+                    "coverage": []
+                }
+
+                # TODO: Check
+                if prev_func_exists:
+                    # New started
+                    pass
+                else:
+                    # First started
+                    pass
+                print("Started new function declaration: '{}' at line '{}'".format(function_name, i+1))
+                prev_func_name = function_name
+
+            else:
+                # Not Function declaration line, so branch or not necessary code parts
+                if prev_func_exists:
+                    # Important, check
+                    # Check line
+                    (line_info, line_data) = get_line_data(line)
+                    if line_info == gcov_info.COVERED or gcov_info.UNCOVERED:
+                        # Save information
+                        branch_is_covered = True if line_info == gcov_info.COVERED else False
+                        gcov_info_list[file_path][prev_func_name][line_data]['coverage'].append((i, branch_is_covered))
+                else:
+                    # not in function, dont care, go out
+                    pass
+
+# Check all gcovs
+for gcov_file in gcov_file_list:
+    print(gcov_file)
+    parse_gcov_file(gcov_file)
+
+# Print gcov result
+for item in gcov_info_list:
+    print(item)
