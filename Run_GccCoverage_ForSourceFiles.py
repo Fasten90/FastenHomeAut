@@ -1,9 +1,7 @@
 import glob
-#from pathlib import Path
-
 import subprocess
-
 import os
+import time
 from enum import Enum
 import re
 
@@ -88,7 +86,11 @@ for source in source_list:
         print("'{}' has no gcno file".format(source))
 
 
-# from pathlib import Path
+print("Wait...")
+for i in range(10):
+    print(".")
+    time.sleep(1)
+
 
 print(os.getcwd())
 
@@ -196,7 +198,10 @@ def parse_gcov_file(file_path):
         prev_func_name = ""
         for i, line in enumerate(file_content):
             # Is detect function?
-            line_try_parse_for_function = line.split(":", 2)[2]
+            try:
+                line_try_parse_for_function = line.split(":", 2)[2]
+            except IndexError:
+                print("[ERROR]: Cannot parsed line: '{}' at line {}".format(line, i))
             actual_line_is_function_decl = regex_function_detect.match(line_try_parse_for_function)
             if actual_line_is_function_decl:
                 # New function declaration, break the previous!
