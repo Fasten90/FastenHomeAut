@@ -24,8 +24,9 @@ make -j4
 
 echo Coverage
 
-# TODO: Another files + PATH fixes
-gcov --all-blocks --function-summaries --branch-probabilities --branch-counts --unconditional-branches main.c
+gcov --all-blocks --function-summaries --branch-probabilities --branch-counts --unconditional-branches CMakeFiles/FastenHomeAut.dir/Src/main.c.gcno
+gcov --all-blocks --function-summaries --branch-probabilities --branch-counts --unconditional-branches CMakeFiles/FastenHomeAut.dir/Src/Common/Handler/CommandHandler.c.gcno
+gcov --all-blocks --function-summaries --branch-probabilities --branch-counts --unconditional-branches CMakeFiles/FastenHomeAut.dir/Src/Common/Helper/StringHelper.c.gcno
 
 
 # Go to original directory

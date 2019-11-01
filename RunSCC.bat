@@ -2,7 +2,7 @@
 echo Run Fasten SCC
 
 
-:: Go to Out/CMakeBuild_Tcc
+:: Go to Tools
 mkdir Tools
 cd Tools
 ::mkdir SourceCodeChecker
@@ -17,13 +17,8 @@ if defined PIPELINE_WORKSPACE (
 )
 
 
-cd
-dir
-
+:: Go into the root
 cd ..
-
-cd
-dir
 
 
 :: Run SCC

@@ -46,34 +46,11 @@ if defined PIPELINE_WORKSPACE (
 )
 
 
-
-:: TODO: Another files?
-:: gcov ../../Src/main.c
-:: Works:
-::gcov CMakeFiles/FastenHomeAut.dir/Src/main.c.gcno
-::gcov --function-summaries CMakeFiles/FastenHomeAut.dir/Src/main.c.gcno
-
-:: gcov -abcfu lib.c
-:: --all-blocks                Show information for every basic block
-::echo Test commands
-::gcov --all-blocks --function-summaries --branch-probabilities --branch-counts --unconditional-branches CMakeFiles/FastenHomeAut.dir/Src/main.c.gcno
-::gcov --all-blocks --function-summaries --branch-probabilities --branch-counts --unconditional-branches CMakeFiles/FastenHomeAut.dir/Src/Common/Handler/CommandHandler.c.gcno
-::gcov --all-blocks --function-summaries --branch-probabilities --branch-counts --unconditional-branches CMakeFiles/FastenHomeAut.dir/Src/Common/Helper/StringHelper.c.gcno
-
 echo Run GccCoverageParser
 
-python ../../Tools/GccCoverageParser/Run_GccCoverage_ForSourceFiles.py
+cd
 
-
-
-::gcc -fprofile-arcs -ftest-coverage main.c
-
-::gcc -fprofile-arcs -ftest-coverage ../../Src/main.c
-
-::gcc -fprofile-arcs -ftest-coverage CMakeFiles/FastenHomeAut.dir/Src/main.c
-
-::gcc -fprofile-arcs -ftest-coverage CMakeFiles/FastenHomeAut.dir/Src/main.c.gcno
-
+python ../../Tools/GccCoverageParser/Run_GccCoverage_ForSourceFiles.py --source-root-dir ../.. --gcno-files-root CMakeFiles/FastenHomeAut.dir --gcov-files-root . --export-file-path GccCoverage.txt
 
 
 :: Go to original directory
