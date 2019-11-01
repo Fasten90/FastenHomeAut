@@ -87,7 +87,7 @@ for source in source_list:
 
 
 print("Wait...")
-for i in range(10):
+for i in range(5):
     print(".")
     time.sleep(1)
 
@@ -121,18 +121,18 @@ def get_line_data(line):
         [line_info, line_number, line_content] = line.split(":", 2)
     except IndexError:
         print("[ERROR]: Cannot parsed line: '{}'".format(line))
-        return (gcov_info.ERROR, None)
+        return (gcov_info.ERROR, None, None)
     line_info = line_info.strip()
     line_number = int(line_number.strip())
     if line_info.isdigit():
-        return (gcov_info.COVERED, int(line_info))
+        return (gcov_info.COVERED, int(line_info), line_number)
     elif "-" == line_info:
-        return (gcov_info.UNKNOWN, None)
+        return (gcov_info.UNKNOWN, None, line_number)
     elif "#####" == line_info:
-        return (gcov_info.UNCOVERED, None)
+        return (gcov_info.UNCOVERED, None, line_number)
     else:
         print("[ERROR]: gcov info could not recognize: '{}' at line {}.".format(line_info, line_number))
-        return (gcov_info.ERROR, None)
+        return (gcov_info.ERROR, None, line_number)
 
 # Function detection
 #   Limitations:
@@ -202,7 +202,8 @@ gcov_info_list = {}
 def parse_gcov_file(file_path):
     with open(file_path, 'r') as file:
         print("Start gcov parseing: '{}'".format(file_path))
-        gcov_info_list[file_path] = {}
+        file_name = file_path.split(".gcov")[0]
+        gcov_info_list[file_name] = {}
         file_content = file.readlines()
         prev_func_exists = False
         prev_func_name = ""
@@ -218,17 +219,17 @@ def parse_gcov_file(file_path):
                 # New function declaration, break the previous!
                 function_name = actual_line_is_function_decl.group("function_name")
                 # Check line data
-                (line_info, line_data) = get_line_data(line)
+                (line_info, line_data, line_number) = get_line_data(line)
                 # line data is line number
 
                 if not (line_info == gcov_info.COVERED or line_info == gcov_info.UNKNOWN or line_info.UNCOVERED):
                     print("[ERROR]: Cannot parsed line: '{}' at line {}".format(line, i))
                     continue
                 function_is_covered = True if line_info == gcov_info.COVERED else False
-
-                gcov_info_list[file_path][function_name] = {
+                # TODO: line_data not used
+                gcov_info_list[file_name][function_name] = {
                     "covered_function": function_is_covered,
-                    "function_decl_line": line_data,
+                    "function_decl_line": line_number,
                     "coverage": []
                 }
 
@@ -248,12 +249,12 @@ def parse_gcov_file(file_path):
                 if prev_func_exists:
                     # Important, check
                     # Check line
-                    (line_info, line_data) = get_line_data(line)
+                    (line_info, line_data, line_number) = get_line_data(line)
                     if line_info == gcov_info.COVERED or gcov_info.UNCOVERED:
                         # Save information
                         branch_is_covered = True if line_info == gcov_info.COVERED else False
-                        line_number = line_data  # real file line number
-                        gcov_info_list[file_path][prev_func_name]['coverage'].append((line_number, branch_is_covered))
+                        # TODO: line_data not used
+                        gcov_info_list[file_name][prev_func_name]['coverage'].append((line_number, branch_is_covered))
                     else:
                         print("[ERROR]: Unknown status of line: '{}' at line {}".format(line, i))
                 else:
@@ -270,5 +271,10 @@ for file in gcov_info_list:
     # Functions
     print("File: {}".format(file))
     for function in gcov_info_list[file]:
-        print("  Function: {}".format(function))
-        print("    " + str(gcov_info_list[file][function]))
+        print("  Function: {} at line {}".format(function, gcov_info_list[file][function]["function_decl_line"]))
+        # Could print all dictionary, but not necessary, if the function has not covered
+        if gcov_info_list[file][function]["covered_function"]:
+            print("    " + "Tested")
+            print("    " + str(gcov_info_list[file][function]["coverage"]))
+        else:
+            print("    " + "Not tested")
