@@ -92,8 +92,13 @@ for i in range(10):
     time.sleep(1)
 
 
+print("CWD:")
 print(os.getcwd())
+print()
 
+print("----------------------------------------")
+print("Start gcov parseing...")
+print()
 gcov_file_list = glob.glob("*.gcov")
 
 
@@ -196,6 +201,7 @@ gcov_info_list = {}
 
 def parse_gcov_file(file_path):
     with open(file_path, 'r') as file:
+        print("Start gcov parseing: '{}'".format(file_path))
         gcov_info_list[file_path] = {}
         file_content = file.readlines()
         prev_func_exists = False
@@ -213,6 +219,7 @@ def parse_gcov_file(file_path):
                 function_name = actual_line_is_function_decl.group("function_name")
                 # Check line data
                 (line_info, line_data) = get_line_data(line)
+                # line data is line number
 
                 if not (line_info == gcov_info.COVERED or line_info == gcov_info.UNKNOWN or line_info.UNCOVERED):
                     print("[ERROR]: Cannot parsed line: '{}' at line {}".format(line, i))
@@ -221,6 +228,7 @@ def parse_gcov_file(file_path):
 
                 gcov_info_list[file_path][function_name] = {
                     "covered_function": function_is_covered,
+                    "function_decl_line": line_data,
                     "coverage": []
                 }
 
@@ -244,9 +252,10 @@ def parse_gcov_file(file_path):
                     if line_info == gcov_info.COVERED or gcov_info.UNCOVERED:
                         # Save information
                         branch_is_covered = True if line_info == gcov_info.COVERED else False
-                        gcov_info_list[file_path][prev_func_name]['coverage'].append((i, branch_is_covered))
+                        line_number = line_data  # real file line number
+                        gcov_info_list[file_path][prev_func_name]['coverage'].append((line_number, branch_is_covered))
                     else:
-                        print("[ERROR]: Unknow status of line: '{}' at line {}".format(line, i))
+                        print("[ERROR]: Unknown status of line: '{}' at line {}".format(line, i))
                 else:
                     # not in function, dont care, go out
                     pass
