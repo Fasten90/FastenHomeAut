@@ -11,11 +11,11 @@ stages:
 - stage: Build
   jobs:
 
-  # Win - Build - MSVC
-  - job: win_build_msvc
+  # Build - Win - MSVC
+  - job: build_win_msvc
     pool:
       vmImage: 'windows-2019'
-    displayName: 'Windows - Build - MSVC'
+    displayName: 'Build - Win - MSVC'
     steps:
     - script: |
         echo 'Start Windows build pipeline: MSVC'
@@ -102,11 +102,11 @@ stages:
       artifact: Build_MSVC_Artifact
 
 
-  # Win - MinGW - GCC
-  - job: win_build_mingw_gcc
+  # Build - Win - MinGW - GCC
+  - job: build_win_mingw_gcc
     pool:
       vmImage: 'windows-2019'
-    displayName: 'Windows - Build - MinGW GCC'
+    displayName: 'Build - Win - MinGW GCC'
     steps:
     - script: |
         echo 'Start Windows build pipeline: MinGW + GCC'
@@ -172,11 +172,11 @@ stages:
       artifact: Build_GCC_Artifact
 
 
-  # Win - MinGW - GCC - batch script
-  - job: win_build_mingw_gcc_self_script
+  # Build - Win - MinGW - GCC - batch script
+  - job: build_win_mingw_gcc_batch
     pool:
       vmImage: 'windows-2019'
-    displayName: 'Windows - Build - MinGW GCC - batch script'
+    displayName: 'Build - Win - MinGW GCC [batch]'
     steps:
     - task: BatchScript@1
       inputs:
@@ -187,11 +187,11 @@ stages:
         #failOnStandardError: true # Optional
 
 
-  # Linux - Build - gcc
-  - job: linux_build_gcc
+  # Build - Linux - GCC
+  - job: build_linux_gcc
     pool:
       vmImage: 'ubuntu-latest'
-    displayName: 'Linux - Build - GCC'
+    displayName: 'Build - Linux - GCC'
     steps:
     - script: |
 
@@ -246,11 +246,11 @@ stages:
         echo 'Finished executing'
 
 
-  # Linux - Build - gcc-arm
-  - job: linux_build_gcc_arm
+  # Build - Linux - gcc-arm
+  - job: build_linux_gcc_arm
     pool:
       vmImage: 'ubuntu-latest'
-    displayName: 'Linux - Build - GCC - ARM - arm-none-eabi-gcc'
+    displayName: 'Build - Linux - GCC ARM - arm-none-eabi-gcc'
     steps:
     - script: |
 
@@ -332,11 +332,11 @@ stages:
       artifact: Build_GCC_ARM_Artifact
 
 
-  # Linux - Clang - shell script
-  - job: linux_build_clang_script
+  # Build - Linux - Clang - shell script
+  - job: build_linux_clang_script
     pool:
       vmImage: 'ubuntu-latest'
-    displayName: 'Linux - Build - Clang - shell script'
+    displayName: 'Build - Linux - Clang [shell]'
     steps:
     - task: Bash@3
       inputs:
@@ -354,11 +354,11 @@ stages:
       artifact: Build_Clang_Artifact
 
 
-  # Linux - TinyCC (TCC) - shell script
-  - job: linux_build_tinycc_script
+  # Build - Linux - TinyCC (TCC) - shell script
+  - job: build_linux_tinycc_script
     pool:
       vmImage: 'ubuntu-latest'
-    displayName: 'Linux - Build - TinyCC (TCC) - shell script'
+    displayName: 'Build - Linux - TinyCC [shell]'
     steps:
     - task: Bash@3
       inputs:
@@ -379,11 +379,11 @@ stages:
 - stage: Test
   dependsOn: Build
   jobs:
-  # Win - GCC - test coverage - batch script
-  - job: win_build_gcc_test_coverage_script
+  # Test - Win - GCC Coverage - batch script
+  - job: test_win_gcc_coverage_script
     pool:
       vmImage: 'windows-2019'
-    displayName: 'Windows - Build - GCC - test coverage - batch script'
+    displayName: 'Test - Win - GccCoverage [batch]'
     steps:
     - task: BatchScript@1
       inputs:
@@ -398,11 +398,11 @@ stages:
       artifact: Test_GccCoverage
 
 
-  # Linux - GCC - test coverage - shell script
-  - job: linux_build_gcc_test_coverage_script
+  # Test - Linux - GCC Coverage - shell script
+  - job: test_linux_gcc_coverage_script
     pool:
       vmImage: 'ubuntu-latest'
-    displayName: 'Linux - Build - GCC - test coverage - shell script'
+    displayName: 'Test - Linux - GccCoverage [shell]'
     steps:
     - task: Bash@3
       inputs:
@@ -488,11 +488,11 @@ stages:
   dependsOn: Build
   jobs:
 
-  # Linux - Clang Static Analysis - shell script
-  - job: linux_clang_analysis_script
+  # Analysis - Linux - Clang Static Analysis - shell script
+  - job: analysis_linux_clang_analysis_script
     pool:
       vmImage: 'ubuntu-latest'
-    displayName: 'Linux - Clang Analysis - shell script'
+    displayName: 'Analysis - Linux - Clang [shell]'
     steps:
     - task: Bash@3
       inputs:
@@ -507,11 +507,11 @@ stages:
         #noRc: true # Optional
 
 
-  # Linux - Clang Static Format - shell script
-  - job: linux_clang_format_script
+  # Format - Linux - Clang Static Format - shell script
+  - job: format_linux_clang_format_script
     pool:
       vmImage: 'ubuntu-latest'
-    displayName: 'Linux - Clang Format - shell script'
+    displayName: 'Format - Linux - Clang [shell]'
     steps:
     - task: Bash@3
       inputs:
@@ -526,11 +526,11 @@ stages:
         #noRc: true # Optional
 
 
-  # Linux - CppCheck - shell script
-  - job: linux_cppcheck_script
+  # Analysis - Linux - CppCheck - shell script
+  - job: analysis_linux_cppcheck_script
     pool:
       vmImage: 'ubuntu-latest'
-    displayName: 'Linux - CppCheck - shell script'
+    displayName: 'Analysis - Linux - CppCheck [shell]'
     steps:
     - task: Bash@3
       inputs:
@@ -545,11 +545,11 @@ stages:
         #noRc: true # Optional
 
 
-  # Fasten SCC - Source Code Checker - shell script
-  - job: source_code_checker
+  # Analysis - Fasten SCC - Source Code Checker - shell script
+  - job: analysis_source_code_checker
     pool:
       vmImage: 'windows-2019'
-    displayName: 'Source Code Checker - batch script'
+    displayName: 'Analysis - Source Code Checker [batch]'
     steps:
     - task: BatchScript@1
       inputs:
@@ -571,7 +571,7 @@ stages:
       vmImage: 'windows-2019'
     displayName: 'Compiler Warnings Collector - MSVC'
     # TODO: Commented, because this will run after build stage
-    #dependsOn: win_build_msvc
+    #dependsOn: build_win_msvc
     steps:
     - download: current
       # TODO: Try more beautiful artifact downloading
@@ -611,7 +611,7 @@ stages:
       vmImage: 'windows-2019'
     displayName: 'Compiler Warnings Collector - GCC'
     # TODO: Commented, because this will run after build stage
-    #dependsOn: win_build_mingw_gcc
+    #dependsOn: build_win_mingw_gcc
     steps:
     - download: current
       # TODO: Try more beautiful artifact downloading
