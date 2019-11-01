@@ -62,8 +62,8 @@ if defined PIPELINE_WORKSPACE (
 
 echo Run GccCoverageParser
 
-python ../../Tools/GccCoverageParser/Run_GccCoverage_ForSourceFiles.py
-
+cd
+python ../../Tools/GccCoverageParser/Run_GccCoverage_ForSourceFiles.py --source-root-dir ../.. --gcno-files-root CMakeFiles/FastenHomeAut.dir --gcov-files-root . --export-file-path GccCoverage.txt
 
 
 ::gcc -fprofile-arcs -ftest-coverage main.c
