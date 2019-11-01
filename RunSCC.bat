@@ -2,7 +2,7 @@
 echo Run Fasten SCC
 
 
-:: Go to Out/CMakeBuild_Tcc
+:: Go to Tools
 mkdir Tools
 cd Tools
 ::mkdir SourceCodeChecker
