@@ -394,6 +394,8 @@ stages:
         #failOnStderr: false # Optional
         #noProfile: true # Optional
         #noRc: true # Optional
+    - publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild_GccCoverage/GccCoverage.txt
+      artifact: Test_GccCoverage
 
 
   # Linux - GCC - test coverage - shell script

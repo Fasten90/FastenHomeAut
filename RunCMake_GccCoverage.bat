@@ -25,6 +25,28 @@ FastenHomeAut.exe
 
 echo Coverage
 
+
+:: Clone GccCoverageParser
+:: PIPELINE_WORKSPACE - Define available at Pipeline (e.g. Azure)
+if defined PIPELINE_WORKSPACE (
+  echo PIPELINE_WORKSPACE is defined, download GccCoverageParser
+  
+  :: Go to original directory
+  cd ../..
+
+  mkdir Tools
+  cd Tools
+ 
+  git clone https://github.com/Fasten90/GccCoverageParser.git
+  
+  cd ..
+
+  cd Out
+  cd CMakeBuild_GccCoverage
+)
+
+
+
 :: TODO: Another files?
 :: gcov ../../Src/main.c
 :: Works:
@@ -33,14 +55,15 @@ echo Coverage
 
 :: gcov -abcfu lib.c
 :: --all-blocks                Show information for every basic block
-echo Test commands
-gcov --all-blocks --function-summaries --branch-probabilities --branch-counts --unconditional-branches CMakeFiles/FastenHomeAut.dir/Src/main.c.gcno
-gcov --all-blocks --function-summaries --branch-probabilities --branch-counts --unconditional-branches CMakeFiles/FastenHomeAut.dir/Src/Common/Handler/CommandHandler.c.gcno
-gcov --all-blocks --function-summaries --branch-probabilities --branch-counts --unconditional-branches CMakeFiles/FastenHomeAut.dir/Src/Common/Helper/StringHelper.c.gcno
+::echo Test commands
+::gcov --all-blocks --function-summaries --branch-probabilities --branch-counts --unconditional-branches CMakeFiles/FastenHomeAut.dir/Src/main.c.gcno
+::gcov --all-blocks --function-summaries --branch-probabilities --branch-counts --unconditional-branches CMakeFiles/FastenHomeAut.dir/Src/Common/Handler/CommandHandler.c.gcno
+::gcov --all-blocks --function-summaries --branch-probabilities --branch-counts --unconditional-branches CMakeFiles/FastenHomeAut.dir/Src/Common/Helper/StringHelper.c.gcno
 
-echo Run python script for check all c files
-:: cd ../.. ?
-python ../../Run_GccCoverage_ForSourceFiles.py
+echo Run GccCoverageParser
+
+python ../../Tools/GccCoverageParser/Run_GccCoverage_ForSourceFiles.py
+
 
 
 ::gcc -fprofile-arcs -ftest-coverage main.c
@@ -53,6 +76,6 @@ python ../../Run_GccCoverage_ForSourceFiles.py
 
 
 
-
 :: Go to original directory
 cd ../..
+
