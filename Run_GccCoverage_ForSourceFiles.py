@@ -129,10 +129,8 @@ def get_line_data(line):
 #     MACRO FUNCTION
 
 # TODO: Move unittest
-# https://regex101.com/r/PgMQnh/1
+# https://regex101.com/r/PgMQnh/2
 """
-void function()
-
 void function1(void)
 
 void function2(void) {
@@ -156,6 +154,33 @@ bool BUTTON_GetButtonState(ButtonType_t button)
 
 """
 Wrong unittest
+/* Noooooooooooooo */
+/* Do not accept because the empty () */
+void function()
+
+    IO_Output_SetStatus(IO_LED_Blue, IO_Output_Cmd_SetToggle);
+
+    UNUSED_ARGUMENT(source);
+
+
+    if (UnitTest_InvalidCnt)
+
+    state = (HAL_GPIO_ReadPin(BUTTON_USER_GPIO_PORT, BUTTON_USER_GPIO_PIN) == GPIO_PIN_SET) ? true : false;
+
+
+    else if (str[1] == 80)
+
+    else if (circBuff->readCnt > circBuff->writeCnt)
+
+    else if (!StrCmp("settime", argv[1]) && argc == 3)
+
+    else if (Logic_Display_ActualState < AppType_Count)
+
+    else if (TaskList[i].isRequestScheduling)
+
+/* Commented line */
+     *         Test data in end of buffer (overflow!)
+
 """
 
 #regex_function_detect = re.compile(r"^[\w\* ]+ (?P<function_name>\w*) *\( *[\w\,\*\_ ]* *\)")
@@ -193,6 +218,7 @@ def parse_gcov_file(file_path):
                     pass
                 else:
                     # First started
+                    prev_func_exists = True
                     pass
                 print("Started new function declaration: '{}' at line '{}'".format(function_name, i+1))
                 prev_func_name = function_name
@@ -206,7 +232,7 @@ def parse_gcov_file(file_path):
                     if line_info == gcov_info.COVERED or gcov_info.UNCOVERED:
                         # Save information
                         branch_is_covered = True if line_info == gcov_info.COVERED else False
-                        gcov_info_list[file_path][prev_func_name][line_data]['coverage'].append((i, branch_is_covered))
+                        gcov_info_list[file_path][prev_func_name]['coverage'].append((i, branch_is_covered))
                 else:
                     # not in function, dont care, go out
                     pass
@@ -217,5 +243,9 @@ for gcov_file in gcov_file_list:
     parse_gcov_file(gcov_file)
 
 # Print gcov result
-for item in gcov_info_list:
-    print(item)
+for file in gcov_info_list:
+    # Functions
+    print("File: {}".format(file))
+    for function in gcov_info_list[file]:
+        print("  Function: {}".format(function))
+        print("    " + str(gcov_info_list[file][function]))
