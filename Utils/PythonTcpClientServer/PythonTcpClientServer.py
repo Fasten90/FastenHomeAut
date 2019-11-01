@@ -7,8 +7,10 @@ import time
 
 
 # Connection configs
+# TODO: Read own IP + autodetect settings
+
 #TCP_IP_DEFAULT = '192.168.4.1'
-TCP_IP_DEFAULT = '192.168.1.62'
+TCP_IP_DEFAULT = '192.168.0.241'
 TCP_PORT_DEFAULT = 2000
 BUFFER_SIZE = 20
 
@@ -129,7 +131,7 @@ while needRun:
 			print("Start server, wait client to IP: {}:{}".format(tcp_ip, tcp_port))
 			s.bind((tcp_ip, tcp_port))
 			s.listen(5)  # Blocking
-			global conn
+			#global conn
 			conn, addr = s.accept()
 			print ("Connected client address: {}".format(addr))
 		else:
