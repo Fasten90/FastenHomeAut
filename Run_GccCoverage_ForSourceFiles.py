@@ -112,7 +112,11 @@ class gcov_info(Enum):
     COVERED = 3
 
 def get_line_data(line):
-    [line_info, line_number, line_content] = line.split(":", 2)
+    try:
+        [line_info, line_number, line_content] = line.split(":", 2)
+    except IndexError:
+        print("[ERROR]: Cannot parsed line: '{}'".format(line))
+        return (gcov_info.ERROR, None)
     line_info = line_info.strip()
     line_number = int(line_number.strip())
     if line_info.isdigit():
@@ -202,6 +206,7 @@ def parse_gcov_file(file_path):
                 line_try_parse_for_function = line.split(":", 2)[2]
             except IndexError:
                 print("[ERROR]: Cannot parsed line: '{}' at line {}".format(line, i))
+                continue
             actual_line_is_function_decl = regex_function_detect.match(line_try_parse_for_function)
             if actual_line_is_function_decl:
                 # New function declaration, break the previous!
@@ -209,7 +214,9 @@ def parse_gcov_file(file_path):
                 # Check line data
                 (line_info, line_data) = get_line_data(line)
 
-                assert(line_info == gcov_info.COVERED or line_info == gcov_info.UNKNOWN or line_info.UNCOVERED)
+                if not (line_info == gcov_info.COVERED or line_info == gcov_info.UNKNOWN or line_info.UNCOVERED):
+                    print("[ERROR]: Cannot parsed line: '{}' at line {}".format(line, i))
+                    continue
                 function_is_covered = True if line_info == gcov_info.COVERED else False
 
                 gcov_info_list[file_path][function_name] = {
@@ -238,6 +245,8 @@ def parse_gcov_file(file_path):
                         # Save information
                         branch_is_covered = True if line_info == gcov_info.COVERED else False
                         gcov_info_list[file_path][prev_func_name]['coverage'].append((i, branch_is_covered))
+                    else:
+                        print("[ERROR]: Unknow status of line: '{}' at line {}".format(line, i))
                 else:
                     # not in function, dont care, go out
                     pass
