@@ -598,14 +598,15 @@ static bool ESP8266_SendTcpMessageNonBlockingMode_Start(size_t msgLength)
     }
 
     /* Buffer for "AT+CIPSEND=0,40\r\n" */
-    char cmdString[STRING_LENGTH("AT+CIPSEND=0," STR(ESP8266_TCP_MESSAGE_MAX_LENGTH) "\r\n") + 1];
+    const size_t cmdStringMaxLength = STRING_LENGTH("AT+CIPSEND=0," STR(ESP8266_TCP_MESSAGE_MAX_LENGTH) "\r\n") + 1;
+    char cmdString[cmdStringMaxLength];
 
 #if (CONFIG_ESP8266_MULTIPLE_CONNECTION == 1)
     /* Send ~ "AT+CIPSEND=0,40\r\n" */
     /* sprintf(cmdString, "AT+CIPSEND=0,%d\r\n", length); // Fix <id>, not good idea */
-    usprintf(cmdString, "AT+CIPSEND=%d,%d\r\n", ESP8266_TcpMessageId, msgLength);
+    usnprintf(cmdString, cmdStringMaxLength, "AT+CIPSEND=%d,%d\r\n", ESP8266_TcpMessageId, msgLength);
 #else
-    usprintf(cmdString, "AT+CIPSEND=%d\r\n", msgLength);
+    usnprintf(cmdString, cmdStringMaxLength, "AT+CIPSEND=%d\r\n", msgLength);
 #endif
 
     ESP8266_SendString(cmdString);
@@ -713,10 +714,11 @@ bool ESP8266_StartSendTcpMessageBlocked(size_t length)
      *     SEND OK
      */
 
-    char buffer[25]; /* For "AT+CIPSEND=0,40\r\n" */
+    const uint8_t bufferLength = 25;
+    char buffer[bufferLength]; /* For "AT+CIPSEND=0,40\r\n" */
 
     /* Send ~ "AT+CIPSEND=0,40\r\n" */
-    usprintf(buffer, "AT+CIPSEND=0,%d\r\n", length);
+    usnprintf(buffer, bufferLength, "AT+CIPSEND=0,%d\r\n", length);
     ESP8266_SendString(buffer);
 
     uint8_t timeout = 200;
@@ -1069,8 +1071,9 @@ void ESP8266_StatusMachine(void)
             ESP8266_ClearReceive(true, 0);
     #if (CONFIG_ESP8266_CONNECT_DYNAMIC == 1)
             /* Dynamic value of WiFi network name and password */
-            char str[50];
-            usprintf(str, "AT+CWJAP=\"%s\",\"%s\"\r\n",
+            const uint8_t strLength = 50;
+            char str[strLength];
+            usnprintf(str, strLength, "AT+CWJAP=\"%s\",\"%s\"\r\n",
                     ESP8266_WifiNetworkName, ESP8266_WifiNetworkPassword);
             ESP8266_SendString(str);
     #else
@@ -1333,11 +1336,12 @@ void ESP8266_StatusMachine(void)
             ESP8266_StartReceive();
             /* E.g.: "AT+CIPSTART=0,\"TCP\",\"192.168.1.62\",2000\r\n" */
 #if CONFIG_ESP8266_CONNECT_DYNAMIC == 1
-            char buffer[60];
+            const uint8_t bufferLength = 60;
+            char buffer[bufferLength];
             uint8_t length = 0;
-            length += usprintf(buffer, "AT+CIPSTART=" CONFIG_ESP8266_TCP_CLIENT_CONNECTION_ID_STRING ",\"TCP\",\"");
+            length += usnprintf(buffer, bufferLength, "AT+CIPSTART=" CONFIG_ESP8266_TCP_CLIENT_CONNECTION_ID_STRING ",\"TCP\",\"");
             length += Network_PrintIp(&buffer[length], (Network_IP_t *)&ESP8266_ServerAddress);
-            length += usprintf(&buffer[length], "\",%d\r\n", ESP8266_ServerPort);
+            length += usnprintf(&buffer[length], bufferLength-length, "\",%d\r\n", ESP8266_ServerPort);
             ESP8266_SendString(buffer);
 #else
             /* Note: 0. id */

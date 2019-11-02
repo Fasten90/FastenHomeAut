@@ -402,16 +402,16 @@ const char * IO_GetStatusName(IO_Status_t status)
  * @brief    Get IO Output status to string
  * @note    Recommend str length: IO_OUPUT_STATES_STRING_MAX_LENGTH
  */
-size_t IO_Output_PrintStates(char *str)
+size_t IO_Output_PrintStates(char *str, uint8_t strLen)
 {
     uint8_t i;
     size_t length = 0;
-    length += usprintf(str, "Output status:\r\n");
+    length += usnprintf(str, strLen, "Output status:\r\n");
 
     for (i = 0; i < (IO_Output_Count - 1); i++)
     {
         IO_Status_t ioStatus = IO_Output_GetStatus(i+1);
-        length += usprintf(&str[length], "%20s - %s\r\n", IO_Output_List[i].name, IO_GetStatusName(ioStatus));
+        length += usnprintf(&str[length], strLen - length, "%20s - %s\r\n", IO_Output_List[i].name, IO_GetStatusName(ioStatus));
     }
 
     return length;

@@ -432,9 +432,10 @@ static SnakeCoord_t Snake_ConvertStepToCoordinate(SnakeStep_t step)
 void Snake_Draw(void)
 {
     /* Print header (Score) */
-    char string[20];
-    usprintf(string, "Score: %d", Snake_Score);
-    Display_PrintString(string, 0, Font_8x5, NO_FORMAT);
+    const uint8_t strLength = 20;
+    char str[strLength];
+    usnprintf(str, strLength, "Score: %d", Snake_Score);
+    Display_PrintString(str, 0, Font_8x5, NO_FORMAT);
 
     /* Header Line */
     uint8_t pixel;

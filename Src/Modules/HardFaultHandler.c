@@ -131,24 +131,25 @@ void prvGetRegistersFromStack(uint32_t *pulFaultStackAddress)
 
 
     /* When the following line is hit, the variables contain the register values. */
-    char str[30];
+    const uint8_t strLength = 30;
+    char str[strLength];
     /* TODO: print to one large string */
-    usprintf(str, "%s: 0x%X\r\n", "r0 ", r0);
+    usnprintf(str, strLength, "%s: 0x%X\r\n", "r0 ", r0);
     DebugUart_SendMessageBlocked(str);
-    usprintf(str, "%s: 0x%X\r\n", "r1 ", r1);
+    usnprintf(str, strLength, "%s: 0x%X\r\n", "r1 ", r1);
     DebugUart_SendMessageBlocked(str);
-    usprintf(str, "%s: 0x%X\r\n", "r2 ", r2);
+    usnprintf(str, strLength, "%s: 0x%X\r\n", "r2 ", r2);
     DebugUart_SendMessageBlocked(str);
-    usprintf(str, "%s: 0x%X\r\n", "r3 ", r3);
+    usnprintf(str, strLength, "%s: 0x%X\r\n", "r3 ", r3);
     DebugUart_SendMessageBlocked(str);
 
-    usprintf(str, "%s: 0x%X\r\n", "r12", r12);
+    usnprintf(str, strLength, "%s: 0x%X\r\n", "r12", r12);
     DebugUart_SendMessageBlocked(str);
-    usprintf(str, "%s: 0x%X\r\n", "lr ", lr);
+    usnprintf(str, strLength, "%s: 0x%X\r\n", "lr ", lr);
     DebugUart_SendMessageBlocked(str);
-    usprintf(str, "%s: 0x%X\r\n", "pc ", pc);
+    usnprintf(str, strLength, "%s: 0x%X\r\n", "pc ", pc);
     DebugUart_SendMessageBlocked(str);
-    usprintf(str, "%s: 0x%X\r\n", "psr", psr);
+    usnprintf(str, strLength, "%s: 0x%X\r\n", "psr", psr);
     DebugUart_SendMessageBlocked(str);
 
 

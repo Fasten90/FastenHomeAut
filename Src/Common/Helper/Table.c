@@ -215,7 +215,7 @@ static void Table_PrintHeader(char * dest, char * smallHeader, const char * src,
 /**
  * @brief    Print table
  */
-void Table_PrintTableWithBorder(const char * fixheader, char * str, char * header, ...)
+void Table_PrintTableWithBorder(const char * fixheader, char * str, uint8_t strMaxLen, char * header, ...)
 {
     /* 1. line: border */
     /* tr_PrintHeader(str, header, fixheader, false); */
@@ -229,8 +229,8 @@ void Table_PrintTableWithBorder(const char * fixheader, char * str, char * heade
     Table_FormatHeader(header, fixheader, true);
 
     va_list ap;                                        /* argument pointer */
-    va_start(ap, header);                             /* ap on arg */
-    string_printf(str, header, ap);                    /* Separate and process */
+    va_start(ap, header);                              /* ap on arg */
+    string_printf_safe(str, strMaxLen, header, ap);    /* Separate and process */
     va_end(ap);
 
     Table_SendLine(str);
@@ -245,3 +245,4 @@ void Table_PrintTableWithBorder(const char * fixheader, char * str, char * heade
 }
 
 
+/* TODO: Add UnitTest */

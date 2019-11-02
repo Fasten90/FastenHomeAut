@@ -359,9 +359,9 @@ void TaskHandler_ClearTimeoutTask(TaskID_t taskID)
 /**
  * @brief    Print TaskHandler statistics border
  */
-static void TaskHandler_PrintStatisticsTableHeader(const char * fixheader, char * str, char * header)
+static void TaskHandler_PrintStatisticsTableHeader(const char * fixheader, char * str, uint8_t strMaxLen, char * header)
 {
-    Table_PrintTableWithBorder(fixheader, str, header, "StartTick", "Run", "TaskName");
+    Table_PrintTableWithBorder(fixheader, str, strMaxLen, header, "StartTick", "Run", "TaskName");
 }
 
 
@@ -426,11 +426,12 @@ void TaskHandler_PrintStatistics(void)
     /* Print Statistics table */
 
     const char const fixheader[] = "| %9d | %3d | %20s |";
-    char str[2 + 9 + 3 + 3 + 3 + 20 + 2 + 1];
+    const uint8_t strLength = 2 + 9 + 3 + 3 + 3 + 20 + 2 + 1;
+    char str[strLength];
     char header[sizeof(fixheader)];
 
 
-    TaskHandler_PrintStatisticsTableHeader(fixheader, str, header);
+    TaskHandler_PrintStatisticsTableHeader(fixheader, str, strMaxLen, header);
 
     /* Print all table */
     for (i = 0; i < TASKHANDLER_STATISTICS_LIMIT; i++)
@@ -438,7 +439,7 @@ void TaskHandler_PrintStatistics(void)
         if (TaskHandler_StatisticsRanTaskTicks[i].startTick > 0)
         {
             /* Print: "<StartTick> - <RunTime: ms> - <TaskName>" */
-            usprintf(str, fixheader,
+            usnprintf(str, strLength, fixheader,
                     TaskHandler_StatisticsRanTaskTicks[i].startTick,
                     TaskHandler_StatisticsRanTaskTicks[i].runTime,
                     TaskList[TaskHandler_StatisticsRanTaskTicks[i].taskId].taskName);
@@ -446,7 +447,7 @@ void TaskHandler_PrintStatistics(void)
         }
     }
 
-    TaskHandler_PrintStatisticsTableHeader(fixheader, str, header);
+    TaskHandler_PrintStatisticsTableHeader(fixheader, str, strMaxLen, header);
 }
 
 
@@ -454,9 +455,9 @@ void TaskHandler_PrintStatistics(void)
 /**
  * @brief    Print TaskHandler RunTimes statistics border
  */
-static void TaskHandler_PrintTaskRunCountsTableHeader(const char * fixheader, char * str, char * header)
+static void TaskHandler_PrintTaskRunCountsTableHeader(const char * fixheader, char * str, uint8_t strMaxLen, char * header)
 {
-    Table_PrintTableWithBorder(fixheader, str, header, "TaskName", "RunCnt");
+    Table_PrintTableWithBorder(fixheader, str, strMaxLen, header, "TaskName", "RunCnt");
 }
 
 
@@ -468,14 +469,15 @@ void TaskHandler_PrintTaskRunCounts(void)
 {
     TaskID_t i;
     static const char const fixheader[] = "| %20s | %9u |";
-    char str[2 + 20 + 3 + 9 + 2 + 1];
+    const uint8_t strLen = 2 + 20 + 3 + 9 + 2 + 1;
+    char str[strLen];
     char header[sizeof(fixheader)];
 
-    TaskHandler_PrintTaskRunCountsTableHeader(fixheader, str, header);
+    TaskHandler_PrintTaskRunCountsTableHeader(fixheader, str, strLen, header);
 
     for (i = 0; i < Task_Count; i++)
     {
-        usprintf(str, fixheader,
+        usnprintf(str, strLen, fixheader,
                 TaskList[i].taskName, TaskList[i].taskRunCount);
         Table_SendLine(str);
     }

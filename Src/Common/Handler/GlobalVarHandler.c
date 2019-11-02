@@ -461,9 +461,10 @@ static void GlobVarH_GetInteger(const GlobVarH_VarRecord_t * varRecord)
             /* Octet num is ok */
             uint32_t *numPointer = (uint32_t *)varRecord->varPointer;
             uint32_t num = *numPointer;
-            char format[10];
+            const uint8_t formatLength = 10;
+            char format[formatLength];
 
-            usprintf(format, "0x%%%dX", octetNum);
+            usnprintf(format, formatLength, "0x%%%dX", octetNum);
             /* Example: "0x%2X" */
             CmdH_Printf(format, num);
         }

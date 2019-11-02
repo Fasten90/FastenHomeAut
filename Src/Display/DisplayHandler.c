@@ -503,14 +503,15 @@ static void SSD1306_display(void)
     /* Originally it was for the clean all display */
     DebugUart_SendMessage(ESCAPE_ERASE_CLS);
 #elif defined(CONFIG_TERMINAL_USE_CONEMU)
-    char_t escape[6] = { 0 };
+    const uint8_t strLength = 6;
+    char_t escape[strLength];
     uint8_t y_start = 1;
     if (DisplayHandler_FirstPrintOk)
     {
         y_start = 2; /* Shall step 2. line because the top frame */
     }
     /* ESC [ row d     Moves the cursor to line row (absolute, 1-based). */
-    usprintf(escape, "\x1B" "[" "%dd", y_start);
+    usnprintf(escape, strLength, "\x1B" "[" "%dd", y_start);
     DebugUart_SendMessage(escape);
 #else
     #warning "Unknown terminal used"
@@ -581,8 +582,9 @@ void DisplayHandler_SendOnTerminal(void)
         {
             #if defined(CONFIG_TERMINAL_USE_CONEMU)
             /* ESC [ row d     Moves the cursor to line row (absolute, 1-based). */
-            char_t escape[6] = { 0 };
-            usprintf(escape, "\x1B" "[" "%dd", y + 3);
+            const uint8_t strLength = 6;
+            char_t escape[strLength];
+            usnprintf(escape, strLength, "\x1B" "[" "%dd", y + 3);
             DebugUart_SendMessage(escape);
             #else
             #warning "This terminal not supported"

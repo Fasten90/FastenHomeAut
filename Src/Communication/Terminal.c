@@ -1138,9 +1138,10 @@ void Terminal_SendLoadingPercent2(uint8_t percent)
     /* Send example: [----       ] 25% */
     uint8_t fill = percent / 10;
     uint8_t empty = 10-fill;
-    char formatString[20];
+    const uint8_t stringLength = 20;
+    char formatString[stringLength];
     /* Need: "%5c%5c %3d%%" */
-    usprintf(formatString, "[%%%dc%%%dc] %%3d%%%%", fill, empty);
+    usnprintf(formatString, stringLength, "[%%%dc%%%dc] %%3d%%%%", fill, empty);
     CmdH_Printf(formatString, '-', ' ', percent);
 }
 

@@ -570,8 +570,9 @@ void Display_ShowLargeClockHalf(Time_t *time, DisplayClock_ChangeState_t display
  */
 void Display_ShowSmallClock(Time_t *time)
 {
-    char clock[10];
-    usprintf(clock, "%02d:%02d:%02d", time->hour, time->minute, time->second);
+    const uint8_t clockStrLength = 10;
+    char clock[clockStrLength];
+    usnprintf(clock, clockStrLength, "%02d:%02d:%02d", time->hour, time->minute, time->second);
     Display_PrintString(clock, 0, Font_12x8, NO_FORMAT);
 
 #ifndef CONFIG_FUNCTION_DISPLAY_MENU

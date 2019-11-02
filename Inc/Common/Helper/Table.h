@@ -51,7 +51,7 @@
  *  Global function declarations
  *----------------------------------------------------------------------------*/
 
-void Table_PrintTableWithBorder(const char * fixheader, char * str, char * header, ...);
+void Table_PrintTableWithBorder(const char * fixheader, char * str, uint8_t strMaxLen, char * header, ...);
 
 
 

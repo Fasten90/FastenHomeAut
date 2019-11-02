@@ -174,11 +174,13 @@ uint32_t EEPROM_ModuleTest(void)
     UNITTEST_ASSERT(result == EEPROM_RESULT_INVALID_ADDRESS, "EEPROM - Invalid size");
     /* TODO: test: has changed the EEPROM content? */
 
-    /* EEPROM_Write - error */
+    /* EEPROM_Write - buffer error */
+  #if !defined(ASSERT_MODE_HARD) || !defined(CONFIG_DEBUG_MODE)
     address = EEPROM_ADDRESS_START;
     result = EEPROM_Write(address, NULL, eepromTestBufferSize);
     UNITTEST_ASSERT(result == EEPROM_RESULT_ERROR, "EEPROM - Error");
     /* TODO: test: has changed the EEPROM content? */
+  #endif
 
 
     /* Test: EEPROM_Read */
@@ -198,10 +200,11 @@ uint32_t EEPROM_ModuleTest(void)
     /* TODO: test: has changed the EEPROM content? */
 
     /* EEPROM_Read - error */
+  #if !defined(ASSERT_MODE_HARD) || !defined(CONFIG_DEBUG_MODE)
     result = EEPROM_Read(address, NULL, eepromTestBufferSize);
     UNITTEST_ASSERT(result == EEPROM_RESULT_ERROR, "EEPROM - Error");
     /* TODO: test: has changed the EEPROM content? */
-
+  #endif
 
     return UnitTest_End();
 }
