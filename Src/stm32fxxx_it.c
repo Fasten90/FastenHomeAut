@@ -121,11 +121,15 @@ void HardFault_Handler(void)
     );
 #elif 1
     /* Own version */
+
     __asm volatile
     (
         " mrs r0, MSP \n"
-        " ldr r1, handler \n"
-        " bx r1 \n"
+        /* TODO: Check */
+        /* Does not work at Optimized compiles: O1, O2, O3, Os... */
+        /* Perhaps: F0 not optimized and F4+ versions */
+        /*" ldr r1, handler \n"
+        " bx r1 \n" */
         " handler: .word prvGetRegistersFromStack \n"
     );
 #endif
@@ -159,6 +163,7 @@ void PendSV_Handler(void)
  */
 void NMI_Handler(void)
 {
+    /* TODO: Save */
 }
 
 

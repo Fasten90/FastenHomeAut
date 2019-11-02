@@ -177,7 +177,7 @@
 
 
 ///< Periodical sending UART message function
-#define CONFIG_FUNCTION_PERIODICAL_SENDING /* */
+/* #define CONFIG_FUNCTION_PERIODICAL_SENDING */
 
 
 #ifdef CONFIG_REQUIRE_DISPLAY
@@ -542,13 +542,14 @@
 /* #define ASSERT_MODE_HARD */
 
 ///< Test Mode: Enable "test" command...
-#define CONFIG_TEST_MODE
+/* #define CONFIG_TEST_MODE */
 
 ///< Module test: Enable "moduletest" command ~hwtest
 /* #define CONFIG_MODULE_TEST_ENABLE */
 
 ///< Simulation mode: Enable "simulate" command
-#define CONFIG_MODULE_SIMULATION_ENABLE
+/* #define CONFIG_MODULE_SIMULATION_ENABLE */
+/* TODO: Recommend to turn off from release version */
 
 ///< SWO: Serial Wire Output enable
 /* #define CONFIG_SWO_ENABLE */
