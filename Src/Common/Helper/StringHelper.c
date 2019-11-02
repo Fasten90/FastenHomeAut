@@ -200,9 +200,9 @@ size_t UnsignedDecimalToStringSafe(uint32_t value, char *str, size_t maxLength)
     }
 
     /* TODO: Merge this "last digit" with above code */
-    if ((length+1) < maxLength)
+    if (length < maxLength)
     {
-        /* Add the ascii code of '0' character to get the desired value's caracter code */
+        /* Add the ASCII code of '0' character to get the desired value's character code */
         str[length] = ((char)value + '0');    /* Last digit */
         length++;
     }
@@ -2120,6 +2120,7 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
         {
             str[length] = *p;                        /* copy to string */
             length++;
+            str[length] = '\0';                     /* EOS */
             remainLength--;
         }
         else
@@ -2211,13 +2212,13 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                          * paramNum2 --> without EOS
                          * remainLength --> with EOS
                          */
-                        /* TODO: Go to change SignedDecimalToStringFill to remain lenth contained? */
-                        if (paramNum2 >= remainLength)
+                        /* TODO: Go to change SignedDecimalToStringFill to remain length contained? */
+                        if (paramNum2 > remainLength)
                         {
                             /* More character wanted to print */
                             paramNum2 = remainLength;
                         }
-
+                        /* TODO: NOT length SAFE */
                         size_t decLen = SignedDecimalToStringFill(ival, &str[length],
                                 paramNum2, fillCharacter);
                         length += decLen;
@@ -2451,6 +2452,7 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                     {
                         str[length] = *p;
                         length++;
+                        str[length] = '\0'; /* EOS */
                         remainLength--;
                     }
                     break;
@@ -2460,7 +2462,7 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
     }    /* End of for loop */
 
     /* string's end */
-    ASSERT(str[length] != '\0');
+    ASSERT(str[length] == '\0');
 
     /* Return with length */
     return length;
@@ -2475,15 +2477,15 @@ size_t usnprintf(char * str, size_t maxLen, const char * format, ...)
 {
     size_t resultLength = 0;
 
-    if ((str == NULL) || (format == NULL))
+    if ((str == NULL) || (format == NULL) || (maxLen == 0))
         return 0;
 
     STRING_ASSERT(MEM_IN_RAM(str, maxLen));
 
     va_list ap;                                    /* argument pointer */
-    va_start(ap, format);                         /* ap on arg */
+    va_start(ap, format);                          /* ap on arg */
     resultLength = string_printf_safe(str, maxLen, format, ap);    /* Separate and process */
-    va_end(ap);                                     /* Cleaning after end */
+    va_end(ap);                                    /* Cleaning after end */
 
     return resultLength;
 }
@@ -2496,7 +2498,8 @@ size_t usnprintf(char * str, size_t maxLen, const char * format, ...)
  */
 uint32_t StringHelper_UnitTest(void)
 {
-    char buffer[30];
+    const uint8_t bufferLength = 30;
+    char buffer[bufferLength];
     uint8_t value8;
     bool result;
     uint32_t value32;
@@ -2533,27 +2536,27 @@ uint32_t StringHelper_UnitTest(void)
     /* Float print tests */
 
     /* "123.339996" ~ like "%0.6" */
-    usprintf(buffer,"%f",123.34);
+    usnprintf(buffer, bufferLength, "%f",123.34f);
     UNITTEST_ASSERT(!StrCmp(buffer, "123.339996"), "Float error");
 
     /* "123" */
-    usprintf(buffer,"%1.0f",123.34);
+    usnprintf(buffer, bufferLength, "%1.0f",123.34f);
     UNITTEST_ASSERT(!StrCmp(buffer, "123"), "Float error");
 
     /* "123.3" */
-    usprintf(buffer, "%1.1f",123.34);
+    usnprintf(buffer, bufferLength, "%1.1f",123.34f);
     UNITTEST_ASSERT(!StrCmp(buffer, "123.3"), "Float error");
 
     /* "123.33999" */
-    usprintf(buffer,"%1.5f",123.34);
+    usnprintf(buffer, bufferLength, "%1.5f",123.34f);
     UNITTEST_ASSERT(!StrCmp(buffer, "123.33999"), "Float error");
 
     /* "  123.3" */
-    usprintf(buffer, "%5.1f",123.34);
+    usnprintf(buffer, bufferLength,  "%5.1f",123.34f);
     UNITTEST_ASSERT(!StrCmp(buffer, "  123.3"), "Float error");
 
     /* "123.33999" */
-    usprintf(buffer,"%5.5f",123.34);
+    usnprintf(buffer, bufferLength, "%5.5f",123.34f);
     UNITTEST_ASSERT(!StrCmp(buffer, "  123.33999"), "Float error");
 
     /* TODO: "%.2f? */
@@ -2562,116 +2565,117 @@ uint32_t StringHelper_UnitTest(void)
     /* Integer print tests */
 
     /* Printed: "123" */
-    usprintf(buffer, "%0u",123);
+    usnprintf(buffer, bufferLength, "%0u",123);
     UNITTEST_ASSERT(!StrCmp(buffer, "123"), "Integer error");
 
     /* Printed:    "123" */
-    usprintf(buffer, "%1u",123);
+    usnprintf(buffer, bufferLength, "%1u",123);
     UNITTEST_ASSERT(!StrCmp(buffer, "123"), "Integer error");
 
     /* Printed: " 123" */
-    usprintf(buffer, "%4u",123);
+    usnprintf(buffer, bufferLength, "%4u",123);
     UNITTEST_ASSERT(!StrCmp(buffer, " 123"), "Integer error");
 
     /* Printed: "      123" */
-    usprintf(buffer, "%9u",123);
+    usnprintf(buffer, bufferLength, "%9u",123);
     UNITTEST_ASSERT(!StrCmp(buffer, "      123"), "Integer error");
 
     /* Printed: "00123", it is OK */
-    usprintf(buffer, "%05u",123);
+    usnprintf(buffer, bufferLength, "%05u", 123);
     UNITTEST_ASSERT(!StrCmp(buffer, "00123"), "Integer error");
 
     /* Integer print tests (wrong examples): */
-    usprintf(buffer, "%A5",123);        /* Printed: "A5u", because 'A' is not a number */
+    usnprintf(buffer, bufferLength, "%A5",123);        /* Printed: "A5", because 'A' is not a number and not format character*/
     UNITTEST_ASSERT(!StrCmp(buffer, "A5"), "Integer error");
-    usprintf(buffer, "%-5u",123);        /* Printed: "-5u", because '-' is not a number */
+    usnprintf(buffer, bufferLength, "%-5u",123);        /* Printed: "-5u", because '-' is not a number */
     UNITTEST_ASSERT(!StrCmp(buffer, "-5u"), "Integer error");
 
     /* Signed Integer print tests: */
 
     /* Printed: "-123" */
-    usprintf(buffer, "%0d",-123);
+    usnprintf(buffer, bufferLength, "%0d",-123);
     UNITTEST_ASSERT(!StrCmp(buffer, "-123"), "Integer error");
 
     /* Printed:    "-123" */
-    usprintf(buffer, "%1d",-123);
+    usnprintf(buffer, bufferLength, "%1d",-123);
     UNITTEST_ASSERT(!StrCmp(buffer, "-123"), "Integer error");
 
     /* Printed: "-123" */
-    usprintf(buffer, "%4d",-123);
+    usnprintf(buffer, bufferLength, "%4d",-123);
     UNITTEST_ASSERT(!StrCmp(buffer, "-123"), "Integer error");
 
     /* Printed: "     -123" */
-    usprintf(buffer, "%9d",-123);
+    usnprintf(buffer, bufferLength, "%9d",-123);
     UNITTEST_ASSERT(!StrCmp(buffer, "     -123"), "Integer error");
 
     /* Printed: "-0123", it is OK */
-    usprintf(buffer, "%05d",-123);
+    usnprintf(buffer, bufferLength, "%05d",-123);
     UNITTEST_ASSERT(!StrCmp(buffer, "-00123"), "Integer error");
 
     /* Hexadecimal print tests: */
-    usprintf(buffer, "0x%x",0xFFFFFFFF);
+    /* TODO: Move to test function with list*/
+    usnprintf(buffer, bufferLength, "0x%x",0xFFFFFFFF);
     UNITTEST_ASSERT(!StrCmp(buffer, "0xFFFFFFFF"), "Hexadecimal error");
-    usprintf(buffer, "0x%01x",0xFFFFFFFF);
+    usnprintf(buffer, bufferLength, "0x%01x",0xFFFFFFFF);
     UNITTEST_ASSERT(!StrCmp(buffer, "0xF"), "Hexadecimal error");
-    usprintf(buffer, "0x%02x",0xFFFFFFFF);
+    usnprintf(buffer, bufferLength, "0x%02x",0xFFFFFFFF);
     UNITTEST_ASSERT(!StrCmp(buffer, "0xFF"), "Hexadecimal error");
-    usprintf(buffer, "0x%03x",0xFFFFFFFF);
+    usnprintf(buffer, bufferLength, "0x%03x",0xFFFFFFFF);
     UNITTEST_ASSERT(!StrCmp(buffer, "0xFFF"), "Hexadecimal error");
-    usprintf(buffer, "0x%04x",0xFFFFFFFF);
+    usnprintf(buffer, bufferLength, "0x%04x",0xFFFFFFFF);
     UNITTEST_ASSERT(!StrCmp(buffer, "0xFFFF"), "Hexadecimal error");
-    usprintf(buffer, "0x%05x",0xFFFFFFFF);
+    usnprintf(buffer, bufferLength, "0x%05x",0xFFFFFFFF);
     UNITTEST_ASSERT(!StrCmp(buffer, "0xFFFFF"), "Hexadecimal error");
-    usprintf(buffer, "0x%06x",0xFFFFFFFF);
+    usnprintf(buffer, bufferLength, "0x%06x",0xFFFFFFFF);
     UNITTEST_ASSERT(!StrCmp(buffer, "0xFFFFFF"), "Hexadecimal error");
-    usprintf(buffer, "0x%07x",0xFFFFFFFF);
+    usnprintf(buffer, bufferLength, "0x%07x",0xFFFFFFFF);
     UNITTEST_ASSERT(!StrCmp(buffer, "0xFFFFFFF"), "Hexadecimal error");
-    usprintf(buffer, "0x%08x",0xFFFFFFFF);
+    usnprintf(buffer, bufferLength, "0x%08x",0xFFFFFFFF);
     UNITTEST_ASSERT(!StrCmp(buffer, "0xFFFFFFFF"), "Hexadecimal error");
-    usprintf(buffer, "0x%09x",0xFFFFFFFF);
+    usnprintf(buffer, bufferLength, "0x%09x",0xFFFFFFFF);
     UNITTEST_ASSERT(!StrCmp(buffer, "0x"), "Hexadecimal error");
 
-    usprintf(buffer, "0x%01x",0x12345678);
+    usnprintf(buffer, bufferLength, "0x%01x",0x12345678);
     UNITTEST_ASSERT(!StrCmp(buffer, "0x8"), "Hexadecimal error");
-    usprintf(buffer, "0x%02x",0x12345678);
+    usnprintf(buffer, bufferLength, "0x%02x",0x12345678);
     UNITTEST_ASSERT(!StrCmp(buffer, "0x78"), "Hexadecimal error");
-    usprintf(buffer, "0x%03x",0x12345678);
+    usnprintf(buffer, bufferLength, "0x%03x",0x12345678);
     UNITTEST_ASSERT(!StrCmp(buffer, "0x678"), "Hexadecimal error");
-    usprintf(buffer, "0x%04x",0x12345678);
+    usnprintf(buffer, bufferLength, "0x%04x",0x12345678);
     UNITTEST_ASSERT(!StrCmp(buffer, "0x5678"), "Hexadecimal error");
-    usprintf(buffer, "0x%05x",0x12345678);
+    usnprintf(buffer, bufferLength, "0x%05x",0x12345678);
     UNITTEST_ASSERT(!StrCmp(buffer, "0x45678"), "Hexadecimal error");
-    usprintf(buffer, "0x%06x",0x12345678);
+    usnprintf(buffer, bufferLength, "0x%06x",0x12345678);
     UNITTEST_ASSERT(!StrCmp(buffer, "0x345678"), "Hexadecimal error");
-    usprintf(buffer, "0x%07x",0x12345678);
+    usnprintf(buffer, bufferLength, "0x%07x",0x12345678);
     UNITTEST_ASSERT(!StrCmp(buffer, "0x2345678"), "Hexadecimal error");
-    usprintf(buffer, "0x%08x",0x12345678);
+    usnprintf(buffer, bufferLength, "0x%08x",0x12345678);
     UNITTEST_ASSERT(!StrCmp(buffer, "0x12345678"), "Hexadecimal error");
-    usprintf(buffer, "0x%09x",0x12345678);
+    usnprintf(buffer, bufferLength, "0x%09x",0x12345678);
     UNITTEST_ASSERT(!StrCmp(buffer, "0x"), "Hexadecimal error");
 
     /* Binaries printf */
-    usprintf(buffer, "0b%b",0x000000FF);
+    usnprintf(buffer, bufferLength, "0b%b",0x000000FF);
     UNITTEST_ASSERT(!StrCmp(buffer, "0b11111111"), "Binary error");
-    usprintf(buffer, "0b%b",0x00000055);
+    usnprintf(buffer, bufferLength, "0b%b",0x00000055);
     UNITTEST_ASSERT(!StrCmp(buffer, "0b1010101"), "Binary error");
 
     /* String (%s) */
 
     /* Standard %s print */
-    usprintf(buffer, "%s", "text");
+    usnprintf(buffer, bufferLength, "%s", "text");
     UNITTEST_ASSERT(!StrCmp(buffer, "text"), "String error (%s)");
 
     /* max 5 character */
-    usprintf(buffer, "%5s", "longtext");
+    usnprintf(buffer, bufferLength, "%5s", "longtext");
     UNITTEST_ASSERT(!StrCmp(buffer, "longt"), "String error (%s)");
 
     /* 10 character, need fill with ' ' */
-    usprintf(buffer, "%10s", "longtext");
+    usnprintf(buffer, bufferLength, "%10s", "longtext");
     UNITTEST_ASSERT(!StrCmp(buffer, "longtext  "), "String error (%s)");
 
     /* max 10 character */
-    usprintf(buffer, "%10s", "toolongtext");
+    usnprintf(buffer, bufferLength, "%10s", "toolongtext");
     UNITTEST_ASSERT(!StrCmp(buffer, "toolongtex"), "String error (%s)");
 
 
@@ -2929,9 +2933,14 @@ uint32_t StringHelper_UnitTest(void)
     UNITTEST_ASSERT(!StrCmp(buffer, "123ABCABC$"), "StringUpper error");
 
 
+    /* TODO: UnsignedDecimalToStringFillSafe */
+
     /* TODO: Add: %9dblalba" */
 
     /* TODO: "%%" */
+
+
+    /* TODO: usnprintf(format, formatLength, "0x%%%dX", octetNum); */
 
 
     /* End of unittest */
