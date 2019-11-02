@@ -115,6 +115,7 @@ uint8_t DecimalToBinaryString(uint32_t value, char *str, uint8_t maxLength);
 
 /* Hexadecimal --> String converters */
 uint8_t DecimalToHexaString(uint32_t value, char *str, uint8_t length);
+uint8_t DecimalToHexaStringSafe(uint32_t value, char *str, uint8_t length, uint8_t maxLength);
 uint8_t ByteToHexaString(uint8_t byte, char *str);
 char HexToHexChar(uint8_t octet);
 

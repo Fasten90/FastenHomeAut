@@ -31,8 +31,11 @@
 
 #ifdef CONFIG_DEBUG_MODE
 #define STRING_ASSERT(_e)            ASSERT(_e)
+#define STRING_SNPRINTF_CATCH_ERROR_ENABLED     (1)
+#define STRING_SNPRINTF_CATCH_ERROR()   DEBUG_BREAKPOINT()
 #else
 #define STRING_ASSERT(_e)
+#define STRING_SNPRINTF_CATCH_ERROR()   (void)0  /* Empty */
 #endif
 
 #define STRING_SIZE_MAX                (1024U)
@@ -56,6 +59,9 @@
 /*------------------------------------------------------------------------------
  *  Local functions
  *----------------------------------------------------------------------------*/
+
+static uint8_t FloatToStringSafe(float value, char *str, uint8_t integerLength, uint8_t fractionLength, uint8_t maxLen);
+static uint8_t UnsignedDecimalToStringFillSafe(uint32_t value, char *str, uint8_t fillLength, char fillCharacter, uint8_t maxLen);
 
 
 
@@ -235,6 +241,7 @@ uint8_t UnsignedDecimalLength(uint32_t value)
 
 /**
  * @brief    Unsigned decimal (uint32_t) to String with fill (a character to x length)
+ *           if fillLength < len(value), the full number will be printed
  */
 uint8_t UnsignedDecimalToStringFill(uint32_t value, char *str, uint8_t fillLength, char fillCharacter)
 {
@@ -266,6 +273,60 @@ uint8_t UnsignedDecimalToStringFill(uint32_t value, char *str, uint8_t fillLengt
         length = i;
         length += UnsignedDecimalToString(value, &str[length]);
     }
+
+    return length;
+}
+
+
+
+/**
+ * @brief    Unsigned decimal (uint32_t) to String with fill (a character to x length)
+ *           If fillLength < len(value), the full number will be printed
+ *           Tthis will make ugly a table printing, but correct value will be printed
+ */
+uint8_t UnsignedDecimalToStringFillSafe(uint32_t value, char *str, uint8_t fillLength, char fillCharacter, uint8_t maxLen)
+{
+    uint8_t numLength = 0;
+    uint8_t length = 0;
+
+    if ((str == NULL) || (maxLen == 0))
+    {
+        return 0;
+    }
+
+    numLength = UnsignedDecimalLength(value);
+
+    if (fillLength < numLength)
+    {
+        /* Shall print entire number */
+        fillLength = numLength;
+    }
+
+    /* Check, could be print? fillLength many characters will be printed */
+    if (fillLength > maxLen)
+    {
+        /* Limiting */
+        fillLength = maxLen;
+        /* Check length again */
+        if (numLength > fillLength)
+        {
+            numLength = fillLength;
+        }
+        /* Shall not happen, but handled */
+        STRING_SNPRINTF_CATCH_ERROR();
+    }
+
+    /* Need fill */
+    uint8_t filledLength = fillLength - numLength; /* fillLength - num_length will not underflow */
+    for (uint8_t i = 0; i < filledLength; i++)
+    {
+        str[i] = fillCharacter;
+    }
+
+    length += filledLength;
+
+    /* Put number */
+    length += (uint8_t)UnsignedDecimalToStringSafe(value, &str[filledLength], numLength);
 
     return length;
 }
@@ -394,11 +455,11 @@ uint8_t ByteToHexaString(uint8_t byte, char *str)
 
 /**
  * @brief    Convert decimal number to binary string
- *             For example: 10 (decimal) --> "1010" (binary)
+ *           For example: 10 (decimal) --> "1010" (binary)
  */
 uint8_t DecimalToBinaryString(uint32_t value, char *str, uint8_t maxLength)
 {
-    uint8_t i;
+    uint8_t i; /* This will be the length/size, and because the uint32_t type, string never will be longer the 32+1 */
     int8_t bitIndex;
 
     if (str == NULL)
@@ -477,7 +538,47 @@ uint8_t DecimalToHexaString(uint32_t value, char *str, uint8_t length)
 
 
 /**
- * @brief    Convert float value to String
+ * @brief     Convert value to hexadecimal string
+ * @return    Created string length
+ */
+uint8_t DecimalToHexaStringSafe(uint32_t value, char *str, uint8_t length, uint8_t maxLength)
+{
+    uint8_t i;
+    uint8_t octet;
+
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    /* Check parameters */
+    if ((length > 8) || (length == 0))
+    {
+        return 0;
+    }
+
+    if (length > maxLength)
+    {
+        /* Safe length mode */
+        length = maxLength;
+    }
+
+    for (i = 0; i < length; i++)
+    {
+        /* Convert next byte */
+        octet = (uint8_t)(0x0F & (value >> ((length-i-1)*4)));
+        str[i] = HexToHexChar (octet);
+    }
+
+    str[length] = '\0';
+
+    return length;
+}
+
+
+
+/**
+ * @brief     Convert float value to String
  * @return    Length
  */
 uint8_t FloatToString(float value, char *str, uint8_t integerLength, uint8_t fractionLength)
@@ -538,8 +639,84 @@ uint8_t FloatToString(float value, char *str, uint8_t integerLength, uint8_t fra
 
 
 /**
+ * @brief     Convert float value to String
+ * @return    Length
+ */
+uint8_t FloatToStringSafe(float value, char *str, uint8_t integerLength, uint8_t fractionLength, uint8_t maxLen)
+{
+    uint8_t num;
+    uint8_t length = 0;
+    uint32_t calcValue;
+    uint8_t remainLength = maxLen;
+
+    if (maxLen == 0)
+    {
+        return 0;
+    }
+
+    /* Sign */
+    if (value < 0)
+    {
+        /* Shall not check the maxLen, because it cannot be 0 */
+        /* Put '-' */
+        str[length] = '-';
+        length++;
+        value = (value * (-1));    /* make positive */
+        remainLength--;
+    }
+
+    /* Integer: minimum interLength length (if integer part is longer then this num, it printed) */
+    calcValue = (uint32_t)value;
+    /* integerLength == 0 --> handled in the called function */
+    length += UnsignedDecimalToStringFillSafe(calcValue, &str[length], integerLength, ' ', remainLength);
+
+    /* If has fractionLength parameter (=/= 0), print it */
+    if (fractionLength && (length < maxLen))
+    {
+        /* Point '.' */
+        str[length] = '.';
+        length++;
+        remainLength--;
+
+        /* Fraction: */
+        /* float : 4.567 */
+        /* fractionLength: 4 */
+        /* string: 4.5670 */
+
+        /* TODO: Make with multiplex (e.g. 0.567 -> * 1000 = 567 --> UnsignedDecimalToString... */
+
+        /* 4.567 --> 0.567 --> 5670 */
+        /* Only fraction */
+        value = (value - (uint32_t)value);
+
+        /* * 10, and write */
+        while (fractionLength && remainLength)
+        {
+            /* 0.567 --> 5.67 */
+            value *= 10;             /* "shift left" = *10 */
+            /* 5.67 --> 5 */
+            num = (uint8_t)value;    /* integer value (MSB octet) */
+            /* 5.67 - 5 */
+            value -= num;            /* value-- */
+            str[length] = num + '0';
+            fractionLength--;
+            length++;
+            remainLength--;
+        }
+    }
+    /* If hasn't fractionLength parameter, '.' and fraction part not printed */
+
+    /* Put end char */
+    str[length] = '\0';
+
+    return length;
+}
+
+
+
+/**
  * @brief    Look the string is hexa or not
- * \str        Null terminated string
+ * @str        Null terminated string
  * @return    How many hexa characters are in the string
  */
 uint8_t StringIsHexadecimalString(const char *str)
@@ -1438,7 +1615,7 @@ size_t StrCpyMax(char *dest, const char *str, size_t maxLength)
     }
 
     StrCpyFixLength(dest, str, length);            /* Copy characters */
-    dest[length] = '\0';                        /* Put end */
+    dest[length] = '\0';                           /* Put end */
 
     return length;
 }
@@ -1892,145 +2069,8 @@ uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint
 
 
 
-#ifndef STRING_SPRINTF_EXTENDED_ENABLE
 /**
- * @brief    Instead of sprintf()
- *            Used '%' parameters
- *            %d, %u, %x, %X, %b, %c, %s, %f
- *            In other settings: %w, %h, %b (hexadecimals)
- *
- * @note    !! Be careful: 'str' can be overflow!!
- */
-size_t string_printf(char *str, const char *format, va_list ap)
-{
-    /* TODO: Use "new" typedefs */
-
-    /* Type variables */
-    char    *p;            /* step on format string */
-    char    *sval;        /* string */
-    int        ival;        /* int */
-    unsigned int uival;    /* uint */
-    float    flval;        /* float */
-    char     cval;        /* character */
-
-    char *string = str;
-
-    /* Check parameters */
-    if (str == NULL || format == NULL)
-        return 0;
-
-    for (p = (char *)format; *p; p++)                /* p to EOS */
-    {
-        if (*p != '%')                                /* copy, if not '%' */
-        {
-            *string = *p;                            /* copy to string */
-            string++;
-        }
-        else
-        {
-            /* '%' character */
-            p++;
-
-            /* Process next character (after '%', or etc) */
-            switch (*p)
-            {
-                case 'd':
-                    /* signed (int) */
-                    ival = va_arg(ap, int);    /* Decimal = signed int (~int32_t) */
-                    string += SignedDecimalToString(ival, string);
-                    break;
-
-                case 'u':
-                    /* unsigned (int) */
-                    uival = va_arg(ap, int);/* Uint = Unsigned int (~uint32_t) */
-                    string += UnsignedDecimalToString(uival, string);
-                    break;
-
-                    /* TODO: Create 'x' and 'X' to different */
-                case 'x':
-                case 'X':
-                    /* %x - Hex - parameterized byte num */
-                    uival = va_arg(ap, unsigned int);
-                    string += DecimalToHexaString(uival, string, 8);
-                    break;
-
-#if defined(STRING_HEXADECIMAL_FORMATS)
-                case 'w':
-                    /* Hex // 32 bits    // 8 hex    // 4 byte */
-                    uival = va_arg(ap, unsigned int);
-                    string += DecimalToHexaString(uival, string, 8);
-                    break;
-
-                case 'h':
-                    /* Hex // 16 bits    // 4 hex    // 2 byte */
-                    ival = va_arg(ap, int);
-                    string += DecimalToHexaString(ival, string, 4);
-                    break;
-
-                case 'b':
-                    /* Hex    // 8 bits    // 2 hex    // 1 byte */
-                    ival = va_arg(ap, int);
-                    string += DecimalToHexaString(ival, string, 2);
-                    break;
-#else
-                case 'b':
-                    /* Binary print (from uint32_t) */
-                    uival = va_arg(ap,  unsigned int);
-                    string += DecimalToBinaryString(uival, string, 33);
-                    break;
-#endif
-                case 'c':
-                    /* %c - char */
-                    cval = va_arg(ap, int);                        /* Char */
-                    /* Default: copy one character */
-                    *string = cval;                            /* Copy to string */
-                    string++;
-                    *string = '\0';
-                    break;
-
-                case 'f':
-                    /* %f - float */
-                    flval = va_arg(ap, double);                    /* Double / Float */
-                    string += FloatToString(flval, string, 0, 6);
-                    break;
-
-                case 's':
-                    /* %s - string */
-                    sval = va_arg(ap, char*);                    /* String */
-                    /* Standard string copy */
-                    string += StrCpy(string, sval);
-                    break;
-
-                case 'p':
-                    /* %p - pointer - print address in hexadecimal */
-                    uival = va_arg(ap, unsigned int);
-                    string += DecimalToHexaString(uival, string, 8);
-                    break;
-
-                default:
-                    *string = *p;                    /* Other, for example: '%' */
-                    string++;
-                    break;
-            }
-        }    /* End of '%' */
-
-    }    /* End of for loop */
-
-    /* string's end */
-    *string = '\0';
-
-    /* Return with length */
-    return (string-str);
-}
-
-
-
-#else    /* #ifdef STRING_SPRINTF_EXTENDED_ENABLE */
-
-
-
-/**
- * @brief    Instead of sprintf()
+ * @brief    Instead of snprintf()
  *            Used '%' parameters
  *            %d, %u, %x, %X, %b, %c, %s, %f
  *            In other settings: %w, %h, %b (hexadecimals)
@@ -2045,255 +2085,38 @@ size_t string_printf(char *str, const char *format, va_list ap)
  *
  * @note    !! Be careful: 'str' can be overflow!!
  */
-size_t string_printf(char *str, const char *format, va_list ap)
-{
-    /* TODO: Use "new" typedefs */
-
-    /* Type variables */
-    char     *p;           /* step on format string */
-    char     *sval;        /* string */
-    int      ival;         /* int */
-    unsigned int uival;    /* uint */
-    float    flval;        /* float */
-    char     cval;         /* character */
-
-    char *string = str;
-
-    /* Process variables */
-    bool paramHasLength;
-    uint8_t paramNum1;
-    uint8_t paramNum2;
-    char fillCharacter;
-
-    /* Check parameters */
-    if (str == NULL || format == NULL)
-        return 0;
-
-    for (p = (char *)format; *p; p++)                /* p to EOS */
-    {
-        if (*p != '%')                                /* copy, if not '%' */
-        {
-            *string = *p;                            /* copy to string */
-            string++;
-        }
-        else
-        {
-            /* '%' character */
-            p++;
-            paramNum1 = 0;    /* for standard %08x */
-            paramNum2 = 0;
-            paramHasLength = false;
-            fillCharacter = ' ';
-
-            /* Check %...x (parameter after %, before x, u, f, s) */
-            /* Next character is num? */
-            if (IsDecimalChar(*p))
-            {
-                /* It is num (1. param) */
-                /* Replace, if has two parameter */
-                paramNum2 = DecimalCharToNum(*p);
-                fillCharacter = *p;
-                paramHasLength = true;
-                p++;
-
-                if (IsDecimalChar(*p))
-                {
-                    /* xy */
-                    /* It is num (2. param) */
-                    paramNum1 = paramNum2;
-                    paramNum2 = DecimalCharToNum(*p);
-                    p++;
-                }
-                else if (*p == '.')
-                {
-                    /* x. */
-                    p++;
-                    if (IsDecimalChar(*p))
-                    {
-                        /* x.y */
-                        paramNum1 = paramNum2;
-                        paramNum2 = DecimalCharToNum(*p);
-                        p++;
-                    }
-                    else
-                    {
-                        /* x.? */
-                        /* x = paramNum1 */
-                        /* ?=0 now, for correct float printing */
-                        /* Do not step p pointer, because this character can be f, x, etc. */
-                        paramNum1 = paramNum2;
-                        paramNum2 = 0;
-                    }
-                }
-                else
-                {
-                    /* x        ==>        x = fill character, y = length */
-                    /* If only has one parameter */
-                    fillCharacter = ' ';    /* Blank character */
-                }
-            }
-
-            /* Process next character (after '%', or etc) */
-            switch (*p)
-            {
-                case 'd':
-                    /* signed (int) */
-                    ival = va_arg(ap, int);    /* Decimal = signed int (~int32_t) */
-                    string += SignedDecimalToStringFill(ival, string,
-                            paramNum2, fillCharacter);
-                    break;
-
-                case 'u':
-                    /* unsigned (int) */
-                    uival = va_arg(ap, int);/* Uint = Unsigned int (~uint32_t) */
-                    string += UnsignedDecimalToStringFill(uival, string,
-                            paramNum2, fillCharacter);
-                    break;
-
-                    /* TODO: Create 'x' and 'X' to different */
-                case 'x':
-                case 'X':
-                    /* %x - Hex - parameterized byte num */
-                    uival = va_arg(ap, unsigned int);
-                    if (paramHasLength)
-                    {
-                        string += DecimalToHexaString(uival, string, paramNum2);
-                    }
-                    else
-                    {
-                        string += DecimalToHexaString(uival, string, 8);
-                    }
-                    break;
-#if defined(STRING_HEXADECIMAL_FORMATS)
-                case 'w':
-                    /* Hex // 32 bits    // 8 hex    // 4 byte */
-                    uival = va_arg(ap, unsigned int);
-                    string += DecimalToHexaString(uival, string, 8);
-                    break;
-
-                case 'h':
-                    /* Hex // 16 bits    // 4 hex    // 2 byte */
-                    ival = va_arg(ap, int);
-                    string += DecimalToHexaString(ival, string, 4);
-                    break;
-
-                case 'b':
-                    /* Hex    // 8 bits    // 2 hex    // 1 byte */
-                    ival = va_arg(ap, int);
-                    string += DecimalToHexaString(ival, string, 2);
-                    break;
-#else
-                case 'b':
-                    /* Binary print (from uint32_t) */
-                    uival = va_arg(ap,  unsigned int);
-                    string += DecimalToBinaryString(uival, string, 33);
-                    break;
-#endif
-                case 'c':
-                    /* %c - char */
-                    cval = (char)va_arg(ap, int);                        /* Char */
-                    if (paramHasLength)
-                    {
-                        /* Copy more character */
-                        string += StrCpyCharacter(string, cval, (paramNum1 * 10 + paramNum2));
-                    }
-                    else
-                    {
-                        /* Default: copy one character */
-                        *string = cval;                            /* Copy to string */
-                        string++;
-                        *string = '\0';
-                    }
-                    break;
-
-                case 'f':
-                    /* %f - float */
-                    flval = (float)va_arg(ap, double);                    /* Double / Float */
-                    if (paramHasLength)
-                    {
-                        string += FloatToString(flval, string, paramNum1, paramNum2);
-                    }
-                    else
-                    {
-                        string += FloatToString(flval, string, 0, 6);
-                    }
-                    break;
-
-                case 's':
-                    /* %s - string */
-                    sval = va_arg(ap, char*);                    /* String */
-                    if (paramHasLength)
-                    {
-                        /* String copy with length */
-                        uint8_t stringLength = paramNum1 * 10 + paramNum2;
-                        string += StrCpyFixLengthWithFillCharacter(string, sval, stringLength, ' ');
-                    }
-                    else
-                    {
-                        /* Standard string copy */
-                        string += StrCpy(string, sval);
-                    }
-                    break;
-
-                case 'p':
-                    /* %p - pointer - print address in hexadecimal */
-                    uival = va_arg(ap, unsigned int);
-                    string += DecimalToHexaString(uival, string, 8);
-                    break;
-
-                default:
-                    *string = *p;                    /* Other, for example: '%' */
-                    string++;
-                    break;
-            }
-        }    /* End of '%' */
-
-    }    /* End of for loop */
-
-    /* string's end */
-    *string = '\0';
-
-    /* Return with length */
-    return (string-str);
-}
-#endif    /* #ifdef STRING_SPRINTF_EXTENDED_ENABLE */
-
-
-
-/**
- * @brief    Instead of snprintf()
- *            Used '%' parameters
- *            %d, %u, %x, %X, %w, %h, %b, %c, %s, %f
- */
 size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list ap)
 {
     /* TODO: Use "new" typedefs */
 
     /* Type variables */
-    char    *p;            /* step on format string */
-    char    *sval;        /* string */
-    int        ival;        /* int */
-    unsigned int uival;    /* uint */
-    float    flval;        /* float */
-    char     cval;        /* character */
+    char     *p;            /* step on format string */
+    char     *sval;         /* string */
+    int      ival;          /* int */
+    unsigned int uival;     /* uint */
+    float    flval;         /* float */
+    char     cval;          /* character */
+
+    /* Check parameters */
+    if ((str == NULL) || (format == NULL) || (maxLen == 0))
+        return 0;
 
     /* String variables */
     size_t length = 0;
-    size_t remainLength = maxLen - 1;
+    size_t remainLength = maxLen-1;  /* Need space for EOS too */
 
     /* Process variables */
+  #ifdef STRING_SPRINTF_EXTENDED_ENABLE
     bool paramHasLength;
     uint8_t paramNum1;
     uint8_t paramNum2;
+    uint8_t paramNumFull;
     char fillCharacter;
-
-    /* Check parameters */
-    if (str == NULL || format == NULL)
-        return 0;
+  #endif
 
     for (p = (char *)format; *p; p++)                /* p to EOS */
     {
-        if ((*p != '%') && (remainLength > 0))    /* copy, if not '%' */
+        if ((*p != '%') && (remainLength > 0))       /* copy, if not '%' */
         {
             str[length] = *p;                        /* copy to string */
             length++;
@@ -2303,9 +2126,10 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
         {
             /* '%' character */
             p++;
+  #ifdef STRING_SPRINTF_EXTENDED_ENABLE
+            paramHasLength = false;
             paramNum1 = 0;    /* for standard %08x */
             paramNum2 = 0;
-            paramHasLength = false;
             fillCharacter = ' ';
 
             /* Check %...x (parameter after %, before x, u, f, s) */
@@ -2315,17 +2139,20 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                 /* It is num (1. param) */
                 /* Replace, if has two parameter */
                 paramNum2 = DecimalCharToNum(*p);
+                paramNumFull = paramNum2;
                 fillCharacter = *p;
                 paramHasLength = true;
                 p++;
 
                 if (IsDecimalChar(*p))
                 {
-                    /* xy */
+                    /* xy - E.g. "%12" */
                     /* It is num (2. param) */
                     paramNum1 = paramNum2;
                     paramNum2 = DecimalCharToNum(*p);
                     p++;
+
+                    paramNumFull = paramNum1 * 10 + paramNum2;
                 }
                 else if (*p == '.')
                 {
@@ -2355,6 +2182,8 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                     fillCharacter = ' ';    /* Blank character */
                 }
             }
+  #endif
+            /* else: *p is character) */
 
             /* Process next character (after '%', or etc) */
             switch (*p)
@@ -2363,67 +2192,112 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                 {
                     /* signed (int) */
                     ival = va_arg(ap, int);    /* Decimal = signed int (~int32_t) */
-                    uint8_t decLen = (uint8_t)SignedDecimalToStringSafe(ival, &str[length], remainLength+1);
+  #ifndef STRING_SPRINTF_EXTENDED_ENABLE
+                    size_t decLen = SignedDecimalToStringSafe(ival, &str[length], remainLength);
                     length += decLen;
                     remainLength -= decLen;
                     UNUSED_ARGUMENT(fillCharacter);
-                    /* TODO: with Fill function */
-                    /*
-                    if (paramNum2 <= remainLength)
+  #else /* STRING_SPRINTF_EXTENDED_ENABLE */
+
+                    if (!paramHasLength)
                     {
-                        uint8_t decLen = SignedDecimalToStringFill(ival, string,
-                                paramNum2, fillCharacter);
+                        size_t decLen = SignedDecimalToStringSafe(ival, &str[length], remainLength);
                         length += decLen;
                         remainLength -= decLen;
                     }
                     else
                     {
+                        /* TODO: Now only handle 1 decimal length (<= 9)
+                         * paramNum2 --> without EOS
+                         * remainLength --> with EOS
+                         */
+                        /* TODO: Go to change SignedDecimalToStringFill to remain lenth contained? */
+                        if (paramNum2 >= remainLength)
+                        {
+                            /* More character wanted to print */
+                            paramNum2 = remainLength;
+                        }
+
+                        size_t decLen = SignedDecimalToStringFill(ival, &str[length],
+                                paramNum2, fillCharacter);
+                        length += decLen;
+                        remainLength -= decLen;
                     }
-                    */
+  #endif /* STRING_SPRINTF_EXTENDED_ENABLE */
                 }
                     break;
 
                 case 'u':
                 {
                     /* unsigned (int) */
-                    uival = va_arg(ap, int);/* Uint = Unsigned int (~uint32_t) */
-                    uint8_t decLen = (uint8_t)UnsignedDecimalToStringSafe(uival, &str[length], remainLength+1);
+                    uival = va_arg(ap, int);    /* uint = Unsigned int (~uint32_t) */
+
+  #ifndef STRING_SPRINTF_EXTENDED_ENABLE
+                    uint8_t decLen = (uint8_t)UnsignedDecimalToStringSafe(uival, &str[length], remainLength);
                     length += decLen;
                     remainLength -= decLen;
-                    UNUSED_ARGUMENT(fillCharacter);
-                    /* TODO: with Fill function */
-                    /*
-                    string += UnsignedDecimalToStringFill(uival, string,
-                            paramNum2, fillCharacter);
-                    */
+  #else /* STRING_SPRINTF_EXTENDED_ENABLE */
+                    if (!paramHasLength)
+                    {
+                        uint8_t decLen = (uint8_t)UnsignedDecimalToStringSafe(uival, &str[length], remainLength);
+                        length += decLen;
+                        remainLength -= decLen;
+                        UNUSED_ARGUMENT(fillCharacter);
+                    }
+                    else
+                    {
+                        /* TODO: Now only handle 1 decimal length (<= 9)
+                         * paramNum2 --> without EOS
+                         * remainLength --> with EOS
+                         */
+                        if (paramNum2 >= remainLength)
+                        {
+                            /* More character wanted to print */
+                            paramNum2 = remainLength;
+                        }
+
+                        size_t decLen = UnsignedDecimalToStringFillSafe(
+                                uival, &str[length],
+                                paramNum2, fillCharacter, remainLength);
+                        length += decLen;
+                        remainLength -= decLen;
+                    }
+  #endif /* STRING_SPRINTF_EXTENDED_ENABLE */
                 }
                     break;
 
-                    /* TODO: Create 'x' and 'X' to different */
+                    /* TODO: Create 'x' and 'X' to different
+                     * with: STRING_SPRINTF_EXTENDED_ENABLE
+                     */
                 case 'x':
                 case 'X':
                     /* %x - Hex - parameterized byte num */
                     uival = va_arg(ap, unsigned int);
-                    /* TODO: Not implemented function (for length safe) */
-                    /* !! NOTE: Static analysers will say the paramNum2 not used */
+  #ifndef STRING_SPRINTF_EXTENDED_ENABLE
+                    /* Length checking is in the called function, so shall not check if (8 > remainLength) */
+                    uint8_t hexLen = DecimalToHexaStringSafe(uival, &str[length], 8, remainLength);
+                    length += hexLen;
+                    remainLength -= hexLen;
+  #else /* STRING_SPRINTF_EXTENDED_ENABLE */
                     if (paramHasLength)
                     {
                         if (paramNum2 > remainLength)
                         {
                             paramNum2 = (uint8_t)remainLength; /* clang_sa_ignore[deadcode.DeadStores] */
                         }
+                        /* else: paramNum2 is ok */
                     }
                     else
-                    {
-                        if (remainLength < 8)
-                        {
-                            paramNum2 = (uint8_t)remainLength; /* clang_sa_ignore[deadcode.DeadStores] */
-                        }
+                    {   /* No param */
+                        /* Length checking is in the called function, so shall not check if (paramNum2 > remainLength) */
+                        paramNum2 = 8; /* Default hexa print */
                     }
-                    uint8_t hexLen = DecimalToHexaString(uival, &str[length], 8);
+                    uint8_t hexLen = DecimalToHexaStringSafe(uival, &str[length], paramNum2, remainLength);
                     length += hexLen;
                     remainLength -= hexLen;
+  #endif /* STRING_SPRINTF_EXTENDED_ENABLE */
                     break;
+
 #if defined(STRING_HEXADECIMAL_FORMATS)
                 case 'w':
                     /* Hex // 32 bits    // 8 hex    // 4 byte */
@@ -2445,27 +2319,55 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
 #else
                 case 'b':
                     /* Binary print (from uint32_t) */
+                    /* Not handled in %<length>b */
                     uival = va_arg(ap,  unsigned int);
-                    /* TODO: Not implemented function (for length safe) */
-                    /* EBUG_BREAKPOINT(); */
-                    uint8_t binLength = DecimalToBinaryString(uival, &str[length], 33);
+  #ifndef STRING_SPRINTF_EXTENDED_ENABLE
+                    uint8_t binLength = DecimalToBinaryString(uival, &str[length], 32);
                     length += binLength;
                     remainLength -= binLength;
+  #else /* STRING_SPRINTF_EXTENDED_ENABLE */
+                    if (paramHasLength)
+                    {
+                        if (paramNumFull >= remainLength)
+                        {
+                            /* More character wanted to print */
+                            paramNumFull = remainLength;
+                        }
+                    }
+                    else
+                    {
+                        paramNumFull = 32;
+                    }
+                    uint8_t binLength = DecimalToBinaryString(uival, &str[length], paramNumFull);
+                    length += binLength;
+                    remainLength -= binLength;
+  #endif /* STRING_SPRINTF_EXTENDED_ENABLE */
                     break;
-#endif
+#endif /* defined(STRING_HEXADECIMAL_FORMATS) */
+
                 case 'c':
                     /* %c - char */
                     cval = (char)va_arg(ap, int);                        /* Char */
+  #ifndef STRING_SPRINTF_EXTENDED_ENABLE
+                    /* Default: copy one character */
+                    if (remainLength > 0)
+                    {
+                        str[length] = cval;                            /* Copy to string */
+                        length++;
+                        remainLength--;
+                        str[length] = '\0';
+                    }
+  #else /* STRING_SPRINTF_EXTENDED_ENABLE */
                     if (paramHasLength)
                     {
                         /* Copy more character */
-                        uint8_t cNum = paramNum1 * 10 + paramNum2;
-                        if (cNum > remainLength)
+                        if (paramNumFull > remainLength)
                         {
-                            cNum = (uint8_t)remainLength;
+                            paramNumFull = (uint8_t)remainLength;
                         }
-                        length += StrCpyCharacter(&str[length], cval, cNum);
-                        remainLength -= cNum;
+                        uint8_t copiedChar = StrCpyCharacter(&str[length], cval, paramNumFull);
+                        length += copiedChar;
+                        remainLength -= copiedChar;
                     }
                     else
                     {
@@ -2477,35 +2379,54 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                             remainLength--;
                             str[length] = '\0';
                         }
+                        /* else: finish */
+    #ifdef STRING_SNPRINTF_CATCH_ERROR_ENABLED
+                        else
+                        {
+                            STRING_SNPRINTF_CATCH_ERROR();
+                        }
+    #endif
                     }
+  #endif /* STRING_SPRINTF_EXTENDED_ENABLE */
                     break;
 
                 case 'f':
                     /* %f - float */
                     flval = (float)va_arg(ap, double);                    /* Double / Float */
-                    UNUSED_ARGUMENT(flval);
-                    /* TODO: Not implemented function (for length safe) */
-                    /* EBUG_BREAKPOINT(); */
-                    uint8_t floatLength;
-                    if (paramHasLength)
-                    {
-                        floatLength = FloatToString(flval, &str[length], paramNum1, paramNum2);
-                    }
-                    else
-                    {
-                        floatLength = FloatToString(flval, &str[length], 0, 6);
-                    }
+  #ifndef STRING_SPRINTF_EXTENDED_ENABLE
+                    uint8_t floatLength = FloatToStringSafe(flval, &str[length], 0, 6, remainLength);
                     length += floatLength;
                     remainLength -= floatLength;
+  #else /* STRING_SPRINTF_EXTENDED_ENABLE */
+
+                    /* Length safe-ing: pre-calculate the lengths */
+                    if (!paramHasLength)
+                    {
+                        /* No param, standard format */
+                        paramNum1 = 0;
+                        paramNum2 = 6;
+                    }
+                    /* else: paramNum1, paramNum2 for integer and float part has been set */
+                    uint8_t floatLength = FloatToStringSafe(flval, &str[length], paramNum1, paramNum2, remainLength);
+                    length += floatLength;
+                    remainLength -= floatLength;
+ #endif /* STRING_SPRINTF_EXTENDED_ENABLE */
                     break;
 
                 case 's':
                     /* %s - string */
                     sval = va_arg(ap, char*);                    /* String */
+
+  #ifndef STRING_SPRINTF_EXTENDED_ENABLE
+                    /* Standard string copy */
+                    uint8_t stringLength = (uint8_t)StrCpyMax(&str[length], sval, remainLength);
+                    length += stringLength;
+                    remainLength -= stringLength;
+  #else /* STRING_SPRINTF_EXTENDED_ENABLE */
                     if (paramHasLength)
                     {
                         /* String copy with length */
-                        uint8_t stringLength = paramNum1 * 10 + paramNum2;
+                        uint8_t stringLength = paramNumFull;
                         if (stringLength > remainLength)
                         {
                             stringLength = (uint8_t)remainLength;
@@ -2521,13 +2442,16 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                         length += stringLength;
                         remainLength -= stringLength;
                     }
+  #endif /* STRING_SPRINTF_EXTENDED_ENABLE */
                     break;
 
                 default:
+                    /* Unknown % after character, e.g. % */
                     if (remainLength > 0)
                     {
-                        str[length] = *p;                    /* Other, for example: '%' */
+                        str[length] = *p;
                         length++;
+                        remainLength--;
                     }
                     break;
             }
@@ -2536,31 +2460,9 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
     }    /* End of for loop */
 
     /* string's end */
-    str[length] = '\0';
+    ASSERT(str[length] != '\0');
 
     /* Return with length */
-    return length;
-}
-
-
-
-/**
- * @brief    Function like sprintf(); Print to string
- */
-size_t usprintf(char *str, const char *format, ...)
-{
-    size_t length = 0;
-
-    if ((str == NULL) || (format == NULL))
-        return 0;
-
-    STRING_ASSERT(MEM_IN_RAM(str, 0));
-
-    va_list ap;                                    /* argument pointer */
-    va_start(ap, format);                         /* ap on arg */
-    length = string_printf(str, format, ap);    /* Separate and process */
-    va_end(ap);                                     /* Cleaning after end */
-
     return length;
 }
 
@@ -3025,6 +2927,11 @@ uint32_t StringHelper_UnitTest(void)
     StrCpy(buffer, "123ABCabc$");
     StringUpper(buffer);
     UNITTEST_ASSERT(!StrCmp(buffer, "123ABCABC$"), "StringUpper error");
+
+
+    /* TODO: Add: %9dblalba" */
+
+    /* TODO: "%%" */
 
 
     /* End of unittest */
