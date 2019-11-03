@@ -231,23 +231,23 @@ void Debug_PrintDebugList(void)
 {
     uint8_t i;
     static const char fixheader[] = "| %20s | %3s |";
-    const uint8_t strLength = 2 + 20 + 3 + 3 + 2 + 1;
-    char str[strLength];
+    #define DEBUG_STR_LENGTH    ((uint8_t)(2 + 20 + 3 + 3 + 2 + 1))
+    char str[DEBUG_STR_LENGTH];
     /* sizeof(fixheader) -- string size */
     char header[sizeof(fixheader)];
 
-    Debug_PrintDebugListTableHeader(fixheader, str, strLength, header);
+    Debug_PrintDebugListTableHeader(fixheader, str, DEBUG_STR_LENGTH, header);
 
     for (i = 0; i < Debug_Count; i++)
     {
-        usnprintf(str, strLength, fixheader,
+        usnprintf(str, DEBUG_STR_LENGTH, fixheader,
                 DebugTasks[i].name,
                 ((DebugTasks[i].isEnabled) ? ("x") : (" ")));
 
         Table_SendLine(str);
     }
 
-    Debug_PrintDebugListTableHeader(fixheader, str, strLength, header);
+    Debug_PrintDebugListTableHeader(fixheader, str, DEBUG_STR_LENGTH, header);
 }
 
 

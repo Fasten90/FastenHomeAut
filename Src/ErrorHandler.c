@@ -42,8 +42,8 @@ void Error_Handler(void)
 {
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
     #ifdef CONFIG_TASKHANDLER_DEBUG_RUN_ENABLE
-    const uint8_t msgLength = 60;
-    char msg[msgLength];
+    #define ERROR_MSG_LENGTH ((uint8_t)60)
+    char msg[ERROR_MSG_LENGTH];
     #endif
 #endif
 
@@ -61,7 +61,7 @@ void Error_Handler(void)
 
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
     #ifdef CONFIG_TASKHANDLER_DEBUG_RUN_ENABLE
-    usnprintf(msg, msgLength, "TaskHandler frozen: %s\r\n", TaskHandler_GetActualRunningTaskName());
+    usnprintf(msg, ERROR_MSG_LENGTH, "TaskHandler frozen: %s\r\n", TaskHandler_GetActualRunningTaskName());
     DebugUart_SendMessageBlocked(msg);
     #else
     DebugUart_SendMessageBlocked("TaskHandler frozen!\r\n");
@@ -109,8 +109,8 @@ void assert_failed(uint8_t *file, uint32_t line)
  */
 void Assert_Function(char *file, uint32_t line, char *exp)
 {
-    const uint8_t msgLength = 255;
-    char errorMsg[msgLength];
+    #define ASSERT_MSG_LENGTH ((uint8_t)255)
+    char errorMsg[ASSERT_MSG_LENGTH ];
 
     /* Error LED */
     IO_Output_SetStatus(IO_LED_Red, IO_Output_Cmd_SetOn);
@@ -118,7 +118,7 @@ void Assert_Function(char *file, uint32_t line, char *exp)
     IO_Output_SetStatus(IO_LED_Blue, IO_Output_Cmd_SetOff);
 
     /* Send error message */
-    usnprintf(errorMsg, msgLength, "File: %s, %d. line: %s\r\n", file, line, exp);
+    usnprintf(errorMsg, ASSERT_MSG_LENGTH , "File: %s, %d. line: %s\r\n", file, line, exp);
     DebugUart_SendMessageBlocked(errorMsg);
     /* TODO: Need the wait? Message was sent blocked */
     DelayMs(100);
