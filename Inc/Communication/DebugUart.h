@@ -97,6 +97,8 @@ void DebugUart_ProcessReceivedCharacters(void);
 
 #else
 
+/* CONFIG_PLATFORM_X86 */
+
 #include <stdio.h>
 
 #define uprintf(...)                            printf(__VA_ARGS__)
