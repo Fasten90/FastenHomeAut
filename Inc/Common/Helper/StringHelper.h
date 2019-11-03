@@ -73,6 +73,7 @@
 #define strstr(_str1, _str2)               STRING_FindString(_str1, _str2)
 
 
+/* TODO: avoid? */
 #define sprintf(...)                       usprintf(__VA_ARGS__)
 
 
@@ -115,6 +116,7 @@ uint8_t DecimalToBinaryString(uint32_t value, char *str, uint8_t maxLength);
 
 /* Hexadecimal --> String converters */
 uint8_t DecimalToHexaString(uint32_t value, char *str, uint8_t length);
+uint8_t DecimalToHexaStringSafe(uint32_t value, char *str, uint8_t length, uint8_t maxLength);
 uint8_t ByteToHexaString(uint8_t byte, char *str);
 char HexToHexChar(uint8_t octet);
 
@@ -180,10 +182,8 @@ const char * STRING_FindString(const char *str, const char *findString);
 uint8_t STRING_Splitter(char *source, const char *delimiters, char **separated, uint8_t paramLimit);
 
 /* String format functions */
-size_t string_printf(char *str, const char *format, va_list ap);
 size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list ap);
 
-size_t usprintf(char *str, const char *format, ...);
 size_t usnprintf(char * str, size_t maxLen, const char * format, ...);
 
 /* Unit test */

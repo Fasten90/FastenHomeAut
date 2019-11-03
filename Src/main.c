@@ -306,22 +306,24 @@ int main(void)
 
     uint32_t utResult = UnitTestList_Run();
 
-#if (CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE == 1)
-    if (utResult != 0)
-    {
-        printf("%s\r\n", responseBuffer);
-    }
-    else
-    {
-        printf("%s\r\n", "Every test has run successfully!");
-    }
-    /* Return with UnitTest result: */
-    exit(utResult);
-#else
     /* Print result */
     printf("%s\r\n", responseBuffer); /* Clang generated compile warning when "printf(responseBuffer);" used */
     printf("Unit test result: %d\r\n", utResult);
+
+    if (utResult != 0)
+    {
+        printf("%s\r\n", "[FAIL] UnitTests are failed!");
+    }
+    else
+    {
+        printf("%s\r\n", "[OK] Every test has run successfully!");
+    }
+
+#if (CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE == 1)
+    /* Return with UnitTest result: */
+    exit(utResult);
 #endif /* CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE */
+
 #endif /* CONFIG_MODULE_UNITTEST_ENABLE */
 
     /* STDIN */

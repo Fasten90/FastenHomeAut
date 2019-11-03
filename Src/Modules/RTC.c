@@ -244,6 +244,7 @@ void RTC_GetTime(Time_t *time)
   * @param  showdate : pointer to buffer
   * @param  showtime : pointer to buffer
   * @retval None
+  *             !! Allocate correct size of string buffer!!
   */
 void RTC_CalendarShow(char *showdate, char *showtime)
 {
@@ -254,10 +255,10 @@ void RTC_CalendarShow(char *showdate, char *showtime)
     HAL_RTC_GetDate(&RtcHandle, &date, RTC_FORMAT_BIN);
     /* Get the RTC current Time */
     HAL_RTC_GetTime(&RtcHandle, &time, RTC_FORMAT_BIN);
-    /* Display date Format : mm-dd-yy */
-    usprintf((char *)showdate, "%4d-%02d-%02d", 2000 + date.Year, date.Month, date.Date);
+    /* Display date Format : YYYY-mm-dd */
+    usnprintf((char *)showdate, 11, "%4d-%02d-%02d", 2000 + date.Year, date.Month, date.Date);
     /* Display time Format : hh:mm:ss */
-    usprintf((char *)showtime, "%02d:%02d:%02d", time.Hours, time.Minutes, time.Seconds);
+    usnprintf((char *)showtime, 9, "%02d:%02d:%02d", time.Hours, time.Minutes, time.Seconds);
 }
 
 

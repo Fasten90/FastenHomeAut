@@ -568,7 +568,7 @@
 
 ///< Debug - Formatted text (colored texts)
 #define CONFIG_MODULE_DEBUG_ENABLE
-#define CONFIG_MODULE_COLOREDMESSAGE_ENABLE
+/* #define CONFIG_MODULE_COLOREDMESSAGE_ENABLE */
 
 ///< Standard library MemHandler functions
 #ifndef CONFIG_STANDARD_LIBRARY_USE_DEFAULT
@@ -633,6 +633,8 @@
 #if defined(CONFIG_USE_PANEL_PC)
 
     #define UNITTEST_PRINT_ASSERT                          (0)
+    /* TODO: Need to check this define? */
+
     /*
      * Exit after UnitTest running, with result
      *        1    Enable   --> Exit with UnitTest result
@@ -648,9 +650,7 @@
         #define CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE        (1)
     #endif
 
-    /* TODO: Need to check this define? */
-
-    #define UNITTEST_PRINT_ASSERT                        (0)
+    #define UNITTEST_PAUSE_WHEN_ERROR                       (0)
 #endif
 
 

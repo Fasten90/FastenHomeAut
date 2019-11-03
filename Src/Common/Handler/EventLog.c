@@ -54,7 +54,7 @@ static EventLogCnt_t LogCounter = 0;
  *----------------------------------------------------------------------------*/
 
 
-static void EventLog_PrintLogTableHeader(const char * fixheader, char * str, char * header);
+static void EventLog_PrintLogTableHeader(const char * fixheader, char * str, uint8_t strMaxLen, char * header);
 #ifdef CONFIG_EVETNLOG_PRINT_IMMEDIATELY
 static void EventLog_DebugPrintLog(EventLogRecord_t * eventRecord);
 #endif
@@ -139,12 +139,12 @@ static void EventLog_DebugPrintLog(EventLogRecord_t * eventRecord)
 
 
 
-static void EventLog_PrintLogTableHeader(const char * fixheader, char * str, char * header)
+static void EventLog_PrintLogTableHeader(const char * fixheader, char * str, uint8_t strMaxLen, char * header)
 {
 #if (EVENTLOG_SAVE_DATETIME == 1)
-    Table_PrintTableWithBorder(fixheader, str, header, "Id", "DateTime", "Tick", "EventName", "Data", "EventType", "TaskName");
+    Table_PrintTableWithBorder(fixheader, str, strMaxLen, header, "Id", "DateTime", "Tick", "EventName", "Data", "EventType", "TaskName");
 #else
-    Table_PrintTableWithBorder(fixheader, str, header, "Id", "Tick", "EventName", "Data", "EventType", "TaskName");
+    Table_PrintTableWithBorder(fixheader, str, strMaxLen, header, "Id", "Tick", "EventName", "Data", "EventType", "TaskName");
 #endif
 }
 
@@ -159,15 +159,17 @@ void EventLog_PrintLogTable(void)
 
 #if (EVENTLOG_SAVE_DATETIME == 1)
     const char const fixheader[] = "| %3u | %20s | %9u | %20s | %8X | %10s | %20s |";
-    char str[2 + 3 + 3 + 20 + 3 + 9 + 3 + 20 + 3 + 10 + 3 + 8 + 3 + 20 + 2];
+    const uint8_t strLength = 2 + 3 + 3 + 20 + 3 + 9 + 3 + 20 + 3 + 10 + 3 + 8 + 3 + 20 + 2 + 1;
+    char str[strLength];
 #else
     const char const fixheader[] = "| %3u | %9u | %20s | %8X | %10s | %20s |";
-    char str[2 + 3 + 3 + 9 + 3 + 20 + 3 + 10 + 3 + 8 + 3 + 20 + 2];
+    const uint8_t strLength = 2 + 3 + 3 + 9 + 3 + 20 + 3 + 10 + 3 + 8 + 3 + 20 + 2 + 1;
+    char str[strLength];
 #endif
 
     char header[sizeof(fixheader)];
 
-    EventLog_PrintLogTableHeader(fixheader, str, header);
+    EventLog_PrintLogTableHeader(fixheader, strLength, str, header);
 
 
     /* Send i. log record */
@@ -181,7 +183,7 @@ void EventLog_PrintLogTable(void)
     DateTime_PrintDateTimeToString(timeStr, &logRecord->dateTime);
 #endif
 
-    usprintf(str, fixheader,
+    usnprintf(str, strLength, fixheader,
             i,
 #if (EVENTLOG_SAVE_DATETIME == 1)
             timeStr,

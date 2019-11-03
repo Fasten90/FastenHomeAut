@@ -143,8 +143,8 @@ void Debug_Printf(Debug_t debugTask, const char *format, ...)
         txBuffer[DEBUGUART_TX_BUFFER_SIZE-1] = DEBUG_GUARD_VALUE;
 #endif
 
-        va_list ap;                                    /* argument pointer */
-        va_start(ap, format);                         /* ap on arg */
+        va_list ap;                                     /* argument pointer */
+        va_start(ap, format);                           /* ap on arg */
         size_t sentChars = string_printf_safe(txBuffer, DEBUGUART_TX_BUFFER_SIZE-1, format, ap);        /* Separate and process */
         va_end(ap);                                     /* Cleaning after end */
 
@@ -217,9 +217,9 @@ bool Debug_SetDebugTaskWithName(char *name, bool enable)
 /**
  * @brief    Print DebugList Table Header
  */
-static void Debug_PrintDebugListTableHeader(const char * fixheader, char * str, char * header)
+static void Debug_PrintDebugListTableHeader(const char * fixheader, char * str, uint8_t strMaxLen, char * header)
 {
-    Table_PrintTableWithBorder(fixheader, str, header, "DebugName", "en");
+    Table_PrintTableWithBorder(fixheader, str, strMaxLen, header, "DebugName", "en");
 }
 
 
@@ -231,22 +231,23 @@ void Debug_PrintDebugList(void)
 {
     uint8_t i;
     static const char fixheader[] = "| %20s | %3s |";
-    char str[2 + 20 + 3 + 3 + 2];
+    #define DEBUG_STR_LENGTH    ((uint8_t)(2 + 20 + 3 + 3 + 2 + 1))
+    char str[DEBUG_STR_LENGTH];
     /* sizeof(fixheader) -- string size */
     char header[sizeof(fixheader)];
 
-    Debug_PrintDebugListTableHeader(fixheader, str, header);
+    Debug_PrintDebugListTableHeader(fixheader, str, DEBUG_STR_LENGTH, header);
 
     for (i = 0; i < Debug_Count; i++)
     {
-        usprintf(str, fixheader,
+        usnprintf(str, DEBUG_STR_LENGTH, fixheader,
                 DebugTasks[i].name,
                 ((DebugTasks[i].isEnabled) ? ("x") : (" ")));
 
         Table_SendLine(str);
     }
 
-    Debug_PrintDebugListTableHeader(fixheader, str, header);
+    Debug_PrintDebugListTableHeader(fixheader, str, DEBUG_STR_LENGTH, header);
 }
 
 

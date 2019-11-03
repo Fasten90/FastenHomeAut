@@ -46,10 +46,13 @@
 /**
  * @brief    Print IP to string
  * @return   string length
+ *           !! Provide fix length buffer !!
+ *           "123.123.123.123" --> 15+1 = 16
  */
 size_t Network_PrintIp(char *str, Network_IP_t *ip)
 {
-    return usprintf(str, "%d.%d.%d.%d",
+    return usnprintf(str, 16,
+            "%d.%d.%d.%d",
             ip->IP[0],
             ip->IP[1],
             ip->IP[2],

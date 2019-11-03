@@ -230,17 +230,20 @@ void Logic_RemoteController_SendMessage(void)
 {
     /* Send message */
 #if 0
-    char msg[30];
-    usprintf(msg, "motor dc %d\r\n", Car_DcForward_ActualValue);
+    const uint8_t msgLength = 30;
+    char msg[msgLength];
+    usnprintf(msg, msgLength, "motor dc %d\r\n", Car_DcForward_ActualValue);
     SEND_MESSAGE_TO_CAR(msg);
 
     /* Send message on WiFi */
-    char msg[30];
-    usprintf(msg, "motor servo %d\r\n", Car_Turning_ActualValue);
+    const uint8_t msgLength = 30;
+    char msg[msgLength];
+    usnprintf(msg, msgLength, "motor servo %d\r\n", Car_Turning_ActualValue);
     SEND_MESSAGE_TO_CAR(msg);
 #endif
-    char msg[40];
-    usprintf(msg, "motor %d %d\r\n", Car_DcForward_ActualValue, Car_Turning_ActualValue);
+    const uint8_t msgLength = 40;
+    char msg[msgLength];
+    usnprintf(msg, msgLength, "motor %d %d\r\n", Car_DcForward_ActualValue, Car_Turning_ActualValue);
     SEND_MESSAGE_TO_CAR(msg);
 
     /* For periodical message */

@@ -2293,7 +2293,7 @@ static CmdH_Result_t CommandFunction_IO(uint32_t argc, char** argv)
                     IO_GetOutputStateName(IO_Output_GetStatus(i)));
         }*/
         char outStateString[IO_OUPUT_STATES_STRING_MAX_LENGTH];
-        IO_Output_PrintStates(outStateString);
+        IO_Output_PrintStates(outStateString, IO_OUPUT_STATES_STRING_MAX_LENGTH);
         CmdH_SendLine(outStateString);
 
         result = CmdH_Result_Ok;
@@ -2341,7 +2341,7 @@ static CmdH_Result_t CommandFunction_IO(uint32_t argc, char** argv)
             /* "status" */
             /* Print IOs statuses */
             char outStateString[IO_OUPUT_STATES_STRING_MAX_LENGTH];
-            IO_Output_PrintStates(outStateString);
+            IO_Output_PrintStates(outStateString, IO_OUPUT_STATES_STRING_MAX_LENGTH);
             CmdH_SendLine(outStateString);
 
             /* TODO: Print input statuses */

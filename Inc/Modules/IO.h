@@ -112,7 +112,7 @@ IO_Status_t IO_Output_GetStatus(IO_Output_Name_t ioName);
 IO_Output_Name_t IO_Output_GetOutputNumFromName(const char *name);
 const char * IO_Output_GetName(IO_Output_Name_t ioNum);
 IO_Output_Cmd_t IO_Output_GetTypeFromString(const char *typeString);
-size_t IO_Output_PrintStates(char *str);
+size_t IO_Output_PrintStates(char *str, uint8_t strLen);
 const char * IO_GetStatusName(IO_Status_t status);
 
 #else

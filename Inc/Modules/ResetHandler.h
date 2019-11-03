@@ -76,7 +76,7 @@ typedef enum
  *----------------------------------------------------------------------------*/
 
 void Reset_ClearResetFlags(void);
-size_t Reset_PrintResetReasons(char * dst);
+size_t Reset_PrintResetReasons(char * str, uint8_t strLength);
 
 
 

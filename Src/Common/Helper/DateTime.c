@@ -288,7 +288,9 @@ bool DateTime_CheckDateTime(DateTime_t *dateTime)
 /**
  * @brief    Print DateTime_t to string
  *             like: "YYYY-MM-DD HH:mm:ss"
- *                     19 character
+ *                     19 character + 1 EOS
+ *           !! Be careful - could not pre-check the buffer lenght !!
+ *           !! Please provide 20 length buffer !!
  */
 size_t DateTime_PrintDateTimeToString(char *message, DateTime_t *dateTime)
 {
@@ -298,7 +300,8 @@ size_t DateTime_PrintDateTimeToString(char *message, DateTime_t *dateTime)
         return 0;
     }
 
-    return usprintf(message, "%04d-%02d-%02d %02d:%02d:%02d",
+    return usnprintf(message, 20,
+            "%04d-%02d-%02d %02d:%02d:%02d",
             dateTime->date.year+2000,
             dateTime->date.month,
             dateTime->date.day,
