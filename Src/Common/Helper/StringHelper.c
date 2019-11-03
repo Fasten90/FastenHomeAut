@@ -1495,7 +1495,7 @@ uint8_t StrCmpWithLength(const char * str1, const char *str2, size_t length)
 
 
 /**
- * @brief    Copy string to *dest pointer
+ * @brief     Copy string to *dest pointer
  * @return    Copied string length
  */
 size_t StrCpy(char *dest, const char *str)
@@ -2116,11 +2116,17 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
 
     for (p = (char *)format; *p; p++)                /* p to EOS */
     {
-        if ((*p != '%') && (remainLength > 0))       /* copy, if not '%' */
+        if (remainLength == 0)                       /* copy, if not '%' */
         {
+            /* There is no enough space, exit */
+            break;
+        }
+        else if (*p != '%')
+        {
+            /* There is enough empty space, could copy */
             str[length] = *p;                        /* copy to string */
             length++;
-            str[length] = '\0';                     /* EOS */
+            str[length] = '\0';                      /* EOS */
             remainLength--;
         }
         else
@@ -2197,7 +2203,6 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                     size_t decLen = SignedDecimalToStringSafe(ival, &str[length], remainLength);
                     length += decLen;
                     remainLength -= decLen;
-                    UNUSED_ARGUMENT(fillCharacter);
   #else /* STRING_SPRINTF_EXTENDED_ENABLE */
 
                     if (!paramHasLength)
@@ -2455,6 +2460,12 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
                         str[length] = '\0'; /* EOS */
                         remainLength--;
                     }
+                    else
+                    {
+                        /* There is no enough space, exit */
+                        STRING_SNPRINTF_CATCH_ERROR(); /* In development phase, shall detect */
+                        break;
+                    }
                     break;
             }
         }    /* End of '%' */
@@ -2531,7 +2542,23 @@ uint32_t StringHelper_UnitTest(void)
     UNITTEST_ASSERT(StrCmpFirst("example1", "example"), "StrCmpFirst error");
 
 
-    /* TODO: Use STRING_SPRINTF_EXTENDED_ENABLE define */
+    /* Sprintf tests */
+
+  #ifndef STRING_SPRINTF_EXTENDED_ENABLE
+    /* Extend turned off */
+    usnprintf(buffer, STRING_BUFFER_LENGTH, "%5u",123);
+    UNITTEST_ASSERT(!StrCmp(buffer, "5u"), "Extend error"); /* u will not detected as format */
+
+    usnprintf(buffer, STRING_BUFFER_LENGTH, "%5u");
+    UNITTEST_ASSERT(!StrCmp(buffer, "5u"), "Extend error"); /* u will not detected as format */
+
+    usnprintf(buffer, STRING_BUFFER_LENGTH, "%5");
+    UNITTEST_ASSERT(!StrCmp(buffer, "5"), "Extend error"); /* 5 will not format anything */
+  #endif /* STRING_SPRINTF_EXTENDED_ENABLE */
+
+    usnprintf(buffer, STRING_BUFFER_LENGTH, "%%");
+    UNITTEST_ASSERT(!StrCmp(buffer, "%"), "Unknown format error"); /* % - format and received unhandled % --> like escaped % */
+
 
     /* Float print tests */
 
@@ -2539,6 +2566,7 @@ uint32_t StringHelper_UnitTest(void)
     usnprintf(buffer, STRING_BUFFER_LENGTH, "%f",123.34f);
     UNITTEST_ASSERT(!StrCmp(buffer, "123.339996"), "Float error");
 
+  #ifdef STRING_SPRINTF_EXTENDED_ENABLE
     /* "123" */
     usnprintf(buffer, STRING_BUFFER_LENGTH, "%1.0f",123.34f);
     UNITTEST_ASSERT(!StrCmp(buffer, "123"), "Float error");
@@ -2559,12 +2587,30 @@ uint32_t StringHelper_UnitTest(void)
     usnprintf(buffer, STRING_BUFFER_LENGTH, "%5.5f",123.34f);
     UNITTEST_ASSERT(!StrCmp(buffer, "  123.33999"), "Float error");
 
-    /* TODO: "%.2f? */
+    /* "123.33999" */
+    /* TODO: Handle "%.f" ? */
+    usnprintf(buffer, STRING_BUFFER_LENGTH, "%0.5f",123.34f);
+    UNITTEST_ASSERT(!StrCmp(buffer, "123.33999"), "Float error");
+
+    /* TODO: Handle "%.f" ? */
+    usnprintf(buffer, STRING_BUFFER_LENGTH, "%0.1f",123.34f);
+    UNITTEST_ASSERT(!StrCmp(buffer, "123.3"), "Float error");
+  #endif /* STRING_SPRINTF_EXTENDED_ENABLE */
 
 
     /* Integer print tests */
 
     /* Printed: "123" */
+    usnprintf(buffer, STRING_BUFFER_LENGTH, "%u",123);
+    UNITTEST_ASSERT(!StrCmp(buffer, "123"), "Integer error");
+
+    usnprintf(buffer, STRING_BUFFER_LENGTH, "%u",123456789);
+    UNITTEST_ASSERT(!StrCmp(buffer, "123456789"), "Integer error");
+
+    usnprintf(buffer, STRING_BUFFER_LENGTH, "%u",1234567890); /* Billion */
+    UNITTEST_ASSERT(!StrCmp(buffer, "1234567890"), "Integer error");
+
+  #ifdef STRING_SPRINTF_EXTENDED_ENABLE
     usnprintf(buffer, STRING_BUFFER_LENGTH, "%0u",123);
     UNITTEST_ASSERT(!StrCmp(buffer, "123"), "Integer error");
 
@@ -2589,9 +2635,16 @@ uint32_t StringHelper_UnitTest(void)
     UNITTEST_ASSERT(!StrCmp(buffer, "A5"), "Integer error");
     usnprintf(buffer, STRING_BUFFER_LENGTH, "%-5u",123);        /* Printed: "-5u", because '-' is not a number */
     UNITTEST_ASSERT(!StrCmp(buffer, "-5u"), "Integer error");
+  #endif /* STRING_SPRINTF_EXTENDED_ENABLE */
+
 
     /* Signed Integer print tests: */
 
+    /* Printed: "-123" */
+    usnprintf(buffer, STRING_BUFFER_LENGTH, "%d",-123);
+    UNITTEST_ASSERT(!StrCmp(buffer, "-123"), "Integer error");
+
+#ifdef STRING_SPRINTF_EXTENDED_ENABLE
     /* Printed: "-123" */
     usnprintf(buffer, STRING_BUFFER_LENGTH, "%0d",-123);
     UNITTEST_ASSERT(!StrCmp(buffer, "-123"), "Integer error");
@@ -2611,11 +2664,14 @@ uint32_t StringHelper_UnitTest(void)
     /* Printed: "-0123", it is OK */
     usnprintf(buffer, STRING_BUFFER_LENGTH, "%05d",-123);
     UNITTEST_ASSERT(!StrCmp(buffer, "-00123"), "Integer error");
+#endif /* STRING_SPRINTF_EXTENDED_ENABLE */
+
 
     /* Hexadecimal print tests: */
     /* TODO: Move to test function with list*/
     usnprintf(buffer, STRING_BUFFER_LENGTH, "0x%x",0xFFFFFFFF);
     UNITTEST_ASSERT(!StrCmp(buffer, "0xFFFFFFFF"), "Hexadecimal error");
+#ifdef STRING_SPRINTF_EXTENDED_ENABLE
     usnprintf(buffer, STRING_BUFFER_LENGTH, "0x%01x",0xFFFFFFFF);
     UNITTEST_ASSERT(!StrCmp(buffer, "0xF"), "Hexadecimal error");
     usnprintf(buffer, STRING_BUFFER_LENGTH, "0x%02x",0xFFFFFFFF);
@@ -2653,6 +2709,8 @@ uint32_t StringHelper_UnitTest(void)
     UNITTEST_ASSERT(!StrCmp(buffer, "0x12345678"), "Hexadecimal error");
     usnprintf(buffer, STRING_BUFFER_LENGTH, "0x%09x",0x12345678);
     UNITTEST_ASSERT(!StrCmp(buffer, "0x"), "Hexadecimal error");
+#endif /* STRING_SPRINTF_EXTENDED_ENABLE */
+
 
     /* Binaries printf */
     usnprintf(buffer, STRING_BUFFER_LENGTH, "0b%b",0x000000FF);
@@ -2666,6 +2724,7 @@ uint32_t StringHelper_UnitTest(void)
     usnprintf(buffer, STRING_BUFFER_LENGTH, "%s", "text");
     UNITTEST_ASSERT(!StrCmp(buffer, "text"), "String error (%s)");
 
+#ifdef STRING_SPRINTF_EXTENDED_ENABLE
     /* max 5 character */
     usnprintf(buffer, STRING_BUFFER_LENGTH, "%5s", "longtext");
     UNITTEST_ASSERT(!StrCmp(buffer, "longt"), "String error (%s)");
@@ -2677,7 +2736,7 @@ uint32_t StringHelper_UnitTest(void)
     /* max 10 character */
     usnprintf(buffer, STRING_BUFFER_LENGTH, "%10s", "toolongtext");
     UNITTEST_ASSERT(!StrCmp(buffer, "toolongtex"), "String error (%s)");
-
+#endif /* STRING_SPRINTF_EXTENDED_ENABLE */
 
 
     /* string -> num converters */
@@ -2690,9 +2749,11 @@ uint32_t StringHelper_UnitTest(void)
     result = StringHexByteToNum("00", &value8);
     UNITTEST_ASSERT(result, "StringByteToNum error");
     UNITTEST_ASSERT((value8 == 0x00), "StringByteToNum error");
+
     result = StringHexByteToNum("15", &value8);
     UNITTEST_ASSERT(result, "StringByteToNum error");
     UNITTEST_ASSERT((value8 == 0x15), "StringByteToNum error");
+
     result = StringHexByteToNum("FF", &value8);
     UNITTEST_ASSERT(result, "StringByteToNum error");
     UNITTEST_ASSERT((value8 == 0xFF), "StringByteToNum error");
@@ -2777,7 +2838,7 @@ uint32_t StringHelper_UnitTest(void)
     /* TODO: StringToBool test */
 
 
-    //* String function testing */
+    /* String function testing */
 
     /* Test: uint8_t StrCpyCharacter(char *dest, char c, uint8_t num) */
     StrCpyCharacter(buffer, 'a', 10);
@@ -2897,10 +2958,26 @@ uint32_t StringHelper_UnitTest(void)
 
 
     /* TODO:  Test safe (length) functions */
-
-    /* usnprintf */
     usnprintf(buffer, 30, "%d %u 1234 %c %s", 1, 2, 'a', "str");
     UNITTEST_ASSERT(!StrCmp(buffer, "1 2 1234 a str"), "usnprintf error");
+
+    /* Length test */
+    buffer[29] = 'e';
+    usnprintf(buffer, 30, "12345678901234567890123456789"); /* OK - last char EOS */
+    UNITTEST_ASSERT(!StrCmp(buffer, "12345678901234567890123456789"), "usnprintf error");
+    UNITTEST_ASSERT(buffer[29] == '\0', "usnprintf error");
+
+    buffer[29] = 'e';
+    usnprintf(buffer, 30, "123456789012345678901234567890"); /* OK - last char EOS */
+    UNITTEST_ASSERT(!StrCmp(buffer, "12345678901234567890123456789"), "usnprintf error");
+    /* Be careful! Last char shall be EOS because the max length */
+    UNITTEST_ASSERT(buffer[29] == '\0', "usnprintf error");
+
+#ifdef STRING_SPRINTF_EXTENDED_ENABLE
+    /* usnprintf */
+    usnprintf(buffer, 30, "%1d %1u 1234 %1c %3s", 1, 2, 'a', "str");
+    UNITTEST_ASSERT(!StrCmp(buffer, "1 2 1234 a str"), "usnprintf error");
+#endif
     /* TODO: Add other test, if usnprintf improved */
 
 
@@ -2936,9 +3013,6 @@ uint32_t StringHelper_UnitTest(void)
     /* TODO: UnsignedDecimalToStringFillSafe */
 
     /* TODO: Add: %9dblalba" */
-
-    /* TODO: "%%" */
-
 
     /* TODO: usnprintf(format, formatLength, "0x%%%dX", octetNum); */
 

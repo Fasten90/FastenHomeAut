@@ -625,7 +625,12 @@ uint32_t HomeAutMessage_UnitTest(void)
 
 
     /* |HomeAut|<SourceAddress>|<TargetAddress>|<DateTime>|<Function>|<DataType>|<Data>| */
+  #ifdef STRING_SPRINTF_EXTENDED_ENABLE
     const char TestMessage[] = "|HomeAut|192.168.100.100|192.168.100.14|2017-01-10 18:49:50|COMMAND|REMOTE|01234567|";
+  #else
+    /*                                                                       ||  - fill zero not works if extension turned off */
+    const char TestMessage[] = "|HomeAut|192.168.100.100|192.168.100.14|2017-1-10 18:49:50|COMMAND|REMOTE|01234567|";
+  #endif
     HomeAut_InformationType testInformation = { 0 };
     char exampleStringMessage[HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH];
     size_t length;

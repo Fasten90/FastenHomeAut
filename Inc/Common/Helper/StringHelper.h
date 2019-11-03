@@ -28,7 +28,10 @@
  *----------------------------------------------------------------------------*/
 
 
-#define STRING_SPRINTF_EXTENDED_ENABLE
+/* Configs */
+#ifndef STRING_SPRINTF_EXTENDED_ENABLE
+    #define STRING_SPRINTF_EXTENDED_ENABLE
+#endif
 
 
 /* size_t strlen ( const char * str ); */

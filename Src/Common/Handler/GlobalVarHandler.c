@@ -371,7 +371,11 @@ static GlobVarH_ProcessResult_t GlobVarH_GetVariable(const GlobVarH_VarRecord_t 
         {
             float *floatPointer = (float *)varRecord->varPointer;
             float value = *floatPointer;
+    #ifdef STRING_SPRINTF_EXTENDED_ENABLE
             CmdH_Printf("%0.2f", value);
+    #else
+            CmdH_Printf("%f", value);
+    #endif
         }
             break;
 
@@ -461,12 +465,17 @@ static void GlobVarH_GetInteger(const GlobVarH_VarRecord_t * varRecord)
             /* Octet num is ok */
             uint32_t *numPointer = (uint32_t *)varRecord->varPointer;
             uint32_t num = *numPointer;
+        #ifdef STRING_SPRINTF_EXTENDED_ENABLE
             #define FORMAT_STRING_LENGTH    ((uint8_t)10)
             char format[FORMAT_STRING_LENGTH];
 
             usnprintf(format, FORMAT_STRING_LENGTH, "0x%%%dX", octetNum);
+
             /* Example: "0x%2X" */
             CmdH_Printf(format, num);
+        #else
+            CmdH_Printf("0x%X", num);
+        #endif
         }
         else
         {
@@ -1917,7 +1926,11 @@ uint32_t GlobVarH_UnitTest(void)
     GlobVarH_UT_Clear();
     result = GlobVarH_ProcessVariableCommand(&utVarList, "testuint32", "", GlobVarH_SetGet_Get, CommProt_Buffer);
     UNITTEST_ASSERT(result == GlobVarH_Process_Ok_Answered, "testuint32 get error");
+  #ifdef STRING_SPRINTF_EXTENDED_ENABLE
     UNITTEST_ASSERT(!StrCmp("0x00000008", GlobVarH_TestBuffer), "testuint32 get error");
+  #else
+    UNITTEST_ASSERT(!StrCmp("0x00000008", GlobVarH_TestBuffer), "testuint32 get error");
+  #endif
 
     /* Set valid value: 65535 */
     GlobVarH_UT_Clear();
