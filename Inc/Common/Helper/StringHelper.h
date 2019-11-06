@@ -29,6 +29,7 @@
 
 
 /* Configs */
+/* Possible optimization: undef the define */
 #ifndef STRING_SPRINTF_EXTENDED_ENABLE
     #define STRING_SPRINTF_EXTENDED_ENABLE
 #endif
