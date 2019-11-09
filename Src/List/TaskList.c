@@ -591,7 +591,7 @@ static TaskResult_t Task_ProcessButtonPressed(ScheduleSource_t source)
         else
         {
             /* Not pressed at now and previous time! */
-            /* canSleep = true; // Stay true */
+            /* canSleep = true; */ /* Stay true */
         }
     }
 

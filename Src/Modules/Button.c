@@ -149,9 +149,9 @@ void BUTTON_Init(void)
 
 
 /**
- * @brief    Get Button state
+ * @brief      Get Button state
  *             Only one button can check
- * @retval    true    if pressed/pressing
+ * @retval     true    if pressed/pressing
  *             false    if not or wrong button
  */
 bool BUTTON_GetButtonState(ButtonType_t button)

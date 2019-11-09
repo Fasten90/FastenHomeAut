@@ -140,9 +140,9 @@ void EXTI15_10_IRQHandler(void)
 #ifdef CONFIG_USE_PANEL_HOMEAUTCENTERPANEL
 
 /* Up        PC7 */
-/* Down        PC8 */
-/* Right    PA0 */
-/* Left        PC9 */
+/* Down      PC8 */
+/* Right     PA0 */
+/* Left      PC9 */
 
 
 void EXTI0_IRQHandler(void)
@@ -196,10 +196,10 @@ void EXTI15_10_IRQHandler(void)
 #ifdef CONFIG_USE_PANEL_FASTENNODE
 
 /*
-BUTTON_UP            GPIOA0
+BUTTON_UP           GPIOA0
 BUTTON_RIGHT        GPIOB8
-BUTTON_DOWN            GPIOB9
-BUTTON_LEFT            GPIOA15
+BUTTON_DOWN         GPIOB9
+BUTTON_LEFT         GPIOA15
 */
 
 #ifdef CONFIG_MODULE_BUTTON_ENABLE
@@ -291,25 +291,25 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     if (GPIO_Pin == BUTTON_UP_GPIO_PIN)
     {
         /* Toggle LED */
-        /* ED_RED_TOGGLE(); */
+        /* LED_RED_TOGGLE(); */
         BUTTON_Clicked |= (1 << PressedButton_Up);
     }
     if (GPIO_Pin == BUTTON_DOWN_GPIO_PIN)
     {
         /* Toggle LED */
-        /* ED_RED_TOGGLE(); */
+        /* LED_RED_TOGGLE(); */
         BUTTON_Clicked |= (1 << PressedButton_Down);
     }
     if (GPIO_Pin == BUTTON_RIGHT_GPIO_PIN)
     {
         /* Toggle LED */
-        /* ED_RED_TOGGLE(); */
+        /* LED_RED_TOGGLE(); */
         BUTTON_Clicked |= (1 << PressedButton_Right);
     }
     if (GPIO_Pin == BUTTON_LEFT_GPIO_PIN)
     {
         /* Toggle LED */
-        /* ED_RED_TOGGLE(); */
+        /* LED_RED_TOGGLE(); */
         BUTTON_Clicked |= (1 << PressedButton_Left);
     }
     #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
