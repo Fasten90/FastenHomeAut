@@ -2456,7 +2456,7 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
             }
             else if (!StrCmp("stackoverflow", argv[2]))
             {
-                SelfTest_Erros_StackOverFlow();
+                SelfTest_Errors_StackOverFlow();
 
                 /* Never reach */
                 result = CmdH_Result_Ok_SendSuccessful;

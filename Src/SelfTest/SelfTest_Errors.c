@@ -38,6 +38,8 @@
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
+static uint32_t SelfTest_Erros_StackOverFlow_RecursiveInfiniteFunction(uint32_t param);
+
 
 
 /*------------------------------------------------------------------------------
@@ -106,13 +108,13 @@ void SelfTest_Errors_MemFault(void)
 /**
  * Test StackOverFlow
  */
-void SelfTest_Erros_StackOverFlow(void)
+static uint32_t SelfTest_Erros_StackOverFlow_RecursiveInfiniteFunction(uint32_t param)
 {
     /* Most simple solution if we will re-call (recursive) this function */
-    uint32_t dummyVar0 = 0x00;
-    uint32_t dummyVar1 = 0x01;
-    uint32_t dummyVar2 = 0x02;
-    uint32_t dummyVar3 = 0x03;
+    uint32_t dummyVar0 = 0x00 + param;
+    uint32_t dummyVar1 = 0x01 + param;
+    uint32_t dummyVar2 = 0x02 + param;
+    uint32_t dummyVar3 = 0x03 + param;
 
     UNUSED_ARGUMENT(dummyVar0);
     UNUSED_ARGUMENT(dummyVar1);
@@ -120,7 +122,19 @@ void SelfTest_Erros_StackOverFlow(void)
     UNUSED_ARGUMENT(dummyVar3);
 
     /* @note: Be careful, recursive, never return... */
-    SelfTest_Erros_StackOverFlow();
+    return SelfTest_Erros_StackOverFlow_RecursiveInfiniteFunction(param + 1);
+}
+
+
+
+/**
+ * Test StackOverFlow
+ */
+void SelfTest_Errors_StackOverFlow(void)
+{
+
+    /* @note: Be careful, recursive, never return... */
+    SelfTest_Erros_StackOverFlow_RecursiveInfiniteFunction(0);
 }
 
 
