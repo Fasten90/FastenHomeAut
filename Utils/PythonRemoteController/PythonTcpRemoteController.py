@@ -59,8 +59,11 @@ login_received = False
 # Motor control    
 speed_max = 50
 speed_min = -50
+speed_step = 10
+
 turn_max = 30
 turn_min = -30
+turn_step = 10
 
 send_msg = ""
 
@@ -82,21 +85,28 @@ force_send_msg = False
 def speed_handle(speed_dir):
     global speed
     if speed_dir > 0:
-        speed = 1
+        speed += speed_step
     elif speed_dir < 0:
-        speed = -1
+        speed -= speed_step
     else:
         print("Error: speed_dir")
+    if speed > speed_max:
+        speed = speed_max
+    elif speed < speed_min:
+        speed = speed_min
 
 def turn_handle(turn_dir):
     global turn
     if turn_dir > 0:
-        turn = 1
+        turn += turn_step
     elif turn_dir < 0:
-        turn = -1
+        turn -= turn_step
     else:
         print("Error: turn_dir")
-
+    if turn > turn_max:
+        turn = turn_max
+    elif turn < turn_min:
+        turn = turn_min
 
 def keyboard_handle_thread():
 
@@ -125,7 +135,7 @@ def keyboard_handle_thread():
             key_pressed = False
             if keyboard.is_pressed('left arrow') or keyboard.is_pressed('a'):
                 print ('Left')
-                turn_handle(-1)
+                turn_handle(1)
                 key_pressed = True
                 key_left_is_pressed = True
             else:
@@ -139,7 +149,7 @@ def keyboard_handle_thread():
                 key_up_is_pressed = False
             if keyboard.is_pressed('right arrow') or keyboard.is_pressed('d'):
                 print ('Right')
-                turn_handle(1)
+                turn_handle(-1)
                 key_pressed = True
                 key_right_is_pressed = True
             else:
