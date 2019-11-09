@@ -7,7 +7,8 @@ import time
 
 
 # Connection configs
-TCP_IP_DEFAULT = '192.168.0.199'
+TCP_IP_DEFAULT = '192.168.0.241'
+#TCP_IP_DEFAULT = '192.168.0.199'
 #TCP_IP_DEFAULT = '192.168.4.2'
 #TCP_IP_DEFAULT = '192.168.1.62'
 TCP_PORT_DEFAULT = 2000
@@ -65,6 +66,7 @@ send_msg = ""
 
 def keyboard_handle_thread():
 	global connectOk
+	global needRun
 	
 	global speed
 	global turn
@@ -105,23 +107,31 @@ def keyboard_handle_thread():
 
 		# Motor control
 		if key == "left":
-			if turn < 0:
+			if turn < -10:
 				turn += 20
+			elif turn < 0:
+				turn = 0
 			elif turn < turn_max:
 				turn += 10
 		if key == "right":
-			if turn > 0:
+			if turn > 10:
 				turn -= 20
+			elif turn > 0:
+				turn = 0
 			elif turn > turn_min:
 				turn -= 10
 		if key == "up":
-			if speed < 0:
+			if speed < -10:
 				speed += 20
+			elif speed < 0:
+				speed = 0
 			elif speed < speed_max:
 				speed += 10
 		if key == "down":
-			if speed > 0:
+			if speed > 10:
 				speed -= 20
+			elif speed > 0:
+				speed = 0
 			elif speed > speed_min:
 				speed -= 10
 
@@ -245,7 +255,7 @@ while needRun:
 				break
 	except Exception as excpt:
 		print("Error in Main" + str(excpt))
-		connectOk = False	
+		connectOk = False
 
 	connectOk = False
 		
