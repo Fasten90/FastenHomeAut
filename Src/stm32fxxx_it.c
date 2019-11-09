@@ -121,7 +121,7 @@ void HardFault_Handler(void)
     );
 #elif 1
     /* Own version */
-
+    /* TODO: Not Keil uVision ARMCC compatible */
     __asm volatile
     (
         " mrs r0, MSP \n"

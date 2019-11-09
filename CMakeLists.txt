@@ -248,7 +248,7 @@ set(SOURCE_FILES ${FASTEN_SOURCE_FILES} ${DRIVER_SOURCE_FILES})
 
 
 # Test or normal output
-if ("${CMAKE_FASTENHOMEAUT_GCC_COERAGE}" STREQUAL "TRUE")
+if ("${CMAKE_FASTENHOMEAUT_GCC_COVERAGE}" STREQUAL "TRUE")
     message(STATUS "# Test coverage turned on")    
 
     SET(GCC_COVERAGE_COMPILE_FLAGS "-g -O0 -coverage -fprofile-arcs -ftest-coverage")

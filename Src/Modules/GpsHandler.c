@@ -1011,11 +1011,19 @@ static void DebugPrintCoordinate(CoordinateLog_t * coordLog)
     DateTime_PrintDateTimeToString(dateTimeString, &coordLog->dateTime);
 
     /* Lat, Lon, Speed [kmph], DateTime */
+  #ifdef STRING_SPRINTF_EXTENDED_ENABLE
     GPSHANDLER_DEBUG_PRINTF("Coord: %f, %f, %3.2f, %s\r\n",
             coordLog->coord.Lat,
             coordLog->coord.Lon,
             coordLog->speed,
             dateTimeString);
+  #else
+    GPSHANDLER_DEBUG_PRINTF("Coord: %f, %f, %f, %s\r\n",
+                coordLog->coord.Lat,
+                coordLog->coord.Lon,
+                coordLog->speed,
+                dateTimeString);
+  #endif
 }
 #endif
 

@@ -14,8 +14,10 @@ cmake CC=gcc -G "MinGW Makefiles" ../..
 
 
 :: Run make
-:: c:\Programs\Engineer\Utils\CompilerTools\make.exe
-c:\Programs\Engineer\Utils\CompilerTools\make.exe VERBOSE=1
+make VERBOSE=1
+
+
+:: TODO: Not Start if there is error
 
 
 set filename="FastenHomeAut.exe"

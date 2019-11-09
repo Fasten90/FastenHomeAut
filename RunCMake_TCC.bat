@@ -10,16 +10,20 @@ mkdir CMakeBuild_Tcc
 cd CMakeBuild_Tcc
 
 
+:: PreTest:
+::make
+::tcc
+
+
 :: Run CMake
 cmake ^
--D"CMAKE_MAKE_PROGRAM:FILEPATH=c:/Programs/Engineer/Utils/CompilerTools/make.exe" ^
--D"CMAKE_C_COMPILER:FILEPATH=c:/Programs/Engineer/tcc/tcc.exe" ^
+-D"CMAKE_MAKE_PROGRAM:FILEPATH=make.exe" ^
+-D"CMAKE_C_COMPILER:FILEPATH=tcc.exe" ^
 CC=gcc -G "MinGW Makefiles" ../..
 
 
 :: Run make
-:: c:\Programs\Engineer\Utils\CompilerTools\make.exe
-c:\Programs\Engineer\Utils\CompilerTools\make.exe VERBOSE=1
+make VERBOSE=1
 
 
 :: Start compiled exe

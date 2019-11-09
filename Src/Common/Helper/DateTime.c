@@ -20,6 +20,9 @@
     #include "UnitTest.h"
 #endif
 
+#ifndef STRING_SPRINTF_EXTENDED_ENABLE
+    #define DATETIME_PARSE_IS_NOT_STRICT
+#endif
 
 
 /*------------------------------------------------------------------------------
@@ -75,7 +78,12 @@ bool DateTime_ConvertStringToDateTime(const char *string, DateTime_t *dateTime)
         return false;
     }
 
+  #ifdef DATETIME_PARSE_IS_NOT_STRICT
+    if (StringLength(string) > (DATETIME_STRING_MAX_LENGTH - 1))
+  #else
+    /* Strict */
     if (StringLength(string) != (DATETIME_STRING_MAX_LENGTH - 1))
+  #endif
     {
         /* Wrong length */
         return false;
@@ -154,7 +162,7 @@ bool DateTime_ConvertStringToDateTime(const char *string, DateTime_t *dateTime)
 
 /**
  * @brief    Convert DateString to Date
- * @note    Str must be modificable!
+ * @note     Str must be modifiable!
  */
 bool DateTime_ConvertDateStringToDate(char *str, Date_t *date)
 {
@@ -289,7 +297,7 @@ bool DateTime_CheckDateTime(DateTime_t *dateTime)
  * @brief    Print DateTime_t to string
  *             like: "YYYY-MM-DD HH:mm:ss"
  *                     19 character + 1 EOS
- *           !! Be careful - could not pre-check the buffer lenght !!
+ *           !! Be careful - could not pre-check the buffer length !!
  *           !! Please provide 20 length buffer !!
  */
 size_t DateTime_PrintDateTimeToString(char *message, DateTime_t *dateTime)
@@ -300,6 +308,7 @@ size_t DateTime_PrintDateTimeToString(char *message, DateTime_t *dateTime)
         return 0;
     }
 
+#ifdef STRING_SPRINTF_EXTENDED_ENABLE
     return usnprintf(message, 20,
             "%04d-%02d-%02d %02d:%02d:%02d",
             dateTime->date.year+2000,
@@ -308,6 +317,16 @@ size_t DateTime_PrintDateTimeToString(char *message, DateTime_t *dateTime)
             dateTime->time.hour,
             dateTime->time.minute,
             dateTime->time.second);
+#else
+    return usnprintf(message, 20,
+            "%d-%d-%d %d:%d:%d",
+            dateTime->date.year+2000,
+            dateTime->date.month,
+            dateTime->date.day,
+            dateTime->time.hour,
+            dateTime->time.minute,
+            dateTime->time.second);
+#endif
 }
 
 
@@ -715,12 +734,12 @@ uint32_t DateTime_UnitTest(void)
     char strDateTime1[DATETIME_STRING_MAX_LENGTH] = { "2017-02-03 12:12:00" };
     result = DateTime_ConvertStringToDateTime(strDateTime1, &test300);
     UNITTEST_ASSERT(result == true, "DateTime_ConvertStringToDateTime error");
-    UNITTEST_ASSERT(((test300.date.year    == 17)
-                        && (test300.date.month    == 2)
-                        && (test300.date.day    == 3)
+    UNITTEST_ASSERT(((test300.date.year          == 17)
+                        && (test300.date.month   == 2)
+                        && (test300.date.day     == 3)
                         && (test300.time.hour    == 12)
-                        && (test300.time.minute    == 12)
-                        && (test300.time.second    == 0)),
+                        && (test300.time.minute  == 12)
+                        && (test300.time.second  == 0)),
             "DateTime_ConvertStringToDateTime error");
 
 
@@ -728,7 +747,11 @@ uint32_t DateTime_UnitTest(void)
     DateTime_t test400 = { .date.year=17, .date.month=2, .date.day=3, .time.hour=12, .time.minute=12, .time.second=0 };
     char strDateTime2[DATETIME_STRING_MAX_LENGTH];
     DateTime_PrintDateTimeToString(strDateTime2, &test400);
+  #ifdef STRING_SPRINTF_EXTENDED_ENABLE
     result = !StrCmp(strDateTime2, "2017-02-03 12:12:00");
+  #else
+    result = !StrCmp(strDateTime2, "2017-2-3 12:12:0");
+  #endif
     UNITTEST_ASSERT(result == true, "DateTime_ConvertStringToDateTime error");
 
 

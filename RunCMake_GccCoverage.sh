@@ -10,7 +10,7 @@ cd CMakeBuild_GccCoverage
 # Run CMake
 # cmake CC=gcc ..
 echo Execute cmake
-cmake -DCMAKE_FASTENHOMEAUT_GCC_COERAGE="TRUE" ../..
+cmake -DCMAKE_FASTENHOMEAUT_GCC_COVERAGE="TRUE" ../..
 
 
 # Run make

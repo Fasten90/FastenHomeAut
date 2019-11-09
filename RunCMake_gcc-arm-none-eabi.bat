@@ -9,13 +9,15 @@ cd CMakeBuildGccArmNoneEabi
 
 
 
+:: TODO: Add precheck: arm-none-eabi-gcc.exe
+
 
 :: Run CMake
 cmake ^
--D"CMAKE_MAKE_PROGRAM:FILEPATH=c:/Programs/Engineer/Utils/CompilerTools/make.exe" ^
+-D"CMAKE_MAKE_PROGRAM:FILEPATH=make.exe" ^
 -G "Unix Makefiles" ^
--D"CMAKE_C_COMPILER:FILEPATH=C:/Programs/Engineer/GNU_Tools_ARM_Embedded_8_2018-q4-major/bin/arm-none-eabi-gcc.exe" ^
--D"CMAKE_CXX_COMPILER:FILEPATH=C:/Programs/Engineer/GNU_Tools_ARM_Embedded_8_2018-q4-major/bin/arm-none-eabi-g++.exe" ^
+-D"CMAKE_C_COMPILER:FILEPATH=arm-none-eabi-gcc.exe" ^
+-D"CMAKE_CXX_COMPILER:FILEPATH=arm-none-eabi-g++.exe" ^
 -DCMAKE_TOOLCHAIN_FILE:PATH="../../Toolchain_ST32F0_arm-none-eabi-gcc.cmake" ^
 ../..
 
@@ -23,13 +25,11 @@ cmake ^
 
 
 :: Run make
-:: c:\Programs\Engineer\Utils\CompilerTools\make.exe
-c:\Programs\Engineer\Utils\CompilerTools\make.exe VERBOSE=1
+:: make
+make VERBOSE=1
 
 
-:: TODO: Delete
-:: Start compiled exe
-::FastenHomeAut.exe
+:: TODO: Check binary is exists
 
 
 :: Go to original directory

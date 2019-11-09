@@ -10,6 +10,7 @@ cd CMakeBuild_ArmCC
 
 
 :: Run CMake
+:: TODO: Change Keil PATH
 cmake ^
 -D"CMAKE_C_COMPILER:FILEPATH=c:/Programs/Engineer/Keil_v5/ARM/ARMCC/bin/armcc.exe" ^
 -D"CMAKE_FASTENHOMEAUT_TARGET=STM32F0_arm-armcc" ^

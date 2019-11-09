@@ -11,7 +11,7 @@ cd CMakeBuild_GccCoverage
 :: Run CMake
 :: cmake CC=gcc ..
 echo Execute cmake
-cmake CC=gcc -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" -DCMAKE_FASTENHOMEAUT_GCC_COERAGE="TRUE" ../..
+cmake CC=gcc -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" -DCMAKE_FASTENHOMEAUT_GCC_COVERAGE="TRUE" ../..
 
 
 :: Run make

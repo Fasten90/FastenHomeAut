@@ -175,7 +175,8 @@ uint32_t EEPROM_ModuleTest(void)
     /* TODO: test: has changed the EEPROM content? */
 
     /* EEPROM_Write - buffer error */
-  #if !defined(ASSERT_MODE_HARD) || !defined(CONFIG_DEBUG_MODE)
+  #if !defined(ASSERT_MODE_HARD) && !defined(CONFIG_DEBUG_MODE)
+    /* Will be go to ASSERT() --> breakpoint */
     address = EEPROM_ADDRESS_START;
     result = EEPROM_Write(address, NULL, eepromTestBufferSize);
     UNITTEST_ASSERT(result == EEPROM_RESULT_ERROR, "EEPROM - Error");
@@ -200,7 +201,7 @@ uint32_t EEPROM_ModuleTest(void)
     /* TODO: test: has changed the EEPROM content? */
 
     /* EEPROM_Read - error */
-  #if !defined(ASSERT_MODE_HARD) || !defined(CONFIG_DEBUG_MODE)
+  #if !defined(ASSERT_MODE_HARD) && !defined(CONFIG_DEBUG_MODE)
     result = EEPROM_Read(address, NULL, eepromTestBufferSize);
     UNITTEST_ASSERT(result == EEPROM_RESULT_ERROR, "EEPROM - Error");
     /* TODO: test: has changed the EEPROM content? */
