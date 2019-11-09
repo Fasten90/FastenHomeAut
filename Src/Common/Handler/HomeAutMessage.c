@@ -21,6 +21,11 @@
 
 #ifdef CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
 
+
+#define HOMEAUTMESSAGE_USE_SPRINTF      (1)
+
+
+
 /*------------------------------------------------------------------------------
  *  Global variables
  *----------------------------------------------------------------------------*/
@@ -357,6 +362,9 @@ size_t HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation,
     size_t length = 0;
     uint8_t i;
 
+    /* |HomeAut|192.168.100.100|192.168.100.014|2017-01-10 18:49:50|COMMAND|REMOTE|00000000|\0 */
+
+#if (HOMEAUTMESSAGE_USE_SPRINTF == 0)
     /* Separator */
     length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
 
@@ -366,9 +374,9 @@ size_t HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation,
     /* Separator */
     length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
 
-    ///////////////////////
-    /* Others, variables */
-    ///////////////////////
+    /*
+     * Others, variables
+     */
 
     /* Source Address */
     length += Network_PrintIp(&createToMessage[length], &messageInformation->SourceAddress);
@@ -419,7 +427,66 @@ size_t HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation,
 
     /* Separator */
     length += StrCpy(&createToMessage[length], HOMEAUTMESSAGE_SEPARATOR_STRING);
+#else
+    /* Use snprintf() */
 
+    /* |HomeAut|192.168.100.100|192.168.100.014|2017-01-10 18:49:50|COMMAND|REMOTE|00000000|\0 */
+
+    /* Source Address */
+    char srcIpString[16];
+    /* TODO: Error check */
+    Network_PrintIp(srcIpString, &messageInformation->SourceAddress);
+
+    /* Target Address */
+    char destIpString[16];
+    /* TODO: Error check */
+    Network_PrintIp(destIpString, &messageInformation->TargetAddress);
+
+    /* DateTime */
+    char dateTimeString[20];
+    if (!DateTime_PrintDateTimeToString(dateTimeString, &messageInformation->DateTime))
+    {
+        return 0; /* Error */
+    }
+
+    /* Function */
+    const char * functionStr = NULL;
+    for (i = 0; FunctionTypeParity_List[i].function != Function_End; i++)
+    {
+        if (FunctionTypeParity_List[i].function == messageInformation->Function )
+        {
+            functionStr = FunctionTypeParity_List[i].name;
+            break;
+        }
+    }
+
+    /* DataType */
+    const char * dataTypeStr = NULL;
+    for (i = 0; DataTypeParity_List[i].type != DataType_End; i++)
+    {
+        if (DataTypeParity_List[i].type == messageInformation->DataType )
+        {
+            dataTypeStr = DataTypeParity_List[i].name;
+            break;
+        }
+    }
+
+    length = snprintf(createToMessage, HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH,
+  #ifdef STRING_SPRINTF_EXTENDED_ENABLE
+            "|%s|%s|%s|%s|%s|%s|%x|",
+  #else
+            "|%s|%s|%s|%s|%s|%s|%x|",
+  #endif /* STRING_SPRINTF_EXTENDED_ENABLE */
+        HOMEAUTMESSAGE_DefaultHeader,
+        srcIpString,
+        destIpString,
+        dateTimeString,
+        functionStr,
+        dataTypeStr,
+        messageInformation->Data
+    );
+
+#endif /* HOMEAUTMESSAGE_USE_SPRINTF */
 
     return length;
 }
