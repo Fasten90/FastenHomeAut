@@ -178,6 +178,7 @@ void TaskHandler_Scheduler(void)
                         /* Schedule - event triggered */
                         TaskHandler_RunTask(i, ScheduleSource_EventTriggered);
                     }
+                    /* else: Enabled but not scheduled */
                 }
             }
         }

@@ -415,7 +415,7 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 
 /**
  * @brief    Motor state machine
- * @note    Call this "task" periodical and often!
+ * @note     Call this "task" periodical and often!
  */
 void Motor_StateMachine(void)
 {
@@ -539,7 +539,7 @@ void Motor_StateMachine(void)
         }
         else
         {
-        /* Equal, not need set */
+            /* Equal, not need set */
         }
     }
 
