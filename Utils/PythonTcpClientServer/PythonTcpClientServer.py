@@ -66,6 +66,9 @@ def tcp_send_thread():
 		elif msg == "Disconnect":
 			connectOk = False
 		else:
+			# TODO: Check, it is necessary?!
+			msg += '\n'
+			#
 			msg = bytes(msg.encode("ASCII"))
 
 		try:
@@ -106,6 +109,7 @@ def tcp_receive_thread():
 			print("Error in receiving thread" + str(excpt))
 			connectOk = False
 			tcp_received_thread_is_ok = False
+			break
 	print("Exit Receive thread")
 
 
@@ -156,9 +160,13 @@ while needRun:
 			if s._closed:
 				connectOk = False
 				break
+	except KeyboardInterrupt:
+		print("KeyboardInterrupt: perhaps want to exit")
+		raise
 	except Exception as excpt:
 		print("Error in Main" + str(excpt))
-		connectOk = False	
+		connectOk = False
+		
 
 	connectOk = False
 		
