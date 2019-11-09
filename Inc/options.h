@@ -25,11 +25,11 @@
 /* #define CONFIG_USE_PANEL_FASTENNODE */
 /* #define CONFIG_USE_PANEL_PC */
 
-#if !defined(CONFIG_USE_PANEL_NUCLEOF401RE) \
-    && !defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) \
-    && !defined(CONFIG_USE_PANEL_HOMEAUTCENTERPANEL) \
-    && !defined(CONFIG_USE_PANEL_HOMEAUTNODESMALL) \
-    && !defined(CONFIG_USE_PANEL_FASTENNODE) \
+#if    !defined(CONFIG_USE_PANEL_NUCLEOF401RE)          \
+    && !defined(CONFIG_USE_PANEL_STM32F4DISCOVERY)      \
+    && !defined(CONFIG_USE_PANEL_HOMEAUTCENTERPANEL)    \
+    && !defined(CONFIG_USE_PANEL_HOMEAUTNODESMALL)      \
+    && !defined(CONFIG_USE_PANEL_FASTENNODE)            \
     && !defined(CONFIG_USE_PANEL_PC)
 #error "Miss config define! Use CONFIG_USE_PANEL_..."
 #endif
@@ -178,6 +178,17 @@
 
 ///< Periodical sending UART message function
 /* #define CONFIG_FUNCTION_PERIODICAL_SENDING */
+
+#define CONFIG_FUNCTION_ESP8266
+#ifdef CONFIG_FUNCTION_ESP8266
+    #define CONFIG_MODULE_ESP8266_ENABLE
+#endif /* CONFIG_FUNCTION_ESP8266 */
+
+
+
+/*------------------------------------------------------------------------------
+ *                     Modules requirements by functions
+ *----------------------------------------------------------------------------*/
 
 
 #ifdef CONFIG_REQUIRE_DISPLAY
@@ -414,7 +425,7 @@
 
     #define CONFIG_MODULE_RESETREASON_ENABLE
 
-    #define CONFIG_MODULE_HARDFAULTHANDLER_ENABLE
+    #define CONFIG_MODULE_HARDFAULTHANDLER_ENABLE /* */
 
     /* #define CONFIG_MODULE_WATCHDOG_ENABLE */
 
@@ -790,10 +801,7 @@
     #else
         /* Connect to other WiFi network */
         #define CONFIG_ESP8266_WIFI_NETWORK_NAME            "FastenWifi"
-        #define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD        "FastenHome90"
-        /* #define CONFIG_ESP8266_WIFI_NETWORK_NAME            "ARTN16" */
-        /* #define CONFIG_ESP8266_WIFI_NETWORK_NAME            "USR5461" */
-        /* #define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD        "Easdg2011" */
+        #define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD        "FastenHome2018"
     #endif
 
     #ifndef CONFIG_ESP8266_WIFI_NETWORK_PASSWORD
@@ -815,8 +823,8 @@
             #define CONFIG_ESP8266_TCP_SERVER_IP_1    (192)
             #define CONFIG_ESP8266_TCP_SERVER_IP_2    (168)
             #define CONFIG_ESP8266_TCP_SERVER_IP_3    (0)
-            #define CONFIG_ESP8266_TCP_SERVER_IP_4    (199)
-            #define CONFIG_ESP8266_TCP_SERVER_IP_STRING        "192.168.0.199"
+            #define CONFIG_ESP8266_TCP_SERVER_IP_4    (241)
+            #define CONFIG_ESP8266_TCP_SERVER_IP_STRING        "192.168.0.241"
             /*
             #define CONFIG_ESP8266_TCP_SERVER_IP_1    (192)
             #define CONFIG_ESP8266_TCP_SERVER_IP_2    (168)
