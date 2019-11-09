@@ -76,38 +76,38 @@
 /* green: PE6 */
 /* red: PA8 */
 
-#define LED_NUM_MIN                (1)
-#define LED_NUM_MAX                (3)
+#define LED_NUM_MIN                 (1)
+#define LED_NUM_MAX                 (3)
 
-#define BOARD_LED_BLUE_PORT            GPIOE
-#define BOARD_LED_BLUE_PIN            GPIO_PIN_5
+#define BOARD_LED_BLUE_PORT         GPIOE
+#define BOARD_LED_BLUE_PIN          GPIO_PIN_5
 
 #define BOARD_LED_GREEN_PORT        GPIOE
-#define BOARD_LED_GREEN_PIN            GPIO_PIN_6
+#define BOARD_LED_GREEN_PIN         GPIO_PIN_6
 
-#define BOARD_LED_RED_PORT            GPIOA
-#define BOARD_LED_RED_PIN            GPIO_PIN_8
+#define BOARD_LED_RED_PORT          GPIOA
+#define BOARD_LED_RED_PIN           GPIO_PIN_8
 
-#define IO_PORT_CLK_ENABLES()        \
-        __GPIOA_CLK_ENABLE();        \
+#define IO_PORT_CLK_ENABLES()       \
+        __GPIOA_CLK_ENABLE();       \
         __GPIOE_CLK_ENABLE()
 
 
-#define LED_RED_ON()            HAL_GPIO_WritePin(BOARD_LED_RED_PORT, BOARD_LED_RED_PIN, GPIO_PIN_SET)
-#define LED_BLUE_ON()            HAL_GPIO_WritePin(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN, GPIO_PIN_SET)
-#define LED_GREEN_ON()            HAL_GPIO_WritePin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN, GPIO_PIN_SET)
+#define LED_RED_ON()                HAL_GPIO_WritePin(BOARD_LED_RED_PORT, BOARD_LED_RED_PIN, GPIO_PIN_SET)
+#define LED_BLUE_ON()               HAL_GPIO_WritePin(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN, GPIO_PIN_SET)
+#define LED_GREEN_ON()              HAL_GPIO_WritePin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN, GPIO_PIN_SET)
 
-#define LED_RED_OFF()            HAL_GPIO_WritePin(BOARD_LED_RED_PORT, BOARD_LED_RED_PIN, GPIO_PIN_RESET)
-#define LED_BLUE_OFF()            HAL_GPIO_WritePin(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN, GPIO_PIN_RESET)
-#define LED_GREEN_OFF()            HAL_GPIO_WritePin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN, GPIO_PIN_RESET)
+#define LED_RED_OFF()               HAL_GPIO_WritePin(BOARD_LED_RED_PORT, BOARD_LED_RED_PIN, GPIO_PIN_RESET)
+#define LED_BLUE_OFF()              HAL_GPIO_WritePin(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN, GPIO_PIN_RESET)
+#define LED_GREEN_OFF()             HAL_GPIO_WritePin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN, GPIO_PIN_RESET)
 
-#define LED_RED_TOGGLE()        HAL_GPIO_TogglePin(BOARD_LED_RED_PORT, BOARD_LED_RED_PIN)
-#define LED_BLUE_TOGGLE()        HAL_GPIO_TogglePin(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN)
-#define LED_GREEN_TOGGLE()        HAL_GPIO_TogglePin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN)
+#define LED_RED_TOGGLE()            HAL_GPIO_TogglePin(BOARD_LED_RED_PORT, BOARD_LED_RED_PIN)
+#define LED_BLUE_TOGGLE()           HAL_GPIO_TogglePin(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN)
+#define LED_GREEN_TOGGLE()          HAL_GPIO_TogglePin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN)
 
-#define LED_RED_STATUS()        HAL_GPIO_ReadPin(BOARD_LED_RED_PORT, BOARD_LED_RED_PIN)
-#define LED_BLUE_STATUS()        HAL_GPIO_ReadPin(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN)
-#define LED_GREEN_STATUS()        HAL_GPIO_ReadPin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN)
+#define LED_RED_STATUS()            HAL_GPIO_ReadPin(BOARD_LED_RED_PORT, BOARD_LED_RED_PIN)
+#define LED_BLUE_STATUS()           HAL_GPIO_ReadPin(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN)
+#define LED_GREEN_STATUS()          HAL_GPIO_ReadPin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN)
 
 #endif /* ifdef CONFIG_USE_PANEL_CENTERPANEL */
 
@@ -119,35 +119,35 @@
 /* green: PE6 */
 /* red: PA8 */
 
-#define LED_NUM_MIN                (1)
-#define LED_NUM_MAX                (3)
+#define LED_NUM_MIN                 (1)
+#define LED_NUM_MAX                 (3)
 
 
-#define BOARD_LED_GREEN_PORT    GPIOD
-#define BOARD_LED_GREEN_PIN        GPIO_PIN_12
-#define BOARD_LED_BLUE_PORT        GPIOD
-#define BOARD_LED_BLUE_PIN        GPIO_PIN_15
-#define BOARD_LED_RED_PORT        GPIOD
-#define BOARD_LED_RED_PIN        GPIO_PIN_14
+#define BOARD_LED_GREEN_PORT        GPIOD
+#define BOARD_LED_GREEN_PIN         GPIO_PIN_12
+#define BOARD_LED_BLUE_PORT         GPIOD
+#define BOARD_LED_BLUE_PIN          GPIO_PIN_15
+#define BOARD_LED_RED_PORT          GPIOD
+#define BOARD_LED_RED_PIN           GPIO_PIN_14
 
-#define IO_PORT_CLK_ENABLES()    __GPIOD_CLK_ENABLE()
+#define IO_PORT_CLK_ENABLES()       __GPIOD_CLK_ENABLE()
 
 
-#define LED_GREEN_ON()            HAL_GPIO_WritePin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN, GPIO_PIN_SET)
-#define LED_BLUE_ON()            HAL_GPIO_WritePin(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN, GPIO_PIN_SET)
-#define LED_RED_ON()            HAL_GPIO_WritePin(BOARD_LED_RED_PORT, BOARD_LED_RED_PIN, GPIO_PIN_SET)
+#define LED_GREEN_ON()              HAL_GPIO_WritePin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN, GPIO_PIN_SET)
+#define LED_BLUE_ON()               HAL_GPIO_WritePin(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN, GPIO_PIN_SET)
+#define LED_RED_ON()                HAL_GPIO_WritePin(BOARD_LED_RED_PORT, BOARD_LED_RED_PIN, GPIO_PIN_SET)
 
-#define LED_GREEN_OFF()            HAL_GPIO_WritePin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN, GPIO_PIN_RESET)
-#define LED_BLUE_OFF()            HAL_GPIO_WritePin(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN, GPIO_PIN_RESET)
-#define LED_RED_OFF()            HAL_GPIO_WritePin(BOARD_LED_RED_PORT, BOARD_LED_RED_PIN, GPIO_PIN_RESET)
+#define LED_GREEN_OFF()             HAL_GPIO_WritePin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN, GPIO_PIN_RESET)
+#define LED_BLUE_OFF()              HAL_GPIO_WritePin(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN, GPIO_PIN_RESET)
+#define LED_RED_OFF()               HAL_GPIO_WritePin(BOARD_LED_RED_PORT, BOARD_LED_RED_PIN, GPIO_PIN_RESET)
 
-#define LED_GREEN_TOGGLE()        HAL_GPIO_TogglePin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN)
-#define LED_BLUE_TOGGLE()        HAL_GPIO_TogglePin(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN)
-#define LED_RED_TOGGLE()        HAL_GPIO_TogglePin(BOARD_LED_RED_PORT, BOARD_LED_RED_PIN)
+#define LED_GREEN_TOGGLE()          HAL_GPIO_TogglePin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN)
+#define LED_BLUE_TOGGLE()           HAL_GPIO_TogglePin(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN)
+#define LED_RED_TOGGLE()            HAL_GPIO_TogglePin(BOARD_LED_RED_PORT, BOARD_LED_RED_PIN)
 
-#define LED_GREEN_STATUS()        HAL_GPIO_ReadPin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN)
-#define LED_BLUE_STATUS()        HAL_GPIO_ReadPin(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN)
-#define LED_RED_STATUS()        HAL_GPIO_ReadPin(BOARD_LED_RED_PORT, BOARD_LED_RED_PIN)
+#define LED_GREEN_STATUS()          HAL_GPIO_ReadPin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN)
+#define LED_BLUE_STATUS()           HAL_GPIO_ReadPin(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN)
+#define LED_RED_STATUS()            HAL_GPIO_ReadPin(BOARD_LED_RED_PORT, BOARD_LED_RED_PIN)
 
 #endif /* ifdef CONFIG_USE_PANEL_CENTERPANEL */
 
@@ -157,28 +157,28 @@
 
 /* Green user LED: PA5 */
 
-#define LED_NUM_MIN                (1)
-#define LED_NUM_MAX                (1)
+#define LED_NUM_MIN                 (1)
+#define LED_NUM_MAX                 (1)
 
-#define BOARD_LED_GREEN_PORT    GPIOA
-#define BOARD_LED_GREEN_PIN        GPIO_PIN_5
+#define BOARD_LED_GREEN_PORT        GPIOA
+#define BOARD_LED_GREEN_PIN         GPIO_PIN_5
 
-#define IO_PORT_CLK_ENABLES()    __GPIOA_CLK_ENABLE()
+#define IO_PORT_CLK_ENABLES()       __GPIOA_CLK_ENABLE()
 
-#define LED_GREEN_ON()            HAL_GPIO_WritePin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN, GPIO_PIN_SET)
+#define LED_GREEN_ON()              HAL_GPIO_WritePin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN, GPIO_PIN_SET)
 #define LED_BLUE_ON()
 #define LED_RED_ON()
 
-#define LED_GREEN_OFF()            HAL_GPIO_WritePin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN, GPIO_PIN_RESET)
+#define LED_GREEN_OFF()             HAL_GPIO_WritePin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN, GPIO_PIN_RESET)
 #define LED_BLUE_OFF()
 #define LED_RED_OFF()
 
 
-#define LED_GREEN_TOGGLE()        HAL_GPIO_TogglePin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN)
+#define LED_GREEN_TOGGLE()          HAL_GPIO_TogglePin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN)
 #define LED_BLUE_TOGGLE()
 #define LED_RED_TOGGLE()
 
-#define LED_GREEN_STATUS()        HAL_GPIO_ReadPin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN)
+#define LED_GREEN_STATUS()          HAL_GPIO_ReadPin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN)
 #define LED_BLUE_STATUS()
 #define LED_RED_STATUS()
 
@@ -217,23 +217,23 @@
 
 #define TIMx_BLUE                           TIM4
 #define TIMx_BLUE_CLK_ENABLE()              __TIM4_CLK_ENABLE()
-#define TIMx_GREEN                            TIM4
-#define TIMx_GREEN_CLK_ENABLE()              __TIM4_CLK_ENABLE()
-#define TIMx_RED                               TIM3
-#define TIMx_RED_CLK_ENABLE()              __TIM3_CLK_ENABLE()
+#define TIMx_GREEN                          TIM4
+#define TIMx_GREEN_CLK_ENABLE()             __TIM4_CLK_ENABLE()
+#define TIMx_RED                            TIM3
+#define TIMx_RED_CLK_ENABLE()               __TIM3_CLK_ENABLE()
 
-#define TIMER_CLK_ENABLES()                    __TIM3_CLK_ENABLE();        \
+#define TIMER_CLK_ENABLES()                 __TIM3_CLK_ENABLE();        \
                                             __TIM4_CLK_ENABLE()
 
 
-#define LED_BLUE_TIMER_CHANNEL                TIM_CHANNEL_2
-#define LED_GREEN_TIMER_CHANNEL                TIM_CHANNEL_1
-#define LED_RED_TIMER_CHANNEL                TIM_CHANNEL_2
+#define LED_BLUE_TIMER_CHANNEL              TIM_CHANNEL_2
+#define LED_GREEN_TIMER_CHANNEL             TIM_CHANNEL_1
+#define LED_RED_TIMER_CHANNEL               TIM_CHANNEL_2
 
 
-#define TIMx_LED_BLUE_GPIO_AF                  GPIO_AF2_TIM4
-#define TIMx_LED_GREEN_GPIO_AF                GPIO_AF2_TIM4
-#define TIMx_LED_RED_GPIO_AF                GPIO_AF2_TIM3
+#define TIMx_LED_BLUE_GPIO_AF                GPIO_AF2_TIM4
+#define TIMx_LED_GREEN_GPIO_AF               GPIO_AF2_TIM4
+#define TIMx_LED_RED_GPIO_AF                 GPIO_AF2_TIM3
 
 #endif
 
@@ -248,47 +248,47 @@
 #ifdef CONFIG_USE_PANEL_NODESMALL
 
 
-#define BOARD_USE_ADC                ADC1
+#define BOARD_USE_ADC                   ADC1
 
 
-#define ADC_COMMON_PORT                GPIOA
+#define ADC_COMMON_PORT                 GPIOA
 #define ADC_COMMON_CLK_ENABLE()        __GPIOA_CLK_ENABLE()
 
 
-#define ADC_CHANNEL_NUM                ( 5 )
+#define ADC_CHANNEL_NUM                 ( 5 )
 
 
 
 /* SENSOR_LIGH_ADC */
 /* PA1 */
 /* ADC1_IN1 */
-#define    ADC_SENSOR_LIGHT_PORT            GPIOA
-#define    ADC_SENSOR_LIGHT_CLK            RCC_AHB1Periph_GPIOA
-#define    ADC_SENSOR_LIGHT_PIN            GPIO_PIN_1
-#define    ADC_SENSOR_LIGHT_CHANNEL        ADC_CHANNEL_1
+#define    ADC_SENSOR_LIGHT_PORT        GPIOA
+#define    ADC_SENSOR_LIGHT_CLK         RCC_AHB1Periph_GPIOA
+#define    ADC_SENSOR_LIGHT_PIN         GPIO_PIN_1
+#define    ADC_SENSOR_LIGHT_CHANNEL     ADC_CHANNEL_1
 
 
 
 /* SENSOR_MICROPHONE_ADC */
 /* PA6 */
 /* ADC1_IN6 */
-#define    ADC_SENSOR_MICROPHONE_PORT            GPIOA
-#define    ADC_SENSOR_MICROPHONE_CLK            RCC_AHB1Periph_GPIOA
-#define    ADC_SENSOR_MICROPHONE_PIN            GPIO_PIN_6
-#define    ADC_SENSOR_MICROPHONE_CHANNEL        ADC_CHANNEL_6
+#define    ADC_SENSOR_MICROPHONE_PORT       GPIOA
+#define    ADC_SENSOR_MICROPHONE_CLK        RCC_AHB1Periph_GPIOA
+#define    ADC_SENSOR_MICROPHONE_PIN        GPIO_PIN_6
+#define    ADC_SENSOR_MICROPHONE_CHANNEL    ADC_CHANNEL_6
 
 
 /* VSOURCE_ADC */
 /* PA7 */
 /* ADC1_IN7 */
-#define    ADC_VSOURCE_PORT            GPIOA
-#define    ADC_VSOURCE_CLK                RCC_AHB1Periph_GPIOA
-#define    ADC_VSOURCE_PIN                GPIO_PIN_7
-#define    ADC_VSOURCE_CHANNEL            ADC_CHANNEL_7
+#define    ADC_VSOURCE_PORT                 GPIOA
+#define    ADC_VSOURCE_CLK                  RCC_AHB1Periph_GPIOA
+#define    ADC_VSOURCE_PIN                  GPIO_PIN_7
+#define    ADC_VSOURCE_CHANNEL              ADC_CHANNEL_7
 
 
-#define ADC_TEMPSENSOR_CHANNEL        ADC_CHANNEL_16
-#define ADC_VREFINT_CHANNEL            ADC_CHANNEL_17
+#define ADC_TEMPSENSOR_CHANNEL              ADC_CHANNEL_16
+#define ADC_VREFINT_CHANNEL                 ADC_CHANNEL_17
 
 
 #endif    /* CONFIG_USE_PANEL_NODEMSMALL */
@@ -299,16 +299,16 @@
 
 
 /* ANALOG */
-#define BOARD_USE_ADC                ADC1
+#define BOARD_USE_ADC                       ADC1
 
 
-#define ADC_COMMON_PORT                GPIOB | GPIOC
-#define ADC_COMMON_CLK_ENABLE()        \
-        __GPIOB_CLK_ENABLE();        \
+#define ADC_COMMON_PORT                     GPIOB | GPIOC
+#define ADC_COMMON_CLK_ENABLE()             \
+        __GPIOB_CLK_ENABLE();               \
         __GPIOC_CLK_ENABLE()
 
 
-#define ADC_CHANNEL_NUM                ( 5 )
+#define ADC_CHANNEL_NUM                     ( 5 )
 /* now: Vsource, ligh, mic, prox, internal temp */
 
 
@@ -317,41 +317,41 @@
 /* PC0 */
 /* ADC_IN10 */
 #define    ADC_SENSOR_LIGHT_PORT            GPIOC
-#define    ADC_SENSOR_LIGHT_PIN            GPIO_PIN_0
-#define    ADC_SENSOR_LIGHT_CHANNEL        ADC_CHANNEL_10
+#define    ADC_SENSOR_LIGHT_PIN             GPIO_PIN_0
+#define    ADC_SENSOR_LIGHT_CHANNEL         ADC_CHANNEL_10
 
 
 
 /* SENSOR_MICROPHONE_ADC */
 /* PC1 */
 /* ADC_IN11 */
-#define    ADC_SENSOR_MICROPHONE_PORT            GPIOC
-#define    ADC_SENSOR_MICROPHONE_PIN            GPIO_PIN_1
-#define    ADC_SENSOR_MICROPHONE_CHANNEL        ADC_CHANNEL_11
+#define    ADC_SENSOR_MICROPHONE_PORT       GPIOC
+#define    ADC_SENSOR_MICROPHONE_PIN        GPIO_PIN_1
+#define    ADC_SENSOR_MICROPHONE_CHANNEL    ADC_CHANNEL_11
 
 
 
 /* SENSOR_PROXIMITY_ADC */
 /* PC2 */
 /* ADC_IN12 */
-#define    ADC_SENSOR_PROXIMITY_PORT            GPIOC
-#define    ADC_SENSOR_PROXIMITY_PIN            GPIO_PIN_2
-#define    ADC_SENSOR_PROXIMITY_CHANNEL        ADC_CHANNEL_12
+#define    ADC_SENSOR_PROXIMITY_PORT        GPIOC
+#define    ADC_SENSOR_PROXIMITY_PIN         GPIO_PIN_2
+#define    ADC_SENSOR_PROXIMITY_CHANNEL     ADC_CHANNEL_12
 
 
 
 /* VSOURCE_ADC */
 /* PB12 */
 /* ADC_IN18 */
-#define    ADC_VSOURCE_PORT            GPIOB
-#define    ADC_VSOURCE_PIN                GPIO_PIN_12
-#define    ADC_VSOURCE_CHANNEL            ADC_CHANNEL_18
+#define    ADC_VSOURCE_PORT                 GPIOB
+#define    ADC_VSOURCE_PIN                  GPIO_PIN_12
+#define    ADC_VSOURCE_CHANNEL              ADC_CHANNEL_18
 
 
 
 /* NOTE: L1 not included internal Tempsensor :( */
-#define ADC_TEMPSENSOR_CHANNEL        ADC_CHANNEL_16
-#define ADC_VREFINT_CHANNEL            ADC_CHANNEL_17
+#define ADC_TEMPSENSOR_CHANNEL              ADC_CHANNEL_16
+#define ADC_VREFINT_CHANNEL                 ADC_CHANNEL_17
 
 
 #endif    /* CONFIG_USE_PANEL_NODEMEDIUM */
@@ -362,40 +362,40 @@
 
 /* ANALOG */
 
-#define ADC_CHANNEL_NUM                    (3)
+#define ADC_CHANNEL_NUM                     (3)
 
 
-#define ADCx                            ADC1
-#define ADCx_CLK_ENABLE()               __HAL_RCC_ADC1_CLK_ENABLE()
-#define DMAx_CLK_ENABLE()               __HAL_RCC_DMA2_CLK_ENABLE()
-#define ADCx_CHANNEL_GPIO_CLK_ENABLE()  __HAL_RCC_GPIOA_CLK_ENABLE()
+#define ADCx                                ADC1
+#define ADCx_CLK_ENABLE()                   __HAL_RCC_ADC1_CLK_ENABLE()
+#define DMAx_CLK_ENABLE()                   __HAL_RCC_DMA2_CLK_ENABLE()
+#define ADCx_CHANNEL_GPIO_CLK_ENABLE()      __HAL_RCC_GPIOA_CLK_ENABLE()
 
 /* Definition for ADCx Channel Pin */
-#define ADCx_CHANNEL_PIN_1                GPIO_PIN_1
-#define ADCx_CHANNEL_PIN_2                GPIO_PIN_2
-#define ADCx_CHANNEL_PIN_3                GPIO_PIN_3
-#define ADCx_CHANNEL_GPIO_PORT            GPIOA
+#define ADCx_CHANNEL_PIN_1                  GPIO_PIN_1
+#define ADCx_CHANNEL_PIN_2                  GPIO_PIN_2
+#define ADCx_CHANNEL_PIN_3                  GPIO_PIN_3
+#define ADCx_CHANNEL_GPIO_PORT              GPIOA
 
 /* Definition for ADCx's Channel */
-#define ADCx_CHANNEL_1                    ADC_CHANNEL_1
-#define ADCx_CHANNEL_2                    ADC_CHANNEL_2
-#define ADCx_CHANNEL_3                    ADC_CHANNEL_3
+#define ADCx_CHANNEL_1                      ADC_CHANNEL_1
+#define ADCx_CHANNEL_2                      ADC_CHANNEL_2
+#define ADCx_CHANNEL_3                      ADC_CHANNEL_3
 
 /* Definition for ADCx's DMA */
-#define ADCx_DMA_CHANNEL                DMA_CHANNEL_0
-#define ADCx_DMA_STREAM                 DMA2_Stream0
+#define ADCx_DMA_CHANNEL                    DMA_CHANNEL_0
+#define ADCx_DMA_STREAM                     DMA2_Stream0
 
 /* Definition for ADCx's NVIC */
-#define ADCx_DMA_IRQn                   DMA2_Stream0_IRQn
-#define ADCx_DMA_IRQHandler             DMA2_Stream0_IRQHandler
+#define ADCx_DMA_IRQn                       DMA2_Stream0_IRQn
+#define ADCx_DMA_IRQHandler                 DMA2_Stream0_IRQHandler
 
 /* ADC DMA Interrupt priorities */
-#define ADC_DMA_PREEMT_PRIORITY            15
-#define ADC_DMA_SUB_PRIORITY            0
+#define ADC_DMA_PREEMT_PRIORITY             15
+#define ADC_DMA_SUB_PRIORITY                0
 
 
-#define COMMON_ADC_VOLTAGE_MAX            (3.0f)
-#define COMMON_ADC_RESOLUTION_MAX        (4095U)
+#define COMMON_ADC_VOLTAGE_MAX              (3.0f)
+#define COMMON_ADC_RESOLUTION_MAX           (4095U)
 
 #endif
 
@@ -410,25 +410,25 @@
 #if defined(CONFIG_USE_PANEL_STM32F4DISCOVERY) || defined(CONFIG_USE_PANEL_NUCLEOF401RE)
 
 
-#define DACx                            DAC
+#define DACx                                DAC
 
 /* Definition for DAC clock resources */
-#define DACx_CHANNEL_GPIO_CLK_ENABLE()    __HAL_RCC_GPIOA_CLK_ENABLE()
-#define DACx_CLK_ENABLE()                __HAL_RCC_DAC_CLK_ENABLE()
+#define DACx_CHANNEL_GPIO_CLK_ENABLE()      __HAL_RCC_GPIOA_CLK_ENABLE()
+#define DACx_CLK_ENABLE()                   __HAL_RCC_DAC_CLK_ENABLE()
 
 /* Definition for DACx Channel1 Pin */
-#define DACx_CHANNEL1_PIN                GPIO_PIN_4
-#define DACx_CHANNEL1_GPIO_PORT            GPIOA
+#define DACx_CHANNEL1_PIN                   GPIO_PIN_4
+#define DACx_CHANNEL1_GPIO_PORT             GPIOA
 
-#define DACx_CHANNEL2_PIN                GPIO_PIN_5
-#define DACx_CHANNEL2_GPIO_PORT            GPIOA
+#define DACx_CHANNEL2_PIN                   GPIO_PIN_5
+#define DACx_CHANNEL2_GPIO_PORT             GPIOA
 
-#define DACx_CHANNEL1                    DAC_CHANNEL_1
-#define DACx_CHANNEL2                    DAC_CHANNEL_2
+#define DACx_CHANNEL1                       DAC_CHANNEL_1
+#define DACx_CHANNEL2                       DAC_CHANNEL_2
 
 
-#define COMMON_DAC_MAX_VOLTAGE            (3.0f)
-#define COMMON_DAC_DA_MAX_VALUE            (4095)
+#define COMMON_DAC_MAX_VOLTAGE              (3.0f)
+#define COMMON_DAC_DA_MAX_VALUE             (4095)
 
 
 #endif
@@ -443,27 +443,27 @@
 
 #ifdef CONFIG_USE_PANEL_NODEMEDIUM
 
-#define BUTTON_NUM                    4
+#define BUTTON_NUM                      4
 
-#define BUTTON_RIGHT_GPIO_PORT        GPIOA
-#define BUTTON_RIGHT_GPIO_PIN        GPIO_PIN_0
+#define BUTTON_RIGHT_GPIO_PORT          GPIOA
+#define BUTTON_RIGHT_GPIO_PIN           GPIO_PIN_0
 
-#define BUTTON_UP_GPIO_PORT            GPIOD
-#define BUTTON_UP_GPIO_PIN            GPIO_PIN_2
+#define BUTTON_UP_GPIO_PORT             GPIOD
+#define BUTTON_UP_GPIO_PIN              GPIO_PIN_2
 
-#define BUTTON_DOWN_GPIO_PORT        GPIOC
-#define BUTTON_DOWN_GPIO_PIN        GPIO_PIN_13
+#define BUTTON_DOWN_GPIO_PORT           GPIOC
+#define BUTTON_DOWN_GPIO_PIN            GPIO_PIN_13
 
-#define BUTTON_LEFT_GPIO_PORT        GPIOB
-#define BUTTON_LEFT_GPIO_PIN        GPIO_PIN_9
+#define BUTTON_LEFT_GPIO_PORT           GPIOB
+#define BUTTON_LEFT_GPIO_PIN            GPIO_PIN_9
 
 
 
-#define BUTTON_CLK_ENABLES()        \
-        __GPIOA_CLK_ENABLE();        \
-        __GPIOB_CLK_ENABLE();        \
-        __GPIOC_CLK_ENABLE();        \
-        __GPIOD_CLK_ENABLE()        \
+#define BUTTON_CLK_ENABLES()            \
+        __GPIOA_CLK_ENABLE();           \
+        __GPIOB_CLK_ENABLE();           \
+        __GPIOC_CLK_ENABLE();           \
+        __GPIOD_CLK_ENABLE()            \
 
 
 #endif    /* #ifdef CONFIG_USE_PANEL_NODEMEDIUM */
@@ -477,24 +477,24 @@
 /* Right    PA0 */
 /* Left        PC9 */
 
-#define BUTTON_NUM                    4
+#define BUTTON_NUM                      4
 
-#define BUTTON_RIGHT_GPIO_PORT        GPIOA
-#define BUTTON_RIGHT_GPIO_PIN        GPIO_PIN_0
+#define BUTTON_RIGHT_GPIO_PORT          GPIOA
+#define BUTTON_RIGHT_GPIO_PIN           GPIO_PIN_0
 
-#define BUTTON_UP_GPIO_PORT            GPIOC
-#define BUTTON_UP_GPIO_PIN            GPIO_PIN_7
+#define BUTTON_UP_GPIO_PORT             GPIOC
+#define BUTTON_UP_GPIO_PIN              GPIO_PIN_7
 
-#define BUTTON_DOWN_GPIO_PORT        GPIOC
-#define BUTTON_DOWN_GPIO_PIN        GPIO_PIN_8
+#define BUTTON_DOWN_GPIO_PORT           GPIOC
+#define BUTTON_DOWN_GPIO_PIN            GPIO_PIN_8
 
-#define BUTTON_LEFT_GPIO_PORT        GPIOC
-#define BUTTON_LEFT_GPIO_PIN        GPIO_PIN_9
+#define BUTTON_LEFT_GPIO_PORT           GPIOC
+#define BUTTON_LEFT_GPIO_PIN            GPIO_PIN_9
 
 
 
-#define BUTTON_CLK_ENABLES()        \
-        __GPIOA_CLK_ENABLE();        \
+#define BUTTON_CLK_ENABLES()            \
+        __GPIOA_CLK_ENABLE();           \
         __GPIOC_CLK_ENABLE()
 
 
@@ -506,17 +506,17 @@
 
 /* User button: PA0 */
 
-#define BUTTON_NUM                                    1
+#define BUTTON_NUM                                  1
 
-#define BUTTON_USER_GPIO_PORT                        GPIOA
+#define BUTTON_USER_GPIO_PORT                       GPIOA
 #define BUTTON_USER_GPIO_PIN                        GPIO_PIN_0
 
 #define BUTTON_CLK_ENABLES()                        __GPIOA_CLK_ENABLE()
 
 /* Button Interrupt priority */
-#define BUTTON_USER_EXTI_IRQn                        EXTI0_IRQn
-#define BUTTON_USER_INTERRUPT_PREEMT_PRIORITY        10
-#define BUTTON_USER_INTERRUPT_SUB_PRIORITY            0
+#define BUTTON_USER_EXTI_IRQn                       EXTI0_IRQn
+#define BUTTON_USER_INTERRUPT_PREEMT_PRIORITY       10
+#define BUTTON_USER_INTERRUPT_SUB_PRIORITY          0
 
 #endif
 
@@ -526,17 +526,17 @@
 
 /* User button: PC13 */
 
-#define BUTTON_NUM                                    1
+#define BUTTON_NUM                                  1
 
-#define BUTTON_USER_GPIO_PORT                        GPIOC
+#define BUTTON_USER_GPIO_PORT                       GPIOC
 #define BUTTON_USER_GPIO_PIN                        GPIO_PIN_13
 
 #define BUTTON_CLK_ENABLES()                        __GPIOC_CLK_ENABLE()
 
 /* Button Interrupt priority */
-#define BUTTON_USER_EXTI_IRQn                        EXTI15_10_IRQn
-#define BUTTON_USER_INTERRUPT_PREEMT_PRIORITY        10
-#define BUTTON_USER_INTERRUPT_SUB_PRIORITY            0
+#define BUTTON_USER_EXTI_IRQn                       EXTI15_10_IRQn
+#define BUTTON_USER_INTERRUPT_PREEMT_PRIORITY       10
+#define BUTTON_USER_INTERRUPT_SUB_PRIORITY          0
 
 #endif
 
