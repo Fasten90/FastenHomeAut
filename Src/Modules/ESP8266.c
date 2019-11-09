@@ -1998,13 +1998,22 @@ static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedM
                     }
         #endif
 
-                    ESP8266_DEBUG_PRINTF("Execute ok, response...");
-
                     /* Print CommandHandler default response: */
                     CmdH_PrintResult(cmdResult);
 
-                    size_t respMsgLength = StringLength(responseBuffer);
-                    ESP8266_RequestSendTcpMessage(responseBuffer, respMsgLength);
+                    if (!StrCmp("\r\n", responseBuffer))
+                    {
+                        /* Response was "\r\n" */
+                        /* Do not send, e.g. "motor" answer */
+                        ESP8266_DEBUG_PRINTF("Execute ok, shall not send answer...");
+                    }
+                    else
+                    {
+                        ESP8266_DEBUG_PRINTF("Execute ok, response...");
+
+                        size_t respMsgLength = StringLength(responseBuffer);
+                        ESP8266_RequestSendTcpMessage(responseBuffer, respMsgLength);
+                    }
 
                     ESP8266_ClearReceive(false, receivedMessageLength);
                     recvOk = true;
