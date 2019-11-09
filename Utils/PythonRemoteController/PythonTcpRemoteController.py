@@ -5,6 +5,8 @@ import io
 import threading
 import time
 
+import keyboard
+
 
 # Connection configs
 TCP_IP_DEFAULT = '192.168.0.241'
@@ -24,18 +26,18 @@ print("Start TCP/UDP script")
 
 # Get parameters
 if get_parameter:
-	tcp_ip = input("TCP server IP (default: {}):".format(TCP_IP_DEFAULT))
-	if not tcp_ip:
-		tcp_ip = TCP_IP_DEFAULT
-	
-	tcp_port = input("TCP server port (default: {}):".format(TCP_PORT_DEFAULT))
-	if not tcp_port:
-		tcp_port = TCP_PORT_DEFAULT
-	else:
-		tcp_port = int(tcp_port)
+    tcp_ip = input("TCP server IP (default: {}):".format(TCP_IP_DEFAULT))
+    if not tcp_ip:
+        tcp_ip = TCP_IP_DEFAULT
+    
+    tcp_port = input("TCP server port (default: {}):".format(TCP_PORT_DEFAULT))
+    if not tcp_port:
+        tcp_port = TCP_PORT_DEFAULT
+    else:
+        tcp_port = int(tcp_port)
 else:
-	tcp_ip = TCP_IP_DEFAULT
-	tcp_port = TCP_PORT_DEFAULT
+    tcp_ip = TCP_IP_DEFAULT
+    tcp_port = TCP_PORT_DEFAULT
 
 
 # Print "TCP server starting..."
@@ -54,210 +56,294 @@ tcp_received_thread_is_ok = None
 
 login_received = False
 
-# Motor control	
+# Motor control    
 speed_max = 50
 speed_min = -50
 turn_max = 30
 turn_min = -30
-turn = 0
-speed = 0
+
 send_msg = ""
 
 
+
+speed = 0
+turn = 0
+
+prev_speed = 0
+prev_turn = 0
+
+key_check_sec = 0.05  # 50ms
+idle_count_limit = 5  # ide limit --> 5* 0.05sec = 250 ms
+idle_count = 0
+
+force_send_msg = False
+
+
+def speed_handle(speed_dir):
+    global speed
+    if speed_dir > 0:
+        speed = 1
+    elif speed_dir < 0:
+        speed = -1
+    else:
+        print("Error: speed_dir")
+
+def turn_handle(turn_dir):
+    global turn
+    if turn_dir > 0:
+        turn = 1
+    elif turn_dir < 0:
+        turn = -1
+    else:
+        print("Error: turn_dir")
+
+
 def keyboard_handle_thread():
-	global connectOk
-	global needRun
-	
-	global speed
-	global turn
-	
-	global send_msg
-	global login_received
 
-	while connectOk:
-		# TODO: How to get cursor inputs?
-		#type = input() # Do nog give parameter to input, because it will re-printed on console
-		print("Wait char")
-		import msvcrt
-		type = msvcrt.getch()
-		key = ""
-		if type == b'x':
-			print("Exit")
-			connectOk = False
-			needRun = False
-		elif type == b's':
-			login_received = True
-		elif type == b'e':
-			login_received = False
-		elif type == b'K': 
-			key = "left"
-		elif type == b'H': 
-			key = "up"
-		elif type == b'M': 
-			key = "right"
-		elif type == b'P': 
-			key = "down"
-		elif type == b'\xe0':
-			continue # ~Escape
-		elif type == 255:
-			# No key pressed
-			continue 
-		else:
-			print("Pressed key: {}".format(type))
+    global connectOk
+    global needRun
+    
+    global send_msg
+    global login_received
 
-		# Motor control
-		if key == "left":
-			if turn < -10:
-				turn += 20
-			elif turn < 0:
-				turn = 0
-			elif turn < turn_max:
-				turn += 10
-		if key == "right":
-			if turn > 10:
-				turn -= 20
-			elif turn > 0:
-				turn = 0
-			elif turn > turn_min:
-				turn -= 10
-		if key == "up":
-			if speed < -10:
-				speed += 20
-			elif speed < 0:
-				speed = 0
-			elif speed < speed_max:
-				speed += 10
-		if key == "down":
-			if speed > 10:
-				speed -= 20
-			elif speed > 0:
-				speed = 0
-			elif speed > speed_min:
-				speed -= 10
+    key_left_is_pressed = False
+    key_up_is_pressed = False
+    key_right_is_pressed = False
+    key_down_is_pressed = False
+    key_left_is_pressed_prev = False
+    key_up_is_pressed_prev = False
+    key_right_is_pressed_prev = False
+    key_down_is_pressed_prev = False
+    
+    key_changed = False
+    idle_status = False
+
+    while True:  # making a loop
+        try:  # used try so that if user pressed other than the given key error will not be shown
+            #print('You Pressed a Key!')
+            time.sleep(key_check_sec)
+            key_pressed = False
+            if keyboard.is_pressed('left arrow') or keyboard.is_pressed('a'):
+                print ('Left')
+                turn_handle(-1)
+                key_pressed = True
+                key_left_is_pressed = True
+            else:
+                key_left_is_pressed = False
+            if keyboard.is_pressed('up arrow') or keyboard.is_pressed('w'):
+                print ('Up')
+                speed_handle(1)
+                key_pressed = True
+                key_up_is_pressed = True
+            else:
+                key_up_is_pressed = False
+            if keyboard.is_pressed('right arrow') or keyboard.is_pressed('d'):
+                print ('Right')
+                turn_handle(1)
+                key_pressed = True
+                key_right_is_pressed = True
+            else:
+                key_right_is_pressed = False
+            if keyboard.is_pressed('down arrow') or keyboard.is_pressed('s'):
+                print ('Down')
+                speed_handle(-1)
+                key_pressed = True
+                key_down_is_pressed = True
+            else:
+                key_down_is_pressed = False
+
+            # Check changes
+            if key_left_is_pressed != key_left_is_pressed_prev:
+                key_changed = True
+            elif key_up_is_pressed != key_up_is_pressed_prev:
+                key_changed = True
+            elif key_right_is_pressed != key_right_is_pressed_prev:
+                key_changed = True
+            elif key_down_is_pressed != key_down_is_pressed_prev:
+                key_changed = True
+            else:
+                key_changed = False
+                #print("Key change")
+
+            # Save new statuses
+            key_left_is_pressed_prev = key_left_is_pressed
+            key_up_is_pressed_prev = key_up_is_pressed
+            key_right_is_pressed_prev = key_right_is_pressed
+            key_down_is_pressed_prev = key_down_is_pressed
+
+            if keyboard.is_pressed('left ctrl') or keyboard.is_pressed('x'):  # if key 'q' is pressed 
+                print('Exit')
+                break  # finishing the loop
+
+            if not key_pressed:
+                global idle_count
+                idle_count += 1
+
+                if idle_count >= idle_count_limit:
+                    # Idle event
+                    global speed
+                    global turn
+                    speed = 0
+                    turn = 0
+                
+                    if not idle_status:
+                        # Force send message
+                        force_send_msg = True
+                        print("Idle event")
+                        idle_status = True
+                else:
+                    # not pressed, send not message
+                    pass
+            else:
+                # Pressing
+                idle_status = False
+            
+            if key_changed:
+                print("Key changed")
+                # Force send message
+                force_send_msg = True
+                key_changed = False
+                    
+        except Exception as ex:
+            print(str(ex))
+            connectOk = False
+            needRun = False
+            break  # if user pressed a key other than the given key the loop will break
 
 
 def tcp_send_thread():
-	global connectOk
-	global needRun
-	global s
-	global is_tcp
-	global login_received
+    global connectOk
+    global needRun
+    global s
+    global is_tcp
+    global login_received
+    global force_send_msg
 
-	# Wait
-	time.sleep(1)
-	
-	while connectOk:
-		# Create actual send message
-		# Message like: "motor 30 20" --> "motor <speed> <turn>"
-		if login_received:
-			send_msg = "motor {} {}\r\n".format(speed, turn)
-			print(send_msg)
-			send_msg = bytes(send_msg.encode("ASCII"))
-			
-			try:
-				if is_tcp:
-					if is_server:
-						conn.send(send_msg)
-					else:
-						s.send(send_msg)
-				else:
-					s.sendto(msg, (tcp_ip, tcp_port))
-			except Exception as excpt:
-				print("Error in sending thread: " + str(excpt))
-				connectOk = False
-				tcp_send_thread_is_ok = False
-				return
-		else:
-			print("Message wasn't sent (not received login msg)")
-		
-		# Delay
-		time.sleep(0.1)
-	print("Exit Send thread")
-	
+    # Wait
+    time.sleep(1)
+    timeout_calc = 0
+
+    while connectOk:
+        # Create actual send message
+        # Message like: "motor 30 20" --> "motor <speed> <turn>"
+
+        if timeout_calc > 4 or force_send_msg:
+            
+            timeout_calc = 0
+            if force_send_msg:
+                force_send_msg = False
+
+            if login_received:
+                send_msg = "motor {} {}\r\n".format(speed, turn)
+                print(send_msg)
+                send_msg = bytes(send_msg.encode("ASCII"))
+                
+                try:
+                    if is_tcp:
+                        if is_server:
+                            conn.send(send_msg)
+                        else:
+                            s.send(send_msg)
+                    else:
+                        s.sendto(msg, (tcp_ip, tcp_port))
+                except Exception as excpt:
+                    print("Error in sending thread: " + str(excpt))
+                    connectOk = False
+                    tcp_send_thread_is_ok = False
+                    return
+            else:
+                print("Message wasn't sent (not received login msg)")
+            
+        # Delay
+        time.sleep(0.05)
+        timeout_calc += 1
+
+    print("Exit Send thread")
+    
 
 def tcp_receive_thread():
-	global connectOk
-	global needRun
-	global s
-	global conn
-	global is_tcp
-	global login_received
+    global connectOk
+    global needRun
+    global s
+    global conn
+    global is_tcp
+    global login_received
 
-	while connectOk:
-		try:
-			if is_server:
-				data = conn.recv(BUFFER_SIZE)
-			else:
-				data = s.recv(BUFFER_SIZE)
-			if not data:
-				print("Received closing byte, pls reconnect!")
-				break
-			elif data == b'login':
-				login_received = True
-				print("Login message received")
-			print("Received data: {}".format(str(data)))
-		except Exception as excpt:
-			print("Error in receiving thread" + str(excpt))
-			connectOk = False
-			tcp_received_thread_is_ok = False
-	print("Exit Receive thread")
+    while connectOk:
+        try:
+            if is_server:
+                data = conn.recv(BUFFER_SIZE)
+            else:
+                data = s.recv(BUFFER_SIZE)
+            if not data:
+                print("Received closing byte, pls reconnect!")
+                break
+            elif data == b'login':
+                login_received = True
+                print("Login message received")
+            print("Received data: {}".format(str(data)))
+        except Exception as excpt:
+            print("Error in receiving thread" + str(excpt))
+            connectOk = False
+            tcp_received_thread_is_ok = False
+    print("Exit Receive thread")
 
 
 # Main:
 while needRun:
-	# Problem: it has large latency
-	if is_tcp:
-		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		# Low latency:
-		#socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-		#s = socket.socket(socket.AF_INET, socket.TCP_NODELAY)
-	else:
-		# UDP?
-		s = socket.socket(socket.AF_INET, # Internet
-						socket.SOCK_DGRAM) # UDP
-	
-	connectOk = False
-	login_received = False
-	
-	try:
-		if is_server:
-			# Server
-			# Wait connect
-			print("Start server, wait client to IP: {}:{}".format(tcp_ip, tcp_port))
-			s.bind((tcp_ip, tcp_port))
-			s.listen(5)  # Blocking
-			#global conn
-			conn, addr = s.accept()
-			print ("Connected client address: {}".format(addr))
-		else:
-			# Client
-			if is_tcp:
-				print("Start TCP connect IP: {}:{}".format(tcp_ip, tcp_port))
-				s.connect((tcp_ip, tcp_port)) # Blocking
-			print("Successful connect")
+    # Problem: it has large latency
+    if is_tcp:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # Low latency:
+        #socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+        #s = socket.socket(socket.AF_INET, socket.TCP_NODELAY)
+    else:
+        # UDP?
+        s = socket.socket(socket.AF_INET, # Internet
+                        socket.SOCK_DGRAM) # UDP
+    
+    connectOk = False
+    login_received = False
+    
+    try:
+        if is_server:
+            # Server
+            # Wait connect
+            print("Start server, wait client to IP: {}:{}".format(tcp_ip, tcp_port))
+            s.bind((tcp_ip, tcp_port))
+            s.listen(5)  # Blocking
+            #global conn
+            conn, addr = s.accept()
+            print ("Connected client address: {}".format(addr))
+        else:
+            # Client
+            if is_tcp:
+                print("Start TCP connect IP: {}:{}".format(tcp_ip, tcp_port))
+                s.connect((tcp_ip, tcp_port)) # Blocking
+            print("Successful connect")
 
-		# Start threads, because ~connect is successful
-		connectOk = True
-		tcp_send_thread_is_ok = True
-		tcp_received_thread_is_ok = True
-		threadRecv = threading.Thread(name="Receive thread", target=tcp_receive_thread)
-		threadRecv.start()
-		threadSend = threading.Thread(name="Send thread", target=tcp_send_thread)
-		threadSend.start()
-		threadKeyHandler = threading.Thread(name="Send thread", target=keyboard_handle_thread)
-		threadKeyHandler.start()
+        # Start threads, because ~connect is successful
+        connectOk = True
+        tcp_send_thread_is_ok = True
+        tcp_received_thread_is_ok = True
+        threadRecv = threading.Thread(name="Receive thread", target=tcp_receive_thread)
+        threadRecv.start()
+        threadSend = threading.Thread(name="Send thread", target=tcp_send_thread)
+        threadSend.start()
+        threadKeyHandler = threading.Thread(name="Send thread", target=keyboard_handle_thread)
+        threadKeyHandler.start()
 
-		while connectOk:
-			# If everything is ok
-			time.sleep(1)
-			if s._closed:
-				connectOk = False
-				break
-	except Exception as excpt:
-		print("Error in Main" + str(excpt))
-		connectOk = False
+        while connectOk:
+            # If everything is ok
+            time.sleep(1)
+            if s._closed:
+                connectOk = False
+                break
+    except Exception as excpt:
+        print("Error in Main" + str(excpt))
+        connectOk = False
 
-	connectOk = False
-		
-	if is_tcp:
-		s.close()
+    connectOk = False
+        
+    if is_tcp:
+        s.close()
