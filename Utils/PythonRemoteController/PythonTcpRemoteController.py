@@ -77,7 +77,8 @@ prev_turn = 0
 
 key_check_sec = 0.05  # 50ms
 idle_count_limit = 5  # ide limit --> 5* 0.05sec = 250 ms
-idle_count = 0
+idle_count_dc = 0
+idle_count_turn = 0
 
 force_send_msg = False
 
@@ -125,19 +126,29 @@ def keyboard_handle_thread():
     key_right_is_pressed_prev = False
     key_down_is_pressed_prev = False
     
+    key_speed_is_pressed = False
+    key_turn_is_pressed = False
+
     key_changed = False
     idle_status = False
 
+    started = False
+
     while True:  # making a loop
+
         try:  # used try so that if user pressed other than the given key error will not be shown
             #print('You Pressed a Key!')
             time.sleep(key_check_sec)
             key_pressed = False
+            key_speed_is_pressed = False
+            key_turn_is_pressed = False
+
             if keyboard.is_pressed('left arrow') or keyboard.is_pressed('a'):
                 print ('Left')
                 turn_handle(1)
                 key_pressed = True
                 key_left_is_pressed = True
+                key_turn_is_pressed = True
             else:
                 key_left_is_pressed = False
             if keyboard.is_pressed('up arrow') or keyboard.is_pressed('w'):
@@ -145,6 +156,7 @@ def keyboard_handle_thread():
                 speed_handle(1)
                 key_pressed = True
                 key_up_is_pressed = True
+                key_speed_is_pressed = True
             else:
                 key_up_is_pressed = False
             if keyboard.is_pressed('right arrow') or keyboard.is_pressed('d'):
@@ -152,6 +164,7 @@ def keyboard_handle_thread():
                 turn_handle(-1)
                 key_pressed = True
                 key_right_is_pressed = True
+                key_turn_is_pressed = True
             else:
                 key_right_is_pressed = False
             if keyboard.is_pressed('down arrow') or keyboard.is_pressed('s'):
@@ -159,6 +172,7 @@ def keyboard_handle_thread():
                 speed_handle(-1)
                 key_pressed = True
                 key_down_is_pressed = True
+                key_speed_is_pressed = True
             else:
                 key_down_is_pressed = False
 
@@ -182,20 +196,40 @@ def keyboard_handle_thread():
             key_down_is_pressed_prev = key_down_is_pressed
 
             if keyboard.is_pressed('left ctrl') or keyboard.is_pressed('x'):  # if key 'q' is pressed 
-                print('Exit')
+                print('Exit from key handler because Ctrl or x')
+                connectOk = False
+                needRun = False
                 break  # finishing the loop
 
-            if not key_pressed:
-                global idle_count
-                idle_count += 1
 
-                if idle_count >= idle_count_limit:
+            #if not key_pressed:
+            if not key_speed_is_pressed or not key_turn_is_pressed:
+                # one direction is unpressed
+                global idle_count_dc
+                global idle_count_turn
+                global speed
+                global turn
+
+                if not key_speed_is_pressed:
+                    idle_count_dc += 1
+                if not key_turn_is_pressed:
+                    idle_count_turn += 1
+
+                idle_speed = False
+                idle_turn = False
+
+                if idle_count_dc >= idle_count_limit:
                     # Idle event
-                    global speed
-                    global turn
                     speed = 0
-                    turn = 0
+                    idle_speed = True
                 
+                if idle_count_turn >= idle_count_limit:
+                    # Idle event
+                    turn = 0
+                    idle_turn = True
+                
+                if idle_speed and idle_turn:
+                    # Full idle
                     if not idle_status:
                         # Force send message
                         force_send_msg = True
@@ -204,9 +238,14 @@ def keyboard_handle_thread():
                 else:
                     # not pressed, send not message
                     pass
-            else:
-                # Pressing
+
+            if key_speed_is_pressed or key_turn_is_pressed:
+                # One key pressingPressing
                 idle_status = False
+                if key_speed_is_pressed:
+                    idle_count_dc = 0
+                if key_turn_is_pressed:
+                    idle_count_turn = 0
             
             if key_changed:
                 print("Key changed")
@@ -215,10 +254,18 @@ def keyboard_handle_thread():
                 key_changed = False
                     
         except Exception as ex:
+            print("Exit from keyhandler")
             print(str(ex))
             connectOk = False
             needRun = False
             break  # if user pressed a key other than the given key the loop will break
+
+        if not started and connectOk:
+            started = True
+            print("Started run")
+        if started and not needRun:
+            print("Exit, requested by another thread")
+            break
 
 
 def tcp_send_thread():
@@ -267,6 +314,9 @@ def tcp_send_thread():
         # Delay
         time.sleep(0.05)
         timeout_calc += 1
+        
+        if not needRun:
+            print("Exit requested by another thread")
 
     print("Exit Send thread")
     
@@ -293,6 +343,7 @@ def tcp_receive_thread():
                 print("Login message received")
             print("Received data: {}".format(str(data)))
         except Exception as excpt:
+            # TODO: Handle WinError
             print("Error in receiving thread" + str(excpt))
             connectOk = False
             tcp_received_thread_is_ok = False
@@ -345,10 +396,18 @@ while needRun:
 
         while connectOk:
             # If everything is ok
-            time.sleep(1)
-            if s._closed:
+            try:
+                time.sleep(1)
+                if s._closed:
+                    connectOk = False
+                    break
+            except KeyboardInterrupt:
+                print("Keyboard interrupt, exit")
                 connectOk = False
-                break
+                needRun = False
+            except Exception as ex:
+                print(str(ex))
+                raise ex
     except Exception as excpt:
         print("Error in Main" + str(excpt))
         connectOk = False
