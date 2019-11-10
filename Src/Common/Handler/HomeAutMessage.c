@@ -471,7 +471,7 @@ size_t HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation,
         }
     }
 
-    length = snprintf(createToMessage, HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH,
+    length = usnprintf(createToMessage, HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH,
   #ifdef STRING_SPRINTF_EXTENDED_ENABLE
             "|%s|%s|%s|%s|%s|%s|%x|",
   #else
