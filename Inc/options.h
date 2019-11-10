@@ -179,7 +179,7 @@
 ///< Periodical sending UART message function
 /* #define CONFIG_FUNCTION_PERIODICAL_SENDING */
 
-#define CONFIG_FUNCTION_ESP8266
+/* #define CONFIG_FUNCTION_ESP8266 */
 #ifdef CONFIG_FUNCTION_ESP8266
     #define CONFIG_MODULE_ESP8266_ENABLE
 #endif /* CONFIG_FUNCTION_ESP8266 */
@@ -572,6 +572,7 @@
 /* #define CONFIG_DEBUG_SELFTEST */
 
 ///< MCU SelfTest
+/* TODO: Refactor: Some test for STM32 */
 /* #define CONFIG_MODULE_SELFTEST_ENABLE */
 
 ///< SelfTest - Error tests
@@ -732,7 +733,7 @@
     /*     - 9600 baudrate */
     /* 1 - upgraded */
     /*     - 115200 baudrate */
-    #define ESP8266_VERSION                            (1)
+    #define ESP8266_VERSION                            (0)
 
     /* ESP8266 Debug mode: */
     /* 1 - on */
