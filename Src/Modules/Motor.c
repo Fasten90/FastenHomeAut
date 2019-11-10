@@ -578,7 +578,7 @@ void Motor_StateMachine(void)
 
 /**
  * @brief    Set all motor state to 0 / default
- * @note    Be careful, it is not immediate stop motors, it is only stop "control" states
+ * @note     Be careful, it is not immediate stop motors, it is only stop "control" states
  */
 void Motor_ControlStop(void)
 {
