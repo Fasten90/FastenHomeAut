@@ -30,17 +30,17 @@
  *----------------------------------------------------------------------------*/
 
 #ifdef CONFIG_DEBUG_MODE
-#define STRING_ASSERT(_e)            ASSERT(_e)
-#define STRING_SNPRINTF_CATCH_ERROR_ENABLED     (1)
-#define STRING_SNPRINTF_CATCH_ERROR()   DEBUG_BREAKPOINT()
+    #define STRING_ASSERT(_e)                       ASSERT(_e)
+    #define STRING_SNPRINTF_CATCH_ERROR_ENABLED     (1)
+    #define STRING_SNPRINTF_CATCH_ERROR()           DEBUG_BREAKPOINT()
 #else
-#define STRING_ASSERT(_e)
-#define STRING_SNPRINTF_CATCH_ERROR()   (void)0  /* Empty */
+    #define STRING_ASSERT(_e)
+    #define STRING_SNPRINTF_CATCH_ERROR()           (void)0  /* Empty */
 #endif
 
-#define STRING_SIZE_MAX                (1024U)
+#define STRING_SIZE_MAX                             (1024U)
 
-#define STRING_INTEGER_MAX_LENGTH      (10U)
+#define STRING_INTEGER_MAX_LENGTH                   (10U)
 
 
 
@@ -71,8 +71,8 @@ static uint8_t UnsignedDecimalToStringFillSafe(uint32_t value, char *str, uint8_
 
 
 /**
- * @brief    Convert signed decimal to string
- * @note    Only max INT_MAX / 2 number can be converted
+ * @brief   Convert signed decimal to string
+ * @note     Only max INT_MAX / 2 number can be converted
  * @return    created string length
  */
 uint8_t SignedDecimalToString(int32_t value, char *str)
@@ -189,7 +189,7 @@ size_t UnsignedDecimalToStringSafe(uint32_t value, char *str, size_t maxLength)
         if ((value >= decade) || (isStarted == true))
         {
             /* Put first digit */
-            /* Add the ascii code of '0' character to get the desired value's caracter code */
+            /* Add the ASCII code of '0' character to get the desired value's caracter code */
             str[length] = ((char)(value/decade) + '0');
             length++;
             isStarted = true;
@@ -1925,7 +1925,7 @@ const char * STRING_FindString(const char *str, const char *findString)
 /**
  * @brief    Separate / split string to small strings by delimiter char
  *             like strtok() (but not match)
- *             E.g.: source: "192.168.0.1", delimiter: '.' --> separated[0] -> "192", sepparated[1] -> "168", ...
+ *             E.g.: source: "192.168.0.1", delimiter: '.' --> separated[0] -> "192", separated[1] -> "168", ...
  * @note    Be careful, pointers to original (source) string
  *             source string need to be changeable!
  */
@@ -1963,7 +1963,7 @@ uint8_t STRING_Splitter(char *source, const char *delimiters, char **separated, 
                 }
                 if (j == 0)
                 {
-                    /* one length parameter // TODO: Do with more beautiful */
+                    /* one length parameter */ /* TODO: Do with more beautiful */
                     separated[parameters] = &source[i];
                 }
                 parameters++;
