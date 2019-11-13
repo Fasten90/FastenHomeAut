@@ -2835,7 +2835,54 @@ uint32_t StringHelper_UnitTest(void)
     UNITTEST_ASSERT(!result, "StringToFloat error");
 
 
-    /* TODO: StringToBool test */
+
+    /* StringToBool test */
+    typedef struct {
+        const char * testString;
+        bool expectedResult;
+        bool expectedReturnValue;
+    } StringBoolTest_t;
+
+    StringBoolTest_t StringBoolTestTable[] =
+    {
+        /*test result return */
+        { "1", true, true },
+        { "0", false, true },
+
+        { "true", true, true },
+        { "on", true, true },
+        { "enable", true, true },
+        { "set", true, true },
+
+        { "false", false, true },
+        { "off", false, true },
+        { "disable", false, true },
+        { "reset", false, true },
+
+        { "2", false, false },
+        { "-1", false, false },
+
+        { "uglywrongtest", false, false },
+
+        { NULL, false, false },
+    };
+
+    uint8_t i;
+    for (i = 0; i < NUM_OF(StringBoolTestTable); i++)
+    {
+        bool testResultValue = false;
+        bool testReturnValue;
+
+        testReturnValue = StringToBool(StringBoolTestTable[i].testString, &testResultValue);
+
+        UNITTEST_ASSERT(testReturnValue == StringBoolTestTable[i].expectedReturnValue, "StringToBool return error");
+        if (StringBoolTestTable[i].expectedReturnValue)
+        {
+            /* Expected right convert value, because the return is OK */
+            UNITTEST_ASSERT(testResultValue == StringBoolTestTable[i].expectedResult, "StringToBool convert error");
+        }
+    }
+
 
 
     /* String function testing */
