@@ -3141,12 +3141,22 @@ uint32_t StringHelper_UnitTest(void)
     usnprintf(buffer, 30, "%1d %1u 1234 %1c %3s", 1, 2, 'a', "str");
     UNITTEST_ASSERT(!StrCmp(buffer, "1 2 1234 a str"), "usnprintf error");
 #endif
+
+
+    /* %9dblalba" */
+#ifdef STRING_SPRINTF_EXTENDED_ENABLE
+    /* %9d --> decimal */
+    usnprintf(buffer, 30, "%9dblabla", 123456789);
+    UNITTEST_ASSERT(!StrCmp(buffer, "123456789blabla"), "usnprintf error");
+#else
+    /* %9d has not supported */
+    usnprintf(buffer, 30, "%9dblabla", 123456789);
+    UNITTEST_ASSERT(!StrCmp(buffer, "9dblabla"), "usnprintf error");
+#endif
+
+
+
     /* TODO: Add other test, if usnprintf improved */
-
-
-    /* TODO: Add: %9dblalba" */
-
-    /* TODO: usnprintf(format, formatLength, "0x%%%dX", octetNum); */
 
 
     /* Test StrAppendSafe */
