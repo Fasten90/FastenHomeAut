@@ -1954,16 +1954,14 @@ uint8_t STRING_Splitter(char *source, const char *delimiters, char **separated, 
         bool isFound = false;
         for (k = 0; delimiters[k] != '\0'; k++)
         {
-            if ((source[i] == delimiters[k]) || (source[i+1] == '\0'))
+            if (source[i] == delimiters[k])
             {
-                /* Found delimiter or end character */
-                if (source[i] == delimiters[k])
-                {
-                    source[i] = '\0';
-                }
+                /* Found delimiter */
+                source[i] = '\0';
                 if (j == 0)
                 {
-                    /* one length parameter */ /* TODO: Do with more beautiful */
+                    /* 0 length parameter */ /* TODO: Do with more beautiful */
+                    /* e.g. ',' separator and ',,' message --> middle of ',' will be 0 length message */
                     separated[parameters] = &source[i];
                 }
                 parameters++;
@@ -1971,6 +1969,21 @@ uint8_t STRING_Splitter(char *source, const char *delimiters, char **separated, 
                 isFound = true;
                 break;
             }
+            /* else: not delimiter char or next char is not the end char */
+        }
+
+        if (source[i+1] == '\0')
+        {
+            /* finish the last */
+            if (j == 0)
+            {
+                /* 0 length parameter */ /* TODO: Do with more beautiful */
+                /* e.g. ',' separator and ',,' message --> middle of ',' will be 0 length message */
+                separated[parameters] = &source[i];
+            }
+
+            parameters++; /* TODO: Idea, at last, not limiter, but not: separated[parameters] = &source[i]; */
+            isFound = true; /* Force put NULL */
         }
 
         if (isFound)
@@ -1982,6 +1995,7 @@ uint8_t STRING_Splitter(char *source, const char *delimiters, char **separated, 
             }
             else
             {
+                /* Set the last to NULL */
                 separated[parameters] = NULL;
             }
         }
@@ -2773,6 +2787,7 @@ uint32_t StringHelper_UnitTest(void)
 
     /* Wrong hex */
     value32 = 0;
+    /*                          x  <-- Wrong character */
     result = StringHexToNum("123G5678", &value32);
     UNITTEST_ASSERT(!result, "StringHexToNum error");
 
@@ -2889,7 +2904,7 @@ uint32_t StringHelper_UnitTest(void)
 
     /* Test: uint8_t StrCpyCharacter(char *dest, char c, uint8_t num) */
     StrCpyCharacter(buffer, 'a', 10);
-    uint8_t i;
+
     for (i = 0; i < 10; i++)
     {
         UNITTEST_ASSERT(buffer[i] == 'a', "StrCpyCharacter error");
@@ -2997,7 +3012,82 @@ uint32_t StringHelper_UnitTest(void)
     UNITTEST_ASSERT(splitted[0] == NULL, "STRING_Splitter error");
 
 
-    /* TODO: Add new tests for STRING_Splitter() */
+    /* STRING_Splitter - more delimiter */
+    StrCpy(buffer, "bla1 bla2_bla3");
+    value8 = STRING_Splitter(buffer, " _", splitted, 10);
+    UNITTEST_ASSERT(value8 == 3, "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[0],"bla1"), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[1],"bla2"), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[2],"bla3"), "STRING_Splitter error");
+    UNITTEST_ASSERT(splitted[3] == NULL, "STRING_Splitter error");
+
+
+    /* STRING_Splitter - delimiter "list" string */
+    /*                  **    **      */
+    StrCpy(buffer, "bla1  bla2__bla3");
+    value8 = STRING_Splitter(buffer, " _", splitted, 10);
+
+    /* TODO: Error: "bla1", "", "bla2", "", "bla3" were the result
+     * but normally expected: "bla1", "bla2", "bla3"
+     *
+     * But example gratia, for GPS: 0,0,,,,0 --> it will be better...
+     */
+  #if 0
+    UNITTEST_ASSERT(value8 == 3, "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[0],"bla1"), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[1],"bla2"), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[2],"bla3"), "STRING_Splitter error");
+    UNITTEST_ASSERT(splitted[3] == NULL, "STRING_Splitter error");
+  #else
+    UNITTEST_ASSERT(value8 == 5, "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[0],"bla1"), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[1],""), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[2],"bla2"), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[3],""), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[4],"bla3"), "STRING_Splitter error");
+    UNITTEST_ASSERT(splitted[5] == NULL, "STRING_Splitter error");
+  #endif
+
+    /* Start with delimiter, end with delimiter */
+
+    StrCpy(buffer, "  bla1__");
+    value8 = STRING_Splitter(buffer, " _", splitted, 10);
+#if 0
+    UNITTEST_ASSERT(value8 == 1, "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[0],"bla1"), "STRING_Splitter error");
+    UNITTEST_ASSERT(splitted[1] == NULL, "STRING_Splitter error");
+#else
+    UNITTEST_ASSERT(value8 == 5, "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[0],""), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[1],""), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[2],"bla1"), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[3],""), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[4],""), "STRING_Splitter error");
+    UNITTEST_ASSERT(splitted[5] == NULL, "STRING_Splitter error");
+#endif
+
+    /* Check with overfull */
+    StrCpy(buffer, "bla1 bla2 bla3 too much");
+    char * expectedDoNotReachString = "mystring";
+    splitted[1] = expectedDoNotReachString; /* Expect: do not modify by function*/
+    value8 = STRING_Splitter(buffer, " _", splitted, 1);
+    UNITTEST_ASSERT(value8 == 1, "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[0],"bla1"), "STRING_Splitter error");
+    UNITTEST_ASSERT(splitted[1] == expectedDoNotReachString, "STRING_Splitter error");
+
+
+    /* Use case test: GPS */
+    StrCpy(buffer, "0.1,2,3,,,,0xEF");
+    value8 = STRING_Splitter(buffer, ",", splitted, 8);
+    UNITTEST_ASSERT(value8 == 7, "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[0],"0.1"), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[1],"2"), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[2],"3"), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[3],""), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[4],""), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[5],""), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[6],"0xEF"), "STRING_Splitter error");
+    UNITTEST_ASSERT(splitted[7] == NULL, "STRING_Splitter error");
 
 
     /* TODO: Test StrAppend */
@@ -3068,6 +3158,7 @@ uint32_t StringHelper_UnitTest(void)
     return UnitTest_End();
 }
 #endif    /* #ifdef CONFIG_MODULE_STRING_UNITTEST_ENABLE */
+
 
 
 /* Other printf: */

@@ -182,7 +182,7 @@ static void GpsHandler_ProcessCgnsinfMessage(const char * msg)
     StrCpyMax(procMsg, msg, GPSHANDLER_MESSAGE_CGNSINF_MAX_LENGTH);
 
     /* Split by ',' - 21 parameter --> 20 ',' */
-    if (STRING_Splitter(procMsg, ",", separated, GPSHANDLER_MESSAGE_CGNSINF_PARAMETER_NUM) == (GPSHANDLER_MESSAGE_CGNSINF_PARAMETER_NUM - 1))
+    if (STRING_Splitter(procMsg, ",", separated, GPSHANDLER_MESSAGE_CGNSINF_PARAMETER_NUM) == (GPSHANDLER_MESSAGE_CGNSINF_PARAMETER_NUM))
     {
         CoordinateLog_t coordLog = { 0 };
 
