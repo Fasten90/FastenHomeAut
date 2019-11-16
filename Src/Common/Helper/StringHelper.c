@@ -176,6 +176,7 @@ size_t UnsignedDecimalToStringSafe(uint32_t value, char *str, size_t maxLength)
 {
     size_t length = 0;
     bool isStarted = false;
+    bool overflowed = false;
 
     if (str == NULL || maxLength == 0)
         return 0;
@@ -183,13 +184,24 @@ size_t UnsignedDecimalToStringSafe(uint32_t value, char *str, size_t maxLength)
     /* Largest num: 1xxxxxx... */
     uint32_t decade = 1000000000;
 
-    //* TODO: Implement without "isStarted" */
-    while ((decade > 1) && ((length+1) < maxLength))
+    /* TODO: Implement without "isStarted" */
+    while (decade > 1)
     {
         if ((value >= decade) || (isStarted == true))
         {
             /* Put first digit */
             /* Add the ASCII code of '0' character to get the desired value's caracter code */
+            /* TODO:
+             * Overflow not handled: maxLength < expectedLength
+             */
+            if ((length+1) >= maxLength)
+            {
+                /* Possible error situation: Want to print too large number with less string space */
+                STRING_SNPRINTF_CATCH_ERROR();
+                overflowed = true;
+                break;
+            }
+
             str[length] = ((char)(value/decade) + '0');
             length++;
             isStarted = true;
@@ -200,12 +212,19 @@ size_t UnsignedDecimalToStringSafe(uint32_t value, char *str, size_t maxLength)
     }
 
     /* TODO: Merge this "last digit" with above code */
-    if (length < maxLength)
+    if (length < maxLength &&  !overflowed)
     {
         /* Add the ASCII code of '0' character to get the desired value's character code */
         str[length] = ((char)value + '0');    /* Last digit */
         length++;
+        /* This branch without 'overflowed' check will be calculate wrong last number E.g. 32 value --> print R character */
     }
+    else if (overflowed)
+    {
+        str[length] = ((char)'?');    /* Last digit */
+        length++;
+    }
+
 
     str[length] = '\0';                /* End character */
 
@@ -2842,9 +2861,8 @@ uint32_t StringHelper_UnitTest(void)
     UNITTEST_ASSERT(result, "StringToUnsignedDecimalNumWithLength error");
     UNITTEST_ASSERT(value32 == 12, "StringToUnsignedDecimalNumWithLength error");
 
-    result = StringToUnsignedDecimalNumWithLength("123", &value32, 4); /* extended length */
-    UNITTEST_ASSERT(result, "StringToUnsignedDecimalNumWithLength error");
-    UNITTEST_ASSERT(value32 == 123, "StringToUnsignedDecimalNumWithLength error");
+    result = StringToUnsignedDecimalNumWithLength("123", &value32, 4); /* extended length, however fix length shall be calculated correctly */
+    UNITTEST_ASSERT(!result, "StringToUnsignedDecimalNumWithLength error");
 
     result = StringToUnsignedDecimalNumWithLength("-123", &value32, 4); /* wrong start (-) at unsigned number */
     UNITTEST_ASSERT(!result, "StringToUnsignedDecimalNumWithLength error");
@@ -3196,24 +3214,36 @@ uint32_t StringHelper_UnitTest(void)
 
     length = UnsignedDecimalToStringFillSafe(1234, buffer, 0, ' ', 3); /* End of number - (4) has been cut */
     UNITTEST_ASSERT(length == 3, "UnsignedDecimalToStringFillSafe error");
-    UNITTEST_ASSERT(!StrCmp(buffer, "123"), "UnsignedDecimalToStringFillSafe error");
+    UNITTEST_ASSERT(!StrCmp(buffer, "12?"), "UnsignedDecimalToStringFillSafe error");
 
     length = UnsignedDecimalToStringFillSafe(1234, buffer, 0, ' ', 4);
     UNITTEST_ASSERT(length == 4, "UnsignedDecimalToStringFillSafe error");
-    UNITTEST_ASSERT(!StrCmp(buffer, "124"), "UnsignedDecimalToStringFillSafe error");
+    UNITTEST_ASSERT(!StrCmp(buffer, "1234"), "UnsignedDecimalToStringFillSafe error");
 
 
     length = UnsignedDecimalToStringFillSafe(123, buffer, 0, ' ', 4);
     UNITTEST_ASSERT(length == 3, "UnsignedDecimalToStringFillSafe error");
     UNITTEST_ASSERT(!StrCmp(buffer, "123"), "UnsignedDecimalToStringFillSafe error");
 
-    length = UnsignedDecimalToStringFillSafe(123, buffer, 1, ' ', 4);
-    UNITTEST_ASSERT(length == 4, "UnsignedDecimalToStringFillSafe error");
-    UNITTEST_ASSERT(!StrCmp(buffer, "123 "), "UnsignedDecimalToStringFillSafe error");
+    length = UnsignedDecimalToStringFillSafe(123, buffer, 1, ' ', 4); /* Fillength < required length --> dont care */
+    UNITTEST_ASSERT(length == 3, "UnsignedDecimalToStringFillSafe error");
+    UNITTEST_ASSERT(!StrCmp(buffer, "123"), "UnsignedDecimalToStringFillSafe error");
 
-    length = UnsignedDecimalToStringFillSafe(123, buffer, 2, ' ', 4); /* However 4 length, 3 number length, but only one fill character has been put */
+    length = UnsignedDecimalToStringFillSafe(123, buffer, 2, ' ', 4); /* However 4 length, 3 number length, but only 2 fill character required --> shall not put */
+    UNITTEST_ASSERT(length == 3, "UnsignedDecimalToStringFillSafe error");
+    UNITTEST_ASSERT(!StrCmp(buffer, "123"), "UnsignedDecimalToStringFillSafe error");
+
+    length = UnsignedDecimalToStringFillSafe(123, buffer, 3, ' ', 4); /* However 4 length, 3 number length, but only 3 fill character --> shall not put */
+    UNITTEST_ASSERT(length == 3, "UnsignedDecimalToStringFillSafe error");
+    UNITTEST_ASSERT(!StrCmp(buffer, "123"), "UnsignedDecimalToStringFillSafe error");
+
+    length = UnsignedDecimalToStringFillSafe(123, buffer, 4, ' ', 4); /* However 4 length, 3 number length, and required 4 filllength --> shall put fillchar */
     UNITTEST_ASSERT(length == 4, "UnsignedDecimalToStringFillSafe error");
-    UNITTEST_ASSERT(!StrCmp(buffer, "123 "), "UnsignedDecimalToStringFillSafe error");
+    UNITTEST_ASSERT(!StrCmp(buffer, " 123"), "UnsignedDecimalToStringFillSafe error");
+
+    length = UnsignedDecimalToStringFillSafe(123, buffer, 5, ' ', 4); /* However 4 length, 3 number length, but required 5 fillength, but could not put: only 1 will be put */
+    UNITTEST_ASSERT(length == 4, "UnsignedDecimalToStringFillSafe error");
+    UNITTEST_ASSERT(!StrCmp(buffer, " 123"), "UnsignedDecimalToStringFillSafe error");
 
 
     /* End of unittest */
