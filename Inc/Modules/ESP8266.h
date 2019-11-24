@@ -224,6 +224,8 @@ size_t ESP8266_PrintIpAddress(char *str);
 
 void ESP8266_RequiredNewState(ESP8266_AdjustableState_t newState);
 
+const char const * ESP8266_GetStatusName(void);
+
 
 
 #endif /* ESP8266_H_ */

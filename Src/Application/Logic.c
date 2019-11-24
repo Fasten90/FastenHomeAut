@@ -176,6 +176,7 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 
 
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER
+    /* Call button --> remote control handle-ing */
     Logic_RemoteController_Button(button, type);
 #endif
 
@@ -221,15 +222,6 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 }
 #endif /* CONFIG_MODULE_BUTTON_ENABLE || CONFIG_MODULE_BUTTONSIMULATOR_ENABLE */
 
-
-
-#ifdef CONFIG_FUNCTION_ESP8266_WRITE_IP_TO_DISPLAY
-void Logic_WriteIpToDisplay(void)
-{
-    /* TODO: Write IP address to Display */
-#warning "Implement this!"
-}
-#endif
 
 
 
@@ -466,5 +458,42 @@ bool Logic_Display_GetClockIsNeedRefresh(void)
 }
 
 
+#endif    /* #ifdef CONFIG_FUNCTION_DISPLAY_MENU */
 
-#endif    /* #ifdef CONFIG_MODULE_DISPLAY_ENABLE */
+
+
+#ifdef CONFIG_DISPLAY_ESP8266_ENABLE
+
+void Logic_DisplayESP8266(ScheduleSource_t source)
+{
+
+    UNUSED_ARGUMENT(source);
+
+    const char * const esp8266_status = ESP8266_GetStatusName();
+
+    char statusMsg[20];
+    usnprintf(statusMsg, 20, "Status: %s", esp8266_status);
+
+    Display_PrintString(
+                    statusMsg,              /* msg */
+                    0,                      /* line */
+                    Font_12x8,              /* Font */
+                    NO_FORMAT);             /* Format */
+
+    /* TODO:
+     * - button icons
+     * - Wifi hostname / client
+     * - Connection type (TCP server or client)
+     *
+     */
+
+
+    /* Require periodical schedule */
+    TaskHandler_SetTaskOnceRun(Task_Display, 1000);
+
+    Display_Activate();
+}
+
+#endif /* CONFIG_DISPLAY_ESP8266_ENABLE */
+
+

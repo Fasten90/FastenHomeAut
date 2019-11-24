@@ -96,6 +96,8 @@ void Logic_DisplayHandler(ScheduleSource_t source);
 bool Logic_Display_GetClockIsNeedRefresh(void);
 void Logic_Display_Snake_ChangeToMenu(void);
 
+void Logic_DisplayESP8266(ScheduleSource_t source);
+
 
 
 #endif /* LOGIC_H_ */

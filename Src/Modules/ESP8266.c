@@ -2265,4 +2265,77 @@ static bool ESP8266_SearchGetRequest(const char *recvMsg)
 
 
 
+const char const * ESP8266_GetStatusName(void)
+{
+    switch (ESP8266StatusMachine)
+    {
+        case Esp8266Status_Init:
+        case Esp8266Status_AfterInit:
+            return "Init";
+
+        case Esp8266Status_ConfigAte0:
+        case Esp2866Status_ConfigAte0CheckResponse:
+        case Esp8266Status_ConfigAt:
+        case Esp8266Status_ConfigAtCheckResponse:
+        case Esp8266Status_ConfigCwMode:
+        case Esp8266Status_ConfigCwModeCheckResponse:
+            return "Config";
+    #ifdef CONFIG_ESP8266_CWDHCP_ENABLE
+        case Esp8266Status_ConfigCwDhcp:
+        case Esp8266Status_ConfigCwDhcpCheckResponse:
+            return "Config";
+    #endif
+    #if (CONFIG_ESP8266_FIX_IP == 1)
+        case Esp8266Status_ConfigFixIp:
+        case Esp8266Status_ConfigFixIpCheckResponse:
+            return "Config";
+    #endif
+        case Esp8266Status_ConfigCipMux:
+        case Esp8266Status_ConfigCipMuxCheckResponse:
+        case Esp8266Status_WaitAfterSuccessfulConfig:
+            return "Config";
+    #if (CONFIG_ESP8266_IS_WIFI_HOST == 1)
+        case Esp8266Status_StartWifiHost:
+        case Esp8266Status_StartWifiHostCheckResponse:
+            return "WifiHost";
+    #else
+        case Esp8266Status_ConnectWifiNetwork:
+        case Esp8266Status_ConnectWifiNetworkCheckResponse:
+        case Esp8266Status_ConnectWifiNetworkCheckFinish:
+            return "WifiConnect";
+    #endif
+    #if (ESP8266_VERSION == 0)
+        case Esp8266Status_PrintMyIpAddress:
+        case Esp8266Status_IpAddressResponse:
+            return "Get IP";
+    #endif
+    #if (CONFIG_ESP8266_IS_TCP_SERVER == 1)
+        case Esp8266Status_StartTcpServer:
+        case Esp8266Status_StartTcpServerCheckResponse:
+            return "TCP server";
+    #else
+        case Esp8266Status_ConnectTcpServer:
+        case Esp8266Status_ConnectTcpServerCheckResponse:
+        case Esp8266Status_ConnectTcpServerCheckFinish:
+            return "TCP connect";
+    #endif
+
+    #if (CONFIG_ESP8266_TRANSPARENT_MODE_ENABLED == 1)
+        case Esp8266Status_ConfigTransparentMode:
+        case Esp8266Status_Config_TransparentModeCheckResponse:
+            return "TCP mode";
+    #endif
+
+        case Esp8266Status_BeforeIdle:
+        case Esp8266Status_Idle:
+            return "Connected";
+
+        case Esp8266Status_Reconfig:
+        default:
+            return "reconfig";
+    }
+}
+
+
+
 #endif    /* #ifdef CONFIG_MODULE_ESP8266_ENABLE */
