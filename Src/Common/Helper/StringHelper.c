@@ -30,17 +30,17 @@
  *----------------------------------------------------------------------------*/
 
 #ifdef CONFIG_DEBUG_MODE
-#define STRING_ASSERT(_e)            ASSERT(_e)
-#define STRING_SNPRINTF_CATCH_ERROR_ENABLED     (1)
-#define STRING_SNPRINTF_CATCH_ERROR()   DEBUG_BREAKPOINT()
+    #define STRING_ASSERT(_e)                       ASSERT(_e)
+    #define STRING_SNPRINTF_CATCH_ERROR_ENABLED     (1)
+    #define STRING_SNPRINTF_CATCH_ERROR()           DEBUG_BREAKPOINT()
 #else
-#define STRING_ASSERT(_e)
-#define STRING_SNPRINTF_CATCH_ERROR()   (void)0  /* Empty */
+    #define STRING_ASSERT(_e)
+    #define STRING_SNPRINTF_CATCH_ERROR()           (void)0  /* Empty */
 #endif
 
-#define STRING_SIZE_MAX                (1024U)
+#define STRING_SIZE_MAX                             (1024U)
 
-#define STRING_INTEGER_MAX_LENGTH      (10U)
+#define STRING_INTEGER_MAX_LENGTH                   (10U)
 
 
 
@@ -71,8 +71,8 @@ static uint8_t UnsignedDecimalToStringFillSafe(uint32_t value, char *str, uint8_
 
 
 /**
- * @brief    Convert signed decimal to string
- * @note    Only max INT_MAX / 2 number can be converted
+ * @brief   Convert signed decimal to string
+ * @note     Only max INT_MAX / 2 number can be converted
  * @return    created string length
  */
 uint8_t SignedDecimalToString(int32_t value, char *str)
@@ -176,6 +176,7 @@ size_t UnsignedDecimalToStringSafe(uint32_t value, char *str, size_t maxLength)
 {
     size_t length = 0;
     bool isStarted = false;
+    bool overflowed = false;
 
     if (str == NULL || maxLength == 0)
         return 0;
@@ -183,13 +184,24 @@ size_t UnsignedDecimalToStringSafe(uint32_t value, char *str, size_t maxLength)
     /* Largest num: 1xxxxxx... */
     uint32_t decade = 1000000000;
 
-    //* TODO: Implement without "isStarted" */
-    while ((decade > 1) && ((length+1) < maxLength))
+    /* TODO: Implement without "isStarted" */
+    while (decade > 1)
     {
         if ((value >= decade) || (isStarted == true))
         {
             /* Put first digit */
-            /* Add the ascii code of '0' character to get the desired value's caracter code */
+            /* Add the ASCII code of '0' character to get the desired value's caracter code */
+            /* TODO:
+             * Overflow not handled: maxLength < expectedLength
+             */
+            if ((length+1) >= maxLength)
+            {
+                /* Possible error situation: Want to print too large number with less string space */
+                STRING_SNPRINTF_CATCH_ERROR();
+                overflowed = true;
+                break;
+            }
+
             str[length] = ((char)(value/decade) + '0');
             length++;
             isStarted = true;
@@ -200,12 +212,19 @@ size_t UnsignedDecimalToStringSafe(uint32_t value, char *str, size_t maxLength)
     }
 
     /* TODO: Merge this "last digit" with above code */
-    if (length < maxLength)
+    if (length < maxLength &&  !overflowed)
     {
         /* Add the ASCII code of '0' character to get the desired value's character code */
         str[length] = ((char)value + '0');    /* Last digit */
         length++;
+        /* This branch without 'overflowed' check will be calculate wrong last number E.g. 32 value --> print R character */
     }
+    else if (overflowed)
+    {
+        str[length] = ((char)'?');    /* Last digit */
+        length++;
+    }
+
 
     str[length] = '\0';                /* End character */
 
@@ -282,7 +301,7 @@ uint8_t UnsignedDecimalToStringFill(uint32_t value, char *str, uint8_t fillLengt
 /**
  * @brief    Unsigned decimal (uint32_t) to String with fill (a character to x length)
  *           If fillLength < len(value), the full number will be printed
- *           Tthis will make ugly a table printing, but correct value will be printed
+ *           This will make ugly a table printing, but correct value will be printed
  */
 uint8_t UnsignedDecimalToStringFillSafe(uint32_t value, char *str, uint8_t fillLength, char fillCharacter, uint8_t maxLen)
 {
@@ -1734,7 +1753,7 @@ size_t CharAppend(char *dest, const char c)
 
 /**
  * @brief    Trim string (cut space and others at end)
- * @note    Be careful, only call with changeable string!
+ * @note     Be careful, only call with changeable string!
  */
 size_t StrTrim(char *str)
 {
@@ -1761,7 +1780,7 @@ size_t StrTrim(char *str)
         }
     }
 
-    return i;
+    return i+1; /* Index of last not whitespace char+1 - so, length */
 }
 
 
@@ -1925,7 +1944,7 @@ const char * STRING_FindString(const char *str, const char *findString)
 /**
  * @brief    Separate / split string to small strings by delimiter char
  *             like strtok() (but not match)
- *             E.g.: source: "192.168.0.1", delimiter: '.' --> separated[0] -> "192", sepparated[1] -> "168", ...
+ *             E.g.: source: "192.168.0.1", delimiter: '.' --> separated[0] -> "192", separated[1] -> "168", ...
  * @note    Be careful, pointers to original (source) string
  *             source string need to be changeable!
  */
@@ -1954,16 +1973,14 @@ uint8_t STRING_Splitter(char *source, const char *delimiters, char **separated, 
         bool isFound = false;
         for (k = 0; delimiters[k] != '\0'; k++)
         {
-            if ((source[i] == delimiters[k]) || (source[i+1] == '\0'))
+            if (source[i] == delimiters[k])
             {
-                /* Found delimiter or end character */
-                if (source[i] == delimiters[k])
-                {
-                    source[i] = '\0';
-                }
+                /* Found delimiter */
+                source[i] = '\0';
                 if (j == 0)
                 {
-                    /* one length parameter // TODO: Do with more beautiful */
+                    /* 0 length parameter */ /* TODO: Do with more beautiful */
+                    /* e.g. ',' separator and ',,' message --> middle of ',' will be 0 length message */
                     separated[parameters] = &source[i];
                 }
                 parameters++;
@@ -1971,6 +1988,21 @@ uint8_t STRING_Splitter(char *source, const char *delimiters, char **separated, 
                 isFound = true;
                 break;
             }
+            /* else: not delimiter char or next char is not the end char */
+        }
+
+        if (source[i+1] == '\0')
+        {
+            /* finish the last */
+            if (j == 0)
+            {
+                /* 0 length parameter */ /* TODO: Do with more beautiful */
+                /* e.g. ',' separator and ',,' message --> middle of ',' will be 0 length message */
+                separated[parameters] = &source[i];
+            }
+
+            parameters++; /* TODO: Idea, at last, not limiter, but not: separated[parameters] = &source[i]; */
+            isFound = true; /* Force put NULL */
         }
 
         if (isFound)
@@ -1982,6 +2014,7 @@ uint8_t STRING_Splitter(char *source, const char *delimiters, char **separated, 
             }
             else
             {
+                /* Set the last to NULL */
                 separated[parameters] = NULL;
             }
         }
@@ -2518,6 +2551,7 @@ uint32_t StringHelper_UnitTest(void)
     float fvalue;
     char *splitted[10];
     const char * cpString;
+    size_t length;
 
 
     /* Start of unittest */
@@ -2773,6 +2807,7 @@ uint32_t StringHelper_UnitTest(void)
 
     /* Wrong hex */
     value32 = 0;
+    /*                          x  <-- Wrong character */
     result = StringHexToNum("123G5678", &value32);
     UNITTEST_ASSERT(!result, "StringHexToNum error");
 
@@ -2817,9 +2852,24 @@ uint32_t StringHelper_UnitTest(void)
     UNITTEST_ASSERT(!result, "StringToUnsignedDecimalNum error");
 
 
-    /* TODO: Test
-    bool StringToUnsignedDecimalNumWithLength(const char * str, uint32_t * value, uint8_t stringLength)
-    */
+    /* bool StringToUnsignedDecimalNumWithLength(const char * str, uint32_t * value, uint8_t stringLength) */
+    result = StringToUnsignedDecimalNumWithLength("123", &value32, 3);
+    UNITTEST_ASSERT(result, "StringToUnsignedDecimalNumWithLength error");
+    UNITTEST_ASSERT(value32 == 123, "StringToUnsignedDecimalNumWithLength error");
+
+    result = StringToUnsignedDecimalNumWithLength("123", &value32, 2); /* Cut end */
+    UNITTEST_ASSERT(result, "StringToUnsignedDecimalNumWithLength error");
+    UNITTEST_ASSERT(value32 == 12, "StringToUnsignedDecimalNumWithLength error");
+
+    result = StringToUnsignedDecimalNumWithLength("123", &value32, 4); /* extended length, however fix length shall be calculated correctly */
+    UNITTEST_ASSERT(!result, "StringToUnsignedDecimalNumWithLength error");
+
+    result = StringToUnsignedDecimalNumWithLength("-123", &value32, 4); /* wrong start (-) at unsigned number */
+    UNITTEST_ASSERT(!result, "StringToUnsignedDecimalNumWithLength error");
+
+    result = StringToUnsignedDecimalNumWithLength("a123", &value32, 4); /* wrong start (a) */
+    UNITTEST_ASSERT(!result, "StringToUnsignedDecimalNumWithLength error");
+
 
     /* Float */
 
@@ -2835,14 +2885,60 @@ uint32_t StringHelper_UnitTest(void)
     UNITTEST_ASSERT(!result, "StringToFloat error");
 
 
-    /* TODO: StringToBool test */
+
+    /* StringToBool test */
+    typedef struct {
+        const char * testString;
+        bool expectedResult;
+        bool expectedReturnValue;
+    } StringBoolTest_t;
+
+    StringBoolTest_t StringBoolTestTable[] =
+    {
+        /*test result return */
+        { "1", true, true },
+        { "0", false, true },
+
+        { "true", true, true },
+        { "on", true, true },
+        { "enable", true, true },
+        { "set", true, true },
+
+        { "false", false, true },
+        { "off", false, true },
+        { "disable", false, true },
+        { "reset", false, true },
+
+        { "2", false, false },
+        { "-1", false, false },
+
+        { "uglywrongtest", false, false },
+
+        { NULL, false, false },
+    };
+
+    uint8_t i;
+    for (i = 0; i < NUM_OF(StringBoolTestTable); i++)
+    {
+        bool testResultValue = false;
+        bool testReturnValue;
+
+        testReturnValue = StringToBool(StringBoolTestTable[i].testString, &testResultValue);
+
+        UNITTEST_ASSERT(testReturnValue == StringBoolTestTable[i].expectedReturnValue, "StringToBool return error");
+        if (StringBoolTestTable[i].expectedReturnValue)
+        {
+            /* Expected right convert value, because the return is OK */
+            UNITTEST_ASSERT(testResultValue == StringBoolTestTable[i].expectedResult, "StringToBool convert error");
+        }
+    }
 
 
     /* String function testing */
 
     /* Test: uint8_t StrCpyCharacter(char *dest, char c, uint8_t num) */
     StrCpyCharacter(buffer, 'a', 10);
-    uint8_t i;
+
     for (i = 0; i < 10; i++)
     {
         UNITTEST_ASSERT(buffer[i] == 'a', "StrCpyCharacter error");
@@ -2852,13 +2948,14 @@ uint32_t StringHelper_UnitTest(void)
 
 
     /* Test: Test StrTrim() */
-    /* TODO: Test return value! */
     StrCpy(buffer, "String with spaces end...    ");
-    StrTrim(buffer);
+    length = StrTrim(buffer);
+    UNITTEST_ASSERT(length == StringLength("String with spaces end..."), "StrTrim return error");
     UNITTEST_ASSERT(!StrCmp("String with spaces end...", buffer), "StrTrim error");
 
     StrCpy(buffer, "End without space.");
-    StrTrim(buffer);
+    length = StrTrim(buffer);
+    UNITTEST_ASSERT(length == StringLength("End without space."), "StrTrim return error");
     UNITTEST_ASSERT(!StrCmp("End without space.", buffer), "StrTrim error");
 
 
@@ -2950,14 +3047,98 @@ uint32_t StringHelper_UnitTest(void)
     UNITTEST_ASSERT(splitted[0] == NULL, "STRING_Splitter error");
 
 
-    /* TODO: Add new tests for STRING_Splitter() */
+    /* STRING_Splitter - more delimiter */
+    StrCpy(buffer, "bla1 bla2_bla3");
+    value8 = STRING_Splitter(buffer, " _", splitted, 10);
+    UNITTEST_ASSERT(value8 == 3, "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[0],"bla1"), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[1],"bla2"), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[2],"bla3"), "STRING_Splitter error");
+    UNITTEST_ASSERT(splitted[3] == NULL, "STRING_Splitter error");
 
 
-    /* TODO: Test StrAppend */
-    /* TODO: Test size_t CharAppend(char *dest, const char c) */
+    /* STRING_Splitter - delimiter "list" string */
+    /*                  **    **      */
+    StrCpy(buffer, "bla1  bla2__bla3");
+    value8 = STRING_Splitter(buffer, " _", splitted, 10);
+
+    /* TODO: Error: "bla1", "", "bla2", "", "bla3" were the result
+     * but normally expected: "bla1", "bla2", "bla3"
+     *
+     * But example gratia, for GPS: 0,0,,,,0 --> it will be better...
+     */
+  #if 0
+    UNITTEST_ASSERT(value8 == 3, "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[0],"bla1"), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[1],"bla2"), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[2],"bla3"), "STRING_Splitter error");
+    UNITTEST_ASSERT(splitted[3] == NULL, "STRING_Splitter error");
+  #else
+    UNITTEST_ASSERT(value8 == 5, "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[0],"bla1"), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[1],""), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[2],"bla2"), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[3],""), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[4],"bla3"), "STRING_Splitter error");
+    UNITTEST_ASSERT(splitted[5] == NULL, "STRING_Splitter error");
+  #endif
+
+    /* Start with delimiter, end with delimiter */
+
+    StrCpy(buffer, "  bla1__");
+    value8 = STRING_Splitter(buffer, " _", splitted, 10);
+#if 0
+    UNITTEST_ASSERT(value8 == 1, "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[0],"bla1"), "STRING_Splitter error");
+    UNITTEST_ASSERT(splitted[1] == NULL, "STRING_Splitter error");
+#else
+    UNITTEST_ASSERT(value8 == 5, "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[0],""), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[1],""), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[2],"bla1"), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[3],""), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[4],""), "STRING_Splitter error");
+    UNITTEST_ASSERT(splitted[5] == NULL, "STRING_Splitter error");
+#endif
+
+    /* Check with overfull */
+    StrCpy(buffer, "bla1 bla2 bla3 too much");
+    char * expectedDoNotReachString = "mystring";
+    splitted[1] = expectedDoNotReachString; /* Expect: do not modify by function*/
+    value8 = STRING_Splitter(buffer, " _", splitted, 1);
+    UNITTEST_ASSERT(value8 == 1, "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[0],"bla1"), "STRING_Splitter error");
+    UNITTEST_ASSERT(splitted[1] == expectedDoNotReachString, "STRING_Splitter error");
 
 
-    /* TODO:  Test safe (length) functions */
+    /* Use case test: GPS */
+    StrCpy(buffer, "0.1,2,3,,,,0xEF");
+    value8 = STRING_Splitter(buffer, ",", splitted, 8);
+    UNITTEST_ASSERT(value8 == 7, "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[0],"0.1"), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[1],"2"), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[2],"3"), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[3],""), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[4],""), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[5],""), "STRING_Splitter error");
+    UNITTEST_ASSERT(!StrCmp(splitted[6],"0xEF"), "STRING_Splitter error");
+    UNITTEST_ASSERT(splitted[7] == NULL, "STRING_Splitter error");
+
+
+    /* Test StrAppend */
+    /* Test size_t CharAppend(char *dest, const char c) */
+    StrCpy(buffer, "start");
+    length = CharAppend(buffer,'a');
+    UNITTEST_ASSERT(length == StringLength("starta"), "StrAppend error");
+    UNITTEST_ASSERT(!StrCmp(buffer,"starta"), "StrAppend error");
+
+    StrCpy(buffer, "");
+    length = CharAppend(buffer, 'a');
+    UNITTEST_ASSERT(length == StringLength("a"), "StrAppend error");
+    UNITTEST_ASSERT(!StrCmp(buffer,"a"), "StrAppend error");
+
+
+    /* Test safe (length) functions */
     usnprintf(buffer, 30, "%d %u 1234 %c %s", 1, 2, 'a', "str");
     UNITTEST_ASSERT(!StrCmp(buffer, "1 2 1234 a str"), "usnprintf error");
 
@@ -2978,6 +3159,21 @@ uint32_t StringHelper_UnitTest(void)
     usnprintf(buffer, 30, "%1d %1u 1234 %1c %3s", 1, 2, 'a', "str");
     UNITTEST_ASSERT(!StrCmp(buffer, "1 2 1234 a str"), "usnprintf error");
 #endif
+
+
+    /* %9dblalba" */
+#ifdef STRING_SPRINTF_EXTENDED_ENABLE
+    /* %9d --> decimal */
+    usnprintf(buffer, 30, "%9dblabla", 123456789);
+    UNITTEST_ASSERT(!StrCmp(buffer, "123456789blabla"), "usnprintf error");
+#else
+    /* %9d has not supported */
+    usnprintf(buffer, 30, "%9dblabla", 123456789);
+    UNITTEST_ASSERT(!StrCmp(buffer, "9dblabla"), "usnprintf error");
+#endif
+
+
+
     /* TODO: Add other test, if usnprintf improved */
 
 
@@ -3010,17 +3206,51 @@ uint32_t StringHelper_UnitTest(void)
     UNITTEST_ASSERT(!StrCmp(buffer, "123ABCABC$"), "StringUpper error");
 
 
-    /* TODO: UnsignedDecimalToStringFillSafe */
+    /* UnsignedDecimalToStringFillSafe */
+    /* uint8_t UnsignedDecimalToStringFillSafe(uint32_t value, char *str, uint8_t fillLength, char fillCharacter, uint8_t maxLen) */
+    length = UnsignedDecimalToStringFillSafe(123, buffer, 0, ' ', 3);
+    UNITTEST_ASSERT(length == 3, "UnsignedDecimalToStringFillSafe error");
+    UNITTEST_ASSERT(!StrCmp(buffer, "123"), "UnsignedDecimalToStringFillSafe error");
 
-    /* TODO: Add: %9dblalba" */
+    length = UnsignedDecimalToStringFillSafe(1234, buffer, 0, ' ', 3); /* End of number - (4) has been cut */
+    UNITTEST_ASSERT(length == 3, "UnsignedDecimalToStringFillSafe error");
+    UNITTEST_ASSERT(!StrCmp(buffer, "12?"), "UnsignedDecimalToStringFillSafe error");
 
-    /* TODO: usnprintf(format, formatLength, "0x%%%dX", octetNum); */
+    length = UnsignedDecimalToStringFillSafe(1234, buffer, 0, ' ', 4);
+    UNITTEST_ASSERT(length == 4, "UnsignedDecimalToStringFillSafe error");
+    UNITTEST_ASSERT(!StrCmp(buffer, "1234"), "UnsignedDecimalToStringFillSafe error");
+
+
+    length = UnsignedDecimalToStringFillSafe(123, buffer, 0, ' ', 4);
+    UNITTEST_ASSERT(length == 3, "UnsignedDecimalToStringFillSafe error");
+    UNITTEST_ASSERT(!StrCmp(buffer, "123"), "UnsignedDecimalToStringFillSafe error");
+
+    length = UnsignedDecimalToStringFillSafe(123, buffer, 1, ' ', 4); /* Fillength < required length --> dont care */
+    UNITTEST_ASSERT(length == 3, "UnsignedDecimalToStringFillSafe error");
+    UNITTEST_ASSERT(!StrCmp(buffer, "123"), "UnsignedDecimalToStringFillSafe error");
+
+    length = UnsignedDecimalToStringFillSafe(123, buffer, 2, ' ', 4); /* However 4 length, 3 number length, but only 2 fill character required --> shall not put */
+    UNITTEST_ASSERT(length == 3, "UnsignedDecimalToStringFillSafe error");
+    UNITTEST_ASSERT(!StrCmp(buffer, "123"), "UnsignedDecimalToStringFillSafe error");
+
+    length = UnsignedDecimalToStringFillSafe(123, buffer, 3, ' ', 4); /* However 4 length, 3 number length, but only 3 fill character --> shall not put */
+    UNITTEST_ASSERT(length == 3, "UnsignedDecimalToStringFillSafe error");
+    UNITTEST_ASSERT(!StrCmp(buffer, "123"), "UnsignedDecimalToStringFillSafe error");
+
+    length = UnsignedDecimalToStringFillSafe(123, buffer, 4, ' ', 4); /* However 4 length, 3 number length, and required 4 filllength --> shall put fillchar */
+    UNITTEST_ASSERT(length == 4, "UnsignedDecimalToStringFillSafe error");
+    UNITTEST_ASSERT(!StrCmp(buffer, " 123"), "UnsignedDecimalToStringFillSafe error");
+
+    length = UnsignedDecimalToStringFillSafe(123, buffer, 5, ' ', 4); /* However 4 length, 3 number length, but required 5 fillength, but could not put: only 1 will be put */
+    UNITTEST_ASSERT(length == 4, "UnsignedDecimalToStringFillSafe error");
+    UNITTEST_ASSERT(!StrCmp(buffer, " 123"), "UnsignedDecimalToStringFillSafe error");
 
 
     /* End of unittest */
     return UnitTest_End();
 }
 #endif    /* #ifdef CONFIG_MODULE_STRING_UNITTEST_ENABLE */
+
 
 
 /* Other printf: */

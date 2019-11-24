@@ -224,7 +224,7 @@ bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
     size_t messageLength;
     char message[HOMEAUTMESSAGE_MESSAGE_MAX_LENGTH];
     bool isOk = true;
-    char *split[HOMEAUTMESSAGE_SPLIT_NUM] = { 0 };
+    char *split[HOMEAUTMESSAGE_SPLIT_NUM+1] = { 0 };
     uint8_t i;
 
     /* |HomeAut|192.168.100.100|192.168.100.014|2017-01-10 18:49:50|COMMAND|REMOTE|00000000|\0 */
@@ -252,8 +252,9 @@ bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
     /* Split */
     if (isOk)
     {
+        /* TODO: Replace the last separator */
         isOk = (STRING_Splitter(&message[1], HOMEAUTMESSAGE_SEPARATOR_STRING,
-                split, HOMEAUTMESSAGE_SPLIT_NUM) == HOMEAUTMESSAGE_SPLIT_NUM);
+                split, HOMEAUTMESSAGE_SPLIT_NUM) == HOMEAUTMESSAGE_SPLIT_NUM + 1);
     }
 
 
