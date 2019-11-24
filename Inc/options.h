@@ -71,13 +71,16 @@
     #ifndef CONFIG_MODULE_BUTTON_ENABLE
         #define CONFIG_MODULE_BUTTON_ENABLE
     #endif
-    #define CONFIG_MODULE_BLUETOOTH_ENABLE
-    /*
+
+    /* #define CONFIG_MODULE_BLUETOOTH_ENABLE */
     #ifndef CONFIG_MODULE_ESP8266_ENABLE
         #define CONFIG_MODULE_ESP8266_ENABLE
     #endif
-    #define CONFIG_FUNCTION_ESP8266_WRITE_IP_TO_DISPLAY
-    */
+
+    #define CONFIG_FUNCTION_DISPLAY_ESP8266
+    #ifdef CONFIG_FUNCTION_DISPLAY_ESP8266
+        #define CONFIG_FUNCTION_DISPLAY
+    #endif
 #endif
 
 
@@ -172,6 +175,13 @@
         #ifndef CONFIG_DISPLAY_FONT12X8_ENABLE
             #define CONFIG_DISPLAY_FONT12X8_ENABLE
         #endif
+    #endif
+
+
+    ///< ESP8266 status display
+    #define CONFIG_DISPLAY_ESP8266_ENABLE
+    #ifndef CONFIG_REQUIRE_DISPLAY
+        #define CONFIG_REQUIRE_DISPLAY
     #endif
 #endif /* #ifdef CONFIG_HW_DISPLAY_ENABLE */
 
@@ -787,6 +797,10 @@
         #error "ESP8266: Cannot use Transparent mode in multiple connection!"
     #endif
 
+    #if ((CONFIG_ESP8266_MULTIPLE_CONNECTION == 0) && (CONFIG_ESP8266_IS_TCP_SERVER == 1))
+        #error "ESP8266: Cannot use single mode and TCP server. Set Multiple mode for TCP server!"
+    #endif
+
 
     #if (CONFIG_ESP8266_MULTIPLE_CONNECTION == 1)
         #define CONFIG_ESP8266_TCP_CLIENT_CONNECTION_ID_STRING        "0,"
@@ -801,8 +815,13 @@
         #define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD        "AUT"
     #else
         /* Connect to other WiFi network */
-        #define CONFIG_ESP8266_WIFI_NETWORK_NAME            "FastenWifi"
-        #define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD        "FastenHome2018"
+        #if 0
+            #define CONFIG_ESP8266_WIFI_NETWORK_NAME            "FastenWifi"
+            #define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD        "FastenHome2018"
+        #else
+            #define CONFIG_ESP8266_WIFI_NETWORK_NAME            "ESP8266HomeAutomation"
+            #define CONFIG_ESP8266_WIFI_NETWORK_PASSWORD        "AUT"
+        #endif
     #endif
 
     #ifndef CONFIG_ESP8266_WIFI_NETWORK_PASSWORD
@@ -823,9 +842,9 @@
             /* TCP connection destination is on the other network */
             #define CONFIG_ESP8266_TCP_SERVER_IP_1    (192)
             #define CONFIG_ESP8266_TCP_SERVER_IP_2    (168)
-            #define CONFIG_ESP8266_TCP_SERVER_IP_3    (0)
-            #define CONFIG_ESP8266_TCP_SERVER_IP_4    (241)
-            #define CONFIG_ESP8266_TCP_SERVER_IP_STRING        "192.168.0.241"
+            #define CONFIG_ESP8266_TCP_SERVER_IP_3    (4)
+            #define CONFIG_ESP8266_TCP_SERVER_IP_4    (1)
+            #define CONFIG_ESP8266_TCP_SERVER_IP_STRING        "192.168.4.1"
             /*
             #define CONFIG_ESP8266_TCP_SERVER_IP_1    (192)
             #define CONFIG_ESP8266_TCP_SERVER_IP_2    (168)
@@ -842,7 +861,9 @@
     ///< Send "login" message after TCP connection
     /* 1 - on */
     /* 0 - off */
-    #define CONFIG_ESP8266_TCP_CONNECT_LOGIN_MSG_ENABLE            (1)
+    #if (CONFIG_ESP8266_IS_TCP_SERVER == 0)
+        #define CONFIG_ESP8266_TCP_CONNECT_LOGIN_MSG_ENABLE       (1)
+    #endif
 
     ///< Fast answer mode (turned off answer)
     /* 1 - Fast mode enabled */
