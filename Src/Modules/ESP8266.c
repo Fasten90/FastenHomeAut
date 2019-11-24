@@ -1358,7 +1358,7 @@ void ESP8266_StatusMachine(void)
 
             ESP8266StatusMachine++;
             TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 1000);
-            ESP8266_DEBUG_PRINT("Start connect TCP");
+            ESP8266_DEBUG_PRINTF("Start connect TCP: IP: %s, port: %s", CONFIG_ESP8266_TCP_SERVER_IP_STRING, CONFIG_ESP8266_TCP_SERVER_PORT_STRING);
 
             break;
 
