@@ -83,7 +83,7 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source);
 
 
 /**
- * @brief Initialize TaskHandler / Tasks
+ * @brief       Initialize TaskHandler / Tasks
  */
 void TaskHandler_Init(void)
 {
@@ -120,9 +120,9 @@ void TaskHandler_Init(void)
 
 
 /**
- *    @brief    Schedule tasks (and increment elapsed time)
- *    @note    Recommend call last from main
- *    @note    Never return, Do not call anything after this function
+ * @brief       Schedule tasks (and increment elapsed time)
+ * @note        Recommend call last from main
+ * @note        Never return, Do not call anything after this function
  */
 void TaskHandler_Scheduler(void)
 {
@@ -190,7 +190,7 @@ void TaskHandler_Scheduler(void)
 
 
 /**
- *    @brief    Increment ticks
+ * @brief       Increment ticks
  */
 static void TaskHandler_IncrementTicks(TaskTick_t elapsedTick)
 {
@@ -208,7 +208,7 @@ static void TaskHandler_IncrementTicks(TaskTick_t elapsedTick)
 
 
 /**
- *    @brief Run task
+ * @brief       Run task
  */
 static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 {
@@ -283,7 +283,7 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
 
 
 /**
- *    @brief    Initialize task
+ * @brief       Initialize task
  */
 void TaskHandler_SetTaskPeriodicTime(TaskID_t taskID, TaskTick_t taskTick)
 {
@@ -296,7 +296,7 @@ void TaskHandler_SetTaskPeriodicTime(TaskID_t taskID, TaskTick_t taskTick)
 
 
 /**
- *    @brief    Set Task scheduling 1x after x time
+ * @brief       Set Task scheduling 1x after x time
  */
 void TaskHandler_SetTaskOnceRun(TaskID_t taskID, TaskTick_t taskTick)
 {
@@ -309,7 +309,7 @@ void TaskHandler_SetTaskOnceRun(TaskID_t taskID, TaskTick_t taskTick)
 
 
 /**
- * @brief    Disable task
+ * @brief       Disable task
  */
 void TaskHandler_DisableTask(TaskID_t taskID)
 {
@@ -322,7 +322,7 @@ void TaskHandler_DisableTask(TaskID_t taskID)
 
 
 /**
- * @brief    Request task scheduling
+ * @brief       Request task scheduling
  */
 void TaskHandler_RequestTaskScheduling(TaskID_t taskID)
 {
@@ -339,7 +339,7 @@ void TaskHandler_RequestTaskScheduling(TaskID_t taskID)
 
 
 /**
- * @brief    Clear TimeOut task tick
+ * @brief       Clear TimeOut task tick
  */
 void TaskHandler_ClearTimeoutTask(TaskID_t taskID)
 {
@@ -358,7 +358,7 @@ void TaskHandler_ClearTimeoutTask(TaskID_t taskID)
 
 #ifdef CONFIG_MODULE_TASKHANDLER_STATISTICS
 /**
- * @brief    Print TaskHandler statistics border
+ * @brief       Print TaskHandler statistics border
  */
 static void TaskHandler_PrintStatisticsTableHeader(const char * fixheader, char * str, uint8_t strMaxLen, char * header)
 {
@@ -368,7 +368,7 @@ static void TaskHandler_PrintStatisticsTableHeader(const char * fixheader, char 
 
 
 /**
- * @brief    Calculate and print TaskHandler statistics
+ * @brief       Calculate and print TaskHandler statistics
  */
 void TaskHandler_PrintStatistics(void)
 {
@@ -454,7 +454,7 @@ void TaskHandler_PrintStatistics(void)
 
 
 /**
- * @brief    Print TaskHandler RunTimes statistics border
+ * @brief       Print TaskHandler RunTimes statistics border
  */
 static void TaskHandler_PrintTaskRunCountsTableHeader(const char * fixheader, char * str, uint8_t strMaxLen, char * header)
 {
@@ -464,7 +464,7 @@ static void TaskHandler_PrintTaskRunCountsTableHeader(const char * fixheader, ch
 
 
 /**
- * @brief    Print TaskHandler runtimes statistics (Run counts)
+ * @brief       Print TaskHandler runtimes statistics (Run counts)
  */
 void TaskHandler_PrintTaskRunCounts(void)
 {
@@ -491,7 +491,7 @@ void TaskHandler_PrintTaskRunCounts(void)
 
 #ifdef CONFIG_TASKHANDLER_DEBUG_RUN_ENABLE
 /**
- * @brief    Get actual running task name
+ * @brief       Get actual running task name
  */
 const char * TaskHandler_GetActualRunningTaskName(void)
 {
@@ -501,7 +501,7 @@ const char * TaskHandler_GetActualRunningTaskName(void)
 
 
 /**
- * @brief    Get actual running task ID
+ * @brief       Get actual running task ID
  */
 TaskID_t TaskHandler_GetActualRunningTaskID(void)
 {

@@ -104,7 +104,7 @@ static void CommonUART_ReceiveEnable(void);
 
 
 /**
- * @brief CommonUART initialization
+ * @brief       CommonUART initialization
  */
 void CommonUART_Init(void)
 {
@@ -120,7 +120,7 @@ void CommonUART_Init(void)
 
 
 /**
- * @brief    Send enable
+ * @brief       Send enable
  */
 static inline void CommonUART_SendEnable(void)
 {
@@ -130,7 +130,7 @@ static inline void CommonUART_SendEnable(void)
 
 
 /**
- * @brief    Receive enable
+ * @brief       Receive enable
  */
 static void CommonUART_ReceiveEnable(void)
 {
@@ -140,7 +140,7 @@ static void CommonUART_ReceiveEnable(void)
 
 
 /**
- * @brief    Send string on CommonUART
+ * @brief       Send string on CommonUART
  */
 size_t CommonUART_SendMessage(const char *msg)
 {
@@ -167,7 +167,7 @@ size_t CommonUART_SendMessage(const char *msg)
 
 
 /**
- * @brief    Process received characters (if Terminal is not enabled)
+ * @brief       Process received characters (if Terminal is not enabled)
  */
 void CommonUART_ProcessReceivedCharacters(void)
 {

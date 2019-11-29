@@ -78,7 +78,7 @@ static void Display_FillRectangle(uint8_t x, uint8_t y, uint8_t width, uint8_t h
 
 
 /**
- * @brief    Print ASCII text string to display
+ * @brief       Print ASCII text string to display
  */
 void Display_PrintString(const char *str, uint8_t line, FontType_t font, FontFormat_t format)
 {
@@ -156,11 +156,11 @@ void Display_PrintString(const char *str, uint8_t line, FontType_t font, FontFor
 
 #ifdef CONFIG_DISPLAY_FONT8X5_ENABLE
 /**
- * @brief    Print a 8x5 pixel (very small) character to display
- * @param    chr        - which character (ASCII - 0-127)
- * @param    index    - column
- * @param    line    - line / row
- * @param    format    - format of text
+ * @brief       Print a 8x5 pixel (very small) character to display
+ * @param       chr        - which character (ASCII - 0-127)
+ * @param       index    - column
+ * @param       line    - line / row
+ * @param       format    - format of text
  */
 /* _attribute__( ( section(".data") ) ) */
 void Display_PrintFont8x5(uint8_t chr, uint8_t index, uint8_t line, FontFormat_t format)
@@ -201,11 +201,11 @@ void Display_PrintFont8x5(uint8_t chr, uint8_t index, uint8_t line, FontFormat_t
 
 #ifdef CONFIG_DISPLAY_FONT12X8_ENABLE
 /**
- * @brief    Print a 12x8 pixel character to display
- * @param    chr        - which character (ASCII - 0-127)
- * @param    index    - column
- * @param    line    - line / row
- * @param    format    - format of text
+ * @brief       Print a 12x8 pixel character to display
+ * @param       chr        - which character (ASCII - 0-127)
+ * @param       index    - column
+ * @param       line    - line / row
+ * @param       format    - format of text
  */
 /* _attribute__( ( section(".data") ) ) */
 void Display_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line, FontFormat_t format)
@@ -246,13 +246,13 @@ void Display_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line, FontFormat_
 
 #ifdef CONFIG_DISPLAY_FONT32X20_ENABLE
 /**
- * @brief    Print 32x20 font
- * @param    chr            - which character (ASCII - '0'-'9', ':')
- * @param    index        - index of character
- * @param    startposx    - line / row
- * @param    startposy    - line / row
- * @param    format        - format of text
- * @note    Now it is only usable for Hour:Minute displaying
+ * @brief       Print 32x20 font
+ * @param       chr            - which character (ASCII - '0'-'9', ':')
+ * @param       index        - index of character
+ * @param       startposx    - line / row
+ * @param       startposy    - line / row
+ * @param       format        - format of text
+ * @note        Now it is only usable for Hour:Minute displaying
  */
 void Display_PrintFont32x20(uint8_t chr, uint8_t index, uint8_t startposx, uint8_t startposy, FontFormat_t format)
 {
@@ -299,7 +299,7 @@ void Display_PrintFont32x20(uint8_t chr, uint8_t index, uint8_t startposx, uint8
 
 
 /**
- * @brief    Clear display - make empty screen
+ * @brief       Clear display - make empty screen
  */
 inline void Display_Clear(void)
 {
@@ -309,7 +309,7 @@ inline void Display_Clear(void)
 
 
 /**
- * @brief    Refresh Display
+ * @brief       Refresh Display
  */
 inline void Display_Activate(void)
 {
@@ -323,7 +323,7 @@ inline void Display_Activate(void)
 
 
 /**
- * @brief    Fill rectangle with color
+ * @brief       Fill rectangle with color
  */
 static void Display_FillRectangle(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color)
 {
@@ -418,7 +418,7 @@ void Display_ChargeLoading(uint8_t percent)
 
 #ifdef CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
 /**
- * @brief    Load "Car" image to screen
+ * @brief       Load "Car" image to screen
  */
 void Display_LoadCarImage(void)
 {
@@ -432,7 +432,7 @@ void Display_LoadCarImage(void)
 
 
 /**
- * @brief    Change "Car's wheels"
+ * @brief       Change "Car's wheels"
  */
 void Display_ChangeCarImage(void)
 {
@@ -469,7 +469,7 @@ void Display_ChangeCarImage(void)
 
 #if defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK) && defined(CONFIG_DISPLAY_CLOCK_LARGE)
 /**
- * @brief    Display time (HH:MM) (large)
+ * @brief       Display time (HH:MM) (large)
  */
 void Display_ShowLargeClock(Time_t *time)
 {
@@ -514,7 +514,7 @@ void Display_ShowLargeClock(Time_t *time)
 
 #ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
 /**
- * @brief    Display time (HH:MM)
+ * @brief       Display time (HH:MM)
  */
 void Display_ShowLargeClockHalf(Time_t *time, DisplayClock_ChangeState_t displayState)
 {
@@ -566,7 +566,7 @@ void Display_ShowLargeClockHalf(Time_t *time, DisplayClock_ChangeState_t display
 
 #if defined(CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK) &&  defined(CONFIG_DISPLAY_CLOCK_SMALL)
 /**
- * @brief    Display time (HH:MM:SS) (small)
+ * @brief       Display time (HH:MM:SS) (small)
  */
 void Display_ShowSmallClock(Time_t *time)
 {
@@ -588,7 +588,7 @@ void Display_ShowSmallClock(Time_t *time)
 
 #ifdef CONFIG_DISPLAY_FONT8X5_ENABLE
 /**
- * @brief    Test 8x5 fonts
+ * @brief       Test 8x5 fonts
  */
 void Display_Test8x5Font(void)
 {
@@ -610,7 +610,7 @@ void Display_Test8x5Font(void)
 
 #ifdef CONFIG_DISPLAY_FONT12X8_ENABLE
 /**
- * @brief    Test 12x8 fonts
+ * @brief       Test 12x8 fonts
  */
 void Display_Test12x8Font(void)
 {
@@ -630,7 +630,7 @@ void Display_Test12x8Font(void)
 
 #ifdef CONFIG_DISPLAY_FONT32X20_ENABLE
 /**
- * @brief    Test 32x20 fonts
+ * @brief       Test 32x20 fonts
  */
 void Display_Test32x20Font(void)
 {
@@ -646,7 +646,7 @@ void Display_Test32x20Font(void)
 
 #ifdef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
 /**
- * @brief    Test Clock show
+ * @brief       Test Clock show
  */
 void Display_TestClock(void)
 {

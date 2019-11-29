@@ -52,7 +52,7 @@ static void Table_PrintHeader(char * dest, char * smallHeader, const char * src,
 
 
 /**
- * @brief    Print %20c --> 20 times '-'
+ * @brief       Print %20c --> 20 times '-'
  */
 static void Table_FormatBorder(char * dest, const char * src)
 {
@@ -124,10 +124,10 @@ static void Table_FormatBorder(char * dest, const char * src)
 
 
 /**
- * @brief    Convert original data format line to border or header
- *             Original: | %3u | %20s | %9u | %20s | 0x%X | %10s | %20s |
- *             Border: '|' --> '+', ' ' --> '-' , 'usx' --> 'c',  parameters --> '-'
- *            Header: '|' --> '|', 'usx '--> 's', parameters: given, ...
+ * @brief       Convert original data format line to border or header
+ *              Original: | %3u | %20s | %9u | %20s | 0x%X | %10s | %20s |
+ *              Border: '|' --> '+', ' ' --> '-' , 'usx' --> 'c',  parameters --> '-'
+ *              Header: '|' --> '|', 'usx '--> 's', parameters: given, ...
  */
 static void Table_FormatHeader(char * dest, const char * src, bool isHeader)
 {
@@ -213,7 +213,7 @@ static void Table_PrintHeader(char * dest, char * smallHeader, const char * src,
 
 
 /**
- * @brief    Print table
+ * @brief       Print table
  */
 void Table_PrintTableWithBorder(const char * fixheader, char * str, uint8_t strMaxLen, char * header, ...)
 {

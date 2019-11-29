@@ -117,7 +117,7 @@ const EventId_t EventsNum = NUM_OF(EventList);
  *----------------------------------------------------------------------------*/
 
 /**
- * @brief    Initialize EventList - check
+ * @brief       Initialize EventList - check
  */
 void EventList_Init(void)
 {

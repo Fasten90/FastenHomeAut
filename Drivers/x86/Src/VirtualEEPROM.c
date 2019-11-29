@@ -81,7 +81,7 @@ static uint8_t file_exist (char * filename)
 
 
 /**
- * @brief  VirtualEEPROM initialization
+ * @brief       VirtualEEPROM initialization
  */
 void VirtualEEPROM_Init(void)
 {

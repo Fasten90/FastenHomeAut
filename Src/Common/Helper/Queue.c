@@ -96,7 +96,7 @@ static void * Queue_SearchEmptySpace(QueueListInfo_t * queue, size_t dataSize);
 
 
 /**
- * @brief  Queue initialization
+ * @brief       Queue initialization
  */
 void Queue_Init(QueueListInfo_t * queue)
 {
@@ -130,8 +130,8 @@ void Queue_Init(QueueListInfo_t * queue)
 
 
 /**
- * @brief   Add / Set queue element
- * @note    Not check empty space and others. Be careful when you use it!
+ * @brief       Add / Set queue element
+ * @note        Not check empty space and others. Be careful when you use it!
  */
 static bool Queue_AddQueueElement(void * pElement, void * pData, size_t dataSize, QueueDataType_t dataType, bool isUsed)
 {
@@ -169,7 +169,7 @@ static bool Queue_AddQueueElement(void * pElement, void * pData, size_t dataSize
 
 
 /**
- * @brief    Get a QueueElement with enough empty space
+ * @brief       Get a QueueElement with enough empty space
  */
 static void * Queue_SearchEmptySpace(QueueListInfo_t * queue, size_t dataSize)
 {

@@ -84,7 +84,7 @@ static void IO_CheckList(void);
 
 
 /**
- * @brief    IO GPIO initialization (without TIMER)
+ * @brief       IO GPIO initialization (without TIMER)
  */
 void IO_Init(void)
 {
@@ -153,7 +153,7 @@ void IO_Init(void)
 
 #ifdef CONFIG_DEBUG_MODE
 /**
- * @brief    Check IO list
+ * @brief       Check IO list
  */
 static void IO_CheckList(void)
 {
@@ -180,8 +180,8 @@ static void IO_CheckList(void)
 
 
 /**
- * @brief    IO (e.g. LED) blinking in infinite loop
- * @note     !! It is blocking !!
+ * @brief       IO (e.g. LED) blinking in infinite loop
+ * @note        !! It is blocking !!
  */
 void IO_Output_Test(void)
 {
@@ -214,9 +214,9 @@ void IO_Output_Test(void)
 
 
 /**
- * @brief    Set IO output state
- * @param    num        IO
- * @param    ledSet    Which type (on, off, toggle)
+ * @brief       Set IO output state
+ * @param       num        IO
+ * @param       ledSet    Which type (on, off, toggle)
  */
 IO_Status_t IO_Output_SetStatus(IO_Output_Name_t ioName, IO_Output_Cmd_t ioCmd)
 {
@@ -275,9 +275,9 @@ IO_Status_t IO_Output_SetStatus(IO_Output_Name_t ioName, IO_Output_Cmd_t ioCmd)
 
 
 /**
- * @brief    Get IO Output status
- * @return   true, if high
- *           false, if low
+ * @brief       Get IO Output status
+ * @return      true, if high
+ *              false, if low
  */
 IO_Status_t IO_Output_GetStatus(IO_Output_Name_t ioName)
 {
@@ -305,7 +305,7 @@ IO_Status_t IO_Output_GetStatus(IO_Output_Name_t ioName)
 
 
 /**
- * @brief    Get IO Output type from name
+ * @brief       Get IO Output type from name
  */
 IO_Output_Name_t IO_Output_GetOutputNumFromName(const char *name)
 {
@@ -329,7 +329,7 @@ IO_Output_Name_t IO_Output_GetOutputNumFromName(const char *name)
 
 
 /**
- * @brief    Get IO output name
+ * @brief       Get IO output name
  */
 const char * IO_Output_GetName(IO_Output_Name_t ioNum)
 {
@@ -345,7 +345,7 @@ const char * IO_Output_GetName(IO_Output_Name_t ioNum)
 
 
 /**
- * @brief    Get type from string
+ * @brief       Get type from string
  */
 IO_Output_Cmd_t IO_Output_GetTypeFromString(const char *typeString)
 {
@@ -368,7 +368,7 @@ IO_Output_Cmd_t IO_Output_GetTypeFromString(const char *typeString)
 
 
 /**
- * @brief    Get IO Status name (Enum --> String)
+ * @brief       Get IO Status name (Enum --> String)
  */
 const char * IO_GetStatusName(IO_Status_t status)
 {
@@ -399,8 +399,8 @@ const char * IO_GetStatusName(IO_Status_t status)
 
 
 /**
- * @brief    Get IO Output status to string
- * @note    Recommend str length: IO_OUPUT_STATES_STRING_MAX_LENGTH
+ * @brief       Get IO Output status to string
+ * @note        Recommend str length: IO_OUPUT_STATES_STRING_MAX_LENGTH
  */
 size_t IO_Output_PrintStates(char *str, uint8_t strLen)
 {
@@ -421,8 +421,8 @@ size_t IO_Output_PrintStates(char *str, uint8_t strLen)
 
 #if defined(LED_TASK_PWM_STYLE)
 /**
- * @brief    LED Task - PWM style
- * @note     Call this function periodically - 2 ms times
+ * @brief       LED Task - PWM style
+ * @note        Call this function periodically - 2 ms times
  */
 void IO_LED_PWMTask(void)
 {
@@ -501,7 +501,7 @@ void IO_LED_PWMTask(void)
 
 #if defined(CONFIG_IO_OUTPUT_BLINK_ENABLE)
 /**
- * @brief    Handle necessary IO output operations (e.g. blink)
+ * @brief       Handle necessary IO output operations (e.g. blink)
  */
 void IO_Output_Handler(void)
 {
@@ -526,7 +526,7 @@ void IO_Output_Handler(void)
 
 
 /**
- * @brief    Get Input State
+ * @brief       Get Input State
  */
 IO_Status_t IO_GetInputState(IO_Input_Name_t inputPin)
 {
@@ -563,7 +563,7 @@ IO_Status_t IO_GetInputState(IO_Input_Name_t inputPin)
 
 
 /**
- * @brief    Get input name
+ * @brief       Get input name
  */
 const char * IO_GetInputName(IO_Input_Name_t inputPin)
 {

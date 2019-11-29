@@ -20,7 +20,7 @@
 
 
 /**
- * @brief Absolute value of argument
+ * @brief       Absolute value of argument
  */
 float absolute(float arg)
 {
@@ -31,9 +31,9 @@ float absolute(float arg)
 
 
 /**
- * @brief Round value
- *           > x.5 >
- *
+ * @brief       Round value
+ *              > x.5 >
+ *              
  */
 int32_t round_int(float arg)
 {
@@ -54,8 +54,8 @@ int32_t round_int(float arg)
 
 
 /**
- * @brief Floor value
- *           x.y --> x.0
+ * @brief       Floor value
+ *              x.y --> x.0
  */
 int32_t floor_int(float arg)
 {
@@ -76,9 +76,9 @@ int32_t floor_int(float arg)
 
 
 /**
- * @brief    Ceil value
- *           x.y --> (x+1).0
- * @note     Possible to lost information in float --> int32 conversion
+ * @brief       Ceil value
+ *              x.y --> (x+1).0
+ * @note        Possible to lost information in float --> int32 conversion
  */
 int32_t ceil_int(float arg)
 {
@@ -99,7 +99,7 @@ int32_t ceil_int(float arg)
 
 
 /**
- * @brief    Power(a,b) = a^b
+ * @brief       Power(a,b) = a^b
  */
 uint32_t power(uint32_t a, uint8_t b)
 {
@@ -125,7 +125,7 @@ uint32_t power(uint32_t a, uint8_t b)
 
 
 /**
- * @brief    Power - secured (check overflow)
+ * @brief       Power - secured (check overflow)
  */
 uint32_t power_secured(uint32_t a, uint8_t b)
 {
@@ -163,9 +163,9 @@ uint32_t power_secured(uint32_t a, uint8_t b)
 
 
 /**
- * @brief    Calculate how many digit need
- * @param    num        which number
- * @param    radix    radix
+ * @brief       Calculate how many digit need
+ * @param       num        which number
+ * @param       radix    radix
  */
 uint8_t DigitNum(uint32_t num, uint8_t radix)
 {
@@ -189,7 +189,7 @@ uint8_t DigitNum(uint32_t num, uint8_t radix)
 
 
 /**
- * @brief    Increment a unsigned integer (32bit)
+ * @brief       Increment a unsigned integer (32bit)
  */
 inline uint32_t Increment(uint32_t * i)
 {
@@ -204,7 +204,7 @@ inline uint32_t Increment(uint32_t * i)
 
 
 /**
- * @brief    Decrement a unsigned integer (32bit)
+ * @brief       Decrement a unsigned integer (32bit)
  */
 inline uint32_t Decrement(uint32_t * i)
 {
@@ -219,9 +219,9 @@ inline uint32_t Decrement(uint32_t * i)
 
 
 /**
- * @brief    Calculate largest 1 bit index (in 32 bit number)
- * @retval    >= 0 - bit index
- * @retval    -1        if there is no set bit (==0
+ * @brief       Calculate largest 1 bit index (in 32 bit number)
+ * @retval      >= 0 - bit index
+ * @retval      -1        if there is no set bit (==0
  */
 int8_t GetLargestBitIndex(uint32_t value)
 {
@@ -243,9 +243,9 @@ int8_t GetLargestBitIndex(uint32_t value)
 
 
 /**
- * @brief    Calculate smallest 1 bit index (in 32 bit number)
- * @retval    >= 0 - bit index
- * @retval    -1        if there is no set bit (==0
+ * @brief       Calculate smallest 1 bit index (in 32 bit number)
+ * @retval      >= 0 - bit index
+ * @retval      -1        if there is no set bit (==0
  */
 int8_t GetSmallestBitIndex(uint32_t value)
 {
@@ -267,7 +267,7 @@ int8_t GetSmallestBitIndex(uint32_t value)
 
 
 /**
- * @brief    '1' bits count
+ * @brief       '1' bits count
  */
 uint8_t popcount(uint32_t value)
 {
@@ -294,7 +294,7 @@ uint8_t popcount(uint32_t value)
 
 
 /**
- * @brief    Clear i. bit
+ * @brief       Clear i. bit
  */
 void ClearBit(uint32_t * value, uint8_t index)
 {
@@ -309,7 +309,7 @@ void ClearBit(uint32_t * value, uint8_t index)
 
 
 /**
- * @brief    Set i. bit
+ * @brief       Set i. bit
  */
 void SetBit(uint32_t * value, uint8_t index)
 {
@@ -324,7 +324,7 @@ void SetBit(uint32_t * value, uint8_t index)
 
 
 /**
- * @brief    Get i. bit
+ * @brief       Get i. bit
  */
 uint8_t GetBit(uint32_t value, uint8_t index)
 {
@@ -340,8 +340,8 @@ uint8_t GetBit(uint32_t value, uint8_t index)
 
 
 /**
- * @brief    Random generator
- *             Generate random number from 0 to RAND_MAX
+ * @brief       Random generator
+ *              Generate random number from 0 to RAND_MAX
  */
 uint16_t random(void)
 {
@@ -354,7 +354,7 @@ uint16_t random(void)
 
 #ifdef CONFIG_MODULE_MATHHELPER_UNITTEST_ENABLE
 /**
- * @brief    MathHelper UnitTest
+ * @brief       MathHelper UnitTest
  */
 uint32_t MathHelper_UnitTest(void)
 {

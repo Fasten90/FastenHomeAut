@@ -50,7 +50,7 @@ static DateTime_t DateTime_SystemTime = { 0 };
 
 
 /**
- * @brief    Get DateTime
+ * @brief       Get DateTime
  */
 INLINE_FUNCTION void SysTime_GetDateTime(DateTime_t *dateTime)
 {
@@ -66,7 +66,7 @@ INLINE_FUNCTION void SysTime_GetDateTime(DateTime_t *dateTime)
 
 
 /**
- * @brief    Set date
+ * @brief       Set date
  */
 INLINE_FUNCTION void SysTime_SetDate(Date_t *date)
 {
@@ -82,7 +82,7 @@ INLINE_FUNCTION void SysTime_SetDate(Date_t *date)
 
 
 /**
- * @brief    Set time
+ * @brief       Set time
  */
 INLINE_FUNCTION void SysTime_SetTime(Time_t *time)
 {
@@ -98,7 +98,7 @@ INLINE_FUNCTION void SysTime_SetTime(Time_t *time)
 
 
 /**
- * @brief    Step SysTime (with 1 second)
+ * @brief       Step SysTime (with 1 second)
  */
 void SysTime_StepSecond(void)
 {

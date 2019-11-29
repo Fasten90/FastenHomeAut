@@ -66,7 +66,7 @@
 
 
 /**
- * @brief  UnitTest - Run
+ * @brief       UnitTest - Run
  */
 uint32_t UnitTestList_Run(void)
 {

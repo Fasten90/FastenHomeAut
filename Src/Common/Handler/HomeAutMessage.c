@@ -211,7 +211,7 @@ HomeAut_InformationType HomeAutMessage_MessageInformation;
 
 
 /**
- * @brief    Check HomeAutMessage (Convert string to information)
+ * @brief       Check HomeAutMessage (Convert string to information)
  */
 bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
         HomeAut_InformationType *messageInformation)
@@ -355,7 +355,7 @@ bool HomeAutMessage_CheckAndProcessMessage(const char *messageString,
 
 
 /**
- * @brief    Create an HomeAutMessage
+ * @brief       Create an HomeAutMessage
  */
 size_t HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation, char *createToMessage)
 {
@@ -495,13 +495,13 @@ size_t HomeAutMessage_CreateMessage(HomeAut_InformationType *messageInformation,
 
 
 /**
- * @brief    Create and send message the sending queue
- * @param    SourceAddress;
- * @param    TargetAddress;
- * @param    dateTime
- * @param    HomeAut_FunctionType Function;
- * @param    HomeAut_DataType DataType;
- * @param    uint32_t Data;
+ * @brief       Create and send message the sending queue
+ * @param       SourceAddress;
+ * @param       TargetAddress;
+ * @param       dateTime
+ * @param       HomeAut_FunctionType Function;
+ * @param       HomeAut_DataType DataType;
+ * @param       uint32_t Data;
  */
 bool HomeAutMessage_CreateAndSendHomeAutMessage(
     Network_IP_t *myIp,
@@ -564,7 +564,7 @@ bool HomeAutMessage_CreateAndSendHomeAutMessage(
 
 
 /**
- * @brief    Send HomeAutMessage immediately on communication port
+ * @brief       Send HomeAutMessage immediately on communication port
  */
 void HomeAutMessage_SendMessage(uint8_t myAddress,
         HomeAut_FunctionType functionType, HomeAut_DataType dataType, float data)
@@ -684,7 +684,7 @@ void HomeAutMessage_SendMessage(uint8_t myAddress,
 
 #ifdef CONFIG_MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
 /**
- * @brief    Test an HomeAutMessage
+ * @brief       Test an HomeAutMessage
  */
 uint32_t HomeAutMessage_UnitTest(void)
 {

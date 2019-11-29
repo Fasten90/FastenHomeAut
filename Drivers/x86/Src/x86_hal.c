@@ -95,8 +95,8 @@ void * x86_linux_StdinReceiveThread(void * args);
 
 
 /**
- * @brief    Initialize HAL function
- *             Windows version: Init SysTick "Thread"
+ * @brief       Initialize HAL function
+ *              Windows version: Init SysTick "Thread"
  */
 void HAL_Init(void)
 {
@@ -129,11 +129,11 @@ void HAL_Init(void)
 
 
 /**
-  * @brief  Provides a tick value in millisecond.
-  * @note   This function is declared as __weak  to be overwritten  in case of other
-  *       implementations in user file.
-  * @retval tick value
-  */
+ * @brief       Provides a tick value in millisecond.
+ * @note        This function is declared as __weak  to be overwritten  in case of other
+ *              implementations in user file.
+ * @retval      tick value
+ */
 uint32_t HAL_GetTick(void)
 {
     /*  Working Windows solution */
@@ -158,14 +158,14 @@ uint32_t HAL_GetTick(void)
 
 
 /**
-  * @brief This function is called to increment  a global variable "uwTick"
-  *        used as application time base.
-  * @note In the default implementation, this variable is incremented each 1ms
-  *       in Systick ISR.
-  * @note This function is declared as __weak to be overwritten in case of other
-  *       implementations in user file.
-  * @retval None
-  */
+ * @brief       This function is called to increment  a global variable "uwTick"
+ *              used as application time base.
+ * @note        In the default implementation, this variable is incremented each 1ms
+ *              in Systick ISR.
+ * @note        This function is declared as __weak to be overwritten in case of other
+ *              implementations in user file.
+ * @retval      None
+ */
 void HAL_IncTick(void)
 {
     uwTick++;
@@ -175,16 +175,16 @@ void HAL_IncTick(void)
 
 
 /**
-  * @brief This function provides accurate delay (in milliseconds) based
-  *        on variable incremented.
-  * @note In the default implementation , SysTick timer is the source of time base.
-  *       It is used to generate interrupts at regular time intervals where uwTick
-  *       is incremented.
-  * @note ThiS function is declared as __weak to be overwritten in case of other
-  *       implementations in user file.
-  * @param Delay: specifies the delay time length, in milliseconds.
-  * @retval None
-  */
+ * @brief       This function provides accurate delay (in milliseconds) based
+ *              on variable incremented.
+ * @note        In the default implementation , SysTick timer is the source of time base.
+ *              It is used to generate interrupts at regular time intervals where uwTick
+ *              is incremented.
+ * @note        ThiS function is declared as __weak to be overwritten in case of other
+ *              implementations in user file.
+ * @param       Delay: specifies the delay time length, in milliseconds.
+ * @retval      None
+ */
 void HAL_Delay(__IO uint32_t Delay)
 {
     uint32_t tickstart = HAL_GetTick();
@@ -197,15 +197,15 @@ void HAL_Delay(__IO uint32_t Delay)
 
 
 /**
-  * @brief Suspend Tick increment.
-  * @note In the default implementation , SysTick timer is the source of time base. It is
-  *       used to generate interrupts at regular time intervals. Once HAL_SuspendTick()
-  *       is called, the the SysTick interrupt will be disabled and so Tick increment
-  *       is suspended.
-  * @note This function is declared as __weak to be overwritten in case of other
-  *       implementations in user file.
-  * @retval None
-  */
+ * @brief       Suspend Tick increment.
+ * @note        In the default implementation , SysTick timer is the source of time base. It is
+ *              used to generate interrupts at regular time intervals. Once HAL_SuspendTick()
+ *              is called, the the SysTick interrupt will be disabled and so Tick increment
+ *              is suspended.
+ * @note        This function is declared as __weak to be overwritten in case of other
+ *              implementations in user file.
+ * @retval      None
+ */
 void HAL_SuspendTick(void)
 {
     /* Disable SysTick Interrupt */
@@ -215,15 +215,15 @@ void HAL_SuspendTick(void)
 
 
 /**
-  * @brief Resume Tick increment.
-  * @note In the default implementation , SysTick timer is the source of time base. It is
-  *       used to generate interrupts at regular time intervals. Once HAL_ResumeTick()
-  *       is called, the the SysTick interrupt will be enabled and so Tick increment
-  *       is resumed.
-  * @note This function is declared as __weak  to be overwritten  in case of other
-  *       implementations in user file.
-  * @retval None
-  */
+ * @brief       Resume Tick increment.
+ * @note        In the default implementation , SysTick timer is the source of time base. It is
+ *              used to generate interrupts at regular time intervals. Once HAL_ResumeTick()
+ *              is called, the the SysTick interrupt will be enabled and so Tick increment
+ *              is resumed.
+ * @note        This function is declared as __weak  to be overwritten  in case of other
+ *              implementations in user file.
+ * @retval      None
+ */
 void HAL_ResumeTick(void)
 {
     /* Enable SysTick Interrupt */
@@ -267,7 +267,7 @@ HAL_StatusTypeDef HAL_UART_Init(UART_HandleTypeDef *huart)
 #ifdef CONFIG_PLATFORM_X86_WIN
 /*  TODO: Implement more beautiful solution */
 /**
- * @brief "STDIN --> UART" Receive thread
+ * @brief       "STDIN --> UART" Receive thread
  */
 DWORD WINAPI Windows_StdinReceiveThread(void * args)
 {
@@ -388,7 +388,7 @@ void windows_delay_ms(int mseconds)
 
 #ifdef CONFIG_PLATFORM_X86_WIN
 /**
- * @brief    Thread for SysTick (increment tick)
+ * @brief       Thread for SysTick (increment tick)
  */
 DWORD WINAPI Windows_SysTickThread(void * args)
 {

@@ -61,7 +61,7 @@ static void CmdH_PrintCommandHelp(CmdH_CommandID_t commandID);
  *----------------------------------------------------------------------------*/
 
 /**
- * @brief    Initialize CommandHandler program
+ * @brief       Initialize CommandHandler program
  */
 void CmdH_Init(void)
 {
@@ -81,9 +81,9 @@ void CmdH_Init(void)
 
 
 /**
- * @brief    Prepare (Separate) the command and Find and Run it...
- * @note    Be careful! Only one call enabled, because this module use global variables
- * @note    This function will modify the input parameter (command)
+ * @brief       Prepare (Separate) the command and Find and Run it...
+ * @note        Be careful! Only one call enabled, because this module use global variables
+ * @note        This function will modify the input parameter (command)
  */
 CmdH_Result_t CmdH_ExecuteCommand(char *command, char *response, size_t length)
 {
@@ -169,10 +169,10 @@ CmdH_Result_t CmdH_ExecuteCommand(char *command, char *response, size_t length)
 
 
 /**
- * @brief      Preparing the command and its parameters, than find and run it...
- * @command    Command string (must consinst of 1 word!)
- * @param      Parameter list
- * @note       Be careful! Only one call enabled, because this module use global variables
+ * @brief       Preparing the command and its parameters, than find and run it...
+ * @command     Command string (must consinst of 1 word!)
+ * @param       Parameter list
+ * @note        Be careful! Only one call enabled, because this module use global variables
  */
 CmdH_Result_t CmdH_ExecuteCommandWithParams(char *command, char *param, char *response, size_t length)
 {
@@ -222,10 +222,10 @@ CmdH_Result_t CmdH_ExecuteCommandWithParams(char *command, char *param, char *re
 
 
 /**
- * @brief    Separate command to parameters/arguments
- *           : from ActualCommand to COMMAND_Arguments[0], [1], [2]
- * @note     Only call from CommandHandler_PrepareFindExecuteCommand()
- * @return   argument number
+ * @brief       Separate command to parameters/arguments
+ *              : from ActualCommand to COMMAND_Arguments[0], [1], [2]
+ * @note        Only call from CommandHandler_PrepareFindExecuteCommand()
+ * @return      argument number
  */
 static uint8_t CmdH_CommandParser(char *command, char **dst)
 {
@@ -240,7 +240,7 @@ static uint8_t CmdH_CommandParser(char *command, char **dst)
 
 
 /**
- * @brief    Find the command (in list)
+ * @brief       Find the command (in list)
  */
 static CmdH_Result_t CmdH_SearchCommand(void)
 {
@@ -272,7 +272,7 @@ static CmdH_Result_t CmdH_SearchCommand(void)
 
 
 /**
- * @brief    Check result and write response
+ * @brief       Check result and write response
  */
 void CmdH_PrintResult(CmdH_Result_t result)
 {
@@ -340,7 +340,7 @@ void CmdH_PrintResult(CmdH_Result_t result)
 
 
 /**
- * @brief    Run command
+ * @brief       Run command
  */
 static CmdH_Result_t CmdH_RunCommand(CmdH_CommandID_t commandID)
 {
@@ -377,7 +377,7 @@ static CmdH_Result_t CmdH_RunCommand(CmdH_CommandID_t commandID)
 
 
 /**
- * @brief    Print all commands
+ * @brief       Print all commands
  */
 void CmdH_PrintAllCommands(void)
 {
@@ -395,7 +395,7 @@ void CmdH_PrintAllCommands(void)
 
 
 /**
- * @brief    Search command and print help
+ * @brief       Search command and print help
  */
 void CmdH_SearchCommandAndPrintHelp(const char *command)
 {
@@ -422,7 +422,7 @@ void CmdH_SearchCommandAndPrintHelp(const char *command)
 
 
 /**
- * @brief    Print a command help
+ * @brief       Print a command help
  */
 static void CmdH_PrintCommandHelp(CmdH_CommandID_t commandID)
 {
@@ -444,7 +444,7 @@ static void CmdH_PrintCommandHelp(CmdH_CommandID_t commandID)
 
 
 /**
- * @brief    Check actual command argument num from settings
+ * @brief       Check actual command argument num from settings
  */
 static CmdH_Result_t CmdH_CheckArgumentNumIsGood(uint8_t receivedArgNum, uint8_t commandArgNum)
 {
@@ -496,7 +496,7 @@ static CmdH_Result_t CmdH_CheckArgumentNumIsGood(uint8_t receivedArgNum, uint8_t
 
 
 /**
- * @brief    Send message to source
+ * @brief       Send message to source
  */
 void CmdH_SendMessage(const char *message)
 {
@@ -514,7 +514,7 @@ void CmdH_SendMessage(const char *message)
 
 
 /**
- * @brief    Send line (with newline) to source
+ * @brief       Send line (with newline) to source
  */
 void CmdH_SendLine(const char *message)
 {
@@ -531,7 +531,7 @@ void CmdH_SendLine(const char *message)
 
 
 /**
- * @brief    Send character
+ * @brief       Send character
  */
 void CmdH_SendChar(char c)
 {
@@ -549,8 +549,8 @@ void CmdH_SendChar(char c)
 
 
 /**
- * @brief    Send message on xy communication protocol
- * @param    format        format string, e.g. "decimal: %d"
+ * @brief       Send message on xy communication protocol
+ * @param       format        format string, e.g. "decimal: %d"
  */
 void CmdH_Printf(const char *format, ...)
 {
@@ -573,7 +573,7 @@ void CmdH_Printf(const char *format, ...)
 
 
 /**
- * @brief Set response buffer
+ * @brief       Set response buffer
  */
 void CmdH_SetResponse(char *respBuffer, size_t respLength)
 {
@@ -585,7 +585,7 @@ void CmdH_SetResponse(char *respBuffer, size_t respLength)
 
 #ifdef CONFIG_MODULE_COMMANDHANDLER_UNITTEST_ENABLE
 /**
- * @brief    CommandHandler unit test
+ * @brief       CommandHandler unit test
  */
 uint32_t CmdH_UnitTest(void)
 {

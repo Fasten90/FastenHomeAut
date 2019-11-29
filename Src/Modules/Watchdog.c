@@ -32,7 +32,7 @@ IWDG_HandleTypeDef IWDG_Handle;
 
 
 /**
- * @brief    Initialize Watchdog
+ * @brief       Initialize Watchdog
  */
 void Watchdog_Init(void)
 {
@@ -55,7 +55,7 @@ void Watchdog_Init(void)
 
 
 /**
- * @brief    Clear Watchdog
+ * @brief       Clear Watchdog
  */
 void Watchdog_Clear(void)
 {

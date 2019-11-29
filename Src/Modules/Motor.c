@@ -80,7 +80,7 @@ static void Motor_DcMotorGpioInit(void);
 
 
 /**
- *    @brief    Initialize Motor
+ * @brief       Initialize Motor
  */
 void Motor_Init(void)
 {
@@ -103,7 +103,7 @@ void Motor_Init(void)
 
 
 /**
- * @brief    Initialize DC motor GPIO-s
+ * @brief       Initialize DC motor GPIO-s
  */
 static void Motor_DcMotorGpioInit(void)
 {
@@ -133,7 +133,7 @@ static void Motor_DcMotorGpioInit(void)
 
 
 /**
- * @brief    Motor - Dc motor init
+ * @brief       Motor - Dc motor init
  */
 void Motor_DcMotorTimerInit(uint8_t percent)
 {
@@ -178,7 +178,7 @@ void Motor_DcMotorTimerInit(uint8_t percent)
 
 
 /**
- * @brief    Set DC motor PWM percent
+ * @brief       Set DC motor PWM percent
  */
 void Motor_DcMotorChangePercent(uint8_t percent)
 {
@@ -224,7 +224,7 @@ void Motor_DcMotorChangePercent(uint8_t percent)
 
 
 /**
- * @brief    Set DC motor direction
+ * @brief       Set DC motor direction
  */
 void Motor_DcMotorSeDirection(MotorDir_t dir)
 {
@@ -253,7 +253,7 @@ void Motor_DcMotorSeDirection(MotorDir_t dir)
 
 #ifndef MOTOR_MOTORS_PWM_ON_ONE_TIMER
 /**
- * @brief    Init for Servo motor
+ * @brief       Init for Servo motor
  */
 void Motor_ServoTimerInit(int8_t angle)
 {
@@ -295,7 +295,7 @@ void Motor_ServoTimerInit(int8_t angle)
 
 
 /**
- * @brief    Change angle for Servo motor
+ * @brief       Change angle for Servo motor
  */
 void Motor_ServoChangeAngle(int8_t angle)
 {
@@ -340,7 +340,7 @@ void Motor_ServoChangeAngle(int8_t angle)
 
 
 /**
- * @brief    Convert angle to ms*10 timer value
+ * @brief       Convert angle to ms*10 timer value
  */
 static uint32_t Motor_ServoConvertAngleToPeriod(int8_t angle)
 {
@@ -368,7 +368,7 @@ static uint32_t Motor_ServoConvertAngleToPeriod(int8_t angle)
 
 
 /**
- * @brief    HAL driver function: PWM MspInit
+ * @brief       HAL driver function: PWM MspInit
  */
 void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 {
@@ -414,8 +414,8 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 
 
 /**
- * @brief    Motor state machine
- * @note     Call this "task" periodical and often!
+ * @brief       Motor state machine
+ * @note        Call this "task" periodical and often!
  */
 void Motor_StateMachine(void)
 {
@@ -577,8 +577,8 @@ void Motor_StateMachine(void)
 
 
 /**
- * @brief    Set all motor state to 0 / default
- * @note     Be careful, it is not immediate stop motors, it is only stop "control" states
+ * @brief       Set all motor state to 0 / default
+ * @note        Be careful, it is not immediate stop motors, it is only stop "control" states
  */
 void Motor_ControlStop(void)
 {

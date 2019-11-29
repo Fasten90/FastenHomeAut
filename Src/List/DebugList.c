@@ -103,9 +103,9 @@ DebugRecord_t DebugTasks[] =
  *  Functions
  *----------------------------------------------------------------------------*/
 
- /**
-  * @brief    DebugList initialization - Check debug list
-  */
+/**
+ * @brief       DebugList initialization - Check debug list
+ */
 void DebugList_Init(void)
 {
     /* Run-time error checking: size of the DebugTasks struct must be equal to members is Debug_t enumeration. */

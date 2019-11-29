@@ -40,7 +40,7 @@ volatile uint8_t BUTTON_Clicked = 0;
 
 
 /**
- * @brief    Initialize buttons
+ * @brief       Initialize buttons
  */
 void BUTTON_Init(void)
 {
@@ -149,10 +149,10 @@ void BUTTON_Init(void)
 
 
 /**
- * @brief      Get Button state
- *             Only one button can check
- * @retval     true    if pressed/pressing
- *             false    if not or wrong button
+ * @brief       Get Button state
+ *              Only one button can check
+ * @retval      true    if pressed/pressing
+ *              false    if not or wrong button
  */
 bool BUTTON_GetButtonState(ButtonType_t button)
 {
@@ -202,9 +202,9 @@ bool BUTTON_GetButtonState(ButtonType_t button)
 
 
 /**
- * @brief    Get button name
- * @brief    button    button type
- * @retval    Button name (string)
+ * @brief       Get button name
+ * @brief       button    button type
+ * @retval      Button name (string)
  */
 const char * BUTTON_GetButtonName(ButtonType_t button)
 {
@@ -245,9 +245,9 @@ const char * BUTTON_GetButtonName(ButtonType_t button)
 
 
 /**
- * @brief    Get button press name
- * @param    pressType    button press type
- * @retval    press type name (string)
+ * @brief       Get button press name
+ * @param       pressType    button press type
+ * @retval      press type name (string)
  */
 const char * BUTTON_GetPressTypeName(ButtonPressType_t pressType)
 {

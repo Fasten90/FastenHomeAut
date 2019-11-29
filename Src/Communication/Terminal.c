@@ -155,7 +155,7 @@ static bool Terminal_CheckPassword(const char *string);
 
 
 /**
- * @brief    Initialize CommandHandler program
+ * @brief       Initialize CommandHandler program
  */
 void Terminal_Init(void)
 {
@@ -212,7 +212,7 @@ void Terminal_Init(void)
 
 
 /**
- * @brief    Always run, wait command and execute it
+ * @brief       Always run, wait command and execute it
  */
 void Terminal_CheckCommand(void)
 {
@@ -333,7 +333,7 @@ void Terminal_CheckCommand(void)
 
 
 /**
- * @brief    Check received characters and make command (COMMAND_Actual)
+ * @brief       Check received characters and make command (COMMAND_Actual)
  */
 static void Terminal_ProcessReceivedCharacter(void)
 {
@@ -523,8 +523,8 @@ static void Terminal_ProcessReceivedCharacter(void)
 
 #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 /**
- * @brief    Process Escape sequence, works with ANSI escape codes
- * @return    valid char, or 0 if invalid
+ * @brief       Process Escape sequence, works with ANSI escape codes
+ * @return      valid char, or 0 if invalid
  */
 static bool Terminal_CommandEscapeCharValidation(void)
 {
@@ -600,7 +600,7 @@ static bool Terminal_CommandEscapeCharValidation(void)
 
 
 /**
- * @brief    Command's letter deleting (backspace)
+ * @brief       Command's letter deleting (backspace)
  */
 void Terminal_CommandBackspace(void)
 {
@@ -678,7 +678,7 @@ void Terminal_CommandBackspace(void)
 
 #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 /**
- * @brief    Delete button received
+ * @brief       Delete button received
  */
 static void Terminal_CommandDelete(void)
 {
@@ -731,7 +731,7 @@ static void Terminal_CommandDelete(void)
 
 #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 /**
- * @brief    Received tabulator command: Complete command
+ * @brief       Received tabulator command: Complete command
  */
 static void Terminal_CommandTabulator(void)
 {
@@ -764,7 +764,7 @@ static void Terminal_CommandTabulator(void)
 #ifdef CONFIG_TERMINAL_ESCAPE_SEQUENCE_ENABLE
 /**
  * @brief        Resend the actual line/command
- *                 NOTE: It save and restore the original cursor position
+ *               NOTE: It save and restore the original cursor position
  */
 static void Terminal_CommandResendLine(bool needRestoreCursor)
 {
@@ -800,7 +800,7 @@ static void Terminal_CommandResendLine(bool needRestoreCursor)
 
 #ifdef CONFIG_TERMINAL_HISTORY_ENABLE
 /**
- * @brief    Initialize History list with default commands
+ * @brief       Initialize History list with default commands
  */
 static void Terminal_InitHistory(void)
 {
@@ -815,7 +815,7 @@ static void Terminal_InitHistory(void)
 
 
 /**
- * @brief    Save actual command to history
+ * @brief       Save actual command to history
  */
 static void Terminal_HistorySave(void)
 {
@@ -847,9 +847,9 @@ static void Terminal_HistorySave(void)
 
 #ifdef CONFIG_TERMINAL_HISTORY_ENABLE
 /**
- * @brief    Check, this command is in History?
- * @return    true, if has equal
- *             false, if not has equal
+ * @brief       Check, this command is in History?
+ * @return      true, if has equal
+ *              false, if not has equal
  */
 static bool Terminal_HistoryFindInList(void)
 {
@@ -874,7 +874,7 @@ static bool Terminal_HistoryFindInList(void)
 
 #ifdef CONFIG_TERMINAL_HISTORY_ENABLE
 /**
- * @brief    Load history from list to actual command
+ * @brief       Load history from list to actual command
  */
 static void Terminal_HistoryLoad(uint8_t direction)
 {
@@ -921,7 +921,7 @@ static void Terminal_HistoryLoad(uint8_t direction)
 
 
 /**
- * @brief    Convert Terminal_CommandActual (Actual command) to small letters
+ * @brief       Convert Terminal_CommandActual (Actual command) to small letters
  */
 static void Terminal_ConvertSmallLetter(void)
 {
@@ -931,7 +931,7 @@ static void Terminal_ConvertSmallLetter(void)
 
 
 /**
- * @brief    Send welcome message
+ * @brief       Send welcome message
  */
 void Terminal_SendWelcome(void)
 {
@@ -973,8 +973,8 @@ void Terminal_SendWelcome(void)
 
 
 /**
- * @brief    Send CLS (Clear Screen)
- * @note    TODO: Move to other file, it is ~EscapeSequence code...
+ * @brief       Send CLS (Clear Screen)
+ * @note        TODO: Move to other file, it is ~EscapeSequence code...
  */
 void Terminal_SendCls(void)
 {
@@ -986,7 +986,7 @@ void Terminal_SendCls(void)
 
 #ifdef CONFIG_TERMINAL_GET_PASSWORD_ENABLE
 /**
- * @brief Get (and wait) Password
+ * @brief       Get (and wait) Password
  */
 static void Terminal_GetPassword(void)
 {
@@ -1056,7 +1056,7 @@ static void Terminal_GetPassword(void)
 
 
 /**
- * @brief    Send "Get password" text
+ * @brief       Send "Get password" text
  */
 inline static void Terminal_SendGetPassword(void)
 {
@@ -1066,7 +1066,7 @@ inline static void Terminal_SendGetPassword(void)
 
 
 /**
- * @brief Check password
+ * @brief       Check password
  */
 inline static bool Terminal_CheckPassword(const char *string)
 {
@@ -1078,7 +1078,7 @@ inline static bool Terminal_CheckPassword(const char *string)
 
 
 /**
- * @brief    loading event
+ * @brief       loading event
  */
 void Terminal_TestLoading(void)
 {
@@ -1095,7 +1095,7 @@ void Terminal_TestLoading(void)
 
 
 /**
- * @brief    Send a loading line
+ * @brief       Send a loading line
  */
 void Terminal_SendLoadingPercent(uint8_t percent)
 {
@@ -1122,7 +1122,7 @@ void Terminal_SendLoadingPercent(uint8_t percent)
 
 
 /**
- * @brief    Send a loading line
+ * @brief       Send a loading line
  */
 void Terminal_SendLoadingPercent2(uint8_t percent)
 {

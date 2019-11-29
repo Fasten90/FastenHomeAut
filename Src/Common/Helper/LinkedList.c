@@ -55,7 +55,7 @@ static int16_t LinkedList_SearchFreeSpace(void);
 
 
 /**
- * @brief    Initialize LinkedList
+ * @brief       Initialize LinkedList
  */
 void LinkedList_Init(ListItem * linkedList, uint16_t size)
 {

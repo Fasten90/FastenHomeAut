@@ -68,7 +68,7 @@ extern void prvGetRegistersFromStack(uint32_t *pulFaultStackAddress);
 
 
 /**
- * @brief    HardFault handler
+ * @brief       HardFault handler
  */
 void HardFault_Handler(void)
 {
@@ -141,8 +141,8 @@ void HardFault_Handler(void)
 
 
 /**
-* @brief This function handles System service call via SWI instruction.
-*/
+ * @brief       This function handles System service call via SWI instruction.
+ */
 void SVC_Handler(void)
 {
 }
@@ -150,7 +150,7 @@ void SVC_Handler(void)
 
 
 /**
- * @brief This function handles Pendable request for system service.
+ * @brief       This function handles Pendable request for system service.
  */
 void PendSV_Handler(void)
 {
@@ -159,7 +159,7 @@ void PendSV_Handler(void)
 
 
 /**
- * @brief This function handles Non maskable interrupt.
+ * @brief       This function handles Non maskable interrupt.
  */
 void NMI_Handler(void)
 {
@@ -169,7 +169,7 @@ void NMI_Handler(void)
 
 
 /**
- * @brief This function handles System tick timer.
+ * @brief       This function handles System tick timer.
  */
 void SysTick_Handler(void)
 {

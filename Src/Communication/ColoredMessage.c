@@ -49,7 +49,7 @@
 
 
 /**
- * @brief    Send message on debug with textcolor & backgroundcolor
+ * @brief       Send message on debug with textcolor & backgroundcolor
  */
 void ColoredMessage_SendMsgWithBackgroundColor(char *str, const char *msg, MsgColors_t textColor, MsgColors_t backgroundColor)
 {
@@ -64,8 +64,8 @@ void ColoredMessage_SendMsgWithBackgroundColor(char *str, const char *msg, MsgCo
 
 
 /**
- * @brief    Send message on debug with textcolor
- * @note    After send message, the original text color will restored
+ * @brief       Send message on debug with textcolor
+ * @note        After send message, the original text color will restored
  */
 void ColoredMessage_SendMsg(char *str, const char *msg, MsgColors_t textColor)
 {
@@ -79,7 +79,7 @@ void ColoredMessage_SendMsg(char *str, const char *msg, MsgColors_t textColor)
 
 
 /**
- * @brief    Send textcolor escape sequence
+ * @brief       Send textcolor escape sequence
  */
 void ColoredMessage_SendTextColor(char *str, MsgColors_t textColor)
 {
@@ -93,7 +93,7 @@ void ColoredMessage_SendTextColor(char *str, MsgColors_t textColor)
 
 
 /**
- * @brief    Send backgroundcolor escape sequence
+ * @brief       Send backgroundcolor escape sequence
  */
 void ColoredMessage_SendBackgroundColor(char *str, MsgColors_t backgroundColor)
 {
@@ -107,7 +107,7 @@ void ColoredMessage_SendBackgroundColor(char *str, MsgColors_t backgroundColor)
 
 
 /**
- * @brief    Send text format
+ * @brief       Send text format
  */
 void ColoredMessage_SendTextFormat(char *str, MsgFormat_t textFormat)
 {
@@ -123,7 +123,7 @@ void ColoredMessage_SendTextFormat(char *str, MsgFormat_t textFormat)
 
 
 /**
- * @brief    Send BackgroundColor + TextColor
+ * @brief       Send BackgroundColor + TextColor
  */
 size_t ColoredMessage_SendBackgroundAndTextColor(char *str, MsgColors_t backgroundColor, MsgColors_t textColor)
 {
@@ -148,7 +148,7 @@ size_t ColoredMessage_SendBackgroundAndTextColor(char *str, MsgColors_t backgrou
 
 
 /**
- * @brief    Send BackgroundColor + TextColor + TextFormat
+ * @brief       Send BackgroundColor + TextColor + TextFormat
  */
 void ColoredMessage_SendBackgroundAndTextColorAndFormat(char *str, MsgColors_t backgroundColor, MsgColors_t textColor, MsgFormat_t textFormat)
 {
@@ -175,7 +175,7 @@ void ColoredMessage_SendBackgroundAndTextColorAndFormat(char *str, MsgColors_t b
 
 
 /**
- * @brief    Send default format: restore original background color, text color and text format (e.g. bold)
+ * @brief       Send default format: restore original background color, text color and text format (e.g. bold)
  */
 size_t ColoredMessage_SendDefaultFormat(char *str)
 {
@@ -186,7 +186,7 @@ size_t ColoredMessage_SendDefaultFormat(char *str)
 
 
 /**
- * @brief    Send error message (black text, with red background)
+ * @brief       Send error message (black text, with red background)
  */
 void ColoredMessage_SendErrorMsg(char *str, const char *msg)
 {
@@ -196,7 +196,7 @@ void ColoredMessage_SendErrorMsg(char *str, const char *msg)
 
 
 /**
- * @brief    Formatted messages Unit test
+ * @brief       Formatted messages Unit test
  */
 void ColoredMessage_Test(void)
 {

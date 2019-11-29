@@ -164,7 +164,7 @@
  * <vizi.gabor90@gmail.com>
  *
  * <http://fasten.e5tv.hu>
-*/
+ */
 
 
 
@@ -267,7 +267,7 @@ static const char * GetStrListElement(uint8_t i)
 
 
 /**
- * @brief    Main function
+ * @brief       Main function
  */
 int main(void)
 {

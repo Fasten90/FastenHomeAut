@@ -166,7 +166,7 @@ void App_DisplayInput_Event(ButtonType_t button, ButtonPressType_t type)
 
 
 /**
- * @brief    Step active letter selection to next (left-right)
+ * @brief       Step active letter selection to next (left-right)
  */
 static void DisplayInput_StepLetterPosition(int8_t step)
 {
@@ -188,7 +188,7 @@ static void DisplayInput_StepLetterPosition(int8_t step)
 
 
 /**
- * @brief    Step Letter value to next (up-down)
+ * @brief       Step Letter value to next (up-down)
  */
 static void DisplayInput_StepLetterNextValue(int8_t step)
 {
@@ -539,7 +539,7 @@ void App_DisplayLargeClock_Update(ScheduleSource_t source)
 
 #if defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK)
 /**
- * @brief    SystemTime - step function
+ * @brief       SystemTime - step function
  */
 static void DisplayLargeClock_StepConfig(void)
 {
@@ -554,7 +554,7 @@ static void DisplayLargeClock_StepConfig(void)
 
 
 /**
- * @brief    SystemTime - change (increment) selected value (hour, minute, or none)
+ * @brief       SystemTime - change (increment) selected value (hour, minute, or none)
  */
 static void DisplayLargeClock_StepValue(void)
 {
@@ -597,7 +597,7 @@ static void DisplayLargeClock_StepValue(void)
 
 
 /**
- * @brief    Get system time (settings) state
+ * @brief       Get system time (settings) state
  */
 DisplayClock_ChangeState_t Logic_GetSystemTimeState(void)
 {

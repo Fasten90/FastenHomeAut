@@ -74,7 +74,7 @@ static void UART_Handler(UART_Handler_t *handler);
 
 
 /**
- * @brief    Initialize USART peripheral
+ * @brief       Initialize USART peripheral
  */
 void UART_Init(UART_HandleTypeDef *UartHandle)
 {
@@ -144,7 +144,7 @@ void UART_Init(UART_HandleTypeDef *UartHandle)
 
 
 /**
- * @brief    UART initialize (port - pins) for HAL driver
+ * @brief       UART initialize (port - pins) for HAL driver
  */
 void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 {
@@ -330,7 +330,7 @@ void COMMONUART_USARTx_IRQHandler(void)
 
 
 /**
- * @brief    UART handler (Handle rx - tx)
+ * @brief       UART handler (Handle rx - tx)
  */
 static void UART_Handler(UART_Handler_t *handler)
 {
@@ -430,7 +430,7 @@ static void UART_Handler(UART_Handler_t *handler)
 
 
 /**
- * @brief    Send enable (IT)
+ * @brief       Send enable (IT)
  */
 void UART_SendEnable(UART_Handler_t * handler)
 {
@@ -440,7 +440,7 @@ void UART_SendEnable(UART_Handler_t * handler)
 
 
 /**
- * @brief    Receive enable (IT)
+ * @brief       Receive enable (IT)
  */
 void UART_ReceiveEnable(UART_Handler_t * handler)
 {
