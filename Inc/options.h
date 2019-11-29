@@ -66,7 +66,7 @@
 
 
 ///< Remote controller (for controller) function
-/* #define CONFIG_FUNCTION_REMOTECONTROLLER */
+#define CONFIG_FUNCTION_REMOTECONTROLLER /* */
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER
     #ifndef CONFIG_MODULE_BUTTON_ENABLE
         #define CONFIG_MODULE_BUTTON_ENABLE
@@ -91,8 +91,10 @@
 
 /* #define CONFIG_FUNCTION_DISPLAY */
 #ifdef CONFIG_FUNCTION_DISPLAY
+
+
     ///< Display: Menu
-    #define CONFIG_FUNCTION_DISPLAY_MENU
+    /* #define CONFIG_FUNCTION_DISPLAY_MENU */
     #ifdef CONFIG_FUNCTION_DISPLAY_MENU
         #define CONFIG_REQUIRE_DISPLAY
 
@@ -189,7 +191,7 @@
 ///< Periodical sending UART message function
 /* #define CONFIG_FUNCTION_PERIODICAL_SENDING */
 
-/* #define CONFIG_FUNCTION_ESP8266 */
+#define CONFIG_FUNCTION_ESP8266 /* */
 #ifdef CONFIG_FUNCTION_ESP8266
     #define CONFIG_MODULE_ESP8266_ENABLE
 #endif /* CONFIG_FUNCTION_ESP8266 */
@@ -557,7 +559,7 @@
 /* #define USE_FULL_ASSERT */
 
 ///< Debug mode: enable breakpoint and other debug support function
-/* #define CONFIG_DEBUG_MODE */
+#define CONFIG_DEBUG_MODE /* */
 
 ///< Hard Assert mode - with file name and line
 /* #define ASSERT_MODE_HARD */
@@ -569,7 +571,7 @@
 /* #define CONFIG_MODULE_TEST_ENABLE */
 
 ///< Simulation mode: Enable "simulate" command
-/* #define CONFIG_MODULE_SIMULATION_ENABLE */
+#define CONFIG_MODULE_SIMULATION_ENABLE /* */
 /* TODO: Recommend to turn off from release version */
 
 ///< SWO: Serial Wire Output enable
@@ -579,7 +581,7 @@
 /* #define CONFIG_DEBUG_SW_WATCHDOG_ENABLE */
 
 ///< SelfTests
-/* #define CONFIG_DEBUG_SELFTEST */
+#define CONFIG_DEBUG_SELFTEST /* */
 
 ///< MCU SelfTest
 /* TODO: Refactor: Some test for STM32 */
@@ -672,7 +674,7 @@
         #define CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE        (1)
     #endif
 
-    #define UNITTEST_PAUSE_WHEN_ERROR                       (0)
+    #define UNITTEST_PAUSE_WHEN_ERROR                       (1)
 #endif
 
 
@@ -776,7 +778,7 @@
     /* Module TCP state */
     /* 1 - ESP8266 will be TCP server, */
     /* 0 - will be TCP client */
-    #define CONFIG_ESP8266_IS_TCP_SERVER            (0)
+    #define CONFIG_ESP8266_IS_TCP_SERVER               (0)
 
 
     /* DHCP Enable */
@@ -788,10 +790,10 @@
     ///< Single-Multiple connection
     /* 1 - Multiple */
     /* 0 - Single */
-    #define CONFIG_ESP8266_MULTIPLE_CONNECTION                    (0)
+    #define CONFIG_ESP8266_MULTIPLE_CONNECTION                     (0)
 
     ///< Transparent mode
-    #define CONFIG_ESP8266_TRANSPARENT_MODE_ENABLED                (1)
+    #define CONFIG_ESP8266_TRANSPARENT_MODE_ENABLED                (0)
 
     #if ((CONFIG_ESP8266_MULTIPLE_CONNECTION == 1) && (CONFIG_ESP8266_TRANSPARENT_MODE_ENABLED == 1))
         #error "ESP8266: Cannot use Transparent mode in multiple connection!"

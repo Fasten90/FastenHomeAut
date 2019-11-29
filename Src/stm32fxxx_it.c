@@ -90,7 +90,7 @@ void HardFault_Handler(void)
         " bx r2                                                     \n"
         " handler2_address_const: .word prvGetRegistersFromStack    \n"
     );
-#elif 0
+#elif 1
     /* https://blog.feabhas.com/2013/02/developing-a-generic-hard-fault-handler-for-arm-cortex-m3cortex-m4/ */
     /* Not work */
     __asm volatile
@@ -164,6 +164,9 @@ void PendSV_Handler(void)
 void NMI_Handler(void)
 {
     /* TODO: Save */
+    #include "DebugUart.h"
+    DebugUart_SendMessageBlocked("NMI");
+    DEBUG_BREAKPOINT();
 }
 
 
