@@ -432,25 +432,25 @@ static bool ESP8266_ConvertIpString(char *message)
     bool isOk = false;
 
 #if (CONFIG_ESP8266_IS_WIFI_HOST == 1)
-    char *pos2 = NULL;
+    char *ipPos2end = NULL;
 #endif
 
     /* String come like "192.168.4.1\r\n192.168.1.34\r\n\r\nOK\r\n" */
-    char *pos1 = (char *)STRING_FindString((const char *)message, "\r\n");
-    if (pos1 != NULL)
+    char *ipPos1end = (char *)STRING_FindString((const char *)message, "\r\n");
+    if (ipPos1end != NULL)
     {
 #if (CONFIG_ESP8266_IS_WIFI_HOST == 1)
-        *pos1 = '\0';
-        pos1 += 2;    /* Skip "\r\n" */
-        pos2 = (char *)STRING_FindString(pos1, "\r\n");
-        if (pos2 != NULL)
+        *ipPos1end = '\0';
+        ipPos1end += 2;    /* Skip "\r\n" */
+        ipPos2end = (char *)STRING_FindString(ipPos1end, "\r\n");
+        if (ipPos2end != NULL)
         {
-            *pos2 = '\0';
+            *ipPos2end = '\0'; /* "finish string with EOS */
             isOk = true;
         }
         /* else: there is no ending "\r\n" */
 #else
-        *pos1 = '\0';
+        *ipPos1end = '\0';
         isOk = true;
 #endif
     }
@@ -465,8 +465,7 @@ static bool ESP8266_ConvertIpString(char *message)
         /* Process IP address string like "192.168.0.1" to Network_IP_t */
         isOk = Network_ConvertIpAddressStringToIP(message, &ESP8266_MyWifiIpAddress);
 #if (CONFIG_ESP8266_IS_WIFI_HOST == 1)
-        pos2++;
-        isOk &= Network_ConvertIpAddressStringToIP(pos2, &ESP8266_ExWifiIpAddress);
+        isOk &= Network_ConvertIpAddressStringToIP(ipPos1end, &ESP8266_ExWifiIpAddress);
 #endif
         if (isOk)
         {
@@ -989,6 +988,7 @@ void ESP8266_StatusMachine(void)
              */
             ESP8266_StartReceive();
     #if (CONFIG_ESP8266_MULTIPLE_CONNECTION == 1)
+            /* Server can only be created when AT+CIPMUX=1 */
             ESP8266_SendString("AT+CIPMUX=1\r\n");
     #else
             ESP8266_SendString("AT+CIPMUX=0\r\n");
@@ -1262,7 +1262,7 @@ void ESP8266_StatusMachine(void)
 
 #warning "ESP8266: New version has IPv6"
 #endif
-#if CONFIG_ESP8266_IS_TCP_SERVER == 1
+#if (CONFIG_ESP8266_IS_TCP_SERVER == 1)
         case Esp8266Status_StartTcpServer:
             /*
              * Set as server/listen()
@@ -1282,6 +1282,7 @@ void ESP8266_StatusMachine(void)
             ESP8266_StartReceive();
             /* E.g. "AT+CIPSERVER=1,2000" */
             ESP8266_SendString("AT+CIPSERVER=1," CONFIG_ESP8266_TCP_SERVER_PORT_STRING "\r\n");
+            /* TODO: Make configurable */
             ESP8266StatusMachine++;
             ESP8266_DEBUG_PRINTF("Start server on port: %d", CONFIG_ESP8266_TCP_SERVER_PORT );
             break;
@@ -1296,10 +1297,10 @@ void ESP8266_StatusMachine(void)
                 ESP8266StatusMachine++;
                 ESP8266_DEBUG_PRINT("Successful started server");
                 /* Disable task, because next state is wait client */
-                /* askHandler_DisableTask(Task_Esp8266); */
+                /* TaskHandler_DisableTask(Task_Esp8266); */
                 ESP8266_StartReceive();
             }
-            else if (!StrCmpFirst("ERROR", (const char *)receiveBuffer))
+            else if (!StrCmpFirst("\r\nERROR", (const char *)receiveBuffer)) /* TODO: Check "\r\nERROR" or "ERROR" */
             {
                 /* ERROR */
                 ESP8266_LED_FAIL();
@@ -1316,7 +1317,8 @@ void ESP8266_StatusMachine(void)
             break;
 
 #else    /* End of #if CONFIG_ESP8266_IS_TCP_SERVER == 1 */
-/*  #if CONFIG_ESP8266_IS_TCP_SERVER == 0 */
+        /*  #if CONFIG_ESP8266_IS_TCP_SERVER == 0 */
+        /* Client mode */
 
         case Esp8266Status_ConnectTcpServer:
 
@@ -1356,7 +1358,7 @@ void ESP8266_StatusMachine(void)
 
             ESP8266StatusMachine++;
             TaskHandler_SetTaskPeriodicTime(Task_Esp8266, 1000);
-            ESP8266_DEBUG_PRINT("Start connect TCP");
+            ESP8266_DEBUG_PRINTF("Start connect TCP: IP: %s, port: %s", CONFIG_ESP8266_TCP_SERVER_IP_STRING, CONFIG_ESP8266_TCP_SERVER_PORT_STRING);
 
             break;
 
@@ -1955,7 +1957,11 @@ static void ESP8266_CheckIdleStateMessages(char *receiveBuffer, size_t receivedM
 
             ESP8266_ClearReceive(false, STRING_LENGTH("\r\nERROR\r\nUnlink\r\n"));
 
+#if (CONFIG_ESP8266_IS_TCP_SERVER == 1)
+            ESP8266StatusMachine = Esp8266Status_StartTcpServer;
+#else
             ESP8266StatusMachine = Esp8266Status_ConnectTcpServer;
+#endif
         }
         else if (!StrCmpFirst("\r\nwrong syntax\r\n\r\nERROR\r\n", (const char *)receiveBuffer))
         {
@@ -2256,6 +2262,79 @@ static bool ESP8266_SearchGetRequest(const char *recvMsg)
     return isFound;
 }
 #endif
+
+
+
+const char const * ESP8266_GetStatusName(void)
+{
+    switch (ESP8266StatusMachine)
+    {
+        case Esp8266Status_Init:
+        case Esp8266Status_AfterInit:
+            return "Init";
+
+        case Esp8266Status_ConfigAte0:
+        case Esp2866Status_ConfigAte0CheckResponse:
+        case Esp8266Status_ConfigAt:
+        case Esp8266Status_ConfigAtCheckResponse:
+        case Esp8266Status_ConfigCwMode:
+        case Esp8266Status_ConfigCwModeCheckResponse:
+            return "Config";
+    #ifdef CONFIG_ESP8266_CWDHCP_ENABLE
+        case Esp8266Status_ConfigCwDhcp:
+        case Esp8266Status_ConfigCwDhcpCheckResponse:
+            return "Config";
+    #endif
+    #if (CONFIG_ESP8266_FIX_IP == 1)
+        case Esp8266Status_ConfigFixIp:
+        case Esp8266Status_ConfigFixIpCheckResponse:
+            return "Config";
+    #endif
+        case Esp8266Status_ConfigCipMux:
+        case Esp8266Status_ConfigCipMuxCheckResponse:
+        case Esp8266Status_WaitAfterSuccessfulConfig:
+            return "Config";
+    #if (CONFIG_ESP8266_IS_WIFI_HOST == 1)
+        case Esp8266Status_StartWifiHost:
+        case Esp8266Status_StartWifiHostCheckResponse:
+            return "WifiHost";
+    #else
+        case Esp8266Status_ConnectWifiNetwork:
+        case Esp8266Status_ConnectWifiNetworkCheckResponse:
+        case Esp8266Status_ConnectWifiNetworkCheckFinish:
+            return "WifiConnect";
+    #endif
+    #if (ESP8266_VERSION == 0)
+        case Esp8266Status_PrintMyIpAddress:
+        case Esp8266Status_IpAddressResponse:
+            return "Get IP";
+    #endif
+    #if (CONFIG_ESP8266_IS_TCP_SERVER == 1)
+        case Esp8266Status_StartTcpServer:
+        case Esp8266Status_StartTcpServerCheckResponse:
+            return "TCP server";
+    #else
+        case Esp8266Status_ConnectTcpServer:
+        case Esp8266Status_ConnectTcpServerCheckResponse:
+        case Esp8266Status_ConnectTcpServerCheckFinish:
+            return "TCP connect";
+    #endif
+
+    #if (CONFIG_ESP8266_TRANSPARENT_MODE_ENABLED == 1)
+        case Esp8266Status_ConfigTransparentMode:
+        case Esp8266Status_Config_TransparentModeCheckResponse:
+            return "TCP mode";
+    #endif
+
+        case Esp8266Status_BeforeIdle:
+        case Esp8266Status_Idle:
+            return "Connected";
+
+        case Esp8266Status_Reconfig:
+        default:
+            return "reconfig";
+    }
+}
 
 
 

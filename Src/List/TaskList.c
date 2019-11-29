@@ -636,6 +636,9 @@ static TaskResult_t Task_DisplayChangeImage(ScheduleSource_t source)
 
     #ifdef CONFIG_FUNCTION_DISPLAY_MENU
     Logic_DisplayHandler(source);
+    #elif defined(CONFIG_FUNCTION_ESP8266)
+    /* TODO: refactor the a menu item ? */
+    Logic_DisplayESP8266(source);
     #endif
 
     return TaskResult_Ok;

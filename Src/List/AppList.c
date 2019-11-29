@@ -69,6 +69,15 @@ const App_List_t AppList[] = {
         .updateFunction = App_DisplayLargeClock_Update
     },
     #endif
+    #ifdef CONFIG_DISPLAY_ESP8266_ENABLE
+    {
+        /* TODO: */
+        .AppName = "ESP8266",
+        .initFunction = NULL,
+        .eventFunction = NULL,
+        .updateFunction = NULL
+    },
+    #endif
 };
 
 const uint8_t AppList_Num = NUM_OF(AppList);

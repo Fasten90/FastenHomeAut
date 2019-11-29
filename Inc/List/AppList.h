@@ -47,6 +47,9 @@ typedef enum
 #ifdef CONFIG_DISPLAY_CLOCK_LARGE
     AppType_Clock,
 #endif
+#ifdef CONFIG_DISPLAY_ESP8266_ENABLE
+    AppType_ESP8266,
+#endif
 
     /* Note: Last item, do not put anything after */
     AppType_Count
