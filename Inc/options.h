@@ -307,16 +307,19 @@
     /* Modules: */
 
     #define CONFIG_MODULE_DEBUGUART_ENABLE
-    #define CONFIG_MODULE_TERMINAL_ENABLE
+    /* TODO: Check, long time ago it has used */
+
+    /* #define CONFIG_MODULE_TERMINAL_ENABLE */
 
     #define CONFIG_MODULE_COMMANDHANDLER_ENABLE
-    #define CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
+    /* #define CONFIG_MODULE_GLOBALVARHANDLER_ENABLE */
 
-    #define CONFIG_MODULE_IO_ENABLE
+    /* #define CONFIG_MODULE_IO_ENABLE */
 
     /* #define CONFIG_MODULE_LEDPWM_ENABLE */
 
-    #define CONFIG_MODULE_BUTTON_ENABLE
+    /* #define CONFIG_MODULE_BUTTON_ENABLE */
+    /* TODO: Check, long time ago it has used */
 
     /* #define CONFIG_MODULE_IO_ENABLE */
 
@@ -332,11 +335,13 @@
 
     /* #define CONFIG_MODULE_SYSMANAGER_ENABLE */
 
-    #define CONFIG_MODULE_COMMON_DAC_ENABLE
+    /* #define CONFIG_MODULE_COMMON_DAC_ENABLE */
+    /* TODO: Check, long time ago it has used */
 
     #define CONFIG_MODULE_COMMON_IO_ENABLE
 
-    #define CONFIG_MODULE_COMMON_ADC_ENABLE
+    /* #define CONFIG_MODULE_COMMON_ADC_ENABLE */
+    /* TODO: Check, long time ago it has used */
 
     /* #define CONFIG_MODULE_COMMON_PWM_ENABLE */
 

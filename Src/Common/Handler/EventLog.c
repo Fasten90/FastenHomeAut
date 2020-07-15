@@ -169,7 +169,7 @@ void EventLog_PrintLogTable(void)
 
     char header[sizeof(fixheader)];
 
-    EventLog_PrintLogTableHeader(fixheader, strLength, str, header);
+    EventLog_PrintLogTableHeader(fixheader, str, strLength, header);
 
 
     /* Send i. log record */
@@ -205,7 +205,7 @@ void EventLog_PrintLogTable(void)
     }
 
     /* Send end of log */
-    EventLog_PrintLogTableHeader(fixheader, str, header);
+    EventLog_PrintLogTableHeader(fixheader, str, strLength, header);
 }
 
 
