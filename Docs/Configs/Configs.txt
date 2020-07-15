@@ -76,8 +76,11 @@ __STDC__
 - CMSIS\.. not recommended files
 - e.g. STL library: 3 assembly files
 
+# If you not use the FreeRTOS
+- Middlewares/Third_Party/FreeRTOS
 # If you use FreeRTOS, you need select your preferred heap and delete/exlude others:
 - heap_1 vs heap_4 files
+
 
 # If have CRC (STL):
 - Add CRC data to linker
