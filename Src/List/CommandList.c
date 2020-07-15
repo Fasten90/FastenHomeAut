@@ -609,7 +609,7 @@ const CmdH_CommandID_t CmdH_CommandNum = NUM_OF(CmdH_CommandList);
 
 
 /**
- * @brief    CLS: Clear screen
+ * @brief       CLS: Clear screen
  */
 static CmdH_Result_t CommandFunction_cls(uint32_t argc, char** argv)
 {
@@ -627,7 +627,7 @@ static CmdH_Result_t CommandFunction_cls(uint32_t argc, char** argv)
 
 
 /**
- * @brief    Get version
+ * @brief       Get version
  */
 static CmdH_Result_t CommandFunction_version(uint32_t argc, char** argv)
 {
@@ -643,7 +643,7 @@ static CmdH_Result_t CommandFunction_version(uint32_t argc, char** argv)
 
 
 /**
- * @brief    Send Welcome message
+ * @brief       Send Welcome message
  */
 static CmdH_Result_t CommandFunction_welcome(uint32_t argc, char** argv)
 {
@@ -661,9 +661,9 @@ static CmdH_Result_t CommandFunction_welcome(uint32_t argc, char** argv)
 
 
 /**
- * @brief    Help command
- *             Use: 'help', or 'help <CommandName>'
- *             List commands or write the command's description
+ * @brief       Help command
+ *              Use: 'help', or 'help <CommandName>'
+ *              List commands or write the command's description
  */
 static CmdH_Result_t CommandFunction_help(uint32_t argc, char** argv)
 {
@@ -684,7 +684,7 @@ static CmdH_Result_t CommandFunction_help(uint32_t argc, char** argv)
 
 
 /**
- * @brief    Reset command
+ * @brief       Reset command
  */
 static CmdH_Result_t CommandFunction_reset(uint32_t argc, char** argv)
 {
@@ -712,7 +712,7 @@ static CmdH_Result_t CommandFunction_reset(uint32_t argc, char** argv)
 
 #ifdef CONFIG_MODULE_UNITTEST_ENABLE
 /**
- * @brief    Run module's unit tests
+ * @brief       Run module's unit tests
  */
 static CmdH_Result_t CommandFunction_unittest(uint32_t argc, char** argv)
 {
@@ -734,7 +734,7 @@ static CmdH_Result_t CommandFunction_unittest(uint32_t argc, char** argv)
 
 #ifdef CONFIG_USE_PANEL_PC
 /**
- * @brief    Exit (to windows)
+ * @brief       Exit (to windows)
  */
 static CmdH_Result_t CommandFunction_exit(uint32_t argc, char** argv)
 {
@@ -754,7 +754,7 @@ static CmdH_Result_t CommandFunction_exit(uint32_t argc, char** argv)
 
 #ifdef CONFIG_MODULE_TEST_ENABLE
 /**
- * @brief    Run module test
+ * @brief       Run module test
  */
 static CmdH_Result_t CommandFunction_moduletest(uint32_t argc, char** argv)
 {
@@ -833,7 +833,7 @@ void SetImportantValue(uint32_t newValue)
 }*/
 
 /**
- * @brief    Test function
+ * @brief       Test function
  */
 static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 {
@@ -1141,8 +1141,8 @@ static CmdH_Result_t CommandFunction_test(uint32_t argc, char** argv)
 
 #ifdef CONFIG_MODULE_GLOBALVARHANDLER_ENABLE
 /**
- * @brief    Get globalvar value
- *             Use: 'get <globalvarname>'
+ * @brief       Get globalvar value
+ *              Use: 'get <globalvarname>'
  */
 static CmdH_Result_t CommandFunction_get(uint32_t argc, char** argv)
 {
@@ -1162,8 +1162,8 @@ static CmdH_Result_t CommandFunction_get(uint32_t argc, char** argv)
 
 
 /**
- * @brief    set global variable
- *             Use: 'set <globalvariablename> <value>'
+ * @brief       set global variable
+ *              Use: 'set <globalvariablename> <value>'
  */
 static CmdH_Result_t CommandFunction_set(uint32_t argc, char** argv)
 {
@@ -1183,8 +1183,8 @@ static CmdH_Result_t CommandFunction_set(uint32_t argc, char** argv)
 
 
 /**
- * @brief    Global variable help
- *             Use: '? <globalvar>'
+ * @brief       Global variable help
+ *              Use: '? <globalvar>'
  */
 static CmdH_Result_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** argv)
 {
@@ -1204,7 +1204,7 @@ static CmdH_Result_t CommandFunction_GlobalVariableHelp(uint32_t argc, char** ar
 
 
 /**
- * @brief    List global variables
+ * @brief       List global variables
  */
 static CmdH_Result_t CommandFunction_GlobalVariableList(uint32_t argc, char** argv)
 {
@@ -1220,7 +1220,7 @@ static CmdH_Result_t CommandFunction_GlobalVariableList(uint32_t argc, char** ar
 
 
 /**
- * @brief    Print all global variable values
+ * @brief       Print all global variable values
  */
 static CmdH_Result_t CommandFunction_GlobalVariableValueList(uint32_t argc,
         char** argv)
@@ -1238,7 +1238,7 @@ static CmdH_Result_t CommandFunction_GlobalVariableValueList(uint32_t argc,
 
 #ifdef CONFIG_GLOBALVARHANDLER_TRACE_ENABLE
 /**
- * @brief    Enable/Disable trace
+ * @brief       Enable/Disable trace
  */
 static CmdH_Result_t CommandFunction_GlobalVariableTrace(uint32_t argc,
         char** argv)
@@ -1303,8 +1303,8 @@ static CmdH_Result_t CommandFunction_GlobalVariableTrace(uint32_t argc,
 
 #ifdef CONFIG_MODULE_COMMON_DAC_ENABLE
 /**
- * @brief    DAC function
- *            Use: 'dac <channel> <voltage>'
+ * @brief       DAC function
+ *              Use: 'dac <channel> <voltage>'
  */
 static CmdH_Result_t CommandFunction_dac(uint32_t argc, char** argv)
 {
@@ -1342,11 +1342,11 @@ static CmdH_Result_t CommandFunction_dac(uint32_t argc, char** argv)
 
 #ifdef CONFIG_MODULE_COMMON_IO_ENABLE
 /**
- * @brief    Common IO function
- *             Initialize and set/get io pin status
- *             "ioinit <port><pin> <input/output>"
- *             "ioout <port><pin> <set/reset>"
- *             "ioin <port><pin>
+ * @brief       Common IO function
+ *              Initialize and set/get io pin status
+ *              "ioinit <port><pin> <input/output>"
+ *              "ioout <port><pin> <set/reset>"
+ *              "ioin <port><pin>
  */
 static CmdH_Result_t CommandFunction_io(uint32_t argc, char** argv)
 {
@@ -1448,8 +1448,8 @@ static CmdH_Result_t CommandFunction_io(uint32_t argc, char** argv)
 
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
 /**
- * @brief    Common ADC function
- *             Read ADC values
+ * @brief       Common ADC function
+ *              Read ADC values
  */
 static CmdH_Result_t CommandFunction_adc(uint32_t argc, char** argv)
 {
@@ -1474,8 +1474,8 @@ static CmdH_Result_t CommandFunction_adc(uint32_t argc, char** argv)
 
 #ifdef CONFIG_MODULE_COMMON_ADC_ENABLE
 /**
- * @brief    Common ADC function
- *             Read ADC values
+ * @brief       Common ADC function
+ *              Read ADC values
  */
 static CmdH_Result_t CommandFunction_adcread(uint32_t argc, char** argv)
 {
@@ -1852,7 +1852,7 @@ static CmdH_Result_t CommandFunction_EventLog(uint32_t argc, char** argv)
 
 #ifdef CONFIG_MODULE_ADC_ENABLE
 /**
- * @brief    Read ADC values
+ * @brief       Read ADC values
  */
 static CmdH_Result_t CommandFunction_adc(uint32_t argc, char** argv)
 {
@@ -1870,8 +1870,8 @@ static CmdH_Result_t CommandFunction_adc(uint32_t argc, char** argv)
 
 #ifdef CONFIG_MODULE_FLASH_ENABLE
 /**
- * @brief    Flash erase
- *             Use: 'flashdel <address> <block/sector>'
+ * @brief       Flash erase
+ *              Use: 'flashdel <address> <block/sector>'
  */
 static CmdH_Result_t CommandFunction_flashdel(uint32_t argc, char** argv)
 {
@@ -1907,8 +1907,8 @@ static CmdH_Result_t CommandFunction_flashdel(uint32_t argc, char** argv)
 
 
 /**
- * @brief    Flash read
- *             Use: 'flashread <address>'
+ * @brief       Flash read
+ *              Use: 'flashread <address>'
  */
 static CmdH_Result_t CommandFunction_flashread(uint32_t argc, char** argv)
 {
@@ -1938,8 +1938,8 @@ static CmdH_Result_t CommandFunction_flashread(uint32_t argc, char** argv)
 
 
 /**
- * @brief    Flash write
- *             Use: 'flashwrite <address> <data>'
+ * @brief       Flash write
+ *              Use: 'flashwrite <address> <data>'
  */
 static CmdH_Result_t CommandFunction_flashwrite(uint32_t argc, char** argv)
 {
@@ -1978,7 +1978,7 @@ static CmdH_Result_t CommandFunction_flashwrite(uint32_t argc, char** argv)
 
 #ifdef CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
 /**
- * @brief    HomeAutMessage command
+ * @brief       HomeAutMessage command
  */
 static CmdH_Result_t CommandFunction_raspberrypi(uint32_t argc, char** argv)
 {
@@ -2139,9 +2139,9 @@ static CmdH_Result_t CommandFunction_mw(uint32_t argc, char** argv)
 
 #ifdef CONFIG_COMMANDLIST_GO_COMMAND_ENABLE
 /**
- * @brief    Function: go (jump to an address)
- * go <destination>
- * jump <destination> address
+ * @brief       Function: go (jump to an address)
+ *              go <destination>
+ *              jump <destination> address
  */
 static CmdH_Result_t CommandFunction_go(uint32_t argc, char** argv)
 {
@@ -2177,7 +2177,7 @@ static CmdH_Result_t CommandFunction_go(uint32_t argc, char** argv)
 
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
 /**
- * @brief    Display module
+ * @brief       Display module
  */
 static CmdH_Result_t CommandFunction_Display(uint32_t argc, char** argv)
 {
@@ -2263,7 +2263,7 @@ static CmdH_Result_t CommandFunction_Display(uint32_t argc, char** argv)
 
 #ifdef CONFIG_MODULE_IO_ENABLE
 /**
- * @brief    Get IO states
+ * @brief       Get IO states
  */
 static CmdH_Result_t CommandFunction_IO(uint32_t argc, char** argv)
 {
@@ -2300,15 +2300,15 @@ static CmdH_Result_t CommandFunction_IO(uint32_t argc, char** argv)
     }
     else if (argc > 1)
     {
-        /**
-         * @brief    Set LED (turn on, turn off, toggle, status)
-         *             Use:
-         *                led <num> on
-         *                led <num> off
-         *                led <num> toggle
-         *                led <num> status
-         *                led status
-         */
+/**
+ * @brief            Set LED (turn on, turn off, toggle, status)
+ *                   Use:
+ *                   led <num> on
+ *                   led <num> off
+ *                   led <num> toggle
+ *                   led <num> status
+ *                   led status
+ */
 
         /* Convert arg2, decimal */
         bool isFirstParamNum = false;
@@ -2398,7 +2398,7 @@ static CmdH_Result_t CommandFunction_IO(uint32_t argc, char** argv)
 
 #ifdef CONFIG_MODULE_SIMULATION_ENABLE
 /**
- * @brief    Simulation
+ * @brief       Simulation
  */
 static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 {
@@ -2597,7 +2597,7 @@ static CmdH_Result_t CommandFunction_Simulation(uint32_t argc, char** argv)
 
 #ifdef CONFIG_MODULE_TASKHANDLER_ENABLE
 /**
- * @brief    TaksHandler functions
+ * @brief       TaksHandler functions
  */
 static CmdH_Result_t CommandFunction_TaskHandler(uint32_t argc, char** argv)
 {

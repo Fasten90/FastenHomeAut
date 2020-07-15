@@ -117,7 +117,7 @@ static bool GpsMessageHandler_ConvertDate(const char * str, Date_t * date);
  *----------------------------------------------------------------------------*/
 
 /**
- * @brief    Process received GPS message
+ * @brief       Process received GPS message
  */
 void GpsHandler_ProcessMessage(const char * msg)
 {
@@ -133,9 +133,9 @@ void GpsHandler_ProcessMessage(const char * msg)
 
 
 /**
- * @brief    Handle CGNSINF message
- *           Process SIM868 GPS message
- *           Will save the message/GPS coordinate, if the message correct
+ * @brief       Handle CGNSINF message
+ *              Process SIM868 GPS message
+ *              Will save the message/GPS coordinate, if the message correct
  */
 /* TODO: Return value with success + input parameter with struct */
 static void GpsHandler_ProcessCgnsinfMessage(const char * msg)
@@ -252,7 +252,7 @@ static void GpsHandler_ProcessCgnsinfMessage(const char * msg)
 
 
 /**
- * @brief Convert "yyyyMMddhhmmss.sss" DateTime message
+ * @brief       Convert "yyyyMMddhhmmss.sss" DateTime message
  */
 static bool GpsHandler_ConvertCgnsinfDateTime(char * str, DateTime_t * dateTime)
 {
@@ -415,7 +415,7 @@ static void GpsHandler_ProcessNmeaMessage(char * msg)
 
 
 /**
- * @brief    GPS - NMEA GPRMC message processing
+ * @brief       GPS - NMEA GPRMC message processing
  */
 static bool GpsHandler_ProcessNmeaGprmcMessage(char * separated[], GPS_NmeaRmcInfo_t * rmcData)
 {
@@ -580,8 +580,8 @@ static bool GpsHandler_ProcessNmeaGprmcMessage(char * separated[], GPS_NmeaRmcIn
 
 
 /**
- * @brief   Convert HHmmSS GPS time format to Time_t object (NMEA)
- * @return  Is okay
+ * @brief       Convert HHmmSS GPS time format to Time_t object (NMEA)
+ * @return      Is okay
  */
 static bool GpsMessageHandler_ConvertTime(const char * str, Time_t * time)
 {
@@ -602,8 +602,8 @@ static bool GpsMessageHandler_ConvertTime(const char * str, Time_t * time)
 
 
 /**
- * @brief   Convert DDMMYY GPS date format to Date_t object (NMEA)
- * @return  Is okay
+ * @brief       Convert DDMMYY GPS date format to Date_t object (NMEA)
+ * @return      Is okay
  */
 static bool GpsMessageHandler_ConvertDate(const char * str, Date_t * date)
 {
@@ -628,7 +628,7 @@ static bool GpsMessageHandler_ConvertDate(const char * str, Date_t * date)
  * @param        coordinateString        coordinate string which shall be converted
  * @param        len                     degree (not minute) length (2-3)
  * @return        bool                   true, if successful
- *                                       false, if failed
+ *                false, if failed
  */
 static bool GpsHandler_Coord2Float(float * floatValue, char * coordinateString, uint8_t len)
 {
@@ -735,9 +735,9 @@ static bool GpsHandler_NmeaGprmcCheckAndConvert(GPS_NmeaRmcInfo_t * rmcData, Coo
 
 
 /**
- * @brief     Check coordinate values
- * @retval    true    if good
- * @retval    false    if wrong
+ * @brief       Check coordinate values
+ * @retval      true    if good
+ * @retval      false    if wrong
  */
 static bool GpsHandler_CheckCoordRanges(Coord_t * coord)
 {
@@ -762,7 +762,7 @@ static bool GpsHandler_CheckCoordRanges(Coord_t * coord)
 
 
 /**
- * @brief    Save CoordLog
+ * @brief       Save CoordLog
  */
 static void GpsHandler_SaveCoordinate(CoordinateLog_t * coord)
 {
@@ -789,7 +789,7 @@ static void GpsHandler_SaveCoordinate(CoordinateLog_t * coord)
 
 
 /**
- * @brief    Get Last coordinate
+ * @brief       Get Last coordinate
  */
 bool GpsHandler_GetLastCoordinateLog(CoordinateLog_t * coordLog)
 {
@@ -819,7 +819,7 @@ bool GpsHandler_GetLastCoordinateLog(CoordinateLog_t * coordLog)
 
 
 /**
- * @brief    Get fix id-s coordinate
+ * @brief       Get fix id-s coordinate
  */
 bool GpsHandler_GetCoordinate(CoordinateLog_t * coordLog, CoordLogID_t id)
 {
@@ -848,7 +848,7 @@ bool GpsHandler_GetCoordinate(CoordinateLog_t * coordLog, CoordLogID_t id)
 
 
 /**
- * @brief    Get coordinate from interval
+ * @brief       Get coordinate from interval
  */
 bool GpsHandler_GetCoordinateByTime(CoordinateLog_t * coordLog, DateTime_t * fromDateTime, DateTime_t * toDateTime)
 {
@@ -894,7 +894,7 @@ bool GpsHandler_GetCoordinateByTime(CoordinateLog_t * coordLog, DateTime_t * fro
 
 
 /**
- * @brief    Get coordinate from systick interval
+ * @brief       Get coordinate from systick interval
  */
 static bool GPS_FindCoordinateFromBuffer(CoordinateLog_t * coordLog, uint32_t startSysTick, uint32_t endSysTick)
 {
@@ -934,7 +934,7 @@ static bool GPS_FindCoordinateFromBuffer(CoordinateLog_t * coordLog, uint32_t st
 
 
 /**
- * @brief    Clear GPS buffer and statistics
+ * @brief       Clear GPS buffer and statistics
  */
 void GpsHandler_ClearBuffer(void)
 {
@@ -1031,7 +1031,7 @@ static void DebugPrintCoordinate(CoordinateLog_t * coordLog)
 
 #ifdef CONFIG_MODULE_GPSHANDLER_UNITTEST_ENABLE
 /**
- * @brief    GpsHandler module Unit Test
+ * @brief       GpsHandler module Unit Test
  */
 uint32_t GpsHandler_UnitTest(void)
 {

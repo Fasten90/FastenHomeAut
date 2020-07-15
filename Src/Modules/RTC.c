@@ -44,7 +44,7 @@ RTC_HandleTypeDef RtcHandle;
 
 
 /**
- * @brief    Initialize RTC
+ * @brief       Initialize RTC
  */
 void RTC_Init(void)
 {
@@ -76,17 +76,17 @@ void RTC_Init(void)
 
 
 /**
-  * @brief RTC MSP Initialization
-  *        This function configures the hardware resources used in this example
-  * @param hrtc RTC handle pointer
-  *
-  * @note  Care must be taken when HAL_RCCEx_PeriphCLKConfig() is used to select
-  *        the RTC clock source; in this case the Backup domain will be reset in
-  *        order to modify the RTC Clock source, as consequence RTC registers (including
-  *        the backup registers) and RCC_BDCR register are set to their reset values.
-  *
-  * @retval None
-  */
+ * @brief       RTC MSP Initialization
+ *              This function configures the hardware resources used in this example
+ * @param       hrtc RTC handle pointer
+ *              
+ * @note        Care must be taken when HAL_RCCEx_PeriphCLKConfig() is used to select
+ *              the RTC clock source; in this case the Backup domain will be reset in
+ *              order to modify the RTC Clock source, as consequence RTC registers (including
+ *              the backup registers) and RCC_BDCR register are set to their reset values.
+ *              
+ * @retval      None
+ */
 void HAL_RTC_MspInit(RTC_HandleTypeDef *hrtc)
 {
     UNUSED_ARGUMENT(hrtc);
@@ -129,10 +129,10 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef *hrtc)
 
 
 /**
-  * @brief  Configure the current time and date.
-  * @param  None
-  * @retval None
-  */
+ * @brief       Configure the current time and date.
+ * @param       None
+ * @retval      None
+ */
 void RTC_CalendarConfig(DateTime_t *dateTime)
 {
 
@@ -147,7 +147,7 @@ void RTC_CalendarConfig(DateTime_t *dateTime)
 
 
 /**
- * @brief    Set date
+ * @brief       Set date
  */
 void RTC_SetDate(Date_t *date)
 {
@@ -169,7 +169,7 @@ void RTC_SetDate(Date_t *date)
 
 
 /**
- * @brief    Set time
+ * @brief       Set time
  */
 void RTC_SetTime(Time_t *time)
 {
@@ -195,7 +195,7 @@ void RTC_SetTime(Time_t *time)
 
 
 /**
- * @brief    Get DateTime
+ * @brief       Get DateTime
  */
 void RTC_GetDateTime(DateTime_t *dateTime)
 {
@@ -206,7 +206,7 @@ void RTC_GetDateTime(DateTime_t *dateTime)
 
 
 /**
- * @brief    Get date
+ * @brief       Get date
  */
 void RTC_GetDate(Date_t *date)
 {
@@ -223,7 +223,7 @@ void RTC_GetDate(Date_t *date)
 
 
 /**
- * @brief    Get time
+ * @brief       Get time
  */
 void RTC_GetTime(Time_t *time)
 {
@@ -240,12 +240,12 @@ void RTC_GetTime(Time_t *time)
 
 
 /**
-  * @brief  Display the current time and date.
-  * @param  showdate : pointer to buffer
-  * @param  showtime : pointer to buffer
-  * @retval None
-  *             !! Allocate correct size of string buffer!!
-  */
+ * @brief       Display the current time and date.
+ * @param       showdate : pointer to buffer
+ * @param       showtime : pointer to buffer
+ * @retval      None
+ *              !! Allocate correct size of string buffer!!
+ */
 void RTC_CalendarShow(char *showdate, char *showtime)
 {
     RTC_DateTypeDef date;

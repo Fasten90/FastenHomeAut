@@ -52,7 +52,7 @@ static EventRun_t Events[Event_Count] = { 0 };
 
 
 /**
- * @brief    Initialize EventHandler
+ * @brief       Initialize EventHandler
  */
 void EventHandler_Init(void)
 {
@@ -84,7 +84,7 @@ void EventHandler_Init(void)
 
 
 /**
- * @brief    Generate event
+ * @brief       Generate event
  */
 void EventHandler_GenerateEvent(EventName_t eventName, EventData_t eventData, TaskID_t taskSource)
 {
@@ -123,7 +123,7 @@ void EventHandler_GenerateEvent(EventName_t eventName, EventData_t eventData, Ta
 
 
 /**
- * @brief    Print log
+ * @brief       Print log
  */
 bool EventHandler_CheckEventState(EventName_t eventName, TaskID_t taskSource)
 {
@@ -160,7 +160,7 @@ bool EventHandler_CheckEventState(EventName_t eventName, TaskID_t taskSource)
 
 
 /**
- * @brief    Clear event (This event is not valid now)
+ * @brief       Clear event (This event is not valid now)
  */
 void EventHandler_ClearEvent(EventName_t eventName, TaskID_t taskSource)
 {
@@ -186,7 +186,7 @@ void EventHandler_ClearEvent(EventName_t eventName, TaskID_t taskSource)
 
 
 /**
- * @brief    Get Event type name
+ * @brief       Get Event type name
  */
 const char * EventHandler_GetEventTypeName(EventType_t eventType)
 {
@@ -219,7 +219,7 @@ const char * EventHandler_GetEventTypeName(EventType_t eventType)
 
 #ifdef CONFIG_MODULE_EVENTHANDLER_UNITTEST_ENABLE
 /**
- * @brief    EventHandler UnitTest
+ * @brief       EventHandler UnitTest
  */
 uint32_t EventHandler_UnitTest(void)
 {

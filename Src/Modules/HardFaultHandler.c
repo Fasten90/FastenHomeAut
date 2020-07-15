@@ -51,7 +51,7 @@ static const char * HardFault_GetReason(CortexM_HardFault_CCR_register_t reg);
 
 
 /**
- * @brief    Get HardFault reason
+ * @brief       Get HardFault reason
  */
 static const char * HardFault_GetReason(CortexM_HardFault_CCR_register_t reg)
 {
@@ -85,7 +85,7 @@ static const char * HardFault_GetReason(CortexM_HardFault_CCR_register_t reg)
 
 
 /**
- * @brief    Print HardFault reason
+ * @brief       Print HardFault reason
  */
 void HardFault_PrintHardFaultReason(void)
 {
@@ -102,7 +102,7 @@ void HardFault_PrintHardFaultReason(void)
 
 
 /**
- * @brief    Get registers from stack - called from HardFault ISR
+ * @brief       Get registers from stack - called from HardFault ISR
  */
 void prvGetRegistersFromStack(uint32_t *pulFaultStackAddress)
 {

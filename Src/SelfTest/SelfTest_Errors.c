@@ -48,7 +48,7 @@ static uint32_t SelfTest_Erros_StackOverFlow_RecursiveInfiniteFunction(uint32_t 
 
 /**
  * Generate Fault to test FaultHandler()
- * @note    !! Be careful !! It is an error, the SW will crash (e.g. CortexM go to FaultHandler) !!
+ * @note        !! Be careful !! It is an error, the SW will crash (e.g. CortexM go to FaultHandler) !!
  */
 void SelfTest_Errors_Constwrite(void)
 {
@@ -69,8 +69,8 @@ void SelfTest_Errors_Constwrite(void)
 
 /**
  * Test zero dividing
- * @note    !! Be careful !! It is an error, the SW will crash (e.g. CortexM go to FaultHandler) !!
- * @note    Not every target support the ZeroDivide "HardFault" flag
+ * @note        !! Be careful !! It is an error, the SW will crash (e.g. CortexM go to FaultHandler) !!
+ * @note        Not every target support the ZeroDivide "HardFault" flag
  */
 void SelfTest_Errors_ZeroDivide(void)
 {

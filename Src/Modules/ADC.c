@@ -73,7 +73,7 @@ static float ADC_ConvertToSourceVoltage(uint32_t readValue);
 
 
 /**
- * @brief    Initialize IOs
+ * @brief       Initialize IOs
  */
 void ADC_Init(void)
 {
@@ -167,7 +167,7 @@ void ADC_Init(void)
 
 
 /**
- * @brief    ADC Msp Init for HAL driver
+ * @brief       ADC Msp Init for HAL driver
  */
 void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 {
@@ -229,7 +229,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 
 
 /**
- * @brief    ADC callback function for HAL driver
+ * @brief       ADC callback function for HAL driver
  */
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
@@ -244,7 +244,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 
 
 /**
- * @brief    ADC callback function - called by HAL
+ * @brief       ADC callback function - called by HAL
  */
 void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
 {
@@ -254,7 +254,7 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
 
 
 /**
- * @brief    ADC error function - called by HAL
+ * @brief       ADC error function - called by HAL
  */
 void HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
 {
@@ -265,7 +265,7 @@ void HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
 
 
 /**
- * @brief    Convert all measurements
+ * @brief       Convert all measurements
  */
 void ADC_ConvertAllMeasuredValues(void)
 {
@@ -297,7 +297,7 @@ void ADC_ConvertAllMeasuredValues(void)
 
 
 /**
- * @brief    Convert read value to voltage
+ * @brief       Convert read value to voltage
  */
 static float ADC_ConvertToVoltage(uint32_t readValue)
 {
@@ -311,7 +311,7 @@ static float ADC_ConvertToVoltage(uint32_t readValue)
 
 
 /**
- * @brief    Convert Source voltage
+ * @brief       Convert Source voltage
  */
 static float ADC_ConvertToSourceVoltage(uint32_t readValue)
 {
@@ -325,7 +325,7 @@ static float ADC_ConvertToSourceVoltage(uint32_t readValue)
 
 
 /**
- * @brief    Get ADC value
+ * @brief       Get ADC value
  */
 float ADC_GetValue(ADC_MeasurementData_t meas)
 {
@@ -340,7 +340,7 @@ float ADC_GetValue(ADC_MeasurementData_t meas)
 
 
 /**
- * @brief    Print all ADC values
+ * @brief       Print all ADC values
  */
 void ADC_PrintAllValues(void)
 {

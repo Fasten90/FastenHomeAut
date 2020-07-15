@@ -66,12 +66,12 @@ static void SSD1306_display(void);
  *----------------------------------------------------------------------------*/
 
 /**
- * @Note    These drawX functions was copied from SSD display driver source files.
- *          These were optimized for the SSD... 128x64
+ * @Note        These drawX functions was copied from SSD display driver source files.
+ *              These were optimized for the SSD... 128x64
  */
 
 /**
- * @brief    The most basic function, set a single pixel
+ * @brief       The most basic function, set a single pixel
  */
 /* __attribute__( ( section(".data") ) ) */
 void DisplayHandler_DrawPixel(uint8_t x, uint8_t y, Display_Color_t color)
@@ -445,7 +445,7 @@ void DisplayHandler_DrawFastHLineInternal(int16_t x, int16_t y, int16_t w,
 
 
 /**
- * @brief    Draw image (put pixel to buffer image)
+ * @brief       Draw image (put pixel to buffer image)
  */
 void DisplayHandler_DrawImage(uint8_t setx, uint8_t sety, uint8_t sizex, uint8_t sizey, uint8_t *img)
 {
@@ -469,7 +469,7 @@ void DisplayHandler_DrawImage(uint8_t setx, uint8_t sety, uint8_t sizex, uint8_t
 
 
 /**
- *    @brief    Clear everything
+ * @brief       Clear everything
  */
 void DisplayHandler_ClearDisplay(void)
 {
@@ -531,7 +531,7 @@ static void SSD1306_display(void)
 #if defined(CONFIG_MODULE_DISPLAY_TEST_WITH_TERMINAL) || defined(CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE)
 
 /**
- * @brief    Print Display (Actual screen) on debug port
+ * @brief       Print Display (Actual screen) on debug port
  */
 void DisplayHandler_SendOnTerminal(void)
 {

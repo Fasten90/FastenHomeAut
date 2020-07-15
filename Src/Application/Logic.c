@@ -114,8 +114,8 @@ static void Logic_Display_PrintMainMenuList(void);
 
 #ifdef CONFIG_FUNCTION_DISPLAY_MENU
 /**
- * @brief    "New submenu" initialization
- * @note    Do not call often, only at menu changing
+ * @brief       "New submenu" initialization
+ * @note        Do not call often, only at menu changing
  */
 void Logic_Display_Init(void)
 {
@@ -148,8 +148,8 @@ void Logic_Display_Init(void)
 
 #if defined(CONFIG_MODULE_BUTTON_ENABLE) || defined(CONFIG_MODULE_BUTTONSIMULATOR_ENABLE)
 /**
- * @brief    Button event handler
- *             Only one button handling (button = i. button
+ * @brief       Button event handler
+ *              Only one button handling (button = i. button
  */
 void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 {

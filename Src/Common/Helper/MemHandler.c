@@ -34,9 +34,9 @@
 #ifdef CONFIG_STANDARD_LIBRARY_MEMHANDLERS_ENABLE
 /**
  * @brief        Memory copy
- * @param[out] destination    where to copy
- * @param[in]  source         from copy
- * @param[in]  num            How many length to copy (in bytes)?
+ * @param[out]  destination    where to copy
+ * @param[in]   source         from copy
+ * @param[in]   num            How many length to copy (in bytes)?
  */
 void * memcpy(void * destination, const void * source, size_t size)
 {
@@ -225,9 +225,9 @@ int memcmp(const void * ptr1, const void * ptr2, size_t size)
 
 
 /**
- * @brief    Stack overflow checker
- *           Fill large RAM buffer with GUARD values
- *           Useful for Stack size calculate (StackOverFlow checker)
+ * @brief       Stack overflow checker
+ *              Fill large RAM buffer with GUARD values
+ *              Useful for Stack size calculate (StackOverFlow checker)
  */
 void mem_StackFillWithGuardValues(void)
 {
@@ -238,7 +238,7 @@ void mem_StackFillWithGuardValues(void)
 
 
 /**
- * @brief    Check memory with local variable: how many bytes not filled by GUARD values?
+ * @brief       Check memory with local variable: how many bytes not filled by GUARD values?
  */
 void mem_CheckStackGuardValues(void)
 {
@@ -284,9 +284,9 @@ void mem_CheckStackGuardValues(void)
 
 
 /**
- * @brief     Check pointer is in good memory range?
- * @retval    true     is ok
- * @retval    false    wrong
+ * @brief       Check pointer is in good memory range?
+ * @retval      true     is ok
+ * @retval      false    wrong
  */
 bool mem_CheckPointer(void * pnt, size_t size)
 {
@@ -331,7 +331,7 @@ bool mem_CheckPointer(void * pnt, size_t size)
 
 #ifdef CONFIG_MODULE_MEM_UNITTEST_ENABLE
 /**
- * @brief    MEM module Unit Test
+ * @brief       MEM module Unit Test
  */
 uint32_t MEM_UnitTest(void)
 {

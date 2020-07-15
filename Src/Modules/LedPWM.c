@@ -48,7 +48,7 @@ TIM_HandleTypeDef    TimLedGreenHandle;
 
 
 /**
- * @brief    LEDs with timer
+ * @brief       LEDs with timer
  */
 void LedPWM_Init(void)
 {

@@ -102,7 +102,7 @@ const uint8_t AppList_Num = NUM_OF(AppList);
 
 
 /**
- * @brief  AppList initialization
+ * @brief       AppList initialization
  */
 void AppList_Init(void)
 {

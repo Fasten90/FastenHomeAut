@@ -51,7 +51,7 @@ static void Reset_GetResetReasonString(uint32_t resetReason, char *resetString, 
 
 
 /**
- * @brief Get reset reason
+ * @brief       Get reset reason
  */
 static uint32_t Reset_GetResetReason(void)
 {
@@ -95,7 +95,7 @@ static uint32_t Reset_GetResetReason(void)
 
 
 /**
- * @brief    Get reset reason string
+ * @brief       Get reset reason string
  */
 static void Reset_GetResetReasonString(uint32_t resetReason, char *resetString, uint8_t strMaxLength)
 {
@@ -173,7 +173,7 @@ static void Reset_GetResetReasonString(uint32_t resetReason, char *resetString, 
 
 
 /**
- * @brief    Clear reset flags
+ * @brief       Clear reset flags
  */
 void Reset_ClearResetFlags(void)
 {
@@ -183,7 +183,7 @@ void Reset_ClearResetFlags(void)
 
 
 /**
- * @brief    Print reset reasons to string
+ * @brief       Print reset reasons to string
  */
 size_t Reset_PrintResetReasons(char * str, uint8_t strLength)
 {

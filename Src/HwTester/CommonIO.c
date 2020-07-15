@@ -32,7 +32,7 @@ static uint32_t IO_GetMode(IO_Type io);
 
 
 /**
- * @brief    Initialize IO pin
+ * @brief       Initialize IO pin
  */
 bool CommonIO_Init(char port, uint8_t pin, IO_Type io)
 {
@@ -60,7 +60,7 @@ bool CommonIO_Init(char port, uint8_t pin, IO_Type io)
 
 
 /**
- * @brief    Set output
+ * @brief       Set output
  */
 bool CommonIO_SetOutput(char port, uint8_t pin, Output_Type output)
 {
@@ -119,7 +119,7 @@ bool CommonIO_SetOutput(char port, uint8_t pin, Output_Type output)
 
 
 /**
- * @brief    Read input
+ * @brief       Read input
  */
 bool CommonIO_ReadPin(char port, uint8_t pin)
 {
@@ -144,7 +144,7 @@ bool CommonIO_ReadPin(char port, uint8_t pin)
 
 
 /**
- * @brief    Enable peripheral clock
+ * @brief       Enable peripheral clock
  */
 static bool IO_EnablePeripheralClock(char port)
 {
@@ -190,7 +190,7 @@ static bool IO_EnablePeripheralClock(char port)
 
 
 /**
- * @brief    Convert "port name" to "port"
+ * @brief       Convert "port name" to "port"
  */
 static GPIO_TypeDef * IO_GetPort(char port)
 {
@@ -236,7 +236,7 @@ static GPIO_TypeDef * IO_GetPort(char port)
 
 
 /**
- * @brief    Convert "num" to "pin"
+ * @brief       Convert "num" to "pin"
  */
 static uint32_t IO_GetPin(uint8_t pin)
 {
@@ -319,7 +319,7 @@ static uint32_t IO_GetPin(uint8_t pin)
 
 
 /**
- * @brief    Get IO mode
+ * @brief       Get IO mode
  */
 static uint32_t IO_GetMode(IO_Type io)
 {

@@ -68,7 +68,7 @@ static void SSD1306_fastSPIwrite(uint8_t d);
  *----------------------------------------------------------------------------*/
 
 /**
- * @brief    Initialize Display - SSD1306
+ * @brief       Initialize Display - SSD1306
  */
 void Display_SSD1306_Init(void)
 {
@@ -309,7 +309,7 @@ static void SSD1306_HardwareInit(void)
 
 
 /**
- * @brief    Send command on SPI
+ * @brief       Send command on SPI
  */
 static void SSD1306_command(uint8_t c)
 {
@@ -328,7 +328,7 @@ static void SSD1306_command(uint8_t c)
 
 
 /**
- * @brief    Send command on SPI to Display
+ * @brief       Send command on SPI to Display
  */
 static void SSD1306_fastSPIwrite(uint8_t d)
 {
@@ -349,8 +349,8 @@ void SSD1306_drawFixVerticalLine(int16_t x, int16_t y, uint8_t row)
 
 
 /**
- * @brief    Invert display
- * TODO: Delete?
+ * @brief       Invert display
+ *              TODO: Delete?
  */
 void SSD1306_invertDisplay(bool invert)
 {
@@ -546,7 +546,7 @@ void SSD1306_display(void)
 
 
 /**
- * @brief    Display SPI communication IRQ handler
+ * @brief       Display SPI communication IRQ handler
  */
 void DISPLAY_SSD1306_SPIx_IRQHandler(void)
 {
@@ -556,11 +556,11 @@ void DISPLAY_SSD1306_SPIx_IRQHandler(void)
 
 
 /**
-  * @brief Tx Transfer completed callback.
-  * @param  hspi: pointer to a SPI_HandleTypeDef structure that contains
-  *               the configuration information for SPI module.
-  * @retval None
-  */
+ * @brief       Tx Transfer completed callback.
+ * @param       hspi: pointer to a SPI_HandleTypeDef structure that contains
+ *              the configuration information for SPI module.
+ * @retval      None
+ */
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 {
     /* Suppress warning */
@@ -581,12 +581,12 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 
 
 /**
-  * @brief  SPI error callbacks
-  * @param  hspi: SPI handle
-  * @note   This example shows a simple way to report transfer error, and you can
-  *         add your own implementation.
-  * @retval None
-  */
+ * @brief       SPI error callbacks
+ * @param       hspi: SPI handle
+ * @note        This example shows a simple way to report transfer error, and you can
+ *              add your own implementation.
+ * @retval      None
+ */
 void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi)
 {
     /* Suppress warning */
@@ -605,10 +605,10 @@ void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi)
 
 #if defined(CONFIG_DISPLAY_SPI_USE_DMA)
 /**
-  * @brief  This function handles DMA interrupt request.
-  * @param  None
-  * @retval None
-  */
+ * @brief       This function handles DMA interrupt request.
+ * @param       None
+ * @retval      None
+ */
 void SPIx_DMA_TX_IRQHandler(void)
 {
     HAL_DMA_IRQHandler(SpiHandle.hdmatx);

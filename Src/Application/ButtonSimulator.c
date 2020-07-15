@@ -55,7 +55,7 @@ static void ButtonSimulator_ExecuteKey(ButtonSimulator_Key_t key);
 
 #ifndef CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON
 /**
- * @brief  ButtonSimulator set
+ * @brief       ButtonSimulator set
  */
 void ButtonSimulator_Set(bool newValue)
 {

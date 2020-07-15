@@ -59,10 +59,10 @@ void EXTI0_1_IRQHandler(void)
 }
 
 /**
-  * @brief  This function handles external lines 4 to 15 interrupt request.
-  * @param  None
-  * @retval None
-  */
+ * @brief       This function handles external lines 4 to 15 interrupt request.
+ * @param       None
+ * @retval      None
+ */
 void EXTI4_15_IRQHandler(void)
 {
 
@@ -277,10 +277,10 @@ void EXTI4_15_IRQHandler(void)
 
 
 /**
-  * @brief EXTI line detection callbacks
-  * @param GPIO_Pin: Specifies the pins connected EXTI line
-  * @retval None
-  */
+ * @brief       EXTI line detection callbacks
+ * @param       GPIO_Pin: Specifies the pins connected EXTI line
+ * @retval      None
+ */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 

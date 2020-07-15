@@ -198,8 +198,8 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
  * OK       if condition is TRUE
  * Error    if condition is FALSE
  *
- * @note    Only can use on a function
- * @note    Be careful, it only works if sizes/datas available in compile-time.
+ * @note        Only can use on a function
+ * @note        Be careful, it only works if sizes/datas available in compile-time.
  */
 #define BUILD_ASSERT(condition) ((void)sizeof(char[1 - 2*!(condition)]))
 /*

@@ -42,7 +42,7 @@ static const char *UnitTest_FileName = NULL;
 
 
 /**
- * @brief    Start unit test
+ * @brief       Start unit test
  */
 void UnitTest_Start(const char *moduleName, const char *fileName)
 {
@@ -59,7 +59,7 @@ void UnitTest_Start(const char *moduleName, const char *fileName)
 
 
 /**
- * @brief    Check unit test result (~assert) (+ condition string)
+ * @brief       Check unit test result (~assert) (+ condition string)
  */
 void UnitTest_CheckResult(bool isValid, const char *conString, const char *errorString, uint32_t line)
 {
@@ -120,8 +120,8 @@ void UnitTest_CheckResult(bool isValid, const char *conString, const char *error
 
 
 /**
- * @brief Finish unit test
- * @retval    0 if successfully run all tests
+ * @brief       Finish unit test
+ * @retval      0 if successfully run all tests
  */
 uint32_t UnitTest_End(void)
 {

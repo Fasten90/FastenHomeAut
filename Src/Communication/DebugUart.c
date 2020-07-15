@@ -96,7 +96,7 @@ xSemaphoreHandle DebugUart_Tx_Semaphore = NULL;
 
 
 /**
- * @brief    DebugUart init
+ * @brief       DebugUart init
  */
 void DebugUart_Init(void)
 {
@@ -123,7 +123,7 @@ void DebugUart_Init(void)
 
 
 /**
- * @brief    Send enable
+ * @brief       Send enable
  */
 static inline void DebugUart_SendEnable(void)
 {
@@ -133,7 +133,7 @@ static inline void DebugUart_SendEnable(void)
 
 
 /**
- * @brief    Receive enable
+ * @brief       Receive enable
  */
 void DebugUart_ReceiveEnable(void)
 {
@@ -148,7 +148,7 @@ void DebugUart_ReceiveEnable(void)
 
 
 /**
- * @brief    Send a char on USART
+ * @brief       Send a char on USART
  */
 bool DebugUart_SendChar(char c)
 {
@@ -166,7 +166,7 @@ bool DebugUart_SendChar(char c)
 
 
 /**
- * @brief    Send string on USART
+ * @brief       Send string on USART
  */
 size_t DebugUart_SendMessage(const char *msg)
 {
@@ -191,7 +191,7 @@ size_t DebugUart_SendMessage(const char *msg)
 
 
 /**
- * @brief Send message with newline
+ * @brief       Send message with newline
  */
 size_t DebugUart_SendLine(const char *msg)
 {
@@ -207,8 +207,8 @@ size_t DebugUart_SendLine(const char *msg)
 
 
 /**
- * @brief    Send message with blocking mode
- *             Use only extreme / important situation!
+ * @brief       Send message with blocking mode
+ *              Use only extreme / important situation!
  */
 size_t DebugUart_SendMessageBlocked(const char * msg)
 {
@@ -226,8 +226,8 @@ size_t DebugUart_SendMessageBlocked(const char * msg)
 
 
 /**
- * @brief    Send line (blocking mode)
- * @note    Use only important / large message
+ * @brief       Send line (blocking mode)
+ * @note        Use only important / large message
  */
 size_t DebugUart_SendLineBlocked(const char * msg)
 {
@@ -243,8 +243,8 @@ size_t DebugUart_SendLineBlocked(const char * msg)
 
 
 /**
- * @brief    Function like printf(); Print on debug serial port
- *             Copy character to buffer and after that, sending.
+ * @brief       Function like printf(); Print on debug serial port
+ *              Copy character to buffer and after that, sending.
  */
 size_t uprintf(const char *format, ...)
 {
@@ -273,7 +273,7 @@ size_t uprintf(const char *format, ...)
 
 #if !defined(CONFIG_MODULE_TERMINAL_ENABLE)
 /**
- * @brief    Process received characters (if Terminal is not enabled)
+ * @brief       Process received characters (if Terminal is not enabled)
  */
 void DebugUart_ProcessReceivedCharacters(void)
 {

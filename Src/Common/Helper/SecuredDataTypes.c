@@ -55,7 +55,7 @@ static uint8_t Secured_ErrorCnt = 0;
  *----------------------------------------------------------------------------*/
 
 /**
- * @brief    Get secured bool value
+ * @brief       Get secured bool value
  */
 bool Get_SecuredBool(SecuredBool_t *data)
 {
@@ -80,7 +80,7 @@ bool Get_SecuredBool(SecuredBool_t *data)
 
 
 /**
- * @brief    Set secured bool value
+ * @brief       Set secured bool value
  */
 void Set_SecuredBool(SecuredBool_t *data, bool value)
 {
@@ -96,7 +96,7 @@ void Set_SecuredBool(SecuredBool_t *data, bool value)
 
 
 /**
- * @brief    Get secured uint32_t value
+ * @brief       Get secured uint32_t value
  */
 uint32_t Get_SecuredUint32(SecuredUint32_t *data)
 {
@@ -121,7 +121,7 @@ uint32_t Get_SecuredUint32(SecuredUint32_t *data)
 
 
 /**
- * @brief    Set secured uint32_t value
+ * @brief       Set secured uint32_t value
  */
 void Set_SecuredUint32(SecuredUint32_t *data, uint32_t value)
 {
@@ -138,7 +138,7 @@ void Set_SecuredUint32(SecuredUint32_t *data, uint32_t value)
 
 #ifdef CONFIG_MODULE_SECUREDDATATYPES_UNITTEST_ENABLE
 /**
- * @brief    Secured data types Unit test
+ * @brief       Secured data types Unit test
  */
 uint32_t SecuredDataTypes_UnitTest(void)
 {

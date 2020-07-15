@@ -117,7 +117,7 @@ static void Logic_Display_PrintSnakeMenuList(void);
 
 
 /**
- * @brief    Initialize Snake game (start position, etc.)
+ * @brief       Initialize Snake game (start position, etc.)
  */
 void Snake_Init(void)
 {

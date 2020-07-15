@@ -63,7 +63,7 @@ static size_t EscapeBrowser_PrintLogMessage(char *str, const char *msg);
 
 
 /**
- * @brief  EscapeBrowser initialization
+ * @brief       EscapeBrowser initialization
  */
 void EscapeBrowser_Init(EscapeBrowser_GetLineFunction getFunc)
 {

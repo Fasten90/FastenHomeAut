@@ -65,7 +65,7 @@ extern DebugRecord_t DebugTasks[];
 
 
 /**
- * @brief    Print fix string
+ * @brief       Print fix string
  */
 void Debug_Print(Debug_t debugTask, const char *msg)
 {
@@ -106,8 +106,8 @@ void Debug_Print(Debug_t debugTask, const char *msg)
 
 
 /**
- * @brief    Debug print
- *             The parameterized debug task is has color and task name, which printed out
+ * @brief       Debug print
+ *              The parameterized debug task is has color and task name, which printed out
  */
 void Debug_Printf(Debug_t debugTask, const char *format, ...)
 {
@@ -175,7 +175,7 @@ void Debug_Printf(Debug_t debugTask, const char *format, ...)
 
 
 /**
- * @brief    Enable-Disable debug print
+ * @brief       Enable-Disable debug print
  */
 bool Debug_SetEnable(Debug_t task, bool enable)
 {
@@ -190,7 +190,7 @@ bool Debug_SetEnable(Debug_t task, bool enable)
 
 
 /**
- * @brief    Enable-Disable debug task with name
+ * @brief       Enable-Disable debug task with name
  */
 bool Debug_SetDebugTaskWithName(char *name, bool enable)
 {
@@ -215,7 +215,7 @@ bool Debug_SetDebugTaskWithName(char *name, bool enable)
 
 
 /**
- * @brief    Print DebugList Table Header
+ * @brief       Print DebugList Table Header
  */
 static void Debug_PrintDebugListTableHeader(const char * fixheader, char * str, uint8_t strMaxLen, char * header)
 {
@@ -225,7 +225,7 @@ static void Debug_PrintDebugListTableHeader(const char * fixheader, char * str, 
 
 
 /**
- * @brief    Print Debug list
+ * @brief       Print Debug list
  */
 void Debug_PrintDebugList(void)
 {
