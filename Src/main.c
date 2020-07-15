@@ -264,6 +264,16 @@ static const char * GetStrListElement(uint8_t i)
 }
 #endif
 
+#ifdef CONFIG_MODULE_UNITTEST_ENABLE
+static void UnitTest_Finished(void);
+static volatile bool UnitTest_Finished_flag = false;
+
+static void UnitTest_Finished(void)
+{
+    UnitTest_Finished_flag = true;
+}
+
+#endif
 
 
 /**
@@ -297,7 +307,7 @@ int main(void)
 #endif /* CONFIG_MODULE_SELFTEST_ENABLE */
 
 
-#ifdef CONFIG_PLATFORM_X86
+#ifdef CONFIG_UNITTEST_EXECUTE_AUTOMATICALLY
     /* Windows functions - Run unittest immediately */
 
 #ifdef CONFIG_MODULE_UNITTEST_ENABLE
@@ -322,6 +332,8 @@ int main(void)
 #if (CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE == 1)
     /* Return with UnitTest result: */
     exit(utResult);
+#else
+    UnitTest_Finished();
 #endif /* CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE */
 
 #endif /* CONFIG_MODULE_UNITTEST_ENABLE */
@@ -329,7 +341,7 @@ int main(void)
     /* STDIN */
     UART_HandleTypeDef Debug_UartHandle;
     HAL_UART_Init(&Debug_UartHandle);
-#endif /* CONFIG_PLATFORM_X86 */
+#endif /* CONFIG_UNITTEST_EXECUTE_AUTOMATICALLY */
 
 
 #ifdef CONFIG_MODULE_MEASUREMENTTIMER_ENABLE
