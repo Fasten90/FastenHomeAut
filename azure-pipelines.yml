@@ -70,7 +70,7 @@ stages:
         # Build the project.
         echo 'Start Make'
         #make VERBOSE=1
-        make VERBOSE=1 > GCC_ARM_build.log 2>&1
+        make VERBOSE=1 &>> GCC_ARM_build.log
 
         # Echo the file
         type GCC_ARM_build.log
