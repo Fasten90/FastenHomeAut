@@ -73,6 +73,7 @@ stages:
         make VERBOSE=1 &>> GCC_ARM_build.log
 
         # Echo the file
+        echo 'Print: GCC_ARM_build.log'
         cat GCC_ARM_build.log
 
         # Check the results
@@ -86,8 +87,9 @@ stages:
         if [ -f "$file" ]
         then
             echo "$0: File '${file}' has found."
-            echo 'Finished...'
-            exit 0
+            # TODO: Turned off as continue the execution
+            #echo 'Finished...'
+            #exit 0
         else
             echo "$0: File '${file}' not found."
             echo 'Finished...'
