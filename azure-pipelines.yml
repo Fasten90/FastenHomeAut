@@ -98,10 +98,26 @@ stages:
         
         echo 'Install xpack-QEMU'
         # https://www.npmjs.com/package/@xpack-dev-tools/qemu-arm
-        npm install --global xpm@latest
-        xpm install --global @xpack-dev-tools/qemu-arm@latest
         
-        qemu-system-gnuarmeclipse.exe --version
+        # TODO: Delete
+        #npm install --global xpm@latest
+        #xpm install --global @xpack-dev-tools/qemu-arm@latest
+        #qemu-system-gnuarmeclipse.exe --version
+
+
+        cd ../../
+
+        # Install with manual
+        # https://xpack.github.io/qemu-arm/install/
+        # downloaded file
+        wget https://github.com/xpack-dev-tools/qemu-arm-xpack/releases/download/v2.8.0-9/xpack-qemu-arm-2.8.0-9-linux-x64.tar.gz
+                
+        mkdir -p opt
+        cd opt
+
+        tar xvf ../xpack-qemu-arm-2.8.0-7-linux-x64.tgz
+        chmod -R -w xPacks/qemu-arm/2.8.0-7
+        ./xPacks/qemu-arm/2.8.0-7/bin/qemu-system-gnuarmeclipse --version
 
 
     - publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild/GCC_ARM_build.log
