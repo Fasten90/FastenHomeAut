@@ -130,6 +130,16 @@ stages:
         bin_path="${qemu_path_first_part}/bin/qemu-system-gnuarmeclipse"
         # Execute the version
         ./$bin_path --version
+        
+        # FastenTestSystem
+        cd ..
+        echo "Clone FastenTestSystem"
+        git clone https://github.com/Fasten90/FastenTestSystem.git
+        cd FastenTestSystem
+        git checkout develop
+        # Execute
+        echo "Executing..."
+        python -u gdb_test.py --test_file_path ../Out/CMakeBuild/FastenHomeAut
 
 
     - publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild/GCC_ARM_build.log
