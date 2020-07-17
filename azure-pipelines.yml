@@ -69,11 +69,11 @@ stages:
 
         # Build the project.
         echo 'Start Make'
-        make VERBOSE=1
+        #make VERBOSE=1
         make VERBOSE=1 &>> GCC_ARM_build.log
 
         # Echo the file
-        type GCC_ARM_build.log
+        cat GCC_ARM_build.log
 
         # Check the results
         echo 'Finished compile-ing'
