@@ -221,7 +221,6 @@ elseif ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F4_arm-.*")
     endif()
 
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${TARGET_COMPILER_OPTIONS} ${TARGET_INCLUDES} ${TARGET_DEFINES}")
-    stm32f4_flash.ld
     if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "gcc*")
         # TODO: Generalizing - changes here: Cortex-m4
         string(CONCAT TARGET_LINKER_OPTIONS
