@@ -72,7 +72,7 @@ stages:
         #make VERBOSE=1
         make VERBOSE=1 > GCC_ARM_build.log 2>&1
 
-        :: Echo the file
+        # Echo the file
         type GCC_ARM_build.log
 
         # Check the results
