@@ -139,6 +139,120 @@ if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F0_arm-.*")
 
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${TARGET_LINKER_OPTIONS}")
 
+elseif ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F4_arm-.*")
+    # STM32F4
+    message(STATUS "# Selected target: STM32F4")
+    
+    # TODO: Copied 2 line not important, there is in toolchain too
+    set(CMAKE_SYSTEM_NAME Generic)
+    set(CMAKE_SYSTEM_PROCESSOR arm)
+
+    # TODO: Generalizing - changes here: Cortex-m4
+    if ("${CMAKE_FASTENHOMEAUT_TARGET}" STREQUAL "STM32F4_arm-none-eabi-gcc")
+        set(CMAKE_C_COMPILER "arm-none-eabi-gcc")
+        set(CMAKE_CXX_COMPILER "arm-none-eabi-g++")
+    elseif ("${CMAKE_FASTENHOMEAUT_TARGET}" STREQUAL "STM32F4_arm-atollic-eabi-gcc")
+        if (NOT "${CMAKE_C_COMPILER}" MATCHES ".*arm-atollic-eabi-gcc.*")
+            set(CMAKE_C_COMPILER "arm-atollic-eabi-gcc")
+            set(CMAKE_CXX_COMPILER "arm-atollic-eabi-g++")
+        endif()
+    endif()
+
+    set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+    set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+    set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+    set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+
+    if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "gcc*")
+        # gcc
+        
+        # TODO: Copied 5 line not important, there is in toolchain too
+        set(CMAKE_EXE_LINKER_FLAGS "--specs=nosys.specs" CACHE INTERNAL "")
+    
+        # TODO: Generalizing - changes here: Cortex-m4
+        string(CONCAT TARGET_COMPILER_OPTIONS
+                                " -mthumb"
+                                " -mcpu=cortex-m4"
+                                " -std=gnu11"
+                                " -O0"
+                                " -ffunction-sections"
+                                " -fdata-sections"
+                                " -fno-strict-aliasing"
+                                " -g"
+                                " -fstack-usage"
+                                " -Wall"
+                                " -Wextra"
+                                " -pedantic"
+                                " -Wmissing-include-dirs"
+                                " -Wswitch-default"
+                                " -Wswitch-enum"
+                                )
+    else()
+        # E.g. STM32F0, but not gcc, if ARMCC (keil)
+        # TODO: Generalizing - changes here: Cortex-m4
+        string(CONCAT TARGET_COMPILER_OPTIONS
+                        " --cpu Cortex-M4"
+                        )
+    endif()
+
+
+    # TODO: Generalizing - changes here: Cortex-m4
+    string(CONCAT TARGET_INCLUDES
+                        " -I../../Drivers/STM32F4xx_HAL_Driver/Inc"
+                        " -I../../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy"
+                        " -I../../Drivers/CMSIS/Device/ST/STM32F4xx/Include"
+                        " -I../../Drivers/CMSIS/Include"
+                        )
+
+    # " -D__weak=__attribute__((weak))"
+    # " -D__packed=__attribute__((__packed__))"
+    # TODO: Generalizing - changes here: Cortex-m4
+    string(CONCAT TARGET_DEFINES
+                       " -DUSE_HAL_DRIVER"
+                       " -DCONFIG_USE_PANEL_STM32F4DISCOVERY=1"
+                       " -DSTM32F407xx"
+                       " -DSTM32F40XX"
+                       " -DSTM32F4XX"
+                       )
+   
+    # TODO: Generalizing
+    if ("${CMAKE_FASTENHOMEAUT_TARGET}" STREQUAL "STM32F4_arm-none-eabi-gcc")
+        string(APPEND TARGET_DEFINES " -DCONFIG_STANDARD_LIBRARY_USE_DEFAULT")
+    endif()
+
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${TARGET_COMPILER_OPTIONS} ${TARGET_INCLUDES} ${TARGET_DEFINES}")
+    stm32f4_flash.ld
+    if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "gcc*")
+        # TODO: Generalizing - changes here: Cortex-m4
+        string(CONCAT TARGET_LINKER_OPTIONS
+                        " -mthumb"
+                        " -mcpu=cortex-m4"
+                        " -Wl,--start-group"
+                        " -lc"
+                        " -lm"
+                        " -Wl,--end-group"
+                        " -static"
+                        " -Wl,-Map=FastenHomeAut.map"
+                        " -Wl,--gc-sections"
+                        " -Wl,--defsym=malloc_getpagesize_P=0x80"
+                        )
+    else()
+        # TODO: Generalizing - changes here: Cortex-m4
+        string(CONCAT TARGET_LINKER_OPTIONS
+                        " --cpu Cortex-M4"
+                        )
+    endif()
+                              
+
+    # TODO: Delete this
+    if ("${CMAKE_FASTENHOMEAUT_TARGET}" STREQUAL "STM32F4_arm-none-eabi-gcc")
+        #string(APPEND TARGET_LINKER_OPTIONS " -nodefaultlibs")
+    elseif ("${CMAKE_FASTENHOMEAUT_TARGET}" STREQUAL "STM32F4_arm-atollic-eabi-gcc")
+        #string(CONCAT TARGET_LINKER_OPTIONS " -T../../../FastenNodeF0/Debug_STM32F030C8_FLASH.ld")
+    endif()
+
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${TARGET_LINKER_OPTIONS}")
+
 else()
     # Not defined STM32F0 --> So target: x86
     message(STATUS "# Selected target: x86")
