@@ -139,7 +139,7 @@ stages:
         git checkout develop
         # Execute
         echo "Executing..."
-        python -u gdb_test.py --test_file_path ../Out/CMakeBuild/FastenHomeAut
+        python -u gdb_test.py --test_file_path ../Out/CMakeBuild/FastenHomeAut --qemu_bin_path $bin_path
 
 
     - publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild/GCC_ARM_build.log
