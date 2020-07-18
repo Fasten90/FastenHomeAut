@@ -127,9 +127,10 @@ stages:
         tar xvf ../$qemu_install_file
         # E.g. chmod -R -w xPacks/qemu-arm/2.8.0-7
         chmod -R -w $qemu_path_first_part
-        bin_path="${qemu_path_first_part}/bin/qemu-system-gnuarmeclipse"
+        qemu_bin_path="${qemu_path_first_part}/bin/qemu-system-gnuarmeclipse"
         # Execute the version
-        ./$bin_path --version
+        ./$qemu_bin_path --version
+        cwd  # Debug
         
         # FastenTestSystem
         cd ..
@@ -139,7 +140,11 @@ stages:
         git checkout develop
         # Execute
         echo "Executing..."
-        python -u gdb_test.py --test_file_path ../Out/CMakeBuild/FastenHomeAut --qemu_bin_path ../opt/$bin_path
+        cwd  # Debug
+        relative_qemu_bin_path="../opt/${qemu_bin_path}"
+        echo "qemu_bin path: ${relative_qemu_bin_path}"
+        python -u gdb_test.py --test_file_path ../Out/CMakeBuild/FastenHomeAut --qemu_bin_path $relative_qemu_bin_path
+        
 
 
     - publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild/GCC_ARM_build.log
