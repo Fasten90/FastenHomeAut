@@ -1298,7 +1298,9 @@ bool StringToBool(const char * str, bool * val)
 
     bool isBool = false;
     bool boolVal = false;
-    uint32_t num;
+    uint32_t num = 0;
+    /* Security default value due the static analysers,
+    but not read if StringToUnsignedDecimalNum return with false */
 
     /* Check it is decimal? */
     if (StringToUnsignedDecimalNum(str, &num))
@@ -1345,7 +1347,7 @@ bool StringToBool(const char * str, bool * val)
         else
         {
             /* Not good "string" */
-            isBool = false;;
+            isBool = false;
         }
     }
 
@@ -1358,13 +1360,19 @@ bool StringToBool(const char * str, bool * val)
 /**
  * @brief       Convert char to lowercase
  */
-void ToLower(char * c)
+void ToLower(char * c_pnt)
 {
-    if ((*c >= 'A') && (*c <= 'Z'))
+    if (c_pnt == NULL)
+        return;
+    if (!MEM_IN_RAM(c_pnt, 1))
+        return;
+
+    char c = *c_pnt;
+    if ((c >= (char)'A') && (c <= (char)'Z'))
     {
         /* Need to change to small letter */
         /* length between Big Letter and small letter */
-        *c = *c - ('A' - 'a');
+        *c_pnt = c - (char)((char)'A' - (char)'a');
     }
 }
 
@@ -1373,13 +1381,19 @@ void ToLower(char * c)
 /**
  * @brief       Convert char to UpperCase
  */
-void ToUpper(char * c)
+void ToUpper(char * c_pnt)
 {
-    if ((*c >= 'a') && (*c <= 'z'))
+    if (c_pnt == NULL)
+        return;
+    if (!MEM_IN_RAM(c_pnt, 1))
+        return;
+
+    char c = *c_pnt;
+    if ((c >= (char)'a') && (c <= (char)'z'))
     {
         /* Need to change to small letter */
         /* length between Big Letter and small letter */
-        *c = *c + ('A' - 'a');
+        *c_pnt = c + (char)((char)'A' - (char)'a');
     }
 }
 
@@ -1793,6 +1807,10 @@ size_t StrTrim(char *str)
 void StringLower(char * str)
 {
     size_t i;
+    if (!MEM_IN_RAM(str, 1))
+    {
+        return;
+    }
 
     if (str == NULL)
     {
@@ -1817,6 +1835,10 @@ void StringUpper(char * str)
     size_t i;
 
     if (str == NULL)
+    {
+        return;
+    }
+    if (!MEM_IN_RAM(str, 1))
     {
         return;
     }
@@ -2896,6 +2918,7 @@ uint32_t StringHelper_UnitTest(void)
     StringBoolTest_t StringBoolTestTable[] =
     {
         /*test result return */
+        /* Input string value, expected output parameter bool value, expected return value */
         { "1", true, true },
         { "0", false, true },
 

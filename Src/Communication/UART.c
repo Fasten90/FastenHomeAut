@@ -129,8 +129,13 @@ void UART_Init(UART_HandleTypeDef *UartHandle)
 
     if (HAL_UART_Init(UartHandle) == HAL_OK)
     {
-
+#ifdef CONFIG_PLATFORM_MCU_STM32F0xx
         __HAL_UART_CLEAR_IT(UartHandle, UART_FLAG_CTS | UART_FLAG_RXNE | UART_FLAG_TXE | UART_FLAG_TC | UART_FLAG_ORE | UART_FLAG_NE | UART_FLAG_FE | UART_FLAG_PE);
+#elif defined(CONFIG_PLATFORM_MCU_STM32F4xx)
+        __HAL_UART_CLEAR_FLAG(UartHandle, UART_FLAG_CTS | UART_FLAG_LBD | UART_FLAG_TC | UART_FLAG_RXNE);
+#else
+        #warning "UART - CLEAR IT or CLEAR_FLAG not handled"
+#endif
 
         /* _HAL_UART_ENABLE_IT(UartHandle, UART_IT_RXNE); */       /* receiver not empty */
         __HAL_UART_DISABLE_IT(UartHandle, UART_IT_TXE);            /* transmit empty */
@@ -384,8 +389,14 @@ static void UART_Handler(UART_Handler_t *handler)
     if ((tmp1 != RESET) && (tmp2 != RESET))
     {
         uint16_t val;
-
+#ifdef CONFIG_PLATFORM_MCU_STM32F0xx
         val = (uint16_t)(huart->Instance->RDR);
+#elif defined(CONFIG_PLATFORM_MCU_STM32F4xx)
+        val = (uint16_t)(huart->Instance->DR & (uint8_t)0x007FU);
+#else
+        val = 0;
+        #warning "Not implemented for another targets"
+#endif
 
         /* Don't put errored data into the FIFO */
         if (!err)
@@ -413,7 +424,13 @@ static void UART_Handler(UART_Handler_t *handler)
         /* TODO: Check txEnable flag */
         if (CircularBuffer_GetChar(handler->tx, &val))
         {
+#ifdef CONFIG_PLATFORM_MCU_STM32F0xx
             huart->Instance->TDR = val;
+#elif defined(CONFIG_PLATFORM_MCU_STM32F4xx)
+            huart->Instance->DR = (val & (uint16_t)0x01FFU);
+#else
+            #warning "Not implemented for another targets"
+#endif
         }
         else
         {

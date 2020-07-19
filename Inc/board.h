@@ -46,20 +46,24 @@
 
 
 #ifdef STM32F030x8
-#define MEM_FLASH_START        (0x08000000)
-#define MEM_FLASH_END          (0x08000000 + 64*1024)
-#define MEM_RAM_START          (0x20000000)
-#define MEM_RAM_END            (0x20002000)
-#elif defined(STM32F40xx)
-#warning "Set memory address values"
+    #define MEM_FLASH_START        (0x08000000)
+    #define MEM_FLASH_END          (0x08000000 + 64*1024)
+    #define MEM_RAM_START          (0x20000000)
+    #define MEM_RAM_END            (0x20002000)
+#elif defined(STM32F407xx)
+    /* 128 KB RAM, 1024 KB FLASH */
+    #define MEM_FLASH_START        (0x08000000)
+    #define MEM_FLASH_END          (0x08000000 + 1024*1024)
+    #define MEM_RAM_START          (0x20000000)
+    #define MEM_RAM_END            (0x20000000 + 128*1024)
 #elif defined(CONFIG_PLATFORM_X86)
-/* Do not use... */
-#define MEM_FLASH_START        (0x00000000)
-#define MEM_FLASH_END          (0xFFFFFFFF)
-#define MEM_RAM_START          (0x00000000)
-#define MEM_RAM_END            (0xFFFFFFFF)
+    /* Do not use... */
+    #define MEM_FLASH_START        (0x00000000)
+    #define MEM_FLASH_END          (0xFFFFFFFF)
+    #define MEM_RAM_START          (0x00000000)
+    #define MEM_RAM_END            (0xFFFFFFFF)
 #else
-#warning "ERROR! memory FLASH - RAM values are missed"
+    #warning "ERROR! memory FLASH - RAM values are missed"
 #endif
 
 

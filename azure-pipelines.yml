@@ -11,240 +11,6 @@ stages:
 - stage: Build
   jobs:
 
-  # Build - Win - MSVC
-  - job: build_win_msvc
-    pool:
-      vmImage: 'windows-2019'
-    displayName: 'Build - Win - MSVC'
-    steps:
-    - script: |
-        echo 'Start Windows build pipeline: MSVC'
-        
-        :: Print SET
-        echo 'Environment variable settings'
-        SET
-        
-        :: Print the gcc version
-        gcc --version
-        :: ?? Install a CMake 3.0.2 version
-        :: Print the CMake version
-        echo 'Start CMake'
-        cmake --version
-      
-        :: TODO: Perhaps does not need
-        echo 'List actual directory'
-        cd
-        dir
-        
-        mkdir Out
-        cd Out
-        mkdir CMakeBuild
-        cd CMakeBuild
-        
-        echo 'Actual directory'
-        cd
-        
-        echo 'CMake'
-        :: Call the CMake.
-        :: Normally: "- cmake" or "-cmake .." used
-        :: Note: As experience, default the mingw used
-        ::cmake ../..
-        
-        :: MSVC
-        :: TODO: parameterize
-        cmake -G "Visual Studio 16 2019" -A Win32 ../..
-        
-        ::Visual Studio 15 2017 [arch] arch: Win64 or ARM
-        
-        ::https://cmake.org/cmake/help/v3.14/generator/Visual%20Studio%2016%202019.html
-        ::cmake -G "Visual Studio 16 2019" -A Win32
-        ::cmake -G "Visual Studio 16 2019" -A x64
-        ::cmake -G "Visual Studio 16 2019" -A ARM
-        ::cmake -G "Visual Studio 16 2019" -A ARM64
-        
-        ::-- Check for working C compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.20.27508/bin/Hostx64/x86/cl.exe
-        ::-- Check for working C compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.20.27508/bin/Hostx64/x86/cl.exe -- works
-        ::-- Check for working CXX compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.20.27508/bin/Hostx64/x86/cl.exe
-        ::-- Check for working CXX compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.20.27508/bin/Hostx64/x86/cl.exe -- works
-        ::-- Check for working C compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.20.27508/bin/Hostx64/x64/cl.exe
-        ::-- Check for working C compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.20.27508/bin/Hostx64/x64/cl.exe -- works
-        ::-- Check for working CXX compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.20.27508/bin/Hostx64/x64/cl.exe
-        ::-- Check for working CXX compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/14.20.27508/bin/Hostx64/x64/cl.exe -- works
-        
-        :: -D"CMAKE_MAKE_PROGRAM:FILEPATH=make.exe" -D"CMAKE_C_COMPILER:FILEPATH=gcc.exe" -D"CMAKE_CXX_COMPILER:FILEPATH=g++.exe" CC=gcc -G "MinGW Makefiles"
-        
-        echo 'List actual directory'      
-        dir
-        
-        :: Build the project.
-        echo 'Start Make'
-        :: For MSVC we shall execute cmake --build instead of "make"
-        :: log to stdout
-        ::cmake --build .
-        :: log to file
-        cmake --build . > MSVC_build.log 2>&1
-        :: Echo the file
-        type MSVC_build.log
-        
-        :: Check the results
-        echo 'Finished compile-ing'
-        dir
-        
-        :: Run
-        echo 'Execute...'
-        ::dir *.exe /S /B
-        cd Debug
-        FastenHomeAut.exe
-        
-        echo 'Finished executing'
-    # TODO: Azure pipeline could not recognize "*.log" 
-    - publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild/MSVC_build.log
-      artifact: Build_MSVC_Artifact
-
-
-  # Build - Win - MinGW - GCC
-  - job: build_win_mingw_gcc
-    pool:
-      vmImage: 'windows-2019'
-    displayName: 'Build - Win - MinGW GCC'
-    steps:
-    - script: |
-        echo 'Start Windows build pipeline: MinGW + GCC'
-        
-        :: Print SET
-        echo 'Environment variable settings'
-        SET
-        
-        :: Print the gcc version
-        gcc --version
-        :: ?? Install a CMake 3.0.2 version
-        :: Print the CMake version
-        echo 'Start CMake'
-        cmake --version
-      
-        :: TODO: Perhaps does not need
-        echo 'List actual directory'
-        cd
-        dir
-        
-        mkdir Out
-        cd Out
-        mkdir CMakeBuild
-        cd CMakeBuild
-        
-        echo 'Actual directory'
-        cd
-        
-        :: Call the CMake.
-        :: Normally: "- cmake" or "-cmake .." used
-        :: Note: As experience, default the mingw used
-        ::cmake ../..
-        
-        :: MSVC - NMake
-        ::cmake -G "NMake Makefiles" ../..
-        
-        :: GCC - MinGW
-        :: At Azure win VM there is sh in installed GIT - shall skip sh with '-DCMAKE_SH="CMAKE_SH-NOTFOUND"'
-        cmake CC=gcc -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" ../..
-        :: -D"CMAKE_MAKE_PROGRAM:FILEPATH=make.exe" -D"CMAKE_C_COMPILER:FILEPATH=gcc.exe" -D"CMAKE_CXX_COMPILER:FILEPATH=g++.exe" CC=gcc -G "MinGW Makefiles"
-        
-        echo 'List actual directory'      
-        dir
-        
-        :: Build the project.
-        echo 'Start Make'
-        ::make
-        make > GCC_build.log 2>&1
-        
-        :: Echo the file
-        type GCC_build.log
-        
-        :: Check the results
-        echo 'Finished compile-ing'
-        dir
-        
-        :: Run
-        echo 'Execute...'
-        FastenHomeAut.exe
-        echo 'Finished executing'
-    # TODO: Azure pipeline could not recognize "*.log" 
-    - publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild/GCC_build.log
-      artifact: Build_GCC_Artifact
-
-
-  # Build - Win - MinGW - GCC - batch script
-  - job: build_win_mingw_gcc_batch
-    pool:
-      vmImage: 'windows-2019'
-    displayName: 'Build - Win - MinGW GCC [batch]'
-    steps:
-    - task: BatchScript@1
-      inputs:
-        filename: 'RunCMake_MinGW_GCC.bat'
-        #arguments: # Optional
-        #modifyEnvironment: False # Optional
-        #workingFolder: # Optional
-        #failOnStandardError: true # Optional
-
-
-  # Build - Linux - GCC
-  - job: build_linux_gcc
-    pool:
-      vmImage: 'ubuntu-latest'
-    displayName: 'Build - Linux - GCC'
-    steps:
-    - script: |
-
-        echo 'Start Linux build pipeline - GCC'
-        # Print the gcc version.
-
-        gcc --version
-        #  Install a CMake 3.0.2 version.
-        #- apt-get update -qq
-        #- apt-get install cmake -y
-        #  Alternatively you could install a CMake 3.2.2 version through PPA repository.
-        apt-get update -qq
-        apt-get install software-properties-common -y
-        # Add PPA repository.
-        echo 'deb http://ppa.launchpad.net/george-edison55/cmake-3.x/ubuntu trusty main' | tee -a /etc/apt/sources.list.d/cmake.list
-        apt-get update -qq
-        apt-get install cmake -y --force-yes
-        # Print the CMake version.
-        echo 'Start CMake'
-
-        cmake --version
-
-        # TODO: Perhaps does not need
-        #- cd $BITBUCKET_CLONE_DIR
-        echo 'List actual directory'
-        pwd
-        # Win: cd
-        ls
-
-        mkdir Out
-        cd Out
-        mkdir CMakeBuild
-        cd CMakeBuild
-        pwd
-
-        # Call the CMake.
-        # Normally: "- cmake" or "-cmake .." used
-        cmake ../..
-        # -D"CMAKE_MAKE_PROGRAM:FILEPATH=make.exe" -D"CMAKE_C_COMPILER:FILEPATH=gcc.exe" -D"CMAKE_CXX_COMPILER:FILEPATH=g++.exe" CC=gcc -G "MinGW Makefiles"
-
-        # Build the project.
-        echo 'Start Make'
-        make
-
-        # Check the results
-        echo 'Finished compile-ing'
-        ls
-
-        # Run
-        echo 'Execute...'
-        ./FastenHomeAut
-        echo 'Finished executing'
-
 
   # Build - Linux - gcc-arm
   - job: build_linux_gcc_arm
@@ -297,17 +63,18 @@ stages:
         # Call the CMake.
         # Normally: "cmake" or "cmake .." used
         #cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE:PATH="..\toolchain.cmake"  ..
-        cmake -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE:PATH="../../Toolchain_ST32F0_arm-none-eabi-gcc.cmake" ../..
+        cmake -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE:PATH="../../Toolchain_ST32F4_arm-none-eabi-gcc.cmake" ../..
         # cmake CC=gcc ../..
         # -D"CMAKE_MAKE_PROGRAM:FILEPATH=make.exe" -D"CMAKE_C_COMPILER:FILEPATH=gcc.exe" -D"CMAKE_CXX_COMPILER:FILEPATH=g++.exe" CC=gcc -G "MinGW Makefiles"
 
         # Build the project.
         echo 'Start Make'
         #make VERBOSE=1
-        make VERBOSE=1 > GCC_ARM_build.log 2>&1
+        make VERBOSE=1 &>> GCC_ARM_build.log
 
-        :: Echo the file
-        type GCC_ARM_build.log.log
+        # Echo the file
+        echo 'Print: GCC_ARM_build.log'
+        cat GCC_ARM_build.log
 
         # Check the results
         echo 'Finished compile-ing'
@@ -320,374 +87,72 @@ stages:
         if [ -f "$file" ]
         then
             echo "$0: File '${file}' has found."
-            echo 'Finished...'
-            exit 0
+            # TODO: Turned off as continue the execution
+            #echo 'Finished...'
+            #exit 0
         else
             echo "$0: File '${file}' not found."
             echo 'Finished...'
             exit -1
         fi
+        
+        echo 'Install xpack-QEMU'
+        # https://www.npmjs.com/package/@xpack-dev-tools/qemu-arm
+        
+        # TODO: Delete
+        #npm install --global xpm@latest
+        #xpm install --global @xpack-dev-tools/qemu-arm@latest
+        #qemu-system-gnuarmeclipse.exe --version
+
+
+        cd ../../
+
+        # Install with manual
+        # https://xpack.github.io/qemu-arm/install/
+        # downloaded file
+        
+        qemu_version="2.8.0-9"
+        qemu_path_first_part="xpack-qemu-arm-${qemu_version}"
+        qemu_install_file="${qemu_path_first_part}-linux-x64.tar.gz"
+        # https://github.com/xpack-dev-tools/qemu-arm-xpack/releases/download/v2.8.0-9/xpack-qemu-arm-2.8.0-9-linux-x64.tar.gz
+        download_full_path="https://github.com/xpack-dev-tools/qemu-arm-xpack/releases/download/v${qemu_version}/${qemu_install_file}"
+        echo "Download: ${download_full_path}"
+        wget $download_full_path
+                
+        mkdir -p opt
+        cd opt
+
+        # E.g. tar xvf ~/Downloads/xpack-qemu-arm-2.8.0-7-linux-x64.tgz
+        echo "Unzip: ${qemu_install_file}"
+        tar xvf ../$qemu_install_file
+        # E.g. chmod -R -w xPacks/qemu-arm/2.8.0-7
+        #chmod -R -w $qemu_path_first_part
+        chmod -R 777 $qemu_path_first_part
+        qemu_bin_path="${qemu_path_first_part}/bin/qemu-system-gnuarmeclipse"
+        # Execute the version
+        echo "Execute: ${qemu_bin_path}"
+        ./$qemu_bin_path --version
+        pwd  # Debug
+        
+        arm-none-eabi-gdb --version
+        
+        python --version
+        
+        # FastenTestSystem
+        cd ..
+        echo "Clone FastenTestSystem"
+        git clone https://github.com/Fasten90/FastenTestSystem.git
+        cd FastenTestSystem
+        git checkout develop
+        # Execute
+        echo "Executing..."
+        pwd  # Debug
+        relative_qemu_bin_path="../opt/${qemu_bin_path}"
+        echo "qemu_bin path: ${relative_qemu_bin_path}"
+        python -u gdb_test.py --test_file_path ../Out/CMakeBuild/FastenHomeAut --qemu_bin_path $relative_qemu_bin_path
+        
+
 
     - publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild/GCC_ARM_build.log
       artifact: Build_GCC_ARM_Artifact
-
-
-  # Build - Linux - Clang - shell script
-  - job: build_linux_clang_script
-    pool:
-      vmImage: 'ubuntu-latest'
-    displayName: 'Build - Linux - Clang [shell]'
-    steps:
-    - task: Bash@3
-      inputs:
-        targetType: 'filePath' # Optional. Options: filePath, inline
-        #filePath: # Required when targetType == FilePath
-        filePath: RunCMake_Clang.sh
-        #arguments: # Optional
-        #script: '# Write your commands here# Use the environment variables input below to pass secret variables to this script' # Required when targetType == Inline
-        #workingDirectory: # Optional
-        #failOnStderr: false # Optional
-        #noProfile: true # Optional
-        #noRc: true # Optional
-    # TODO: Specific Out directory
-    - publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild_Clang/Clang_build.log
-      artifact: Build_Clang_Artifact
-
-
-  # Build - Linux - TinyCC (TCC) - shell script
-  - job: build_linux_tinycc_script
-    pool:
-      vmImage: 'ubuntu-latest'
-    displayName: 'Build - Linux - TinyCC [shell]'
-    steps:
-    - task: Bash@3
-      inputs:
-        targetType: 'filePath' # Optional. Options: filePath, inline
-        #filePath: # Required when targetType == FilePath
-        filePath: RunCMake_TCC.sh
-        #arguments: # Optional
-        #script: '# Write your commands here# Use the environment variables input below to pass secret variables to this script' # Required when targetType == Inline
-        #workingDirectory: # Optional
-        #failOnStderr: false # Optional
-        #noProfile: true # Optional
-        #noRc: true # Optional
-    # TODO: Specific Out directory
-    - publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild_Tcc/TinyCC_build.log
-      artifact: Build_TinyCC_Artifact
-
-
-- stage: Test
-  dependsOn: Build
-  jobs:
-  # Test - Win - GCC Coverage - batch script
-  - job: test_win_gcc_coverage_script
-    pool:
-      vmImage: 'windows-2019'
-    displayName: 'Test - Win - GccCoverage [batch]'
-    steps:
-    - task: BatchScript@1
-      inputs:
-        filename: 'RunCMake_GccCoverage.bat'
-        #arguments: # Optional
-        #script: '# Write your commands here# Use the environment variables input below to pass secret variables to this script' # Required when targetType == Inline
-        #workingDirectory: # Optional
-        #failOnStderr: false # Optional
-        #noProfile: true # Optional
-        #noRc: true # Optional
-    - publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild_GccCoverage/GccCoverage.txt
-      artifact: Test_GccCoverage
-
-
-  # Test - Linux - GCC Coverage - shell script
-  - job: test_linux_gcc_coverage_script
-    pool:
-      vmImage: 'ubuntu-latest'
-    displayName: 'Test - Linux - GccCoverage [shell]'
-    steps:
-    - task: Bash@3
-      inputs:
-        targetType: 'filePath' # Optional. Options: filePath, inline
-        #filePath: # Required when targetType == FilePath
-        filePath: RunCMake_GccCoverage.sh
-        #arguments: # Optional
-        #script: '# Write your commands here# Use the environment variables input below to pass secret variables to this script' # Required when targetType == Inline
-        #workingDirectory: # Optional
-        #failOnStderr: false # Optional
-        #noProfile: true # Optional
-        #noRc: true # Optional
-
-
-# Note: Not works yet, there is no Clang installation on Azure windows images
-
-# Win - Clang
-#- job: win_build_clang
-#  pool:
-#    vmImage: 'windows-2019'
-#  displayName: 'Windows - Build - Clang'
-#  steps:
-#  - script: |
-#      echo 'Start Windows build pipeline: Clang'
-#      
-#      :: Print SET
-#      echo 'Environment variable settings'
-#      SET
-#      
-#      :: Print the gcc version
-#      gcc --version
-#      :: Print the CMake version
-#      cmake --version
-#      :: Print the Clang version
-#      clang --version
-#    
-#      :: TODO: Perhaps does not need
-#      echo 'List actual directory'
-#      cd
-#      dir
-#      
-#      mkdir Out
-#      cd Out
-#      mkdir CMakeBuild
-#      cd CMakeBuild
-#      
-#      echo 'Actual directory'
-#      cd
-#      
-#      echo 'CMake'
-#      :: Call the CMake.
-#      :: Normally: "- cmake" or "-cmake .." used
-#      :: Note: As experience, default the mingw used
-#      ::cmake ../..
-#      
-#      cmake -G "Visual Studio 16 2019" -A Win64 -T LLVM CC=clang-cl CX=clang-cl ../..
-#      ::cmake -G "Visual Studio 16 2019" -A Win32 -T LLVM CC=clang-cl CXX=clang-cl -D"CMAKE_C_COMPILER:FILEPATH=C:\Programs\Engineer\LLVM-8.0.0-win64\bin\clang-cl" -D"CMAKE_CXX_COMPILER:FILEPATH=C:\Programs\Engineer\LLVM-8.0.0-win64\bin\clang-cl" ../..
-#      
-#      echo 'CMake finished'
-#      
-#      echo 'List actual directory'      
-#      dir
-#      
-#      :: Build the project.
-#      echo 'Start Make'
-#      cmake
-#      
-#      :: Check the results
-#      echo 'Finished compile-ing'
-#      cd
-#      dir
-#      
-#      :: Run
-#      echo 'Execute...'
-#      ::dir *.exe /S /B
-#      cd Debug
-#      FastenHomeAut.exe
-#      
-#      echo 'Finished executing'
-
-
-- stage: Analysis_Checkers
-  dependsOn: Build
-  jobs:
-
-  # Analysis - Linux - Clang Static Analysis - shell script
-  - job: analysis_linux_clang_analysis_script
-    pool:
-      vmImage: 'ubuntu-latest'
-    displayName: 'Analysis - Linux - Clang [shell]'
-    steps:
-    - task: Bash@3
-      inputs:
-        targetType: 'filePath' # Optional. Options: filePath, inline
-        #filePath: # Required when targetType == FilePath
-        filePath: Run_ClangAnalysis.sh
-        #arguments: # Optional
-        #script: '# Write your commands here# Use the environment variables input below to pass secret variables to this script' # Required when targetType == Inline
-        #workingDirectory: # Optional
-        #failOnStderr: false # Optional
-        #noProfile: true # Optional
-        #noRc: true # Optional
-
-
-  # Format - Linux - Clang Static Format - shell script
-  - job: format_linux_clang_format_script
-    pool:
-      vmImage: 'ubuntu-latest'
-    displayName: 'Format - Linux - Clang [shell]'
-    steps:
-    - task: Bash@3
-      inputs:
-        targetType: 'filePath' # Optional. Options: filePath, inline
-        #filePath: # Required when targetType == FilePath
-        filePath: Run_ClangFormatter.sh
-        #arguments: # Optional
-        #script: '# Write your commands here# Use the environment variables input below to pass secret variables to this script' # Required when targetType == Inline
-        #workingDirectory: # Optional
-        #failOnStderr: false # Optional
-        #noProfile: true # Optional
-        #noRc: true # Optional
-
-
-  # Analysis - Linux - CppCheck - shell script
-  - job: analysis_linux_cppcheck_script
-    pool:
-      vmImage: 'ubuntu-latest'
-    displayName: 'Analysis - Linux - CppCheck [shell]'
-    steps:
-    - task: Bash@3
-      inputs:
-        targetType: 'filePath' # Optional. Options: filePath, inline
-        #filePath: # Required when targetType == FilePath
-        filePath: Run_CppCheck.sh
-        #arguments: # Optional
-        #script: '# Write your commands here# Use the environment variables input below to pass secret variables to this script' # Required when targetType == Inline
-        #workingDirectory: # Optional
-        #failOnStderr: false # Optional
-        #noProfile: true # Optional
-        #noRc: true # Optional
-
-
-  # Analysis - Fasten SCC - Source Code Checker - shell script
-  - job: analysis_source_code_checker
-    pool:
-      vmImage: 'windows-2019'
-    displayName: 'Analysis - Source Code Checker [batch]'
-    steps:
-    - task: BatchScript@1
-      inputs:
-        filename: 'RunSCC.bat'
-        #arguments: # Optional
-        #script: '# Write your commands here# Use the environment variables input below to pass secret variables to this script' # Required when targetType == Inline
-        #workingDirectory: # Optional
-        #failOnStderr: false # Optional
-        #noProfile: true # Optional
-        #noRc: true # Optional
-
-
-- stage: CompilerWarning
-  dependsOn: Build
-  jobs:
-  # Fasten CWC - Compiler Warnings Collector
-  - job: compiler_warnings_msvc
-    pool:
-      vmImage: 'windows-2019'
-    displayName: 'Compiler Warnings Collector - MSVC'
-    # TODO: Commented, because this will run after build stage
-    #dependsOn: build_win_msvc
-    steps:
-    - download: current
-      # TODO: Try more beautiful artifact downloading
-      #artifact: $(System.DefaultWorkingDirectory)/Build_MSVC_Artifact
-      artifact: Build_MSVC_Artifact
-    - script: |
-        echo Compiler Warnings Collector
-        :: Artifacts go to <pipeline>\<artifactname>
-        ::cd ../Build_MSVC_Artifact
-        :: MSVC build log
-        echo ##################################################
-        ::echo MSVC build:
-        ::echo ##################################################
-        ::type MSVC_build.log
-        ::echo ##################################################
-        :: Good, but not needed
-        ::more MSVC_build.log
-        :: Go to Tools for clone-ing
-        mkdir Tools
-        cd Tools
-        :: Clone CWC
-        git clone https://github.com/Fasten90/CompilerWarningCollector.git
-        :: Copy log file to here
-        copy ..\..\Build_MSVC_Artifact\MSVC_build.log
-        :: Run CWC
-        :: Default config: scc_config.json
-        ::python CompilerWarningCollector/CompilerWarningCollector.py
-        python CompilerWarningCollector/CompilerWarningCollector.py --file_list MSVC_build.log --comp MSVC
-    # TODO: Change to Compiler independent
-    - publish: $(System.DefaultWorkingDirectory)/Tools/MSVC_build_found_warnings.txt
-      artifact: CompilerWarning_Artifact_MSVC
-
-
-  # Fasten CWC - Compiler Warnings Collector
-  - job: compiler_warnings_gcc
-    pool:
-      vmImage: 'windows-2019'
-    displayName: 'Compiler Warnings Collector - GCC'
-    # TODO: Commented, because this will run after build stage
-    #dependsOn: build_win_mingw_gcc
-    steps:
-    - download: current
-      # TODO: Try more beautiful artifact downloading
-      #artifact: $(System.DefaultWorkingDirectory)/Build_MSVC_Artifact
-      artifact: Build_GCC_Artifact
-    - script: |
-        echo Compiler Warnings Collector
-        :: Artifacts go to <pipeline>\<artifactname>
-        echo ##################################################
-        mkdir Tools
-        cd Tools
-        :: Clone CWC
-        git clone https://github.com/Fasten90/CompilerWarningCollector.git
-        :: Copy log file to here
-        copy ..\..\Build_GCC_Artifact\GCC_build.log
-        :: Run CWC
-        :: Default config: scc_config.json
-        ::python CompilerWarningCollector/CompilerWarningCollector.py
-        python CompilerWarningCollector/CompilerWarningCollector.py --file_list GCC_build.log --comp GCC
-    # TODO: Change to Compiler independent
-    - publish: $(System.DefaultWorkingDirectory)/Tools/GCC_build_found_warnings.txt
-      artifact: CompilerWarning_Artifact_GCC
-
-  
-  # TODO: Refactor
-  - job: compiler_warnings_gcc_arm
-    pool:
-      vmImage: 'windows-2019'
-    displayName: 'Compiler Warnings Collector - GCC - ARM'
-    steps:
-    - download: current
-      artifact: Build_GCC_ARM_Artifact
-    - script: |
-        echo Compiler Warnings Collector
-        echo ##################################################
-        mkdir Tools
-        cd Tools
-        git clone https://github.com/Fasten90/CompilerWarningCollector.git
-        copy ..\..\Build_GCC_ARM_Artifact\GCC_ARM_build.log
-        python CompilerWarningCollector/CompilerWarningCollector.py --file_list GCC_ARM_build.log --comp GCC
-    - publish: $(System.DefaultWorkingDirectory)/Tools/GCC_ARM_build_found_warnings.txt
-      artifact: CompilerWarning_Artifact_GCC_ARM
-
-  - job: compiler_warnings_clang
-    pool:
-      vmImage: 'windows-2019'
-    displayName: 'Compiler Warnings Collector - Clang'
-    steps:
-    - download: current
-      artifact: Build_Clang_Artifact
-    - script: |
-        echo Compiler Warnings Collector
-        echo ##################################################
-        mkdir Tools
-        cd Tools
-        git clone https://github.com/Fasten90/CompilerWarningCollector.git
-        copy ..\..\Build_Clang_Artifact\Clang_build.log
-        python CompilerWarningCollector/CompilerWarningCollector.py --file_list Clang_build.log --comp Clang
-    - publish: $(System.DefaultWorkingDirectory)/Tools/Clang_build_found_warnings.txt
-      artifact: CompilerWarning_Artifact_Clang
-
-  - job: compiler_warnings_tinycc
-    pool:
-      vmImage: 'windows-2019'
-    displayName: 'Compiler Warnings Collector - TinyCC'
-    steps:
-    - download: current
-      artifact: Build_TinyCC_Artifact
-    - script: |
-        echo Compiler Warnings Collector
-        echo ##################################################
-        mkdir Tools
-        cd Tools
-        git clone https://github.com/Fasten90/CompilerWarningCollector.git
-        copy ..\..\Build_TinyCC_Artifact\TinyCC_build.log
-        python CompilerWarningCollector/CompilerWarningCollector.py --file_list TinyCC_build.log --comp GCC
-    - publish: $(System.DefaultWorkingDirectory)/Tools/TinyCC_build_found_warnings.txt
-      artifact: CompilerWarning_Artifact_TinyCC
 
