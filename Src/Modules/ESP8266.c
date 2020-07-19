@@ -2265,7 +2265,7 @@ static bool ESP8266_SearchGetRequest(const char *recvMsg)
 
 
 
-const char const * ESP8266_GetStatusName(void)
+const char * const ESP8266_GetStatusName(void)
 {
     switch (ESP8266StatusMachine)
     {
