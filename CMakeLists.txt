@@ -1,10 +1,20 @@
 #cmake_minimum_required (VERSION 2.6)
 cmake_minimum_required (VERSION 3.0)
-project (FastenHomeAut)
 
+project(FastenHomeAut C ASM)
+
+#if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F4_arm-.*")
+#    project(FastenHomeAut C ASM)
+#    message(STATUS "# ASM enabled")
+#else()
+#    # Normal project
+#    project (FastenHomeAut)
+#    message(STATUS "# Normal C project")
+#endif()
+    
+    
 # reported in Azure pipeline - Windows - MSVC?
 cmake_policy(SET CMP0054 NEW) 
-
 
 
 # Compiler type
@@ -227,13 +237,17 @@ elseif ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F4_arm-.*")
         # -T"liker_file.ld"
         # -specs.=nosys.specs / -specs/nano.specs
         # -cref
-        # -u
+        # -u --> Put Reset_Handler symbol
         # .map file...
         #
-        
+
+# -mthumb -mcpu=cortex-m4 -T"../stm32f4_flash.ld" -specs=nosys.specs -static -Wl,-cref,-u,Reset_Handler "-Wl,-Map=${BuildArtifactFileBaseName}.map" -Wl,--gc-sections -Wl,--defsym=malloc_getpagesize_P=0x80 -Wl,--start-group -lc -lm -Wl,--end-group -specs=nano.specs
+
         string(CONCAT TARGET_LINKER_OPTIONS
                         " -mthumb"
                         " -mcpu=cortex-m4"
+                        " -T../../stm32f4_flash.ld"
+                        " -Wl,-cref,-u,Reset_Handler"
                         " -Wl,--start-group"
                         " -lc"
                         " -lm"
@@ -371,10 +385,36 @@ endif()
 
 set(SOURCE_FILES ${FASTEN_SOURCE_FILES} ${DRIVER_SOURCE_FILES})
 
+if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F4.*")
+    set(CMAKE_ASM_SOURCE_FILE_EXTENSIONS "s") 
+    #enable_language(C ASM)  # Error
+    set(ASM_OPTIONS "-x assembler-with-cpp")
+    set(CMAKE_ASM_FLAGS "${CMAKE_C_FLAGS} ${ASM_OPTIONS}" ) 
+    # -mthumb -mcpu=cortex-m4 -DSTM32F4XX -DSTM32F40XX -DUSE_STDPERIPH_DRIVER -DUSE_STM32F4_DISCOVERY -DHSE_VALUE=8000000 -DUSE_HAL_DRIVER -DCONFIG_USE_PANEL_STM32F4DISCOVERY=1 -DSTM32F407xx -g -Wa,--warn -x assembler-with-cpp -specs=nano.specs
+
+    # startup_stm32f407xx.s
+    #enable_language(C ASM)
+    #project(assembler C ASM)
+    #SET(CMAKE_ASM_FLAGS "${CFLAGS} -x assembler-with-cpp")
+
+    # TODO: *.s
+    #file(GLOB_RECURSE DRIVER_SOURCE_FILES_3 "Drivers/CMSIS/Device/ST/STM32F4xx/Source/gcc/startup_stm32f407xx.s")
+    set(FASTEN_ASM_FILE "Drivers/CMSIS/Device/ST/STM32F4xx/Source/gcc/startup_stm32f407xx.s")
+    set(SOURCE_FILES ${SOURCE_FILES} ${FASTEN_ASM_FILE})
+
+    message(STATUS "# ASM property adding")
+    set_source_files_properties("Drivers/CMSIS/Device/ST/STM32F4xx/Source/gcc/startup_stm32f407xx.s" PROPERTIES COMPILE_FLAGS "-x assembler-with-cpp")
+    set_source_files_properties("startup_stm32f407xx.s" PROPERTIES COMPILE_FLAGS "-x assembler-with-cpp")
+    #Example: set_source_files_properties(foo.cpp PROPERTIES COMPILE_FLAGS -Wno-effc++)
+    message(STATUS "# Source list: " ${SOURCE_FILES})
+else()
+    set(FASTEN_ASM_FILE "")
+endif()
+
 
 # Test or normal output
 if ("${CMAKE_FASTENHOMEAUT_GCC_COVERAGE}" STREQUAL "TRUE")
-    message(STATUS "# Test coverage turned on")    
+    message(STATUS "# Test coverage turned on")
 
     SET(GCC_COVERAGE_COMPILE_FLAGS "-g -O0 -coverage -fprofile-arcs -ftest-coverage")
     SET(GCC_COVERAGE_LINK_FLAGS    "-coverage -lgcov")
