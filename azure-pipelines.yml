@@ -134,6 +134,10 @@ stages:
         ./$qemu_bin_path --version
         pwd  # Debug
         
+        arm-none-eabi-gdb --version
+        
+        python --version
+        
         # FastenTestSystem
         cd ..
         echo "Clone FastenTestSystem"
