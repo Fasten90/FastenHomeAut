@@ -223,6 +223,14 @@ elseif ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F4_arm-.*")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${TARGET_COMPILER_OPTIONS} ${TARGET_INCLUDES} ${TARGET_DEFINES}")
     if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "gcc*")
         # TODO: Generalizing - changes here: Cortex-m4
+        #Missed: (atollic these are in)
+        # -T"liker_file.ld"
+        # -specs.=nosys.specs / -specs/nano.specs
+        # -cref
+        # -u
+        # .map file...
+        #
+        
         string(CONCAT TARGET_LINKER_OPTIONS
                         " -mthumb"
                         " -mcpu=cortex-m4"
@@ -238,7 +246,7 @@ elseif ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F4_arm-.*")
     else()
         # TODO: Generalizing - changes here: Cortex-m4
         string(CONCAT TARGET_LINKER_OPTIONS
-                        " --cpu Cortex-M4"
+                        " --cpu Cortex-m4"
                         )
     endif()
                               
