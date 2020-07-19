@@ -1362,11 +1362,13 @@ bool StringToBool(const char * str, bool * val)
  */
 void ToLower(char * c_pnt)
 {
-    if (c_pon == NULL)
+    if (c_pnt == NULL)
+        return;
+    if (!MEM_IN_RAM(c_pnt, 1))
         return;
 
-    char c = *c_pon;
-    if ((c >= 'A') && (c <= 'Z'))
+    char c = *c_pnt;
+    if ((c >= (char)'A') && (c <= (char)'Z'))
     {
         /* Need to change to small letter */
         /* length between Big Letter and small letter */
@@ -1383,9 +1385,11 @@ void ToUpper(char * c_pnt)
 {
     if (c_pnt == NULL)
         return;
+    if (!MEM_IN_RAM(c_pnt, 1))
+        return;
 
-    char c = *c_pon;
-    if ((c >= 'a') && (c <= 'z'))
+    char c = *c_pnt;
+    if ((c >= (char)'a') && (c <= (char)'z'))
     {
         /* Need to change to small letter */
         /* length between Big Letter and small letter */
