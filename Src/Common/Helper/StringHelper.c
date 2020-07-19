@@ -1298,7 +1298,9 @@ bool StringToBool(const char * str, bool * val)
 
     bool isBool = false;
     bool boolVal = false;
-    uint32_t num;
+    uint32_t num = 0;
+    /* Security default value due the static analysers,
+    but not read if StringToUnsignedDecimalNum return with false */
 
     /* Check it is decimal? */
     if (StringToUnsignedDecimalNum(str, &num))
@@ -1345,7 +1347,7 @@ bool StringToBool(const char * str, bool * val)
         else
         {
             /* Not good "string" */
-            isBool = false;;
+            isBool = false;
         }
     }
 
@@ -2896,6 +2898,7 @@ uint32_t StringHelper_UnitTest(void)
     StringBoolTest_t StringBoolTestTable[] =
     {
         /*test result return */
+        /* Input string value, expected output parameter bool value, expected return value */
         { "1", true, true },
         { "0", false, true },
 
