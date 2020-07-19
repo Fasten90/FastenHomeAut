@@ -384,7 +384,8 @@ stages:
         relative_qemu_bin_path="../opt/${qemu_bin_path}"
         echo "qemu_bin path: ${relative_qemu_bin_path}"
         python -u gdb_test.py --test_file_path ../Out/CMakeBuild/FastenHomeAut --qemu_bin_path $relative_qemu_bin_path
-
+    - publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild/GCC_ARM_build.log
+      artifact: Build_GCC_ARM_Artifact
 
  
   # Build - Linux - Clang - shell script
@@ -698,7 +699,6 @@ stages:
     displayName: 'Compiler Warnings Collector - GCC - ARM'
     steps:
     - download: current
-    - publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild/GCC_ARM_build.log
       artifact: Build_GCC_ARM_Artifact
     - script: |
         echo Compiler Warnings Collector
