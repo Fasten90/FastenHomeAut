@@ -2265,8 +2265,9 @@ static bool ESP8266_SearchGetRequest(const char *recvMsg)
 
 
 
-const char * const ESP8266_GetStatusName(void)
+const char * ESP8266_GetStatusName(void)
 {
+    /* TODO: Refactor: replace return with a 'retval = "value"' and return at the end with the 'retval' (return retval) */
     switch (ESP8266StatusMachine)
     {
         case Esp8266Status_Init:
