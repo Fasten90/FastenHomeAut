@@ -1360,13 +1360,17 @@ bool StringToBool(const char * str, bool * val)
 /**
  * @brief       Convert char to lowercase
  */
-void ToLower(char * c)
+void ToLower(char * c_pnt)
 {
-    if ((*c >= 'A') && (*c <= 'Z'))
+    if (c_pon == NULL)
+        return;
+
+    char c = *c_pon;
+    if ((c >= 'A') && (c <= 'Z'))
     {
         /* Need to change to small letter */
         /* length between Big Letter and small letter */
-        *c = *c - ('A' - 'a');
+        *c_pnt = c - (char)((char)'A' - (char)'a');
     }
 }
 
@@ -1375,13 +1379,17 @@ void ToLower(char * c)
 /**
  * @brief       Convert char to UpperCase
  */
-void ToUpper(char * c)
+void ToUpper(char * c_pnt)
 {
-    if ((*c >= 'a') && (*c <= 'z'))
+    if (c_pnt == NULL)
+        return;
+
+    char c = *c_pon;
+    if ((c >= 'a') && (c <= 'z'))
     {
         /* Need to change to small letter */
         /* length between Big Letter and small letter */
-        *c = *c + ('A' - 'a');
+        *c_pnt = c + (char)((char)'A' - (char)'a');
     }
 }
 
@@ -1795,6 +1803,10 @@ size_t StrTrim(char *str)
 void StringLower(char * str)
 {
     size_t i;
+    if (!MEM_IN_RAM(str, 1))
+    {
+        return;
+    }
 
     if (str == NULL)
     {
@@ -1819,6 +1831,10 @@ void StringUpper(char * str)
     size_t i;
 
     if (str == NULL)
+    {
+        return;
+    }
+    if (!MEM_IN_RAM(str, 1))
     {
         return;
     }

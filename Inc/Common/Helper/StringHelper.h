@@ -157,8 +157,8 @@ bool StringToFloat(const char *str, float *num);
 /* String --> Bool converter */
 bool StringToBool(const char * str, bool * val);
 
-void ToLower(char * c);
-void ToUpper(char * c);
+void ToLower(char * c_pnt);
+void ToUpper(char * c_pnt);
 
 /* Standard string functions: */
 size_t StringLength(const char *str);
