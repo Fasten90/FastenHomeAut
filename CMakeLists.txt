@@ -1,19 +1,20 @@
 #cmake_minimum_required (VERSION 2.6)
 cmake_minimum_required (VERSION 3.0)
 
-if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F4_arm-.*")
-    project(FastenHomeAut C ASM)
-    message(STATUS "# ASM enabled")
-else()
-    # Normal project
-    project (FastenHomeAut)
-endif()
-    
-    
+project(FastenHomeAut C ASM)
 
+#if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F4_arm-.*")
+#    project(FastenHomeAut C ASM)
+#    message(STATUS "# ASM enabled")
+#else()
+#    # Normal project
+#    project (FastenHomeAut)
+#    message(STATUS "# Normal C project")
+#endif()
+    
+    
 # reported in Azure pipeline - Windows - MSVC?
 cmake_policy(SET CMP0054 NEW) 
-
 
 
 # Compiler type
@@ -376,15 +377,7 @@ if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F0.*")
 elseif ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F4.*")
     file(GLOB_RECURSE DRIVER_SOURCE_FILES_1 "Drivers/STM32F4xx_HAL_Driver/*.c")
     file(GLOB_RECURSE DRIVER_SOURCE_FILES_2 "Drivers/CMSIS/Device/ST/STM32F4xx/Source/*.c")
-    # startup_stm32f407xx.s
-    #enable_language(C ASM)
-    #project(assembler C ASM)
-    #SET(CMAKE_ASM_FLAGS "${CFLAGS} -x assembler-with-cpp")
-
-    # TODO: *.s
-    file(GLOB_RECURSE DRIVER_SOURCE_FILES_3 "Drivers/CMSIS/Device/ST/STM32F4xx/Source/gcc/startup_stm32f407xx.s")
-
-    set(DRIVER_SOURCE_FILES ${DRIVER_SOURCE_FILES_1} ${DRIVER_SOURCE_FILES_2} ${DRIVER_SOURCE_FILES_3})
+    set(DRIVER_SOURCE_FILES ${DRIVER_SOURCE_FILES_1} ${DRIVER_SOURCE_FILES_2})
 else()
     file(GLOB_RECURSE DRIVER_SOURCE_FILES "Drivers/x86/Src/*.c")
 endif()
@@ -397,12 +390,25 @@ if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F4.*")
     #enable_language(C ASM)  # Error
     set(ASM_OPTIONS "-x assembler-with-cpp")
     set(CMAKE_ASM_FLAGS "${CMAKE_C_FLAGS} ${ASM_OPTIONS}" ) 
-    # -mthumb -mcpu=cortex-m4 -DSTM32F4XX -DSTM32F40XX -DUSE_STDPERIPH_DRIVER -DUSE_STM32F4_DISCOVERY -DHSE_VALUE=8000000 -DUSE_HAL_DRIVER -DCONFIG_USE_PANEL_STM32F4DISCOVERY=1 -DSTM32F407xx -I../src -I../Libraries/CMSIS/Include -I../Libraries/Device/STM32F4xx/Include -I../Libraries/STM32F4xx_StdPeriph_Driver/inc -I../Utilities/STM32F4-Discovery -I"../..\FastenHomeAut\Drivers\STM32F4xx_HAL_Driver\Inc" -I"../..\FastenHomeAut\Drivers\STM32F4xx_HAL_Driver\Inc\Legacy" -I"../..\FastenHomeAut\Drivers\CMSIS\Device\ST\STM32F4xx\Include" -I"../..\FastenHomeAut\Drivers\CMSIS\Include" -I"../..\FastenHomeAut\Inc\Common" -I"../..\FastenHomeAut\Inc\HwTester" -I"../..\FastenHomeAut\Inc\Modules" -I"../..\FastenHomeAut\Inc\Application" -I"../..\FastenHomeAut\Inc" -I"../..\FastenHomeAut\Inc\Common\Handler" -I"../..\FastenHomeAut\Inc\Common\Helper" -I"../..\FastenHomeAut\Inc\Display" -I"../..\FastenHomeAut\Inc\List" -I"../..\FastenHomeAut\Inc\SelfTest" -g -Wa,--warn -x assembler-with-cpp -specs=nano.specs
+    # -mthumb -mcpu=cortex-m4 -DSTM32F4XX -DSTM32F40XX -DUSE_STDPERIPH_DRIVER -DUSE_STM32F4_DISCOVERY -DHSE_VALUE=8000000 -DUSE_HAL_DRIVER -DCONFIG_USE_PANEL_STM32F4DISCOVERY=1 -DSTM32F407xx -g -Wa,--warn -x assembler-with-cpp -specs=nano.specs
+
+    # startup_stm32f407xx.s
+    #enable_language(C ASM)
+    #project(assembler C ASM)
+    #SET(CMAKE_ASM_FLAGS "${CFLAGS} -x assembler-with-cpp")
+
+    # TODO: *.s
+    #file(GLOB_RECURSE DRIVER_SOURCE_FILES_3 "Drivers/CMSIS/Device/ST/STM32F4xx/Source/gcc/startup_stm32f407xx.s")
+    set(FASTEN_ASM_FILE "Drivers/CMSIS/Device/ST/STM32F4xx/Source/gcc/startup_stm32f407xx.s")
+    set(SOURCE_FILES ${SOURCE_FILES} ${FASTEN_ASM_FILE})
 
     message(STATUS "# ASM property adding")
     set_source_files_properties("Drivers/CMSIS/Device/ST/STM32F4xx/Source/gcc/startup_stm32f407xx.s" PROPERTIES COMPILE_FLAGS "-x assembler-with-cpp")
+    set_source_files_properties("startup_stm32f407xx.s" PROPERTIES COMPILE_FLAGS "-x assembler-with-cpp")
     #Example: set_source_files_properties(foo.cpp PROPERTIES COMPILE_FLAGS -Wno-effc++)
     message(STATUS "# Source list: " ${SOURCE_FILES})
+else()
+    set(FASTEN_ASM_FILE "")
 endif()
 
 
