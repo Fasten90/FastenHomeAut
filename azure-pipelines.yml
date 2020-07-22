@@ -278,11 +278,8 @@ stages:
 
         # Print the CMake version.
         echo 'Start CMake'
-
         cmake --version
 
-        # TODO: Perhaps does not need
-        #- cd $BITBUCKET_CLONE_DIR
         echo 'List actual directory'
         pwd
         # Win: cd
@@ -329,63 +326,11 @@ stages:
             echo 'Finished...'
             exit -1
         fi
-        
-        echo 'Install xpack-QEMU'
-        # https://www.npmjs.com/package/@xpack-dev-tools/qemu-arm
-        
-        # TODO: Delete
-        #npm install --global xpm@latest
-        #xpm install --global @xpack-dev-tools/qemu-arm@latest
-        #qemu-system-gnuarmeclipse.exe --version
 
-
-        cd ../../
-
-        # Install with manual
-        # https://xpack.github.io/qemu-arm/install/
-        # downloaded file
-        
-        qemu_version="2.8.0-9"
-        qemu_path_first_part="xpack-qemu-arm-${qemu_version}"
-        qemu_install_file="${qemu_path_first_part}-linux-x64.tar.gz"
-        # https://github.com/xpack-dev-tools/qemu-arm-xpack/releases/download/v2.8.0-9/xpack-qemu-arm-2.8.0-9-linux-x64.tar.gz
-        download_full_path="https://github.com/xpack-dev-tools/qemu-arm-xpack/releases/download/v${qemu_version}/${qemu_install_file}"
-        echo "Download: ${download_full_path}"
-        wget $download_full_path
-                
-        mkdir -p opt
-        cd opt
-
-        # E.g. tar xvf ~/Downloads/xpack-qemu-arm-2.8.0-7-linux-x64.tgz
-        echo "Unzip: ${qemu_install_file}"
-        tar xvf ../$qemu_install_file
-        # E.g. chmod -R -w xPacks/qemu-arm/2.8.0-7
-        #chmod -R -w $qemu_path_first_part
-        chmod -R 777 $qemu_path_first_part
-        qemu_bin_path="${qemu_path_first_part}/bin/qemu-system-gnuarmeclipse"
-        # Execute the version
-        echo "Execute: ${qemu_bin_path}"
-        ./$qemu_bin_path --version
-        pwd  # Debug
-        
-        arm-none-eabi-gdb --version
-        
-        python --version
-        
-        # FastenTestSystem
-        cd ..
-        echo "Clone FastenTestSystem"
-        git clone https://github.com/Fasten90/FastenTestSystem.git
-        cd FastenTestSystem
-        git checkout develop
-        # Execute
-        echo "Executing..."
-        pwd  # Debug
-        relative_qemu_bin_path="../opt/${qemu_bin_path}"
-        echo "qemu_bin path: ${relative_qemu_bin_path}"
-        python -u gdb_test.py --test_file_path ../Out/CMakeBuild/FastenHomeAut --qemu_bin_path $relative_qemu_bin_path
     - publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild/GCC_ARM_build.log
       artifact: Build_GCC_ARM_Artifact
+    - publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild/FastenHomeAut
+      artifact: Build_GCC_ARM_Bin_Artifact
 
  
   # Build - Linux - Clang - shell script
@@ -471,6 +416,71 @@ stages:
         #failOnStderr: false # Optional
         #noProfile: true # Optional
         #noRc: true # Optional
+
+
+  # Test - Linux - arm-none-eabi-gcc QEMU
+  - job: test_linux_arm_none_eabi_gcc_qemu_test
+    pool:
+      vmImage: 'ubuntu-latest'
+    displayName: 'Test - Linux - Arm-None-Eabi-GCC - QEMU Test'
+    steps:
+    - download: current
+      # TODO: Try more beautiful artifact downloading
+      artifact: Build_GCC_ARM_Bin_Artifact
+    - script: |
+
+        pwd
+        ls
+        
+        # ARM-none-eabi-gcc
+        # Note: Similar installation as ARM none eabi gcc build
+        sudo add-apt-repository ppa:team-gcc-arm-embedded/ppa
+        sudo apt-get update
+        sudo apt-get install gcc-arm-embedded
+        arm-none-eabi-gcc --version
+        
+        # Python
+        python --version
+
+        # QEMU
+        # Install with manual
+        # https://xpack.github.io/qemu-arm/install/
+        # downloaded file
+        qemu_version="2.8.0-9"
+        qemu_path_first_part="xpack-qemu-arm-${qemu_version}"
+        qemu_install_file="${qemu_path_first_part}-linux-x64.tar.gz"
+        # https://github.com/xpack-dev-tools/qemu-arm-xpack/releases/download/v2.8.0-9/xpack-qemu-arm-2.8.0-9-linux-x64.tar.gz
+        download_full_path="https://github.com/xpack-dev-tools/qemu-arm-xpack/releases/download/v${qemu_version}/${qemu_install_file}"
+        echo "Download: ${download_full_path}"
+        wget $download_full_path
+                
+        mkdir -p opt
+        cd opt
+
+        # E.g. tar xvf ~/Downloads/xpack-qemu-arm-2.8.0-7-linux-x64.tgz
+        echo "Unzip: ${qemu_install_file}"
+        tar xvf ../$qemu_install_file
+        # E.g. chmod -R -w xPacks/qemu-arm/2.8.0-7
+        #chmod -R -w $qemu_path_first_part
+        chmod -R 777 $qemu_path_first_part
+        qemu_bin_path="${qemu_path_first_part}/bin/qemu-system-gnuarmeclipse"
+        # Execute the version
+        echo "Execute: ${qemu_bin_path}"
+        ./$qemu_bin_path --version
+        pwd  # Debug
+        
+        # FastenTestSystem
+        cd ..
+        echo "Clone FastenTestSystem"
+        git clone https://github.com/Fasten90/FastenTestSystem.git
+        cd FastenTestSystem
+        git checkout develop
+        # Execute
+        echo "Executing..."
+        pwd  # Debug
+        relative_qemu_bin_path="../opt/${qemu_bin_path}"
+        echo "qemu_bin path: ${relative_qemu_bin_path}"
+        python -u gdb_test.py --test_file_path ../../Build_GCC_ARM_Bin_Artifact/FastenHomeAut --qemu_bin_path $relative_qemu_bin_path
 
 
 # Note: Not works yet, there is no Clang installation on Azure windows images
