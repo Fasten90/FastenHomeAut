@@ -278,11 +278,8 @@ stages:
 
         # Print the CMake version.
         echo 'Start CMake'
-
         cmake --version
 
-        # TODO: Perhaps does not need
-        #- cd $BITBUCKET_CLONE_DIR
         echo 'List actual directory'
         pwd
         # Win: cd
@@ -425,13 +422,27 @@ stages:
   - job: test_linux_arm_none_eabi_gcc_qemu_test
     pool:
       vmImage: 'ubuntu-latest'
-    displayName: 'Test - Linux - Arm-None-Eabi-GCC - QEMU Test [shell]'
+    displayName: 'Test - Linux - Arm-None-Eabi-GCC - QEMU Test'
     steps:
     - download: current
       # TODO: Try more beautiful artifact downloading
       artifact: Build_GCC_ARM_Bin_Artifact
     - script: |
 
+        pwd
+        ls
+        
+        # ARM-none-eabi-gcc
+        # Note: Similar installation as ARM none eabi gcc build
+        sudo add-apt-repository ppa:team-gcc-arm-embedded/ppa
+        sudo apt-get update
+        sudo apt-get install gcc-arm-embedded
+        arm-none-eabi-gcc --version
+        
+        # Python
+        python --version
+
+        # QEMU
         # Install with manual
         # https://xpack.github.io/qemu-arm/install/
         # downloaded file
@@ -458,10 +469,6 @@ stages:
         ./$qemu_bin_path --version
         pwd  # Debug
         
-        arm-none-eabi-gdb --version
-        
-        python --version
-        
         # FastenTestSystem
         cd ..
         echo "Clone FastenTestSystem"
@@ -473,7 +480,7 @@ stages:
         pwd  # Debug
         relative_qemu_bin_path="../opt/${qemu_bin_path}"
         echo "qemu_bin path: ${relative_qemu_bin_path}"
-        python -u gdb_test.py --test_file_path ../Out/CMakeBuild/FastenHomeAut --qemu_bin_path $relative_qemu_bin_path
+        python -u gdb_test.py --test_file_path ../../Build_GCC_ARM_Bin_Artifact/FastenHomeAut --qemu_bin_path $relative_qemu_bin_path
 
 
 # Note: Not works yet, there is no Clang installation on Azure windows images
