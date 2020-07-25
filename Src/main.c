@@ -333,6 +333,7 @@ int main(void)
     /* Return with UnitTest result: */
     exit(utResult);
 #else
+    UnitTest_Finished_flag = true;
     UnitTest_Finished();
 #endif /* CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE */
 
