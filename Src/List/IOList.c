@@ -51,6 +51,30 @@ const IO_Output_Record_t IO_Output_List[] =
     },
 #endif
 
+
+#if defined(CONFIG_FUNCTION_TRAFFIC_LIGHT)
+    {
+        .GPIO_Port = BOARD_TRAFFICLIGHT_RED_PORT,
+        .GPIO_Pin = BOARD_TRAFFICLIGHT_RED_PIN,
+        .lowVoltageState = IO_Status_Off,
+        .name = "tl_red"
+    },
+
+    {
+        .GPIO_Port = BOARD_TRAFFICLIGHT_YELLOW_PORT,
+        .GPIO_Pin = BOARD_TRAFFICLIGHT_YELLOW_PIN,
+        .lowVoltageState = IO_Status_Off,
+        .name = "tl_yellow"
+    },
+    {
+        .GPIO_Port = BOARD_TRAFFICLIGHT_GREEN_PORT,
+        .GPIO_Pin = BOARD_TRAFFICLIGHT_GREEN_PIN,
+        .lowVoltageState = IO_Status_Off,
+        .name = "tl_green"
+    },
+#endif
+
+
     /*
      * XXX: Add new IO output here
      * GPIO_TypeDef * GPIO_Port;            ///< GPIO port
@@ -123,6 +147,7 @@ const IO_Input_Record_t IO_Input_List[] =
  */
 void IO_List_Init(void)
 {
+    /* List IO_Output_List shall be synced with Enum IO_Output_Count */
     BUILD_ASSERT((NUM_OF(IO_Output_List)) == (IO_Output_Count - 1));
 
     /* Do not be empty */

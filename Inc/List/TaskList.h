@@ -87,6 +87,9 @@ typedef enum
 #ifdef CONFIG_MODULE_COMMON_UART_ENABLE
     Task_CommonUART,
 #endif
+#ifdef CONFIG_FUNCTION_TRAFFIC_LIGHT
+    Task_TrafficLight,
+#endif
 
     /* XXX: Add new Task enum here! */
     /* @note: !! Be careful !! Sync with TaskList */

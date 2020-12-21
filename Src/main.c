@@ -322,11 +322,11 @@ int main(void)
 
     if (utResult != 0)
     {
-        printf("%s\r\n", "[FAIL] UnitTests are failed!");
+        uprintf("%s\r\n", "[FAIL] UnitTests are failed!");
     }
     else
     {
-        printf("%s\r\n", "[OK] Every test has run successfully!");
+        uprintf("%s\r\n", "[OK] Every test has run successfully!");
     }
 
 #if (CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE == 1)
