@@ -13,7 +13,7 @@
 
 
 /*------------------------------------------------------------------------------
- *                                Config Defines
+ *                                Module configs
  *----------------------------------------------------------------------------*/
 
 //* XXX: Select your panel */
@@ -89,7 +89,8 @@
 #endif
 
 
-#define CONFIG_FUNCTION_DISPLAY
+/* Require function Display */
+/* #define CONFIG_FUNCTION_DISPLAY */
 #if defined(CONFIG_FUNCTION_DISPLAY) && defined(CONFIG_HW_DISPLAY_ENABLE)
     ///< Display: Menu
     #define CONFIG_FUNCTION_DISPLAY_MENU
