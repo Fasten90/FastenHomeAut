@@ -46,18 +46,19 @@
 
 
 #ifdef STM32F030x8
+    /* 2 kB RAM, 64 kB Flash */
     #define MEM_FLASH_START        (0x08000000)
     #define MEM_FLASH_END          (0x08000000 + 64*1024)
     #define MEM_RAM_START          (0x20000000)
     #define MEM_RAM_END            (0x20002000)
 #elif defined(STM32F407xx)
-    /* 128 KB RAM, 1024 KB FLASH */
+    /* 128 kB RAM, 1024 kB FLASH */
     #define MEM_FLASH_START        (0x08000000)
     #define MEM_FLASH_END          (0x08000000 + 1024*1024)
     #define MEM_RAM_START          (0x20000000)
     #define MEM_RAM_END            (0x20000000 + 128*1024)
 #elif defined(CONFIG_PLATFORM_X86)
-    /* Do not use... */
+    /* Turning off the checker with full range of 32 bit */
     #define MEM_FLASH_START        (0x00000000)
     #define MEM_FLASH_END          (0xFFFFFFFF)
     #define MEM_RAM_START          (0x00000000)

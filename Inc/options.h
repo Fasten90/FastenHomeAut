@@ -453,6 +453,10 @@
     /* #define CONFIG_MODULE_ESCAPEBROWSER_ENABLE */
 
     /* #define CONFIG_MODULE_MEASUREMENTTIMER_ENABLE */
+
+    /* Settings */
+
+    #define CONFIG_UNITTEST_EXECUTE_AUTOMATICALLY
 #endif
 
 

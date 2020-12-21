@@ -80,7 +80,7 @@ uint32_t UnitTestList_Run(void)
     result += DateTime_UnitTest();
 #endif
 
-#ifdef CONFIG_MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE
+#if defined(CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE) && defined(CONFIG_MODULE_HOMEAUTMESSAGE_UNITTEST_ENABLE)
     result += HomeAutMessage_UnitTest();
 #endif
 
@@ -112,7 +112,7 @@ uint32_t UnitTestList_Run(void)
     result += MEM_UnitTest();
 #endif
 
-#ifdef CONFIG_MODULE_LINKEDLIST_UNITTEST_ENABLE
+#if defined(CONFIG_MODULE_LINKEDLIST_ENABLE) && defined(CONFIG_MODULE_LINKEDLIST_UNITTEST_ENABLE)
     result += LinkedList_UnitTest();
 #endif
 

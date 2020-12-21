@@ -317,8 +317,8 @@ int main(void)
     uint32_t utResult = UnitTestList_Run();
 
     /* Print result */
-    printf("%s\r\n", responseBuffer); /* Clang generated compile warning when "printf(responseBuffer);" used */
-    printf("Unit test result: %d\r\n", utResult);
+    uprintf("%s\r\n", responseBuffer); /* Clang generated compile warning when "printf(responseBuffer);" used */
+    uprintf("Unit test result: %d\r\n", utResult);
 
     if (utResult != 0)
     {
@@ -330,7 +330,7 @@ int main(void)
     }
 
 #if (CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE == 1)
-    /* Return with UnitTest result: */
+    /* Return with UnitTest result, it is only recommended for x86/x64/ PC host architectures */
     exit(utResult);
 #else
     UnitTest_Finished_flag = true;
