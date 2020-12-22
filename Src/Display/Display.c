@@ -119,7 +119,7 @@ void Display_PrintString(const char *str, uint8_t line, FontType_t font, FontFor
     }
 
     /* Print text */
-    for (i = 0; str[i]; i++)
+    for (i = 0; str[i]; i++) /* TODO: Add checker for length */
     {
         switch (font)
         {
@@ -203,9 +203,9 @@ void Display_PrintFont8x5(uint8_t chr, uint8_t index, uint8_t line, FontFormat_t
 /**
  * @brief       Print a 12x8 pixel character to display
  * @param       chr        - which character (ASCII - 0-127)
- * @param       index    - column
- * @param       line    - line / row
- * @param       format    - format of text
+ * @param       index      - column (from 0)
+ * @param       line       - line / row
+ * @param       format     - format of text
  */
 /* _attribute__( ( section(".data") ) ) */
 void Display_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line, FontFormat_t format)

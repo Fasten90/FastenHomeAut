@@ -300,6 +300,8 @@ void TaskHandler_SetTaskPeriodicTime(TaskID_t taskID, TaskTick_t taskTick)
  */
 void TaskHandler_SetTaskOnceRun(TaskID_t taskID, TaskTick_t taskTick)
 {
+    /* TODO: Check taskID */
+
     TaskList[taskID].isRunOnce = true;
     TaskList[taskID].isDisabled = false;
     TaskList[taskID].taskScheduleRate = taskTick;
