@@ -91,6 +91,10 @@
 
 /* Require function Display */
 /* #define CONFIG_FUNCTION_DISPLAY */
+/* Automatic required by board */
+#ifdef CONFIG_USE_PANEL_FASTENNODE
+    #define CONFIG_FUNCTION_DISPLAY
+#endif
 #if defined(CONFIG_FUNCTION_DISPLAY) && defined(CONFIG_HW_DISPLAY_ENABLE)
     ///< Display: Menu
     #define CONFIG_FUNCTION_DISPLAY_MENU

@@ -264,7 +264,7 @@ static const char * GetStrListElement(uint8_t i)
 }
 #endif
 
-#ifdef CONFIG_MODULE_UNITTEST_ENABLE
+#if defined(CONFIG_MODULE_UNITTEST_ENABLE) && defined(CONFIG_UNITTEST_EXECUTE_AUTOMATICALLY)
 static void UnitTest_Finished(void);
 static volatile bool UnitTest_Finished_flag = false;
 
@@ -273,7 +273,7 @@ static void UnitTest_Finished(void)
     UnitTest_Finished_flag = true;
 }
 
-#endif
+#endif /* CONFIG_MODULE_UNITTEST_ENABLE && CONFIG_UNITTEST_EXECUTE_AUTOMATICALLY */
 
 
 /**
