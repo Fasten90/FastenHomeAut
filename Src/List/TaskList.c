@@ -52,6 +52,8 @@
 #include "RemoteController.h"
 #endif
 
+#include "SmallApps.h"
+
 #include "TaskList.h"
 
 
@@ -113,7 +115,7 @@ static TaskResult_t Task_BluetoothProcessFunction(ScheduleSource_t source);
 #ifdef CONFIG_MODULE_COMMON_UART_ENABLE
 static TaskResult_t Task_CommonUARTfunction(ScheduleSource_t source);
 #endif
-#ifdef CONFIG_FUNCTION_TRAFFIC_LIGHT
+#ifdef CONFIG_FUNCTION_TASK_TRAFFIC_LIGHT
 static TaskResult_t Task_FunctionTrafficLight(ScheduleSource_t source);
 #endif
 
@@ -276,7 +278,7 @@ Task_t TaskList[] =
     #endif
     },
 #endif
-#ifdef CONFIG_FUNCTION_TRAFFIC_LIGHT
+#ifdef CONFIG_FUNCTION_TASK_TRAFFIC_LIGHT
     {
         .taskName = "TrafficLight",
         .taskFunction = Task_FunctionTrafficLight,
@@ -816,6 +818,7 @@ static TaskResult_t Task_BluetoothProcessFunction(ScheduleSource_t source)
 #endif
 
 
+
 #ifdef CONFIG_MODULE_COMMON_UART_ENABLE
 static TaskResult_t Task_CommonUARTfunction(ScheduleSource_t source)
 {
@@ -829,42 +832,10 @@ static TaskResult_t Task_CommonUARTfunction(ScheduleSource_t source)
 
 
 
-#ifdef CONFIG_FUNCTION_TRAFFIC_LIGHT
+#ifdef CONFIG_FUNCTION_TASK_TRAFFIC_LIGHT
 static TaskResult_t Task_FunctionTrafficLight(ScheduleSource_t source)
 {
-    UNUSED_ARGUMENT(source);
-
-    static uint32_t TrafficLight_Global_Cnt = 0;
-
-    TrafficLight_Global_Cnt++;
-
-    switch (TrafficLight_Global_Cnt % 3)
-    {
-        case 0:
-            IO_Output_SetStatus(IO_AppTrafficLight_Red, IO_Output_Cmd_SetOn);
-            IO_Output_SetStatus(IO_AppTrafficLight_Yellow, IO_Output_Cmd_SetOff);
-            IO_Output_SetStatus(IO_AppTrafficLight_Green, IO_Output_Cmd_SetOff);
-            break;
-
-        case 1:
-            IO_Output_SetStatus(IO_AppTrafficLight_Red, IO_Output_Cmd_SetOff);
-            IO_Output_SetStatus(IO_AppTrafficLight_Yellow, IO_Output_Cmd_SetOn);
-            IO_Output_SetStatus(IO_AppTrafficLight_Green, IO_Output_Cmd_SetOff);
-            break;
-
-        case 2:
-            IO_Output_SetStatus(IO_AppTrafficLight_Red, IO_Output_Cmd_SetOff);
-            IO_Output_SetStatus(IO_AppTrafficLight_Yellow, IO_Output_Cmd_SetOff);
-            IO_Output_SetStatus(IO_AppTrafficLight_Green, IO_Output_Cmd_SetOn);
-            break;
-
-        default:
-            /* Error situation, it never reached */
-            IO_Output_SetStatus(IO_AppTrafficLight_Red, IO_Output_Cmd_SetOff);
-            IO_Output_SetStatus(IO_AppTrafficLight_Yellow, IO_Output_Cmd_SetOff);
-            IO_Output_SetStatus(IO_AppTrafficLight_Green, IO_Output_Cmd_SetOff);
-            break;
-    }
+    App_TrafficLight_TaskFunction(source);
 
     return TaskResult_Ok;
 }

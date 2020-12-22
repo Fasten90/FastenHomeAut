@@ -50,6 +50,9 @@ typedef enum
 #ifdef CONFIG_DISPLAY_ESP8266_ENABLE
     AppType_ESP8266,
 #endif
+#ifdef CONFIG_FUNCTION_TRAFFIC_LIGHT
+    AppType_TrafficLight,
+#endif
 
     /* Note: Last item, do not put anything after */
     AppType_Count

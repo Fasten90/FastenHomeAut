@@ -46,6 +46,37 @@ typedef enum
 #endif
 
 
+#if defined(CONFIG_FUNCTION_TRAFFIC_LIGHT)
+typedef enum
+{
+    TrafficLight_Mode_Automatic,
+    TrafficLight_Mode_Manual,
+    TrafficLight_Mode_TurnedOff,
+
+    /* Do not use, it is only for checkers */
+    TrafficLight_Mode_Count
+} TrafficLight_Mode_t;
+
+#define TRAFFICLIGHT_MODE_DEFAULT_VALUE (TrafficLight_Mode_Automatic)
+
+typedef enum
+{
+    TraffictLight_Lamp_Red,
+    TraffictLight_Lamp_Yellow,
+    TraffictLight_Lamp_Green,
+
+    /* Do not use, it is only for checkers */
+    TraffictLight_Lamp_Count
+} TrafficLight_Lamp_t;
+
+
+typedef struct
+{
+    uint16_t TrafficLight_LampRed_time[TraffictLight_Lamp_Count];
+} TrafficLight_LampTime_t;
+
+#endif
+
 
 /*------------------------------------------------------------------------------
  *  Global variables
@@ -75,6 +106,12 @@ void App_DisplayLargeClock_Init(void);
 void App_DisplayLargeClock_Event(ButtonType_t button, ButtonPressType_t type);
 void App_DisplayLargeClock_Update(ScheduleSource_t source);
 
+
+void App_TrafficLight_Init(void);
+void App_TrafficLight_Event(ButtonType_t button, ButtonPressType_t type);
+void App_TrafficLight_Update(ScheduleSource_t source);
+
+void App_TrafficLight_TaskFunction(ScheduleSource_t source);
 
 
 #endif /* SMALLAPPS_H_ */

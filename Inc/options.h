@@ -202,6 +202,9 @@
         #ifndef CONFIG_MODULE_IO_ENABLE
             #define CONFIG_MODULE_IO_ENABLE
         #endif
+
+        /* Possible to use without App */
+        /* #define CONFIG_FUNCTION_TASK_TRAFFIC_LIGHT */
     #endif
 #endif /* #ifdef CONFIG_HW_DISPLAY_ENABLE */
 

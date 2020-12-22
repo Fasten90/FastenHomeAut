@@ -87,7 +87,7 @@ typedef enum
 #ifdef CONFIG_MODULE_COMMON_UART_ENABLE
     Task_CommonUART,
 #endif
-#ifdef CONFIG_FUNCTION_TRAFFIC_LIGHT
+#ifdef CONFIG_FUNCTION_TASK_TRAFFIC_LIGHT
     Task_TrafficLight,
 #endif
 
