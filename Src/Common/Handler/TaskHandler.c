@@ -287,10 +287,14 @@ static void TaskHandler_RunTask(TaskID_t taskID, ScheduleSource_t source)
  */
 void TaskHandler_SetTaskPeriodicTime(TaskID_t taskID, TaskTick_t taskTick)
 {
-    TaskList[taskID].isRunOnce = false;
-    TaskList[taskID].isDisabled = false;
-    TaskList[taskID].taskScheduleRate = taskTick;
-    TaskList[taskID].tick = 0;
+    if (taskID < Task_Count)
+    {
+        TaskList[taskID].isRunOnce = false;
+        TaskList[taskID].isDisabled = false;
+        TaskList[taskID].taskScheduleRate = taskTick;
+        TaskList[taskID].tick = 0;
+    }
+    /* TODO: Error report */
 }
 
 
@@ -300,12 +304,14 @@ void TaskHandler_SetTaskPeriodicTime(TaskID_t taskID, TaskTick_t taskTick)
  */
 void TaskHandler_SetTaskOnceRun(TaskID_t taskID, TaskTick_t taskTick)
 {
-    /* TODO: Check taskID */
-
-    TaskList[taskID].isRunOnce = true;
-    TaskList[taskID].isDisabled = false;
-    TaskList[taskID].taskScheduleRate = taskTick;
-    TaskList[taskID].tick = 0;
+    if (taskID < Task_Count)
+    {
+        TaskList[taskID].isRunOnce = true;
+        TaskList[taskID].isDisabled = false;
+        TaskList[taskID].taskScheduleRate = taskTick;
+        TaskList[taskID].tick = 0;
+    }
+    /* TODO: Error report */
 }
 
 
@@ -319,6 +325,7 @@ void TaskHandler_DisableTask(TaskID_t taskID)
     {
         TaskList[taskID].isDisabled = true;
     }
+    /* TODO: Error report */
 }
 
 
@@ -354,6 +361,7 @@ void TaskHandler_ClearTimeoutTask(TaskID_t taskID)
         EventHandler_GenerateEvent(Event_TaskCleared, taskID, 0);
 #endif
     }
+    /* TODO: Error report */
 }
 
 
