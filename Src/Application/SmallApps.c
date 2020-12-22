@@ -104,6 +104,7 @@ static int8_t TrafficLight_LampTime_ActualIndex = 0;
 
 #define TRAFFICLIGHT_LAMP_DEFAULT_STATUS (TraffictLight_Lamp_Red)
 #define TRAFFICLIGHT_LAMP_MIN_STATUS     (TraffictLight_Lamp_Red)
+#define TRAFFICLIGHT_LAMP_MAX_STATUS     (TraffictLight_Lamp_Green)
 static TrafficLight_Lamp_t TrafficLight_ActualStatus = TRAFFICLIGHT_LAMP_DEFAULT_STATUS;
 
 #endif /* CONFIG_FUNCTION_TRAFFIC_LIGHT */
@@ -701,20 +702,21 @@ void App_TrafficLight_Event(ButtonType_t button, ButtonPressType_t type)
                     /* Lamp change */
                     if (button == PressedButton_Up)
                     {
-                        TrafficLight_ActualStatus++;
-                        if (TrafficLight_ActualStatus >= TraffictLight_Lamp_Count)
-                        {
-                            TrafficLight_ActualStatus = TRAFFICLIGHT_LAMP_DEFAULT_STATUS;
-                        }
-                    }
-                    else
-                    {
-                        /* if (button == PressedButton_Down) */
+                        /* For the live App, it is more user-friendly if the top (index=0) is the increment (up) */
                         TrafficLight_ActualStatus--;
                         /* For avoid the warning, the value < 0 cannot check */
                         if (TrafficLight_ActualStatus >= TraffictLight_Lamp_Count)
                         {
                             TrafficLight_ActualStatus = TRAFFICLIGHT_LAMP_MIN_STATUS;
+                        }
+                    }
+                    else
+                    {
+                        /* if (button == PressedButton_Down) */
+                        TrafficLight_ActualStatus++;
+                        if (TrafficLight_ActualStatus >= TraffictLight_Lamp_Count)
+                        {
+                            TrafficLight_ActualStatus = TRAFFICLIGHT_LAMP_MAX_STATUS;
                         }
                     }
                 }
@@ -755,8 +757,15 @@ void App_TrafficLight_Event(ButtonType_t button, ButtonPressType_t type)
                         TrafficLight_Mode = TrafficLight_Mode_Count - 1; /* Last value */
                     }
                 }
+
                 /* TimeCnt update */
                 TrafficLight_TimeCnt = 0;
+
+                /* Calculated new status */
+                if (TrafficLight_Mode == TrafficLight_Mode_TurnedOff)
+                {
+                    TrafficLight_ActualStatus = TraffictLight_Lamp_Count;
+                }
 
                 /* Update the display + lamps */
                 App_TrafficLight_Update(ScheduleSource_EventTriggered);
@@ -819,9 +828,6 @@ void App_TrafficLight_Update(ScheduleSource_t source)
 
     if (need_update_display == true)
     {
-        /* Update the display */
-        /* TODO */
-
         /* Update the lamp */
         switch (TrafficLight_ActualStatus)
         {
@@ -851,8 +857,69 @@ void App_TrafficLight_Update(ScheduleSource_t source)
                 IO_Output_SetStatus(IO_AppTrafficLight_Green, IO_Output_Cmd_SetOff);
                 break;
         }
-    }
 
+        /* Update the display */
+        /*
+         * +---------+
+         * | O       |
+         * | X text  |
+         * | X       |
+         * +---------+
+         *
+         * Solution: space indent required for the displaying to text
+         */
+
+        switch (TrafficLight_Mode)
+        {
+            case TrafficLight_Mode_Automatic:
+                Display_PrintString("  Automatic", 2, Font_12x8, NO_FORMAT);
+                break;
+
+            case TrafficLight_Mode_Manual:
+                Display_PrintString("  Manual", 2, Font_12x8, NO_FORMAT);
+                break;
+
+            case TrafficLight_Mode_TurnedOff:
+                Display_PrintString("  Off", 2, Font_12x8, NO_FORMAT);
+                break;
+
+            case TrafficLight_Mode_Count:
+            default:
+                Display_PrintString("  Error", 2, Font_12x8, NO_FORMAT);
+                break;
+        }
+
+        switch (TrafficLight_ActualStatus)
+        {
+            case TraffictLight_Lamp_Red:
+                Display_PrintFont12x8('O', 0, 1, NO_FORMAT);
+                Display_PrintFont12x8('X', 0, 2, NO_FORMAT);
+                Display_PrintFont12x8('X', 0, 3, NO_FORMAT);
+                break;
+
+            case TraffictLight_Lamp_Yellow:
+                Display_PrintFont12x8('X', 0, 1, NO_FORMAT);
+                Display_PrintFont12x8('O', 0, 2, NO_FORMAT);
+                Display_PrintFont12x8('X', 0, 3, NO_FORMAT);
+                break;
+
+            case TraffictLight_Lamp_Green:
+                Display_PrintFont12x8('X', 0, 1, NO_FORMAT);
+                Display_PrintFont12x8('X', 0, 2, NO_FORMAT);
+                Display_PrintFont12x8('O', 0, 3, NO_FORMAT);
+                break;
+
+            case TraffictLight_Lamp_Count:
+            default:
+                /* Off situation */
+                Display_PrintFont12x8('X', 0, 1, NO_FORMAT);
+                Display_PrintFont12x8('X', 0, 2, NO_FORMAT);
+                Display_PrintFont12x8('X', 0, 3, NO_FORMAT);
+                break;
+        }
+
+        Display_Activate();
+    }
 }
 
 
