@@ -83,15 +83,15 @@ static const TrafficLight_LampTime_t TrafficLight_LampTime_List[] = {
     /* Lowest values/timeout --> Fastest */
     {
         /* Red, Yellow, Green */
-        .TrafficLight_LampRed_time = { 2000, 500, 2000, }
+        .TrafficLight_LampRed_time = { 2000, 500, 2000, 500, }
     },
     /* Default timeouts */
     {
-        .TrafficLight_LampRed_time = { 5000, 1000, 5000, }
+        .TrafficLight_LampRed_time = { 5000, 1000, 5000, 1000, }
     },
     /* Highest values/timeout --> Slowest */
     {
-        .TrafficLight_LampRed_time = { 10000, 2000, 10000, }
+        .TrafficLight_LampRed_time = { 10000, 2000, 10000, 2000, }
     },
 };
 
@@ -104,7 +104,7 @@ static int8_t TrafficLight_LampTime_ActualIndex = 0;
 
 #define TRAFFICLIGHT_LAMP_DEFAULT_STATUS (TraffictLight_Lamp_Red)
 #define TRAFFICLIGHT_LAMP_MIN_STATUS     (TraffictLight_Lamp_Red)
-#define TRAFFICLIGHT_LAMP_MAX_STATUS     (TraffictLight_Lamp_Green)
+#define TRAFFICLIGHT_LAMP_MAX_STATUS     (TraffictLight_Lamp_Yellow)
 static TrafficLight_Lamp_t TrafficLight_ActualStatus = TRAFFICLIGHT_LAMP_DEFAULT_STATUS;
 
 #endif /* CONFIG_FUNCTION_TRAFFIC_LIGHT */
@@ -837,8 +837,8 @@ void App_TrafficLight_Update(ScheduleSource_t source)
                 IO_Output_SetStatus(IO_AppTrafficLight_Green, IO_Output_Cmd_SetOff);
                 break;
 
-            case TraffictLight_Lamp_Yellow:
-                IO_Output_SetStatus(IO_AppTrafficLight_Red, IO_Output_Cmd_SetOff);
+            case TraffictLight_Lamp_RedYellow:
+                IO_Output_SetStatus(IO_AppTrafficLight_Red, IO_Output_Cmd_SetOn);
                 IO_Output_SetStatus(IO_AppTrafficLight_Yellow, IO_Output_Cmd_SetOn);
                 IO_Output_SetStatus(IO_AppTrafficLight_Green, IO_Output_Cmd_SetOff);
                 break;
@@ -847,6 +847,12 @@ void App_TrafficLight_Update(ScheduleSource_t source)
                 IO_Output_SetStatus(IO_AppTrafficLight_Red, IO_Output_Cmd_SetOff);
                 IO_Output_SetStatus(IO_AppTrafficLight_Yellow, IO_Output_Cmd_SetOff);
                 IO_Output_SetStatus(IO_AppTrafficLight_Green, IO_Output_Cmd_SetOn);
+                break;
+
+            case TraffictLight_Lamp_Yellow:
+                IO_Output_SetStatus(IO_AppTrafficLight_Red, IO_Output_Cmd_SetOff);
+                IO_Output_SetStatus(IO_AppTrafficLight_Yellow, IO_Output_Cmd_SetOn);
+                IO_Output_SetStatus(IO_AppTrafficLight_Green, IO_Output_Cmd_SetOff);
                 break;
 
             case TraffictLight_Lamp_Count:
@@ -897,8 +903,8 @@ void App_TrafficLight_Update(ScheduleSource_t source)
                 Display_PrintFont12x8('X', 0, 3, NO_FORMAT);
                 break;
 
-            case TraffictLight_Lamp_Yellow:
-                Display_PrintFont12x8('X', 0, 1, NO_FORMAT);
+            case TraffictLight_Lamp_RedYellow:
+                Display_PrintFont12x8('O', 0, 1, NO_FORMAT);
                 Display_PrintFont12x8('O', 0, 2, NO_FORMAT);
                 Display_PrintFont12x8('X', 0, 3, NO_FORMAT);
                 break;
@@ -907,6 +913,12 @@ void App_TrafficLight_Update(ScheduleSource_t source)
                 Display_PrintFont12x8('X', 0, 1, NO_FORMAT);
                 Display_PrintFont12x8('X', 0, 2, NO_FORMAT);
                 Display_PrintFont12x8('O', 0, 3, NO_FORMAT);
+                break;
+
+            case TraffictLight_Lamp_Yellow:
+                Display_PrintFont12x8('X', 0, 1, NO_FORMAT);
+                Display_PrintFont12x8('O', 0, 2, NO_FORMAT);
+                Display_PrintFont12x8('X', 0, 3, NO_FORMAT);
                 break;
 
             case TraffictLight_Lamp_Count:

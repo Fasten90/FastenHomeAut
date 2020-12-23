@@ -61,9 +61,12 @@ typedef enum
 
 typedef enum
 {
+    /* Sync the first item with TRAFFICLIGHT_LAMP_MIN_STATUS */
     TraffictLight_Lamp_Red,
-    TraffictLight_Lamp_Yellow,
+    TraffictLight_Lamp_RedYellow,
     TraffictLight_Lamp_Green,
+    TraffictLight_Lamp_Yellow,
+    /* Sync the last item with TRAFFICLIGHT_LAMP_MAX_STATUS */
 
     /* Do not use, it is only for checkers */
     TraffictLight_Lamp_Count
