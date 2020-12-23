@@ -13,7 +13,7 @@
 
 
 /*------------------------------------------------------------------------------
- *                                Config Defines
+ *                                Module configs
  *----------------------------------------------------------------------------*/
 
 //* XXX: Select your panel */
@@ -85,12 +85,17 @@
 
 
 #if defined(CONFIG_FUNCTION_REMOTECONTROLLER_CAR) && defined(CONFIG_FUNCTION_REMOTECONTROLLER)
-#error "RemoteController - controller and car is too defined. Do not use them together!"
+#error "RemoteController - controller and car also defined. Do not use them together!"
 #endif
 
 
+/* Require function Display */
 /* #define CONFIG_FUNCTION_DISPLAY */
-#ifdef CONFIG_FUNCTION_DISPLAY
+/* Automatic required by board */
+#ifdef CONFIG_USE_PANEL_FASTENNODE
+    #define CONFIG_FUNCTION_DISPLAY
+#endif
+#if defined(CONFIG_FUNCTION_DISPLAY) && defined(CONFIG_HW_DISPLAY_ENABLE)
     ///< Display: Menu
     #define CONFIG_FUNCTION_DISPLAY_MENU
     #ifdef CONFIG_FUNCTION_DISPLAY_MENU
@@ -100,7 +105,7 @@
         #define CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
         #define CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
         /* Display: Snake game */
-        #define CONFIG_FUNCTION_GAME_SNAKE
+        /* #define CONFIG_FUNCTION_GAME_SNAKE */
         /* Display: Input */
         #define CONFIG_FUNCTION_DISPLAY_INPUT
         /* Display: Show screen */
@@ -179,9 +184,27 @@
 
 
     ///< ESP8266 status display
-    #define CONFIG_DISPLAY_ESP8266_ENABLE
+    /* #define CONFIG_DISPLAY_ESP8266_ENABLE */
     #ifndef CONFIG_REQUIRE_DISPLAY
         #define CONFIG_REQUIRE_DISPLAY
+    #endif
+
+
+    ///< Traffic light
+    #define CONFIG_FUNCTION_TRAFFIC_LIGHT
+    #ifdef CONFIG_FUNCTION_TRAFFIC_LIGHT
+        #ifndef CONFIG_FUNCTION_TRAFFIC_LIGHT
+            #define CONFIG_FUNCTION_TRAFFIC_LIGHT
+        #endif /* CONFIG_FUNCTION_TRAFFIC_LIGHT */
+        #ifndef CONFIG_REQUIRE_DISPLAY
+            #define CONFIG_REQUIRE_DISPLAY
+        #endif
+        #ifndef CONFIG_MODULE_IO_ENABLE
+            #define CONFIG_MODULE_IO_ENABLE
+        #endif
+
+        /* Possible to use without App */
+        /* #define CONFIG_FUNCTION_TASK_TRAFFIC_LIGHT */
     #endif
 #endif /* #ifdef CONFIG_HW_DISPLAY_ENABLE */
 
@@ -270,8 +293,6 @@
 
     #define CONFIG_MODULE_BUTTON_ENABLE
 
-    /* #define CONFIG_MODULE_IO_ENABLE */
-
     /* #define CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE */
 
     /* #define CONFIG_MODULE_ESP8266_ENABLE */
@@ -316,14 +337,10 @@
     #define CONFIG_MODULE_COMMANDHANDLER_ENABLE
     /* #define CONFIG_MODULE_GLOBALVARHANDLER_ENABLE */
 
-    /* #define CONFIG_MODULE_IO_ENABLE */
-
     /* #define CONFIG_MODULE_LEDPWM_ENABLE */
 
     /* #define CONFIG_MODULE_BUTTON_ENABLE */
     /* TODO: Check, long time ago it has used */
-
-    /* #define CONFIG_MODULE_IO_ENABLE */
 
     #define CONFIG_MODULE_HOMEAUTMESSAGE_ENABLE
 
@@ -453,6 +470,11 @@
     /* #define CONFIG_MODULE_ESCAPEBROWSER_ENABLE */
 
     /* #define CONFIG_MODULE_MEASUREMENTTIMER_ENABLE */
+
+    /* Settings */
+
+    /* #define CONFIG_UNITTEST_EXECUTE_AUTOMATICALLY */
+    /* TODO: It goes to HardFault, due the used UART before it has been initialized */
 #endif
 
 

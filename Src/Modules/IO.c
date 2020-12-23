@@ -179,6 +179,7 @@ static void IO_CheckList(void)
 
 
 
+#if defined(CONFIG_MODULE_IO_TEST)
 /**
  * @brief       IO (e.g. LED) blinking in infinite loop
  * @note        !! It is blocking !!
@@ -210,6 +211,7 @@ void IO_Output_Test(void)
         DelayMs(200);
     }
 }
+#endif /* CONFIG_MODULE_IO_TEST */
 
 
 

@@ -729,9 +729,9 @@ uint32_t CmdH_UnitTest(void)
     /* ---------------------------------------------------- */
 #ifdef CONFIG_MODULE_IO_ENABLE
     /* test with 2 parameters: */
-    StrCpy(cmdSrcBuffer, "led");            /* command string must reside in RAM! */
+    StrCpy(cmdSrcBuffer, "led");               /* command string must reside in RAM! */
     StrCpy(cmdParamBuffer, "1 on");            /* command string must reside in RAM! */
-    result = CmdH_ExecuteCommandWithParams(CommProt_DebugUart, cmdSrcBuffer, cmdParamBuffer, buffer, CMD_UNITTEST_BUFFER_SIZE);
+    result = CmdH_ExecuteCommandWithParams(cmdSrcBuffer, cmdParamBuffer, buffer, CMD_UNITTEST_BUFFER_SIZE);
 
     /* Check command execute result: true/successful, because CommandHandler will find "version" command */
     UNITTEST_ASSERT(result == CmdH_Result_Ok, "CmdH_PrepareFindExecuteCommand error");

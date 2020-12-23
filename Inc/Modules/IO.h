@@ -106,7 +106,9 @@ typedef struct
 #ifdef CONFIG_MODULE_IO_ENABLE
 
 void IO_Init(void);
+#if defined(CONFIG_MODULE_IO_TEST)
 void IO_Output_Test(void);
+#endif /* CONFIG_MODULE_IO_TEST */
 IO_Status_t IO_Output_SetStatus(IO_Output_Name_t ioName, IO_Output_Cmd_t ioCmd);
 IO_Status_t IO_Output_GetStatus(IO_Output_Name_t ioName);
 IO_Output_Name_t IO_Output_GetOutputNumFromName(const char *name);

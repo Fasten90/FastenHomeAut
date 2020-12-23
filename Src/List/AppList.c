@@ -78,6 +78,15 @@ const App_List_t AppList[] = {
         .updateFunction = NULL
     },
     #endif
+    #ifdef CONFIG_FUNCTION_TRAFFIC_LIGHT
+    {
+        .AppName = "TrafficLight",
+        .initFunction = App_TrafficLight_Init,
+        .eventFunction = App_TrafficLight_Event,
+        .updateFunction = App_TrafficLight_Update
+    },
+    #endif
+
 };
 
 const uint8_t AppList_Num = NUM_OF(AppList);

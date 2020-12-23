@@ -21,6 +21,7 @@
 #include "TaskList.h"
 #include "CommandHandler.h"
 #include "SysTime.h"
+#include "IO.h"
 #include "AppList.h"
 
 
@@ -71,6 +72,42 @@ static uint16_t DisplayCarAnimation_RefreshPeriod_Actual = 300;        /* Do not
 #if defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK)
 static DisplayClock_ChangeState_t App_Clock_SystemTimeConfigState = 0;
 #endif /* CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK */
+
+
+#if defined(CONFIG_FUNCTION_TRAFFIC_LIGHT)
+static uint32_t TrafficLight_TimeCnt = 0;
+
+static TrafficLight_Mode_t TrafficLight_Mode = TRAFFICLIGHT_MODE_DEFAULT_VALUE;
+
+static const TrafficLight_LampTime_t TrafficLight_LampTime_List[] = {
+    /* Lowest values/timeout --> Fastest */
+    {
+        /* Red, Yellow, Green */
+        .TrafficLight_LampRed_time = { 2000, 500, 2000, 500, }
+    },
+    /* Default timeouts */
+    {
+        .TrafficLight_LampRed_time = { 5000, 1000, 5000, 1000, }
+    },
+    /* Highest values/timeout --> Slowest */
+    {
+        .TrafficLight_LampRed_time = { 10000, 2000, 10000, 2000, }
+    },
+};
+
+static const int8_t TrafficLight_LampTime_MaxTimeIndex = NUM_OF(TrafficLight_LampTime_List);
+#define  TRAFFICLIGHT_LAMPTIME_MINTIMEINDEX (0)
+
+#define TRAFFICLIGHT_LAMPTIME_DEFAULT_INDEX (1)
+
+static int8_t TrafficLight_LampTime_ActualIndex = 0;
+
+#define TRAFFICLIGHT_LAMP_DEFAULT_STATUS (TraffictLight_Lamp_Red)
+#define TRAFFICLIGHT_LAMP_MIN_STATUS     (TraffictLight_Lamp_Red)
+#define TRAFFICLIGHT_LAMP_MAX_STATUS     (TraffictLight_Lamp_Yellow)
+static TrafficLight_Lamp_t TrafficLight_ActualStatus = TRAFFICLIGHT_LAMP_DEFAULT_STATUS;
+
+#endif /* CONFIG_FUNCTION_TRAFFIC_LIGHT */
 
 
 
@@ -606,3 +643,331 @@ DisplayClock_ChangeState_t Logic_GetSystemTimeState(void)
 #endif    /* #ifdef CONFIG_MODULE_DISPLAY_SHOW_CLOCK */
 
 
+
+
+#if defined(CONFIG_FUNCTION_TRAFFIC_LIGHT)
+
+void App_TrafficLight_Init(void)
+{
+    TrafficLight_TimeCnt = 0;
+    TrafficLight_Mode = TRAFFICLIGHT_MODE_DEFAULT_VALUE;
+    TrafficLight_LampTime_ActualIndex = TRAFFICLIGHT_LAMPTIME_DEFAULT_INDEX;
+    TrafficLight_ActualStatus = TRAFFICLIGHT_LAMP_DEFAULT_STATUS;
+
+    /* TODO: merge with the below */
+    uint16_t next_timeout = TrafficLight_LampTime_List[TrafficLight_LampTime_ActualIndex].TrafficLight_LampRed_time[TrafficLight_ActualStatus];
+
+    TaskHandler_SetTaskOnceRun(Task_Display, next_timeout);
+}
+
+
+
+void App_TrafficLight_Event(ButtonType_t button, ButtonPressType_t type)
+{
+    UNUSED_ARGUMENT(type);
+
+    switch (button)
+    {
+        case PressedButton_Up:
+        case PressedButton_Down:
+            {
+                /* Lamp or time change */
+                if (TrafficLight_Mode == TrafficLight_Mode_Automatic)
+                {
+                    /* Timeout change */
+
+                    if (button == PressedButton_Up)
+                    {
+                        TrafficLight_LampTime_ActualIndex++;
+                        if (TrafficLight_LampTime_ActualIndex >= TrafficLight_LampTime_MaxTimeIndex)
+                        {
+                            /* Do not overflow, stay at the max */
+                            TrafficLight_LampTime_ActualIndex = TrafficLight_LampTime_MaxTimeIndex - 1;
+                        }
+                    }
+                    else
+                    {
+                        /* if (button == PressedButton_Down) */
+                        TrafficLight_LampTime_ActualIndex--;
+                        if (TrafficLight_LampTime_ActualIndex < TRAFFICLIGHT_LAMPTIME_MINTIMEINDEX)
+                        {
+                            /* Trick: The '--' make a negative value */
+                            /* Do not underflow, stay at the min */
+                            TrafficLight_LampTime_ActualIndex = TRAFFICLIGHT_LAMPTIME_MINTIMEINDEX;
+                        }
+                    }
+                }
+                else if (TrafficLight_Mode == TrafficLight_Mode_Manual)
+                {
+                    /* Lamp change */
+                    if (button == PressedButton_Up)
+                    {
+                        /* For the live App, it is more user-friendly if the top (index=0) is the increment (up) */
+                        TrafficLight_ActualStatus--;
+                        /* For avoid the warning, the value < 0 cannot check */
+                        if (TrafficLight_ActualStatus >= TraffictLight_Lamp_Count)
+                        {
+                            TrafficLight_ActualStatus = TRAFFICLIGHT_LAMP_MIN_STATUS;
+                        }
+                    }
+                    else
+                    {
+                        /* if (button == PressedButton_Down) */
+                        TrafficLight_ActualStatus++;
+                        if (TrafficLight_ActualStatus >= TraffictLight_Lamp_Count)
+                        {
+                            TrafficLight_ActualStatus = TRAFFICLIGHT_LAMP_MAX_STATUS;
+                        }
+                    }
+                }
+                else if (TrafficLight_Mode == TrafficLight_Mode_TurnedOff)
+                {
+                    /* Turned off status, do nothing */
+                    TrafficLight_ActualStatus = TraffictLight_Lamp_Count; /* Turn off status */
+                }
+                else
+                {
+                    /* TODO: Error situation */
+                }
+
+                /* Update the display + lamps */
+                App_TrafficLight_Update(ScheduleSource_EventTriggered);
+            }
+            break;
+
+        case PressedButton_Right:
+        case PressedButton_Left:
+            {
+                /* Mode change */
+                if (button == PressedButton_Right)
+                {
+                    TrafficLight_Mode++;
+                    if (TrafficLight_Mode >= TrafficLight_Mode_Count)
+                    {
+                        TrafficLight_Mode = TRAFFICLIGHT_MODE_DEFAULT_VALUE;
+                    }
+                }
+                else
+                {
+                    /* button == PressedButton_Left */
+                    TrafficLight_Mode--;
+                    /* For avoid the warning, the value < 0 cannot check */
+                    if (TrafficLight_Mode >= TrafficLight_Mode_Count)
+                    {
+                        TrafficLight_Mode = TrafficLight_Mode_Count - 1; /* Last value */
+                    }
+                }
+
+                /* TimeCnt update */
+                TrafficLight_TimeCnt = 0;
+
+                /* Calculated new status */
+                if (TrafficLight_Mode == TrafficLight_Mode_TurnedOff)
+                {
+                    TrafficLight_ActualStatus = TraffictLight_Lamp_Count;
+                }
+
+                /* Update the display + lamps */
+                App_TrafficLight_Update(ScheduleSource_EventTriggered);
+            }
+            break;
+
+        case  PressedButton_Count:
+        default:
+            /* Error handling: skip it */
+            /* TODO: Report error */
+            break;
+    }
+}
+
+
+
+void App_TrafficLight_Update(ScheduleSource_t source)
+{
+    uint16_t next_timeout = 0;
+
+    bool need_update_display = false;
+
+    if (source == ScheduleSource_EventTriggered)
+    {
+        /* Button pressed */
+        /* In this case, the App_TrafficLight_Event() function has prepared the new statuses */
+        /* Draw immediately the actual status */
+        need_update_display = true;
+
+        /* Note: possible event: if at a lamp we change the timeout, the timeout will be reset */
+    }
+    else if ((source == ScheduleSource_RunOnce) || (source == ScheduleSource_PeriodicSchedule))
+    {
+        need_update_display = true;
+
+        /* Increment the status, due the timeout of actual lamp */
+        if (TrafficLight_Mode == TrafficLight_Mode_Automatic)
+        {
+            TrafficLight_ActualStatus++;
+            if (TrafficLight_ActualStatus >= TraffictLight_Lamp_Count)
+            {
+                TrafficLight_ActualStatus = TRAFFICLIGHT_LAMP_DEFAULT_STATUS;
+            }
+
+            /* Get new timeout */
+            next_timeout = TrafficLight_LampTime_List[TrafficLight_LampTime_ActualIndex].TrafficLight_LampRed_time[TrafficLight_ActualStatus];
+
+            /* Task schedule requiring */
+            TaskHandler_SetTaskOnceRun(Task_Display, next_timeout);
+        }
+        /* At manual mode, we dont need the periodic task execution */
+    }
+    else
+    {
+        /* TODO: Report */
+        need_update_display = true;
+        /*TaskHandler_SetTaskOnceRun(Task_Display, next_timeout); */ /* TODO: Check */
+    }
+
+
+    if (need_update_display == true)
+    {
+        /* Update the lamp */
+        switch (TrafficLight_ActualStatus)
+        {
+            case TraffictLight_Lamp_Red:
+                IO_Output_SetStatus(IO_AppTrafficLight_Red, IO_Output_Cmd_SetOn);
+                IO_Output_SetStatus(IO_AppTrafficLight_Yellow, IO_Output_Cmd_SetOff);
+                IO_Output_SetStatus(IO_AppTrafficLight_Green, IO_Output_Cmd_SetOff);
+                break;
+
+            case TraffictLight_Lamp_RedYellow:
+                IO_Output_SetStatus(IO_AppTrafficLight_Red, IO_Output_Cmd_SetOn);
+                IO_Output_SetStatus(IO_AppTrafficLight_Yellow, IO_Output_Cmd_SetOn);
+                IO_Output_SetStatus(IO_AppTrafficLight_Green, IO_Output_Cmd_SetOff);
+                break;
+
+            case TraffictLight_Lamp_Green:
+                IO_Output_SetStatus(IO_AppTrafficLight_Red, IO_Output_Cmd_SetOff);
+                IO_Output_SetStatus(IO_AppTrafficLight_Yellow, IO_Output_Cmd_SetOff);
+                IO_Output_SetStatus(IO_AppTrafficLight_Green, IO_Output_Cmd_SetOn);
+                break;
+
+            case TraffictLight_Lamp_Yellow:
+                IO_Output_SetStatus(IO_AppTrafficLight_Red, IO_Output_Cmd_SetOff);
+                IO_Output_SetStatus(IO_AppTrafficLight_Yellow, IO_Output_Cmd_SetOn);
+                IO_Output_SetStatus(IO_AppTrafficLight_Green, IO_Output_Cmd_SetOff);
+                break;
+
+            case TraffictLight_Lamp_Count:
+            default:
+                /* Off situation */
+                IO_Output_SetStatus(IO_AppTrafficLight_Red, IO_Output_Cmd_SetOff);
+                IO_Output_SetStatus(IO_AppTrafficLight_Yellow, IO_Output_Cmd_SetOff);
+                IO_Output_SetStatus(IO_AppTrafficLight_Green, IO_Output_Cmd_SetOff);
+                break;
+        }
+
+        /* Update the display */
+        /*
+         * +---------+
+         * | O       |
+         * | X text  |
+         * | X       |
+         * +---------+
+         *
+         * Solution: space indent required for the displaying to text
+         */
+
+        switch (TrafficLight_Mode)
+        {
+            case TrafficLight_Mode_Automatic:
+                Display_PrintString("  Automatic", 2, Font_12x8, NO_FORMAT);
+                break;
+
+            case TrafficLight_Mode_Manual:
+                Display_PrintString("  Manual", 2, Font_12x8, NO_FORMAT);
+                break;
+
+            case TrafficLight_Mode_TurnedOff:
+                Display_PrintString("  Off", 2, Font_12x8, NO_FORMAT);
+                break;
+
+            case TrafficLight_Mode_Count:
+            default:
+                Display_PrintString("  Error", 2, Font_12x8, NO_FORMAT);
+                break;
+        }
+
+        switch (TrafficLight_ActualStatus)
+        {
+            case TraffictLight_Lamp_Red:
+                Display_PrintFont12x8('O', 0, 1, NO_FORMAT);
+                Display_PrintFont12x8('X', 0, 2, NO_FORMAT);
+                Display_PrintFont12x8('X', 0, 3, NO_FORMAT);
+                break;
+
+            case TraffictLight_Lamp_RedYellow:
+                Display_PrintFont12x8('O', 0, 1, NO_FORMAT);
+                Display_PrintFont12x8('O', 0, 2, NO_FORMAT);
+                Display_PrintFont12x8('X', 0, 3, NO_FORMAT);
+                break;
+
+            case TraffictLight_Lamp_Green:
+                Display_PrintFont12x8('X', 0, 1, NO_FORMAT);
+                Display_PrintFont12x8('X', 0, 2, NO_FORMAT);
+                Display_PrintFont12x8('O', 0, 3, NO_FORMAT);
+                break;
+
+            case TraffictLight_Lamp_Yellow:
+                Display_PrintFont12x8('X', 0, 1, NO_FORMAT);
+                Display_PrintFont12x8('O', 0, 2, NO_FORMAT);
+                Display_PrintFont12x8('X', 0, 3, NO_FORMAT);
+                break;
+
+            case TraffictLight_Lamp_Count:
+            default:
+                /* Off situation */
+                Display_PrintFont12x8('X', 0, 1, NO_FORMAT);
+                Display_PrintFont12x8('X', 0, 2, NO_FORMAT);
+                Display_PrintFont12x8('X', 0, 3, NO_FORMAT);
+                break;
+        }
+
+        Display_Activate();
+    }
+}
+
+
+#ifdef CONFIG_FUNCTION_TASK_TRAFFIC_LIGHT
+void App_TrafficLight_TaskFunction(ScheduleSource_t source)
+{
+    TrafficLight_TimeCnt++;
+
+    switch (TrafficLight_TimeCnt % 3)
+    {
+        case 0:
+            IO_Output_SetStatus(IO_AppTrafficLight_Red, IO_Output_Cmd_SetOn);
+            IO_Output_SetStatus(IO_AppTrafficLight_Yellow, IO_Output_Cmd_SetOff);
+            IO_Output_SetStatus(IO_AppTrafficLight_Green, IO_Output_Cmd_SetOff);
+            break;
+
+        case 1:
+            IO_Output_SetStatus(IO_AppTrafficLight_Red, IO_Output_Cmd_SetOff);
+            IO_Output_SetStatus(IO_AppTrafficLight_Yellow, IO_Output_Cmd_SetOn);
+            IO_Output_SetStatus(IO_AppTrafficLight_Green, IO_Output_Cmd_SetOff);
+            break;
+
+        case 2:
+            IO_Output_SetStatus(IO_AppTrafficLight_Red, IO_Output_Cmd_SetOff);
+            IO_Output_SetStatus(IO_AppTrafficLight_Yellow, IO_Output_Cmd_SetOff);
+            IO_Output_SetStatus(IO_AppTrafficLight_Green, IO_Output_Cmd_SetOn);
+            break;
+
+        default:
+            /* Error situation, it never reached */
+            IO_Output_SetStatus(IO_AppTrafficLight_Red, IO_Output_Cmd_SetOff);
+            IO_Output_SetStatus(IO_AppTrafficLight_Yellow, IO_Output_Cmd_SetOff);
+            IO_Output_SetStatus(IO_AppTrafficLight_Green, IO_Output_Cmd_SetOff);
+            break;
+    }
+}
+#endif /* CONFIG_FUNCTION_TASK_TRAFFIC_LIGHT */
+
+#endif    /* CONFIG_FUNCTION_TRAFFIC_LIGHT */

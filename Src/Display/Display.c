@@ -86,40 +86,51 @@ void Display_PrintString(const char *str, uint8_t line, FontType_t font, FontFor
     uint8_t i;
     uint8_t index_offset = 0;
 
+    uint8_t fontWidth = 0;
+    switch (font)
+    {
+#ifdef CONFIG_DISPLAY_FONT8X5_ENABLE
+        case Font_8x5:
+            fontWidth = 5;
+            break;
+#endif
+#ifdef CONFIG_DISPLAY_FONT12X8_ENABLE
+        case Font_12x8:
+            fontWidth = 8;
+            break;
+#endif
+#ifdef CONFIG_DISPLAY_FONT32X20_ENABLE
+        case Font_32x20:
+            fontWidth = 20;
+            break;
+#endif
+        case Font_Unknown:
+        case Font_Count:
+        default:
+            /* Error */
+            break;
+    }
+
+    /* Check length */
+    uint8_t length = StringLength(str);
+    if ((length* fontWidth) >= DISPLAY_WIDTH)
+    {
+        /* Too long, split it */
+        length = (uint8_t)(DISPLAY_WIDTH / fontWidth);
+    }
+
+
     /* Handle "centering" text */
     if (format.Format_Center)
     {
         format.Format_Center = 0;
-        uint8_t length = StringLength(str);
-        uint8_t fontWidth = 0;
-        switch (font)
-        {
-#ifdef CONFIG_DISPLAY_FONT8X5_ENABLE
-            case Font_8x5:
-                fontWidth = 5;
-                break;
-#endif
-#ifdef CONFIG_DISPLAY_FONT12X8_ENABLE
-            case Font_12x8:
-                fontWidth = 8;
-                break;
-#endif
-#ifdef CONFIG_DISPLAY_FONT32X20_ENABLE
-            case Font_32x20:
-                fontWidth = 20;
-                break;
-#endif
-            case Font_Unknown:
-            case Font_Count:
-            default:
-                break;
-        }
+
         /* Calculate empty/2 space (index, not pixel!) */
         index_offset = (DISPLAY_WIDTH - length * fontWidth)/2/fontWidth;
     }
 
     /* Print text */
-    for (i = 0; str[i]; i++)
+    for (i = 0; i < length; i++) /* str[i] not length secure */
     {
         switch (font)
         {
@@ -203,9 +214,9 @@ void Display_PrintFont8x5(uint8_t chr, uint8_t index, uint8_t line, FontFormat_t
 /**
  * @brief       Print a 12x8 pixel character to display
  * @param       chr        - which character (ASCII - 0-127)
- * @param       index    - column
- * @param       line    - line / row
- * @param       format    - format of text
+ * @param       index      - column (from 0)
+ * @param       line       - line / row
+ * @param       format     - format of text
  */
 /* _attribute__( ( section(".data") ) ) */
 void Display_PrintFont12x8(uint8_t chr, uint8_t index, uint8_t line, FontFormat_t format)

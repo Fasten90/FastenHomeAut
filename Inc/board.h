@@ -46,18 +46,19 @@
 
 
 #ifdef STM32F030x8
+    /* 2 kB RAM, 64 kB Flash */
     #define MEM_FLASH_START        (0x08000000)
     #define MEM_FLASH_END          (0x08000000 + 64*1024)
     #define MEM_RAM_START          (0x20000000)
     #define MEM_RAM_END            (0x20002000)
 #elif defined(STM32F407xx)
-    /* 128 KB RAM, 1024 KB FLASH */
+    /* 128 kB RAM, 1024 kB FLASH */
     #define MEM_FLASH_START        (0x08000000)
     #define MEM_FLASH_END          (0x08000000 + 1024*1024)
     #define MEM_RAM_START          (0x20000000)
     #define MEM_RAM_END            (0x20000000 + 128*1024)
 #elif defined(CONFIG_PLATFORM_X86)
-    /* Do not use... */
+    /* Turning off the checker with full range of 32 bit */
     #define MEM_FLASH_START        (0x00000000)
     #define MEM_FLASH_END          (0xFFFFFFFF)
     #define MEM_RAM_START          (0x00000000)
@@ -1431,8 +1432,8 @@ _GPIO2            PB15
 #ifdef CONFIG_MODULE_IO_ENABLE
 
 /* LED_GREEN        PC14 */
-/* LED_BLUE            PC15 */
-/* LED_RED            PC13 */
+/* LED_BLUE         PC15 */
+/* LED_RED          PC13 */
 
 
 #define LED_NUM_MAX                (3)
@@ -1444,8 +1445,7 @@ _GPIO2            PB15
 #define BOARD_LED_RED_PORT         GPIOC
 #define BOARD_LED_RED_PIN          GPIO_PIN_13
 
-#define IO_PORT_CLK_ENABLES()      __GPIOC_CLK_ENABLE()
-
+/* #define IO_PORT_CLK_ENABLES()      __GPIOC_CLK_ENABLE() */
 
 #define LED_GREEN_ON()            HAL_GPIO_WritePin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN, GPIO_PIN_RESET)
 #define LED_BLUE_ON()             HAL_GPIO_WritePin(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN, GPIO_PIN_RESET)
@@ -1462,6 +1462,28 @@ _GPIO2            PB15
 #define LED_GREEN_STATUS()        HAL_GPIO_ReadPin(BOARD_LED_GREEN_PORT, BOARD_LED_GREEN_PIN)
 #define LED_BLUE_STATUS()         HAL_GPIO_ReadPin(BOARD_LED_BLUE_PORT, BOARD_LED_BLUE_PIN)
 #define LED_RED_STATUS()          HAL_GPIO_ReadPin(BOARD_LED_RED_PORT, BOARD_LED_RED_PIN)
+
+
+
+#define BOARD_TRAFFICLIGHT_RED_PORT           GPIOB
+#define BOARD_TRAFFICLIGHT_RED_PIN            GPIO_PIN_0
+#define BOARD_TRAFFICLIGHT_YELLOW_PORT        GPIOA
+#define BOARD_TRAFFICLIGHT_YELLOW_PIN         GPIO_PIN_7
+#define BOARD_TRAFFICLIGHT_GREEN_PORT         GPIOA
+#define BOARD_TRAFFICLIGHT_GREEN_PIN          GPIO_PIN_6
+
+
+#ifdef CONFIG_FUNCTION_TRAFFIC_LIGHT
+#define IO_PORT_CLK_ENABLES()      do { \
+    __GPIOA_CLK_ENABLE();               \
+    __GPIOB_CLK_ENABLE();               \
+    __GPIOC_CLK_ENABLE();               \
+    } while(0);
+
+#else
+#define IO_PORT_CLK_ENABLES()      __GPIOC_CLK_ENABLE()
+#endif
+
 
 #endif    /* CONFIG_MODULE_IO_ENABLE */
 

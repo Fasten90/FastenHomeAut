@@ -44,6 +44,12 @@ typedef enum
     IO_LED_Red,
 #endif
 
+#if defined(CONFIG_FUNCTION_TRAFFIC_LIGHT)
+    IO_AppTrafficLight_Red,
+    IO_AppTrafficLight_Yellow,
+    IO_AppTrafficLight_Green,
+#endif /* CONFIG_FUNCTION_TRAFFIC_LIGHT */
+
     /* Do not use: */
     IO_Output_Count
 } IO_Output_Name_t;

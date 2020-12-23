@@ -264,7 +264,7 @@ static const char * GetStrListElement(uint8_t i)
 }
 #endif
 
-#ifdef CONFIG_MODULE_UNITTEST_ENABLE
+#if defined(CONFIG_MODULE_UNITTEST_ENABLE) && defined(CONFIG_UNITTEST_EXECUTE_AUTOMATICALLY)
 static void UnitTest_Finished(void);
 static volatile bool UnitTest_Finished_flag = false;
 
@@ -273,7 +273,7 @@ static void UnitTest_Finished(void)
     UnitTest_Finished_flag = true;
 }
 
-#endif
+#endif /* CONFIG_MODULE_UNITTEST_ENABLE && CONFIG_UNITTEST_EXECUTE_AUTOMATICALLY */
 
 
 /**
@@ -317,20 +317,20 @@ int main(void)
     uint32_t utResult = UnitTestList_Run();
 
     /* Print result */
-    printf("%s\r\n", responseBuffer); /* Clang generated compile warning when "printf(responseBuffer);" used */
-    printf("Unit test result: %d\r\n", utResult);
+    uprintf("%s\r\n", responseBuffer); /* Clang generated compile warning when "printf(responseBuffer);" used */
+    uprintf("Unit test result: %d\r\n", utResult);
 
     if (utResult != 0)
     {
-        printf("%s\r\n", "[FAIL] UnitTests are failed!");
+        uprintf("%s\r\n", "[FAIL] UnitTests are failed!");
     }
     else
     {
-        printf("%s\r\n", "[OK] Every test has run successfully!");
+        uprintf("%s\r\n", "[OK] Every test has run successfully!");
     }
 
 #if (CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE == 1)
-    /* Return with UnitTest result: */
+    /* Return with UnitTest result, it is only recommended for x86/x64/ PC host architectures */
     exit(utResult);
 #else
     UnitTest_Finished_flag = true;
