@@ -794,8 +794,8 @@ stages:
         :: TODO: Branch: change to master
         git checkout task_refactor
         mkdir input
-        :: Copy log file to here
-        copy ..\..\CompilerWarning_Artifact_*\*.csv .
+        :: Copy csv files to here
+        copy ..\..\..\CompilerWarning_Artifact_*\*.csv
         cd ..
         :: Run
         python PdfGenerator.py
