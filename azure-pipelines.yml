@@ -271,17 +271,6 @@ stages:
         sudo apt-get install cmake -y --allow 
         
         # ARM-none-eabi-gcc
-        #sudo add-apt-repository ppa:team-gcc-arm-embedded/ppa
-        #sudo apt-get update
-        #sudo apt-get install gcc-arm-embedded
-        
-        #sudo npm install --global xpm@latest
-        #which xpm
-        #xpm --version
-        #sudo xpm install --global @xpack-dev-tools/arm-none-eabi-gcc@latest
-        
-        #sudo apt-get install arm-none-eabi-gcc
-
         sudo apt-get update -y
         sudo apt-get install -y gcc-arm-none-eabi
 
@@ -446,13 +435,8 @@ stages:
         
         # ARM-none-eabi-gcc
         # Note: Similar installation as ARM none eabi gcc build
-        #sudo add-apt-repository ppa:team-gcc-arm-embedded/ppa
-        #sudo apt-get update
-        #sudo apt-get install gcc-arm-embedded
-        sudo npm install --global xpm@latest
-        which xpm
-        xpm --version
-        sudo xpm install --global @xpack-dev-tools/arm-none-eabi-gcc@latest
+        sudo apt-get update -y
+        sudo apt-get install -y gcc-arm-none-eabi
 
         arm-none-eabi-gcc --version
         
