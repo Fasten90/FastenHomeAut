@@ -802,6 +802,8 @@ stages:
         dir
         cd ..
         dir
+        :: Install
+        pip install -r requirements.txt
         :: Run
         python PdfGenerator.py
     - publish: $(System.DefaultWorkingDirectory)/out/*.pdf
