@@ -806,6 +806,6 @@ stages:
         pip install -r requirements.txt
         :: Run
         python PdfGenerator.py
-    - publish: $(System.DefaultWorkingDirectory)/out/*.pdf
+    - publish: $(System.DefaultWorkingDirectory)/Tools/FastenDocSystem/out/*.pdf
       artifact: DocumentGeneration_Artifact
 
