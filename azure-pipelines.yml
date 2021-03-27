@@ -279,7 +279,11 @@ stages:
         #which xpm
         #xpm --version
         #sudo xpm install --global @xpack-dev-tools/arm-none-eabi-gcc@latest
-        sudo apt-get install arm-none-eabi-gcc
+        
+        #sudo apt-get install arm-none-eabi-gcc
+
+        sudo apt-get update -y
+        sudo apt-get install -y gcc-arm-none-eabi
 
 
         arm-none-eabi-gcc --version
