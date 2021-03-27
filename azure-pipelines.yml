@@ -669,7 +669,7 @@ stages:
         ::python CompilerWarningCollector/CompilerWarningCollector.py
         python CompilerWarningCollector/CompilerWarningCollector.py --file_list MSVC_build.log --comp MSVC
     # TODO: Change to Compiler independent
-    - publish: $(System.DefaultWorkingDirectory)/Tools/MSVC_build_found_warnings/
+    - publish: $(System.DefaultWorkingDirectory)/Tools/MSVC_build_found_warnings
       artifact: CompilerWarning_Artifact_MSVC
 
 
@@ -700,7 +700,7 @@ stages:
         ::python CompilerWarningCollector/CompilerWarningCollector.py
         python CompilerWarningCollector/CompilerWarningCollector.py --file_list GCC_build.log --comp GCC
     # TODO: Change to Compiler independent
-    - publish: $(System.DefaultWorkingDirectory)/Tools/GCC_build_found_warnings/
+    - publish: $(System.DefaultWorkingDirectory)/Tools/GCC_build_found_warnings
       artifact: CompilerWarning_Artifact_GCC
 
   
@@ -720,7 +720,7 @@ stages:
         git clone https://github.com/Fasten90/CompilerWarningCollector.git
         copy ..\..\Build_GCC_ARM_Artifact\GCC_ARM_build.log
         python CompilerWarningCollector/CompilerWarningCollector.py --file_list GCC_ARM_build.log --comp GCC
-    - publish: $(System.DefaultWorkingDirectory)/Tools/GCC_ARM_build_found_warnings/
+    - publish: $(System.DefaultWorkingDirectory)/Tools/GCC_ARM_build_found_warnings
       artifact: CompilerWarning_Artifact_GCC_ARM
 
 
@@ -739,7 +739,7 @@ stages:
         git clone https://github.com/Fasten90/CompilerWarningCollector.git
         copy ..\..\Build_Clang_Artifact\Clang_build.log
         python CompilerWarningCollector/CompilerWarningCollector.py --file_list Clang_build.log --comp Clang
-    - publish: $(System.DefaultWorkingDirectory)/Tools/Clang_build_found_warnings/
+    - publish: $(System.DefaultWorkingDirectory)/Tools/Clang_build_found_warnings
       artifact: CompilerWarning_Artifact_Clang
 
   - job: compiler_warnings_tinycc
@@ -757,7 +757,7 @@ stages:
         git clone https://github.com/Fasten90/CompilerWarningCollector.git
         copy ..\..\Build_TinyCC_Artifact\TinyCC_build.log
         python CompilerWarningCollector/CompilerWarningCollector.py --file_list TinyCC_build.log --comp GCC
-    - publish: $(System.DefaultWorkingDirectory)/Tools/TinyCC_build_found_warnings/
+    - publish: $(System.DefaultWorkingDirectory)/Tools/TinyCC_build_found_warnings
       artifact: CompilerWarning_Artifact_TinyCC
 
 
