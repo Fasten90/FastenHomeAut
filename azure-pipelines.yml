@@ -783,20 +783,25 @@ stages:
     - script: |
         echo Document generation
         :: Artifacts go to <pipeline>\<artifactname>
-        ::cd ../Build_MSVC_Artifact
-        :: MSVC build log
         :: Go to Tools for clone-ing
         mkdir Tools
         cd Tools
-        :: Clone CWC
+        :: Clone FastenDocSystem
         git clone https://github.com/Fasten90/FastenDocSystem.git
         cd FastenDocSystem
         :: TODO: Branch: change to master
         git checkout task_refactor
         mkdir input
+        cd input
         :: Copy csv files to here
-        copy ..\..\..\CompilerWarning_Artifact_*\*.csv
+        copy ..\..\..\..\CompilerWarning_Artifact_MSVC\*.csv
+        copy ..\..\..\..\CompilerWarning_Artifact_GCC\*.csv
+        copy ..\..\..\..\CompilerWarning_Artifact_GCC_ARM\*.csv
+        copy ..\..\..\..\CompilerWarning_Artifact_Clang\*.csv
+        copy ..\..\..\..\CompilerWarning_Artifact_TinyCC\*.csv
+        dir
         cd ..
+        dir
         :: Run
         python PdfGenerator.py
     - publish: $(System.DefaultWorkingDirectory)/out/*.pdf
