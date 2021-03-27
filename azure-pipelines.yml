@@ -437,6 +437,7 @@ stages:
         # Note: Similar installation as ARM none eabi gcc build
         sudo apt-get update -y
         sudo apt-get install -y gcc-arm-none-eabi
+        sudo apt-get install -y gdb-multiarch
 
         arm-none-eabi-gcc --version
         arm-none-eabi-gdb --version
