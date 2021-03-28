@@ -268,12 +268,13 @@ stages:
         # Add PPA repository.
         echo 'deb http://ppa.launchpad.net/george-edison55/cmake-3.x/ubuntu trusty main' | tee -a /etc/apt/sources.list.d/cmake.list
         sudo apt-get update -qq
-        sudo apt-get install cmake -y --force-yes
+        sudo apt-get install cmake -y --allow 
         
         # ARM-none-eabi-gcc
-        sudo add-apt-repository ppa:team-gcc-arm-embedded/ppa
-        sudo apt-get update
-        sudo apt-get install gcc-arm-embedded
+        sudo apt-get update -y
+        sudo apt-get install -y gcc-arm-none-eabi
+
+
         arm-none-eabi-gcc --version
 
         # Print the CMake version.
@@ -434,10 +435,13 @@ stages:
         
         # ARM-none-eabi-gcc
         # Note: Similar installation as ARM none eabi gcc build
-        sudo add-apt-repository ppa:team-gcc-arm-embedded/ppa
-        sudo apt-get update
-        sudo apt-get install gcc-arm-embedded
+        sudo apt-get update -y
+        sudo apt-get install -y gcc-arm-none-eabi
+        sudo apt-get install -y gdb-multiarch
+        sudo ln -s /usr/bin/gdb-multiarch /usr/bin/arm-none-eabi-gdb
+
         arm-none-eabi-gcc --version
+        arm-none-eabi-gdb --version
         
         # Python
         python --version
@@ -668,7 +672,7 @@ stages:
         ::python CompilerWarningCollector/CompilerWarningCollector.py
         python CompilerWarningCollector/CompilerWarningCollector.py --file_list MSVC_build.log --comp MSVC
     # TODO: Change to Compiler independent
-    - publish: $(System.DefaultWorkingDirectory)/Tools/MSVC_build_found_warnings.txt
+    - publish: $(System.DefaultWorkingDirectory)/Tools/MSVC_build_found_warnings.csv
       artifact: CompilerWarning_Artifact_MSVC
 
 
@@ -699,7 +703,7 @@ stages:
         ::python CompilerWarningCollector/CompilerWarningCollector.py
         python CompilerWarningCollector/CompilerWarningCollector.py --file_list GCC_build.log --comp GCC
     # TODO: Change to Compiler independent
-    - publish: $(System.DefaultWorkingDirectory)/Tools/GCC_build_found_warnings.txt
+    - publish: $(System.DefaultWorkingDirectory)/Tools/GCC_build_found_warnings.csv
       artifact: CompilerWarning_Artifact_GCC
 
   
@@ -719,7 +723,7 @@ stages:
         git clone https://github.com/Fasten90/CompilerWarningCollector.git
         copy ..\..\Build_GCC_ARM_Artifact\GCC_ARM_build.log
         python CompilerWarningCollector/CompilerWarningCollector.py --file_list GCC_ARM_build.log --comp GCC
-    - publish: $(System.DefaultWorkingDirectory)/Tools/GCC_ARM_build_found_warnings.txt
+    - publish: $(System.DefaultWorkingDirectory)/Tools/GCC_ARM_build_found_warnings.csv
       artifact: CompilerWarning_Artifact_GCC_ARM
 
 
@@ -738,7 +742,7 @@ stages:
         git clone https://github.com/Fasten90/CompilerWarningCollector.git
         copy ..\..\Build_Clang_Artifact\Clang_build.log
         python CompilerWarningCollector/CompilerWarningCollector.py --file_list Clang_build.log --comp Clang
-    - publish: $(System.DefaultWorkingDirectory)/Tools/Clang_build_found_warnings.txt
+    - publish: $(System.DefaultWorkingDirectory)/Tools/Clang_build_found_warnings.csv
       artifact: CompilerWarning_Artifact_Clang
 
   - job: compiler_warnings_tinycc
@@ -756,6 +760,55 @@ stages:
         git clone https://github.com/Fasten90/CompilerWarningCollector.git
         copy ..\..\Build_TinyCC_Artifact\TinyCC_build.log
         python CompilerWarningCollector/CompilerWarningCollector.py --file_list TinyCC_build.log --comp GCC
-    - publish: $(System.DefaultWorkingDirectory)/Tools/TinyCC_build_found_warnings.txt
+    - publish: $(System.DefaultWorkingDirectory)/Tools/TinyCC_build_found_warnings.csv
       artifact: CompilerWarning_Artifact_TinyCC
+
+
+- stage: Doc
+  dependsOn: CompilerWarning
+  jobs:
+  - job: document_generation
+    pool:
+      vmImage: 'windows-2019'
+    displayName: 'Document generation'
+    steps:
+    - download: current
+      artifact: CompilerWarning_Artifact_MSVC
+    - download: current
+      artifact: CompilerWarning_Artifact_GCC
+    - download: current
+      artifact: CompilerWarning_Artifact_GCC_ARM
+    - download: current
+      artifact: CompilerWarning_Artifact_Clang
+    - download: current
+      artifact: CompilerWarning_Artifact_TinyCC
+      
+    - script: |
+        echo Document generation
+        :: Artifacts go to <pipeline>\<artifactname>
+        :: Go to Tools for clone-ing
+        mkdir Tools
+        cd Tools
+        :: Clone FastenDocSystem
+        git clone https://github.com/Fasten90/FastenDocSystem.git
+        cd FastenDocSystem
+        :: TODO: Branch: change to master
+        git checkout task_refactor
+        mkdir input
+        cd input
+        :: Copy csv files to here
+        copy ..\..\..\..\CompilerWarning_Artifact_MSVC\*.csv
+        copy ..\..\..\..\CompilerWarning_Artifact_GCC\*.csv
+        copy ..\..\..\..\CompilerWarning_Artifact_GCC_ARM\*.csv
+        copy ..\..\..\..\CompilerWarning_Artifact_Clang\*.csv
+        copy ..\..\..\..\CompilerWarning_Artifact_TinyCC\*.csv
+        dir
+        cd ..
+        dir
+        :: Install
+        pip install -r requirements.txt
+        :: Run
+        python PdfGenerator.py
+    - publish: $(System.DefaultWorkingDirectory)/Tools/FastenDocSystem/out/FastenDoc.pdf
+      artifact: DocumentGeneration_Artifact
 
