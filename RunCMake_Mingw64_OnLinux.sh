@@ -20,5 +20,5 @@ make
 ./FastenHomeAut
 
 
-:: Go to original directory
+# Go to original directory
 cd ../..
