@@ -784,6 +784,8 @@ stages:
       artifact: CompilerWarning_Artifact_Clang
     - download: current
       artifact: CompilerWarning_Artifact_TinyCC
+    - download. current
+      artifact: SourceCodeChecker_Issues
       
     - script: |
         echo Document generation
@@ -794,8 +796,9 @@ stages:
         :: Clone FastenDocSystem
         git clone https://github.com/Fasten90/FastenDocSystem.git
         cd FastenDocSystem
-        :: TODO: Branch: change to master
-        git checkout task_refactor
+        git checkout master
+        
+        :: Prepare sources:
         mkdir input
         cd input
         :: Copy csv files to here
@@ -804,12 +807,16 @@ stages:
         copy ..\..\..\..\CompilerWarning_Artifact_GCC_ARM\*.csv
         copy ..\..\..\..\CompilerWarning_Artifact_Clang\*.csv
         copy ..\..\..\..\CompilerWarning_Artifact_TinyCC\*.csv
+        copy ..\..\..\..\SourceCodeChecker_Issues\*.csv
         dir
         cd ..
         dir
+        
         :: Install
         pip install -r requirements.txt
+        
         :: Run
+        :: TODO: Declare the arguments
         python PdfGenerator.py
     - publish: $(System.DefaultWorkingDirectory)/Tools/FastenDocSystem/out/FastenDoc.pdf
       artifact: DocumentGeneration_Artifact
