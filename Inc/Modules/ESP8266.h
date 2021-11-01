@@ -1,12 +1,10 @@
 /*
- *        ESP8266.h
- *        Creat on:        2016-01-01
- *        Author:         Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        ESP8266 communication
- *        Target:            STM32Fx
- *        Version:        v5
- *        Last modified:    2017-03-05
+ *    ESP8266.h
+ *    Created on:   2016-01-01
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     ESP8266 communication
+ *    Target:       STM32Fx
  */
 
 #ifndef ESP8266_H_

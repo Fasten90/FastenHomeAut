@@ -79,12 +79,12 @@ void RTC_Init(void)
  * @brief       RTC MSP Initialization
  *              This function configures the hardware resources used in this example
  * @param       hrtc RTC handle pointer
- *              
+ *
  * @note        Care must be taken when HAL_RCCEx_PeriphCLKConfig() is used to select
  *              the RTC clock source; in this case the Backup domain will be reset in
  *              order to modify the RTC Clock source, as consequence RTC registers (including
  *              the backup registers) and RCC_BDCR register are set to their reset values.
- *              
+ *
  * @retval      None
  */
 void HAL_RTC_MspInit(RTC_HandleTypeDef *hrtc)

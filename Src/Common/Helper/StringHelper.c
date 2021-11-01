@@ -2137,7 +2137,7 @@ uint8_t STRING_Splitter(char *source, char delimiterChar, char **separated, uint
  *              %8c --> print character 8 times
  *              %8s --> print string (with max length)
  *              %.2f  --> print float in this format: "123.00"
- *              
+ *
  * @note        !! Be careful: 'str' can be overflow!!
  */
 size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list ap)

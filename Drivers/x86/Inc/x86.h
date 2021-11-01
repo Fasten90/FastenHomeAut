@@ -49,7 +49,7 @@ typedef struct
   __IO uint32_t CCR;          /*!< ADC common configuration register,             Address offset: ADC1 base address + 0x308 */
 } ADC_Common_TypeDef;
 
-/** 
+/**
   * @brief CRC calculation unit
   */
 
@@ -59,13 +59,13 @@ typedef struct
   __IO uint8_t  IDR;         /*!< CRC Independent data register,               Address offset: 0x04 */
   uint8_t       RESERVED0;   /*!< Reserved,                                                    0x05 */
   uint16_t      RESERVED1;   /*!< Reserved,                                                    0x06 */
-  __IO uint32_t CR;          /*!< CRC Control register,                        Address offset: 0x08 */ 
+  __IO uint32_t CR;          /*!< CRC Control register,                        Address offset: 0x08 */
   uint32_t      RESERVED2;   /*!< Reserved,                                                    0x0C */
   __IO uint32_t INIT;        /*!< Initial CRC value register,                  Address offset: 0x10 */
   __IO uint32_t RESERVED3;   /*!< Reserved,                                                    0x14 */
 } CRC_TypeDef_Modified; /* Typedef has been modified because CLANG */
 
-/** 
+/**
   * @brief Debug MCU
   */
 
@@ -77,7 +77,7 @@ typedef struct
   __IO uint32_t APB2FZ;       /*!< Debug MCU APB2 freeze register,              Address offset: 0x0C */
 }DBGMCU_TypeDef;
 
-/** 
+/**
   * @brief DMA Controller
   */
 
@@ -97,7 +97,7 @@ typedef struct
   __IO uint32_t CSELR;        /*!< Channel selection register,                               Address offset: 0xA8 */
 } DMA_TypeDef;
 
-/** 
+/**
   * @brief External Interrupt/Event Controller
   */
 
@@ -111,7 +111,7 @@ typedef struct
   __IO uint32_t PR;           /*!<EXTI Pending register,                        Address offset: 0x14 */
 } EXTI_TypeDef;
 
-/** 
+/**
   * @brief FLASH Registers
   */
 typedef struct
@@ -127,7 +127,7 @@ typedef struct
   __IO uint32_t WRPR;         /*!<FLASH option bytes register,                   Address offset: 0x20 */
 } FLASH_TypeDef;
 
-/** 
+/**
   * @brief Option Bytes Registers
   */
 typedef struct
@@ -142,7 +142,7 @@ typedef struct
   __IO uint16_t WRP3;         /*!< FLASH option byte write protection 3,          Address offset: 0x0E */
 } OB_TypeDef;
 
-/** 
+/**
   * @brief General Purpose I/O
   */
 
@@ -160,7 +160,7 @@ typedef struct
   __IO uint32_t BRR;          /*!< GPIO bit reset register,                     Address offset: 0x28      */
 } GPIO_TypeDef;
 
-/** 
+/**
   * @brief SysTem Configuration
   */
 
@@ -172,7 +172,7 @@ typedef struct
   __IO uint32_t CFGR2;       /*!< SYSCFG configuration register 2,                           Address offset: 0x18 */
 } SYSCFG_TypeDef;
 
-/** 
+/**
   * @brief Inter-integrated Circuit Interface
   */
 
@@ -191,7 +191,7 @@ typedef struct
   __IO uint32_t TXDR;     /*!< I2C Transmit data register,        Address offset: 0x28 */
 } I2C_TypeDef;
 
-/** 
+/**
   * @brief Independent WATCHDOG
   */
 
@@ -204,7 +204,7 @@ typedef struct
   __IO uint32_t WINR; /*!< IWDG Window register,    Address offset: 0x10 */
 } IWDG_TypeDef;
 
-/** 
+/**
   * @brief Power Control
   */
 
@@ -214,7 +214,7 @@ typedef struct
   __IO uint32_t CSR;  /*!< PWR power control/status register,                   Address offset: 0x04 */
 } PWR_TypeDef;
 
-/** 
+/**
   * @brief Reset and Clock Control
   */
 
@@ -236,14 +236,14 @@ typedef struct
   __IO uint32_t CR2;        /*!< RCC clock control register 2,                                Address offset: 0x34 */
 } RCC_TypeDef;
 
-/** 
+/**
   * @brief Real-Time Clock
   */
 typedef struct
 {
   __IO uint32_t TR;         /*!< RTC time register,                                         Address offset: 0x00 */
   __IO uint32_t DR;         /*!< RTC date register,                                         Address offset: 0x04 */
-  __IO uint32_t CR;         /*!< RTC control register,                                      Address offset: 0x08 */                                                                                            
+  __IO uint32_t CR;         /*!< RTC control register,                                      Address offset: 0x08 */
   __IO uint32_t ISR;        /*!< RTC initialization and status register,                    Address offset: 0x0C */
   __IO uint32_t PRER;       /*!< RTC prescaler register,                                    Address offset: 0x10 */
   __IO uint32_t WUTR;       /*!< RTC wakeup timer register,                                 Address offset: 0x14 */
@@ -261,7 +261,7 @@ typedef struct
   __IO uint32_t ALRMASSR;   /*!< RTC alarm A sub second register,                           Address offset: 0x44 */
 } RTC_TypeDef;
 
-/** 
+/**
   * @brief Serial Peripheral Interface
   */
 
@@ -277,7 +277,7 @@ typedef struct
   __IO uint32_t I2SCFGR;    /*!< SPI_I2S configuration register,                     Address offset: 0x1C */
 } SPI_TypeDef;
 
-/** 
+/**
   * @brief TIM
   */
 typedef struct
@@ -295,8 +295,8 @@ typedef struct
   __IO uint32_t PSC;          /*!< TIM prescaler register,              Address offset: 0x28 */
   __IO uint32_t ARR;          /*!< TIM auto-reload register,            Address offset: 0x2C */
   __IO uint32_t RCR;             /*!< TIM  repetition counter register,            Address offset: 0x30 */
-  __IO uint32_t CCR1;         /*!< TIM capture/compare register 1,      Address offset: 0x34 */    
-  __IO uint32_t CCR2;         /*!< TIM capture/compare register 2,      Address offset: 0x38 */    
+  __IO uint32_t CCR1;         /*!< TIM capture/compare register 1,      Address offset: 0x34 */
+  __IO uint32_t CCR2;         /*!< TIM capture/compare register 2,      Address offset: 0x38 */
   __IO uint32_t CCR3;         /*!< TIM capture/compare register 3,      Address offset: 0x3C */
   __IO uint32_t CCR4;         /*!< TIM capture/compare register 4,      Address offset: 0x40 */
   __IO uint32_t BDTR;            /*!< TIM break and dead-time register,            Address offset: 0x44 */
@@ -305,18 +305,18 @@ typedef struct
   __IO uint32_t OR;           /*!< TIM option register,                 Address offset: 0x50 */
 } TIM_TypeDef;
 
-/** 
+/**
   * @brief Universal Synchronous Asynchronous Receiver Transmitter
   */
- 
+
 typedef struct
 {
-  __IO uint32_t CR1;    /*!< USART Control register 1,                 Address offset: 0x00 */ 
-  __IO uint32_t CR2;    /*!< USART Control register 2,                 Address offset: 0x04 */ 
+  __IO uint32_t CR1;    /*!< USART Control register 1,                 Address offset: 0x00 */
+  __IO uint32_t CR2;    /*!< USART Control register 2,                 Address offset: 0x04 */
   __IO uint32_t CR3;    /*!< USART Control register 3,                 Address offset: 0x08 */
   __IO uint32_t BRR;    /*!< USART Baud rate register,                 Address offset: 0x0C */
   __IO uint32_t GTPR;   /*!< USART Guard time and prescaler register,  Address offset: 0x10 */
-  __IO uint32_t RTOR;   /*!< USART Receiver Time Out register,         Address offset: 0x14 */  
+  __IO uint32_t RTOR;   /*!< USART Receiver Time Out register,         Address offset: 0x14 */
   __IO uint32_t RQR;    /*!< USART Request register,                   Address offset: 0x18 */
   __IO uint32_t ISR;    /*!< USART Interrupt and status register,      Address offset: 0x1C */
   __IO uint32_t ICR;    /*!< USART Interrupt flag Clear register,      Address offset: 0x20 */
@@ -326,7 +326,7 @@ typedef struct
   uint16_t  RESERVED2;  /*!< Reserved, 0x2A                                                 */
 } USART_TypeDef;
 
-/** 
+/**
   * @brief Window WATCHDOG
   */
 typedef struct
@@ -336,7 +336,7 @@ typedef struct
   __IO uint32_t SR;   /*!< WWDG Status register,        Address offset: 0x08 */
 } WWDG_TypeDef;
 
-/** 
+/**
   * @}
   */
 

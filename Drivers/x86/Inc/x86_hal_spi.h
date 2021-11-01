@@ -364,7 +364,7 @@ typedef struct __SPI_HandleTypeDef
 /**
   * @}
   */
-  
+
 /* Exported macros -----------------------------------------------------------*/
 /** @defgroup SPI_Exported_Macros SPI Exported Macros
   * @{

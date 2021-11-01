@@ -13,7 +13,7 @@ cd Tools
 :: PIPELINE_WORKSPACE - Define available at Pipeline (e.g. Azure)
 if defined PIPELINE_WORKSPACE (
   echo PIPELINE_WORKSPACE is defined, download SourceCodeChecker
-  git clone https://fasten90@bitbucket.org/fasten90/sourcecodechecker.git
+  git clone https://github.com/Fasten90/SourceCodeChecker.git
 )
 
 
@@ -25,5 +25,5 @@ cd ..
 :: Default config: scc_config.json
 echo Run SourceCodeChecker
 echo ---------------------
-python Tools/SourceCodeChecker/SourceCodeChecker.py
+python Tools/SourceCodeChecker/SourceCodeChecker.py --source-file-path="Src\**,Inc\**,Drivers\x86\**"
 
