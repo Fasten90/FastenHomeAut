@@ -784,7 +784,7 @@ stages:
       artifact: CompilerWarning_Artifact_Clang
     - download: current
       artifact: CompilerWarning_Artifact_TinyCC
-    - download. current
+    - download: current
       artifact: SourceCodeChecker_Issues
       
     - script: |
