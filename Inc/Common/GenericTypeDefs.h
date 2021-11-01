@@ -1,13 +1,10 @@
 /*
- *        GenericTypeDefs.h
- *
- *        Created on:        2017. febr. 27.
- *        Author:            Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        -
- *        Target:            STM32Fx
- *        Version:        -
- *        Last modified:    2017. febr. 27.
+ *    GenericTypeDefs.h
+ *    Created on:   2017-02-27
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Generic typedefs
+ *    Target:       STM32Fx
  */
 
 #ifndef GENERICTYPEDEFS_H_

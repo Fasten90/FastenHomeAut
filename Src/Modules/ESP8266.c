@@ -1,14 +1,11 @@
 /*
- *        ESP8266.c
- *        Creat on:        2016-01-01
- *        Author:         Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        ESP8266 communication
- *        Target:            STM32Fx
- *        Version:        v6
- *        Last modified:    2018-03-04
+ *    ESP8266.c
+ *    Created on:   2016-01-01
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     ESP8266 communication
+ *    Target:       STM32Fx
  */
-
 
 
 /*------------------------------------------------------------------------------

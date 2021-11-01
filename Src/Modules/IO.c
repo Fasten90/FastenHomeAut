@@ -1,14 +1,11 @@
 /*
- *        LED.c
- *        Creat on:        2016-01-01
- *        Author:         Vizi Gábor
- *        E-mail:            vizi.gabor90@gmail.com
- *        Function:        LED functions
- *        Target:            STM32Fx
- *        Version:        v2
- *        Last modified:    2016-11-23
+ *    LED.c
+ *    Created on:   2016-01-01
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     LED functions
+ *    Target:       STM32Fx
  */
-
 
 
 /*------------------------------------------------------------------------------
