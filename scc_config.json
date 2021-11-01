@@ -16,7 +16,7 @@
     "Refactor checker - Comment": true,
     "Refactor checker - Unused argument": true,
     "Tabs checker": true,
-    "Tabs enabled": true,
+    "Tabs enabled": false,
     "Tab space size": 4,
     "Trailing whitespace checker": true,
     "Until first error": false,
