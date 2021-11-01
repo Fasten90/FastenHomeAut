@@ -631,6 +631,8 @@ stages:
         #failOnStderr: false # Optional
         #noProfile: true # Optional
         #noRc: true # Optional
+    - publish: $(System.DefaultWorkingDirectory)/source_code_checker_issues.csv
+      artifact: SourceCodeChecker_Issues
 
 
 - stage: CompilerWarning
