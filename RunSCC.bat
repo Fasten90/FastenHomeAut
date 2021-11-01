@@ -25,5 +25,5 @@ cd ..
 :: Default config: scc_config.json
 echo Run SourceCodeChecker
 echo ---------------------
-python Tools/SourceCodeChecker/SourceCodeChecker.py --project-path=..\\..\\AtollicWorkspace\\FastenHomeAut --source-file-path='Src\**,Inc\**,Drivers\x86\**'
+python Tools/SourceCodeChecker/SourceCodeChecker.py --source-file-path="Src\**,Inc\**,Drivers\x86\**"
 
