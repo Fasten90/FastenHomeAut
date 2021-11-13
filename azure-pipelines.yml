@@ -653,7 +653,7 @@ stages:
         mkdir -p Out/CMakeBuild && cd Out/CMakeBuild
         
         echo Execute cmake
-        cmake CC=gcc -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" ../..
+        cmake ../..
         #make > GCC_build.log 2>&1
         echo Execute CodeChecker
         CodeChecker log --build "make" --output ./compile_commands.json
