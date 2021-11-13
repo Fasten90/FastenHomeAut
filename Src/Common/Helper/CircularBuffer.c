@@ -276,7 +276,7 @@ uint16_t CircularBuffer_DropCharacters(CircularBufferInfo_t *circBuff, uint16_t 
         {
             /* Not need drop all of last characters */
             /* TODO: Check! Clang told: firstClear not read */
-            /* codechecker_confirmed [deadcode.DeadStores] suppress deadcode */
+            /* codechecker_intentional [deadcode.DeadStores] suppress deadcode */
             firstClear = length;
             secondClear = 0;
         }
