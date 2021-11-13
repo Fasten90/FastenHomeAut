@@ -81,7 +81,7 @@ void SelfTest_Errors_ZeroDivide(void)
     /* Zero division */
     /* NOTE: Be careful! Static analyzers will say, this is possible ZeroDivide - but we want to do that */
     /* cppcheck-suppress zerodiv */
-    c = a/b;  /* clang_sa_ignore[core.DivideZero] */
+    c = a/b;  /* clang_sa_ignore[core.DivideZero] */ /* codechecker_intentional [core.DivideZero] suppress DivideZero */
 
     uprintf("ZeroDivide result: %d\r\n", c);
 }
@@ -156,7 +156,7 @@ void SelfTest_Errors_InvalidFunction(void)
     /* STM32F0 --> it goes to the HardFault */
     Function = NULL;
 
-    Function();
+    Function(); /* codechecker_intentional [core.CallAndMessage] suppress CallAndMessage */
 }
 
 

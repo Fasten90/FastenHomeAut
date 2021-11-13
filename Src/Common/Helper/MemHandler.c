@@ -259,7 +259,7 @@ void mem_CheckStackGuardValues(void)
 
     for (i = 0; i < CONFIG_MEM_STACK_GUARD_LENGTH; i++)
     {
-        if (!guardWasFound && stackOverFlowCheckerVariable[i] == CONFIG_MEM_STACK_GUARD_VALUE) /* clang_sa_ignore[core.UndefinedBinaryOperatorResult] */
+        if (!guardWasFound && stackOverFlowCheckerVariable[i] == CONFIG_MEM_STACK_GUARD_VALUE) /* clang_sa_ignore[core.UndefinedBinaryOperatorResult] */ /* // codechecker_intentional [core.UndefinedBinaryOperatorResult] suppress UndefinedBinaryOperatorResult */
         {
             guardWasFound = true;
             guardGoodCnt = i;

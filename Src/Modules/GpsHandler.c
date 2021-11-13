@@ -806,7 +806,7 @@ bool GpsHandler_GetLastCoordinateLog(CoordinateLog_t * coordLog)
         CoordLogID_t id = GpsHandler_CoordLogActualCnt ;
         if (GpsHandler_CoordLogActualCnt == 0)
         {
-            id = GPSHANDLER_COORD_BUFFER_LENGTH;
+            id = GPSHANDLER_COORD_BUFFER_LENGTH - 1;
         }
 
         memcpy(coordLog, &GpsHandler_CoordLogBuffer[id], sizeof(CoordinateLog_t));
