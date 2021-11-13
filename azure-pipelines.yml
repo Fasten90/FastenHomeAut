@@ -655,11 +655,12 @@ stages:
         echo Execute cmake
         cmake ../..
         #make > GCC_build.log 2>&1
-        echo Execute CodeChecker
+        echo Execute CodeChecker log-build
         CodeChecker log --build "make" --output ./compile_commands.json
         cat ./compile_commands.json
+        echo Execute CodeChecker analyze
         CodeChecker analyze ./compile_commands.json --enable sensitive --output ./reports
-        # Export
+        echo Execute CodeChecker export
         CodeChecker parse --export html --output ./reports_html ./reports
     - publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild/reports_html
       artifact: EricssonCodeChecker_HTML_Report
