@@ -661,9 +661,12 @@ stages:
         echo Execute CodeChecker analyze
         CodeChecker analyze ./compile_commands.json --enable sensitive --output ./reports
         echo Execute CodeChecker export
-        CodeChecker parse --export html --output ./reports_html ./reports
-    - publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild/reports_html
-      artifact: EricssonCodeChecker_HTML_Report
+        # View result: https://github.com/Ericsson/codechecker/blob/master/docs/usage.md#view-the-analysis-results-in-the-command-line-
+        CodeChecker parse ./reports
+        # TODO: Maybe it require install 'report-converter' python tool
+        #CodeChecker parse --export html --output ./reports_html ./reports
+    #- publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild/reports_html
+    #  artifact: EricssonCodeChecker_HTML_Report
 
 - stage: CompilerWarning
   dependsOn: Build
