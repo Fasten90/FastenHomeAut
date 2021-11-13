@@ -479,7 +479,7 @@ stages:
         echo "Clone FastenTestSystem"
         git clone https://github.com/Fasten90/FastenTestSystem.git
         cd FastenTestSystem
-        git checkout develop
+        git checkout task_improvements
         # Execute
         echo "Executing..."
         pwd  # Debug
