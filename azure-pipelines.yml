@@ -821,6 +821,8 @@ stages:
       artifact: CompilerWarning_Artifact_TinyCC
     - download: current
       artifact: SourceCodeChecker_Issues
+    - download: current
+      artifact: TestQemu_Result
       
     - script: |
         echo Document generation
@@ -843,6 +845,7 @@ stages:
         copy ..\..\..\..\CompilerWarning_Artifact_Clang\*.csv
         copy ..\..\..\..\CompilerWarning_Artifact_TinyCC\*.csv
         copy ..\..\..\..\SourceCodeChecker_Issues\*.csv
+        copy ..\..\..\..\TestQemu_Result\*.csv
         dir
         cd ..
         dir
