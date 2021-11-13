@@ -635,6 +635,39 @@ stages:
       artifact: SourceCodeChecker_Issues
 
 
+  # Analysis - Ericsson CodeChecker
+  - job: ericsson_codechecker
+    pool:
+      vmImage: 'ubuntu-latest'
+    displayName: 'Analysis - Ericsson CodeChecker'
+    steps:
+    - script: |
+        echo Ericsson CodeChecker
+        echo Install codechecker
+        #https://github.com/Ericsson/codechecker/blob/master/docs/usage.md#step-1
+        pip3 install codechecker
+        
+        echo Preparations
+        gcc --version
+        cmake --version
+        mkdir -p Out/CMakeBuild && cd Out/CMakeBuild
+        
+        echo Execute cmake
+        cmake ../..
+        #make > GCC_build.log 2>&1
+        echo Execute CodeChecker log-build
+        CodeChecker log --build "make" --output ./compile_commands.json
+        cat ./compile_commands.json
+        echo Execute CodeChecker analyze
+        CodeChecker analyze ./compile_commands.json --enable sensitive --output ./reports
+        echo Execute CodeChecker export
+        # View result: https://github.com/Ericsson/codechecker/blob/master/docs/usage.md#view-the-analysis-results-in-the-command-line-
+        CodeChecker parse ./reports
+        # TODO: Maybe it require install 'report-converter' python tool
+        #CodeChecker parse --export html --output ./reports_html ./reports
+    #- publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild/reports_html
+    #  artifact: EricssonCodeChecker_HTML_Report
+
 - stage: CompilerWarning
   dependsOn: Build
   jobs:

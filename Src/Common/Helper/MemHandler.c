@@ -259,6 +259,7 @@ void mem_CheckStackGuardValues(void)
 
     for (i = 0; i < CONFIG_MEM_STACK_GUARD_LENGTH; i++)
     {
+        /* codechecker_intentional [core.UndefinedBinaryOperatorResult] suppress UndefinedBinaryOperatorResult */
         if (!guardWasFound && stackOverFlowCheckerVariable[i] == CONFIG_MEM_STACK_GUARD_VALUE) /* clang_sa_ignore[core.UndefinedBinaryOperatorResult] */
         {
             guardWasFound = true;
