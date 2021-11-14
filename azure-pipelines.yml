@@ -486,6 +486,8 @@ stages:
         relative_qemu_bin_path="../opt/${qemu_bin_path}"
         echo "qemu_bin path: ${relative_qemu_bin_path}"
         python3 -u gdb_test.py --test_file_path ../../Build_GCC_ARM_Bin_Artifact/FastenHomeAut --qemu_bin_path $relative_qemu_bin_path
+    - publish: $(System.DefaultWorkingDirectory)/FastenTestSystem/TestResults.csv
+      artifact: TestQemu_Result
 
 
 # Note: Not works yet, there is no Clang installation on Azure windows images
@@ -819,6 +821,8 @@ stages:
       artifact: CompilerWarning_Artifact_TinyCC
     - download: current
       artifact: SourceCodeChecker_Issues
+    - download: current
+      artifact: TestQemu_Result
       
     - script: |
         echo Document generation
@@ -841,6 +845,7 @@ stages:
         copy ..\..\..\..\CompilerWarning_Artifact_Clang\*.csv
         copy ..\..\..\..\CompilerWarning_Artifact_TinyCC\*.csv
         copy ..\..\..\..\SourceCodeChecker_Issues\*.csv
+        copy ..\..\..\..\TestQemu_Result\*.csv
         dir
         cd ..
         dir
