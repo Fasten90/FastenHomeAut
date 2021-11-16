@@ -68,25 +68,25 @@ void UnitTest_CheckResult(bool isValid, const char *conString, const char *error
         /* Valid */
         UnitTest_ValidCnt++;
 
-#if (UNITTEST_PRINT_ASSERT == 1)
+    #if (UNITTEST_PRINT_ASSERT == 1)
         /* Successful ASSERT, but need print */
         uprintf("Assert OK: %s:%d - \"%s\" - \"%s\"\r\n",
                 UnitTest_FileName, line,
                 conString,
                 errorString);
-#endif
+    #endif
     }
     else
     {
         /* Invalid */
         UnitTest_InvalidCnt++;
 
-#if (UNITTEST_PAUSE_WHEN_ERROR == 1)
+    #if (UNITTEST_PAUSE_WHEN_ERROR == 1)
         UNUSED_ARGUMENT(conString);
         UNUSED_ARGUMENT(errorString);
         UNUSED_ARGUMENT(line);
         DEBUG_BREAKPOINT();
-#else
+    #else
 
     #ifdef CONFIG_MODULE_COLOREDMESSAGE_ENABLE
         char coloredMsg[ESCAPE_FORMAT_STANDARD_STRING_MAX_LENGTH * 2] = { 0 };
