@@ -803,6 +803,8 @@ stages:
 
 - stage: Doc
   dependsOn: CompilerWarning
+  dependsOn: Test
+  dependsOn: Analysis_Checkers
   jobs:
   - job: document_generation
     pool:
