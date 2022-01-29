@@ -802,7 +802,7 @@ stages:
 
 
 - stage: Doc
-  dependsOn: CompilerWarning
+  dependsOn: [CompilerWarning, Test, Analysis_Checkers]
   jobs:
   - job: document_generation
     pool:
