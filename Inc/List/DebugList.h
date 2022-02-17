@@ -54,6 +54,9 @@ typedef enum
 #ifdef CONFIG_MODULE_GPS_ENABLE
     Debug_GPS,
 #endif
+#ifdef CONFIG_MODULE_GSM_ENABLE
+    Debug_GSM,
+#endif
 
     /*
      * XXX: Add here new Debug task enums

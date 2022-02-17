@@ -23,6 +23,9 @@
 #include "ErrorHandler.h"
 #include "UART.h"
 #include "GSM_SIM800.h"
+#ifdef CONFIG_MODULE_DEBUG_ENABLE
+    #include "Debug.h"
+#endif
 
 
 
@@ -34,6 +37,20 @@
 
 #define GSM_TX_BUFFER_LENGTH        (255U)
 #define GSM_RX_BUFFER_LENGTH        (255U)
+
+#define GSM_DEBUG_ENABLED           (1)
+
+
+
+#if (GSM_DEBUG_ENABLED == 1)
+    #ifdef CONFIG_MODULE_DEBUG_ENABLE
+        #define DEBUG_PRINT(msg)                    Debug_Print(Debug_GSM, msg)
+    #else
+        #define DEBUG_PRINT(msg)                    uprintf(msg)
+    #endif
+#else
+    #define DEBUG_PRINT(msg)                        NOT_USED(msg)   // Empty
+#endif
 
 
 
@@ -84,6 +101,16 @@ UART_Handler_t GSM_Uart =
  *  Local variables
  *----------------------------------------------------------------------------*/
 
+typedef enum {
+    GSM_Unknown,
+    GSM_InitStart,
+} GSM_StatusMachine_t;
+
+
+
+GSM_StatusMachine_t gsm_status = GSM_Unknown; /* Zero initialized */
+
+
 
 /*------------------------------------------------------------------------------
  *  Function declarations
@@ -117,6 +144,32 @@ void GSM_SIM800_Init(void)
 static inline void GSM_SendEnable(void)
 {
     UART_SendEnable(&GSM_Uart);
+}
+
+
+
+void GSM_TaskFunction(ScheduleSource_t source)
+{
+    /* TODO: GSM status machine */
+    // TaskHandler: Task_GSM
+
+    switch (gsm_status)
+    {
+        case GSM_Unknown:
+            DEBUG_PRINT("GSM status init");
+            gsm_status++;
+            break;
+
+        case GSM_InitStart:
+            gsm_status++;
+            break;
+
+        default:
+            /* Not stable status, go back */
+            gsm_status = GSM_Unknown;
+            DEBUG_PRINT("GSM status was invalid, restart the status machine");
+            break;
+    }
 }
 
 

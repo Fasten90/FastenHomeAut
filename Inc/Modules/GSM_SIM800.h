@@ -48,6 +48,8 @@ extern UART_Handler_t     GSM_Uart;
 
 void GSM_SIM800_Init(void);
 
+void GSM_TaskFunction(ScheduleSource_t source);
+
 
 
 #endif /* GSM_SIM800_H_ */
