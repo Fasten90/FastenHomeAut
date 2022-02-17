@@ -197,6 +197,7 @@
 #include "GlobalVarHandler.h"
 #include "Watchdog.h"
 #include "UnitTestList.h"
+#include "GSM_SIM800.h"
 
 #ifdef CONFIG_MODULE_MEASUREMENTTIMER_ENABLE
 #include "MeasurementTimer.h"
@@ -465,6 +466,10 @@ int main(void)
     ESP8266_Init();
 #endif
 
+#ifdef CONFIG_MODULE_GSM_ENABLE
+    /* GSM */
+    GSM_SIM800_Init();
+#endif
 
 #ifdef CONFIG_MODULE_RTC_ENABLE
     /* RTC */

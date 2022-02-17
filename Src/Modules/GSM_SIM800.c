@@ -25,6 +25,7 @@
 #include "GSM_SIM800.h"
 #ifdef CONFIG_MODULE_DEBUG_ENABLE
     #include "Debug.h"
+	#include "DebugUart.h"
 #endif
 
 
@@ -116,6 +117,9 @@ GSM_StatusMachine_t gsm_status = GSM_Unknown; /* Zero initialized */
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
+static size_t GSM_SendMsg(const char *msg);
+static void GSM_ClearReceive(bool isFullClear, size_t stepLength);
+
 
 
 /*------------------------------------------------------------------------------
@@ -153,14 +157,36 @@ void GSM_TaskFunction(ScheduleSource_t source)
     /* TODO: GSM status machine */
     // TaskHandler: Task_GSM
 
-    switch (gsm_status)
+    /* If WriteCnt not equal with ReadCnt, we have received message */
+    char receiveBuffer[GSM_RX_BUFFER_LENGTH+1] = { 0 };
+    uint16_t receivedMessageLength = 0;
+
+    /* Need copy to receiveBuffer */
+    receivedMessageLength = CircularBuffer_GetString(
+            GSM_Uart.rx,
+            receiveBuffer,
+            GSM_RX_BUFFER_LENGTH);
+
+    /* Print all received chars: */
+#ifdef CONFIG_MODULE_DEBUG_ENABLE
+    if (receivedMessageLength > 0)
+    {
+        DebugUart_Printf("GSM Received: %s", receiveBuffer);
+    }
+#endif
+
+	switch (gsm_status)
     {
         case GSM_Unknown:
             DEBUG_PRINT("GSM status init");
+            GSM_ClearReceive(true, 0);
+            /* TODO: Later: GSM reset */
             gsm_status++;
             break;
 
         case GSM_InitStart:
+        	GSM_ClearReceive(true, 0);
+        	GSM_SendMsg("AT\r\n");
             gsm_status++;
             break;
 
@@ -168,7 +194,40 @@ void GSM_TaskFunction(ScheduleSource_t source)
             /* Not stable status, go back */
             gsm_status = GSM_Unknown;
             DEBUG_PRINT("GSM status was invalid, restart the status machine");
+            GSM_ClearReceive(true, 0);
             break;
+    }
+}
+
+
+
+static size_t GSM_SendMsg(const char *msg)
+{
+	size_t msgLength = StringLength(msg);
+    size_t putLength = CircularBuffer_PutString(GSM_Uart.tx, msg, msgLength);
+
+    if (putLength > 0)
+        GSM_SendEnable();
+
+    return putLength;
+}
+
+
+
+/**
+ * @brief       Clear receive buffer
+ */
+static void GSM_ClearReceive(bool isFullClear, size_t stepLength)
+{
+    if (isFullClear)
+    {
+        /* Clear all buffer */
+        CircularBuffer_Clear(GSM_Uart.rx);
+    }
+    else
+    {
+        /* Not full clear from readCnt to writeCnt */
+        CircularBuffer_DropCharacters(GSM_Uart.rx, stepLength);
     }
 }
 
