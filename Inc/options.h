@@ -52,6 +52,9 @@
  *----------------------------------------------------------------------------*/
 
 
+// TODO: Add #define CONFIG_MODULE_GSM_ENABLE
+
+
 ///< Remote controller (for car) function
 /* #define CONFIG_FUNCTION_REMOTECONTROLLER_CAR */
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
@@ -470,6 +473,8 @@
     /* #define CONFIG_MODULE_ESCAPEBROWSER_ENABLE */
 
     /* #define CONFIG_MODULE_MEASUREMENTTIMER_ENABLE */
+
+    #define CONFIG_MODULE_GSM_ENABLE
 
     /* Settings */
 
