@@ -1710,6 +1710,56 @@ _CH                PA12
 #endif /* CONFIG_MODULE_ESP8266_ENABLE */
 
 
+
+
+
+#ifdef CONFIG_MODULE_GSM_ENABLE
+
+/* USART1 */
+/* USART_TX        PA9 */
+/* USART_RX        PA10 */
+
+#define GSM_USARTx                        USART1
+
+#define GSM_USART_CLK_ENABLES()           \
+        __USART1_CLK_ENABLE();                \
+        __GPIOA_CLK_ENABLE()
+
+
+#define GSM_USART_TX_GPIO_PORT            GPIOA
+#define GSM_USART_TX_GPIO_PIN             GPIO_PIN_9
+
+#define GSM_USART_RX_GPIO_PORT            GPIOA
+#define GSM_USART_RX_GPIO_PIN             GPIO_PIN_10
+
+#define GSM_USART_AF                      GPIO_AF1_USART1
+
+/* Definition for USARTx's NVIC */
+#define GSM_USARTx_IRQn                   USART1_IRQn
+#define GSM_USARTx_IRQHandler             USART1_IRQHandler
+
+#define GSM_USART_PREEMT_PRIORITY         2
+#define GSM_USART_SUB_PRIORITY            0
+
+#define GSM_USART_BAUDRATE            9600
+
+
+/*
+GSM - Other pins
+TODO: update if needed (RST pin?)
+*/
+/*
+#define GSM_PINS_CLK_ENABLES()        \
+        __GPIOB_CLK_ENABLE();             \
+        __GPIOA_CLK_ENABLE()
+
+#define GSM_GPIO0_GPIO_PIN            GPIO_PIN_7
+#define GSM_GPIO0_GPIO_PORT           GPIOB
+*/
+
+#endif /* CONFIG_MODULE_ESP8266_ENABLE */
+
+
 #ifdef CONFIG_MODULE_BLUETOOTH_ENABLE
 
 /* USART1 */
