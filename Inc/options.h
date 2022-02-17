@@ -154,6 +154,13 @@
         #define CONFIG_REQUIRE_BUTTON
     #endif
 
+    // TODO: Lot of display function requires buttons...
+    #if (defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK) || \
+        defined(CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN) || \
+        defined(CONFIG_FUNCTION_DISPLAY_MENU_SCROLLING))
+        #define CONFIG_REQUIRE_BUTTON
+    #endif
+
 
     ///< Charger function
     /* #define CONFIG_FUNCTION_CHARGER */
