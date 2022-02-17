@@ -1414,7 +1414,7 @@ size_t StringLength(const char *str)
     }
 
     /* Added max length checking */
-    while ((length < STRING_SIZE_MAX) && (str[length] != '\0'))
+    while ((length < STRING_SIZE_MAX) && (str[length] != '\0')) /* TODO: Add a defensive memory address checker code to here? */
     {
         length++;    /* Length = string length */
     }

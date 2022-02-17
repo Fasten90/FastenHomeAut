@@ -91,7 +91,7 @@ UART_Handler_t GSM_Uart =
     .rxIsEnalbed = true,
 #ifdef CONFIG_MODULE_UART_REQUIRE_TASKSCHEDULE_ENABLE
     /* TODO: */
-    .requiredTask = Task_Count,
+    .requiredTask = Task_GSM,
 #endif
 };
 

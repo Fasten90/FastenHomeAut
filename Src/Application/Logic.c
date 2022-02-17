@@ -21,7 +21,6 @@
 #include "TaskList.h"
 #include "TaskHandler.h"
 #include "StringHelper.h"
-#include "Logic.h"
 #include "Display.h"
 #include "CommandHandler.h"
 #include "Communication.h"
@@ -29,6 +28,7 @@
 #include "EventHandler.h"
 #include "EventList.h"
 #include "AppList.h"
+#include "Logic.h"
 
 #ifdef CONFIG_FUNCTION_CHARGER
 #include "ADC.h"
@@ -386,7 +386,7 @@ static void Logic_Display_PrintMainMenuList(void)
     FontFormat_t selectedFormat = { 0 };
     selectedFormat.Format_Inverse = 1;
 
-    /* TODO: RunTime warning! This function run at 40ms! Optimize! */
+    /* TODO: IMPORTANT IMPROVEMENT: Execution time is high! This function run at 40ms! Optimize! */
 
     /* Print menu */
     /* TODO: Do with smaller text */
@@ -410,6 +410,8 @@ static void Logic_Display_PrintMainMenuList(void)
         }
     }
 
+    BUILD_ASSERT(AppList_Num <= DisplayMenu_ShowMenuLimit);
+
     for (i = 0; i < DisplayMenu_ShowMenuLimit; i++)
     {
         /* Clear */
@@ -421,20 +423,20 @@ static void Logic_Display_PrintMainMenuList(void)
 
         /* Print menu name */
         Display_PrintString(
-                AppList[startLine + i].AppName,                /* Menu "name" string */
+                AppList[startLine + i].AppName,                  /* Menu "name" string */
                 Logic_Display_MenuListLineOffset + i,            /* <x.> line */
                 Font_12x8,                /* Font */
                 Logic_Display_SelectedState == startLine+i+1 ? selectedFormat : NO_FORMAT);    /* i + 1, because enum started with "Main" */
     }
 #else
     /* Only max DisplayMenu_ShowMenuLimit menu item can displayed */
-    BUILD_ASSERT(NUM_OF(Logic_MenuList) <= DisplayMenu_ShowMenuLimit);
+    BUILD_ASSERT(AppList_Num > DisplayMenu_ShowMenuLimit);
 
-    for (i = 0; i < NUM_OF(Logic_MenuList); i++)
+    for (i = 0; i < AppList_Num; i++)
     {
         Display_PrintString(
-                Logic_MenuList[i],        /* Menu "name" string */
-                i + Logic_Display_MenuListLineOffset,            /* <x.> line */
+        		AppList[i].AppName,       	 		 /* Menu "name" string */
+                Logic_Display_MenuListLineOffset + i,            /* <x.> line */
                 Font_12x8,                /* Font */
                 Logic_Display_SelectedState == i+1 ? selectedFormat : NO_FORMAT);    /* i + 1, because enum started with "Main" */
     }

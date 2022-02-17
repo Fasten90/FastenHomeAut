@@ -6,7 +6,7 @@
  * ------------------------
  * Welcome in FastenHomeAut project main page.
  *
- * This document created by [Doxygen](http://www.stack.nl/~dimitri/doxygen/index.html)
+ * This document created by [Doxygen](https://www.doxygen.nl/index.html)
  *
  * FastenHomeAut is a simple embedded project with "Hardware tester" and "CommandHandler" software, which written in C by Vizi Gábor.
  *
