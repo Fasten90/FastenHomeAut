@@ -91,8 +91,8 @@ UART_Handler_t GSM_Uart =
     .txIsEnabled = true,
     .rxIsEnalbed = true,
 #ifdef CONFIG_MODULE_UART_REQUIRE_TASKSCHEDULE_ENABLE
-    /* TODO: */
-    .requiredTask = Task_GSM,
+    /* TODO: for Task_GSM it response immediately after one character received. */
+    .requiredTask = Task_Count,
 #endif
 };
 
@@ -105,6 +105,10 @@ UART_Handler_t GSM_Uart =
 typedef enum {
     GSM_Unknown,
     GSM_InitStart,
+	GSM_InitStart_Reply,
+	GSM_Init_GetSignal,
+	GSM_Init_GetSignal_Reply,
+	GSM_Ready,
 } GSM_StatusMachine_t;
 
 
@@ -157,6 +161,8 @@ void GSM_TaskFunction(ScheduleSource_t source)
     /* TODO: GSM status machine */
     // TaskHandler: Task_GSM
 
+	static uint8_t err_cnt = 0;
+
     /* If WriteCnt not equal with ReadCnt, we have received message */
     char receiveBuffer[GSM_RX_BUFFER_LENGTH+1] = { 0 };
     uint16_t receivedMessageLength = 0;
@@ -181,19 +187,87 @@ void GSM_TaskFunction(ScheduleSource_t source)
             DEBUG_PRINT("GSM status init");
             GSM_ClearReceive(true, 0);
             /* TODO: Later: GSM reset */
+            TaskHandler_SetTaskPeriodicTime(Task_GSM, 1000);
             gsm_status++;
             break;
 
         case GSM_InitStart:
         	GSM_ClearReceive(true, 0);
-        	GSM_SendMsg("AT\r\n");
+        	GSM_SendMsg("AT\r\n"); /* TODO: Generalize: \r\n always needed */
+        	TaskHandler_SetTaskPeriodicTime(Task_GSM, 100);
             gsm_status++;
             break;
+
+        case GSM_InitStart_Reply:
+        {
+        	if (receivedMessageLength > 0) /* TODO: Generalize the receiving */
+        	{
+        		if (StrCmp("AT\r\r\nOK\r\n", receiveBuffer) == 0)
+        		{
+					gsm_status++;
+        		}
+        		else
+        		{
+            		DEBUG_PRINT("Wrong answer received");
+            		gsm_status--;
+            		err_cnt++;
+        		}
+        	}
+        	else
+        	{
+        		DEBUG_PRINT("AT Answer is not received");
+        		gsm_status--;
+        		err_cnt++;
+        	}
+        	GSM_ClearReceive(true, 0);
+        }
+        break;
+
+        case GSM_Init_GetSignal:
+        	GSM_ClearReceive(true, 0);
+        	GSM_SendMsg("AT+CSQ\r\n");
+        	TaskHandler_SetTaskPeriodicTime(Task_GSM, 100);
+            gsm_status++;
+            break;
+
+        case GSM_Init_GetSignal_Reply:
+        {
+        	if (receivedMessageLength > 0)
+        	{
+        		/* AT+CSQ +CSQ: 22,0 */
+        		/* AT+CSQ\r\r\n+CSQ: 21,0\r\n\r\nOK\r\n */ /* TODO: Process the signal quality and save to the information struct */
+        		if (StrCmpFirst("AT+CSQ\r\r\n+CSQ: ", receiveBuffer) == 0)
+				{
+        			gsm_status++;
+				}
+				else
+				{
+					DEBUG_PRINT("Wrong answer received");
+					gsm_status--;
+					err_cnt++;
+				}
+        	}
+        	else
+        	{
+        		DEBUG_PRINT("AT Answer is not received");
+        		gsm_status--;
+        		err_cnt++;
+        	}
+        	GSM_ClearReceive(true, 0);
+        }
+		break;
+
+        case GSM_Ready:
+        	/* TODO: Be happy */
+        	DEBUG_PRINT("Be happy!");
+        	TaskHandler_SetTaskPeriodicTime(Task_GSM, 1000);
+        	break;
 
         default:
             /* Not stable status, go back */
             gsm_status = GSM_Unknown;
             DEBUG_PRINT("GSM status was invalid, restart the status machine");
+            TaskHandler_SetTaskPeriodicTime(Task_GSM, 1000);
             GSM_ClearReceive(true, 0);
             break;
     }
@@ -201,6 +275,7 @@ void GSM_TaskFunction(ScheduleSource_t source)
 
 
 
+/* TODO: Generalize */
 static size_t GSM_SendMsg(const char *msg)
 {
 	size_t msgLength = StringLength(msg);
@@ -214,6 +289,7 @@ static size_t GSM_SendMsg(const char *msg)
 
 
 
+/* TODO: Generalize */
 /**
  * @brief       Clear receive buffer
  */
@@ -231,6 +307,11 @@ static void GSM_ClearReceive(bool isFullClear, size_t stepLength)
     }
 }
 
+
+/* TODO: Check Idle messages: Ring, etc */
+
+
+/* TODO: Print Information struct (e.g. Signal Quality) */
 
 
 #endif /* #ifdef CONFIG_MODULE_GSM_ENABLE */
