@@ -2558,6 +2558,106 @@ size_t usnprintf(char * str, size_t maxLen, const char * format, ...)
 
 
 
+size_t string_scanf(char *str, const char *format, ...)
+{
+    /* Type variables */
+    char     *p;            /* step on format string */
+    char     *sval;         /* string */
+    int      *ival;          /* int */
+    unsigned int *uival;     /* uint */
+    float    *flval;         /* float */
+    char     *cval;          /* character */
+
+
+    va_list ap;                                    /* argument pointer */
+    va_start(ap, format);                          /* ap on arg */
+
+
+    /* Check parameters */
+    if ((str == NULL) || (format == NULL))
+        return 0;
+
+    char *format_p;
+
+    for (format_p = (char *)format; *format_p; format_p++)                /* p to EOS */
+    {
+        if (*format_p != '%')
+        {
+            /* Check is the char is same */
+            if (*str == *format_p)
+            {
+            	/* OK, go to the next */
+            }
+            else
+            {
+            	/* not equal */
+            	return -1;
+            }
+        }
+        else
+        {
+            /* '%' character */
+        	format_p++;
+            /* Read value */
+        	switch (*format_p)
+        	{
+        		case 'd':
+					{
+	        			uival = va_arg(ap, unsigned int*);    /* Decimal = signed int (~int32_t) */
+						/* digit read */
+	        			/* Firstly, check the digit length */
+
+						char * digit_p = format_p;
+						uint8_t digit_count = 0;
+						for (int i=0; i<15; i++)
+						{
+							if (IsDecimalChar(*digit_p))
+							{
+								digit_count++;
+							}
+							else
+							{
+								break; /* Exit from counting */
+							}
+						}
+						/* we got the count */
+						if (digit_count)
+						{
+							/* get the var */
+							uint8_t length = UnsignedDecimalToStringSafe(uival, str, digit_count);
+							if (length != digit_count)
+							{
+								return -2;
+							}
+							str += digit_count - 1;
+						}
+						else
+						{
+							/* Wrong situation, exit with error */
+							return -1;
+						}
+					}
+				break;
+
+        		case 's':
+        			/* TODO: Implement */
+        			return -1;
+        			break;
+
+        		default:
+        			return -1; /* Not supposed format */
+        			break;
+        	}
+		}
+        str++;
+	}
+
+    va_end(ap);
+
+    return 0;
+}
+
+
 #ifdef CONFIG_MODULE_STRING_UNITTEST_ENABLE
 /**
  * @brief       String module Unit Test
@@ -3267,6 +3367,32 @@ uint32_t StringHelper_UnitTest(void)
     length = UnsignedDecimalToStringFillSafe(123, buffer, 5, ' ', 4); /* However 4 length, 3 number length, but required 5 fillength, but could not put: only 1 will be put */
     UNITTEST_ASSERT(length == 4, "UnsignedDecimalToStringFillSafe error");
     UNITTEST_ASSERT(!StrCmp(buffer, " 123"), "UnsignedDecimalToStringFillSafe error");
+
+
+
+    /* scanf */
+    size_t retval = 0;
+    retval = string_scanf("bla", "bla");
+    UNITTEST_ASSERT(retval == 0, "string_scanf simple");
+
+    uint32_t var;
+    string_scanf("bla 1", "bla %d", &var);
+    UNITTEST_ASSERT(var == 1, "string_scanf integer");
+    uprintf("Expected 1: %d", var);
+
+    string_scanf("bla 12", "bla %d", &var);
+	UNITTEST_ASSERT(var == 12, "string_scanf integer");
+	uprintf("Expected 12: %d", var);
+
+	string_scanf("bla 123,", "bla %d,", &var);
+	UNITTEST_ASSERT(var == 123, "string_scanf integer");
+	uprintf("Expected 123: %d", var);
+
+	uint32_t var2 = 0;
+	string_scanf("bla 124,15", "bla %d,%d", &var, &var2);
+	UNITTEST_ASSERT(var == 124, "string_scanf integer");
+	UNITTEST_ASSERT(var2 == 15, "string_scanf integer");
+	uprintf("Expected 1234: %d, 15: %d", var, var2);
 
 
     /* End of unittest */

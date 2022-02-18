@@ -190,6 +190,11 @@ size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list 
 
 size_t usnprintf(char * str, size_t maxLen, const char * format, ...);
 
+
+/* scanf */
+size_t string_scanf(char *str, const char *format, ...);
+
+
 /* Unit test */
 uint32_t StringHelper_UnitTest(void);
 
