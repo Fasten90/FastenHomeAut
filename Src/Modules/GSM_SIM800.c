@@ -113,6 +113,9 @@ typedef enum {
 	GSM_Init_GetSignal_Reply,
 	GSM_Init_GetCCID,
 	GSM_Init_GetCCID_Reply,
+	GSM_Settings_CMGF,
+	GSM_Settings_CNMI,
+	GSM_Settings_CLIP,
 	GSM_Init_GetCREG,
 	GSM_Init_GetCREG_Reply,
 	GSM_Ready,
@@ -141,6 +144,7 @@ GSM_InformationStruct GSM_Information = { 0 };
  *----------------------------------------------------------------------------*/
 
 static void GSM_ClearReceive(bool isFullClear, size_t stepLength);
+static void GSM_CheckIdleMessages(char * receivedMessage);
 
 
 
@@ -328,6 +332,30 @@ void GSM_TaskFunction(ScheduleSource_t source)
 			}
 			break;
 
+        case GSM_Settings_CMGF:
+        	GSM_ClearReceive(true, 0);
+        	GSM_SendMsg("AT+CMGF=1\r\n"); // Configuring TEXT mode
+        	TaskHandler_SetTaskPeriodicTime(Task_GSM, 500);
+            gsm_status++;
+        	break;
+        	/* TODO: Check reply */
+
+        case GSM_Settings_CNMI:
+        	GSM_ClearReceive(true, 0);
+        	GSM_SendMsg("AT+CNMI=1,2,0,0,0\r\n"); // Decides how newly arrived SMS messages should be handled
+        	TaskHandler_SetTaskPeriodicTime(Task_GSM, 500);
+            gsm_status++;
+        	break;
+        	/* TODO: Check reply */
+
+        case GSM_Settings_CLIP:
+        	GSM_ClearReceive(true, 0);
+        	GSM_SendMsg("AT+CLIP=1\r\n"); // Decides how newly arrived SMS messages should be handled
+        	TaskHandler_SetTaskPeriodicTime(Task_GSM, 500);
+            gsm_status++;
+        	break;
+        	/* TODO: Check reply */
+
         case GSM_Init_GetCREG:
         	GSM_ClearReceive(true, 0);
         	GSM_SendMsg("AT+CREG?\r\n");
@@ -396,6 +424,11 @@ void GSM_TaskFunction(ScheduleSource_t source)
         case GSM_Ready:
         	/* TODO: Be happy */
         	DEBUG_PRINT("Be happy!");
+        	if (receivedMessageLength > 0)
+        	{
+        		GSM_CheckIdleMessages(receiveBuffer);
+        		GSM_ClearReceive(true, 0);
+        	}
         	TaskHandler_SetTaskPeriodicTime(Task_GSM, 1000);
         	break;
 
@@ -444,10 +477,72 @@ static void GSM_ClearReceive(bool isFullClear, size_t stepLength)
 }
 
 
+
+/* TODO: Refactor */
+static void GSM_CheckIdleMessages(char * receivedMessage)
+{
+	for (uint8_t i = 0; receivedMessage[i] != '\0'; i++)
+	{
+		/* TODO: Generalize / Move it to a list */
+		if (!StrCmpFirst("RING", &receivedMessage[i]))
+		{
+			/* Ongoing call */
+			DEBUG_PRINT("Ongoing call");
+		}
+		else if (!StrCmpFirst("NO CARRIER", &receivedMessage[i]))
+		{
+			/* Terminated call */
+			DEBUG_PRINT("Terminated call");
+		}
+		else if (!StrCmpFirst("+CLIP", &receivedMessage[i]))
+		{
+			/* +CLIP: "+36705808642",145,"",0,"",0 */
+			/* TODO: !!!!! Implement */
+			DEBUG_PRINT("Caller: ...");
+		}
+		else
+		{
+			/* Unknown - maybe next turn we find somethings*/
+			//DEBUG_PRINT("Unknown message received");
+		}
+
+		/* Search first \r\n */
+		char * newline = STRING_FindCharacters(&receivedMessage[i], "\r\n");
+		if (newline)
+		{
+			i += (newline - &receivedMessage[i]); /* Jump to the \r\n */
+		}
+	}
+}
+
+
 /* TODO: Check Idle messages: Ring, etc */
 
 
 /* TODO: Print Information struct (e.g. Signal Quality) */
+
+
+/* TODO: Adding AT commands lists
+ *
+ * AT+CMGS=+ZZxxxxxxxxxx – Sends SMS to the phone number specified. The text message
+ *
+ *
+ * Set AT+CLTS=1, it means user can receive network time updating
+ * and use AT+CCLK to show current time.
+ *
+ *
+ * "AT+CNMI=1,2,0,0,0" // Decides how newly arrived SMS messages should be handled
+ *
+ *
+ *
+ * List all SMS messages. AT+CMGL="ALL"
+ *
+ * AT+CNMI=2,2,0,0,0
+ * +CMT: "+36705808642","","22/02/17,20:01:22+04"
+ * Newsms
+ *
+ *
+ */
 
 
 #endif /* #ifdef CONFIG_MODULE_GSM_ENABLE */
