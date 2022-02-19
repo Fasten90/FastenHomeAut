@@ -63,6 +63,8 @@
 static uint8_t FloatToStringSafe(float value, char *str, uint8_t integerLength, uint8_t fractionLength, uint8_t maxLen);
 static uint8_t UnsignedDecimalToStringFillSafe(uint32_t value, char *str, uint8_t fillLength, char fillCharacter, uint8_t maxLen);
 
+static size_t string_scanf_implementation(char *str, const char *format, va_list ap);
+
 
 
 /*------------------------------------------------------------------------------
@@ -2558,7 +2560,7 @@ size_t usnprintf(char * str, size_t maxLen, const char * format, ...)
 
 
 
-size_t string_scanf(char *str, const char *format, ...)
+static size_t string_scanf_implementation(char *str, const char *format, va_list ap)
 {
     /* Type variables */
     char     *p;            /* step on format string */
@@ -2567,11 +2569,6 @@ size_t string_scanf(char *str, const char *format, ...)
     unsigned int *uival;     /* uint */
     float    *flval;         /* float */
     char     *cval;          /* character */
-
-
-    va_list ap;                                    /* argument pointer */
-    va_start(ap, format);                          /* ap on arg */
-
 
     /* Check parameters */
     if ((str == NULL) || (format == NULL))
@@ -2607,13 +2604,14 @@ size_t string_scanf(char *str, const char *format, ...)
 						/* digit read */
 	        			/* Firstly, check the digit length */
 
-						char * digit_p = format_p;
+						char * digit_p = str;
 						uint8_t digit_count = 0;
-						for (int i=0; i<15; i++)
+						for (int i = 0; i < 15; i++)
 						{
 							if (IsDecimalChar(*digit_p))
 							{
 								digit_count++;
+								digit_p++;
 							}
 							else
 							{
@@ -2624,8 +2622,8 @@ size_t string_scanf(char *str, const char *format, ...)
 						if (digit_count)
 						{
 							/* get the var */
-							uint8_t length = UnsignedDecimalToStringSafe(uival, str, digit_count);
-							if (length != digit_count)
+							bool is_successful = StringToUnsignedDecimalNumWithLength(str, uival, digit_count);
+							if (!is_successful)
 							{
 								return -2;
 							}
@@ -2634,28 +2632,42 @@ size_t string_scanf(char *str, const char *format, ...)
 						else
 						{
 							/* Wrong situation, exit with error */
-							return -1;
+							return -3;
 						}
 					}
 				break;
 
         		case 's':
         			/* TODO: Implement */
-        			return -1;
+        			return -4;
         			break;
 
         		default:
-        			return -1; /* Not supposed format */
+        			return -5; /* Not supposed format */
         			break;
         	}
 		}
         str++;
 	}
 
-    va_end(ap);
 
     return 0;
 }
+
+
+
+size_t string_scanf(char *str, const char *format, ...)
+{
+	size_t retval = 0;
+
+    va_list ap;                                    /* argument pointer */
+    va_start(ap, format);                          /* ap on arg */
+    retval = string_scanf_implementation(str, format, ap);
+    va_end(ap);
+
+    return retval;
+}
+
 
 
 #ifdef CONFIG_MODULE_STRING_UNITTEST_ENABLE
@@ -3369,29 +3381,35 @@ uint32_t StringHelper_UnitTest(void)
     UNITTEST_ASSERT(!StrCmp(buffer, " 123"), "UnsignedDecimalToStringFillSafe error");
 
 
+#include "DebugUart.h"
 
     /* scanf */
-    size_t retval = 0;
+    volatile size_t retval = 0;
     retval = string_scanf("bla", "bla");
     UNITTEST_ASSERT(retval == 0, "string_scanf simple");
 
-    uint32_t var;
-    string_scanf("bla 1", "bla %d", &var);
+    volatile uint32_t var = 0;
+    retval = string_scanf("bla 1", "bla %d", &var);
+    UNITTEST_ASSERT(retval == 0, "string_scanf simple");
     UNITTEST_ASSERT(var == 1, "string_scanf integer");
+    uprintf("Retval: %d", retval);
     uprintf("Expected 1: %d", var);
 
-    string_scanf("bla 12", "bla %d", &var);
-	UNITTEST_ASSERT(var == 12, "string_scanf integer");
+    retval = string_scanf("bla 12", "bla %d", &var);
+    UNITTEST_ASSERT(var == 12, "string_scanf integer");
+	uprintf("Retval: %d", retval);
 	uprintf("Expected 12: %d", var);
 
-	string_scanf("bla 123,", "bla %d,", &var);
+	retval = string_scanf("bla 123,", "bla %d,", &var);
 	UNITTEST_ASSERT(var == 123, "string_scanf integer");
+	uprintf("Retval: %d", retval);
 	uprintf("Expected 123: %d", var);
 
-	uint32_t var2 = 0;
-	string_scanf("bla 124,15", "bla %d,%d", &var, &var2);
+	volatile uint32_t var2 = 0;
+	retval = string_scanf("bla 124,15", "bla %d,%d", &var, &var2);
 	UNITTEST_ASSERT(var == 124, "string_scanf integer");
 	UNITTEST_ASSERT(var2 == 15, "string_scanf integer");
+	uprintf("Retval: %d", retval);
 	uprintf("Expected 1234: %d, 15: %d", var, var2);
 
 
