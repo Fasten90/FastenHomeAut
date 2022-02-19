@@ -50,6 +50,8 @@ void GSM_SIM800_Init(void);
 
 void GSM_TaskFunction(ScheduleSource_t source);
 
+size_t GSM_SendMsg(const char *msg);
+
 
 
 #endif /* GSM_SIM800_H_ */
