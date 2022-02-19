@@ -2560,15 +2560,24 @@ size_t usnprintf(char * str, size_t maxLen, const char * format, ...)
 
 
 
+/**
+ * TODOS
+ * TODO: Add supporting %f
+ * TODO: Add supporting %u
+ * TODO: Add supporting %s
+ * TODO: Advanced: Add supporting %<num>d - maybe it will be overkill in program size
+ */
 static size_t string_scanf_implementation(char *str, const char *format, va_list ap)
 {
     /* Type variables */
+    unsigned int *uival;     /* uint */
+#if 0 /* Development is ongoing */
     char     *p;            /* step on format string */
     char     *sval;         /* string */
     int      *ival;          /* int */
-    unsigned int *uival;     /* uint */
     float    *flval;         /* float */
     char     *cval;          /* character */
+#endif
 
     /* Check parameters */
     if ((str == NULL) || (format == NULL))
@@ -2622,7 +2631,7 @@ static size_t string_scanf_implementation(char *str, const char *format, va_list
 						if (digit_count)
 						{
 							/* get the var */
-							bool is_successful = StringToUnsignedDecimalNumWithLength(str, uival, digit_count);
+							bool is_successful = StringToUnsignedDecimalNumWithLength(str, (uint32_t *)uival, digit_count);
 							if (!is_successful)
 							{
 								return -2;

@@ -445,7 +445,7 @@ stages:
         
         # Python
         python --version
-        pytho3 --version
+        python3 --version
 
         # QEMU
         # Install with manual
@@ -476,6 +476,8 @@ stages:
         
         # FastenTestSystem
         cd ..
+
+
         echo "Clone FastenTestSystem"
         git clone https://github.com/Fasten90/FastenTestSystem.git
         cd FastenTestSystem
