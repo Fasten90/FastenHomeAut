@@ -39,6 +39,10 @@ if defined PIPELINE_WORKSPACE (
  
   git clone https://github.com/Fasten90/GccCoverageParser.git
   
+  cd GccCoverageParser
+  git checkout fix_syntax_issue
+  cd ..
+  
   cd ..
 
   cd Out
