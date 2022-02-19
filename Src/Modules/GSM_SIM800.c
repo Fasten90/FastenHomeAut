@@ -108,12 +108,28 @@ typedef enum {
 	GSM_InitStart_Reply,
 	GSM_Init_GetSignal,
 	GSM_Init_GetSignal_Reply,
+	GSM_Init_GetCCID,
+	GSM_Init_GetCCID_Reply,
+	GSM_Init_GetCREG,
+	GSM_Init_GetCREG_Reply,
 	GSM_Ready,
 } GSM_StatusMachine_t;
 
 
 
 GSM_StatusMachine_t gsm_status = GSM_Unknown; /* Zero initialized */
+
+
+typedef struct {
+	bool isValid;
+	uint8_t csq; 				///< Signal Qulity 0-3x?
+	uint8_t creg_1;				///< Creg value
+	uint8_t creg_2;				///< Creg value - 2.
+	bool connectionIsActive;	///< Connection is active?
+} GSM_InformationStruct;
+
+
+GSM_InformationStruct GSM_Information = { 0 };
 
 
 
@@ -231,31 +247,171 @@ void GSM_TaskFunction(ScheduleSource_t source)
             break;
 
         case GSM_Init_GetSignal_Reply:
-        {
-        	if (receivedMessageLength > 0)
-        	{
-        		/* AT+CSQ +CSQ: 22,0 */
-        		/* AT+CSQ\r\r\n+CSQ: 21,0\r\n\r\nOK\r\n */ /* TODO: Process the signal quality and save to the information struct */
-        		if (StrCmpFirst("AT+CSQ\r\r\n+CSQ: ", receiveBuffer) == 0)
+			{
+				if (receivedMessageLength > 0)
 				{
-        			gsm_status++;
+					/* AT+CSQ +CSQ: 22,0 */
+					/* AT+CSQ\r\r\n+CSQ: 21,0\r\n\r\nOK\r\n */ /* TODO: Process the signal quality and save to the information struct */
+					const char * const csq_expected_reply = "AT+CSQ\r\r\n+CSQ: ";
+					const uint8_t len_csq_expected_reply = NUM_OF(csq_expected_reply);
+					if (StrCmpFirst(csq_expected_reply, receiveBuffer) == 0)
+					{
+						gsm_status++;
+						/* Check the content */
+						if (receivedMessageLength > len_csq_expected_reply)
+						{
+							char * str_pnt_to_csq = &receiveBuffer[len_csq_expected_reply];
+							char * const str_pnt_to_csq_first_argument = STRING_FindCharacter(str_pnt_to_csq, ',');
+							//uint8_t len_csq_str = str_pnt_to_csq_first_argument - str_pnt_to_csq;
+							if (str_pnt_to_csq_first_argument != NULL)
+							{
+								*str_pnt_to_csq_first_argument = '\0';
+
+								uint32_t csq = 0;
+								if (StringToUnsignedDecimalNum(str_pnt_to_csq_first_argument, &csq))
+								{
+									/* Successful */
+									GSM_Information.isValid = true;
+									GSM_Information.csq = csq;
+									/* TODO: Second argument of CSQ not too informative value */
+								}
+								else
+								{
+									/* Failed */
+									DEBUG_PRINT("Wrong CSQ received");
+									gsm_status--;
+									err_cnt++;
+								}
+							}
+							else
+							{
+								/* Wrong branch */
+								DEBUG_PRINT("Wrong CSQ received - 2");
+								gsm_status--;
+								err_cnt++;
+							}
+						}
+						else
+						{
+							/* Wrong length */
+							DEBUG_PRINT("Wrong length of received");
+							gsm_status--;
+							err_cnt++;
+						}
+					}
+					else
+					{
+						DEBUG_PRINT("Wrong answer received");
+						gsm_status--;
+						err_cnt++;
+					}
 				}
 				else
 				{
-					DEBUG_PRINT("Wrong answer received");
+					DEBUG_PRINT("AT Answer is not received");
 					gsm_status--;
 					err_cnt++;
 				}
-        	}
-        	else
-        	{
-        		DEBUG_PRINT("AT Answer is not received");
-        		gsm_status--;
-        		err_cnt++;
-        	}
+				GSM_ClearReceive(true, 0);
+			}
+			break;
+
+        case GSM_Init_GetCCID:
         	GSM_ClearReceive(true, 0);
-        }
-		break;
+        	GSM_SendMsg("AT+CCID\r\n");
+        	TaskHandler_SetTaskPeriodicTime(Task_GSM, 100);
+            gsm_status++;
+        	break;
+
+        case GSM_Init_GetCCID_Reply:
+			{
+				if (receivedMessageLength > 0)
+				{
+					/*AT+CCID 89367031561940002091*/
+					if (StrCmpFirst("AT+CCID", receiveBuffer) == 0)
+					{
+						//string_scanf(receiveBuffer, "AT+CCID\r\r\n%s");
+						gsm_status++;
+					}
+					else
+					{
+						DEBUG_PRINT("Wrong answer received");
+						gsm_status--;
+						err_cnt++;
+					}
+				}
+				else
+				{
+					DEBUG_PRINT("AT Answer is not received");
+					gsm_status--;
+					err_cnt++;
+				}
+				GSM_ClearReceive(true, 0);
+			}
+			break;
+
+        case GSM_Init_GetCREG:
+        	GSM_ClearReceive(true, 0);
+        	GSM_SendMsg("AT+CCREG?\r\n");
+        	TaskHandler_SetTaskPeriodicTime(Task_GSM, 100);
+            gsm_status++;
+        	break;
+
+        case GSM_Init_GetCREG_Reply:
+			{
+				if (receivedMessageLength > 0)
+				{
+					/* AT+CREG? +CREG: 0,1 */
+					/* AT+CCREG?\r\r\nERROR\r\n" */
+					if (StrCmpFirst("AT+CREG? +CREG: ", receiveBuffer) == 0)
+					{
+						uint32_t creg_1 = 0;
+						uint32_t creg_2 = 0;
+						size_t convert_reval;
+						convert_reval = string_scanf(receiveBuffer, "AT+CREG? +CREG: %d,%d", &creg_1, &creg_2);
+
+						if (!convert_reval)
+						{
+							/* Successful */
+							GSM_Information.creg_1 = creg_1;
+							GSM_Information.creg_2 = creg_2;
+
+							if (creg_2 == 1)
+							{
+								gsm_status++;
+							}
+							else
+							{
+								DEBUG_PRINT("Wrong CCREG received");
+								gsm_status--;
+								err_cnt++;
+							}
+
+						}
+						else
+						{
+							/* Failed */
+							DEBUG_PRINT("Invalid CCREG received");
+							gsm_status--;
+							err_cnt++;
+						}
+					}
+					else
+					{
+						DEBUG_PRINT("Wrong answer received");
+						gsm_status--;
+						err_cnt++;
+					}
+				}
+				else
+				{
+					DEBUG_PRINT("CCREG Answer is not received");
+					gsm_status--;
+					err_cnt++;
+				}
+				GSM_ClearReceive(true, 0);
+			}
+			break;
 
         case GSM_Ready:
         	/* TODO: Be happy */
