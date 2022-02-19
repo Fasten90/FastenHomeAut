@@ -46,11 +46,14 @@
 #if (GSM_DEBUG_ENABLED == 1)
     #ifdef CONFIG_MODULE_DEBUG_ENABLE
         #define DEBUG_PRINT(msg)                    Debug_Print(Debug_GSM, msg)
+		#define DEBUG_PRINTF(...)                   Debug_Printf(Debug_GSM, __VA_ARGS__)
     #else
         #define DEBUG_PRINT(msg)                    uprintf(msg)
+		#define DEBUG_PRINTF(...)                   uprintf(__VA_ARGS__)
     #endif
 #else
     #define DEBUG_PRINT(msg)                        NOT_USED(msg)   // Empty
+	#define DEBUG_PRINT(...)                        // Empty
 #endif
 
 
@@ -137,7 +140,6 @@ GSM_InformationStruct GSM_Information = { 0 };
  *  Function declarations
  *----------------------------------------------------------------------------*/
 
-static size_t GSM_SendMsg(const char *msg);
 static void GSM_ClearReceive(bool isFullClear, size_t stepLength);
 
 
@@ -251,50 +253,26 @@ void GSM_TaskFunction(ScheduleSource_t source)
 				if (receivedMessageLength > 0)
 				{
 					/* AT+CSQ +CSQ: 22,0 */
-					/* AT+CSQ\r\r\n+CSQ: 21,0\r\n\r\nOK\r\n */ /* TODO: Process the signal quality and save to the information struct */
-					const char * const csq_expected_reply = "AT+CSQ\r\r\n+CSQ: ";
-					const uint8_t len_csq_expected_reply = NUM_OF(csq_expected_reply);
-					if (StrCmpFirst(csq_expected_reply, receiveBuffer) == 0)
+					/* AT+CSQ\r\r\n+CSQ: 21,0\r\n\r\nOK\r\n */
+					uint32_t csq_1;
+					uint32_t csq_2;
+					size_t csq_process_retval = string_scanf(receiveBuffer, "AT+CSQ\r\r\n+CSQ: %d,%d", &csq_1, &csq_2);
+					if (csq_process_retval == 0)
 					{
 						gsm_status++;
-						/* Check the content */
-						if (receivedMessageLength > len_csq_expected_reply)
-						{
-							char * str_pnt_to_csq = &receiveBuffer[len_csq_expected_reply];
-							char * const str_pnt_to_csq_first_argument = STRING_FindCharacter(str_pnt_to_csq, ',');
-							//uint8_t len_csq_str = str_pnt_to_csq_first_argument - str_pnt_to_csq;
-							if (str_pnt_to_csq_first_argument != NULL)
-							{
-								*str_pnt_to_csq_first_argument = '\0';
 
-								uint32_t csq = 0;
-								if (StringToUnsignedDecimalNum(str_pnt_to_csq_first_argument, &csq))
-								{
-									/* Successful */
-									GSM_Information.isValid = true;
-									GSM_Information.csq = csq;
-									/* TODO: Second argument of CSQ not too informative value */
-								}
-								else
-								{
-									/* Failed */
-									DEBUG_PRINT("Wrong CSQ received");
-									gsm_status--;
-									err_cnt++;
-								}
-							}
-							else
-							{
-								/* Wrong branch */
-								DEBUG_PRINT("Wrong CSQ received - 2");
-								gsm_status--;
-								err_cnt++;
-							}
+						if (csq_1 > 0 && csq_1 < 32)
+						{
+							/* Successful */
+							GSM_Information.isValid = true;
+							GSM_Information.csq = csq_1;
+							DEBUG_PRINTF("CSQ: %d", csq_1);
+							/* TODO: Should we save the csq_2? */
 						}
 						else
 						{
-							/* Wrong length */
-							DEBUG_PRINT("Wrong length of received");
+							/* Failed */
+							DEBUG_PRINT("Wrong CSQ received");
 							gsm_status--;
 							err_cnt++;
 						}
@@ -330,7 +308,7 @@ void GSM_TaskFunction(ScheduleSource_t source)
 					/*AT+CCID 89367031561940002091*/
 					if (StrCmpFirst("AT+CCID", receiveBuffer) == 0)
 					{
-						//string_scanf(receiveBuffer, "AT+CCID\r\r\n%s");
+						//string_scanf(receiveBuffer, "AT+CCID\r\r\n%s"); /* TODO: It is too long for decimal/int. Maybe we can store it in string */
 						gsm_status++;
 					}
 					else
@@ -352,7 +330,7 @@ void GSM_TaskFunction(ScheduleSource_t source)
 
         case GSM_Init_GetCREG:
         	GSM_ClearReceive(true, 0);
-        	GSM_SendMsg("AT+CCREG?\r\n");
+        	GSM_SendMsg("AT+CREG?\r\n");
         	TaskHandler_SetTaskPeriodicTime(Task_GSM, 100);
             gsm_status++;
         	break;
@@ -363,12 +341,12 @@ void GSM_TaskFunction(ScheduleSource_t source)
 				{
 					/* AT+CREG? +CREG: 0,1 */
 					/* AT+CCREG?\r\r\nERROR\r\n" */
-					if (StrCmpFirst("AT+CREG? +CREG: ", receiveBuffer) == 0)
+					if (StrCmpFirst("AT+CREG?\r\r\n+CREG: ", receiveBuffer) == 0)
 					{
 						uint32_t creg_1 = 0;
 						uint32_t creg_2 = 0;
 						size_t convert_reval;
-						convert_reval = string_scanf(receiveBuffer, "AT+CREG? +CREG: %d,%d", &creg_1, &creg_2);
+						convert_reval = string_scanf(receiveBuffer, "AT+CREG?\r\r\n+CREG: %d,%d", &creg_1, &creg_2);
 
 						if (!convert_reval)
 						{
@@ -378,6 +356,7 @@ void GSM_TaskFunction(ScheduleSource_t source)
 
 							if (creg_2 == 1)
 							{
+								DEBUG_PRINT("CCREG is OK");
 								gsm_status++;
 							}
 							else
@@ -410,6 +389,7 @@ void GSM_TaskFunction(ScheduleSource_t source)
 					err_cnt++;
 				}
 				GSM_ClearReceive(true, 0);
+				TaskHandler_SetTaskPeriodicTime(Task_GSM, 1000);
 			}
 			break;
 
@@ -431,8 +411,8 @@ void GSM_TaskFunction(ScheduleSource_t source)
 
 
 
-/* TODO: Generalize */
-static size_t GSM_SendMsg(const char *msg)
+/* TODO: Generalize to UART module */
+size_t GSM_SendMsg(const char *msg)
 {
 	size_t msgLength = StringLength(msg);
     size_t putLength = CircularBuffer_PutString(GSM_Uart.tx, msg, msgLength);
@@ -445,7 +425,7 @@ static size_t GSM_SendMsg(const char *msg)
 
 
 
-/* TODO: Generalize */
+/* TODO: Generalize to UART module*/
 /**
  * @brief       Clear receive buffer
  */
