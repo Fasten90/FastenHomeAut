@@ -15,6 +15,7 @@
 
 #include "options.h"
 #include "GenericTypeDefs.h"
+#include "compiler.h"
 #include "StringHelper.h"
 #include "CircularBuffer.h"
 #include "TaskList.h"
@@ -123,16 +124,7 @@ typedef enum {
 
 
 
-GSM_StatusMachine_t gsm_status = GSM_Unknown; /* Zero initialized */
-
-
-typedef struct {
-	bool isValid;
-	uint8_t csq; 				///< Signal Qulity 0-3x?
-	uint8_t creg_1;				///< Creg value
-	uint8_t creg_2;				///< Creg value - 2.
-	bool connectionIsActive;	///< Connection is active?
-} GSM_InformationStruct;
+static GSM_StatusMachine_t gsm_status = GSM_Unknown; /* Zero initialized */
 
 
 GSM_InformationStruct GSM_Information = { 0 };
@@ -180,8 +172,7 @@ static inline void GSM_SendEnable(void)
 
 void GSM_TaskFunction(ScheduleSource_t source)
 {
-    /* TODO: GSM status machine */
-    // TaskHandler: Task_GSM
+	UNUSED_ARGUMENT(source); /* TODO: use it? */
 
 	static uint8_t err_cnt = 0;
 
@@ -439,6 +430,7 @@ void GSM_TaskFunction(ScheduleSource_t source)
             TaskHandler_SetTaskPeriodicTime(Task_GSM, 1000);
             GSM_ClearReceive(true, 0);
             break;
+		/* TODO: !!!! Handle error status !!! */
     }
 }
 
@@ -488,17 +480,21 @@ static void GSM_CheckIdleMessages(char * receivedMessage)
 		{
 			/* Ongoing call */
 			DEBUG_PRINT("Ongoing call");
+			GSM_Information.callIsOngoing = true;
 		}
 		else if (!StrCmpFirst("NO CARRIER", &receivedMessage[i]))
 		{
 			/* Terminated call */
 			DEBUG_PRINT("Terminated call");
+			GSM_Information.callIsOngoing = false;
 		}
 		else if (!StrCmpFirst("+CLIP", &receivedMessage[i]))
 		{
 			/* +CLIP: "+36705808642",145,"",0,"",0 */
 			/* TODO: !!!!! Implement */
-			DEBUG_PRINT("Caller: ...");
+			//size_t clip_result = string_scanf(&receivedMessage[i], "", );
+			DEBUG_PRINT("Caller: ");
+			GSM_Information.callIsOngoing = true;
 		}
 		else
 		{
@@ -507,7 +503,7 @@ static void GSM_CheckIdleMessages(char * receivedMessage)
 		}
 
 		/* Search first \r\n */
-		char * newline = STRING_FindCharacters(&receivedMessage[i], "\r\n");
+		const char * newline = STRING_FindCharacters((const char *)&receivedMessage[i], "\r\n");
 		if (newline)
 		{
 			i += (newline - &receivedMessage[i]); /* Jump to the \r\n */

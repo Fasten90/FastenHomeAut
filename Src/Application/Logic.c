@@ -47,6 +47,10 @@
 #include "RemoteController.h"
 #endif
 
+#ifdef CONFIG_MODULE_GSM_ENABLE
+#include "GSM_SIM800.h"
+#endif
+
 
 
 /*------------------------------------------------------------------------------
@@ -366,11 +370,37 @@ static void Logic_Display_MainMenu(void)
     DISPLAY_GENERATE_EVENT(Event_Display_SpiEvent, 1);
 
     static App_Type_t oldSelectedMenu = AppType_MainMenu;
-    if (Logic_Display_SelectedState != oldSelectedMenu)
+
+#ifdef CONFIG_MODULE_GSM_ENABLE
+    /* TODO: More beautiful solution needed */
+    if (GSM_Information.callIsOngoing)
+    {
+        Display_PrintString(
+					"CALL        ",
+					Logic_Display_MenuListLineOffset,
+					Font_12x8,
+					NO_FORMAT);
+        Display_PrintString(
+        			"            ",
+        			Logic_Display_MenuListLineOffset + 1,
+        			Font_12x8,
+        			NO_FORMAT);
+        Display_PrintString(
+        			"            ",
+        			Logic_Display_MenuListLineOffset + 2,
+        			Font_12x8,
+        			NO_FORMAT);
+    }
+    /* It is supposed if the menu will not change */
+    /* TODO: Force update display when call has end */
+#endif
+
+    if (Logic_Display_SelectedState != oldSelectedMenu) /* Only display / recalculate the display when it is changed */
     {
         oldSelectedMenu = Logic_Display_SelectedState;
         /* Display main menu list */
         /* TODO: Optimize... Run at ~40ms */
+        /* Normal work */
         Logic_Display_PrintMainMenuList();
     }
 

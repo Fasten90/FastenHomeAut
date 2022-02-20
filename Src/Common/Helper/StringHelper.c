@@ -2647,7 +2647,7 @@ static size_t string_scanf_implementation(char *str, const char *format, va_list
 				break;
 
         		case 's':
-        			/* TODO: Implement */
+        			/* TODO: !!! Implement */
         			return -4;
         			break;
 

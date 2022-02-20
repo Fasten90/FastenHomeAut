@@ -31,6 +31,15 @@
  *  Type definitions
  *----------------------------------------------------------------------------*/
 
+typedef struct {
+	bool isValid;
+	uint8_t csq; 				///< Signal Qulity 0-3x?
+	uint8_t creg_1;				///< Creg value
+	uint8_t creg_2;				///< Creg value - 2.
+	bool connectionIsActive;	///< Connection is active?
+	bool callIsOngoing;			///< Call is ongoing?
+} GSM_InformationStruct;
+
 
 
 /*------------------------------------------------------------------------------
@@ -39,6 +48,8 @@
 
 extern UART_HandleTypeDef GSM_UartHandle;
 extern UART_Handler_t     GSM_Uart;
+
+extern GSM_InformationStruct GSM_Information;
 
 
 
