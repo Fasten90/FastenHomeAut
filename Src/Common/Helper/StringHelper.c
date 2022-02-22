@@ -2592,72 +2592,72 @@ static size_t string_scanf_implementation(char *str, const char *format, va_list
             /* Check is the char is same */
             if (*str == *format_p)
             {
-            	/* OK, go to the next */
+                /* OK, go to the next */
             }
             else
             {
-            	/* not equal */
-            	return -1;
+                /* not equal */
+                return -1;
             }
         }
         else
         {
             /* '%' character */
-        	format_p++;
+            format_p++;
             /* Read value */
-        	switch (*format_p)
-        	{
-        		case 'd':
-					{
-	        			uival = va_arg(ap, unsigned int*);    /* Decimal = signed int (~int32_t) */
-						/* digit read */
-	        			/* Firstly, check the digit length */
+            switch (*format_p)
+            {
+                case 'd':
+                    {
+                        uival = va_arg(ap, unsigned int*);    /* Decimal = signed int (~int32_t) */
+                        /* digit read */
+                        /* Firstly, check the digit length */
 
-						char * digit_p = str;
-						uint8_t digit_count = 0;
-						for (int i = 0; i < 15; i++)
-						{
-							if (IsDecimalChar(*digit_p))
-							{
-								digit_count++;
-								digit_p++;
-							}
-							else
-							{
-								break; /* Exit from counting */
-							}
-						}
-						/* we got the count */
-						if (digit_count)
-						{
-							/* get the var */
-							bool is_successful = StringToUnsignedDecimalNumWithLength(str, (uint32_t *)uival, digit_count);
-							if (!is_successful)
-							{
-								return -2;
-							}
-							str += digit_count - 1;
-						}
-						else
-						{
-							/* Wrong situation, exit with error */
-							return -3;
-						}
-					}
-				break;
+                        char * digit_p = str;
+                        uint8_t digit_count = 0;
+                        for (int i = 0; i < 15; i++)
+                        {
+                            if (IsDecimalChar(*digit_p))
+                            {
+                                digit_count++;
+                                digit_p++;
+                            }
+                            else
+                            {
+                                break; /* Exit from counting */
+                            }
+                        }
+                        /* we got the count */
+                        if (digit_count)
+                        {
+                            /* get the var */
+                            bool is_successful = StringToUnsignedDecimalNumWithLength(str, (uint32_t *)uival, digit_count);
+                            if (!is_successful)
+                            {
+                                return -2;
+                            }
+                            str += digit_count - 1;
+                        }
+                        else
+                        {
+                            /* Wrong situation, exit with error */
+                            return -3;
+                        }
+                    }
+                break;
 
-        		case 's':
-        			/* TODO: !!! Implement */
-        			return -4;
-        			break;
+                case 's':
+                    /* TODO: !!! Implement */
+                    return -4;
+                    break;
 
-        		default:
-        			return -5; /* Not supposed format */
-        			break;
-        	}
-		}
+                default:
+                    return -5; /* Not supposed format */
+                    break;
+            }
+        }
         str++;
-	}
+    }
 
 
     return 0;
@@ -2667,7 +2667,7 @@ static size_t string_scanf_implementation(char *str, const char *format, va_list
 
 size_t string_scanf(char *str, const char *format, ...)
 {
-	size_t retval = 0;
+    size_t retval = 0;
 
     va_list ap;                                    /* argument pointer */
     va_start(ap, format);                          /* ap on arg */
@@ -3406,20 +3406,20 @@ uint32_t StringHelper_UnitTest(void)
 
     retval = string_scanf("bla 12", "bla %d", &var);
     UNITTEST_ASSERT(var == 12, "string_scanf integer");
-	uprintf("Retval: %d", retval);
-	uprintf("Expected 12: %d", var);
+    uprintf("Retval: %d", retval);
+    uprintf("Expected 12: %d", var);
 
-	retval = string_scanf("bla 123,", "bla %d,", &var);
-	UNITTEST_ASSERT(var == 123, "string_scanf integer");
-	uprintf("Retval: %d", retval);
-	uprintf("Expected 123: %d", var);
+    retval = string_scanf("bla 123,", "bla %d,", &var);
+    UNITTEST_ASSERT(var == 123, "string_scanf integer");
+    uprintf("Retval: %d", retval);
+    uprintf("Expected 123: %d", var);
 
-	volatile uint32_t var2 = 0;
-	retval = string_scanf("bla 124,15", "bla %d,%d", &var, &var2);
-	UNITTEST_ASSERT(var == 124, "string_scanf integer");
-	UNITTEST_ASSERT(var2 == 15, "string_scanf integer");
-	uprintf("Retval: %d", retval);
-	uprintf("Expected 1234: %d, 15: %d", var, var2);
+    volatile uint32_t var2 = 0;
+    retval = string_scanf("bla 124,15", "bla %d,%d", &var, &var2);
+    UNITTEST_ASSERT(var == 124, "string_scanf integer");
+    UNITTEST_ASSERT(var2 == 15, "string_scanf integer");
+    uprintf("Retval: %d", retval);
+    uprintf("Expected 1234: %d, 15: %d", var, var2);
 
 
     /* End of unittest */

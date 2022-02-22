@@ -376,20 +376,20 @@ static void Logic_Display_MainMenu(void)
     if (GSM_Information.callIsOngoing)
     {
         Display_PrintString(
-					"CALL        ",
-					Logic_Display_MenuListLineOffset,
-					Font_12x8,
-					NO_FORMAT);
+                    "CALL        ",
+                    Logic_Display_MenuListLineOffset,
+                    Font_12x8,
+                    NO_FORMAT);
         Display_PrintString(
-        			"            ",
-        			Logic_Display_MenuListLineOffset + 1,
-        			Font_12x8,
-        			NO_FORMAT);
+                    "            ",
+                    Logic_Display_MenuListLineOffset + 1,
+                    Font_12x8,
+                    NO_FORMAT);
         Display_PrintString(
-        			"            ",
-        			Logic_Display_MenuListLineOffset + 2,
-        			Font_12x8,
-        			NO_FORMAT);
+                    "            ",
+                    Logic_Display_MenuListLineOffset + 2,
+                    Font_12x8,
+                    NO_FORMAT);
     }
     /* It is supposed if the menu will not change */
     /* TODO: Force update display when call has end */
@@ -465,7 +465,7 @@ static void Logic_Display_PrintMainMenuList(void)
     for (i = 0; i < AppList_Num; i++)
     {
         Display_PrintString(
-        		AppList[i].AppName,       	 		 /* Menu "name" string */
+                AppList[i].AppName,                     /* Menu "name" string */
                 Logic_Display_MenuListLineOffset + i,            /* <x.> line */
                 Font_12x8,                /* Font */
                 Logic_Display_SelectedState == i+1 ? selectedFormat : NO_FORMAT);    /* i + 1, because enum started with "Main" */

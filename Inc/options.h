@@ -52,7 +52,7 @@
  *----------------------------------------------------------------------------*/
 
 
-// TODO: Add #define CONFIG_MODULE_GSM_ENABLE
+/*  TODO: Add #define CONFIG_MODULE_GSM_ENABLE */
 
 
 ///< Remote controller (for car) function
@@ -115,10 +115,10 @@
         #define CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
 
         /* Display: Scrolling menu (Use only for longer then 3 menu) */
-        //#define CONFIG_FUNCTION_DISPLAY_MENU_SCROLLING
+        /* #define CONFIG_FUNCTION_DISPLAY_MENU_SCROLLING */
     #endif
 
-	/* TODO: Check scroll function */
+    /* TODO: Check scroll function */
 
 
     ///< Display: Show screen
@@ -156,7 +156,7 @@
         #define CONFIG_REQUIRE_BUTTON
     #endif
 
-    // TODO: Lot of display function requires buttons...
+    /*  TODO: Lot of display function requires buttons... */
     #if (defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK) || \
         defined(CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN) || \
         defined(CONFIG_FUNCTION_DISPLAY_MENU_SCROLLING))
@@ -203,7 +203,7 @@
 
 
     ///< Traffic light
-    //#define CONFIG_FUNCTION_TRAFFIC_LIGHT
+    /* #define CONFIG_FUNCTION_TRAFFIC_LIGHT */
     #ifdef CONFIG_FUNCTION_TRAFFIC_LIGHT
         #ifndef CONFIG_FUNCTION_TRAFFIC_LIGHT
             #define CONFIG_FUNCTION_TRAFFIC_LIGHT

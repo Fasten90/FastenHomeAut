@@ -2853,7 +2853,7 @@ static CmdH_Result_t CommandFunction_Gsm(uint32_t argc, char** argv)
     }
    else
    {
-	   /* TODO */
+       /* TODO */
    }
 
     return result;

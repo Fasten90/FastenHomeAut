@@ -33,7 +33,6 @@ float absolute(float arg)
 /**
  * @brief       Round value
  *              > x.5 >
- *
  */
 int32_t round_int(float arg)
 {
