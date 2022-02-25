@@ -676,6 +676,26 @@ stages:
     #- publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild/reports_html
     #  artifact: EricssonCodeChecker_HTML_Report
 
+
+  # Doc - Doxygen
+  - job: doc_doxygen
+    pool:
+      vmImage: 'ubuntu-latest'
+    displayName: 'Doc - Doxygen'
+    steps:
+    - script: |
+        echo Doxygen
+        sudo apt-get update -y 
+        sudo apt-get install -y doxygen
+        
+        doxygen --help
+        
+        # generate
+        doxygen
+
+# TODO: Artifact
+
+
 - stage: CompilerWarning
   dependsOn: Build
   jobs:
