@@ -258,7 +258,7 @@ const CmdH_Command_t CmdH_CommandList[] =
         .commandFunctionPointer = CommandFunction_unittest,
         .commandArgNum = CmdH_CommandArgNum_0 | CmdH_CommandArgNum_1,
         .description = "Run unit tests",
-        .syntax = "(modul)",
+        .syntax = "(module)",
     },
 #endif
 #ifdef CONFIG_USE_PANEL_PC

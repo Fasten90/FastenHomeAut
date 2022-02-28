@@ -25,6 +25,8 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
+#define GSM_TELEPHONE_NUMBER_STRING_LENGTH  (13)
+
 
 
 /*------------------------------------------------------------------------------
@@ -33,11 +35,13 @@
 
 typedef struct {
 	bool isValid;
-	uint8_t csq; 				///< Signal Qulity 0-3x?
+	uint8_t csq; 				///< Signal Quality 0-3x?
 	uint8_t creg_1;				///< Creg value
 	uint8_t creg_2;				///< Creg value - 2.
 	bool connectionIsActive;	///< Connection is active?
 	bool callIsOngoing;			///< Call is ongoing?
+	char lastCaller[GSM_TELEPHONE_NUMBER_STRING_LENGTH];      ///< Last caller
+	bool lastCallerIsValid;     ///< Last caller is valid
 } GSM_InformationStruct;
 
 

@@ -187,12 +187,10 @@ void GSM_TaskFunction(ScheduleSource_t source)
             GSM_RX_BUFFER_LENGTH);
 
     /* Print all received chars: */
-#ifdef CONFIG_MODULE_DEBUG_ENABLE
     if (receivedMessageLength > 0)
     {
-        DebugUart_Printf("GSM Received: %s", receiveBuffer);
+        DEBUG_PRINTF("GSM Received: %s", receiveBuffer);
     }
-#endif
 
     switch (gsm_status)
     {
@@ -360,6 +358,16 @@ void GSM_TaskFunction(ScheduleSource_t source)
                 {
                     /* AT+CREG? +CREG: 0,1 */
                     /* AT+CCREG?\r\r\nERROR\r\n" */
+                    /* +CREG: <n>,<stat>[,<lac>,<ci>] */
+                    /* n: <n> 0 Disable network registration unsolicited result code
+                     * 1 Enable network registration unsolicited result code
+                     * +CREG: <stat>
+                     * 2 Enable network registration unsolicited result code with
+                     * location information +CREG: <stat>[,<lac>,<ci>]
+                     * <stat> 0 Not registered, MT is not currently searching a new
+                     * operator to register to
+                     * 1 Registered, home network
+                     * 2 Not registered, but MT is currently searching a ne */
                     if (StrCmpFirst("AT+CREG?\r\r\n+CREG: ", receiveBuffer) == 0)
                     {
                         uint32_t creg_1 = 0;
@@ -373,7 +381,7 @@ void GSM_TaskFunction(ScheduleSource_t source)
                             GSM_Information.creg_1 = creg_1;
                             GSM_Information.creg_2 = creg_2;
 
-                            if (creg_2 == 1)
+                            if (creg_2 == 1) /* Registered home network */
                             {
                                 DEBUG_PRINT("CCREG is OK");
                                 gsm_status++;
@@ -475,25 +483,40 @@ static void GSM_CheckIdleMessages(char * receivedMessage)
 {
     for (uint8_t i = 0; receivedMessage[i] != '\0'; i++)
     {
+        char * recv = &receivedMessage[i];
         /* TODO: Generalize / Move it to a list */
-        if (!StrCmpFirst("RING", &receivedMessage[i]))
+        if (!StrCmpFirst("RING", recv))
         {
             /* Ongoing call */
             DEBUG_PRINT("Ongoing call");
             GSM_Information.callIsOngoing = true;
         }
-        else if (!StrCmpFirst("NO CARRIER", &receivedMessage[i]))
+        else if (!StrCmpFirst("NO CARRIER", recv))
         {
             /* Terminated call */
             DEBUG_PRINT("Terminated call");
             GSM_Information.callIsOngoing = false;
+
         }
-        else if (!StrCmpFirst("+CLIP", &receivedMessage[i]))
+        else if (!StrCmpFirst("+CLIP", recv))
         {
+            DEBUG_PRINT("Calling...");
             /* +CLIP: "+36705808642",145,"",0,"",0 */
             /* TODO: !!!!! Implement */
-            /* size_t clip_result = string_scanf(&receivedMessage[i], "", ); */
-            DEBUG_PRINT("Caller: ");
+            /* TODO: There is no defend for buffer overwrite */
+            //uint32_ clip_int_1;
+            //uint32_ clip_int_2;
+            //uint32_ clip_int_3;
+            //size_t clip_retval = string_scanf(lastCaller, "+CLIP: \"+%s\",%d,\"\",%d,\"\",%d", lastCaller, &csq_1, &csq_2);
+            size_t clip_retval = string_scanf(recv, "+CLIP: \"+%s\",%d,\"\",%d,\"\",%d", GSM_Information.lastCaller);
+            if (clip_retval > 0)
+            {
+                /* Self-defense */
+                GSM_Information.lastCaller[GSM_TELEPHONE_NUMBER_STRING_LENGTH-1] = '\0';
+                DEBUG_PRINTF("Caller found: %s", GSM_Information.lastCaller);
+                GSM_Information.lastCallerIsValid = true;
+            }
+
             GSM_Information.callIsOngoing = true;
         }
         else

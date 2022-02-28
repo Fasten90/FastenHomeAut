@@ -1,5 +1,5 @@
 /*
- *    String.h
+ *    StringHelper.h
  *    Created on:   2016-01-01
  *    Author:       Vizi Gabor
  *    E-mail:       vizi.gabor90@gmail.com
