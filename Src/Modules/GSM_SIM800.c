@@ -303,7 +303,7 @@ void GSM_TaskFunction(ScheduleSource_t source)
                     /*AT+CCID 89367031561940002091*/
                     if (StrCmpFirst("AT+CCID", receiveBuffer) == 0)
                     {
-                        /* string_scanf(receiveBuffer, "AT+CCID\r\r\n%s"); /* TODO: It is too long for decimal/int. Maybe we can store it in string */ */
+                        /* string_scanf(receiveBuffer, "AT+CCID\r\r\n%s"); */ /* TODO: It is too long for decimal/int. Maybe we can store it in string */
                         gsm_status++;
                     }
                     else
