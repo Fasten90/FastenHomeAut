@@ -373,8 +373,10 @@ static void Logic_Display_MainMenu(void)
 
 #ifdef CONFIG_MODULE_GSM_ENABLE
     /* TODO: More beautiful solution needed */
+    static bool displayCallIsOngoing = false;
     if (GSM_Information.callIsOngoing)
     {
+        displayCallIsOngoing = true;
         Display_PrintString(
                     "CALL        ",
                     Logic_Display_MenuListLineOffset,
@@ -391,8 +393,17 @@ static void Logic_Display_MainMenu(void)
                     Font_12x8,
                     NO_FORMAT);
     }
+    else
+    {
+        if (displayCallIsOngoing)
+        {
+            displayCallIsOngoing = false;
+            /* Force update display when call has end */
+            /* Logic_Display_SelectedState = AppType_MainMenu */
+            oldSelectedMenu = AppType_Count; /* Trick: It is sure it is not used, so it will be updated */
+        }
+    }
     /* It is supposed if the menu will not change */
-    /* TODO: Force update display when call has end */
 #endif
 
     if (Logic_Display_SelectedState != oldSelectedMenu) /* Only display / recalculate the display when it is changed */
