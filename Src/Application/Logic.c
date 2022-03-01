@@ -383,7 +383,7 @@ static void Logic_Display_MainMenu(void)
                     Font_12x8,
                     NO_FORMAT);
         Display_PrintString(
-                    "            ",
+                    GSM_Information.lastCaller,
                     Logic_Display_MenuListLineOffset + 1,
                     Font_12x8,
                     NO_FORMAT);
@@ -401,6 +401,12 @@ static void Logic_Display_MainMenu(void)
             /* Force update display when call has end */
             /* Logic_Display_SelectedState = AppType_MainMenu */
             oldSelectedMenu = AppType_Count; /* Trick: It is sure it is not used, so it will be updated */
+            /* TODO: Ugly solution: Force clean 2. line */
+            Display_PrintString(
+                        "            ",
+                        Logic_Display_MenuListLineOffset + 1,
+                        Font_12x8,
+                        NO_FORMAT);
         }
     }
     /* It is supposed if the menu will not change */
