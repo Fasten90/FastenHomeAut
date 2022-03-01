@@ -502,19 +502,61 @@ static void GSM_CheckIdleMessages(char * receivedMessage)
         {
             DEBUG_PRINT("Calling...");
             /* +CLIP: "+36705808642",145,"",0,"",0 */
-            /* TODO: !!!!! Implement */
             /* TODO: There is no defend for buffer overwrite */
-            //uint32_ clip_int_1;
-            //uint32_ clip_int_2;
-            //uint32_ clip_int_3;
-            //size_t clip_retval = string_scanf(lastCaller, "+CLIP: \"+%s\",%d,\"\",%d,\"\",%d", lastCaller, &csq_1, &csq_2);
-            size_t clip_retval = string_scanf(recv, "+CLIP: \"+%s\",%d,\"\",%d,\"\",%d", GSM_Information.lastCaller);
-            if (clip_retval > 0)
+            /* +CLIP: <number>,<type>[,<subaddr>,<satype>,<alphaId>,<CLI
+             * validity>]
+             * Parameters
+             * <number> String type (string should be included in quotation marks)
+             *  phone number of calling address in format specified by <type>.
+             * <type> Type of address octet in integer format;
+             *      129 Unknown type
+             *      161 National number type
+             *      145 International number type
+             *      177 Network specific number
+             * <subaddr> String type (subaddress of format specified by <satype>)
+             * <satype> Integer type (type of subaddress)
+             * <alphaId> String type (string should be included in quotation marks)
+             *      alphanumeric representation of <number> corresponding to the entry
+             *      found in phone book.
+             * <CLI validity>
+             *      0 CLI valid
+             *      1 CLI has been withheld by the originator.
+             *      2 CLI is not available due to interworking problems or
+             *      limitations of originating network
+             */
+            uint32_t ring_type = 0;
+            /* "+CLIP: \"+%s\",%d,\"\",%d,\"\",%d" */
+            size_t clip_retval = string_scanf(recv, "+CLIP: \"+%s\",%d,\"", GSM_Information.lastCaller, &ring_type);
+            if (clip_retval == 0)
             {
                 /* Self-defense */
                 GSM_Information.lastCaller[GSM_TELEPHONE_NUMBER_STRING_LENGTH-1] = '\0';
                 DEBUG_PRINTF("Caller found: %s", GSM_Information.lastCaller);
                 GSM_Information.lastCallerIsValid = true;
+
+                /* TODO: save it */
+                switch (ring_type)
+                {
+                    case 129:
+                        DEBUG_PRINT("Unknown type");
+                        break;
+                    case 161:
+                        DEBUG_PRINT("National number type");
+                        break;
+                    case 145:
+                        DEBUG_PRINT("International number type");
+                        break;
+                    case 177:
+                        DEBUG_PRINT("Network specific type");
+                        break;
+                    default:
+                        DEBUG_PRINT("Unhandled type");
+                        break;
+                }
+            }
+            else
+            {
+                DEBUG_PRINT("Caller parsing failed");
             }
 
             GSM_Information.callIsOngoing = true;
