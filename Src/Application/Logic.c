@@ -395,6 +395,7 @@ static void Logic_Display_MainMenu(void)
     }
     else
     {
+        // Call has ended
         if (displayCallIsOngoing)
         {
             displayCallIsOngoing = false;
@@ -407,6 +408,10 @@ static void Logic_Display_MainMenu(void)
                         Logic_Display_MenuListLineOffset + 1,
                         Font_12x8,
                         NO_FORMAT);
+        }
+        else
+        {
+            /* DO NOTHING. It is valid menu status without ongoing call */
         }
     }
     /* It is supposed if the menu will not change */
