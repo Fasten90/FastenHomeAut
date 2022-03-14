@@ -670,7 +670,8 @@ stages:
         CodeChecker analyze ./compile_commands.json --enable sensitive --output ./reports
         echo Execute CodeChecker export
         # View result: https://github.com/Ericsson/codechecker/blob/master/docs/usage.md#view-the-analysis-results-in-the-command-line-
-        CodeChecker parse ./reports
+        CodeChecker parse ./reports || echo "Return code: $?"
+        # TODO: Handle return code. E.g. 2 return code is low+medium issue
         # TODO: Maybe it require install 'report-converter' python tool
         #CodeChecker parse --export html --output ./reports_html ./reports
     #- publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild/reports_html
