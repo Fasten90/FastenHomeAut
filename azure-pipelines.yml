@@ -640,7 +640,7 @@ stages:
 
 
   # Analysis - Ericsson CodeChecker
-  - job: ericsson_codechecker
+  - job: analysis_ericsson_codechecker
     pool:
       vmImage: 'ubuntu-latest'
     displayName: 'Analysis - Ericsson CodeChecker'
@@ -676,6 +676,26 @@ stages:
         #CodeChecker parse --export html --output ./reports_html ./reports
     #- publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild/reports_html
     #  artifact: EricssonCodeChecker_HTML_Report
+
+
+  # Analysis - FastenStaticAnalyzer
+  - job: analysis_fasten_static_analyzer
+    pool:
+      vmImage: 'ubuntu-latest'
+    displayName: 'Analysis - Fasten Static Analyzer'
+    steps:
+    - script: |
+        echo FastenStaticAnalyzer
+        
+        echo clone FastenStaticAnalyzer
+        git clone https://github.com/fasten90/FastenStaticAnalyzer
+        
+        cd FastenStaticAnalyzer
+        ./install.sh
+        includes="-IInc/Common -IInc/Communication -IInc/HwTester -IInc/Modules -IInc -IInc/Application -IInc/List -IInc/Display -IInc/Common/Helper -IInc/Common/Handler -IInc/SelfTest")
+        args="-IDrivers/x86/Inc -DCONFIG_USE_PANEL_PC=1"
+        python FastenStaticAnalyzer.py --source="../Src/Common/Handler/CommandHandler.c" --prepocessor="gcc" --preprocessor_args="-std=c99 -nostdinc -E -D_Atomic(_arg)=_arg -Ipycparser/utils/fake_libc_include ${args} ${includes}"
+        # TODO: Handle return code. E.g. 2 return code is low+medium issue
 
 
   # Doc - Doxygen
