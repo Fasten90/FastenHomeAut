@@ -52,6 +52,9 @@
  *----------------------------------------------------------------------------*/
 
 
+/*  TODO: Add #define CONFIG_MODULE_GSM_ENABLE */
+
+
 ///< Remote controller (for car) function
 /* #define CONFIG_FUNCTION_REMOTECONTROLLER_CAR */
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER_CAR
@@ -107,18 +110,20 @@
         /* Display: Snake game */
         /* #define CONFIG_FUNCTION_GAME_SNAKE */
         /* Display: Input */
-        #define CONFIG_FUNCTION_DISPLAY_INPUT
-        /* Display: Show screen */
+        /* #define CONFIG_FUNCTION_DISPLAY_INPUT */
+        /* Display: Show screen (Car animation)*/
         #define CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
 
         /* Display: Scrolling menu (Use only for longer then 3 menu) */
-        #define CONFIG_FUNCTION_DISPLAY_MENU_SCROLLING
+        /* #define CONFIG_FUNCTION_DISPLAY_MENU_SCROLLING */
     #endif
+
+    /* TODO: Check scroll function */
 
 
     ///< Display: Show screen
     /* #define CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN */
-    /* TODO: What we want to displaying */
+    /* TODO: What we would like to displaying */
 
 
     ///< Display: Show clock
@@ -148,6 +153,13 @@
     /* #define CONFIG_FUNCTION_DISPLAY_INPUT */
     #ifdef CONFIG_FUNCTION_DISPLAY_INPUT
         #define CONFIG_REQUIRE_DISPLAY
+        #define CONFIG_REQUIRE_BUTTON
+    #endif
+
+    /*  TODO: Lot of display function requires buttons... */
+    #if (defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK) || \
+        defined(CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN) || \
+        defined(CONFIG_FUNCTION_DISPLAY_MENU_SCROLLING))
         #define CONFIG_REQUIRE_BUTTON
     #endif
 
@@ -191,7 +203,7 @@
 
 
     ///< Traffic light
-    #define CONFIG_FUNCTION_TRAFFIC_LIGHT
+    /* #define CONFIG_FUNCTION_TRAFFIC_LIGHT */
     #ifdef CONFIG_FUNCTION_TRAFFIC_LIGHT
         #ifndef CONFIG_FUNCTION_TRAFFIC_LIGHT
             #define CONFIG_FUNCTION_TRAFFIC_LIGHT
@@ -230,7 +242,7 @@
     #elif !defined(CONFIG_HW_DISPLAY_ENABLE)
         #define CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE
     #else
-        #error "Could not used because Display module missed!"
+        #error "Invalid configuration: Display module missed!"
     #endif
 #endif
 
@@ -241,7 +253,7 @@
     #elif !defined(CONFIG_HW_BUTTON_ENABLE)
         #define CONFIG_MODULE_BUTTONSIMULATOR_ENABLE
     #else
-        #error "Could not used because Button module missed!"
+        #error "Invalid configuration: Button module missed!"
     #endif
 #endif
 
@@ -470,6 +482,8 @@
     /* #define CONFIG_MODULE_ESCAPEBROWSER_ENABLE */
 
     /* #define CONFIG_MODULE_MEASUREMENTTIMER_ENABLE */
+
+    #define CONFIG_MODULE_GSM_ENABLE
 
     /* Settings */
 

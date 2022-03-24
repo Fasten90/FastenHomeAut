@@ -6,7 +6,7 @@
  * ------------------------
  * Welcome in FastenHomeAut project main page.
  *
- * This document created by [Doxygen](http://www.stack.nl/~dimitri/doxygen/index.html)
+ * This document created by [Doxygen](https://www.doxygen.nl/index.html)
  *
  * FastenHomeAut is a simple embedded project with "Hardware tester" and "CommandHandler" software, which written in C by Vizi Gábor.
  *
@@ -197,6 +197,7 @@
 #include "GlobalVarHandler.h"
 #include "Watchdog.h"
 #include "UnitTestList.h"
+#include "GSM_SIM800.h"
 
 #ifdef CONFIG_MODULE_MEASUREMENTTIMER_ENABLE
 #include "MeasurementTimer.h"
@@ -465,6 +466,10 @@ int main(void)
     ESP8266_Init();
 #endif
 
+#ifdef CONFIG_MODULE_GSM_ENABLE
+    /* GSM */
+    GSM_SIM800_Init();
+#endif
 
 #ifdef CONFIG_MODULE_RTC_ENABLE
     /* RTC */

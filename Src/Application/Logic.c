@@ -21,7 +21,6 @@
 #include "TaskList.h"
 #include "TaskHandler.h"
 #include "StringHelper.h"
-#include "Logic.h"
 #include "Display.h"
 #include "CommandHandler.h"
 #include "Communication.h"
@@ -29,6 +28,7 @@
 #include "EventHandler.h"
 #include "EventList.h"
 #include "AppList.h"
+#include "Logic.h"
 
 #ifdef CONFIG_FUNCTION_CHARGER
 #include "ADC.h"
@@ -45,6 +45,10 @@
 
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER
 #include "RemoteController.h"
+#endif
+
+#ifdef CONFIG_MODULE_GSM_ENABLE
+#include "GSM_SIM800.h"
 #endif
 
 
@@ -366,11 +370,59 @@ static void Logic_Display_MainMenu(void)
     DISPLAY_GENERATE_EVENT(Event_Display_SpiEvent, 1);
 
     static App_Type_t oldSelectedMenu = AppType_MainMenu;
-    if (Logic_Display_SelectedState != oldSelectedMenu)
+
+#ifdef CONFIG_MODULE_GSM_ENABLE
+    /* TODO: More beautiful solution needed */
+    static bool displayCallIsOngoing = false;
+    if (GSM_Information.callIsOngoing)
+    {
+        displayCallIsOngoing = true;
+        Display_PrintString(
+                    "CALL        ",
+                    Logic_Display_MenuListLineOffset,
+                    Font_12x8,
+                    NO_FORMAT);
+        Display_PrintString(
+                    GSM_Information.lastCaller,
+                    Logic_Display_MenuListLineOffset + 1,
+                    Font_12x8,
+                    NO_FORMAT);
+        Display_PrintString(
+                    "            ",
+                    Logic_Display_MenuListLineOffset + 2,
+                    Font_12x8,
+                    NO_FORMAT);
+    }
+    else
+    {
+        // Call has ended
+        if (displayCallIsOngoing)
+        {
+            displayCallIsOngoing = false;
+            /* Force update display when call has end */
+            /* Logic_Display_SelectedState = AppType_MainMenu */
+            oldSelectedMenu = AppType_Count; /* Trick: It is sure it is not used, so it will be updated */
+            /* TODO: Ugly solution: Force clean 2. line */
+            Display_PrintString(
+                        "            ",
+                        Logic_Display_MenuListLineOffset + 1,
+                        Font_12x8,
+                        NO_FORMAT);
+        }
+        else
+        {
+            /* DO NOTHING. It is valid menu status without ongoing call */
+        }
+    }
+    /* It is supposed if the menu will not change */
+#endif
+
+    if (Logic_Display_SelectedState != oldSelectedMenu) /* Only display / recalculate the display when it is changed */
     {
         oldSelectedMenu = Logic_Display_SelectedState;
         /* Display main menu list */
         /* TODO: Optimize... Run at ~40ms */
+        /* Normal work */
         Logic_Display_PrintMainMenuList();
     }
 
@@ -386,7 +438,7 @@ static void Logic_Display_PrintMainMenuList(void)
     FontFormat_t selectedFormat = { 0 };
     selectedFormat.Format_Inverse = 1;
 
-    /* TODO: RunTime warning! This function run at 40ms! Optimize! */
+    /* TODO: IMPORTANT IMPROVEMENT: Execution time is high! This function run at 40ms! Optimize! */
 
     /* Print menu */
     /* TODO: Do with smaller text */
@@ -410,6 +462,8 @@ static void Logic_Display_PrintMainMenuList(void)
         }
     }
 
+    BUILD_ASSERT(AppList_Num <= DisplayMenu_ShowMenuLimit);
+
     for (i = 0; i < DisplayMenu_ShowMenuLimit; i++)
     {
         /* Clear */
@@ -421,20 +475,20 @@ static void Logic_Display_PrintMainMenuList(void)
 
         /* Print menu name */
         Display_PrintString(
-                AppList[startLine + i].AppName,                /* Menu "name" string */
+                AppList[startLine + i].AppName,                  /* Menu "name" string */
                 Logic_Display_MenuListLineOffset + i,            /* <x.> line */
                 Font_12x8,                /* Font */
                 Logic_Display_SelectedState == startLine+i+1 ? selectedFormat : NO_FORMAT);    /* i + 1, because enum started with "Main" */
     }
 #else
     /* Only max DisplayMenu_ShowMenuLimit menu item can displayed */
-    BUILD_ASSERT(NUM_OF(Logic_MenuList) <= DisplayMenu_ShowMenuLimit);
+    BUILD_ASSERT(AppList_Num > DisplayMenu_ShowMenuLimit);
 
-    for (i = 0; i < NUM_OF(Logic_MenuList); i++)
+    for (i = 0; i < AppList_Num; i++)
     {
         Display_PrintString(
-                Logic_MenuList[i],        /* Menu "name" string */
-                i + Logic_Display_MenuListLineOffset,            /* <x.> line */
+                AppList[i].AppName,                     /* Menu "name" string */
+                Logic_Display_MenuListLineOffset + i,            /* <x.> line */
                 Font_12x8,                /* Font */
                 Logic_Display_SelectedState == i+1 ? selectedFormat : NO_FORMAT);    /* i + 1, because enum started with "Main" */
     }

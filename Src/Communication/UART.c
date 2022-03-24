@@ -36,6 +36,9 @@
 #ifdef CONFIG_MODULE_COMMON_UART_ENABLE
 #include "CommonUART.h"
 #endif
+#ifdef CONFIG_MODULE_GSM_ENABLE
+#include "GSM_SIM800.h"
+#endif
 #include "UART.h"
 
 
@@ -119,6 +122,14 @@ void UART_Init(UART_HandleTypeDef *UartHandle)
         UartHandle->Init.BaudRate = COMMONUART_USART_BAUDRATE;
     }
 #endif
+#ifdef CONFIG_MODULE_GSM_ENABLE
+    if (UartHandle == &GSM_UartHandle)
+    {
+        UartHandle->Instance      = GSM_USARTx;
+        UartHandle->Init.BaudRate = GSM_USART_BAUDRATE;
+    }
+#endif
+
 
     UartHandle->Init.WordLength   = UART_WORDLENGTH_8B;
     UartHandle->Init.StopBits     = UART_STOPBITS_1;
@@ -292,6 +303,40 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
         HAL_NVIC_EnableIRQ(COMMONUART_USARTx_IRQn);
     }
 #endif    /* #ifdef CONFIG_MODULE_COMMONUART_ENABLE */
+#ifdef CONFIG_MODULE_GSM_ENABLE
+    if (huart == &GSM_UartHandle)
+    {
+        /* ##-1- Enable peripherals and GPIO Clocks */
+
+        /* Enable GPIO TX/RX clock */
+        /* Enable USARTx clock */
+        GSM_USART_CLK_ENABLES();
+
+
+        /* ##-2- Configure peripheral GPIO */
+        /* UART TX GPIO pin configuration */
+        GPIO_InitStruct.Pin       = GSM_USART_TX_GPIO_PIN;
+        GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
+        GPIO_InitStruct.Pull      = GPIO_NOPULL;
+        GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_HIGH;
+        GPIO_InitStruct.Alternate = GSM_USART_AF;
+
+        HAL_GPIO_Init(GSM_USART_TX_GPIO_PORT, &GPIO_InitStruct);
+
+        /* UART RX GPIO pin configuration */
+        GPIO_InitStruct.Pin = GSM_USART_RX_GPIO_PIN;
+        /* PIO_InitStruct.Alternate = GSM_USART_AF; */
+
+        HAL_GPIO_Init(GSM_USART_RX_GPIO_PORT, &GPIO_InitStruct);
+
+
+        /* ##-3- Configure the NVIC for UART */
+        /* NVIC for USARTx */
+
+        HAL_NVIC_SetPriority(GSM_USARTx_IRQn, GSM_USART_PREEMT_PRIORITY, GSM_USART_SUB_PRIORITY);
+        HAL_NVIC_EnableIRQ(GSM_USARTx_IRQn);
+    }
+#endif    /* #ifdef CONFIG_MODULE_GSM_ENABLE */
 }
 
 
@@ -332,6 +377,14 @@ void COMMONUART_USARTx_IRQHandler(void)
 }
 #endif
 
+
+
+#ifdef CONFIG_MODULE_GSM_ENABLE
+void GSM_USARTx_IRQHandler(void)
+{
+    UART_Handler(&GSM_Uart);
+}
+#endif
 
 
 /**

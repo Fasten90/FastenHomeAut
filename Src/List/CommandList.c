@@ -57,6 +57,7 @@
 #include "UnitTestList.h"
 #include "SelfTest_Errors.h"
 #include "ButtonSimulator.h"
+#include "GSM_SIM800.h"
 
 #ifdef CONFIG_USE_PANEL_PC
 /* Need for exit() */
@@ -181,6 +182,10 @@ static CmdH_Result_t CommandFunction_CommonUART(uint32_t argc, char** argv);
 #if defined(CONFIG_MODULE_BUTTONSIMULATOR_ENABLE) && !defined(CONFIG_MODULE_BUTTONSIMULATOR_AUTO_ON)
 static CmdH_Result_t CommandFunction_ButtonSimulator(uint32_t argc, char** argv);
 #endif
+#ifdef CONFIG_MODULE_GSM_ENABLE
+static CmdH_Result_t CommandFunction_Gsm(uint32_t argc, char** argv);
+#endif
+
 
 
 /*------------------------------------------------------------------------------
@@ -253,7 +258,7 @@ const CmdH_Command_t CmdH_CommandList[] =
         .commandFunctionPointer = CommandFunction_unittest,
         .commandArgNum = CmdH_CommandArgNum_0 | CmdH_CommandArgNum_1,
         .description = "Run unit tests",
-        .syntax = "(modul)",
+        .syntax = "(module)",
     },
 #endif
 #ifdef CONFIG_USE_PANEL_PC
@@ -583,6 +588,15 @@ const CmdH_Command_t CmdH_CommandList[] =
         .description = "Button Simulator",
     },
 #endif
+#ifdef CONFIG_MODULE_GSM_ENABLE
+    {
+        .name = "gsm",
+        .commandFunctionPointer = CommandFunction_Gsm,
+        .commandArgNum = CmdH_CommandArgNum_2,
+        .description = "GSM",
+    },
+#endif
+
 
 
     /*
@@ -2817,6 +2831,32 @@ static CmdH_Result_t CommandFunction_ButtonSimulator(uint32_t argc, char** argv)
     ButtonSimulator_Set(true);
 
     return CmdH_Result_Ok_SendSuccessful;
+}
+#endif
+
+#ifdef CONFIG_MODULE_GSM_ENABLE
+static CmdH_Result_t CommandFunction_Gsm(uint32_t argc, char** argv)
+{
+    UNUSED(argc);
+
+    UNUSED_ARGUMENT(argc);
+    bool result = CmdH_Result_Unknown;
+
+   if (!StrCmp("sendtomodule", argv[1]))
+   {
+        /* Send forward to ESP8266 module last parameter */
+        /* Send: received string + \r\n */
+        char sendString[50];
+        usnprintf(sendString, 50, "%s\r\n", argv[2]);
+        GSM_SendMsg(sendString);
+        result = CmdH_Result_Ok;
+    }
+   else
+   {
+       /* TODO */
+   }
+
+    return result;
 }
 #endif
 

@@ -1,5 +1,5 @@
 /*
- *    String.c
+ *    StringHelper.c
  *    Created on:   2016-01-01
  *    Author:       Vizi Gabor
  *    E-mail:       vizi.gabor90@gmail.com
@@ -22,6 +22,9 @@
 #ifdef CONFIG_MODULE_STRING_UNITTEST_ENABLE
     #include "UnitTest.h"
 #endif
+
+#include "DebugUart.h"
+
 
 
 
@@ -62,6 +65,8 @@
 
 static uint8_t FloatToStringSafe(float value, char *str, uint8_t integerLength, uint8_t fractionLength, uint8_t maxLen);
 static uint8_t UnsignedDecimalToStringFillSafe(uint32_t value, char *str, uint8_t fillLength, char fillCharacter, uint8_t maxLen);
+
+static size_t string_scanf_implementation(char *str, const char *format, va_list ap);
 
 
 
@@ -1414,7 +1419,7 @@ size_t StringLength(const char *str)
     }
 
     /* Added max length checking */
-    while ((length < STRING_SIZE_MAX) && (str[length] != '\0'))
+    while ((length < STRING_SIZE_MAX) && (str[length] != '\0')) /* TODO: Add a defensive memory address checker code to here? */
     {
         length++;    /* Length = string length */
     }
@@ -2558,6 +2563,145 @@ size_t usnprintf(char * str, size_t maxLen, const char * format, ...)
 
 
 
+/**
+ * TODOS
+ * TODO: Add supporting %f
+ * TODO: Add supporting %u
+ * TODO: Advanced: Add supporting %<num>d - maybe it will be overkill in program size
+ */
+static size_t string_scanf_implementation(char *str, const char *format, va_list ap)
+{
+    /* Type variables */
+    unsigned int *uival;     /* uint */
+    char     *sval;         /* string */
+#if 0 /* Development is ongoing */
+    char     *p;            /* step on format string */
+    int      *ival;          /* int */
+    float    *flval;         /* float */
+    char     *cval;          /* character */
+#endif
+
+    /* Check parameters */
+    if ((str == NULL) || (format == NULL))
+        return 0;
+
+    char *format_p;
+
+    for (format_p = (char *)format; *format_p; format_p++)                /* p to EOS */
+    {
+        if (*format_p != '%')
+        {
+            /* Check is the char is same */
+            if (*str == *format_p)
+            {
+                /* OK, go to the next, shall not save */
+                /* str will be increased at end */
+            }
+            else
+            {
+                /* not equal */
+                return -1;
+            }
+        }
+        else
+        {
+            /* '%' character */
+            format_p++;
+            /* Read value */
+            switch (*format_p)
+            {
+                case 'd':
+                    {
+                        uival = va_arg(ap, unsigned int*);    /* Decimal = signed int (~int32_t) */
+                        /* digit read */
+                        /* Firstly, check the digit length */
+
+                        char * digit_p = str;
+                        uint8_t digit_count = 0;
+                        for (int i = 0; i < 15; i++)
+                        {
+                            if (IsDecimalChar(*digit_p))
+                            {
+                                digit_count++;
+                                digit_p++;
+                            }
+                            else
+                            {
+                                break; /* Exit from counting */
+                            }
+                        }
+                        /* we got the count */
+                        if (digit_count)
+                        {
+                            /* get the var */
+                            bool is_successful = StringToUnsignedDecimalNumWithLength(str, (uint32_t *)uival, digit_count);
+                            if (!is_successful)
+                            {
+                                return -2;
+                            }
+                            str += digit_count - 1;
+                        }
+                        else
+                        {
+                            return -3;
+                        }
+                    }
+                break;
+
+                case 's':
+                    {
+                        sval = va_arg(ap, char*);
+                        for (uint8_t i = 0; i < 255; i++)
+                        {
+                            if ((*(format_p+1) == *str) || (*str == '\0')) /* Next expected format character is same with the actual read character */
+                            {
+                                /* Finish it */
+                                sval[i] = '\0'; /* Don't care, but beautiful solution */
+                                //string_copy_i = 0; /* Dont care */
+                                /* DO NOT increment the str, it is incremented after the switch-case */
+                                str--; /* Correctize the str due it is incremented at end */
+                                /* TODO: More beautiful solution if str++ removed at the end? */
+                                break;
+                            }
+                            else
+                            {
+                                /* Not same, so we can copy */
+                                sval[i] = *str;
+                                sval[i+1] = '\0'; /* Yes, the performance will not be good, but if you use the scanf, I hope you don't expect it */
+                                str++;
+                            }
+                        }
+                    }
+                    break;
+
+                default:
+                    return -5; /* Not supported format */
+                    break;
+            }
+        }
+        str++;
+    }
+
+
+    return 0;
+}
+
+
+
+size_t string_scanf(char *str, const char *format, ...)
+{
+    size_t retval = 0;
+
+    va_list ap;                                    /* argument pointer */
+    va_start(ap, format);                          /* ap on arg */
+    retval = string_scanf_implementation(str, format, ap);
+    va_end(ap);
+
+    return retval;
+}
+
+
+
 #ifdef CONFIG_MODULE_STRING_UNITTEST_ENABLE
 /**
  * @brief       String module Unit Test
@@ -3268,6 +3412,49 @@ uint32_t StringHelper_UnitTest(void)
     UNITTEST_ASSERT(length == 4, "UnsignedDecimalToStringFillSafe error");
     UNITTEST_ASSERT(!StrCmp(buffer, " 123"), "UnsignedDecimalToStringFillSafe error");
 
+
+    /* scanf */
+    volatile size_t retval = 0;
+    retval = string_scanf("bla", "bla");
+    UNITTEST_ASSERT(retval == 0, "string_scanf simple");
+
+    volatile uint32_t var = 0;
+    retval = string_scanf("bla 1", "bla %d", &var);
+    UNITTEST_ASSERT(retval == 0, "string_scanf simple");
+    UNITTEST_ASSERT(var == 1, "string_scanf integer");
+    uprintf("Retval: %d", retval);
+    uprintf("Expected 1: %d", var);
+
+    retval = string_scanf("bla 12", "bla %d", &var);
+    UNITTEST_ASSERT(var == 12, "string_scanf integer");
+    //uprintf("Retval: %d", retval);
+    //uprintf("Expected 12: %d", var);
+
+    retval = string_scanf("bla 123,", "bla %d,", &var);
+    UNITTEST_ASSERT(var == 123, "string_scanf integer");
+    //uprintf("Retval: %d", retval);
+    //uprintf("Expected 123: %d", var);
+
+    volatile uint32_t var2 = 0;
+    retval = string_scanf("bla 124,15", "bla %d,%d", &var, &var2);
+    UNITTEST_ASSERT(var == 124, "string_scanf integer");
+    UNITTEST_ASSERT(var2 == 15, "string_scanf integer");
+    //uprintf("Retval: %d", retval);
+    //uprintf("Expected 1234: %d, 15: %d", var, var2);
+
+
+    volatile char var_string[5] = { 0 };
+    retval = string_scanf("bla 124,15", "%s 124,15", &var_string[0]);
+    UNITTEST_ASSERT(retval == 0, "string_scanf string");
+    UNITTEST_ASSERT(!StrCmp(var_string, "bla"), "string_scanf string");
+
+    volatile char var_string_2[5] = { 0 };
+    var = 0;
+    retval = string_scanf("bla 124,15", "%s %d,%s", &var_string[0], &var, &var_string_2[0]);
+    UNITTEST_ASSERT(retval == 0, "string_scanf string");
+    UNITTEST_ASSERT(!StrCmp(var_string, "bla"), "string_scanf string");
+    UNITTEST_ASSERT(var == 124, "string_scanf string");
+    UNITTEST_ASSERT(!StrCmp(var_string_2, "15"), "string_scanf string");
 
     /* End of unittest */
     return UnitTest_End();

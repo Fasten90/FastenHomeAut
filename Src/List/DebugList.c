@@ -77,7 +77,13 @@ DebugRecord_t DebugTasks[] =
         .color = Color_Green,
     },
 #endif
-
+#ifdef CONFIG_MODULE_GSM_ENABLE
+    {
+        .name = "GSM",
+        .isEnabled = true,
+        .color = Color_Green,
+    },
+#endif
 
     /*
      * XXX: Add here new Debug task struct

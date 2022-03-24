@@ -90,6 +90,9 @@ typedef enum
 #ifdef CONFIG_FUNCTION_TASK_TRAFFIC_LIGHT
     Task_TrafficLight,
 #endif
+#ifdef CONFIG_MODULE_GSM_ENABLE
+    Task_GSM,
+#endif
 
     /* XXX: Add new Task enum here! */
     /* @note: !! Be careful !! Sync with TaskList */

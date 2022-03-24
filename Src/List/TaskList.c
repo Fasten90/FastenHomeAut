@@ -51,6 +51,9 @@
 #ifdef CONFIG_FUNCTION_REMOTECONTROLLER
 #include "RemoteController.h"
 #endif
+#ifdef CONFIG_MODULE_GSM_ENABLE
+#include "GSM_SIM800.h"
+#endif
 
 #include "SmallApps.h"
 
@@ -117,6 +120,9 @@ static TaskResult_t Task_CommonUARTfunction(ScheduleSource_t source);
 #endif
 #ifdef CONFIG_FUNCTION_TASK_TRAFFIC_LIGHT
 static TaskResult_t Task_FunctionTrafficLight(ScheduleSource_t source);
+#endif
+#ifdef CONFIG_MODULE_GSM_ENABLE
+static TaskResult_t Task_GsmFunction(ScheduleSource_t source);
 #endif
 
 ///< Tasks list
@@ -286,7 +292,13 @@ Task_t TaskList[] =
         .taskScheduleRate = 500,
     },
 #endif
-
+#ifdef CONFIG_MODULE_GSM_ENABLE
+    {
+        .taskName = "GSM",
+        .taskFunction = Task_GsmFunction,
+        .taskScheduleRate = 1000,
+    },
+#endif
 
     /* XXX: Add here new tasks */
     /* @note Be careful, taskList order need to be equal with TaskName_t */
@@ -841,6 +853,16 @@ static TaskResult_t Task_FunctionTrafficLight(ScheduleSource_t source)
 }
 #endif
 
+
+
+#ifdef CONFIG_MODULE_GSM_ENABLE
+static TaskResult_t Task_GsmFunction(ScheduleSource_t source)
+{
+    GSM_TaskFunction(source);
+
+    return TaskResult_Ok;
+}
+#endif
 
 
 #endif /* ifdef CONFIG_MODULE_TASKHANDLER_ENABLE */

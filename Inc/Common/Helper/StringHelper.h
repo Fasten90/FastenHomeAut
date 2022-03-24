@@ -1,5 +1,5 @@
 /*
- *    String.h
+ *    StringHelper.h
  *    Created on:   2016-01-01
  *    Author:       Vizi Gabor
  *    E-mail:       vizi.gabor90@gmail.com
@@ -189,6 +189,11 @@ uint8_t STRING_Splitter(char *source, const char *delimiters, char **separated, 
 size_t string_printf_safe(char *str, size_t maxLen, const char *format, va_list ap);
 
 size_t usnprintf(char * str, size_t maxLen, const char * format, ...);
+
+
+/* scanf */
+size_t string_scanf(char *str, const char *format, ...);
+
 
 /* Unit test */
 uint32_t StringHelper_UnitTest(void);

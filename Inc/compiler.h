@@ -136,7 +136,7 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 
 
 ///< Macro for list's element size/num
-#define NUM_OF(x) (sizeof(x)/sizeof(x[0]))
+#define NUM_OF(x)                         (sizeof(x)/sizeof(x[0]))
 
 
 ///< Stringification

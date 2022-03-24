@@ -445,7 +445,7 @@ stages:
         
         # Python
         python --version
-        pytho3 --version
+        python3 --version
 
         # QEMU
         # Install with manual
@@ -476,6 +476,8 @@ stages:
         
         # FastenTestSystem
         cd ..
+
+
         echo "Clone FastenTestSystem"
         git clone https://github.com/Fasten90/FastenTestSystem.git
         cd FastenTestSystem
@@ -645,6 +647,10 @@ stages:
     steps:
     - script: |
         echo Ericsson CodeChecker
+        
+        sudo apt update -y
+        sudo apt install -y clang-tidy
+        
         echo Install codechecker
         #https://github.com/Ericsson/codechecker/blob/master/docs/usage.md#step-1
         pip3 install codechecker
@@ -664,11 +670,32 @@ stages:
         CodeChecker analyze ./compile_commands.json --enable sensitive --output ./reports
         echo Execute CodeChecker export
         # View result: https://github.com/Ericsson/codechecker/blob/master/docs/usage.md#view-the-analysis-results-in-the-command-line-
-        CodeChecker parse ./reports
+        CodeChecker parse ./reports || echo "Return code: $?"
+        # TODO: Handle return code. E.g. 2 return code is low+medium issue
         # TODO: Maybe it require install 'report-converter' python tool
         #CodeChecker parse --export html --output ./reports_html ./reports
     #- publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild/reports_html
     #  artifact: EricssonCodeChecker_HTML_Report
+
+
+  # Doc - Doxygen
+  - job: doc_doxygen
+    pool:
+      vmImage: 'ubuntu-latest'
+    displayName: 'Doc - Doxygen'
+    steps:
+    - script: |
+        echo Doxygen
+        sudo apt-get update -y 
+        sudo apt-get install -y doxygen
+        
+        doxygen --help
+        
+        # generate
+        doxygen
+
+# TODO: Artifact
+
 
 - stage: CompilerWarning
   dependsOn: Build
