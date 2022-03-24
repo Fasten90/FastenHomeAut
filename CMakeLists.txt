@@ -275,7 +275,7 @@ elseif ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F4_arm-.*")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${TARGET_LINKER_OPTIONS}")
 
 else()
-    # Not defined STM32F0 --> So target: x86
+    # Not defined STM32Fx --> So target: x86
     message(STATUS "# Selected target: x86")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I../../Drivers/x86/Inc -DCONFIG_USE_PANEL_PC=1")
 endif()

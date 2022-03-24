@@ -640,7 +640,7 @@ stages:
 
 
   # Analysis - Ericsson CodeChecker
-  - job: ericsson_codechecker
+  - job: analysis_ericsson_codechecker
     pool:
       vmImage: 'ubuntu-latest'
     displayName: 'Analysis - Ericsson CodeChecker'
@@ -676,6 +676,25 @@ stages:
         #CodeChecker parse --export html --output ./reports_html ./reports
     #- publish: $(System.DefaultWorkingDirectory)/Out/CMakeBuild/reports_html
     #  artifact: EricssonCodeChecker_HTML_Report
+
+
+  # Analysis - FastenStaticAnalyzer
+  - job: analysis_fasten_static_analyzer
+    pool:
+      vmImage: 'ubuntu-latest'
+    displayName: 'Analysis - Fasten Static Analyzer'
+    steps:
+    - script: |
+        echo FastenStaticAnalyzer
+        
+        echo clone FastenStaticAnalyzer
+        git clone https://github.com/fasten90/FastenStaticAnalyzer
+        
+        cd FastenStaticAnalyzer
+        ./install.sh
+        cd ..
+        ./Run_FastenStaticAnalyzer.sh
+        # TODO: Handle return code. E.g. 2 return code is low+medium issue
 
 
   # Doc - Doxygen
