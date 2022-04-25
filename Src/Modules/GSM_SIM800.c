@@ -114,14 +114,18 @@ typedef enum {
     GSM_Init_GetSignal_Reply,
     GSM_Init_GetCCID,
     GSM_Init_GetCCID_Reply,
-    GSM_Settings_CMGF,
     GSM_Settings_CNMI,
     GSM_Settings_CLIP,
+    GSM_Settings_SMS_Mode,
+    GSM_Settings_SMS_Mode_Reply,
+    GSM_Settings_SMS_NewSmsMessageIndicator,
+    GSM_Settings_SMS_NewSmsMessageIndicator_Reply,
     GSM_Init_GetCREG,
     GSM_Init_GetCREG_Reply,
     GSM_Ready,
+    GSM_Idle_SMS_Read,
+    GSM_Idle_SMS_Read_Reply,
 } GSM_StatusMachine_t;
-
 
 
 static GSM_StatusMachine_t gsm_status = GSM_Unknown; /* Zero initialized */
@@ -321,14 +325,6 @@ void GSM_TaskFunction(ScheduleSource_t source)
             }
             break;
 
-        case GSM_Settings_CMGF:
-            GSM_ClearReceive(true, 0);
-            GSM_SendMsg("AT+CMGF=1\r\n"); /*  Configuring TEXT mode */
-            TaskHandler_SetTaskPeriodicTime(Task_GSM, 500);
-            gsm_status++;
-            break;
-            /* TODO: Check reply */
-
         case GSM_Settings_CNMI:
             GSM_ClearReceive(true, 0);
             GSM_SendMsg("AT+CNMI=1,2,0,0,0\r\n"); /*  Decides how newly arrived SMS messages should be handled */
@@ -344,6 +340,63 @@ void GSM_TaskFunction(ScheduleSource_t source)
             gsm_status++;
             break;
             /* TODO: Check reply */
+
+        case GSM_Settings_SMS_Mode:
+            /*
+             * AT+CMGF=<mode><CR>  OK
+             * Parameters
+             * <mode>: 0 = PDU Mode, 1 = Text Mode
+             */
+            /*  Configuring TEXT mode */
+            GSM_ClearReceive(true, 0);
+            GSM_SendMsg("AT+CMGF=1\r\n");
+            TaskHandler_SetTaskPeriodicTime(Task_GSM, 500);
+            gsm_status++;
+            break;
+
+        case GSM_Settings_SMS_Mode_Reply:
+            {
+                if (StrCmpFirst("AT+CMGF=1\r\r\nOK", receiveBuffer) == 0)
+                {
+                    /* Proper reply */
+                    gsm_status++;
+                }
+                else
+                {
+                    DEBUG_PRINT("AT+CMGF answer is not received");
+                    gsm_status--;
+                    err_cnt++;
+                }
+            }
+            break;
+
+        case GSM_Settings_SMS_NewSmsMessageIndicator:
+            /*
+             * GSM_Settings_SMS_NewSmsMessageIndicator
+             * GSM_Settings_SMS_NewSmsMessageIndicator
+             *
+             */
+            GSM_ClearReceive(true, 0);
+            GSM_SendMsg("AT+CNMI=2,1,0,0,0\r\n");
+            TaskHandler_SetTaskPeriodicTime(Task_GSM, 500);
+            gsm_status++;
+            break;
+
+        case GSM_Settings_SMS_NewSmsMessageIndicator_Reply:
+            {
+                if (STRING_FindString(receiveBuffer, "OK") != NULL)
+                {
+                    /* Proper reply */
+                    gsm_status++;
+                }
+                else
+                {
+                    DEBUG_PRINT("AT+CMGF answer is not received");
+                    gsm_status--;
+                    err_cnt++;
+                }
+            }
+            break;
 
         case GSM_Init_GetCREG:
             GSM_ClearReceive(true, 0);
@@ -429,6 +482,24 @@ void GSM_TaskFunction(ScheduleSource_t source)
                 GSM_ClearReceive(true, 0);
             }
             TaskHandler_SetTaskPeriodicTime(Task_GSM, 1000);
+            break;
+
+        /* TODO: Check the pending sms */
+
+        case GSM_Idle_SMS_Read:
+            /* AT+CMGL="ALL" */
+
+            GSM_ClearReceive(true, 0);
+            GSM_SendMsg("AT+CMGL=\"ALL\"\r\n");
+            TaskHandler_SetTaskPeriodicTime(Task_GSM, 500);
+            gsm_status++;
+            break;
+
+        case GSM_Idle_SMS_Read_Reply:
+            {
+               /* TODO: Parse */
+                gsm_status = GSM_Ready;
+            }
             break;
 
         default:
@@ -561,11 +632,34 @@ static void GSM_CheckIdleMessages(char * receivedMessage)
 
             GSM_Information.callIsOngoing = true;
         }
+        else if (!StrCmpFirst("+CMTI:", recv))
+        {
+            /* +CMTI: "SM",1 */
+            DEBUG_PRINT("Received SMS message");
+            /* Read it with status machine */
+            gsm_status = GSM_Idle_SMS_Read;
+
+            uint32_t sms_index = 0;
+            size_t sms_index_read_val = string_scanf(recv, "+CMTI: \"SM\",%d", &sms_index);
+            if (sms_index_read_val == 0)
+            {
+                DEBUG_PRINTF("SMS index: %d", sms_index);
+                /* We can read that SMS with AT+CMGR=<index> */
+                /* TODO */
+            }
+            else
+            {
+                DEBUG_PRINT("SMS index is not parsed successfully");
+            }
+        }
         else
         {
             /* Unknown - maybe next turn we find somethings*/
             /* DEBUG_PRINT("Unknown message received"); */
         }
+
+        /* TODO: What if received line is not finished yet? */
+        /* E.g. received +CM , but TI receivigin in next turn */
 
         /* Search first \r\n */
         const char * newline = STRING_FindCharacters((const char *)&receivedMessage[i], "\r\n");
@@ -575,6 +669,38 @@ static void GSM_CheckIdleMessages(char * receivedMessage)
         }
     }
 }
+
+
+/*
+ * AT+CMGF=1
+OK
+AT+CMGL="ALL"
++CMGL: 1,"REC UNREAD","+31628870634",,"11/01/09,10:26:26+04"
+This is text message 1
++CMGL: 2,"REC UNREAD","+31628870634",,"11/01/09,10:26:49+04"
+This is text message 2
+OK
+AT+CMGD=1
+OK
+AT+CMGD=2
+OK
+ */
+
+
+/*
+ *GSM: GSM Received: AT+CMGR=1 +CMGR: "REC READ","+36705808642","","22/03/24,22:59:28+04"
+ *GSM: Teszt4
+ *GSM: OK
+ *
+ *
+ *
+ *gsm sendtomodule AT+CMGL="ALL"
+ *GSM Received: AT+CMGL="ALL" +CMGL: 1,"REC READ","+36705808642","","22/03/24,22:59:28+04"
+ */
+
+/*
+ * TODO: Read SMS periodically and at startup
+ */
 
 
 /* TODO: Check Idle messages: Ring, etc */
