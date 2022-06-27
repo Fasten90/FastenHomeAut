@@ -10,5 +10,5 @@ default_analyzer_args="-std=c99 -nostdinc -E -D_Atomic(_arg)=_arg -IFastenStatic
 # TODO: Not the best pattern for c files
 for file in $(git ls-files -x *c) ; 
 do
-    python FastenStaticAnalyzer/FastenStaticAnalyzer.py --source=$file --prepocessor="gcc" --preprocessor_args="${default_analyzer_args} ${args} ${includes}"
+    python FastenStaticAnalyzer/FastenStaticAnalyzer.py --source=$file --preprocessor="gcc" --preprocessor_args="${default_analyzer_args} ${args} ${includes}"
 done
