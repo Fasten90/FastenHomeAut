@@ -104,3 +104,6 @@ $RECYCLE.BIN/
 /source_code_checker_issues.csv
 /env/
 /FastenStaticAnalyzer/
+/lextab.py
+/yacctab.py
+/StaticAnalysisResult.csv
