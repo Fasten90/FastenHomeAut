@@ -34,20 +34,22 @@
 /* Includes ------------------------------------------------------------------*/
 #include "options.h"
 
+#ifdef CONFIG_PLATFORM_MCU_STM32Fxxx
+
 #if defined(CONFIG_PLATFORM_MCU_STM32F0xx)
-#include "stm32f0xx_hal.h"
-#include "stm32f0xx.h"
-#include "stm32f0xx_it.h"
+    #include "stm32f0xx_hal.h"
+    #include "stm32f0xx.h"
+    #include "stm32f0xx_it.h"
 #elif defined(CONFIG_PLATFORM_MCU_STM32F4xx)
-#include "stm32f4xx_hal.h"
-#include "stm32f4xx.h"
-#include "stm32f4xx_it.h"
-#elif defined(CONFIG_PLATFORM_PC_WINDOWS)
-#include "windows_hal.h"
+    #include "stm32f4xx_hal.h"
+    #include "stm32f4xx.h"
+    #include "stm32f4xx_it.h"
+#else
+    #error "Not supported STM32Fxxx platform"
 #endif
 
-// TODO: This is need?
-//#include "cmsis_os.h"
+/* TODO: This is need? */
+/* include "cmsis_os.h" */
 
 #include "ErrorHandler.h"
 #include "SwWatchDog.h"
@@ -66,17 +68,17 @@ extern void prvGetRegistersFromStack(uint32_t *pulFaultStackAddress);
 
 
 /**
- * @brief	HardFault handler
+ * @brief       HardFault handler
  */
 void HardFault_Handler(void)
 {
 #ifdef CONFIG_MODULE_HARDFAULTHANDLER_ENABLE
 
 #if 0
-	/* FreeRTOS style:
-	 * http://www.freertos.org/Debugging-Hard-Faults-On-Cortex-M-Microcontrollers.html
-	 * It works on Cortex-M3-4?
-	 */
+    /* FreeRTOS style:
+     * http://www.freertos.org/Debugging-Hard-Faults-On-Cortex-M-Microcontrollers.html
+     * It works on Cortex-M3-4?
+     */
     __asm volatile
     (
         " tst lr, #4                                                \n"
@@ -89,53 +91,58 @@ void HardFault_Handler(void)
         " handler2_address_const: .word prvGetRegistersFromStack    \n"
     );
 #elif 0
-    // https://blog.feabhas.com/2013/02/developing-a-generic-hard-fault-handler-for-arm-cortex-m3cortex-m4/
-    // Not work
+    /* https://blog.feabhas.com/2013/02/developing-a-generic-hard-fault-handler-for-arm-cortex-m3cortex-m4/ */
+    /* Not work */
     __asm volatile
-	(
-		" mrs r0, MSP \n"
-		" b prvGetRegistersFromStack \n"
+    (
+        " mrs r0, MSP \n"
+        " b prvGetRegistersFromStack \n"
     );
 #elif 0
-    // Segger version
+    /* Segger version */
+    /* This version is for Cortex M0 */
     /*
-	 ;// This version is for Cortex M0
-	movs R0, #4
-	mov R1, LR
-	tst R0, R1 ;// Check EXC_RETURN in Link register bit 2.
-	bne Uses_PSP
-	mrs R0, MSP ;// Stacking was using MSP.
-	b Pass_StackPtr
-     */
+    ;
+    movs R0, #4
+    mov R1, LR
+    tst R0, R1 ; Check EXC_RETURN in Link register bit 2.
+    bne Uses_PSP
+    mrs R0, MSP ;  Stacking was using MSP.
+    b Pass_StackPtr
+    */
     __asm volatile
-	(
+    (
     "movs R0, #4 \n"
     "mov R1, LR \n"
-    "tst R0, R1 \n" // Check EXC_RETURN in Link register bit 2.
-    //"bne Uses_PSP \n"		// mrs R0, PSP ;// Stacking was using PSP.
-    "mrs R0, MSP \n" // Stacking was using MSP.
+    "tst R0, R1 \n" /* Check EXC_RETURN in Link register bit 2. */
+    /* bne Uses_PSP \n"        // mrs R0, PSP ;// Stacking was using PSP. */
+    "mrs R0, MSP \n" /* Stacking was using MSP. */
     "b prvGetRegistersFromStack  \n"
-	);
+    );
 #elif 1
-    // Own version
+    /* Own version */
+    /* TODO: Not Keil uVision ARMCC compatible */
     __asm volatile
-	(
-		" mrs r0, MSP \n"
-		" ldr r1, handler \n"
-		" bx r1 \n"
-		" handler: .word prvGetRegistersFromStack \n"
+    (
+        " mrs r0, MSP \n"
+        /* TODO: Check */
+        /* Does not work at Optimized compiles: O1, O2, O3, Os... */
+        /* Perhaps: F0 not optimized and F4+ versions */
+        /*" ldr r1, handler \n"
+        " bx r1 \n" */
+        " handler: .word prvGetRegistersFromStack \n"
     );
 #endif
-#endif	/* CONFIG_MODULE_HARDFAULTHANDLER_ENABLE */
+#endif    /* CONFIG_MODULE_HARDFAULTHANDLER_ENABLE */
 
-	Error_Handler();
+    Error_Handler();
 }
 
 
 
 /**
-* @brief This function handles System service call via SWI instruction.
-*/
+ * @brief       This function handles System service call via SWI instruction.
+ */
 void SVC_Handler(void)
 {
 }
@@ -143,7 +150,7 @@ void SVC_Handler(void)
 
 
 /**
- * @brief This function handles Pendable request for system service.
+ * @brief       This function handles Pendable request for system service.
  */
 void PendSV_Handler(void)
 {
@@ -152,25 +159,26 @@ void PendSV_Handler(void)
 
 
 /**
- * @brief This function handles Non maskable interrupt.
+ * @brief       This function handles Non maskable interrupt.
  */
 void NMI_Handler(void)
 {
+    /* TODO: Save */
 }
 
 
 
 /**
- * @brief This function handles System tick timer.
+ * @brief       This function handles System tick timer.
  */
 void SysTick_Handler(void)
 {
-	HAL_IncTick();
-	HAL_SYSTICK_IRQHandler();
+    HAL_IncTick();
+    HAL_SYSTICK_IRQHandler();
 #ifdef CONFIG_USE_FREERTOS
-	osSystickHandler();
+    osSystickHandler();
 #endif
-	SW_WATCHDOG_CHECK();
+    SW_WATCHDOG_CHECK();
 }
 
 
@@ -183,3 +191,5 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+#endif /* CONFIG_PLATFORM_MCU_STM32Fxxx */

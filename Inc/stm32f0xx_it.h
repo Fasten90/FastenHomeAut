@@ -32,12 +32,12 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F0xx_IT_H
-#define __STM32F0xx_IT_H
+#ifndef STM32F0XX_IT_H_
+#define STM32F0XX_IT_H_
 
 #ifdef __cplusplus
- extern "C" {
-#endif 
+extern "C" {
+#endif
 
 /* Includes ------------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
@@ -55,6 +55,6 @@ void SysTick_Handler(void);
 }
 #endif
 
-#endif /* __STM32F0xx_IT_H */
+#endif /* STM32F0XX_IT_H_ */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

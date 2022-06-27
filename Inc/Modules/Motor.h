@@ -1,12 +1,10 @@
 /*
- *		Motor.h
- *		Created on:		2017-02-11
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Motor control
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-02-11
+ *    Motor.h
+ *    Created on:   2017-02-11
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Motor control
+ *    Target:       STM32Fx
  */
 
 #ifndef MOTOR_H_
@@ -26,32 +24,32 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-// DC Motor
-// DC Motor PWM control: 0-100% PWM
-//#define PWM_TIMER_DCMOTOR_PERIOD_VALUE					(uint32_t)(666 - 1)  /* Period Value  */
+/* DC Motor */
+/* DC Motor PWM control: 0-100% PWM */
+/* define PWM_TIMER_DCMOTOR_PERIOD_VALUE                    (uint32_t)(666 - 1) */ /* Period Value  */
 
-#define MOTOR_DCMOTOR_PWM_TIMER_PRESCALER		(100000U)				// ms*10 based timer
-#define MOTOR_DCMOTOR_PWM_TIMER_PERIOD_VALUE	(uint32_t)(2000 - 1)	// ms*100
+#define MOTOR_DCMOTOR_PWM_TIMER_PRESCALER        (100000U)                /* ms*10 based timer */
+#define MOTOR_DCMOTOR_PWM_TIMER_PERIOD_VALUE    (uint32_t)(2000 - 1)    /* ms*100 */
 
 
 
-// Servo motor
-// Set Servo motor PWM from 10ms to 20ms, and 15ms (middle) is center angle
-#define MOTOR_SERVO_PWM_TIMER_PRESCALER			(100000U)				// ms*10 based timer
-#define MOTOR_SERVO_PWM_TIMER_PERIOD_VALUE		((uint32_t)(2000 - 1))	// ms*100
+/* Servo motor */
+/* Set Servo motor PWM from 10ms to 20ms, and 15ms (middle) is center angle */
+#define MOTOR_SERVO_PWM_TIMER_PRESCALER            (100000U)                /* ms*10 based timer */
+#define MOTOR_SERVO_PWM_TIMER_PERIOD_VALUE        ((uint32_t)(2000 - 1))    /* ms*100 */
 
-#define MOTOR_SERVO_MIN_ANGLE					(-90)
-#define MOTOR_SERVO_OFFSET_ANGLE				(90)
-#define MOTOR_SERVO_MAX_ANGLE					(+90)
-#define MOTOR_SERVO_ANGLE_INTERVAL				(MOTOR_SERVO_MAX_ANGLE-MOTOR_SERVO_MIN_ANGLE)
+#define MOTOR_SERVO_MIN_ANGLE                    (-90)
+#define MOTOR_SERVO_OFFSET_ANGLE                (90)
+#define MOTOR_SERVO_MAX_ANGLE                    (+90)
+#define MOTOR_SERVO_ANGLE_INTERVAL                (MOTOR_SERVO_MAX_ANGLE-MOTOR_SERVO_MIN_ANGLE)
 
-#define MOTOR_SERVO_MIN_TIMER_VALUE				(100)		// ms*100
-#define MOTOR_SERVO_MAX_TIMER_VALUE 			(200)		// ms*100
-#define MOTOR_SERVO_TIMER_INTERVAL				(MOTOR_SERVO_MAX_TIMER_VALUE-MOTOR_SERVO_MIN_TIMER_VALUE)
-#define MOTOR_SERVO_TIME_FULL					(100000)	// ms*100
+#define MOTOR_SERVO_MIN_TIMER_VALUE                (100)        /* ms*100 */
+#define MOTOR_SERVO_MAX_TIMER_VALUE             (200)        /* ms*100 */
+#define MOTOR_SERVO_TIMER_INTERVAL                (MOTOR_SERVO_MAX_TIMER_VALUE-MOTOR_SERVO_MIN_TIMER_VALUE)
+#define MOTOR_SERVO_TIME_FULL                    (100000)    /* ms*100 */
 
-#define MOTOR_SERVO_MECHANICAL_MAX_ANGLE		(30)
-#define MOTOR_SERVO_MECHANICAL_MIN_ANGLE		(-30)
+#define MOTOR_SERVO_MECHANICAL_MAX_ANGLE        (30)
+#define MOTOR_SERVO_MECHANICAL_MIN_ANGLE        (-30)
 
 
 
@@ -61,18 +59,18 @@
 
 typedef enum
 {
-	MotorDir_Unknown,
-	MotorDir_Forward,
-	MotorDir_Backward,
-	MotorDir_Stop
+    MotorDir_Unknown,
+    MotorDir_Forward,
+    MotorDir_Backward,
+    MotorDir_Stop
 } MotorDir_t;
 
 
 typedef struct
 {
-	MotorDir_t dir;			///< Direction of DC motor
-	uint8_t dcPercent;		///< DC motor "percent"
-	int8_t angle;			///< Turning angle
+    MotorDir_t dir;            ///< Direction of DC motor
+    uint8_t dcPercent;        ///< DC motor "percent"
+    int8_t angle;            ///< Turning angle
 } MotorState_t;
 
 
@@ -106,4 +104,4 @@ void Motor_StateMachine_SetDc(int16_t dc);
 
 
 
-#endif /* HWTESTER_COMMONPWM_H_ */
+#endif /* MOTOR_H_ */

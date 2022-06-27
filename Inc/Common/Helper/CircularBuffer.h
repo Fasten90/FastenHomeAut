@@ -1,12 +1,10 @@
 /*
- *		CircularBuffer.h
- *		Created on:		2017-03-04
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Circular buffer handler
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-03-04
+ *    CircularBuffer.h
+ *    Created on:   2017-03-04
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Circular buffer handler
+ *    Target:       STM32Fx
  */
 
 #ifndef CIRCULARBUFFER_H_
@@ -26,11 +24,11 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-///< Statistics for CircularBuffer	(1 = Enable statistics, 0 = disabled)
-#define CIRCULARBUFFER_STATISTICS_ENABLE			(0)
+///< Statistics for CircularBuffer    (1 = Enable statistics, 0 = disabled)
+#define CIRCULARBUFFER_STATISTICS_ENABLE            (0)
 
-///< When Drop characters, it will clear the buffer ('\0')	(1 = Enable clearing, 0 = disable)
-#define CIRCULARBUFFER_DROP_WITH_CLEAR				(0)
+///< When Drop characters, it will clear the buffer ('\0')    (1 = Enable clearing, 0 = disable)
+#define CIRCULARBUFFER_DROP_WITH_CLEAR                (0)
 
 
 
@@ -40,14 +38,14 @@
 
 typedef struct
 {
-	char * const buffer;			///< Buffer pointer
-	const uint16_t size;			///< Size
-	volatile uint16_t writeCnt;		///< Write counter
-	volatile uint16_t readCnt;		///< Read counter
-	const char * const name;		///< Buffer name
+    char * const buffer;            ///< Buffer pointer
+    const uint16_t size;            ///< Size
+    volatile uint16_t writeCnt;        ///< Write counter
+    volatile uint16_t readCnt;        ///< Read counter
+    const char * const name;        ///< Buffer name
 #if (CIRCULARBUFFER_STATISTICS_ENABLE == 1)
-	volatile uint32_t statSuccesfulPutCharCnt;		///< All put characters num
-	volatile uint32_t statDroppedCharCnt;			///< All dropped characters num
+    volatile uint32_t statSuccesfulPutCharCnt;        ///< All put characters num
+    volatile uint32_t statDroppedCharCnt;            ///< All dropped characters num
 #endif
 } CircularBufferInfo_t;
 

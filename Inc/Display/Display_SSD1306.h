@@ -1,16 +1,14 @@
 /*
- *		Display_SSD1306.h
- *		Created on:		2017-03-16
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Display - SSD1306 driver
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-03-16
+ *    Display_SSD1306.h
+ *    Created on:   2017-03-16
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Display - SSD1306 driver
+ *    Target:       STM32Fx
  */
 
-#ifndef MODULES_DISPLAY_SSD1306_H_
-#define MODULES_DISPLAY_SSD1306_H_
+#ifndef DISPLAY_SSD1306_H_
+#define DISPLAY_SSD1306_H_
 
 
 
@@ -26,7 +24,7 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-//#define SSD1306_ROTATION_ENABLE
+/* define SSD1306_ROTATION_ENABLE */
 
 
 #define BLACK 0
@@ -35,9 +33,9 @@
 
 
 
-#define SSD1306_I2C_ADDRESS   0x3C  // 011110+SA0+RW - 0x3C or 0x3D
-// Address for 128x32 is 0x3C
-// Address for 128x64 is 0x3D (default) or 0x3C (if SA0 is grounded)
+#define SSD1306_I2C_ADDRESS   0x3C  /* 011110+SA0+RW - 0x3C or 0x3D */
+/* Address for 128x32 is 0x3C */
+/* Address for 128x64 is 0x3D (default) or 0x3C (if SA0 is grounded) */
 
 /*=========================================================================
     SSD1306 Displays
@@ -50,8 +48,8 @@
     SSD1306_96_16
     -----------------------------------------------------------------------*/
 #define SSD1306_128_64
-//#define SSD1306_128_32
-//   #define SSD1306_96_16
+/* define SSD1306_128_32 */
+/*   #define SSD1306_96_16 */
 /*=========================================================================*/
 
 #if defined SSD1306_128_64 && defined SSD1306_128_32
@@ -74,8 +72,8 @@
   #define SSD1306_LCDHEIGHT                 16
 #endif
 
-#define DISPLAY_WIDTH						SSD1306_LCDWIDTH
-#define DISPLAY_HEIGHT						SSD1306_LCDHEIGHT
+#define DISPLAY_WIDTH                        SSD1306_LCDWIDTH
+#define DISPLAY_HEIGHT                        SSD1306_LCDHEIGHT
 
 
 #define SSD1306_SETCONTRAST 0x81
@@ -115,7 +113,7 @@
 #define SSD1306_EXTERNALVCC 0x1
 #define SSD1306_SWITCHCAPVCC 0x2
 
-// Scrolling #defines
+/* Scrolling #defines */
 #define SSD1306_ACTIVATE_SCROLL 0x2F
 #define SSD1306_DEACTIVATE_SCROLL 0x2E
 #define SSD1306_SET_VERTICAL_SCROLL_AREA 0xA3
@@ -132,9 +130,9 @@
 
 typedef enum
 {
-	DisplayColor_Black,
-	DisplayColor_White,
-	DisplayColor_Inverse,
+    DisplayColor_Black,
+    DisplayColor_White,
+    DisplayColor_Inverse,
 } Display_Color_t;
 
 
@@ -151,9 +149,12 @@ typedef enum
 
 void Display_SSD1306_Init(void);
 
-void SSD1306_clearDisplay(void);
 void SSD1306_invertDisplay(bool invert);
+
+#if !defined(CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE)
+/* This function has override if not the Display HW used */
 void SSD1306_display(void);
+#endif
 
 void SSD1306_startscrollright(uint8_t start, uint8_t stop);
 void SSD1306_startscrollleft(uint8_t start, uint8_t stop);
@@ -164,21 +165,11 @@ void SSD1306_stopscroll(void);
 
 void SSD1306_dim(bool dim);
 
-void SSD1306_drawPixel(uint8_t x, uint8_t y, Display_Color_t color);
 void SSD1306_drawFixVerticalLine(int16_t x, int16_t y, uint8_t row);
-void SSD1306_drawImage(uint8_t setx, uint8_t sety, uint8_t sizex, uint8_t sizey, uint8_t *img);
-
-void SSD1306_drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
-void SSD1306_drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
-
-void SSD1306_drawFastVLineInternal(int16_t x, int16_t y, int16_t h, uint16_t color);
-void SSD1306_drawFastHLineInternal(int16_t x, int16_t y, int16_t w, uint16_t color);
 
 void DISPLAY_SSD1306_SPIx_IRQHandler(void);
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi);
 void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi);
 
-void Display_SendOnTerminal(void);
 
-
-#endif /* MODULES_DISPLAY_SSD1306_H_ */
+#endif /* DISPLAY_SSD1306_H_ */

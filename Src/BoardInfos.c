@@ -1,12 +1,10 @@
 /*
- *		BoardInfos.c
- *		Created on:		2018-01-21
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
- *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2018-01-21
+ *    BoardInfos.c
+ *    Created on:   2018-01-21
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       STM32Fx
  */
 
 
@@ -26,10 +24,10 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
-const char Global_BoardName[]	= BOARD_NAME;
-const char Global_Version[]		= VERSION_STRING;
-const char Global_BoardMCU[]	= BOARD_MCU;
-char Global_DeviceName[20] 		= BOARD_NAME;
+const char Global_BoardName[]    = BOARD_NAME;
+const char Global_Version[]        = VERSION_STRING;
+const char Global_BoardMCU[]    = BOARD_MCU;
+char Global_DeviceName[20]         = BOARD_NAME;
 
 
 

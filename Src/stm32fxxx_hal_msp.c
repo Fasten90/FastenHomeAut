@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : stm32fxxx_hal_msp.c
-  * Description        : This file provides code for the MSP Initialization 
+  * Description        : This file provides code for the MSP Initialization
   *                      and de-Initialization codes.
   ******************************************************************************
   *
@@ -34,12 +34,14 @@
 /* Includes ------------------------------------------------------------------*/
 #include "options.h"
 
+#ifdef CONFIG_PLATFORM_MCU_STM32Fxxx
+
 #if defined(CONFIG_PLATFORM_MCU_STM32F0xx)
-	#include "stm32f0xx_hal.h"
+    #include "stm32f0xx_hal.h"
 #elif defined(CONFIG_PLATFORM_MCU_STM32F4xx)
-	#include "stm32f4xx_hal.h"
-#elif defined(CONFIG_PLATFORM_PC_WINDOWS)
-	#include "windows_hal.h"
+    #include "stm32f4xx_hal.h"
+#else
+    #error "Not supported STM32Fxxx platform"
 #endif
 
 
@@ -53,35 +55,35 @@ void HAL_MspInit(void)
 {
 #if defined(CONFIG_PLATFORM_MCU_STM32F0xx)
 
-  __HAL_RCC_SYSCFG_CLK_ENABLE();
+    __HAL_RCC_SYSCFG_CLK_ENABLE();
 
-  /* System interrupt init*/
-  /* SVC_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(SVC_IRQn, 0, 0);
-  /* PendSV_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(PendSV_IRQn, 0, 0);
-  /* SysTick_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+    /* System interrupt init*/
+    /* SVC_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(SVC_IRQn, 0, 0);
+    /* PendSV_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(PendSV_IRQn, 0, 0);
+    /* SysTick_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 
 #elif defined(CONFIG_PLATFORM_MCU_STM32F4xx)
 
-  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+    HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
-  /* System interrupt init*/
-  /* MemoryManagement_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(MemoryManagement_IRQn, 0, 0);
-  /* BusFault_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(BusFault_IRQn, 0, 0);
-  /* UsageFault_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(UsageFault_IRQn, 0, 0);
-  /* SVCall_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(SVCall_IRQn, 0, 0);
-  /* DebugMonitor_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DebugMonitor_IRQn, 0, 0);
-  /* PendSV_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(PendSV_IRQn, 15, 0);
-  /* SysTick_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
+    /* System interrupt init*/
+    /* MemoryManagement_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(MemoryManagement_IRQn, 0, 0);
+    /* BusFault_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(BusFault_IRQn, 0, 0);
+    /* UsageFault_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(UsageFault_IRQn, 0, 0);
+    /* SVCall_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(SVCall_IRQn, 0, 0);
+    /* DebugMonitor_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(DebugMonitor_IRQn, 0, 0);
+    /* PendSV_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(PendSV_IRQn, 15, 0);
+    /* SysTick_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
 
 #endif
 }
@@ -89,3 +91,5 @@ void HAL_MspInit(void)
 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+#endif /* CONFIG_PLATFORM_MCU_STM32Fxxx */

@@ -98,4 +98,9 @@ $RECYCLE.BIN/
 /Out
 
 # Tools
-/Tools/llvm-7.0.0.src
+/Tools/
+
+/Utils/
+/source_code_checker_issues.csv
+/env/
+/FastenStaticAnalyzer/

@@ -97,7 +97,8 @@
   */ 
 
 #include <string.h>
-#include "MEM.h"
+/* FastenHomeAut Change: for mem functions */
+#include "MemHandler.h"
 #include "cmsis_os.h"
 
 extern void xPortSysTickHandler(void);

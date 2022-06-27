@@ -7,8 +7,10 @@ import time
 
 
 # Connection configs
+# TODO: Read own IP + autodetect settings
+
 #TCP_IP_DEFAULT = '192.168.4.1'
-TCP_IP_DEFAULT = '192.168.1.62'
+TCP_IP_DEFAULT = '192.168.0.241'
 TCP_PORT_DEFAULT = 2000
 BUFFER_SIZE = 20
 
@@ -64,6 +66,9 @@ def tcp_send_thread():
 		elif msg == "Disconnect":
 			connectOk = False
 		else:
+			# TODO: Check, it is necessary?!
+			msg += '\n'
+			#
 			msg = bytes(msg.encode("ASCII"))
 
 		try:
@@ -104,6 +109,7 @@ def tcp_receive_thread():
 			print("Error in receiving thread" + str(excpt))
 			connectOk = False
 			tcp_received_thread_is_ok = False
+			break
 	print("Exit Receive thread")
 
 
@@ -129,7 +135,7 @@ while needRun:
 			print("Start server, wait client to IP: {}:{}".format(tcp_ip, tcp_port))
 			s.bind((tcp_ip, tcp_port))
 			s.listen(5)  # Blocking
-			global conn
+			#global conn
 			conn, addr = s.accept()
 			print ("Connected client address: {}".format(addr))
 		else:
@@ -154,9 +160,13 @@ while needRun:
 			if s._closed:
 				connectOk = False
 				break
+	except KeyboardInterrupt:
+		print("KeyboardInterrupt: perhaps want to exit")
+		raise
 	except Exception as excpt:
 		print("Error in Main" + str(excpt))
-		connectOk = False	
+		connectOk = False
+		
 
 	connectOk = False
 		

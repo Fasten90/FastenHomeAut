@@ -1,17 +1,17 @@
 /*
- *		Font8x5.h
+ *        Font8x5.h
  *
- *		Created on:		2017. márc. 19.
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
- *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017. márc. 19.
+ *        Created on:        2017. márc. 19.
+ *        Author:            Vizi Gábor
+ *        E-mail:            vizi.gabor90@gmail.com
+ *        Function:        -
+ *        Target:            STM32Fx
+ *        Version:        -
+ *        Last modified:    2017. márc. 19.
  */
 
-#ifndef MODULES_FONT8X5_H_
-#define MODULES_FONT8X5_H_
+#ifndef FONT8X5_H_
+#define FONT8X5_H_
 
 
 
@@ -27,11 +27,11 @@
  *  Macros & definitions
  *----------------------------------------------------------------------------*/
 
-#define FONT_8X5_NUM			( 128 )
-#define FONT_8X5_STORE_SIZE		( 5 )
+#define FONT_8X5_NUM            ( 128 )
+#define FONT_8X5_STORE_SIZE        ( 5 )
 
-#define FONT_8X5_HEIGHT			( 8 )
-#define FONT_8X5_WIDTH			( 5 )
+#define FONT_8X5_HEIGHT            ( 8 )
+#define FONT_8X5_WIDTH            ( 5 )
 
 
 /*------------------------------------------------------------------------------
@@ -54,4 +54,4 @@ extern const uint8_t Font8x5[FONT_8X5_NUM][FONT_8X5_STORE_SIZE];
 
 
 
-#endif /* MODULES_FONT8X5_H_ */
+#endif /* FONT8X5_H_ */

@@ -21,7 +21,8 @@ with open(commit_msg_filepath, 'r') as f:
     content = f.read()
 
 # Commit message shall be start with "# "
-if not content.startswith("# "):
+# or accept the default "Merge branch" commit message
+if not (content.startswith("# ") or content.startswith("Merge branch")):
     print("commit-msg: ERROR! The commit message must start with  \"# \"")
     sys.exit(1)
 
@@ -34,11 +35,15 @@ if len(content) < 8:
 _, files_modified, _= run("git diff-index --name-only --cached HEAD")
 
 for fname in files_modified:
-    print("Modified file: {}".format(fname))
-    with open(fname, 'r') as f:
-        file_changes = f.read()
-        if "DO NOT COMMIT" in file_changes or "DO_NOT_COMMIT" in file_changes:
-            print("commit-changes: ERROR! There are \"DO NOT COMMIT\" in changes!")
-            sys.exit(1)
+    if os.path.exists(fname):
+        print("Modified file: {}".format(fname))
+        if ".png" not in str(fname) and ".jpg" not in str(fname):
+            with open(fname, 'r') as f:
+                file_changes = f.read()
+                if "DO NOT COMMIT" in file_changes or "DO_NOT_COMMIT" in file_changes:
+                    print("commit-changes: ERROR! There are \"DO NOT COMMIT\" in changes!")
+                    sys.exit(1)
+    else:
+        print("Does not exists file, shall not check: {}".format(fname))
 
 sys.exit(0)

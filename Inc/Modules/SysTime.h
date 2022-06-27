@@ -1,16 +1,14 @@
 /*
- *		SysTime.h
- *		Created on:		2017-12-20
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
- *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2017-12-20
+ *    SysTime.h
+ *    Created on:   2017-12-20
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       STM32Fx
  */
 
-#ifndef MODULES_SYSTIME_H_
-#define MODULES_SYSTIME_H_
+#ifndef SYSTIME_H_
+#define SYSTIME_H_
 
 
 
@@ -53,4 +51,4 @@ void SysTime_StepSecond(void);
 
 
 
-#endif /* MODULES_SYSTIME_H_ */
+#endif /* SYSTIME_H_ */

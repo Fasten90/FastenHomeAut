@@ -1,12 +1,10 @@
 /*
- *		DebugList.h
- *		Created on:		2017-09-08
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Debug "task" list
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-09-08
+ *    DebugList.h
+ *    Created on:   2017-09-08
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Debug
+ *    Target:       STM32Fx
  */
 
 #ifndef DEBUGLIST_H_
@@ -36,31 +34,37 @@
 typedef enum
 {
 #ifdef CONFIG_MODULE_EVENTHANDLER_ENABLE
-	Debug_EventHandler,
+    Debug_EventHandler,
 #endif
 #ifdef CONFIG_MODULE_COMMANDHANDLER_ENABLE
-	Debug_CommandHandler,
+    Debug_CommandHandler,
 #endif
 #ifdef CONFIG_FUNCTION_GAME_SNAKE
-	Debug_GameSnake,
+    Debug_GameSnake,
 #endif
 #ifdef CONFIG_MODULE_ESP8266_ENABLE
-	Debug_ESP8266,
+    Debug_ESP8266,
 #endif
 #ifdef CONFIG_BUTTON_DEBUG_ENABLE
-	Debug_Button,
+    Debug_Button,
 #endif
 #ifdef CONFIG_MODULE_WEBPAGE_ENABLE
-	Debug_WebPage,
+    Debug_WebPage,
+#endif
+#ifdef CONFIG_MODULE_GPS_ENABLE
+    Debug_GPS,
+#endif
+#ifdef CONFIG_MODULE_GSM_ENABLE
+    Debug_GSM,
 #endif
 
-	/*
-	 * XXX: Add here new Debug task enums
-	 * \note	Do not forget synchronize with DebugTasks
-	 */
+    /*
+     * XXX: Add here new Debug task enums
+     * @note    Do not forget synchronize with DebugTasks
+     */
 
-	// Do not use, it used for enum count
-	Debug_Count
+    /* Do not use, it used for enum count */
+    Debug_Count
 } Debug_t;
 
 

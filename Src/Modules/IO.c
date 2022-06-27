@@ -1,14 +1,11 @@
 /*
- *		LED.c
- *		Creat on:		2016-01-01
- *		Author: 		Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		LED functions
- *		Target:			STM32Fx
- *		Version:		v2
- *		Last modified:	2016-11-23
+ *    LED.c
+ *    Created on:   2016-01-01
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     LED functions
+ *    Target:       STM32Fx
  */
-
 
 
 /*------------------------------------------------------------------------------
@@ -35,16 +32,16 @@
 ///< IO output command type names
 const char * const IO_Output_Cmd_NameList[] =
 {
-	"-",
-	"on",
-	"off",
-	"toggle",
+    "-",
+    "on",
+    "off",
+    "toggle",
 #if defined(CONFIG_IO_OUTPUT_BLINK_ENABLE)
-	"blink",
+    "blink",
 #endif
-	"status"
+    "status"
 
-	// NOTE: Synchronize with IO_Output_Cmd_t
+    /* NOTE: Synchronize with IO_Output_Cmd_t */
 };
 
 
@@ -61,9 +58,9 @@ extern IO_Output_Cmd_t IO_Output_ActualState[];
 ///< IO input state names
 const char * const IO_Input_StateNames[] =
 {
-	"Unknown",
-	"Active",
-	"Inactive"
+    "Unknown",
+    "Active",
+    "Inactive"
 };
 
 
@@ -84,68 +81,68 @@ static void IO_CheckList(void);
 
 
 /**
- * \brief	IO GPIO initialization (without TIMER)
+ * @brief       IO GPIO initialization (without TIMER)
  */
 void IO_Init(void)
 {
-	// Check list
-	BUILD_ASSERT((NUM_OF(IO_Output_Cmd_NameList)) == IO_Output_Cmd_Count);
+    /* Check list */
+    BUILD_ASSERT((NUM_OF(IO_Output_Cmd_NameList)) == IO_Output_Cmd_Count);
 
 #ifdef CONFIG_DEBUG_MODE
-	// Check list in runtime
-	IO_CheckList();
+    /* Check list in runtime */
+    IO_CheckList();
 #endif
 
-	GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_InitTypeDef GPIO_InitStructure;
 
-	// GPIO Peripheral clock enable
-	IO_PORT_CLK_ENABLES();
+    /* GPIO Peripheral clock enable */
+    IO_PORT_CLK_ENABLES();
 
-	uint8_t i;
-	for (i = 0; i < (IO_Output_Count -1); i++)
-	{
-		GPIO_TypeDef * port = (GPIO_TypeDef *)IO_Output_List[i].GPIO_Port;
-		uint32_t pin = IO_Output_List[i].GPIO_Pin;
+    uint8_t i;
+    for (i = 0; i < (IO_Output_Count -1); i++)
+    {
+        GPIO_TypeDef * port = (GPIO_TypeDef *)IO_Output_List[i].GPIO_Port;
+        uint32_t pin = IO_Output_List[i].GPIO_Pin;
 
-		// Configure pins
+        /* Configure pins */
 
-		// Common settings
-		//GPIO_InitStructure.Alternate = GPIO_AF;
-		GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
-		GPIO_InitStructure.Pull = GPIO_NOPULL;
-		GPIO_InitStructure.Speed = GPIO_SPEED_LOW;
+        /* Common settings */
+        /* PIO_InitStructure.Alternate = GPIO_AF; */
+        GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
+        GPIO_InitStructure.Pull = GPIO_NOPULL;
+        GPIO_InitStructure.Speed = GPIO_SPEED_LOW;
 
-		// Different settings
-		GPIO_InitStructure.Pin = pin;
-		HAL_GPIO_Init(port, &GPIO_InitStructure);
-	}
+        /* Different settings */
+        GPIO_InitStructure.Pin = pin;
+        HAL_GPIO_Init(port, &GPIO_InitStructure);
+    }
 
-	// Turn off all IOs
-	for (i = 0; i < (IO_Output_Count - 1); i++)
-	{
-		// Start from i+1 because we shall start after "Unknown"
-		IO_Output_SetStatus(i+1, IO_Output_Cmd_SetOff);
-	}
+    /* Turn off all IOs */
+    for (i = 0; i < (IO_Output_Count - 1); i++)
+    {
+        /* Start from i+1 because we shall start after "IO_Output_Unknown" */
+        IO_Output_SetStatus(i+1, IO_Output_Cmd_SetOff);
+    }
 
 #if (IO_INPUTS_NUM > 0)
-	// Inputs
-	for (i = 0; i < (IO_Input_Count -1); i++)
-	{
-		GPIO_TypeDef * port = (GPIO_TypeDef *)IO_Input_List[i].GPIO_Port;
-		uint32_t pin = IO_Input_List[i].GPIO_Pin;
+    /* Inputs */
+    for (i = 0; i < (IO_Input_Count -1); i++)
+    {
+        GPIO_TypeDef * port = (GPIO_TypeDef *)IO_Input_List[i].GPIO_Port;
+        uint32_t pin = IO_Input_List[i].GPIO_Pin;
 
-		// Configure pins
+        /* Configure pins */
 
-		// Common settings
-		//GPIO_InitStructure.Alternate = GPIO_AF;
-		GPIO_InitStructure.Mode = GPIO_MODE_INPUT;
-		GPIO_InitStructure.Pull = GPIO_NOPULL;
-		GPIO_InitStructure.Speed = GPIO_SPEED_LOW;
+        /* Common settings */
+        /* PIO_InitStructure.Alternate = GPIO_AF; */
+        GPIO_InitStructure.Mode = GPIO_MODE_INPUT;
+        GPIO_InitStructure.Pull = GPIO_NOPULL;
+        GPIO_InitStructure.Speed = GPIO_SPEED_LOW;
 
-		// Different settings
-		GPIO_InitStructure.Pin = pin;
-		HAL_GPIO_Init(port, &GPIO_InitStructure);
-	}
+        /* Different settings */
+        GPIO_InitStructure.Pin = pin;
+        HAL_GPIO_Init(port, &GPIO_InitStructure);
+    }
 #endif
 }
 
@@ -153,348 +150,349 @@ void IO_Init(void)
 
 #ifdef CONFIG_DEBUG_MODE
 /**
- * \brief	Check IO list
+ * @brief       Check IO list
  */
 static void IO_CheckList(void)
 {
-	uint8_t i;
+    uint8_t i;
 
-	for (i = 0; i < (IO_Output_Count - 1); i++)
-	{
-		ASSERT(IO_Output_List[i].GPIO_Port != NULL);
-		ASSERT((IO_Output_List[i].lowVoltageState == IO_Status_Off) || (IO_Output_List[i].lowVoltageState == IO_Status_On));
-		ASSERT(IO_Output_List[i].name != NULL);
-	}
+    for (i = 0; i < (IO_Output_Count - 1); i++)
+    {
+        ASSERT(IO_Output_List[i].GPIO_Port != NULL);
+        ASSERT((IO_Output_List[i].lowVoltageState == IO_Status_Off) || (IO_Output_List[i].lowVoltageState == IO_Status_On));
+        ASSERT(IO_Output_List[i].name != NULL);
+    }
 
-	#if (IO_INPUTS_NUM > 0)
-	for (i = 0; i < (IO_Input_Count - 1); i++)
-	{
-		ASSERT(IO_Input_List[i].GPIO_Port != NULL);
-		ASSERT((IO_Input_List[i].lowVoltageState == IO_Status_Off) || (IO_Input_List[i].lowVoltageState == IO_Status_On));
-		ASSERT(IO_Input_List[i].name != NULL);
-	}
-	#endif
+    #if (IO_INPUTS_NUM > 0)
+    for (i = 0; i < (IO_Input_Count - 1); i++)
+    {
+        ASSERT(IO_Input_List[i].GPIO_Port != NULL);
+        ASSERT((IO_Input_List[i].lowVoltageState == IO_Status_Off) || (IO_Input_List[i].lowVoltageState == IO_Status_On));
+        ASSERT(IO_Input_List[i].name != NULL);
+    }
+    #endif
 }
 #endif /* CONFIG_DEBUG_MODE */
 
 
 
+#if defined(CONFIG_MODULE_IO_TEST)
 /**
- * \brief	IO (e.g. LED) blinking in infinite loop
- * \note	!! It is blocking !!
+ * @brief       IO (e.g. LED) blinking in infinite loop
+ * @note        !! It is blocking !!
  */
 void IO_Output_Test(void)
 {
-	COMPILER_MESSAGE("IO Test (infinite loop) turned on!");
+    COMPILER_MESSAGE("IO Test (infinite loop) turned on!");
 
-	while(1)
-	{
-		uint8_t i;
+    while(1)
+    {
+        uint8_t i;
 
-		// Turn on all IOs
-		for (i = 0; i < (IO_Output_Count - 1); i++)
-		{
-			IO_Output_SetStatus(i+1, IO_Output_Cmd_SetOn);
-		}
+        /* Turn on all IOs */
+        for (i = 0; i < (IO_Output_Count - 1); i++)
+        {
+            IO_Output_SetStatus(i+1, IO_Output_Cmd_SetOn);
+        }
 
-		// Delay
-		DelayMs(200);
+        /* Delay */
+        DelayMs(200);
 
-		// Turn off all IOs
-		for (i = 0; i < (IO_Output_Count - 1); i++)
-		{
-			IO_Output_SetStatus(i+1, IO_Output_Cmd_SetOff);
-		}
+        /* Turn off all IOs */
+        for (i = 0; i < (IO_Output_Count - 1); i++)
+        {
+            IO_Output_SetStatus(i+1, IO_Output_Cmd_SetOff);
+        }
 
-		// Delay
-		DelayMs(200);
-	}
+        /* Delay */
+        DelayMs(200);
+    }
 }
+#endif /* CONFIG_MODULE_IO_TEST */
 
 
 
 /**
- * \brief	Set IO output state
- * \param	num		IO
- * \param	ledSet	Which type (on, off, toggle)
+ * @brief       Set IO output state
+ * @param       num        IO
+ * @param       ledSet    Which type (on, off, toggle)
  */
 IO_Status_t IO_Output_SetStatus(IO_Output_Name_t ioName, IO_Output_Cmd_t ioCmd)
 {
-	IO_Status_t status = IO_Status_Unknown;
+    IO_Status_t status = IO_Status_Unknown;
 
-	if ((ioName < IO_Output_Count) && (ioCmd < IO_Output_Cmd_Count) && (ioName != IO_Output_Unknown) && (ioCmd != IO_Output_Cmd_DontCare))
-	{
+    if ((ioName < IO_Output_Count) && (ioCmd < IO_Output_Cmd_Count) && (ioName != IO_Output_Unknown) && (ioCmd != IO_Output_Cmd_DontCare))
+    {
 #if defined(CONFIG_IO_OUTPUT_BLINK_ENABLE)
-		IO_Output_ActualState[ioName - 1] = ioCmd;
+        IO_Output_ActualState[ioName - 1] = ioCmd;
 #endif
 
-		GPIO_TypeDef * port = (GPIO_TypeDef *)IO_Output_List[ioName-1].GPIO_Port;
-		uint32_t pin = IO_Output_List[ioName-1].GPIO_Pin;
-		const IO_Status_t lowVoltageState = IO_Output_List[ioName-1].lowVoltageState;
+        GPIO_TypeDef * port = (GPIO_TypeDef *)IO_Output_List[ioName-1].GPIO_Port;
+        uint32_t pin = IO_Output_List[ioName-1].GPIO_Pin;
+        const IO_Status_t lowVoltageState = IO_Output_List[ioName-1].lowVoltageState;
 
-		switch (ioCmd)
-		{
-			case IO_Output_Cmd_SetOn:
-	#if defined(CONFIG_IO_OUTPUT_BLINK_ENABLE)
-			case IO_Output_Cmd_SetBlink:
-	#endif
-				//IO_OUT_ON();
-				HAL_GPIO_WritePin(port, pin, (lowVoltageState == IO_Status_Off) ? (GPIO_PIN_SET) : (GPIO_PIN_RESET));
-				break;
+        switch (ioCmd)
+        {
+            case IO_Output_Cmd_SetOn:
+    #if defined(CONFIG_IO_OUTPUT_BLINK_ENABLE)
+            case IO_Output_Cmd_SetBlink:
+    #endif
+                /* O_OUT_ON(); */
+                HAL_GPIO_WritePin(port, pin, (lowVoltageState == IO_Status_Off) ? (GPIO_PIN_SET) : (GPIO_PIN_RESET));
+                break;
 
-			case IO_Output_Cmd_SetOff:
-				//IO_OUT_OFF();
-				HAL_GPIO_WritePin(port, pin, (lowVoltageState == IO_Status_Off) ? (GPIO_PIN_RESET) : (GPIO_PIN_SET));
-				break;
+            case IO_Output_Cmd_SetOff:
+                /* O_OUT_OFF(); */
+                HAL_GPIO_WritePin(port, pin, (lowVoltageState == IO_Status_Off) ? (GPIO_PIN_RESET) : (GPIO_PIN_SET));
+                break;
 
-			case IO_Output_Cmd_SetToggle:
-				//IO_OUT_TOGGLE();
-				HAL_GPIO_TogglePin(port, pin);
-				break;
+            case IO_Output_Cmd_SetToggle:
+                /* O_OUT_TOGGLE(); */
+                HAL_GPIO_TogglePin(port, pin);
+                break;
 
-			case IO_Output_Cmd_GetStatus:
-			case IO_Output_Cmd_DontCare:
-			case IO_Output_Cmd_Count:
-			default:
-				// Do nothing
-				break;
-		}
+            case IO_Output_Cmd_GetStatus:
+            case IO_Output_Cmd_DontCare:
+            case IO_Output_Cmd_Count:
+            default:
+                /* Do nothing */
+                break;
+        }
 
-		// Return with IO status, so IO_Output_Cmd_GetStatus state is handled with this
-		//return IO_OUT_STATUS();
-		const GPIO_PinState pinState = HAL_GPIO_ReadPin(port, pin);
+        /* Return with IO status, so IO_Output_Cmd_GetStatus state is handled with this */
+        /* return IO_OUT_STATUS(); */
+        const GPIO_PinState pinState = HAL_GPIO_ReadPin(port, pin);
 
-		status = (lowVoltageState == IO_Status_Off)
-				? ((pinState == GPIO_PIN_RESET) ? IO_Status_Off : IO_Status_On)
-				: ((pinState == GPIO_PIN_RESET) ? IO_Status_On : IO_Status_Off);
-	}
+        status = (lowVoltageState == IO_Status_Off)
+                ? ((pinState == GPIO_PIN_RESET) ? IO_Status_Off : IO_Status_On)
+                : ((pinState == GPIO_PIN_RESET) ? IO_Status_On : IO_Status_Off);
+    }
 
-	return status;
+    return status;
 }
 
 
 
 /**
- * \brief	Get IO Output status
- * \return	true, if high
- * 			false, if low
+ * @brief       Get IO Output status
+ * @return      true, if high
+ *              false, if low
  */
 IO_Status_t IO_Output_GetStatus(IO_Output_Name_t ioName)
 {
-	IO_Status_t status = IO_Status_Unknown;
+    IO_Status_t status = IO_Status_Unknown;
 
-	if ((ioName < IO_Output_Count) && (ioName != IO_Output_Unknown))
-	{
-		// Get IO datas
-		GPIO_TypeDef * port = (GPIO_TypeDef *)IO_Output_List[ioName-1].GPIO_Port;
-		uint32_t pin = IO_Output_List[ioName-1].GPIO_Pin;
-		IO_Status_t lowVoltageState = IO_Output_List[ioName-1].lowVoltageState;
+    if ((ioName < IO_Output_Count) && (ioName != IO_Output_Unknown))
+    {
+        /* Get IO datas */
+        GPIO_TypeDef * port = (GPIO_TypeDef *)IO_Output_List[ioName-1].GPIO_Port;
+        uint32_t pin = IO_Output_List[ioName-1].GPIO_Pin;
+        IO_Status_t lowVoltageState = IO_Output_List[ioName-1].lowVoltageState;
 
-		// Read pin
-		GPIO_PinState pinState = HAL_GPIO_ReadPin(port, pin);
+        /* Read pin */
+        GPIO_PinState pinState = HAL_GPIO_ReadPin(port, pin);
 
-		// Set state
-		status = (lowVoltageState == IO_Status_Off)
-				? ((pinState == GPIO_PIN_RESET) ? IO_Status_Off : IO_Status_On)
-				: ((pinState == GPIO_PIN_RESET) ? IO_Status_On : IO_Status_Off);
-	}
+        /* Set state */
+        status = (lowVoltageState == IO_Status_Off)
+                ? ((pinState == GPIO_PIN_RESET) ? IO_Status_Off : IO_Status_On)
+                : ((pinState == GPIO_PIN_RESET) ? IO_Status_On : IO_Status_Off);
+    }
 
-	return status;
+    return status;
 }
 
 
 
 /**
- * \brief	Get IO Output type from name
+ * @brief       Get IO Output type from name
  */
 IO_Output_Name_t IO_Output_GetOutputNumFromName(const char *name)
 {
-	uint8_t i;
-	IO_Output_Name_t outputNum = IO_Output_Unknown;
+    uint8_t i;
+    IO_Output_Name_t outputNum = IO_Output_Unknown;
 
-	// Search IO Output name in the list
-	for (i = 0; i < (IO_Output_Count -1) - 1; i++)
-	{
-		if (!StrCmp(IO_Output_List[i].name, name))
-		{
-			// IO Output num = index+1
-			outputNum = i + 1;
-			break;
-		}
-	}
+    /* Search IO Output name in the list */
+    for (i = 0; i < (IO_Output_Count -1) - 1; i++)
+    {
+        if (!StrCmp(IO_Output_List[i].name, name))
+        {
+            /* IO Output num = index+1 */
+            outputNum = i + 1;
+            break;
+        }
+    }
 
-	return outputNum;
+    return outputNum;
 }
 
 
 
 /**
- * \brief	Get IO output name
+ * @brief       Get IO output name
  */
 const char * IO_Output_GetName(IO_Output_Name_t ioNum)
 {
-	const char *name = NULL;
-	if ((ioNum != IO_Output_Unknown) && (ioNum < IO_Output_Count))
-	{
-		name = IO_Output_List[ioNum-1].name;
-	}
+    const char *name = NULL;
+    if ((ioNum != IO_Output_Unknown) && (ioNum < IO_Output_Count))
+    {
+        name = IO_Output_List[ioNum-1].name;
+    }
 
-	return name;
+    return name;
 }
 
 
 
 /**
- * \brief	Get type from string
+ * @brief       Get type from string
  */
 IO_Output_Cmd_t IO_Output_GetTypeFromString(const char *typeString)
 {
-	uint8_t i;
-	IO_Output_Cmd_t outputCmdType = 0;
+    uint8_t i;
+    IO_Output_Cmd_t outputCmdType = 0;
 
-	// Search IO Output type string in the list
-	for (i = 0; i < IO_Output_Cmd_Count; i++)
-	{
-		if (!StrCmp(IO_Output_Cmd_NameList[i], typeString))
-		{
-			outputCmdType = i;
-			break;
-		}
-	}
+    /* Search IO Output type string in the list */
+    for (i = 0; i < IO_Output_Cmd_Count; i++)
+    {
+        if (!StrCmp(IO_Output_Cmd_NameList[i], typeString))
+        {
+            outputCmdType = i;
+            break;
+        }
+    }
 
-	return outputCmdType;
+    return outputCmdType;
 }
 
 
 
 /**
- * \brief	Get IO Status name (Enum --> String)
+ * @brief       Get IO Status name (Enum --> String)
  */
 const char * IO_GetStatusName(IO_Status_t status)
 {
-	const char *str = NULL;
+    const char *str = NULL;
 
-	switch (status)
-	{
-		case IO_Status_Unknown:
-			str = "Unknown";
-			break;
+    switch (status)
+    {
+        case IO_Status_Unknown:
+            str = "Unknown";
+            break;
 
-		case IO_Status_Off:
-			str = "Off";
-			break;
+        case IO_Status_Off:
+            str = "Off";
+            break;
 
-		case IO_Status_On:
-			str = "On";
-			break;
+        case IO_Status_On:
+            str = "On";
+            break;
 
-		default:
-			str = "Wrong";
-			break;
-	}
+        default:
+            str = "Wrong";
+            break;
+    }
 
-	return str;
+    return str;
 }
 
 
 
 /**
- * \brief	Get IO Output status to string
- * \note	Recommend str length: IO_OUPUT_STATES_STRING_MAX_LENGTH
+ * @brief       Get IO Output status to string
+ * @note        Recommend str length: IO_OUPUT_STATES_STRING_MAX_LENGTH
  */
-size_t IO_Output_PrintStates(char *str)
+size_t IO_Output_PrintStates(char *str, uint8_t strLen)
 {
-	uint8_t i;
-	size_t length = 0;
-	length += usprintf(str, "Output status:\r\n");
+    uint8_t i;
+    size_t length = 0;
+    length += usnprintf(str, strLen, "Output status:\r\n");
 
-	for (i = 0; i < (IO_Output_Count - 1); i++)
-	{
-		IO_Status_t ioStatus = IO_Output_GetStatus(i+1);
-		length += usprintf(&str[length], "%20s - %s\r\n", IO_Output_List[i].name, IO_GetStatusName(ioStatus));
-	}
+    for (i = 0; i < (IO_Output_Count - 1); i++)
+    {
+        IO_Status_t ioStatus = IO_Output_GetStatus(i+1);
+        length += usnprintf(&str[length], strLen - length, "%20s - %s\r\n", IO_Output_List[i].name, IO_GetStatusName(ioStatus));
+    }
 
-	return length;
+    return length;
 }
 
 
 
 #if defined(LED_TASK_PWM_STYLE)
 /**
- * \brief	LED Task - PWM style
- * \note	Call this function periodically - 2 ms times
+ * @brief       LED Task - PWM style
+ * @note        Call this function periodically - 2 ms times
  */
 void IO_LED_PWMTask(void)
 {
+    /* Blue LED blinking like PWM */
 
-	// Blue LED blinking like PWM
+    /* 50 Hz --> 20ms */
 
-	// 50 Hz --> 20ms
+    static uint8_t LED_PwmCnt = 0;
+    static uint8_t LED_PwmLimit = 0;
+    static const uint8_t LED_PwmMaxLimit = 10;
+    static bool LED_PwmLimitDir = false;
+    static uint8_t LED_100ms = 0;
+    static uint8_t LED_2ms = 0;
+    static const uint8_t LED_PWM_ChangeDir_100ms_limit = 10;
 
-	static uint8_t LED_PwmCnt = 0;
-	static uint8_t LED_PwmLimit = 0;
-	static const uint8_t LED_PwmMaxLimit = 10;
-	static bool LED_PwmLimitDir = false;
-	static uint8_t LED_100ms = 0;
-	static uint8_t LED_2ms = 0;
-	static const uint8_t LED_PWM_ChangeDir_100ms_limit = 10;
+    LED_2ms++;
+    if (LED_2ms >= 100/2)
+    {
+        /* Run every 100. ms */
 
-	LED_2ms++;
-	if (LED_2ms >= 100/2)
-	{
-		// Run every 100. ms
+        LED_2ms = 0;
+        LED_100ms++;
 
-		LED_2ms = 0;
-		LED_100ms++;
+        /* Change PWM percent */
 
-		// Change PWM percent
+        if (LED_PwmLimitDir)
+        {
+            LED_PwmLimit--;
+        }
+        else
+        {
+            LED_PwmLimit++;
+        }
 
-		if (LED_PwmLimitDir)
-		{
-			LED_PwmLimit--;
-		}
-		else
-		{
-			LED_PwmLimit++;
-		}
+        /* Change direction */
+        if (LED_100ms >= LED_PWM_ChangeDir_100ms_limit)
+        {
+            /* Run every 1000. msec = every sec */
+            LED_100ms = 0;
 
-		// Change direction
-		if (LED_100ms >= LED_PWM_ChangeDir_100ms_limit)
-		{
-			// Run every 1000. msec = every sec
-			LED_100ms = 0;
+            /* Change dir after 1 sec */
+            if (LED_PwmLimit == 0)
+            {
+                LED_PwmLimitDir = false;
+            }
+            else
+            {
+                LED_PwmLimitDir = true;
+            }
+        }
+    }
 
-			// Change dir after 1 sec
-			if (LED_PwmLimit == 0)
-			{
-				LED_PwmLimitDir = false;
-			}
-			else
-			{
-				LED_PwmLimitDir = true;
-			}
-		}
-	}
+    /* PWM limit: 0-10 */
 
-	// PWM limit: 0-10
+    /* Check, need LED blinking? */
+    if (LED_PwmCnt < LED_PwmLimit)
+    {
+        IO_Output_SetStatus(IO_LED_Blue, IO_Output_Cmd_SetOn);
+        /* O_Output_SetStatus(IO_LED_Blue, IO_Output_Cmd_SetToggle); */
+    }
+    else
+    {
+        IO_Output_SetStatus(IO_LED_Blue, IO_Output_Cmd_SetOff);
+    }
 
-	// Check, need LED blinking?
-	if (LED_PwmCnt < LED_PwmLimit)
-	{
-		IO_Output_SetStatus(IO_LED_Blue, IO_Output_Cmd_SetOn);
-		//IO_Output_SetStatus(IO_LED_Blue, IO_Output_Cmd_SetToggle);
-	}
-	else
-	{
-		IO_Output_SetStatus(IO_LED_Blue, IO_Output_Cmd_SetOff);
-	}
-
-	// PWM counter
-	LED_PwmCnt++;
-	if (LED_PwmCnt >= LED_PwmMaxLimit)	// Max limit
-	{
-		LED_PwmCnt = 0;
-	}
+    /* PWM counter */
+    LED_PwmCnt++;
+    if (LED_PwmCnt >= LED_PwmMaxLimit)    /* Max limit */
+    {
+        LED_PwmCnt = 0;
+    }
 }
 #endif
 
@@ -502,85 +500,85 @@ void IO_LED_PWMTask(void)
 
 #if defined(CONFIG_IO_OUTPUT_BLINK_ENABLE)
 /**
- * \brief	Handle necessary IO output operations (e.g. blink)
+ * @brief       Handle necessary IO output operations (e.g. blink)
  */
 void IO_Output_Handler(void)
 {
-	// Now only have one task: check blink state and turn off the LED if need
-	uint8_t i;
-	for (i = 0; i < IO_Output_Count; i++)
-	{
-		if (IO_Output_ActualState[i] == IO_Output_Cmd_SetBlink)
-		{
-			// Need corrects the LED index
-			IO_Output_SetStatus((i+1), IO_Output_Cmd_SetOff);
-		}
-	}
+    /* Now only have one task: check blink state and turn off the LED if need */
+    uint8_t i;
+    for (i = 0; i < IO_Output_Count; i++)
+    {
+        if (IO_Output_ActualState[i] == IO_Output_Cmd_SetBlink)
+        {
+            /* Need corrects the LED index */
+            IO_Output_SetStatus((i+1), IO_Output_Cmd_SetOff);
+        }
+    }
 }
 #endif /* CONFIG_IO_OUTPUT_BLINK_ENABLE */
 
 
 
 /**************************************************
- * 				IO - Input
+ *                 IO - Input
  **************************************************/
 
 
 /**
- * \brief	Get Input State
+ * @brief       Get Input State
  */
 IO_Status_t IO_GetInputState(IO_Input_Name_t inputPin)
 {
-	IO_Status_t inputState = IO_Status_Unknown;
+    IO_Status_t inputState = IO_Status_Unknown;
 
-	if ((inputPin == IO_Input_Unknown) || (inputPin >= IO_Input_Count))
-	{
-		// Wrong value
-		return IO_Status_Unknown;
-	}
+    if ((inputPin == IO_Input_Unknown) || (inputPin >= IO_Input_Count))
+    {
+        /* Wrong value */
+        return IO_Status_Unknown;
+    }
 
-	GPIO_TypeDef * port = (GPIO_TypeDef *)IO_Input_List[inputPin-1].GPIO_Port;
-	uint32_t pin = IO_Input_List[inputPin-1].GPIO_Pin;
-	IO_Status_t lowVoltageState = IO_Input_List[inputPin-1].lowVoltageState;
+    GPIO_TypeDef * port = (GPIO_TypeDef *)IO_Input_List[inputPin-1].GPIO_Port;
+    uint32_t pin = IO_Input_List[inputPin-1].GPIO_Pin;
+    IO_Status_t lowVoltageState = IO_Input_List[inputPin-1].lowVoltageState;
 
-	uint32_t ioReadState = HAL_GPIO_ReadPin(port, pin);
+    uint32_t ioReadState = HAL_GPIO_ReadPin(port, pin);
 
-	if (ioReadState == GPIO_PIN_RESET)
-	{
-		inputState = (lowVoltageState == IO_Status_On) ? IO_Status_On : IO_Status_Off;
-	}
-	else
-	{
-		// GPIO_PIN_SET
-		inputState = (lowVoltageState == IO_Status_Off) ? IO_Status_On : IO_Status_Off;
-	}
+    if (ioReadState == GPIO_PIN_RESET)
+    {
+        inputState = (lowVoltageState == IO_Status_On) ? IO_Status_On : IO_Status_Off;
+    }
+    else
+    {
+        /* GPIO_PIN_SET */
+        inputState = (lowVoltageState == IO_Status_Off) ? IO_Status_On : IO_Status_Off;
+    }
 
-	// TODO: Store the read value
-	//inputState = IO_InputStates[inputpin];
+    /* TODO: Store the read value */
+    /* nputState = IO_InputStates[inputpin]; */
 
-	return inputState;
+    return inputState;
 }
 
 
 
 /**
- * \brief	Get input name
+ * @brief       Get input name
  */
 const char * IO_GetInputName(IO_Input_Name_t inputPin)
 {
-	const char * str = NULL;
+    const char * str = NULL;
 
-	if ((inputPin != IO_Input_Unknown) && (inputPin < IO_Input_Count))
-	{
-		// Value is ok
-		str = IO_Input_List[inputPin-1].name;
-	}
+    if ((inputPin != IO_Input_Unknown) && (inputPin < IO_Input_Count))
+    {
+        /* Value is ok */
+        str = IO_Input_List[inputPin-1].name;
+    }
 
-	return str;
+    return str;
 }
 
 
-// TODO: SetInputState - from ISR e.g.
+/* TODO: SetInputState - from ISR e.g. */
 
 
-#endif	// #ifdef CONFIG_MODULE_IO_ENABLE
+#endif    /* #ifdef CONFIG_MODULE_IO_ENABLE */

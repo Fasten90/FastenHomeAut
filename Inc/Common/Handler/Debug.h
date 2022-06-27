@@ -1,16 +1,14 @@
 /*
- *		Debug.h
- *		Created on:		2017-08-17
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		Debug prints (with colorized messages and enabling)
- *		Target:			STM32Fx
- *		Version:		v1
- *		Last modified:	2017-08-17
+ *    Debug.h
+ *    Created on:   2017-08-17
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     Debug prints
+ *    Target:       STM32Fx
  */
 
-#ifndef COMMON_DEBUG_H_
-#define COMMON_DEBUG_H_
+#ifndef DEBUG_H_
+#define DEBUG_H_
 
 
 
@@ -28,7 +26,7 @@
  *----------------------------------------------------------------------------*/
 
 ///< Enable background
-//#define CONFIG_DEBUG_BACKGROUND_ENABLE
+/* define CONFIG_DEBUG_BACKGROUND_ENABLE */
 
 
 
@@ -38,11 +36,11 @@
 
 typedef struct
 {
-	const char * name;					///< Name (string)
-	bool isEnabled;						///< Need to debugprint?
-	MsgColors_t color;					///< Text color
+    const char * name;                    ///< Name (string)
+    bool isEnabled;                       ///< Need to debugprint?
+    MsgColors_t color;                    ///< Text color
 #ifdef CONFIG_DEBUG_BACKGROUND_ENABLE
-	MsgColors_t background;				///< Background color
+    MsgColors_t background;               ///< Background color
 #endif
 } DebugRecord_t;
 
@@ -66,9 +64,9 @@ bool Debug_SetEnable(Debug_t task, bool enable);
 bool Debug_SetDebugTaskWithName(char *name, bool enable);
 void Debug_PrintDebugList(void);
 #else
-// Empty macro for suppress warnings
+/* Empty macro for suppress warnings */
 #define Debug_Printf(...)
 #endif
 
 
-#endif /* COMMON_DEBUG_H_ */
+#endif /* DEBUG_H_ */

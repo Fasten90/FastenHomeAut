@@ -1,16 +1,14 @@
 /*
- *		WebpageList.h
- *		Created on:		2018-03-05
- *		Author:			Vizi Gábor
- *		E-mail:			vizi.gabor90@gmail.com
- *		Function:		-
- *		Target:			STM32Fx
- *		Version:		-
- *		Last modified:	2018-03-05
+ *    WebpageList.h
+ *    Created on:   2018-03-05
+ *    Author:       Vizi Gabor
+ *    E-mail:       vizi.gabor90@gmail.com
+ *    Function:     -
+ *    Target:       STM32Fx
  */
 
-#ifndef INC_LIST_WEBPAGELIST_H_
-#define INC_LIST_WEBPAGELIST_H_
+#ifndef WEBPAGELIST_H_
+#define WEBPAGELIST_H_
 
 
 
@@ -47,4 +45,4 @@ void WebpageList_Init(void);
 
 
 
-#endif /* INC_LIST_WEBPAGELIST_H_ */
+#endif /* WEBPAGELIST_H_ */

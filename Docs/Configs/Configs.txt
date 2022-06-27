@@ -17,7 +17,7 @@ Project configs:
 ../FastenHomeAut/Inc/Communication
 ../FastenHomeAut/Inc/HwTester
 ../FastenHomeAut/Inc/Modules
-../FastenHomeAut/Inc/Game
+../FastenHomeAut/Inc/Application
 ../FastenHomeAut/Inc/Common/Handler
 ../FastenHomeAut/Inc/Common/Helper
 ../FastenHomeAut/Inc/Display
@@ -49,10 +49,15 @@ USE_HAL_DRIVER
 STM32F407xx
 STM32F030x8
 
-# Fasten lib defines (only one need!)
+# Fasten lib - board - defines (only one need!)
 CONFIG_USE_PANEL_FASTENNODE         1
 CONFIG_USE_PANEL_STM32F4DISCOVERY   1
 CONFIG_USE_PANEL_PC                 1
+
+# Fasten lib - UnitTest result define
+CONFIG_UNITTEST_EXIT_WITH_RESULT_ENABLE
+- Set to 1, if exit with UnitTest result (only local test + CI)
+- Set to 0, if CommandHandler mode enabled (local)
 
 
 # Not need, because normal situation it is defined by compiler (one need)
@@ -71,8 +76,11 @@ __STDC__
 - CMSIS\.. not recommended files
 - e.g. STL library: 3 assembly files
 
+# If you not use the FreeRTOS
+- Middlewares/Third_Party/FreeRTOS
 # If you use FreeRTOS, you need select your preferred heap and delete/exlude others:
 - heap_1 vs heap_4 files
+
 
 # If have CRC (STL):
 - Add CRC data to linker
