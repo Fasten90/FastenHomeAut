@@ -896,7 +896,7 @@ stages:
         copy ..\..\..\..\CompilerWarning_Artifact_TinyCC\*.csv
         copy ..\..\..\..\SourceCodeChecker_Issues\*.csv
         copy ..\..\..\..\TestQemu_Result\*.csv
-        copy ..\...\..\..\FastenStaticAnalyzer_Artifact\*.csv
+        copy ..\..\..\..\FastenStaticAnalyzer_Artifact\*.csv
         dir
         cd ..
         dir
