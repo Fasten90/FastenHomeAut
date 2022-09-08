@@ -62,20 +62,23 @@ typedef enum
 typedef enum
 {
     /* Sync the first item with TRAFFICLIGHT_LAMP_MIN_STATUS */
-    TraffictLight_Lamp_Red,
-    TraffictLight_Lamp_RedYellow,
-    TraffictLight_Lamp_Green,
-    TraffictLight_Lamp_Yellow,
+    TrafficLight_Lamp_Off,
+
+    TrafficLight_Lamp_Red,
+    TrafficLight_Lamp_RedYellow,
+    TrafficLight_Lamp_Green,
+    TrafficLight_Lamp_Yellow,
     /* Sync the last item with TRAFFICLIGHT_LAMP_MAX_STATUS */
 
     /* Do not use, it is only for checkers */
-    TraffictLight_Lamp_Count
+    TrafficLight_Lamp_Count
 } TrafficLight_Lamp_t;
+
 
 
 typedef struct
 {
-    uint16_t TrafficLight_LampRed_time[TraffictLight_Lamp_Count];
+    uint16_t TrafficLight_LampRed_time[TrafficLight_Lamp_Count];
 } TrafficLight_LampTime_t;
 
 #endif

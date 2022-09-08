@@ -3446,15 +3446,15 @@ uint32_t StringHelper_UnitTest(void)
     volatile char var_string[5] = { 0 };
     retval = string_scanf("bla 124,15", "%s 124,15", &var_string[0]);
     UNITTEST_ASSERT(retval == 0, "string_scanf string");
-    UNITTEST_ASSERT(!StrCmp(var_string, "bla"), "string_scanf string");
+    UNITTEST_ASSERT(!StrCmp((char *)var_string, "bla"), "string_scanf string");
 
     volatile char var_string_2[5] = { 0 };
     var = 0;
     retval = string_scanf("bla 124,15", "%s %d,%s", &var_string[0], &var, &var_string_2[0]);
     UNITTEST_ASSERT(retval == 0, "string_scanf string");
-    UNITTEST_ASSERT(!StrCmp(var_string, "bla"), "string_scanf string");
+    UNITTEST_ASSERT(!StrCmp((char *)var_string, "bla"), "string_scanf string");
     UNITTEST_ASSERT(var == 124, "string_scanf string");
-    UNITTEST_ASSERT(!StrCmp(var_string_2, "15"), "string_scanf string");
+    UNITTEST_ASSERT(!StrCmp((char *)var_string_2, "15"), "string_scanf string");
 
     /* End of unittest */
     return UnitTest_End();
