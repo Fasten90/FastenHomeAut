@@ -80,31 +80,35 @@ static uint32_t TrafficLight_TimeCnt = 0;
 static TrafficLight_Mode_t TrafficLight_Mode = TRAFFICLIGHT_MODE_DEFAULT_VALUE;
 
 static const TrafficLight_LampTime_t TrafficLight_LampTime_List[] = {
-    /* Lowest values/timeout --> Fastest */
     {
-        /* Red, Yellow, Green */
-        .TrafficLight_LampRed_time = { 2000, 500, 2000, 500, }
+        .lamp_name = TrafficLight_Lamp_Red,
+        .lamp_time_interval = { 10000, 5000, 2000, 500, }    /* Lowest values/timeout --> Fastest */
     },
-    /* Default timeouts */
     {
-        .TrafficLight_LampRed_time = { 5000, 1000, 5000, 1000, }
+        .lamp_name = TrafficLight_Lamp_RedYellow,
+        .lamp_time_interval = { 2000, 1000, 400, 100, }
     },
-    /* Highest values/timeout --> Slowest */
     {
-        .TrafficLight_LampRed_time = { 10000, 2000, 10000, 2000, }
+        .lamp_name = TrafficLight_Lamp_Green,
+        .lamp_time_interval = { 10000, 5000, 2000, 500, }
     },
+    {
+        .lamp_name = TrafficLight_Lamp_Yellow,
+        .lamp_time_interval = { 2000, 1000, 400, 100, }
+    }
 };
 
-static const int8_t TrafficLight_LampTime_MaxTimeIndex = NUM_OF(TrafficLight_LampTime_List);
-#define  TRAFFICLIGHT_LAMPTIME_MINTIMEINDEX (0)
+const uint8_t TrafficLight_Automatic_Lamp_Count = NUM_OF(TrafficLight_LampTime_List);
 
-#define TRAFFICLIGHT_LAMPTIME_DEFAULT_INDEX (1)
+#define TRAFFICLIGHT_AUTOMATIC_LAMP_TIME_DEFAULT_INDEX (0)
 
-static int8_t TrafficLight_LampTime_ActualIndex = 0;
+static int8_t TrafficLight_Automatic_Lamp_TimeActual_Index = 0;
+static int8_t TrafficLight_Automatic_Lamp_StatusActual_Index = 0;
 
-#define TRAFFICLIGHT_LAMP_DEFAULT_STATUS (TrafficLight_Lamp_Red)
-#define TRAFFICLIGHT_LAMP_MIN_STATUS     (TrafficLight_Lamp_Red)
-#define TRAFFICLIGHT_LAMP_MAX_STATUS     (TrafficLight_Lamp_Yellow)
+#define TRAFFICLIGHT_AUTOMATIC_LAMP_DEFAULT_INDEX (0)
+
+#define TRAFFICLIGHT_LAMP_DEFAULT_STATUS          (TrafficLight_Lamp_Red)
+
 static TrafficLight_Lamp_t TrafficLight_ActualStatus = TRAFFICLIGHT_LAMP_DEFAULT_STATUS;
 
 const TrafficLight_Lamp_t TrafficLight_Lamp_Down_List[] = { TrafficLight_Lamp_Green, TrafficLight_Lamp_RedYellow, TrafficLight_Lamp_Red };
@@ -658,11 +662,12 @@ void App_TrafficLight_Init(void)
 {
     TrafficLight_TimeCnt = 0;
     TrafficLight_Mode = TRAFFICLIGHT_MODE_DEFAULT_VALUE;
-    TrafficLight_LampTime_ActualIndex = TRAFFICLIGHT_LAMPTIME_DEFAULT_INDEX;
+    TrafficLight_Automatic_Lamp_TimeActual_Index = TRAFFICLIGHT_AUTOMATIC_LAMP_TIME_DEFAULT_INDEX;
     TrafficLight_ActualStatus = TRAFFICLIGHT_LAMP_DEFAULT_STATUS;
 
     /* TODO: merge with the below */
-    uint16_t next_timeout = TrafficLight_LampTime_List[TrafficLight_LampTime_ActualIndex].TrafficLight_LampRed_time[TrafficLight_ActualStatus];
+    /* Note: The default settings is for the automatic lamp, that is why we need the timeout from automatic lamp settings */
+    uint16_t next_timeout = TrafficLight_LampTime_List[TrafficLight_Automatic_Lamp_StatusActual_Index].lamp_time_interval[TrafficLight_Automatic_Lamp_TimeActual_Index];
 
     TaskHandler_SetTaskOnceRun(Task_Display, next_timeout);
 }
@@ -685,22 +690,22 @@ void App_TrafficLight_Event(ButtonType_t button, ButtonPressType_t type)
 
                     if (button == PressedButton_Up)
                     {
-                        TrafficLight_LampTime_ActualIndex++;
-                        if (TrafficLight_LampTime_ActualIndex >= TrafficLight_LampTime_MaxTimeIndex)
+                        TrafficLight_Automatic_Lamp_TimeActual_Index++;
+                        if (TrafficLight_Automatic_Lamp_TimeActual_Index >= TrafficLight_Automatic_Lamp_TimeLevel_len)
                         {
                             /* Do not overflow, stay at the max */
-                            TrafficLight_LampTime_ActualIndex = TrafficLight_LampTime_MaxTimeIndex - 1;
+                            TrafficLight_Automatic_Lamp_TimeActual_Index = TrafficLight_Automatic_Lamp_TimeLevel_len - 1;
                         }
                     }
                     else
                     {
                         /* if (button == PressedButton_Down) */
-                        TrafficLight_LampTime_ActualIndex--;
-                        if (TrafficLight_LampTime_ActualIndex < TRAFFICLIGHT_LAMPTIME_MINTIMEINDEX)
+                        TrafficLight_Automatic_Lamp_TimeActual_Index--;
+                        if (TrafficLight_Automatic_Lamp_TimeActual_Index < TRAFFICLIGHT_AUTOMATIC_LAMP_TIME_DEFAULT_INDEX)
                         {
                             /* Trick: The '--' make a negative value */
                             /* Do not underflow, stay at the min */
-                            TrafficLight_LampTime_ActualIndex = TRAFFICLIGHT_LAMPTIME_MINTIMEINDEX;
+                            TrafficLight_Automatic_Lamp_TimeActual_Index = TRAFFICLIGHT_AUTOMATIC_LAMP_TIME_DEFAULT_INDEX;
                         }
                     }
                 }
@@ -713,7 +718,7 @@ void App_TrafficLight_Event(ButtonType_t button, ButtonPressType_t type)
                     {
                         TrafficLight_Manual_ActualIndex++;
                         /* For avoid the warning, the value < 0 cannot check */
-                        if (TrafficLight_Manual_ActualIndex > (int8_t)(TrafficLight_Lamp_List_Len - 1) )
+                        if (TrafficLight_Manual_ActualIndex >= (int8_t)(TrafficLight_Lamp_List_Len) )
                         {
                             TrafficLight_Manual_ActualIndex = TrafficLight_Lamp_List_Len - 1;
                         }
@@ -814,14 +819,17 @@ void App_TrafficLight_Update(ScheduleSource_t source)
         /* Increment the status, due the timeout of actual lamp */
         if (TrafficLight_Mode == TrafficLight_Mode_Automatic)
         {
-            TrafficLight_ActualStatus++;
-            if (TrafficLight_ActualStatus >= TrafficLight_Lamp_Count)
+            TrafficLight_Automatic_Lamp_StatusActual_Index++;
+            if (TrafficLight_Automatic_Lamp_StatusActual_Index >= TrafficLight_Automatic_Lamp_Count)
             {
-                TrafficLight_ActualStatus = TRAFFICLIGHT_LAMP_DEFAULT_STATUS;
+                /* restart it from zero/init */
+                TrafficLight_Automatic_Lamp_StatusActual_Index = TRAFFICLIGHT_AUTOMATIC_LAMP_DEFAULT_INDEX;
             }
 
+            TrafficLight_ActualStatus = TrafficLight_LampTime_List[TrafficLight_Automatic_Lamp_StatusActual_Index].lamp_name;
+
             /* Get new timeout */
-            next_timeout = TrafficLight_LampTime_List[TrafficLight_LampTime_ActualIndex].TrafficLight_LampRed_time[TrafficLight_ActualStatus];
+            next_timeout = TrafficLight_LampTime_List[TrafficLight_Automatic_Lamp_StatusActual_Index].lamp_time_interval[TrafficLight_Automatic_Lamp_TimeActual_Index];
 
             /* Task schedule requiring */
             TaskHandler_SetTaskOnceRun(Task_Display, next_timeout);

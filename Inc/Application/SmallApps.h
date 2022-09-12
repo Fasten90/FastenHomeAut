@@ -57,7 +57,7 @@ typedef enum
     TrafficLight_Mode_Count
 } TrafficLight_Mode_t;
 
-#define TRAFFICLIGHT_MODE_DEFAULT_VALUE (TrafficLight_Mode_Automatic)
+#define TRAFFICLIGHT_MODE_DEFAULT_VALUE     (TrafficLight_Mode_Automatic)
 
 typedef enum
 {
@@ -75,10 +75,12 @@ typedef enum
 } TrafficLight_Lamp_t;
 
 
+#define TrafficLight_Automatic_Lamp_TimeLevel_len (4)
 
 typedef struct
 {
-    uint16_t TrafficLight_LampRed_time[TrafficLight_Lamp_Count];
+    TrafficLight_Lamp_t lamp_name;
+    uint16_t lamp_time_interval[TrafficLight_Automatic_Lamp_TimeLevel_len];
 } TrafficLight_LampTime_t;
 
 #endif
