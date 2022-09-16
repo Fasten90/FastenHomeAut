@@ -292,7 +292,7 @@ analysis_fasten_static_analyzer:
 
 
 doc_doxygen:
-  stage: doc
+  stage: build
   script: |
     echo Doxygen
     sudo apt-get update -y 
@@ -348,18 +348,18 @@ compiler_warning:
     
     echo ##################################################
     # Copy log file to here
-    cp ../../Out/CMakeBuild/GCC_ARM_build.log .
+    cp ../Out/CMakeBuild/GCC_ARM_build.log .
     # Run CWC
     # Default config: scc_config.json
     python CompilerWarningCollector/CompilerWarningCollector.py --file_list GCC_build.log --comp GCC
     # TODO: Change to Compiler independent
     
     echo ##################################################
-    cp ../../Out/CMakeBuild_Clang/Clang_build.log .
+    cp ../Out/CMakeBuild_Clang/Clang_build.log .
     python CompilerWarningCollector/CompilerWarningCollector.py --file_list Clang_build.log --comp Clang
     
     echo ##################################################
-    cp ../../Out/CMakeBuild_Tcc/TinyCC_build.log .
+    cp ../Out/CMakeBuild_Tcc/TinyCC_build.log .
     python CompilerWarningCollector/CompilerWarningCollector.py --file_list TinyCC_build.log --comp GCC
 
   needs:

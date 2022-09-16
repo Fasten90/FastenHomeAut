@@ -15,5 +15,5 @@ cd ..
 # Default config: scc_config.json
 echo Run SourceCodeChecker
 echo ---------------------
-python Tools/SourceCodeChecker/SourceCodeChecker.py --source-file-path="Src\**,Inc\**,Drivers\x86\**"
+python3 Tools/SourceCodeChecker/SourceCodeChecker.py --source-file-path="Src\**,Inc\**,Drivers\x86\**"
 
