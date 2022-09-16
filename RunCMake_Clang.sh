@@ -41,10 +41,19 @@ else
 fi
 
 
+file="./FastenHomeAut"
+if [ -f "$file" ]
+then
+    echo "$0: File '${file}' has found."
+else
+    echo "$0: File '${file}' not found."
+    echo 'Finished...'
+    exit -1
+fi
 
 # Start compiled exe
 ./FastenHomeAut
 
 
-:: Go to original directory
+# Go to original directory
 cd ../..

@@ -50,7 +50,7 @@ build_linux_gcc_arm:
     arm-none-eabi-gcc --version
 
     mkdir -p Out/CMakeBuild
-    cd out/CMakeBuild
+    cd Out/CMakeBuild
 
     # Call the CMake.
     # Normally: "cmake" or "cmake .." used
@@ -73,8 +73,8 @@ build_linux_gcc_arm:
     ls
 
     # Run
-    echo 'Test result exists...'
-
+    echo 'Check Test result'
+    ##
     file="./FastenHomeAut"
     if [ -f "$file" ]
     then
@@ -87,6 +87,7 @@ build_linux_gcc_arm:
         echo 'Finished...'
         exit -1
     fi
+
   artifacts:
     paths:
       - Out/CMakeBuild/GCC_ARM_build.log
@@ -97,6 +98,7 @@ build_linux_gcc_arm:
 build_linux_cmake_clang:
   stage: build
   script:
+    - clang --version
     - chmod u+x ./RunCMake_Clang.sh
     - ./RunCMake_Clang.sh
   artifacts:
