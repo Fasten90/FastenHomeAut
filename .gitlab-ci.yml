@@ -38,6 +38,10 @@ build_job_linux_gcc:
   script:
     - chmod u+x ./RunCMake_Mingw64_OnLinux.sh
     - ./RunCMake_Mingw64_OnLinux.sh
+  artifacts:
+    paths:
+      - Out/CMakeBuildMinGW64/*.log
+      - Out/CMakeBuildMinGW64/FastenHomeAut
 
 
 build_linux_gcc_arm:
@@ -231,8 +235,8 @@ analysis_linux_cppcheck_script:
 analysis_source_code_checker:
   stage: build
   script:
-    - chmod u+x ./RunSCC.sh
-    - ./RunSCC.sh
+    - chmod u+x ./Run_SCC.sh
+    - ./Run_SCC.sh
 
 
 analysis_ericsson_codechecker:
@@ -240,8 +244,10 @@ analysis_ericsson_codechecker:
   script: |
     echo Ericsson CodeChecker
     
-    sudo apt update -y
-    sudo apt install -y clang-tidy
+    apt update -y
+    apt install -y clang-tidy
+    
+    apt-get install -y python3 pip3
     
     echo Install codechecker
     #https://github.com/Ericsson/codechecker/blob/master/docs/usage.md#step-1
@@ -272,6 +278,8 @@ analysis_fasten_static_analyzer:
   stage: build
   script: |
     echo FastenStaticAnalyzer
+    
+    apt-get install -y python3 pip3
     
     echo clone FastenStaticAnalyzer
     git clone https://github.com/fasten90/FastenStaticAnalyzer
@@ -331,31 +339,27 @@ compiler_warning:
   # Fasten CWC - Compiler Warnings Collector
   script: |
     echo Compiler Warnings Collector
-    #
+    
     echo ##################################################
     mkdir Tools
     cd Tools
     # Clone CWC
     git clone https://github.com/Fasten90/CompilerWarningCollector.git
+    
+    echo ##################################################
     # Copy log file to here
-    copy ..\..\Build_GCC_Artifact\GCC_build.log
+    cp out/GCC_build.log .
     # Run CWC
     # Default config: scc_config.json
     python CompilerWarningCollector/CompilerWarningCollector.py --file_list GCC_build.log --comp GCC
     # TODO: Change to Compiler independent
-    #
+    
     echo ##################################################
-    mkdir Tools
-    cd Tools
-    git clone https://github.com/Fasten90/CompilerWarningCollector.git
-    copy ..\..\Build_Clang_Artifact\Clang_build.log
+    cp out/CMakeBuild_Clang/Clang_build.log .
     python CompilerWarningCollector/CompilerWarningCollector.py --file_list Clang_build.log --comp Clang
     
     echo ##################################################
-    mkdir Tools
-    cd Tools
-    git clone https://github.com/Fasten90/CompilerWarningCollector.git
-    copy ..\..\Build_TinyCC_Artifact\TinyCC_build.log
+    cp out/CMakeBuild_Tcc/TinyCC_build.log .
     python CompilerWarningCollector/CompilerWarningCollector.py --file_list TinyCC_build.log --comp GCC
 
   needs:
