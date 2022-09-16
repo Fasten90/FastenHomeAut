@@ -200,7 +200,7 @@ test_linux_arm_none_eabi_gcc_qemu_test:
     pwd  # Debug
     relative_qemu_bin_path="../opt/${qemu_bin_path}"
     echo "qemu_bin path: ${relative_qemu_bin_path}"
-    python3 -u gdb_test.py --test_file_path Out/CMakeBuild/FastenHomeAut --qemu_bin_path $relative_qemu_bin_path
+    python3 -u gdb_test.py --test_file_path ../../Out/CMakeBuild/FastenHomeAut --qemu_bin_path $relative_qemu_bin_path
   needs:
       job: build_linux_gcc_arm
       artifacts: true
@@ -247,7 +247,7 @@ analysis_ericsson_codechecker:
     apt update -y
     apt install -y clang-tidy
     
-    apt-get install -y python3 pip3
+    apt-get install -y python3 python3-pip
     
     echo Install codechecker
     #https://github.com/Ericsson/codechecker/blob/master/docs/usage.md#step-1
@@ -279,7 +279,7 @@ analysis_fasten_static_analyzer:
   script: |
     echo FastenStaticAnalyzer
     
-    apt-get install -y python3 pip3
+    apt-get install -y python3 python3-pip
     
     echo clone FastenStaticAnalyzer
     git clone https://github.com/fasten90/FastenStaticAnalyzer
@@ -348,18 +348,18 @@ compiler_warning:
     
     echo ##################################################
     # Copy log file to here
-    cp out/GCC_build.log .
+    cp ../../Out/GCC_build.log .
     # Run CWC
     # Default config: scc_config.json
     python CompilerWarningCollector/CompilerWarningCollector.py --file_list GCC_build.log --comp GCC
     # TODO: Change to Compiler independent
     
     echo ##################################################
-    cp out/CMakeBuild_Clang/Clang_build.log .
+    cp ../../Out/CMakeBuild_Clang/Clang_build.log .
     python CompilerWarningCollector/CompilerWarningCollector.py --file_list Clang_build.log --comp Clang
     
     echo ##################################################
-    cp out/CMakeBuild_Tcc/TinyCC_build.log .
+    cp ../../Out/CMakeBuild_Tcc/TinyCC_build.log .
     python CompilerWarningCollector/CompilerWarningCollector.py --file_list TinyCC_build.log --comp GCC
 
   needs:
