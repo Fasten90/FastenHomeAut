@@ -126,7 +126,7 @@ build_linux_tinycc_script:
     expire_in: 1 week
 
 
-test_win_gcc_coverage_script:
+test_linux_gcc_coverage_script:
   stage: test
   script:
     - chmod u+x ./RunCMake_GccCoverage.sh
@@ -135,13 +135,9 @@ test_win_gcc_coverage_script:
     paths:
       - Out/CMakeBuild_GccCoverage/GccCoverage.txt
     expire_in: 1 week
-
-
-test_linux_gcc_coverage_script:
-  stage: test
-  script:
-    - chmod u+x ./RunCMake_GccCoverage.sh
-    - ./RunCMake_GccCoverage.sh
+  needs:
+      job: build_linux_gcc
+      artifacts: false
 
 
 test_linux_arm_none_eabi_gcc_qemu_test:
@@ -214,6 +210,7 @@ test_linux_arm_none_eabi_gcc_qemu_test:
 analysis_linux_clang_analysis_script:
   stage: build
   script:
+    - apt-get install clang -y --force-yes
     - chmod u+x ./Run_ClangAnalysis.sh
     - ./Run_ClangAnalysis.sh
 
@@ -289,6 +286,7 @@ analysis_fasten_static_analyzer:
     cd ..
     ./Run_FastenStaticAnalyzer.sh
     # TODO: Handle return code. E.g. 2 return code is low+medium issue
+  allow_failure: true
 
 
 doc_doxygen:
