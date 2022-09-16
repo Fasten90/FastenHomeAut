@@ -1,22 +1,18 @@
-# This file is a template, and might need editing before it works on your project.
-# To contribute improvements to CI/CD templates, please follow the Development guide at:
-# https://docs.gitlab.com/ee/development/cicd/templates.html
-# This specific template is located at:
-# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
+# FastenHomeAut - Gitlab CI
 
-# This is a sample GitLab CI/CD configuration file that should run without any modifications.
-# It demonstrates a basic 3 stage CI/CD pipeline. Instead of real tests or scripts,
-# it uses echo commands to simulate the pipeline execution.
-#
-# A pipeline is composed of independent jobs that run scripts, grouped into stages.
-# Stages run in sequential order, but jobs within stages run in parallel.
-#
+# Documentation for Gitlab CI (yaml)
+# https://docs.gitlab.com/ee/development/cicd/templates.html
+# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
 # For more information, see: https://docs.gitlab.com/ee/ci/yaml/index.html#stages
 
-stages:          # List of stages for jobs, and their order of execution
+stages:
   - build
+  - test
 
-build-job:       # This job runs in the build stage, which runs first.
+# Note: I expect, the runner is a pure linux
+
+
+build_job_linux_gcc:
   stage: build
   script:
     - apt-get update -qq
@@ -26,5 +22,103 @@ build-job:       # This job runs in the build stage, which runs first.
     - apt-get update -qq
     - apt-get install cmake -y --force-yes
 
+    - cmake --version
+
     - chmod u+x ./RunCMake_Mingw64_OnLinux.sh
     - ./RunCMake_Mingw64_OnLinux.sh
+
+
+build_linux_gcc_arm:
+  stage: build
+  script: |
+
+    echo 'Start Linux build pipeline - GCC - ARM - arm-none-eabi-gcc'
+    # Print the gcc version.
+
+    gcc --version
+
+    #  Install a CMake 3.0.2 version.
+    #- apt-get update -qq
+    #- apt-get install cmake -y
+    #  Alternatively you could install a CMake 3.2.2 version through PPA repository.
+    sudo apt-get update -qq
+    apt-get install software-properties-common -y
+    # Add PPA repository.
+    echo 'deb http://ppa.launchpad.net/george-edison55/cmake-3.x/ubuntu trusty main' | tee -a /etc/apt/sources.list.d/cmake.list
+    sudo apt-get update -qq
+    sudo apt-get install cmake -y --allow 
+    
+    # ARM-none-eabi-gcc
+    sudo apt-get update -y
+    sudo apt-get install -y gcc-arm-none-eabi
+
+
+    arm-none-eabi-gcc --version
+
+    # Print the CMake version.
+    echo 'Start CMake'
+    cmake --version
+
+    echo 'List actual directory'
+    pwd
+    # Win: cd
+    ls
+
+    mkdir Out
+    cd Out
+    mkdir CMakeBuild
+    cd CMakeBuild
+    pwd
+
+    # Call the CMake.
+    # Normally: "cmake" or "cmake .." used
+    #cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE:PATH="..\toolchain.cmake"  ..
+    cmake -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE:PATH="../../Toolchain_ST32F4_arm-none-eabi-gcc.cmake" ../..
+    # cmake CC=gcc ../..
+    # -D"CMAKE_MAKE_PROGRAM:FILEPATH=make.exe" -D"CMAKE_C_COMPILER:FILEPATH=gcc.exe" -D"CMAKE_CXX_COMPILER:FILEPATH=g++.exe" CC=gcc -G "MinGW Makefiles"
+
+    # Build the project.
+    echo 'Start Make'
+    #make VERBOSE=1
+    make VERBOSE=1 &>> GCC_ARM_build.log
+
+    # Echo the file
+    echo 'Print: GCC_ARM_build.log'
+    cat GCC_ARM_build.log
+
+    # Check the results
+    echo 'Finished compile-ing'
+    ls
+
+    # Run
+    echo 'Test result exists...'
+
+    file="./FastenHomeAut"
+    if [ -f "$file" ]
+    then
+        echo "$0: File '${file}' has found."
+        # TODO: Turned off as continue the execution
+        #echo 'Finished...'
+        #exit 0
+    else
+        echo "$0: File '${file}' not found."
+        echo 'Finished...'
+        exit -1
+    fi
+  artifacts:
+    paths:
+      - Out/CMakeBuild/GCC_ARM_build.log
+      - Out/CMakeBuild/FastenHomeAut
+    expire_in: 1 week
+
+
+build_linux_gcc_arm:
+  stage: build
+  script:
+    - chmoud u+x ./RunCMake_Clang.sh
+    - ./RunCMake_Clang.sh
+  artifacts:
+    paths:
+      - Out/CMakeBuild_Clang/Clang_build.log
+    expire_in: 1 week
+
