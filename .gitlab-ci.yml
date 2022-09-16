@@ -27,8 +27,8 @@ before_script:
     - apt-get install software-properties-common -y
 
     - apt-get update -qq
-    #- apt-get install cmake -y --force-yes  # Does not work
-    - apt-get install cmake -y --allow
+    #- apt-get install cmake -y --allow  # Does not work
+    - apt-get install cmake -y --force-yes
 
     - cmake --version
 
