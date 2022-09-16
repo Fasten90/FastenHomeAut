@@ -101,7 +101,7 @@ build_linux_gcc_arm:
 build_linux_cmake_clang:
   stage: build
   script:
-    - apt-get install cmake -y --force-yes
+    - apt-get install clang -y --force-yes
     - clang --version
     - chmod u+x ./RunCMake_Clang.sh
     - ./RunCMake_Clang.sh
@@ -196,7 +196,7 @@ test_linux_arm_none_eabi_gcc_qemu_test:
     pwd  # Debug
     relative_qemu_bin_path="../opt/${qemu_bin_path}"
     echo "qemu_bin path: ${relative_qemu_bin_path}"
-    python3 -u gdb_test.py --test_file_path ../../Build_GCC_ARM_Bin_Artifact/FastenHomeAut --qemu_bin_path $relative_qemu_bin_path
+    python3 -u gdb_test.py --test_file_path Out/CMakeBuild/FastenHomeAut --qemu_bin_path $relative_qemu_bin_path
   needs:
       job: build_linux_gcc_arm
       artifacts: true
@@ -208,35 +208,35 @@ test_linux_arm_none_eabi_gcc_qemu_test:
 
 
 analysis_linux_clang_analysis_script:
-  stage: analysis
+  stage: build
   script:
     - chmod u+x ./Run_ClangAnalysis.sh
     - ./Run_ClangAnalysis.sh
 
 
 format_linux_clang_format_script:
-  stage: analysis
+  stage: build
   script:
     - chmod u+x ./Run_ClangFormatter.sh
     - ./Run_ClangFormatter.sh
 
 
 analysis_linux_cppcheck_script:
-  stage: analysis
+  stage: build
   script:
     - chmod u+x ./Run_CppCheck.sh
     - ./Run_CppCheck.sh
 
 
 analysis_source_code_checker:
-  stage: analysis
+  stage: build
   script:
     - chmod u+x ./RunSCC.sh
     - ./RunSCC.sh
 
 
 analysis_ericsson_codechecker:
-  stage: analysis
+  stage: build
   script: |
     echo Ericsson CodeChecker
     
@@ -269,7 +269,7 @@ analysis_ericsson_codechecker:
 
 
 analysis_fasten_static_analyzer:
-  stage: analysis
+  stage: build
   script: |
     echo FastenStaticAnalyzer
     
