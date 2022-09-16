@@ -112,13 +112,14 @@ build_linux_gcc_arm:
     expire_in: 1 week
 
 
-build_linux_gcc_arm:
+build_linux_cmake_clang:
   stage: build
   script:
-    - chmoud u+x ./RunCMake_Clang.sh
+    - chmod u+x ./RunCMake_Clang.sh
     - ./RunCMake_Clang.sh
   artifacts:
     paths:
       - Out/CMakeBuild_Clang/Clang_build.log
     expire_in: 1 week
+
 
