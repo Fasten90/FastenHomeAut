@@ -392,10 +392,6 @@ document_generation:
     git clone https://github.com/Fasten90/FastenDocSystem.git --branch master
     cd FastenDocSystem
     
-    # Prepare sources:
-    mkdir input
-    cd input
-    
     # Install
     python3 -m pip install -r requirements.txt
     
