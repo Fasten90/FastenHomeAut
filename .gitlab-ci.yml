@@ -211,6 +211,7 @@ analysis_linux_clang_analysis_script:
   stage: build
   script:
     - apt-get install clang -y --force-yes
+    - clang --version
     - chmod u+x ./Run_ClangAnalysis.sh
     - ./Run_ClangAnalysis.sh
 
@@ -218,6 +219,8 @@ analysis_linux_clang_analysis_script:
 format_linux_clang_format_script:
   stage: build
   script:
+    - apt-get install clang -y --force-yes
+    - clang --version
     - chmod u+x ./Run_ClangFormatter.sh
     - ./Run_ClangFormatter.sh
 
@@ -379,28 +382,26 @@ document_generation:
   script: |
     echo Document generation
     
+    apt-get install -y python3 python3-pip
+    
     # Go to Tools for clone-ing
-    mkdir Tools
+    mkdir -p Tools
     cd Tools
+    
     # Clone FastenDocSystem
-    git clone https://github.com/Fasten90/FastenDocSystem.git
+    git clone https://github.com/Fasten90/FastenDocSystem.git --branch master
     cd FastenDocSystem
-    git checkout master
     
     # Prepare sources:
     mkdir input
     cd input
-    # Copy csv files to here
-    dir
-    cd ..
-    dir
     
     # Install
-    pip install -r requirements.txt
+    python3 -m pip install -r requirements.txt
     
     # Run
     # TODO: Declare the arguments
-    python PdfGenerator.py
+    python3 PdfGenerator.py
   needs:
       job: compiler_warning
       artifacts: true
