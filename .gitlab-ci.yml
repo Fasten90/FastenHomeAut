@@ -225,6 +225,7 @@ format_linux_clang_format_script:
 analysis_linux_cppcheck_script:
   stage: build
   script:
+    - apt-get install cppcheck -y --force-yes
     - chmod u+x ./Run_CppCheck.sh
     - ./Run_CppCheck.sh
 
