@@ -101,6 +101,7 @@ build_linux_gcc_arm:
 build_linux_cmake_clang:
   stage: build
   script:
+    - apt-get install cmake -y --force-yes
     - clang --version
     - chmod u+x ./RunCMake_Clang.sh
     - ./RunCMake_Clang.sh
@@ -142,24 +143,20 @@ test_linux_gcc_coverage_script:
 test_linux_arm_none_eabi_gcc_qemu_test:
   stage: test
   script: |
-
-    pwd
-    ls
-    
     # ARM-none-eabi-gcc
     # Note: Similar installation as ARM none eabi gcc build
-    sudo apt-get update -y
-    sudo apt-get install -y gcc-arm-none-eabi
-    sudo apt-get install -y gdb-multiarch
-    sudo ln -s /usr/bin/gdb-multiarch /usr/bin/arm-none-eabi-gdb
-
+    apt-get update -y
+    apt-get install -y gcc-arm-none-eabi
+    apt-get install -y gdb-multiarch
+    ln -s /usr/bin/gdb-multiarch /usr/bin/arm-none-eabi-gdb
+    
     arm-none-eabi-gcc --version
     arm-none-eabi-gdb --version
     
     # Python
     python --version
     python3 --version
-
+    
     # QEMU
     # Install with manual
     # https://xpack.github.io/qemu-arm/install/
@@ -171,10 +168,10 @@ test_linux_arm_none_eabi_gcc_qemu_test:
     download_full_path="https://github.com/xpack-dev-tools/qemu-arm-xpack/releases/download/v${qemu_version}/${qemu_install_file}"
     echo "Download: ${download_full_path}"
     wget $download_full_path
-            
+    
     mkdir -p opt
     cd opt
-
+    
     # E.g. tar xvf ~/Downloads/xpack-qemu-arm-2.8.0-7-linux-x64.tgz
     echo "Unzip: ${qemu_install_file}"
     tar xvf ../$qemu_install_file
@@ -189,7 +186,7 @@ test_linux_arm_none_eabi_gcc_qemu_test:
     
     # FastenTestSystem
     cd ..
-
+    
     echo "Clone FastenTestSystem"
     git clone https://github.com/Fasten90/FastenTestSystem.git
     cd FastenTestSystem
@@ -395,11 +392,11 @@ document_generation:
     cd ..
     dir
     
-    :: Install
+    # Install
     pip install -r requirements.txt
     
-    :: Run
-    :: TODO: Declare the arguments
+    # Run
+    # TODO: Declare the arguments
     python PdfGenerator.py
   needs:
       job: compiler_warning
@@ -408,3 +405,4 @@ document_generation:
     paths:
       - Tools/FastenDocSystem/out/*.pdf
     expire_in: 1 week
+
