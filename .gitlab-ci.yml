@@ -33,7 +33,7 @@ before_script:
     - cmake --version
 
 
-build_job_linux_gcc:
+build_linux_gcc:
   stage: build
   script:
     - chmod u+x ./RunCMake_Mingw64_OnLinux.sh
