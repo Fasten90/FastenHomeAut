@@ -9,21 +9,30 @@ stages:
   - build
   - test
 
-# Note: I expect, the runner is a pure linux
+# Note:
+## - I expect, the runner is a pure linux
+## - sudo cannot use
+
+
+before_script:
+    - gcc --version
+
+    #  Install a CMake 3.0.2 version.
+    #- apt-get update -qq
+    #- apt-get install cmake -y
+    #  Alternatively you could install a CMake 3.2.2 version through PPA repository.
+    - apt-get update -qq
+    - apt-get install software-properties-common -y
+
+    - apt-get update -qq
+    - apt-get install cmake -y --allow  --force-yes
+
+    - cmake --version
 
 
 build_job_linux_gcc:
   stage: build
   script:
-    - apt-get update -qq
-    - apt-get install software-properties-common -y
-    # Add PPA repository.
-    # Not supported on Ruby docker image # - echo 'deb http://ppa.launchpad.net/george-edison55/cmake-3.x/ubuntu trusty main' | tee -a /etc/apt/sources.list.d/cmake.list
-    - apt-get update -qq
-    - apt-get install cmake -y --force-yes
-
-    - cmake --version
-
     - chmod u+x ./RunCMake_Mingw64_OnLinux.sh
     - ./RunCMake_Mingw64_OnLinux.sh
 
@@ -33,42 +42,15 @@ build_linux_gcc_arm:
   script: |
 
     echo 'Start Linux build pipeline - GCC - ARM - arm-none-eabi-gcc'
-    # Print the gcc version.
-
-    gcc --version
-
-    #  Install a CMake 3.0.2 version.
-    #- apt-get update -qq
-    #- apt-get install cmake -y
-    #  Alternatively you could install a CMake 3.2.2 version through PPA repository.
-    sudo apt-get update -qq
-    apt-get install software-properties-common -y
-    # Add PPA repository.
-    echo 'deb http://ppa.launchpad.net/george-edison55/cmake-3.x/ubuntu trusty main' | tee -a /etc/apt/sources.list.d/cmake.list
-    sudo apt-get update -qq
-    sudo apt-get install cmake -y --allow 
     
     # ARM-none-eabi-gcc
-    sudo apt-get update -y
-    sudo apt-get install -y gcc-arm-none-eabi
-
+    apt-get update -y
+    apt-get install -y gcc-arm-none-eabi
 
     arm-none-eabi-gcc --version
 
-    # Print the CMake version.
-    echo 'Start CMake'
-    cmake --version
-
-    echo 'List actual directory'
-    pwd
-    # Win: cd
-    ls
-
-    mkdir Out
-    cd Out
-    mkdir CMakeBuild
-    cd CMakeBuild
-    pwd
+    mkdir -p Out/CMakeBuild
+    cd out/CMakeBuild
 
     # Call the CMake.
     # Normally: "cmake" or "cmake .." used
