@@ -8,6 +8,8 @@
 stages:
   - build
   - test
+  - analysis
+  - doc
 
 # Note:
 ## - I expect, the runner is a pure linux
@@ -25,7 +27,8 @@ before_script:
     - apt-get install software-properties-common -y
 
     - apt-get update -qq
-    - apt-get install cmake -y --force-yes
+    #- apt-get install cmake -y --force-yes  # Does not work
+    - apt-get install cmake -y --allow
 
     - cmake --version
 
@@ -107,3 +110,301 @@ build_linux_cmake_clang:
     expire_in: 1 week
 
 
+build_linux_tinycc_script:
+  stage: build
+  script:
+    - chmod u+x ./RunCMake_TCC.sh
+    - ./RunCMake_TCC.sh
+  artifacts:
+    paths:
+      - Out/CMakeBuild_Tcc/TinyCC_build.log
+    expire_in: 1 week
+
+
+test_win_gcc_coverage_script:
+  stage: test
+  script:
+    - chmod u+x ./RunCMake_GccCoverage.sh
+    - ./RunCMake_GccCoverage.sh
+  artifacts:
+    paths:
+      - Out/CMakeBuild_GccCoverage/GccCoverage.txt
+    expire_in: 1 week
+
+
+test_linux_gcc_coverage_script:
+  stage: test
+  script:
+    - chmod u+x ./RunCMake_GccCoverage.sh
+    - ./RunCMake_GccCoverage.sh
+
+
+test_linux_arm_none_eabi_gcc_qemu_test:
+  stage: test
+  script: |
+
+    pwd
+    ls
+    
+    # ARM-none-eabi-gcc
+    # Note: Similar installation as ARM none eabi gcc build
+    sudo apt-get update -y
+    sudo apt-get install -y gcc-arm-none-eabi
+    sudo apt-get install -y gdb-multiarch
+    sudo ln -s /usr/bin/gdb-multiarch /usr/bin/arm-none-eabi-gdb
+
+    arm-none-eabi-gcc --version
+    arm-none-eabi-gdb --version
+    
+    # Python
+    python --version
+    python3 --version
+
+    # QEMU
+    # Install with manual
+    # https://xpack.github.io/qemu-arm/install/
+    # downloaded file
+    qemu_version="2.8.0-9"
+    qemu_path_first_part="xpack-qemu-arm-${qemu_version}"
+    qemu_install_file="${qemu_path_first_part}-linux-x64.tar.gz"
+    # https://github.com/xpack-dev-tools/qemu-arm-xpack/releases/download/v2.8.0-9/xpack-qemu-arm-2.8.0-9-linux-x64.tar.gz
+    download_full_path="https://github.com/xpack-dev-tools/qemu-arm-xpack/releases/download/v${qemu_version}/${qemu_install_file}"
+    echo "Download: ${download_full_path}"
+    wget $download_full_path
+            
+    mkdir -p opt
+    cd opt
+
+    # E.g. tar xvf ~/Downloads/xpack-qemu-arm-2.8.0-7-linux-x64.tgz
+    echo "Unzip: ${qemu_install_file}"
+    tar xvf ../$qemu_install_file
+    # E.g. chmod -R -w xPacks/qemu-arm/2.8.0-7
+    #chmod -R -w $qemu_path_first_part
+    chmod -R 777 $qemu_path_first_part
+    qemu_bin_path="${qemu_path_first_part}/bin/qemu-system-gnuarmeclipse"
+    # Execute the version
+    echo "Execute: ${qemu_bin_path}"
+    ./$qemu_bin_path --version
+    pwd  # Debug
+    
+    # FastenTestSystem
+    cd ..
+
+    echo "Clone FastenTestSystem"
+    git clone https://github.com/Fasten90/FastenTestSystem.git
+    cd FastenTestSystem
+    git checkout develop
+    # Execute
+    echo "Executing..."
+    pwd  # Debug
+    relative_qemu_bin_path="../opt/${qemu_bin_path}"
+    echo "qemu_bin path: ${relative_qemu_bin_path}"
+    python3 -u gdb_test.py --test_file_path ../../Build_GCC_ARM_Bin_Artifact/FastenHomeAut --qemu_bin_path $relative_qemu_bin_path
+  needs:
+      job: build_linux_gcc_arm
+      artifacts: true
+  artifacts:
+    paths:
+      - FastenTestSystem/TestResults.csv
+    expire_in: 1 week
+
+
+
+analysis_linux_clang_analysis_script:
+  stage: analysis
+  script:
+    - chmod u+x ./Run_ClangAnalysis.sh
+    - ./Run_ClangAnalysis.sh
+
+
+format_linux_clang_format_script:
+  stage: analysis
+  script:
+    - chmod u+x ./Run_ClangFormatter.sh
+    - ./Run_ClangFormatter.sh
+
+
+analysis_linux_cppcheck_script:
+  stage: analysis
+  script:
+    - chmod u+x ./Run_CppCheck.sh
+    - ./Run_CppCheck.sh
+
+
+analysis_source_code_checker:
+  stage: analysis
+  script:
+    - chmod u+x ./RunSCC.sh
+    - ./RunSCC.sh
+
+
+analysis_ericsson_codechecker:
+  stage: analysis
+  script: |
+    echo Ericsson CodeChecker
+    
+    sudo apt update -y
+    sudo apt install -y clang-tidy
+    
+    echo Install codechecker
+    #https://github.com/Ericsson/codechecker/blob/master/docs/usage.md#step-1
+    pip3 install codechecker
+    
+    echo Preparations
+    gcc --version
+    cmake --version
+    mkdir -p Out/CMakeBuild && cd Out/CMakeBuild
+    
+    echo Execute cmake
+    cmake ../..
+    #make > GCC_build.log 2>&1
+    echo Execute CodeChecker log-build
+    CodeChecker log --build "make" --output ./compile_commands.json
+    cat ./compile_commands.json
+    echo Execute CodeChecker analyze
+    CodeChecker analyze ./compile_commands.json --enable sensitive --output ./reports
+    echo Execute CodeChecker export
+    # View result: https://github.com/Ericsson/codechecker/blob/master/docs/usage.md#view-the-analysis-results-in-the-command-line-
+    CodeChecker parse ./reports || echo "Return code: $?"
+    # TODO: Handle return code. E.g. 2 return code is low+medium issue
+    # TODO: Maybe it require install 'report-converter' python tool
+    #CodeChecker parse --export html --output ./reports_html ./reports
+
+
+analysis_fasten_static_analyzer:
+  stage: analysis
+  script: |
+    echo FastenStaticAnalyzer
+    
+    echo clone FastenStaticAnalyzer
+    git clone https://github.com/fasten90/FastenStaticAnalyzer
+    
+    cd FastenStaticAnalyzer
+    ./install.sh
+    cd ..
+    ./Run_FastenStaticAnalyzer.sh
+    # TODO: Handle return code. E.g. 2 return code is low+medium issue
+
+
+doc_doxygen:
+  stage: doc
+  script: |
+    echo Doxygen
+    sudo apt-get update -y 
+    sudo apt-get install -y doxygen
+    
+    doxygen --help
+    
+    # generate
+    doxygen
+
+# TODO: Artifact
+
+
+compiler_warning:
+  stage: analysis
+  #
+  #   artifact: Build_MSVC_Artifact
+  # - script: |
+  #     echo Compiler Warnings Collector
+  #     :: Artifacts go to <pipeline>\<artifactname>
+  #     ::cd ../Build_MSVC_Artifact
+  #     :: MSVC build log
+  #     echo ##################################################
+  #     ::echo MSVC build:
+  #     ::echo ##################################################
+  #     ::type MSVC_build.log
+  #     ::echo ##################################################
+  #     :: Good, but not needed
+  #     ::more MSVC_build.log
+  #     :: Go to Tools for clone-ing
+  #     mkdir Tools
+  #     cd Tools
+  #     :: Clone CWC
+  #     git clone https://github.com/Fasten90/CompilerWarningCollector.git
+  #     :: Copy log file to here
+  #     copy ..\..\Build_MSVC_Artifact\MSVC_build.log
+  #     :: Run CWC
+  #     :: Default config: scc_config.json
+  #     ::python CompilerWarningCollector/CompilerWarningCollector.py
+  #     python CompilerWarningCollector/CompilerWarningCollector.py --file_list MSVC_build.log --comp MSVC
+  # # TODO: Change to Compiler independent
+  # - publish: $(System.DefaultWorkingDirectory)/Tools/MSVC_build_found_warnings.csv
+  #   artifact: CompilerWarning_Artifact_MSVC
+  # Fasten CWC - Compiler Warnings Collector
+  script: |
+    echo Compiler Warnings Collector
+    #
+    echo ##################################################
+    mkdir Tools
+    cd Tools
+    # Clone CWC
+    git clone https://github.com/Fasten90/CompilerWarningCollector.git
+    # Copy log file to here
+    copy ..\..\Build_GCC_Artifact\GCC_build.log
+    # Run CWC
+    # Default config: scc_config.json
+    python CompilerWarningCollector/CompilerWarningCollector.py --file_list GCC_build.log --comp GCC
+    # TODO: Change to Compiler independent
+    #
+    echo ##################################################
+    mkdir Tools
+    cd Tools
+    git clone https://github.com/Fasten90/CompilerWarningCollector.git
+    copy ..\..\Build_Clang_Artifact\Clang_build.log
+    python CompilerWarningCollector/CompilerWarningCollector.py --file_list Clang_build.log --comp Clang
+    
+    echo ##################################################
+    mkdir Tools
+    cd Tools
+    git clone https://github.com/Fasten90/CompilerWarningCollector.git
+    copy ..\..\Build_TinyCC_Artifact\TinyCC_build.log
+    python CompilerWarningCollector/CompilerWarningCollector.py --file_list TinyCC_build.log --comp GCC
+
+  needs:
+    - job: build_linux_gcc_arm
+      artifacts: true
+    - job: build_linux_cmake_clang
+      artifacts: true
+    - job: build_linux_tinycc_script
+      artifacts: true
+  artifacts:
+    paths:
+      - Tools/*.csv
+    expire_in: 1 week
+
+
+document_generation:
+  stage: doc
+  script: |
+    echo Document generation
+    
+    # Go to Tools for clone-ing
+    mkdir Tools
+    cd Tools
+    # Clone FastenDocSystem
+    git clone https://github.com/Fasten90/FastenDocSystem.git
+    cd FastenDocSystem
+    git checkout master
+    
+    # Prepare sources:
+    mkdir input
+    cd input
+    # Copy csv files to here
+    dir
+    cd ..
+    dir
+    
+    :: Install
+    pip install -r requirements.txt
+    
+    :: Run
+    :: TODO: Declare the arguments
+    python PdfGenerator.py
+  needs:
+      job: compiler_warning
+      artifacts: true
+  artifacts:
+    paths:
+      - Tools/FastenDocSystem/out/*.pdf
+    expire_in: 1 week
