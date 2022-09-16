@@ -6,7 +6,7 @@ cd Tools
 
 # Clone SCC
 # PIPELINE_WORKSPACE - Define available at Pipeline (e.g. Azure)
-git clone https://github.com/Fasten90/SourceCodeChecker.git
+git clone https://github.com/Fasten90/SourceCodeChecker.git --branch task_fix_linux_ascii
 
 # Go into the root
 cd ..
