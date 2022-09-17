@@ -233,11 +233,14 @@ analysis_linux_cppcheck_script:
     - ./Run_CppCheck.sh
 
 
-analysis_source_code_checker:
+analysis_fasten_source_code_checker:
   stage: build
   script:
     - chmod u+x ./Run_SCC.sh
     - ./Run_SCC.sh
+  artifacts:
+    paths:
+      - source_code_checker_issues.csv
 
 
 analysis_ericsson_codechecker:
@@ -283,7 +286,8 @@ analysis_fasten_static_analyzer:
     apt-get install -y python3 python3-pip
     
     echo clone FastenStaticAnalyzer
-    git clone https://github.com/fasten90/FastenStaticAnalyzer
+    git clone https://github.com/fasten90/FastenStaticAnalyzer --branch task_fix_linux_pip_issue
+    # TODO: After the FastenStaticAnalyzer merge, change to master
     
     cd FastenStaticAnalyzer
     ./install.sh
@@ -404,7 +408,9 @@ document_generation:
     # TODO: Declare the arguments
     python3 PdfGenerator.py --input-path ..  --export-pdf-file-path out/FastenDoc.pdf
   needs:
-      job: compiler_warning
+    - job: compiler_warning
+      artifacts: true
+    - job: analysis_fasten_source_code_checker
       artifacts: true
   artifacts:
     paths:
