@@ -295,6 +295,9 @@ analysis_fasten_static_analyzer:
     ./Run_FastenStaticAnalyzer.sh
     # TODO: Handle return code. E.g. 2 return code is low+medium issue
   allow_failure: true
+  artifacts:
+    paths:
+      - StaticAnalysisResult.csv
 
 
 doc_doxygen:
@@ -411,6 +414,8 @@ document_generation:
     - job: compiler_warning
       artifacts: true
     - job: analysis_fasten_source_code_checker
+      artifacts: true
+    - job: analysis_fasten_static_analyzer
       artifacts: true
   artifacts:
     paths:
