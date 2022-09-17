@@ -280,7 +280,7 @@ analysis_fasten_static_analyzer:
   script: |
     echo FastenStaticAnalyzer
     
-    apt-get install -y python3 python3-pip pip
+    apt-get install -y python3 python3-pip
     
     echo clone FastenStaticAnalyzer
     git clone https://github.com/fasten90/FastenStaticAnalyzer
@@ -348,13 +348,16 @@ compiler_warning:
     # Clone CWC
     git clone https://github.com/Fasten90/CompilerWarningCollector.git
     
-    echo ##################################################
-    # Copy log file to here
-    cp ../Out/CMakeBuild/GCC_ARM_build.log .
     # Run CWC
     # Default config: scc_config.json
+    
+    echo ##################################################
+    cp ../Out/CMakeBuildMinGW64/GCC_build.log .
     python3 CompilerWarningCollector/CompilerWarningCollector.py --file_list GCC_build.log --comp GCC
-    # TODO: Change to Compiler independent
+    
+    echo ##################################################
+    cp ../Out/CMakeBuild/GCC_ARM_build.log .
+    python3 CompilerWarningCollector/CompilerWarningCollector.py --file_list GCC_ARM_build.log --comp GCC
     
     echo ##################################################
     cp ../Out/CMakeBuild_Clang/Clang_build.log .
@@ -365,6 +368,8 @@ compiler_warning:
     python3 CompilerWarningCollector/CompilerWarningCollector.py --file_list TinyCC_build.log --comp GCC
 
   needs:
+    - job: build_linux_gcc
+      artifacts: true
     - job: build_linux_gcc_arm
       artifacts: true
     - job: build_linux_cmake_clang
@@ -397,7 +402,7 @@ document_generation:
     
     # Run
     # TODO: Declare the arguments
-    python3 PdfGenerator.py
+    python3 PdfGenerator.py --input-path ..  --export-pdf-file-path out/FastenDoc.pdf
   needs:
       job: compiler_warning
       artifacts: true
