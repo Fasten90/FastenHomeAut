@@ -180,12 +180,17 @@ FreeRTOS/Source/portable/MemMang/heap_x.c where 'x' is 1, 2, 3, 4 or 5.
 #endif
 
 
-#ifndef _MSC_VER
-    /* Inline function */
-    #define INLINE_FUNCTION     inline __attribute__((always_inline))
+#ifndef INLINE_FUNCTION
+    #ifndef _MSC_VER
+        /* Inline function */
+        #define INLINE_FUNCTION     inline __attribute__((always_inline))
+    #else
+        /* MSVC does not support the inline function */
+        #define INLINE_FUNCTION
+    #endif
 #else
-    /* MSVC does not support the inline function */
-    #define INLINE_FUNCTION
+    /* INLINE_FUNCTION is defined */
+    /* As experienced, the pycparser fail on the "inline __attribute__((always_inline))" */
 #endif
 
 
