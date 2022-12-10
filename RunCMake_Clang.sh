@@ -24,12 +24,9 @@ cmake ../..
 echo Execute make
 
 # PIPELINE_WORKSPACE - Define available at Pipeline (e.g. Azure)
+# CI - Predefined variable at Gitlab CI
 
-#if defined PIPELINE_WORKSPACE (
-#  make
-#)
-
-if [[ -z "${PIPELINE_WORKSPACE}" ]]; then
+if [[ -z "${PIPELINE_WORKSPACE}" ]] && [[ -z "${CI}" ]] ; then
   # Local
   echo Run on local
   make
@@ -41,10 +38,19 @@ else
 fi
 
 
+file="./FastenHomeAut"
+if [ -f "$file" ]
+then
+    echo "$0: File '${file}' has found."
+else
+    echo "$0: File '${file}' not found."
+    echo 'Finished...'
+    exit -1
+fi
 
 # Start compiled exe
 ./FastenHomeAut
 
 
-:: Go to original directory
+# Go to original directory
 cd ../..

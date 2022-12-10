@@ -22,7 +22,8 @@ cmake CC=tcc ../..
 echo Execute make
 
 # PIPELINE_WORKSPACE - Define available at Pipeline (e.g. Azure)
-if [[ -z "${PIPELINE_WORKSPACE}" ]]; then
+# CI - Predefined variable at Gitlab CI
+if [[ -z "${PIPELINE_WORKSPACE}" ]] && [[ -z "${CI}" ]] ; then
   # Local
   echo Run on local
   make

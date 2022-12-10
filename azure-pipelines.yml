@@ -628,7 +628,7 @@ stages:
     steps:
     - task: BatchScript@1
       inputs:
-        filename: 'RunSCC.bat'
+        filename: 'Run_SCC.bat'
         #arguments: # Optional
         #script: '# Write your commands here# Use the environment variables input below to pass secret variables to this script' # Required when targetType == Inline
         #workingDirectory: # Optional
