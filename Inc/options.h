@@ -100,7 +100,7 @@
 #endif
 #if defined(CONFIG_FUNCTION_DISPLAY) && defined(CONFIG_HW_DISPLAY_ENABLE)
     ///< Display: Menu
-    #define CONFIG_FUNCTION_DISPLAY_MENU
+    //#define CONFIG_FUNCTION_DISPLAY_MENU
     #ifdef CONFIG_FUNCTION_DISPLAY_MENU
         #define CONFIG_REQUIRE_DISPLAY
 
