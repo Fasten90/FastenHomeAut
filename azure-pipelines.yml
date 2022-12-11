@@ -492,6 +492,56 @@ stages:
       artifact: TestQemu_Result
 
 
+  # Build - Linux - gcc-arm
+  - job: build_linux_gcc_arm_configurates
+    pool:
+      vmImage: 'ubuntu-latest'
+    displayName: 'Build - Linux - GCC ARM - arm-none-eabi-gcc - configurates'
+    steps:
+   # Note: Similar steps as at "Build - Linux - GCC ARM - arm-none-eabi-gcc"
+    - script: |
+
+        echo 'Start Linux build pipeline - GCC - ARM - arm-none-eabi-gcc'
+        # Print the gcc version.
+
+        gcc --version
+
+        #  Install a CMake 3.0.2 version.
+        #- apt-get update -qq
+        #- apt-get install cmake -y
+        #  Alternatively you could install a CMake 3.2.2 version through PPA repository.
+        sudo apt-get update -qq
+        apt-get install software-properties-common -y
+        # Add PPA repository.
+        echo 'deb http://ppa.launchpad.net/george-edison55/cmake-3.x/ubuntu trusty main' | tee -a /etc/apt/sources.list.d/cmake.list
+        sudo apt-get update -qq
+        sudo apt-get install cmake -y --allow 
+        
+        # ARM-none-eabi-gcc
+        sudo apt-get update -y
+        sudo apt-get install -y gcc-arm-none-eabi
+
+
+        arm-none-eabi-gcc --version
+
+        # Print the CMake version.
+        echo 'Start CMake'
+        cmake --version
+
+        echo 'List actual directory'
+        pwd
+        # Win: cd
+        ls
+
+        mkdir Out
+        cd Out
+        mkdir CMakeBuild
+        cd CMakeBuild
+        pwd
+
+        ./Run_FastenConfigurator.sh
+
+
 # Note: Not works yet, there is no Clang installation on Azure windows images
 
 # Win - Clang
