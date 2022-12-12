@@ -528,17 +528,6 @@ stages:
         echo 'Start CMake'
         cmake --version
 
-        echo 'List actual directory'
-        pwd
-        # Win: cd
-        ls
-
-        mkdir Out
-        cd Out
-        mkdir CMakeBuild
-        cd CMakeBuild
-        pwd
-
         ./Run_FastenConfigurator.sh
 
 
