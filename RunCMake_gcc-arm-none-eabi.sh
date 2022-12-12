@@ -1,3 +1,7 @@
+#!/bin/bash
+set -e
+
+
 echo Run CMake - gcc-arm-none-eabi
 
 
@@ -12,7 +16,7 @@ cmake \
 -G "Unix Makefiles" \
 -D"CMAKE_C_COMPILER:FILEPATH=arm-none-eabi-gcc" \
 -D"CMAKE_CXX_COMPILER:FILEPATH=arm-none-eabi-g++" \
--DCMAKE_TOOLCHAIN_FILE:PATH="../../Toolchain_ST32F0_arm-none-eabi-gcc" \
+-DCMAKE_TOOLCHAIN_FILE:PATH="../../Toolchain_ST32F0_arm-none-eabi-gcc.cmake" \
 ../..
 
 # cmake -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE:PATH="../../toolchain.cmake" ../..
