@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# FastenConfigurator 
+# FastenConfigurator
 
 FASTENCCONFIGURATOR_PATH="FastenCConfigurator"
 mkdir -p Tools
