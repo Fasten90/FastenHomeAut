@@ -528,6 +528,7 @@ stages:
         echo 'Start CMake'
         cmake --version
 
+        chmod +x ./Run_FastenConfigurator.sh
         ./Run_FastenConfigurator.sh
 
 
