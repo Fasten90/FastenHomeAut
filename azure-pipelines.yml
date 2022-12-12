@@ -529,6 +529,7 @@ stages:
         cmake --version
 
         chmod +x ./Run_FastenConfigurator.sh
+        chmod +x ./RunCMake_gcc-arm-none-eabi.bat
         ./Run_FastenConfigurator.sh
 
 
