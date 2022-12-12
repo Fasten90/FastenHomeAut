@@ -11,7 +11,8 @@ if [[ -d "$FASTENCCONFIGURATOR_PATH" ]]; then
     git pull
     popd
 else
-    git clone git@github.com:Fasten90/FastenCConfigurator.git
+    #git clone git@github.com:Fasten90/FastenCConfigurator.git
+    git clone https://github.com/fasten90/FastenCConfigurator
 fi
 popd
 
