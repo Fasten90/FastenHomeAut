@@ -31,5 +31,5 @@ for config_item in config_*
 do
     echo "Next config: ${config_item}"
     export FASTENCCONFIGURATOR_CONFIG=$config_item
-    ./RunCMake_gcc-arm-none-eabi.bat
+    ./RunCMake_gcc-arm-none-eabi.sh
 done
