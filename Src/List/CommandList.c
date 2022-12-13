@@ -2293,7 +2293,7 @@ static CmdH_Result_t CommandFunction_IO(uint32_t argc, char** argv)
         {
             CmdH_Printf(" %20s %s\r\n",
                     IO_GetInputName(i),
-                    IO_GetInputStateName(IO_GetInputState(i)));
+                    IO_GetStatusName(IO_GetInputState(i)));
         }
 #endif
 
