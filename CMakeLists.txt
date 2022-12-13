@@ -11,14 +11,28 @@ project(FastenHomeAut C ASM)
 #    project (FastenHomeAut)
 #    message(STATUS "# Normal C project")
 #endif()
-    
-    
+
+
 # reported in Azure pipeline - Windows - MSVC?
 cmake_policy(SET CMP0054 NEW) 
 
 
 # Compiler type
 message(STATUS "# Compiler ID: ${CMAKE_C_COMPILER_ID}")
+
+
+if(DEFINED ENV{FASTENCCONFIGURATOR})
+    message(STATUS "# FastenCConfigurator is turned on")
+    set(PROJECT_CONFIG $ENV{FASTENCCONFIGURATOR_CONFIG})
+    file(READ ${PROJECT_CONFIG} FASTENCCONFIGURATOR_DEFINES)
+    # FASTENCCONFIGURATOR_DEFINES contains the read config values
+    message(STATUS ${FASTENCCONFIGURATOR_DEFINES})
+    string(CONCAT TARGET_DEFINES
+        ${FASTENCCONFIGURATOR_DEFINES}
+        )
+else()
+    string(CONCAT TARGET_DEFINES )
+endif()
 
 
 # CI vs Local build
@@ -105,7 +119,7 @@ if ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F0_arm-.*")
 
     # " -D__weak=__attribute__((weak))"
     # " -D__packed=__attribute__((__packed__))"
-    string(CONCAT TARGET_DEFINES
+    string(APPEND TARGET_DEFINES
                        " -DUSE_HAL_DRIVER"
                        " -DCONFIG_USE_PANEL_FASTENNODE=1"
                        " -DSTM32F030x8"
@@ -217,7 +231,7 @@ elseif ("${CMAKE_FASTENHOMEAUT_TARGET}" MATCHES "STM32F4_arm-.*")
     # " -D__weak=__attribute__((weak))"
     # " -D__packed=__attribute__((__packed__))"
     # TODO: Generalizing - changes here: Cortex-m4
-    string(CONCAT TARGET_DEFINES
+    string(APPEND TARGET_DEFINES
                        " -DUSE_HAL_DRIVER"
                        " -DCONFIG_USE_PANEL_STM32F4DISCOVERY=1"
                        " -DSTM32F407xx"

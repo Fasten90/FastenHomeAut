@@ -128,6 +128,7 @@ void IO_Output_Handler(void);
 /* IO - Input */
 
 IO_Status_t IO_GetInputState(IO_Input_Name_t inputpin);
+const char * IO_GetInputName(IO_Input_Name_t inputPin);
 
 
 

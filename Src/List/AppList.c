@@ -17,7 +17,7 @@
 #include "AppList.h"
 
 
-#ifdef CONFIG_FUNCTION_DISPLAY
+#if defined(CONFIG_FUNCTION_DISPLAY) && defined(CONFIG_FUNCTION_DISPLAY_MENU)
 
 /* Note: Shall be excluded if there is no used function, because  AppList will be empty */
 
