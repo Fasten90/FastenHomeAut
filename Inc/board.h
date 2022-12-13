@@ -1866,16 +1866,22 @@ BUTTON_LEFT            GPIOA15
 #endif    /* CONFIG_MODULE_BUTTON_ENABLE */
 
 
+// Charger
 
-#define IO_INPUTS_NUM    0
-
+// TODO: IO_INPUTS_NUM not a proper values if we use more inputs
 #ifdef CONFIG_MODULE_IO_BATTERY_CHARGER_ENABLE
 
-#define IO_INPUT_BATTERYCHARGER_CLK_ENABLES()        \
-        __GPIOA_CLK_ENABLE()
+    #define IO_INPUTS_NUM    1
 
-#define IO_INPUT_BATTERYCHARGER_GPIO_PORT            GPIOA
-#define IO_INPUT_BATTERYCHARGER_GPIO_PIN             GPIO_PIN_12
+    #define IO_INPUT_BATTERYCHARGER_CLK_ENABLES()        \
+            __GPIOA_CLK_ENABLE()
+
+    #define IO_INPUT_BATTERYCHARGER_GPIO_PORT            GPIOA
+    #define IO_INPUT_BATTERYCHARGER_GPIO_PIN             GPIO_PIN_12
+
+#else
+
+    #define IO_INPUTS_NUM    0
 
 #endif
 
