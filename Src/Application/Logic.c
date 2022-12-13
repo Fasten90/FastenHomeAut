@@ -233,24 +233,23 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 #ifdef CONFIG_FUNCTION_CHARGER
 void Logic_CheckCharger(void)
 {
-    InputState_t chargeState = IO_GetInputState(Input_BatteryCharger);
+    IO_Status_t chargeState = IO_GetInputState(Input_BatteryCharger);
     bool isCharging = false;
 
     /* Check actual state */
     switch (chargeState)
     {
-        case InputState_Active:
+        case IO_Status_On:
             /* Battery is charging... */
             isCharging = true;
             break;
 
-        case InputState_Inactive:
+        case IO_Status_Off:
             /* Battery is not charging */
             isCharging = false;
             break;
 
-        case InputState_Unknown:
-        case InputState_Count:
+        case IO_Status_Unknown:
         default:
             uprintf("Battery charge state error!\r\n");
             /* reak; */
