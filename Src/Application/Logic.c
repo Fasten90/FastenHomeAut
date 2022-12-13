@@ -32,6 +32,7 @@
 
 #ifdef CONFIG_FUNCTION_CHARGER
 #include "ADC.h"
+#include "IO.h"
 #endif
 
 #ifdef CONFIG_FUNCTION_GAME_SNAKE
