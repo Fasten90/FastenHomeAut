@@ -233,7 +233,7 @@ void Logic_ButtonEventHandler(ButtonType_t button, ButtonPressType_t type)
 #ifdef CONFIG_FUNCTION_CHARGER
 void Logic_CheckCharger(void)
 {
-    IO_Status_t chargeState = IO_GetInputState(Input_BatteryCharger);
+    IO_Status_t chargeState = IO_GetInputState(IO_Input_BatteryCharger);
     bool isCharging = false;
 
     /* Check actual state */
