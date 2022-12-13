@@ -481,7 +481,7 @@ stages:
         echo "Clone FastenTestSystem"
         git clone https://github.com/Fasten90/FastenTestSystem.git
         cd FastenTestSystem
-        git checkout develop
+        git checkout fix_special_multilines
         # Execute
         echo "Executing..."
         pwd  # Debug
