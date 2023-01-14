@@ -14,6 +14,7 @@
  *----------------------------------------------------------------------------*/
 
 #include "options.h"
+#include "board.h"
 #include "SmallApps.h"
 #include "DebugUart.h"
 #include "StringHelper.h"
@@ -135,7 +136,11 @@ static void DisplayInput_StepLetterNextValue(int8_t step);
 
 #ifdef CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK
 static void DisplayLargeClock_StepConfig(void);
+    #if (CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK_ADVANCED == 1)
+static void DisplayLargeClock_StepValue(ButtonType_t button);
+    #else
 static void DisplayLargeClock_StepValue(void);
+    #endif
 #endif
 
 
@@ -501,7 +506,11 @@ void App_DisplayLargeClock_Event(ButtonType_t button, ButtonPressType_t type)
             if (App_Clock_SystemTimeConfigState != DisplayClock_HourAndMinute)
             {
                 /* Not exit step, step values */
+        #if (CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK_ADVANCED == 1)
+                DisplayLargeClock_StepValue(button);
+        #else
                 DisplayLargeClock_StepValue();
+        #endif
             }
             else
             {
@@ -510,6 +519,8 @@ void App_DisplayLargeClock_Event(ButtonType_t button, ButtonPressType_t type)
                 Logic_Display_ChangeState(AppType_MainMenu);
             }
         }
+    #else
+        #error("Display without button")
     #endif
 }
 
@@ -604,7 +615,11 @@ static void DisplayLargeClock_StepConfig(void)
 /**
  * @brief       SystemTime - change (increment) selected value (hour, minute, or none)
  */
+#if (CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK_ADVANCED == 1)
+static void DisplayLargeClock_StepValue(ButtonType_t button)
+#else
 static void DisplayLargeClock_StepValue(void)
+#endif
 {
     switch (App_Clock_SystemTimeConfigState)
     {
@@ -617,7 +632,24 @@ static void DisplayLargeClock_StepValue(void)
             /* Hour */
             DateTime_t dateTime;
             SysTime_GetDateTime(&dateTime);
+    #if (CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK_ADVANCED == 1)
+            switch (button)
+            {
+                case PressedButton_Up:
+                    DateTime_AddHour(&dateTime);
+                    break;
+                case PressedButton_Down:
+                    DateTime_SubHour(&dateTime);
+                    break;
+                case PressedButton_Right:
+                case PressedButton_Left:
+                case PressedButton_Count:
+                default:
+                    break;
+            }
+    #else
             DateTime_AddHour(&dateTime);
+    #endif
             SysTime_SetTime(&dateTime.time);    /* Only hour changed, date is not */
             TaskHandler_RequestTaskScheduling(Task_Display);
         }
@@ -628,7 +660,24 @@ static void DisplayLargeClock_StepValue(void)
             /* Minute */
             DateTime_t dateTime;
             SysTime_GetDateTime(&dateTime);
-            DateTime_AddMinute(&dateTime);
+    #if (CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK_ADVANCED == 1)
+        switch (button)
+        {
+            case PressedButton_Up:
+                DateTime_AddMinute(&dateTime);
+                break;
+            case PressedButton_Down:
+                DateTime_SubMinute(&dateTime);
+                break;
+            case PressedButton_Right:
+            case PressedButton_Left:
+            case PressedButton_Count:
+            default:
+                break;
+        }
+    #else
+        DateTime_AddMinute(&dateTime);
+    #endif
             SysTime_SetTime(&dateTime.time);    /* Only hour changed, date is not */
             TaskHandler_RequestTaskScheduling(Task_Display);
         }

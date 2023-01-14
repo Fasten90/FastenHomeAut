@@ -621,6 +621,28 @@ void DateTime_AddMinute(DateTime_t *dateTime)
 }
 
 
+
+/**
+ * @brief       Substract one minute to actual DateTime
+ * @note        If minute is "0" the next value will "59" (and the hour is not stepped!)
+ *              Only can be use for "settings" not for periodically stepping
+ */
+void DateTime_SubMinute(DateTime_t *dateTime)
+{
+    if (dateTime == NULL)
+        return;
+
+    if (dateTime->time.minute == 0)
+    {
+        dateTime->time.minute = 59;
+    }
+    else
+    {
+        dateTime->time.minute--;
+    }
+}
+
+
 /* TODO: Idea, if more minute / hour added: dateTime->time.minute = (dateTime->time.minute + 1) % 60; */
 
 
@@ -646,6 +668,28 @@ void DateTime_AddHour(DateTime_t *dateTime)
     /* ateTime->time.hour = (dateTime->time.hour + 1) % 24; */
 }
 
+
+
+/**
+ * @brief       Substract one hour to actual DateTime
+ * @note        If hour is "0" the next value will "23" (and the day is not stepped!)
+ */
+void DateTime_SubHour(DateTime_t *dateTime)
+{
+    if (dateTime == NULL)
+        return;
+
+    if (dateTime->time.hour == 0)
+    {
+        dateTime->time.hour = 23;
+    }
+    else
+    {
+        dateTime->time.hour--;
+    }
+
+    /* ateTime->time.hour = (dateTime->time.hour + 1) % 24; */
+}
 
 
 /**
