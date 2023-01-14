@@ -129,6 +129,10 @@ void DateTime_StepOneSecond(DateTime_t *dateTime);
 
 void DateTime_AddMinute(DateTime_t *dateTime);
 void DateTime_AddHour(DateTime_t *dateTime);
+/* Optionals */
+void DateTime_SubMinute(DateTime_t *dateTime);
+void DateTime_SubHour(DateTime_t *dateTime);
+
 
 #ifdef CONFIG_MODULE_DATETIME_UNITTEST_ENABLE
 uint32_t DateTime_UnitTest(void);

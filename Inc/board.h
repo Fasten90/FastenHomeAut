@@ -1360,7 +1360,7 @@ _GPIO2            PB15
 /* DOWN      S3    BUTTON_2        GPIOB12 */
 /* RIGHT     S1    BUTTON_1        GPIOA0 */
 
-#define BUTTON_NUM                    4
+#define BUTTON_NUM                    (4)
 
 #define BUTTON_RIGHT_GPIO_PORT        GPIOA
 #define BUTTON_RIGHT_GPIO_PIN         GPIO_PIN_0
