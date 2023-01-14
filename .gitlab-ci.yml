@@ -143,6 +143,10 @@ test_linux_gcc_coverage_script:
 test_linux_arm_none_eabi_gcc_qemu_test:
   stage: test
   script: |
+    # Python
+    apt-get install -y python3 python3-pip  
+    alias python=python3
+    
     # ARM-none-eabi-gcc
     # Note: Similar installation as ARM none eabi gcc build
     apt-get update -y
@@ -284,6 +288,7 @@ analysis_fasten_static_analyzer:
     echo FastenStaticAnalyzer
     
     apt-get install -y python3 python3-pip
+    alias python=python3
     
     echo clone FastenStaticAnalyzer
     git clone https://github.com/fasten90/FastenStaticAnalyzer --branch task_fix_linux_pip_issue
