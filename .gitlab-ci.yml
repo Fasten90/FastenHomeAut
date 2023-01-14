@@ -359,6 +359,10 @@ compiler_warning:
     cd Tools
     # Clone CWC
     git clone https://github.com/Fasten90/CompilerWarningCollector.git
+    # TODO: Temporary:
+    pushd CompilerWarningCollector
+    git checkout fix_python_dictionary_change
+    popd
     
     # Run CWC
     # Default config: scc_config.json
