@@ -607,7 +607,9 @@ static void DisplayLargeClock_StepConfig(void)
 
     App_Clock_SystemTimeConfigState++;
     if (App_Clock_SystemTimeConfigState >= DisplayClock_Count)
+    {
         App_Clock_SystemTimeConfigState = 0;
+    }
 }
 
 
