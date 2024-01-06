@@ -122,6 +122,11 @@ const size_t TrafficLight_Lamp_List_Len = NUM_OF(TrafficLight_Lamp_Up_List);
 #endif /* CONFIG_FUNCTION_TRAFFIC_LIGHT */
 
 
+#if defined(CONFIG_FUNCTION_ELEVATOR)
+static volatile int32_t App_Elevator_level = 0;
+#endif /* CONFIG_FUNCTION_ELEVATOR */
+
+
 
 /*------------------------------------------------------------------------------
  *  Function declarations
@@ -607,7 +612,9 @@ static void DisplayLargeClock_StepConfig(void)
 
     App_Clock_SystemTimeConfigState++;
     if (App_Clock_SystemTimeConfigState >= DisplayClock_Count)
+    {
         App_Clock_SystemTimeConfigState = 0;
+    }
 }
 
 
@@ -1040,3 +1047,79 @@ void App_TrafficLight_TaskFunction(ScheduleSource_t source)
 #endif /* CONFIG_FUNCTION_TASK_TRAFFIC_LIGHT */
 
 #endif    /* CONFIG_FUNCTION_TRAFFIC_LIGHT */
+
+
+#if defined(CONFIG_FUNCTION_ELEVATOR)
+
+void App_DisplayElevator_Init(void)
+{
+    App_Elevator_level = 0;
+    App_DisplayElevator_Update(ScheduleSource_EventTriggered);
+}
+
+void App_DisplayElevator_Event(ButtonType_t button, ButtonPressType_t type)
+{
+    if (type != ButtonPress_ReleasedContinuous)
+    {
+        switch (button)
+        {
+            case PressedButton_Right:
+                /* Right */
+                //DisplayInput_StepLetterPosition((type == ButtonPress_Short || type == ButtonPress_Continuous) ? 1 : 3);
+                break;
+
+            case PressedButton_Left:
+                /* Left */
+                //DisplayInput_StepLetterPosition((type == ButtonPress_Short || type == ButtonPress_Continuous) ? -1 : -3);
+                break;
+
+            case PressedButton_Up:
+                /* Up */
+                App_Elevator_level++;
+                App_DisplayElevator_Update(ScheduleSource_EventTriggered);
+                break;
+
+            case PressedButton_Down:
+                /* Down */
+                App_Elevator_level--;
+                App_DisplayElevator_Update(ScheduleSource_EventTriggered);
+                break;
+
+            case PressedButton_Count:
+            default:
+                /* Error! */
+                break;
+        }
+    }
+}
+
+
+void App_DisplayElevator_Update(ScheduleSource_t source)
+{
+    UNUSED_ARGUMENT(source);
+
+    uint32_t level_without_sign = 0;
+    char elevator_level_string[5];
+
+    if (App_Elevator_level < 0)
+    {
+        level_without_sign = -App_Elevator_level;
+        usnprintf(elevator_level_string, 5, ":%d", level_without_sign);
+    }
+    else
+    {
+        level_without_sign = App_Elevator_level;
+        usnprintf(elevator_level_string, 5, "%d", level_without_sign);
+    }
+
+    Display_Clear();
+    Display_Activate();
+    Display_PrintString(elevator_level_string, 0, Font_32x20, Display_NoFormat);
+    Display_Activate();
+    TaskHandler_DisableTask(Task_Display);
+}
+
+
+#endif /* CONFIG_FUNCTION_ELEVATOR */
+
+

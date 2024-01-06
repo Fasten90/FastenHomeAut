@@ -86,7 +86,14 @@ const App_List_t AppList[] = {
         .updateFunction = App_TrafficLight_Update
     },
     #endif
-
+    #ifdef CONFIG_FUNCTION_ELEVATOR
+    {
+        .AppName = "Elevator",
+        .initFunction = App_DisplayElevator_Init,
+        .eventFunction = App_DisplayElevator_Event,
+        .updateFunction = App_DisplayElevator_Update
+    },
+    #endif
 };
 
 const uint8_t AppList_Num = NUM_OF(AppList);

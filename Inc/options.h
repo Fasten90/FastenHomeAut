@@ -117,7 +117,9 @@
         /* Display: Show screen (Car animation)*/
         #define CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
 
-        #define CONFIG_FUNCTION_TRAFFIC_LIGHT
+        /* #define CONFIG_FUNCTION_TRAFFIC_LIGHT */
+
+        #define CONFIG_FUNCTION_ELEVATOR
 
         /* Display: Scrolling menu (Use only for longer then 3 menu) */
         /* #define CONFIG_FUNCTION_DISPLAY_MENU_SCROLLING */
