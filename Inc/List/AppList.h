@@ -53,6 +53,9 @@ typedef enum
 #ifdef CONFIG_FUNCTION_TRAFFIC_LIGHT
     AppType_TrafficLight,
 #endif
+#ifdef CONFIG_FUNCTION_ELEVATOR
+    AppType_Elevator,
+#endif
 
     /* Note: Last item, do not put anything after */
     AppType_Count

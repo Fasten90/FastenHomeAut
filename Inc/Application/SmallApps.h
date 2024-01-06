@@ -121,5 +121,10 @@ void App_TrafficLight_Update(ScheduleSource_t source);
 
 void App_TrafficLight_TaskFunction(ScheduleSource_t source);
 
+void App_DisplayElevator_Init(ScheduleSource_t source);
+void App_DisplayElevator_Update(ScheduleSource_t source);
+void App_DisplayElevator_Event(ButtonType_t button, ButtonPressType_t type);
+
+
 
 #endif /* SMALLAPPS_H_ */
