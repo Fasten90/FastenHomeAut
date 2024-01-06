@@ -57,8 +57,8 @@ typedef enum
 
 typedef struct
 {
-    uint32_t Format_Center:        1;            ///< Text on center
-    uint32_t Format_Inverse:    1;            ///< Text inverted with the text character background
+    uint32_t Format_Center:       1;            ///< Text on center
+    uint32_t Format_Inverse:      1;            ///< Text inverted with the text character background
     uint32_t Format_Underline:    1;            ///< Text unverlined
 } FontFormat_t;
 

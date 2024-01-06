@@ -1054,51 +1054,7 @@ void App_TrafficLight_TaskFunction(ScheduleSource_t source)
 void App_DisplayElevator_Init(void)
 {
     App_Elevator_level = 0;
-}
-
-
-void App_DisplayElevator_Update(ScheduleSource_t source)
-{
-    uuint32 level_without_sign = 0;
-
-    if (App_Elevator_level < 0)
-    {
-        Display_PrintFont32x20("-", 0,
-                DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
-                DISPLAY_FONT32X20_CLOCK_START_POSITION_Y,
-                Display_NoFormat);
-        level_without_sign = -App_Elevator_level;
-    }
-    else
-    {
-        Display_PrintFont32x20(" ", 0,
-                DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
-                DISPLAY_FONT32X20_CLOCK_START_POSITION_Y,
-                Display_NoFormat);
-        level_without_sign = App_Elevator_level;
-    }
-
-    /* 1 --> 1, 100, 1, 0, 0*/
-    uint8_t case_count = 1;
-    uint8_t digit = 0;
-    if (level_without_sign >= 100)
-    {
-        case_count = 3;
-    }
-    else if (level_without_sign >= 10)
-    {
-        case_count = 2;
-    }
-
-    for (uint8_t i=0; i<case_count; i++)
-    {
-        /* 1 - 10^0, 2. - ^ 10^1, 3. - 10^3 */
-        digit = level_without_sign / power(10, case_count-1-i);
-        Display_PrintFont32x20(digit, 1+i,
-                DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
-                DISPLAY_FONT32X20_CLOCK_START_POSITION_Y,
-                Display_NoFormat);
-    }
+    App_DisplayElevator_Update(ScheduleSource_EventTriggered);
 }
 
 void App_DisplayElevator_Event(ButtonType_t button, ButtonPressType_t type)
@@ -1120,11 +1076,13 @@ void App_DisplayElevator_Event(ButtonType_t button, ButtonPressType_t type)
             case PressedButton_Up:
                 /* Up */
                 App_Elevator_level++;
+                App_DisplayElevator_Update(ScheduleSource_EventTriggered);
                 break;
 
             case PressedButton_Down:
                 /* Down */
                 App_Elevator_level--;
+                App_DisplayElevator_Update(ScheduleSource_EventTriggered);
                 break;
 
             case PressedButton_Count:
@@ -1133,6 +1091,32 @@ void App_DisplayElevator_Event(ButtonType_t button, ButtonPressType_t type)
                 break;
         }
     }
+}
+
+
+void App_DisplayElevator_Update(ScheduleSource_t source)
+{
+    UNUSED_ARGUMENT(source);
+
+    uint32_t level_without_sign = 0;
+    char elevator_level_string[5];
+
+    if (App_Elevator_level < 0)
+    {
+        level_without_sign = -App_Elevator_level;
+        usnprintf(elevator_level_string, 5, ":%d", level_without_sign);
+    }
+    else
+    {
+        level_without_sign = App_Elevator_level;
+        usnprintf(elevator_level_string, 5, "%d", level_without_sign);
+    }
+
+    Display_Clear();
+    Display_Activate();
+    Display_PrintString(elevator_level_string, 0, Font_32x20, Display_NoFormat);
+    Display_Activate();
+    TaskHandler_DisableTask(Task_Display);
 }
 
 
