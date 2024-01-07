@@ -5,6 +5,11 @@
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
 # For more information, see: https://docs.gitlab.com/ee/ci/yaml/index.html#stages
 
+
+default:
+  image: ubuntu:latest
+
+
 stages:
   - build
   - test
@@ -17,21 +22,38 @@ stages:
 
 
 before_script:
-    - gcc --version
+    - apt-get update -qq
+
+    - if gcc --version ; then
+    -   echo "GCC available"
+    - else
+    -   apt-get -y install gcc
+    -   gcc --version
+    - fi
 
     #  Install a CMake 3.0.2 version.
     #- apt-get update -qq
     #- apt-get install cmake -y
     #  Alternatively you could install a CMake 3.2.2 version through PPA repository.
-    - apt-get update -qq
-    - apt-get install software-properties-common -y
+    - apt-get -y install software-properties-common
 
-    - apt-get update -qq
     #- apt-get install cmake -y --allow  # Does not work
-    - apt-get install cmake -y --force-yes
-
+    - apt-get -y install cmake --force-yes
     - cmake --version
+    
+    - if python3 --version ; then
+    -   echo "python available"
+    - else
+    -   apt-get -y install python3
+    -   python3 --version
+    - fi
 
+    - if git --version ; then
+    -  echo "Git is available"
+    - else
+    -  apt-get -y install git
+    -  git --version 
+    - fi
 
 build_linux_gcc:
   stage: build
@@ -145,7 +167,6 @@ test_linux_arm_none_eabi_gcc_qemu_test:
   script: |
     # Python
     apt-get install -y python3 python3-pip  
-    alias python=python3
     
     # ARM-none-eabi-gcc
     # Note: Similar installation as ARM none eabi gcc build
@@ -153,12 +174,12 @@ test_linux_arm_none_eabi_gcc_qemu_test:
     apt-get install -y gcc-arm-none-eabi
     apt-get install -y gdb-multiarch
     ln -s /usr/bin/gdb-multiarch /usr/bin/arm-none-eabi-gdb
+    apt-get install -y wget
     
     arm-none-eabi-gcc --version
     arm-none-eabi-gdb --version
     
     # Python
-    python --version
     python3 --version
     
     # QEMU

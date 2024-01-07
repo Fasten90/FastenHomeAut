@@ -12,5 +12,5 @@ DEFAULT_ANALYZER_ARGS="-std=c99 -nostdinc -E -D_Atomic(_arg)=_arg -DINLINE_FUNCT
 # TODO: Not the best pattern for c files
 for file in $(git ls-files -x *c) ; 
 do
-    python -u FastenStaticAnalyzer/FastenStaticAnalyzer.py --source=$file --preprocessor="gcc" --preprocessor_args="${DEFAULT_ANALYZER_ARGS} ${ARGS} ${INCLUDES}" --delete_temporary_files --export_file="StaticAnalysisResult.csv" --extend_export_file
+    python3 -u FastenStaticAnalyzer/FastenStaticAnalyzer.py --source=$file --preprocessor="gcc" --preprocessor_args="${DEFAULT_ANALYZER_ARGS} ${ARGS} ${INCLUDES}" --delete_temporary_files --export_file="StaticAnalysisResult.csv" --extend_export_file
 done
