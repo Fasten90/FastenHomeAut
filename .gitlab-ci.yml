@@ -43,7 +43,7 @@ before_script:
     - if python --version ; then
     -   echo "python available"
     - else
-    -   apt-get -y install gcc
+    -   apt-get -y install python
     -   python --version
     - fi
 
