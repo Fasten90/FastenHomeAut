@@ -22,21 +22,30 @@ stages:
 
 
 before_script:
-    - gcc --version
+    - apt-get update -qq
+
+    - if gcc --version ; then
+    -   echo "GCC available"
+    - else
+    -   apt-get -y install gcc
+    - fi
 
     #  Install a CMake 3.0.2 version.
     #- apt-get update -qq
     #- apt-get install cmake -y
     #  Alternatively you could install a CMake 3.2.2 version through PPA repository.
-    - apt-get update -qq
-    - apt-get install software-properties-common -y
+    - apt-get -y install software-properties-common
 
-    - apt-get update -qq
     #- apt-get install cmake -y --allow  # Does not work
-    - apt-get install cmake -y --force-yes
-
+    - apt-get -y install cmake --force-yes
     - cmake --version
-
+    
+    - if python --version ; then
+    -   echo "python available"
+    - else
+    -   apt-get -y install gcc
+    -   python --version
+    - fi
 
 build_linux_gcc:
   stage: build
