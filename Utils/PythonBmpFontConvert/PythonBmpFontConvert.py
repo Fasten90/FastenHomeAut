@@ -3,97 +3,15 @@ Python - BMP -> Font converter
 For Display - HomeAut system (FastenNode)
 
 @author	Vizi Gábor
-"""
+"""    
 
 
-# Parameters
-
-"""
-# Font 8x5 - 128 ASCII characters in 4 line
-imagename = 'Font_8x5_v6.bmp'
-codefilename = 'Font8x5'
-
-fontname = "Font - 8x5"
-
-font_store_height = 8
-font_store_width = 5
-
-column_storing = True
-byte_storing = 1
-
-font_line_numbers = 4
-font_character_numbers = 128
-"""
-
-"""
-# Font 12x8 - 128 ASCII characters in 4 line
-imagename = 'Font_12x8_v2.bmp'
-codefilename = 'Font12x8'
-
-fontname = "Font - 12x8"
-
-font_store_height = 12
-font_store_width = 8
-
-column_storing = False
-byte_storing = 1
-
-font_line_numbers = 4
-font_character_numbers = 128
-"""
-
-"""
-# Font 32x20 - "0-9" + ":"
-imagename = 'Font_32x20.bmp'
-codefilename = 'Font32x20'
-
-fontname = "Font - 32x20"
-
-font_store_height = 32
-font_store_width = 20
-
-column_storing = True
-byte_storing = 4
-
-font_line_numbers = 1
-font_character_numbers = 11
-"""
-
-
-print("Image file name: " + imagename)
-print("Code file name: " + codefilename)
-
-
-file = open(imagename,'rb')
-codefile = open(codefilename + ".c", 'wt')
-
-data = file.read()
-
-file.close()
-
-sizex = int.from_bytes(data[18:21], byteorder='little', signed=False)
-sizey = int.from_bytes(data[22:25], byteorder='little', signed=False)
-
-print("Size X: " + str(sizex))
-print("Size Y: " + str(sizey))
-
-
-
-bitmap_process = []
-
-bitmap_process = data[54:]
-
-bitmap = [0 for x in range(sizex*sizey)]
-
-bitmap2 = []
-
-
-def process_font(font, index):
+def process_font(codefile, font, index):
 	""" Process a font character (print stdout and file)"""
 	global font_store_height
 	print("Index: " + str(index))
 	print_font(font)
-	print_font_to_codefile(font, index)
+	print_font_to_codefile(codefile, font, index)
 
 
 def print_font(font):
@@ -116,9 +34,8 @@ def print_font_line(font_line):
 	print(line_string)
 
 	
-def print_font_to_codefile(font, index):
+def print_font_to_codefile(codefile, font, index):
 	""" Print a font character to code file """
-	global codefile
 	# Print index
 	codefile.write("\t/* Font: \"" + chr(index) + "\" (dec: " + str(index) + ", hex: 0x" + format(index, '02X') +") */\n")
 
@@ -175,105 +92,189 @@ def print_font_to_codefile(font, index):
 	codefile.write(" },\n")
 
 
-# Convert pixel colours to one color (BLUE)
-skip_index = 0
-for i in range(0, sizex*sizey):
-	try:
-		if (sizex % 4) != 0:
-			if i % (sizex+1) == 0:
-				# Skip last byte(s) of row
-				skip_index += sizex%4
-			# Copy pixel
-			bitmap[i] = bitmap_process[i*3+skip_index]
-		else:
-			# Copy pixel without problem
-			bitmap[i] = bitmap_process[i*3]
-	except Exception as excpt:
-		print("Error:" + str(excpt))
+def generate_images():
+
+    print("Image file name: " + imagename)
+    print("Code file name: " + codefilename)
 
 
-#if need_extend:
-	# Restore row length
-#	 sizex = original_sizex
+    file = open(imagename,'rb')
+    codefile = open(codefilename + ".c", 'wt')
 
-# Convert bitmap to top --> bottom bitmap
-for bitmap_line_index in range (0, sizey):
-	bitmap2[(bitmap_line_index*sizex) : ((bitmap_line_index + 1) * sizex)] \
-		= bitmap[(sizex*sizey - (bitmap_line_index + 1) * sizex) : (sizex*sizey - bitmap_line_index * sizex)]
+    data = file.read()
 
+    file.close()
 
-bitmap = bitmap2
+    sizex = int.from_bytes(data[18:21], byteorder='little', signed=False)
+    sizey = int.from_bytes(data[22:25], byteorder='little', signed=False)
 
-
-# Convert to matrix
-Matrix = [[0 for x in range(sizex)] for y in range(sizey)]
-
-for bitmap_line_index in range(0, sizey):
-	Matrix[bitmap_line_index][0:sizex] = bitmap[bitmap_line_index*sizex : (bitmap_line_index+1)*sizex]
+    print("Size X: " + str(sizex))
+    print("Size Y: " + str(sizey))
 
 
-# Skip every font_store_height + 1. index line
-# Skip "------------------------------"
-line_index = 0
-for bitmap_line_index in range (0, sizey):
-	if (bitmap_line_index % (font_store_height+1)) != 0:
-		# Copy this line
-		Matrix[line_index][:] = Matrix[bitmap_line_index][:]
-		line_index += 1
+    bitmap_process = []
+
+    bitmap_process = data[54:]
 
 
-sizey = font_store_height * font_line_numbers
+    bitmap2 = []
+
+    bitmap = [0 for x in range(sizex*sizey)]
+
+    # Convert pixel colours to one color (BLUE)
+    skip_index = 0
+    for i in range(0, sizex*sizey):
+        try:
+            if (sizex % 4) != 0:
+                if i % (sizex+1) == 0:
+                    # Skip last byte(s) of row
+                    skip_index += sizex%4
+                # Copy pixel
+                bitmap[i] = bitmap_process[i*3+skip_index]
+            else:
+                # Copy pixel without problem
+                bitmap[i] = bitmap_process[i*3]
+        except Exception as excpt:
+            print("Error:" + str(excpt))
 
 
-# Skip every "|"
-new_bitmap_width = int(font_store_width * font_character_numbers / font_line_numbers)
-column_index = 0
+    #if need_extend:
+        # Restore row length
+    #	 sizex = original_sizex
 
-# Process a colum
-for bitmap_column_index in range(0, sizex):
-	# Check actual column
-	try:
-		if (bitmap_column_index % (font_store_width+1)) != 0:
-			# Copy actual column, if good
-			for line in range(0, sizey):
-				Matrix[line][column_index] = Matrix[line][bitmap_column_index]
-			column_index += 1
-	except Exception as excpt:
-		print("Error...")
-
-sizex = new_bitmap_width
+    # Convert bitmap to top --> bottom bitmap
+    for bitmap_line_index in range (0, sizey):
+        bitmap2[(bitmap_line_index*sizex) : ((bitmap_line_index + 1) * sizex)] \
+            = bitmap[(sizex*sizey - (bitmap_line_index + 1) * sizex) : (sizex*sizey - bitmap_line_index * sizex)]
 
 
-# Lines
-font = [[0 for x in range(font_store_width)] for y in range(font_store_height)]
+    bitmap = bitmap2
 
 
-# Print header of code file
-# TODO: include
-codefile.write("#include \"" + codefilename + ".h\"\n")
-codefile.write("\n")
-codefile.write("\n")
-codefile.write("/* " + fontname + " */\n")
-codefile.write("const uint8_t " + codefilename +"[FONT_NUM][FONT_STORE_SIZE] = {\n")
+    # Convert to matrix
+    Matrix = [[0 for x in range(sizex)] for y in range(sizey)]
+
+    for bitmap_line_index in range(0, sizey):
+        Matrix[bitmap_line_index][0:sizex] = bitmap[bitmap_line_index*sizex : (bitmap_line_index+1)*sizex]
 
 
-for font_line_index in range(0, font_line_numbers):
-	for font_column_index in range(0, int(font_character_numbers / font_line_numbers)):
-		# This code not worked?
-		#font[0:font_store_height][0:font_store_width] \
-		#	= Matrix[font_line_index*font_store_height:(font_line_index+1)*font_store_height] \
-		#		[font_column_index*font_store_width:(font_column_index+1)*font_store_width]
-		for y in range(font_store_height):	
-			for x in range(font_store_width):
-				font[y][x] \
-					= Matrix[(font_line_index*font_store_height) + y] \
-						[(font_column_index*font_store_width) + x]
-
-		# Process this font
-		index = font_line_index*int(font_character_numbers / font_line_numbers) + font_column_index
-		process_font(font, index)
+    # Skip every font_store_height + 1. index line
+    # Skip "------------------------------"
+    line_index = 0
+    for bitmap_line_index in range (0, sizey):
+        if (bitmap_line_index % (font_store_height+1)) != 0:
+            # Copy this line
+            Matrix[line_index][:] = Matrix[bitmap_line_index][:]
+            line_index += 1
 
 
-# Print end of code file
-codefile.write("};\n")
-codefile.write("/* End of font*/\n")
+    sizey = font_store_height * font_line_numbers
+
+
+    # Skip every "|"
+    new_bitmap_width = int(font_store_width * font_character_numbers / font_line_numbers)
+    column_index = 0
+
+    # Process a colum
+    for bitmap_column_index in range(0, sizex):
+        # Check actual column
+        try:
+            if (bitmap_column_index % (font_store_width+1)) != 0:
+                # Copy actual column, if good
+                for line in range(0, sizey):
+                    Matrix[line][column_index] = Matrix[line][bitmap_column_index]
+                column_index += 1
+        except Exception as excpt:
+            print("Error...")
+
+    sizex = new_bitmap_width
+
+
+    # Lines
+    font = [[0 for x in range(font_store_width)] for y in range(font_store_height)]
+
+
+    # Print header of code file
+    # TODO: include
+    codefile.write("#include \"" + codefilename + ".h\"\n")
+    codefile.write("\n")
+    codefile.write("\n")
+    codefile.write("/* " + fontname + " */\n")
+    codefile.write("const uint8_t " + codefilename +"[FONT_NUM][FONT_STORE_SIZE] = {\n")
+
+
+    for font_line_index in range(0, font_line_numbers):
+        for font_column_index in range(0, int(font_character_numbers / font_line_numbers)):
+            # This code not worked?
+            #font[0:font_store_height][0:font_store_width] \
+            #	= Matrix[font_line_index*font_store_height:(font_line_index+1)*font_store_height] \
+            #		[font_column_index*font_store_width:(font_column_index+1)*font_store_width]
+            for y in range(font_store_height):	
+                for x in range(font_store_width):
+                    font[y][x] \
+                        = Matrix[(font_line_index*font_store_height) + y] \
+                            [(font_column_index*font_store_width) + x]
+
+            # Process this font
+            index = font_line_index*int(font_character_numbers / font_line_numbers) + font_column_index
+            process_font(codefile, font, index)
+
+
+    # Print end of code file
+    codefile.write("};\n")
+    codefile.write("/* End of font*/\n")
+
+
+# Font 8x5 - 128 ASCII characters in 4 line
+imagename = 'Font_8x5_v6.bmp'
+codefilename = 'Font8x5'
+
+fontname = "Font - 8x5"
+
+font_store_height = 8
+font_store_width = 5
+
+column_storing = True
+byte_storing = 1
+
+font_line_numbers = 4
+font_character_numbers = 128
+
+generate_images()
+
+
+# Font 12x8 - 128 ASCII characters in 4 line
+imagename = 'Font_12x8_v2.bmp'
+codefilename = 'Font12x8'
+
+fontname = "Font - 12x8"
+
+font_store_height = 12
+font_store_width = 8
+
+column_storing = False
+byte_storing = 1
+
+font_line_numbers = 4
+font_character_numbers = 128
+
+generate_images()
+
+
+# Font 32x20 - "0-9" + ":"
+imagename = 'Font_32x20.bmp'
+codefilename = 'Font32x20'
+
+fontname = "Font - 32x20"
+
+font_store_height = 32
+font_store_width = 20
+
+column_storing = True
+byte_storing = 4
+
+font_line_numbers = 1
+font_character_numbers = 13
+
+generate_images()
+
