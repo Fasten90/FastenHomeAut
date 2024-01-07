@@ -40,11 +40,11 @@ before_script:
     - apt-get -y install cmake --force-yes
     - cmake --version
     
-    - if python --version ; then
+    - if python3 --version ; then
     -   echo "python available"
     - else
     -   apt-get -y install python3
-    -   python --version
+    -   python3 --version
     - fi
 
 build_linux_gcc:
