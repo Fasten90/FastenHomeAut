@@ -1098,22 +1098,10 @@ void App_DisplayElevator_Update(ScheduleSource_t source)
 {
     UNUSED_ARGUMENT(source);
 
-    uint32_t level_without_sign = 0;
     char elevator_level_string[5];
 
-    if (App_Elevator_level < 0)
-    {
-        level_without_sign = -App_Elevator_level;
-        usnprintf(elevator_level_string, 5, ":%d", level_without_sign);
-    }
-    else
-    {
-        level_without_sign = App_Elevator_level;
-        usnprintf(elevator_level_string, 5, "%d", level_without_sign);
-    }
+    usnprintf(elevator_level_string, 5, "%d  ", App_Elevator_level);
 
-    Display_Clear();
-    Display_Activate();
     Display_PrintString(elevator_level_string, 0, Font_32x20, Display_NoFormat);
     Display_Activate();
     TaskHandler_DisableTask(Task_Display);

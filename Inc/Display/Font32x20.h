@@ -23,11 +23,11 @@
 
 
 /* This font contain only 11 "font character": 0-9 (numbers) + ':' character for hour displaying */
-#define FONT_32X20_NUM                ( 11 )
+#define FONT_32X20_NUM               ( 13 )
 #define FONT_32X20_STORE_SIZE        ( 20 )
 
 #define FONT_32X20_HEIGHT            ( 32 )
-#define FONT_32X20_WIDTH            ( 20 )
+#define FONT_32X20_WIDTH             ( 20 )
 
 
 /*------------------------------------------------------------------------------

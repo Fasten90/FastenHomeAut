@@ -282,6 +282,21 @@ void Display_PrintFont32x20(uint8_t chr, uint8_t index, uint8_t startposx, uint8
         /* ':'    - Dependent with Font store (32x20) */
         chr = 10;
     }
+    else if (chr == '-')
+    {
+        /* '-'    - Dependent with Font store (32x20) */
+        chr = 11;
+    }
+    else if (chr == ' ')
+    {
+        /* ''    - Dependent with Font store (32x20) */
+        chr = 12;
+    }
+    else
+    {
+        /* Unknown, let be it '-' */
+        chr = 11;
+    }
 
     /* Step on columns */
     for (i = 0; i < FONT_32X20_WIDTH; i++)
