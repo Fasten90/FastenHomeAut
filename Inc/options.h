@@ -112,6 +112,7 @@
         #endif
         /* Display: Snake game */
         /* #define CONFIG_FUNCTION_GAME_SNAKE */
+
         /* Display: Input */
         /* #define CONFIG_FUNCTION_DISPLAY_INPUT */
         /* Display: Show screen (Car animation)*/
