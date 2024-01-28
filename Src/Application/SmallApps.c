@@ -1098,9 +1098,9 @@ void App_DisplayElevator_Update(ScheduleSource_t source)
 {
     UNUSED_ARGUMENT(source);
 
-    char elevator_level_string[5];
+    char elevator_level_string[6];
 
-    usnprintf(elevator_level_string, 5, "%d  ", App_Elevator_level);
+    usnprintf(elevator_level_string, 6, "%d  ", App_Elevator_level);
 
     Display_PrintString(elevator_level_string, 0, Font_32x20, Display_NoFormat);
     Display_Activate();
