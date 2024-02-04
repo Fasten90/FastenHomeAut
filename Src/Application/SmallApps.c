@@ -1055,6 +1055,8 @@ void App_DisplayElevator_Init(void)
 {
     App_Elevator_level = 0;
     App_DisplayElevator_Update(ScheduleSource_EventTriggered);
+
+    TaskHandler_SetTaskPeriodicTime(Task_ButtonPressed, 500);  /* 2 level / second */
 }
 
 void App_DisplayElevator_Event(ButtonType_t button, ButtonPressType_t type)
@@ -1065,12 +1067,10 @@ void App_DisplayElevator_Event(ButtonType_t button, ButtonPressType_t type)
         {
             case PressedButton_Right:
                 /* Right */
-                //DisplayInput_StepLetterPosition((type == ButtonPress_Short || type == ButtonPress_Continuous) ? 1 : 3);
                 break;
 
             case PressedButton_Left:
                 /* Left */
-                //DisplayInput_StepLetterPosition((type == ButtonPress_Short || type == ButtonPress_Continuous) ? -1 : -3);
                 break;
 
             case PressedButton_Up:

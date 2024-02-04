@@ -277,6 +277,11 @@ void Display_PrintFont32x20(uint8_t chr, uint8_t index, uint8_t startposx, uint8
         /* 0-9 - Dependent with Font store (32x20) */
         chr -= '0';
     }
+    else if (chr >= (char)0 && chr <= (char)9)
+    {
+        /* 0-9 - Dependent with Font store (32x20) */
+        __NOP();
+    }
     else if (chr == ':')
     {
         /* ':'    - Dependent with Font store (32x20) */

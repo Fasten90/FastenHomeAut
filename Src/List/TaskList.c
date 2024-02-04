@@ -681,7 +681,7 @@ static TaskResult_t Task_SystemTimeSecondStep(ScheduleSource_t source)
     UNUSED_ARGUMENT(source);
 
     /* Step SystemTime +1 second */
-    //SysTime_StepSecond(); // TODO: Temporarily turned off
+    SysTime_StepSecond();
 
     /* Test code */
     /* printf("."); */
