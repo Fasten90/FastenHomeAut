@@ -198,6 +198,7 @@
 #include "Watchdog.h"
 #include "UnitTestList.h"
 #include "GSM_SIM800.h"
+#include "DateTime.h"
 
 #ifdef CONFIG_MODULE_MEASUREMENTTIMER_ENABLE
 #include "MeasurementTimer.h"
@@ -510,6 +511,11 @@ int main(void)
 
     /* Run task scheduler */
     TaskHandler_Scheduler();
+
+    #ifdef CONFIG_TEMPORARY_CHANGES
+    Time_t time= { .hour = 4, .minute = 14, .second = 0 };
+    SysTime_SetTime(&time);
+    #endif
 
     /* TaskHandler never return here!! */
 #endif

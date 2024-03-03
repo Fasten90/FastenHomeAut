@@ -223,6 +223,8 @@
         /* Possible to use without App */
         /* #define CONFIG_FUNCTION_TASK_TRAFFIC_LIGHT */
     #endif
+
+    #define CONFIG_TEMPORARY_CHANGES
 #endif /* #ifdef CONFIG_HW_DISPLAY_ENABLE */
 
 

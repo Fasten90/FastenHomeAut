@@ -502,7 +502,7 @@ void Display_ChangeCarImage(void)
 /**
  * @brief       Display time (HH:MM) (large)
  */
-void Display_ShowLargeClock(Time_t *time)
+void Display_ShowLargeClock(Time_t *time, bool colon)
 {
 
     /* Show clock: large version */
@@ -518,7 +518,11 @@ void Display_ShowLargeClock(Time_t *time)
             Display_NoFormat);
 
     /* ':' */
-    Display_PrintFont32x20(':', 2,
+    char_t separator = ':';
+    if (colon == false) {
+        separator = ' ';
+    }
+    Display_PrintFont32x20(separator, 2,
             DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
             DISPLAY_FONT32X20_CLOCK_START_POSITION_Y,
             Display_NoFormat);

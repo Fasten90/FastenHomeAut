@@ -538,6 +538,7 @@ void App_DisplayLargeClock_Update(ScheduleSource_t source)
 
     /* Display vibrate function: if we are in setting mode, hour or minute will vibrate */
     static bool Display_VibrateStateHide = false;
+    static bool colon = true;
 
     if (source == ScheduleSource_EventTriggered)
         Display_VibrateStateHide = false;
@@ -557,7 +558,7 @@ void App_DisplayLargeClock_Update(ScheduleSource_t source)
             }
             else
             {
-                Display_ShowLargeClock(&dateTime.time);
+                Display_ShowLargeClock(&dateTime.time, true);
                 Display_VibrateStateHide = true;
             }
             TaskHandler_SetTaskOnceRun(Task_Display, 500);
@@ -572,7 +573,7 @@ void App_DisplayLargeClock_Update(ScheduleSource_t source)
             }
             else
             {
-                Display_ShowLargeClock(&dateTime.time);
+                Display_ShowLargeClock(&dateTime.time, true);
                 Display_VibrateStateHide = true;
             }
             TaskHandler_SetTaskOnceRun(Task_Display, 500);
@@ -582,8 +583,10 @@ void App_DisplayLargeClock_Update(ScheduleSource_t source)
         case DisplayClock_Count:
         default:
             /* Not in setting, display the hour and minute too */
-            Display_ShowLargeClock(&dateTime.time);
-            TaskHandler_DisableTask(Task_Display);
+            Display_ShowLargeClock(&dateTime.time, colon);
+            colon = !colon;
+            /* TaskHandler_DisableTask(Task_Display); */
+            TaskHandler_SetTaskOnceRun(Task_Display, 1000);
             break;
     }
     #else
