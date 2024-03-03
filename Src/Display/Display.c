@@ -287,7 +287,7 @@ void Display_PrintFont32x20(uint8_t chr, uint8_t index, uint8_t startposx, uint8
         /* ':'    - Dependent with Font store (32x20) */
         chr = 10;
     }
-    else if (chr == '-')
+    else if (chr == 'P' || chr == '-')
     {
         /* '-'    - Dependent with Font store (32x20) */
         chr = 11;
@@ -297,10 +297,15 @@ void Display_PrintFont32x20(uint8_t chr, uint8_t index, uint8_t startposx, uint8
         /* ''    - Dependent with Font store (32x20) */
         chr = 12;
     }
+    else if (chr == 'F')
+    {
+        /* ''    - Dependent with Font store (32x20) */
+        chr = 13;
+    }
     else
     {
         /* Unknown, let be it '-' */
-        chr = 11;
+        chr = 12;
     }
 
     /* Step on columns */

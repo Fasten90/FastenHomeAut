@@ -113,7 +113,9 @@ def generate_images():
 
     print("Size X: " + str(sizex))
     print("Size Y: " + str(sizey))
-
+    #if (sizex % 2) == 1:
+    #    sizex =- 1
+    #    print("Size X correctized: " + str(sizex))
 
     bitmap_process = []
 
@@ -290,11 +292,11 @@ column_storing = True
 byte_storing = 4
 
 font_line_numbers = 1
-font_character_numbers = 13
+font_character_numbers = 14
 
 SPECIAL_NOTE = """
 /*
- * This font contain only 11 "font character": 0-9 (numbers) + ':' character for hour displaying
+ * This font contain only 14 "font character": 0-9 (numbers) + ':' (colon) character for hour displaying, and 'P' as parking, and 'F'
  */
 
 """

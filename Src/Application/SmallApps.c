@@ -1103,7 +1103,14 @@ void App_DisplayElevator_Update(ScheduleSource_t source)
 
     char elevator_level_string[6];
 
-    usnprintf(elevator_level_string, 6, "%d  ", App_Elevator_level);
+    if (App_Elevator_level != 0)
+    {
+        usnprintf(elevator_level_string, 6, "%d  ", App_Elevator_level);
+    }
+    else
+    {   /* 0 = FSZ */
+        usnprintf(elevator_level_string, 6, "F52  ");
+    }
 
     Display_PrintString(elevator_level_string, 0, Font_32x20, Display_NoFormat);
     Display_Activate();
