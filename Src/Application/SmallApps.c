@@ -1056,7 +1056,7 @@ void App_TrafficLight_TaskFunction(ScheduleSource_t source)
 
 void App_DisplayElevator_Init(void)
 {
-    App_Elevator_level = 0;
+    /* App_Elevator_level = 0; */ /* We would not like to forget the elevator level */
     App_DisplayElevator_Update(ScheduleSource_EventTriggered);
 
     TaskHandler_SetTaskPeriodicTime(Task_ButtonPressed, 500);  /* 2 level / second */
@@ -1070,10 +1070,18 @@ void App_DisplayElevator_Event(ButtonType_t button, ButtonPressType_t type)
         {
             case PressedButton_Right:
                 /* Right */
+                if (type == ButtonPress_Long)
+                {
+                    Logic_Display_ChangeState(AppType_MainMenu);
+                }
                 break;
 
             case PressedButton_Left:
                 /* Left */
+                if (type == ButtonPress_Long)
+                {
+                    Logic_Display_ChangeState(AppType_MainMenu);
+                }
                 break;
 
             case PressedButton_Up:
