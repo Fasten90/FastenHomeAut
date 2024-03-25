@@ -425,6 +425,8 @@ int main(void)
     /* DebugUart initializing */
     /* @note    Be careful, Terminal need to initializing after this */
     DebugUart_Init();
+#include "Display_TM1637.h"
+    Display_TM1637_Test();
 #endif
 
 
