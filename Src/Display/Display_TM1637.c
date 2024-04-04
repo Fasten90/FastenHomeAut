@@ -2,15 +2,51 @@
  * Display_TM1637.c
  *
  *  Created on: 2024. márc. 25.
- *      Author: faste
+ *      Author: fasten
  */
 
 
-/* https://www.makerguides.com/tm1637-arduino-tutorial/ /*
+/* https://www.makerguides.com/tm1637-arduino-tutorial/
  *
  */
 #include "Display_TM1637.h"
-#include "UART.h"
+#include "board.h"
+
+
+
+/* TODO: Move to board.h */
+/* Definition for Display TM1637 I2C Pins */
+/*
+PB6 SCL
+PB7 SDA
+*/
+#define DISPLAY_TM1637_I2C_SCK_PIN                    GPIO_PIN_6
+#define DISPLAY_TM1637_I2C_SCK_GPIO_PORT             GPIOB
+#define DISPLAY_TM1637_I2C_SCK_AF                     GPIO_AF1_I2C1
+
+#define DISPLAY_TM1637_I2C_SDA_PIN                   GPIO_PIN_7
+#define DISPLAY_TM1637_I2C_SDA_GPIO_PORT             GPIOB
+#define DISPLAY_TM1637_I2C_SDA_AF                    GPIO_AF1_I2C1
+
+#define DISPLAY_TM1637_PINS_CLK_ENABLE()               __HAL_RCC_GPIOB_CLK_ENABLE()
+
+
+#define I2Cx                            I2C1
+/* This example use TIMING to 0x00A51314 to reach 1 MHz speed (Rise time = 100 ns, Fall time = 100 ns) */
+#define I2C_TIMING      0x00A51314
+/* TODO: This is a random address */
+#define I2C_ADDRESS     (TM1637_I2C_COMM1)
+
+
+I2C_HandleTypeDef I2cHandle;
+
+
+
+
+
+#define TM1637_I2C_COMM1    0x40
+#define TM1637_I2C_COMM2    0xC0
+#define TM1637_I2C_COMM3    0x80
 
 
 //
@@ -42,8 +78,8 @@ static const uint8_t digitToSegment[] = {
   };
 
 
+static const uint8_t minusSegments = 0b01000000;
 
-volatile UART_HandleTypeDef Display_UartHandle;
 
 static volatile uint8_t display_buffer[5];
 
@@ -53,29 +89,53 @@ static volatile uint8_t display_buffer[5];
   More info: www.www.makerguides.com */
 
 
-static uint8_t m_pinClk;
-static uint8_t m_pinDIO;
+//static uint8_t m_pinClk;
+//static uint8_t m_pinDIO;
 static uint8_t m_brightness;
 static unsigned int m_bitDelay;
 
 
 
-
-static const uint8_t minusSegments = 0b01000000;
-
-TM1637Display(uint8_t pinClk, uint8_t pinDIO, unsigned int bitDelay)
+void TM1637Display_Init(void)
 {
-    // Copy the pin numbers
-    m_pinClk = pinClk;
-    m_pinDIO = pinDIO;
-    m_bitDelay = bitDelay;
+    GPIO_InitTypeDef GPIO_InitStruct;
+    /*##-2- Configure peripheral GPIO ##########################################*/
+    /* SPI SCK GPIO pin configuration  */
+    GPIO_InitStruct.Pin = DISPLAY_TM1637_I2C_SCK_PIN;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+    GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+    GPIO_InitStruct.Alternate = DISPLAY_TM1637_I2C_SCK_AF;
 
-    // Set the pin direction and default value.
-    // Both pins are set as inputs, allowing the pull-up resistors to pull them up
-    pinMode(m_pinClk, INPUT);
-    pinMode(m_pinDIO, INPUT);
-    digitalWrite(m_pinClk, LOW);
-    digitalWrite(m_pinDIO, LOW);
+    HAL_GPIO_Init(DISPLAY_TM1637_I2C_SCK_GPIO_PORT, &GPIO_InitStruct);
+
+    /* SPI MOSI GPIO pin configuration  */
+    GPIO_InitStruct.Pin = DISPLAY_TM1637_I2C_SDA_PIN;
+
+    HAL_GPIO_Init(DISPLAY_TM1637_I2C_SDA_GPIO_PORT, &GPIO_InitStruct);
+
+    /* Initialize other GPIO pins */
+    DISPLAY_TM1637_PINS_CLK_ENABLE();
+
+    /*##-1- Configure the I2C peripheral ######################################*/
+    I2cHandle.Instance             = I2Cx;
+    I2cHandle.Init.Timing          = I2C_TIMING;
+    I2cHandle.Init.OwnAddress1     = I2C_ADDRESS;
+    I2cHandle.Init.AddressingMode  = I2C_ADDRESSINGMODE_10BIT;
+    I2cHandle.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+    I2cHandle.Init.OwnAddress2     = 0xFF;
+    I2cHandle.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+    I2cHandle.Init.NoStretchMode   = I2C_NOSTRETCH_DISABLE;
+
+    if(HAL_I2C_Init(&I2cHandle) != HAL_OK)
+    {
+        /* Initialization Error */
+        Error_Handler();
+    }
+
+    /* Enable the Analog I2C Filter */
+    HAL_I2CEx_ConfigAnalogFilter(&I2cHandle,I2C_ANALOGFILTER_ENABLE);
+
 }
 
 void setBrightness(uint8_t brightness, bool on)
@@ -86,30 +146,32 @@ void setBrightness(uint8_t brightness, bool on)
 void setSegments(const uint8_t segments[], uint8_t length, uint8_t pos)
 {
     // Write COMM1
-    start();
+    //start();
     writeByte(TM1637_I2C_COMM1);
-    stop();
+    //stop();
 
     // Write COMM2 + first digit address
-    start();
+    //start();
     writeByte(TM1637_I2C_COMM2 + (pos & 0x03));
 
     // Write the data bytes
     for (uint8_t k=0; k < length; k++)
+    {
       writeByte(segments[k]);
+    }
 
-    stop();
+    //stop();
 
     // Write COMM3 + brightness
-    start();
+    //start();
     writeByte(TM1637_I2C_COMM3 + (m_brightness & 0x0f));
-    stop();
+    //stop();
 }
 
 void clear()
 {
     uint8_t data[] = { 0, 0, 0, 0 };
-    setSegments(data);
+    setSegments(data, 4, 0);
 }
 
 void showNumberDec(int num, bool leading_zero, uint8_t length, uint8_t pos)
@@ -133,7 +195,8 @@ void showNumberBaseEx(int8_t base, uint16_t num, uint8_t dots, bool leading_zero
                                     uint8_t length, uint8_t pos)
 {
     bool negative = false;
-    if (base < 0) {
+    if (base < 0)
+    {
         base = -base;
         negative = true;
     }
@@ -183,68 +246,104 @@ void showNumberBaseEx(int8_t base, uint16_t num, uint8_t dots, bool leading_zero
 
 void bitDelay()
 {
-    delayMicroseconds(m_bitDelay);
+    DelayMs(m_bitDelay);
 }
 
 void start()
 {
-  pinMode(m_pinDIO, OUTPUT);
+  //pinMode(m_pinDIO, OUTPUT);
   bitDelay();
 }
 
-void stop()
+//void stop()
+void Oldstop()
 {
-    pinMode(m_pinDIO, OUTPUT);
+    //pinMode(m_pinDIO, OUTPUT);
     bitDelay();
-    pinMode(m_pinClk, INPUT);
+    //pinMode(m_pinClk, INPUT);
+
     bitDelay();
-    pinMode(m_pinDIO, INPUT);
+    //pinMode(m_pinDIO, INPUT);
     bitDelay();
 }
 
+
 bool writeByte(uint8_t b)
+{
+
+    HAL_StatusTypeDef result;
+    uint8_t datalength = 1;
+    result = HAL_I2C_Master_Transmit(&I2cHandle, (uint16_t)I2C_ADDRESS, (uint8_t*)&b, datalength, 10000);
+    /* Error_Handler() function is called when Timeout error occurs.
+    When Acknowledge failure occurs (Slave don't acknowledge its address)
+    Master restarts communication */
+    //if (HAL_I2C_GetError(&I2cHandle) != HAL_I2C_ERROR_AF)
+    //{
+    //Error_Handler();
+    //}
+    return (result == HAL_OK) ? true : false;
+}
+
+
+//bool writeByte(uint8_t b)
+bool oldWriteBzte(uint8_t b)
 {
   uint8_t data = b;
 
   // 8 Data Bits
   for(uint8_t i = 0; i < 8; i++) {
     // CLK low
-    pinMode(m_pinClk, OUTPUT);
+    //pinMode(m_pinClk, OUTPUT);
+    SET_SCK_PIN(RESET);
     bitDelay();
 
     // Set data bit
     if (data & 0x01)
-      pinMode(m_pinDIO, INPUT);
+    {
+      //pinMode(m_pinDIO, INPUT);
+      SET_DIO_PIN(SET);
+    }
     else
-      pinMode(m_pinDIO, OUTPUT);
+    {
+      //pinMode(m_pinDIO, OUTPUT);
+      SET_DIO_PIN(RESET);
+    }
 
     bitDelay();
 
     // CLK high
-    pinMode(m_pinClk, INPUT);
+    //pinMode(m_pinClk, INPUT);
+    SET_SCK_PIN(SET);
     bitDelay();
     data = data >> 1;
   }
 
   // Wait for acknowledge
   // CLK to zero
-  pinMode(m_pinClk, OUTPUT);
-  pinMode(m_pinDIO, INPUT);
+  //pinMode(m_pinClk, OUTPUT);
+  SET_SCK_PIN(RESET);
+  //pinMode(m_pinDIO, INPUT);
+  SET_DIO_PIN(SET);
   bitDelay();
 
   // CLK to high
-  pinMode(m_pinClk, INPUT);
+  //pinMode(m_pinClk, INPUT);
+  SET_SCK_PIN(SET);
   bitDelay();
-  uint8_t ack = digitalRead(m_pinDIO);
-  if (ack == 0)
-    pinMode(m_pinDIO, OUTPUT);
-
+  //uint8_t ack = digitalRead(m_pinDIO);
+  //if (ack == 0)
+  //{
+  //  pinMode(m_pinDIO, OUTPUT);
+    SET_DIO_PIN(RESET);
+  //}
 
   bitDelay();
-  pinMode(m_pinClk, OUTPUT);
+  //pinMode(m_pinClk, OUTPUT);
+  SET_SCK_PIN(RESET);
   bitDelay();
 
-  return ack;
+  //return ack;
+  return true;
 }
 
 void showDots(uint8_t dots, uint8_t* digits)
@@ -285,53 +384,8 @@ const uint8_t fahrenheit[] = {
 };
 
 
-
-
-void setup() {
-
-    // Create display object of type TM1637Display:
-    TM1637Display display = TM1637Display(CLK, DIO);
-
-  // Set the display brightness (0-7):
-  display.setBrightness(0);
-  // Clear the display:
-  display.clear();
-  // Setup sensor:
-  dht.begin();
-  // Begin serial communication at a baud rate of 9600:
-  Serial.begin(9600);
-  // Wait for console opening:
-  delay(2000);
-}
-
-void loop() {
-  // Read the temperature as Celsius and Fahrenheit:
-  temperature_celsius = dht.readTemperature();
-  temperature_fahrenheit = dht.readTemperature(true);
-  // Print the temperature to the Serial Monitor:
-  Serial.println(temperature_celsius);
-  Serial.println(temperature_fahrenheit);
-
-  // Show the temperature on the TM1637 display:
-  display.showNumberDec(temperature_celsius, false, 2, 0);
-  display.setSegments(celsius, 2, 2);
-
-  delay(2000);
-
-  display.showNumberDec(temperature_fahrenheit, false, 2, 0);
-  display.setSegments(fahrenheit, 2, 2);
-
-  delay(2000);
-}
-
-
-
 void Display_TM1637_Test(void)
 {
-
-    /* USART TX - RX     */
-    UART_Init(&Display_UartHandle);
-
 
     char * string = "0123456789ABCDF";
     uint8_t index;
@@ -362,9 +416,6 @@ void Display_TM1637_Test(void)
         }
         display_buffer[i] = digit;
     }
-
-    //HAL_StatusTypeDef res = HAL_UART_Transmit(Display_UartHandle, uint8_t *pData, uint16_t Size, uint32_t Timeout);
-    HAL_StatusTypeDef res = HAL_UART_Transmit(&Display_UartHandle, display_buffer, 5, 5000);
 
 }
 

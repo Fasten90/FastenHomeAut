@@ -37,7 +37,7 @@ extern void Display_TM1637_Test(void);
   //! @param pinDIO - The number of the digital pin connected to the DIO pin of the module
   //! @param bitDelay - The delay, in microseconds, between bit transition on the serial
   //!                   bus connected to the display
-extern  TM1637Display(uint8_t pinClk, uint8_t pinDIO, unsigned int bitDelay = DEFAULT_BIT_DELAY);
+extern void TM1637Display_Init(void)
 
   //! Sets the brightness of the display.
   //!
@@ -46,7 +46,7 @@ extern  TM1637Display(uint8_t pinClk, uint8_t pinDIO, unsigned int bitDelay = DE
   //!
   //! @param brightness A number from 0 (lowes brightness) to 7 (highest brightness)
   //! @param on Turn display on or off
-extern void setBrightness(uint8_t brightness, bool on = true);
+extern void setBrightness(uint8_t brightness, bool on);
 
   //! Display arbitrary data on the module
   //!
@@ -60,7 +60,7 @@ extern void setBrightness(uint8_t brightness, bool on = true);
   //! @param segments An array of size @ref length containing the raw segment values
   //! @param length The number of digits to be modified
   //! @param pos The position from which to start the modification (0 - leftmost, 3 - rightmost)
-extern  void setSegments(const uint8_t segments[], uint8_t length = 4, uint8_t pos = 0);
+extern  void setSegments(const uint8_t segments[], uint8_t length, uint8_t pos);
 
   //! Clear the display
 extern void clear();
@@ -76,7 +76,7 @@ extern void clear();
   //!        fits to the number of digits requested (for example, if two digits are to be displayed,
   //!        the number must be between 0 to 99)
   //! @param pos The position of the most significant digit (0 - leftmost, 3 - rightmost)
-extern void showNumberDec(int num, bool leading_zero = false, uint8_t length = 4, uint8_t pos = 0);
+extern void showNumberDec(int num, bool leading_zero, uint8_t length, uint8_t pos);
 
   //! Display a decimal number, with dot control
   //!
@@ -101,7 +101,7 @@ extern void showNumberDec(int num, bool leading_zero = false, uint8_t length = 4
   //!        fits to the number of digits requested (for example, if two digits are to be displayed,
   //!        the number must be between 0 to 99)
   //! @param pos The position of the most significant digit (0 - leftmost, 3 - rightmost)
-extern void showNumberDecEx(int num, uint8_t dots = 0, bool leading_zero = false, uint8_t length = 4, uint8_t pos = 0);
+extern void showNumberDecEx(int num, uint8_t dots, bool leading_zero, uint8_t length, uint8_t pos);
 
   //! Display a hexadecimal number, with dot control
   //!
@@ -126,7 +126,7 @@ extern void showNumberDecEx(int num, uint8_t dots = 0, bool leading_zero = false
   //!        fits to the number of digits requested (for example, if two digits are to be displayed,
   //!        the number must be between 0 to 99)
   //! @param pos The position of the most significant digit (0 - leftmost, 3 - rightmost)
-extern void showNumberHexEx(uint16_t num, uint8_t dots = 0, bool leading_zero = false, uint8_t length = 4, uint8_t pos = 0);
+extern void showNumberHexEx(uint16_t num, uint8_t dots, bool leading_zero, uint8_t length, uint8_t pos);
 
   //! Translate a single digit into 7 segment code
   //!
@@ -150,7 +150,7 @@ extern bool writeByte(uint8_t b);
 
 extern void showDots(uint8_t dots, uint8_t* digits);
 
-extern void showNumberBaseEx(int8_t base, uint16_t num, uint8_t dots = 0, bool leading_zero = false, uint8_t length = 4, uint8_t pos = 0);
+extern void showNumberBaseEx(int8_t base, uint16_t num, uint8_t dots, bool leading_zero, uint8_t length, uint8_t pos);
 
 
 
