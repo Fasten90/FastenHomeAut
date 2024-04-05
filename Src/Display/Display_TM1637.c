@@ -10,6 +10,7 @@
  *
  */
 #include "Display_TM1637.h"
+#include "compiler.h"
 #include "board.h"
 
 
@@ -366,22 +367,6 @@ uint8_t encodeDigit(uint8_t digit)
 #define CLK 2
 #define DIO 3
 #define DHTPIN 4
-
-// Create variable:
-int temperature_celsius;
-int temperature_fahrenheit;
-
-// Create degree Celsius symbol:
-const uint8_t celsius[] = {
-  SEG_A | SEG_B | SEG_F | SEG_G,  // Circle
-  SEG_A | SEG_D | SEG_E | SEG_F   // C
-};
-
-// Create degree Fahrenheit symbol:
-const uint8_t fahrenheit[] = {
-  SEG_A | SEG_B | SEG_F | SEG_G,  // Circle
-  SEG_A | SEG_E | SEG_F | SEG_G   // F
-};
 
 
 void Display_TM1637_Test(void)

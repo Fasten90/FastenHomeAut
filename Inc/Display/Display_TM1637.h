@@ -37,7 +37,7 @@ extern void Display_TM1637_Test(void);
   //! @param pinDIO - The number of the digital pin connected to the DIO pin of the module
   //! @param bitDelay - The delay, in microseconds, between bit transition on the serial
   //!                   bus connected to the display
-extern void TM1637Display_Init(void)
+extern void TM1637Display_Init(void);
 
   //! Sets the brightness of the display.
   //!
