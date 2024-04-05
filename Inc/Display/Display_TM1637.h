@@ -146,7 +146,8 @@ extern void start();
 
 extern void stop();
 
-extern bool writeByte(uint8_t b);
+//extern bool writeByte(uint8_t b);
+extern bool writeByte(uint8_t *b, uint8_t datalength);
 
 extern void showDots(uint8_t dots, uint8_t* digits);
 

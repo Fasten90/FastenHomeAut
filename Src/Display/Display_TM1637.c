@@ -82,7 +82,8 @@ static const uint8_t digitToSegment[] = {
 static const uint8_t minusSegments = 0b01000000;
 
 
-static volatile uint8_t display_buffer[5];
+#define BUFFER_LENGTH   (5)
+static volatile uint8_t display_buffer[BUFFER_LENGTH];
 
 
 /* Arduino example sketch to display DHT11 temperature readings
@@ -148,24 +149,24 @@ void setSegments(const uint8_t segments[], uint8_t length, uint8_t pos)
 {
     // Write COMM1
     //start();
-    writeByte(TM1637_I2C_COMM1);
+    //writeByte(TM1637_I2C_COMM1);
     //stop();
 
     // Write COMM2 + first digit address
     //start();
-    writeByte(TM1637_I2C_COMM2 + (pos & 0x03));
+    //writeByte(TM1637_I2C_COMM2 + (pos & 0x03));
 
     // Write the data bytes
     for (uint8_t k=0; k < length; k++)
     {
-      writeByte(segments[k]);
+      //writeByte(segments[k]);
     }
 
     //stop();
 
     // Write COMM3 + brightness
     //start();
-    writeByte(TM1637_I2C_COMM3 + (m_brightness & 0x0f));
+    //writeByte(TM1637_I2C_COMM3 + (m_brightness & 0x0f));
     //stop();
 }
 
@@ -269,12 +270,12 @@ void Oldstop()
 }
 
 
-bool writeByte(uint8_t b)
+bool writeByte(uint8_t *b, uint8_t datalength)
 {
 
     HAL_StatusTypeDef result;
-    uint8_t datalength = 1;
-    result = HAL_I2C_Master_Transmit(&I2cHandle, (uint16_t)I2C_ADDRESS, (uint8_t*)&b, datalength, 10000);
+    //uint8_t datalength = 1;
+    result = HAL_I2C_Master_Transmit(&I2cHandle, (uint16_t)TM1637_I2C_COMM1, (uint8_t*)b, datalength, 10000);
     /* Error_Handler() function is called when Timeout error occurs.
     When Acknowledge failure occurs (Slave don't acknowledge its address)
     Master restarts communication */
@@ -376,7 +377,8 @@ void Display_TM1637_Test(void)
     uint8_t index;
     uint8_t digit;
 
-    for (int i=0; i++; i<strlen(string))
+    const int i = 0;
+    if (1)
     {
         digit = string[i];
         if (digit >= '0' && digit <= '9')
@@ -399,7 +401,13 @@ void Display_TM1637_Test(void)
             index = 15; /* hardcoded E - ERROR */
             digit = digitToSegment[index];
         }
-        display_buffer[i] = digit;
+        //display_buffer[i] = digit;
+        //TM1637_I2C_COMM1); // address
+        display_buffer[0] = TM1637_I2C_COMM2 + 1;  // pos
+        display_buffer[1] = digit;
+        uint8_t m_brightness = 2;
+        display_buffer[2] = TM1637_I2C_COMM3 + (m_brightness & 0x0f);
+        writeByte(display_buffer, 3);
     }
 
 }
