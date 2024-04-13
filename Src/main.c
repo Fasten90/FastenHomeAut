@@ -426,16 +426,16 @@ int main(void)
     /* @note    Be careful, Terminal need to initializing after this */
     DebugUart_Init();
 #include "Display_TM1637.h"
-    Display_TM1637_Test();
+    TM1637Display_Init();
+    while (1) {
+        Display_TM1637_Test();
+    }
 #endif
 
 
 #if defined(CONFIG_MODULE_DISPLAY_ENABLE) || defined(CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE)
     /* Display */
-    TM1637Display_Init();
-    while (1) {
-        Display_TM1637_Test();
-    }
+
 
     #ifdef CONFIG_HW_DISPLAY_ENABLE
     Display_SSD1306_Init();
