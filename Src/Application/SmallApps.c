@@ -25,6 +25,9 @@
 #include "IO.h"
 #include "AppList.h"
 
+#ifdef CONFIG_HW_DISPLAY_TM1637_ENABLE
+    #include "Display_TM1637.h"
+#endif
 
 #define DisplayInput_LetterPosition_MaxLimit        (11)
 
@@ -1123,6 +1126,12 @@ void App_DisplayElevator_Update(ScheduleSource_t source)
     Display_PrintString(elevator_level_string, 0, Font_32x20, Display_NoFormat);
     Display_Activate();
     TaskHandler_DisableTask(Task_Display);
+
+
+#ifdef CONFIG_HW_DISPLAY_TM1637_ENABLE
+    Display_TM1637_Print(elevator_level_string);  /* Minimum 4 character */
+#endif
+
 }
 
 

@@ -82,12 +82,23 @@ static const uint8_t digitToSegment[] = {
   0b01011110,    // d
   0b01111001,    // E
   0b01110001     // F
-  };
+};
+
+
+
+const uint8_t _tm1637_digit[] =
+  {0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f};
+const uint8_t _tm1637_on[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+const uint8_t _tm1637_off[6] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
+const uint8_t fill_off[4] = {0x00, 0x00, 0x00, 0x00};
+const uint8_t _tm1637_minus = 0x40;
+const uint8_t _tm1637_dot = 0x80;
+const uint8_t _tm1637_empty = 0x00;
 
 
 static const uint8_t minusSegments = 0b01000000;
 
-static volatile tm1637_t disp;
+static tm1637_t disp;
 
 static const uint8_t seg_LOAD[4] =  {0x38, 0x5c, 0x77, 0x5e}; // display LOAD
 
@@ -130,6 +141,14 @@ static uint8_t Display_ConvertSegmens(uint8_t digit)
         index = digit - 'a' + 10;
         digit = digitToSegment[index];
     }
+    else if (digit == '-')
+    {
+        digit = _tm1637_minus;
+    }
+    else if (digit == ' ')
+    {
+        digit = _tm1637_empty;
+    }
     else
     {
         index = 15; /* hardcoded E - ERROR */
@@ -144,9 +163,6 @@ void Display_TM1637_Test(void)
 {
 
     char * string = "0123456789ABCDF";
-    uint8_t index;
-    uint8_t digit;
-
     uint8_t segments[4] =  {0, 0, 0, 0};
 
     for (int i = 0; i < 4; i++)
@@ -166,13 +182,34 @@ void Display_TM1637_Test(void)
 }
 
 
-const uint8_t _tm1637_digit[] =
-  {0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f};
-const uint8_t _tm1637_on[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-const uint8_t _tm1637_off[6] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
-const uint8_t fill_off[4] = {0x00, 0x00, 0x00, 0x00};
-const uint8_t _tm1637_minus = 0x40;
-const uint8_t _tm1637_dot = 0x80;
+void Display_TM1637_Print(char *str)
+{
+    uint8_t segments[4] =  {0, 0, 0, 0};
+
+    if (str == NULL)
+    {
+        return;
+    }
+
+    // TODO: Check length
+    uint8_t len = StringLength(str);
+    if (len > 4) {
+        len = 4;
+    }
+    else if (len < 4)
+    {
+        for (int i = len; i < 4; i++ )
+        {
+            segments[i] =_tm1637_empty;
+        }
+    }
+    for (int i = 0; i < len; i++)
+    {
+        segments[i] = Display_ConvertSegmens(str[i]);
+    }
+    tm1637_write_segment(&disp, segments, 4, 0);
+    DelayMs(10);
+}
 
 
 

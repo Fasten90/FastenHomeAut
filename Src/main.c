@@ -199,6 +199,7 @@
 #include "UnitTestList.h"
 #include "GSM_SIM800.h"
 #include "DateTime.h"
+#include "Display_TM1637.h"
 
 #ifdef CONFIG_MODULE_MEASUREMENTTIMER_ENABLE
 #include "MeasurementTimer.h"
@@ -425,17 +426,12 @@ int main(void)
     /* DebugUart initializing */
     /* @note    Be careful, Terminal need to initializing after this */
     DebugUart_Init();
-#include "Display_TM1637.h"
-    TM1637Display_Init();
-    while (1) {
-        Display_TM1637_Test();
-    }
+
 #endif
 
 
 #if defined(CONFIG_MODULE_DISPLAY_ENABLE) || defined(CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE)
     /* Display */
-
 
     #ifdef CONFIG_HW_DISPLAY_ENABLE
     Display_SSD1306_Init();
@@ -443,6 +439,11 @@ int main(void)
     #ifdef CONFIG_FUNCTION_DISPLAY_MENU
     Logic_Display_Init();
     #endif
+
+    #ifdef CONFIG_HW_DISPLAY_TM1637_ENABLE
+    TM1637Display_Init();
+    #endif
+
 #endif
 
 
