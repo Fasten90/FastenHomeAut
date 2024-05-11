@@ -127,6 +127,7 @@ const size_t TrafficLight_Lamp_List_Len = NUM_OF(TrafficLight_Lamp_Up_List);
 
 #if defined(CONFIG_FUNCTION_ELEVATOR)
 static volatile int32_t App_Elevator_level = 0;
+static volatile bool App_Elevator_in_error_status = false;
 #endif /* CONFIG_FUNCTION_ELEVATOR */
 
 
@@ -1081,9 +1082,10 @@ void App_DisplayElevator_Event(ButtonType_t button, ButtonPressType_t type)
 
             case PressedButton_Left:
                 /* Left */
-                if (type == ButtonPress_Long)
+                if (type == ButtonPress_Short)
                 {
-                    Logic_Display_ChangeState(AppType_MainMenu);
+                	App_Elevator_in_error_status = ~App_Elevator_in_error_status;
+                	App_DisplayElevator_Update(ScheduleSource_EventTriggered);
                 }
                 break;
 
@@ -1114,19 +1116,18 @@ void App_DisplayElevator_Update(ScheduleSource_t source)
 
     char elevator_level_string[6];
 
-    //if (App_Elevator_level != 0)
-    //{
-        usnprintf(elevator_level_string, 6, "%d  ", App_Elevator_level);
-    //}
-    //else
-    //{   /* 0 = FSZ */
-    //    usnprintf(elevator_level_string, 6, "F52  ");
-    //}
+	if (!App_Elevator_in_error_status)
+	{
+		usnprintf(elevator_level_string, 6, "%d  ", App_Elevator_level);
+	}
+	else
+	{
+		usnprintf(elevator_level_string, 6, "--    ");
+	}
 
     Display_PrintString(elevator_level_string, 0, Font_32x20, Display_NoFormat);
     Display_Activate();
     TaskHandler_DisableTask(Task_Display);
-
 
 #ifdef CONFIG_HW_DISPLAY_TM1637_ENABLE
     Display_TM1637_Print(elevator_level_string);  /* Minimum 4 character */
