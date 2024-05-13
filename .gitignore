@@ -100,7 +100,6 @@ $RECYCLE.BIN/
 # Tools
 /Tools/
 
-/Utils/
 /source_code_checker_issues.csv
 /env/
 /FastenStaticAnalyzer/
