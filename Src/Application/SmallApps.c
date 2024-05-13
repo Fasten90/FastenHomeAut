@@ -25,6 +25,9 @@
 #include "IO.h"
 #include "AppList.h"
 
+#ifdef CONFIG_HW_DISPLAY_TM1637_ENABLE
+    #include "Display_TM1637.h"
+#endif
 
 #define DisplayInput_LetterPosition_MaxLimit        (11)
 
@@ -124,6 +127,7 @@ const size_t TrafficLight_Lamp_List_Len = NUM_OF(TrafficLight_Lamp_Up_List);
 
 #if defined(CONFIG_FUNCTION_ELEVATOR)
 static volatile int32_t App_Elevator_level = 0;
+static volatile bool App_Elevator_in_error_status = false;
 #endif /* CONFIG_FUNCTION_ELEVATOR */
 
 
@@ -538,6 +542,7 @@ void App_DisplayLargeClock_Update(ScheduleSource_t source)
 
     /* Display vibrate function: if we are in setting mode, hour or minute will vibrate */
     static bool Display_VibrateStateHide = false;
+    static bool colon = true;
 
     if (source == ScheduleSource_EventTriggered)
         Display_VibrateStateHide = false;
@@ -557,7 +562,7 @@ void App_DisplayLargeClock_Update(ScheduleSource_t source)
             }
             else
             {
-                Display_ShowLargeClock(&dateTime.time);
+                Display_ShowLargeClock(&dateTime.time, true);
                 Display_VibrateStateHide = true;
             }
             TaskHandler_SetTaskOnceRun(Task_Display, 500);
@@ -572,7 +577,7 @@ void App_DisplayLargeClock_Update(ScheduleSource_t source)
             }
             else
             {
-                Display_ShowLargeClock(&dateTime.time);
+                Display_ShowLargeClock(&dateTime.time, true);
                 Display_VibrateStateHide = true;
             }
             TaskHandler_SetTaskOnceRun(Task_Display, 500);
@@ -582,8 +587,10 @@ void App_DisplayLargeClock_Update(ScheduleSource_t source)
         case DisplayClock_Count:
         default:
             /* Not in setting, display the hour and minute too */
-            Display_ShowLargeClock(&dateTime.time);
-            TaskHandler_DisableTask(Task_Display);
+            Display_ShowLargeClock(&dateTime.time, colon);
+            colon = !colon;
+            /* TaskHandler_DisableTask(Task_Display); */
+            TaskHandler_SetTaskOnceRun(Task_Display, 1000);
             break;
     }
     #else
@@ -1053,8 +1060,10 @@ void App_TrafficLight_TaskFunction(ScheduleSource_t source)
 
 void App_DisplayElevator_Init(void)
 {
-    App_Elevator_level = 0;
+    /* App_Elevator_level = 0; */ /* We would not like to forget the elevator level */
     App_DisplayElevator_Update(ScheduleSource_EventTriggered);
+
+    TaskHandler_SetTaskPeriodicTime(Task_ButtonPressed, 500);  /* 2 level / second */
 }
 
 void App_DisplayElevator_Event(ButtonType_t button, ButtonPressType_t type)
@@ -1065,12 +1074,19 @@ void App_DisplayElevator_Event(ButtonType_t button, ButtonPressType_t type)
         {
             case PressedButton_Right:
                 /* Right */
-                //DisplayInput_StepLetterPosition((type == ButtonPress_Short || type == ButtonPress_Continuous) ? 1 : 3);
+                if (type == ButtonPress_Long)
+                {
+                    Logic_Display_ChangeState(AppType_MainMenu);
+                }
                 break;
 
             case PressedButton_Left:
                 /* Left */
-                //DisplayInput_StepLetterPosition((type == ButtonPress_Short || type == ButtonPress_Continuous) ? -1 : -3);
+                if (type == ButtonPress_Short)
+                {
+                	App_Elevator_in_error_status = ~App_Elevator_in_error_status;
+                	App_DisplayElevator_Update(ScheduleSource_EventTriggered);
+                }
                 break;
 
             case PressedButton_Up:
@@ -1098,25 +1114,25 @@ void App_DisplayElevator_Update(ScheduleSource_t source)
 {
     UNUSED_ARGUMENT(source);
 
-    uint32_t level_without_sign = 0;
-    char elevator_level_string[5];
+    char elevator_level_string[6];
 
-    if (App_Elevator_level < 0)
-    {
-        level_without_sign = -App_Elevator_level;
-        usnprintf(elevator_level_string, 5, ":%d", level_without_sign);
-    }
-    else
-    {
-        level_without_sign = App_Elevator_level;
-        usnprintf(elevator_level_string, 5, "%d", level_without_sign);
-    }
+	if (!App_Elevator_in_error_status)
+	{
+		usnprintf(elevator_level_string, 6, "%d  ", App_Elevator_level);
+	}
+	else
+	{
+		usnprintf(elevator_level_string, 6, "--    ");
+	}
 
-    Display_Clear();
-    Display_Activate();
     Display_PrintString(elevator_level_string, 0, Font_32x20, Display_NoFormat);
     Display_Activate();
     TaskHandler_DisableTask(Task_Display);
+
+#ifdef CONFIG_HW_DISPLAY_TM1637_ENABLE
+    Display_TM1637_Print(elevator_level_string);  /* Minimum 4 character */
+#endif
+
 }
 
 

@@ -43,6 +43,7 @@
 #ifdef CONFIG_USE_PANEL_FASTENNODE
     #define CONFIG_HW_DISPLAY_ENABLE
     #define CONFIG_HW_BUTTON_ENABLE
+    #define CONFIG_HW_DISPLAY_TM1637_ENABLE
 #endif
 
 
@@ -112,6 +113,7 @@
         #endif
         /* Display: Snake game */
         /* #define CONFIG_FUNCTION_GAME_SNAKE */
+
         /* Display: Input */
         /* #define CONFIG_FUNCTION_DISPLAY_INPUT */
         /* Display: Show screen (Car animation)*/
@@ -222,6 +224,8 @@
         /* Possible to use without App */
         /* #define CONFIG_FUNCTION_TASK_TRAFFIC_LIGHT */
     #endif
+
+    #define CONFIG_TEMPORARY_CHANGES
 #endif /* #ifdef CONFIG_HW_DISPLAY_ENABLE */
 
 

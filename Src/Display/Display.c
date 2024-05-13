@@ -277,10 +277,35 @@ void Display_PrintFont32x20(uint8_t chr, uint8_t index, uint8_t startposx, uint8
         /* 0-9 - Dependent with Font store (32x20) */
         chr -= '0';
     }
+    else if (chr >= (char)0 && chr <= (char)9)
+    {
+        /* 0-9 - Dependent with Font store (32x20) */
+        __NOP();
+    }
     else if (chr == ':')
     {
         /* ':'    - Dependent with Font store (32x20) */
         chr = 10;
+    }
+    else if (chr == 'P')
+    {
+        /* 'P'    - Dependent with Font store (32x20) */
+        chr = 11;
+    }
+    else if (chr == ' ')
+    {
+        /* ' '    - Dependent with Font store (32x20) */
+        chr = 12;
+    }
+    else if (chr == '-')
+    {
+        /* '-'    - Dependent with Font store (32x20) */
+        chr = 13;
+    }
+    else
+    {
+        /* Unknown, let be it '-' */
+        chr = 12;
     }
 
     /* Step on columns */
@@ -482,7 +507,7 @@ void Display_ChangeCarImage(void)
 /**
  * @brief       Display time (HH:MM) (large)
  */
-void Display_ShowLargeClock(Time_t *time)
+void Display_ShowLargeClock(Time_t *time, bool colon)
 {
 
     /* Show clock: large version */
@@ -498,7 +523,11 @@ void Display_ShowLargeClock(Time_t *time)
             Display_NoFormat);
 
     /* ':' */
-    Display_PrintFont32x20(':', 2,
+    char_t separator = ':';
+    if (colon == false) {
+        separator = ' ';
+    }
+    Display_PrintFont32x20(separator, 2,
             DISPLAY_FONT32X20_CLOCK_START_POSITION_X,
             DISPLAY_FONT32X20_CLOCK_START_POSITION_Y,
             Display_NoFormat);

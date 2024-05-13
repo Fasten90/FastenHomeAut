@@ -198,6 +198,8 @@
 #include "Watchdog.h"
 #include "UnitTestList.h"
 #include "GSM_SIM800.h"
+#include "DateTime.h"
+#include "Display_TM1637.h"
 
 #ifdef CONFIG_MODULE_MEASUREMENTTIMER_ENABLE
 #include "MeasurementTimer.h"
@@ -424,17 +426,24 @@ int main(void)
     /* DebugUart initializing */
     /* @note    Be careful, Terminal need to initializing after this */
     DebugUart_Init();
+
 #endif
 
 
 #if defined(CONFIG_MODULE_DISPLAY_ENABLE) || defined(CONFIG_MODULE_DISPLAY_SIMULATOR_ENABLE)
     /* Display */
+
     #ifdef CONFIG_HW_DISPLAY_ENABLE
     Display_SSD1306_Init();
     #endif
     #ifdef CONFIG_FUNCTION_DISPLAY_MENU
     Logic_Display_Init();
     #endif
+
+    #ifdef CONFIG_HW_DISPLAY_TM1637_ENABLE
+    TM1637Display_Init();
+    #endif
+
 #endif
 
 
@@ -510,6 +519,11 @@ int main(void)
 
     /* Run task scheduler */
     TaskHandler_Scheduler();
+
+    #ifdef CONFIG_TEMPORARY_CHANGES
+    Time_t time= { .hour = 4, .minute = 14, .second = 0 };
+    SysTime_SetTime(&time);
+    #endif
 
     /* TaskHandler never return here!! */
 #endif
