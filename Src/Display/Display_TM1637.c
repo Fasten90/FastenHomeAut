@@ -18,6 +18,9 @@
 
 
 
+#ifdef CONFIG_MODULE_DISPLAY_ENABLE
+
+
 /* TODO: Move to board.h */
 /* Definition for Display TM1637 I2C Pins */
 /*
@@ -468,3 +471,4 @@ static void tm1637_fill(tm1637_t *tm1637, bool enable)
 }
 
 
+#endif /* #ifdef CONFIG_MODULE_DISPLAY_ENABLE */
