@@ -10,6 +10,7 @@
 /* https://github.com/nimaltd/tm1637/blob/main/README.md */
 
 
+#include "options.h"
 #include "Display_TM1637.h"
 #include "compiler.h"
 #include "board.h"
@@ -52,7 +53,7 @@ typedef struct
   uint16_t              pin_clk;
   uint16_t              pin_dat;
 
-}tm1637_t;
+} tm1637_t;
 
 
 
@@ -105,14 +106,14 @@ static const uint8_t seg_LOAD[4] =  {0x38, 0x5c, 0x77, 0x5e}; // display LOAD
 
 static uint8_t Display_ConvertSegmens(uint8_t digit);
 
-// TODO: Move to better place
-void tm1637_init(tm1637_t *tm1637, GPIO_TypeDef *gpio_clk, uint16_t pin_clk, GPIO_TypeDef *gpio_dat, uint16_t pin_dat);
-void tm1637_brightness(tm1637_t *tm1637, uint8_t brightness_0_to_7);
-void tm1637_write_segment(tm1637_t *tm1637, const uint8_t *segments, uint8_t length, uint8_t pos);
-void tm1637_write_int(tm1637_t *tm1637, int32_t digit, uint8_t pos);
-void tm1637_write_float(tm1637_t *tm1637, float digit, uint8_t floating_digit, uint8_t pos);
-void tm1637_show_zero(tm1637_t *tm1637, bool enable);
-void tm1637_fill(tm1637_t *tm1637, bool enable);
+
+static void tm1637_init(tm1637_t *tm1637, GPIO_TypeDef *gpio_clk, uint16_t pin_clk, GPIO_TypeDef *gpio_dat, uint16_t pin_dat);
+static void tm1637_brightness(tm1637_t *tm1637, uint8_t brightness_0_to_7);
+static void tm1637_write_segment(tm1637_t *tm1637, const uint8_t *segments, uint8_t length, uint8_t pos);
+static void tm1637_write_int(tm1637_t *tm1637, int32_t digit, uint8_t pos);
+static void tm1637_write_float(tm1637_t *tm1637, float digit, uint8_t floating_digit, uint8_t pos);
+static void tm1637_show_zero(tm1637_t *tm1637, bool enable);
+static void tm1637_fill(tm1637_t *tm1637, bool enable);
 
 
 
@@ -213,19 +214,22 @@ void Display_TM1637_Print(char *str)
 
 
 
-void tm1637_delay_us(uint8_t delay)
+static void tm1637_delay_us(uint8_t delay)
 {
     DelayMs(delay/1000);
 }
 
 
-void tm1637_start(tm1637_t *tm1637)
+
+static void tm1637_start(tm1637_t *tm1637)
 {
   HAL_GPIO_WritePin(tm1637->gpio_dat, tm1637->pin_dat, GPIO_PIN_RESET);
   tm1637_delay_us(_TM1637_BIT_DELAY);
 }
-//#######################################################################################################################
-void tm1637_stop(tm1637_t *tm1637)
+
+
+
+static void tm1637_stop(tm1637_t *tm1637)
 {
   HAL_GPIO_WritePin(tm1637->gpio_dat, tm1637->pin_dat, GPIO_PIN_RESET);
   tm1637_delay_us(_TM1637_BIT_DELAY);
@@ -234,8 +238,10 @@ void tm1637_stop(tm1637_t *tm1637)
   HAL_GPIO_WritePin(tm1637->gpio_dat, tm1637->pin_dat, GPIO_PIN_SET);
   tm1637_delay_us(_TM1637_BIT_DELAY);
 }
-//#######################################################################################################################
-uint8_t tm1637_write_byte(tm1637_t *tm1637, uint8_t data)
+
+
+
+static uint8_t tm1637_write_byte(tm1637_t *tm1637, uint8_t data)
 {
   //  write 8 bit data
   for (uint8_t i = 0; i < 8; i++)
@@ -265,20 +271,26 @@ uint8_t tm1637_write_byte(tm1637_t *tm1637, uint8_t data)
   tm1637_delay_us(_TM1637_BIT_DELAY);
   return ack;
 }
-//#######################################################################################################################
+
+
+
 void tm1637_lock(tm1637_t *tm1637)
 {
   while (tm1637->lock == 1)
       DelayMs(1);
   tm1637->lock = 1;
 }
-//#######################################################################################################################
+
+
+
 void tm1637_unlock(tm1637_t *tm1637)
 {
   tm1637->lock = 0;
 }
-//#######################################################################################################################
-void tm1637_init(tm1637_t *tm1637, GPIO_TypeDef *gpio_clk, uint16_t pin_clk, GPIO_TypeDef *gpio_dat, uint16_t pin_dat)
+
+
+
+static void tm1637_init(tm1637_t *tm1637, GPIO_TypeDef *gpio_clk, uint16_t pin_clk, GPIO_TypeDef *gpio_dat, uint16_t pin_dat)
 {
   memset(tm1637, 0, sizeof(tm1637_t));
   //  set max brightess
@@ -299,15 +311,19 @@ void tm1637_init(tm1637_t *tm1637, GPIO_TypeDef *gpio_clk, uint16_t pin_clk, GPI
   HAL_GPIO_Init(gpio_dat, &g);
   tm1637_unlock(tm1637);
 }
-//#######################################################################################################################
-void tm1637_brightness(tm1637_t *tm1637, uint8_t brightness_0_to_7)
+
+
+
+static void tm1637_brightness(tm1637_t *tm1637, uint8_t brightness_0_to_7)
 {
   tm1637_lock(tm1637);
   tm1637->brightness = (brightness_0_to_7 & 0x7) | 0x08;
   tm1637_unlock(tm1637);
 }
-//#######################################################################################################################
-void tm1637_write_raw(tm1637_t *tm1637, const uint8_t *raw, uint8_t length, uint8_t pos)
+
+
+
+static void tm1637_write_raw(tm1637_t *tm1637, const uint8_t *raw, uint8_t length, uint8_t pos)
 {
   if (pos > 5)
     return;
@@ -329,15 +345,19 @@ void tm1637_write_raw(tm1637_t *tm1637, const uint8_t *raw, uint8_t length, uint
   tm1637_write_byte(tm1637, TM1637_COMM3 + tm1637->brightness);
   tm1637_stop(tm1637);
 }
-//#######################################################################################################################
-void tm1637_write_segment(tm1637_t *tm1637, const uint8_t *segments, uint8_t length, uint8_t pos)
+
+
+
+static void tm1637_write_segment(tm1637_t *tm1637, const uint8_t *segments, uint8_t length, uint8_t pos)
 {
   tm1637_lock(tm1637);
   tm1637_write_raw(tm1637, segments, length, pos);
   tm1637_unlock(tm1637);
 }
-//#######################################################################################################################
-void tm1637_write_int(tm1637_t *tm1637, int32_t digit, uint8_t pos)
+
+
+
+static void tm1637_write_int(tm1637_t *tm1637, int32_t digit, uint8_t pos)
 {
   tm1637_lock(tm1637);
   char str[7];
@@ -358,8 +378,10 @@ void tm1637_write_int(tm1637_t *tm1637, int32_t digit, uint8_t pos)
   tm1637_write_raw(tm1637, buffer, 6, pos);
   tm1637_unlock(tm1637);
 }
-//#######################################################################################################################
-void tm1637_write_float(tm1637_t *tm1637, float digit, uint8_t floating_digit, uint8_t pos)
+
+
+
+static void tm1637_write_float(tm1637_t *tm1637, float digit, uint8_t floating_digit, uint8_t pos)
 {
   tm1637_lock(tm1637);
   char str[8];
@@ -427,13 +449,17 @@ void tm1637_write_float(tm1637_t *tm1637, float digit, uint8_t floating_digit, u
   tm1637_write_raw(tm1637, buffer, 6, pos);
   tm1637_unlock(tm1637);
 }
-//#######################################################################################################################
-void tm1637_show_zero(tm1637_t *tm1637, bool enable)
+
+
+
+static void tm1637_show_zero(tm1637_t *tm1637, bool enable)
 {
   tm1637->show_zero = enable;
 }
-//#######################################################################################################################
-void tm1637_fill(tm1637_t *tm1637, bool enable)
+
+
+
+static void tm1637_fill(tm1637_t *tm1637, bool enable)
 {
     if (enable)
         tm1637_write_segment(tm1637, _tm1637_on, 6, 0);
