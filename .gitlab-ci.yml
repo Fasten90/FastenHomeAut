@@ -280,8 +280,10 @@ analysis_ericsson_codechecker:
     
     echo Install codechecker
     #https://github.com/Ericsson/codechecker/blob/master/docs/usage.md#step-1
-    pip3 install codechecker
-    
+    #pip3 install codechecker
+    python3 -m venv venv
+    venv/bin/python3 -m pip install codechecker
+
     echo Preparations
     gcc --version
     cmake --version
@@ -431,11 +433,12 @@ document_generation:
     cd FastenDocSystem
     
     # Install
-    python3 -m pip install -r requirements.txt
+    python3 -m venv venv
+    venv/bin/python3 -m pip install -r requirements.txt
     
     # Run
     # TODO: Declare the arguments
-    python3 PdfGenerator.py --input-path ..  --export-pdf-file-path out/FastenDoc.pdf
+    venv/bin/python3 PdfGenerator.py --input-path ..  --export-pdf-file-path out/FastenDoc.pdf
   needs:
     - job: compiler_warning
       artifacts: true
