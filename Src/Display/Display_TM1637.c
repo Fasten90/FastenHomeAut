@@ -85,9 +85,10 @@ static const uint8_t digitToSegment[] = {
   0b00111001,    // C
   0b01011110,    // d
   0b01111001,    // E
-  0b01110001     // F
+  0b01110001,     // F
 };
 
+static const uint8_t tm1637_letter_G = 0b00111101;    // G
 
 
 const uint8_t _tm1637_digit[] =
@@ -144,6 +145,10 @@ static uint8_t Display_ConvertSegmens(uint8_t digit)
     {
         index = digit - 'a' + 10;
         digit = digitToSegment[index];
+    }
+    else if (digit == 'g' || digit == 'G') // TODO: Special, should be excluded somehow, maybe with #ifdef
+    {
+    	digit = tm1637_letter_G;
     }
     else if (digit == '-')
     {

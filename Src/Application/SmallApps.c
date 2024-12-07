@@ -303,6 +303,11 @@ static void DisplayInput_StepLetterNextValue(int8_t step)
         DisplayInput_ActualRealString[DisplayInput_LetterPosition] = DisplayInput_Characters[selectedLetter];
     }
 
+#ifdef CONFIG_MODULE_DISPLAY_ENABLE
+    /* Refresh 7segment */
+    Display_TM1637_Print(DisplayInput_ActualRealString);
+#endif
+
     /* Refresh display */
     TaskHandler_RequestTaskScheduling(Task_Display);
 }
