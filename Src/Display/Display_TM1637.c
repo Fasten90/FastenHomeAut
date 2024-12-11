@@ -15,7 +15,7 @@
 #include "compiler.h"
 #include "board.h"
 #include "StringHelper.h"
-
+#include "DateTime.h"
 
 
 #ifdef CONFIG_MODULE_DISPLAY_ENABLE
@@ -158,8 +158,14 @@ static uint8_t Display_ConvertSegmens(uint8_t digit)
     {
         digit = _tm1637_empty;
     }
+    else if (digit < NUM_OF(digitToSegment))
+    {
+		/* Byte number */
+    	digit = digitToSegment[digit];
+    }
     else
     {
+
         index = 15; /* hardcoded E - ERROR */
         digit = digitToSegment[index];
     }
@@ -189,6 +195,27 @@ void Display_TM1637_Test(void)
     //tm1637_write_int(&disp, 56, 0);
 
 }
+
+
+
+void Display_TM1637_DisplayTime(Time_t *time)
+{
+    uint8_t segments[4] =  {0, 0, 0, 0};
+
+    if (time == NULL)
+    {
+        return;
+    }
+
+    segments[0] = Display_ConvertSegmens(time->hour / 10) | _tm1637_dot;
+    segments[1] = Display_ConvertSegmens(time->hour % 10) | _tm1637_dot;
+    segments[2] = Display_ConvertSegmens(time->minute / 10) | _tm1637_dot;
+    segments[3] = Display_ConvertSegmens(time->minute % 10) | _tm1637_dot;
+
+    tm1637_write_segment(&disp, segments, 4, 0);
+    DelayMs(10);
+}
+
 
 
 void Display_TM1637_Print(char *str)

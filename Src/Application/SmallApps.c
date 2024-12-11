@@ -598,6 +598,10 @@ void App_DisplayLargeClock_Update(ScheduleSource_t source)
             TaskHandler_SetTaskOnceRun(Task_Display, 1000);
             break;
     }
+
+#ifdef CONFIG_HW_DISPLAY_TM1637_ENABLE
+    Display_TM1637_DisplayTime(&dateTime.time);
+#endif
     #else
     /* Only display a simple large clock (there is no vibration, not changeable) */
 
