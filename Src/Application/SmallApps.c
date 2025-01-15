@@ -75,6 +75,10 @@ static uint16_t DisplayCarAnimation_RefreshPeriod_Actual = 300;        /* Do not
 
 #if defined(CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK)
 static DisplayClock_ChangeState_t App_Clock_SystemTimeConfigState = 0;
+#if defined(CONFIG_DISPLAY_CLOCK_SUPPORT_AM_PM)
+static bool DisplayClock_AMPM_is12hour = false;
+static bool DisplayClock_ShallBeCleaned = false;
+#endif /* CONFIG_DISPLAY_CLOCK_SUPPORT_AM_PM */
 #endif /* CONFIG_FUNCTION_DISPLAY_CHANGE_CLOCK */
 
 
@@ -550,7 +554,9 @@ void App_DisplayLargeClock_Update(ScheduleSource_t source)
     static bool colon = true;
 
     if (source == ScheduleSource_EventTriggered)
+    {
         Display_VibrateStateHide = false;
+    }
 
     /* Get actual DateTime */
     DateTime_t dateTime;
@@ -587,17 +593,48 @@ void App_DisplayLargeClock_Update(ScheduleSource_t source)
             }
             TaskHandler_SetTaskOnceRun(Task_Display, 500);
             break;
-
+#ifdef CONFIG_DISPLAY_CLOCK_SUPPORT_AM_PM
+        case DisplayClock_AMPM:
+        	Display_Clear();
+        	FontFormat_t format = { 0 };
+        	format.Format_Center = 1;
+        	if (DisplayClock_AMPM_is12hour)
+        	{
+        		Display_PrintString("12H", 2, Font_12x8, format);
+        	}
+        	else
+        	{
+        		Display_PrintString("24H", 2, Font_12x8, format);
+        	}
+            TaskHandler_SetTaskOnceRun(Task_Display, 500);
+			break;
+#endif
         case DisplayClock_HourAndMinute:
         case DisplayClock_Count:
         default:
             /* Not in setting, display the hour and minute too */
-            Display_ShowLargeClock(&dateTime.time, colon);
+
+#ifdef CONFIG_DISPLAY_CLOCK_SUPPORT_AM_PM
+			if (DisplayClock_ShallBeCleaned)
+			{
+				Display_Clear();
+				DisplayClock_ShallBeCleaned = false;
+			}
+        	if (DisplayClock_AMPM_is12hour)
+        	{
+        		if (dateTime.time.hour > 12)
+        		{
+        			dateTime.time.hour -= 12;
+        		}
+        		/* else if (dateTime.time.hour == 0) */
+        	}
+			Display_ShowLargeClock(&dateTime.time, colon);
             colon = !colon;
             /* TaskHandler_DisableTask(Task_Display); */
             TaskHandler_SetTaskOnceRun(Task_Display, 1000);
             break;
     }
+#endif /* CONFIG_DISPLAY_CLOCK_SUPPORT_AM_PM */
 
 #ifdef CONFIG_HW_DISPLAY_TM1637_ENABLE
     Display_TM1637_DisplayTime(&dateTime.time);
@@ -706,6 +743,12 @@ static void DisplayLargeClock_StepValue(void)
         }
             break;
 
+#ifdef CONFIG_DISPLAY_CLOCK_SUPPORT_AM_PM
+        case DisplayClock_AMPM:
+        	DisplayClock_ShallBeCleaned = true;
+        	DisplayClock_AMPM_is12hour = !DisplayClock_AMPM_is12hour;
+        	break;
+#endif /* CONFIG_DISPLAY_CLOCK_SUPPORT_AM_PM */
         case DisplayClock_Count:
         default:
             /* Error ! */
