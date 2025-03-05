@@ -235,7 +235,7 @@ bool DateTime_ConvertTimeStringToTime(char *str, Time_t *time)
         convertTime.minute = (uint8_t)convertValue;
 
         isOk &= StringToUnsignedDecimalNum(separated[2], &convertValue);
-        isOk &= DateTime_CheckValue(convertValue, 0, 59);
+        isOk &= DateTime_CheckValue(convertValue, 0, 60); // It is a hack
         convertTime.second = (uint8_t)convertValue;
 
         /* If ok, copy to parameter */
@@ -286,7 +286,7 @@ bool DateTime_CheckDateTime(DateTime_t *dateTime)
     isOk &= DateTime_CheckValue(dateTime->date.day, 1, 31);
     isOk &= DateTime_CheckValue(dateTime->time.hour, 0, 23);
     isOk &= DateTime_CheckValue(dateTime->time.minute, 0, 59);
-    isOk &= DateTime_CheckValue(dateTime->time.second, 0, 59);
+    isOk &= DateTime_CheckValue(dateTime->time.second, 0, 60); // It is a hack
 
     return isOk;
 }
@@ -560,7 +560,7 @@ void DateTime_StepOneSecond(DateTime_t *dateTime)
 
     ++dateTime->time.second;
 
-    if (dateTime->time.second > 59)
+    if (dateTime->time.second > 60) // It is a temporary hack
     {
         dateTime->time.second = 0;
         ++dateTime->time.minute;
