@@ -551,3 +551,30 @@ void Logic_DisplayESP8266(ScheduleSource_t source)
 #endif /* CONFIG_DISPLAY_ESP8266_ENABLE */
 
 
+#ifdef CONFIG_FUNCTION_MATI_CLOCK_HACK
+
+void Logic_DisplayMatiClockHack(ScheduleSource_t source)
+{
+
+    UNUSED_ARGUMENT(source);
+
+    char statusMsg[20];
+    usnprintf(statusMsg, 20, "Status: %d", DateTime_minute_max);
+
+    Display_PrintString(
+                    statusMsg,              /* msg */
+                    0,                      /* line */
+                    Font_12x8,              /* Font */
+                    NO_FORMAT);             /* Format */
+
+    /* Require periodical schedule */
+    TaskHandler_SetTaskOnceRun(Task_Display, 1000);
+
+    Display_Activate();
+}
+
+
+#endif /* CONFIG_FUNCTION_MATI_CLOCK_HACK */
+
+
+

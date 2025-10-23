@@ -129,6 +129,9 @@ void App_DisplayElevator_Init(void);
 void App_DisplayElevator_Event(ButtonType_t button, ButtonPressType_t type);
 void App_DisplayElevator_Update(ScheduleSource_t source);
 
+void App_DisplayMatiClockHack_Init(void);
+void App_DisplayMatiClockHack_Event(ButtonType_t button, ButtonPressType_t type);
+void App_DisplayMatiClockHack_Update(ScheduleSource_t source);
 
 
 #endif /* SMALLAPPS_H_ */

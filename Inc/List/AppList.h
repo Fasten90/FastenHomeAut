@@ -56,6 +56,9 @@ typedef enum
 #ifdef CONFIG_FUNCTION_ELEVATOR
     AppType_Elevator,
 #endif
+#ifdef CONFIG_FUNCTION_MATI_CLOCK_HACK
+    AppType_MatiClockHack,
+#endif
 
     /* Note: Last item, do not put anything after */
     AppType_Count

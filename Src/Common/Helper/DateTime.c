@@ -29,6 +29,7 @@
  *  Global variables
  *----------------------------------------------------------------------------*/
 
+uint8_t DateTime_minute_max = 59;
 
 
 /*------------------------------------------------------------------------------
@@ -235,7 +236,7 @@ bool DateTime_ConvertTimeStringToTime(char *str, Time_t *time)
         convertTime.minute = (uint8_t)convertValue;
 
         isOk &= StringToUnsignedDecimalNum(separated[2], &convertValue);
-        isOk &= DateTime_CheckValue(convertValue, 0, 60); // It is a hack
+        isOk &= DateTime_CheckValue(convertValue, 0, DateTime_minute_max); // It is a hack
         convertTime.second = (uint8_t)convertValue;
 
         /* If ok, copy to parameter */
@@ -286,7 +287,7 @@ bool DateTime_CheckDateTime(DateTime_t *dateTime)
     isOk &= DateTime_CheckValue(dateTime->date.day, 1, 31);
     isOk &= DateTime_CheckValue(dateTime->time.hour, 0, 23);
     isOk &= DateTime_CheckValue(dateTime->time.minute, 0, 59);
-    isOk &= DateTime_CheckValue(dateTime->time.second, 0, 60); // It is a hack
+    isOk &= DateTime_CheckValue(dateTime->time.second, 0, DateTime_minute_max); // It is a hack
 
     return isOk;
 }

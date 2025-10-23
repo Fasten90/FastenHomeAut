@@ -123,6 +123,8 @@
 
         #define CONFIG_FUNCTION_ELEVATOR
 
+		#define CONFIG_FUNCTION_MATI_CLOCK_HACK
+
         /* Display: Scrolling menu (Use only for longer then 3 menu) */
         /* #define CONFIG_FUNCTION_DISPLAY_MENU_SCROLLING */
     #endif

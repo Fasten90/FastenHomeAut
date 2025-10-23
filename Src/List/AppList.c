@@ -94,6 +94,14 @@ const App_List_t AppList[] = {
         .updateFunction = App_DisplayElevator_Update
     },
     #endif
+	#ifdef CONFIG_FUNCTION_MATI_CLOCK_HACK
+    {
+        .AppName = "MatiClock",
+        .initFunction = App_DisplayMatiClockHack_Init,
+        .eventFunction = App_DisplayMatiClockHack_Event,
+        .updateFunction = App_DisplayMatiClockHack_Update
+    },
+	#endif
 };
 
 const uint8_t AppList_Num = NUM_OF(AppList);

@@ -98,6 +98,8 @@ void Logic_Display_Snake_ChangeToMenu(void);
 
 void Logic_DisplayESP8266(ScheduleSource_t source);
 
+void Logic_DisplayMatiClockHack(ScheduleSource_t source);
+
 
 
 #endif /* LOGIC_H_ */

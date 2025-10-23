@@ -1187,7 +1187,80 @@ void App_DisplayElevator_Update(ScheduleSource_t source)
 
 }
 
-
 #endif /* CONFIG_FUNCTION_ELEVATOR */
 
+
+
+#ifdef CONFIG_FUNCTION_MATI_CLOCK_HACK
+
+void App_DisplayMatiClockHack_Init(void)
+{
+	App_DisplayMatiClockHack_Update(ScheduleSource_EventTriggered);
+}
+
+void App_DisplayMatiClockHack_Event(ButtonType_t button, ButtonPressType_t type)
+{
+    if (type != ButtonPress_ReleasedContinuous)
+    {
+        switch (button)
+        {
+            case PressedButton_Right:
+                /* Right */
+                if (type == ButtonPress_Long)
+                {
+                	DateTime_minute_max++;
+                	App_DisplayMatiClockHack_Update(ScheduleSource_EventTriggered);
+                }
+                break;
+
+            case PressedButton_Left:
+                /* Left */
+                if (type == ButtonPress_Short)
+                {
+                	DateTime_minute_max--;
+                	App_DisplayMatiClockHack_Update(ScheduleSource_EventTriggered);
+                }
+                break;
+
+            case PressedButton_Up:
+                /* Up */
+            	DateTime_minute_max++;
+            	App_DisplayMatiClockHack_Update(ScheduleSource_EventTriggered);
+                break;
+
+            case PressedButton_Down:
+                /* Down */
+            	DateTime_minute_max--;
+            	App_DisplayMatiClockHack_Update(ScheduleSource_EventTriggered);
+                break;
+
+            case PressedButton_Count:
+            default:
+                /* Error! */
+                break;
+        }
+    }
+}
+
+void App_DisplayMatiClockHack_Update(ScheduleSource_t source)
+{
+    UNUSED_ARGUMENT(source);
+
+    char statusMsg[20];
+    usnprintf(statusMsg, 20, "%d", DateTime_minute_max);
+
+    Display_PrintString(
+                    statusMsg,              /* msg */
+                    0,                      /* line */
+                    Font_12x8,              /* Font */
+                    NO_FORMAT);             /* Format */
+
+
+    Display_PrintString(statusMsg, 0, Font_32x20, Display_NoFormat);
+    Display_Activate();
+    TaskHandler_DisableTask(Task_Display);
+
+}
+
+#endif /* CONFIG_FUNCTION_MATI_CLOCK_HACK */
 

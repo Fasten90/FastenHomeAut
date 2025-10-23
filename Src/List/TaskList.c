@@ -865,4 +865,5 @@ static TaskResult_t Task_GsmFunction(ScheduleSource_t source)
 #endif
 
 
+
 #endif /* ifdef CONFIG_MODULE_TASKHANDLER_ENABLE */
