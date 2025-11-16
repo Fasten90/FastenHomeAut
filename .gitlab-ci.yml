@@ -195,10 +195,10 @@ test_linux_arm_none_eabi_gcc_qemu_test:
     download_full_path="https://github.com/xpack-dev-tools/qemu-arm-xpack/releases/download/v${qemu_version}/${qemu_install_file}"
     echo "Download: ${download_full_path}"
     wget $download_full_path
-    
+
     mkdir -p opt
     cd opt
-    
+
     # E.g. tar xvf ~/Downloads/xpack-qemu-arm-2.8.0-7-linux-x64.tgz
     echo "Unzip: ${qemu_install_file}"
     tar xvf ../$qemu_install_file
@@ -210,14 +210,15 @@ test_linux_arm_none_eabi_gcc_qemu_test:
     echo "Execute: ${qemu_bin_path}"
     ./$qemu_bin_path --version
     pwd  # Debug
-    
+
     # FastenTestSystem
     cd ..
-    
+
     echo "Clone FastenTestSystem"
     git clone https://github.com/Fasten90/FastenTestSystem.git
     cd FastenTestSystem
-    git checkout develop
+    #git checkout develop
+    git checkout feature-print-invalid-tests
     # Execute
     echo "Executing..."
     pwd  # Debug
