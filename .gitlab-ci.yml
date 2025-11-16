@@ -217,8 +217,7 @@ test_linux_arm_none_eabi_gcc_qemu_test:
     echo "Clone FastenTestSystem"
     git clone https://github.com/Fasten90/FastenTestSystem.git
     cd FastenTestSystem
-    #git checkout develop
-    git checkout feature-print-invalid-tests
+    git checkout develop
     # Execute
     echo "Executing..."
     pwd  # Debug
