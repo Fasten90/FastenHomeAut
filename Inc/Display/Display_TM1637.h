@@ -10,6 +10,8 @@
 
 
 #include "compiler.h"
+#include "DateTime.h"
+
 
 
 #define SEG_A   0b00000001
@@ -25,6 +27,8 @@
 extern void TM1637Display_Init(void);
 
 extern void Display_TM1637_Test(void);
+
+extern void Display_TM1637_DisplayTime(Time_t *time);
 
 extern void Display_TM1637_Print(char *str);
 

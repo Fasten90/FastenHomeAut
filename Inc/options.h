@@ -115,7 +115,7 @@
         /* #define CONFIG_FUNCTION_GAME_SNAKE */
 
         /* Display: Input */
-        /* #define CONFIG_FUNCTION_DISPLAY_INPUT */
+        #define CONFIG_FUNCTION_DISPLAY_INPUT
         /* Display: Show screen (Car animation)*/
         #define CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
 
@@ -140,6 +140,7 @@
     #ifdef CONFIG_FUNCTION_DISPLAY_SHOW_CLOCK
         #define CONFIG_DISPLAY_CLOCK_LARGE
         #define CONFIG_DISPLAY_CLOCK_SMALL
+		#define CONFIG_DISPLAY_CLOCK_SUPPORT_AM_PM
         #ifndef CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
             #define CONFIG_MODULE_TASK_SYSTEMTIME_ENABLE
         #endif

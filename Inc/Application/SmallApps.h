@@ -40,6 +40,10 @@ typedef enum
     DisplayClock_Hour,
     DisplayClock_Minute,
 
+#ifdef CONFIG_DISPLAY_CLOCK_SUPPORT_AM_PM
+	DisplayClock_AMPM,
+#endif
+
     /* Do not use! */
     DisplayClock_Count
 } DisplayClock_ChangeState_t;
