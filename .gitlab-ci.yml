@@ -316,7 +316,7 @@ analysis_fasten_static_analyzer:
     alias python=python3
 
     echo clone FastenStaticAnalyzer
-    git clone https://github.com/fasten90/FastenStaticAnalyzer --branch fix-gitlab-image-fail-python3
+    git clone https://github.com/fasten90/FastenStaticAnalyzer --branch master
 
     cd FastenStaticAnalyzer
     ./install.sh
