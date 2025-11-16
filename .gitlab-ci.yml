@@ -274,12 +274,12 @@ analysis_ericsson_codechecker:
   stage: build
   script: |
     echo Ericsson CodeChecker
-    
+  
     apt update -y
     apt install -y clang-tidy
-    
+  
     apt-get install -y python3 python3-pip
-    
+  
     echo Install codechecker
     #https://github.com/Ericsson/codechecker/blob/master/docs/usage.md#step-1
     #pip3 install codechecker
@@ -295,16 +295,16 @@ analysis_ericsson_codechecker:
     cmake ../..
     #make > GCC_build.log 2>&1
     echo Execute CodeChecker log-build
-    CodeChecker log --build "make" --output ./compile_commands.json
+    codechecker log --build "make" --output ./compile_commands.json
     cat ./compile_commands.json
     echo Execute CodeChecker analyze
-    CodeChecker analyze ./compile_commands.json --enable sensitive --output ./reports
+    codechecker analyze ./compile_commands.json --enable sensitive --output ./reports
     echo Execute CodeChecker export
     # View result: https://github.com/Ericsson/codechecker/blob/master/docs/usage.md#view-the-analysis-results-in-the-command-line-
-    CodeChecker parse ./reports || echo "Return code: $?"
+    codechecker parse ./reports || echo "Return code: $?"
     # TODO: Handle return code. E.g. 2 return code is low+medium issue
     # TODO: Maybe it require install 'report-converter' python tool
-    #CodeChecker parse --export html --output ./reports_html ./reports
+    #codechecker parse --export html --output ./reports_html ./reports
 
 
 analysis_fasten_static_analyzer:
