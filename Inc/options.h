@@ -117,11 +117,13 @@
         /* Display: Input */
         #define CONFIG_FUNCTION_DISPLAY_INPUT
         /* Display: Show screen (Car animation)*/
-        #define CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN
+        /* #define CONFIG_FUNCTION_DISPLAY_SHOW_SCREEN */
 
         /* #define CONFIG_FUNCTION_TRAFFIC_LIGHT */
 
         #define CONFIG_FUNCTION_ELEVATOR
+
+		#define CONFIG_FUNCTION_GAME_X2
 
         /* Display: Scrolling menu (Use only for longer then 3 menu) */
         /* #define CONFIG_FUNCTION_DISPLAY_MENU_SCROLLING */
@@ -203,6 +205,20 @@
             #define CONFIG_DISPLAY_FONT12X8_ENABLE
         #endif
     #endif
+
+
+	///< X2 Game
+	/* #define CONFIG_FUNCTION_GAME_X2 */
+	#ifdef CONFIG_FUNCTION_GAME_X2
+		#define CONFIG_REQUIRE_DISPLAY
+
+		#ifndef CONFIG_DISPLAY_FONT8X5_ENABLE
+			#define CONFIG_DISPLAY_FONT8X5_ENABLE
+		#endif
+		#ifndef CONFIG_DISPLAY_FONT12X8_ENABLE
+			#define CONFIG_DISPLAY_FONT12X8_ENABLE
+		#endif
+	#endif
 
 
     ///< ESP8266 status display

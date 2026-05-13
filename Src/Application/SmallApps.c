@@ -135,6 +135,52 @@ static volatile bool App_Elevator_in_error_status = false;
 #endif /* CONFIG_FUNCTION_ELEVATOR */
 
 
+#ifdef CONFIG_FUNCTION_GAME_X2
+static const App_GameX2_LevelList[] = {
+    "2",
+	"4",
+	"8",
+	"16",
+	"32",
+	"64",
+	"128",
+	"256",
+	"512",
+	"1024",
+	"2048",
+	"4096",
+	"8192",
+	"16E"
+	"32E",
+	"64E",
+	"128E",
+	"256E",
+	"513E",
+	"1M",
+    "2M",
+	"4M",
+	"8M",
+	"16M",
+	"32M",
+	"64M",
+	"128M",
+	"257M",
+	"514M",
+	"1Md",
+    "2Md",
+	"4Md",
+	"8Md",
+	"16Md",
+	"32Md",
+	"64Md",
+	"129Md",
+	"258Md",
+	"516Md",
+	"1T",
+};
+#endif /* CONFIG_FUNCTION_GAME_X2 */
+
+
 
 /*------------------------------------------------------------------------------
  *  Function declarations
@@ -1190,4 +1236,93 @@ void App_DisplayElevator_Update(ScheduleSource_t source)
 
 #endif /* CONFIG_FUNCTION_ELEVATOR */
 
+
+
+#ifdef CONFIG_FUNCTION_GAME_X2
+
+void App_GameX2_Init(void)
+{
+	App_GameX2_Update(ScheduleSource_EventTriggered);
+
+    TaskHandler_SetTaskPeriodicTime(Task_ButtonPressed, 500);  /* 2 level / second */
+}
+
+void App_GameX2_Event(ButtonType_t button, ButtonPressType_t type)
+{
+    if (type != ButtonPress_ReleasedContinuous)
+    {
+        switch (button)
+        {
+        	// TODO
+            case PressedButton_Right:
+                /* Right */
+                if (type == ButtonPress_Long)
+                {
+                    Logic_Display_ChangeState(AppType_MainMenu);
+                }
+                break;
+
+            case PressedButton_Left:
+                /* Left */
+                if (type == ButtonPress_Short)
+                {
+                	//App_Elevator_in_error_status = ~App_Elevator_in_error_status;
+                	App_DisplayElevator_Update(ScheduleSource_EventTriggered);
+                }
+                break;
+
+            case PressedButton_Up:
+                /* Up */
+                //App_Elevator_level++;
+                App_DisplayElevator_Update(ScheduleSource_EventTriggered);
+                break;
+
+            case PressedButton_Down:
+                /* Down */
+                //App_Elevator_level--;
+                App_DisplayElevator_Update(ScheduleSource_EventTriggered);
+                break;
+
+            case PressedButton_Count:
+            default:
+                /* Error! */
+                break;
+        }
+    }
+}
+
+
+void App_GameX2_Update(ScheduleSource_t source)
+{
+    UNUSED_ARGUMENT(source);
+
+    char first_line[12];
+
+    // TODO
+    static uint8_t x2_actual_index = 0;
+    // TODO: max
+
+    //TODO index
+
+    // Line draw
+    char * x2_actual_value = App_GameX2_LevelList[x2_actual_index];
+
+	if (!x2_actual_index)
+	{
+		usnprintf(first_line, 6, "%d  ", x2_actual_index);
+	}
+	else
+	{
+		usnprintf(first_line, 6, "--    ", x2_actual_value);
+	}
+
+    Display_PrintString(x2_actual_value, 0, Font_32x20, Display_NoFormat);
+    Display_Activate();
+    TaskHandler_DisableTask(Task_Display);
+
+#ifdef CONFIG_HW_DISPLAY_TM1637_ENABLE
+    Display_TM1637_Print(first_line);
+#endif
+
+#endif /* CONFIG_FUNCTION_GAME_X2 */
 

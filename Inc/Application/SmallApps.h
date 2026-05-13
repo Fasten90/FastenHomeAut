@@ -129,6 +129,10 @@ void App_DisplayElevator_Init(void);
 void App_DisplayElevator_Event(ButtonType_t button, ButtonPressType_t type);
 void App_DisplayElevator_Update(ScheduleSource_t source);
 
+void App_GameX2_Init(void);
+void App_GameX2_Event(ButtonType_t button, ButtonPressType_t type);
+void App_GameX2_Update(ScheduleSource_t source);
+
 
 
 #endif /* SMALLAPPS_H_ */

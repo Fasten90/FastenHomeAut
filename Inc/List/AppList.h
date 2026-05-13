@@ -56,6 +56,9 @@ typedef enum
 #ifdef CONFIG_FUNCTION_ELEVATOR
     AppType_Elevator,
 #endif
+#ifdef CONFIG_FUNCTION_GAME_X2
+	AppType_GameX2,
+#endif
 
     /* Note: Last item, do not put anything after */
     AppType_Count

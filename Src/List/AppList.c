@@ -94,7 +94,17 @@ const App_List_t AppList[] = {
         .updateFunction = App_DisplayElevator_Update
     },
     #endif
+	#ifdef CONFIG_FUNCTION_GAME_X2
+    {
+        .AppName = "X2",
+        .initFunction = App_GameX2_Init,
+        .eventFunction = App_GameX2_Event,
+        .updateFunction = App_GameX2_Update
+    },
+	#endif
 };
+
+/* Note: If you add new element, please sync with the 'AppType_Count' */
 
 const uint8_t AppList_Num = NUM_OF(AppList);
 
