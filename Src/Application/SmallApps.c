@@ -29,6 +29,11 @@
     #include "Display_TM1637.h"
 #endif
 
+#ifdef CONFIG_FUNCTION_GAME_X2
+	#include "Display.h"
+	#include "MathHelper.h"
+#endif
+
 #define DisplayInput_LetterPosition_MaxLimit        (11)
 
 #define DisplayInput_LetterPosition_MinLimit        (0)
@@ -58,7 +63,7 @@ static uint8_t DisplayInput_LetterPosition = 0;
 static char DisplayInput_ActualRealString[DisplayInput_StringLimit] = { 0 };
 static uint8_t DisplayInput_ActualString[DisplayInput_LetterPosition_MaxLimit+1] = { 0 };
 
-static const char const DisplayInput_Characters[] = { ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+static const char DisplayInput_Characters[] = { ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
     't', 'u', 'v', 'w', 'x', 'y', 'z' };
 
@@ -136,7 +141,7 @@ static volatile bool App_Elevator_in_error_status = false;
 
 
 #ifdef CONFIG_FUNCTION_GAME_X2
-static const App_GameX2_LevelList[] = {
+static const char * const App_GameX2_LevelList[] = {
     "2",
 	"4",
 	"8",
@@ -1240,15 +1245,104 @@ void App_DisplayElevator_Update(ScheduleSource_t source)
 
 #ifdef CONFIG_FUNCTION_GAME_X2
 
+typedef enum
+{
+	GameX2_column_min = 0,
+	GameX2_column_left = 0, /* Min */
+	GameX2_column_mid,
+	GameX2_column_right, /* Latest acceptable */
+	GameX2_column_count /* Max+1 */
+} GameX2_column_t;
+
+#define GameX2_Column_Size (3)
+#define GameX2_Row_Size (3)
+
+static const char * GameX2_Matrix[GameX2_Column_Size][GameX2_Row_Size] = { 0 };
+/* column index, row index */
+
+static const char * volatile GameX2_ActualNewNumber = NULL;
+
+static const char * volatile GameX2_Record = NULL;
+static volatile uint8_t GameX2_NextNumber_MinIndex = 0;
+
+#define GAME_X2_START_RECORD_INDEX ( 4 )
+#define GAME_X2_NUMBER_STRING_LENGTH ( 4 )
+#define GAME_X2_BOTTOM_LINE_INDEX_FOR_NEXT_NUMBER ( GameX2_Row_Size )
+#define GAME_X2_RANDOM_GENERATION_NEXT_NUMBER_MAX_INDEX ( 3 )
+
+#define GAME_X2_STRING_ONE_LINE_MAX_LENGTH ( ( GAME_X2_NUMBER_STRING_LENGTH * GameX2_Column_Size ) + 1)
+
+
+static bool_t GameX2_CheckAllFields_IsThereFree(void) {
+	bool_t result = false; /* It has no free */
+	uint8_t row_i;
+	uint8_t column_i;
+	for (row_i=0; row_i < GameX2_Row_Size; row_i++) {
+		for (column_i=0; column_i < GameX2_Column_Size; column_i++) {
+			if (GameX2_Matrix[column_i][row_i] == NULL ) {
+				result = true;
+				break;
+			}
+		}
+	}
+	return result;
+}
+
+static bool_t GameX2_SelectColumn(GameX2_column_t column) {
+	bool_t result = true;
+	if (column >= GameX2_column_min && column < GameX2_column_count) {
+		uint8_t row_i;
+		bool_t column_passed = false;
+		for (row_i=0; row_i < GameX2_Row_Size; row_i++) {
+			if (GameX2_Matrix[column][row_i] == NULL ) {
+				GameX2_Matrix[column][row_i] = GameX2_ActualNewNumber;
+				column_passed = true;
+				break;
+			}
+			// else : There is a field in that
+		}
+		if (column_passed != true) {
+			/* The column was full */
+			result = false;
+			/* TODO: Check the all columns, because maybe there is no another free column */
+		}
+	}
+	return result;
+}
+
+static void GameX2_GenerateNewNumber(void) {
+	uint8_t random_index = random() % GAME_X2_RANDOM_GENERATION_NEXT_NUMBER_MAX_INDEX;
+	GameX2_ActualNewNumber = App_GameX2_LevelList[GameX2_NextNumber_MinIndex+random_index];
+}
+
+static void GameX2_CheckIfMergePossible(void) {
+	// TODO: Check the fields
+	// TODO Increase the GameX2_NextNumber_MinIndex if new record is arrived
+	return;
+}
+
 void App_GameX2_Init(void)
 {
+	// Init game
+	ASSERT(GameX2_Column_Size == GameX2_column_right)
+	ASSERT(GameX2_Column_Size == GameX2_column_count - 1)
+
+	GameX2_Record = App_GameX2_LevelList[GAME_X2_START_RECORD_INDEX];
+	// Put the record to the top center
+	GameX2_Matrix[GameX2_column_mid][0] = GameX2_Record;
+
+	// Generate a new number
+	GameX2_GenerateNewNumber();
+
 	App_GameX2_Update(ScheduleSource_EventTriggered);
 
-    TaskHandler_SetTaskPeriodicTime(Task_ButtonPressed, 500);  /* 2 level / second */
+    //TaskHandler_SetTaskPeriodicTime(Task_ButtonPressed, 500);  /* 2 level / second */
 }
 
 void App_GameX2_Event(ButtonType_t button, ButtonPressType_t type)
 {
+	bool_t is_successful = false;
+
     if (type != ButtonPress_ReleasedContinuous)
     {
         switch (button)
@@ -1256,9 +1350,9 @@ void App_GameX2_Event(ButtonType_t button, ButtonPressType_t type)
         	// TODO
             case PressedButton_Right:
                 /* Right */
-                if (type == ButtonPress_Long)
+                if (type == ButtonPress_Short)
                 {
-                    Logic_Display_ChangeState(AppType_MainMenu);
+                	is_successful = GameX2_SelectColumn(GameX2_column_right);
                 }
                 break;
 
@@ -1266,21 +1360,25 @@ void App_GameX2_Event(ButtonType_t button, ButtonPressType_t type)
                 /* Left */
                 if (type == ButtonPress_Short)
                 {
-                	//App_Elevator_in_error_status = ~App_Elevator_in_error_status;
-                	App_DisplayElevator_Update(ScheduleSource_EventTriggered);
+                	is_successful = GameX2_SelectColumn(GameX2_column_left);
                 }
                 break;
 
             case PressedButton_Up:
                 /* Up */
                 //App_Elevator_level++;
-                App_DisplayElevator_Update(ScheduleSource_EventTriggered);
+            	if (type == ButtonPress_Long) {
+            		Logic_Display_ChangeState(AppType_MainMenu);
+            		is_successful = false;
+            	}
                 break;
 
             case PressedButton_Down:
                 /* Down */
-                //App_Elevator_level--;
-                App_DisplayElevator_Update(ScheduleSource_EventTriggered);
+                if (type == ButtonPress_Short)
+                {
+                	is_successful = GameX2_SelectColumn(GameX2_column_mid);
+                }
                 break;
 
             case PressedButton_Count:
@@ -1289,6 +1387,15 @@ void App_GameX2_Event(ButtonType_t button, ButtonPressType_t type)
                 break;
         }
     }
+
+    // TODO: is_successful doing anything?
+    if (is_successful == true) {
+    	/* So we put successfully the number, let us generated a new number */
+    	GameX2_CheckIfMergePossible();
+    	GameX2_GenerateNewNumber();
+    }
+
+    App_GameX2_Update(ScheduleSource_EventTriggered);
 }
 
 
@@ -1296,17 +1403,48 @@ void App_GameX2_Update(ScheduleSource_t source)
 {
     UNUSED_ARGUMENT(source);
 
-    char first_line[12];
+    char first_line[GAME_X2_STRING_ONE_LINE_MAX_LENGTH];
+    bool_t is_there_free_field;
 
     // TODO
-    static uint8_t x2_actual_index = 0;
+    //static uint8_t x2_actual_index = 0;
     // TODO: max
 
-    //TODO index
+    // Draw screen
+    static uint8_t row_i = 0;
+    static uint8_t column_i = 0;
+	for (row_i=0; row_i < GameX2_Row_Size; row_i++) {
+		// one line
+		memset(first_line, 0,GAME_X2_STRING_ONE_LINE_MAX_LENGTH);
+		for (column_i=0; column_i < GameX2_Column_Size; column_i++) {
+		    const char * x2_actual_value = GameX2_Matrix[column_i][row_i];
+			uint8_t string_index = column_i * GAME_X2_NUMBER_STRING_LENGTH;
+			if (x2_actual_value) // The pointed value (string)
+			{
+				usnprintf(&first_line[string_index], GAME_X2_NUMBER_STRING_LENGTH + 1, "%s   ", x2_actual_value);
+			}
+			else
+			{
+				usnprintf(&first_line[string_index], GAME_X2_NUMBER_STRING_LENGTH + 1, "    ");
+			}
 
-    // Line draw
-    char * x2_actual_value = App_GameX2_LevelList[x2_actual_index];
+		}
+		// Display the entire line
+		Display_PrintString(first_line, row_i, Font_12x8, Display_NoFormat);
+	}
 
+	/* The generated next number into the bottom + center */
+	usnprintf(first_line, GAME_X2_NUMBER_STRING_LENGTH + 1, "%s", GameX2_ActualNewNumber);
+	FontFormat_t format;
+	format.Format_Center = 1;
+	Display_PrintString(first_line, GAME_X2_BOTTOM_LINE_INDEX_FOR_NEXT_NUMBER, Font_12x8, format);
+
+#ifdef CONFIG_HW_DISPLAY_TM1637_ENABLE
+    //Display_TM1637_Print(first_line);
+#endif
+
+	// TODO: Remove
+	/*
 	if (!x2_actual_index)
 	{
 		usnprintf(first_line, 6, "%d  ", x2_actual_index);
@@ -1315,14 +1453,19 @@ void App_GameX2_Update(ScheduleSource_t source)
 	{
 		usnprintf(first_line, 6, "--    ", x2_actual_value);
 	}
+	*/
 
-    Display_PrintString(x2_actual_value, 0, Font_32x20, Display_NoFormat);
+    //Display_PrintString(x2_actual_value, 0, Font_32x20, Display_NoFormat);
     Display_Activate();
-    TaskHandler_DisableTask(Task_Display);
+    TaskHandler_DisableTask(Task_Display); // We dont need periodical refresh
 
-#ifdef CONFIG_HW_DISPLAY_TM1637_ENABLE
-    Display_TM1637_Print(first_line);
-#endif
+    is_there_free_field = GameX2_CheckAllFields_IsThereFree();
+	if (is_there_free_field != true)
+	{
+		Display_PrintString("Finished", GAME_X2_BOTTOM_LINE_INDEX_FOR_NEXT_NUMBER, Font_12x8, Display_NoFormat);
+		Display_Activate();
+	}
+}
 
 #endif /* CONFIG_FUNCTION_GAME_X2 */
 
