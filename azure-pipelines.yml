@@ -14,7 +14,7 @@ stages:
   # Build - Win - MSVC
   - job: build_win_msvc
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'windows-2022'
     displayName: 'Build - Win - MSVC'
     steps:
     - script: |
@@ -105,7 +105,7 @@ stages:
   # Build - Win - MinGW - GCC
   - job: build_win_mingw_gcc
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'windows-2022'
     displayName: 'Build - Win - MinGW GCC'
     steps:
     - script: |
@@ -175,7 +175,7 @@ stages:
   # Build - Win - MinGW - GCC - batch script
   - job: build_win_mingw_gcc_batch
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'windows-2022'
     displayName: 'Build - Win - MinGW GCC [batch]'
     steps:
     - task: BatchScript@1
@@ -384,7 +384,7 @@ stages:
   # Test - Win - GCC Coverage - batch script
   - job: test_win_gcc_coverage_script
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'windows-2022'
     displayName: 'Test - Win - GccCoverage [batch]'
     steps:
     - task: BatchScript@1
@@ -538,7 +538,7 @@ stages:
 # Win - Clang
 #- job: win_build_clang
 #  pool:
-#    vmImage: 'windows-2019'
+#    vmImage: 'windows-2022'
 #  displayName: 'Windows - Build - Clang'
 #  steps:
 #  - script: |
@@ -664,7 +664,7 @@ stages:
   # Analysis - Fasten SCC - Source Code Checker - shell script
   - job: analysis_source_code_checker
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'windows-2022'
     displayName: 'Analysis - Source Code Checker [batch]'
     steps:
     - task: BatchScript@1
@@ -769,7 +769,7 @@ stages:
   # Fasten CWC - Compiler Warnings Collector
   - job: compiler_warnings_msvc
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'windows-2022'
     displayName: 'Compiler Warnings Collector - MSVC'
     # TODO: Commented, because this will run after build stage
     #dependsOn: build_win_msvc
@@ -809,7 +809,7 @@ stages:
   # Fasten CWC - Compiler Warnings Collector
   - job: compiler_warnings_gcc
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'windows-2022'
     displayName: 'Compiler Warnings Collector - GCC'
     # TODO: Commented, because this will run after build stage
     #dependsOn: build_win_mingw_gcc
@@ -840,7 +840,7 @@ stages:
   # TODO: Refactor
   - job: compiler_warnings_gcc_arm
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'windows-2022'
     displayName: 'Compiler Warnings Collector - GCC - ARM'
     steps:
     - download: current
@@ -859,7 +859,7 @@ stages:
 
   - job: compiler_warnings_clang
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'windows-2022'
     displayName: 'Compiler Warnings Collector - Clang'
     steps:
     - download: current
@@ -877,7 +877,7 @@ stages:
 
   - job: compiler_warnings_tinycc
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'windows-2022'
     displayName: 'Compiler Warnings Collector - TinyCC'
     steps:
     - download: current
