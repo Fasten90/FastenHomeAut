@@ -183,6 +183,8 @@ static const char * const App_GameX2_LevelList[] = {
 	"516Md",
 	"1T",
 };
+
+const uint8_t GameX2_LevelList_Size = NUM_OF(App_GameX2_LevelList);
 #endif /* CONFIG_FUNCTION_GAME_X2 */
 
 
@@ -1272,6 +1274,8 @@ static volatile uint8_t GameX2_NextNumber_MinIndex = 0;
 
 #define GAME_X2_STRING_ONE_LINE_MAX_LENGTH ( ( GAME_X2_NUMBER_STRING_LENGTH * GameX2_Column_Size ) + 1)
 
+static void GameX2_CheckAndDoTheAllMerges(void);
+
 
 static bool_t GameX2_CheckAllFields_IsThereFree(void) {
 	bool_t result = false; /* It has no free */
@@ -1288,6 +1292,24 @@ static bool_t GameX2_CheckAllFields_IsThereFree(void) {
 	return result;
 }
 
+/**
+ * @brief   Find the index of a value in the level list.
+ * @return  Index if found, -1 if not found.
+ */
+static int8_t GameX2_GetLevelIndex(const char * value)
+{
+    uint8_t i;
+    for (i = 0; i < GameX2_LevelList_Size; i++)
+    {
+        if (App_GameX2_LevelList[i] == value)
+        {
+            return (int8_t)i;
+        }
+    }
+    return -1;
+}
+
+
 static bool_t GameX2_SelectColumn(GameX2_column_t column) {
 	bool_t result = true;
 	if (column >= GameX2_column_min && column < GameX2_column_count) {
@@ -1300,6 +1322,16 @@ static bool_t GameX2_SelectColumn(GameX2_column_t column) {
 				break;
 			}
 			// else : There is a field in that
+			if (column_passed == false && row_i == (GameX2_Row_Size - 1)) // Latest line
+			{
+				if (GameX2_Matrix[column][row_i] == GameX2_ActualNewNumber ) { // Only if they can be merged  Special MERGE !!!
+					int8_t lvl_index = GameX2_GetLevelIndex(GameX2_Matrix[column][row_i]);
+					GameX2_Matrix[column][row_i] = App_GameX2_LevelList[lvl_index+1];
+
+					// It is very easily possible, if we shall merge anothers also:
+					GameX2_CheckAndDoTheAllMerges();
+				}
+			}
 		}
 		if (column_passed != true) {
 			/* The column was full */
@@ -1315,10 +1347,44 @@ static void GameX2_GenerateNewNumber(void) {
 	GameX2_ActualNewNumber = App_GameX2_LevelList[GameX2_NextNumber_MinIndex+random_index];
 }
 
-static void GameX2_CheckIfMergePossible(void) {
-	// TODO: Check the fields
-	// TODO Increase the GameX2_NextNumber_MinIndex if new record is arrived
-	return;
+static bool_t GameX2_CheckIfMergePossible(void) {
+	bool_t result_there_was_change = false; /* There is no change*/
+	uint8_t row_i;
+	uint8_t column_i;
+	for (row_i=0; row_i < GameX2_Row_Size; row_i++) {
+		for (column_i=0; column_i < GameX2_Column_Size; column_i++) {
+			if (GameX2_Matrix[column_i][row_i] != NULL ) {
+				if (row_i < GameX2_Column_Size - 1) {
+					if (GameX2_Matrix[column_i][row_i] == GameX2_Matrix[column_i][row_i+1]) // Same
+					{
+						result_there_was_change = true;
+						int8_t lvl_index = GameX2_GetLevelIndex(GameX2_Matrix[column_i][row_i]);
+						GameX2_Matrix[column_i][row_i] = App_GameX2_LevelList[lvl_index+1]; // "Merge" - next number
+						GameX2_Matrix[column_i][row_i+1] = NULL; // Clean the next / below number
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	return result_there_was_change;
+}
+
+static void GameX2_CheckAndDoTheAllMerges(void) {
+	bool_t there_was_change = true; // Tricky point to start once
+	const uint8_t max_change = ( GameX2_Row_Size - 1) * GameX2_Column_Size;
+	uint8_t i;
+	for (i = 0; i < max_change; i++ ) {
+		if (there_was_change) {
+			there_was_change = GameX2_CheckIfMergePossible();
+		}
+		else
+		{
+			//no more available merge
+			break;
+		}
+	}
 }
 
 void App_GameX2_Init(void)
@@ -1388,10 +1454,9 @@ void App_GameX2_Event(ButtonType_t button, ButtonPressType_t type)
         }
     }
 
-    // TODO: is_successful doing anything?
     if (is_successful == true) {
     	/* So we put successfully the number, let us generated a new number */
-    	GameX2_CheckIfMergePossible();
+    	GameX2_CheckAndDoTheAllMerges();
     	GameX2_GenerateNewNumber();
     }
 
@@ -1405,10 +1470,6 @@ void App_GameX2_Update(ScheduleSource_t source)
 
     char first_line[GAME_X2_STRING_ONE_LINE_MAX_LENGTH];
     bool_t is_there_free_field;
-
-    // TODO
-    //static uint8_t x2_actual_index = 0;
-    // TODO: max
 
     // Draw screen
     static uint8_t row_i = 0;
@@ -1442,18 +1503,6 @@ void App_GameX2_Update(ScheduleSource_t source)
 #ifdef CONFIG_HW_DISPLAY_TM1637_ENABLE
     //Display_TM1637_Print(first_line);
 #endif
-
-	// TODO: Remove
-	/*
-	if (!x2_actual_index)
-	{
-		usnprintf(first_line, 6, "%d  ", x2_actual_index);
-	}
-	else
-	{
-		usnprintf(first_line, 6, "--    ", x2_actual_value);
-	}
-	*/
 
     //Display_PrintString(x2_actual_value, 0, Font_32x20, Display_NoFormat);
     Display_Activate();
