@@ -126,7 +126,7 @@
 		#define CONFIG_FUNCTION_GAME_X2
 
         /* Display: Scrolling menu (Use only for longer then 3 menu) */
-        /* #define CONFIG_FUNCTION_DISPLAY_MENU_SCROLLING */
+        #define CONFIG_FUNCTION_DISPLAY_MENU_SCROLLING
     #endif
 
     /* TODO: Check scroll function */

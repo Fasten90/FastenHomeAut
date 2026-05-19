@@ -1257,7 +1257,7 @@ typedef enum
 } GameX2_column_t;
 
 #define GameX2_Column_Size (3)
-#define GameX2_Row_Size (3)
+#define GameX2_Row_Size (4)
 
 static const char * GameX2_Matrix[GameX2_Column_Size][GameX2_Row_Size] = { 0 };
 /* column index, row index */
@@ -1354,7 +1354,7 @@ static bool_t GameX2_CheckIfMergePossible(void) {
 	for (row_i=0; row_i < GameX2_Row_Size; row_i++) {
 		for (column_i=0; column_i < GameX2_Column_Size; column_i++) {
 			if (GameX2_Matrix[column_i][row_i] != NULL ) {
-				if (row_i < GameX2_Column_Size - 1) {
+				if (row_i < GameX2_Row_Size - 1) {
 					if (GameX2_Matrix[column_i][row_i] == GameX2_Matrix[column_i][row_i+1]) // Same
 					{
 						result_there_was_change = true;
