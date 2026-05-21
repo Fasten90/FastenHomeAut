@@ -121,7 +121,7 @@
 
         /* #define CONFIG_FUNCTION_TRAFFIC_LIGHT */
 
-        #define CONFIG_FUNCTION_ELEVATOR
+        /* #define CONFIG_FUNCTION_ELEVATOR */
 
 		#define CONFIG_FUNCTION_GAME_X2
 
@@ -663,7 +663,7 @@
 #define CONFIG_MODULE_SELFTEST_ERRORS_ENABLE
 
 ///< Debug - Formatted text (colored texts)
-#define CONFIG_MODULE_DEBUG_ENABLE
+//#define CONFIG_MODULE_DEBUG_ENABLE
 /* #define CONFIG_MODULE_COLOREDMESSAGE_ENABLE */
 
 ///< Standard library MemHandler functions
@@ -679,7 +679,7 @@
 
 
 ///< Unit tests
-#define CONFIG_MODULE_UNITTEST_ENABLE
+//#define CONFIG_MODULE_UNITTEST_ENABLE
 #if defined(CONFIG_MODULE_UNITTEST_ENABLE) && !defined(CONFIG_USE_PANEL_PC)
     /* Unittest at embedded target */
     #define CONFIG_MODULE_STRING_UNITTEST_ENABLE
