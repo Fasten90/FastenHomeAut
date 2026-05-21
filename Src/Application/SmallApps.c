@@ -1275,6 +1275,7 @@ static volatile uint8_t GameX2_NextNumber_MinIndex = 0;
 #define GAME_X2_STRING_ONE_LINE_MAX_LENGTH ( ( GAME_X2_NUMBER_STRING_LENGTH * GameX2_Column_Size ) + 1)
 
 static void GameX2_CheckAndDoTheAllMerges(void);
+static void GameX2_Check_if_new_record_reached(const char * new_val);
 
 
 static bool_t GameX2_CheckAllFields_IsThereFree(void) {
@@ -1344,7 +1345,12 @@ static bool_t GameX2_SelectColumn(GameX2_column_t column) {
 
 static void GameX2_GenerateNewNumber(void) {
 	uint8_t random_index = random() % GAME_X2_RANDOM_GENERATION_NEXT_NUMBER_MAX_INDEX;
-	GameX2_ActualNewNumber = App_GameX2_LevelList[GameX2_NextNumber_MinIndex+random_index];
+	uint8_t id = GameX2_NextNumber_MinIndex + random_index;
+	if (id >= GameX2_LevelList_Size)
+	{
+		id = GameX2_LevelList_Size - 1;
+	}
+	GameX2_ActualNewNumber = App_GameX2_LevelList[id];
 }
 
 static bool_t GameX2_CheckIfMergePossible(void) {
@@ -1357,10 +1363,12 @@ static bool_t GameX2_CheckIfMergePossible(void) {
 				if (row_i < GameX2_Row_Size - 1) {
 					if (GameX2_Matrix[column_i][row_i] == GameX2_Matrix[column_i][row_i+1]) // Same
 					{
+						// Merge !!
 						result_there_was_change = true;
 						int8_t lvl_index = GameX2_GetLevelIndex(GameX2_Matrix[column_i][row_i]);
 						GameX2_Matrix[column_i][row_i] = App_GameX2_LevelList[lvl_index+1]; // "Merge" - next number
 						GameX2_Matrix[column_i][row_i+1] = NULL; // Clean the next / below number
+						GameX2_Check_if_new_record_reached(GameX2_Matrix[column_i][row_i]);
 						break;
 					}
 				}
@@ -1384,6 +1392,20 @@ static void GameX2_CheckAndDoTheAllMerges(void) {
 			//no more available merge
 			break;
 		}
+	}
+}
+
+static void GameX2_Check_if_new_record_reached(const char * new_val) {
+	int8_t actual_val_index = GameX2_GetLevelIndex(new_val);
+	int8_t record_index = GameX2_GetLevelIndex(GameX2_Record);
+	uint8_t diff;
+
+	if (record_index < actual_val_index)
+	{
+		GameX2_Record = new_val;
+		diff = actual_val_index - record_index;
+		// Now, we expect larger newly generated numbers
+		GameX2_NextNumber_MinIndex += diff;
 	}
 }
 
@@ -1468,7 +1490,7 @@ void App_GameX2_Update(ScheduleSource_t source)
 {
     UNUSED_ARGUMENT(source);
 
-    char first_line[GAME_X2_STRING_ONE_LINE_MAX_LENGTH];
+    char first_line[GAME_X2_STRING_ONE_LINE_MAX_LENGTH * 3];
     bool_t is_there_free_field;
 
     // Draw screen
@@ -1495,10 +1517,10 @@ void App_GameX2_Update(ScheduleSource_t source)
 	}
 
 	/* The generated next number into the bottom + center */
-	usnprintf(first_line, GAME_X2_NUMBER_STRING_LENGTH + 1, "%s", GameX2_ActualNewNumber);
-	FontFormat_t format;
-	format.Format_Center = 1;
-	Display_PrintString(first_line, GAME_X2_BOTTOM_LINE_INDEX_FOR_NEXT_NUMBER, Font_12x8, format);
+	usnprintf(first_line, GAME_X2_NUMBER_STRING_LENGTH * 3, "   %s  ", GameX2_ActualNewNumber);
+	//FontFormat_t format;
+	//format.Format_Center = 1;
+	Display_PrintString(first_line, GAME_X2_BOTTOM_LINE_INDEX_FOR_NEXT_NUMBER, Font_12x8, Display_NoFormat);
 
 #ifdef CONFIG_HW_DISPLAY_TM1637_ENABLE
     //Display_TM1637_Print(first_line);
