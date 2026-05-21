@@ -58,7 +58,7 @@ typedef struct
 
 } tm1637_t;
 
-
+#define CONFIG_DISPLAY_7SEGMENT_EXTRA_LETTER 1
 
 //
 //      A
@@ -85,10 +85,26 @@ static const uint8_t digitToSegment[] = {
   0b00111001,    // C
   0b01011110,    // d
   0b01111001,    // E
-  0b01110001,     // F
+  0b01110001,    // F
+#ifdef CONFIG_DISPLAY_7SEGMENT_EXTRA_LETTER
+  0b00111101,  // G
+  0b01110110, 	 // H
+  0b00000110,    // I
+  0b00001110,    // J
+  0b00110001,    // K  (F+E+G) ugly!
+  0b00111000,    // L
+  0b01010100,    // M like n)
+  0b01010100,    // n
+  0b01011100,    // o
+  0b01110011,    // P
+  0b01010000,    // r
+  0b01101101,    // S
+  0b01111000,    // t
+  0b00111110,    // U
+  0b01101110,    // y
+  0b01011011,    // Z
+#endif
 };
-
-static const uint8_t tm1637_letter_G = 0b00111101;    // G
 
 
 const uint8_t _tm1637_digit[] =
@@ -146,10 +162,18 @@ static uint8_t Display_ConvertSegmens(uint8_t digit)
         index = digit - 'a' + 10;
         digit = digitToSegment[index];
     }
-    else if (digit == 'g' || digit == 'G') // TODO: Special, should be excluded somehow, maybe with #ifdef
+#ifdef CONFIG_DISPLAY_7SEGMENT_EXTRA_LETTER
+    else if (digit >= 'g' || digit <= 'z')
     {
-    	digit = tm1637_letter_G;
+        index = digit - 'a' + 10;
+        digit = digitToSegment[index];
     }
+    else if (digit >= 'G' && digit <= 'Z')
+    {
+        index = digit - 'A' + 10;
+        digit = digitToSegment[index];
+    }
+#endif
     else if (digit == '-')
     {
         digit = _tm1637_minus;
