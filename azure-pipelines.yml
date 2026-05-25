@@ -52,7 +52,8 @@ stages:
         
         :: MSVC
         :: TODO: parameterize
-        cmake -G "Visual Studio 16 2019" -A Win32 ../..
+        ::cmake -G "Visual Studio 16 2019" -A Win32 ../..
+        cmake -G "Visual Studio 17 2022" -A Win32 ../..
         
         ::Visual Studio 15 2017 [arch] arch: Win64 or ARM
         

@@ -37,8 +37,11 @@
 
 #define GPSHANDLER_COORD_BUFFER_LENGTH                (100U)
 
-
+#ifdef CONFIG_MODULE_DEBUG_ENABLE
 #define GPSHANDLER_DEBUG_ENABLE                       (1)
+#else
+#define GPSHANDLER_DEBUG_ENABLE                       (0)    
+#endif
 
 #if (GPSHANDLER_DEBUG_ENABLE == 1)
     #define GPSHANDLER_DEBUG_PRINT(_str)              Debug_Print(Debug_GPS, _str)
