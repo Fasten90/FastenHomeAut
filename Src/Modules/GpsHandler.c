@@ -105,7 +105,7 @@ static bool GPS_FindCoordinateFromBuffer(CoordinateLog_t * coordLog, uint32_t st
 #if (GPSHANDLER_DEBUG_ENABLE == 1)
     static void DebugPrintCoordinate(CoordinateLog_t * coordLog);
 #else
-    #define DebugPrintCoordinate()
+    #define DebugPrintCoordinate(_str)
 #endif
 
 static bool GpsHandler_ConvertCgnsinfDateTime(char * str, DateTime_t * dateTime);
