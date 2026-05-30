@@ -60,6 +60,9 @@ typedef struct
 
 #define CONFIG_DISPLAY_7SEGMENT_EXTRA_LETTER 1
 
+
+#define SEGMENTS_LIST_ABC_INDEX	(10) 	// First 0-9 elements are the numbers
+#define SEGMENTS_LIST_ERROR_INDEX (15)  // E
 //
 //      A
 //     ---
@@ -69,7 +72,8 @@ typedef struct
 //     ---
 //      D
 static const uint8_t digitToSegment[] = {
- // XGFEDCBA
+  /* It is very important to start the list with numbers, because the time displaying is depending on this */
+  // XGFEDCBA
   0b00111111,    // 0
   0b00000110,    // 1
   0b01011011,    // 2
@@ -158,23 +162,23 @@ static uint8_t Display_ConvertSegmens(uint8_t digit)
     }
     else if (digit >= 'A' && digit <= 'F')
     {
-        index = digit - 'A' + 10;
+        index = digit - 'A' + SEGMENTS_LIST_ABC_INDEX;
         digit = digitToSegment[index];
     }
     else if (digit >= 'a' && digit <= 'f')
     {
-        index = digit - 'a' + 10;
+        index = digit - 'a' + SEGMENTS_LIST_ABC_INDEX;
         digit = digitToSegment[index];
     }
 #ifdef CONFIG_DISPLAY_7SEGMENT_EXTRA_LETTER
-    else if (digit >= 'g' || digit <= 'z')
-    {
-        index = digit - 'a' + 10;
-        digit = digitToSegment[index];
-    }
     else if (digit >= 'G' && digit <= 'Z')
     {
-        index = digit - 'A' + 10;
+        index = digit - 'A' + SEGMENTS_LIST_ABC_INDEX;
+        digit = digitToSegment[index];
+    }
+    else if (digit >= 'g' &&  digit <= 'z')
+    {
+        index = digit - 'a' + SEGMENTS_LIST_ABC_INDEX;
         digit = digitToSegment[index];
     }
 #endif
@@ -186,7 +190,7 @@ static uint8_t Display_ConvertSegmens(uint8_t digit)
     {
         digit = _tm1637_empty;
     }
-    else if (digit < NUM_OF(digitToSegment))
+    else if (digit <= 9)
     {
 		/* Byte number */
     	digit = digitToSegment[digit];
@@ -194,7 +198,7 @@ static uint8_t Display_ConvertSegmens(uint8_t digit)
     else
     {
 
-        index = 15; /* hardcoded E - ERROR */
+        index = SEGMENTS_LIST_ERROR_INDEX; /* hardcoded E - ERROR */
         digit = digitToSegment[index];
     }
 
