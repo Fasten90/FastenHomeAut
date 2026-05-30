@@ -1276,6 +1276,7 @@ static volatile uint8_t GameX2_NextNumber_MinIndex = 0;
 
 static void GameX2_CheckAndDoTheAllMerges(void);
 static void GameX2_Check_if_new_record_reached(const char * new_val);
+static void GameX2_CleanOldNumbers(void);
 
 
 static bool_t GameX2_CheckAllFields_IsThereFree(void) {
@@ -1395,6 +1396,27 @@ static void GameX2_CheckAndDoTheAllMerges(void) {
 	}
 }
 
+/**
+ * @brief   Remove old numbers from the matrix that are smaller than the current
+ *          minimum acceptable number (GameX2_NextNumber_MinIndex).
+ *          These small numbers can never be merged again, so they would block the board.
+ */
+static void GameX2_CleanOldNumbers(void)
+{
+    uint8_t row_i;
+    uint8_t column_i;
+    for (row_i = 0; row_i < GameX2_Row_Size; row_i++) {
+        for (column_i = 0; column_i < GameX2_Column_Size; column_i++) {
+            if (GameX2_Matrix[column_i][row_i] != NULL) {
+                int8_t lvl_index = GameX2_GetLevelIndex(GameX2_Matrix[column_i][row_i]);
+                if (lvl_index < (int8_t)GameX2_NextNumber_MinIndex) {
+                    GameX2_Matrix[column_i][row_i] = NULL;
+                }
+            }
+        }
+    }
+}
+
 static void GameX2_Check_if_new_record_reached(const char * new_val) {
 	int8_t actual_val_index = GameX2_GetLevelIndex(new_val);
 	int8_t record_index = GameX2_GetLevelIndex(GameX2_Record);
@@ -1406,6 +1428,7 @@ static void GameX2_Check_if_new_record_reached(const char * new_val) {
 		diff = actual_val_index - record_index;
 		// Now, we expect larger newly generated numbers
 		GameX2_NextNumber_MinIndex += diff;
+		GameX2_CleanOldNumbers();
 	}
 }
 
