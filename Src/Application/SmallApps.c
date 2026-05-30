@@ -151,10 +151,10 @@ static const char * const App_GameX2_LevelList[] = {
 	"128",
 	"256",
 	"512",
-	"1024",
-	"2048",
-	"4096",
-	"8192",
+	"1E",
+	"2E",
+	"4E",
+	"8E",
 	"16E"
 	"32E",
 	"64E",
@@ -1267,7 +1267,7 @@ static const char * volatile GameX2_ActualNewNumber = NULL;
 static const char * volatile GameX2_Record = NULL;
 static volatile uint8_t GameX2_NextNumber_MinIndex = 0;
 
-#define GAME_X2_START_RECORD_INDEX ( 4 )
+#define GAME_X2_START_RECORD_INDEX ( 5 )
 #define GAME_X2_NUMBER_STRING_LENGTH ( 4 )
 #define GAME_X2_BOTTOM_LINE_INDEX_FOR_NEXT_NUMBER ( GameX2_Row_Size )
 #define GAME_X2_RANDOM_GENERATION_NEXT_NUMBER_MAX_INDEX ( 3 )
